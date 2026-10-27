@@ -1,3 +1,4 @@
+import sourceEquipment from "./source-equipment.json" with { type: "json" };
 import { items } from "./item-database";
 const factualNames = new Map(items.map((item) => [item.id, item.name]));
 // Original factual catalog. Sources in DATA_SOURCES.md. No copied descriptions or combat statistics.
@@ -15,6 +16,8 @@ export const equipmentSlots = [
 ] as const;
 export type EquipmentSlot = (typeof equipmentSlots)[number];
 export type Family = {
+  variants?: Record<number, number>;
+  twoHanded?: boolean;
   code: string;
   name: string;
   slot: EquipmentSlot;
@@ -126,6 +129,19 @@ export const equipmentFamilies: Family[] = [
     source: official,
   },
 ];
+for (const family of equipmentFamilies) {
+  const sourced = (sourceEquipment as Family[]).find((row) => row.code === family.code);
+  if (sourced)
+    Object.assign(family, {
+      tiers: sourced.tiers,
+      enchants: sourced.enchants,
+      variants: sourced.variants,
+      twoHanded: sourced.twoHanded,
+      tierNames: { ...sourced.tierNames, ...family.tierNames },
+    });
+}
+const existingCodes = new Set(equipmentFamilies.map((f) => f.code));
+equipmentFamilies.push(...(sourceEquipment as Family[]).filter((f) => !existingCodes.has(f.code)));
 export function equipmentId(family: Family, tier: number, enchantment: number) {
   return `T${tier}_${family.code}${enchantment ? `@${enchantment}` : ""}`;
 }
@@ -136,7 +152,8 @@ export function findEquipment(id: string) {
     (f) =>
       f.code === match[2] &&
       f.tiers.includes(Number(match[1])) &&
-      f.enchants.includes(Number(match[3] || 0)),
+      f.enchants.includes(Number(match[3] || 0)) &&
+      (!f.variants || !!(f.variants[Number(match[1])] & (1 << Number(match[3] || 0)))),
   );
   return family ? { family, tier: Number(match[1]), enchantment: Number(match[3] || 0) } : null;
 }

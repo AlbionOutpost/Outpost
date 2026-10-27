@@ -1,4 +1,5 @@
 "use client";
+import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
@@ -7,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { buildInput, slots, contentTypes, type BuildInput } from "@/lib/builds/validation";
 const empty: BuildInput = {
+  equipmentSets: [],
   title: "",
   description: "",
   contentType: "Other",
@@ -56,6 +58,31 @@ export function BuildEditor({
           : row,
       ),
     );
+  }
+  const supportedEquipment = draft.equipment
+    .filter((e) => !!findEquipment(e.itemId))
+    .map((e) => ({
+      slot: e.slot,
+      itemId: e.itemId,
+      quality: e.quality,
+      abilities: e.abilitySelections,
+      alternatives: e.alternativeItemIds,
+    }));
+  function updateEquipment(gear: EquipmentChoice[]) {
+    update("equipment", [
+      ...draft.equipment.filter(
+        (e) => !findEquipment(e.itemId) && !gear.some((g) => g.slot === e.slot),
+      ),
+      ...gear.map((e) => ({
+        slot: e.slot,
+        itemId: e.itemId,
+        quality: e.quality,
+        abilities: draft.equipment.find((old) => old.slot === e.slot)?.abilities || "",
+        alternatives: draft.equipment.find((old) => old.slot === e.slot)?.alternatives || "",
+        abilitySelections: e.abilities,
+        alternativeItemIds: e.alternatives,
+      })),
+    ]);
   }
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -131,22 +158,13 @@ export function BuildEditor({
             abilities: e.abilitySelections,
             alternatives: e.alternativeItemIds,
           }))}
-        onChange={(gear: EquipmentChoice[]) =>
-          update("equipment", [
-            ...draft.equipment.filter(
-              (e) => !findEquipment(e.itemId) && !gear.some((g) => g.slot === e.slot),
-            ),
-            ...gear.map((e) => ({
-              slot: e.slot,
-              itemId: e.itemId,
-              quality: e.quality,
-              abilities: draft.equipment.find((old) => old.slot === e.slot)?.abilities || "",
-              alternatives: draft.equipment.find((old) => old.slot === e.slot)?.alternatives || "",
-              abilitySelections: e.abilities,
-              alternativeItemIds: e.alternatives,
-            })),
-          ])
-        }
+        onChange={updateEquipment}
+      />
+      <EquipmentSets
+        equipment={supportedEquipment}
+        sets={draft.equipmentSets}
+        onEquipment={updateEquipment}
+        onSets={(sets) => update("equipmentSets", sets)}
       />
       <details className="build-settings panel">
         <summary>Build settings & description</summary>

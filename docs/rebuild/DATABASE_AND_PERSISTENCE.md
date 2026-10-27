@@ -1,6 +1,8 @@
 # Database and persistence contracts
 
-The [exact database reference](DATABASE_REFERENCE.md) reproduces all29 Prisma models, three enums and17 ordered migration paths/checksums. It is the complete schema appendix. This chapter explains how those tables work together. Recreate both ORM definitions and committed SQL; do not infer constraints only from forms.
+**October27 implementation update:** Migration18 adds `Build.equipmentSets` as non-null JSONB default[]; Build versions include it through validated input, older snapshots default[]. Each strict set has UUID/name and1–10 unique-slot equipment choices, with abilities/quality/alternatives and valid hand combinations; up to five distinct sets. Comp members carry the same JSON sets. Copying a Build copies values rather than linking mutable arrays; JSON imports preserve exported sets.
+
+The [exact database reference](DATABASE_REFERENCE.md) reproduces all29 Prisma models, three enums and18 ordered migration paths/checksums. It is the complete schema appendix. This chapter explains how those tables work together. Recreate both ORM definitions and committed SQL; do not infer constraints only from forms.
 
 ## Entity groups
 

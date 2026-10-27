@@ -1,0 +1,1200 @@
+{
+  "T4_2H_TOOL_KNIFE_AVALON": { "Passive": ["Skinning Proficiency"] },
+  "T4_2H_NATURESTAFF_KEEPER": { "E": ["Spirit Animal"] },
+  "T7_2H_SHAPESHIFTER_SET3": { "E": ["Spirit Bear Transformation"] },
+  "T7_2H_SHAPESHIFTER_SET2": { "E": ["Sylvian Transformation"] },
+  "T4_MAIN_DAGGER": {
+    "Q": ["Assassin Spirit", "Deadly Swipe", "Sunder Armor"],
+    "W": ["Chain Slash", "Dash", "Forbidden Stab", "Shadow Edge", "Throwing Blades"],
+    "E": ["Bloodthirsty Blade"],
+    "Passive": ["Aggressive Rush", "Auto-Attack Speed", "Deep Cuts", "Life Leech"]
+  },
+  "T6_2H_TOOL_SICKLE_AVALON": { "Passive": ["Harvesting Proficiency"] },
+  "T7_2H_FLAIL": { "E": ["Gravitas"] },
+  "T4_MAIN_CURSEDSTAFF_AVALON": { "E": ["Inner Shadow"] },
+  "T7_2H_GLACIALSTAFF": { "E": ["Ice Storm"] },
+  "T4_2H_MACE": { "E": ["Battle Howl"] },
+  "T4_2H_LONGBOW": { "E": ["Rain of Arrows"] },
+  "T4_2H_HALBERD_MORGANA": { "E": ["Morgana Raven"] },
+  "T6_MAIN_ROCKMACE_KEEPER": { "E": ["Force of Nature"] },
+  "T2_2H_BOW": {
+    "Q": ["Deadly Shot", "Multishot"],
+    "W": ["Ray of Light"],
+    "E": ["Enchanted Quiver"],
+    "Passive": ["Energetic", "Slow Poison"]
+  },
+  "T4_MAIN_SWORD_CRYSTAL": { "E": ["Limitbreaker"] },
+  "T7_2H_INFERNOSTAFF": { "E": ["Combustion"] },
+  "T4_2H_SCYTHE_CRYSTAL": { "E": ["Relentless Assault"] },
+  "T4_MAIN_FROSTSTAFF": {
+    "Q": ["Frostbite", "Frozen Surge", "Ice Shard"],
+    "W": ["Frost Beam", "Frost Bomb", "Frost Lance", "Frost Nova", "Glacial Obelisk"],
+    "E": ["Freezing Wind"],
+    "Passive": ["Aggressive Caster", "Energetic", "Frost", "Furious"]
+  },
+  "T4_2H_CURSEDSTAFF_MORGANA": { "E": ["Cataclysm"] },
+  "T4_2H_CURSEDSTAFF": { "E": ["Area of Decay"] },
+  "T6_MAIN_SPEAR_KEEPER": { "E": ["Spear Throw"] },
+  "T7_2H_DUALSWORD": { "E": ["Spinning Blades"] },
+  "T4_2H_CLAWPAIR": { "E": ["Disembowel"] },
+  "T4_2H_COMBATSTAFF_MORGANA": { "E": ["Fatal Blade"] },
+  "T4_2H_DUALMACE_AVALON": { "E": ["Blessed Aurora"] },
+  "T7_2H_DIVINESTAFF": { "E": ["Divine Protection"] },
+  "T4_2H_LONGBOW_UNDEAD": { "E": ["Undead Arrows"] },
+  "T4_2H_POLEHAMMER": { "E": ["Groundbreaker"] },
+  "T4_2H_GLAIVE_CRYSTAL": { "E": ["Razor's Edge"] },
+  "T5_2H_TOOL_AXE_AVALON": { "Passive": ["Lumberjack Proficiency"] },
+  "T4_2H_CROSSBOWLARGE": { "E": ["Sweeping Bolt"] },
+  "T4_2H_KNUCKLES_KEEPER": { "E": ["Hundred Striking Fists"] },
+  "T4_MAIN_ARCANESTAFF_UNDEAD": { "E": ["Black Hole"] },
+  "T5_2H_TOOL_PICK_AVALON": { "Passive": ["Mining Proficiency"] },
+  "T4_2H_DUALCROSSBOW_HELL": { "E": ["Deathward Climax"] },
+  "T7_2H_TOOL_FISHINGROD_AVALON": { "Passive": ["Fisherman Proficiency"] },
+  "T3_2H_BOW": {
+    "Q": ["Deadly Shot", "Multishot"],
+    "W": ["Frost Shot", "Ray of Light"],
+    "E": ["Enchanted Quiver"],
+    "Passive": ["Energetic", "Slow Poison"]
+  },
+  "T2_MAIN_FIRESTAFF": {
+    "Q": ["Burning Field", "Fire Bolt"],
+    "W": ["Flame Blast"],
+    "E": ["Pyroblast"],
+    "Passive": ["Burn", "Energetic"]
+  },
+  "T5_2H_TOOL_HAMMER_AVALON": { "Passive": ["Quarrying Proficiency"] },
+  "T4_2H_ICEGAUNTLETS_HELL": { "E": ["Frozen Hell"] },
+  "T8_2H_TOOL_SICKLE_AVALON": { "Passive": ["Harvesting Proficiency"] },
+  "T4_2H_SHAPESHIFTER_SET3": { "E": ["Spirit Bear Transformation"] },
+  "T4_2H_SHAPESHIFTER_SET1": {
+    "Q": ["Adapting Matter", "Pulse Shock", "Reality Fissure", "Unstable Projectile"],
+    "W": ["Distortion", "Polymorph", "Positional Drift", "Tether Shift"],
+    "E": ["Shadow Panther Transformation"],
+    "Passive": ["Altered Beast", "Innate Power", "Intimidating Presence", "Rule Bender"]
+  },
+  "T4_2H_SHAPESHIFTER_SET2": { "E": ["Sylvian Transformation"] },
+  "T4_2H_DOUBLEBLADEDSTAFF": { "E": ["Soaring Swipe"] },
+  "T4_2H_INFERNOSTAFF": { "E": ["Combustion"] },
+  "T4_MAIN_RAPIER_MORGANA": { "E": ["Lunging Stabs"] },
+  "T4_2H_DUALHAMMER_HELL": { "E": ["Giant Steps"] },
+  "T4_MAIN_FIRESTAFF": {
+    "Q": ["Burning Field", "Fire Bolt", "Searing Flame"],
+    "W": ["Fire Artillery", "Fire Wave", "Flame Blast", "Raging Flare", "Wall of Flames"],
+    "E": ["Pyroblast"],
+    "Passive": ["Aggressive Caster", "Burn", "Energetic", "Furious"]
+  },
+  "T4_2H_HAMMER_UNDEAD": { "E": ["Grasp of the Undead"] },
+  "T4_2H_WARBOW": { "E": ["Magic Arrow"] },
+  "T6_2H_HAMMER_UNDEAD": { "E": ["Grasp of the Undead"] },
+  "T3_MAIN_FIRESTAFF": {
+    "Q": ["Burning Field", "Fire Bolt"],
+    "W": ["Flame Blast", "Wall of Flames"],
+    "E": ["Pyroblast"],
+    "Passive": ["Burn", "Energetic"]
+  },
+  "T6_2H_KNUCKLES_KEEPER": { "E": ["Hundred Striking Fists"] },
+  "T4_2H_SHAPESHIFTER_HELL": { "E": ["Hellfire Imp Transformation"] },
+  "T4_2H_HALBERD": { "E": ["Tear Apart"] },
+  "T4_2H_RAM_KEEPER": { "E": ["Ground Pound"] },
+  "T7_2H_NATURESTAFF": { "E": ["Living Armor"] },
+  "T6_2H_SHAPESHIFTER_MORGANA": { "E": ["Werewolf Transformation"] },
+  "T4_2H_ROCKSTAFF_KEEPER": { "E": ["Mystic Rocks"] },
+  "T4_MAIN_FIRESTAFF_CRYSTAL": { "E": ["Spontaneous Combustion"] },
+  "T4_2H_TOOL_SICKLE_AVALON": { "Passive": ["Harvesting Proficiency"] },
+  "T6_MAIN_CURSEDSTAFF_UNDEAD": { "E": ["Enfeeble Blades"] },
+  "T4_2H_DUALAXE_KEEPER": { "E": ["Razor Cut"] },
+  "T4_2H_BOW_AVALON": { "E": ["Lucent Hawk"] },
+  "T4_2H_DAGGERPAIR": { "E": ["Slit Throat"] },
+  "T7_2H_HOLYSTAFF": { "E": ["Holy Explosion"] },
+  "T6_2H_TOOL_KNIFE_AVALON": { "Passive": ["Skinning Proficiency"] },
+  "T4_2H_AXE_AVALON": { "E": ["Aftershock"] },
+  "T3_MAIN_DAGGER": {
+    "Q": ["Deadly Swipe", "Sunder Armor"],
+    "W": ["Dash", "Throwing Blades"],
+    "E": ["Bloodthirsty Blade"],
+    "Passive": ["Deep Cuts", "Life Leech"]
+  },
+  "T4_MAIN_SWORD": {
+    "Q": ["Heroic Cleave", "Heroic Strike"],
+    "W": [
+      "Blade Cyclone",
+      "Hamstring",
+      "Interrupt",
+      "Iron Will",
+      "Parry Strike",
+      "Splitting Slash"
+    ],
+    "E": ["Mighty Blow"],
+    "Passive": ["Deep Cuts", "Heroic Fighting", "Increased Defense", "Weakening"]
+  },
+  "T4_MAIN_SPEAR_LANCE_AVALON": { "E": ["Breakthrough"] },
+  "T4_2H_KNUCKLES_HELL": { "E": ["Infernal Boulder"] },
+  "T7_2H_ENIGMATICSTAFF": { "E": ["Protective Beam"] },
+  "T4_2H_CLAYMORE": { "E": ["Charge"] },
+  "T4_2H_GLACIALSTAFF": { "E": ["Ice Storm"] },
+  "T4_2H_FIRESTAFF": { "E": ["Flame Pillar"] },
+  "T4_2H_TRIDENT_UNDEAD": { "E": ["Spectral Trident"] },
+  "T3_MAIN_HOLYSTAFF": {
+    "Q": ["Generous Heal", "Smite"],
+    "W": ["Holy Beam", "Sacred Pulse"],
+    "E": ["Desperate Prayer"],
+    "Passive": ["Adrenaline Driven Charity", "Energetic"]
+  },
+  "T4_2H_CLEAVER_HELL": { "E": ["Fearless Strike"] },
+  "T4_2H_SHAPESHIFTER_AVALON": { "E": ["Dawnbird Transformation"] },
+  "T7_MAIN_1HCROSSBOW": { "E": ["Exploding Shot"] },
+  "T4_MAIN_NATURESTAFF_KEEPER": { "E": ["Spiritual Seed"] },
+  "T4_MAIN_MACE_CRYSTAL": { "E": ["Eye of the Storm"] },
+  "T4_2H_FLAIL": { "E": ["Gravitas"] },
+  "T7_MAIN_HOLYSTAFF_MORGANA": { "E": ["Holy Touch"] },
+  "T7_2H_CURSEDSTAFF": { "E": ["Area of Decay"] },
+  "T4_2H_TWINSCYTHE_HELL": { "E": ["Tornado"] },
+  "T7_2H_HAMMER": { "E": ["Tackle"] },
+  "T4_2H_QUARTERSTAFF": {
+    "Q": ["Cartwheel", "Concussive Combo", "Whirling Strikes"],
+    "W": ["Forceful Swing", "Gale Dance", "Rising Blow", "Separator", "Stun Run"],
+    "E": ["Vault Leap"],
+    "Passive": ["Dreadladen Fighting", "Energetic", "Life Leech", "Stunning Strike"]
+  },
+  "T6_2H_TOOL_PICK_AVALON": { "Passive": ["Mining Proficiency"] },
+  "T4_MAIN_MACE_HELL": { "E": ["Shrinking Curse"] },
+  "T4_2H_CROSSBOW_CANNON_AVALON": { "E": ["Divine Engine"] },
+  "T4_2H_DUALSICKLE_UNDEAD": { "E": ["Ghost Strike"] },
+  "T4_2H_HOLYSTAFF_CRYSTAL": { "E": ["Sanctify"] },
+  "T7_2H_CROSSBOWLARGE": { "E": ["Sweeping Bolt"] },
+  "T4_2H_KNUCKLES_SET3": { "E": ["Gravitational Collapse"] },
+  "T4_2H_KNUCKLES_SET2": { "E": ["Falcon Smash"], "Passive": ["Fatal Fury"] },
+  "T4_2H_KNUCKLES_SET1": {
+    "Q": ["Create Opening", "Dragon Leap", "Fleet Footwork", "Shockwave"],
+    "W": ["Backhand Strike", "Counter", "Devastating Combo", "Triple Kick"],
+    "E": ["Blazing Geyser"],
+    "Passive": ["Fatal Fury", "Hard to Catch", "Rage", "Rushdown"]
+  },
+  "T7_2H_WILDSTAFF": { "E": ["Well Of Life"] },
+  "T8_2H_SHAPESHIFTER_SET3": { "E": ["Spirit Bear Transformation"] },
+  "T8_2H_SHAPESHIFTER_SET2": { "E": ["Sylvian Transformation"] },
+  "T6_2H_TOOL_HAMMER_AVALON": { "Passive": ["Quarrying Proficiency"] },
+  "T5_2H_TOOL_KNIFE_AVALON": { "Passive": ["Skinning Proficiency"] },
+  "T7_2H_TOOL_KNIFE_AVALON": { "Passive": ["Skinning Proficiency"] },
+  "T3_MAIN_SPEAR": {
+    "Q": ["Lunging Strike", "Spirit Spear"],
+    "W": ["Forest of Spears", "Inner Focus"],
+    "E": ["Reckless Charge"],
+    "Passive": ["Life Leech", "Slow Poison"]
+  },
+  "T6_2H_TOOL_FISHINGROD_AVALON": { "Passive": ["Fisherman Proficiency"] },
+  "T4_2H_ENIGMATICORB_MORGANA": { "E": ["The Void"] },
+  "T4_MAIN_HOLYSTAFF_MORGANA": { "E": ["Holy Touch"] },
+  "T6_2H_HALBERD_MORGANA": { "E": ["Morgana Raven"] },
+  "T4_2H_WILDSTAFF": { "E": ["Well Of Life"] },
+  "T7_2H_FROSTSTAFF": { "E": ["Hail"] },
+  "T4_2H_SHAPESHIFTER_CRYSTAL": { "E": ["Crystal Cobra Transformation"] },
+  "T4_2H_FIRESTAFF_HELL": { "E": ["Meteor"] },
+  "T4_MAIN_FROSTSTAFF_AVALON": { "E": ["Glacial Prison"] },
+  "T4_MAIN_ROCKMACE_KEEPER": { "E": ["Force of Nature"] },
+  "T4_2H_FROSTSTAFF_CRYSTAL": { "E": ["Arctic Volley"] },
+  "T1_MAIN_SWORD": { "Q": ["Heroic Cleave", "Heroic Strike"] },
+  "T7_2H_TOOL_HAMMER_AVALON": { "Passive": ["Quarrying Proficiency"] },
+  "T4_2H_SKULLORB_HELL": { "E": ["Haunting Screams"] },
+  "T8_2H_TOOL_PICK_AVALON": { "Passive": ["Mining Proficiency"] },
+  "T6_MAIN_NATURESTAFF_KEEPER": { "E": ["Spiritual Seed"] },
+  "T4_2H_ARCANESTAFF_HELL": { "E": ["Time Corridor"] },
+  "T7_2H_TOOL_AXE_AVALON": { "Passive": ["Lumberjack Proficiency"] },
+  "T4_2H_DAGGER_KATAR_AVALON": { "E": ["Merciless Finish"] },
+  "T3_MAIN_AXE": {
+    "Q": ["Rending Spin", "Rending Strike"],
+    "W": ["Adrenaline Boost", "Deadly Chop"],
+    "E": ["Blood Bandit"],
+    "Passive": ["Deep Cuts", "Life Leech"]
+  },
+  "T7_2H_GLAIVE": { "E": ["Fling"] },
+  "T7_2H_DAGGERPAIR": { "E": ["Slit Throat"] },
+  "T7_2H_FIRESTAFF": { "E": ["Flame Pillar"] },
+  "T6_MAIN_RAPIER_MORGANA": { "E": ["Lunging Stabs"] },
+  "T3_2H_SHAPESHIFTER_SET1": {
+    "Q": ["Reality Fissure", "Unstable Projectile"],
+    "W": ["Distortion", "Positional Drift"],
+    "E": ["Shadow Panther Transformation"],
+    "Passive": ["Altered Beast", "Intimidating Presence"]
+  },
+  "T7_2H_DEMONICSTAFF": { "E": ["Anguished Soul"] },
+  "T5_2H_TOOL_SICKLE_AVALON": { "Passive": ["Harvesting Proficiency"] },
+  "T8_2H_TOOL_KNIFE_AVALON": { "Passive": ["Skinning Proficiency"] },
+  "T4_2H_BOW_HELL": { "E": ["Demon Arrow"] },
+  "T6_2H_TOOL_AXE_AVALON": { "Passive": ["Lumberjack Proficiency"] },
+  "T4_MAIN_CURSEDSTAFF_UNDEAD": { "E": ["Enfeeble Blades"] },
+  "T4_MAIN_1HCROSSBOW": { "E": ["Exploding Shot"] },
+  "T8_2H_TOOL_AXE_AVALON": { "Passive": ["Lumberjack Proficiency"] },
+  "T4_2H_KNUCKLES_MORGANA": { "E": ["Earth Crusher"], "Passive": ["Fatal Fury"] },
+  "T4_2H_HOLYSTAFF_HELL": { "E": ["Salvation"] },
+  "T7_2H_TOOL_SICKLE_AVALON": { "Passive": ["Harvesting Proficiency"] },
+  "T3_MAIN_FROSTSTAFF": {
+    "Q": ["Frostbite", "Ice Shard"],
+    "W": ["Frost Beam", "Frost Bomb"],
+    "E": ["Freezing Wind"],
+    "Passive": ["Energetic", "Frost"]
+  },
+  "T4_2H_FIRE_RINGPAIR_AVALON": { "E": ["Flaming Phoenix"] },
+  "T4_2H_HOLYSTAFF": { "E": ["Holy Explosion"] },
+  "T4_2H_HAMMER_AVALON": { "E": ["Onslaught"] },
+  "T7_2H_CLAYMORE": { "E": ["Charge"] },
+  "T3_MAIN_MACE": {
+    "Q": ["Defensive Slam", "Threatening Smash"],
+    "W": ["Ground Shaker", "Snare Charge"],
+    "E": ["Deep Leap"],
+    "Passive": ["Energetic", "Stunning Strike"]
+  },
+  "T4_2H_DIVINESTAFF": { "E": ["Divine Protection"] },
+  "T8_2H_TOOL_FISHINGROD_AVALON": { "Passive": ["Fisherman Proficiency"] },
+  "T7_2H_TOOL_PICK_AVALON": { "Passive": ["Mining Proficiency"] },
+  "T4_2H_KNUCKLES_AVALON": { "E": ["Purifying Combination"], "Passive": ["Fatal Fury"] },
+  "T7_2H_SPEAR": { "E": ["Rooting Smash"] },
+  "T4_MAIN_HAMMER": {
+    "Q": ["Iron Breaker", "Powerful Swing", "Threatening Strike"],
+    "W": ["Inertia Ring", "Knockout", "Power Geyser", "Seismic Tremor", "Slowing Charge"],
+    "E": ["Earth Shatter"],
+    "Passive": ["Dreadladen Fighting", "Energetic", "Life Leech", "Stunning Strike"]
+  },
+  "T4_2H_DUALSCIMITAR_UNDEAD": { "E": ["Soulless Stream"] },
+  "T8_2H_TOOL_HAMMER_AVALON": { "Passive": ["Quarrying Proficiency"] },
+  "T4_2H_REPEATINGCROSSBOW_UNDEAD": { "E": ["Explosive Mine"] },
+  "T7_2H_AXE": { "E": ["Whirlwind"] },
+  "T5_2H_TOOL_FISHINGROD_AVALON": { "Passive": ["Fisherman Proficiency"] },
+  "T4_MAIN_MACE": {
+    "Q": ["Defensive Slam", "Sacred Ground", "Threatening Smash"],
+    "W": ["Air Compressor", "Ground Shaker", "Guard Rune", "Snare Charge"],
+    "E": ["Deep Leap"],
+    "Passive": ["Dreadladen Fighting", "Energetic", "Life Leech", "Stunning Strike"]
+  },
+  "T4_2H_TOOL_PICK_AVALON": { "Passive": ["Mining Proficiency"] },
+  "T4_2H_ARCANESTAFF": { "E": ["Time Freeze"] },
+  "T4_MAIN_HOLYSTAFF": {
+    "Q": ["Generous Heal", "Holy Flash", "Smite"],
+    "W": ["Holy Beam", "Holy Blessing", "Holy Orb", "Reawaken", "Sacred Pulse"],
+    "E": ["Desperate Prayer"],
+    "Passive": ["Adrenaline Driven Charity", "Ascended", "Energetic", "Magic Force"]
+  },
+  "T4_2H_KNUCKLES_CRYSTAL": { "E": ["Unstoppable Rush"], "Passive": ["Fatal Fury"] },
+  "T4_2H_BOW_CRYSTAL": { "E": ["Sky's Fury"] },
+  "T4_2H_HAMMER_CRYSTAL": { "E": ["Hyperstatic"] },
+  "T3_2H_KNUCKLES_SET1": {
+    "Q": ["Create Opening", "Dragon Leap"],
+    "W": ["Backhand Strike", "Triple Kick"],
+    "E": ["Blazing Geyser"],
+    "Passive": ["Fatal Fury", "Rage"]
+  },
+  "T4_MAIN_CURSEDSTAFF_CRYSTAL": { "E": ["Plaguebringer"] },
+  "T4_2H_HARPOON_HELL": { "E": ["Corrupting Steel"] },
+  "T4_2H_FROSTSTAFF": { "E": ["Hail"] },
+  "T4_2H_TOOL_AXE_AVALON": { "Passive": ["Lumberjack Proficiency"] },
+  "T4_2H_TOOL_HAMMER_AVALON": { "Passive": ["Quarrying Proficiency"] },
+  "T6_MAIN_ARCANESTAFF_UNDEAD": { "E": ["Black Hole"] },
+  "T3_MAIN_SWORD": {
+    "Q": ["Heroic Cleave", "Heroic Strike"],
+    "W": ["Blade Cyclone", "Interrupt"],
+    "E": ["Mighty Blow"],
+    "Passive": ["Deep Cuts", "Weakening"]
+  },
+  "T7_2H_POLEHAMMER": { "E": ["Groundbreaker"] },
+  "T4_2H_NATURESTAFF": { "E": ["Living Armor"] },
+  "T4_MAIN_SCIMITAR_MORGANA": { "E": ["Crescent Slash"] },
+  "T7_2H_ARCANESTAFF": { "E": ["Time Freeze"] },
+  "T4_2H_MACE_MORGANA": { "E": ["Vendetta"] },
+  "T4_MAIN_NATURESTAFF_CRYSTAL": { "E": ["Dual Nature"] },
+  "T4_2H_CROSSBOWLARGE_MORGANA": { "E": ["Vicious Barrage"] },
+  "T4_MAIN_FROSTSTAFF_KEEPER": { "E": ["Avalanche"] },
+  "T3_MAIN_HAMMER": {
+    "Q": ["Powerful Swing", "Threatening Strike"],
+    "W": ["Seismic Tremor", "Slowing Charge"],
+    "E": ["Earth Shatter"],
+    "Passive": ["Energetic", "Stunning Strike"]
+  },
+  "T6_MAIN_FIRESTAFF_KEEPER": { "E": ["Magma Sphere"] },
+  "T4_2H_IRONCLADEDSTAFF": { "E": ["Hurricane"] },
+  "T4_2H_CROSSBOW": {
+    "Q": ["Auto Fire", "Explosive Bolt"],
+    "W": ["Caltrops", "Explosive Salvo", "Knockback Shot", "Noise Eraser", "Sunder Shot"],
+    "E": ["Snipe Shot"],
+    "Passive": ["Energetic", "Forceful Bolts", "Furious", "Well-Prepared"]
+  },
+  "T4_MAIN_NATURESTAFF_AVALON": { "E": ["Soul Link"] },
+  "T3_MAIN_CURSEDSTAFF": {
+    "Q": ["Cursed Sickle", "Vile Curse"],
+    "W": ["Armor Piercer", "Desecrate"],
+    "E": ["Death Curse"],
+    "Passive": ["Bane", "Energetic"]
+  },
+  "T4_2H_HOLYSTAFF_UNDEAD": { "E": ["Celestial Sphere"] },
+  "T7_2H_MACE": { "E": ["Battle Howl"] },
+  "T4_MAIN_AXE": {
+    "Q": ["Rending Rage", "Rending Spin", "Rending Strike"],
+    "W": ["Adrenaline Boost", "Battle Rush", "Deadly Chop", "Internal Bleeding", "Raging Blades"],
+    "E": ["Blood Bandit"],
+    "Passive": ["Aggressive Rush", "Deep Cuts", "Increased Defense", "Life Leech"]
+  },
+  "T4_2H_BOW": {
+    "Q": ["Deadly Shot", "Multishot", "Poisoned Arrow"],
+    "W": ["Explosive Arrows", "Frost Shot", "Ray of Light", "Speed Shot"],
+    "E": ["Enchanted Quiver"],
+    "Passive": ["Auto-Attack Speed", "Energetic", "Piercing Arrows", "Slow Poison"]
+  },
+  "T4_2H_NATURESTAFF_HELL": { "E": ["Elevated Nature"] },
+  "T4_2H_DEMONICSTAFF": { "E": ["Anguished Soul"] },
+  "T4_2H_SCYTHE_HELL": { "E": ["Bloody Reap"] },
+  "T4_2H_SHAPESHIFTER_MORGANA": { "E": ["Werewolf Transformation"] },
+  "T7_2H_DOUBLEBLADEDSTAFF": { "E": ["Soaring Swipe"] },
+  "T7_2H_CLAWPAIR": { "E": ["Disembowel"] },
+  "T4_2H_DAGGERPAIR_CRYSTAL": { "E": ["Ring of Death"] },
+  "T4_2H_QUARTERSTAFF_AVALON": { "E": ["Soul Shaker"] },
+  "T6_2H_COMBATSTAFF_MORGANA": { "E": ["Fatal Blade"] },
+  "T4_2H_GLAIVE": { "E": ["Fling"] },
+  "T6_MAIN_FROSTSTAFF_KEEPER": { "E": ["Avalanche"] },
+  "T4_2H_ARCANESTAFF_CRYSTAL": { "E": ["Starfall"] },
+  "T4_2H_ARCANE_RINGPAIR_AVALON": { "E": ["Dark Sphere"] },
+  "T4_MAIN_NATURESTAFF": {
+    "Q": ["Rejuvenating Flower", "Rejuvenation", "Thorn Growth"],
+    "W": [
+      "Brambleseed",
+      "Cleanse Heal",
+      "Protection of Nature",
+      "Rejuvenating Breeze",
+      "Revitalize"
+    ],
+    "E": ["Circle of Life"],
+    "Passive": ["Adrenaline Driven Charity", "Calmness", "Energetic", "Hit and Run"]
+  },
+  "T4_2H_ICECRYSTAL_UNDEAD": { "E": ["Ice Crystal"] },
+  "T4_MAIN_DAGGER_HELL": { "E": ["Blood Ritual"] },
+  "T4_2H_DUALCROSSBOW_CRYSTAL": { "E": ["Flickershots"] },
+  "T4_MAIN_ARCANESTAFF": {
+    "Q": ["Arcane Protection", "Chain Missile", "Magic Shock"],
+    "W": ["Empowering Beam", "Enigma Blade", "Frazzle", "Mimic", "Motivating Cleanse"],
+    "E": ["Arcane Orb"],
+    "Passive": ["Calmness", "Energetic", "Hush", "Lingering Power"]
+  },
+  "T4_2H_AXE": { "E": ["Whirlwind"] },
+  "T4_2H_TOOL_FISHINGROD_AVALON": { "Passive": ["Fisherman Proficiency"] },
+  "T4_2H_SPEAR": { "E": ["Rooting Smash"] },
+  "T4_2H_DOUBLEBLADEDSTAFF_CRYSTAL": { "E": ["Phantom Twin"] },
+  "T3_MAIN_NATURESTAFF": {
+    "Q": ["Rejuvenation", "Thorn Growth"],
+    "W": ["Brambleseed", "Revitalize"],
+    "E": ["Circle of Life"],
+    "Passive": ["Adrenaline Driven Charity", "Energetic"]
+  },
+  "T4_MAIN_SPEAR_KEEPER": { "E": ["Spear Throw"] },
+  "T4_2H_BOW_KEEPER": { "E": ["Raging Storm"] },
+  "T4_2H_ENIGMATICSTAFF": { "E": ["Protective Beam"] },
+  "T7_2H_HALBERD": { "E": ["Tear Apart"] },
+  "T2_MAIN_SWORD": {
+    "Q": ["Heroic Cleave", "Heroic Strike"],
+    "W": ["Blade Cyclone"],
+    "E": ["Mighty Blow"],
+    "Passive": ["Deep Cuts", "Weakening"]
+  },
+  "T3_MAIN_ARCANESTAFF": {
+    "Q": ["Arcane Protection", "Chain Missile"],
+    "W": ["Enigma Blade", "Motivating Cleanse"],
+    "E": ["Arcane Orb"],
+    "Passive": ["Energetic", "Lingering Power"]
+  },
+  "T3_2H_CROSSBOW": {
+    "Q": ["Auto Fire", "Explosive Bolt"],
+    "W": ["Explosive Salvo", "Sunder Shot"],
+    "E": ["Snipe Shot"],
+    "Passive": ["Forceful Bolts", "Well-Prepared"]
+  },
+  "T4_2H_HAMMER": { "E": ["Tackle"] },
+  "T7_2H_IRONCLADEDSTAFF": { "E": ["Hurricane"] },
+  "T4_MAIN_HOLYSTAFF_AVALON": { "E": ["Divine Intervention"] },
+  "T7_2H_REPEATINGCROSSBOW_UNDEAD": { "E": ["Explosive Mine"] },
+  "T6_MAIN_SCIMITAR_MORGANA": { "E": ["Crescent Slash"] },
+  "T3_2H_QUARTERSTAFF": {
+    "Q": ["Concussive Combo", "Whirling Strikes"],
+    "W": ["Gale Dance", "Stun Run"],
+    "E": ["Vault Leap"],
+    "Passive": ["Energetic", "Stunning Strike"]
+  },
+  "T4_MAIN_CURSEDSTAFF": {
+    "Q": ["Cursed Sickle", "Cursed Tar", "Vile Curse"],
+    "W": ["Armor Piercer", "Cursed Beam", "Dark Matter", "Desecrate", "Grudge"],
+    "E": ["Death Curse"],
+    "Passive": ["Bane", "Energetic", "Furious", "Hit and Run"]
+  },
+  "T4_MAIN_FIRESTAFF_KEEPER": { "E": ["Magma Sphere"] },
+  "T4_2H_CLAYMORE_AVALON": { "E": ["Majestic Smash"] },
+  "T4_2H_SHAPESHIFTER_KEEPER": { "E": ["Runestone Golem Transformation"] },
+  "T4_MAIN_SPEAR": {
+    "Q": ["Lunging Strike", "Spirit Spear"],
+    "W": ["Cripple", "Deflecting Spin", "Forest of Spears", "Harpoon", "Impaler", "Inner Focus"],
+    "E": ["Reckless Charge"],
+    "Passive": ["Aggressive Rush", "Auto-Attack Speed", "Life Leech", "Slow Poison"]
+  },
+  "T4_2H_DUALSWORD": { "E": ["Spinning Blades"] },
+  "T7_2H_KNUCKLES_SET2": { "E": ["Falcon Smash"], "Passive": ["Fatal Fury"] },
+  "T7_2H_KNUCKLES_SET3": { "E": ["Gravitational Collapse"] },
+  "T4_2H_INFERNOSTAFF_MORGANA": { "E": ["Flame Tornado"] },
+  "T2_HEAD_LEATHER_SET1": {
+    "Active": ["Energizing Shield", "Howl"],
+    "Passive": ["Balanced Mind", "Swiftness"]
+  },
+  "T5_HEAD_GATHERER_ROCK": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Fatigue-Proof"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T4_HEAD_PLATE_SET2": {
+    "Active": ["Displacement Immunity", "Energizing Shield", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_PLATE_SET3": {
+    "Active": ["Emergency Shield", "Energizing Shield", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_PLATE_HELL": {
+    "Active": ["Energizing Shield", "Hush", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T7_HEAD_GATHERER_ROCK": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Fatigue-Proof"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T5_HEAD_GATHERER_HIDE": {
+    "Active": ["Bear Trap", "Block", "Cleanse", "Emergency Shield"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T6_HEAD_GATHERER_FIBER": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Magic Pollen"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T4_HEAD_LEATHER_AVALON": {
+    "Active": ["Cleanse", "Energizing Shield", "Nasty Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T7_HEAD_GATHERER_HIDE": {
+    "Active": ["Bear Trap", "Block", "Cleanse", "Emergency Shield"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T2_HEAD_PLATE_SET1": {
+    "Active": ["Block", "Energizing Shield"],
+    "Passive": ["Authority", "Toughness"]
+  },
+  "T4_HEAD_LEATHER_ROYAL": {
+    "Active": ["Cleanse", "Energizing Shield", "Growing Rage"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_GATHERER_WOOD": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Tree Trunks"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T4_HEAD_CLOTH_ROYAL": {
+    "Active": ["Energizing Shield", "Force Field", "Perpetual Energy"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_HEAD_PLATE_UNDEAD": {
+    "Active": ["Energizing Shield", "Sacrifice", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T7_HEAD_GATHERER_FIBER": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Magic Pollen"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T5_HEAD_GATHERER_FISH": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Rotten Fish"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T6_HEAD_GATHERER_FISH": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Rotten Fish"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T3_HEAD_CLOTH_SET1": {
+    "Active": ["Aegis of Energy", "Energizing Shield", "Force Field"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T1_HEAD_LEATHER_SET1": { "Active": ["Energizing Shield"] },
+  "T3_HEAD_LEATHER_SET1": {
+    "Active": ["Cleanse", "Energizing Shield", "Howl"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_GATHERER_FIBER": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Magic Pollen"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T7_HEAD_GATHERER_FISH": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Rotten Fish"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T5_HEAD_GATHERER_FIBER": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Magic Pollen"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T5_HEAD_GATHERER_ORE": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Motivating Worker's Song"],
+    "Passive": ["Mining Skills"]
+  },
+  "T8_HEAD_GATHERER_FISH": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Rotten Fish"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T7_HEAD_GATHERER_ORE": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Motivating Worker's Song"],
+    "Passive": ["Mining Skills"]
+  },
+  "T8_HEAD_GATHERER_FIBER": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Magic Pollen"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T4_HEAD_LEATHER_FEY": {
+    "Active": ["Cleanse", "Energizing Shield", "Immortal"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_GATHERER_HIDE": {
+    "Active": ["Bear Trap", "Block", "Cleanse", "Emergency Shield"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T4_HEAD_LEATHER_UNDEAD": {
+    "Active": ["Cleanse", "Energizing Shield", "Flash of Insight"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T6_HEAD_GATHERER_ROCK": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Fatigue-Proof"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T4_HEAD_PLATE_FEY": {
+    "Active": ["Energizing Shield", "Spider's Thread", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_PLATE_KEEPER": {
+    "Active": ["Electric Discharge", "Energizing Shield", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_CLOTH_KEEPER": {
+    "Active": ["Circle of Inspiration", "Energizing Shield", "Force Field"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_HEAD_CLOTH_FEY": {
+    "Active": ["Energizing Shield", "Force Field", "Hyper Focus"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T6_HEAD_GATHERER_HIDE": {
+    "Active": ["Bear Trap", "Block", "Cleanse", "Emergency Shield"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T8_HEAD_GATHERER_ROCK": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Fatigue-Proof"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T4_HEAD_LEATHER_MORGANA": {
+    "Active": ["Cleanse", "Energizing Shield", "Mortal Agony"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_PLATE_ROYAL": {
+    "Active": ["Ballista Support Fire", "Energizing Shield", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T8_HEAD_GATHERER_HIDE": {
+    "Active": ["Bear Trap", "Block", "Cleanse", "Emergency Shield"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T3_HEAD_PLATE_SET1": {
+    "Active": ["Block", "Energizing Shield", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_GATHERER_FISH": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Rotten Fish"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T4_HEAD_CLOTH_MORGANA": {
+    "Active": ["Energizing Shield", "Force Field", "Inner Corruption"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T5_HEAD_GATHERER_WOOD": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Tree Trunks"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T4_HEAD_LEATHER_SET2": {
+    "Active": ["Cleanse", "Energizing Shield", "Retaliate"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_LEATHER_SET3": {
+    "Active": ["Cleanse", "Energizing Shield", "Meditation"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T6_HEAD_GATHERER_WOOD": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Tree Trunks"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T2_HEAD_CLOTH_SET1": {
+    "Active": ["Energizing Shield", "Force Field"],
+    "Passive": ["Aggression", "Concentration"]
+  },
+  "T4_HEAD_LEATHER_HELL": {
+    "Active": ["Cleanse", "Energizing Shield", "Smokebomb"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_HEAD_PLATE_AVALON": {
+    "Active": ["Energizing Shield", "Purifying Smoke", "Stone Skin"],
+    "Passive": ["Authority", "Tenacity", "Toughness"]
+  },
+  "T4_HEAD_CLOTH_AVALON": {
+    "Active": ["Avalonian Beam", "Energizing Shield", "Force Field"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_HEAD_CLOTH_SET2": {
+    "Active": ["Energizing Shield", "Force Field", "Ice Block"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T8_HEAD_GATHERER_WOOD": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Tree Trunks"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T4_HEAD_CLOTH_SET3": {
+    "Active": ["Energizing Shield", "Firebreath", "Force Field"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T7_HEAD_GATHERER_WOOD": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Tree Trunks"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T4_HEAD_CLOTH_HELL": {
+    "Active": ["Energizing Shield", "Force Field", "Purge"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T6_HEAD_GATHERER_ORE": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Motivating Worker's Song"],
+    "Passive": ["Mining Skills"]
+  },
+  "T4_HEAD_GATHERER_ORE": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Motivating Worker's Song"],
+    "Passive": ["Mining Skills"]
+  },
+  "T8_HEAD_GATHERER_ORE": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Motivating Worker's Song"],
+    "Passive": ["Mining Skills"]
+  },
+  "T4_HEAD_GATHERER_ROCK": {
+    "Active": ["Block", "Cleanse", "Emergency Shield", "Fatigue-Proof"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T4_ARMOR_LEATHER_SET3": {
+    "Active": ["Ambush", "Inferno Shield", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_ARMOR_LEATHER_SET2": {
+    "Active": ["Haste", "Inferno Shield", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T6_ARMOR_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T4_ARMOR_PLATE_UNDEAD": {
+    "Active": ["Mend Wounds", "Soul Chain", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T5_ARMOR_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T4_ARMOR_CLOTH_FEY": {
+    "Active": ["Frost Shield", "Mend Wounds", "Wild Magic"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_ARMOR_LEATHER_HELL": {
+    "Active": ["Inferno Shield", "Life Steal Aura", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_ARMOR_PLATE_SET2": {
+    "Active": ["Mend Wounds", "Taunt", "Wind Wall"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T4_ARMOR_PLATE_SET3": {
+    "Active": ["Enfeeble Aura", "Mend Wounds", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T4_ARMOR_LEATHER_FEY": {
+    "Active": ["Inferno Shield", "Mend Wounds", "Mist Cloud"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T6_ARMOR_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T4_ARMOR_GATHERER_FIBER": {
+    "Active": ["Ambush", "Mend Wounds", "Spirit of Vengeance", "Wind Wall"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T4_ARMOR_LEATHER_ROYAL": {
+    "Active": ["Inferno Shield", "Mend Wounds", "Royal Banner"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_ARMOR_PLATE_HELL": {
+    "Active": ["Mend Wounds", "Protection of the Fiends", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T6_ARMOR_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T4_ARMOR_GATHERER_ORE": {
+    "Active": ["Ambush", "Mend Wounds", "Wind Shield", "Wind Wall"],
+    "Passive": ["Mining Skills"]
+  },
+  "T2_ARMOR_CLOTH_SET1": {
+    "Active": ["Frost Shield", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration"]
+  },
+  "T2_ARMOR_LEATHER_SET1": {
+    "Active": ["Bloodlust", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Swiftness"]
+  },
+  "T4_ARMOR_LEATHER_UNDEAD": {
+    "Active": ["Inferno Shield", "Mend Wounds", "Self Ignition"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_ARMOR_GATHERER_WOOD": {
+    "Active": ["Ambush", "Mend Wounds", "Purging Shield", "Wind Wall"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T3_ARMOR_PLATE_SET1": {
+    "Active": ["Fury", "Mend Wounds", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T8_ARMOR_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T4_ARMOR_PLATE_ROYAL": {
+    "Active": ["Energy Source", "Mend Wounds", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T2_ARMOR_PLATE_SET1": {
+    "Active": ["Fury", "Mend Wounds"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Toughness"]
+  },
+  "T7_ARMOR_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T6_ARMOR_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T5_ARMOR_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_ARMOR_GATHERER_ROCK": {
+    "Active": ["Ambush", "Flow", "Mend Wounds", "Wind Wall"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T4_ARMOR_PLATE_AVALON": {
+    "Active": ["Mend Wounds", "Requite", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T3_ARMOR_LEATHER_SET1": {
+    "Active": ["Bloodlust", "Inferno Shield", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T8_ARMOR_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T4_ARMOR_LEATHER_AVALON": {
+    "Active": ["Dynamic Defense", "Inferno Shield", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_ARMOR_CLOTH_AVALON": {
+    "Active": ["Energy Emission", "Frost Shield", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T8_ARMOR_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T4_ARMOR_CLOTH_ROYAL": {
+    "Active": ["Frost Shield", "Magic Rune", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T1_ARMOR_LEATHER_SET1": { "Active": ["Mend Wounds"] },
+  "T7_ARMOR_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T5_ARMOR_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T7_ARMOR_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T5_ARMOR_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T7_ARMOR_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T6_ARMOR_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T4_ARMOR_CLOTH_SET2": {
+    "Active": ["Everlasting Spirit", "Frost Shield", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_ARMOR_CLOTH_SET3": {
+    "Active": ["Frost Shield", "Mend Wounds", "Purging Shield"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T5_ARMOR_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T4_ARMOR_CLOTH_KEEPER": {
+    "Active": ["Frost Shield", "Mend Wounds", "Obsessive Burst"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T6_ARMOR_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_ARMOR_GATHERER_FISH": {
+    "Active": ["Ambush", "Mend Wounds", "Water Shield", "Wind Wall"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T4_ARMOR_CLOTH_MORGANA": {
+    "Active": ["Frost Shield", "Levitate", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T7_ARMOR_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T8_ARMOR_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_ARMOR_CLOTH_HELL": {
+    "Active": ["Fear Aura", "Frost Shield", "Mend Wounds"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T4_ARMOR_PLATE_FEY": {
+    "Active": ["Mend Wounds", "Mythical Web", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T5_ARMOR_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T8_ARMOR_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T8_ARMOR_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T4_ARMOR_GATHERER_HIDE": {
+    "Active": ["Ambush", "Hide Animal Poison", "Mend Wounds", "Wind Wall"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T4_ARMOR_PLATE_KEEPER": {
+    "Active": ["Force Shield", "Mend Wounds", "Taunt"],
+    "Passive": ["Authority", "Protective Instinct", "Spirit Crush", "Tenacity", "Toughness"]
+  },
+  "T3_ARMOR_CLOTH_SET1": {
+    "Active": ["Frost Shield", "Mend Wounds", "Speed Caster"],
+    "Passive": ["Aggression", "Concentration", "Efficiency"]
+  },
+  "T7_ARMOR_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_ARMOR_LEATHER_MORGANA": {
+    "Active": ["Electric Field", "Inferno Shield", "Mend Wounds"],
+    "Passive": ["Balanced Mind", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_GATHERER_HIDE": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Scent of the Wilderness", "Wanderlust"],
+    "Passive": ["Skinning Skills"]
+  },
+  "T2_SHOES_PLATE_SET1": {
+    "Active": ["Dodge", "Rejuvenating Sprint"],
+    "Passive": ["Courier", "Toughness"]
+  },
+  "T6_SHOES_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T4_SHOES_GATHERER_ROCK": {
+    "Active": ["Dodge", "Motivating Pain", "Rejuvenating Sprint", "Wanderlust"],
+    "Passive": ["Quarrying Skills"]
+  },
+  "T5_SHOES_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T7_SHOES_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T8_SHOES_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_SHOES_LEATHER_MORGANA": {
+    "Active": ["Dodge", "Raging Blink", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T6_SHOES_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T7_SHOES_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T4_SHOES_CLOTH_FEY": {
+    "Active": ["Dodge", "Energetic Sprint", "Ethereal Form"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T5_SHOES_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_SHOES_PLATE_HELL": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Vengeful Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T4_SHOES_PLATE_SET2": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Shield Charge"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T4_SHOES_PLATE_SET3": {
+    "Active": ["Dodge", "Giant", "Rejuvenating Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T8_SHOES_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T8_SHOES_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T6_SHOES_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T4_SHOES_LEATHER_HELL": {
+    "Active": ["Dodge", "Mark of Sacrifice", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_PLATE_FEY": {
+    "Active": ["Crush Charge", "Dodge", "Rejuvenating Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T4_SHOES_LEATHER_SET2": {
+    "Active": ["Dodge", "Refreshing Sprint", "Rush"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_LEATHER_SET3": {
+    "Active": ["Dodge", "Refreshing Sprint", "Swift Cut"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_GATHERER_FISH": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Splash Wave", "Wanderlust"],
+    "Passive": ["Fisherman Skills"]
+  },
+  "T3_SHOES_LEATHER_SET1": {
+    "Active": ["Break Free", "Dodge", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_CLOTH_AVALON": {
+    "Active": ["Dodge", "Energetic Sprint", "Hover"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T5_SHOES_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T4_SHOES_PLATE_AVALON": {
+    "Active": ["Dodge", "Premonition", "Rejuvenating Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T3_SHOES_PLATE_SET1": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Wanderlust"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T1_SHOES_LEATHER_SET1": { "Active": ["Dodge"] },
+  "T2_SHOES_LEATHER_SET1": {
+    "Active": ["Dodge", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier"]
+  },
+  "T4_SHOES_LEATHER_AVALON": {
+    "Active": ["Blind Spot", "Dodge", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_GATHERER_ORE": {
+    "Active": ["Dodge", "Flee", "Rejuvenating Sprint", "Wanderlust"],
+    "Passive": ["Mining Skills"]
+  },
+  "T3_SHOES_CLOTH_SET1": {
+    "Active": ["Dodge", "Energetic Sprint", "Focused Run"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T7_SHOES_GATHERER_ORE": { "Passive": ["Mining Skills"] },
+  "T4_SHOES_GATHERER_FIBER": {
+    "Active": ["Dodge", "Ethereal Path", "Rejuvenating Sprint", "Wanderlust"],
+    "Passive": ["Harvesting Skills"]
+  },
+  "T4_SHOES_CLOTH_HELL": {
+    "Active": ["Dodge", "Energetic Sprint", "Position Swap"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T8_SHOES_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T4_SHOES_CLOTH_SET3": {
+    "Active": ["Delayed Teleport", "Dodge", "Energetic Sprint"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T4_SHOES_CLOTH_SET2": {
+    "Active": ["Blink", "Dodge", "Energetic Sprint"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T4_SHOES_LEATHER_UNDEAD": {
+    "Active": ["Dodge", "Refreshing Sprint", "Spectral Run"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T7_SHOES_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_SHOES_PLATE_UNDEAD": {
+    "Active": ["Battle Frenzy", "Dodge", "Rejuvenating Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T2_SHOES_CLOTH_SET1": {
+    "Active": ["Dodge", "Energetic Sprint"],
+    "Passive": ["Aggression", "Courier"]
+  },
+  "T4_SHOES_CLOTH_KEEPER": {
+    "Active": ["Dodge", "Energetic Sprint", "Frost Walk"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T7_SHOES_GATHERER_FIBER": { "Passive": ["Harvesting Skills"] },
+  "T5_SHOES_GATHERER_WOOD": { "Passive": ["Lumberjack Skills"] },
+  "T6_SHOES_GATHERER_FISH": { "Passive": ["Fisherman Skills"] },
+  "T4_SHOES_PLATE_KEEPER": {
+    "Active": ["Dodge", "Elbow Smash", "Rejuvenating Sprint"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T4_SHOES_CLOTH_MORGANA": {
+    "Active": ["Dodge", "Energetic Sprint", "Rotten Ground"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T5_SHOES_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T8_SHOES_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T4_SHOES_GATHERER_WOOD": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Sprint Shield", "Wanderlust"],
+    "Passive": ["Lumberjack Skills"]
+  },
+  "T4_SHOES_LEATHER_ROYAL": {
+    "Active": ["Dodge", "Evasive Jump", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T4_SHOES_PLATE_ROYAL": {
+    "Active": ["Dodge", "Rejuvenating Sprint", "Royal March"],
+    "Passive": ["Authority", "Courier", "Tenacity", "Toughness"]
+  },
+  "T8_SHOES_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T4_SHOES_CLOTH_ROYAL": {
+    "Active": ["Defenseless Rush", "Dodge", "Energetic Sprint"],
+    "Passive": ["Aggression", "Concentration", "Courier", "Efficiency"]
+  },
+  "T6_SHOES_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T7_SHOES_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T4_SHOES_LEATHER_FEY": {
+    "Active": ["After Image", "Dodge", "Refreshing Sprint"],
+    "Passive": ["Balanced Mind", "Courier", "Quick Thinker", "Swiftness"]
+  },
+  "T6_SHOES_GATHERER_HIDE": { "Passive": ["Skinning Skills"] },
+  "T5_SHOES_GATHERER_ROCK": { "Passive": ["Quarrying Skills"] },
+  "T8_BACKPACK_GATHERER_ROCK": { "Passive": ["Stone Carrier"] },
+  "T8_BACKPACK_GATHERER_HIDE": { "Passive": ["Hide Carrier"] },
+  "T5_BACKPACK_GATHERER_FISH": { "Passive": ["Fish Carrier"] },
+  "T6_BACKPACK_GATHERER_WOOD": { "Passive": ["Wood Carrier"] },
+  "T6_BACKPACK_GATHERER_FIBER": { "Passive": ["Fiber Carrier"] },
+  "T5_BACKPACK_GATHERER_FIBER": { "Passive": ["Fiber Carrier"] },
+  "T8_BACKPACK_GATHERER_FISH": { "Passive": ["Fish Carrier"] },
+  "T5_BACKPACK_GATHERER_ROCK": { "Passive": ["Stone Carrier"] },
+  "T4_CAPEITEM_FW_CAERLEON": { "Passive": ["Opportunist"] },
+  "T4_BACKPACK_GATHERER_ORE": { "Passive": ["Ore Carrier"] },
+  "T4_CAPEITEM_HERETIC": { "Passive": ["Devious Trap"] },
+  "T5_BACKPACK_GATHERER_HIDE": { "Passive": ["Hide Carrier"] },
+  "T4_CAPEITEM_FW_MARTLOCK": { "Passive": ["Shield of Protection"] },
+  "T4_CAPEITEM_AVALON": { "Passive": ["Force Pulse"] },
+  "T4_BACKPACK_GATHERER_WOOD": { "Passive": ["Wood Carrier"] },
+  "T4_CAPEITEM_FW_BRIDGEWATCH": { "Passive": ["Sandstorm"] },
+  "T7_BACKPACK_GATHERER_WOOD": { "Passive": ["Wood Carrier"] },
+  "T4_CAPEITEM_MORGANA": { "Passive": ["Mark of the Raven"] },
+  "T4_BACKPACK_GATHERER_FIBER": { "Passive": ["Fiber Carrier"] },
+  "T4_CAPEITEM_SMUGGLER": { "Passive": ["Hidden Vial"] },
+  "T4_CAPEITEM_KEEPER": { "Passive": ["Berserk"] },
+  "T7_BACKPACK_GATHERER_ROCK": { "Passive": ["Stone Carrier"] },
+  "T8_BACKPACK_GATHERER_FIBER": { "Passive": ["Fiber Carrier"] },
+  "T5_BACKPACK_GATHERER_WOOD": { "Passive": ["Wood Carrier"] },
+  "T7_BACKPACK_GATHERER_HIDE": { "Passive": ["Hide Carrier"] },
+  "T4_CAPEITEM_DEMON": { "Passive": ["Opening to Hell"] },
+  "T4_BACKPACK_GATHERER_ROCK": { "Passive": ["Stone Carrier"] },
+  "T7_BACKPACK_GATHERER_FIBER": { "Passive": ["Fiber Carrier"] },
+  "T6_BACKPACK_GATHERER_FISH": { "Passive": ["Fish Carrier"] },
+  "T5_BACKPACK_GATHERER_ORE": { "Passive": ["Ore Carrier"] },
+  "T4_BACKPACK_GATHERER_HIDE": { "Passive": ["Hide Carrier"] },
+  "T6_BACKPACK_GATHERER_ORE": { "Passive": ["Ore Carrier"] },
+  "T4_CAPEITEM_FW_FORTSTERLING": { "Passive": ["Untouchable"] },
+  "T8_BACKPACK_GATHERER_WOOD": { "Passive": ["Wood Carrier"] },
+  "T6_BACKPACK_GATHERER_HIDE": { "Passive": ["Hide Carrier"] },
+  "T8_BACKPACK_GATHERER_ORE": { "Passive": ["Ore Carrier"] },
+  "T4_BACKPACK_GATHERER_FISH": { "Passive": ["Fish Carrier"] },
+  "T4_CAPEITEM_FW_LYMHURST": { "Passive": ["Energy Reserve"] },
+  "T7_BACKPACK_GATHERER_FISH": { "Passive": ["Fish Carrier"] },
+  "T4_CAPEITEM_FW_BRECILIEN": { "Passive": ["Fey Barrier"] },
+  "T4_CAPEITEM_UNDEAD": { "Passive": ["Vanisher"] },
+  "T7_BACKPACK_GATHERER_ORE": { "Passive": ["Ore Carrier"] },
+  "T4_CAPEITEM_FW_THETFORD": { "Passive": ["Chain Lightning"] },
+  "T6_BACKPACK_GATHERER_ROCK": { "Passive": ["Stone Carrier"] },
+  "T4_BAG_INSIGHT": { "Passive": ["Combat Study Active", "Combat Study Inactive"] },
+  "T2_BAG": { "Passive": ["Trudge"] },
+  "T7_FISH_FRESHWATER_AVALON_RARE": { "Active": ["Puremist Snapper"] },
+  "T5_FISH_FRESHWATER_STEPPE_RARE": { "Active": ["Drybrook Crab"] },
+  "T7_FISH_SALTWATER_ALL_RARE": { "Active": ["Deepwater Kraken"] },
+  "T4_MEAL_STEW_AVALON": { "Active": ["Avalonian Stew"] },
+  "T8_FISH_FRESHWATER_ALL_COMMON": { "Active": ["River Sturgeon"] },
+  "T5_FISH_FRESHWATER_SWAMP_RARE": { "Active": ["Murkwater Clam"] },
+  "T7_FISH_SALTWATER_ALL_COMMON": { "Active": ["Bluefin Tuna"] },
+  "T5_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Spotted Trout"] },
+  "T3_MEAL_SOUP_FISH": { "Active": ["Clam Soup"] },
+  "T4_MEAL_STEW": { "Active": ["Meat Stew"] },
+  "T6_MEAL_STEW": { "Active": ["Meat Stew"] },
+  "T7_FISH_FRESHWATER_MOUNTAIN_RARE": { "Active": ["Frostpeak Deadeye"] },
+  "T3_FISH_SALTWATER_ALL_RARE": { "Active": ["Shallowshore Squid"] },
+  "T5_MEAL_PIE_FISH": { "Active": ["Fish Pie"] },
+  "T6_MEAL_STEW_AVALON": { "Active": ["Avalonian Stew"] },
+  "T3_MEAL_OMELETTE_AVALON": { "Active": ["Avalonian Omelette"] },
+  "T5_MEAL_OMELETTE_FISH": { "Active": ["Crab Omelette"] },
+  "T8_MEAL_STEW_FISH": { "Active": ["Eel Stew"] },
+  "T4_MEAL_SANDWICH": { "Active": ["Sandwich"] },
+  "T8_FISH_SALTWATER_ALL_COMMON": { "Active": ["Steelscale Swordfish"] },
+  "T6_MEAL_SANDWICH_FISH": { "Active": ["Lurcher Sandwich"] },
+  "T6_MEAL_STEW_FISH": { "Active": ["Eel Stew"] },
+  "T8_MEAL_SANDWICH": { "Active": ["Sandwich"] },
+  "T3_MEAL_PIE": { "Active": ["Meat Pie"] },
+  "T7_MEAL_ROAST": { "Active": ["Meat Roast"] },
+  "T8_MEAL_STEW": { "Active": ["Meat Stew"] },
+  "T7_MEAL_ROAST_FISH": { "Active": ["Snapper Roast"] },
+  "T3_MEAL_OMELETTE_FISH": { "Active": ["Crab Omelette"] },
+  "T7_FISH_FRESHWATER_SWAMP_RARE": { "Active": ["Blackbog Clam"] },
+  "T1_MEAL_SOUP": { "Active": ["Vegetable Soup"] },
+  "T7_MEAL_PIE_FISH": { "Active": ["Fish Pie"] },
+  "T6_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Brightscale Zander"] },
+  "T4_MEAL_SANDWICH_AVALON": { "Active": ["Avalonian Sandwich"] },
+  "T5_FISH_FRESHWATER_MOUNTAIN_RARE": { "Active": ["Mountain Blindeye"] },
+  "T4_MEAL_SANDWICH_FISH": { "Active": ["Lurcher Sandwich"] },
+  "T3_FISH_SALTWATER_ALL_COMMON": { "Active": ["Flatshore Plaice"] },
+  "T2_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Striped Carp"] },
+  "T1_MEAL_SOUP_FISH": { "Active": ["Clam Soup"] },
+  "T3_FISH_FRESHWATER_HIGHLANDS_RARE": { "Active": ["Stonestream Lurcher"] },
+  "T7_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Danglemouth Catfish"] },
+  "T7_MEAL_PIE": { "Active": ["Meat Pie"] },
+  "T6_FISH_SALTWATER_ALL_COMMON": { "Active": ["Strongfin Salmon"] },
+  "T6_MEAL_SANDWICH_AVALON": { "Active": ["Avalonian Sandwich"] },
+  "T7_FISH_FRESHWATER_HIGHLANDS_RARE": { "Active": ["Thunderfall Lurcher"] },
+  "T8_MEAL_SANDWICH_AVALON": { "Active": ["Avalonian Sandwich"] },
+  "T7_MEAL_OMELETTE": { "Active": ["Omelette"] },
+  "T6_MEAL_SANDWICH": { "Active": ["Sandwich"] },
+  "T4_MEAL_SALAD": { "Active": ["Salad"] },
+  "T3_FISH_FRESHWATER_SWAMP_RARE": { "Active": ["Greenmoor Clam"] },
+  "T3_MEAL_OMELETTE": { "Active": ["Omelette"] },
+  "T3_FISH_FRESHWATER_MOUNTAIN_RARE": { "Active": ["Upland Coldeye"] },
+  "T5_MEAL_OMELETTE": { "Active": ["Omelette"] },
+  "T3_MEAL_ROAST": { "Active": ["Meat Roast"] },
+  "T5_MEAL_SOUP": { "Active": ["Vegetable Soup"] },
+  "T5_MEAL_ROAST": { "Active": ["Meat Roast"] },
+  "T7_FISH_FRESHWATER_FOREST_RARE": { "Active": ["Deadwater Eel"] },
+  "T3_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Albion Perch"] },
+  "T3_MEAL_SOUP": { "Active": ["Vegetable Soup"] },
+  "T5_FISH_SALTWATER_ALL_COMMON": { "Active": ["Spotted Wolffish"] },
+  "T4_MEAL_STEW_FISH": { "Active": ["Eel Stew"] },
+  "T3_MEAL_ROAST_FISH": { "Active": ["Snapper Roast"] },
+  "T1_MEAL_SEAWEEDSALAD": { "Active": ["Seaweed Salad"] },
+  "T2_MEAL_SALAD": { "Active": ["Salad"] },
+  "T5_MEAL_SOUP_FISH": { "Active": ["Clam Soup"] },
+  "T2_FISH_SALTWATER_ALL_COMMON": { "Active": ["Striped Mackerel"] },
+  "T6_MEAL_SALAD": { "Active": ["Salad"] },
+  "T5_FISH_SALTWATER_ALL_RARE": { "Active": ["Midwater Octopus"] },
+  "T7_FISH_FRESHWATER_STEPPE_RARE": { "Active": ["Dusthole Crab"] },
+  "T5_MEAL_ROAST_FISH": { "Active": ["Snapper Roast"] },
+  "T6_MEAL_SALAD_FISH": { "Active": ["Seafood Salad"] },
+  "T5_MEAL_OMELETTE_AVALON": { "Active": ["Avalonian Omelette"] },
+  "T5_FISH_FRESHWATER_AVALON_RARE": { "Active": ["Clearhaze Snapper"] },
+  "T3_FISH_FRESHWATER_FOREST_RARE": { "Active": ["Greenriver Eel"] },
+  "T1_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Common Rudd"] },
+  "T8_MEAL_STEW_AVALON": { "Active": ["Avalonian Stew"] },
+  "T8_MEAL_SANDWICH_FISH": { "Active": ["Lurcher Sandwich"] },
+  "T4_FISH_FRESHWATER_ALL_COMMON": { "Active": ["Bluescale Pike"] },
+  "T1_MEAL_GRILLEDFISH": { "Active": ["Grilled Fish"] },
+  "T5_MEAL_PIE": { "Active": ["Meat Pie"] },
+  "T3_MEAL_PIE_FISH": { "Active": ["Fish Pie"] },
+  "T5_FISH_FRESHWATER_HIGHLANDS_RARE": { "Active": ["Rushwater Lurcher"] },
+  "T4_MEAL_SALAD_FISH": { "Active": ["Seafood Salad"] },
+  "T4_FISH_SALTWATER_ALL_COMMON": { "Active": ["Bluescale Cod"] },
+  "T7_MEAL_OMELETTE_FISH": { "Active": ["Crab Omelette"] },
+  "T3_FISH_FRESHWATER_STEPPE_RARE": { "Active": ["Lowriver Crab"] },
+  "T7_MEAL_OMELETTE_AVALON": { "Active": ["Avalonian Omelette"] },
+  "T3_FISH_FRESHWATER_AVALON_RARE": { "Active": ["Whitefog Snapper"] },
+  "T2_MEAL_SALAD_FISH": { "Active": ["Seafood Salad"] },
+  "T5_FISH_FRESHWATER_FOREST_RARE": { "Active": ["Redspring Eel"] },
+  "T1_FISH_SALTWATER_ALL_COMMON": { "Active": ["Common Herring"] },
+  "T4_POTION_GATHER": { "Active": ["Gathering Potion"] },
+  "T7_POTION_CLEANSE2": { "Active": ["Cleansing Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_YELLOW": { "Active": ["Yellow Fireworks"] },
+  "T6_POTION_GATHER": { "Active": ["Gathering Potion"] },
+  "T3_POTION_STONESKIN": { "Active": ["Resistance Potion"] },
+  "T5_POTION_CLEANSE2": { "Active": ["Cleansing Potion"] },
+  "T8_POTION_BERSERK": { "Active": ["Berserk Potion"] },
+  "T5_POTION_REVIVE": { "Active": ["Gigantify Potion"] },
+  "T7_POTION_MOB_RESET": { "Active": ["Calming Potion"] },
+  "T8_POTION_TORNADO": { "Active": ["Tornado in a Bottle"] },
+  "T5_POTION_MOB_RESET": { "Active": ["Calming Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_GREEN_NONTRADABLE": { "Active": ["Green Fireworks"] },
+  "T6_POTION_BERSERK": { "Active": ["Berserk Potion"] },
+  "T4_POTION_COOLDOWN": { "Active": ["Poison Potion"] },
+  "T5_POTION_ACID": { "Active": ["Acid Potion"] },
+  "T6_POTION_ENERGY": { "Active": ["Energy Potion"] },
+  "T4_POTION_HEAL": { "Active": ["Healing Potion"] },
+  "T2_POTION_HEAL": { "Active": ["Healing Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_YELLOW_NONTRADABLE": { "Active": ["Yellow Fireworks"] },
+  "T3_POTION_ACID": { "Active": ["Acid Potion"] },
+  "T3_POTION_MOB_RESET": { "Active": ["Calming Potion"] },
+  "T5_POTION_STONESKIN": { "Active": ["Resistance Potion"] },
+  "T6_POTION_TORNADO": { "Active": ["Tornado in a Bottle"] },
+  "T4_POTION_TORNADO": { "Active": ["Tornado in a Bottle"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_GREEN": { "Active": ["Green Fireworks"] },
+  "T8_POTION_LAVA": { "Active": ["Hellfire Potion"] },
+  "T7_POTION_REVIVE": { "Active": ["Gigantify Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_BLUE": { "Active": ["Blue Fireworks"] },
+  "T5_POTION_SLOWFIELD": { "Active": ["Sticky Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_RED_NONTRADABLE": { "Active": ["Red Fireworks"] },
+  "T8_POTION_COOLDOWN": { "Active": ["Poison Potion"] },
+  "T4_POTION_BERSERK": { "Active": ["Berserk Potion"] },
+  "T4_POTION_LAVA": { "Active": ["Hellfire Potion"] },
+  "T6_POTION_COOLDOWN": { "Active": ["Poison Potion"] },
+  "T3_POTION_CLEANSE2": { "Active": ["Cleansing Potion"] },
+  "T3_POTION_SLOWFIELD": { "Active": ["Sticky Potion"] },
+  "T2_POTION_ENERGY": { "Active": ["Energy Potion"] },
+  "T3_POTION_REVIVE": { "Active": ["Gigantify Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_BLUE_NONTRADABLE": { "Active": ["Blue Fireworks"] },
+  "T4_POTION_ENERGY": { "Active": ["Energy Potion"] },
+  "T6_POTION_LAVA": { "Active": ["Hellfire Potion"] },
+  "T3_VANITY_CONSUMABLE_FIREWORKS_RED": { "Active": ["Red Fireworks"] },
+  "T8_POTION_GATHER": { "Active": ["Gathering Potion"] },
+  "T6_POTION_HEAL": { "Active": ["Healing Potion"] },
+  "T7_POTION_SLOWFIELD": { "Active": ["Sticky Potion"] },
+  "T7_POTION_STONESKIN": { "Active": ["Resistance Potion"] },
+  "T7_POTION_ACID": { "Active": ["Acid Potion"] },
+  "T8_POTION_CLEANSE": { "Active": ["Invisibility Potion"] }
+}

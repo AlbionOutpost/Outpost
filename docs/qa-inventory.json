@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-26T18:30:46.455178+00:00",
+  "reviewed_at": "2026-10-27T03:44:55.986959+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -23,7 +23,7 @@
       "BLOCKED": 0,
       "NOT_TESTED": 0
     },
-    "rule": "Equal current acceptance scopes within each category; joint credit is implementation × verification. NOT_APPLICABLE excluded with rationale. Historical/process duplicates are not scored."
+    "rule": "Equal current acceptance scopes within each category; joint credit is implementation \u00d7 verification. NOT_APPLICABLE excluded with rationale. Historical/process duplicates are not scored."
   },
   "items": [
     {
@@ -32,14 +32,15 @@
       "title": "Regional market, item discovery and observation history",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Market starts with guided setup and retains independent watchlist/history access. The homepage has one searchable source-price/history preview with exact item/region identity and independent side timestamps.",
+      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Market starts with guided setup and retains independent watchlist/history access. The homepage has one searchable source-price/history preview with exact item/region identity and independent side timestamps. Temporary12-selection research batches by quality and region, with last observations retained and labelled on refresh failure.",
       "remaining": "Full catalog is DATA-001; watchlists are CORE-020.",
       "evidence": [
         "src/components/market.tsx",
         "e2e/history.spec.ts",
         "e2e/qa-regressions.spec.ts",
         "e2e/homepage-polish.spec.ts",
-        "tests/market-preview.test.ts"
+        "tests/market-preview.test.ts",
+        "e2e/market-research.spec.ts"
       ]
     },
     {
@@ -48,13 +49,15 @@
       "title": "Build equipment editor and persistence",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Starter equipment/ability selectors, alternatives, private/public/unlisted editing, optimistic revisions and save/reload. The homepage now links directly to build creation instead of duplicating community discovery.",
-      "remaining": "Complete item/consumable families, unlocks/statistics and equipment-set tray remain absent.",
+      "verified_scope": "7510 pinned-source equipment variants across all ten slots, source-listed spell selectors, quality, per-slot alternatives, up to five named full spare sets, starting templates, persistence/revisions and independent copying into comps. Two-handed weapons clear incompatible off hands with undo.",
+      "remaining": "Character unlock/tier restrictions, current-patch spell availability and calculated combat statistics remain unverified.",
       "evidence": [
         "src/lib/builds/validation.ts",
         "src/components/build-editor.tsx",
         "e2e/build-editor-visual.spec.ts",
-        "e2e/homepage-visual-correction.spec.ts"
+        "e2e/homepage-visual-correction.spec.ts",
+        "e2e/equipment-sets.spec.ts",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -73,12 +76,13 @@
       "title": "Party compositions and shared loadouts",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Small-party board, large roster, assignments, substitutes, pointer/keyboard reorder, JSON, duplicate and current group permissions.",
-      "remaining": "Full template/catalog/consumable and swap-workflow coverage remains incomplete.",
+      "verified_scope": "Comps retain roles, substitutes, mandatory slots, copy-from-build, equipment/ability/consumable choices and independent named spare sets. A five-player role template and missing-role/weapon counts support first use. Existing access/revision/export behavior is preserved.",
+      "remaining": "Current-patch role/build meta, character unlocks and full combat statistics are not certified.",
       "evidence": [
         "src/lib/compositions/service.ts",
         "e2e/compositions.spec.ts",
-        "e2e/reference-ui.spec.ts"
+        "e2e/reference-ui.spec.ts",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -87,7 +91,7 @@
       "title": "Local composition PNG download",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Real equipment/fallback labels; full-height export and 1920×1080 option up to 20 players, actual downloaded PNG dimensions.",
+      "verified_scope": "Real equipment/fallback labels; full-height export and 1920\u00d71080 option up to 20 players, actual downloaded PNG dimensions.",
       "remaining": "Browser/device matrix is sampled; no external upload or complete artwork-availability guarantee.",
       "evidence": [
         "src/components/composition-png-export.tsx",
@@ -155,14 +159,15 @@
       "title": "Crafting calculator",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Nine T4 recipes checked against pinned July ingredients/base focus, independent three-region Bow accounting, manual returns/fees and private saved scenarios. Historical total-efficiency focus estimate is separate from station-confirmed saved focus totals.",
-      "remaining": "Full recipes, journals, automatic verified city/focus/spec and batch craft planning are absent.",
+      "verified_scope": "45 normal T4\u2013T8 recipes across nine source-reviewed base families; manual/observed prices, historical five-city return profile, supplied crafting FCE estimates, explicit focus assumptions and private scenario save/reload.",
+      "remaining": "Full enchanted/artifact/food/potion recipes, crafting specialization trees, journals, station rounding and current patch remain incomplete.",
       "evidence": [
         "src/lib/albion/recipes.ts",
         "src/lib/albion/production.ts",
         "e2e/production-modes.spec.ts",
         "tests/reviewed-recipes.test.ts",
-        "src/lib/albion/reviewed-crafting.json"
+        "src/lib/albion/reviewed-crafting.json",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -171,12 +176,13 @@
       "title": "Refining calculator",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Standard T4 steel accounting, manual eligible returns, prices/fees and save/reload.",
-      "remaining": "Other resources/tiers, transmutation and automatic coefficients are absent; steel source applicability unresolved.",
+      "verified_scope": "25 normal T4\u2013T8 recipes covering metal bars, planks, cloth, leather and stone blocks; corrected plain Steel provenance, historical city/refining specialization/focus profile, independent expected values and private persistence.",
+      "remaining": "Enchanted/heart/transmutation recipes, actual focus rounding and current-patch certification remain open.",
       "evidence": [
         "src/lib/albion/recipes.ts",
         "tests/production.test.ts",
-        "e2e/production-modes.spec.ts"
+        "e2e/production-modes.spec.ts",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -185,7 +191,7 @@
       "title": "Enchanting calculator",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Supported starter equipment families, quality preservation, .0–.3 upgrade materials and saved scenarios.",
+      "verified_scope": "Supported starter equipment families, quality preservation, .0\u2013.3 upgrade materials and saved scenarios.",
       "remaining": "Full families/two-hand coverage and current-patch ingredient verification remain incomplete.",
       "evidence": [
         "src/lib/albion/recipes.ts",
@@ -271,8 +277,8 @@
       "title": "Remaining specialized calculator engines",
       "implementation": "MISSING",
       "verification": "BLOCKED",
-      "verified_scope": "Farming, animals, cooking, alchemy, laborers, fish, calculated IP and automatic focus/spec engines are absent.",
-      "remaining": "Source-backed coefficients/recipes plus implementations and independent fixtures required.",
+      "verified_scope": "Farming, animals, cooking, alchemy, laborers, fish and calculated IP remain absent. Source-backed historical city/refining-specialization/focus estimates are now implemented for the supported production recipes, separately from current-patch certification.",
+      "remaining": "Remaining engines need versioned source data and independent fixtures; crafting specialization trees and station rounding remain open.",
       "evidence": ["src/lib/albion/recipes.ts", "docs/engineering/CALCULATOR_PARITY.md"]
     },
     {
@@ -281,15 +287,16 @@
       "title": "Operational private market watchlists",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Operational private watchlist save/list/remove/reload by item, region and quality; local additive migration applied after backup. Origin/authentication, owner spoofing/outsider denial, private/no-store cache, duplicate handling, concurrent 100-item cap and account export pass.",
-      "remaining": "No price alerts, automatic quote refresh or external deployment claimed.",
+      "verified_scope": "Private watchlist save/list/remove/reload by item, region and quality, plus explicit batched quote refresh for the selected region. Missing observations, independent source times, stale values and partial failures stay explicit. Existing origin/authentication, outsider denial, private/no-store, concurrency cap and export regressions retained.",
+      "remaining": "No background refresh, price alerts or deployed operational verification claimed.",
       "evidence": [
         "src/app/api/market-watch/route.ts",
         "src/app/api/market-watch/[id]/route.ts",
         "src/components/market-watchlist.tsx",
         "e2e/market-watchlist.spec.ts",
         "docs/deployment/MIGRATIONS.md",
-        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -313,8 +320,8 @@
       "title": "Equipment and economic metadata catalog",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "205 authored structured variants, 245 combined starter IDs; separate 7,510-record pinned July MIT runtime catalog with 1,576 ability/passive mappings and 6,309 item-power values. Item reference queries the full catalog through bounded API pages.",
-      "remaining": "Full current-patch catalog, missing unlocks/variant spell mappings, complete recipes and statistics remain unverified.",
+      "verified_scope": "7510 exact source-supported workbench variants in377 families;604 base items with source-listed spell names. Pinned July MIT runtime catalog remains7510 records with1576 ability/passive mappings and6309 explicit item-power values. Seventy normal T4\u2013T8 production recipe facts are processed separately.",
+      "remaining": "Not a complete current game denominator. Unlocks, current-patch ability applicability, full recipes/effects and statistics remain unverified.",
       "evidence": [
         "src/lib/albion/equipment-catalog.ts",
         "scripts/audit-game-data.ts",
@@ -322,7 +329,9 @@
         "docs/data/item-snapshot-source.json",
         "docs/data/item-snapshot-coverage.json",
         "scripts/prepare-item-snapshot.ts",
-        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md",
+        "docs/data/equipment-workbench-source.json",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -331,13 +340,15 @@
       "title": "Complete licensed current-patch game data",
       "implementation": "PARTIAL",
       "verification": "BLOCKED",
-      "verified_scope": "July MIT snapshot pinned, parsed and activated locally (7,510 records); zero fully manual/current-patch verified records. Official October item-data rechecks returned 403.",
-      "remaining": "Current permitted build data and source-bound manual/patch/unlock/image evidence remain required; July source has no matching October build.",
+      "verified_scope": "Pinned July MIT snapshot activated locally and all7510 variants selectable. October12 archived recipe facts and official resource-name API observations are separate evidence; no source build is matched to a current patch and zero records are fully manually/current-patch verified.",
+      "remaining": "Obtain permitted current-build metadata and source-bound manual, unlock, patch and image-rights evidence.",
       "evidence": [
         "docs/data/ao-source.example.json",
         "docs/engineering/GAME_DATA_COVERAGE.md",
         "docs/data/item-snapshot-source.json",
-        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md",
+        "docs/data/production-recipes-source.json",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -346,12 +357,14 @@
       "title": "Current-patch recipe and formula provenance",
       "implementation": "PARTIAL",
       "verification": "BLOCKED",
-      "verified_scope": "Nine crafting ingredient/base-focus records directly source-reviewed against pinned July snapshot and independent constants. Plain steel still has mismatched Pristine source; zero current-patch recipe/coefficient verification.",
-      "remaining": "Steel source names Pristine Steel Bar while runtime output is plain Steel Bar; full recipe/coefficient review required.",
+      "verified_scope": "45 normal crafting and25 normal refining recipes at T4\u2013T8; plain Steel Bar independently matches2 Iron Ore+1 Bronze Bar and base focus54 in pinned October12 archive. Five-city historical return profile, refining specialization and unrounded focus estimates have independent expected values.",
+      "remaining": "No current-patch certification. Full enchanted/alternate/artifact/cooking/alchemy coverage, crafting specialization trees and station rounding remain incomplete. Archive has no declared license; minimal factual transcription does not grant blanket rights.",
       "evidence": [
         "src/lib/albion/recipes.ts",
         "docs/engineering/CALCULATOR_PARITY.md",
-        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md",
+        "tests/production-profile.test.ts",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -675,8 +688,8 @@
       "title": "Current representative page performance measurements",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Latest controlled homepage mobile lab: three before/after samples, median LCP5.222s to2.862s after replacing lazy external hero delivery with local source-pinned optimized eager/high-priority equipment artwork. The2.5s target remains open. Accessibility100/CLS0 in all six; not field evidence. See docs/design-review/playful-ui/performance.json. Historical controlled Market median 2.628s retained; before/after ranges overlapped. Latest player-polish homepage smoke sample: Lighthouse performance 89, accessibility 100, LCP 3.761s, CLS 0; existing hero image was LCP. This is one unpaired sample, not evidence of an improvement or regression. No new controlled Market benchmark.",
-      "remaining": "2.5s LCP target remains missed; timing ranges overlap, so no general speedup claim. HTML/cache tradeoff, field INP/p75, real devices and production load remain unverified.",
+      "verified_scope": "Three production Lighthouse13.5 mobile runs per homepage/Market before and after. Actual LCP nodes are introductory text. Font transfer reduced48256\u219236992bytes while retaining230 mapped glyphs/400\u2013800 weights; no meaningful LCP gain observed.",
+      "remaining": "Both route medians remain approximately2.55s, above2.5s. Full route/field/load and container evidence remain incomplete.",
       "evidence": [
         "docs/engineering/PERFORMANCE_REPORT.md",
         "docs/design-review/homepage/POLISH.md",
@@ -685,7 +698,8 @@
         "docs/engineering/UI_UX_CODE_AUDIT_2026-10-26.md",
         "docs/design-review/refinement/README.md",
         "docs/design-review/homepage-redesign/README.md",
-        "docs/design-review/player-polish/README.md"
+        "docs/design-review/player-polish/README.md",
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
       ]
     },
     {
@@ -840,14 +854,16 @@
       "id": "OPS-007",
       "category": "operations",
       "title": "Hosted repository CI",
-      "implementation": "PARTIAL",
-      "verification": "FAILED",
-      "verified_scope": "Private Outpost workflow was uploaded and executed. Hosted main run40427946626 failed unit and browser checks; the original publication omitted tests/, subsequently restored with143 clean-clone unit tests passing. The corrected-source run40431213286 also completed with failure in the combined quality step. No hosted success is claimed. Local full phase passes independently.",
-      "remaining": "Observe a successful hosted quality rerun of the corrected complete source and investigate any remaining hosted browser failure; no hosted pass is inferred from local results.",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Hosted Quality gates run40440298944 succeeded on45b0acd7ce2d767d9bd105f3522e86ae0c78af41. Prior failure logs identified hydration races and inadequate hosted time budgets; readiness controls, serial CI workers and larger visual-test budgets fixed them. Action allowlist remains unchanged. This success predates the product-feature commit, whose hosted result must be checked independently.",
+      "remaining": "Track the actual hosted result for every later product commit; hosted checks do not certify deployment or real OAuth.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",
-        "docs/engineering/REPOSITORY_READINESS.md"
+        "docs/engineering/REPOSITORY_READINESS.md",
+        "scripts/qa-ci-evidence.mjs",
+        "tests/ci-evidence.test.ts"
       ]
     },
     {

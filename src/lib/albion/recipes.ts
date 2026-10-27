@@ -1,5 +1,5 @@
 import { equipmentFamilies, equipmentId, equipmentName } from "./equipment-catalog";
-import reviewedCrafting from "./reviewed-crafting.json" with { type: "json" };
+import expandedRecipes from "./expanded-recipes.json" with { type: "json" };
 export type Recipe = {
   id: string;
   name: string;
@@ -10,23 +10,17 @@ export type Recipe = {
   source: string;
   baseFocus?: number;
 };
-export const recipes: Recipe[] = [
-  ...(reviewedCrafting as Recipe[]),
-  {
-    id: "steel-bar-t4",
-    name: "T4 Steel Bar (standard recipe)",
-    kind: "refining",
-    output: "T4_METALBAR",
-    outputCount: 1,
-    ingredients: [
-      { id: "T4_ORE", name: "Iron Ore", quantity: 2, quality: "normal" },
-      { id: "T3_METALBAR", name: "Bronze Bar", quantity: 1, quality: "normal" },
-    ],
-    source: "https://wiki.albiononline.com/wiki/Pristine_Steel_Bar",
-  },
-];
-export const enchantable = equipmentFamilies.filter(
-  (f) => !["Mount", "Food", "Potion"].includes(f.slot),
+export const recipes: Recipe[] = expandedRecipes as Recipe[];
+export const enchantable = equipmentFamilies.filter((f) =>
+  [
+    "MAIN_AXE",
+    "OFF_SHIELD",
+    "HEAD_CLOTH_SET1",
+    "ARMOR_LEATHER_SET1",
+    "SHOES_LEATHER_SET1",
+    "CAPE",
+    "BAG",
+  ].includes(f.code),
 );
 export function recipeFor(input: {
   kind: string;

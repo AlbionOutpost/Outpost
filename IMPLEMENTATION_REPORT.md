@@ -1,6 +1,6 @@
 # Outpost implementation report
 
-Complete current rebuild/AI handoff: [single-file handbook](docs/rebuild/HANDBOOK.md), [chapter index](docs/rebuild/README.md) and [source inventory](docs/rebuild/INVENTORY.md). This dated report below remains historical.
+Complete current rebuild/AI handoff: [single-file handbook](docs/rebuild/HANDBOOK.md), [chapter index](docs/rebuild/README.md) and [source inventory](docs/rebuild/INVENTORY.md). This dated report below remains historical. The latest player functionality changes and explicit remaining scope are in the [October27 product milestone](docs/engineering/PRODUCT_MILESTONE_2026-10-27.md).
 
 Subsequent work is recorded in [the next development milestone](docs/engineering/NEXT_MILESTONE_2026-10-26.md), including the activated July catalog, calculator fixes, watchlists and updated performance evidence. The account below preserves the earlier checkpoint.
 

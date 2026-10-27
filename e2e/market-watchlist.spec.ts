@@ -44,6 +44,27 @@ test("private watchlists persist region/quality and deny foreign deletion, spoof
       "href",
       "/tools/market?region=asia&item=T4_BAG&quality=2",
     );
+    let refreshedRegion = "",
+      refreshedQuality = "";
+    await page.route("**/api/market/batch?*", async (route) => {
+      const query = new URL(route.request().url()).searchParams;
+      refreshedRegion = query.get("region") || "";
+      refreshedQuality = query.get("quality") || "";
+      await route.fulfill({
+        json: {
+          region: "asia",
+          fetchedAt: new Date().toISOString(),
+          source: "Albion Online Data Project",
+          prices: [],
+        },
+      });
+    });
+    await page.getByRole("button", { name: "Refresh watchlist quotes", exact: true }).click();
+    await expect(
+      page.locator(".market-watchlist:not(.market-research-list) .watchlist-items"),
+    ).toContainText("No observations returned");
+    expect(refreshedRegion).toBe("asia");
+    expect(refreshedQuality).toBe("2");
     const warmed = await context.request.get("/api/market-watch");
     expect(warmed.headers()["cache-control"]).toBe("private, no-store");
     const exported = await context.request.get("/api/account/export");

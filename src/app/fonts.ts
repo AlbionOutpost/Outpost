@@ -1,9 +1,9 @@
 import localFont from "next/font/local";
 
 export const inter = localFont({
-  src: "../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  src: "../../public/fonts/inter-latin-400-800.woff2",
   variable: "--font-inter",
-  weight: "100 900",
+  weight: "400 800",
   display: "swap",
   fallback: ["Arial", "sans-serif"],
 });

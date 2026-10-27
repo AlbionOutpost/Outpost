@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { equipmentSets } from "@/lib/albion/equipment-sets";
 import { equipmentChoice } from "@/lib/compositions/validation";
 export const GET = apiHandler("composition.loadout", async (req: NextRequest) => {
   const user = await getServerSession(authOptions);
@@ -27,10 +28,11 @@ export const GET = apiHandler("composition.loadout", async (req: NextRequest) =>
   if (loadout.some((e) => !e.success))
     throw new HttpError(
       422,
-      "This build contains equipment not yet supported by the verified composition catalog. Select equipment directly instead.",
+      "This build contains equipment not yet supported by the source-supported comp catalog. Select equipment directly instead.",
     );
   return NextResponse.json({
     sourceBuildId: build.id,
+    equipmentSets: equipmentSets.parse(build.equipmentSets),
     equipment: loadout.map((e) => e.data),
     notes: build.equipment
       .filter((e) => e.abilities || e.alternatives)

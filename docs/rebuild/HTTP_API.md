@@ -1,6 +1,8 @@
 # HTTP and Server Action contracts
 
-[Generated HTTP inventory](INVENTORY.md#http-routes-33) lists all33 handlers/44 exported operations and exact source paths. Query/body field names below are implementation contracts. User/session IDs come from server authentication, never from a trusted browser author field. All examples are **illustrative request shapes**, not real saved records, users, game recommendations or market observations.
+**October27 implementation update:** `GET /api/market/batch?region=europe&items=T4_BAG,T4_CAPE&quality=1` validates1–12 distinct IDs plus region/quality, shares the existing market public budget, and returns AODP rows with source/request identity. Missing quotes are not substituted. Research/watchlist refresh groups by quality and makes bounded sequential chunks; the private saved-selection API retains its existing authentication/ownership/no-store boundaries.
+
+[Generated HTTP inventory](INVENTORY.md#http-routes-34) lists all34 handlers/45 exported operations and exact source paths. Query/body field names below are implementation contracts. User/session IDs come from server authentication, never from a trusted browser author field. All examples are **illustrative request shapes**, not real saved records, users, game recommendations or market observations.
 
 ## Common behavior
 

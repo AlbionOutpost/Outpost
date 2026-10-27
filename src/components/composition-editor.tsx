@@ -11,6 +11,7 @@ import {
 } from "@/lib/compositions/validation";
 import { PartyBoard } from "./party-board";
 import { CompositionPngExport } from "./composition-png-export";
+import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { EquipmentStrip } from "./equipment-strip";
 import { EditorDialog } from "./editor-dialog";
@@ -25,6 +26,7 @@ function member(): MemberSlot {
     notes: "",
     sourceBuildId: null,
     equipment: [],
+    equipmentSets: [],
   };
 }
 export function CompositionEditor({
@@ -241,6 +243,39 @@ export function CompositionEditor({
           />
         </label>
       </details>
+      {!draft.slots.length && (
+        <section className="panel comp-start-template">
+          <h2>Start with a party layout</h2>
+          <p>
+            One tank, one healer and three DPS slots. An editable planning layout, not a meta
+            recommendation.
+          </p>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              update(
+                "slots",
+                (["Tank", "Healer", "Melee DPS", "Ranged DPS", "Ranged DPS"] as const).map(
+                  (role) => ({ ...member(), role }),
+                ),
+              );
+              setActive(0);
+            }}
+          >
+            Use 5-player party template
+          </button>
+        </section>
+      )}
+      {!!draft.slots.length && (
+        <p className="muted" role="status">
+          {draft.slots.filter((s) => s.mandatory && !s.playerName.trim()).length} required players
+          unassigned ·{" "}
+          {draft.slots.filter((s) => !s.equipment.some((e) => e.slot === "Main hand")).length}{" "}
+          loadouts need a weapon · {draft.slots.filter((s) => s.substitute.trim()).length}{" "}
+          substitutes recorded
+        </p>
+      )}
       <div className="party-tools-bar">
         <section className="party-size-bar">
           <div className="actions section">
@@ -603,6 +638,7 @@ export function CompositionEditor({
                         if (!response.ok) throw new Error(body.error);
                         patch({
                           equipment: body.equipment,
+                          equipmentSets: body.equipmentSets || [],
                           sourceBuildId: body.sourceBuildId,
                           notes: [selected.notes, body.notes]
                             .filter(Boolean)
@@ -626,10 +662,16 @@ export function CompositionEditor({
                   </select>
                 </label>
                 <p className="muted">
-                  Sourced starter catalog; some equipment families, food/potions and spell
-                  alternatives are not yet covered. No invented stats. Build copies are snapshots,
-                  not synchronized links.
+                  July source catalog with equipment, consumables and spare sets. Confirm spell
+                  availability and unlocks in game. Build copies are independent snapshots.
                 </p>
+                <EquipmentSets
+                  key={selected.id}
+                  equipment={selected.equipment}
+                  sets={selected.equipmentSets}
+                  onEquipment={(equipment) => patch({ equipment })}
+                  onSets={(equipmentSets) => patch({ equipmentSets })}
+                />
                 <EquipmentPicker
                   key={selected.id}
                   value={selected.equipment}

@@ -95,14 +95,14 @@
   },
   "counts": {
     "pages": 32,
-    "apiRoutes": 33,
-    "httpOperations": 44,
-    "components": 55,
-    "libraryModules": 50,
+    "apiRoutes": 34,
+    "httpOperations": 45,
+    "components": 60,
+    "libraryModules": 54,
     "models": 29,
     "enums": 3,
-    "migrations": 17,
-    "files": 379
+    "migrations": 18,
+    "files": 405
   },
   "pages": [
     {
@@ -138,6 +138,8 @@
       "client": false,
       "imports": [
         "@/components/community-panel",
+        "@/components/saved-equipment-sets",
+        "@/lib/albion/equipment-sets",
         "@/components/build-loadout-view",
         "@/components/build-actions",
         "@/components/build-cost",
@@ -636,6 +638,7 @@
         "@/lib/api-errors",
         "@/lib/auth",
         "@/lib/db",
+        "@/lib/albion/equipment-sets",
         "@/lib/compositions/validation"
       ]
     },
@@ -795,6 +798,19 @@
       ]
     },
     {
+      "route": "/api/market/batch",
+      "source": "src/app/api/market/batch/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "@/lib/albion/market-quotes",
+        "@/lib/albion/market-client",
+        "@/lib/redis"
+      ]
+    },
+    {
       "route": "/api/market",
       "source": "src/app/api/market/route.ts",
       "methods": ["GET"],
@@ -942,6 +958,7 @@
       "source": "src/components/build-editor.tsx",
       "client": true,
       "imports": [
+        "./equipment-sets",
         "./equipment-picker",
         "@/lib/albion/equipment-catalog",
         "@/lib/compositions/validation",
@@ -1005,6 +1022,7 @@
         "@/lib/compositions/validation",
         "./party-board",
         "./composition-png-export",
+        "./equipment-sets",
         "./equipment-picker",
         "./equipment-strip",
         "./editor-dialog"
@@ -1021,6 +1039,7 @@
       "source": "src/components/composition-view.tsx",
       "client": true,
       "imports": [
+        "./saved-equipment-sets",
         "./party-board",
         "./composition-png-export",
         "./equipment-strip",
@@ -1063,6 +1082,17 @@
       "exports": ["EquipmentPicker"]
     },
     {
+      "source": "src/components/equipment-sets.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "@/lib/albion/equipment-sets",
+        "@/lib/compositions/validation",
+        "./equipment-strip"
+      ],
+      "exports": ["EquipmentSets"]
+    },
+    {
       "source": "src/components/equipment-strip.tsx",
       "client": false,
       "imports": ["./item-icon", "./equipment-overview", "@/lib/albion/equipment-catalog"],
@@ -1072,6 +1102,7 @@
       "source": "src/components/equipment-workbench.tsx",
       "client": true,
       "imports": [
+        "@/lib/albion/equipment-abilities",
         "react",
         "lucide-react",
         "@/lib/albion/equipment-catalog",
@@ -1261,6 +1292,30 @@
       "exports": ["LoginButton", "LogoutButton"]
     },
     {
+      "source": "src/components/market-batch-quotes.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "@/lib/albion/market-quotes",
+        "@/lib/albion/quote-summary",
+        "@/lib/albion/freshness"
+      ],
+      "exports": ["BatchQuote", "quoteKey", "useBatchQuotes"]
+    },
+    {
+      "source": "src/components/market-research.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "@/lib/albion/equipment-catalog",
+        "@/lib/albion/market-quotes",
+        "./item-icon",
+        "./market-batch-quotes"
+      ],
+      "exports": ["MarketResearch"]
+    },
+    {
       "source": "src/components/market-watchlist.tsx",
       "client": true,
       "imports": [
@@ -1269,6 +1324,7 @@
         "@/lib/market-watch",
         "@/lib/albion/equipment-catalog",
         "./item-icon",
+        "./market-batch-quotes",
         "zod"
       ],
       "exports": ["MarketWatchlist"]
@@ -1282,6 +1338,7 @@
         "next/link",
         "./catalog-item-picker",
         "./item-icon",
+        "./market-research",
         "./market-watchlist",
         "@/lib/albion/equipment-catalog",
         "next/navigation",
@@ -1334,6 +1391,7 @@
       "client": true,
       "imports": [
         "@/app/production-workspace.css",
+        "./production-profile",
         "lucide-react",
         "react",
         "next/navigation",
@@ -1349,10 +1407,22 @@
       "exports": ["ProductionCalculator"]
     },
     {
+      "source": "src/components/production-profile.tsx",
+      "client": true,
+      "imports": ["react", "@/lib/albion/production-profile", "@/lib/albion/production"],
+      "exports": ["ProductionProfile"]
+    },
+    {
       "source": "src/components/region-context.tsx",
       "client": true,
       "imports": ["react", "@/lib/albion/region-config"],
       "exports": ["RegionContext", "useAtlasRegion"]
+    },
+    {
+      "source": "src/components/saved-equipment-sets.tsx",
+      "client": false,
+      "imports": ["@/lib/albion/equipment-sets", "@/lib/albion/equipment-catalog", "./item-icon"],
+      "exports": ["SavedEquipmentSets"]
     },
     {
       "source": "src/components/scenario-controls.tsx",
@@ -1479,9 +1549,15 @@
       "exports": ["requestData"]
     },
     {
+      "source": "src/lib/albion/equipment-abilities.ts",
+      "client": false,
+      "imports": ["./source-abilities.json", "./equipment-catalog"],
+      "exports": ["abilitiesFor"]
+    },
+    {
       "source": "src/lib/albion/equipment-catalog.ts",
       "client": false,
-      "imports": ["./item-database"],
+      "imports": ["./source-equipment.json", "./item-database"],
       "exports": [
         "EquipmentSlot",
         "Family",
@@ -1493,10 +1569,22 @@
       ]
     },
     {
+      "source": "src/lib/albion/equipment-sets.ts",
+      "client": false,
+      "imports": ["zod", "./equipment-validation"],
+      "exports": [
+        "EquipmentSet",
+        "equipmentSet",
+        "equipmentSets",
+        "loadoutTemplates",
+        "templateEquipment"
+      ]
+    },
+    {
       "source": "src/lib/albion/equipment-validation.ts",
       "client": false,
-      "imports": ["zod", "./equipment-catalog"],
-      "exports": ["equipmentChoice"]
+      "imports": ["./equipment-abilities", "zod", "./equipment-catalog"],
+      "exports": ["equipmentChoice", "validHandCombination"]
     },
     {
       "source": "src/lib/albion/freshness.ts",
@@ -1531,7 +1619,7 @@
     {
       "source": "src/lib/albion/market-client.ts",
       "client": false,
-      "imports": ["zod", "./region-config", "./data-client"],
+      "imports": ["zod", "./region-config", "./data-client", "./market-quotes"],
       "exports": ["MarketPrice", "getPrices", "isStale"]
     },
     {
@@ -1541,15 +1629,42 @@
       "exports": ["PreviewPrice", "observationLabel", "parseMarketPreview"]
     },
     {
+      "source": "src/lib/albion/market-quotes.ts",
+      "client": false,
+      "imports": ["zod", "./region-config"],
+      "exports": [
+        "MarketPrice",
+        "QuoteSelection",
+        "batchQuery",
+        "fetchQuoteBatch",
+        "marketPrice",
+        "quoteResponse"
+      ]
+    },
+    {
       "source": "src/lib/albion/production-observations.ts",
       "client": false,
       "imports": ["./production"],
       "exports": ["mergeProductionObservations", "productionPriceQuery"]
     },
     {
+      "source": "src/lib/albion/production-profile.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": [
+        "MechanicsProfile",
+        "mechanicsProfile",
+        "productionCities",
+        "refiningEfficiency",
+        "refiningSpecSource",
+        "returnProfileSource",
+        "sourcedReturnRates"
+      ]
+    },
+    {
       "source": "src/lib/albion/production.ts",
       "client": false,
-      "imports": ["zod", "./region-config", "./recipes", "./freshness"],
+      "imports": ["./production-profile", "zod", "./region-config", "./recipes", "./freshness"],
       "exports": [
         "ProductionInput",
         "estimatedFocusCost",
@@ -1570,7 +1685,7 @@
     {
       "source": "src/lib/albion/recipes.ts",
       "client": false,
-      "imports": ["./equipment-catalog", "./reviewed-crafting.json"],
+      "imports": ["./equipment-catalog", "./expanded-recipes.json"],
       "exports": ["Recipe", "enchantable", "recipeFor", "recipes"]
     },
     {
@@ -1618,7 +1733,12 @@
     {
       "source": "src/lib/builds/validation.ts",
       "client": false,
-      "imports": ["../albion/equipment-validation", "zod", "../albion/region-config"],
+      "imports": [
+        "../albion/equipment-sets",
+        "../albion/equipment-validation",
+        "zod",
+        "../albion/region-config"
+      ],
       "exports": ["BuildInput", "buildInput", "canReadBuild", "contentTypes", "slots"]
     },
     {
@@ -1721,7 +1841,12 @@
     {
       "source": "src/lib/compositions/validation.ts",
       "client": false,
-      "imports": ["zod", "../albion/region-config", "../albion/equipment-validation"],
+      "imports": [
+        "../albion/equipment-sets",
+        "zod",
+        "../albion/region-config",
+        "../albion/equipment-validation"
+      ],
       "exports": [
         "CompositionInput",
         "EquipmentChoice",
@@ -1832,7 +1957,7 @@
   ],
   "database": {
     "schema": "prisma/schema.prisma",
-    "sha256": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f",
+    "sha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969",
     "definitions": [
       {
         "kind": "model",
@@ -1928,7 +2053,7 @@
       {
         "kind": "model",
         "name": "Build",
-        "definition": "model Build {\n  id String @id @default(cuid())\n  authorId String\n  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  title String\n  description String @db.Text\n  contentType String\n  region String\n  visibility BuildVisibility @default(PRIVATE)\n  playerCount Int @default(1)\n  recommendedIP Int @default(0)\n  strategy String @db.Text\n  patchNotes String @db.Text\n  version Int @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  equipment BuildEquipment[]\n  versions BuildVersion[]\n  @@index([visibility, updatedAt])\n  @@index([authorId, updatedAt])\n  groupSnapshots GroupBuild[]\n\n hiddenAt DateTime?\n comments ContentComment[]\n reports ContentReport[]\n favorites BuildFavorite[]\n votes BuildVote[]\n\n}",
+        "definition": "model Build {\n  id String @id @default(cuid())\n  authorId String\n  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  title String\n  description String @db.Text\n  contentType String\n  region String\n  visibility BuildVisibility @default(PRIVATE)\n  playerCount Int @default(1)\n  recommendedIP Int @default(0)\n  strategy String @db.Text\n  patchNotes String @db.Text\n  version Int @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  equipmentSets Json @default(\"[]\")\n  equipment BuildEquipment[]\n  versions BuildVersion[]\n  @@index([visibility, updatedAt])\n  @@index([authorId, updatedAt])\n  groupSnapshots GroupBuild[]\n\n hiddenAt DateTime?\n comments ContentComment[]\n reports ContentReport[]\n favorites BuildFavorite[]\n votes BuildVote[]\n\n}",
         "entries": [
           "id String @id @default(cuid())",
           "authorId String",
@@ -1945,6 +2070,7 @@
           "version Int @default(1)",
           "createdAt DateTime @default(now())",
           "updatedAt DateTime @updatedAt",
+          "equipmentSets Json @default(\"[]\")",
           "equipment BuildEquipment[]",
           "versions BuildVersion[]",
           "@@index([visibility, updatedAt])",
@@ -2489,6 +2615,11 @@
         "name": "20261026110000_market_watch_items",
         "source": "prisma/migrations/20261026110000_market_watch_items/migration.sql",
         "sha256": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9"
+      },
+      {
+        "name": "20261027040000_equipment_sets",
+        "source": "prisma/migrations/20261027040000_equipment_sets/migration.sql",
+        "sha256": "05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835"
       }
     ]
   },
@@ -2585,13 +2716,18 @@
     },
     {
       "path": "docs/assets/OUTPOST_MEDIA_INVENTORY.md",
-      "bytes": 3724,
-      "sha256": "80b5e11a86f5b36783b40c1bd208947330c1db7fd8b75b0e28cb8d9243af3628"
+      "bytes": 4110,
+      "sha256": "cd13cdb028f5d89eec3ba26fb6953ca072776250a634205bfe26458fae4ea38c"
     },
     {
       "path": "docs/data/ao-source.example.json",
       "bytes": 294,
       "sha256": "cd56897ac9207c2a44b9cd3525e64ebba8457ef2980b66478b29e0f2611af185"
+    },
+    {
+      "path": "docs/data/equipment-workbench-source.json",
+      "bytes": 3395,
+      "sha256": "aec8142cac1278be290444b744fdb11f669fde3d701797bdf953da88a68858d4"
     },
     {
       "path": "docs/data/item-snapshot-coverage.json",
@@ -2602,6 +2738,11 @@
       "path": "docs/data/item-snapshot-source.json",
       "bytes": 3338,
       "sha256": "b0a1199c44146db148f73e106f481b25aba784a86a507899eef60627ba93169f"
+    },
+    {
+      "path": "docs/data/production-recipes-source.json",
+      "bytes": 15402,
+      "sha256": "0a1ba10379b6c7e38b51a3a601b0c952eadf90c0b7aeacaeb96f1aaf30826fcd"
     },
     {
       "path": "e2e/account.spec.ts",
@@ -2654,6 +2795,11 @@
       "sha256": "dd3a07b81ff010a416043746a80ad4d77b516c7bbd8d05e3e6fe5d818fdabd61"
     },
     {
+      "path": "e2e/equipment-sets.spec.ts",
+      "bytes": 5603,
+      "sha256": "7d1ead64219a72319647945d2976028123ad3c955a7275f4dd08119740a5de4c"
+    },
+    {
       "path": "e2e/group-editing.spec.ts",
       "bytes": 4860,
       "sha256": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418"
@@ -2694,14 +2840,19 @@
       "sha256": "0851184cf977d46536803ff5dea36439aa412abd7d1b1a0115f408632962c267"
     },
     {
+      "path": "e2e/market-research.spec.ts",
+      "bytes": 3391,
+      "sha256": "7283da4d19a318b89e48a0cce30d854ae07d75875cd16194dfce1ac5ba482538"
+    },
+    {
       "path": "e2e/market-visual.spec.ts",
       "bytes": 3823,
       "sha256": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06"
     },
     {
       "path": "e2e/market-watchlist.spec.ts",
-      "bytes": 5114,
-      "sha256": "05cc05844c1896f298902b849f34156e3f062b4fbb4a6de1092764181f6e938b"
+      "bytes": 5952,
+      "sha256": "29227ec0216e0d229eebbb0cea54804537051ed6fcab535e65bc64cf08f5fa56"
     },
     {
       "path": "e2e/outpost.spec.ts",
@@ -2750,8 +2901,8 @@
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png",
-      "bytes": 93513,
-      "sha256": "f5d8750d8185acfd9af6808f236ef91a05b90608285e1c12a942fc0eac7ac12f"
+      "bytes": 109303,
+      "sha256": "9824e40af7bcceedb342b0c8ba1bac36e75cfb962af3934d3ee23b3a2a29a0e4"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png",
@@ -2787,6 +2938,11 @@
       "path": "e2e/production-modes.spec.ts",
       "bytes": 6868,
       "sha256": "a9a3238097c979abbb7aa1dab5c1a44a94397c65d9c6fbe1d23e039702adbb4d"
+    },
+    {
+      "path": "e2e/production-profile.spec.ts",
+      "bytes": 3907,
+      "sha256": "dbcf6891e4794f1e27550da07b7cda922bc5f2d9027dfa6fc752f3dc6a01c3c1"
     },
     {
       "path": "e2e/production.spec.ts",
@@ -2832,6 +2988,11 @@
       "path": "e2e/settings-recovery.spec.ts",
       "bytes": 3512,
       "sha256": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70"
+    },
+    {
+      "path": "e2e/source-equipment.spec.ts",
+      "bytes": 2076,
+      "sha256": "1bfb1ba655907b2352ab44e9628d625b33c96ba7291d693c6a056661e3748418"
     },
     {
       "path": "e2e/support/db.ts",
@@ -2979,14 +3140,19 @@
       "sha256": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9"
     },
     {
+      "path": "prisma/migrations/20261027040000_equipment_sets/migration.sql",
+      "bytes": 76,
+      "sha256": "05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835"
+    },
+    {
       "path": "prisma/migrations/migration_lock.toml",
       "bytes": 128,
       "sha256": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900"
     },
     {
       "path": "prisma/schema.prisma",
-      "bytes": 12167,
-      "sha256": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f"
+      "bytes": 12203,
+      "sha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969"
     },
     {
       "path": "prisma/seed.ts",
@@ -3049,6 +3215,11 @@
       "sha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48"
     },
     {
+      "path": "public/fonts/inter-latin-400-800.woff2",
+      "bytes": 36992,
+      "sha256": "69a6704255300c984ecd962610f034dc9ba3e82e9b6eca87884f93d8a78a6826"
+    },
+    {
       "path": "public/licenses/ao-item-snapshot.txt",
       "bytes": 1066,
       "sha256": "7cd65919fd845d6160f2ec1b4afee97e0f58625a712723fd5ff972f54074555c"
@@ -3075,8 +3246,8 @@
     },
     {
       "path": "scripts/audit-game-data.ts",
-      "bytes": 7623,
-      "sha256": "a2f632ee51daa1fcec88249dd5a03e16ca5a26c8924033808b8559660fd2360d"
+      "bytes": 8194,
+      "sha256": "85aae04b9572a2fc214f4551a47f35f97b04a32374db61abe22e1e79faa6c23c"
     },
     {
       "path": "scripts/db-diagnose.mjs",
@@ -3107,6 +3278,11 @@
       "path": "scripts/prepare-standalone.mjs",
       "bytes": 216,
       "sha256": "23f7697dbb6115d681c200b905f2caaf5ddf1ac7582eb2c4c9d2182a19f69b36"
+    },
+    {
+      "path": "scripts/prepare-ui-font.py",
+      "bytes": 910,
+      "sha256": "f476b44dfd0bd02193429c58b8cc308a671a5e27af50c6f9183e765c9cca546f"
     },
     {
       "path": "scripts/qa-api-timings.mjs",
@@ -3305,8 +3481,8 @@
     },
     {
       "path": "src/app/api/compositions/loadout/route.ts",
-      "bytes": 1631,
-      "sha256": "fbd978b676c4f5d38f784580becf20428f795c2ef3174c5d2b560535d9cc1c18"
+      "bytes": 1754,
+      "sha256": "40be820b9fa38eb6efa7080a5d24f513dfcc51fe2ab11b21093388fcdfbb4715"
     },
     {
       "path": "src/app/api/compositions/route.ts",
@@ -3374,6 +3550,11 @@
       "sha256": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0"
     },
     {
+      "path": "src/app/api/market/batch/route.ts",
+      "bytes": 1115,
+      "sha256": "e91f57b080add147fb5852c7fb0c8e1695d48e651aaef3407a96e59a20451006"
+    },
+    {
       "path": "src/app/api/market/route.ts",
       "bytes": 1261,
       "sha256": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98"
@@ -3425,8 +3606,8 @@
     },
     {
       "path": "src/app/builds/[id]/page.tsx",
-      "bytes": 3637,
-      "sha256": "b8aba1ed31a998fa6965cdcaa27fe23f87b1fea691d288fb0656758a027341f8"
+      "bytes": 3847,
+      "sha256": "c27efd2f8bf698220cffc4a4b13bc896959ca54dc8d7d3537e7d0bafb08850ae"
     },
     {
       "path": "src/app/builds/new/page.tsx",
@@ -3465,8 +3646,8 @@
     },
     {
       "path": "src/app/equipment-workspace.css",
-      "bytes": 18869,
-      "sha256": "14eed291c7cda81409c8244d641237fbcf9cc76dcb2eb78e0cfe8b38c740cbba"
+      "bytes": 19431,
+      "sha256": "89c848c2ab7d92682d58c1390b2b36a4c5cbd87a2672224a311bf7ad17d80295"
     },
     {
       "path": "src/app/error.tsx",
@@ -3480,8 +3661,8 @@
     },
     {
       "path": "src/app/fonts.ts",
-      "bytes": 1394,
-      "sha256": "18f68daac6bc6f7408f16945f8b4470add8daeb37fd1eccdb675a282a0692604"
+      "bytes": 1357,
+      "sha256": "0b0d898fabd80e8b1ba5d8c363d83a7c85932dbd0f8358a2c117b266c3a467ff"
     },
     {
       "path": "src/app/globals.css",
@@ -3600,8 +3781,8 @@
     },
     {
       "path": "src/app/task-ui.css",
-      "bytes": 8755,
-      "sha256": "0bda95f9b4438f2c41f2d53d1bd103f04a5a9542e5b7c7be02859bb2cae0ffaa"
+      "bytes": 10947,
+      "sha256": "c866f11ca7b6d8e7876c9ec19b6a5764443190c3f519bcfbb6872456b7b58a80"
     },
     {
       "path": "src/app/timers/page.tsx",
@@ -3675,8 +3856,8 @@
     },
     {
       "path": "src/components/build-editor.tsx",
-      "bytes": 11769,
-      "sha256": "3eb74b86120412379b2c6c24d0341a993eb66e1cf0f22378b90abdb0ef813b52"
+      "bytes": 12261,
+      "sha256": "f513014dcdf021a6fb84420a7343d99c406d501fcd559ed9927562ac489d3dc4"
     },
     {
       "path": "src/components/build-loadout-view.tsx",
@@ -3700,8 +3881,8 @@
     },
     {
       "path": "src/components/composition-editor.tsx",
-      "bytes": 27247,
-      "sha256": "e5a73faf5df7fb3548a50284cc5c6d81a883e9814888ca4eac067924cb6aca3d"
+      "bytes": 28889,
+      "sha256": "c364faa7a2fc1426217d606089e997978a27552eb779c5f0b4d6744a0f885935"
     },
     {
       "path": "src/components/composition-png-export.tsx",
@@ -3710,8 +3891,8 @@
     },
     {
       "path": "src/components/composition-view.tsx",
-      "bytes": 7252,
-      "sha256": "28ed93e1ec46026b840590b7b626b70195c54b1db38b42e3c13d8f0ae133aa9e"
+      "bytes": 7396,
+      "sha256": "2f113258765270f0e459c478e2117fbfef5590dbf87f9b6e8cf5cc3fb52f448c"
     },
     {
       "path": "src/components/discord-mark.tsx",
@@ -3734,14 +3915,19 @@
       "sha256": "cca7d84ea6cdf8bb15d1bc0e5e74a3a28b76bb89214ca537c6fe2e834d40ddbc"
     },
     {
+      "path": "src/components/equipment-sets.tsx",
+      "bytes": 4586,
+      "sha256": "adf6cf95ee9b68fa8b845c8ad35fa0383b6f4573371f222c31c0767c1be2e9f7"
+    },
+    {
       "path": "src/components/equipment-strip.tsx",
       "bytes": 1052,
       "sha256": "23bea5d7e65c71b871f52dfad92e7b63af012663d7424090a6ca4a679051f5cf"
     },
     {
       "path": "src/components/equipment-workbench.tsx",
-      "bytes": 19955,
-      "sha256": "7ef2cba880df6e20453ddc5f4d8ae1239b005f5b2b051cd74857f9260102cc55"
+      "bytes": 23990,
+      "sha256": "e8de85031eaa4f319f82a6bb3441f9feb4265e8d6a201a5ec2259f4f5c6d2abc"
     },
     {
       "path": "src/components/favorite-build-button.tsx",
@@ -3834,14 +4020,24 @@
       "sha256": "de599dafb5eda7a57b83bc7afe16c9771fee2c6de171b80923bb23789986ac9a"
     },
     {
+      "path": "src/components/market-batch-quotes.tsx",
+      "bytes": 3622,
+      "sha256": "6d5ef282385b21fc2863ff6d8cd3626e56b250ff3a9d25833012b1c13bc64d35"
+    },
+    {
+      "path": "src/components/market-research.tsx",
+      "bytes": 3703,
+      "sha256": "939a75d96845be260ead9617da219c187bc455d9b6ca5af6eb11e29e4d7506e5"
+    },
+    {
       "path": "src/components/market-watchlist.tsx",
-      "bytes": 3655,
-      "sha256": "7d6a496f6dca254942bcda3d11dfd7fb58a9f12f49d48cc579b04e7e5e9125e4"
+      "bytes": 4581,
+      "sha256": "6594551a7d0d0b17db7a8d331ca51dfa7aab5c155dde320e39c47ef0f932ba4e"
     },
     {
       "path": "src/components/market.tsx",
-      "bytes": 20557,
-      "sha256": "994843a796ab57eb01cc1a54f6023b77bf240be75b997d7876b49230c851639b"
+      "bytes": 20692,
+      "sha256": "72c3b20d9c6ead1b20d24745cc621775073026a9c03f1ccfb34c4a70eb81c5c8"
     },
     {
       "path": "src/components/mobile-filter-panel.tsx",
@@ -3860,18 +4056,28 @@
     },
     {
       "path": "src/components/party-board.tsx",
-      "bytes": 3806,
-      "sha256": "6d0f5a40017d3747bc50608bde33773008bd9dc696cf9a7d41d9e6dc9c4e6394"
+      "bytes": 3962,
+      "sha256": "83eca33b337979992a4fd717fee8d92f4b6d51e7b1ee5b3e46c66dce1326e959"
     },
     {
       "path": "src/components/production-calculator.tsx",
-      "bytes": 30567,
-      "sha256": "09f20b1bdffda8d14d00984f7a70833bae0a31adc6ee5f545d35cb698256361d"
+      "bytes": 31818,
+      "sha256": "4158561135a27e9f68cccd3f8a6cb5848987f1c979ad4859a24c154c874e71fe"
+    },
+    {
+      "path": "src/components/production-profile.tsx",
+      "bytes": 5890,
+      "sha256": "70de84cb5cfcd118d9de793185205522057869ce279f0a4fcc802f7ba81947e2"
     },
     {
       "path": "src/components/region-context.tsx",
       "bytes": 258,
       "sha256": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382"
+    },
+    {
+      "path": "src/components/saved-equipment-sets.tsx",
+      "bytes": 1459,
+      "sha256": "602099ef393aadf081f32c0995f343493bd65e2f4d2e14e9069dae41e30270d8"
     },
     {
       "path": "src/components/scenario-controls.tsx",
@@ -3954,14 +4160,29 @@
       "sha256": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c"
     },
     {
+      "path": "src/lib/albion/equipment-abilities.ts",
+      "bytes": 875,
+      "sha256": "21955a3d6d9aede663c304f967c436cc04aa37c75b51bce19357fe03d6e2af3b"
+    },
+    {
       "path": "src/lib/albion/equipment-catalog.ts",
-      "bytes": 3956,
-      "sha256": "2ae952ae0378fa66a800e85ce35725e0f5c9e85c706ff71082ef7cefcf6b78c6"
+      "bytes": 4732,
+      "sha256": "5f4577dcbed60ea4739cda763245ae6e9ae77d56d9bfaa0dc036eece6febca1f"
+    },
+    {
+      "path": "src/lib/albion/equipment-sets.ts",
+      "bytes": 2051,
+      "sha256": "7c78aedc51db61e7e2839546e12d288a3aab4d39c4f9c6cf73a9ab7bee295a6f"
     },
     {
       "path": "src/lib/albion/equipment-validation.ts",
-      "bytes": 1081,
-      "sha256": "81d9cacac4d530deceae608629c80b5943ceaad36b99073e7f6407f8b89946f6"
+      "bytes": 1643,
+      "sha256": "25f63bdc9f4e7b857ebd4e80e18cfabb8078786a6db3905383701bd131c33d9f"
+    },
+    {
+      "path": "src/lib/albion/expanded-recipes.json",
+      "bytes": 38253,
+      "sha256": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c"
     },
     {
       "path": "src/lib/albion/freshness.ts",
@@ -3990,8 +4211,8 @@
     },
     {
       "path": "src/lib/albion/market-client.ts",
-      "bytes": 1290,
-      "sha256": "bb76d9a1c4de8a109a0c9c2cd719bc99a2a259359052d8c893ef1e0259365c36"
+      "bytes": 972,
+      "sha256": "64021c723b8ce1c0a225ea3002334fa6d82243adeb4f525324a6baedabf87dd8"
     },
     {
       "path": "src/lib/albion/market-preview.ts",
@@ -3999,14 +4220,24 @@
       "sha256": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b"
     },
     {
+      "path": "src/lib/albion/market-quotes.ts",
+      "bytes": 3070,
+      "sha256": "fbefff5ad4b14cc45747ec04ccf5492141c18ed5316831165e0dfbb3955b11a3"
+    },
+    {
       "path": "src/lib/albion/production-observations.ts",
       "bytes": 1356,
       "sha256": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75"
     },
     {
+      "path": "src/lib/albion/production-profile.ts",
+      "bytes": 2665,
+      "sha256": "45b9ac346df60d8cc97c67d5e793b1008b7ab0a7ae93bef712d25b4ee6a64014"
+    },
+    {
       "path": "src/lib/albion/production.ts",
-      "bytes": 6603,
-      "sha256": "95786307a52502aa48fe4e0b64a8f7afe6e465dc0d49d2e0b4929f1e58be74f0"
+      "bytes": 6753,
+      "sha256": "b68cb3414c771edd0957d911000ab5da32dfb8c5e6ae44e43c2de6e770409599"
     },
     {
       "path": "src/lib/albion/quote-summary.ts",
@@ -4015,8 +4246,8 @@
     },
     {
       "path": "src/lib/albion/recipes.ts",
-      "bytes": 2655,
-      "sha256": "43256904bcf0c0039016ef431368c9a83654dd0bc5b70e036e5ba1a4a41cbda9"
+      "bytes": 2352,
+      "sha256": "aea10dfc15074a6b741dd86508444e96e0627d1d03cdce9e3a16ded1e0f20509"
     },
     {
       "path": "src/lib/albion/region-config.ts",
@@ -4027,6 +4258,16 @@
       "path": "src/lib/albion/reviewed-crafting.json",
       "bytes": 4797,
       "sha256": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66"
+    },
+    {
+      "path": "src/lib/albion/source-abilities.json",
+      "bytes": 55197,
+      "sha256": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937"
+    },
+    {
+      "path": "src/lib/albion/source-equipment.json",
+      "bytes": 209659,
+      "sha256": "6f685c9d983f280b4ec1dc4ae3f07823a8bb7aeb6993abc6513151172b5dd337"
     },
     {
       "path": "src/lib/albion/transport-prices.ts",
@@ -4055,8 +4296,8 @@
     },
     {
       "path": "src/lib/builds/validation.ts",
-      "bytes": 2690,
-      "sha256": "ef962c70a1ef1db73b502231108699157c6869d223f8c87880fb017077f041e2"
+      "bytes": 2880,
+      "sha256": "192be7b930ad973ccdf713ae500390382a9f2569582af5b70c767a6a98b8d960"
     },
     {
       "path": "src/lib/catalog/item-snapshot.ts",
@@ -4115,8 +4356,8 @@
     },
     {
       "path": "src/lib/compositions/validation.ts",
-      "bytes": 1786,
-      "sha256": "174417e1707f3b2f30cde9258fdc0dd6fd0c0f65effd7fe06347731d7c336447"
+      "bytes": 1972,
+      "sha256": "86c7f5c28fce12673e8fc6d798d991a18d9ba26d6aff58bd6319a79d684f0f94"
     },
     {
       "path": "src/lib/db.ts",
@@ -4255,8 +4496,8 @@
     },
     {
       "path": "tests/catalog.test.ts",
-      "bytes": 4101,
-      "sha256": "0899d27ca4a8b2d8168bce08d71f18159a6aced8d4cb0b6e68c8183c3fbe94b1"
+      "bytes": 4175,
+      "sha256": "7aa8af2630c874f09db3512f2435b17bf7fc73d4e981e722972d20c5acebde15"
     },
     {
       "path": "tests/ci-evidence.test.ts",
@@ -4284,6 +4525,11 @@
       "sha256": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba"
     },
     {
+      "path": "tests/equipment-sets.test.ts",
+      "bytes": 1864,
+      "sha256": "145badbd87b1fc1e3acab965115e89c10bf514051e531b7f2512d723eb05f5d6"
+    },
+    {
       "path": "tests/github-setup.test.ts",
       "bytes": 9401,
       "sha256": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03"
@@ -4297,6 +4543,11 @@
       "path": "tests/item-snapshot.test.ts",
       "bytes": 2661,
       "sha256": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12"
+    },
+    {
+      "path": "tests/market-batch.test.ts",
+      "bytes": 2167,
+      "sha256": "b12e79aa4e236c8e1e8e24f758db632a2b1d92e7fe5505afe1115f8b64ca950d"
     },
     {
       "path": "tests/market-payload.test.ts",
@@ -4327,6 +4578,11 @@
       "path": "tests/production-observations.test.ts",
       "bytes": 2261,
       "sha256": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36"
+    },
+    {
+      "path": "tests/production-profile.test.ts",
+      "bytes": 2790,
+      "sha256": "a3752f5a4632a9afd80913d12c7998d0739945c836c3ba19172cc7926497cc13"
     },
     {
       "path": "tests/production.test.ts",
@@ -4367,6 +4623,11 @@
       "path": "tests/source-secret-scan.test.ts",
       "bytes": 751,
       "sha256": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c"
+    },
+    {
+      "path": "tests/source-workbench.test.ts",
+      "bytes": 1844,
+      "sha256": "1d238c535177eeb1fd3f9a7d34452c29e6f0b738b4626ee85e8dd744a5d6d559"
     },
     {
       "path": "tests/timers.test.ts",

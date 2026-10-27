@@ -415,3 +415,116 @@
 :is(#production-setup, #production-materials, #production-results) {
   scroll-margin-top: 96px;
 }
+
+.equipment-set-tools {
+  margin-block: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  padding: 16px;
+  background: var(--panel);
+}
+.equipment-set-tools summary {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 650;
+}
+.equipment-set-tools summary > span {
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 12px;
+  font-weight: 400;
+}
+.set-template-controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin-top: 16px;
+}
+.set-template-controls > label {
+  flex: 1;
+  min-width: 0;
+}
+.saved-equipment-sets {
+  margin-block: 20px;
+}
+.saved-equipment-sets > article,
+.saved-equipment-sets > details {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.saved-equipment-sets h3 {
+  font: 650 17px/1.4 var(--font-ui);
+  margin: 0;
+}
+.saved-equipment-sets small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+}
+@media (max-width: 780px) {
+  .set-template-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .saved-equipment-sets .section-heading {
+    display: block;
+  }
+  .saved-equipment-sets .actions {
+    margin-block: 12px;
+    flex-wrap: wrap;
+  }
+}
+.equipment-set-tools,
+.equipment-set-tools details,
+.saved-equipment-sets article {
+  min-width: 0;
+}
+.saved-equipment-sets .equipment-strip {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.gear-change-notice {
+  grid-column: 1 / -1;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: var(--panel);
+  font-size: 14px;
+}
+
+/* Research rows retain separate item/quality identities without widening the page. */
+.research-item-details {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.batch-quote {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+  margin-top: 0.65rem;
+  font-size: 0.875rem;
+}
+.batch-quote small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.batch-quote > .muted {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+.watchlist-items > li {
+  align-items: start;
+}
+@media (max-width: 480px) {
+  .watchlist-items > li {
+    flex-wrap: wrap;
+  }
+  .research-item-details {
+    flex-basis: calc(100% - 56px);
+  }
+}

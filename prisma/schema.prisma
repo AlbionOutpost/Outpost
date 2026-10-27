@@ -96,6 +96,7 @@ model Build {
   version Int @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  equipmentSets Json @default("[]")
   equipment BuildEquipment[]
   versions BuildVersion[]
   @@index([visibility, updatedAt])

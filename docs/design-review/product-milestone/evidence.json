@@ -1,0 +1,62 @@
+{
+  "tool": "Local Playwright library Chromium fallback; MCP execution remains blocked by approval policy",
+  "build": "Next16.4.3 production, local PostgreSQL/Redis, Node22",
+  "viewports": [1920, 1440, 768, 390, 375, 320],
+  "sessions": "Local isolated fixture sessions for Build/Comp and saved profiles, not genuine Discord OAuth",
+  "prices": "Research captures use explicit test-only synthetic1234-silver stale observations and forced source failure, not live market activity",
+  "review": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention.",
+  "files": [
+    {
+      "path": "docs/design-review/product-milestone/before-build-1440.png",
+      "sha256": "144e12136501bbf70a647ddb58c1d82aa7e1c52d34828e744b4e0741e7e174a7"
+    },
+    {
+      "path": "docs/design-review/product-milestone/build-1440.png",
+      "sha256": "552ff45a3d3d4e61bac3f794b009969fef892ecdee61cd1078725668a44fefb3"
+    },
+    {
+      "path": "docs/design-review/product-milestone/build-390.png",
+      "sha256": "cab9c15658d48dc929d912fbe43b3e92f1d6480711d6f514a0decc4951b9fdb6"
+    },
+    {
+      "path": "docs/design-review/product-milestone/build-320.png",
+      "sha256": "1a56826157ce4b8e45653978ac0042b7926a40693e6fd2e6e8b798c8050041c3"
+    },
+    {
+      "path": "docs/design-review/product-milestone/research-1440.png",
+      "sha256": "6752371698fab92adb8487ff67afa81fcc9ad90a63bca5412533f93d52e8ee16"
+    },
+    {
+      "path": "docs/design-review/product-milestone/research-390.png",
+      "sha256": "adb3c99eff08c6e5b03da15ae6dea88a34adfac038a148b04c4a6611e50615f8"
+    },
+    {
+      "path": "docs/design-review/product-milestone/research-320.png",
+      "sha256": "7f38bae0290bae9099018f65732395323937a63c9cf3188ee68075f9beddb10b"
+    },
+    {
+      "path": "docs/design-review/product-milestone/profile-1440.png",
+      "sha256": "def374789b56d22c2e9091cca525cf3dfcd8ab2ee95a859614d5f53135d4ee55"
+    },
+    {
+      "path": "docs/design-review/product-milestone/profile-320.png",
+      "sha256": "98b91ed80d3d912635ba8727448a787ef189bf42f035ad4cb8604a0a70137eda"
+    },
+    {
+      "path": "docs/design-review/product-milestone/refining-1440.png",
+      "sha256": "236821290aae22df58da341d66ac8565b55ca74878fead6e0b244958be57697e"
+    },
+    {
+      "path": "docs/design-review/product-milestone/comp-gear-1440.png",
+      "sha256": "858d8be01aafd1123ff8f674e9f996f165deccb34e8dfe5443c3a564d0aeb988"
+    },
+    {
+      "path": "docs/design-review/product-milestone/comp-gear-390.png",
+      "sha256": "3b0a345af281883dedce374530bca69d0123a30ea55347bcbe5fe312c7b61472"
+    },
+    {
+      "path": "docs/design-review/product-milestone/comp-gear-320.png",
+      "sha256": "5e7357cc7d81e8780b6b2f0e8b12df31d11964bab078bb53ad66b5efed87b980"
+    }
+  ]
+}

@@ -6,6 +6,8 @@ For an exact recreation, use the commit containing this handoff (or a reviewed l
 
 For a single-file AI handoff, use [the complete handbook](HANDBOOK.md); it contains all chapters and the generated database/component references. The separate chapters remain the maintained source.
 
+The [October27 functionality milestone](../engineering/PRODUCT_MILESTONE_2026-10-27.md) supersedes older starter-scope statements below: named full spare sets,7510 selectable source variants,70 normal production recipes, saved city/refining profiles and batched Market research/watchlist refresh. The original baseline remains historical.
+
 ## Start here
 
 1. Read [rebuild sequence](REBUILD_SEQUENCE.md) and [setup/operations](SETUP_AND_OPERATIONS.md).
@@ -15,7 +17,7 @@ For a single-file AI handoff, use [the complete handbook](HANDBOOK.md); it conta
 5. Run [testing and acceptance](TESTING_AND_ACCEPTANCE.md). Keep [incomplete/blocked scope](DECISIONS_AND_LIMITS.md) explicit.
 6. Use the generated [inventory](INVENTORY.md), [exact database reference](DATABASE_REFERENCE.md) and [machine inventory](inventory.json) to check completeness.
 
-The current inventory has **32 page routes, 33 API route files exposing 44 HTTP operations, 55 component modules, 50 library modules, 29 database models, three enums and 17 SQL migrations**. These are source inventory counts, not test results or a completeness score for Albion mechanics. The generator captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
+The current inventory has **32 page routes, 34 API route files exposing 45 HTTP operations, 60 component modules, 54 library modules, 29 database models, three enums and 18 SQL migrations**. These are source inventory counts, not test results or a completeness score for Albion mechanics. The generator captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
 
 ```bash
 node scripts/rebuild-inventory.mjs
@@ -40,7 +42,7 @@ When old documents conflict, trace the relevant source and update the stale stat
 
 ## Copyable instruction for the next AI
 
-> Rebuild Outpost from the source baseline and `docs/rebuild/README.md`. Read every linked handbook chapter and the generated inventories before changing architecture. Preserve the existing Next.js App Router/React/Prisma/Redis boundaries, 17 SQL migrations, server authorization, version conflicts, exact item/region/quality/source identities, pure accounting formulas and explicit unsupported states. Recreate the current top navigation, compact search palette, genuine-equipment hero, desktop workspaces and mobile drawer; use the original assets and local fonts. Follow the installed Next.js documentation rather than assuming older APIs. Build in dependency order from `REBUILD_SEQUENCE.md`; verify each supported journey with the existing tests and actual screenshots. Do not fabricate prices, community activity, abilities, current-patch evidence, provider verification or missing licenses. Run the mandatory phase gate and required postchecks, update the handoff inventory and current reports, and state actual blockers. Credentials/private records must be supplied securely outside source control. Do not deploy or publish anything beyond the user’s authorization.
+> Rebuild Outpost from the source baseline and `docs/rebuild/README.md`. Read every linked handbook chapter and the generated inventories before changing architecture. Preserve the existing Next.js App Router/React/Prisma/Redis boundaries, 18 SQL migrations, server authorization, version conflicts, exact item/region/quality/source identities, pure accounting formulas and explicit unsupported states. Recreate the current top navigation, compact search palette, genuine-equipment hero, desktop workspaces and mobile drawer; use the original assets and local fonts. Follow the installed Next.js documentation rather than assuming older APIs. Build in dependency order from `REBUILD_SEQUENCE.md`; verify each supported journey with the existing tests and actual screenshots. Do not fabricate prices, community activity, abilities, current-patch evidence, provider verification or missing licenses. Run the mandatory phase gate and required postchecks, update the handoff inventory and current reports, and state actual blockers. Credentials/private records must be supplied securely outside source control. Do not deploy or publish anything beyond the user’s authorization.
 
 [Verification of this handoff](VERIFICATION.md) records the actual source extraction, clean-publication checks, negative drift probe, local phase and hosted limits.
 

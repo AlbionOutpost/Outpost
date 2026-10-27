@@ -1,4 +1,5 @@
 "use client";
+import { abilitiesFor } from "@/lib/albion/equipment-abilities";
 import { useEffect, useId, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import {
@@ -32,6 +33,10 @@ export function EquipmentWorkbench({
       return (equipped && findEquipment(equipped.itemId)?.enchantment) || 0;
     }),
     [view, setView] = useState("equipment");
+  const [swapQuery, setSwapQuery] = useState("");
+  const [browserPage, setBrowserPage] = useState({ key: "", index: 0 });
+  const [notice, setNotice] = useState("");
+  const [previous, setPrevious] = useState<EquipmentChoice[] | null>(null);
   const studio = useRef<HTMLDivElement>(null);
   const focusRequested = useRef(false);
   const paneId = useId();
@@ -58,11 +63,33 @@ export function EquipmentWorkbench({
       f.slot === slot &&
       f.name.toLowerCase().includes(query.toLowerCase()) &&
       f.tiers.includes(tier) &&
-      f.enchants.includes(enchant),
+      f.enchants.includes(enchant) &&
+      !!findEquipment(equipmentId(f, tier, enchant)),
   );
+  const browserKey = `${slot}:${query}:${tier}:${enchant}`;
+  const pageIndex = browserPage.key === browserKey ? browserPage.index : 0;
+  const shownFamilies = families.slice(pageIndex * 12, pageIndex * 12 + 12);
+  const swapCandidates = equipmentFamilies
+    .filter((f) => f.slot === slot)
+    .flatMap((f) => f.tiers.flatMap((t) => f.enchants.map((e) => equipmentId(f, t, e))))
+    .filter(
+      (id) =>
+        id !== current?.itemId &&
+        !!findEquipment(id) &&
+        swapQuery
+          .toLowerCase()
+          .split(/\s+/)
+          .every((term) => `${equipmentName(id)} ${id}`.toLowerCase().includes(term)),
+    )
+    .sort(
+      (a, b) =>
+        Number(findEquipment(b)?.family.code === found?.family.code) -
+        Number(findEquipment(a)?.family.code === found?.family.code),
+    );
   function selectSlot(next: EquipmentSlot) {
     setSlot(next);
     setQuery("");
+    setSwapQuery("");
     const equipped = value.find((e) => e.slot === next);
     const info = equipped ? findEquipment(equipped.itemId) : null;
     const family = info?.family || equipmentFamilies.find((f) => f.slot === next);
@@ -72,7 +99,33 @@ export function EquipmentWorkbench({
     }
   }
   function change(next: EquipmentChoice | null) {
-    onChange([...value.filter((e) => e.slot !== slot), ...(next ? [next] : [])]);
+    const main = value.find((e) => e.slot === "Main hand");
+    if (next?.slot === "Off hand" && main && findEquipment(main.itemId)?.family.twoHanded) {
+      setNotice("Choose a one-handed weapon before adding an off hand.");
+      return;
+    }
+    let rows = value.filter((e) => e.slot !== slot);
+    if (
+      next?.slot === "Main hand" &&
+      findEquipment(next.itemId)?.family.twoHanded &&
+      rows.some((e) => e.slot === "Off hand")
+    ) {
+      setPrevious(structuredClone(value));
+      rows = rows.filter((e) => e.slot !== "Off hand");
+      setNotice("Off hand cleared: this weapon uses both hands.");
+    } else setNotice("");
+    if (next) {
+      const itemId = next.itemId;
+      const options = abilitiesFor(itemId);
+      next = {
+        ...next,
+        abilities: Object.fromEntries(
+          Object.entries(next.abilities).filter(([key, name]) => options[key]?.includes(name)),
+        ),
+        alternatives: next.alternatives.filter((id) => id !== itemId),
+      };
+    }
+    onChange([...rows, ...(next ? [next] : [])]);
   }
   function choose(code: string) {
     const f = equipmentFamilies.find((f) => f.code === code && f.slot === slot);
@@ -80,11 +133,9 @@ export function EquipmentWorkbench({
       f
         ? {
             slot,
-            itemId: equipmentId(
-              f,
-              f.tiers.includes(tier) ? tier : f.tiers[0],
-              f.enchants.includes(enchant) ? enchant : 0,
-            ),
+            itemId: findEquipment(equipmentId(f, tier, enchant))
+              ? equipmentId(f, tier, enchant)
+              : equipmentId(f, f.tiers[0], 0),
             quality: current?.quality || 1,
             abilities: {},
             alternatives: [],
@@ -95,6 +146,24 @@ export function EquipmentWorkbench({
   }
   return (
     <div ref={studio} className={`gear-studio${variant === "build" ? " build-gear-studio" : ""}`}>
+      {notice && (
+        <div className="gear-change-notice" role="status">
+          {notice}
+          {previous && (
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => {
+                onChange(previous);
+                setPrevious(null);
+                setNotice("");
+              }}
+            >
+              Undo equipment change
+            </button>
+          )}
+        </div>
+      )}
       <nav className="gear-mobile-nav" aria-label="Equipment views">
         {[
           ["equipment", "Equipment"],
@@ -200,7 +269,7 @@ export function EquipmentWorkbench({
           </label>
         </div>
         <div className="item-browser-grid">
-          {families.map((f) => {
+          {shownFamilies.map((f) => {
             const id = equipmentId(
               f,
               f.tiers.includes(tier) ? tier : f.tiers[0],
@@ -226,12 +295,36 @@ export function EquipmentWorkbench({
         </div>
         {!families.length && (
           <p className="gear-coverage">
-            No supported item matches this slot, search and tier/enchantment filters. This catalog
-            is a starter subset; unavailable gear is not invented.
+            No supported item matches this slot, search and tier/enchantment filters. Unavailable
+            variants are not invented.
           </p>
         )}
+        {families.length > 12 && (
+          <div className="actions gear-browser-paging" aria-label="Equipment results pages">
+            <button
+              type="button"
+              className="button secondary"
+              disabled={pageIndex === 0}
+              onClick={() => setBrowserPage({ key: browserKey, index: pageIndex - 1 })}
+            >
+              Previous items
+            </button>
+            <span>
+              {pageIndex * 12 + 1}–{Math.min(families.length, (pageIndex + 1) * 12)} of{" "}
+              {families.length}
+            </span>
+            <button
+              type="button"
+              className="button secondary"
+              disabled={(pageIndex + 1) * 12 >= families.length}
+              onClick={() => setBrowserPage({ key: browserKey, index: pageIndex + 1 })}
+            >
+              Next items
+            </button>
+          </div>
+        )}
         <details className="gear-catalog-coverage">
-          <summary>Starter catalog · {equipmentFamilies.length} families</summary>
+          <summary>Source catalog · {equipmentFamilies.length} families</summary>
           <p className="gear-coverage">
             Other equipment and unlock requirements await verified data. The build’s advanced fields
             retain manual IDs and notes.
@@ -365,9 +458,11 @@ export function EquipmentWorkbench({
                     })
                   }
                 >
-                  {found.family.tiers.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  {found.family.tiers
+                    .filter((t) => !!findEquipment(equipmentId(found.family, t, found.enchantment)))
+                    .map((t) => (
+                      <option key={t}>{t}</option>
+                    ))}
                 </select>
               </label>
               <label>
@@ -382,9 +477,11 @@ export function EquipmentWorkbench({
                     })
                   }
                 >
-                  {found.family.enchants.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  {found.family.enchants
+                    .filter((t) => !!findEquipment(equipmentId(found.family, found.tier, t)))
+                    .map((t) => (
+                      <option key={t}>{t}</option>
+                    ))}
                 </select>
               </label>
               <label>
@@ -403,7 +500,11 @@ export function EquipmentWorkbench({
               </label>
             </div>
             <h3 className="ability-heading">Abilities & passives</h3>
-            {Object.entries(found.family.abilities).map(([key, choices]) => (
+            <p className="gear-coverage">
+              July 2026 source options and retained starter references. Character unlocks, tier
+              restrictions and current-patch availability need in-game confirmation.
+            </p>
+            {Object.entries(abilitiesFor(current.itemId)).map(([key, choices]) => (
               <label className="ability-choice" key={key}>
                 <span className="ability-key" aria-hidden="true">
                   {key === "Passive" ? "P" : key === "Active" ? "A" : key}
@@ -428,11 +529,23 @@ export function EquipmentWorkbench({
                 </span>
               </label>
             ))}
-            {!Object.keys(found.family.abilities).length && (
+            {!Object.keys(abilitiesFor(current.itemId)).length && (
               <p className="gear-coverage">No ability selection is recorded for this equipment.</p>
             )}
             <div className="gear-alternatives">
               <h3>Equipment swaps</h3>
+              <label>
+                Filter swaps
+                <input
+                  value={swapQuery}
+                  onChange={(e) => setSwapQuery(e.target.value)}
+                  placeholder="Item name, tier or ID"
+                />
+              </label>
+              <p className="gear-coverage">
+                {swapCandidates.length} matching variants. Showing up to 200; filter by name or tier
+                for more.
+              </p>
               {current.alternatives.length > 0 && (
                 <div className="gear-swap-previews" aria-label="Saved equipment alternatives">
                   {current.alternatives.map((id) => (
@@ -458,24 +571,16 @@ export function EquipmentWorkbench({
                       }}
                     >
                       <option value="">None</option>
-                      {equipmentFamilies
-                        .filter((f) => f.slot === slot)
-                        .flatMap((f) =>
-                          f.tiers
-                            .flatMap((t) =>
-                              f.enchants.map((enchantment) => equipmentId(f, t, enchantment)),
-                            )
-                            .filter(
-                              (id) =>
-                                id === alternative ||
-                                (!current.alternatives.includes(id) && id !== current.itemId),
-                            )
-                            .map((id) => (
-                              <option key={id} value={id}>
-                                {equipmentName(id)}
-                              </option>
-                            )),
-                        )}
+                      {[
+                        ...new Set([
+                          ...(alternative ? [alternative] : []),
+                          ...swapCandidates.slice(0, 200),
+                        ]),
+                      ].map((id) => (
+                        <option key={id} value={id}>
+                          {equipmentName(id)}
+                        </option>
+                      ))}
                     </select>
                   </label>
                 ),
@@ -514,7 +619,7 @@ export function EquipmentWorkbench({
             </div>
             {Object.keys(found.family.abilities).length > 0 && (
               <p className="gear-coverage">
-                Starter ability choices; mastery unlock requirements are not verified.
+                Source spell options unavailable here; mastery unlock requirements are unverified.
               </p>
             )}
             <p className="gear-coverage">{current.itemId} · No inferred combat statistics.</p>

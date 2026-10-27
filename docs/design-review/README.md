@@ -49,3 +49,5 @@ The [26 October read-only UI/UX and engineering audit](../engineering/UI_UX_CODE
 ## Homepage and global navigation redesign
 
 [The implemented homepage redesign](homepage-redesign/README.md) supersedes the earlier homepage composition: a field-guide palette, asymmetric hero, dedicated rail, ivory market workbench and new shared navigation. Real matched desktop/mobile screenshots and six-width checks are linked there. The scope is the homepage and navigation, not another whole-application audit.
+
+[October27 player functionality review](product-milestone/README.md): full spare sets, expanded source catalog, production profiles and Market research; accepted brand/layout retained.

@@ -1,5 +1,7 @@
 # Albion data, observations and artwork
 
+**October27 implementation update:** The October27 editor consumes `source-equipment.json` (377 families/7510 exact variants) and `source-abilities.json` (604 base records), with provenance and output hashes in `docs/data/equipment-workbench-source.json`. `abilitiesFor` uses exact tier-source names and retained T4–T8 starter references without extrapolating beginner spells. Recipes now use `expanded-recipes.json`; its separate October12 factual/rights ledger is `docs/data/production-recipes-source.json`. Current-patch/unlock certification remains zero.
+
 ## Three independent data systems
 
 | System                       | Source of truth                                                                             | Purpose                                                                                       |

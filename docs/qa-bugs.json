@@ -255,7 +255,7 @@
       "status": "BACKLOG",
       "reproduction": "Try focus/city crafting or reload saved scenario.",
       "expected": "Sourced production mechanics and persistence.",
-      "current": "Starter crafting/refining/enchanting, manual trade, cargo and scanner work; remaining engines and current-patch formulas/recipes do not.",
+      "current": "45 normal crafting and25 normal refining recipes plus historical city/refining-specialization/focus profiles work with independent fixtures; broader recipes, crafting specialization trees, station rounding and current-patch certification remain incomplete.",
       "historical_cause": "Calculator phase incomplete.",
       "historical_files": "calculations.ts; PROJECT_PLAN.md",
       "verification": "tests/production.test.ts and e2e/production.spec.ts cover the implemented subset; automatic city/focus specialization and full recipes remain missing.",
@@ -463,14 +463,15 @@
       "status": "OPEN",
       "reproduction": "Compare supplied reference with rendered implementation.",
       "expected": "Preserve reference hierarchy, imagery regions and density.",
-      "current": "Prior design rejected; measured build/composition corrections are starter-scoped and full acceptance remains open. Targeted Market review confirms table top 499.5px at 390px,667px internal table width, delayed item/history detail and absent multi-item workflow; no owner visual acceptance. Frontend pass now corrects phone quote freshness/scrolling, build context/inventory, party controls and tool-header overlap. Full catalog/watchlists/media and owner acceptance remain separate open requirements.",
+      "current": "Accepted charcoal/copper, top navigation and task-oriented homepage are preserved. The October27 milestone adds full spare-set workflows,7510 source-supported equipment variants, bounded catalog browsing, multi-item Market research and regional watchlist quote refresh. Actual desktop/mobile captures were inspected and label/overflow issues corrected; current-patch data/media and global owner acceptance remain separate open requirements.",
       "historical_cause": "Prior phases prioritized general component treatment and tests over measured reference comparison.",
       "historical_files": "docs/design-review; src/app/page.tsx; globals.css",
       "verification": "Multiple page correction iterations now exist; no owner acceptance record closes the global gate. Passing functional tests do not prove reference acceptance.",
       "evidence": [
         "docs/design-review/README.md",
         "docs/design-review/skill-system-review/README.md",
-        "docs/design-review/frontend-pass/README.md"
+        "docs/design-review/frontend-pass/README.md",
+        "docs/design-review/product-milestone/README.md"
       ]
     },
     {

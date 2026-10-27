@@ -1,6 +1,7 @@
+import { equipmentSets } from "../albion/equipment-sets";
 import { z } from "zod";
 import { regionSchema } from "../albion/region-config";
-import { equipmentChoice } from "../albion/equipment-validation";
+import { equipmentChoice, validHandCombination } from "../albion/equipment-validation";
 export const roles = [
   "Tank",
   "Healer",
@@ -16,6 +17,7 @@ export const roles = [
 ] as const;
 export { equipmentChoice } from "../albion/equipment-validation";
 export const memberSlot = z.object({
+  equipmentSets,
   id: z.string().uuid(),
   playerName: z.string().trim().max(60),
   role: z.enum(roles),
@@ -30,7 +32,8 @@ export const memberSlot = z.object({
     .refine(
       (es) => new Set(es.map((e) => e.slot)).size === es.length,
       "Equipment slots must be unique",
-    ),
+    )
+    .refine(validHandCombination, "A two-handed weapon cannot be used with an off hand"),
 });
 export const compositionInput = z
   .object({

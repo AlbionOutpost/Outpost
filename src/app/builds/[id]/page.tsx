@@ -1,4 +1,6 @@
 import { CommunityPanel } from "@/components/community-panel";
+import { SavedEquipmentSets } from "@/components/saved-equipment-sets";
+import { equipmentSets } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "@/components/build-loadout-view";
 import { BuildActions } from "@/components/build-actions";
 import { BuildCost } from "@/components/build-cost";
@@ -78,6 +80,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           ))}
         </details>
       </section>
+      <SavedEquipmentSets sets={equipmentSets.parse(build.equipmentSets)} />
       <BuildActions
         id={id}
         version={build.version}

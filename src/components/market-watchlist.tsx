@@ -4,6 +4,7 @@ import Link from "next/link";
 import { watchResponse } from "@/lib/market-watch";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
+import { BatchQuote, quoteKey, useBatchQuotes } from "./market-batch-quotes";
 import type { z } from "zod";
 export function MarketWatchlist({
   region,
@@ -17,6 +18,8 @@ export function MarketWatchlist({
   const [items, setItems] = useState<z.infer<typeof watchResponse> | null>(null);
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
+  const { quotes, busy: refreshing, refresh } = useBatchQuotes(region);
+  const regionalItems = items?.filter((i) => i.region === region) || [];
   async function action(method: "GET" | "POST" | "DELETE", id?: string) {
     setBusy(true);
     setMessage("");
@@ -71,7 +74,21 @@ export function MarketWatchlist({
         >
           Load your watchlist
         </button>
+        <button
+          type="button"
+          className="button secondary"
+          disabled={busy || refreshing || !regionalItems.length}
+          onClick={() => void refresh(regionalItems)}
+        >
+          {refreshing ? "Refreshing watchlist…" : "Refresh watchlist quotes"}
+        </button>
       </div>
+      {items && (
+        <p className="muted">
+          Refresh quotes for {regionalItems.length} saved selections in {region}. Other regions stay
+          saved and are never mixed into these observations.
+        </p>
+      )}
       {message && (
         <p role="status">
           {message}{" "}
@@ -87,12 +104,15 @@ export function MarketWatchlist({
         {items?.map((i) => (
           <li key={i.id}>
             <ItemIcon id={i.itemId} quality={i.quality} size={32} />
-            <Link
-              className="text-link"
-              href={`/tools/market?${new URLSearchParams({ region: i.region, item: i.itemId, quality: String(i.quality) })}`}
-            >
-              {equipmentName(i.itemId)} · {i.region} · quality {i.quality}
-            </Link>
+            <div className="research-item-details">
+              <Link
+                className="text-link"
+                href={`/tools/market?${new URLSearchParams({ region: i.region, item: i.itemId, quality: String(i.quality) })}`}
+              >
+                {equipmentName(i.itemId)} · {i.region} · quality {i.quality}
+              </Link>
+              {i.region === region && <BatchQuote quote={quotes[quoteKey(i)]} />}
+            </div>
             <button
               type="button"
               className="button secondary"

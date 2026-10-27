@@ -10,6 +10,8 @@ For an exact recreation, use the commit containing this handoff (or a reviewed l
 
 For a single-file AI handoff, use [the complete handbook](HANDBOOK.md); it contains all chapters and the generated database/component references. The separate chapters remain the maintained source.
 
+The [October27 functionality milestone](../engineering/PRODUCT_MILESTONE_2026-10-27.md) supersedes older starter-scope statements below: named full spare sets,7510 selectable source variants,70 normal production recipes, saved city/refining profiles and batched Market research/watchlist refresh. The original baseline remains historical.
+
 ### Start here
 
 1. Read [rebuild sequence](REBUILD_SEQUENCE.md) and [setup/operations](SETUP_AND_OPERATIONS.md).
@@ -19,7 +21,7 @@ For a single-file AI handoff, use [the complete handbook](HANDBOOK.md); it conta
 5. Run [testing and acceptance](TESTING_AND_ACCEPTANCE.md). Keep [incomplete/blocked scope](DECISIONS_AND_LIMITS.md) explicit.
 6. Use the generated [inventory](INVENTORY.md), [exact database reference](DATABASE_REFERENCE.md) and [machine inventory](inventory.json) to check completeness.
 
-The current inventory has **32 page routes, 33 API route files exposing 44 HTTP operations, 55 component modules, 50 library modules, 29 database models, three enums and 17 SQL migrations**. These are source inventory counts, not test results or a completeness score for Albion mechanics. The generator captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
+The current inventory has **32 page routes, 34 API route files exposing 45 HTTP operations, 60 component modules, 54 library modules, 29 database models, three enums and 18 SQL migrations**. These are source inventory counts, not test results or a completeness score for Albion mechanics. The generator captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
 
 ```bash
 node scripts/rebuild-inventory.mjs
@@ -44,7 +46,7 @@ When old documents conflict, trace the relevant source and update the stale stat
 
 ### Copyable instruction for the next AI
 
-> Rebuild Outpost from the source baseline and `docs/rebuild/README.md`. Read every linked handbook chapter and the generated inventories before changing architecture. Preserve the existing Next.js App Router/React/Prisma/Redis boundaries, 17 SQL migrations, server authorization, version conflicts, exact item/region/quality/source identities, pure accounting formulas and explicit unsupported states. Recreate the current top navigation, compact search palette, genuine-equipment hero, desktop workspaces and mobile drawer; use the original assets and local fonts. Follow the installed Next.js documentation rather than assuming older APIs. Build in dependency order from `REBUILD_SEQUENCE.md`; verify each supported journey with the existing tests and actual screenshots. Do not fabricate prices, community activity, abilities, current-patch evidence, provider verification or missing licenses. Run the mandatory phase gate and required postchecks, update the handoff inventory and current reports, and state actual blockers. Credentials/private records must be supplied securely outside source control. Do not deploy or publish anything beyond the user’s authorization.
+> Rebuild Outpost from the source baseline and `docs/rebuild/README.md`. Read every linked handbook chapter and the generated inventories before changing architecture. Preserve the existing Next.js App Router/React/Prisma/Redis boundaries, 18 SQL migrations, server authorization, version conflicts, exact item/region/quality/source identities, pure accounting formulas and explicit unsupported states. Recreate the current top navigation, compact search palette, genuine-equipment hero, desktop workspaces and mobile drawer; use the original assets and local fonts. Follow the installed Next.js documentation rather than assuming older APIs. Build in dependency order from `REBUILD_SEQUENCE.md`; verify each supported journey with the existing tests and actual screenshots. Do not fabricate prices, community activity, abilities, current-patch evidence, provider verification or missing licenses. Run the mandatory phase gate and required postchecks, update the handoff inventory and current reports, and state actual blockers. Credentials/private records must be supplied securely outside source control. Do not deploy or publish anything beyond the user’s authorization.
 
 [Verification of this handoff](VERIFICATION.md) records the actual source extraction, clean-publication checks, negative drift probe, local phase and hosted limits.
 
@@ -68,7 +70,7 @@ Use this dependency order whether restoring the repository or reimplementing the
 
 ### 1. Preserve inputs and establish the baseline
 
-Obtain the private repository at the documented implementation baseline or a reviewed later commit. Retain source, lockfile, public/license/original assets, pinned data/manifests and all17 migrations. Read root AGENTS and local Next documentation. Run the rebuild inventory check to identify source drift. Keep credentials/private DB contents separate; record any unavailable input before guessing.
+Obtain the private repository at the documented implementation baseline or a reviewed later commit. Retain source, lockfile, public/license/original assets, pinned data/manifests and all18 migrations. Read root AGENTS and local Next documentation. Run the rebuild inventory check to identify source drift. Keep credentials/private DB contents separate; record any unavailable input before guessing.
 
 Result: a legitimate writable checkout with understood source/version, original assets and no fabricated account/market content. If original Git metadata is protected, clone the actual remote into an authorized writable location; do not initialize replacement history or reset existing user changes.
 
@@ -307,7 +309,9 @@ Retain existing `atlas-*` cookies/cache namespaces, npm package identity, JSON e
 
 ## 05. Database and persistence contracts
 
-The [exact database reference](DATABASE_REFERENCE.md) reproduces all29 Prisma models, three enums and17 ordered migration paths/checksums. It is the complete schema appendix. This chapter explains how those tables work together. Recreate both ORM definitions and committed SQL; do not infer constraints only from forms.
+**October27 implementation update:** Migration18 adds `Build.equipmentSets` as non-null JSONB default[]; Build versions include it through validated input, older snapshots default[]. Each strict set has UUID/name and1–10 unique-slot equipment choices, with abilities/quality/alternatives and valid hand combinations; up to five distinct sets. Comp members carry the same JSON sets. Copying a Build copies values rather than linking mutable arrays; JSON imports preserve exported sets.
+
+The [exact database reference](DATABASE_REFERENCE.md) reproduces all29 Prisma models, three enums and18 ordered migration paths/checksums. It is the complete schema appendix. This chapter explains how those tables work together. Recreate both ORM definitions and committed SQL; do not infer constraints only from forms.
 
 ### Entity groups
 
@@ -436,7 +440,9 @@ Run independent-user cases, not only the happy path: outsider private reads, wro
 
 ## 07. HTTP and Server Action contracts
 
-[Generated HTTP inventory](INVENTORY.md#http-routes-33) lists all33 handlers/44 exported operations and exact source paths. Query/body field names below are implementation contracts. User/session IDs come from server authentication, never from a trusted browser author field. All examples are **illustrative request shapes**, not real saved records, users, game recommendations or market observations.
+**October27 implementation update:** `GET /api/market/batch?region=europe&items=T4_BAG,T4_CAPE&quality=1` validates1–12 distinct IDs plus region/quality, shares the existing market public budget, and returns AODP rows with source/request identity. Missing quotes are not substituted. Research/watchlist refresh groups by quality and makes bounded sequential chunks; the private saved-selection API retains its existing authentication/ownership/no-store boundaries.
+
+[Generated HTTP inventory](INVENTORY.md#http-routes-34) lists all34 handlers/45 exported operations and exact source paths. Query/body field names below are implementation contracts. User/session IDs come from server authentication, never from a trusted browser author field. All examples are **illustrative request shapes**, not real saved records, users, game recommendations or market observations.
 
 ### Common behavior
 
@@ -753,7 +759,7 @@ Inspect actual1440×900,1920×1080,768px tablet,390×844,375px and320px pages. C
 
 ## 10. Component and module responsibility map
 
-The [generated inventory](INVENTORY.md#components-55) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
+The [generated inventory](INVENTORY.md#components-60) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
 
 | Concern                 | Components                                                                                                | Important contract                                                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -809,6 +815,8 @@ Keep one shared shell/search/region mechanism, actual domain validators and the 
 ---
 
 ## 11. Albion data, observations and artwork
+
+**October27 implementation update:** The October27 editor consumes `source-equipment.json` (377 families/7510 exact variants) and `source-abilities.json` (604 base records), with provenance and output hashes in `docs/data/equipment-workbench-source.json`. `abilitiesFor` uses exact tier-source names and retained T4–T8 starter references without extrapolating beginner spells. Recipes now use `expanded-recipes.json`; its separate October12 factual/rights ledger is `docs/data/production-recipes-source.json`. Current-patch/unlock certification remains zero.
 
 ### Three independent data systems
 
@@ -886,6 +894,8 @@ All four generated scenery images are archived. No approved authentic scene repl
 ---
 
 ## 12. Calculator mechanics and independent examples
+
+**October27 implementation update:** October27 expands the earlier starter recipes to45 crafting/25 refining normal T4–T8 recipes. `production-profile.ts` derives historical five-city returns and five-node refining efficiency; estimated focus is fractional and station rounding stays unverified. `mechanicsProfile` persists with production scenarios; changing recipe/rates clears or resets derived assumptions. Preserve manual prices/fees. The old nine-recipe examples remain valid historical independent fixtures; see the latest `docs/engineering/CALCULATOR_PARITY.md` for supported scope.
 
 Reproduce **the declared accounting models**, not guessed Albion mechanics. Pure engines live in `src/lib/albion/calculations.ts`, `production.ts`, `transport.ts` and `recipes.ts`; UI lives in the corresponding calculator components. All prices/costs are silver unless explicitly labelled otherwise. Percentages enter as0–100-style percentage inputs, then divide by100; `returnedMaterialCost` alone takes a fraction0≤r<1. Keep these units distinct.
 
@@ -1000,7 +1010,7 @@ npm run qa:phase
 
 Run Node22 with PostgreSQL/Redis configured for the intended local development environment. `qa:phase` checks database connectivity, types, lint, units, game-data structure, disposable database integration, production build/browser suite, dependency advisories and bounded regional reads. It records each command’s actual PASS/FAIL and blocks browser execution if build fails. Never report a failed gate as passed because a targeted subset later passed; retain both scopes and rerun the required failed scope/gate.
 
-The browser suite launches its own production server on3000 when `E2E_PRODUCTION=1`; an existing review server must use a separate port and be stopped during builds. Concurrency is capped at two because real local budgets/services are shared. Do not weaken request limits or suppress console errors merely to increase parallelism. Keep screenshots and Lighthouse runs sequential with respect to full suites/builds.
+The browser suite launches its own production server on3000 when `E2E_PRODUCTION=1`; an existing review server must use a separate port and be stopped during builds. Concurrency is capped at two locally and one in hosted CI because real local budgets/services are shared. Do not weaken request limits or suppress console errors merely to increase parallelism. Keep screenshots and Lighthouse runs sequential with respect to full suites/builds.
 
 Required postchecks:
 
@@ -1147,7 +1157,7 @@ The chapter index, consolidated handbook, exact schema and machine inventory tog
 
 ## 16. Exact database reference
 
-Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
+Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
 
 ### User
 
@@ -1267,6 +1277,7 @@ model Build {
   version Int @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  equipmentSets Json @default("[]")
   equipment BuildEquipment[]
   versions BuildVersion[]
   @@index([visibility, updatedAt])
@@ -1741,7 +1752,7 @@ model MarketWatchItem {
 }
 ```
 
-### Ordered migrations (17)
+### Ordered migrations (18)
 
 | Migration                                      | SQL                                                                                                                                                                | SHA256                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
@@ -1762,6 +1773,7 @@ model MarketWatchItem {
 | `20261025225221_personal_data_invariants`      | [prisma/migrations/20261025225221_personal_data_invariants/migration.sql](../../prisma/migrations/20261025225221_personal_data_invariants/migration.sql)           | `c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e` |
 | `20261025225359_timer_null_state`              | [prisma/migrations/20261025225359_timer_null_state/migration.sql](../../prisma/migrations/20261025225359_timer_null_state/migration.sql)                           | `96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd` |
 | `20261026110000_market_watch_items`            | [prisma/migrations/20261026110000_market_watch_items/migration.sql](../../prisma/migrations/20261026110000_market_watch_items/migration.sql)                       | `f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9` |
+| `20261027040000_equipment_sets`                | [prisma/migrations/20261027040000_equipment_sets/migration.sql](../../prisma/migrations/20261027040000_equipment_sets/migration.sql)                               | `05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835` |
 
 ---
 
@@ -1806,7 +1818,7 @@ Generated from the current source, without private environment values or databas
 | `/tools/refining`         | [src/app/tools/refining/page.tsx](../../src/app/tools/refining/page.tsx)                 | No (server component)   |
 | `/tools/transporting`     | [src/app/tools/transporting/page.tsx](../../src/app/tools/transporting/page.tsx)         | No (server component)   |
 
-### HTTP routes (33)
+### HTTP routes (34)
 
 | Route                                        | Exported methods | Source                                                                                                                         |
 | -------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -1835,6 +1847,7 @@ Generated from the current source, without private environment values or databas
 | `/api/items`                                 | GET              | [src/app/api/items/route.ts](../../src/app/api/items/route.ts)                                                                 |
 | `/api/market-watch/[id]`                     | DELETE           | [src/app/api/market-watch/[id]/route.ts](../../src/app/api/market-watch/[id]/route.ts)                                         |
 | `/api/market-watch`                          | GET, POST        | [src/app/api/market-watch/route.ts](../../src/app/api/market-watch/route.ts)                                                   |
+| `/api/market/batch`                          | GET              | [src/app/api/market/batch/route.ts](../../src/app/api/market/batch/route.ts)                                                   |
 | `/api/market`                                | GET              | [src/app/api/market/route.ts](../../src/app/api/market/route.ts)                                                               |
 | `/api/opportunities`                         | GET              | [src/app/api/opportunities/route.ts](../../src/app/api/opportunities/route.ts)                                                 |
 | `/api/scenarios/[id]`                        | DELETE           | [src/app/api/scenarios/[id]/route.ts](../../src/app/api/scenarios/[id]/route.ts)                                               |
@@ -1844,7 +1857,7 @@ Generated from the current source, without private environment values or databas
 | `/api/timers`                                | GET, POST        | [src/app/api/timers/route.ts](../../src/app/api/timers/route.ts)                                                               |
 | `/api/transport/prices`                      | GET              | [src/app/api/transport/prices/route.ts](../../src/app/api/transport/prices/route.ts)                                           |
 
-### Components (55)
+### Components (60)
 
 | Source                                                                                         | Boundary                 | Exports                                                       |
 | ---------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------- |
@@ -1864,6 +1877,7 @@ Generated from the current source, without private environment values or databas
 | [src/components/editor-dialog.tsx](../../src/components/editor-dialog.tsx)                     | Client                   | `EditorDialog`                                                |
 | [src/components/equipment-overview.tsx](../../src/components/equipment-overview.tsx)           | Server-compatible module | `EquipmentGlyph`, `EquipmentOverview`                         |
 | [src/components/equipment-picker.tsx](../../src/components/equipment-picker.tsx)               | Client                   | `EquipmentPicker`                                             |
+| [src/components/equipment-sets.tsx](../../src/components/equipment-sets.tsx)                   | Client                   | `EquipmentSets`                                               |
 | [src/components/equipment-strip.tsx](../../src/components/equipment-strip.tsx)                 | Server-compatible module | `EquipmentStrip`                                              |
 | [src/components/equipment-workbench.tsx](../../src/components/equipment-workbench.tsx)         | Client                   | `EquipmentWorkbench`                                          |
 | [src/components/favorite-build-button.tsx](../../src/components/favorite-build-button.tsx)     | Client                   | `FavoriteBuildButton`                                         |
@@ -1884,6 +1898,8 @@ Generated from the current source, without private environment values or databas
 | [src/components/item-icon.tsx](../../src/components/item-icon.tsx)                             | Client                   | `ItemIcon`                                                    |
 | [src/components/item-market-link.tsx](../../src/components/item-market-link.tsx)               | Client                   | `ItemMarketLink`                                              |
 | [src/components/login-button.tsx](../../src/components/login-button.tsx)                       | Client                   | `LoginButton`, `LogoutButton`                                 |
+| [src/components/market-batch-quotes.tsx](../../src/components/market-batch-quotes.tsx)         | Client                   | `BatchQuote`, `quoteKey`, `useBatchQuotes`                    |
+| [src/components/market-research.tsx](../../src/components/market-research.tsx)                 | Client                   | `MarketResearch`                                              |
 | [src/components/market-watchlist.tsx](../../src/components/market-watchlist.tsx)               | Client                   | `MarketWatchlist`                                             |
 | [src/components/market.tsx](../../src/components/market.tsx)                                   | Client                   | `Market`                                                      |
 | [src/components/mobile-filter-panel.tsx](../../src/components/mobile-filter-panel.tsx)         | Client                   | `MobileFilterPanel`                                           |
@@ -1891,7 +1907,9 @@ Generated from the current source, without private environment values or databas
 | [src/components/opportunity-scanner.tsx](../../src/components/opportunity-scanner.tsx)         | Client                   | `OpportunityScanner`                                          |
 | [src/components/party-board.tsx](../../src/components/party-board.tsx)                         | Client                   | `PartyBoard`                                                  |
 | [src/components/production-calculator.tsx](../../src/components/production-calculator.tsx)     | Client                   | `ProductionCalculator`                                        |
+| [src/components/production-profile.tsx](../../src/components/production-profile.tsx)           | Client                   | `ProductionProfile`                                           |
 | [src/components/region-context.tsx](../../src/components/region-context.tsx)                   | Client                   | `RegionContext`, `useAtlasRegion`                             |
+| [src/components/saved-equipment-sets.tsx](../../src/components/saved-equipment-sets.tsx)       | Server-compatible module | `SavedEquipmentSets`                                          |
 | [src/components/scenario-controls.tsx](../../src/components/scenario-controls.tsx)             | Client                   | `ScenarioControls`                                            |
 | [src/components/settings-forms.tsx](../../src/components/settings-forms.tsx)                   | Client                   | `DeleteAccountForm`, `PreferencesForm`                        |
 | [src/components/shell.tsx](../../src/components/shell.tsx)                                     | Client                   | `Shell`                                                       |
@@ -1904,7 +1922,7 @@ Generated from the current source, without private environment values or databas
 | [src/components/wordmark.tsx](../../src/components/wordmark.tsx)                               | Server-compatible module | `Wordmark`                                                    |
 | [src/components/workspace-navigation.tsx](../../src/components/workspace-navigation.tsx)       | Client                   | `WorkspaceNavigation`                                         |
 
-### Domain and infrastructure modules (50)
+### Domain and infrastructure modules (54)
 
 | Source                                                                                       | Exports                                                                                                                                                                                                                                                                                       |
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1912,8 +1930,10 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/backoff.ts](../../src/lib/albion/backoff.ts)                                 | `retryDelay`                                                                                                                                                                                                                                                                                  |
 | [src/lib/albion/calculations.ts](../../src/lib/albion/calculations.ts)                       | `returnedMaterialCost`, `trade`, `tradeScenarioSchema`, `tradeSchema`                                                                                                                                                                                                                         |
 | [src/lib/albion/data-client.ts](../../src/lib/albion/data-client.ts)                         | `requestData`                                                                                                                                                                                                                                                                                 |
+| [src/lib/albion/equipment-abilities.ts](../../src/lib/albion/equipment-abilities.ts)         | `abilitiesFor`                                                                                                                                                                                                                                                                                |
 | [src/lib/albion/equipment-catalog.ts](../../src/lib/albion/equipment-catalog.ts)             | `EquipmentSlot`, `Family`, `equipmentFamilies`, `equipmentId`, `equipmentName`, `equipmentSlots`, `findEquipment`                                                                                                                                                                             |
-| [src/lib/albion/equipment-validation.ts](../../src/lib/albion/equipment-validation.ts)       | `equipmentChoice`                                                                                                                                                                                                                                                                             |
+| [src/lib/albion/equipment-sets.ts](../../src/lib/albion/equipment-sets.ts)                   | `EquipmentSet`, `equipmentSet`, `equipmentSets`, `loadoutTemplates`, `templateEquipment`                                                                                                                                                                                                      |
+| [src/lib/albion/equipment-validation.ts](../../src/lib/albion/equipment-validation.ts)       | `equipmentChoice`, `validHandCombination`                                                                                                                                                                                                                                                     |
 | [src/lib/albion/freshness.ts](../../src/lib/albion/freshness.ts)                             | `isStale`, `sourceTimestamp`                                                                                                                                                                                                                                                                  |
 | [src/lib/albion/history-client.ts](../../src/lib/albion/history-client.ts)                   | `getGold`, `getHistory`                                                                                                                                                                                                                                                                       |
 | [src/lib/albion/icon-cache.ts](../../src/lib/albion/icon-cache.ts)                           | `renderIcon`                                                                                                                                                                                                                                                                                  |
@@ -1921,7 +1941,9 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/item-renderer.ts](../../src/lib/albion/item-renderer.ts)                     | `itemIconUrl`                                                                                                                                                                                                                                                                                 |
 | [src/lib/albion/market-client.ts](../../src/lib/albion/market-client.ts)                     | `MarketPrice`, `getPrices`, `isStale`                                                                                                                                                                                                                                                         |
 | [src/lib/albion/market-preview.ts](../../src/lib/albion/market-preview.ts)                   | `PreviewPrice`, `observationLabel`, `parseMarketPreview`                                                                                                                                                                                                                                      |
+| [src/lib/albion/market-quotes.ts](../../src/lib/albion/market-quotes.ts)                     | `MarketPrice`, `QuoteSelection`, `batchQuery`, `fetchQuoteBatch`, `marketPrice`, `quoteResponse`                                                                                                                                                                                              |
 | [src/lib/albion/production-observations.ts](../../src/lib/albion/production-observations.ts) | `mergeProductionObservations`, `productionPriceQuery`                                                                                                                                                                                                                                         |
+| [src/lib/albion/production-profile.ts](../../src/lib/albion/production-profile.ts)           | `MechanicsProfile`, `mechanicsProfile`, `productionCities`, `refiningEfficiency`, `refiningSpecSource`, `returnProfileSource`, `sourcedReturnRates`                                                                                                                                           |
 | [src/lib/albion/production.ts](../../src/lib/albion/production.ts)                           | `ProductionInput`, `estimatedFocusCost`, `initialProduction`, `observation`, `production`, `productionOutputQuality`, `productionSchema`, `returnRateFromBonus`                                                                                                                               |
 | [src/lib/albion/quote-summary.ts](../../src/lib/albion/quote-summary.ts)                     | `summarizeQuotes`                                                                                                                                                                                                                                                                             |
 | [src/lib/albion/recipes.ts](../../src/lib/albion/recipes.ts)                                 | `Recipe`, `enchantable`, `recipeFor`, `recipes`                                                                                                                                                                                                                                               |

@@ -14,7 +14,7 @@ npm run qa:phase
 
 Run Node22 with PostgreSQL/Redis configured for the intended local development environment. `qa:phase` checks database connectivity, types, lint, units, game-data structure, disposable database integration, production build/browser suite, dependency advisories and bounded regional reads. It records each command’s actual PASS/FAIL and blocks browser execution if build fails. Never report a failed gate as passed because a targeted subset later passed; retain both scopes and rerun the required failed scope/gate.
 
-The browser suite launches its own production server on3000 when `E2E_PRODUCTION=1`; an existing review server must use a separate port and be stopped during builds. Concurrency is capped at two because real local budgets/services are shared. Do not weaken request limits or suppress console errors merely to increase parallelism. Keep screenshots and Lighthouse runs sequential with respect to full suites/builds.
+The browser suite launches its own production server on3000 when `E2E_PRODUCTION=1`; an existing review server must use a separate port and be stopped during builds. Concurrency is capped at two locally and one in hosted CI because real local budgets/services are shared. Do not weaken request limits or suppress console errors merely to increase parallelism. Keep screenshots and Lighthouse runs sequential with respect to full suites/builds.
 
 Required postchecks:
 

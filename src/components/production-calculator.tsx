@@ -1,5 +1,6 @@
 "use client";
 import "@/app/production-workspace.css";
+import { ProductionProfile } from "./production-profile";
 import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -57,7 +58,17 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
         : "Check quantities, percentages, enchantment path and focus cost.";
   }
   function update<K extends keyof ProductionInput>(key: K, value: ProductionInput[K]) {
-    setDraft((d) => ({ ...d, [key]: value }));
+    setDraft((d) => ({
+      ...d,
+      [key]: value,
+      ...(d.mechanicsProfile &&
+      ["recipeId", "returnRate", "focusReturnRate", "returns"].includes(key)
+        ? {
+            mechanicsProfile: null,
+            ...(key === "recipeId" ? { returnRate: 0, focusReturnRate: 0, returns: {} } : {}),
+          }
+        : {}),
+    }));
   }
   function price(id: string, quality: number, value: string) {
     setDraft((d) => ({
@@ -480,10 +491,30 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             )}
             <p className="production-coverage">
               {kind === "crafting"
-                ? "Nine T4 recipes · July source, current patch unverified."
-                : "Starter recipe coverage."}{" "}
+                ? "45 crafting recipes, T4–T8 · archived sources, current patch unverified."
+                : kind === "refining"
+                  ? "25 refining recipes, T4–T8 · archived sources, current patch unverified."
+                  : "Rune enchanting for the original supported equipment families."}{" "}
               Enter your own station and market assumptions.
             </p>
+            {kind !== "enchanting" && (
+              <ProductionProfile
+                kind={kind}
+                output={recipe.output}
+                baseFocus={recipe.baseFocus}
+                batches={draft.batches}
+                saved={draft.mechanicsProfile}
+                onApply={(profile, rates) =>
+                  setDraft((d) => ({
+                    ...d,
+                    mechanicsProfile: profile,
+                    returnRate: rates.returnRate,
+                    focusReturnRate: rates.focusReturnRate,
+                    returns: Object.fromEntries(recipe.ingredients.map((i) => [i.id, true])),
+                  }))
+                }
+              />
+            )}
             <details className="production-model-notes">
               <summary>Model notes & recipe source</summary>{" "}
               <p className="muted">

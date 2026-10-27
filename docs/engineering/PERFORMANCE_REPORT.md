@@ -41,3 +41,18 @@ The rebuilt homepage’s large weapon was the LCP element. Three comparable Ligh
 ## Task-led UX sample — October27
 
 The production homepage was measured once with local Chromium/CDP and Lighthouse13.5.0 mobile defaults after the task-led redesign: LCP2554ms, CLS0, Performance97, Accessibility100. Raw report: `.qa/ux-transform/lighthouse.json`; compact result: `.qa/ux-transform/lighthouse-summary.json`. There is no comparable before measurement for this architecture, so no speedup or field-performance claim is made. This sample is slightly above2.5s; the earlier Market Explorer target remains a separate requirement.
+
+## October27 functionality milestone — repeatable production comparison
+
+Three Lighthouse13.5 mobile samples per homepage and Market, before and after; a separate warmed after-series confirms the initial result. Exact settings, samples and caveats are in the [portable performance record](../design-review/product-milestone/performance.json). Local production Node22/Chromium/CDP, fresh Lighthouse profiles, warm services, sequential runs; no builds/browser suites alongside. This is lab simulation, not field p75 or INP.
+
+| Route    | Before median (range), ms | Warm after median (range), ms |
+| -------- | ------------------------- | ----------------------------- |
+| Homepage | 2554 (2554–2557)          | 2556 (2555–2556)              |
+| Market   | 2553 (2553–2554)          | 2553 (2553–2555)              |
+
+CLS0, Accessibility100 and Performance97 in these comparison samples. The initial after-series is retained, including a3073ms first-home sample; it is not concealed or used as an improvement baseline. Both medians still miss2500ms. No meaningful LCP speedup is established.
+
+The actual LCP elements are the homepage introductory paragraph and Market introductory paragraph. There is no external render-blocking stylesheet in these captures. A separate performance-only Lantern graph diagnosis places initial HTML, the Next runtime chunk and the preloaded UI font on the modeled critical path; its single2256ms result is **not** a comparable end-to-end success claim. The Market document was about92KB transferred /505KB decoded, including152KB inline CSS; runtime transfer remains material. Inter was safely trimmed from48256 to36992bytes, retaining all230 mapped glyphs and the used400–800 variable weights. Correctness/golden tests pass, but the unchanged measured LCP means font transfer alone does not resolve the remaining bottleneck. Root trace/graph artifact: `.qa/product-next/lcp-diagnosis.json`; raw before/after audits stay under `.qa/product-next`.
+
+The fresh Docker build again fails while writing `/home/bttw/.docker/buildx/activity` on a read-only mount. No permission weakening or alternate Docker-security bypass was attempted. Owned staging/field measurements, fuller rendering/load profiling and sub2.5s acceptance remain open.

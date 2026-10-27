@@ -1,3 +1,4 @@
+import { mechanicsProfile } from "./production-profile";
 import { z } from "zod";
 import { regionSchema, cities } from "./region-config";
 import { recipeFor } from "./recipes";
@@ -12,6 +13,7 @@ export const observation = z.object({
 });
 export const productionSchema = z
   .object({
+    mechanicsProfile: mechanicsProfile.nullable().default(null),
     kind: z.enum(["crafting", "refining", "enchanting"]),
     region: regionSchema,
     materialCity: z.enum(cities),
@@ -176,6 +178,7 @@ export function initialProduction(
   return {
     kind,
     region,
+    mechanicsProfile: null,
     materialCity: "Lymhurst",
     outputCity: "Lymhurst",
     recipeId: kind === "refining" ? "steel-bar-t4" : "battleaxe-t4",

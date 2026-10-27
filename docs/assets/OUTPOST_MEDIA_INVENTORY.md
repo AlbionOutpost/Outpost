@@ -17,3 +17,5 @@ For authentic replacements record original source/creator, permission or license
 Original interface emblems and the unmodified official Discord sign-in symbol are recorded in the [brand interaction review](../design-review/brand-interaction/README.md#media-provenance), with source, retrieval date, rights limitations and checksum. These interface marks do not add verified Albion game data or authentic scene rights.
 
 The [interactive equipment composition](../design-review/playful-ui/README.md) uses existing validated renderer IDs and original task glyphs. No new game scene or currency-art license is claimed. Direct SILVER/GOLD renderer probes did not yield usable artwork; no substitute is presented as an authentic currency asset.
+
+The October27 Inter delivery variant at `public/fonts/inter-latin-400-800.woff2` retains all230 mapped characters and the used400–800 variable range. `scripts/prepare-ui-font.py` generates it from the locked Fontsource file using FontTools; source48256bytes, output36992bytes. Existing `public/licenses/inter-OFL.txt` applies. No glyph/design replacement or LCP speedup is asserted.

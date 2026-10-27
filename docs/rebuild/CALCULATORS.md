@@ -1,5 +1,7 @@
 # Calculator mechanics and independent examples
 
+**October27 implementation update:** October27 expands the earlier starter recipes to45 crafting/25 refining normal T4–T8 recipes. `production-profile.ts` derives historical five-city returns and five-node refining efficiency; estimated focus is fractional and station rounding stays unverified. `mechanicsProfile` persists with production scenarios; changing recipe/rates clears or resets derived assumptions. Preserve manual prices/fees. The old nine-recipe examples remain valid historical independent fixtures; see the latest `docs/engineering/CALCULATOR_PARITY.md` for supported scope.
+
 Reproduce **the declared accounting models**, not guessed Albion mechanics. Pure engines live in `src/lib/albion/calculations.ts`, `production.ts`, `transport.ts` and `recipes.ts`; UI lives in the corresponding calculator components. All prices/costs are silver unless explicitly labelled otherwise. Percentages enter as0–100-style percentage inputs, then divide by100; `returnedMaterialCost` alone takes a fraction0≤r<1. Keep these units distinct.
 
 ## Manual trade

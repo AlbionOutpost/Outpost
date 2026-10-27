@@ -82,6 +82,9 @@ export function PartyBoard({
                   );
                 })}
               </div>
+              {!!member.equipmentSets?.length && (
+                <span className="muted">{member.equipmentSets.length} spare sets</span>
+              )}
               <div className="party-card-status">
                 <span>{member.playerName ? "Assigned" : "Unassigned"}</span>
                 <span>

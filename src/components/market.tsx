@@ -4,6 +4,7 @@ import { History } from "./history";
 import Link from "next/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
+import { MarketResearch } from "./market-research";
 import { MarketWatchlist } from "./market-watchlist";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
@@ -490,6 +491,7 @@ export function Market() {
         <div id="market-history-research" hidden={!hasResult && !researchOpen}>
           <History item={item} quality={Number(quality)} />
         </div>
+        <MarketResearch region={region} itemId={item} quality={Number(quality)} />
         <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
       </aside>
     </div>

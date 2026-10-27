@@ -92,6 +92,8 @@ it("known factual names do not imply unverified equipment abilities", async () =
   const { equipmentName, findEquipment } = await import("../src/lib/albion/equipment-catalog");
   expect(equipmentName("T6_MAIN_SWORD")).toBe("Broadsword · T6.0");
   expect(equipmentName("T6_2H_BOW@2")).toBe("Bow · T6.2");
-  expect(findEquipment("T6_2H_BOW@2")).toBeNull();
+  expect(findEquipment("T6_2H_BOW@2")).toMatchObject({
+    family: { code: "2H_BOW", twoHanded: true, abilities: {} },
+  });
   expect(equipmentName("T4_UNKNOWN_TEST")).toBe("T4_UNKNOWN_TEST");
 });

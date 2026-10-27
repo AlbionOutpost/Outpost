@@ -897,3 +897,27 @@
     min-height: 44px;
   }
 }
+
+/* Keep a large source catalog beside the set rather than stretching the editor. */
+.gear-browser .item-browser-grid {
+  max-height: 350px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px;
+}
+.gear-browser-paging {
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.gear-browser-paging .button {
+  min-height: 38px;
+  padding: 8px 10px;
+}
+
+/* Full comp sets need tier labels that follow wrapped names at narrow widths. */
+.gear-studio:not(.build-gear-studio) .slot-tier {
+  position: static;
+  display: block;
+}

@@ -1,0 +1,1492 @@
+[
+  {
+    "id": "broadsword-t4",
+    "name": "T4 Broadsword",
+    "kind": "crafting",
+    "output": "T4_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 1286,
+    "ingredients": [
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "broadsword-t5",
+    "name": "T5 Broadsword",
+    "kind": "crafting",
+    "output": "T5_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 2251,
+    "ingredients": [
+      {
+        "id": "T5_METALBAR",
+        "name": "Titanium Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_MAIN_SWORD"
+  },
+  {
+    "id": "broadsword-t6",
+    "name": "T6 Broadsword",
+    "kind": "crafting",
+    "output": "T6_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 3939,
+    "ingredients": [
+      {
+        "id": "T6_METALBAR",
+        "name": "Runite Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_MAIN_SWORD"
+  },
+  {
+    "id": "broadsword-t7",
+    "name": "T7 Broadsword",
+    "kind": "crafting",
+    "output": "T7_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 6893,
+    "ingredients": [
+      {
+        "id": "T7_METALBAR",
+        "name": "Meteorite Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_MAIN_SWORD"
+  },
+  {
+    "id": "broadsword-t8",
+    "name": "T8 Broadsword",
+    "kind": "crafting",
+    "output": "T8_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 12064,
+    "ingredients": [
+      {
+        "id": "T8_METALBAR",
+        "name": "Adamantium Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T8_LEATHER",
+        "name": "Fortified Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_MAIN_SWORD"
+  },
+  {
+    "id": "battleaxe-t4",
+    "name": "T4 Battleaxe",
+    "kind": "crafting",
+    "output": "T4_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 1286,
+    "ingredients": [
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "battleaxe-t5",
+    "name": "T5 Battleaxe",
+    "kind": "crafting",
+    "output": "T5_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 2251,
+    "ingredients": [
+      {
+        "id": "T5_PLANKS",
+        "name": "Cedar Planks",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_METALBAR",
+        "name": "Titanium Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_MAIN_AXE"
+  },
+  {
+    "id": "battleaxe-t6",
+    "name": "T6 Battleaxe",
+    "kind": "crafting",
+    "output": "T6_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 3939,
+    "ingredients": [
+      {
+        "id": "T6_PLANKS",
+        "name": "Bloodoak Planks",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_METALBAR",
+        "name": "Runite Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_MAIN_AXE"
+  },
+  {
+    "id": "battleaxe-t7",
+    "name": "T7 Battleaxe",
+    "kind": "crafting",
+    "output": "T7_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 6893,
+    "ingredients": [
+      {
+        "id": "T7_PLANKS",
+        "name": "Ashenbark Planks",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_METALBAR",
+        "name": "Meteorite Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_MAIN_AXE"
+  },
+  {
+    "id": "battleaxe-t8",
+    "name": "T8 Battleaxe",
+    "kind": "crafting",
+    "output": "T8_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 12064,
+    "ingredients": [
+      {
+        "id": "T8_PLANKS",
+        "name": "Whitewood Planks",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T8_METALBAR",
+        "name": "Adamantium Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_MAIN_AXE"
+  },
+  {
+    "id": "bow-t4",
+    "name": "T4 Bow",
+    "kind": "crafting",
+    "output": "T4_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 1715,
+    "ingredients": [
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "bow-t5",
+    "name": "T5 Bow",
+    "kind": "crafting",
+    "output": "T5_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 3001,
+    "ingredients": [
+      {
+        "id": "T5_PLANKS",
+        "name": "Cedar Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_2H_BOW"
+  },
+  {
+    "id": "bow-t6",
+    "name": "T6 Bow",
+    "kind": "crafting",
+    "output": "T6_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 5252,
+    "ingredients": [
+      {
+        "id": "T6_PLANKS",
+        "name": "Bloodoak Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_2H_BOW"
+  },
+  {
+    "id": "bow-t7",
+    "name": "T7 Bow",
+    "kind": "crafting",
+    "output": "T7_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 9191,
+    "ingredients": [
+      {
+        "id": "T7_PLANKS",
+        "name": "Ashenbark Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_2H_BOW"
+  },
+  {
+    "id": "bow-t8",
+    "name": "T8 Bow",
+    "kind": "crafting",
+    "output": "T8_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 16085,
+    "ingredients": [
+      {
+        "id": "T8_PLANKS",
+        "name": "Whitewood Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_2H_BOW"
+  },
+  {
+    "id": "shield-t4",
+    "name": "T4 Shield",
+    "kind": "crafting",
+    "output": "T4_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json"
+  },
+  {
+    "id": "shield-t5",
+    "name": "T5 Shield",
+    "kind": "crafting",
+    "output": "T5_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 750,
+    "ingredients": [
+      {
+        "id": "T5_PLANKS",
+        "name": "Cedar Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_METALBAR",
+        "name": "Titanium Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_OFF_SHIELD"
+  },
+  {
+    "id": "shield-t6",
+    "name": "T6 Shield",
+    "kind": "crafting",
+    "output": "T6_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 1313,
+    "ingredients": [
+      {
+        "id": "T6_PLANKS",
+        "name": "Bloodoak Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_METALBAR",
+        "name": "Runite Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_OFF_SHIELD"
+  },
+  {
+    "id": "shield-t7",
+    "name": "T7 Shield",
+    "kind": "crafting",
+    "output": "T7_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 2298,
+    "ingredients": [
+      {
+        "id": "T7_PLANKS",
+        "name": "Ashenbark Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_METALBAR",
+        "name": "Meteorite Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_OFF_SHIELD"
+  },
+  {
+    "id": "shield-t8",
+    "name": "T8 Shield",
+    "kind": "crafting",
+    "output": "T8_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 4021,
+    "ingredients": [
+      {
+        "id": "T8_PLANKS",
+        "name": "Whitewood Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T8_METALBAR",
+        "name": "Adamantium Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_OFF_SHIELD"
+  },
+  {
+    "id": "scholar-cowl-t4",
+    "name": "T4 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T4_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/head.json"
+  },
+  {
+    "id": "scholar-cowl-t5",
+    "name": "T5 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T5_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 750,
+    "ingredients": [
+      {
+        "id": "T5_CLOTH",
+        "name": "Ornate Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_HEAD_CLOTH_SET1"
+  },
+  {
+    "id": "scholar-cowl-t6",
+    "name": "T6 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T6_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 1313,
+    "ingredients": [
+      {
+        "id": "T6_CLOTH",
+        "name": "Lavish Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_HEAD_CLOTH_SET1"
+  },
+  {
+    "id": "scholar-cowl-t7",
+    "name": "T7 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T7_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 2298,
+    "ingredients": [
+      {
+        "id": "T7_CLOTH",
+        "name": "Opulent Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_HEAD_CLOTH_SET1"
+  },
+  {
+    "id": "scholar-cowl-t8",
+    "name": "T8 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T8_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 4021,
+    "ingredients": [
+      {
+        "id": "T8_CLOTH",
+        "name": "Baroque Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_HEAD_CLOTH_SET1"
+  },
+  {
+    "id": "mercenary-jacket-t4",
+    "name": "T4 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T4_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 858,
+    "ingredients": [
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json"
+  },
+  {
+    "id": "mercenary-jacket-t5",
+    "name": "T5 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T5_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 1501,
+    "ingredients": [
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_ARMOR_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-jacket-t6",
+    "name": "T6 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T6_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 2626,
+    "ingredients": [
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_ARMOR_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-jacket-t7",
+    "name": "T7 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T7_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 4596,
+    "ingredients": [
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_ARMOR_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-jacket-t8",
+    "name": "T8 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T8_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 8042,
+    "ingredients": [
+      {
+        "id": "T8_LEATHER",
+        "name": "Fortified Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_ARMOR_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-shoes-t4",
+    "name": "T4 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T4_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/shoes.json"
+  },
+  {
+    "id": "mercenary-shoes-t5",
+    "name": "T5 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T5_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 750,
+    "ingredients": [
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_SHOES_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-shoes-t6",
+    "name": "T6 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T6_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 1313,
+    "ingredients": [
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_SHOES_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-shoes-t7",
+    "name": "T7 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T7_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 2298,
+    "ingredients": [
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_SHOES_LEATHER_SET1"
+  },
+  {
+    "id": "mercenary-shoes-t8",
+    "name": "T8 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T8_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 4021,
+    "ingredients": [
+      {
+        "id": "T8_LEATHER",
+        "name": "Fortified Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_SHOES_LEATHER_SET1"
+  },
+  {
+    "id": "cape-t4",
+    "name": "T4 Cape",
+    "kind": "crafting",
+    "output": "T4_CAPE",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json"
+  },
+  {
+    "id": "cape-t5",
+    "name": "T5 Cape",
+    "kind": "crafting",
+    "output": "T5_CAPE",
+    "outputCount": 1,
+    "baseFocus": 750,
+    "ingredients": [
+      {
+        "id": "T5_CLOTH",
+        "name": "Ornate Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_CAPE"
+  },
+  {
+    "id": "cape-t6",
+    "name": "T6 Cape",
+    "kind": "crafting",
+    "output": "T6_CAPE",
+    "outputCount": 1,
+    "baseFocus": 1313,
+    "ingredients": [
+      {
+        "id": "T6_CLOTH",
+        "name": "Lavish Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_CAPE"
+  },
+  {
+    "id": "cape-t7",
+    "name": "T7 Cape",
+    "kind": "crafting",
+    "output": "T7_CAPE",
+    "outputCount": 1,
+    "baseFocus": 2298,
+    "ingredients": [
+      {
+        "id": "T7_CLOTH",
+        "name": "Opulent Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_CAPE"
+  },
+  {
+    "id": "cape-t8",
+    "name": "T8 Cape",
+    "kind": "crafting",
+    "output": "T8_CAPE",
+    "outputCount": 1,
+    "baseFocus": 4021,
+    "ingredients": [
+      {
+        "id": "T8_CLOTH",
+        "name": "Baroque Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T8_LEATHER",
+        "name": "Fortified Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_CAPE"
+  },
+  {
+    "id": "bag-t4",
+    "name": "T4 Bag",
+    "kind": "crafting",
+    "output": "T4_BAG",
+    "outputCount": 1,
+    "baseFocus": 858,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/bag.json"
+  },
+  {
+    "id": "bag-t5",
+    "name": "T5 Bag",
+    "kind": "crafting",
+    "output": "T5_BAG",
+    "outputCount": 1,
+    "baseFocus": 1501,
+    "ingredients": [
+      {
+        "id": "T5_CLOTH",
+        "name": "Ornate Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_BAG"
+  },
+  {
+    "id": "bag-t6",
+    "name": "T6 Bag",
+    "kind": "crafting",
+    "output": "T6_BAG",
+    "outputCount": 1,
+    "baseFocus": 2626,
+    "ingredients": [
+      {
+        "id": "T6_CLOTH",
+        "name": "Lavish Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_BAG"
+  },
+  {
+    "id": "bag-t7",
+    "name": "T7 Bag",
+    "kind": "crafting",
+    "output": "T7_BAG",
+    "outputCount": 1,
+    "baseFocus": 4596,
+    "ingredients": [
+      {
+        "id": "T7_CLOTH",
+        "name": "Opulent Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_BAG"
+  },
+  {
+    "id": "bag-t8",
+    "name": "T8 Bag",
+    "kind": "crafting",
+    "output": "T8_BAG",
+    "outputCount": 1,
+    "baseFocus": 8042,
+    "ingredients": [
+      {
+        "id": "T8_CLOTH",
+        "name": "Baroque Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T8_LEATHER",
+        "name": "Fortified Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_BAG"
+  },
+  {
+    "id": "steel-bar-t4",
+    "name": "T4 Steel Bar",
+    "kind": "refining",
+    "output": "T4_METALBAR",
+    "outputCount": 1,
+    "baseFocus": 54,
+    "ingredients": [
+      {
+        "id": "T4_ORE",
+        "name": "Iron Ore",
+        "quantity": 2,
+        "quality": "normal"
+      },
+      {
+        "id": "T3_METALBAR",
+        "name": "Bronze Bar",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_METALBAR"
+  },
+  {
+    "id": "planks-t4",
+    "name": "T4 Pine Planks",
+    "kind": "refining",
+    "output": "T4_PLANKS",
+    "outputCount": 1,
+    "baseFocus": 54,
+    "ingredients": [
+      {
+        "id": "T4_WOOD",
+        "name": "Pine Logs",
+        "quantity": 2,
+        "quality": "normal"
+      },
+      {
+        "id": "T3_PLANKS",
+        "name": "Chestnut Planks",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_PLANKS"
+  },
+  {
+    "id": "cloth-t4",
+    "name": "T4 Fine Cloth",
+    "kind": "refining",
+    "output": "T4_CLOTH",
+    "outputCount": 1,
+    "baseFocus": 54,
+    "ingredients": [
+      {
+        "id": "T4_FIBER",
+        "name": "Hemp",
+        "quantity": 2,
+        "quality": "normal"
+      },
+      {
+        "id": "T3_CLOTH",
+        "name": "Neat Cloth",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_CLOTH"
+  },
+  {
+    "id": "leather-t4",
+    "name": "T4 Worked Leather",
+    "kind": "refining",
+    "output": "T4_LEATHER",
+    "outputCount": 1,
+    "baseFocus": 54,
+    "ingredients": [
+      {
+        "id": "T4_HIDE",
+        "name": "Medium Hide",
+        "quantity": 2,
+        "quality": "normal"
+      },
+      {
+        "id": "T3_LEATHER",
+        "name": "Thick Leather",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_LEATHER"
+  },
+  {
+    "id": "stoneblock-t4",
+    "name": "T4 Travertine Block",
+    "kind": "refining",
+    "output": "T4_STONEBLOCK",
+    "outputCount": 1,
+    "baseFocus": 54,
+    "ingredients": [
+      {
+        "id": "T4_ROCK",
+        "name": "Travertine",
+        "quantity": 2,
+        "quality": "normal"
+      },
+      {
+        "id": "T3_STONEBLOCK",
+        "name": "Sandstone Block",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_STONEBLOCK"
+  },
+  {
+    "id": "metalbar-t5",
+    "name": "T5 Titanium Steel Bar",
+    "kind": "refining",
+    "output": "T5_METALBAR",
+    "outputCount": 1,
+    "baseFocus": 94,
+    "ingredients": [
+      {
+        "id": "T5_ORE",
+        "name": "Titanium Ore",
+        "quantity": 3,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_METALBAR"
+  },
+  {
+    "id": "planks-t5",
+    "name": "T5 Cedar Planks",
+    "kind": "refining",
+    "output": "T5_PLANKS",
+    "outputCount": 1,
+    "baseFocus": 94,
+    "ingredients": [
+      {
+        "id": "T5_WOOD",
+        "name": "Cedar Logs",
+        "quantity": 3,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_PLANKS"
+  },
+  {
+    "id": "cloth-t5",
+    "name": "T5 Ornate Cloth",
+    "kind": "refining",
+    "output": "T5_CLOTH",
+    "outputCount": 1,
+    "baseFocus": 94,
+    "ingredients": [
+      {
+        "id": "T5_FIBER",
+        "name": "Skyflower",
+        "quantity": 3,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_CLOTH"
+  },
+  {
+    "id": "leather-t5",
+    "name": "T5 Cured Leather",
+    "kind": "refining",
+    "output": "T5_LEATHER",
+    "outputCount": 1,
+    "baseFocus": 94,
+    "ingredients": [
+      {
+        "id": "T5_HIDE",
+        "name": "Heavy Hide",
+        "quantity": 3,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_LEATHER"
+  },
+  {
+    "id": "stoneblock-t5",
+    "name": "T5 Granite Block",
+    "kind": "refining",
+    "output": "T5_STONEBLOCK",
+    "outputCount": 1,
+    "baseFocus": 94,
+    "ingredients": [
+      {
+        "id": "T5_ROCK",
+        "name": "Granite",
+        "quantity": 3,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_STONEBLOCK",
+        "name": "Travertine Block",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_STONEBLOCK"
+  },
+  {
+    "id": "metalbar-t6",
+    "name": "T6 Runite Steel Bar",
+    "kind": "refining",
+    "output": "T6_METALBAR",
+    "outputCount": 1,
+    "baseFocus": 164,
+    "ingredients": [
+      {
+        "id": "T6_ORE",
+        "name": "Runite Ore",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_METALBAR",
+        "name": "Titanium Steel Bar",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_METALBAR"
+  },
+  {
+    "id": "planks-t6",
+    "name": "T6 Bloodoak Planks",
+    "kind": "refining",
+    "output": "T6_PLANKS",
+    "outputCount": 1,
+    "baseFocus": 164,
+    "ingredients": [
+      {
+        "id": "T6_WOOD",
+        "name": "Bloodoak Logs",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_PLANKS",
+        "name": "Cedar Planks",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_PLANKS"
+  },
+  {
+    "id": "cloth-t6",
+    "name": "T6 Lavish Cloth",
+    "kind": "refining",
+    "output": "T6_CLOTH",
+    "outputCount": 1,
+    "baseFocus": 164,
+    "ingredients": [
+      {
+        "id": "T6_FIBER",
+        "name": "Amberleaf Cotton",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_CLOTH",
+        "name": "Ornate Cloth",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_CLOTH"
+  },
+  {
+    "id": "leather-t6",
+    "name": "T6 Hardened Leather",
+    "kind": "refining",
+    "output": "T6_LEATHER",
+    "outputCount": 1,
+    "baseFocus": 164,
+    "ingredients": [
+      {
+        "id": "T6_HIDE",
+        "name": "Robust Hide",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_LEATHER",
+        "name": "Cured Leather",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_LEATHER"
+  },
+  {
+    "id": "stoneblock-t6",
+    "name": "T6 Slate Block",
+    "kind": "refining",
+    "output": "T6_STONEBLOCK",
+    "outputCount": 1,
+    "baseFocus": 164,
+    "ingredients": [
+      {
+        "id": "T6_ROCK",
+        "name": "Slate",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T5_STONEBLOCK",
+        "name": "Granite Block",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_STONEBLOCK"
+  },
+  {
+    "id": "metalbar-t7",
+    "name": "T7 Meteorite Steel Bar",
+    "kind": "refining",
+    "output": "T7_METALBAR",
+    "outputCount": 1,
+    "baseFocus": 287,
+    "ingredients": [
+      {
+        "id": "T7_ORE",
+        "name": "Meteorite Ore",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_METALBAR",
+        "name": "Runite Steel Bar",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_METALBAR"
+  },
+  {
+    "id": "planks-t7",
+    "name": "T7 Ashenbark Planks",
+    "kind": "refining",
+    "output": "T7_PLANKS",
+    "outputCount": 1,
+    "baseFocus": 287,
+    "ingredients": [
+      {
+        "id": "T7_WOOD",
+        "name": "Ashenbark Logs",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_PLANKS",
+        "name": "Bloodoak Planks",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_PLANKS"
+  },
+  {
+    "id": "cloth-t7",
+    "name": "T7 Opulent Cloth",
+    "kind": "refining",
+    "output": "T7_CLOTH",
+    "outputCount": 1,
+    "baseFocus": 287,
+    "ingredients": [
+      {
+        "id": "T7_FIBER",
+        "name": "Sunflax",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_CLOTH",
+        "name": "Lavish Cloth",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_CLOTH"
+  },
+  {
+    "id": "leather-t7",
+    "name": "T7 Reinforced Leather",
+    "kind": "refining",
+    "output": "T7_LEATHER",
+    "outputCount": 1,
+    "baseFocus": 287,
+    "ingredients": [
+      {
+        "id": "T7_HIDE",
+        "name": "Thick Hide",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_LEATHER",
+        "name": "Hardened Leather",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_LEATHER"
+  },
+  {
+    "id": "stoneblock-t7",
+    "name": "T7 Basalt Block",
+    "kind": "refining",
+    "output": "T7_STONEBLOCK",
+    "outputCount": 1,
+    "baseFocus": 287,
+    "ingredients": [
+      {
+        "id": "T7_ROCK",
+        "name": "Basalt",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T6_STONEBLOCK",
+        "name": "Slate Block",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_STONEBLOCK"
+  },
+  {
+    "id": "metalbar-t8",
+    "name": "T8 Adamantium Steel Bar",
+    "kind": "refining",
+    "output": "T8_METALBAR",
+    "outputCount": 1,
+    "baseFocus": 503,
+    "ingredients": [
+      {
+        "id": "T8_ORE",
+        "name": "Adamantium Ore",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_METALBAR",
+        "name": "Meteorite Steel Bar",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_METALBAR"
+  },
+  {
+    "id": "planks-t8",
+    "name": "T8 Whitewood Planks",
+    "kind": "refining",
+    "output": "T8_PLANKS",
+    "outputCount": 1,
+    "baseFocus": 503,
+    "ingredients": [
+      {
+        "id": "T8_WOOD",
+        "name": "Whitewood Logs",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_PLANKS",
+        "name": "Ashenbark Planks",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_PLANKS"
+  },
+  {
+    "id": "cloth-t8",
+    "name": "T8 Baroque Cloth",
+    "kind": "refining",
+    "output": "T8_CLOTH",
+    "outputCount": 1,
+    "baseFocus": 503,
+    "ingredients": [
+      {
+        "id": "T8_FIBER",
+        "name": "Ghost Hemp",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_CLOTH",
+        "name": "Opulent Cloth",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_CLOTH"
+  },
+  {
+    "id": "leather-t8",
+    "name": "T8 T8_LEATHER",
+    "kind": "refining",
+    "output": "T8_LEATHER",
+    "outputCount": 1,
+    "baseFocus": 503,
+    "ingredients": [
+      {
+        "id": "T8_HIDE",
+        "name": "Resilient Hide",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_LEATHER",
+        "name": "Reinforced Leather",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_LEATHER"
+  },
+  {
+    "id": "stoneblock-t8",
+    "name": "T8 Marble Block",
+    "kind": "refining",
+    "output": "T8_STONEBLOCK",
+    "outputCount": 1,
+    "baseFocus": 503,
+    "ingredients": [
+      {
+        "id": "T8_ROCK",
+        "name": "Marble",
+        "quantity": 5,
+        "quality": "normal"
+      },
+      {
+        "id": "T7_STONEBLOCK",
+        "name": "Basalt Block",
+        "quantity": 1,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_STONEBLOCK"
+  }
+]

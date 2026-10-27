@@ -1,0 +1,136 @@
+"use client";
+import { useState } from "react";
+import {
+  equipmentSet,
+  loadoutTemplates,
+  templateEquipment,
+  type EquipmentSet,
+} from "@/lib/albion/equipment-sets";
+import type { EquipmentChoice } from "@/lib/compositions/validation";
+import { EquipmentStrip } from "./equipment-strip";
+export function EquipmentSets({
+  equipment,
+  sets,
+  onEquipment,
+  onSets,
+}: {
+  equipment: EquipmentChoice[];
+  sets: EquipmentSet[];
+  onEquipment: (rows: EquipmentChoice[]) => void;
+  onSets: (sets: EquipmentSet[]) => void;
+}) {
+  const [name, setName] = useState("");
+  const [template, setTemplate] = useState("battleaxe");
+  const [message, setMessage] = useState("");
+  function restore(set: EquipmentSet) {
+    if (
+      equipment.length &&
+      !window.confirm(
+        "Replace the active equipment with this set? Save your active set first if you want to keep it.",
+      )
+    )
+      return;
+    onEquipment(structuredClone(set.equipment));
+    setMessage(`${set.name} applied. Save the build or comp to persist your changes.`);
+  }
+  return (
+    <section className="equipment-set-tools" aria-label="Equipment sets and templates">
+      <details>
+        <summary>
+          Templates & spare sets <span>{sets.length}/5 saved</span>
+        </summary>
+        <div className="set-template-controls">
+          <label>
+            Starting template
+            <select value={template} onChange={(e) => setTemplate(e.target.value)}>
+              {loadoutTemplates.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() =>
+              restore({
+                id: crypto.randomUUID(),
+                name: loadoutTemplates.find((t) => t.id === template)!.name,
+                equipment: templateEquipment(template),
+              })
+            }
+          >
+            Apply template
+          </button>
+        </div>
+        <p className="muted">{loadoutTemplates.find((t) => t.id === template)?.description}</p>
+        <div className="set-template-controls">
+          <label>
+            Spare set name
+            <input
+              maxLength={60}
+              placeholder="Boss swap, budget set, substitute…"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
+          <button
+            type="button"
+            className="button secondary"
+            disabled={!equipment.length || sets.length >= 5}
+            onClick={() => {
+              const parsed = equipmentSet.safeParse({ id: crypto.randomUUID(), name, equipment });
+              if (!parsed.success) {
+                setMessage("Name the set and select supported equipment first.");
+                return;
+              }
+              onSets([...sets, structuredClone(parsed.data)]);
+              setName("");
+              setMessage("Spare set added to the draft. Save the build or comp to keep it.");
+            }}
+          >
+            Save active as spare set
+          </button>
+        </div>
+        <div className="saved-equipment-sets">
+          {sets.map((set) => (
+            <article key={set.id}>
+              <div className="section-heading">
+                <h3>{set.name}</h3>
+                <div className="actions">
+                  <button
+                    type="button"
+                    className="button secondary"
+                    aria-label={`Apply ${set.name} set`}
+                    onClick={() => restore(set)}
+                  >
+                    Apply set
+                  </button>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    aria-label={`Remove ${set.name} set`}
+                    onClick={() => {
+                      onSets(sets.filter((s) => s.id !== set.id));
+                      setMessage("Spare set removed from the draft.");
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <EquipmentStrip equipment={set.equipment} />
+              <small>
+                {set.equipment.length}/10 slots · abilities, quality and item alternatives included
+              </small>
+            </article>
+          ))}
+        </div>
+      </details>
+      <p role="status" className="muted">
+        {message}
+      </p>
+    </section>
+  );
+}

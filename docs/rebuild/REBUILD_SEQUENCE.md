@@ -4,7 +4,7 @@ Use this dependency order whether restoring the repository or reimplementing the
 
 ## 1. Preserve inputs and establish the baseline
 
-Obtain the private repository at the documented implementation baseline or a reviewed later commit. Retain source, lockfile, public/license/original assets, pinned data/manifests and all17 migrations. Read root AGENTS and local Next documentation. Run the rebuild inventory check to identify source drift. Keep credentials/private DB contents separate; record any unavailable input before guessing.
+Obtain the private repository at the documented implementation baseline or a reviewed later commit. Retain source, lockfile, public/license/original assets, pinned data/manifests and all18 migrations. Read root AGENTS and local Next documentation. Run the rebuild inventory check to identify source drift. Keep credentials/private DB contents separate; record any unavailable input before guessing.
 
 Result: a legitimate writable checkout with understood source/version, original assets and no fabricated account/market content. If original Git metadata is protected, clone the actual remote into an authorized writable location; do not initialize replacement history or reset existing user changes.
 

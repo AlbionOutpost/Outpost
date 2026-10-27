@@ -1,4 +1,5 @@
 "use client";
+import { SavedEquipmentSets } from "./saved-equipment-sets";
 import { PartyBoard } from "./party-board";
 import { CompositionPngExport } from "./composition-png-export";
 import { EquipmentStrip } from "./equipment-strip";
@@ -185,6 +186,7 @@ export function CompositionView({
                 {!s.equipment.length && <li className="muted">Equipment not assigned</li>}
               </ul>
             )}
+            {mode === "detailed" && <SavedEquipmentSets sets={s.equipmentSets} />}
             {mode === "detailed" && s.notes && <p className="preserve">{s.notes}</p>}
           </article>
         ))}

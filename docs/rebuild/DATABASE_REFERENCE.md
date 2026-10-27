@@ -1,6 +1,6 @@
 # Exact database reference
 
-Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
+Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
 
 ## User
 
@@ -120,6 +120,7 @@ model Build {
   version Int @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  equipmentSets Json @default("[]")
   equipment BuildEquipment[]
   versions BuildVersion[]
   @@index([visibility, updatedAt])
@@ -594,7 +595,7 @@ model MarketWatchItem {
 }
 ```
 
-## Ordered migrations (17)
+## Ordered migrations (18)
 
 | Migration                                      | SQL                                                                                                                                                                | SHA256                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
@@ -615,3 +616,4 @@ model MarketWatchItem {
 | `20261025225221_personal_data_invariants`      | [prisma/migrations/20261025225221_personal_data_invariants/migration.sql](../../prisma/migrations/20261025225221_personal_data_invariants/migration.sql)           | `c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e` |
 | `20261025225359_timer_null_state`              | [prisma/migrations/20261025225359_timer_null_state/migration.sql](../../prisma/migrations/20261025225359_timer_null_state/migration.sql)                           | `96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd` |
 | `20261026110000_market_watch_items`            | [prisma/migrations/20261026110000_market_watch_items/migration.sql](../../prisma/migrations/20261026110000_market_watch_items/migration.sql)                       | `f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9` |
+| `20261027040000_equipment_sets`                | [prisma/migrations/20261027040000_equipment_sets/migration.sql](../../prisma/migrations/20261027040000_equipment_sets/migration.sql)                               | `05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835` |

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-27T01:55:23.138Z",
+  "phase_checked_at": "2026-10-27T03:49:12.511Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,67 +11,67 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 1.49
+      "seconds": 1.36
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 3.61
+      "seconds": 3.82
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.28
+      "seconds": 2.3
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.14
+      "seconds": 0.2
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 2.97
+      "seconds": 2.99
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 3.36
+      "seconds": 3.26
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 79.57
+      "seconds": 84.35
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.35
+      "seconds": 0.36
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.33
+      "seconds": 0.32
     }
   ],
   "counts": {
-    "unit_passed": 143,
-    "browser_passed": 72,
+    "unit_passed": 156,
+    "browser_passed": 76,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-27T01:58:26.738Z",
-    "scope": "Repository-defined starter data, not a live database audit or complete game denominator.",
+    "checkedAt": "2026-10-27T03:52:05.734Z",
+    "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
-      "authoredEquipment": 205,
-      "schemaValidatedEquipment": 205,
+      "authoredEquipment": 7510,
+      "schemaValidatedEquipment": 7510,
       "externalSourceImported": 7510,
       "manuallyVerified": 0,
       "patchVerified": 0
     },
-    "equipmentEntries": 205,
+    "equipmentEntries": 7510,
     "importedSnapshot": {
       "sourceRevision": "d72a159ed01ee4645b60d18633cd683779b9adc6",
       "sourceDate": "2026-07-12T03:26:10Z",
@@ -461,62 +461,62 @@
       "scope": "Checksum-validated repository bundle; live database activation counted separately in .qa/next-milestone/runtime-catalog.json"
     },
     "localSearchNames": 100,
-    "uniqueCombinedIds": 245,
+    "uniqueCombinedIds": 7510,
     "duplicateEquipmentIds": 0,
     "invalidMappings": [],
     "slots": [
       {
         "slot": "Main hand",
-        "families": 1,
-        "variants": 25
+        "families": 151,
+        "variants": 3515
       },
       {
         "slot": "Off hand",
-        "families": 1,
-        "variants": 25
+        "families": 18,
+        "variants": 456
       },
       {
         "slot": "Helmet",
-        "families": 1,
-        "variants": 25
+        "families": 33,
+        "variants": 832
       },
       {
         "slot": "Chest",
-        "families": 1,
-        "variants": 25
+        "families": 33,
+        "variants": 832
       },
       {
         "slot": "Boots",
-        "families": 1,
-        "variants": 25
+        "families": 33,
+        "variants": 832
       },
       {
         "slot": "Cape",
-        "families": 1,
-        "variants": 25
+        "families": 21,
+        "variants": 527
       },
       {
         "slot": "Bag",
-        "families": 1,
-        "variants": 25
+        "families": 2,
+        "variants": 52
       },
       {
         "slot": "Mount",
-        "families": 1,
-        "variants": 6
+        "families": 36,
+        "variants": 53
       },
       {
         "slot": "Food",
-        "families": 1,
-        "variants": 12
+        "families": 28,
+        "variants": 243
       },
       {
         "slot": "Potion",
-        "families": 1,
-        "variants": 12
+        "families": 22,
+        "variants": 168
       }
     ],
-    "uniqueAbilityNames": 8,
+    "uniqueAbilityNames": 534,
     "verifiedUnlockRequirements": 0,
     "currentPatchVerifiedEntries": 0,
     "statisticEntries": 0,
@@ -530,10 +530,74 @@
         "review": "Current source/patch recheck required."
       },
       {
+        "id": "broadsword-t5",
+        "kind": "crafting",
+        "output": "T5_MAIN_SWORD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_MAIN_SWORD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "broadsword-t6",
+        "kind": "crafting",
+        "output": "T6_MAIN_SWORD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_MAIN_SWORD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "broadsword-t7",
+        "kind": "crafting",
+        "output": "T7_MAIN_SWORD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_MAIN_SWORD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "broadsword-t8",
+        "kind": "crafting",
+        "output": "T8_MAIN_SWORD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_MAIN_SWORD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
         "id": "battleaxe-t4",
         "kind": "crafting",
         "output": "T4_MAIN_AXE",
         "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "battleaxe-t5",
+        "kind": "crafting",
+        "output": "T5_MAIN_AXE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_MAIN_AXE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "battleaxe-t6",
+        "kind": "crafting",
+        "output": "T6_MAIN_AXE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_MAIN_AXE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "battleaxe-t7",
+        "kind": "crafting",
+        "output": "T7_MAIN_AXE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_MAIN_AXE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "battleaxe-t8",
+        "kind": "crafting",
+        "output": "T8_MAIN_AXE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_MAIN_AXE",
         "currentPatchVerified": false,
         "review": "Current source/patch recheck required."
       },
@@ -546,10 +610,74 @@
         "review": "Current source/patch recheck required."
       },
       {
+        "id": "bow-t5",
+        "kind": "crafting",
+        "output": "T5_2H_BOW",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_2H_BOW",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bow-t6",
+        "kind": "crafting",
+        "output": "T6_2H_BOW",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_2H_BOW",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bow-t7",
+        "kind": "crafting",
+        "output": "T7_2H_BOW",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_2H_BOW",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bow-t8",
+        "kind": "crafting",
+        "output": "T8_2H_BOW",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_2H_BOW",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
         "id": "shield-t4",
         "kind": "crafting",
         "output": "T4_OFF_SHIELD",
         "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "shield-t5",
+        "kind": "crafting",
+        "output": "T5_OFF_SHIELD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_OFF_SHIELD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "shield-t6",
+        "kind": "crafting",
+        "output": "T6_OFF_SHIELD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_OFF_SHIELD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "shield-t7",
+        "kind": "crafting",
+        "output": "T7_OFF_SHIELD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_OFF_SHIELD",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "shield-t8",
+        "kind": "crafting",
+        "output": "T8_OFF_SHIELD",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_OFF_SHIELD",
         "currentPatchVerified": false,
         "review": "Current source/patch recheck required."
       },
@@ -562,10 +690,74 @@
         "review": "Current source/patch recheck required."
       },
       {
+        "id": "scholar-cowl-t5",
+        "kind": "crafting",
+        "output": "T5_HEAD_CLOTH_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_HEAD_CLOTH_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "scholar-cowl-t6",
+        "kind": "crafting",
+        "output": "T6_HEAD_CLOTH_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_HEAD_CLOTH_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "scholar-cowl-t7",
+        "kind": "crafting",
+        "output": "T7_HEAD_CLOTH_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_HEAD_CLOTH_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "scholar-cowl-t8",
+        "kind": "crafting",
+        "output": "T8_HEAD_CLOTH_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_HEAD_CLOTH_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
         "id": "mercenary-jacket-t4",
         "kind": "crafting",
         "output": "T4_ARMOR_LEATHER_SET1",
         "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-jacket-t5",
+        "kind": "crafting",
+        "output": "T5_ARMOR_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_ARMOR_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-jacket-t6",
+        "kind": "crafting",
+        "output": "T6_ARMOR_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_ARMOR_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-jacket-t7",
+        "kind": "crafting",
+        "output": "T7_ARMOR_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_ARMOR_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-jacket-t8",
+        "kind": "crafting",
+        "output": "T8_ARMOR_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_ARMOR_LEATHER_SET1",
         "currentPatchVerified": false,
         "review": "Current source/patch recheck required."
       },
@@ -578,10 +770,74 @@
         "review": "Current source/patch recheck required."
       },
       {
+        "id": "mercenary-shoes-t5",
+        "kind": "crafting",
+        "output": "T5_SHOES_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_SHOES_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-shoes-t6",
+        "kind": "crafting",
+        "output": "T6_SHOES_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_SHOES_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-shoes-t7",
+        "kind": "crafting",
+        "output": "T7_SHOES_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_SHOES_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-shoes-t8",
+        "kind": "crafting",
+        "output": "T8_SHOES_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_SHOES_LEATHER_SET1",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
         "id": "cape-t4",
         "kind": "crafting",
         "output": "T4_CAPE",
         "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cape-t5",
+        "kind": "crafting",
+        "output": "T5_CAPE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_CAPE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cape-t6",
+        "kind": "crafting",
+        "output": "T6_CAPE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_CAPE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cape-t7",
+        "kind": "crafting",
+        "output": "T7_CAPE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_CAPE",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cape-t8",
+        "kind": "crafting",
+        "output": "T8_CAPE",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_CAPE",
         "currentPatchVerified": false,
         "review": "Current source/patch recheck required."
       },
@@ -594,24 +850,256 @@
         "review": "Current source/patch recheck required."
       },
       {
+        "id": "bag-t5",
+        "kind": "crafting",
+        "output": "T5_BAG",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_BAG",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bag-t6",
+        "kind": "crafting",
+        "output": "T6_BAG",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_BAG",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bag-t7",
+        "kind": "crafting",
+        "output": "T7_BAG",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_BAG",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bag-t8",
+        "kind": "crafting",
+        "output": "T8_BAG",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_BAG",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
         "id": "steel-bar-t4",
         "kind": "refining",
         "output": "T4_METALBAR",
-        "source": "https://wiki.albiononline.com/wiki/Pristine_Steel_Bar",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_METALBAR",
         "currentPatchVerified": false,
-        "review": "Source points to Pristine Steel Bar while output is plain Steel Bar; source applicability needs verification."
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "planks-t4",
+        "kind": "refining",
+        "output": "T4_PLANKS",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_PLANKS",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cloth-t4",
+        "kind": "refining",
+        "output": "T4_CLOTH",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_CLOTH",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "leather-t4",
+        "kind": "refining",
+        "output": "T4_LEATHER",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_LEATHER",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "stoneblock-t4",
+        "kind": "refining",
+        "output": "T4_STONEBLOCK",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T4_STONEBLOCK",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "metalbar-t5",
+        "kind": "refining",
+        "output": "T5_METALBAR",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_METALBAR",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "planks-t5",
+        "kind": "refining",
+        "output": "T5_PLANKS",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_PLANKS",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cloth-t5",
+        "kind": "refining",
+        "output": "T5_CLOTH",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_CLOTH",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "leather-t5",
+        "kind": "refining",
+        "output": "T5_LEATHER",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_LEATHER",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "stoneblock-t5",
+        "kind": "refining",
+        "output": "T5_STONEBLOCK",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T5_STONEBLOCK",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "metalbar-t6",
+        "kind": "refining",
+        "output": "T6_METALBAR",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_METALBAR",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "planks-t6",
+        "kind": "refining",
+        "output": "T6_PLANKS",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_PLANKS",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cloth-t6",
+        "kind": "refining",
+        "output": "T6_CLOTH",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_CLOTH",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "leather-t6",
+        "kind": "refining",
+        "output": "T6_LEATHER",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_LEATHER",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "stoneblock-t6",
+        "kind": "refining",
+        "output": "T6_STONEBLOCK",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T6_STONEBLOCK",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "metalbar-t7",
+        "kind": "refining",
+        "output": "T7_METALBAR",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_METALBAR",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "planks-t7",
+        "kind": "refining",
+        "output": "T7_PLANKS",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_PLANKS",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cloth-t7",
+        "kind": "refining",
+        "output": "T7_CLOTH",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_CLOTH",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "leather-t7",
+        "kind": "refining",
+        "output": "T7_LEATHER",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_LEATHER",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "stoneblock-t7",
+        "kind": "refining",
+        "output": "T7_STONEBLOCK",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T7_STONEBLOCK",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "metalbar-t8",
+        "kind": "refining",
+        "output": "T8_METALBAR",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_METALBAR",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "planks-t8",
+        "kind": "refining",
+        "output": "T8_PLANKS",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_PLANKS",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cloth-t8",
+        "kind": "refining",
+        "output": "T8_CLOTH",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_CLOTH",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "leather-t8",
+        "kind": "refining",
+        "output": "T8_LEATHER",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_LEATHER",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "stoneblock-t8",
+        "kind": "refining",
+        "output": "T8_STONEBLOCK",
+        "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_STONEBLOCK",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
       }
     ],
-    "rendererCompatible": 205,
+    "rendererCompatible": 7510,
     "sources": [
       "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/food.json",
       "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/potion.json",
-      "https://albiononline.com/news/basic-builds-battleaxe"
+      "https://albiononline.com/news/basic-builds-battleaxe",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/bag.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/head.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mount.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/shoes.json"
     ],
-    "licensing": "Original factual starter index only; full bulk dataset redistribution rights unresolved. Renderer URL compatibility does not certify asset existence/rights or full icon coverage.",
+    "licensing": "Pinned July MIT equipment identity and source-listed spell names, plus retained starter references; October recipe facts have a separate explicit rights boundary. Renderer URL compatibility does not certify asset existence/rights or full icon coverage.",
     "missing": [
       "Full weapon/offhand/armor families",
-      "Food and potion metadata",
+      "Verified food/potion effects, yields and current-patch applicability",
       "Full mounts and economic item categories",
       "Ability descriptions, passives and unlock levels",
       "Item statistics and patch compatibility",
@@ -620,8 +1108,8 @@
     "outdatedStatus": "Unknown: no current patch reference baseline is verified; zero confirmed-current entries. Do not infer zero outdated entries."
   },
   "migration": {
-    "checkedAt": "2026-10-26T16:58:01.245Z",
-    "scope": "Read-back after private local backup and authorized additive watchlist migration; local development only",
+    "checkedAt": "2026-10-27T03:16:32.630Z",
+    "scope": "Read-only local development read-back; no external deployment",
     "migrations": [
       {
         "migration_name": "20261025194321_foundation",
@@ -690,27 +1178,29 @@
       {
         "migration_name": "20261026110000_market_watch_items",
         "finished": true
+      },
+      {
+        "migration_name": "20261027040000_equipment_sets",
+        "finished": true
       }
     ],
+    "equipmentSetsPresent": true,
     "watchTablePresent": true
   },
   "remote": {
-    "checkedAt": "2026-10-26T12:53:15.471Z",
-    "scope": "Read-only documentation status recheck",
+    "checkedAt": "2026-10-27T03:19:18.846040+00:00",
+    "scope": "Read-only repository/organization/hosted CI status; no policy changes",
     "organization": {
       "login": "AlbionOutpost",
       "plan": "free",
-      "twoFactorRequired": false,
-      "memberVisibilityChanges": true,
-      "memberDeletion": true,
-      "memberInvitations": true
+      "twoFactorRequired": false
     },
     "repositories": [
       {
         "name": "AlbionOutpost/Outpost",
         "private": true,
-        "size": 0,
-        "hostedRuns": 0
+        "size": 56450,
+        "hostedRuns": 14
       },
       {
         "name": "AlbionOutpost/Outpost-Operations",
@@ -719,7 +1209,8 @@
         "hostedRuns": 0
       }
     ],
-    "previousPolicyEvidence": ".qa/github-live/provisioning.json"
+    "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40440298944",
+    "successfulCommit": "45b0acd7ce2d767d9bd105f3522e86ae0c78af41"
   },
   "dependency_maintenance": {
     "checkedAt": "2026-10-26T12:40:53.488543+00:00",
@@ -730,115 +1221,79 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-27T01:59:55.430218+00:00",
-    "phase": "2026-10-27T01:55:23.138Z",
-    "scope": "Task-led homepage, Market and production workflows. Actual production local Playwright library fallback; before/after same viewport, six widths and observed/manual/light states opened. Fifteen sampled axe scans have no violations, no overflow in27 captured route/state/width combinations. Manual crafting is explicitly priced, not observed profit. Owner acceptance and full conformance remain open.",
+    "checkedAt": "2026-10-27T03:52:05.494289+00:00",
+    "phase": "2026-10-27T03:49:12.511Z",
+    "scope": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention. Latest research captures wait for visible images and distinguish source failure from an actual empty response. Fixture sessions are not real OAuth; source unlocks/patch and owner acceptance remain open.",
     "files": [
       {
-        "path": "docs/design-review/ux-transformation/after-crafting-1440.png",
-        "sha256": "6f418bb932965e54053803d387558a190137ed1f93e8ab34667c4a27ed5fcf50"
+        "path": "docs/design-review/product-milestone/before-build-1440.png",
+        "sha256": "144e12136501bbf70a647ddb58c1d82aa7e1c52d34828e744b4e0741e7e174a7"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-crafting-320.png",
-        "sha256": "927ff7af64caadb18aef4d42fbf64e33b937f411b0df57e9ee4e5fdf200b1cb4"
+        "path": "docs/design-review/product-milestone/build-1440.png",
+        "sha256": "552ff45a3d3d4e61bac3f794b009969fef892ecdee61cd1078725668a44fefb3"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-crafting-390.png",
-        "sha256": "bee6b254981386675ba76b96b479556fdfeae181223d953a78c6c62f61e72939"
+        "path": "docs/design-review/product-milestone/build-390.png",
+        "sha256": "cab9c15658d48dc929d912fbe43b3e92f1d6480711d6f514a0decc4951b9fdb6"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-home-1440.png",
-        "sha256": "c49806b62f20edaeeadda7d4dfeb627fd1f4041b1571d10c111d1453ff55c7c3"
+        "path": "docs/design-review/product-milestone/build-320.png",
+        "sha256": "1a56826157ce4b8e45653978ac0042b7926a40693e6fd2e6e8b798c8050041c3"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-home-320.png",
-        "sha256": "902a7e519bf81d7cca46b1525322a2175e8a723592d650246b6a03ef7c7112eb"
+        "path": "docs/design-review/product-milestone/research-1440.png",
+        "sha256": "6752371698fab92adb8487ff67afa81fcc9ad90a63bca5412533f93d52e8ee16"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-home-390.png",
-        "sha256": "21ed64edab126f8b1a070186848c19c05a7598c85a04d1b3f2f02d089d0b6115"
+        "path": "docs/design-review/product-milestone/research-390.png",
+        "sha256": "adb3c99eff08c6e5b03da15ae6dea88a34adfac038a148b04c4a6611e50615f8"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-market-1440.png",
-        "sha256": "b69b2311d63c38d1b616c2bc82fb8dbbda1998d5cb7c9d1c3e04d979f959c3f8"
+        "path": "docs/design-review/product-milestone/research-320.png",
+        "sha256": "7f38bae0290bae9099018f65732395323937a63c9cf3188ee68075f9beddb10b"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-market-320.png",
-        "sha256": "28bf7341bb1bdf628f57c50d5ae46115c0018254328cfb693b5f2f691c28960c"
+        "path": "docs/design-review/product-milestone/profile-1440.png",
+        "sha256": "def374789b56d22c2e9091cca525cf3dfcd8ab2ee95a859614d5f53135d4ee55"
       },
       {
-        "path": "docs/design-review/ux-transformation/after-market-390.png",
-        "sha256": "42fb763389edab139c75da57b4edb3bc0c005cd4fad528198a49740d54980254"
+        "path": "docs/design-review/product-milestone/profile-320.png",
+        "sha256": "98b91ed80d3d912635ba8727448a787ef189bf42f035ad4cb8604a0a70137eda"
       },
       {
-        "path": "docs/design-review/ux-transformation/before-crafting-1440.png",
-        "sha256": "2634a60f8a3a9c093df0758978e79e2c151eb4c00ea24ecb4117e518a9cb48a6"
+        "path": "docs/design-review/product-milestone/refining-1440.png",
+        "sha256": "236821290aae22df58da341d66ac8565b55ca74878fead6e0b244958be57697e"
       },
       {
-        "path": "docs/design-review/ux-transformation/before-crafting-320.png",
-        "sha256": "d02f1c5d4b8d1b059079c03588aa4d33cc7c75bc8f6fbef3cf07f3ac31f24399"
+        "path": "docs/design-review/product-milestone/comp-gear-1440.png",
+        "sha256": "858d8be01aafd1123ff8f674e9f996f165deccb34e8dfe5443c3a564d0aeb988"
       },
       {
-        "path": "docs/design-review/ux-transformation/before-crafting-390.png",
-        "sha256": "d14624a2eb6649cdcb47573de9b8eb7c29ca6b323df3c068d6209d7f388b0e51"
+        "path": "docs/design-review/product-milestone/comp-gear-390.png",
+        "sha256": "3b0a345af281883dedce374530bca69d0123a30ea55347bcbe5fe312c7b61472"
       },
       {
-        "path": "docs/design-review/ux-transformation/before-home-1440.png",
-        "sha256": "e34371c862d62e8aa7eb9eebc37b2e56abfa02bdb6ff984dc10a528b1c676896"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/before-home-320.png",
-        "sha256": "2a0dab1464934822820f65541d51853fe4f674a5506b10a1af13c4628aaec9af"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/before-home-390.png",
-        "sha256": "0501998b60e2689f8a56abbefda74aa65dd8e5be13052fc4502a636fa62e00dc"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/before-market-1440.png",
-        "sha256": "d1baf4ec537a4f078eb7c1f5d355516d655da45609effc94e2b2ff2a4f5a611b"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/before-market-320.png",
-        "sha256": "101ff650f5aa10c1a0ec8221ce3cfc9cfc49308e862e300ab34f9648ab6fd25d"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/before-market-390.png",
-        "sha256": "86a393f7898b663218b8d39d8160ff3daff231f9161dff5e30768f8c8c798763"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/crafting-manual-profit-390.png",
-        "sha256": "acd2f7f11215108f57dbd14e4b53489682ed27de1b7465b33aa7bc95978f003d"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/home-light-1440.png",
-        "sha256": "661a76f9770e0ee6339a30fec86648afa20e141924cb1c87e48ad2df63108194"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/market-observed-1440.png",
-        "sha256": "1b7b69100760c369193ac83e381f2b5dd018207b2bf6bc1c119265fbbdcbf8d4"
-      },
-      {
-        "path": "docs/design-review/ux-transformation/market-observed-390.png",
-        "sha256": "de1606a3ba0c4715ddc0b88e179feb6e9958c9dfa32ca4802fba9c567f0fb98b"
+        "path": "docs/design-review/product-milestone/comp-gear-320.png",
+        "sha256": "5e7357cc7d81e8780b6b2f0e8b12df31d11964bab078bb53ad66b5efed87b980"
       }
     ]
   },
   "source_scan": {
-    "filesScanned": 646,
+    "filesScanned": 676,
     "configuredKeys": ["NEXTAUTH_SECRET"],
     "findings": [],
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 48,
+    "filesScanned": 51,
     "configuredSecretKeys": ["NEXTAUTH_SECRET"],
     "matches": []
   },
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "f3ecaef77b1b3382cfcb5faab9e88580f7eb825fb51d0e1c3f8a04dd7bfbf550",
+      "sha256": "ca3e06ca4d66694ffbdc4a0733bf5e93d0fd50fadb0e6bad978b5b86dd15903f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -848,22 +1303,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "714c86951194ad47d2a759e9828cbbb5cb71463293d704a0e9f0cdbe4258957e",
+      "sha256": "4ed54d8cde3f055a99ceb33624ceb0f8bb604acdcebe46315b51c499c8ab8e65",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "aa3fc3c85d2d6f717bdc73ef5b6035f2708284c580fb52c457a9d02ecc2d71a8",
+      "sha256": "059ede95573d9d83318103eda80f220f4e24066f1360c1f92d98f1754f63e2dd",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "8191d311e76e33c940ee90991dce8fad75b427734becc1841c860f1414a08c3b",
+      "sha256": "4dce8fcaadeaa5183dab077a1040b3a6c41941245d723d139725dbe9c3d9f679",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "78faacaf10b39127190856e47eaa0f647a97e16cba179080d94a9736c883b06d",
+      "sha256": "b3cc7bbd64eaa20ee468c3f1da0ddb11f128c40e03d71ea3f226d5769449db4e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -878,12 +1333,12 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "d968de17e0b8113f471668da02977b86b43aa1f5473ff27c581c0dfb2ac117c8",
+      "sha256": "cd25f0c5af90420389f83f47bf4f1a3f69ef2dfb1c49bd53bfd02e228239b66e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-game-data-structure.log",
-      "sha256": "ecd03e75e88efc907f52d7e02826e64279aacb72750a76c325942d76169e13fd",
+      "sha256": "0c214895d7af13baa8f3b57cebf2fca3fa1c71b3becce5c5fd76de3febff14e7",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -893,12 +1348,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "6871c5f8d72d419924363ac1cdbc40e1cdd26c21f8b74aee5bc2c3d714171602",
+      "sha256": "6c8f379bb995efcb9298a17ff08461b90b8d40ae3dca2633c3a983b924fc268a",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "20ee774038fbd8d4151539f568ff9317f4e116e695608e15ec7d58c81f316163",
+      "sha256": "c36c9bd9eda596f78127f2883fa8ef55bb4161e5da249307d2a7a495bf4c755d",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -913,12 +1368,12 @@
     },
     {
       "path": ".qa/documentation-reconciliation/migration-state.json",
-      "sha256": "f6fdd4e217558eff96ee919f557a48130c12e4ee4ee4cc1b271dd14af2b12512",
+      "sha256": "030cf6ca58cb466f67690305029540d5481620706f39edfc7cbf8e535a699546",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/documentation-reconciliation/remote-state.json",
-      "sha256": "28dca4cdb628d2a5d96952aa6e60334fd82a9612158dac1c13b3d73944358997",
+      "sha256": "2f36939f9447dae1d305e0c100435aadf393610db6ef9e6e29a0e683d2aaaf5a",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -928,13 +1383,13 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "db8e6057923440c588baae0b1a5c23fa1698a435065311da81fb19587f6e1c48",
+      "sha256": "d1074b8c24e000e47f8d9c21cc821090627db7fdb5dd63c688e1f16873ec6786",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
   "reviewed_sources": {
     ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
-    ".github/workflows/quality.yml": "fc172d673bbdda669250bbb5c8867a60f4ab01dc2e562141284783f4def2ecce",
+    ".github/workflows/quality.yml": "4d893f1c2544a6e1b3ad462cfcc8dd19a46f267ed28cbe2f2f1be4a78b3266ef",
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
     "e2e/account.spec.ts": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877",
@@ -944,9 +1399,10 @@
     "e2e/catalog.spec.ts": "67b81777ec1234e635e1a323035f3ad5fbfa1b0e8265312244db1cb5b170cbc2",
     "e2e/community.spec.ts": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b",
     "e2e/composition-visual.spec.ts": "886c21ba4f674903af6078ecc334108d1f8f45f9be6a9c326fdd7c8f35dd5b68",
-    "e2e/compositions.spec.ts": "cd285f95911dfc6811073e546114538c05d96d8f42d68a0e022bf1b6620c2bef",
+    "e2e/compositions.spec.ts": "a27cef6342336b580122269354e94ef2f6a0dfec779f9b93e677de9305f04708",
     "e2e/dashboard-loadouts.spec.ts": "09daa65244cb9cf2c5f1f213b6bce153a39b4b5b00eb10dcdde68907dd3ab327",
-    "e2e/design-review.spec.ts": "7cd2f8d01c2b5e072979aeb931adf8d525c5a0c088a1c4161700ee4a3902473b",
+    "e2e/design-review.spec.ts": "dd3a07b81ff010a416043746a80ad4d77b516c7bbd8d05e3e6fe5d818fdabd61",
+    "e2e/equipment-sets.spec.ts": "7d1ead64219a72319647945d2976028123ad3c955a7275f4dd08119740a5de4c",
     "e2e/group-editing.spec.ts": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418",
     "e2e/groups.spec.ts": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832",
     "e2e/guild-visual.spec.ts": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647",
@@ -955,10 +1411,11 @@
     "e2e/home-market-terminal.spec.ts": "d12a538d13c08f024cd4122b9ffd729645b40fede1df925f7f172639fe7637d9",
     "e2e/homepage-polish.spec.ts": "fdc3573adfd9bf36dc31ed0b39abdba9caef1662f50ade60a0c6fcadec4c8d29",
     "e2e/homepage-visual-correction.spec.ts": "0851184cf977d46536803ff5dea36439aa412abd7d1b1a0115f408632962c267",
+    "e2e/market-research.spec.ts": "7283da4d19a318b89e48a0cce30d854ae07d75875cd16194dfce1ac5ba482538",
     "e2e/market-visual.spec.ts": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06",
-    "e2e/market-watchlist.spec.ts": "05cc05844c1896f298902b849f34156e3f062b4fbb4a6de1092764181f6e938b",
+    "e2e/market-watchlist.spec.ts": "29227ec0216e0d229eebbb0cea54804537051ed6fcab535e65bc64cf08f5fa56",
     "e2e/outpost.spec.ts": "4ee19048b59a33062f1b0213e0766d9e48779f36d1e37ffbe52fc472819bbf77",
-    "e2e/personal-tools.spec.ts": "52fb2e34a7b00867d1eaaae88a1fb9e608b2c8d27884403699f4cdd69725abf1",
+    "e2e/personal-tools.spec.ts": "80baa098d14fde4b79c48932f9a8c9c2535f095ac02ba69ae06214f6df5899d9",
     "e2e/player-workflows.spec.ts": "0094f3583bc45005e86afb1cbbc4c5f88faa8603edd3a627cb1a613d47f590ff",
     "e2e/playful-ui.spec.ts": "9aeda13238f0e8b288fabece9c3ad110f1b255113c8c876f6afa15140e2fe82d",
     "e2e/premium-visual.spec.ts": "4f7f189b71c1275d70bf0f8616604a5e45e23418132ad8def419eb327ab46a04",
@@ -966,7 +1423,7 @@
     "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "19bdcaf760a50c384f97400de0adf1d8d722d4246555e0abee04730d225f285d",
     "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "86a214d06400f4fbbaa781c848c03600f9dbd353b0f63e8ba23ec748b16da68d",
     "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "97d62894c54ca2d6156af6c5705e6b970e0d78e3d794143e007b78e39cacb304",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "f5d8750d8185acfd9af6808f236ef91a05b90608285e1c12a942fc0eac7ac12f",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "9824e40af7bcceedb342b0c8ba1bac36e75cfb962af3934d3ee23b3a2a29a0e4",
     "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "a0facfbcfef75ff2840f016d9a4ad4994d99f1cbab5482635b676dd44163952e",
     "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "a1813b703e7308aa21d08acbb2e456ef639970e4ec6166c5cc0ba73145d3332c",
     "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "4a14af4e1f02b4449828593396f936686f67a03725d413f4002d70a3446e6586",
@@ -974,15 +1431,17 @@
     "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png": "b1e8a2d9aa31222324f63f920970d36fffee887285d480c9aa51fb4004c040d8",
     "e2e/production-freshness.spec.ts": "b3bf4dd175b24b7df763d0c3e8bdc50a220cb2aec0cec9b25916b61b022016fc",
     "e2e/production-modes.spec.ts": "a9a3238097c979abbb7aa1dab5c1a44a94397c65d9c6fbe1d23e039702adbb4d",
+    "e2e/production-profile.spec.ts": "dbcf6891e4794f1e27550da07b7cda922bc5f2d9027dfa6fc752f3dc6a01c3c1",
     "e2e/production.spec.ts": "31b07fe06bca1ed80bc7c4d5e659ec7df5070aef809f42741afafa622439db76",
     "e2e/public.spec.ts": "4d3cf5d6ad7ad873793c8887af90c274d2033781946b901bfaa2aa6d4a827017",
     "e2e/qa-audit.spec.ts": "44758c6d62538dd1255c67dd1af46728fdf44aeeef3ba7cb3a913aae8453dcd4",
-    "e2e/qa-light.spec.ts": "b6bf1a49a446f00041f5cd299bb671d28c7c15743f2c40955d1ee9c23f509550",
+    "e2e/qa-light.spec.ts": "4584c542e3eb077b70161c4d7201340b476c42cb83fccc1ca58e036273d6de70",
     "e2e/qa-regressions.spec.ts": "7d2b6001ce1630913ac18ce13c2441a5615889a4d3cea08945c972951c6c84fb",
     "e2e/qa-security.spec.ts": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044",
     "e2e/reference-ui.spec.ts": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7",
     "e2e/refinement.spec.ts": "bd1abd5e54618c01b9e87a76aabdaf83d3ef602ad3ea3c9e9da9278842d8f6d2",
     "e2e/settings-recovery.spec.ts": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70",
+    "e2e/source-equipment.spec.ts": "1bfb1ba655907b2352ab44e9628d625b33c96ba7291d693c6a056661e3748418",
     "e2e/support/db.ts": "18028d9a156cd46571ff71e75ac317db1632029feba0da695188a55427b9c90b",
     "e2e/tool-directory.spec.ts": "a63a911012262e1bfc5eaecd131921f3f812b93ad16571b3022c7ee6be308c37",
     "e2e/trade-scenarios.spec.ts": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc",
@@ -992,7 +1451,7 @@
     "next.config.ts": "1eae45f8ba32dc7309dedc5cc2675c85de7737e1ada51a433c23558f357f20d7",
     "package-lock.json": "bd581ec9ccf09b0edcdf94b761caaf4c83ad47203b34d414491be04d8fae788a",
     "package.json": "daeabd515e65b2ceedac90b238d39d164ff0d6b544fc22fca554e7ae1e88336b",
-    "playwright.config.ts": "7f3c144613f2aa1d96db22f311f6a4d1f2df9337cd5f4d2363f4beb19f918fe4",
+    "playwright.config.ts": "a266fb2a62ee192701b3e10d65dc1d18cafa0f38b11978c9e2b2a2cffd54987e",
     "prisma/migrations/20261025194321_foundation/migration.sql": "eec39c694939395f0fac7fefaaf1224bcd190c864a7ce254009a3e7950387d9e",
     "prisma/migrations/20261025195551_build_platform/migration.sql": "0dc693d959ac177f4cfb45770517570fa11468fb34579f86fd7967d477e339a4",
     "prisma/migrations/20261025211414_compositions_and_group_access/migration.sql": "62894f81927ec6d3931b9b0ac449f881fd9a872e334ad06c147e507a92cd1f18",
@@ -1010,8 +1469,9 @@
     "prisma/migrations/20261025225221_personal_data_invariants/migration.sql": "c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e",
     "prisma/migrations/20261025225359_timer_null_state/migration.sql": "96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd",
     "prisma/migrations/20261026110000_market_watch_items/migration.sql": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9",
+    "prisma/migrations/20261027040000_equipment_sets/migration.sql": "05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835",
     "prisma/migrations/migration_lock.toml": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900",
-    "prisma/schema.prisma": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f",
+    "prisma/schema.prisma": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969",
     "prisma/seed.ts": "7286d68bd2296862e0bee354fb7ca79aa9e33a648743e6f68ef6f0d1cf3a0679",
     "public/albion/equipment/T4_2H_BOW.png": "21d323adfaba0afcbcb7e86d7010c840fef1e7bfbffe48f02a45580332539932",
     "public/albion/equipment/T4_ARMOR_LEATHER_SET1.png": "1181eec2bd8f842d1bce58b183a47a1db7554e73e7ffe6ee74fb927db7014462",
@@ -1024,6 +1484,7 @@
     "public/albion/illustrations/market-v1.webp": "ff763c2e144dc45331a4ffb1157ffaf5b890d849df1070f17f3a2a9c2904db7e",
     "public/brand/discord-symbol.svg": "3efc001289994d74fa3f919397259d1e7b8e77188c9161880243965ee284466e",
     "public/brand/outpost-logo.png": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48",
+    "public/fonts/inter-latin-400-800.woff2": "69a6704255300c984ecd962610f034dc9ba3e82e9b6eca87884f93d8a78a6826",
     "public/licenses/ao-item-snapshot.txt": "7cd65919fd845d6160f2ec1b4afee97e0f58625a712723fd5ff972f54074555c",
     "public/licenses/archivo-black-OFL.txt": "4cafdbbd100af37a23805af09b7068e4daafb4516dc3d6d52436f4a9d7b4c0d3",
     "public/licenses/barlow-condensed-OFL.txt": "046ee27d8bddc6b6ee08eee53c96dbf3ec1f6df561644e018507dd8ffcb11d31",
@@ -1041,7 +1502,7 @@
     "src/app/api/community/[kind]/[id]/route.ts": "cbbdded78ccaaed8ad119baa499651d69fcbb1f1085c0035ffc69d2826442c95",
     "src/app/api/compositions/[id]/duplicate/route.ts": "9dcd33eebe15e5f54b5361449a4243994cf630a2bec758ba155dd5c35bc55d4d",
     "src/app/api/compositions/[id]/route.ts": "b4465d94aab6b19824ac7f3e31bb90eac2b4dbdf752aff1a4be38d2a83541d06",
-    "src/app/api/compositions/loadout/route.ts": "fbd978b676c4f5d38f784580becf20428f795c2ef3174c5d2b560535d9cc1c18",
+    "src/app/api/compositions/loadout/route.ts": "40be820b9fa38eb6efa7080a5d24f513dfcc51fe2ab11b21093388fcdfbb4715",
     "src/app/api/compositions/route.ts": "194fa9fc8f75c122c7fd720017f576f8d7fa180805b48716ba2d59d2bce3d8c8",
     "src/app/api/economy/prices/route.ts": "57333582465b9055cde0bcdec71076bdfbda0edd2c018b7e7d4b3f561c537d34",
     "src/app/api/groups/[id]/actions/route.ts": "37fc1bd8735f6616617d3323da9487d807db6d57ca1f94c2c3788745bb6e09ab",
@@ -1053,6 +1514,7 @@
     "src/app/api/invitations/[token]/route.ts": "d687fb1eb245c1fcb8f5c26054319f1ae11ac6d35998dbca3037d9ffa13aa68c",
     "src/app/api/item-icon/route.ts": "30a9098c2d7c93fa72ad3fe67b74a36fe53937bf33dc3df9849b1c7f519e7625",
     "src/app/api/items/route.ts": "6914300ab06965c423a49e436c32dd0f61451bdca3daaf12390f01c64c8d1d6e",
+    "src/app/api/market/batch/route.ts": "e91f57b080add147fb5852c7fb0c8e1695d48e651aaef3407a96e59a20451006",
     "src/app/api/market/route.ts": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98",
     "src/app/api/market-watch/[id]/route.ts": "0b71f41e85649298acc2acf5a64171748dab9b64fb80c7a5d424f43e840c6b7c",
     "src/app/api/market-watch/route.ts": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0",
@@ -1065,7 +1527,7 @@
     "src/app/api/transport/prices/route.ts": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec",
     "src/app/brand-interactions.css": "806330221afaa4d7e56e0ba3263fa0f3c07abca735d48bcbd3aaae6a1dbf1328",
     "src/app/builds/[id]/edit/page.tsx": "2dc8e833809a3d4b2eeaaf8f3e232b2566c2ecc8ae4215c9c34d4eab3fc109b2",
-    "src/app/builds/[id]/page.tsx": "b8aba1ed31a998fa6965cdcaa27fe23f87b1fea691d288fb0656758a027341f8",
+    "src/app/builds/[id]/page.tsx": "c27efd2f8bf698220cffc4a4b13bc896959ca54dc8d7d3537e7d0bafb08850ae",
     "src/app/builds/new/page.tsx": "83634f6aa8ce7b28b75141fa2da2b8e1bb3c8c2b824855754e509faeedc330cd",
     "src/app/builds/page.tsx": "b265f30980d4da4845b84ed7a49e4548f889057e6482c959d415dea6398f45d9",
     "src/app/compositions/[id]/edit/page.tsx": "a83b0ff4d5cfd24145278408e60b592260425e2c46916e0036a30c51ae189635",
@@ -1073,10 +1535,10 @@
     "src/app/compositions/new/page.tsx": "8f1fa18ca3db3ca7b960412e0c86354e94488c3972e116e84ca6c3fa0bc93fa4",
     "src/app/compositions/page.tsx": "6460050113e7ad1a32a2a81f5e20b3accf018462c2c21b0857a6adfa8c4408b0",
     "src/app/dashboard/page.tsx": "fe106711c3d719a06da2919d404615a247e54fc33bc229c0b14546e434564262",
-    "src/app/equipment-workspace.css": "14eed291c7cda81409c8244d641237fbcf9cc76dcb2eb78e0cfe8b38c740cbba",
+    "src/app/equipment-workspace.css": "89c848c2ab7d92682d58c1390b2b36a4c5cbd87a2672224a311bf7ad17d80295",
     "src/app/error.tsx": "8e8112ae108fdc60ca5892991728e302d475ccc93e2b6620300af6f51f3add75",
     "src/app/favorites/page.tsx": "85fd86aea6bf112f6027b251327315daf435409d820101a17bf7cda47b604b5b",
-    "src/app/fonts.ts": "18f68daac6bc6f7408f16945f8b4470add8daeb37fd1eccdb675a282a0692604",
+    "src/app/fonts.ts": "0b0d898fabd80e8b1ba5d8c363d83a7c85932dbd0f8358a2c117b266c3a467ff",
     "src/app/globals.css": "8286adb44257349b5dc1bd0c0e3a9d28650b2e688305f652ac41baeb1ca1a8d3",
     "src/app/groups/[slug]/page.tsx": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72",
     "src/app/groups/new/page.tsx": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a",
@@ -1100,7 +1562,7 @@
     "src/app/settings/actions.ts": "d371ccaec4161dc5ee19b298a91ff184c1207092f35d7c13ffe7331899b298f4",
     "src/app/settings/page.tsx": "6f6b0d4dfe0c0da8678583413484447ecbb6183eb239163b9697356f959edc3e",
     "src/app/signin/page.tsx": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4",
-    "src/app/task-ui.css": "0bda95f9b4438f2c41f2d53d1bd103f04a5a9542e5b7c7be02859bb2cae0ffaa",
+    "src/app/task-ui.css": "c866f11ca7b6d8e7876c9ec19b6a5764443190c3f519bcfbb6872456b7b58a80",
     "src/app/timers/page.tsx": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933",
     "src/app/tools/crafting/page.tsx": "e0c9a1189c0eb6170c37718fc203603ef67f311f9e0faef9975f2f23918675b5",
     "src/app/tools/enchanting/page.tsx": "7774f6fbdb6a2bbbd71316bf3d2417f2deaee3e556223bdd0a34baaa7c9e7762",
@@ -1115,23 +1577,24 @@
     "src/components/albion-scene.tsx": "aa289808f3926da00f78cbde2da31c011219ebcdcdc7ede8b2b6489e3ddae350",
     "src/components/build-actions.tsx": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019",
     "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
-    "src/components/build-editor.tsx": "3eb74b86120412379b2c6c24d0341a993eb66e1cf0f22378b90abdb0ef813b52",
+    "src/components/build-editor.tsx": "f513014dcdf021a6fb84420a7343d99c406d501fcd559ed9927562ac489d3dc4",
     "src/components/build-loadout-view.tsx": "2cc9ed65457ba2d25eff0e6763f24369a071eb288170e86f8b04a6eac91c97f2",
     "src/components/build-preview-card.tsx": "0bf7800d57b25fa6bbf4e00cac2860cbcbd5f81d02ad44d33a71efa0f882ef3a",
     "src/components/catalog-item-picker.tsx": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559",
     "src/components/community-panel.tsx": "810bc12b93a77df5e6d096aebc5a0551933e17afbcde3ec0b4169c2bd53de795",
-    "src/components/composition-editor.tsx": "72ba03be3214095818fe0e171dd1f8e1705bc97e251672baaa8e4a72b91c9b91",
+    "src/components/composition-editor.tsx": "c364faa7a2fc1426217d606089e997978a27552eb779c5f0b4d6744a0f885935",
     "src/components/composition-png-export.tsx": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769",
-    "src/components/composition-view.tsx": "28ed93e1ec46026b840590b7b626b70195c54b1db38b42e3c13d8f0ae133aa9e",
+    "src/components/composition-view.tsx": "2f113258765270f0e459c478e2117fbfef5590dbf87f9b6e8cf5cc3fb52f448c",
     "src/components/discord-mark.tsx": "a71ac7c9bcee1f4027a2a9f8db89c2de652c7f058c122a5efc3900ec91aaf458",
     "src/components/editor-dialog.tsx": "f2f35b1418231a7af409ff7f1526975422caa104ef23aefda5ada240fb89a404",
     "src/components/equipment-overview.tsx": "5b1192d49e49d0a95f993bd5eb78d3016f1f7954e1d124d932f8fdfdf20d4437",
     "src/components/equipment-picker.tsx": "cca7d84ea6cdf8bb15d1bc0e5e74a3a28b76bb89214ca537c6fe2e834d40ddbc",
+    "src/components/equipment-sets.tsx": "adf6cf95ee9b68fa8b845c8ad35fa0383b6f4573371f222c31c0767c1be2e9f7",
     "src/components/equipment-strip.tsx": "23bea5d7e65c71b871f52dfad92e7b63af012663d7424090a6ca4a679051f5cf",
-    "src/components/equipment-workbench.tsx": "7ef2cba880df6e20453ddc5f4d8ae1239b005f5b2b051cd74857f9260102cc55",
+    "src/components/equipment-workbench.tsx": "e8de85031eaa4f319f82a6bb3441f9feb4265e8d6a201a5ec2259f4f5c6d2abc",
     "src/components/favorite-build-button.tsx": "b8534a90d60c0a75cf2f68ee57389e210a7b769578f3ce391c3c210997692a84",
     "src/components/feature-emblem.tsx": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128",
-    "src/components/global-search.tsx": "99f9b69edadd361cf8815279a19d75a1cd5a209a515019acd627c3b7ae069258",
+    "src/components/global-search.tsx": "6b6bebb18f9d2e733ffd69780a02bf6a035a5c55fa4e79e36918c8d689675881",
     "src/components/group-create.tsx": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945",
     "src/components/group-dashboard.tsx": "0fe9127abb680fd2989d948fabf4efee2f8b91c7e1ace5f7dbfe63784bd54f8d",
     "src/components/group-event-editor.tsx": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97",
@@ -1147,14 +1610,18 @@
     "src/components/item-icon.tsx": "7e3ac5611c479eee1f7b5f67884fd4417740b21d51338032725df503540afa08",
     "src/components/item-market-link.tsx": "4ce8b16231e9bb9b469ade59b583e1498aeeb6f7aa13b1d7a772da5dd45ba56e",
     "src/components/login-button.tsx": "de599dafb5eda7a57b83bc7afe16c9771fee2c6de171b80923bb23789986ac9a",
-    "src/components/market-watchlist.tsx": "7d6a496f6dca254942bcda3d11dfd7fb58a9f12f49d48cc579b04e7e5e9125e4",
-    "src/components/market.tsx": "994843a796ab57eb01cc1a54f6023b77bf240be75b997d7876b49230c851639b",
+    "src/components/market-batch-quotes.tsx": "6d5ef282385b21fc2863ff6d8cd3626e56b250ff3a9d25833012b1c13bc64d35",
+    "src/components/market-research.tsx": "939a75d96845be260ead9617da219c187bc455d9b6ca5af6eb11e29e4d7506e5",
+    "src/components/market-watchlist.tsx": "6594551a7d0d0b17db7a8d331ca51dfa7aab5c155dde320e39c47ef0f932ba4e",
+    "src/components/market.tsx": "72c3b20d9c6ead1b20d24745cc621775073026a9c03f1ccfb34c4a70eb81c5c8",
     "src/components/mobile-filter-panel.tsx": "018ce3a07a4fbfeed5833c5636bc14acaaa65be9215f50fa006420a0d1ed995d",
     "src/components/moderation-queue.tsx": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c",
     "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
-    "src/components/party-board.tsx": "6d0f5a40017d3747bc50608bde33773008bd9dc696cf9a7d41d9e6dc9c4e6394",
-    "src/components/production-calculator.tsx": "09f20b1bdffda8d14d00984f7a70833bae0a31adc6ee5f545d35cb698256361d",
+    "src/components/party-board.tsx": "83eca33b337979992a4fd717fee8d92f4b6d51e7b1ee5b3e46c66dce1326e959",
+    "src/components/production-calculator.tsx": "4158561135a27e9f68cccd3f8a6cb5848987f1c979ad4859a24c154c874e71fe",
+    "src/components/production-profile.tsx": "70de84cb5cfcd118d9de793185205522057869ce279f0a4fcc802f7ba81947e2",
     "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
+    "src/components/saved-equipment-sets.tsx": "602099ef393aadf081f32c0995f343493bd65e2f4d2e14e9069dae41e30270d8",
     "src/components/scenario-controls.tsx": "ae859faa59706b5f56d2444fdbbe12fdc242fbc39e0f9c2e3dbb58ef05c7d675",
     "src/components/settings-forms.tsx": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951",
     "src/components/shell.tsx": "2cba12fd97a7747c063d72c37ffac18db5089612e9e9b9f6795457eaed6656cc",
@@ -1171,27 +1638,34 @@
     "src/lib/albion/backoff.ts": "9658bc2e31b3e192604fcc2e413fe0f2a0f3b3f6a92029d84e4ffef9a0a0ea26",
     "src/lib/albion/calculations.ts": "00e4ff80128853d113a3551b7e06bc1503723bee6cf7147dcc0cbe59778f3356",
     "src/lib/albion/data-client.ts": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c",
-    "src/lib/albion/equipment-catalog.ts": "2ae952ae0378fa66a800e85ce35725e0f5c9e85c706ff71082ef7cefcf6b78c6",
-    "src/lib/albion/equipment-validation.ts": "81d9cacac4d530deceae608629c80b5943ceaad36b99073e7f6407f8b89946f6",
+    "src/lib/albion/equipment-abilities.ts": "21955a3d6d9aede663c304f967c436cc04aa37c75b51bce19357fe03d6e2af3b",
+    "src/lib/albion/equipment-catalog.ts": "5f4577dcbed60ea4739cda763245ae6e9ae77d56d9bfaa0dc036eece6febca1f",
+    "src/lib/albion/equipment-sets.ts": "7c78aedc51db61e7e2839546e12d288a3aab4d39c4f9c6cf73a9ab7bee295a6f",
+    "src/lib/albion/equipment-validation.ts": "25f63bdc9f4e7b857ebd4e80e18cfabb8078786a6db3905383701bd131c33d9f",
+    "src/lib/albion/expanded-recipes.json": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c",
     "src/lib/albion/freshness.ts": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244",
     "src/lib/albion/history-client.ts": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1",
     "src/lib/albion/icon-cache.ts": "1fa9bf230864aabb21c54c9319a3505e512945ec0c34cf712e749df5e08b2e57",
     "src/lib/albion/item-database.ts": "0ec703bb5bd14fd93f6fa65c2bbc0de2561faf3cc09ac441b9ecb2a732725069",
     "src/lib/albion/item-renderer.ts": "11416fd556db05cce534c4f321fb737911712587960f497a883d9b12c1c5654f",
-    "src/lib/albion/market-client.ts": "bb76d9a1c4de8a109a0c9c2cd719bc99a2a259359052d8c893ef1e0259365c36",
+    "src/lib/albion/market-client.ts": "64021c723b8ce1c0a225ea3002334fa6d82243adeb4f525324a6baedabf87dd8",
     "src/lib/albion/market-preview.ts": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b",
+    "src/lib/albion/market-quotes.ts": "fbefff5ad4b14cc45747ec04ccf5492141c18ed5316831165e0dfbb3955b11a3",
     "src/lib/albion/production-observations.ts": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75",
-    "src/lib/albion/production.ts": "95786307a52502aa48fe4e0b64a8f7afe6e465dc0d49d2e0b4929f1e58be74f0",
+    "src/lib/albion/production-profile.ts": "45b9ac346df60d8cc97c67d5e793b1008b7ab0a7ae93bef712d25b4ee6a64014",
+    "src/lib/albion/production.ts": "b68cb3414c771edd0957d911000ab5da32dfb8c5e6ae44e43c2de6e770409599",
     "src/lib/albion/quote-summary.ts": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a",
-    "src/lib/albion/recipes.ts": "43256904bcf0c0039016ef431368c9a83654dd0bc5b70e036e5ba1a4a41cbda9",
+    "src/lib/albion/recipes.ts": "aea10dfc15074a6b741dd86508444e96e0627d1d03cdce9e3a16ded1e0f20509",
     "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
     "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
+    "src/lib/albion/source-abilities.json": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937",
+    "src/lib/albion/source-equipment.json": "6f685c9d983f280b4ec1dc4ae3f07823a8bb7aeb6993abc6513151172b5dd337",
     "src/lib/albion/transport-prices.ts": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82",
     "src/lib/albion/transport.ts": "e12a77763b80e3660e51094f01954e3c477a2013acc70bbf071ff32c025c4689",
     "src/lib/api-errors.ts": "39c7c15a57538971ac9a462e6c8e6f212f3835bfc71789f393e9157a8253546b",
     "src/lib/auth.ts": "0bd660b0ad76a65d5ca618a9ec6b0f11f60db5f5da0b0e9cb03d67a158c7ec9f",
     "src/lib/builds/service.ts": "295d996660f8e8a48b4fa793fd5ba9be227ff4fb686e21cf0f497ae0ec47d720",
-    "src/lib/builds/validation.ts": "ef962c70a1ef1db73b502231108699157c6869d223f8c87880fb017077f041e2",
+    "src/lib/builds/validation.ts": "192be7b930ad973ccdf713ae500390382a9f2569582af5b70c767a6a98b8d960",
     "src/lib/catalog/item-snapshot.ts": "d03e658c987c62598efaf6a680a0678f757a14708033f5ac586bb21cfb9d364b",
     "src/lib/catalog/png-verification.ts": "e4defcef5dfdca99cfb32bdd4dce085ae7cb259bb43f01ed1bc72d76c90eb535",
     "src/lib/catalog/release-state.ts": "582cece21596dfbe14dfda20ec03f2e083de9897e791a4c22bdcba4c611dab93",
@@ -1203,7 +1677,7 @@
     "src/lib/community/validation.ts": "ef13a55b4a8c547148f7652df45b0f18edb60457ccf1e8242c943dd585f658a0",
     "src/lib/compositions/repository.ts": "2c254f0ac035b5d9c5c2d67296a903a47559dac467bcacd17ad5953371266f74",
     "src/lib/compositions/service.ts": "ee2ac0d80e89be2317776ffdd3793da4ccb7f49ea70058483b6821946d89d194",
-    "src/lib/compositions/validation.ts": "174417e1707f3b2f30cde9258fdc0dd6fd0c0f65effd7fe06347731d7c336447",
+    "src/lib/compositions/validation.ts": "86c7f5c28fce12673e8fc6d798d991a18d9ba26d6aff58bd6319a79d684f0f94",
     "src/lib/db.ts": "12d5ef697cb4e454d538a7c0c70bc7078398aaa5087e885d088a2117b4f95aeb",
     "src/lib/env.ts": "7625ac2d77eb09b8c58eff8ac6115aeedec341ac424852c54ac40a67e8f61c71",
     "src/lib/groups/calendar.ts": "951af8d7b49e1a7fe63405a58493b6f48ac53e15f886301f945015f51837ae50",
@@ -1231,20 +1705,24 @@
     "tests/catalog-search.test.ts": "55f7c7706fb23f46bd4938428584f3a2b818a2bfb1b5e5a81943fb9376d194a9",
     "tests/catalog-source-cli.test.ts": "07507cf8c3e8c54d706d8eded804213d4f8283100e251b72ae83645b8a232282",
     "tests/catalog-verification.test.ts": "e99a982bd40edf696eaa099bb835147b28c0d38e0063c86680dc9679ae080ef7",
-    "tests/catalog.test.ts": "0899d27ca4a8b2d8168bce08d71f18159a6aced8d4cb0b6e68c8183c3fbe94b1",
+    "tests/catalog.test.ts": "7aa8af2630c874f09db3512f2435b17bf7fc73d4e981e722972d20c5acebde15",
+    "tests/ci-evidence.test.ts": "58210bd5cbdefb7a4f456806cf2366399dc11733dd22ca5b267b365ad44bd5d6",
     "tests/community.test.ts": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207",
     "tests/compositions.test.ts": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed",
     "tests/data-client.test.ts": "4a4451e49a115c5deceb1165c869e2de935d5bfdffd677dcfb76599a62e3f745",
     "tests/env.test.ts": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba",
+    "tests/equipment-sets.test.ts": "145badbd87b1fc1e3acab965115e89c10bf514051e531b7f2512d723eb05f5d6",
     "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
     "tests/icon-cache.test.ts": "5a5698e14e82dd5a14616f491575372b347288c9ca74790a316cc90cd588732b",
     "tests/item-snapshot.test.ts": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12",
+    "tests/market-batch.test.ts": "b12e79aa4e236c8e1e8e24f758db632a2b1d92e7fe5505afe1115f8b64ca950d",
     "tests/market-payload.test.ts": "15ebd5ea0715be2951773f1d7359d5f95b65273ebd034b84ad688229a92c0515",
     "tests/market-preview.test.ts": "48ce3681a1039d97eb1ed5ff3cfce51cda3af6fe30f133c66e6fc9aac777ed1f",
     "tests/market.test.ts": "e5f421f8c90384b5e89ded8b19ea80733411b17983921325fdce508baed72e48",
     "tests/opportunities.test.ts": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39",
     "tests/production-market.test.ts": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9",
     "tests/production-observations.test.ts": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36",
+    "tests/production-profile.test.ts": "a3752f5a4632a9afd80913d12c7998d0739945c836c3ba19172cc7926497cc13",
     "tests/production.test.ts": "48b1a3dd61413ee6e7bc7cc36ad180a1b83cfa88f5584a9f44924db8635f9139",
     "tests/qa-regressions.test.ts": "36f116ed01cfa912d8787db4680acbe221ae75ce03d63ac7477314babc444382",
     "tests/quote-summary.test.ts": "b1530ecfbab74f9e5531435841799aabc8b82151f249b28710c94553c8351b07",
@@ -1253,6 +1731,7 @@
     "tests/serialization-retry.test.ts": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9",
     "tests/settings-recovery.test.ts": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8",
     "tests/source-secret-scan.test.ts": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c",
+    "tests/source-workbench.test.ts": "1d238c535177eeb1fd3f9a7d34452c29e6f0b738b4626ee85e8dd744a5d6d559",
     "tests/timers.test.ts": "2f8dbcea1ae80e90169792bc8cae145f11aae6a7ffaf31fad19e09c0f39d0963",
     "tests/transport.test.ts": "a98a86cf7caf79e42fb6dbc1ac4290a65c5738c2a84e7875007450744ba57ce2",
     "tsconfig.json": "2bbd1ea18863cadea4a4757648f91c6b65725a5cb1e19edc55d54f4e2a25f6b4",
