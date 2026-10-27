@@ -1,0 +1,330 @@
+{
+  "checkedAt": "2026-10-26T15:18:37.570575+00:00",
+  "phaseCheckedAt": "2026-10-26T15:13:07.213Z",
+  "mode": "production localhost:3001",
+  "tool": "local Playwright library; MCP unavailable",
+  "fixtures": "synthetic eight-city T4_BAG and three-point history; not live",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "documentWidth": 1440,
+      "tableTop": 336.4375,
+      "tableWidth": 1280,
+      "tableScrollWidth": 1278,
+      "tableClientWidth": 1278
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "documentWidth": 1920,
+      "tableTop": 337.296875,
+      "tableWidth": 1280,
+      "tableScrollWidth": 1278,
+      "tableClientWidth": 1278
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "documentWidth": 768,
+      "tableTop": 475.53125,
+      "tableWidth": 736,
+      "tableScrollWidth": 734,
+      "tableClientWidth": 734
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "documentWidth": 390,
+      "tableTop": 499.53125,
+      "tableWidth": 358,
+      "tableScrollWidth": 667,
+      "tableClientWidth": 356
+    },
+    {
+      "width": 375,
+      "height": 844,
+      "documentWidth": 375,
+      "tableTop": 499.53125,
+      "tableWidth": 343,
+      "tableScrollWidth": 667,
+      "tableClientWidth": 341
+    },
+    {
+      "width": 320,
+      "height": 844,
+      "documentWidth": 320,
+      "tableTop": 499.53125,
+      "tableWidth": 288,
+      "tableScrollWidth": 667,
+      "tableClientWidth": 286
+    },
+    {
+      "width": 327,
+      "height": 576,
+      "documentWidth": 327,
+      "tableTop": 499.53125,
+      "tableWidth": 295,
+      "tableScrollWidth": 667,
+      "tableClientWidth": 293
+    }
+  ],
+  "states": ["initial", "loading", "empty", "error", "unavailable"],
+  "interactions": {
+    "cityFilter": true,
+    "searchDropdown": true,
+    "escape": true
+  },
+  "performance": {
+    "samples": [
+      {
+        "interactionMs": 63.836577000000034,
+        "domContentLoadedMs": 16.299999999813735,
+        "responseEndMs": 6.7999999998137355,
+        "scriptTransferBytes": 191000,
+        "resourceCount": 22,
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 36
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 36
+          }
+        ]
+      },
+      {
+        "interactionMs": 59.713494999999966,
+        "domContentLoadedMs": 19.9000000001397,
+        "responseEndMs": 7.699999999953434,
+        "scriptTransferBytes": 191000,
+        "resourceCount": 22,
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 40
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 40
+          }
+        ]
+      },
+      {
+        "interactionMs": 61.43039200000021,
+        "domContentLoadedMs": 22.399999999906868,
+        "responseEndMs": 11.399999999906868,
+        "scriptTransferBytes": 191000,
+        "resourceCount": 22,
+        "paint": [
+          {
+            "name": "first-paint",
+            "ms": 56
+          },
+          {
+            "name": "first-contentful-paint",
+            "ms": 56
+          }
+        ]
+      }
+    ],
+    "scope": "three warm unthrottled loopback runs; automation wall-time interaction proxy; no field INP/LCP/CLS or Lighthouse claim",
+    "medianInteractionMs": 61.43039200000021,
+    "lighthouse": {
+      "version": "13.5.0",
+      "fetchTime": "2026-10-26T15:13:01.255Z",
+      "route": "http://localhost:3001/tools/market?region=europe",
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "scores": {
+        "performance": 96,
+        "accessibility": 100
+      },
+      "metrics": {
+        "largest-contentful-paint": 2818.374500000001,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 24.5
+      },
+      "samples": 1
+    }
+  },
+  "limits": [
+    "No successful browser MCP call",
+    "No field INP or production p75 evidence",
+    "No visual redesign or owner acceptance",
+    "Current-patch game verification remains zero",
+    "Fresh Docker build blocked on protected filesystem",
+    "Skill installation/discovery blocked on protected filesystem"
+  ],
+  "artifacts": [
+    {
+      "path": ".qa/skill-system/frontend-measurements.json",
+      "sha256": "112005e5b709d974369eea90c15cb8e77dc83129ab8600afebaff17ca3fe53a9",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/accounting.json",
+      "sha256": "06cb75694b89803fbb7749348863852c038aec94849e155ccf3eae8dab260493",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/validator-cases.json",
+      "sha256": "5c0c5febb4c75ed9315804f5b3cc3ab5146162c28395ac06e673372a51310332",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/discovery.json",
+      "sha256": "f9a9eeb8f5a1cf153d6b70e0f5388f8c3a6cd4eebef3db84e2089aa716e90fde",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/lighthouse-market.json",
+      "sha256": "2348de64ad20dc716dae4f3a492cea6d15178a1ac49cb81ae3d55565040f1645",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/docker-build.log",
+      "sha256": "7d86c9ea9ae2ee5e929bffeda28a227599bfb6fd405e10df135b8bb41fe4b981",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/initial-phase/phase-summary.json",
+      "sha256": "4e2e8626ab6e486804c74c3ae486576c1b3675cdf76a85a902cd8f0863bb9d01",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/initial-phase/phase-browser.log",
+      "sha256": "dc11c04b55ecc5a86a823714a104a4f66c9f893da302095bed6c0f7e701b7217",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/phase-summary.json",
+      "sha256": "28c062d0cb5347cc226d392c20a2e86d15adcf3684278493fa7c6ee27ab02ae4",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/phase-browser.log",
+      "sha256": "390efeee86c1123f08849c930aaab3a11baec7b37716bde234d1dbaa6dc62943",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-1440.png",
+      "sha256": "3b38229bba967ded5b9acc7df68f8438edafbc73102156a2ea8777a4a4c428c6",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-1920.png",
+      "sha256": "7d7efe79d213b4966aa6eae66fa2050aa2519ec2c05afae5272efbe54d1e0a4f",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-320.png",
+      "sha256": "95dfc5544de3cac25f9e35e42d27277f762b8d3760adcc66ed40502f02cd1996",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-327.png",
+      "sha256": "ffbdb9ca55f615380c5d620e065db4989156efe9db3957a4ab3272bd243d5d8e",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-375.png",
+      "sha256": "5642b45636f1d7da2fe1243a75edca2bd02cf32b9e1c4bb916609f89d5ca74c0",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-390.png",
+      "sha256": "ee2d8011769994c29e58dd019892038451c2e0b98e539af7f72198b6dbc29d2a",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-768.png",
+      "sha256": "5390d97c1460fe053c0586711399e47413f0365433ec6bcb64981de08a3a0a2a",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-state-empty.png",
+      "sha256": "f339533c817ffe13a7c83f8cedc8fe1af73e7da1152ce280556fe13ca66e2ec9",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-state-error.png",
+      "sha256": "e508b8cb5e97cd75bfa67e13188d6088c3f6fe3ad6485908c32ca2457bcbc42f",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-state-initial.png",
+      "sha256": "75fe36b8ddfa39c4c57f0610bd07d8e40bd9b13170e34d3c42ffe6adc0730aac",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-state-loading.png",
+      "sha256": "ab6e989be1455ed40212a96a47041c86d97dfeaf6e1606b444bf1f444d870556",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-state-unavailable.png",
+      "sha256": "41667f1f52ddefa6e6b06292c2c6e76a3938680b9752fe5402feb253caee8d4b",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-1440.png",
+      "sha256": "7ecdb6114d523f53e2298a27da209acbfc1f74fd1fb660984c53bf77f81c073d",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-1920.png",
+      "sha256": "bc7e7cf2c6d33a2767cacebeb50f5df14303f78a3561129b3427e922af581400",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-320.png",
+      "sha256": "83a7b67645bba9e035ae01c55e39078d7c1bc8a3931feeaec8b4fd9cc87dd18c",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-327.png",
+      "sha256": "bf4cd29c392353745c1cb128b5976a30877060401458cfbd4829c849d5d9f6e0",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-375.png",
+      "sha256": "d040c98e3f510a51013df23de1200f6c30fe8eab854b8058c86667c675a3d982",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-390.png",
+      "sha256": "a7c229bf6f4e336e16665c4a277c9e9ef987921072e018a9429d74ee7347011b",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": ".qa/skill-system/market-viewport-768.png",
+      "sha256": "e2c4b1b55fe3a90f84d58d1ef276df0db656e6ae59e4ac642b187ca6eebf3b8e",
+      "availability": "local ignored; may be absent in a clean checkout"
+    },
+    {
+      "path": "docs/design-review/skill-system-review/market-desktop.png",
+      "sha256": "3b38229bba967ded5b9acc7df68f8438edafbc73102156a2ea8777a4a4c428c6",
+      "availability": "portable representative"
+    },
+    {
+      "path": "docs/design-review/skill-system-review/market-mobile.png",
+      "sha256": "a7c229bf6f4e336e16665c4a277c9e9ef987921072e018a9429d74ee7347011b",
+      "availability": "portable representative"
+    },
+    {
+      "path": "docs/design-review/skill-system-review/reference-comparison.png",
+      "sha256": "8d63cdd463476bca24c2b5cc33e40acc594c90f7331978f9b936ee717ddf19c3",
+      "availability": "portable representative"
+    }
+  ]
+}

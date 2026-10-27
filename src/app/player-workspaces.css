@@ -1,0 +1,1170 @@
+/* Task-oriented player workspaces. Shared colors and typography remain in globals/workspace. */
+
+/* Market: discovery first, quotes in the center, selected-item research alongside. */
+.market-explorer-page .market-workspace {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.48fr);
+  gap: 24px;
+  align-items: start;
+}
+.market-explorer-page .market-filters {
+  grid-template-columns: minmax(0, 1fr) 130px auto;
+  gap: 10px;
+}
+.market-explorer-page .market-filters > .catalog-picker {
+  grid-column: auto;
+}
+.market-explorer-page .market-filters > .button {
+  grid-column: auto;
+  align-self: end;
+}
+.market-explorer-page .market-secondary-controls {
+  margin: 10px 0 16px;
+  gap: 18px;
+}
+.market-table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.market-table-toolbar label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0;
+}
+.market-table-toolbar select {
+  min-height: 36px;
+  font-size: 13px;
+  margin-top: 4px;
+  padding: 6px 9px;
+}
+.market-explorer-page .market-board table {
+  min-width: 0;
+  width: 100%;
+}
+.market-explorer-page .market-board th:first-child,
+.market-explorer-page .market-board td:first-child {
+  display: none;
+}
+.market-explorer-page .market-board th,
+.market-explorer-page .market-board td {
+  padding: 12px 10px;
+}
+.market-explorer-page .market-board th.observation-time,
+.market-explorer-page .market-board td.observation-time,
+.market-explorer-page .market-board th:nth-last-child(-n + 2) {
+  display: none;
+}
+.market-inline-time {
+  display: block;
+  font: 400 11px/1.5 var(--font-ui);
+  color: var(--muted);
+  margin-top: 5px;
+  white-space: normal;
+}
+.market-explorer-page .market-col-long {
+  display: none;
+}
+.market-explorer-page .market-col-short {
+  display: inline;
+}
+.market-explorer-page .market-item-panel {
+  display: block;
+  padding: 18px;
+  margin: 0;
+  background: var(--sidebar);
+}
+.market-explorer-page .market-selected-item [data-albion-icon] {
+  width: 60px;
+  height: 60px;
+}
+.market-explorer-page .market-selected-item h2 {
+  font-size: 20px;
+}
+.market-explorer-page .quote-freshness {
+  font-size: 12px;
+  line-height: 1.6;
+  padding-top: 12px;
+  margin-top: 14px;
+}
+.market-explorer-page .market-quote-summary {
+  gap: 12px;
+  margin-block: 16px;
+}
+.market-explorer-page .market-quote-summary dt {
+  font-size: 12px;
+}
+.market-explorer-page .market-quote-summary dd {
+  font-size: 20px;
+}
+.market-explorer-page .market-item-panel > .history-panel {
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  margin-top: 20px;
+  padding: 18px 0 0;
+  background: transparent;
+}
+.market-explorer-page .history-panel h2 {
+  font: 600 16px/1.4 var(--font-ui);
+}
+.market-explorer-page .history-panel > p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.market-explorer-page .history-panel .market-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.market-explorer-page .history-panel .market-form label {
+  min-width: 0;
+}
+.market-explorer-page .history-panel .market-form .button {
+  width: 100%;
+}
+.market-explorer-page .history-panel .empty {
+  min-height: 0;
+  padding: 24px 8px;
+  margin-block: 12px;
+}
+.market-explorer-page .market-empty {
+  min-height: 0;
+  padding: 28px 12px;
+  margin-block: 8px 16px;
+}
+.market-source-note {
+  display: block;
+  margin-top: 12px;
+  line-height: 1.7;
+  font-size: 12px;
+}
+
+/* Build workbench: inventory geometry, current selection and real saved alternatives. */
+.build-editor-context {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) and (min-width: 781px) {
+  .market-explorer-page .market-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .market-explorer-page .market-item-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .market-explorer-page .market-item-panel > .history-panel {
+    border-top: 0;
+    border-left: 1px solid var(--border);
+    margin-top: 0;
+    padding: 0 0 0 20px;
+  }
+}
+@media (max-width: 780px) {
+  .market-explorer-page > .intro {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .market-explorer-page .market-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .market-explorer-page .market-filters {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .market-explorer-page .market-filters > .catalog-picker {
+    grid-column: 1 / -1;
+  }
+  .market-explorer-page .market-filters > label:last-of-type,
+  .market-explorer-page .market-filters > .button {
+    grid-column: auto;
+  }
+  .market-explorer-page .market-secondary-controls {
+    margin: 8px 0 12px;
+    gap: 12px;
+  }
+  .market-table-toolbar {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .market-explorer-page .market-board table {
+    table-layout: fixed;
+    min-width: 0;
+  }
+  .market-explorer-page .market-board th,
+  .market-explorer-page .market-board td {
+    width: 33.333%;
+    padding: 10px 7px;
+    font-size: 13px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .market-explorer-page .market-board .city-indicator {
+    display: none;
+  }
+  .market-explorer-page .market-board .numeric {
+    font-size: 14px;
+  }
+  .market-explorer-page .market-board td.numeric > span {
+    display: block;
+  }
+  .market-explorer-page .market-inline-time {
+    font-size: 11px;
+  }
+  .market-explorer-page .market-item-panel {
+    padding: 16px;
+  }
+  .build-editor-context > span:last-child {
+    font-size: 11px;
+  }
+}
+
+.market-explorer-page .market-price-missing {
+  font: 400 12px/1.5 var(--font-ui);
+}
+@media (max-width: 780px) {
+  .build-editor-context,
+  .build-gear-studio .gear-selection-context {
+    display: none;
+  }
+}
+
+/* Party planning: keep player equipment ahead of presentation/export settings. */
+.party-editor .party-tools-bar {
+  gap: 12px;
+  align-items: end;
+}
+.party-editor .party-size-bar .actions {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-block: 0;
+  gap: 6px;
+  padding-block: 3px;
+}
+.party-editor .party-size-bar .button {
+  white-space: nowrap;
+  flex: none;
+  padding-inline: 12px;
+}
+.party-board .party-loadout-card {
+  border-radius: 2px;
+}
+
+/* Production: a small recipe workbench, explicit optional assumptions, then materials. */
+.production-batch-actions button,
+.item-category-nav button {
+  color: var(--muted);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 2px;
+  font: 500 13px var(--font-ui);
+  min-height: 34px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+.production-batch-actions button[aria-pressed="true"],
+.item-category-nav button[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--metal);
+  background: var(--accent-wash);
+}
+
+/* Item reference: authentic icons anchor rows; technical identities remain inspectable. */
+.item-category-nav {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.item-category-nav button {
+  flex: none;
+  white-space: nowrap;
+}
+.catalog-item-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.catalog-item-identity > div {
+  min-width: 0;
+}
+.catalog-item-identity small {
+  display: block;
+  margin-top: 5px;
+  font: 400 11px/1.5 var(--font-ui);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.item-reference-browser td:first-child {
+  min-width: 220px;
+}
+.item-reference-browser td {
+  padding-block: 12px;
+}
+
+/* Original guides use an editorial hierarchy rather than empty image cards. */
+.guide-card-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.guide-number {
+  font: 600 28px var(--font-display);
+  color: var(--metal);
+}
+.guide-discovery-card {
+  border-left: 2px solid var(--accent);
+  padding: 20px;
+}
+.guide-discovery-card h2 {
+  font-size: 19px;
+  line-height: 1.4;
+}
+.guide-discovery-card details {
+  margin-top: 16px;
+}
+
+/* Guilds: activity and actual shared loadouts carry the page, not a decorative banner. */
+.guild-workspace-page .guild-identity-banner {
+  padding: 20px;
+  min-height: 0;
+  gap: 18px;
+}
+.guild-workspace-page .guild-identity-banner .intro {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+.guild-workspace-page .guild-tabs {
+  margin-block: 12px 20px;
+}
+.guild-workspace-page .guild-next-event,
+.guild-workspace-page .guild-recent-announcements,
+.guild-workspace-page .guild-quick-comps,
+.guild-workspace-page .guild-upcoming {
+  border-radius: 2px;
+}
+.guild-workspace-page .guild-next-event .event-date {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Personal hub: bounded real records and real equipment, with direct destinations. */
+.player-hub-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-block: 24px;
+}
+.player-hub-shortcuts > a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  background: var(--sidebar);
+  color: var(--text);
+  font-size: 13px;
+}
+.player-hub-shortcuts > a > svg,
+.player-hub-grid h2 > svg {
+  color: var(--accent-ink);
+}
+.player-hub-shortcuts strong {
+  font: 500 24px var(--font-data);
+}
+.player-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.player-hub-grid > .panel {
+  padding: 20px;
+  border-radius: 2px;
+  min-width: 0;
+}
+.player-hub-grid h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 17px var(--font-ui);
+  margin-bottom: 14px;
+}
+.player-loadout-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-block: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+}
+.player-loadout-link > span:first-child {
+  min-width: 0;
+}
+.player-loadout-link strong {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.player-loadout-link small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
+.player-loadout-link .equipment-strip {
+  flex-shrink: 0;
+}
+
+@media (max-width: 1100px) {
+  .player-hub-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 780px) {
+  .party-editor .party-tools-bar {
+    display: block;
+  }
+  .party-editor .party-size-bar {
+    width: 100%;
+    min-width: 0;
+  }
+  .party-editor .composition-layout-controls {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    align-items: end;
+    gap: 8px;
+  }
+  .party-editor .composition-layout-controls > label {
+    display: block;
+    font-size: 12px;
+  }
+  .party-editor .png-export {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 6px;
+    min-width: 0;
+  }
+  .party-editor .png-size {
+    display: block;
+    width: auto;
+    font-size: 12px;
+    min-width: 0;
+  }
+  .party-editor .png-export select,
+  .party-editor .composition-layout-controls > label select {
+    width: 100%;
+    min-width: 0;
+    font-size: 12px;
+    padding-inline: 6px;
+  }
+  .party-editor .png-export .button {
+    font-size: 12px;
+    padding-inline: 8px;
+    white-space: nowrap;
+  }
+  .party-board[data-party-size] .party-board-title {
+    padding: 8px 0 14px;
+    text-align: left;
+  }
+  .party-board[data-party-size] .party-board-title h2 {
+    font-size: 22px;
+    margin-block: 6px;
+  }
+  .party-board[data-party-size] .party-board-title p {
+    font-size: 12px;
+    margin: 0;
+  }
+  .guild-workspace-page .guild-identity-banner {
+    padding: 14px;
+    gap: 12px;
+  }
+  .guild-workspace-page .guild-identity-banner .page-title {
+    font-size: 28px;
+    margin-block: 4px 8px;
+  }
+  .guild-workspace-page .guild-identity-banner .intro {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .guild-workspace-page .guild-monogram {
+    width: 42px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+  .guild-workspace-page .guild-tabs {
+    margin-block: 8px 16px;
+  }
+  .player-hub-shortcuts {
+    gap: 8px;
+    margin-block: 20px;
+  }
+  .player-hub-shortcuts > a {
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .player-hub-shortcuts strong {
+    grid-column: 2;
+    font-size: 20px;
+  }
+  .player-hub-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .player-loadout-link {
+    flex-wrap: wrap;
+  }
+  .item-reference-browser {
+    padding: 12px;
+  }
+  .item-reference-browser .market-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .item-reference-browser .market-form > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .item-reference-browser table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+  .item-reference-browser th:nth-child(2),
+  .item-reference-browser td:nth-child(2),
+  .item-reference-browser th:nth-child(3),
+  .item-reference-browser td:nth-child(3) {
+    display: none;
+  }
+  .item-reference-browser th:first-child,
+  .item-reference-browser td:first-child {
+    min-width: 0;
+    width: 68%;
+  }
+  .item-reference-browser th:last-child,
+  .item-reference-browser td:last-child {
+    width: 32%;
+    white-space: normal;
+  }
+  .item-reference-browser th,
+  .item-reference-browser td {
+    padding: 10px 6px;
+    overflow-wrap: anywhere;
+  }
+  .item-reference-browser .catalog-item-identity {
+    gap: 8px;
+    align-items: start;
+  }
+  .item-reference-browser .catalog-item-identity [data-albion-icon] {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+  .guide-discovery-card {
+    padding: 16px;
+  }
+}
+
+.workspace-route h1.page-title {
+  overflow-wrap: anywhere;
+}
+.catalog-item-identity small {
+  white-space: normal;
+}
+.catalog-item-identity > div {
+  flex: 1;
+}
+@media (max-width: 780px) {
+  .guide-directory > .build-discovery-filters {
+    padding: 16px;
+  }
+  .guide-directory .responsive-filter-panel {
+    margin-top: 8px;
+  }
+}
+
+.directory-page > .product-page-heading {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  margin-bottom: 24px;
+}
+@media (max-width: 780px) {
+  .directory-page > .product-page-heading {
+    display: block;
+  }
+  .directory-page > .product-page-heading .scope-note {
+    display: block;
+    max-width: none;
+    margin-top: 10px;
+  }
+}
+
+.build-detail-page {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.build-detail-page > .intro {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+@media (max-width: 780px) {
+  .build-detail-page .character-slots {
+    margin-block: 16px;
+    gap: 8px;
+  }
+  .build-detail-page .character-slot {
+    min-height: 94px;
+    border-radius: 2px;
+    padding: 6px;
+  }
+  .build-detail-page .character-slot [data-albion-icon] {
+    width: 54px;
+  }
+  .build-detail-page .character-slot.equipped .slot-item-name {
+    display: none;
+  }
+  .build-detail-page .character-slot > svg {
+    height: 32px;
+    margin-block: 2px;
+  }
+}
+.market-watchlist {
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+.watchlist-items {
+  list-style: none;
+  padding: 0;
+}
+.watchlist-items li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block: 14px;
+}
+.watchlist-items a {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .watchlist-items li {
+    flex-wrap: wrap;
+  }
+}
+.composition-roster-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+.composition-roster-preview strong {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 13px;
+}
+.market-quote-summary dd.quote-unavailable {
+  /* Empty-state prose uses the UI face; load the numeric face when quotes exist. */
+  font-family: var(--font-ui);
+}
+
+/* Preserve readable, copyable source identifiers at narrow widths. */
+.item-metadata-detail {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Roster browsing keeps search close to the actual equipment previews. */
+.composition-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.5fr) auto;
+  gap: 16px;
+  align-items: end;
+  margin-top: 24px;
+  padding: 16px;
+}
+.composition-filters label {
+  margin: 0;
+}
+.composition-filters input,
+.composition-filters select {
+  width: 100%;
+  min-width: 0;
+}
+.composition-preview-card h2 {
+  margin-block: 12px;
+  line-height: 1.35;
+}
+.composition-preview-card .composition-roster-preview {
+  padding-block: 8px;
+  border-block: 1px solid var(--border);
+}
+.composition-preview-card .composition-roster-preview [data-albion-icon] {
+  width: 44px;
+  height: 44px;
+}
+.item-category-select {
+  display: none;
+}
+@media (max-width: 780px) {
+  .composition-directory-heading {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .composition-directory-heading .page-title {
+    margin-block: 0;
+  }
+  .composition-directory > .intro {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .composition-filters {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    margin-top: 16px;
+    padding: 12px;
+  }
+  .composition-filters > label {
+    font-size: var(--text-xs);
+  }
+  .composition-filters > .responsive-filter-panel {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+  }
+  .composition-filters > button {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 44px;
+  }
+  .composition-filters .mobile-filter-trigger {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+  .composition-directory .composition-results {
+    margin-top: 16px;
+  }
+  .composition-preview-card {
+    padding: 16px;
+  }
+  .item-reference-browser .item-category-nav {
+    display: none;
+  }
+  .item-category-select {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .item-category-select select {
+    width: 100%;
+  }
+}
+
+/* Player-facing polish: retain Outpost's charcoal/copper identity. */
+.item-back-link {
+  display: inline-flex;
+  margin-bottom: 16px;
+  min-height: 32px;
+  align-items: center;
+}
+.item-reference-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.item-reference-summary > div {
+  min-width: 0;
+  flex: 1;
+}
+.item-reference-summary p {
+  margin: 4px 0;
+}
+.item-reference-slot {
+  font-size: 16px;
+  font-weight: 600;
+}
+.item-reference-summary code {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.item-data-notice {
+  margin: 24px 0;
+  padding: 12px 0;
+  border-block: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.item-abilities > h2 {
+  font: 600 20px/1.4 var(--font-ui);
+}
+.item-ability-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+.item-ability-group h3 {
+  font: 700 14px/1.4 var(--font-ui);
+  color: var(--metal);
+  margin: 0 0 8px;
+}
+.item-ability-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.item-ability-group li {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  font-size: 14px;
+}
+.item-ability-group small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.item-provenance {
+  border-top: 1px solid var(--border);
+  margin-top: 28px;
+  padding-top: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.item-provenance summary {
+  min-height: 32px;
+  cursor: pointer;
+  color: var(--text);
+}
+.item-provenance p {
+  overflow-wrap: anywhere;
+}
+.comp-roster-empty {
+  max-width: 60ch;
+  padding: 28px 0 20px;
+}
+.comp-roster-empty > svg {
+  color: var(--metal);
+  margin-bottom: 12px;
+}
+.comp-roster-empty h2 {
+  font: 600 18px/1.4 var(--font-ui);
+  margin: 0 0 8px;
+}
+.comp-roster-empty p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.comp-more-actions {
+  position: relative;
+  align-self: end;
+}
+.comp-more-actions summary {
+  cursor: pointer;
+  min-height: 40px;
+}
+.comp-more-actions-panel {
+  position: absolute;
+  right: 0;
+  z-index: 10;
+  width: max-content;
+  max-width: min(280px, 80vw);
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  background: var(--sidebar);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.comp-more-actions-panel .button {
+  justify-content: flex-start;
+  min-height: 44px;
+}
+.comp-action-status:empty {
+  display: none;
+}
+.collection-empty {
+  padding: 12px 0 20px;
+  color: var(--muted);
+}
+.collection-empty p {
+  margin-bottom: 8px;
+}
+.outpost-not-found {
+  max-width: 58ch;
+  padding-block: 64px;
+}
+.outpost-not-found > svg {
+  color: var(--metal);
+  margin-bottom: 20px;
+}
+.outpost-not-found p {
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 16px 0 24px;
+}
+.guide-card-kicker {
+  color: var(--muted);
+  font-size: 13px;
+}
+.guide-card-kicker svg {
+  color: var(--metal);
+}
+.guide-discovery-card {
+  border-left-width: 1px;
+}
+@media (max-width: 780px) {
+  .item-reference-summary {
+    gap: 16px;
+  }
+  .item-reference-summary > .button {
+    width: 100%;
+    justify-content: center;
+  }
+  .composition-toolbar {
+    gap: 8px;
+  }
+  .composition-toolbar > label {
+    flex: 1 1 160px;
+  }
+  .composition-toolbar {
+    position: relative;
+  }
+  .comp-more-actions {
+    position: static;
+  }
+  .comp-more-actions-panel {
+    top: 100%;
+    right: 0;
+    left: auto;
+    max-width: 100%;
+  }
+  .outpost-not-found {
+    padding-block: 32px;
+  }
+}
+
+/* Grind reference: game artwork leads, surfaces separate tasks, labels remain legible. */
+.directory-page .directory-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.directory-page .directory-group-heading h2 {
+  font: 700 19px/1.35 var(--font-ui);
+}
+.directory-page .directory-entries {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+.directory-page .directory-entry {
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  align-items: start;
+  position: relative;
+}
+.directory-page .directory-entry:hover {
+  background: var(--elevated);
+  border-color: var(--metal);
+}
+.directory-page .directory-entry h3 {
+  font-size: 16px;
+  font-weight: 700;
+  padding-right: 12px;
+}
+.directory-page .directory-entry p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.directory-page .directory-arrow {
+  position: absolute;
+  right: 12px;
+  top: 16px;
+  color: var(--muted);
+}
+.directory-page .tool-symbol {
+  width: 56px;
+  height: 56px;
+  color: var(--metal);
+  background: var(--bg);
+  border-radius: 50%;
+}
+.directory-page .tool-game-art {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.directory-page .tool-game-art img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+.build-discovery-page .build-discovery-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.build-discovery-page .build-preview-card {
+  background: var(--panel);
+  border-radius: 6px;
+}
+.build-discovery-page .build-preview-link {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px;
+  min-height: 200px;
+}
+.build-discovery-page .build-card-art {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+.build-discovery-page .build-card-art img {
+  width: 80px;
+  height: 80px;
+}
+.build-discovery-page .build-card-art .card-category {
+  position: static;
+  font-size: 11px;
+  color: var(--metal);
+  white-space: normal;
+}
+.build-discovery-page .build-card-content {
+  min-width: 0;
+  padding: 0;
+}
+.build-discovery-page .build-card-content h2 {
+  font: 700 18px/1.4 var(--font-ui);
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
+.build-discovery-page .build-card-content p {
+  font-size: 13px;
+  margin: 12px 0;
+}
+.build-discovery-page .build-card-content .equipment-strip {
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.build-discovery-page .build-card-content .strip-slot {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 0;
+}
+.build-discovery-page .build-card-content .strip-slot img {
+  width: 40px;
+  height: 40px;
+}
+.composition-directory .composition-results {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.composition-directory .composition-preview-card {
+  padding: 22px;
+  background: var(--panel);
+  border-radius: 6px;
+}
+.composition-directory .composition-preview-card h2 {
+  font: 700 20px/1.4 var(--font-ui);
+  margin: 14px 0;
+}
+.composition-directory .composition-roster-preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: start;
+  gap: 10px;
+  padding-block: 16px;
+}
+.composition-directory .composition-roster-preview > strong {
+  flex-basis: 100%;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.composition-directory .comp-preview-player {
+  display: grid;
+  width: 64px;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.composition-directory .comp-preview-player [data-albion-icon],
+.composition-directory .comp-preview-player > svg {
+  width: 60px;
+  height: 60px;
+}
+.comp-preview-player small {
+  font: 500 11px/1.35 var(--font-ui);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.comp-preview-more {
+  font-size: 12px;
+  padding: 20px 4px;
+  color: var(--muted);
+}
+@media (max-width: 1100px) {
+  .directory-page .directory-entries {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 780px) {
+  .directory-page .directory-entries,
+  .composition-directory .composition-results,
+  .build-discovery-page .build-discovery-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .directory-page .directory-entry {
+    padding: 16px;
+  }
+  .build-discovery-page .build-preview-link {
+    grid-template-columns: 64px minmax(0, 1fr);
+    padding: 16px;
+    gap: 12px;
+  }
+  .build-discovery-page .build-card-art img {
+    width: 64px;
+    height: 64px;
+  }
+  .build-discovery-page .build-card-content .strip-slot,
+  .build-discovery-page .build-card-content .strip-slot img {
+    width: 32px;
+    height: 32px;
+  }
+  .composition-directory .composition-preview-card {
+    padding: 18px;
+  }
+}

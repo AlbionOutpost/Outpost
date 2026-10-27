@@ -1,0 +1,669 @@
+/* Outpost's copper, parchment and dark metal palette. */
+.app.outpost:not(.light) {
+  --bg: #141211;
+  --sidebar: #1a1715;
+  --panel: #211c19;
+  --elevated: #2a231f;
+  --border: #443830;
+  --text: #f0e5d5;
+  --muted: #beb1a6;
+  --accent: #c16b46;
+  --accent-ink: #e8aa85;
+  --accent-wash: #c16b461c;
+  --action: #a34c30;
+  --action-hover: #a85234;
+  --brand-accent: #c16b46;
+  --metal: #d0ad79;
+  --interaction-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.app.outpost.light {
+  --bg: #f5f0e8;
+  --sidebar: #fffaf3;
+  --panel: #fffdf9;
+  --elevated: #eee4d8;
+  --border: #d3c2b0;
+  --text: #30251f;
+  --muted: #6a594b;
+  --accent: #a14e32;
+  --accent-ink: #93442c;
+  --accent-wash: #a14e3212;
+  --action: #93412b;
+  --action-hover: #7f3421;
+  --brand-accent: #a14e32;
+  --metal: #956b36;
+  --interaction-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Preserve the original asset's crop geometry rather than shrinking its image inside the crop. */
+.app.outpost .top-brand {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-height: 60px;
+}
+.app.outpost .top-brand .outpost-wordmark {
+  width: 148px;
+  aspect-ratio: 1530/620;
+}
+.app.outpost .top-brand .outpost-wordmark .outpost-logo {
+  width: 141.96%;
+  height: auto;
+  max-width: none;
+  left: -22.22%;
+  top: -9.68%;
+}
+.app.outpost .light .outpost-wordmark,
+.app.outpost.light .outpost-wordmark {
+  background: none;
+}
+.app.outpost.product-route .site-header {
+  height: 80px;
+  gap: 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--sidebar);
+  box-shadow: 0 8px 24px #00000014;
+}
+.app.outpost .desktop-navigation {
+  gap: 10px;
+}
+.app.outpost .desktop-navigation > a,
+.app.outpost .desktop-navigation > .nav-dropdown > summary {
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 650;
+  border: 1px solid transparent;
+  transition:
+    transform 180ms var(--interaction-ease),
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.app.outpost .desktop-navigation > a::after {
+  display: none;
+}
+.app.outpost .desktop-navigation > a:hover,
+.app.outpost .desktop-navigation > .nav-dropdown > summary:hover {
+  background: var(--accent-wash);
+  border-color: var(--border);
+  transform: translateY(-1px);
+  color: var(--text);
+}
+.app.outpost .desktop-navigation > a[aria-current="page"],
+.app.outpost .desktop-navigation > .nav-dropdown.is-active > summary {
+  background: var(--accent-wash);
+  border-color: var(--border);
+  box-shadow: none;
+  color: var(--text);
+}
+.app.outpost .header-actions {
+  gap: 10px;
+}
+.app.outpost .site-header .search-trigger {
+  width: 210px;
+  min-height: 40px;
+  height: 40px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 8px;
+  color: var(--muted);
+}
+.app.outpost .search-trigger:hover {
+  border-color: var(--accent-ink);
+}
+.app.outpost .search-shortcut {
+  font-size: 11px;
+}
+.app.outpost .region {
+  position: relative;
+  min-height: 40px;
+  padding-left: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  gap: 7px;
+  background: var(--bg);
+  color: var(--muted);
+  transition:
+    transform 180ms var(--interaction-ease),
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+.app.outpost .region select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 9px 26px 9px 0;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 38px;
+  max-width: 112px;
+  cursor: pointer;
+}
+.app.outpost .region select:focus-visible {
+  outline-offset: -1px;
+  border-radius: 6px;
+}
+.app.outpost .region-chevron {
+  position: absolute;
+  right: 9px;
+  pointer-events: none;
+}
+.app.outpost .region:hover,
+.app.outpost .region:focus-within {
+  border-color: var(--accent-ink);
+  box-shadow: 0 3px 10px #0002;
+}
+.app.outpost select option {
+  background: var(--panel);
+  color: var(--text);
+}
+.app.outpost .site-header .theme-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 64px;
+  min-width: 64px;
+  height: 38px;
+  min-height: 38px;
+  padding: 4px;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg);
+  isolation: isolate;
+}
+.app.outpost .theme-toggle::before {
+  content: "";
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  top: 4px;
+  left: 4px;
+  transform: translateX(27px);
+  transition: transform 240ms var(--interaction-ease);
+  z-index: -1;
+}
+.app.outpost .theme-toggle[aria-pressed="true"]::before {
+  transform: translateX(0);
+}
+.app.outpost .theme-choice {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  color: var(--muted);
+}
+.app.outpost .theme-toggle[aria-pressed="true"] .theme-sun,
+.app.outpost .theme-toggle[aria-pressed="false"] .theme-moon {
+  color: var(--accent-ink);
+}
+.app.outpost .theme-choice svg {
+  transition: transform 220ms var(--interaction-ease);
+}
+.app.outpost .theme-toggle:hover .theme-choice svg {
+  transform: rotate(-12deg);
+}
+.app.outpost .discord-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 15px;
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1px solid #d8b99a;
+  background: #ead5ba;
+  color: #302116;
+  box-shadow: 0 3px 0 #00000014;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.app.outpost .discord-login:hover {
+  background: #f3e2cb;
+  color: #302116;
+  border-color: #edcdae;
+  box-shadow: 0 6px 15px #0002;
+}
+.discord-mark {
+  width: 22px;
+  height: 17px;
+  flex-shrink: 0;
+}
+.app.outpost .account-dropdown > summary {
+  border-radius: 8px;
+  padding: 9px 12px;
+  min-height: 40px;
+  border-color: var(--border);
+  background: var(--bg);
+  font-size: 12px;
+}
+.app.outpost .nav-dropdown summary > svg {
+  transform: none;
+}
+.app.outpost .nav-dropdown[open] > summary > svg:last-child {
+  transform: rotate(180deg);
+}
+.app.outpost .dropdown-panel {
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 14px 32px #0004;
+  top: calc(100% + 12px);
+  animation: none;
+}
+.app.outpost .tools-dropdown-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 410px;
+  gap: 4px;
+  left: -4px;
+}
+.app.outpost .dropdown-panel > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 43px;
+  padding: 8px 11px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+.app.outpost .dropdown-panel > a:hover {
+  background: var(--accent-wash);
+  transform: translateX(2px);
+}
+.dropdown-tool-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border-radius: 6px;
+}
+.app.outpost .nav-dropdown::details-content {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top left;
+  transition:
+    opacity 160ms var(--interaction-ease),
+    transform 160ms var(--interaction-ease),
+    content-visibility 160ms allow-discrete;
+}
+.app.outpost .nav-dropdown[open]::details-content {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@starting-style {
+  .app.outpost .nav-dropdown[open]::details-content {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+/* Color state changes remain instantaneous to preserve contrast during transitions. */
+.app.outpost .button,
+.app.outpost button:not(.home-gear-slot),
+.app.outpost .tool-card,
+.app.outpost .build-preview-card,
+.app.outpost .composition-preview-card,
+.app.outpost .home-gear-slot {
+  transition:
+    transform 190ms var(--interaction-ease),
+    box-shadow 190ms ease,
+    border-color 160ms ease;
+}
+@media (hover: hover) {
+  .app.outpost .button:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.025);
+  }
+  .app.outpost .tool-card:hover,
+  .app.outpost .build-preview-card:hover,
+  .app.outpost .composition-preview-card:hover {
+    transform: translateY(-3px) scale(1.012);
+    border-color: var(--accent-ink);
+  }
+  .app.outpost .home-gear-slot:hover {
+    transform: scale(1.04);
+  }
+  .app.outpost .button:hover > svg {
+    transform: rotate(-7deg) scale(1.08);
+  }
+}
+.app.outpost .button:active:not(:disabled),
+.app.outpost button:active:not(:disabled),
+.app.outpost .tool-card:active,
+.app.outpost .build-preview-card:active,
+.app.outpost .composition-preview-card:active {
+  transform: translateY(1px) scale(0.97);
+}
+.app.outpost .button > svg {
+  transition: transform 200ms var(--interaction-ease);
+}
+.app.outpost .search-dialog {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  border-radius: 14px;
+  background: var(--panel);
+  transition:
+    opacity 180ms ease,
+    transform 180ms var(--interaction-ease),
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete;
+}
+.app.outpost .search-dialog[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@starting-style {
+  .app.outpost .search-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+.app.outpost .outpost-hero {
+  background: #141211;
+}
+.app.outpost .outpost-hero h1 em {
+  color: #e8aa85;
+}
+.app.outpost .hero-scene::after {
+  background:
+    linear-gradient(90deg, #141211 0%, #141211d9 17%, #14121162 43%, #14121105 80%),
+    linear-gradient(0deg, #1412116b, transparent 45%);
+}
+.app.outpost .hero-actions .primary {
+  background: #ead5ba;
+  border-color: #d8b99a;
+  color: #302116;
+}
+.app.outpost .home-terminal {
+  --hub-panel: #1d1916;
+  --hub-border: #493b32;
+  --text: #f0e5d5;
+  --muted: #c1b3a7;
+  --bg: #171411;
+  --panel: #211c18;
+  --sidebar: #211c18;
+  --elevated: #2a231e;
+  --border: #493b32;
+  --accent-ink: #e8aa85;
+}
+/* Original Outpost emblems replace the unrelated equipment strips in the feature links. */
+.app.outpost .featured-tool {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  gap: 5px 15px;
+  min-height: 174px;
+  padding: 22px;
+  border-radius: 9px;
+  background: var(--sidebar);
+  transform-origin: center;
+  transition:
+    transform 220ms var(--interaction-ease),
+    box-shadow 220ms ease,
+    border-color 160ms ease;
+}
+.feature-emblem {
+  display: block;
+  width: 70px;
+  height: 78px;
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  align-self: center;
+  overflow: visible;
+  transform-origin: 50% 65%;
+  transition: transform 260ms var(--interaction-ease);
+}
+.emblem-field {
+  fill: var(--accent-wash);
+  stroke: var(--accent);
+  stroke-width: 1.4;
+}
+.emblem-rim {
+  stroke: var(--metal);
+  stroke-opacity: 0.5;
+  stroke-width: 1;
+}
+.emblem-crown {
+  stroke: var(--metal);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.emblem-drawing {
+  stroke: var(--accent-ink);
+  stroke-width: 2;
+}
+.emblem-beads,
+.emblem-star {
+  fill: var(--metal);
+  stroke: none;
+}
+.app.outpost .featured-tool h2 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font: 700 17px/1.4 var(--font-ui);
+  align-self: end;
+}
+.app.outpost .featured-tool p {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  min-height: 0;
+  max-width: 27ch;
+  font-size: 12px;
+  align-self: start;
+}
+.app.outpost .featured-tool .feature-action {
+  grid-column: 2;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+@media (hover: hover) {
+  .app.outpost .featured-tool:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 24px #0002;
+    border-color: var(--accent);
+  }
+  .app.outpost .featured-tool:hover .feature-emblem {
+    transform: rotate(-7deg) scale(1.1);
+  }
+}
+.app.outpost .featured-tool:active {
+  transform: translateY(1px) scale(0.98);
+}
+@media (max-width: 1350px) {
+  .app.outpost .site-header .search-trigger {
+    width: 34px;
+    padding: 8px;
+    border: 0;
+    background: none;
+  }
+  .app.outpost .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 1250px) {
+  .app.outpost .home-auth-action .discord-label {
+    display: none;
+  }
+  .app.outpost .home-auth-action {
+    padding: 10px 12px;
+  }
+  .app.outpost .desktop-navigation {
+    gap: 4px;
+  }
+  .app.outpost .desktop-navigation > a,
+  .app.outpost .desktop-navigation > .nav-dropdown > summary {
+    padding-inline: 9px;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost.product-route .site-header {
+    height: 72px;
+    gap: 16px;
+  }
+  .app.outpost .home-auth-action {
+    display: none;
+  }
+  .app.outpost .desktop-navigation {
+    display: none;
+  }
+}
+@media (max-width: 800px) {
+  .app.outpost .featured-tool {
+    min-height: 160px;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .top-brand .outpost-wordmark {
+    width: 112px;
+  }
+  .app.outpost.product-route .site-header {
+    height: 66px;
+    gap: 8px;
+  }
+  .app.outpost .top-brand {
+    min-height: 50px;
+  }
+  .app.outpost .header-actions {
+    gap: 6px;
+  }
+  .app.outpost .region {
+    padding-left: 0;
+    gap: 0;
+    min-height: 34px;
+  }
+  .app.outpost .region-globe {
+    display: none;
+  }
+  .app.outpost .region select {
+    min-height: 32px;
+    padding: 7px 24px 7px 9px;
+    font-size: 11px;
+    max-width: 100px;
+  }
+  .app.outpost .site-header .theme-toggle {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 4px;
+  }
+  .app.outpost .theme-toggle::before {
+    width: 26px;
+    height: 26px;
+    top: 4px;
+    left: 4px;
+    transform: none;
+  }
+  .app.outpost .theme-choice {
+    display: none;
+  }
+  .app.outpost .theme-toggle[aria-pressed="false"] .theme-moon,
+  .app.outpost .theme-toggle[aria-pressed="true"] .theme-sun {
+    display: grid;
+  }
+  .app.outpost .featured-tool {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 6px 10px;
+    padding: 16px 13px;
+    min-height: 186px;
+  }
+  .feature-emblem {
+    width: 48px;
+    height: 56px;
+  }
+  .app.outpost .featured-tool h2 {
+    font-size: 15px;
+  }
+  .app.outpost .featured-tool p {
+    font-size: 11px;
+  }
+  .app.outpost .featured-tool .feature-action {
+    font-size: 10px;
+  }
+  .app.outpost .hero-scene::after {
+    background:
+      linear-gradient(90deg, #141211ed, #141211b5), linear-gradient(0deg, #14121185, transparent);
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .site-header .theme-toggle {
+    display: none;
+  }
+  .app.outpost .featured-tool {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 6px 9px;
+    padding: 14px 11px;
+  }
+  .feature-emblem {
+    width: 40px;
+    height: 48px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost *,
+  .app.outpost *::before,
+  .app.outpost *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .app.outpost .nav-dropdown::details-content {
+    transition: none;
+  }
+}
+.app.outpost.light {
+  --metal: #80582e;
+}
+.app.outpost.light .outpost-wordmark {
+  background: #211b17;
+  border-radius: 8px;
+}
+@media (max-width: 600px) {
+  .feature-emblem {
+    grid-row: 1;
+  }
+  .app.outpost .featured-tool h2 {
+    align-self: center;
+  }
+  .app.outpost .featured-tool p {
+    grid-column: 1/-1;
+    grid-row: 2;
+    max-width: none;
+  }
+  .app.outpost .featured-tool .feature-action {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .featured-tools {
+    grid-template-columns: 1fr;
+  }
+  .app.outpost .featured-tool {
+    min-height: 150px;
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .feature-emblem {
+    width: 48px;
+    height: 54px;
+  }
+}
+.app.outpost .hero-actions .primary:hover {
+  background: #f3e2cb;
+  color: #302116;
+  border-color: #e6bc9a;
+}

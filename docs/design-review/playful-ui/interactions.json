@@ -1,0 +1,37 @@
+{
+  "errors": [],
+  "scans": [
+    {
+      "state": "search-empty",
+      "violations": []
+    },
+    {
+      "state": "search-results",
+      "violations": []
+    },
+    {
+      "state": "tools",
+      "violations": []
+    },
+    {
+      "state": "light",
+      "violations": []
+    },
+    {
+      "state": "search-mobile",
+      "violations": []
+    }
+  ],
+  "motion": [
+    "equipment-arrive",
+    "content-arrive",
+    "search-spin",
+    "-ua-view-transition-group-anim-root",
+    "theme-arrive",
+    "theme-leave",
+    "-ua-view-transition-group-anim-outpost-page",
+    "route-arrive",
+    "route-leave"
+  ],
+  "reducedAnimations": 0
+}

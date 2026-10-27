@@ -1,0 +1,185 @@
+[
+  {
+    "id": "broadsword-t4",
+    "name": "T4 Broadsword",
+    "kind": "crafting",
+    "output": "T4_MAIN_SWORD",
+    "outputCount": 1,
+    "baseFocus": 1286,
+    "ingredients": [
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "battleaxe-t4",
+    "name": "T4 Battleaxe",
+    "kind": "crafting",
+    "output": "T4_MAIN_AXE",
+    "outputCount": 1,
+    "baseFocus": 1286,
+    "ingredients": [
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 16,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "bow-t4",
+    "name": "T4 Bow",
+    "kind": "crafting",
+    "output": "T4_2H_BOW",
+    "outputCount": 1,
+    "baseFocus": 1715,
+    "ingredients": [
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 32,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json"
+  },
+  {
+    "id": "shield-t4",
+    "name": "T4 Shield",
+    "kind": "crafting",
+    "output": "T4_OFF_SHIELD",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_PLANKS",
+        "name": "Pine Planks",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_METALBAR",
+        "name": "Steel Bar",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json"
+  },
+  {
+    "id": "scholar-cowl-t4",
+    "name": "T4 Scholar Cowl",
+    "kind": "crafting",
+    "output": "T4_HEAD_CLOTH_SET1",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/head.json"
+  },
+  {
+    "id": "mercenary-jacket-t4",
+    "name": "T4 Mercenary Jacket",
+    "kind": "crafting",
+    "output": "T4_ARMOR_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 858,
+    "ingredients": [
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 16,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json"
+  },
+  {
+    "id": "mercenary-shoes-t4",
+    "name": "T4 Mercenary Shoes",
+    "kind": "crafting",
+    "output": "T4_SHOES_LEATHER_SET1",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/shoes.json"
+  },
+  {
+    "id": "cape-t4",
+    "name": "T4 Cape",
+    "kind": "crafting",
+    "output": "T4_CAPE",
+    "outputCount": 1,
+    "baseFocus": 429,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 4,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 4,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json"
+  },
+  {
+    "id": "bag-t4",
+    "name": "T4 Bag",
+    "kind": "crafting",
+    "output": "T4_BAG",
+    "outputCount": 1,
+    "baseFocus": 858,
+    "ingredients": [
+      {
+        "id": "T4_CLOTH",
+        "name": "Fine Cloth",
+        "quantity": 8,
+        "quality": "normal"
+      },
+      {
+        "id": "T4_LEATHER",
+        "name": "Worked Leather",
+        "quantity": 8,
+        "quality": "normal"
+      }
+    ],
+    "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/bag.json"
+  }
+]

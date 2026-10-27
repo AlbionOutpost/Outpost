@@ -1,0 +1,861 @@
+{
+  "schema_version": 2,
+  "reviewed_at": "2026-10-26T18:30:46.455178+00:00",
+  "scoring": {
+    "weights": {
+      "core": 25,
+      "data": 20,
+      "security": 20,
+      "ui": 15,
+      "performance": 10,
+      "code": 5,
+      "operations": 5
+    },
+    "implementation_credit": {
+      "COMPLETE": 1,
+      "PARTIAL": 0.5,
+      "MISSING": 0
+    },
+    "verification_credit": {
+      "VERIFIED": 1,
+      "PARTIALLY_TESTED": 0.5,
+      "FAILED": 0,
+      "BLOCKED": 0,
+      "NOT_TESTED": 0
+    },
+    "rule": "Equal current acceptance scopes within each category; joint credit is implementation \u00d7 verification. NOT_APPLICABLE excluded with rationale. Historical/process duplicates are not scored."
+  },
+  "items": [
+    {
+      "id": "CORE-001",
+      "category": "core",
+      "title": "Regional market, item discovery and observation history",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Homepage loads a compact city preview on request with independent side timestamps, missing values and identity cancellation.",
+      "remaining": "Full catalog is DATA-001; watchlists are CORE-020.",
+      "evidence": [
+        "src/components/market.tsx",
+        "e2e/history.spec.ts",
+        "e2e/qa-regressions.spec.ts",
+        "e2e/homepage-polish.spec.ts",
+        "tests/market-preview.test.ts"
+      ]
+    },
+    {
+      "id": "CORE-002",
+      "category": "core",
+      "title": "Build equipment editor and persistence",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Starter equipment/ability selectors, alternatives, private/public/unlisted editing, optimistic revisions and save/reload. Homepage cards display saved armor/cape and only actually recorded optional consumables.",
+      "remaining": "Complete item/consumable families, unlocks/statistics and equipment-set tray remain absent.",
+      "evidence": [
+        "src/lib/builds/validation.ts",
+        "src/components/build-editor.tsx",
+        "e2e/build-editor-visual.spec.ts",
+        "e2e/homepage-visual-correction.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-003",
+      "category": "core",
+      "title": "Independent build duplication and historical restoration",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Accessible builds copy to independent private records; owner restoration creates a new revision and retains visibility.",
+      "remaining": "No full-catalog implication.",
+      "evidence": ["src/lib/builds/service.ts", "e2e/verified-builds.spec.ts"]
+    },
+    {
+      "id": "CORE-004",
+      "category": "core",
+      "title": "Party compositions and shared loadouts",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Small-party board, large roster, assignments, substitutes, pointer/keyboard reorder, JSON, duplicate and current group permissions.",
+      "remaining": "Full template/catalog/consumable and swap-workflow coverage remains incomplete.",
+      "evidence": [
+        "src/lib/compositions/service.ts",
+        "e2e/compositions.spec.ts",
+        "e2e/reference-ui.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-005",
+      "category": "core",
+      "title": "Local composition PNG download",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Real equipment/fallback labels; full-height export and 1920\u00d71080 option up to 20 players, actual downloaded PNG dimensions.",
+      "remaining": "Browser/device matrix is sampled; no external upload or complete artwork-availability guarantee.",
+      "evidence": [
+        "src/components/composition-png-export.tsx",
+        "e2e/composition-visual.spec.ts",
+        "e2e/reference-ui.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-006",
+      "category": "core",
+      "title": "Guild collaboration",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Create/discover, invitations/expiry/revocation, requests, fixed roles, safe ownership transfer, announcements/events/RSVP/calendar and shared resources.",
+      "remaining": "Configurable permissions, safe uploads, full archive/roster pagination and production operations remain.",
+      "evidence": [
+        "src/lib/groups/service.ts",
+        "e2e/groups.spec.ts",
+        "e2e/group-editing.spec.ts",
+        "e2e/guild-visual.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-007",
+      "category": "core",
+      "title": "Persisted build and composition favorites",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Authorized favorite mutations, duplicate prevention, reload, visibility filtering and failed-request retry.",
+      "remaining": "Market-item watchlists now have separate operational scope CORE-020.",
+      "evidence": [
+        "src/app/favorites/page.tsx",
+        "src/lib/community/service.ts",
+        "e2e/community.spec.ts",
+        "e2e/build-discovery-visual.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-008",
+      "category": "core",
+      "title": "Community votes, comments, reports and moderation",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Database-backed votes/comments/revisions, reports, role-checked moderation queue, hide/restore and audit records.",
+      "remaining": "Comprehensive spam defenses, appeals and operational staffing remain incomplete.",
+      "evidence": ["src/lib/community/service.ts", "e2e/community.spec.ts"]
+    },
+    {
+      "id": "CORE-009",
+      "category": "core",
+      "title": "Manual trade accounting and sale thresholds",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Supplied purchase/sale fees, transport cost, profit, break-even and exact strictly-profitable whole-silver thresholds.",
+      "remaining": "Manual accounting excludes repeated listings, partial execution and liquidity; rates are not current-game defaults.",
+      "evidence": [
+        "src/lib/albion/calculations.ts",
+        "tests/calculations.test.ts",
+        "e2e/trade-scenarios.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-010",
+      "category": "core",
+      "title": "Crafting calculator",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Nine T4 recipes checked against pinned July ingredients/base focus, independent three-region Bow accounting, manual returns/fees and private saved scenarios. Historical total-efficiency focus estimate is separate from station-confirmed saved focus totals.",
+      "remaining": "Full recipes, journals, automatic verified city/focus/spec and batch craft planning are absent.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "src/lib/albion/production.ts",
+        "e2e/production-modes.spec.ts",
+        "tests/reviewed-recipes.test.ts",
+        "src/lib/albion/reviewed-crafting.json"
+      ]
+    },
+    {
+      "id": "CORE-011",
+      "category": "core",
+      "title": "Refining calculator",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Standard T4 steel accounting, manual eligible returns, prices/fees and save/reload.",
+      "remaining": "Other resources/tiers, transmutation and automatic coefficients are absent; steel source applicability unresolved.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "tests/production.test.ts",
+        "e2e/production-modes.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-012",
+      "category": "core",
+      "title": "Enchanting calculator",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Supported starter equipment families, quality preservation, .0\u2013.3 upgrade materials and saved scenarios.",
+      "remaining": "Full families/two-hand coverage and current-patch ingredient verification remain incomplete.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "tests/production.test.ts",
+        "e2e/production-modes.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-013",
+      "category": "core",
+      "title": "Direct and Black Market opportunity scanner",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Bounded 25-item cross-city scanner, source identities, missing values and supported order directions.",
+      "remaining": "Upgrade scan, broad catalog, purchase-order scanner fees, execution and liquidity modeling remain missing.",
+      "evidence": ["src/components/opportunity-scanner.tsx", "tests/opportunities.test.ts"]
+    },
+    {
+      "id": "CORE-014",
+      "category": "core",
+      "title": "Cargo transport planner",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Manual weight/capacity/trip/risk accounting, source/manual prices, private scenarios.",
+      "remaining": "Verified weight/mount metadata, full route scanning and complete sharing/region workflows remain.",
+      "evidence": [
+        "src/lib/albion/transport.ts",
+        "tests/transport.test.ts",
+        "e2e/transport.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-015",
+      "category": "core",
+      "title": "Private calculator scenarios",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Owner-scoped production/trade/transport save/load/delete and export; kind filtering precedes pagination.",
+      "remaining": "Static shared assumptions do not expose private saved records or promise fresh prices.",
+      "evidence": [
+        "src/app/api/scenarios/route.ts",
+        "e2e/trade-scenarios.spec.ts",
+        "e2e/production-modes.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-016",
+      "category": "core",
+      "title": "Dashboard, timers and global search",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Bounded account summaries, persistent manual timers, ownership/revisions and permission-filtered keyboard search.",
+      "remaining": "Background notifications, group timers and dashboard customization remain missing.",
+      "evidence": [
+        "src/lib/timers/engine.ts",
+        "src/app/api/search/route.ts",
+        "e2e/personal-tools.spec.ts"
+      ]
+    },
+    {
+      "id": "CORE-017",
+      "category": "core",
+      "title": "Guide CMS and editorial workflows",
+      "implementation": "MISSING",
+      "verification": "NOT_TESTED",
+      "verified_scope": "Searchable original guide notes exist, but no CMS implementation.",
+      "remaining": "Authoring/review/publishing and complete guide content are absent.",
+      "evidence": ["src/app/guides/page.tsx", "src/components/guide-directory.tsx"]
+    },
+    {
+      "id": "CORE-018",
+      "category": "core",
+      "title": "Islands, Avalon mapping, shopping lists and mastery tools",
+      "implementation": "MISSING",
+      "verification": "NOT_TESTED",
+      "verified_scope": "No dedicated implementations or routes found.",
+      "remaining": "Implement verified domain models, persistence, permissions and player workflows.",
+      "evidence": ["src/app/tools/page.tsx"]
+    },
+    {
+      "id": "CORE-019",
+      "category": "core",
+      "title": "Remaining specialized calculator engines",
+      "implementation": "MISSING",
+      "verification": "BLOCKED",
+      "verified_scope": "Farming, animals, cooking, alchemy, laborers, fish, calculated IP and automatic focus/spec engines are absent.",
+      "remaining": "Source-backed coefficients/recipes plus implementations and independent fixtures required.",
+      "evidence": ["src/lib/albion/recipes.ts", "docs/engineering/CALCULATOR_PARITY.md"]
+    },
+    {
+      "id": "CORE-020",
+      "category": "core",
+      "title": "Operational private market watchlists",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Operational private watchlist save/list/remove/reload by item, region and quality; local additive migration applied after backup. Origin/authentication, owner spoofing/outsider denial, private/no-store cache, duplicate handling, concurrent 100-item cap and account export pass.",
+      "remaining": "No price alerts, automatic quote refresh or external deployment claimed.",
+      "evidence": [
+        "src/app/api/market-watch/route.ts",
+        "src/app/api/market-watch/[id]/route.ts",
+        "src/components/market-watchlist.tsx",
+        "e2e/market-watchlist.spec.ts",
+        "docs/deployment/MIGRATIONS.md",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+      ]
+    },
+    {
+      "id": "CORE-021",
+      "category": "core",
+      "title": "Account settings, export and deletion",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Profile/region updates, sanitized export/cascade, retry preserving failed drafts and confirmation.",
+      "remaining": "Fixtures exercise application sessions, not remote provider onboarding.",
+      "evidence": [
+        "src/app/settings/actions.ts",
+        "src/app/api/account/export/route.ts",
+        "e2e/settings-recovery.spec.ts",
+        "e2e/account.spec.ts"
+      ]
+    },
+    {
+      "id": "DATA-001",
+      "category": "data",
+      "title": "Equipment and economic metadata catalog",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "205 authored structured variants, 245 combined starter IDs; separate 7,510-record pinned July MIT runtime catalog with 1,576 ability/passive mappings and 6,309 item-power values. Item reference queries the full catalog through bounded API pages.",
+      "remaining": "Full current-patch catalog, missing unlocks/variant spell mappings, complete recipes and statistics remain unverified.",
+      "evidence": [
+        "src/lib/albion/equipment-catalog.ts",
+        "scripts/audit-game-data.ts",
+        "tests/catalog-search.test.ts",
+        "docs/data/item-snapshot-source.json",
+        "docs/data/item-snapshot-coverage.json",
+        "scripts/prepare-item-snapshot.ts",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+      ]
+    },
+    {
+      "id": "DATA-002",
+      "category": "data",
+      "title": "Complete licensed current-patch game data",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "July MIT snapshot pinned, parsed and activated locally (7,510 records); zero fully manual/current-patch verified records. Official October item-data rechecks returned 403.",
+      "remaining": "Current permitted build data and source-bound manual/patch/unlock/image evidence remain required; July source has no matching October build.",
+      "evidence": [
+        "docs/data/ao-source.example.json",
+        "docs/engineering/GAME_DATA_COVERAGE.md",
+        "docs/data/item-snapshot-source.json",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+      ]
+    },
+    {
+      "id": "DATA-003",
+      "category": "data",
+      "title": "Current-patch recipe and formula provenance",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "Nine crafting ingredient/base-focus records directly source-reviewed against pinned July snapshot and independent constants. Plain steel still has mismatched Pristine source; zero current-patch recipe/coefficient verification.",
+      "remaining": "Steel source names Pristine Steel Bar while runtime output is plain Steel Bar; full recipe/coefficient review required.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "docs/engineering/CALCULATOR_PARITY.md",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+      ]
+    },
+    {
+      "id": "DATA-004",
+      "category": "data",
+      "title": "Reproducible source preparation and review controls",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Pinned revisions/checksums, reuse gate, immutable artifacts, relationship checks and separate manual/patch stages.",
+      "remaining": "Tool tests do not certify operator attestations or confer current-patch status.",
+      "evidence": [
+        "src/lib/catalog/verification.ts",
+        "scripts/sync-game-source.ts",
+        "tests/catalog-verification.test.ts",
+        "tests/catalog-source-cli.test.ts"
+      ]
+    },
+    {
+      "id": "DATA-005",
+      "category": "data",
+      "title": "Supplied production accounting correctness",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Independent crafting/refining/enchanting totals; upfront versus retained economic value, eligible returns and focus assumptions.",
+      "remaining": "Arithmetic scope excludes automatic current-game mechanics and unsupported recipes.",
+      "evidence": [
+        "src/lib/albion/production.ts",
+        "tests/production.test.ts",
+        "tests/production-observations.test.ts",
+        "e2e/production-freshness.spec.ts"
+      ]
+    },
+    {
+      "id": "DATA-006",
+      "category": "data",
+      "title": "Market identity, missing values and observation freshness",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Region/item/quality/city checks, zero/unknown timestamp handling, stale labels, cancellation and retry.",
+      "remaining": "Point-in-time live source checks are not continuous availability evidence.",
+      "evidence": [
+        "src/lib/albion/market-client.ts",
+        "tests/market-payload.test.ts",
+        "e2e/qa-regressions.spec.ts"
+      ]
+    },
+    {
+      "id": "DATA-007",
+      "category": "data",
+      "title": "Official item renderer integration",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Validated item IDs, actual rendered icons, bounded same-origin export service and neutral fallback.",
+      "remaining": "No all-items availability, blanket reuse license or semantic image-match certification.",
+      "evidence": [
+        "src/components/item-icon.tsx",
+        "src/lib/albion/icon-cache.ts",
+        "tests/icon-cache.test.ts",
+        "e2e/reference-ui.spec.ts"
+      ]
+    },
+    {
+      "id": "DATA-008",
+      "category": "data",
+      "title": "Reviewed runtime catalog import",
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Atomic starter imports, provenance/checksum and refusal of inactive/incomplete idempotent releases.",
+      "remaining": "Prepared richer source artifacts are not fully integrated with runtime database metadata.",
+      "evidence": [
+        "scripts/sync-catalog.ts",
+        "src/lib/catalog/release-state.ts",
+        "tests/catalog-release-state.test.ts",
+        "e2e/catalog.spec.ts"
+      ]
+    },
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "title": "Session authorization and current membership boundaries",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Separate owner/member/outsider fixtures, expiry/logout, hidden/private content, optimistic revisions and revocation. Dashboard equipment previews are tested after warming one user then opening a second user; outsider private-build access remains 404.",
+      "remaining": "Scoped regressions do not establish absence of authorization bypasses.",
+      "evidence": [
+        "src/lib/http.ts",
+        "e2e/qa-security.spec.ts",
+        "e2e/groups.spec.ts",
+        "e2e/personal-tools.spec.ts",
+        "docs/design-review/frontend-pass/README.md"
+      ]
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "title": "Real Discord OAuth lifecycle",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "Provider code requests identify/email with state and PKCE; no credentialed exchange/repeated login evidence.",
+      "remaining": "Owned staging credentials and actual login/state/redirect/account lifecycle tests required.",
+      "evidence": ["src/lib/auth.ts", "docs/deployment/DISCORD_HTTPS_VERIFICATION.md"]
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "title": "HTTPS staging and Secure cookies",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "Canonical-origin validation, nonce CSP/HSTS logic and local session checks exist.",
+      "remaining": "No deployed TLS/proxy or Secure-cookie browser verification.",
+      "evidence": [
+        "src/proxy.ts",
+        "src/lib/env.ts",
+        "docs/deployment/DISCORD_HTTPS_VERIFICATION.md"
+      ]
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "title": "Input, origin, error and hostile-content safeguards",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Bounded schemas/JSON, origin checks, escaped hostile text, safe errors and parameterized ORM access in tested paths.",
+      "remaining": "No complete XSS, SQL injection or penetration-test assurance.",
+      "evidence": [
+        "src/lib/http.ts",
+        "src/lib/api-errors.ts",
+        "tests/api-errors.test.ts",
+        "e2e/qa-security.spec.ts"
+      ]
+    },
+    {
+      "id": "SEC-005",
+      "category": "security",
+      "title": "Community abuse resistance",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Current role moderation and request budgets tested.",
+      "remaining": "Broader spam, appeals, provisioning and incident operations not comprehensively tested.",
+      "evidence": ["src/lib/community/service.ts", "e2e/community.spec.ts"]
+    },
+    {
+      "id": "SEC-006",
+      "category": "security",
+      "title": "Maintained source and Git-history secret audit",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Configured-value and token/private-key-pattern scans exist and have local evidence.",
+      "remaining": "No Git history in workspace or complete maintained-scanner audit; absent secrets cannot be checked by value.",
+      "evidence": [
+        "scripts/qa-source-secrets.mjs",
+        "scripts/qa-secret-scan.mjs",
+        "tests/source-secret-scan.test.ts"
+      ]
+    },
+    {
+      "id": "SEC-007",
+      "category": "security",
+      "title": "Remote private repository and Actions API policies",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Private empty repos, no forks, selected repositories, SHA pinning, allowlist, read tokens, fork isolation, retention and Dependabot read back.",
+      "remaining": "Does not establish hosted workflow execution or complete organization security.",
+      "evidence": [
+        "scripts/github-setup.mjs",
+        "tests/github-setup.test.ts",
+        "docs/deployment/GITHUB_SETUP.md"
+      ]
+    },
+    {
+      "id": "SEC-008",
+      "category": "security",
+      "title": "Organization MFA and owner-only member privileges",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "API policies applied; live read still shows MFA requirement false and member visibility/deletion/invitation permissions enabled.",
+      "remaining": "Website configuration and fresh read-back required.",
+      "evidence": ["docs/deployment/GITHUB_SETUP.md"]
+    },
+    {
+      "id": "SEC-009",
+      "category": "security",
+      "title": "Private default-branch protection",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "Managed ruleset payload prepared and tested; remote endpoints returned upgrade-required HTTP 403.",
+      "remaining": "Eligible plan and enforced rule/CI-context verification needed; no paid upgrade authorized.",
+      "evidence": ["scripts/github-setup.mjs", "docs/deployment/GITHUB_SETUP.md"]
+    },
+    {
+      "id": "UI-001",
+      "category": "ui",
+      "title": "Current reference design acceptance",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Current market-led homepage follows the supplied user reference with bold navigation, observed-price chart and authentic equipment previews. Latest homepage pass replaces scene cards with an interactive gear example, earlier market lookup and grouped task links. Measured the user-owned Grind public frontend across 30 pages. Applied real renderer art, stronger surfaces and larger gear/role previews to Outpost tools/builds/comps while preserving charcoal/copper identity. Actual before/after desktop/mobile captures and four deliberate golden changes inspected. Earlier whole-page-set refinement remains recorded; global owner acceptance remains open.",
+      "remaining": "Global owner visual acceptance, full equipment-set layout and asset-dependent differences remain open.",
+      "evidence": [
+        "docs/design-review/README.md",
+        "docs/OUTPOST_ACCEPTANCE.md",
+        "docs/design-review/skill-system-review/README.md",
+        "docs/design-review/frontend-pass/README.md",
+        "docs/design-review/refinement/README.md",
+        "docs/design-review/homepage-redesign/README.md",
+        "docs/design-review/player-polish/README.md",
+        "docs/design-review/grind-reference/README.md",
+        "docs/design-review/home-hub/README.md",
+        "docs/design-review/home-market/README.md",
+        "docs/design-review/command-center/README.md",
+        "docs/design-review/top-tabs/README.md",
+        "docs/design-review/immersive/README.md",
+        "docs/design-review/brand-interaction/README.md",
+        "docs/design-review/playful-ui/README.md"
+      ]
+    },
+    {
+      "id": "UI-002",
+      "category": "ui",
+      "title": "Responsive navigation, editors and data tables",
+      "implementation": "COMPLETE",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Latest market-led homepage recaptured at six responsive widths with desktop/mobile image review. Latest homepage captures at 320/375/390/768/1440/1920 have no horizontal overflow and were opened. Latest tools/builds/comps pass: 18 configurations at 320/375/390/768/1440/1920px, no document overflow, failed images or page/console/request errors. Filtering, private boundaries, favorites, save/reload and PNG/JSON export regressions pass. Prior 192-configuration page-set review remains separate historical evidence.",
+      "remaining": "Physical devices, all states/browser engines, complete layout acceptance and owner visual approval remain open. Equipment names deliberately increase panel height for readability.",
+      "evidence": [
+        "e2e/design-review.spec.ts",
+        "e2e/player-workflows.spec.ts",
+        "e2e/qa-audit.spec.ts",
+        "e2e/outpost.spec.ts",
+        "e2e/homepage-polish.spec.ts",
+        "e2e/homepage-visual-correction.spec.ts",
+        "docs/design-review/skill-system-review/README.md",
+        "docs/design-review/frontend-pass/README.md",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md",
+        "docs/engineering/UI_UX_CODE_AUDIT_2026-10-26.md",
+        "docs/design-review/refinement/README.md",
+        "docs/design-review/homepage-redesign/README.md",
+        "docs/design-review/player-polish/README.md",
+        "docs/design-review/grind-reference/README.md",
+        "docs/design-review/home-hub/README.md",
+        "docs/design-review/home-market/README.md",
+        "docs/design-review/command-center/README.md",
+        "docs/design-review/top-tabs/README.md",
+        "docs/design-review/immersive/README.md",
+        "docs/design-review/brand-interaction/README.md",
+        "docs/design-review/playful-ui/README.md"
+      ]
+    },
+    {
+      "id": "UI-003",
+      "category": "ui",
+      "title": "Accessibility acceptance",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Latest market-led homepage includes corrected chart-control and light-theme surface contrast, with source-state axe scans. Latest homepage: six unrestricted axe scans reported zero violations; preview labels and mobile header wrapping were corrected. Latest three-surface pass: six unrestricted desktop/mobile axe scans reported zero violations. Prior 64 page-set scans plus four anonymous/source-state scans remain recorded separately. Keyboard/reduced-motion regressions still pass; no full conformance claim.",
+      "remaining": "Complete screen-reader, voice-control, contrast/zoom and physical-device acceptance; sampled axe and Lighthouse are not conformance evidence.",
+      "evidence": [
+        "e2e/qa-light.spec.ts",
+        "e2e/design-review.spec.ts",
+        "docs/design-review/skill-system-review/README.md",
+        "docs/design-review/frontend-pass/README.md",
+        "docs/engineering/UI_UX_CODE_AUDIT_2026-10-26.md",
+        "docs/design-review/refinement/README.md",
+        "docs/design-review/homepage-redesign/README.md",
+        "docs/design-review/player-polish/README.md",
+        "docs/design-review/grind-reference/README.md",
+        "docs/design-review/home-hub/README.md",
+        "docs/design-review/home-market/README.md",
+        "docs/design-review/command-center/README.md",
+        "docs/design-review/top-tabs/README.md",
+        "docs/design-review/immersive/README.md",
+        "docs/design-review/brand-interaction/README.md",
+        "docs/design-review/playful-ui/README.md"
+      ]
+    },
+    {
+      "id": "UI-004",
+      "category": "ui",
+      "title": "Authentic permitted scene media",
+      "implementation": "MISSING",
+      "verification": "BLOCKED",
+      "verified_scope": "All four generated scenes are archived. The homepage now uses genuine source-pinned equipment art through Next Image optimization, with original task glyphs; no authentic gameplay-scene replacement or blanket artwork permission is claimed. See docs/assets/HOMEPAGE_EQUIPMENT.json and docs/design-review/playful-ui/README.md.",
+      "remaining": "Official press-kit/terms retrieval again returned 403; no current image-specific reuse permission verified. Genuine replacement still required; no new generated substitute.",
+      "evidence": [
+        "src/lib/albion/assets.ts",
+        "docs/design-review/homepage/generated-assets.json",
+        "docs/assets/OUTPOST_MEDIA_INVENTORY.md",
+        "docs/design-review/homepage/SCENE_SOURCE_REVIEW.md",
+        "docs/design-review/homepage-redesign/README.md"
+      ]
+    },
+    {
+      "id": "UI-005",
+      "category": "ui",
+      "title": "Genuine ability artwork and full visual data coverage",
+      "implementation": "MISSING",
+      "verification": "BLOCKED",
+      "verified_scope": "Named starter ability controls exist; no complete genuine ability artwork.",
+      "remaining": "Permitted mapped ability/consumable assets and current metadata needed.",
+      "evidence": ["src/lib/albion/equipment-catalog.ts", "docs/assets/OUTPOST_MEDIA_INVENTORY.md"]
+    },
+    {
+      "id": "PERF-001",
+      "category": "performance",
+      "title": "Bounded caches, deduplication and source budgets",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "TTL, byte/entry caps, source identity, cooldown, retry, artwork queue/concurrency and eviction regressions.",
+      "remaining": "Per-process safeguards do not certify cross-instance throughput or upstream allowances.",
+      "evidence": [
+        "src/lib/albion/data-client.ts",
+        "tests/cache-expiry.test.ts",
+        "tests/icon-cache.test.ts"
+      ]
+    },
+    {
+      "id": "PERF-002",
+      "category": "performance",
+      "title": "Current representative page performance measurements",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Latest controlled homepage mobile lab: three before/after samples, median LCP5.222s to2.862s after replacing lazy external hero delivery with local source-pinned optimized eager/high-priority equipment artwork. The2.5s target remains open. Accessibility100/CLS0 in all six; not field evidence. See docs/design-review/playful-ui/performance.json. Historical controlled Market median 2.628s retained; before/after ranges overlapped. Latest player-polish homepage smoke sample: Lighthouse performance 89, accessibility 100, LCP 3.761s, CLS 0; existing hero image was LCP. This is one unpaired sample, not evidence of an improvement or regression. No new controlled Market benchmark.",
+      "remaining": "2.5s LCP target remains missed; timing ranges overlap, so no general speedup claim. HTML/cache tradeoff, field INP/p75, real devices and production load remain unverified.",
+      "evidence": [
+        "docs/engineering/PERFORMANCE_REPORT.md",
+        "docs/design-review/homepage/POLISH.md",
+        "docs/design-review/skill-system-review/README.md",
+        "docs/design-review/frontend-pass/README.md",
+        "docs/engineering/UI_UX_CODE_AUDIT_2026-10-26.md",
+        "docs/design-review/refinement/README.md",
+        "docs/design-review/homepage-redesign/README.md",
+        "docs/design-review/player-polish/README.md"
+      ]
+    },
+    {
+      "id": "PERF-003",
+      "category": "performance",
+      "title": "Production-scale load and failover evidence",
+      "implementation": "MISSING",
+      "verification": "NOT_TESTED",
+      "verified_scope": "No sustained authorized staging throughput/failure-recovery study.",
+      "remaining": "Dataset/concurrency/latency/error/resource measurements needed.",
+      "evidence": ["docs/engineering/LOAD_TEST_RESULTS.md"]
+    },
+    {
+      "id": "PERF-004",
+      "category": "performance",
+      "title": "Field Core Web Vitals",
+      "implementation": "MISSING",
+      "verification": "NOT_TESTED",
+      "verified_scope": "No deployed field p75 LCP/INP evidence.",
+      "remaining": "Real-user instrumentation, representative traffic and observation period required.",
+      "evidence": ["docs/engineering/PERFORMANCE_REPORT.md"]
+    },
+    {
+      "id": "CODE-001",
+      "category": "code",
+      "title": "Strict types, production compilation and local regression gate",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Current Node 22 type/lint/unit/database/build/browser/advisory/regional gate recorded.",
+      "remaining": "Local gates are not hosted CI or full product acceptance.",
+      "evidence": [
+        "tsconfig.json",
+        "scripts/qa-phase.mjs",
+        "docs/design-review/refinement/README.md"
+      ]
+    },
+    {
+      "id": "CODE-002",
+      "category": "code",
+      "title": "Dependency maintenance",
+      "implementation": "PARTIAL",
+      "verification": "FAILED",
+      "verified_scope": "ESLint 9.39.5 registry deprecation rechecked; lint itself passes.",
+      "remaining": "Compatible supported toolchain migration and fresh dependency lifecycle review required; advisory scan is a separate check.",
+      "evidence": ["package-lock.json", "docs/engineering/DEPENDENCY_CLEANUP.md"]
+    },
+    {
+      "id": "CODE-003",
+      "category": "code",
+      "title": "Data access and presentation separation",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Pure calculation/service modules exist; remaining Prisma reads still appear in presentation pages.",
+      "remaining": "Behavior-preserving extraction and complete dead-code/dependency review pending.",
+      "evidence": [
+        "src/app/settings/page.tsx",
+        "src/app/builds/page.tsx",
+        "docs/engineering/CODEBASE_CLEANUP.md",
+        "docs/design-review/refinement/README.md"
+      ]
+    },
+    {
+      "id": "CODE-004",
+      "category": "code",
+      "title": "Current documentation and report automation",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Two-dimensional inventory, factual evidence snapshots, stable identifiers, deterministic reports and link/status validation.",
+      "remaining": "Human legal/design/source judgments remain explicitly manual.",
+      "evidence": ["scripts/qa-reports.py", "scripts/docs-validate.py", "docs/DOCUMENTATION.md"]
+    },
+    {
+      "id": "CODE-005",
+      "category": "code",
+      "title": "Fresh checkout and source history verification",
+      "implementation": "MISSING",
+      "verification": "BLOCKED",
+      "verified_scope": "Workspace is not a Git repository; remote repositories are empty.",
+      "remaining": "Establish reviewed history, source scan and independently verified clean install before hosted use.",
+      "evidence": ["docs/engineering/REPOSITORY_READINESS.md"]
+    },
+    {
+      "id": "OPS-001",
+      "category": "operations",
+      "title": "Deployable standalone/container foundation",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Current standalone build plus fresh local nonroot Docker image, UID 1000, no copied environment file, homepage and dependency health smoke.",
+      "remaining": "Owned staging deployment, operational configuration and rollback remain unverified.",
+      "evidence": ["Dockerfile", "scripts/start.mjs", "docs/DEPLOYMENT.md"]
+    },
+    {
+      "id": "OPS-002",
+      "category": "operations",
+      "title": "Existing application migration deployment",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Local development backup followed by authorized additive migration 17; read-back confirms all 17 complete and MarketWatchItem present. Disposable migrations/constraints/restore and operational watchlist regressions pass.",
+      "remaining": "Intended owned HTTPS staging/production migration and compatible rollout/backup/restore evidence remain required; local deployment is not external rollout.",
+      "evidence": [
+        "prisma/migrations/20261026110000_market_watch_items/migration.sql",
+        "scripts/qa-database.mjs",
+        "docs/deployment/MIGRATIONS.md",
+        "docs/engineering/NEXT_MILESTONE_2026-10-26.md"
+      ]
+    },
+    {
+      "id": "OPS-003",
+      "category": "operations",
+      "title": "Scheduled backups and operational restore",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Synthetic disposable backup/restore relationships verified.",
+      "remaining": "Encrypted scheduled backups/retention and owned staging recovery drill absent.",
+      "evidence": ["scripts/qa-database.mjs", "docs/DEPLOYMENT.md"]
+    },
+    {
+      "id": "OPS-004",
+      "category": "operations",
+      "title": "Monitoring, alerts and incident operation",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Local dependency health and sanitized structured error logging exist.",
+      "remaining": "No operational monitoring/alert delivery or incident-response exercise.",
+      "evidence": [
+        "src/app/api/health/route.ts",
+        "src/lib/logging.ts",
+        "docs/engineering/RELIABILITY_CHECKLIST.md"
+      ]
+    },
+    {
+      "id": "OPS-005",
+      "category": "operations",
+      "title": "Legal/operator and privacy readiness",
+      "implementation": "PARTIAL",
+      "verification": "BLOCKED",
+      "verified_scope": "Legal draft and configurable operator fields; tested account export/deletion.",
+      "remaining": "Actual operator/contact, retention/vendor disclosures and qualified review missing; no compliance certification.",
+      "evidence": ["src/app/legal/page.tsx", "SECURITY.md"]
+    },
+    {
+      "id": "OPS-006",
+      "category": "operations",
+      "title": "Original application-code license decision",
+      "implementation": "MISSING",
+      "verification": "BLOCKED",
+      "verified_scope": "No original-code license selected; bundled font notices retained separately.",
+      "remaining": "Owner must choose license; data/artwork rights remain separate.",
+      "evidence": ["README.md", "public/licenses"]
+    },
+    {
+      "id": "OPS-007",
+      "category": "operations",
+      "title": "Hosted repository CI",
+      "implementation": "PARTIAL",
+      "verification": "NOT_TESTED",
+      "verified_scope": "Pinned-action quality workflow and dependency-update configuration prepared locally; live repositories empty and zero hosted runs.",
+      "remaining": "Reviewed source upload, clean-checkout secrets exclusion and successful hosted run needed.",
+      "evidence": [
+        ".github/workflows/quality.yml",
+        ".github/dependabot.yml",
+        "docs/engineering/REPOSITORY_READINESS.md"
+      ]
+    },
+    {
+      "id": "OPS-008",
+      "category": "operations",
+      "title": "Deployment rollback rehearsal",
+      "implementation": "PARTIAL",
+      "verification": "NOT_TESTED",
+      "verified_scope": "Additive migration recovery runbook exists.",
+      "remaining": "Owned staging image/schema rollback and recovery evidence required.",
+      "evidence": ["docs/deployment/MIGRATIONS.md", "docs/DEPLOYMENT.md"]
+    }
+  ]
+}

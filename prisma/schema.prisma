@@ -1,0 +1,447 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+model User {
+ marketWatchItems MarketWatchItem[]
+ timers Timer[]
+  id String @id @default(cuid())
+  name String?
+  email String? @unique
+  emailVerified DateTime?
+  image String?
+  role String @default("USER")
+  region String @default("europe")
+  characterName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  compositions Composition[]
+  ownedGroups Group[]
+  memberships GroupMember[]
+  builds Build[]
+  accounts Account[]
+  sessions Session[]
+  groupRequests GroupMembershipRequest[]
+  groupRsvps EventRSVP[]
+
+  authoredAnnouncements GroupAnnouncement[]
+  authoredGroupEvents GroupEvent[]
+  authoredGroupBuilds GroupBuild[]
+  issuedGroupInvites GroupInvitation[]
+
+  savedScenarios SavedScenario[]
+
+  buildFavorites BuildFavorite[]
+  compositionFavorites CompositionFavorite[]
+  buildVotes BuildVote[]
+  comments ContentComment[]
+  reports ContentReport[] @relation("ReportAuthor")
+  reviewedReports ContentReport[] @relation("ReportReviewer")
+  moderationLogs ModerationLog[]
+
+}
+model Account {
+  id String @id @default(cuid())
+  userId String
+  type String
+  provider String
+  providerAccountId String
+  refresh_token String? @db.Text
+  access_token String? @db.Text
+  expires_at Int?
+  token_type String?
+  scope String?
+  id_token String? @db.Text
+  session_state String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+model Session {
+  id String @id @default(cuid())
+  sessionToken String @unique
+  userId String
+  expires DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+model VerificationToken {
+  identifier String
+  token String @unique
+  expires DateTime
+  @@unique([identifier, token])
+}
+
+enum BuildVisibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+model Build {
+  id String @id @default(cuid())
+  authorId String
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title String
+  description String @db.Text
+  contentType String
+  region String
+  visibility BuildVisibility @default(PRIVATE)
+  playerCount Int @default(1)
+  recommendedIP Int @default(0)
+  strategy String @db.Text
+  patchNotes String @db.Text
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  equipment BuildEquipment[]
+  versions BuildVersion[]
+  @@index([visibility, updatedAt])
+  @@index([authorId, updatedAt])
+  groupSnapshots GroupBuild[]
+
+ hiddenAt DateTime?
+ comments ContentComment[]
+ reports ContentReport[]
+ favorites BuildFavorite[]
+ votes BuildVote[]
+
+}
+model BuildEquipment {
+  id String @id @default(cuid())
+  buildId String
+  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  slot String
+  itemId String
+  quality Int
+  abilities String @db.Text
+  alternatives String @db.Text
+  @@unique([buildId, slot])
+  abilitySelections Json @default("{}")
+  alternativeItemIds String[] @default([])
+
+}
+model BuildVersion {
+  id String @id @default(cuid())
+  buildId String
+  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  version Int
+  snapshot Json
+  createdAt DateTime @default(now())
+  @@unique([buildId, version])
+}
+
+enum GroupRole {
+ OWNER
+ ADMIN
+ OFFICER
+ MEMBER
+}
+enum ContentVisibility {
+ PUBLIC
+ PRIVATE
+ GROUP
+}
+model Group {
+ id String @id @default(cuid())
+ name String
+ slug String @unique
+ description String @db.Text
+ region String
+ visibility String @default("PRIVATE")
+ ownerId String
+ owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ members GroupMember[]
+ compositions Composition[]
+ @@index([visibility,updatedAt])
+ @@index([ownerId])
+  invitations GroupInvitation[]
+  requests GroupMembershipRequest[]
+  announcements GroupAnnouncement[]
+  events GroupEvent[]
+  builds GroupBuild[]
+
+}
+model GroupMember {
+ groupId String
+ userId String
+ role GroupRole @default(MEMBER)
+ joinedAt DateTime @default(now())
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@id([groupId,userId])
+ @@index([userId])
+}
+model Composition {
+ id String @id @default(cuid())
+ authorId String
+ author User @relation(fields:[authorId],references:[id],onDelete:Cascade)
+ groupId String?
+ group Group? @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ description String @db.Text
+ region String
+ contentType String
+ visibility ContentVisibility @default(PRIVATE)
+ slots Json
+ notes String @db.Text
+ version Int @default(1)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ versions CompositionVersion[]
+ @@index([authorId,updatedAt])
+ @@index([visibility,updatedAt])
+ @@index([groupId,updatedAt])
+  events GroupEvent[]
+
+ hiddenAt DateTime?
+ comments ContentComment[]
+ reports ContentReport[]
+ favorites CompositionFavorite[]
+
+}
+model CompositionVersion {
+ id String @id @default(cuid())
+ compositionId String
+ composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)
+ version Int
+ snapshot Json
+ createdAt DateTime @default(now())
+ @@unique([compositionId,version])
+}
+
+model GroupInvitation {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ tokenHash String @unique
+ createdById String?
+ createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)
+ expiresAt DateTime
+ acceptedAt DateTime?
+ revokedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([groupId,createdAt])
+}
+model GroupMembershipRequest {
+ groupId String
+ userId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ status String @default("PENDING")
+ message String @db.Text
+ updatedAt DateTime @updatedAt
+ @@id([groupId,userId])
+ @@index([groupId,status])
+}
+model GroupAnnouncement {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ body String @db.Text
+ authorId String?
+ author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ @@index([groupId,createdAt])
+}
+model GroupEvent {
+ version Int @default(1)
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ description String @db.Text
+ startsAt DateTime
+ timezone String
+ expectedParticipants Int
+ voiceInfo String
+ compositionId String?
+ composition Composition? @relation(fields:[compositionId],references:[id],onDelete:SetNull)
+ cancelled Boolean @default(false)
+ authorId String?
+ author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ rsvps EventRSVP[]
+ @@index([groupId,startsAt])
+}
+model EventRSVP {
+ eventId String
+ userId String
+ event GroupEvent @relation(fields:[eventId],references:[id],onDelete:Cascade)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ status String
+ role String
+ updatedAt DateTime @updatedAt
+ @@id([eventId,userId])
+}
+model GroupBuild {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ snapshot Json
+ sourceBuildId String?
+ sourceBuild Build? @relation(fields:[sourceBuildId],references:[id],onDelete:SetNull)
+ authorId String?
+ author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ @@index([groupId,createdAt])
+}
+
+model SavedScenario {
+ id String @id @default(cuid())
+ authorId String
+ author User @relation(fields:[authorId],references:[id],onDelete:Cascade)
+ title String
+ kind String
+ configuration Json
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([authorId,updatedAt])
+}
+
+model CatalogRelease {
+ id String @id @default(cuid())
+ version String @unique
+ sourceUrl String
+ rightsReference String
+ checksum String
+ importedAt DateTime @default(now())
+ itemCount Int
+ items ItemMetadata[]
+}
+model ItemMetadata {
+ id String @id
+ name String
+ slot String
+ tier Int
+ enchantment Int
+ itemPower Int?
+ abilities Json
+ recipe Json?
+ releaseId String
+ release CatalogRelease @relation(fields:[releaseId],references:[id],onDelete:Restrict)
+ active Boolean @default(true)
+ @@index([active,slot,tier])
+ @@index([name])
+}
+
+model BuildFavorite {
+ userId String
+ buildId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)
+ createdAt DateTime @default(now())
+ @@id([userId,buildId])
+ @@index([buildId])
+}
+model CompositionFavorite {
+ userId String
+ compositionId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)
+ createdAt DateTime @default(now())
+ @@id([userId,compositionId])
+ @@index([compositionId])
+}
+model BuildVote {
+ userId String
+ buildId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)
+ createdAt DateTime @default(now())
+ @@id([userId,buildId])
+ @@index([buildId])
+}
+model ContentComment {
+ id String @id @default(cuid())
+ authorId String
+ author User @relation(fields:[authorId],references:[id],onDelete:Cascade)
+ buildId String?
+ build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)
+ compositionId String?
+ composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)
+ body String @db.Text
+ version Int @default(1)
+ hiddenAt DateTime?
+ deletedAt DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ revisions CommentRevision[]
+ reports ContentReport[]
+ @@index([buildId,createdAt])
+ @@index([compositionId,createdAt])
+ @@index([authorId])
+}
+model CommentRevision {
+ id String @id @default(cuid())
+ commentId String
+ comment ContentComment @relation(fields:[commentId],references:[id],onDelete:Cascade)
+ version Int
+ body String @db.Text
+ createdAt DateTime @default(now())
+ @@unique([commentId,version])
+}
+model ContentReport {
+ version Int @default(1)
+ id String @id @default(cuid())
+ authorId String?
+ author User? @relation("ReportAuthor",fields:[authorId],references:[id],onDelete:SetNull)
+ buildId String?
+ build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)
+ compositionId String?
+ composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)
+ commentId String?
+ comment ContentComment? @relation(fields:[commentId],references:[id],onDelete:Cascade)
+ reason String @db.Text
+ status String @default("OPEN")
+ reviewerId String?
+ reviewer User? @relation("ReportReviewer",fields:[reviewerId],references:[id],onDelete:SetNull)
+ reviewNote String @default("") @db.Text
+ createdAt DateTime @default(now())
+ reviewedAt DateTime?
+ @@index([status,createdAt])
+}
+model ModerationLog {
+ id String @id @default(cuid())
+ actorId String?
+ actor User? @relation(fields:[actorId],references:[id],onDelete:SetNull)
+ targetType String
+ targetId String
+ action String
+ reason String @db.Text
+ createdAt DateTime @default(now())
+ @@index([createdAt])
+}
+
+model Timer {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ title String
+ category String
+ status String @default("RUNNING")
+ durationMs Int
+ dueAt DateTime?
+ remainingMs Int?
+ version Int @default(1)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([userId,updatedAt])
+}
+
+model MarketWatchItem {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ region String
+ itemId String
+ quality Int @default(1)
+ createdAt DateTime @default(now())
+ @@unique([userId,region,itemId,quality])
+}

@@ -1,0 +1,176 @@
+/* The shared product shell keeps the tools one click away. */
+.product-route:not(.light) {
+  --bg: #0d1217;
+  --sidebar: #10171c;
+  --panel: #141c22;
+  --elevated: #1b252d;
+  --border: #2c373f;
+  --accent: #bb5632;
+  --accent-ink: #f19a69;
+  --accent-wash: #35271f;
+  --muted: #afb9c2;
+}
+.product-route .site-header {
+  height: 72px;
+  padding: 0 max(24px, calc((100vw - 1536px) / 2 + 24px));
+  gap: 28px;
+  background: var(--sidebar);
+}
+.product-route .top-brand {
+  width: 154px;
+  min-width: 154px;
+}
+.product-route .top-brand .outpost-logo {
+  width: 154px;
+  height: auto;
+}
+.product-route .desktop-navigation {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+}
+.product-route .desktop-navigation > a,
+.product-route .desktop-navigation > .nav-dropdown > summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 14px/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.product-route .desktop-navigation > a > svg {
+  display: none;
+}
+.product-route .desktop-navigation > a:hover,
+.product-route .desktop-navigation > a[aria-current="page"] {
+  color: var(--text);
+}
+.product-route .header-actions {
+  margin-left: auto;
+  min-width: 0;
+  gap: 12px;
+}
+.product-route .site-header .search-trigger {
+  justify-content: start;
+  width: 240px;
+  height: 36px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--elevated);
+}
+.product-route .search-shortcut {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  text-align: left;
+}
+.product-route .search-shortcut kbd {
+  display: none;
+}
+.product-frame {
+  display: block;
+  max-width: 1536px;
+  margin: 0 auto;
+  min-height: calc(100svh - 160px);
+}
+.product-frame > main {
+  width: 100%;
+  min-width: 0;
+  padding: 28px 24px;
+  max-width: none;
+  margin: 0;
+}
+.product-route footer {
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+}
+.product-route .home-auth-action {
+  display: inline-flex;
+  white-space: nowrap;
+  background: var(--action);
+  color: white;
+  border-color: var(--action);
+  font-size: 12px;
+  font-weight: 650;
+  min-height: 36px;
+}
+@media (max-width: 1350px) {
+  .product-route .site-header {
+    gap: 22px;
+  }
+  .product-route .desktop-navigation {
+    gap: 18px;
+  }
+  .product-route .site-header .search-trigger {
+    width: 34px;
+    height: 36px;
+    padding: 8px;
+    border: 0;
+    background: none;
+  }
+  .product-route .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .product-route .desktop-navigation {
+    display: none;
+  }
+  .product-route .site-header {
+    padding-inline: 20px;
+    gap: 16px;
+    height: 64px;
+  }
+  .product-route .top-brand {
+    width: auto;
+    min-width: 0;
+  }
+  .product-route .home-auth-action {
+    display: none;
+  }
+  .product-frame > main {
+    padding: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .product-frame > main {
+    padding: 16px;
+  }
+  .product-route .site-header {
+    padding-inline: 12px;
+    gap: 10px;
+  }
+  .product-route .top-brand .outpost-logo {
+    width: 130px;
+  }
+  .product-route .header-actions {
+    gap: 6px;
+  }
+}
+.product-route .production-mobile-summary > span:last-child {
+  color: var(--accent-ink);
+}
+.product-route .button.secondary:hover,
+.product-route .button.secondary:focus-visible {
+  color: var(--text);
+}
+/* Primary/secondary changes must stay readable throughout the state transition. */
+.product-route .button {
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-route .button {
+    transition: none;
+  }
+}

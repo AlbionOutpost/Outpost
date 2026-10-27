@@ -1,0 +1,68 @@
+import { spawnSync } from "node:child_process";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+mkdirSync(".qa", { recursive: true });
+function run(args) {
+  const r = spawnSync("docker", args, { encoding: "utf8" });
+  if (r.status !== 0)
+    throw new Error(`Container operation failed: ${String(r.stderr).slice(-500)}`);
+  return r.stdout.trim();
+}
+if (process.argv[2] === "stop") {
+  const record = JSON.parse(readFileSync(".qa/docker.json", "utf8"));
+  if (!/^albion-atlas-qa-[a-f0-9]+$/.test(record.name))
+    throw new Error("Invalid audit container identity");
+  record.finalHealth = run(["inspect", "--format", "{{.State.Health.Status}}", record.name]);
+  run(["stop", record.name]);
+  run(["rm", record.name]);
+  record.cleaned = true;
+  writeFileSync(".qa/docker.json", JSON.stringify(record, null, 2));
+  console.log("Owned QA container removed");
+} else {
+  const name = `albion-atlas-qa-${randomUUID().replaceAll("-", "").slice(0, 10)}`;
+  run([
+    "run",
+    "-d",
+    "--name",
+    name,
+    "--network",
+    "albionhelper_default",
+    "-p",
+    "127.0.0.1:3102:3000",
+    "--env-file",
+    ".env",
+    "-e",
+    "NEXTAUTH_URL=http://localhost:3102",
+    "-e",
+    "DATABASE_URL=postgresql://atlas:atlas@db:5432/atlas",
+    "-e",
+    "REDIS_URL=redis://redis:6379",
+    "albion-atlas:qa",
+  ]);
+  let health;
+  for (let i = 0; i < 20; i++) {
+    try {
+      const r = await fetch("http://localhost:3102/api/health");
+      if (r.ok) {
+        health = await r.json();
+        break;
+      }
+    } catch {}
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  if (!health) throw new Error("QA container did not become ready");
+  const uid = run(["exec", name, "id", "-u"]);
+  const hasEnv = run([
+    "exec",
+    name,
+    "node",
+    "-e",
+    "console.log(require('fs').existsSync('/app/.env'))",
+  ]);
+  const home = await fetch("http://localhost:3102/");
+  const record = { name, image: "albion-atlas:qa", health, uid, hasEnv, homeStatus: home.status };
+  writeFileSync(".qa/docker.json", JSON.stringify(record, null, 2));
+  if (uid === "0" || hasEnv !== "false" || !home.ok)
+    throw new Error("Container hardening check failed");
+  console.log(JSON.stringify(record));
+}

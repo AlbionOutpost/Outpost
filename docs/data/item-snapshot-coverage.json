@@ -1,0 +1,387 @@
+{
+  "sourceRevision": "d72a159ed01ee4645b60d18633cd683779b9adc6",
+  "sourceDate": "2026-07-12T03:26:10Z",
+  "files": [
+    {
+      "slot": "mainhand",
+      "sourceRows": 795,
+      "excluded": [],
+      "sourceCategories": [
+        "arcanestaff",
+        "axe",
+        "bow",
+        "crossbow",
+        "cursestaff",
+        "dagger",
+        "fiber",
+        "firestaff",
+        "fish",
+        "froststaff",
+        "guilds",
+        "hammer",
+        "hide",
+        "holystaff",
+        "knuckles",
+        "mace",
+        "naturestaff",
+        "ore",
+        "quarterstaff",
+        "rock",
+        "shapeshifterstaff",
+        "spear",
+        "sword",
+        "tracking",
+        "wood"
+      ],
+      "records": 3515
+    },
+    {
+      "slot": "offhand",
+      "sourceRows": 96,
+      "excluded": [],
+      "sourceCategories": ["booktype", "shieldtype", "torchtype"],
+      "records": 456
+    },
+    {
+      "slot": "head",
+      "sourceRows": 172,
+      "excluded": [],
+      "sourceCategories": [
+        "cloth_helmet",
+        "fiber",
+        "fish",
+        "hide",
+        "leather_helmet",
+        "ore",
+        "plate_helmet",
+        "rock",
+        "wood"
+      ],
+      "records": 832
+    },
+    {
+      "slot": "armor",
+      "sourceRows": 172,
+      "excluded": [],
+      "sourceCategories": [
+        "cloth_armor",
+        "fiber",
+        "fish",
+        "hide",
+        "leather_armor",
+        "ore",
+        "plate_armor",
+        "rock",
+        "wood"
+      ],
+      "records": 832
+    },
+    {
+      "slot": "shoes",
+      "sourceRows": 173,
+      "excluded": [
+        {
+          "id": "UNIQUE_SHOES_RUBBERBANDING",
+          "reason": "Unsupported identifier or absent English name"
+        }
+      ],
+      "sourceCategories": [
+        "cloth_shoes",
+        "fiber",
+        "fish",
+        "hide",
+        "leather_shoes",
+        "ore",
+        "plate_shoes",
+        "rock",
+        "wood"
+      ],
+      "records": 832
+    },
+    {
+      "slot": "cape",
+      "sourceRows": 107,
+      "excluded": [],
+      "sourceCategories": [
+        "accessoires_capes_avalon",
+        "accessoires_capes_brecilien",
+        "accessoires_capes_bridgewatch",
+        "accessoires_capes_caerleon",
+        "accessoires_capes_capes",
+        "accessoires_capes_demon",
+        "accessoires_capes_fortsterling",
+        "accessoires_capes_heretic",
+        "accessoires_capes_keeper",
+        "accessoires_capes_lymhurst",
+        "accessoires_capes_martlock",
+        "accessoires_capes_morgana",
+        "accessoires_capes_smuggler",
+        "accessoires_capes_thetford",
+        "accessoires_capes_undead",
+        "fiber",
+        "fish",
+        "hide",
+        "ore",
+        "rock",
+        "wood"
+      ],
+      "records": 527
+    },
+    {
+      "slot": "bag",
+      "sourceRows": 12,
+      "excluded": [],
+      "sourceCategories": ["bags", "satchels"],
+      "records": 52
+    },
+    {
+      "slot": "mount",
+      "sourceRows": 104,
+      "excluded": [
+        {
+          "id": "UNIQUE_MOUNT_BEETLE_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_GIANTTOAD_02_TELLAFRIEND",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ARMORED_EAGLE_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEAR_KEEPER_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_UNDEAD_DIREBOAR_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_MORGANA_RAVEN_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TANKBEETLE_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RHINO_SEASON_BRONZE",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RHINO_SEASON_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BATTLESPIDER_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BAT_PERSONAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEHEMOTH_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEHEMOTH_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RHINO_SEASON_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TOWER_CHARIOT_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BATTLESPIDER_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ENT_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BAT_TELLAFRIEND",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEETLE_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_JUGGERNAUT_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "T8_MOUNT_MAMMOTH_BATTLE",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TOWER_CHARIOT_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_GIANTTOAD_TELLAFRIEND",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BASTION_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_DIVINE_OWL_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEHEMOTH_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ARMORED_EAGLE_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "T8_MOUNT_HORSE_UNDEAD",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BEETLE_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BATTLESPIDER_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ENT_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_GIANT_HORSE_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TOWER_CHARIOT_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "T8_MOUNT_COUGAR_KEEPER",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "UNIQUE_MOUNT_MOABIRD_TELLAFRIEND",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_HERETIC_MULE_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BASTION_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TANKBEETLE_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RHINO_SEASON_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RAM_TELLAFRIEND",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "T8_MOUNT_ARMORED_HORSE_MORGANA",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "UNIQUE_MOUNT_JUGGERNAUT_CRYSTAL",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_RAM_XMAS",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "T8_MOUNT_RABBIT_EASTER_DARK",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "T5_MOUNT_COUGAR_KEEPER",
+          "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ARMORED_EAGLE_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BASTION_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_JUGGERNAUT_GOLD",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_BLACK_PANTHER_ADC",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_TANKBEETLE_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_MOUNT_ENT_SILVER",
+          "reason": "Unsupported identifier or absent English name"
+        }
+      ],
+      "sourceCategories": ["basemounts", "battle_mount", "raremounts"],
+      "records": 53
+    },
+    {
+      "slot": "food",
+      "sourceRows": 91,
+      "excluded": [
+        {
+          "id": "UNIQUE_CONSUMABLE_EVENT_EASTER_2020_CHOCOLATE",
+          "reason": "Unsupported identifier or absent English name"
+        }
+      ],
+      "sourceCategories": ["fish", "food"],
+      "records": 243
+    },
+    {
+      "slot": "potion",
+      "sourceRows": 50,
+      "excluded": [
+        {
+          "id": "UNIQUE_CONSUMABLE_EVENT_EASTER_2020_EGG",
+          "reason": "Unsupported identifier or absent English name"
+        },
+        {
+          "id": "UNIQUE_CONSUMABLE_EVENT_WINTER_2017",
+          "reason": "Unsupported identifier or absent English name"
+        }
+      ],
+      "sourceCategories": ["other", "potions"],
+      "records": 168
+    }
+  ],
+  "records": 7510,
+  "abilityMappings": 1576,
+  "recordsWithAbilities": 604,
+  "recordsWithItemPower": 6309,
+  "manuallyFullyVerified": 0,
+  "unlocksVerified": 0,
+  "currentPatchVerified": 0,
+  "normalizedSha256": "61756b210d662c03e26f17212a77d9af275c098cd8f4b23cef2cb840d0dd7a0f",
+  "limitations": "July source; no October patch binding, unlocks, image review or recipe return eligibility. Nested variant spell inheritance not inferred. No complete game denominator."
+}

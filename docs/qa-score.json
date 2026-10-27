@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "evidence_checked_at": "2026-10-27T00:31:46.009Z",
+  "inputs_sha256": "f6859ff310b5580fbe0f2bd5dab26bc39922135c2d20240b000f3d378a0622bf",
+  "coverage_indices": {
+    "implementation": 58.75,
+    "verification": 57.32,
+    "joint": 44.75
+  },
+  "categories": {
+    "core": {
+      "weight": 25,
+      "scopes": 21,
+      "implementation": 61.904761904761905,
+      "verification": 85.71428571428571,
+      "joint": 61.904761904761905
+    },
+    "data": {
+      "weight": 20,
+      "scopes": 8,
+      "implementation": 75.0,
+      "verification": 75.0,
+      "joint": 62.5
+    },
+    "security": {
+      "weight": 20,
+      "scopes": 9,
+      "implementation": 66.66666666666667,
+      "verification": 44.44444444444444,
+      "joint": 38.888888888888886
+    },
+    "ui": {
+      "weight": 15,
+      "scopes": 5,
+      "implementation": 40.0,
+      "verification": 30.0,
+      "joint": 20.0
+    },
+    "performance": {
+      "weight": 10,
+      "scopes": 4,
+      "implementation": 37.5,
+      "verification": 37.5,
+      "joint": 31.25
+    },
+    "code": {
+      "weight": 5,
+      "scopes": 5,
+      "implementation": 60.0,
+      "verification": 50.0,
+      "joint": 45.0
+    },
+    "operations": {
+      "weight": 5,
+      "scopes": 8,
+      "implementation": 43.75,
+      "verification": 25.0,
+      "joint": 12.5
+    }
+  },
+  "implementation_counts": {
+    "COMPLETE": 19,
+    "PARTIAL": 32,
+    "MISSING": 9
+  },
+  "verification_counts": {
+    "VERIFIED": 30,
+    "NOT_TESTED": 6,
+    "BLOCKED": 12,
+    "PARTIALLY_TESTED": 11,
+    "FAILED": 1
+  },
+  "open_release_gates": 17,
+  "verdict": "NO-GO"
+}

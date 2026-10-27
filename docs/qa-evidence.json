@@ -1,0 +1,1235 @@
+{
+  "schema_version": 1,
+  "phase_checked_at": "2026-10-27T00:31:46.009Z",
+  "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
+  "checks": [
+    {
+      "name": "database-connectivity",
+      "status": "PASS",
+      "seconds": 0.02
+    },
+    {
+      "name": "typecheck",
+      "status": "PASS",
+      "seconds": 1.65
+    },
+    {
+      "name": "lint",
+      "status": "PASS",
+      "seconds": 4.58
+    },
+    {
+      "name": "unit",
+      "status": "PASS",
+      "seconds": 2.37
+    },
+    {
+      "name": "game-data-structure",
+      "status": "PASS",
+      "seconds": 0.17
+    },
+    {
+      "name": "database-integration",
+      "status": "PASS",
+      "seconds": 3.56
+    },
+    {
+      "name": "build",
+      "status": "PASS",
+      "seconds": 4.19
+    },
+    {
+      "name": "browser",
+      "status": "PASS",
+      "seconds": 90.57
+    },
+    {
+      "name": "dependencies",
+      "status": "PASS",
+      "seconds": 0.44
+    },
+    {
+      "name": "live-regions",
+      "status": "PASS",
+      "seconds": 0.34
+    }
+  ],
+  "counts": {
+    "unit_passed": 143,
+    "browser_passed": 71,
+    "database_passed": 15,
+    "database_total": 15,
+    "live_region_endpoints": 9
+  },
+  "game_data": {
+    "checkedAt": "2026-10-27T00:35:30.958Z",
+    "scope": "Repository-defined starter data, not a live database audit or complete game denominator.",
+    "verificationStages": {
+      "authoredEquipment": 205,
+      "schemaValidatedEquipment": 205,
+      "externalSourceImported": 7510,
+      "manuallyVerified": 0,
+      "patchVerified": 0
+    },
+    "equipmentEntries": 205,
+    "importedSnapshot": {
+      "sourceRevision": "d72a159ed01ee4645b60d18633cd683779b9adc6",
+      "sourceDate": "2026-07-12T03:26:10Z",
+      "files": [
+        {
+          "slot": "mainhand",
+          "sourceRows": 795,
+          "excluded": [],
+          "sourceCategories": [
+            "arcanestaff",
+            "axe",
+            "bow",
+            "crossbow",
+            "cursestaff",
+            "dagger",
+            "fiber",
+            "firestaff",
+            "fish",
+            "froststaff",
+            "guilds",
+            "hammer",
+            "hide",
+            "holystaff",
+            "knuckles",
+            "mace",
+            "naturestaff",
+            "ore",
+            "quarterstaff",
+            "rock",
+            "shapeshifterstaff",
+            "spear",
+            "sword",
+            "tracking",
+            "wood"
+          ],
+          "records": 3515
+        },
+        {
+          "slot": "offhand",
+          "sourceRows": 96,
+          "excluded": [],
+          "sourceCategories": ["booktype", "shieldtype", "torchtype"],
+          "records": 456
+        },
+        {
+          "slot": "head",
+          "sourceRows": 172,
+          "excluded": [],
+          "sourceCategories": [
+            "cloth_helmet",
+            "fiber",
+            "fish",
+            "hide",
+            "leather_helmet",
+            "ore",
+            "plate_helmet",
+            "rock",
+            "wood"
+          ],
+          "records": 832
+        },
+        {
+          "slot": "armor",
+          "sourceRows": 172,
+          "excluded": [],
+          "sourceCategories": [
+            "cloth_armor",
+            "fiber",
+            "fish",
+            "hide",
+            "leather_armor",
+            "ore",
+            "plate_armor",
+            "rock",
+            "wood"
+          ],
+          "records": 832
+        },
+        {
+          "slot": "shoes",
+          "sourceRows": 173,
+          "excluded": [
+            {
+              "id": "UNIQUE_SHOES_RUBBERBANDING",
+              "reason": "Unsupported identifier or absent English name"
+            }
+          ],
+          "sourceCategories": [
+            "cloth_shoes",
+            "fiber",
+            "fish",
+            "hide",
+            "leather_shoes",
+            "ore",
+            "plate_shoes",
+            "rock",
+            "wood"
+          ],
+          "records": 832
+        },
+        {
+          "slot": "cape",
+          "sourceRows": 107,
+          "excluded": [],
+          "sourceCategories": [
+            "accessoires_capes_avalon",
+            "accessoires_capes_brecilien",
+            "accessoires_capes_bridgewatch",
+            "accessoires_capes_caerleon",
+            "accessoires_capes_capes",
+            "accessoires_capes_demon",
+            "accessoires_capes_fortsterling",
+            "accessoires_capes_heretic",
+            "accessoires_capes_keeper",
+            "accessoires_capes_lymhurst",
+            "accessoires_capes_martlock",
+            "accessoires_capes_morgana",
+            "accessoires_capes_smuggler",
+            "accessoires_capes_thetford",
+            "accessoires_capes_undead",
+            "fiber",
+            "fish",
+            "hide",
+            "ore",
+            "rock",
+            "wood"
+          ],
+          "records": 527
+        },
+        {
+          "slot": "bag",
+          "sourceRows": 12,
+          "excluded": [],
+          "sourceCategories": ["bags", "satchels"],
+          "records": 52
+        },
+        {
+          "slot": "mount",
+          "sourceRows": 104,
+          "excluded": [
+            {
+              "id": "UNIQUE_MOUNT_BEETLE_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_GIANTTOAD_02_TELLAFRIEND",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ARMORED_EAGLE_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEAR_KEEPER_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_UNDEAD_DIREBOAR_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_MORGANA_RAVEN_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TANKBEETLE_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RHINO_SEASON_BRONZE",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RHINO_SEASON_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BATTLESPIDER_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BAT_PERSONAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEHEMOTH_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEHEMOTH_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RHINO_SEASON_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TOWER_CHARIOT_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BATTLESPIDER_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ENT_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BAT_TELLAFRIEND",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEETLE_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_JUGGERNAUT_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "T8_MOUNT_MAMMOTH_BATTLE",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TOWER_CHARIOT_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_GIANTTOAD_TELLAFRIEND",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BASTION_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_DIVINE_OWL_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEHEMOTH_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ARMORED_EAGLE_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "T8_MOUNT_HORSE_UNDEAD",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BEETLE_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BATTLESPIDER_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ENT_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_GIANT_HORSE_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TOWER_CHARIOT_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "T8_MOUNT_COUGAR_KEEPER",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "UNIQUE_MOUNT_MOABIRD_TELLAFRIEND",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_HERETIC_MULE_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BASTION_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TANKBEETLE_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RHINO_SEASON_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RAM_TELLAFRIEND",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "T8_MOUNT_ARMORED_HORSE_MORGANA",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "UNIQUE_MOUNT_JUGGERNAUT_CRYSTAL",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_RAM_XMAS",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "T8_MOUNT_RABBIT_EASTER_DARK",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "T5_MOUNT_COUGAR_KEEPER",
+              "reason": "Source tier/enchantment disagrees with identifier; not corrected by inference"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ARMORED_EAGLE_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BASTION_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_JUGGERNAUT_GOLD",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_BLACK_PANTHER_ADC",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_TANKBEETLE_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_MOUNT_ENT_SILVER",
+              "reason": "Unsupported identifier or absent English name"
+            }
+          ],
+          "sourceCategories": ["basemounts", "battle_mount", "raremounts"],
+          "records": 53
+        },
+        {
+          "slot": "food",
+          "sourceRows": 91,
+          "excluded": [
+            {
+              "id": "UNIQUE_CONSUMABLE_EVENT_EASTER_2020_CHOCOLATE",
+              "reason": "Unsupported identifier or absent English name"
+            }
+          ],
+          "sourceCategories": ["fish", "food"],
+          "records": 243
+        },
+        {
+          "slot": "potion",
+          "sourceRows": 50,
+          "excluded": [
+            {
+              "id": "UNIQUE_CONSUMABLE_EVENT_EASTER_2020_EGG",
+              "reason": "Unsupported identifier or absent English name"
+            },
+            {
+              "id": "UNIQUE_CONSUMABLE_EVENT_WINTER_2017",
+              "reason": "Unsupported identifier or absent English name"
+            }
+          ],
+          "sourceCategories": ["other", "potions"],
+          "records": 168
+        }
+      ],
+      "records": 7510,
+      "abilityMappings": 1576,
+      "recordsWithAbilities": 604,
+      "recordsWithItemPower": 6309,
+      "manuallyFullyVerified": 0,
+      "unlocksVerified": 0,
+      "currentPatchVerified": 0,
+      "normalizedSha256": "61756b210d662c03e26f17212a77d9af275c098cd8f4b23cef2cb840d0dd7a0f",
+      "limitations": "July source; no October patch binding, unlocks, image review or recipe return eligibility. Nested variant spell inheritance not inferred. No complete game denominator.",
+      "scope": "Checksum-validated repository bundle; live database activation counted separately in .qa/next-milestone/runtime-catalog.json"
+    },
+    "localSearchNames": 100,
+    "uniqueCombinedIds": 245,
+    "duplicateEquipmentIds": 0,
+    "invalidMappings": [],
+    "slots": [
+      {
+        "slot": "Main hand",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Off hand",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Helmet",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Chest",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Boots",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Cape",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Bag",
+        "families": 1,
+        "variants": 25
+      },
+      {
+        "slot": "Mount",
+        "families": 1,
+        "variants": 6
+      },
+      {
+        "slot": "Food",
+        "families": 1,
+        "variants": 12
+      },
+      {
+        "slot": "Potion",
+        "families": 1,
+        "variants": 12
+      }
+    ],
+    "uniqueAbilityNames": 8,
+    "verifiedUnlockRequirements": 0,
+    "currentPatchVerifiedEntries": 0,
+    "statisticEntries": 0,
+    "recipes": [
+      {
+        "id": "broadsword-t4",
+        "kind": "crafting",
+        "output": "T4_MAIN_SWORD",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "battleaxe-t4",
+        "kind": "crafting",
+        "output": "T4_MAIN_AXE",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bow-t4",
+        "kind": "crafting",
+        "output": "T4_2H_BOW",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "shield-t4",
+        "kind": "crafting",
+        "output": "T4_OFF_SHIELD",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "scholar-cowl-t4",
+        "kind": "crafting",
+        "output": "T4_HEAD_CLOTH_SET1",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/head.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-jacket-t4",
+        "kind": "crafting",
+        "output": "T4_ARMOR_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "mercenary-shoes-t4",
+        "kind": "crafting",
+        "output": "T4_SHOES_LEATHER_SET1",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/shoes.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "cape-t4",
+        "kind": "crafting",
+        "output": "T4_CAPE",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "bag-t4",
+        "kind": "crafting",
+        "output": "T4_BAG",
+        "source": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/bag.json",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "steel-bar-t4",
+        "kind": "refining",
+        "output": "T4_METALBAR",
+        "source": "https://wiki.albiononline.com/wiki/Pristine_Steel_Bar",
+        "currentPatchVerified": false,
+        "review": "Source points to Pristine Steel Bar while output is plain Steel Bar; source applicability needs verification."
+      }
+    ],
+    "rendererCompatible": 205,
+    "sources": [
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/food.json",
+      "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/potion.json",
+      "https://albiononline.com/news/basic-builds-battleaxe"
+    ],
+    "licensing": "Original factual starter index only; full bulk dataset redistribution rights unresolved. Renderer URL compatibility does not certify asset existence/rights or full icon coverage.",
+    "missing": [
+      "Full weapon/offhand/armor families",
+      "Food and potion metadata",
+      "Full mounts and economic item categories",
+      "Ability descriptions, passives and unlock levels",
+      "Item statistics and patch compatibility",
+      "Full crafting/refining/cooking/alchemy recipes"
+    ],
+    "outdatedStatus": "Unknown: no current patch reference baseline is verified; zero confirmed-current entries. Do not infer zero outdated entries."
+  },
+  "migration": {
+    "checkedAt": "2026-10-26T16:58:01.245Z",
+    "scope": "Read-back after private local backup and authorized additive watchlist migration; local development only",
+    "migrations": [
+      {
+        "migration_name": "20261025194321_foundation",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025195551_build_platform",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025213500_qa_invariants",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025211414_compositions_and_group_access",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025212501_group_collaboration",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025214851_collaboration_foreign_keys",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025215723_structured_build_abilities",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025220602_saved_economy_scenarios",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025222653_catalog_metadata",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025223720_community_interactions",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025223807_moderation_version",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025224025_community_invariants",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025224426_group_event_revisions",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025224924_personal_timers",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025225221_personal_data_invariants",
+        "finished": true
+      },
+      {
+        "migration_name": "20261025225359_timer_null_state",
+        "finished": true
+      },
+      {
+        "migration_name": "20261026110000_market_watch_items",
+        "finished": true
+      }
+    ],
+    "watchTablePresent": true
+  },
+  "remote": {
+    "checkedAt": "2026-10-26T12:53:15.471Z",
+    "scope": "Read-only documentation status recheck",
+    "organization": {
+      "login": "AlbionOutpost",
+      "plan": "free",
+      "twoFactorRequired": false,
+      "memberVisibilityChanges": true,
+      "memberDeletion": true,
+      "memberInvitations": true
+    },
+    "repositories": [
+      {
+        "name": "AlbionOutpost/Outpost",
+        "private": true,
+        "size": 0,
+        "hostedRuns": 0
+      },
+      {
+        "name": "AlbionOutpost/Outpost-Operations",
+        "private": true,
+        "size": 0,
+        "hostedRuns": 0
+      }
+    ],
+    "previousPolicyEvidence": ".qa/github-live/provisioning.json"
+  },
+  "dependency_maintenance": {
+    "checkedAt": "2026-10-26T12:40:53.488543+00:00",
+    "package": "eslint",
+    "version": "9.39.5",
+    "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
+    "source": "npm registry metadata from npm view eslint@9.39.5 deprecated --json",
+    "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
+  },
+  "visual_review": {
+    "checkedAt": "2026-10-26T19:58:03.876583+00:00",
+    "phase": "2026-10-26T19:53:53.928Z",
+    "scope": "Homepage/global navigation redesign; anonymous actual production source state, no invented market/community observations. Same viewport before/after, fonts/images awaited; screenshots opened and inspected. Other workspace bodies unchanged.",
+    "files": [
+      {
+        "path": "docs/design-review/homepage-redesign/after-home-1440.webp",
+        "sha256": "da4d7a581bbbed3794279d6d579e90595fbb0bfc4159a8fc74ce0bce2a0dd1d7"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/after-home-390.webp",
+        "sha256": "4a6f4c27bbd733450aa63249e6f84190d2099534bb40376985dd80a085a71cc4"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/after-home-viewport-1440.webp",
+        "sha256": "bf856f79f7d12b12b8a51e350a93a21f712526be5be26d5ca583f06b5042a238"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/after-home-viewport-390.webp",
+        "sha256": "588c5a3137b980a4139157441d3c92a463057cadc52bd88a5a398cf884f44c13"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/after-navigation-390.webp",
+        "sha256": "56071f3f00005c95e61c3bf8614058cdd9ad2b60663964c1bb11c0dd971408fe"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/after-tools-menu-1440.webp",
+        "sha256": "c6ee9886f486fe1d69992054011e104c11d1ddb76104a037a93417fb09a95fe0"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-home-1440.webp",
+        "sha256": "339a0cc5a3c163bfd5abf52bea6c75f73ed82d46ef8c0446791c02029a52b87f"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-home-390.webp",
+        "sha256": "62b370cf92d1fffa5ce6ba80ce38fd900241d2aa0896ab92c615d677e410cb0e"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-home-viewport-1440.webp",
+        "sha256": "2365d303b80da6150abb022f4b12d16fc388c30e5379cf79ba9eb75c21f21661"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-home-viewport-390.webp",
+        "sha256": "9a55e0ba98a37c3f3e8ccd9b5a90242255df2ce43641bcd856d309fde69a4c21"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-navigation-390.webp",
+        "sha256": "4e52193cc00490ff4247105b6f403d5f989603464d295f3b075701258d1a875c"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/before-tools-menu-1440.webp",
+        "sha256": "e1f7436f49ae7b6fb36dfd6880accb6f710b2db342c3fbbe865d8e038c321811"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/compare-home-1440.webp",
+        "sha256": "92d284f6988a4f7aec50fa4e3144a4264c822feb16f332c7d004c132f336b742"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/compare-home-390.webp",
+        "sha256": "0463ab9aa21b660b1323a738e8b798dd62b1c69a59fae1b9f9004518338f2e71"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/compare-home-viewport-1440.webp",
+        "sha256": "122aabeec968d1aa85e1c00e99d0e688a86bfdb0e689b524b3302c91567bc399"
+      },
+      {
+        "path": "docs/design-review/homepage-redesign/compare-home-viewport-390.webp",
+        "sha256": "61f07ca9e073116af16240af8f389649d442792a3f84b26521e7eedf001e6d22"
+      }
+    ]
+  },
+  "source_scan": {
+    "filesScanned": 620,
+    "configuredKeys": ["NEXTAUTH_SECRET"],
+    "findings": [],
+    "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
+  },
+  "bundle_scan": {
+    "filesScanned": 48,
+    "configuredSecretKeys": ["NEXTAUTH_SECRET"],
+    "matches": []
+  },
+  "local_artifacts": [
+    {
+      "path": ".qa/phase-summary.json",
+      "sha256": "cf021614a3a34f830c1127319383012d038fd7622fd5d9a2eadeeb5231a9a283",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/database-final.json",
+      "sha256": "de1424d4eb514cb5189127458724ac87be76ee9210d8a98f4f88201ba1937580",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/game-data-coverage.json",
+      "sha256": "ef8f4b2299240c604f20ba915b5bfb89a68c3bbd60978731fdebbbfde902dd3e",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/repository-source-scan.json",
+      "sha256": "d2cfbe170fa28841af8194622e035faed458798e1b0bb867a80a8bd461ed3040",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/secret-scan.json",
+      "sha256": "8191d311e76e33c940ee90991dce8fad75b427734becc1841c860f1414a08c3b",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-database-connectivity.log",
+      "sha256": "59b0331624511c1e652db0bf21a6b940dd713525d35016f4372175bab31d2b35",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-typecheck.log",
+      "sha256": "33111c3116410c7bce40b895027c2628cee56be8c4c5dc05d0d673403b2426c4",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-lint.log",
+      "sha256": "17684fe7ed2c31356fb2ac4058ad73aba14741fc78a3b1c9f20e5603da2a4ad6",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-unit.log",
+      "sha256": "5a25915d7a3686792c01d748623f1a0af310db4b49c079d240cdd3db46a5e776",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-game-data-structure.log",
+      "sha256": "ecd03e75e88efc907f52d7e02826e64279aacb72750a76c325942d76169e13fd",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-database-integration.log",
+      "sha256": "40e5e959fc9c9797deb86bbba36ad753989425a11f3eff8f6531d60c3ea77a62",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-build.log",
+      "sha256": "52d7cb6a8c46781683fb4084ea54c6dc38a67300a42a24321cace17c9ab7c5bb",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-browser.log",
+      "sha256": "416de8443ad3a6b71ca4c67c51d45242adb2fc925de8ff9f441cfe12a1d8dc39",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-dependencies.log",
+      "sha256": "8d32c16b0c912eaf39e44257fd00995d54a72f68179aa82853c2d292291ff257",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/phase-live-regions.log",
+      "sha256": "b1353eacefb644121b750fd571af52b1ea113225ff04fcbe701e78035dad9c60",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/documentation-reconciliation/migration-state.json",
+      "sha256": "f6fdd4e217558eff96ee919f557a48130c12e4ee4ee4cc1b271dd14af2b12512",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/documentation-reconciliation/remote-state.json",
+      "sha256": "28dca4cdb628d2a5d96952aa6e60334fd82a9612158dac1c13b3d73944358997",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/documentation-reconciliation/dependency-status.json",
+      "sha256": "03e51e431579345f6b16c8c140973b8270567918ca393be6fb42cac99698b997",
+      "availability": "local ignored artifact; portable summary retained here"
+    },
+    {
+      "path": ".qa/documentation-reconciliation/visual-review.json",
+      "sha256": "6c2e4a1e892a19d09f5de4515d80700d8354b2c5f2942c8d675b009c453282c9",
+      "availability": "local ignored artifact; portable summary retained here"
+    }
+  ],
+  "reviewed_sources": {
+    ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
+    ".github/workflows/quality.yml": "20cc652f305dd325016553c1cd51e74cfc2428032c2116704fab366a2bd32f91",
+    "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
+    "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
+    "e2e/account.spec.ts": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877",
+    "e2e/build-discovery-visual.spec.ts": "20621969d4699afabdaf7d7496b6e789c9d2768b3c6658cdc668af21e45c368b",
+    "e2e/build-editor-visual.spec.ts": "9f5404e4f24475bbc2af93ad0d57d2841265ced791c42cc9d0624b84b1945dbe",
+    "e2e/builds.spec.ts": "b711bcad122ca8fd489b30e791c8bf9f1e622b15aa988a856aab70f8cba6c0d1",
+    "e2e/catalog.spec.ts": "86caadbdd3a95c54e5a25fb3e6df88489dd119cd94a8d2d62eedb6d67c9740c7",
+    "e2e/community.spec.ts": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b",
+    "e2e/composition-visual.spec.ts": "886c21ba4f674903af6078ecc334108d1f8f45f9be6a9c326fdd7c8f35dd5b68",
+    "e2e/compositions.spec.ts": "cd285f95911dfc6811073e546114538c05d96d8f42d68a0e022bf1b6620c2bef",
+    "e2e/dashboard-loadouts.spec.ts": "09daa65244cb9cf2c5f1f213b6bce153a39b4b5b00eb10dcdde68907dd3ab327",
+    "e2e/design-review.spec.ts": "c425c982220f25d5b765428585506576c6adda51d823b550a18309fa00e13cf7",
+    "e2e/group-editing.spec.ts": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418",
+    "e2e/groups.spec.ts": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832",
+    "e2e/guild-visual.spec.ts": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647",
+    "e2e/history.spec.ts": "a1dab29d6d7ccdee2c42ebe8acdc88ad4ca81bacbd842fd1dd4fb71fb9c06a1a",
+    "e2e/home-market-pulse.spec.ts": "7db6681c766e556fdfeb234208b917d9db77e7be2421bb846886957785056018",
+    "e2e/home-market-terminal.spec.ts": "d12a538d13c08f024cd4122b9ffd729645b40fede1df925f7f172639fe7637d9",
+    "e2e/homepage-polish.spec.ts": "821695f7915f247535e708e897feaa3d7b01977ee31b1aae56f6c113481ec198",
+    "e2e/homepage-visual-correction.spec.ts": "42f28609ece000572d6389844f09fc0dd6c8c4fcf15b385b9cc7dec22e2dee5e",
+    "e2e/market-visual.spec.ts": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06",
+    "e2e/market-watchlist.spec.ts": "05cc05844c1896f298902b849f34156e3f062b4fbb4a6de1092764181f6e938b",
+    "e2e/outpost.spec.ts": "1a507a70c5ee1b09eadc3ab07a5bf851c0a949528cf2b03e646cf8b8a6743e59",
+    "e2e/personal-tools.spec.ts": "52fb2e34a7b00867d1eaaae88a1fb9e608b2c8d27884403699f4cdd69725abf1",
+    "e2e/player-workflows.spec.ts": "514fd1a7d83b6836d62a5f3392527f2f7893e0518e051aee55dff743b2999ee9",
+    "e2e/playful-ui.spec.ts": "4ae19c2b63d1bcc3070a4438a284f9eff97078ec60bb2cfbb49b7449f720bc01",
+    "e2e/premium-visual.spec.ts": "4f7f189b71c1275d70bf0f8616604a5e45e23418132ad8def419eb327ab46a04",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png": "e6bade7c4ec05c13180bed6fdacb113be252a0eff2b1728de8e2dc5ae802ac69",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "2123642f08b394fc55c9163fa1b28b65eec5fe6ce1b1c268fd142f2ab9b5ae59",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "4900fe63ecb74f7931539260399f1bed4f35fb620881d929f0dd61b2ba591320",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "8ebdfcfbcdd517b4f0a30aa681f51db8998c6c0e4e9adf0abe979618b86404de",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "86e39dccd2347104b91800ef29d8a0230cbc232313f3729cf2fe9b5597557cca",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "d3b38e0f1f0f5cd976be46b8b9267f79c4008dc73e50080789c7dfc227f1ed61",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "c7d9ddc84ace55ab018eda84928f3eed2fc2c92b9a78b26461358981683134dc",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "515e088280d3e850e3c3d47af2434263ec8de9ac37abdaf3dce036d954a15769",
+    "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png": "aecba27c79369e9a40f71d6d8f6ad383e67a6a314ec97f701ace59705dd8595c",
+    "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png": "b1e8a2d9aa31222324f63f920970d36fffee887285d480c9aa51fb4004c040d8",
+    "e2e/production-freshness.spec.ts": "67656412628b34c1bf2e3b77dc8d6261682164631b73008e3b476f7469712be4",
+    "e2e/production-modes.spec.ts": "f371d56172d1a828745d08e5f2e560f3648ecbb9ee411a8b9660921782becc68",
+    "e2e/production.spec.ts": "31b07fe06bca1ed80bc7c4d5e659ec7df5070aef809f42741afafa622439db76",
+    "e2e/public.spec.ts": "4d3cf5d6ad7ad873793c8887af90c274d2033781946b901bfaa2aa6d4a827017",
+    "e2e/qa-audit.spec.ts": "44758c6d62538dd1255c67dd1af46728fdf44aeeef3ba7cb3a913aae8453dcd4",
+    "e2e/qa-light.spec.ts": "b6bf1a49a446f00041f5cd299bb671d28c7c15743f2c40955d1ee9c23f509550",
+    "e2e/qa-regressions.spec.ts": "7d2b6001ce1630913ac18ce13c2441a5615889a4d3cea08945c972951c6c84fb",
+    "e2e/qa-security.spec.ts": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044",
+    "e2e/reference-ui.spec.ts": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7",
+    "e2e/refinement.spec.ts": "bd1abd5e54618c01b9e87a76aabdaf83d3ef602ad3ea3c9e9da9278842d8f6d2",
+    "e2e/settings-recovery.spec.ts": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70",
+    "e2e/support/db.ts": "18028d9a156cd46571ff71e75ac317db1632029feba0da695188a55427b9c90b",
+    "e2e/tool-directory.spec.ts": "a63a911012262e1bfc5eaecd131921f3f812b93ad16571b3022c7ee6be308c37",
+    "e2e/trade-scenarios.spec.ts": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc",
+    "e2e/transport.spec.ts": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819",
+    "e2e/verified-builds.spec.ts": "7fa4dfeb76647279694ca5d7b76cbbab739c60710003d3b525b3f4b70fb6c37e",
+    "next.config.ts": "1eae45f8ba32dc7309dedc5cc2675c85de7737e1ada51a433c23558f357f20d7",
+    "package-lock.json": "bd581ec9ccf09b0edcdf94b761caaf4c83ad47203b34d414491be04d8fae788a",
+    "package.json": "daeabd515e65b2ceedac90b238d39d164ff0d6b544fc22fca554e7ae1e88336b",
+    "playwright.config.ts": "7f3c144613f2aa1d96db22f311f6a4d1f2df9337cd5f4d2363f4beb19f918fe4",
+    "prisma/migrations/20261025194321_foundation/migration.sql": "eec39c694939395f0fac7fefaaf1224bcd190c864a7ce254009a3e7950387d9e",
+    "prisma/migrations/20261025195551_build_platform/migration.sql": "0dc693d959ac177f4cfb45770517570fa11468fb34579f86fd7967d477e339a4",
+    "prisma/migrations/20261025211414_compositions_and_group_access/migration.sql": "62894f81927ec6d3931b9b0ac449f881fd9a872e334ad06c147e507a92cd1f18",
+    "prisma/migrations/20261025212501_group_collaboration/migration.sql": "00a7beee25b5e813a292b721c4345d6d4f98a2adc972b94f77c3391edc0fc601",
+    "prisma/migrations/20261025213500_qa_invariants/migration.sql": "4c630e30f5818e81dfc0b6e3dee2bd025fb347ad5c45eba2d9603d27a68a8408",
+    "prisma/migrations/20261025214851_collaboration_foreign_keys/migration.sql": "2a59cbdb07dba63a9e9006d491cbf7618160cb19d48b8228593b89ec561f0ee5",
+    "prisma/migrations/20261025215723_structured_build_abilities/migration.sql": "c01d4758c424788b7e427872e76641c66c968fd49422f0f6e4b2a310ad837976",
+    "prisma/migrations/20261025220602_saved_economy_scenarios/migration.sql": "946c36507e0a3504a43354043fef97118d7eba0a9bac4754b0646dd6ba12216a",
+    "prisma/migrations/20261025222653_catalog_metadata/migration.sql": "b9d588776f02fce238e1ecfbfafaccc97bd517f9c93942e621434ddbc38c1d63",
+    "prisma/migrations/20261025223720_community_interactions/migration.sql": "2a55c221dfb6fe0e542f4d5d33511a9e78996e4c1bb798182c1becc2915065fd",
+    "prisma/migrations/20261025223807_moderation_version/migration.sql": "051586d1e974ba4c885e6cd487125483b712d0da76cd45c7b33a37e1bddf8510",
+    "prisma/migrations/20261025224025_community_invariants/migration.sql": "d030f41b257aa51ae7c3a56bfd784d22571b9918637382fcb90c3c44a49af9a9",
+    "prisma/migrations/20261025224426_group_event_revisions/migration.sql": "7105ec42cdc5110abb34db8895c67719740a3fdae0d0226307e72083e5561dbc",
+    "prisma/migrations/20261025224924_personal_timers/migration.sql": "db3018a97a20cd7e235d4d160d49b3b7f75bc967903ddb03ea216914f7f277e8",
+    "prisma/migrations/20261025225221_personal_data_invariants/migration.sql": "c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e",
+    "prisma/migrations/20261025225359_timer_null_state/migration.sql": "96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd",
+    "prisma/migrations/20261026110000_market_watch_items/migration.sql": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9",
+    "prisma/migrations/migration_lock.toml": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900",
+    "prisma/schema.prisma": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f",
+    "prisma/seed.ts": "7286d68bd2296862e0bee354fb7ca79aa9e33a648743e6f68ef6f0d1cf3a0679",
+    "public/albion/equipment/T4_2H_BOW.png": "21d323adfaba0afcbcb7e86d7010c840fef1e7bfbffe48f02a45580332539932",
+    "public/albion/equipment/T4_ARMOR_LEATHER_SET1.png": "1181eec2bd8f842d1bce58b183a47a1db7554e73e7ffe6ee74fb927db7014462",
+    "public/albion/equipment/T4_HEAD_CLOTH_SET1.png": "3c64672675337db4b68dbc6a5b190594c574de468e4dc61b578ae3269e27e379",
+    "public/albion/equipment/T4_MAIN_AXE.png": "cd59da708f7329be8bb2bf2b68edab977c514b502f5ec2a4099d36d5226b09c6",
+    "public/albion/equipment/T4_MAIN_SWORD.png": "838395584afef3461344e4d9c1e388488fc40c26cc7f1a9f5dcf379557acea4e",
+    "public/albion/illustrations/build-v1.webp": "318639a9fce3784fe15e07da2ece53f2afe864d4d3d1fb198898f5785cdea924",
+    "public/albion/illustrations/composition-v1.webp": "d1db0094df10949241766ab2f258912a08825a81ccfb941b685226352554401b",
+    "public/albion/illustrations/hero-v1.webp": "64b6f1de9ed9eeb6ef8dddf1fa0245f4d427b4ad46933f9dfe4b26c939d3d5b2",
+    "public/albion/illustrations/market-v1.webp": "ff763c2e144dc45331a4ffb1157ffaf5b890d849df1070f17f3a2a9c2904db7e",
+    "public/brand/discord-symbol.svg": "3efc001289994d74fa3f919397259d1e7b8e77188c9161880243965ee284466e",
+    "public/brand/outpost-logo.png": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48",
+    "public/licenses/ao-item-snapshot.txt": "7cd65919fd845d6160f2ec1b4afee97e0f58625a712723fd5ff972f54074555c",
+    "public/licenses/archivo-black-OFL.txt": "4cafdbbd100af37a23805af09b7068e4daafb4516dc3d6d52436f4a9d7b4c0d3",
+    "public/licenses/barlow-condensed-OFL.txt": "046ee27d8bddc6b6ee08eee53c96dbf3ec1f6df561644e018507dd8ffcb11d31",
+    "public/licenses/geist-mono-OFL.txt": "cc815ed4fc045f0e991abb10395b7932bd028c6a067deb13316d6002105074e6",
+    "public/licenses/inter-OFL.txt": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345",
+    "src/app/admin/reports/page.tsx": "b5e6aa96074f36409675a4a0d2b0722a622c8a32851933d15828fe939aaf66b6",
+    "src/app/api/account/export/route.ts": "b983eff724f3e17b0b8616551dc9cd4e3ff523b4040256dd5c41462f0d4c480c",
+    "src/app/api/admin/reports/route.ts": "60ba0cf030bf55d2119b9b30d236d64aceb1d86769e14b0f0aa5bd1dd506973e",
+    "src/app/api/auth/[...nextauth]/route.ts": "116de1e2ea44f1393dafc708ecf7515d1c3a8f683b0d9ae918dd25641b605838",
+    "src/app/api/builds/[id]/cost/route.ts": "bde1ac7f8e173330790e39d6925088db3e2e1a3a2f39298d87036ebba50fc525",
+    "src/app/api/builds/[id]/duplicate/route.ts": "fb63e72dca9366fee19ebfde96519968cf931b48ef4edee4529ff3ae165c4a5c",
+    "src/app/api/builds/[id]/restore/route.ts": "b83e5709b9cfeb09d5ab28321a8b9b74726ec95fd2ab20f63ead8e043a23056c",
+    "src/app/api/builds/[id]/route.ts": "62eb16e4fcfc1e024ad22b7180a462bae584aa0022efd44f97835089aa889304",
+    "src/app/api/builds/route.ts": "5dc3acdef908419a6175ff11cc55dd37ae207363614c993ef52730c537ab6fe0",
+    "src/app/api/community/[kind]/[id]/route.ts": "cbbdded78ccaaed8ad119baa499651d69fcbb1f1085c0035ffc69d2826442c95",
+    "src/app/api/compositions/[id]/duplicate/route.ts": "9dcd33eebe15e5f54b5361449a4243994cf630a2bec758ba155dd5c35bc55d4d",
+    "src/app/api/compositions/[id]/route.ts": "b4465d94aab6b19824ac7f3e31bb90eac2b4dbdf752aff1a4be38d2a83541d06",
+    "src/app/api/compositions/loadout/route.ts": "fbd978b676c4f5d38f784580becf20428f795c2ef3174c5d2b560535d9cc1c18",
+    "src/app/api/compositions/route.ts": "194fa9fc8f75c122c7fd720017f576f8d7fa180805b48716ba2d59d2bce3d8c8",
+    "src/app/api/economy/prices/route.ts": "57333582465b9055cde0bcdec71076bdfbda0edd2c018b7e7d4b3f561c537d34",
+    "src/app/api/groups/[id]/actions/route.ts": "37fc1bd8735f6616617d3323da9487d807db6d57ca1f94c2c3788745bb6e09ab",
+    "src/app/api/groups/[id]/events/[eventId]/calendar/route.ts": "c5346309f604fd64a572658b8af37a13eb8417a3fadd3459f6d28e41e0b54727",
+    "src/app/api/groups/[id]/route.ts": "c1b01c1e30d390101997342722bc407fa028cdbc9ae2ec9a08debf04385a2b5f",
+    "src/app/api/groups/route.ts": "eaf8c555e932f2ced3e86afc0b760b6758ff1514e79c5f783093e11714d05649",
+    "src/app/api/health/route.ts": "ece12b3b9e34ae3d13eef97d15c0aa72b125f40b64c08f59bb37d0e70717bfd0",
+    "src/app/api/history/route.ts": "270f89977685a3bda3517f0bc155d34913cb8e258daa773ea21c2f43503dbcd5",
+    "src/app/api/invitations/[token]/route.ts": "d687fb1eb245c1fcb8f5c26054319f1ae11ac6d35998dbca3037d9ffa13aa68c",
+    "src/app/api/item-icon/route.ts": "30a9098c2d7c93fa72ad3fe67b74a36fe53937bf33dc3df9849b1c7f519e7625",
+    "src/app/api/items/route.ts": "6914300ab06965c423a49e436c32dd0f61451bdca3daaf12390f01c64c8d1d6e",
+    "src/app/api/market/route.ts": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98",
+    "src/app/api/market-watch/[id]/route.ts": "0b71f41e85649298acc2acf5a64171748dab9b64fb80c7a5d424f43e840c6b7c",
+    "src/app/api/market-watch/route.ts": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0",
+    "src/app/api/opportunities/route.ts": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025",
+    "src/app/api/scenarios/[id]/route.ts": "9652ac481f62f38390d08103a83920c00177ca84801527d3641fa8943821ec4d",
+    "src/app/api/scenarios/route.ts": "3834ab6a67f58bb6f0eb212da22e5ae20f60aed8ac9a44327d5b89a0a03d5342",
+    "src/app/api/search/route.ts": "8af7b103b6085504ae5efe2d6b96c6feeb0f5e7e05c00da052dcb270031c5bf3",
+    "src/app/api/timers/[id]/route.ts": "2e662d5c53f410d89384c6b21c5acc8d15d159fd930c2dd3c1b58984df6aae22",
+    "src/app/api/timers/route.ts": "26a61dad097afbb0338bc14d093dc117628ba44374fd3cfaf2fb29b342548d0e",
+    "src/app/api/transport/prices/route.ts": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec",
+    "src/app/brand-interactions.css": "179ca99d458c086fb65809195f74ed982e639804d48b87ad07675022bf93a3d9",
+    "src/app/builds/[id]/edit/page.tsx": "2dc8e833809a3d4b2eeaaf8f3e232b2566c2ecc8ae4215c9c34d4eab3fc109b2",
+    "src/app/builds/[id]/page.tsx": "b8aba1ed31a998fa6965cdcaa27fe23f87b1fea691d288fb0656758a027341f8",
+    "src/app/builds/new/page.tsx": "83634f6aa8ce7b28b75141fa2da2b8e1bb3c8c2b824855754e509faeedc330cd",
+    "src/app/builds/page.tsx": "b265f30980d4da4845b84ed7a49e4548f889057e6482c959d415dea6398f45d9",
+    "src/app/compositions/[id]/edit/page.tsx": "a83b0ff4d5cfd24145278408e60b592260425e2c46916e0036a30c51ae189635",
+    "src/app/compositions/[id]/page.tsx": "0ffccd6fffa37a191f98dc3071501898f0874f58af599914618caae10e061072",
+    "src/app/compositions/new/page.tsx": "8f1fa18ca3db3ca7b960412e0c86354e94488c3972e116e84ca6c3fa0bc93fa4",
+    "src/app/compositions/page.tsx": "6460050113e7ad1a32a2a81f5e20b3accf018462c2c21b0857a6adfa8c4408b0",
+    "src/app/dashboard/page.tsx": "fe106711c3d719a06da2919d404615a247e54fc33bc229c0b14546e434564262",
+    "src/app/equipment-workspace.css": "14eed291c7cda81409c8244d641237fbcf9cc76dcb2eb78e0cfe8b38c740cbba",
+    "src/app/error.tsx": "8e8112ae108fdc60ca5892991728e302d475ccc93e2b6620300af6f51f3add75",
+    "src/app/favorites/page.tsx": "85fd86aea6bf112f6027b251327315daf435409d820101a17bf7cda47b604b5b",
+    "src/app/fonts.ts": "18f68daac6bc6f7408f16945f8b4470add8daeb37fd1eccdb675a282a0692604",
+    "src/app/globals.css": "8286adb44257349b5dc1bd0c0e3a9d28650b2e688305f652ac41baeb1ca1a8d3",
+    "src/app/groups/[slug]/page.tsx": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72",
+    "src/app/groups/new/page.tsx": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a",
+    "src/app/groups/page.tsx": "a1b4b0227f273094973cd8597a9dcd077849bbe4e2cd932b8045a0af4518e64e",
+    "src/app/guides/page.tsx": "63b3e4c5abf030da15dccb35346d03fbf2fc91d2e8b2d9744d47b3235436bd78",
+    "src/app/home-market-terminal.css": "adb39fd99ce8919c07123627bf136e7d52919fb8db7dff20e51a31026d5ee0d2",
+    "src/app/homepage.css": "d1c480064e8f0007594b1ef52e99690b1ec08250f0b3a253db70ca51d0862e77",
+    "src/app/invitations/[token]/page.tsx": "67484fbee448ce8bb5dcda2481f7e5e292abe9ade6dc85cabefae41a5cc1b15d",
+    "src/app/items/[id]/page.tsx": "944638edf62753d74909c5ecb79c3ecf6374807bb2689a548c6b4dacd9038288",
+    "src/app/items/page.tsx": "c9f1f9582a30f992703a438db6a9e09f22e5f89cfc4ec42dd256f453115b213c",
+    "src/app/layout.tsx": "6b1bde74ca93150a1a27c4855a4284a16df7181b52bd2efa639423c4b2d583dc",
+    "src/app/legal/page.tsx": "42b7d083b2b4a2e3cf3a09f689ddd1cee7e2adf291aa0311d3bb644c278f7a45",
+    "src/app/loading.tsx": "9352287a856a37239f9e53de283ad4c8b370d7be164565dd2243760b555192ba",
+    "src/app/not-found.tsx": "6d29aeec0e1ff6bc55d3503373adc04ef9a53a289d2ec7b0dbffe78e9d6810a8",
+    "src/app/page.tsx": "cd0bfe47e3045e6576f5216bd238e3482e0842720cb90d2f50f19cd66a4d1788",
+    "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
+    "src/app/players/[id]/page.tsx": "eef8fb26a21dfda9ffde78177b9dba9f8ab4376c9bc8b5728a087c984eaf2e39",
+    "src/app/playful-ui.css": "38b9b6df74b4556b3f2dd8dad9c2f6a52882b5dc7954ca4f2e6edb3e45bc810c",
+    "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
+    "src/app/production-workspace.css": "fa8d5599d7469b1fd2abfe705fb74c59dd1feba6c2f34eca8121639eb3113e01",
+    "src/app/settings/actions.ts": "d371ccaec4161dc5ee19b298a91ff184c1207092f35d7c13ffe7331899b298f4",
+    "src/app/settings/page.tsx": "6f6b0d4dfe0c0da8678583413484447ecbb6183eb239163b9697356f959edc3e",
+    "src/app/signin/page.tsx": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4",
+    "src/app/timers/page.tsx": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933",
+    "src/app/tools/crafting/page.tsx": "1a4139e26519302c374367aa330ac60d7c964a012b61d16fde9052a0fc4d3145",
+    "src/app/tools/enchanting/page.tsx": "7774f6fbdb6a2bbbd71316bf3d2417f2deaee3e556223bdd0a34baaa7c9e7762",
+    "src/app/tools/flipping/page.tsx": "1ca4d18f7de3595d67c1c23088cc9bee52e8c2ab92448e759a05a4baecd8c969",
+    "src/app/tools/gold/page.tsx": "52830ea986fca24d3b459191040830f4959318323d3d44e147f1f23a80a6328d",
+    "src/app/tools/market/page.tsx": "11aaee8eee3165c660b3a794884a25ad291d50e003738d487d31402cc801dd97",
+    "src/app/tools/page.tsx": "e1d4ef00b2eae0356f18c76918e49f0781ab36f01f3951afdbb45c46e978df7b",
+    "src/app/tools/refining/page.tsx": "343a8d67f074e78c3c647a23bdad021d30eff10f7eabc8bc4f2d1338842da083",
+    "src/app/tools/transporting/page.tsx": "f333053ed871deb65a98f90c393f7acaf8a2cbf93abae5ec8cf02f991230df92",
+    "src/app/workspace.css": "ea5fe9a4290fc364fe821780ee118f97aabc282263c66e1fdc6b1251d295871c",
+    "src/components/accept-invite.tsx": "d11ccf02b13292093d4de451f51a1f26708d1206325ee54fe4a1cd4d78fb1162",
+    "src/components/albion-scene.tsx": "aa289808f3926da00f78cbde2da31c011219ebcdcdc7ede8b2b6489e3ddae350",
+    "src/components/build-actions.tsx": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019",
+    "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
+    "src/components/build-editor.tsx": "3eb74b86120412379b2c6c24d0341a993eb66e1cf0f22378b90abdb0ef813b52",
+    "src/components/build-loadout-view.tsx": "2cc9ed65457ba2d25eff0e6763f24369a071eb288170e86f8b04a6eac91c97f2",
+    "src/components/build-preview-card.tsx": "0bf7800d57b25fa6bbf4e00cac2860cbcbd5f81d02ad44d33a71efa0f882ef3a",
+    "src/components/catalog-item-picker.tsx": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559",
+    "src/components/community-panel.tsx": "810bc12b93a77df5e6d096aebc5a0551933e17afbcde3ec0b4169c2bd53de795",
+    "src/components/composition-editor.tsx": "72ba03be3214095818fe0e171dd1f8e1705bc97e251672baaa8e4a72b91c9b91",
+    "src/components/composition-png-export.tsx": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769",
+    "src/components/composition-view.tsx": "28ed93e1ec46026b840590b7b626b70195c54b1db38b42e3c13d8f0ae133aa9e",
+    "src/components/discord-mark.tsx": "a71ac7c9bcee1f4027a2a9f8db89c2de652c7f058c122a5efc3900ec91aaf458",
+    "src/components/editor-dialog.tsx": "f2f35b1418231a7af409ff7f1526975422caa104ef23aefda5ada240fb89a404",
+    "src/components/equipment-overview.tsx": "5b1192d49e49d0a95f993bd5eb78d3016f1f7954e1d124d932f8fdfdf20d4437",
+    "src/components/equipment-picker.tsx": "cca7d84ea6cdf8bb15d1bc0e5e74a3a28b76bb89214ca537c6fe2e834d40ddbc",
+    "src/components/equipment-strip.tsx": "23bea5d7e65c71b871f52dfad92e7b63af012663d7424090a6ca4a679051f5cf",
+    "src/components/equipment-workbench.tsx": "7ef2cba880df6e20453ddc5f4d8ae1239b005f5b2b051cd74857f9260102cc55",
+    "src/components/favorite-build-button.tsx": "b8534a90d60c0a75cf2f68ee57389e210a7b769578f3ce391c3c210997692a84",
+    "src/components/feature-emblem.tsx": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128",
+    "src/components/global-search.tsx": "99f9b69edadd361cf8815279a19d75a1cd5a209a515019acd627c3b7ae069258",
+    "src/components/group-create.tsx": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945",
+    "src/components/group-dashboard.tsx": "0fe9127abb680fd2989d948fabf4efee2f8b91c7e1ace5f7dbfe63784bd54f8d",
+    "src/components/group-event-editor.tsx": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97",
+    "src/components/group-profile-editor.tsx": "2c5b103c36a2aa5bf57ee338b4a289d068feee21d17f7bc64f0f55742441735b",
+    "src/components/guide-directory.tsx": "e4e3167b54e1f42047648388dd9624cfdfabcd0d312ebd4d8be7f7a8b4ebdd4c",
+    "src/components/history.tsx": "93c8db65f7a8cb63fa1c29bce8ed90a968e5669ed3067f473954496f051383c8",
+    "src/components/home-build-card.tsx": "e2af1beb06dc453fcdc70b9fe713b7fe7f759b06f3c125e12fe12a627b49584a",
+    "src/components/home-equipment-showcase.tsx": "a60823ce483141b41f344d0d6c384f5f1d0882bc596b3fd27724bfb7ce2c1ee9",
+    "src/components/home-market-pulse.tsx": "6ec95b39d59241757f2d16f5339d7e7b2b7660af55bfe57c5ac94e9b69f3f488",
+    "src/components/home-market-terminal.tsx": "5a28afb16f5593e3731646a7fc7c6ffc61ebbd6275a8b7a60e8dd164c7f1d0dd",
+    "src/components/home-player-preview.tsx": "2ef698a0dd61b64f26512f720fe48d3363378d3651a3e767d04bb24d0aba272e",
+    "src/components/item-catalog.tsx": "7d61332400c3ea1e438b2eac7a3ad734474328da4c4e96ac64b9820b71dc9be0",
+    "src/components/item-icon.tsx": "7e3ac5611c479eee1f7b5f67884fd4417740b21d51338032725df503540afa08",
+    "src/components/item-market-link.tsx": "4ce8b16231e9bb9b469ade59b583e1498aeeb6f7aa13b1d7a772da5dd45ba56e",
+    "src/components/login-button.tsx": "de599dafb5eda7a57b83bc7afe16c9771fee2c6de171b80923bb23789986ac9a",
+    "src/components/market-watchlist.tsx": "7d6a496f6dca254942bcda3d11dfd7fb58a9f12f49d48cc579b04e7e5e9125e4",
+    "src/components/market.tsx": "e0a1f77fc62e1b5003de25c9c7829c9f18ac9b507ca4d6e03666ae3cc00feac0",
+    "src/components/mobile-filter-panel.tsx": "018ce3a07a4fbfeed5833c5636bc14acaaa65be9215f50fa006420a0d1ed995d",
+    "src/components/moderation-queue.tsx": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c",
+    "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
+    "src/components/party-board.tsx": "6d0f5a40017d3747bc50608bde33773008bd9dc696cf9a7d41d9e6dc9c4e6394",
+    "src/components/production-calculator.tsx": "dfc8bd32dbc2e672f377da4e9e35f5f28ec4d36053de254ff0e745b5b7d43382",
+    "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
+    "src/components/scenario-controls.tsx": "ae859faa59706b5f56d2444fdbbe12fdc242fbc39e0f9c2e3dbb58ef05c7d675",
+    "src/components/settings-forms.tsx": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951",
+    "src/components/shell.tsx": "2cba12fd97a7747c063d72c37ffac18db5089612e9e9b9f6795457eaed6656cc",
+    "src/components/timer-manager.tsx": "88d53c5fd4acaba6a24d50149b6c0bf73cc47e90c76b89e2da2b6e2fd9af62e0",
+    "src/components/tool-directory.tsx": "4b3950e44441ad8d4b6bede068a69a355beaa567966a5fd1bc72e49610d14b97",
+    "src/components/tool-icon.tsx": "4cf701bed76759e5c4bc9e4f13a7959d6d4e0bbfc150eb0a43acf7cfdbd89304",
+    "src/components/trade-calculator.tsx": "3c400f4cd813467332616813d9daa922eacd4aa1ce5776a44a58e67d5d3d9d2f",
+    "src/components/transport-calculator.tsx": "a4275e74b9b50963d4c40950603689e0252663cf622dc98f8a4c99aa8fa1f4e7",
+    "src/components/use-visible-refresh.ts": "d921ea46e961ac7dc9892e8fd14617c656a0b20ddf8447d59f887d83e6a0d813",
+    "src/components/wordmark.tsx": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082",
+    "src/components/workspace-navigation.tsx": "73a7a62e8625acbe3780fe36416fb4069f233f489c91eb26e5f9275eed1885af",
+    "src/instrumentation.ts": "aabdb2f5ad5f215467de2450c0063a80606c1457f62c2cb60821dced7e9940d9",
+    "src/lib/albion/assets.ts": "17dd3cf7fb75dddfe3277b6d954e09febde2f5e589f2de7031e15b5fa1f69cb3",
+    "src/lib/albion/backoff.ts": "9658bc2e31b3e192604fcc2e413fe0f2a0f3b3f6a92029d84e4ffef9a0a0ea26",
+    "src/lib/albion/calculations.ts": "00e4ff80128853d113a3551b7e06bc1503723bee6cf7147dcc0cbe59778f3356",
+    "src/lib/albion/data-client.ts": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c",
+    "src/lib/albion/equipment-catalog.ts": "2ae952ae0378fa66a800e85ce35725e0f5c9e85c706ff71082ef7cefcf6b78c6",
+    "src/lib/albion/equipment-validation.ts": "81d9cacac4d530deceae608629c80b5943ceaad36b99073e7f6407f8b89946f6",
+    "src/lib/albion/freshness.ts": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244",
+    "src/lib/albion/history-client.ts": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1",
+    "src/lib/albion/icon-cache.ts": "1fa9bf230864aabb21c54c9319a3505e512945ec0c34cf712e749df5e08b2e57",
+    "src/lib/albion/item-database.ts": "0ec703bb5bd14fd93f6fa65c2bbc0de2561faf3cc09ac441b9ecb2a732725069",
+    "src/lib/albion/item-renderer.ts": "11416fd556db05cce534c4f321fb737911712587960f497a883d9b12c1c5654f",
+    "src/lib/albion/market-client.ts": "bb76d9a1c4de8a109a0c9c2cd719bc99a2a259359052d8c893ef1e0259365c36",
+    "src/lib/albion/market-preview.ts": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b",
+    "src/lib/albion/production-observations.ts": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75",
+    "src/lib/albion/production.ts": "95786307a52502aa48fe4e0b64a8f7afe6e465dc0d49d2e0b4929f1e58be74f0",
+    "src/lib/albion/quote-summary.ts": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a",
+    "src/lib/albion/recipes.ts": "43256904bcf0c0039016ef431368c9a83654dd0bc5b70e036e5ba1a4a41cbda9",
+    "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
+    "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
+    "src/lib/albion/transport-prices.ts": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82",
+    "src/lib/albion/transport.ts": "e12a77763b80e3660e51094f01954e3c477a2013acc70bbf071ff32c025c4689",
+    "src/lib/api-errors.ts": "39c7c15a57538971ac9a462e6c8e6f212f3835bfc71789f393e9157a8253546b",
+    "src/lib/auth.ts": "0bd660b0ad76a65d5ca618a9ec6b0f11f60db5f5da0b0e9cb03d67a158c7ec9f",
+    "src/lib/builds/service.ts": "295d996660f8e8a48b4fa793fd5ba9be227ff4fb686e21cf0f497ae0ec47d720",
+    "src/lib/builds/validation.ts": "ef962c70a1ef1db73b502231108699157c6869d223f8c87880fb017077f041e2",
+    "src/lib/catalog/item-snapshot.ts": "d03e658c987c62598efaf6a680a0678f757a14708033f5ac586bb21cfb9d364b",
+    "src/lib/catalog/png-verification.ts": "e4defcef5dfdca99cfb32bdd4dce085ae7cb259bb43f01ed1bc72d76c90eb535",
+    "src/lib/catalog/release-state.ts": "582cece21596dfbe14dfda20ec03f2e083de9897e791a4c22bdcba4c611dab93",
+    "src/lib/catalog/search.ts": "e6f1cde3c7788cbeaec12188f093d2b5190fe98b171c130cc3ddf9a6abfb0382",
+    "src/lib/catalog/validation.ts": "c9af147e83f53274e1a79ec9383049984fbf424836589e9820982ada0df3a194",
+    "src/lib/catalog/verification.ts": "03af1b14fff1861df5c13398c3b456652a670798573014cd2745d6b9ddc4a753",
+    "src/lib/community/access.ts": "4928bba4568bd16c5f382d76b56ee87290bb5d5c1793c312e002eb33285b1e8f",
+    "src/lib/community/service.ts": "761b67c7d604ac0691bf8dd815c0b4d9256128392c11eeb075a77dd9569af0a3",
+    "src/lib/community/validation.ts": "ef13a55b4a8c547148f7652df45b0f18edb60457ccf1e8242c943dd585f658a0",
+    "src/lib/compositions/repository.ts": "2c254f0ac035b5d9c5c2d67296a903a47559dac467bcacd17ad5953371266f74",
+    "src/lib/compositions/service.ts": "ee2ac0d80e89be2317776ffdd3793da4ccb7f49ea70058483b6821946d89d194",
+    "src/lib/compositions/validation.ts": "174417e1707f3b2f30cde9258fdc0dd6fd0c0f65effd7fe06347731d7c336447",
+    "src/lib/db.ts": "12d5ef697cb4e454d538a7c0c70bc7078398aaa5087e885d088a2117b4f95aeb",
+    "src/lib/env.ts": "7625ac2d77eb09b8c58eff8ac6115aeedec341ac424852c54ac40a67e8f61c71",
+    "src/lib/groups/calendar.ts": "951af8d7b49e1a7fe63405a58493b6f48ac53e15f886301f945015f51837ae50",
+    "src/lib/groups/dashboard.ts": "9384c24b6a03d8cfe52a99626ab2d5a4393a25880d2d86b8191075a873b57910",
+    "src/lib/groups/permissions.ts": "1f1eeb2ff199bb78396c41888f137c5a80adfbe15ce02f2c434bb372aa7542c4",
+    "src/lib/groups/service.ts": "70d907ea07532503524e499edce18da3a2ef2ad7aa1feebb18f492183f4862cd",
+    "src/lib/groups/validation.ts": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4",
+    "src/lib/http.ts": "5d3eb14af183ea674be8cc90e14f2e1b7e3642c4f1263464544c165d25fbdad2",
+    "src/lib/logging.ts": "7fdcfbfa64a6b145e0e36462db19acc128ca507bce4343ba3911c7b424d28b55",
+    "src/lib/market-watch.ts": "c2da0e2a843910852448e1d00b477a54c1afce37a9d5ea52d1988f50c3617a2a",
+    "src/lib/redis.ts": "75dae4d2a99d02bfeb9c1f7e48f51a002c6f38b41a84a5d570dab149e8869663",
+    "src/lib/serialization-retry.ts": "b172e69decca5af44c0e0657626711949ec031f0dc7a37033e26839f3edb0c44",
+    "src/lib/timers/engine.ts": "3949b57b6bbe957534eba82b4bd270fccdf7abaf40caa01154237722a4d18175",
+    "src/lib/tool-directory.ts": "c387b4f3bb512bc10f34ee70abb60f69872c3b1ef3e9a46d29d03ea4bcb57251",
+    "src/proxy.ts": "ca7d6f253134b04d99f51d6b3e1a0a5461bcf5ae3ba36252e50edf9fa94b2acf",
+    "src/types/next-auth.d.ts": "70a09cb8382980b4232f3aaa931137b0fc62aafc3cb41bbb7c23352c04860b90",
+    "tests/api-errors.test.ts": "f85232767db1ddbd74498343d5709fe7a6cf465fe760cd16edbfb74baedd5f27",
+    "tests/backoff.test.ts": "bdd440a3424ee202efeffb1b92265d7f2d9ecb3f6c6bf7cfbf8fc6817ddf81d5",
+    "tests/build-cost.test.ts": "846ff4a2ee8597c5f5f97a546aec2ce32f7019d76f89604733632eca28094382",
+    "tests/builds.test.ts": "0702111f7ced595ea8dc2346d051a099d558cbc37c2e4b333dd82b0e111b7b0b",
+    "tests/cache-expiry.test.ts": "7a45b3beca6f050efd248a24917fb01f1d0693b0e8107a8d8ea43fc686668bf5",
+    "tests/calculations.test.ts": "1e8d636684111bafca2b41a869889c737c4c0d61ed53c8234952f67f0963c212",
+    "tests/calendar.test.ts": "8d42a6fb4729ad72b3c10282d0a1487aea5a6b5ec3822ec29c5cad24b7fd9f47",
+    "tests/catalog-release-state.test.ts": "8d166797f04d04db28c923d94cb4da1029cd5927fca5ce0bc153318347d28ca5",
+    "tests/catalog-search.test.ts": "55f7c7706fb23f46bd4938428584f3a2b818a2bfb1b5e5a81943fb9376d194a9",
+    "tests/catalog-source-cli.test.ts": "07507cf8c3e8c54d706d8eded804213d4f8283100e251b72ae83645b8a232282",
+    "tests/catalog-verification.test.ts": "e99a982bd40edf696eaa099bb835147b28c0d38e0063c86680dc9679ae080ef7",
+    "tests/catalog.test.ts": "0899d27ca4a8b2d8168bce08d71f18159a6aced8d4cb0b6e68c8183c3fbe94b1",
+    "tests/community.test.ts": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207",
+    "tests/compositions.test.ts": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed",
+    "tests/data-client.test.ts": "4a4451e49a115c5deceb1165c869e2de935d5bfdffd677dcfb76599a62e3f745",
+    "tests/env.test.ts": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba",
+    "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
+    "tests/icon-cache.test.ts": "5a5698e14e82dd5a14616f491575372b347288c9ca74790a316cc90cd588732b",
+    "tests/item-snapshot.test.ts": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12",
+    "tests/market-payload.test.ts": "15ebd5ea0715be2951773f1d7359d5f95b65273ebd034b84ad688229a92c0515",
+    "tests/market-preview.test.ts": "48ce3681a1039d97eb1ed5ff3cfce51cda3af6fe30f133c66e6fc9aac777ed1f",
+    "tests/market.test.ts": "e5f421f8c90384b5e89ded8b19ea80733411b17983921325fdce508baed72e48",
+    "tests/opportunities.test.ts": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39",
+    "tests/production-market.test.ts": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9",
+    "tests/production-observations.test.ts": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36",
+    "tests/production.test.ts": "48b1a3dd61413ee6e7bc7cc36ad180a1b83cfa88f5584a9f44924db8635f9139",
+    "tests/qa-regressions.test.ts": "36f116ed01cfa912d8787db4680acbe221ae75ce03d63ac7477314babc444382",
+    "tests/quote-summary.test.ts": "b1530ecfbab74f9e5531435841799aabc8b82151f249b28710c94553c8351b07",
+    "tests/redis-recovery.test.ts": "4fefd4a8863bf430dc9c00ddd41b066bda7a764c1f9ba46562e9765d8c4a260d",
+    "tests/reviewed-recipes.test.ts": "105c0eab5f6d953d4f4250833a80be455cb953e2a295599d9871e4d1392277ba",
+    "tests/serialization-retry.test.ts": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9",
+    "tests/settings-recovery.test.ts": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8",
+    "tests/source-secret-scan.test.ts": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c",
+    "tests/timers.test.ts": "2f8dbcea1ae80e90169792bc8cae145f11aae6a7ffaf31fad19e09c0f39d0963",
+    "tests/transport.test.ts": "a98a86cf7caf79e42fb6dbc1ac4290a65c5738c2a84e7875007450744ba57ce2",
+    "tsconfig.json": "2bbd1ea18863cadea4a4757648f91c6b65725a5cb1e19edc55d54f4e2a25f6b4",
+    "vitest.config.ts": "d0d6a8eb253ac7099822cc17cd388eac87e66d3d6a461c8c5a3bd6eec02dc56d"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "retrievedAt": "2026-10-27",
+  "source": "Official Albion item renderer, unmodified PNGs",
+  "rights": "Sandbox Interactive game artwork; existing equipment delivery, not a blanket media license.",
+  "patchVerification": "Not established by artwork retrieval.",
+  "assets": [
+    {
+      "id": "T4_MAIN_AXE",
+      "source": "https://render.albiononline.com/v1/item/T4_MAIN_AXE.png?quality=1&size=217",
+      "path": "public/albion/equipment/T4_MAIN_AXE.png",
+      "sha256": "cd59da708f7329be8bb2bf2b68edab977c514b502f5ec2a4099d36d5226b09c6",
+      "bytes": 80323,
+      "quality": 1,
+      "size": 217
+    },
+    {
+      "id": "T4_MAIN_SWORD",
+      "source": "https://render.albiononline.com/v1/item/T4_MAIN_SWORD.png?quality=1&size=217",
+      "path": "public/albion/equipment/T4_MAIN_SWORD.png",
+      "sha256": "838395584afef3461344e4d9c1e388488fc40c26cc7f1a9f5dcf379557acea4e",
+      "bytes": 74617,
+      "quality": 1,
+      "size": 217
+    },
+    {
+      "id": "T4_2H_BOW",
+      "source": "https://render.albiononline.com/v1/item/T4_2H_BOW.png?quality=1&size=217",
+      "path": "public/albion/equipment/T4_2H_BOW.png",
+      "sha256": "21d323adfaba0afcbcb7e86d7010c840fef1e7bfbffe48f02a45580332539932",
+      "bytes": 80485,
+      "quality": 1,
+      "size": 217
+    },
+    {
+      "id": "T4_HEAD_CLOTH_SET1",
+      "source": "https://render.albiononline.com/v1/item/T4_HEAD_CLOTH_SET1.png?quality=1&size=217",
+      "path": "public/albion/equipment/T4_HEAD_CLOTH_SET1.png",
+      "sha256": "3c64672675337db4b68dbc6a5b190594c574de468e4dc61b578ae3269e27e379",
+      "bytes": 71304,
+      "quality": 1,
+      "size": 217
+    },
+    {
+      "id": "T4_ARMOR_LEATHER_SET1",
+      "source": "https://render.albiononline.com/v1/item/T4_ARMOR_LEATHER_SET1.png?quality=1&size=217",
+      "path": "public/albion/equipment/T4_ARMOR_LEATHER_SET1.png",
+      "sha256": "1181eec2bd8f842d1bce58b183a47a1db7554e73e7ffe6ee74fb927db7014462",
+      "bytes": 86155,
+      "quality": 1,
+      "size": 217
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "asset": "Outpost banner logo",
+  "source": "User-supplied image attachment, explicitly requested for site branding on 2026-10-26",
+  "path": "public/brand/outpost-logo.png",
+  "format": "PNG RGBA",
+  "width": 2172,
+  "height": 724,
+  "bytes": 1115199,
+  "sha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48",
+  "modifications": "None to stored original. Next Image serves resized display variants; CSS excludes transparent outer padding from the display frame and uses a charcoal backplate in light mode.",
+  "delivery": "Shared Wordmark component in header, mobile navigation drawer and footer",
+  "permission": "User instruction to use this supplied logo. No independent third-party license determination or game-scene permission implied."
+}

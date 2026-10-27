@@ -1,0 +1,479 @@
+{
+  "checkedAt": "2026-10-26T23:56:06.347Z",
+  "scope": "Anonymous production localhost:3001; actual source state, no market fixtures; local Playwright Chromium fallback",
+  "rows": [
+    {
+      "width": 1440,
+      "documentWidth": 1440,
+      "height": 1627,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": true
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "documentWidth": 1920,
+      "height": 1643,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": true
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "documentWidth": 768,
+      "height": 2292,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": false
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2627,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": false
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "documentWidth": 375,
+      "height": 2685,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": false
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "documentWidth": 320,
+      "height": 3017,
+      "font": "inter, \"inter Fallback\", Arial, sans-serif, Arial, sans-serif",
+      "images": [
+        {
+          "src": "/_next/image",
+          "loaded": true
+        },
+        {
+          "src": "/brand/discord-symbol.svg",
+          "loaded": false
+        },
+        {
+          "src": "/albion/illustrations/hero-v1.webp",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_POTION_HEAL.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_MAIN_AXE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_CAPE.png",
+          "loaded": true
+        },
+        {
+          "src": "/v1/item/T4_BAG.png",
+          "loaded": true
+        },
+        {
+          "src": "/_next/image",
+          "loaded": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "accessibility": [
+    {
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 9
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 9
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 12
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 13
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 13
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 2
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 13
+        }
+      ]
+    }
+  ]
+}

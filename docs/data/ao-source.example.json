@@ -1,0 +1,11 @@
+{
+  "id": "ao-bin-dumps",
+  "repository": "ao-data/ao-bin-dumps",
+  "revision": null,
+  "path": "formatted/items.json",
+  "sha256": null,
+  "format": "ao-formatted-items-v1",
+  "gameVersion": null,
+  "rights": { "approved": false, "reference": null, "reviewer": null },
+  "targetPatch": null
+}

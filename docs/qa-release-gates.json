@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "owner_release_approval": "NOT_RECORDED",
+  "gates": [
+    {
+      "id": "REL-001",
+      "requirement": "DATA-002",
+      "acceptance": "July MIT metadata is activated locally; current-build source-bound manual/patch/unlock/image evidence and complete coverage remain required."
+    },
+    {
+      "id": "REL-002",
+      "requirement": "DATA-003",
+      "acceptance": "Steel source names Pristine Steel Bar while runtime output is plain Steel Bar; full recipe/coefficient review required."
+    },
+    {
+      "id": "REL-003",
+      "requirement": "CORE-019",
+      "acceptance": "Source-backed coefficients/recipes plus implementations and independent fixtures required."
+    },
+    {
+      "id": "REL-004",
+      "requirement": "SEC-002",
+      "acceptance": "Owned staging credentials and actual login/state/redirect/account lifecycle tests required."
+    },
+    {
+      "id": "REL-005",
+      "requirement": "SEC-003",
+      "acceptance": "No deployed TLS/proxy or Secure-cookie browser verification."
+    },
+    {
+      "id": "REL-006",
+      "requirement": "OPS-002",
+      "acceptance": "Local migration 17 and watchlist persistence are verified; intended owned staging/production migration, compatible rollout and operational recovery remain unverified."
+    },
+    {
+      "id": "REL-007",
+      "requirement": "UI-004",
+      "acceptance": "Official press-kit/terms retrieval again returned403; no current image-specific reuse permission verified. Genuine replacement still required; no new generated substitute."
+    },
+    {
+      "id": "REL-008",
+      "requirement": "OPS-003",
+      "acceptance": "Encrypted scheduled backups/retention and owned staging recovery drill absent."
+    },
+    {
+      "id": "REL-009",
+      "requirement": "OPS-004",
+      "acceptance": "No operational monitoring/alert delivery or incident-response exercise."
+    },
+    {
+      "id": "REL-010",
+      "requirement": "OPS-005",
+      "acceptance": "Actual operator/contact, retention/vendor disclosures and qualified review missing; no compliance certification."
+    },
+    {
+      "id": "REL-011",
+      "requirement": "OPS-006",
+      "acceptance": "Owner must choose license; data/artwork rights remain separate."
+    },
+    {
+      "id": "REL-012",
+      "requirement": "OPS-007",
+      "acceptance": "Reviewed source upload, clean-checkout secrets exclusion and successful hosted run needed."
+    },
+    {
+      "id": "REL-013",
+      "requirement": "OPS-008",
+      "acceptance": "Owned staging image/schema rollback and recovery evidence required."
+    },
+    {
+      "id": "REL-014",
+      "requirement": "UI-001",
+      "acceptance": "Global owner visual acceptance, full equipment-set layout and asset-dependent differences remain open."
+    },
+    {
+      "id": "REL-015",
+      "requirement": "SEC-008",
+      "acceptance": "Website configuration and fresh read-back required."
+    },
+    {
+      "id": "REL-016",
+      "requirement": "SEC-009",
+      "acceptance": "Eligible plan and enforced rule/CI-context verification needed; no paid upgrade authorized."
+    },
+    {
+      "id": "REL-017",
+      "requirement": "CODE-005",
+      "acceptance": "Establish reviewed history, source scan and independently verified clean install before hosted use."
+    }
+  ]
+}

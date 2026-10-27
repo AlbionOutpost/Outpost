@@ -1,0 +1,21 @@
+node_modules
+.next
+.env
+package-lock.json
+test-results
+playwright-report
+prisma/migrations
+
+.qa
+.agents
+.codex
+.aws
+
+# Checksum-pinned generated catalog; the preparer owns its serialization.
+data/catalog
+
+# Reviewed third-party skills retain their pinned upstream bytes.
+skill-system/vendor
+
+# Immutable historical documentation snapshots retain original bytes.
+docs/history/2026-10-26-before-reconciliation
