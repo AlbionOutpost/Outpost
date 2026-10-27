@@ -12,7 +12,7 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -45,6 +45,18 @@ jobs:
         run: npm run qa:phase
       - name: Browser bundle configured-secret scan
         run: node scripts/qa-secret-scan.mjs
+      - name: Prepare sanitized failure evidence
+        if: always()
+        run: node scripts/qa-ci-evidence.mjs
+      - name: Retain sanitized quality logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: quality-evidence
+          path: .qa/ci-evidence/
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
       - name: Remove ephemeral CI services
         if: always()
         run: docker compose down --volumes

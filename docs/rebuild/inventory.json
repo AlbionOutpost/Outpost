@@ -102,7 +102,7 @@
     "models": 29,
     "enums": 3,
     "migrations": 17,
-    "files": 377
+    "files": 379
   },
   "pages": [
     {
@@ -2515,8 +2515,8 @@
     },
     {
       "path": ".github/workflows/quality.yml",
-      "bytes": 1792,
-      "sha256": "fc172d673bbdda669250bbb5c8867a60f4ab01dc2e562141284783f4def2ecce"
+      "bytes": 2239,
+      "sha256": "4e9dcafac7b6d80bba5bbb9dedeb68de202c7a224bf8b501067594635e3edf10"
     },
     {
       "path": ".gitignore",
@@ -3112,6 +3112,11 @@
       "path": "scripts/qa-api-timings.mjs",
       "bytes": 943,
       "sha256": "2e039828f0ac970e064ac607bc17d9695c485e094769e86a7af8bd40315f4177"
+    },
+    {
+      "path": "scripts/qa-ci-evidence.mjs",
+      "bytes": 1607,
+      "sha256": "7b80c04a3a09ef444df36a67b4aa87c4d8f0a8463b1badf84e5a3d883f3529ef"
     },
     {
       "path": "scripts/qa-container.mjs",
@@ -4252,6 +4257,11 @@
       "path": "tests/catalog.test.ts",
       "bytes": 4101,
       "sha256": "0899d27ca4a8b2d8168bce08d71f18159a6aced8d4cb0b6e68c8183c3fbe94b1"
+    },
+    {
+      "path": "tests/ci-evidence.test.ts",
+      "bytes": 688,
+      "sha256": "58210bd5cbdefb7a4f456806cf2366399dc11733dd22ca5b267b365ad44bd5d6"
     },
     {
       "path": "tests/community.test.ts",
