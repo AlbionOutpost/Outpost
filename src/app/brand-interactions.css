@@ -382,18 +382,6 @@
   border-color: #d8b99a;
   color: #302116;
 }
-.app.outpost .home-terminal {
-  --hub-panel: #1d1916;
-  --hub-border: #493b32;
-  --text: #f0e5d5;
-  --muted: #c1b3a7;
-  --bg: #171411;
-  --panel: #211c18;
-  --sidebar: #211c18;
-  --elevated: #2a231e;
-  --border: #493b32;
-  --accent-ink: #e8aa85;
-}
 /* Original Outpost emblems replace the unrelated equipment strips in the feature links. */
 .app.outpost .featured-tool {
   display: grid;

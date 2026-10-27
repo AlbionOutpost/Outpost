@@ -4,8 +4,7 @@ export default function Page() {
     <div className="production-calculator-page">
       <h1 className="page-title display-title">Crafting calculator</h1>
       <p className="intro">
-        Price a starter recipe with your own assumptions and available market observations. Full
-        recipe coverage remains incomplete.
+        Choose a recipe, price your materials and see what your next crafting run could earn.
       </p>
       <ProductionCalculator kind="crafting" />
     </div>

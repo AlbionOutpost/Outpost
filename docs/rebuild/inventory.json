@@ -102,7 +102,7 @@
     "models": 29,
     "enums": 3,
     "migrations": 17,
-    "files": 375
+    "files": 377
   },
   "pages": [
     {
@@ -348,17 +348,10 @@
       "client": false,
       "imports": [
         "./homepage.css",
-        "@/lib/db",
-        "@/components/home-player-preview",
-        "@/components/item-icon",
         "@/components/home-market-terminal",
-        "@/components/home-equipment-showcase",
-        "@/components/home-market-pulse",
-        "@/components/home-build-card",
         "next/headers",
         "next/link",
         "lucide-react",
-        "@/components/feature-emblem",
         "@/lib/albion/region-config"
       ],
       "exports": ["Home", "default"]
@@ -1211,6 +1204,8 @@
         "next/link",
         "lucide-react",
         "zod",
+        "./catalog-item-picker",
+        "@/lib/albion/equipment-catalog",
         "./item-icon",
         "./region-context",
         "@/lib/albion/region-config",
@@ -1282,6 +1277,7 @@
       "source": "src/components/market.tsx",
       "client": true,
       "imports": [
+        "lucide-react",
         "./history",
         "next/link",
         "./catalog-item-picker",
@@ -1338,6 +1334,7 @@
       "client": true,
       "imports": [
         "@/app/production-workspace.css",
+        "lucide-react",
         "react",
         "next/navigation",
         "next/link",
@@ -2628,8 +2625,8 @@
     },
     {
       "path": "e2e/catalog.spec.ts",
-      "bytes": 4018,
-      "sha256": "86caadbdd3a95c54e5a25fb3e6df88489dd119cd94a8d2d62eedb6d67c9740c7"
+      "bytes": 4014,
+      "sha256": "67b81777ec1234e635e1a323035f3ad5fbfa1b0e8265312244db1cb5b170cbc2"
     },
     {
       "path": "e2e/community.spec.ts",
@@ -2653,8 +2650,8 @@
     },
     {
       "path": "e2e/design-review.spec.ts",
-      "bytes": 7270,
-      "sha256": "c425c982220f25d5b765428585506576c6adda51d823b550a18309fa00e13cf7"
+      "bytes": 7302,
+      "sha256": "7cd2f8d01c2b5e072979aeb931adf8d525c5a0c088a1c4161700ee4a3902473b"
     },
     {
       "path": "e2e/group-editing.spec.ts",
@@ -2673,13 +2670,13 @@
     },
     {
       "path": "e2e/history.spec.ts",
-      "bytes": 3428,
-      "sha256": "a1dab29d6d7ccdee2c42ebe8acdc88ad4ca81bacbd842fd1dd4fb71fb9c06a1a"
+      "bytes": 3521,
+      "sha256": "3af63d8bae0a38e08ba5aed90d5c8b93fb98d5b7dab8c6b5a25cfb44daa6aae8"
     },
     {
       "path": "e2e/home-market-pulse.spec.ts",
-      "bytes": 2423,
-      "sha256": "7db6681c766e556fdfeb234208b917d9db77e7be2421bb846886957785056018"
+      "bytes": 1861,
+      "sha256": "23b8ca028d5c4e3e549d6f03dd13a56477e0aee6fcaba0c70e7f66d68b090565"
     },
     {
       "path": "e2e/home-market-terminal.spec.ts",
@@ -2688,13 +2685,13 @@
     },
     {
       "path": "e2e/homepage-polish.spec.ts",
-      "bytes": 8074,
-      "sha256": "821695f7915f247535e708e897feaa3d7b01977ee31b1aae56f6c113481ec198"
+      "bytes": 3689,
+      "sha256": "fdc3573adfd9bf36dc31ed0b39abdba9caef1662f50ade60a0c6fcadec4c8d29"
     },
     {
       "path": "e2e/homepage-visual-correction.spec.ts",
-      "bytes": 10231,
-      "sha256": "42f28609ece000572d6389844f09fc0dd6c8c4fcf15b385b9cc7dec22e2dee5e"
+      "bytes": 2190,
+      "sha256": "0851184cf977d46536803ff5dea36439aa412abd7d1b1a0115f408632962c267"
     },
     {
       "path": "e2e/market-visual.spec.ts",
@@ -2708,8 +2705,8 @@
     },
     {
       "path": "e2e/outpost.spec.ts",
-      "bytes": 2524,
-      "sha256": "1a507a70c5ee1b09eadc3ab07a5bf851c0a949528cf2b03e646cf8b8a6743e59"
+      "bytes": 2536,
+      "sha256": "4ee19048b59a33062f1b0213e0766d9e48779f36d1e37ffbe52fc472819bbf77"
     },
     {
       "path": "e2e/personal-tools.spec.ts",
@@ -2718,13 +2715,13 @@
     },
     {
       "path": "e2e/player-workflows.spec.ts",
-      "bytes": 4949,
-      "sha256": "514fd1a7d83b6836d62a5f3392527f2f7893e0518e051aee55dff743b2999ee9"
+      "bytes": 4945,
+      "sha256": "0094f3583bc45005e86afb1cbbc4c5f88faa8603edd3a627cb1a613d47f590ff"
     },
     {
       "path": "e2e/playful-ui.spec.ts",
-      "bytes": 2228,
-      "sha256": "4ae19c2b63d1bcc3070a4438a284f9eff97078ec60bb2cfbb49b7449f720bc01"
+      "bytes": 2164,
+      "sha256": "9aeda13238f0e8b288fabece9c3ad110f1b255113c8c876f6afa15140e2fe82d"
     },
     {
       "path": "e2e/premium-visual.spec.ts",
@@ -2733,43 +2730,43 @@
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png",
-      "bytes": 38427,
-      "sha256": "e6bade7c4ec05c13180bed6fdacb113be252a0eff2b1728de8e2dc5ae802ac69"
+      "bytes": 39478,
+      "sha256": "9decc1c8252bc3f10f3394b4d9f14d8f1595f245d83171838061db073e108e25"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png",
-      "bytes": 34057,
-      "sha256": "2123642f08b394fc55c9163fa1b28b65eec5fe6ce1b1c268fd142f2ab9b5ae59"
+      "bytes": 36457,
+      "sha256": "19bdcaf760a50c384f97400de0adf1d8d722d4246555e0abee04730d225f285d"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png",
-      "bytes": 34163,
-      "sha256": "4900fe63ecb74f7931539260399f1bed4f35fb620881d929f0dd61b2ba591320"
+      "bytes": 37072,
+      "sha256": "86a214d06400f4fbbaa781c848c03600f9dbd353b0f63e8ba23ec748b16da68d"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png",
-      "bytes": 35354,
-      "sha256": "8ebdfcfbcdd517b4f0a30aa681f51db8998c6c0e4e9adf0abe979618b86404de"
+      "bytes": 37509,
+      "sha256": "97d62894c54ca2d6156af6c5705e6b970e0d78e3d794143e007b78e39cacb304"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png",
-      "bytes": 91912,
-      "sha256": "86e39dccd2347104b91800ef29d8a0230cbc232313f3729cf2fe9b5597557cca"
+      "bytes": 93513,
+      "sha256": "f5d8750d8185acfd9af6808f236ef91a05b90608285e1c12a942fc0eac7ac12f"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png",
-      "bytes": 25968,
-      "sha256": "d3b38e0f1f0f5cd976be46b8b9267f79c4008dc73e50080789c7dfc227f1ed61"
+      "bytes": 26299,
+      "sha256": "a0facfbcfef75ff2840f016d9a4ad4994d99f1cbab5482635b676dd44163952e"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png",
-      "bytes": 26033,
-      "sha256": "c7d9ddc84ace55ab018eda84928f3eed2fc2c92b9a78b26461358981683134dc"
+      "bytes": 26261,
+      "sha256": "a1813b703e7308aa21d08acbb2e456ef639970e4ec6166c5cc0ba73145d3332c"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png",
-      "bytes": 28306,
-      "sha256": "515e088280d3e850e3c3d47af2434263ec8de9ac37abdaf3dce036d954a15769"
+      "bytes": 28587,
+      "sha256": "4a14af4e1f02b4449828593396f936686f67a03725d413f4002d70a3446e6586"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png",
@@ -2783,13 +2780,13 @@
     },
     {
       "path": "e2e/production-freshness.spec.ts",
-      "bytes": 3336,
-      "sha256": "67656412628b34c1bf2e3b77dc8d6261682164631b73008e3b476f7469712be4"
+      "bytes": 3424,
+      "sha256": "b3bf4dd175b24b7df763d0c3e8bdc50a220cb2aec0cec9b25916b61b022016fc"
     },
     {
       "path": "e2e/production-modes.spec.ts",
-      "bytes": 6785,
-      "sha256": "f371d56172d1a828745d08e5f2e560f3648ecbb9ee411a8b9660921782becc68"
+      "bytes": 6868,
+      "sha256": "a9a3238097c979abbb7aa1dab5c1a44a94397c65d9c6fbe1d23e039702adbb4d"
     },
     {
       "path": "e2e/production.spec.ts",
@@ -2855,6 +2852,11 @@
       "path": "e2e/transport.spec.ts",
       "bytes": 2458,
       "sha256": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819"
+    },
+    {
+      "path": "e2e/ux-task-flow.spec.ts",
+      "bytes": 2390,
+      "sha256": "0a75b653de5cbae8c9198eab8ab7217ff187311d00c1b60cb54845ae67034b7a"
     },
     {
       "path": "e2e/verified-builds.spec.ts",
@@ -3408,8 +3410,8 @@
     },
     {
       "path": "src/app/brand-interactions.css",
-      "bytes": 15541,
-      "sha256": "179ca99d458c086fb65809195f74ed982e639804d48b87ad07675022bf93a3d9"
+      "bytes": 15293,
+      "sha256": "806330221afaa4d7e56e0ba3263fa0f3c07abca735d48bcbd3aaae6a1dbf1328"
     },
     {
       "path": "src/app/builds/[id]/edit/page.tsx",
@@ -3503,13 +3505,13 @@
     },
     {
       "path": "src/app/home-market-terminal.css",
-      "bytes": 7245,
-      "sha256": "adb39fd99ce8919c07123627bf136e7d52919fb8db7dff20e51a31026d5ee0d2"
+      "bytes": 6631,
+      "sha256": "ea0ac53b36508f36fb04e7a6f36a250372fccede0706e19d37e76f5c3245abb4"
     },
     {
       "path": "src/app/homepage.css",
-      "bytes": 13599,
-      "sha256": "d1c480064e8f0007594b1ef52e99690b1ec08250f0b3a253db70ca51d0862e77"
+      "bytes": 2432,
+      "sha256": "3bbcdba4a3acc24063ef0a1b32428730a8a0f3a7d0c68c0732d3d0e12b9d5a27"
     },
     {
       "path": "src/app/invitations/[token]/page.tsx",
@@ -3528,8 +3530,8 @@
     },
     {
       "path": "src/app/layout.tsx",
-      "bytes": 1920,
-      "sha256": "6b1bde74ca93150a1a27c4855a4284a16df7181b52bd2efa639423c4b2d583dc"
+      "bytes": 1944,
+      "sha256": "9be832c8e2659e8d57559e67d9c25bd59ffe88ed8e28c4d28943ee5c59d31350"
     },
     {
       "path": "src/app/legal/page.tsx",
@@ -3548,8 +3550,8 @@
     },
     {
       "path": "src/app/page.tsx",
-      "bytes": 6142,
-      "sha256": "cd0bfe47e3045e6576f5216bd238e3482e0842720cb90d2f50f19cd66a4d1788"
+      "bytes": 2335,
+      "sha256": "f7aa60af2dcc75f96da85f88cf81ac973c8da9e76cb71766446fa51cb7e05d41"
     },
     {
       "path": "src/app/player-workspaces.css",
@@ -3592,14 +3594,19 @@
       "sha256": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4"
     },
     {
+      "path": "src/app/task-ui.css",
+      "bytes": 8755,
+      "sha256": "0bda95f9b4438f2c41f2d53d1bd103f04a5a9542e5b7c7be02859bb2cae0ffaa"
+    },
+    {
       "path": "src/app/timers/page.tsx",
       "bytes": 869,
       "sha256": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933"
     },
     {
       "path": "src/app/tools/crafting/page.tsx",
-      "bytes": 485,
-      "sha256": "1a4139e26519302c374367aa330ac60d7c964a012b61d16fde9052a0fc4d3145"
+      "bytes": 438,
+      "sha256": "e0c9a1189c0eb6170c37718fc203603ef67f311f9e0faef9975f2f23918675b5"
     },
     {
       "path": "src/app/tools/enchanting/page.tsx",
@@ -3618,8 +3625,8 @@
     },
     {
       "path": "src/app/tools/market/page.tsx",
-      "bytes": 532,
-      "sha256": "11aaee8eee3165c660b3a794884a25ad291d50e003738d487d31402cc801dd97"
+      "bytes": 510,
+      "sha256": "a9768bb5983eb1ab9b0472f7b50e3c53b8f4f3cf7991f392b08dce57bae9aecc"
     },
     {
       "path": "src/app/tools/page.tsx",
@@ -3793,8 +3800,8 @@
     },
     {
       "path": "src/components/home-market-terminal.tsx",
-      "bytes": 16348,
-      "sha256": "5a28afb16f5593e3731646a7fc7c6ffc61ebbd6275a8b7a60e8dd164c7f1d0dd"
+      "bytes": 17876,
+      "sha256": "908ffaf8e9ba0b9225e3c8776357578ead64f55e24126650ca28539e9bde22a7"
     },
     {
       "path": "src/components/home-player-preview.tsx",
@@ -3828,8 +3835,8 @@
     },
     {
       "path": "src/components/market.tsx",
-      "bytes": 15362,
-      "sha256": "e0a1f77fc62e1b5003de25c9c7829c9f18ac9b507ca4d6e03666ae3cc00feac0"
+      "bytes": 20557,
+      "sha256": "994843a796ab57eb01cc1a54f6023b77bf240be75b997d7876b49230c851639b"
     },
     {
       "path": "src/components/mobile-filter-panel.tsx",
@@ -3853,8 +3860,8 @@
     },
     {
       "path": "src/components/production-calculator.tsx",
-      "bytes": 25815,
-      "sha256": "dfc8bd32dbc2e672f377da4e9e35f5f28ec4d36053de254ff0e745b5b7d43382"
+      "bytes": 30567,
+      "sha256": "09f20b1bdffda8d14d00984f7a70833bae0a31adc6ee5f545d35cb698256361d"
     },
     {
       "path": "src/components/region-context.tsx",

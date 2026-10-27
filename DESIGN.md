@@ -1,5 +1,7 @@
 # Outpost visual direction
 
+Current implemented UX (October27): short task-led homepage with one searchable source-price/history preview. Remove the previous equipment collage, repeated market panels and empty community feed. Market guides selection/city/quality before results; crafting has recipe, pricing and profit steps on mobile. Shared charcoal/light surfaces,8px controls and12px panels replace the isolated brown chart palette. [Current evidence](docs/design-review/ux-transformation/README.md). Earlier composition notes below are history where they conflict with this implementation.
+
 The green/ivory expedition redesign was rejected and reverted at the user’s request on October 26. Latest owner clarification: retain the supplied reference’s immersive scene-led composition and visual tool panels, with bold horizontal top tabs instead of the sidebar. The earlier illustration-free equipment-only hero stripped away too much. Use the existing disclosed courtyard illustration at a bounded scale, genuine renderer equipment art, real observed-price snapshots, useful hover states and reduced-motion support. No fake activity, fabricated prices or claims of realtime execution. Barlow Condensed, Inter and Geist Mono retain their established roles.
 
 Preserve the functional, accessibility, game-data and calculator improvements. Do not reintroduce the rejected redesign. Historical screenshots remain in docs/design-review/homepage-redesign.

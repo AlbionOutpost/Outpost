@@ -17,7 +17,7 @@ test("local item names remain selectable after a successful empty catalog respon
   await response;
   await expect(page.getByRole("listbox").getByRole("option").first()).toContainText("Bow");
   await input.press("Enter");
-  await expect(page.locator(".market-selected-item")).toContainText("Bow");
+  await expect(page.locator(".market-selection")).toContainText("Bow");
 });
 test("catalog release persists, filters, paginates and exposes honest provenance", async ({
   page,

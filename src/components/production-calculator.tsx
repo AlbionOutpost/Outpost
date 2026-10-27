@@ -1,5 +1,6 @@
 "use client";
 import "@/app/production-workspace.css";
+import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,6 +27,9 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
   const router = useRouter();
   const [draft, setDraft] = useState(() => initialProduction(kind, region));
   const [error, setError] = useState("");
+  const [step, setStep] = useState(1);
+  const [showScenarios, setShowScenarios] = useState(false);
+  const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const [overwrite, setOverwrite] = useState(false);
@@ -77,6 +81,7 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
     request.current = controller;
     const requested = configuration;
     setPendingKey(requestKey);
+    setAttemptedKey(requestKey);
     setError("");
     try {
       const response = await fetch(`/api/economy/prices?${requestKey}`, {
@@ -109,8 +114,24 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
       ? p
       : null;
   };
+  const hasPrices = Object.values(draft.prices).some((p) => p.value !== null);
+  const attempted = attemptedKey === requestKey;
+  function goToStep(next: number) {
+    setStep(next);
+    requestAnimationFrame(() => {
+      const panel = document.getElementById(
+        next === 1
+          ? "production-setup"
+          : next === 2
+            ? "production-materials"
+            : "production-results",
+      );
+      panel?.focus({ preventScroll: true });
+      if (matchMedia("(max-width: 780px)").matches) panel?.scrollIntoView({ block: "start" });
+    });
+  }
   return (
-    <>
+    <div className="production-journey" data-step={step}>
       <nav className="production-mode-nav" aria-label="Production calculators">
         {(["crafting", "refining", "enchanting"] as const).map((mode) => (
           <Link
@@ -122,20 +143,29 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
           </Link>
         ))}
       </nav>
-      <a className="production-mobile-summary" href="#production-results">
-        <span>Expected economic profit</span>
-        <strong className={(result?.profit ?? 0) < 0 ? "negative" : ""}>
-          {money(result?.profit)}
-          {result?.complete ? " silver" : ""}
-        </strong>
-        <span>View breakdown ↓</span>
-      </a>
+      <nav className="task-progress production-steps" aria-label="Crafting workflow">
+        {[
+          [1, "Choose recipe"],
+          [2, "Price materials"],
+          [3, "Review profit"],
+        ].map(([n, label]) => (
+          <button
+            type="button"
+            key={n}
+            aria-current={step === n ? "step" : undefined}
+            onClick={() => goToStep(Number(n))}
+          >
+            <span>{n}</span>
+            {label}
+          </button>
+        ))}
+      </nav>
       <div className="calculator-grid production-workspace">
         <div className="calculator-inputs">
-          <section className="panel">
+          <section className="panel" id="production-setup" tabIndex={-1}>
             <h2 className="production-inputs-heading">
               <ItemIcon id={recipe.output} quality={outputQuality} size={36} />
-              Recipe & assumptions
+              Choose your recipe
             </h2>
             {kind !== "enchanting" ? (
               <label>
@@ -256,37 +286,47 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                 </button>
               ))}
             </div>
+            <div className="input-grid production-city-choices">
+              {" "}
+              <label>
+                Material purchase market
+                <select
+                  aria-label="Material purchase market"
+                  value={draft.materialCity}
+                  onChange={(e) =>
+                    update("materialCity", e.target.value as ProductionInput["materialCity"])
+                  }
+                >
+                  {cities.map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Output sale market
+                <select
+                  aria-label="Output sale market"
+                  value={draft.outputCity}
+                  onChange={(e) =>
+                    update("outputCity", e.target.value as ProductionInput["outputCity"])
+                  }
+                >
+                  {cities.map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <button
+              className="button primary production-next"
+              type="button"
+              onClick={() => goToStep(2)}
+            >
+              Next: price materials <ArrowRight size={16} aria-hidden="true" />
+            </button>
             <details className="production-fees">
               <summary>Markets & transaction fees</summary>
               <div className="input-grid">
-                <label>
-                  Material purchase market
-                  <select
-                    aria-label="Material purchase market"
-                    value={draft.materialCity}
-                    onChange={(e) =>
-                      update("materialCity", e.target.value as ProductionInput["materialCity"])
-                    }
-                  >
-                    {cities.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Output sale market
-                  <select
-                    aria-label="Output sale market"
-                    value={draft.outputCity}
-                    onChange={(e) =>
-                      update("outputCity", e.target.value as ProductionInput["outputCity"])
-                    }
-                  >
-                    {cities.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
-                  </select>
-                </label>
                 <label>
                   Station / upgrade fee per craft
                   <input
@@ -457,13 +497,27 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             </details>
           </section>
         </div>
-        <section className="panel section production-materials">
+        <section
+          className="panel section production-materials"
+          id="production-materials"
+          tabIndex={-1}
+        >
           <div className="section-heading">
             <h2>Material costs</h2>
             <button className="button secondary" disabled={busy} onClick={load}>
               {busy ? "Fetching observations…" : "Load market observations"}
             </button>
           </div>
+          <p className="production-price-help">
+            Load observed prices for {draft.materialCity}, or enter your own prices below. Output
+            sells in {draft.outputCity}.
+          </p>
+          {attempted && !busy && !error && !result?.complete && (
+            <p className="task-state" role="status">
+              Some prices were not observed for this recipe, market or quality. Enter the missing
+              unit prices to finish. Existing observations keep their source times.
+            </p>
+          )}
           <label>
             Replace manual overrides when refreshing
             <select
@@ -530,12 +584,17 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                         ? "Manual override"
                         : p?.observedAt
                           ? `${p.observedAt} UTC`
-                          : "No observation"}
+                          : attempted
+                            ? "No source observation"
+                            : "Enter or load a price"}
                     </span>
                     <span>
                       Cost{" "}
                       <strong className="numeric">
-                        {money(result?.rows.find((row) => row.id === i.id)?.gross)}
+                        {money(result?.rows.find((row) => row.id === i.id)?.gross).replace(
+                          "Unavailable",
+                          "pending",
+                        )}
                       </strong>
                     </span>
                   </div>
@@ -565,20 +624,56 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                 {current(recipe.output, outputQuality, draft.outputCity)?.manual
                   ? "Manual override"
                   : current(recipe.output, outputQuality, draft.outputCity)?.observedAt ||
-                    "No available observation"}
+                    (attempted
+                      ? "No output quote returned. Enter your sale price."
+                      : "Enter your expected sale price, or load observations.")}
               </small>
             </section>
           </div>
+          <button
+            className="button primary production-next"
+            type="button"
+            onClick={() => goToStep(3)}
+          >
+            Review profit <ArrowRight size={16} aria-hidden="true" />
+          </button>
         </section>
         <section className="panel result" id="production-results" tabIndex={-1}>
-          <div className="eyebrow">EXPECTED ECONOMIC PROFIT</div>
-          <strong
-            key={result?.profit ?? "empty"}
-            className={`value-update${(result?.profit ?? 0) < 0 ? " negative" : ""}`}
-          >
-            {money(result?.profit)}
-            {result?.profit !== null && result?.profit !== undefined && <small> silver</small>}
-          </strong>
+          <h2>Profit breakdown</h2>
+          {!result?.complete ? (
+            <div className="production-result-start" role="status">
+              <Calculator size={32} aria-hidden="true" />
+              <h3>
+                {busy
+                  ? "Loading observed prices…"
+                  : error
+                    ? "Prices could not be loaded"
+                    : attempted || hasPrices
+                      ? "Finish pricing your run"
+                      : "What will this run earn?"}
+              </h3>
+              <p>
+                {busy
+                  ? "Checking material and output prices for your selected markets."
+                  : error
+                    ? "Your recipe and manual prices are kept. Retry loading observations or enter prices yourself."
+                    : attempted || hasPrices
+                      ? "Add the missing unit prices below. Profit appears when every required price is configured."
+                      : "Choose your recipe and quantity, then load market observations or add unit prices. We’ll calculate the cost and profit here."}
+              </p>
+              <button className="button secondary" type="button" onClick={() => goToStep(2)}>
+                Add material prices <ArrowRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          ) : (
+            <strong
+              key={result.profit}
+              className={`value-update${(result.profit ?? 0) < 0 ? " negative" : ""}`}
+            >
+              {money(result.profit)}
+              <small> silver</small>
+            </strong>
+          )}
           {result?.stale && (
             <p className="error">
               Stale or undated source observations included. Refresh before acting.
@@ -589,7 +684,7 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
               {validation}
             </p>
           )}
-          {result && !result.complete && (
+          {result && !result.complete && (attempted || hasPrices) && (
             <p role="status">
               Missing or mismatched observations:{" "}
               {result.missing
@@ -602,50 +697,73 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
               . No complete profit estimate is available.
             </p>
           )}
-          <dl>
-            {[
-              ["Total material cost", result?.grossMaterials],
-              ["Station / upgrade fees", result?.stationCost],
-              ["Upfront silver requirement", result?.upfront],
-              ["Expected returned material value", result?.returnCredit],
-              ["Effective production cost", result?.cost],
-              ["Gross output revenue", result?.revenue],
-              ["Taxes and setup fees", result?.fees],
-              ["Cash profit before valuing retained returns", result?.cashProfit],
-              ["Profit margin (%)", result?.margin],
-              ["ROI on effective cost (%)", result?.roi],
-              ["Profit per output", result?.profitPerItem],
-              ...(draft.useFocus
-                ? [
-                    ["Profit per focus", result?.profitPerFocus],
-                    ["Additional material value per focus", result?.incrementalPerFocus],
-                  ]
-                : []),
-            ].map(([label, value]) => (
-              <div key={String(label)}>
-                <dt>{label}</dt>
-                <dd>{money(value as number | null | undefined)}</dd>
-              </div>
-            ))}
-          </dl>
+          {result?.complete && (
+            <dl>
+              {[
+                ["Total material cost", result?.grossMaterials],
+                ["Station / upgrade fees", result?.stationCost],
+                ["Upfront silver requirement", result?.upfront],
+                ["Expected returned material value", result?.returnCredit],
+                ["Effective production cost", result?.cost],
+                ["Gross output revenue", result?.revenue],
+                ["Taxes and setup fees", result?.fees],
+                ["Cash profit before valuing retained returns", result?.cashProfit],
+                ["Profit margin (%)", result?.margin],
+                ["ROI on effective cost (%)", result?.roi],
+                ["Profit per output", result?.profitPerItem],
+                ...(draft.useFocus
+                  ? [
+                      ["Profit per focus", result?.profitPerFocus],
+                      ["Additional material value per focus", result?.incrementalPerFocus],
+                    ]
+                  : []),
+              ].map(([label, value]) => (
+                <div key={String(label)}>
+                  <dt>{label}</dt>
+                  <dd>{money(value as number | null | undefined)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {result?.complete && (
+            <p className="production-result-note">
+              <CircleCheck size={16} aria-hidden="true" />
+              Based on your prices and assumptions. Retained returns are valued separately from cash
+              profit.
+            </p>
+          )}
         </section>
       </div>
-      <ScenarioControls
-        schema={productionSchema}
-        configuration={configuration}
-        onLoad={(value) => {
-          if (value.kind === kind && productionSchema.safeParse(value).success) {
-            request.current?.abort();
-            setDraft(value);
-            if (value.region !== region) {
-              document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-              const url = new URL(window.location.href);
-              url.searchParams.set("region", value.region);
-              router.replace(url.pathname + url.search + url.hash, { scroll: false });
+      <button
+        type="button"
+        className="button secondary production-scenarios-toggle"
+        aria-expanded={showScenarios}
+        aria-controls="production-scenarios"
+        onClick={() => setShowScenarios(!showScenarios)}
+      >
+        Saved runs & sharing
+      </button>
+      <div
+        id="production-scenarios"
+        className={`production-scenarios${showScenarios ? " is-open" : ""}`}
+      >
+        <ScenarioControls
+          schema={productionSchema}
+          configuration={configuration}
+          onLoad={(value) => {
+            if (value.kind === kind && productionSchema.safeParse(value).success) {
+              request.current?.abort();
+              setDraft(value);
+              if (value.region !== region) {
+                document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+                const url = new URL(window.location.href);
+                url.searchParams.set("region", value.region);
+                router.replace(url.pathname + url.search + url.hash, { scroll: false });
+              }
             }
-          }
-        }}
-      />
-    </>
+          }}
+        />
+      </div>
+    </div>
   );
 }

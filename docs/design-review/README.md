@@ -1,6 +1,8 @@
 # Current Outpost visual reviews
 
-Latest implementation: [search, transitions, menus and real equipment](playful-ui/README.md).
+Latest implementation: [task-led homepage, Market and crafting](ux-transformation/README.md).
+
+Previous shared interaction work: [search, transitions, menus and real equipment](playful-ui/README.md).
 
 Previous refinement: [header, logo-led controls and interactive tool emblems](brand-interaction/README.md).
 

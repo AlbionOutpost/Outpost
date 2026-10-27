@@ -99,8 +99,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
           () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),
         );
         if (width === 390) {
-          await expect(page.locator(".production-mobile-summary")).toContainText(expected);
-          await page.locator(".production-mobile-summary").click();
+          await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
+          await expect(page.locator("#production-results")).toContainText(expected);
           await expect(page.locator("#production-results")).toBeInViewport();
           await page.evaluate(() => {
             (document.activeElement as HTMLElement)?.blur();
@@ -113,6 +113,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         );
       }
       if (kind === "crafting") {
+        await page.setViewportSize({ width: 1440, height: 900 });
         await page.getByText("Returns & focus", { exact: true }).click();
         await page.getByLabel("Return rate without focus (%)", { exact: true }).fill("20");
         await page.getByLabel("Apply returns to Steel Bar", { exact: true }).check();

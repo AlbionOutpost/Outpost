@@ -97,7 +97,7 @@ test("market item names can be selected with the keyboard", async ({ page }) => 
   await input.press("ArrowDown");
   await input.press("Enter");
   await expect(input).toHaveAttribute("aria-expanded", "false");
-  await expect(page.locator(".market-selected-item")).toContainText("Battleaxe");
+  await expect(page.locator(".market-selection")).toContainText("Battleaxe");
   await expect(page.getByLabel("Albion region")).toHaveValue("asia");
   await input.fill("no matching equipment xxxxx");
   await expect(page.getByText("No matching items. Adjust the name or filters.")).toBeVisible();

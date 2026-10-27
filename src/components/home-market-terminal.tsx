@@ -4,6 +4,8 @@ import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { ChartNoAxesCombined, ArrowUpRight, Shield, Users, Coins } from "lucide-react";
 import { z } from "zod";
+import { CatalogItemPicker } from "./catalog-item-picker";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
 import { useAtlasRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
@@ -14,13 +16,12 @@ import {
 } from "@/lib/albion/market-preview";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 
-const item = "T4_BAG";
 const historySchema = z.object({
   region: z.string(),
   data: z
     .array(
       z.object({
-        item_id: z.literal(item),
+        item_id: z.string(),
         location: z.string(),
         quality: z.literal(1),
         data: z
@@ -43,6 +44,9 @@ const date = (n: number) =>
 
 export function HomeMarketTerminal() {
   const region = useAtlasRegion();
+  const [item, setItem] = useState("T4_BAG");
+  const [expanded, setExpanded] = useState(false);
+  const [revision, setRevision] = useState(0);
   const gradient = useId().replaceAll(":", "");
   const [city, setCity] = useState("Lymhurst");
   const [days, setDays] = useState(30);
@@ -52,9 +56,13 @@ export function HomeMarketTerminal() {
     error: boolean;
     asOf: number;
   } | null>(null);
-  const [market, setMarket] = useState<{ key: string; rows: PreviewPrice[] } | null>(null);
+  const [market, setMarket] = useState<{
+    key: string;
+    rows: PreviewPrice[];
+    error: boolean;
+  } | null>(null);
   const [hover, setHover] = useState<number | null>(null);
-  const identity = `${region}:${city}`;
+  const identity = `${region}:${item}:${city}`;
   useEffect(() => {
     const controller = new AbortController();
     let timedOut = false;
@@ -70,17 +78,18 @@ export function HomeMarketTerminal() {
         return parseMarketPreview(await response.json(), region, item);
       })
       .then((rows) => {
-        if (!controller.signal.aborted) setMarket({ key: region, rows });
+        if (!controller.signal.aborted) setMarket({ key: `${region}:${item}`, rows, error: false });
       })
       .catch(() => {
-        if (!controller.signal.aborted || timedOut) setMarket({ key: region, rows: [] });
+        if (!controller.signal.aborted || timedOut)
+          setMarket({ key: `${region}:${item}`, rows: [], error: true });
       })
       .finally(() => clearTimeout(timeout));
     return () => {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [region]);
+  }, [region, item, revision]);
   useEffect(() => {
     const controller = new AbortController();
     let timedOut = false;
@@ -95,7 +104,10 @@ export function HomeMarketTerminal() {
       .then(async (response) => {
         if (!response.ok) throw new Error();
         const data = historySchema.parse(await response.json());
-        if (data.region !== region || data.data.some((row) => row.location !== city))
+        if (
+          data.region !== region ||
+          data.data.some((row) => row.location !== city || row.item_id !== item)
+        )
           throw new Error();
         const points = data.data
           .flatMap((row) => row.data)
@@ -122,11 +134,13 @@ export function HomeMarketTerminal() {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [region, city, identity]);
+  }, [region, item, city, identity, revision]);
   const active = history?.key === identity ? history : null;
   const points = active?.points.filter((p) => p.timestamp >= active.asOf - days * 86400000) ?? [];
   const rows =
-    market?.key === region ? market.rows.filter((r) => r.city !== "Black Market").slice(0, 4) : [];
+    market?.key === `${region}:${item}`
+      ? market.rows.filter((r) => r.city !== "Black Market").slice(0, 4)
+      : [];
   const min = points.length ? Math.min(...points.map((p) => p.price)) : 0;
   const max = points.length ? Math.max(...points.map((p) => p.price)) : 0;
   const spread = Math.max(max - min, max * 0.04, 1);
@@ -144,31 +158,47 @@ export function HomeMarketTerminal() {
     .join(" ");
   const selected = points[hover ?? points.length - 1];
   return (
-    <section className="home-terminal" aria-label="Observed market overview">
+    <section
+      className={`home-terminal${expanded ? " is-expanded" : ""}`}
+      aria-label="Observed market overview"
+    >
       <div className="terminal-toolbar">
         <span>
-          <ChartNoAxesCombined size={17} /> MARKET OVERVIEW
+          <ChartNoAxesCombined size={18} aria-hidden="true" /> Check the market
         </span>
         <span>
           {regions[region].label} <span className="terminal-dot" /> AODP
         </span>
       </div>
+      <div className="terminal-search">
+        <CatalogItemPicker
+          onSelect={(selected) => {
+            setItem(selected.id);
+            setHover(null);
+          }}
+        />
+      </div>
       <div className="terminal-item">
         <ItemIcon id={item} size={66} />
         <div>
-          <h2>Adept’s Bag</h2>
+          <h2>{equipmentName(item)}</h2>
           <span>
-            T4.0 <b>Normal quality</b>
+            <b>Normal quality</b>
           </span>
         </div>
-        <Link
-          href={`/tools/market?region=${region}&item=${item}`}
-          aria-label="Open Bag market details"
-        >
-          <ArrowUpRight size={21} />
+        <Link href={`/tools/market?region=${region}&item=${item}`} aria-label="Explore market">
+          Explore market <ArrowUpRight size={17} aria-hidden="true" />
         </Link>
       </div>
-      <div className="terminal-data-grid">
+      <button
+        className="terminal-mobile-toggle button secondary"
+        aria-expanded={expanded}
+        aria-controls="home-market-data"
+        onClick={() => setExpanded(!expanded)}
+      >
+        {expanded ? "Hide price preview" : "Show city prices & history"}
+      </button>
+      <div className="terminal-data-grid" id="home-market-data">
         <div className="terminal-history">
           <div className="terminal-chart-heading">
             <div>
@@ -338,13 +368,28 @@ export function HomeMarketTerminal() {
           ))}
           {!rows.length && (
             <p className="muted">
-              {market?.key === region ? "City quotes unavailable." : "Loading city quotes…"}
+              {market?.key !== `${region}:${item}`
+                ? "Loading city quotes…"
+                : market.error
+                  ? "City prices could not be loaded. Refresh observations to retry."
+                  : "No city quotes were returned for this item and quality. Try another item."}
             </p>
           )}
         </div>
       </div>
       <details className="terminal-source">
         <summary>Source & {points.length} history observations</summary>
+        <button
+          type="button"
+          className="button secondary"
+          onClick={() => {
+            setHistory(null);
+            setMarket(null);
+            setRevision((n) => n + 1);
+          }}
+        >
+          Refresh observations
+        </button>
         <p>
           Albion Online Data Project · daily sell-order averages, not confirmed trades. Missing
           dates stay unfilled. Quote ages are shown separately.

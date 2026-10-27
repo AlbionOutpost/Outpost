@@ -37,3 +37,7 @@ Three fresh Chromium processes per candidate under the same Lighthouse 13.5.0 pr
 ## Equipment artwork loading — 2026-10-27
 
 The rebuilt homepage’s large weapon was the LCP element. Three comparable Lighthouse13.5 mobile runs measured median5.222s (range5.210–5.224s) with lazy external delivery. Local source-pinned PNGs, Next Image optimization and eager/high-priority lead delivery measured median2.862s (range2.633–3.399s) across three sequential runs. Browser profiles were fresh, application/services warm and code/browsers/benchmarks sequential; this is lab evidence with external observations, not field performance. Accessibility100 and CLS0 in all six. The2.5s target remains open. [Audits and image provenance](../design-review/playful-ui/README.md#artwork-loading).
+
+## Task-led UX sample — October27
+
+The production homepage was measured once with local Chromium/CDP and Lighthouse13.5.0 mobile defaults after the task-led redesign: LCP2554ms, CLS0, Performance97, Accessibility100. Raw report: `.qa/ux-transform/lighthouse.json`; compact result: `.qa/ux-transform/lighthouse-summary.json`. There is no comparable before measurement for this architecture, so no speedup or field-performance claim is made. This sample is slightly above2.5s; the earlier Market Explorer target remains a separate requirement.

@@ -1,6 +1,6 @@
 # Game-data coverage
 
-Generated 2026-10-27T01:10:05.501Z. Repository-defined starter data, not a live database audit or complete game denominator.
+Generated 2026-10-27T01:58:26.738Z. Repository-defined starter data, not a live database audit or complete game denominator.
 
 - Equipment variants: 205; local search names: 100; combined unique IDs: 245. These are not counts of fully verified current-game records.
 - Structurally invalid mappings: 0; duplicate equipment IDs: 0.

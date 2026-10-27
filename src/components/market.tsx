@@ -1,4 +1,5 @@
 "use client";
+import { Search, MapPin, ChartNoAxesCombined, ArrowRight } from "lucide-react";
 import { History } from "./history";
 import Link from "next/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
@@ -27,11 +28,14 @@ export function Market() {
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [city, setCity] = useState("");
+  const [researchOpen, setResearchOpen] = useState(false);
   const [sort, setSort] = useState("city");
   const controller = useRef<AbortController | null>(null);
   const current = `${region}:${item.trim().toUpperCase()}:${quality}`;
   useEffect(() => () => controller.current?.abort(), [current]);
   const loading = pendingKey === current;
+  const hasResult = result?.key === current;
+  const hasError = error?.key === current;
   const rows = result?.key === current ? result.rows : [];
   const summary = summarizeQuotes(rows);
   const visible = rows
@@ -68,7 +72,7 @@ export function Market() {
       if (controller.current === active) setPendingKey(null);
     }
   }
-  const format = (n: number) => (n ? n.toLocaleString() : "Unavailable");
+  const format = (n: number) => (n ? n.toLocaleString() : "No quote");
   const dateLabel = (value: string) => {
     const stamp = sourceTimestamp(value);
     return Number.isFinite(stamp)
@@ -76,8 +80,26 @@ export function Market() {
       : "Unknown";
   };
   return (
-    <div className="market-workspace">
+    <div
+      className={`market-workspace${hasResult ? " has-results" : " is-setup"}`}
+      aria-busy={loading}
+    >
+      <ol className="task-progress" aria-label="Market workflow">
+        <li aria-current={!hasResult ? "step" : undefined}>
+          <span>1</span> Choose an item
+        </li>
+        <li>
+          <span>2</span> City & quality
+        </li>
+        <li aria-current={hasResult ? "step" : undefined}>
+          <span>3</span> Compare prices
+        </li>
+      </ol>
       <section className="market-board">
+        <div className="market-setup-heading">
+          <h2>What are you trading?</h2>
+          <p>Search by name, select an item, then compare observed city prices.</p>
+        </div>
         <form className="market-form market-filters" onSubmit={submit}>
           <CatalogItemPicker
             category={category}
@@ -103,6 +125,15 @@ export function Market() {
             </select>
           </label>
 
+          <label>
+            Market city
+            <select aria-label="Market city" value={city} onChange={(e) => setCity(e.target.value)}>
+              <option value="">All cities</option>
+              {cities.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </label>
           <button className="button primary" disabled={loading}>
             {loading ? "Fetching observations…" : "Compare prices"}
           </button>
@@ -118,134 +149,181 @@ export function Market() {
             observations for the selected item and quality.
           </p>
         )}
-        <>
-          <div className="market-table-toolbar" aria-label="Observation filters">
-            <label>
-              Market city
-              <select
-                aria-label="Market city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              >
-                <option value="">All cities</option>
-                {cities.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Sort market prices
-              <select
-                aria-label="Sort market prices"
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-              >
-                <option value="city">City name</option>
-                <option value="sell">Lowest sell price</option>
-                <option value="buy">Highest buy price</option>
-              </select>
-            </label>
-          </div>
-          <div
-            className="table-scroll"
-            tabIndex={0}
-            role="region"
-            aria-label="Scrollable market observations"
-          >
-            <table>
-              <caption className="market-table-caption">
-                <span>
-                  <ItemIcon id={item} quality={Number(quality)} size={28} />
-                  <strong>{selectedName || equipmentName(item)}</strong>
-                </span>
-                <span>
-                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
-                    Number(quality) - 1
-                  ] || "Unknown quality"}{" "}
-                  · {region} · Observed prices · UTC
-                </span>
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Item</th>
-                  <th scope="col">Market</th>
-                  <th scope="col" className="numeric" aria-label="Lowest sell order">
-                    <span className="market-col-long">Lowest sell order</span>
-                    <span className="market-col-short">Sell order</span>
-                  </th>
-                  <th scope="col" className="numeric" aria-label="Highest buy order">
-                    <span className="market-col-long">Highest buy order</span>
-                    <span className="market-col-short">Buy order</span>
-                  </th>
-                  <th scope="col">Sell observation (UTC)</th>
-                  <th scope="col">Buy observation (UTC)</th>
-                </tr>
-              </thead>
-              <tbody
-                key={result?.key || "empty"}
-                className={rows.length ? "price-refresh" : undefined}
-              >
-                {visible.map((r, i) => (
-                  <tr key={`${r.city}-${i}`}>
-                    <td>
-                      <span className="market-table-item">
-                        <ItemIcon id={r.item_id} quality={r.quality} size={36} />
-                        <span>{equipmentName(r.item_id)}</span>
-                      </span>
-                    </td>
-                    <td>
-                      <span className="city-indicator" aria-hidden="true">
-                        {r.city.slice(0, 2).toUpperCase()}
-                      </span>
-                      {r.city}
-                    </td>
-                    <td className="numeric">
-                      <span className={!r.sell_price_min ? "market-price-missing" : undefined}>
-                        {format(r.sell_price_min)}
-                      </span>
-                      <small className="market-inline-time" title={r.sell_price_min_date}>
-                        {r.sell_price_min
-                          ? `${dateLabel(r.sell_price_min_date).replace(/^\d{4}-/, "")}${isStale(r.sell_price_min_date) ? " · STALE" : ""}`
-                          : "No observation"}
-                      </small>
-                    </td>
-                    <td className="numeric">
-                      <span className={!r.buy_price_max ? "market-price-missing" : undefined}>
-                        {format(r.buy_price_max)}
-                      </span>
-                      <small className="market-inline-time" title={r.buy_price_max_date}>
-                        {r.buy_price_max
-                          ? `${dateLabel(r.buy_price_max_date).replace(/^\d{4}-/, "")}${isStale(r.buy_price_max_date) ? " · STALE" : ""}`
-                          : "No observation"}
-                      </small>
-                    </td>
-                    <td className="observation-time" title={r.sell_price_min_date}>
-                      {r.sell_price_min
-                        ? `${dateLabel(r.sell_price_min_date)} ${isStale(r.sell_price_min_date) ? "· STALE" : ""}`
-                        : "—"}
-                    </td>
-                    <td className="observation-time" title={r.buy_price_max_date}>
-                      {r.buy_price_max
-                        ? `${dateLabel(r.buy_price_max_date)} ${isStale(r.buy_price_max_date) ? "· STALE" : ""}`
-                        : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {!visible.length && (
-            <div className="empty market-empty" role="status">
-              {loading
-                ? "Loading source observations…"
-                : error?.key === current
-                  ? "No observations loaded. Compare prices to retry."
-                  : result?.key === current
-                    ? "No observations available for this selection."
-                    : "Choose an item and compare markets to begin."}
+        {hasResult && (
+          <>
+            <div className="market-table-toolbar" aria-label="Observation filters">
+              <label>
+                Sort market prices
+                <select
+                  aria-label="Sort market prices"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                >
+                  <option value="city">City name</option>
+                  <option value="sell">Lowest sell price</option>
+                  <option value="buy">Highest buy price</option>
+                </select>
+              </label>
             </div>
-          )}
-        </>
+            <div
+              className="table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="Scrollable market observations"
+            >
+              <table>
+                <caption className="market-table-caption">
+                  <span>
+                    <ItemIcon id={item} quality={Number(quality)} size={28} />
+                    <strong>{selectedName || equipmentName(item)}</strong>
+                  </span>
+                  <span>
+                    {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
+                      Number(quality) - 1
+                    ] || "Unknown quality"}{" "}
+                    · {region} · Observed prices · UTC
+                  </span>
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Market</th>
+                    <th scope="col" className="numeric" aria-label="Lowest sell order">
+                      <span className="market-col-long">Lowest sell order</span>
+                      <span className="market-col-short">Sell order</span>
+                    </th>
+                    <th scope="col" className="numeric" aria-label="Highest buy order">
+                      <span className="market-col-long">Highest buy order</span>
+                      <span className="market-col-short">Buy order</span>
+                    </th>
+                    <th scope="col">Sell observation (UTC)</th>
+                    <th scope="col">Buy observation (UTC)</th>
+                  </tr>
+                </thead>
+                <tbody
+                  key={result?.key || "empty"}
+                  className={rows.length ? "price-refresh" : undefined}
+                >
+                  {visible.map((r, i) => (
+                    <tr key={`${r.city}-${i}`}>
+                      <td>
+                        <span className="market-table-item">
+                          <ItemIcon id={r.item_id} quality={r.quality} size={36} />
+                          <span>{equipmentName(r.item_id)}</span>
+                        </span>
+                      </td>
+                      <td>
+                        <span className="city-indicator" aria-hidden="true">
+                          {r.city.slice(0, 2).toUpperCase()}
+                        </span>
+                        {r.city}
+                      </td>
+                      <td className="numeric">
+                        <span className={!r.sell_price_min ? "market-price-missing" : undefined}>
+                          {format(r.sell_price_min)}
+                        </span>
+                        <small className="market-inline-time" title={r.sell_price_min_date}>
+                          {r.sell_price_min
+                            ? `${dateLabel(r.sell_price_min_date).replace(/^\d{4}-/, "")}${isStale(r.sell_price_min_date) ? " · STALE" : ""}`
+                            : "No observation"}
+                        </small>
+                      </td>
+                      <td className="numeric">
+                        <span className={!r.buy_price_max ? "market-price-missing" : undefined}>
+                          {format(r.buy_price_max)}
+                        </span>
+                        <small className="market-inline-time" title={r.buy_price_max_date}>
+                          {r.buy_price_max
+                            ? `${dateLabel(r.buy_price_max_date).replace(/^\d{4}-/, "")}${isStale(r.buy_price_max_date) ? " · STALE" : ""}`
+                            : "No observation"}
+                        </small>
+                      </td>
+                      <td className="observation-time" title={r.sell_price_min_date}>
+                        {r.sell_price_min
+                          ? `${dateLabel(r.sell_price_min_date)} ${isStale(r.sell_price_min_date) ? "· STALE" : ""}`
+                          : "—"}
+                      </td>
+                      <td className="observation-time" title={r.buy_price_max_date}>
+                        {r.buy_price_max
+                          ? `${dateLabel(r.buy_price_max_date)} ${isStale(r.buy_price_max_date) ? "· STALE" : ""}`
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {!visible.length && (
+              <div className="empty market-empty" role="status">
+                {loading
+                  ? "Loading source observations…"
+                  : error?.key === current
+                    ? "No observations loaded. Compare prices to retry."
+                    : result?.key === current
+                      ? "No observations available for this selection."
+                      : "Choose an item and compare markets to begin."}
+              </div>
+            )}
+          </>
+        )}
+        {!hasResult && (
+          <div className="market-first-use" role="status">
+            <div className="market-selection">
+              <ItemIcon id={item} quality={Number(quality)} size={56} />
+              <div>
+                <strong>{selectedName || equipmentName(item)}</strong>
+                <span>
+                  Selected item ·{" "}
+                  {
+                    ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
+                      Number(quality) - 1
+                    ]
+                  }{" "}
+                  quality
+                </span>
+              </div>
+            </div>
+            <div className="market-start-examples" aria-label="Suggested market items">
+              {[
+                { id: "T4_BAG", name: "Bag" },
+                { id: "T4_MAIN_AXE", name: "Battleaxe" },
+                { id: "T4_CAPE", name: "Cape" },
+              ].map((preset) => (
+                <button
+                  type="button"
+                  key={preset.id}
+                  aria-pressed={item === preset.id}
+                  onClick={() => {
+                    setItem(preset.id);
+                    setSelectedName(preset.name);
+                  }}
+                >
+                  <ItemIcon id={preset.id} size={28} />
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+            <p>
+              {loading
+                ? "Fetching player observations from Albion Online Data Project…"
+                : hasError
+                  ? "The price source could not be reached. Your selection is kept. Use Compare prices to retry."
+                  : "Choose an item above or try a suggestion. No prices are requested until you compare."}
+            </p>
+          </div>
+        )}
+        {hasResult && !summary.available && (
+          <div className="task-state" role="status">
+            <h3>No usable prices returned</h3>
+            <p>
+              Albion Online Data Project relies on players scanning markets. This item and quality
+              have no valid quotes in this response. No last observation is known.
+            </p>
+            <p>
+              Try Normal quality, another item, or compare again after visiting the market in game.
+            </p>
+          </div>
+        )}
         <small className="muted market-source-note">
           Source: Albion Online Data Project · Observations older than one hour or unexpectedly in
           the future are marked stale. Observations do not guarantee executable trades or liquidity.
@@ -315,55 +393,103 @@ export function Market() {
         </div>
       </section>
       <aside className="market-item-panel">
-        <div className="market-item-overview">
-          <div className="market-selected-item">
-            <ItemIcon id={item} quality={Number(quality)} size={88} />
-            <div>
-              <span className="eyebrow">SELECTED ITEM</span>
-              <h2>{selectedName || equipmentName(item)}</h2>
-              <p>
-                {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
-                  Number(quality) - 1
-                ] || "Unknown quality"}{" "}
-                · {region}
-              </p>
+        {hasResult ? (
+          <div className="market-item-overview">
+            <div className="market-selected-item">
+              <ItemIcon id={item} quality={Number(quality)} size={88} />
+              <div>
+                <span className="eyebrow">SELECTED ITEM</span>
+                <h2>{selectedName || equipmentName(item)}</h2>
+                <p>
+                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
+                    Number(quality) - 1
+                  ] || "Unknown quality"}{" "}
+                  · {region}
+                </p>
+              </div>
+            </div>
+            <p className="quote-freshness">
+              {rows.length
+                ? !summary.available
+                  ? "No valid price observations were returned for this item."
+                  : summary.stale
+                    ? "Some observations are stale. Check timestamps before trading."
+                    : "Source timestamps are within the application freshness window."
+                : "Request prices to inspect quote freshness."}
+            </p>
+            <dl className="market-quote-summary">
+              <div>
+                <dt>Lowest observed sell order</dt>
+                <dd className={`numeric${summary.ask ? "" : " quote-unavailable"}`}>
+                  {summary.ask ? format(summary.ask.sell_price_min) : "No quote"}
+                  <small>{summary.ask?.city || "No available quote"}</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Highest observed buy order</dt>
+                <dd className={`numeric${summary.bid ? "" : " quote-unavailable"}`}>
+                  {summary.bid ? format(summary.bid.buy_price_max) : "No quote"}
+                  <small>{summary.bid?.city || "No available quote"}</small>
+                </dd>
+              </div>
+            </dl>
+            <div className="actions">
+              <Link className="button secondary" href={`/tools/flipping?region=${region}`}>
+                Plan a trade
+              </Link>
+              <Link className="text-link" href={`/items?region=${region}`}>
+                Item reference
+              </Link>
             </div>
           </div>
-          <p className="quote-freshness">
-            {rows.length
-              ? !summary.available
-                ? "No valid price observations were returned for this item."
-                : summary.stale
-                  ? "Some observations are stale. Check timestamps before trading."
-                  : "Source timestamps are within the application freshness window."
-              : "Request prices to inspect quote freshness."}
-          </p>
-          <dl className="market-quote-summary">
-            <div>
-              <dt>Lowest observed sell order</dt>
-              <dd className={`numeric${summary.ask ? "" : " quote-unavailable"}`}>
-                {summary.ask ? format(summary.ask.sell_price_min) : "Unavailable"}
-                <small>{summary.ask?.city || "No available quote"}</small>
-              </dd>
-            </div>
-            <div>
-              <dt>Highest observed buy order</dt>
-              <dd className={`numeric${summary.bid ? "" : " quote-unavailable"}`}>
-                {summary.bid ? format(summary.bid.buy_price_max) : "Unavailable"}
-                <small>{summary.bid?.city || "No available quote"}</small>
-              </dd>
-            </div>
-          </dl>
-          <div className="actions">
-            <Link className="button secondary" href={`/tools/flipping?region=${region}`}>
-              Plan a trade
-            </Link>
-            <Link className="text-link" href={`/items?region=${region}`}>
-              Item reference
-            </Link>
+        ) : (
+          <div className="market-getting-started">
+            <ChartNoAxesCombined size={32} aria-hidden="true" />
+            <h2>From a price check to a trade</h2>
+            <ul>
+              <li>
+                <Search aria-hidden="true" />
+                <div>
+                  <strong>Find your item</strong>
+                  <p>
+                    Search gear, resources or consumables. Use item filters for tier and
+                    enchantment.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <MapPin aria-hidden="true" />
+                <div>
+                  <strong>Compare the right markets</strong>
+                  <p>Choose quality, then filter the returned prices by city.</p>
+                </div>
+              </li>
+              <li>
+                <ArrowRight aria-hidden="true" />
+                <div>
+                  <strong>Check before you commit</strong>
+                  <p>
+                    Inspect source times and price history. Plan fees and transport before trading.
+                  </p>
+                </div>
+              </li>
+            </ul>
           </div>
+        )}
+        {!hasResult && (
+          <button
+            type="button"
+            className="button secondary market-research-toggle"
+            aria-expanded={researchOpen}
+            aria-controls="market-history-research"
+            onClick={() => setResearchOpen(!researchOpen)}
+          >
+            {researchOpen ? "Hide price history" : "Research price history"}
+          </button>
+        )}
+        <div id="market-history-research" hidden={!hasResult && !researchOpen}>
+          <History item={item} quality={Number(quality)} />
         </div>
-        <History item={item} quality={Number(quality)} />
         <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
       </aside>
     </div>

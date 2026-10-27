@@ -23,7 +23,7 @@
       "BLOCKED": 0,
       "NOT_TESTED": 0
     },
-    "rule": "Equal current acceptance scopes within each category; joint credit is implementation \u00d7 verification. NOT_APPLICABLE excluded with rationale. Historical/process duplicates are not scored."
+    "rule": "Equal current acceptance scopes within each category; joint credit is implementation × verification. NOT_APPLICABLE excluded with rationale. Historical/process duplicates are not scored."
   },
   "items": [
     {
@@ -32,7 +32,7 @@
       "title": "Regional market, item discovery and observation history",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Homepage loads a compact city preview on request with independent side timestamps, missing values and identity cancellation.",
+      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Market starts with guided setup and retains independent watchlist/history access. The homepage has one searchable source-price/history preview with exact item/region identity and independent side timestamps.",
       "remaining": "Full catalog is DATA-001; watchlists are CORE-020.",
       "evidence": [
         "src/components/market.tsx",
@@ -48,7 +48,7 @@
       "title": "Build equipment editor and persistence",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Starter equipment/ability selectors, alternatives, private/public/unlisted editing, optimistic revisions and save/reload. Homepage cards display saved armor/cape and only actually recorded optional consumables.",
+      "verified_scope": "Starter equipment/ability selectors, alternatives, private/public/unlisted editing, optimistic revisions and save/reload. The homepage now links directly to build creation instead of duplicating community discovery.",
       "remaining": "Complete item/consumable families, unlocks/statistics and equipment-set tray remain absent.",
       "evidence": [
         "src/lib/builds/validation.ts",
@@ -87,7 +87,7 @@
       "title": "Local composition PNG download",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Real equipment/fallback labels; full-height export and 1920\u00d71080 option up to 20 players, actual downloaded PNG dimensions.",
+      "verified_scope": "Real equipment/fallback labels; full-height export and 1920×1080 option up to 20 players, actual downloaded PNG dimensions.",
       "remaining": "Browser/device matrix is sampled; no external upload or complete artwork-availability guarantee.",
       "evidence": [
         "src/components/composition-png-export.tsx",
@@ -185,7 +185,7 @@
       "title": "Enchanting calculator",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Supported starter equipment families, quality preservation, .0\u2013.3 upgrade materials and saved scenarios.",
+      "verified_scope": "Supported starter equipment families, quality preservation, .0–.3 upgrade materials and saved scenarios.",
       "remaining": "Full families/two-hand coverage and current-patch ingredient verification remain incomplete.",
       "evidence": [
         "src/lib/albion/recipes.ts",
@@ -547,7 +547,7 @@
       "title": "Current reference design acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Current market-led homepage follows the supplied user reference with bold navigation, observed-price chart and authentic equipment previews. Latest homepage pass replaces scene cards with an interactive gear example, earlier market lookup and grouped task links. Measured the user-owned Grind public frontend across 30 pages. Applied real renderer art, stronger surfaces and larger gear/role previews to Outpost tools/builds/comps while preserving charcoal/copper identity. Actual before/after desktop/mobile captures and four deliberate golden changes inspected. Earlier whole-page-set refinement remains recorded; global owner acceptance remains open.",
+      "verified_scope": "Current task-led implementation replaces the equipment collage and repeated market/community widgets with a short introduction, direct planning tasks and one searchable market preview. Market guides setup before quotes; mobile production has persistent recipe/pricing/profit steps. Shared typography,8px controls,12px panels and theme tokens replace the isolated brown terminal. Actual before/after captures are opened in docs/design-review/ux-transformation/README.md. Historical owner corrections remain linked; no global owner acceptance is inferred.",
       "remaining": "Global owner visual acceptance, full equipment-set layout and asset-dependent differences remain open.",
       "evidence": [
         "docs/design-review/README.md",
@@ -564,7 +564,8 @@
         "docs/design-review/top-tabs/README.md",
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
-        "docs/design-review/playful-ui/README.md"
+        "docs/design-review/playful-ui/README.md",
+        "docs/design-review/ux-transformation/README.md"
       ]
     },
     {
@@ -573,7 +574,7 @@
       "title": "Responsive navigation, editors and data tables",
       "implementation": "COMPLETE",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Latest market-led homepage recaptured at six responsive widths with desktop/mobile image review. Latest homepage captures at 320/375/390/768/1440/1920 have no horizontal overflow and were opened. Latest tools/builds/comps pass: 18 configurations at 320/375/390/768/1440/1920px, no document overflow, failed images or page/console/request errors. Filtering, private boundaries, favorites, save/reload and PNG/JSON export regressions pass. Prior 192-configuration page-set review remains separate historical evidence.",
+      "verified_scope": "Current homepage/Market/crafting are captured at1440/1920/768/390/375/320px. Phone preview details expand on demand, crafting renders one persistent step at a time and saved-run controls expand separately. Related navigation, equipment/comp goldens, filtering, scenario and watchlist persistence regressions remain exercised. See the current task-led UX review for actual scope and artifacts.",
       "remaining": "Physical devices, all states/browser engines, complete layout acceptance and owner visual approval remain open. Equipment names deliberately increase panel height for readability.",
       "evidence": [
         "e2e/design-review.spec.ts",
@@ -596,7 +597,8 @@
         "docs/design-review/top-tabs/README.md",
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
-        "docs/design-review/playful-ui/README.md"
+        "docs/design-review/playful-ui/README.md",
+        "docs/design-review/ux-transformation/README.md"
       ]
     },
     {
@@ -605,7 +607,7 @@
       "title": "Accessibility acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Latest owner correction: generated panorama removed, real equipment selector added, search/menu/region controls rebuilt, shared fonts/buttons improved and actual route/theme animations observed with reduced-motion checks. Full local phase passes143 unit/71 browser tests. See docs/design-review/playful-ui/README.md. Latest refinement: corrected logo crop/alignment, logo-derived palette, region/theme/Discord controls, original left-of-title tool emblems and browser-measured hover/press motion. See docs/design-review/brand-interaction/README.md for current responsive/state checks and limitations. Latest owner clarification: scene-led reference composition with horizontal top tabs, actual source snapshot refresh controls and reduced-motion support. See latest rendered evidence; subjective owner acceptance remains open. Owner rejected sidebar/scenery; latest correction restores bold top tabs, removes the sidebar/generated hero and uses genuine equipment previews. Six responsive captures were opened with zero overflow or sampled axe violations. Latest companion-app pass: shared sidebar/search header, wide disclosed hero and four compact gear-led tool previews; final browser evidence is recorded in the linked review. Latest market-led homepage includes corrected chart-control and light-theme surface contrast, with source-state axe scans. Latest homepage: six unrestricted axe scans reported zero violations; preview labels and mobile header wrapping were corrected. Latest three-surface pass: six unrestricted desktop/mobile axe scans reported zero violations. Prior 64 page-set scans plus four anonymous/source-state scans remain recorded separately. Keyboard/reduced-motion regressions still pass; no full conformance claim.",
+      "verified_scope": "Current sampled initial and populated desktop/mobile axe scans, keyboard item selection, dialog/search focus, persistent mobile-step focus and reduced-motion regressions remain exercised. Current artifacts and final counts are recorded in the task-led UX review. Full conformance and physical-device acceptance remain open.",
       "remaining": "Complete screen-reader, voice-control, contrast/zoom and physical-device acceptance; sampled axe and Lighthouse are not conformance evidence.",
       "evidence": [
         "e2e/qa-light.spec.ts",
@@ -623,7 +625,8 @@
         "docs/design-review/top-tabs/README.md",
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
-        "docs/design-review/playful-ui/README.md"
+        "docs/design-review/playful-ui/README.md",
+        "docs/design-review/ux-transformation/README.md"
       ]
     },
     {
@@ -839,7 +842,7 @@
       "title": "Hosted repository CI",
       "implementation": "PARTIAL",
       "verification": "FAILED",
-      "verified_scope": "Private Outpost workflow was uploaded and executed. Hosted main run40427946626 failed unit and browser checks; the original publication omitted tests/, now restored in the handoff candidate with143 clean-clone unit tests passing. Detailed hosted browser failure was not retained by the prior workflow. Local full phase passes independently.",
+      "verified_scope": "Private Outpost workflow was uploaded and executed. Hosted main run40427946626 failed unit and browser checks; the original publication omitted tests/, subsequently restored with143 clean-clone unit tests passing. The corrected-source run40431213286 also completed with failure in the combined quality step. No hosted success is claimed. Local full phase passes independently.",
       "remaining": "Observe a successful hosted quality rerun of the corrected complete source and investigate any remaining hosted browser failure; no hosted pass is inferred from local results.",
       "evidence": [
         ".github/workflows/quality.yml",

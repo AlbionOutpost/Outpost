@@ -2,13 +2,13 @@
 
 ## Current direction and reference hierarchy
 
-Recreate the **current implemented Outpost**, not a fresh theme. Its identity is the original copper/cream banner logo, neutral charcoal product surfaces, restrained warm accents, readable application type and real Albion equipment. The owner rejected the green/ivory expedition, left sidebar and generated panoramic hero. Historical screenshots are useful only with their dated rejection/context. The current reference is [search/menus/real-equipment review](../design-review/playful-ui/README.md), with [desktop](../design-review/playful-ui/after-1440.png), [mobile](../design-review/playful-ui/after-390.png), [search](../design-review/playful-ui/search-empty-1440.png), [Tools](../design-review/playful-ui/tools-1440.png), [region](../design-review/playful-ui/region-1440.png) and [light theme](../design-review/playful-ui/light-1440.png).
+Recreate the **current implemented Outpost**, not a fresh theme. Its identity is the original copper/cream banner logo, neutral charcoal product surfaces, restrained warm accents, readable application type and real Albion equipment. The owner rejected the green/ivory expedition, left sidebar and generated panoramic hero. Historical screenshots are useful only with their dated rejection/context. The current homepage/Market/crafting reference is [the task-led UX implementation](../design-review/ux-transformation/README.md). Shared search/menus reference: [search/menus/real-equipment review](../design-review/playful-ui/README.md), with [desktop](../design-review/playful-ui/after-1440.png), [mobile](../design-review/playful-ui/after-390.png), [search](../design-review/playful-ui/search-empty-1440.png), [Tools](../design-review/playful-ui/tools-1440.png), [region](../design-review/playful-ui/region-1440.png) and [light theme](../design-review/playful-ui/light-1440.png).
 
 The user-owned Albion Online Grind influenced readable controls, named task destinations and genuine game imagery. Do not copy its proprietary source, audience counts, example prices, premium claims or unrelated layout wholesale. The rebuild is Outpost, including its actual limited data states.
 
 ## Font roles
 
-All fonts are local through `src/app/fonts.ts` and `next/font/local`; retain notices. Inter variable100–900 is UI/body/application headings. Barlow Condensed600/700 is secondary display personality and800 is major display. Geist Mono variable is numeric/financial data. The homepage’s current large headline uses Inter, not tiny condensed application controls. Body is15px in the current shell; desktop nav15px bold, ordinary buttons about14px, card titles19px desktop/16px phone, descriptive card text14px, hero description16px desktop/15px phone. The hero title scales to64px desktop,44px intermediate and36–48px phone. Exact computed sizes depend on the existing layered selectors.
+All fonts are local through `src/app/fonts.ts` and `next/font/local`; retain notices. Inter variable100–900 is UI/body/application headings. Barlow Condensed600/700 is secondary display personality and800 is major display. Geist Mono variable is numeric/financial data. The homepage’s current large headline uses Inter, not tiny condensed application controls. Body is15px in the current shell; desktop nav15px bold, ordinary buttons about14px, card titles19px desktop/16px phone, descriptive card text14px, hero description16px desktop/15px phone. The homepage heading is48px desktop,40px intermediate and34px phone; shared page titles are34px desktop/28px phone. Exact computed sizes depend on the existing layered selectors.
 
 Inter is the prioritized UI font. Barlow variants and Geist use `preload:false`; never reintroduce duplicate Barlow loading declarations or an external Google Fonts waterfall. Preserve fallback fonts/font-display swap and actual font variables (`--font-ui`, `--font-display`, `--font-heading`, `--font-data`).
 
@@ -28,13 +28,11 @@ Inter is the prioritized UI font. Barlow variants and Geist use `preload:false`;
 | `--error`                                       | `#f17c73`             | Existing light error token; check actual rendered contrast |
 | `--metal`                                       | `#d0ad79`             | `#80582e`                                                  |
 
-The selected market terminal has readable local warm-dark tokens even in light mode. Do not mistake that intentional bounded data panel for a requirement to keep every light-mode card dark. Material/primary/negative/selected states retain contrast; color state changes are instantaneous while transform/border/shadow motion is animated. Fading text opacity over an opaque surface was corrected after rapid popup switching exposed contrast problems.
-
-Spacing uses a4px base scale, with8/12/16/24/32px common and a54px large hero grid gap. Buttons are approximately8px radius, current tool menu14px, search17px and equipment panel16px; other existing workbench/table borders remain compact. Use the actual source cascade rather than applying one universal border radius to every control. Avoid random glow, excessive gradients/glass and anonymous repeated form cards.
+The market terminal inherits the shared dark/light tokens; the old brown local palette is removed. Controls use an8px radius and major panels12px through `task-ui.css`. Small range controls use6px and step markers are circular. The spacing scale is4/8/12/16/24/32px; preserve readable data/state hierarchy in both themes.
 
 ## CSS composition and source order
 
-The root layout imports `globals.css`, `workspace.css`, `player-workspaces.css`, `product-shell.css`, `brand-interactions.css`, `playful-ui.css`. The home imports `homepage.css`, which includes `home-market-terminal.css`; specialized equipment/production styles are imported by affected routes/components. Specificity and import order matter: later explicit Outpost overrides intentionally replace older product defaults. Do not rebuild from the first color declaration found by grep.
+The root layout imports `globals.css`, `workspace.css`, `player-workspaces.css`, `product-shell.css`, `brand-interactions.css`, `playful-ui.css`, then `task-ui.css`. The home imports `homepage.css`, which includes `home-market-terminal.css`; specialized equipment/production styles are imported by affected routes/components. Specificity and import order matter: later explicit Outpost overrides intentionally replace older product defaults. Do not rebuild from the first color declaration found by grep.
 
 Classes `.app.outpost`, `.light`, `.home-route`, `.workspace-route`, `.product-route` and main `data-page`/`data-width` select actual page patterns. Product max width is1536px, with matched header/content gutters. Desktop content generally uses24px gutters; phone becomes16px. Reading pages/boards/workspaces deliberately differ. Large tables own their horizontal scrolling; do not hide document overflow to conceal broken controls.
 
@@ -44,9 +42,9 @@ Use the unchanged `public/brand/outpost-logo.png` via `Wordmark`. The original21
 
 ## Homepage composition
 
-Desktop: balanced text/equipment grid, clear eyebrow, two-line headline, short description and two actual actions. The compact equipment panel has a named weapon link, two supporting named armor links, three weapon selector buttons and actual tier context. The five original renderer PNGs are pinned locally; use Next Image with appropriate sizes, eager/high priority for the lead. No generated scenery, fake market dashboard screenshot, invented price line or apparent recommended build statistics.
+Desktop: a compact introduction and three task links beside one searchable observed-market preview. No equipment collage, redundant market panels or community feed. Genuine item imagery identifies the selected item. Chart points preserve actual dates, missing-day gaps and source identity. A refresh action remains inside source details.
 
-Tablet keeps a deliberately denser two-column hero; phone stacks text/actions, equipment showcase, task cards, market snapshot, terminal/lookup and community section. Task cards are2columns on ordinary phones and1column at≤360px; card title words must not break internally. Remove the old decorative caption that overlapped the jacket label. Real item thumbnails belong in actual item/price contexts, not repeated arbitrary strips in every destination tile.
+At≤780px, introduction/tasks lead and the market preview initially shows search/selection/navigation only. A labelled button expands city prices/history and sets `aria-expanded`. Crafting uses three persistent mobile steps (recipe, materials, profit); only the chosen panel is visible. Switching steps preserves all fields and moves focus to the panel. Desktop retains simultaneous configuration/material/result access. Missing prices never become zero or a calculated profit.
 
 ## Shared interaction contracts
 
@@ -60,7 +58,7 @@ Tablet keeps a deliberately denser two-column hero; phone stacks text/actions, e
 | Theme                       | Snapshot crossfade when `document.startViewTransition` is supported; immediate update otherwise; persisted cookie and pressed state  |
 | Route                       | React19.3 `ViewTransition` around main content keyed by pathname; persistent header stays outside it                                 |
 | Editor/member/event dialogs | Focused modal workflows, correct close/Escape/focus return and validation/draft retention                                            |
-| Source refresh              | Actual visible/online bounded polling with pause/manual controls; no invented animated market values                                 |
+| Source refresh              | Explicit source refresh in the single preview; no separate homepage polling snapshot or invented values                              |
 
 Current shared button transform duration is about190ms; buttons hover up2px/scale1.025 and press down1px/scale.97. Feature cards have their own restrained lift/tilt. Tools move in/out around160ms and search around180ms, retaining full text opacity. Route arrival240ms/exit130ms and theme crossfade280ms communicate state changes. Preserve named CSS transitions and user feedback, not arbitrary duration claims if later source changes.
 

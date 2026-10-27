@@ -14,6 +14,7 @@ import "./player-workspaces.css";
 import "./product-shell.css";
 import "./brand-interactions.css";
 import "./playful-ui.css";
+import "./task-ui.css";
 export const metadata: Metadata = {
   title: { default: "Outpost | Albion tools", template: "%s | Outpost" },
   description:

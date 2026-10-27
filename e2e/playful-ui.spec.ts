@@ -32,10 +32,9 @@ test("equipment selection opens the real item, and the redesigned search and men
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  await page.getByRole("button", { name: "Broadsword", exact: true }).click();
-  const item = page.getByRole("link", { name: "Inspect Broadsword", exact: true });
-  await expect(item).toHaveAttribute("href", "/items/T4_MAIN_SWORD?region=europe");
-  await expect(item.locator("img")).toHaveAttribute("src", /T4_MAIN_SWORD/);
+  const preview = page.getByRole("region", { name: "Observed market overview" });
+  const item = preview.getByRole("link", { name: "Explore market", exact: true });
+  await expect(item).toHaveAttribute("href", "/tools/market?region=europe&item=T4_BAG");
   await page.keyboard.press("Control+k");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
@@ -43,5 +42,5 @@ test("equipment selection opens the real item, and the redesigned search and men
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
   await item.click();
-  await expect(page).toHaveURL(/items\/T4_MAIN_SWORD/);
+  await expect(page).toHaveURL(/tools\/market.*item=T4_BAG/);
 });

@@ -1,5 +1,7 @@
 # Outpost interface system
 
+Current October27 UX: [task-led homepage, Market and crafting](design-review/ux-transformation/README.md). The homepage has one searchable observed-market preview and three compact planning links. Market setup precedes quote results; independent watchlist and optional history access remain available. Crafting uses persistent recipe/pricing/profit steps on phones. `task-ui.css` defines8px controls,12px panels and shared page-heading/surface rules; the terminal inherits dark/light tokens. Earlier composition notes below are historical where they conflict.
+
 Current scope: implemented interface rules with sampled browser evidence; global owner visual acceptance is still open. [Current per-page reviews](design-review/README.md) replace the old homepage-only sequencing. [Original design history](history/2026-10-26-before-reconciliation/docs/DESIGN_SYSTEM.md) is preserved.
 
 ## Typography, surfaces and navigation

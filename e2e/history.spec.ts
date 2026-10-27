@@ -31,6 +31,7 @@ test("changing quality allows a new history request while the old request is pen
   });
   try {
     await page.goto("/tools/market?region=europe");
+    await page.getByRole("button", { name: "Research price history", exact: true }).click();
     await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
     await expect.poll(() => firstRequested).toBe(true);
     await page.getByLabel("Quality", { exact: true }).selectOption("2");

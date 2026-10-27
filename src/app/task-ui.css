@@ -1,0 +1,417 @@
+/* Shared task surfaces: one scale for tools, navigation, and their states. */
+.app.outpost {
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+}
+.app.outpost
+  :is(.panel, .market-item-panel, .market-getting-started, .scenario-controls, .history-panel) {
+  border-radius: var(--radius-panel);
+  background: var(--panel);
+}
+.app.outpost
+  :is(
+    input,
+    select,
+    textarea,
+    .button,
+    .desktop-navigation > a,
+    .desktop-navigation summary,
+    .header-region,
+    .search-trigger
+  ) {
+  border-radius: var(--radius-control);
+}
+.app.outpost :is(input, select, textarea) {
+  background-color: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+.app.outpost :is(.button, button) {
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.app.outpost .page-title {
+  font: 750 34px/1.18 var(--font-ui);
+  letter-spacing: -0.025em;
+}
+.app.outpost .intro {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.task-progress {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  grid-column: 1 / -1;
+}
+.task-progress :is(li, button) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font: 600 14px/1.4 var(--font-ui);
+}
+.task-progress span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.task-progress [aria-current="step"] {
+  color: var(--text);
+}
+.task-progress [aria-current="step"] span {
+  background: var(--action);
+  color: #fff;
+  border-color: var(--action);
+}
+.task-state {
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.task-state h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.task-state p {
+  color: var(--muted);
+  margin-block: 8px 0;
+}
+.app.outpost .market-workspace {
+  gap: 24px;
+}
+.app.outpost .market-workspace.is-setup {
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.75fr);
+}
+.market-workspace > .task-progress {
+  margin: 0;
+}
+.market-setup-heading h2 {
+  font: 650 22px/1.3 var(--font-ui);
+  margin: 0 0 8px;
+}
+.market-setup-heading p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+.app.outpost .market-filters {
+  grid-template-columns: minmax(0, 1fr) 140px 140px;
+  gap: 12px;
+  padding: 0;
+}
+.app.outpost .market-filters > .catalog-picker {
+  grid-column: 1 / -1;
+}
+.app.outpost .market-filters > .button {
+  grid-column: auto;
+  width: 100%;
+}
+.app.outpost .market-filters label {
+  font-size: 14px;
+}
+.app.outpost .market-filters :is(input, select) {
+  min-height: 44px;
+}
+.market-first-use {
+  margin-block: 24px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.market-selection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.market-selection strong {
+  display: block;
+  font-size: 19px;
+}
+.market-selection span {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.market-first-use > p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 20px 0 0;
+}
+.market-start-examples {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.market-start-examples button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.market-start-examples button[aria-pressed="true"] {
+  border-color: var(--accent-ink);
+}
+.market-getting-started {
+  border: 0;
+  padding: 4px;
+}
+.market-getting-started > svg {
+  color: var(--accent-ink);
+  margin-bottom: 16px;
+}
+.market-getting-started h2 {
+  font: 650 20px/1.4 var(--font-ui);
+  margin: 0;
+}
+.market-getting-started ul {
+  padding: 0;
+  list-style: none;
+  margin: 24px 0 0;
+  display: grid;
+  gap: 24px;
+}
+.market-getting-started li {
+  display: flex;
+  gap: 12px;
+}
+.market-getting-started li > svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.market-getting-started strong {
+  font-size: 14px;
+}
+.market-getting-started p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.market-explorer-page .market-table-toolbar {
+  margin-top: 20px;
+}
+.market-explorer-page .market-table-toolbar label {
+  font-size: 13px;
+}
+.market-explorer-page .market-source-note {
+  display: block;
+  line-height: 1.65;
+  margin-block: 16px;
+}
+.app.outpost .market-item-panel .eyebrow {
+  display: none;
+}
+.app.outpost .production-workspace .panel {
+  border-radius: var(--radius-panel);
+}
+.app.outpost .production-calculator-page .production-workspace {
+  gap: 20px;
+}
+.app.outpost .production-workspace :is(label, summary) {
+  font-size: 14px;
+}
+.app.outpost .production-workspace input {
+  min-height: 44px;
+}
+.production-steps button {
+  padding: 4px 0;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+}
+.production-city-choices {
+  margin-top: 20px;
+}
+.production-price-help {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.production-next {
+  margin-top: 20px;
+  width: 100%;
+}
+.production-result-start {
+  display: grid;
+  gap: 16px;
+  padding-block: 16px;
+}
+.production-result-start > svg {
+  color: var(--accent-ink);
+}
+.production-result-start h3 {
+  font: 650 20px/1.35 var(--font-ui);
+  margin: 0;
+}
+.production-result-start p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+.app.outpost .production-workspace .result > p {
+  border: 0;
+  padding-left: 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.production-result-note {
+  display: flex;
+  gap: 8px;
+  color: var(--muted);
+}
+.production-result-note svg {
+  flex-shrink: 0;
+}
+@media (max-width: 1100px) {
+  .app.outpost .market-workspace.is-setup {
+    grid-template-columns: minmax(0, 1.4fr) minmax(250px, 1fr);
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .page-title {
+    font-size: 28px;
+  }
+  .app.outpost .market-workspace.is-setup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .market-getting-started {
+    display: none;
+  }
+  .task-progress {
+    gap: 12px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+  }
+  .task-progress :is(li, button) {
+    font-size: 12px;
+    gap: 6px;
+  }
+  .task-progress span {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+  .market-workspace > .task-progress {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .app.outpost .market-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .market-filters > .button {
+    grid-column: 1 / -1;
+  }
+  .market-first-use {
+    padding: 16px;
+    margin-block: 16px;
+  }
+  .market-selection strong {
+    font-size: 17px;
+  }
+  .market-start-examples button {
+    padding-inline: 8px;
+  }
+  .market-setup-heading h2 {
+    font-size: 20px;
+  }
+  .app.outpost .production-calculator-page .production-workspace {
+    display: block;
+  }
+  .production-journey[data-step="1"] .production-workspace > :is(.production-materials, .result),
+  .production-journey[data-step="2"] .production-workspace > :is(.calculator-inputs, .result),
+  .production-journey[data-step="3"]
+    .production-workspace
+    > :is(.calculator-inputs, .production-materials) {
+    display: none;
+  }
+  .production-steps button {
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    text-align: center;
+  }
+  .production-calculator-page .calculator-inputs .input-grid {
+    gap: 12px;
+  }
+  .app.outpost .production-workspace input:not([type="checkbox"]) {
+    font-size: 16px;
+  }
+  .production-journey > .scenario-controls {
+    margin-top: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost :is(.button, button) {
+    transition: none;
+  }
+}
+
+.market-research-toggle {
+  margin-block: 24px 12px;
+  width: 100%;
+}
+.market-item-panel #market-history-research .history-panel {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin-block: 24px;
+}
+
+.production-scenarios-toggle {
+  display: none;
+}
+@media (max-width: 780px) {
+  .market-workspace > .task-progress li {
+    flex-direction: column;
+    text-align: center;
+  }
+  .production-scenarios-toggle {
+    display: flex;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .production-scenarios:not(.is-open) {
+    display: none;
+  }
+  .production-scenarios .section {
+    margin-top: 12px;
+  }
+}
+
+/* Keep a focused workflow panel below the persistent global header. */
+:is(#production-setup, #production-materials, #production-results) {
+  scroll-margin-top: 96px;
+}

@@ -47,8 +47,8 @@ Refresh evidence only after inspecting actual logs, inventory changes and screen
 | Community private targets/comments/votes/moderation           | `community.spec.ts`, account/security/private-cache regressions                                                    |
 | Timers/account/settings recovery                              | `personal-tools.spec.ts`, `account.spec.ts`, `settings-recovery.spec.ts`, timer-engine tests                       |
 | Private watchlist persistence/cap/concurrency                 | `market-watchlist.spec.ts` and watchlist schema tests                                                              |
-| Homepage actual source/error/region/cancellation              | `homepage-polish.spec.ts`, `home-market-terminal.spec.ts`, `home-market-pulse.spec.ts`                             |
-| Search/menus/equipment selector/region/theme                  | `playful-ui.spec.ts`, `public.spec.ts`, `outpost.spec.ts`                                                          |
+| Homepage source/error/region and Market onboarding            | `homepage-polish.spec.ts`, `home-market-terminal.spec.ts`, `home-market-pulse.spec.ts`                             |
+| Search/menus/market selection/region/theme                    | `playful-ui.spec.ts`, `public.spec.ts`, `outpost.spec.ts`                                                          |
 | Broad rendered layouts/themes/focus                           | `design-review.spec.ts`, `qa-audit.spec.ts`, `qa-light.spec.ts`, per-page visual files and premium goldens         |
 | Migration/cascade/backup/restore/health                       | `scripts/qa-database.mjs`, database diagnostics, environment/boundary tests                                        |
 
@@ -79,3 +79,5 @@ Open every changed golden, explain intentional changes and rerun without updatin
 Identify actual LCP element and waterfall before changing delivery. For a claimed improvement use at least three comparable baseline and three post-change production samples with the same route/mobile profile/cache description, sequential runs and median/range. Distinguish cold browser from warm application/image/source caches. Record actual CLS/TBT/other lab values and leave field INP/p75 unverified without actual field evidence. The documented hero comparison5.222→2.862s median is a scoped lab result and still misses2.5s.
 
 Current UI/runtime/deployment phases also require actual applicable Docker/Lighthouse attempts and precise permission failures, not stale inherited evidence. An image build, health200 or synthetic restore does not establish real credentialed HTTPS, scheduled encrypted backups, production restore or incident operation. Keep release NO-GO until essential gates actually close.
+
+Mobile crafting steps and independently calculated profit are covered by `e2e/ux-task-flow.spec.ts`. The retired homepage snapshot/manual lookup layouts have been replaced by the single searchable terminal; their old layout assertions are superseded while exact prices, source dates, identity, failure/retry and accounting checks remain.

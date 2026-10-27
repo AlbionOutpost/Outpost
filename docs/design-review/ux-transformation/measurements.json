@@ -1,0 +1,190 @@
+{
+  "homepage": [
+    {
+      "width": 1440,
+      "beforeFullPageHeight": 1730,
+      "afterFullPageHeight": 997
+    },
+    {
+      "width": 390,
+      "beforeFullPageHeight": 3006,
+      "afterFullPageHeight": 1101
+    },
+    {
+      "width": 320,
+      "beforeFullPageHeight": 3539,
+      "afterFullPageHeight": 1145
+    }
+  ],
+  "initialViewportHeights": {
+    "1440": 900,
+    "390": 844,
+    "320": 844
+  },
+  "layoutScans": [
+    {
+      "name": "home",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "home",
+      "width": 1920,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 1920,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 1920,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "home",
+      "width": 768,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 768,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 768,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "home",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "home",
+      "width": 375,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 375,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 375,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "home",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "market",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "name": "crafting",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    }
+  ],
+  "stateScans": [
+    {
+      "state": "actual-source-market",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "manual-crafting-1000-silver",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "light-home",
+      "width": 1440,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "actual-source-market",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "manual-crafting-1000-silver",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "light-home",
+      "width": 390,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "actual-source-market",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "manual-crafting-1000-silver",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    },
+    {
+      "state": "light-home",
+      "width": 320,
+      "overflow": false,
+      "axe": []
+    }
+  ]
+}

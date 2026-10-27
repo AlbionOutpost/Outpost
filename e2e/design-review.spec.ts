@@ -113,7 +113,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
               .first()
               .evaluate((el) => getComputedStyle(el).fontFamily),
           ).toMatch(
-            route !== "/" && (await page.locator("main h1.display-title").count())
+            route !== "/" && (await page.locator("main h1.display-title:not(.page-title)").count())
               ? /barlow/i
               : /inter/i,
           );
@@ -177,7 +177,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
       .getByRole("option")
       .first()
       .click();
-    await page.getByRole("link", { name: /^Open market/ }).click();
+    await page.getByRole("link", { name: "Explore market", exact: true }).click();
     await page.getByText("Advanced item identifier", { exact: true }).click();
     await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T6_MAIN_AXE@1");
     await expect(page).toHaveURL(/region=europe/);

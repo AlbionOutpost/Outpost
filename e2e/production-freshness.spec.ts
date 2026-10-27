@@ -75,7 +75,8 @@ test("a zero source-price sentinel cannot produce a complete profit estimate", a
   await page.getByRole("button", { name: "Load market observations", exact: true }).click();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("100");
   await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("");
-  await expect(page.locator(".panel.result > strong")).toHaveText("Unavailable");
+  await expect(page.locator(".panel.result > strong")).toHaveCount(0);
+  await expect(page.locator(".production-result-start")).toContainText("Finish pricing your run");
   await expect(
     page.getByRole("status").filter({ hasText: "Missing or mismatched observations" }),
   ).toContainText("T4 Battleaxe");
