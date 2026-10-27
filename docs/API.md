@@ -1,5 +1,7 @@
 # Outpost API contracts
 
+The [rebuild HTTP specification](rebuild/HTTP_API.md) documents actual query/body shapes, errors and all exported operations; [generated route inventory](rebuild/INVENTORY.md) is checked against source.
+
 Source schemas and access predicates are authoritative. Responses are JSON unless noted; private data uses no-store behavior. Mutations authenticate, enforce the configured same-origin boundary, apply budgets and parse bounded JSON. These source/test controls are scoped evidence, not comprehensive security certification.
 
 ## Market, metadata and accounting inputs
@@ -62,4 +64,4 @@ Build JSON uses the default64KiB boundary; composition roster operations explici
 | `/api/auth/[...nextauth]`       | NextAuth provider/session/signout handlers; actual Discord exchange remains unverified.                                                                                                                       |
 | `GET /api/health`               | Database/cache checks and separate provider-configuration state; no secrets/connection URLs or complete readiness certification.                                                                              |
 
-Profile save/account deletion are authenticated Server Actions in [settings actions](../src/app/settings/actions.ts), with deletion confirmation and group-ownership protection. Static scenario-share fragments hold validated assumptions and do not publish private saved records. Legacy export/calendar identifiers are retained for compatibility. There is no operational market-watchlist API: its prepared migration remains unapplied.
+Profile save/account deletion are authenticated Server Actions in [settings actions](../src/app/settings/actions.ts), with deletion confirmation and group-ownership protection. Static scenario-share fragments hold validated assumptions and do not publish private saved records. Legacy export/calendar identifiers are retained for compatibility. The private watchlist is implemented locally through `GET/POST /api/market-watch` and `DELETE /api/market-watch/[id]`, with migration17, per-user100-item cap, region/item/quality uniqueness, serializable duplicate/cap checks, reload persistence and owner-only deletion. Controlled staging rollout and recovery remain separate.

@@ -1,0 +1,16 @@
+{
+  "product": "Outpost",
+  "documentedImplementationCommit": "b1a22559d4f6675d26d5c1ceaea0d37011a0d8d6",
+  "documentedImplementationDate": "2026-10-27",
+  "scope": "Reproduce the implemented application, preserve its unknowns and release gates; not a claim of a complete current-patch Albion companion.",
+  "sourceRepository": "https://github.com/AlbionOutpost/Outpost",
+  "privateInputsExcluded": [
+    "environment values",
+    "credentials",
+    "sessions",
+    "private database contents",
+    "backups",
+    "ignored QA request logs"
+  ],
+  "requiredCheckout": "Use the commit containing this handbook or a later reviewed descendant. The feature baseline predates the handoff and its restoration of the omitted unit-test directory."
+}

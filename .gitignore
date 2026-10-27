@@ -31,3 +31,7 @@ Thumbs.db
 backups/
 .aws/
 .codex/auth.json
+
+# Generated Python validation caches
+__pycache__/
+*.pyc

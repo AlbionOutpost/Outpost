@@ -838,9 +838,9 @@
       "category": "operations",
       "title": "Hosted repository CI",
       "implementation": "PARTIAL",
-      "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Pinned-action quality workflow and dependency-update configuration published to private Outpost main. GitHub Quality gates run40427701027 was triggered and observed in_progress; not a hosted pass.",
-      "remaining": "Successful hosted Quality gates completion and ongoing operational ownership remain open.",
+      "verification": "FAILED",
+      "verified_scope": "Private Outpost workflow was uploaded and executed. Hosted main run40427946626 failed unit and browser checks; the original publication omitted tests/, now restored in the handoff candidate with143 clean-clone unit tests passing. Detailed hosted browser failure was not retained by the prior workflow. Local full phase passes independently.",
+      "remaining": "Observe a successful hosted quality rerun of the corrected complete source and investigate any remaining hosted browser failure; no hosted pass is inferred from local results.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

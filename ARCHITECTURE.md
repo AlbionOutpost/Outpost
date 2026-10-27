@@ -1,5 +1,7 @@
 # Outpost architecture
 
+For the complete reproducible implementation specification, read [the rebuild handoff](docs/rebuild/README.md) or its [single-file handbook](docs/rebuild/HANDBOOK.md).
+
 ## Runtime and boundaries
 
 Next.js App Router/React on Node22 is a modular monolith using strict TypeScript, PostgreSQL/Prisma and Redis. Installed versions are recorded in [stack audit](docs/engineering/STACK_AUDIT.md); current executed results belong in [QA_REPORT.md](QA_REPORT.md).
@@ -28,6 +30,6 @@ Pure trade/production/transport models distinguish supplied assumptions, observe
 
 Nonce CSP and private no-store behavior, origin checks, sanitized errors and validation have scoped regressions. HTTPS HSTS/cookie logic requires deployed verification. React renders author prose as text; there is no general untrusted-HTML or uploaded-asset pipeline. Scoped tests cannot certify the absence of injection or authorization vulnerabilities.
 
-Fonts are served locally through next/font. Official renderer item requests have bounded neutral fallback; homepage scenes are disclosed generated illustrations. Current UI uses Inter, Barlow Condensed and Geist Mono with shared dark/light/reduced-motion tokens. Historical cookie/cache keys, npm identity, export formats/filenames and calendar identifiers are preserved for compatibility; they do not set the product brand.
+Fonts are served locally through next/font. Official renderer item requests have bounded neutral fallback; the current homepage uses source-pinned real equipment artwork and all generated scenes are archived. Current UI uses Inter, Barlow Condensed and Geist Mono with shared dark/light/reduced-motion tokens. Historical cookie/cache keys, npm identity, export formats/filenames and calendar identifiers are preserved for compatibility; they do not set the product brand.
 
 The standalone nonroot container has historical local smoke evidence. Production monitoring, backup scheduling, rollback and public deployment require independent execution. [Deployment runbook](docs/DEPLOYMENT.md), [release gates](RELEASE_READINESS.md) and [architecture decisions](docs/engineering/ARCHITECTURE_DECISIONS.md) carry those details. Earlier implementation checkpoints are preserved in [history](docs/history/README.md).

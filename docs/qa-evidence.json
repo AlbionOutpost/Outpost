@@ -1,57 +1,57 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-27T00:31:46.009Z",
+  "phase_checked_at": "2026-10-27T01:08:37.389Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
       "name": "database-connectivity",
       "status": "PASS",
-      "seconds": 0.02
+      "seconds": 0.03
     },
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 1.65
+      "seconds": 1.84
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 4.58
+      "seconds": 5.03
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.37
+      "seconds": 2.46
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.17
+      "seconds": 0.15
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.56
+      "seconds": 3.88
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 4.19
+      "seconds": 5.18
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 90.57
+      "seconds": 112.66
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.44
+      "seconds": 0.56
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.34
+      "seconds": 0.43
     }
   ],
   "counts": {
@@ -62,7 +62,7 @@
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-27T00:35:30.958Z",
+    "checkedAt": "2026-10-27T01:10:05.501Z",
     "scope": "Repository-defined starter data, not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 205,
@@ -801,7 +801,7 @@
     ]
   },
   "source_scan": {
-    "filesScanned": 620,
+    "filesScanned": 643,
     "configuredKeys": ["NEXTAUTH_SECRET"],
     "findings": [],
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
@@ -814,7 +814,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "cf021614a3a34f830c1127319383012d038fd7622fd5d9a2eadeeb5231a9a283",
+      "sha256": "52e81d6a71ceedee6d8e151b185c9781f0d21a6f7e231aada671edca66677e98",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -824,12 +824,12 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "ef8f4b2299240c604f20ba915b5bfb89a68c3bbd60978731fdebbbfde902dd3e",
+      "sha256": "5b2f913d2d3ab11400f8541fdee510beb5e47aba4bbc0bf7c8327e3fed65b6be",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "d2cfbe170fa28841af8194622e035faed458798e1b0bb867a80a8bd461ed3040",
+      "sha256": "b980436832eed7c4b4ac7f954c9bd7b883a6b03ede779a908985dfac305e90bb",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -839,7 +839,7 @@
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "59b0331624511c1e652db0bf21a6b940dd713525d35016f4372175bab31d2b35",
+      "sha256": "33422cd10e45733fe573c956502e71956ed2754f05a264595bea7b3643064fbe",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -854,7 +854,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "5a25915d7a3686792c01d748623f1a0af310db4b49c079d240cdd3db46a5e776",
+      "sha256": "4b7c9081a0c4294fc6f514dee33387bf21203b70a79652e502aa873985b1a5ce",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -869,12 +869,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "52d7cb6a8c46781683fb4084ea54c6dc38a67300a42a24321cace17c9ab7c5bb",
+      "sha256": "980c5ae0d9a665675175f782837b0723a3aa4864853bd252ca787b10f18e0cc2",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "416de8443ad3a6b71ca4c67c51d45242adb2fc925de8ff9f441cfe12a1d8dc39",
+      "sha256": "97ad90c18a2dc03bacfc5a7102dcbe36c7fdd27218b9d0bf7daf9d5648db6a2e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -910,7 +910,7 @@
   ],
   "reviewed_sources": {
     ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
-    ".github/workflows/quality.yml": "20cc652f305dd325016553c1cd51e74cfc2428032c2116704fab366a2bd32f91",
+    ".github/workflows/quality.yml": "fc172d673bbdda669250bbb5c8867a60f4ab01dc2e562141284783f4def2ecce",
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
     "e2e/account.spec.ts": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877",

@@ -1,0 +1,4375 @@
+{
+  "formatVersion": 1,
+  "baseline": {
+    "product": "Outpost",
+    "documentedImplementationCommit": "b1a22559d4f6675d26d5c1ceaea0d37011a0d8d6",
+    "documentedImplementationDate": "2026-10-27",
+    "scope": "Reproduce the implemented application, preserve its unknowns and release gates; not a claim of a complete current-patch Albion companion.",
+    "sourceRepository": "https://github.com/AlbionOutpost/Outpost",
+    "privateInputsExcluded": [
+      "environment values",
+      "credentials",
+      "sessions",
+      "private database contents",
+      "backups",
+      "ignored QA request logs"
+    ],
+    "requiredCheckout": "Use the commit containing this handbook or a later reviewed descendant. The feature baseline predates the handoff and its restoration of the omitted unit-test directory."
+  },
+  "instructions": "Regenerate from repository root with node scripts/rebuild-inventory.mjs; --check verifies drift. Textual boundary references are navigation aids, not an authorization audit.",
+  "runtime": {
+    "node": "22",
+    "packageManager": "npm with committed package-lock.json",
+    "dependencies": {
+      "@fontsource-variable/geist-mono": {
+        "requested": "^5.2.0",
+        "resolved": "5.3.0"
+      },
+      "@fontsource-variable/inter": {
+        "requested": "^5.2.0",
+        "resolved": "5.3.0"
+      },
+      "@fontsource/barlow-condensed": {
+        "requested": "^5.2.0",
+        "resolved": "5.3.0"
+      },
+      "@next-auth/prisma-adapter": {
+        "requested": "^1.0.7",
+        "resolved": "1.0.7"
+      },
+      "@prisma/client": {
+        "requested": "^6.19.0",
+        "resolved": "6.19.3"
+      },
+      "ioredis": {
+        "requested": "^5.6.0",
+        "resolved": "5.11.1"
+      },
+      "lucide-react": {
+        "requested": "^0.577.0",
+        "resolved": "0.577.0"
+      },
+      "next": {
+        "requested": "^16.4.3",
+        "resolved": "16.4.3"
+      },
+      "next-auth": {
+        "requested": "^4.24.11",
+        "resolved": "4.24.15"
+      },
+      "react": {
+        "requested": "^19.1.0",
+        "resolved": "19.3.1"
+      },
+      "react-dom": {
+        "requested": "^19.1.0",
+        "resolved": "19.3.1"
+      },
+      "zod": {
+        "requested": "^4.6.7",
+        "resolved": "4.6.7"
+      }
+    },
+    "scripts": {
+      "dev": "next dev",
+      "build": "prisma generate && next build && node scripts/prepare-standalone.mjs",
+      "start": "node scripts/start.mjs",
+      "typecheck": "tsc --noEmit",
+      "test": "vitest run",
+      "test:e2e": "playwright test",
+      "db:migrate": "prisma migrate dev",
+      "db:seed": "tsx prisma/seed.ts",
+      "lint": "eslint .",
+      "format": "prettier --write .",
+      "format:check": "prettier --check .",
+      "test:live": "tsx scripts/verify-live.ts",
+      "db:deploy": "prisma migrate deploy",
+      "test:integration": "node scripts/qa-database.mjs",
+      "qa:phase": "node scripts/qa-phase.mjs",
+      "data:sync": "tsx scripts/sync-catalog.ts",
+      "data:prepare-snapshot": "tsx scripts/prepare-item-snapshot.ts",
+      "db:diagnose": "node scripts/db-diagnose.mjs",
+      "data:audit": "node --import tsx scripts/audit-game-data.ts",
+      "data:source": "node --import tsx scripts/sync-game-source.ts"
+    }
+  },
+  "counts": {
+    "pages": 32,
+    "apiRoutes": 33,
+    "httpOperations": 44,
+    "components": 55,
+    "libraryModules": 50,
+    "models": 29,
+    "enums": 3,
+    "migrations": 17,
+    "files": 375
+  },
+  "pages": [
+    {
+      "route": "/admin/reports",
+      "source": "src/app/admin/reports/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/community/access",
+        "@/components/moderation-queue"
+      ],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/builds/[id]/edit",
+      "source": "src/app/builds/[id]/edit/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/builds/validation",
+        "@/components/build-editor"
+      ],
+      "exports": ["EditBuild", "default"]
+    },
+    {
+      "route": "/builds/[id]",
+      "source": "src/app/builds/[id]/page.tsx",
+      "client": false,
+      "imports": [
+        "@/components/community-panel",
+        "@/components/build-loadout-view",
+        "@/components/build-actions",
+        "@/components/build-cost",
+        "next/link",
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/builds/validation"
+      ],
+      "exports": ["BuildPage", "default"]
+    },
+    {
+      "route": "/builds/new",
+      "source": "src/app/builds/new/page.tsx",
+      "client": false,
+      "imports": ["next-auth", "next/navigation", "@/lib/auth", "@/components/build-editor"],
+      "exports": ["NewBuild", "default"]
+    },
+    {
+      "route": "/builds",
+      "source": "src/app/builds/page.tsx",
+      "client": false,
+      "imports": [
+        "@/components/mobile-filter-panel",
+        "@/components/build-preview-card",
+        "@/lib/builds/validation",
+        "next/link",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/db",
+        "zod"
+      ],
+      "exports": ["Builds", "default", "dynamic"]
+    },
+    {
+      "route": "/compositions/[id]/edit",
+      "source": "src/app/compositions/[id]/edit/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/compositions/service",
+        "@/lib/compositions/repository",
+        "@/lib/compositions/validation",
+        "@/lib/api-errors",
+        "@/components/composition-editor"
+      ],
+      "exports": ["EditComposition", "default"]
+    },
+    {
+      "route": "/compositions/[id]",
+      "source": "src/app/compositions/[id]/page.tsx",
+      "client": false,
+      "imports": [
+        "@/components/community-panel",
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/compositions/service",
+        "@/lib/groups/permissions",
+        "@/lib/db",
+        "@/lib/compositions/validation",
+        "@/lib/api-errors",
+        "@/components/composition-view"
+      ],
+      "exports": ["CompositionPage", "default"]
+    },
+    {
+      "route": "/compositions/new",
+      "source": "src/app/compositions/new/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/compositions/repository",
+        "@/components/composition-editor"
+      ],
+      "exports": ["NewComposition", "default"]
+    },
+    {
+      "route": "/compositions",
+      "source": "src/app/compositions/page.tsx",
+      "client": false,
+      "imports": [
+        "next/link",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/db",
+        "zod",
+        "@prisma/client",
+        "@/lib/compositions/validation",
+        "@/components/mobile-filter-panel",
+        "@/components/item-icon",
+        "@/components/equipment-overview",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["Compositions", "default"]
+    },
+    {
+      "route": "/dashboard",
+      "source": "src/app/dashboard/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "next/link",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/components/equipment-strip",
+        "lucide-react"
+      ],
+      "exports": ["Dashboard", "default"]
+    },
+    {
+      "route": "/favorites",
+      "source": "src/app/favorites/page.tsx",
+      "client": false,
+      "imports": ["next-auth", "next/navigation", "next/link", "@/lib/auth", "@/lib/db"],
+      "exports": ["Favorites", "default"]
+    },
+    {
+      "route": "/groups/[slug]",
+      "source": "src/app/groups/[slug]/page.tsx",
+      "client": false,
+      "imports": [
+        "@/components/group-profile-editor",
+        "@/lib/groups/permissions",
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/groups/dashboard",
+        "@/lib/api-errors",
+        "@/components/group-dashboard"
+      ],
+      "exports": ["GroupPage", "default"]
+    },
+    {
+      "route": "/groups/new",
+      "source": "src/app/groups/new/page.tsx",
+      "client": false,
+      "imports": ["next-auth", "next/navigation", "@/lib/auth", "@/components/group-create"],
+      "exports": ["NewGroup", "default"]
+    },
+    {
+      "route": "/groups",
+      "source": "src/app/groups/page.tsx",
+      "client": false,
+      "imports": ["next/link", "next-auth", "@/lib/auth", "@/lib/db", "@/lib/albion/region-config"],
+      "exports": ["Groups", "default"]
+    },
+    {
+      "route": "/guides",
+      "source": "src/app/guides/page.tsx",
+      "client": false,
+      "imports": ["@/components/guide-directory", "next/link"],
+      "exports": ["Guides", "default", "metadata"]
+    },
+    {
+      "route": "/invitations/[token]",
+      "source": "src/app/invitations/[token]/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/link",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/groups/service",
+        "@/components/accept-invite"
+      ],
+      "exports": ["Invitation", "default"]
+    },
+    {
+      "route": "/items/[id]",
+      "source": "src/app/items/[id]/page.tsx",
+      "client": false,
+      "imports": [
+        "@/components/item-market-link",
+        "next/navigation",
+        "@/lib/db",
+        "@/components/item-icon",
+        "@/lib/catalog/validation",
+        "next/link"
+      ],
+      "exports": ["Item", "default"]
+    },
+    {
+      "route": "/items",
+      "source": "src/app/items/page.tsx",
+      "client": false,
+      "imports": ["@/lib/db", "@/components/item-catalog"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/legal",
+      "source": "src/app/legal/page.tsx",
+      "client": false,
+      "imports": [],
+      "exports": ["Legal", "default", "dynamic"]
+    },
+    {
+      "route": "/",
+      "source": "src/app/page.tsx",
+      "client": false,
+      "imports": [
+        "./homepage.css",
+        "@/lib/db",
+        "@/components/home-player-preview",
+        "@/components/item-icon",
+        "@/components/home-market-terminal",
+        "@/components/home-equipment-showcase",
+        "@/components/home-market-pulse",
+        "@/components/home-build-card",
+        "next/headers",
+        "next/link",
+        "lucide-react",
+        "@/components/feature-emblem",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["Home", "default"]
+    },
+    {
+      "route": "/players/[id]",
+      "source": "src/app/players/[id]/page.tsx",
+      "client": false,
+      "imports": ["next/navigation", "next/link", "@/lib/db"],
+      "exports": ["Profile", "default"]
+    },
+    {
+      "route": "/settings",
+      "source": "src/app/settings/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/components/settings-forms",
+        "@/components/login-button"
+      ],
+      "exports": ["Settings", "default"]
+    },
+    {
+      "route": "/signin",
+      "source": "src/app/signin/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/components/login-button",
+        "next/link"
+      ],
+      "exports": ["Signin", "default"]
+    },
+    {
+      "route": "/timers",
+      "source": "src/app/timers/page.tsx",
+      "client": false,
+      "imports": [
+        "next-auth",
+        "next/navigation",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/components/timer-manager"
+      ],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/crafting",
+      "source": "src/app/tools/crafting/page.tsx",
+      "client": false,
+      "imports": ["@/components/production-calculator"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/enchanting",
+      "source": "src/app/tools/enchanting/page.tsx",
+      "client": false,
+      "imports": ["@/components/production-calculator"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/flipping",
+      "source": "src/app/tools/flipping/page.tsx",
+      "client": false,
+      "imports": ["@/components/opportunity-scanner", "@/components/trade-calculator"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/gold",
+      "source": "src/app/tools/gold/page.tsx",
+      "client": false,
+      "imports": ["@/components/history"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/market",
+      "source": "src/app/tools/market/page.tsx",
+      "client": false,
+      "imports": ["@/components/market"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools",
+      "source": "src/app/tools/page.tsx",
+      "client": false,
+      "imports": ["@/components/tool-directory"],
+      "exports": ["Tools", "default"]
+    },
+    {
+      "route": "/tools/refining",
+      "source": "src/app/tools/refining/page.tsx",
+      "client": false,
+      "imports": ["@/components/production-calculator"],
+      "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/transporting",
+      "source": "src/app/tools/transporting/page.tsx",
+      "client": false,
+      "imports": ["@/components/transport-calculator"],
+      "exports": ["Page", "default"]
+    }
+  ],
+  "apis": [
+    {
+      "route": "/api/account/export",
+      "source": "src/app/api/account/export/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession", "rateLimit"],
+      "imports": [
+        "@/lib/api-errors",
+        "next-auth",
+        "next/server",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/redis"
+      ]
+    },
+    {
+      "route": "/api/admin/reports",
+      "source": "src/app/api/admin/reports/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@prisma/client",
+        "zod",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/community/access",
+        "@/lib/community/validation"
+      ]
+    },
+    {
+      "route": "/api/auth/[...nextauth]",
+      "source": "src/app/api/auth/[...nextauth]/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": ["rateLimit"],
+      "imports": ["next-auth", "@/lib/auth", "@/lib/redis", "next/server"]
+    },
+    {
+      "route": "/api/builds/[id]/cost",
+      "source": "src/app/api/builds/[id]/cost/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession", "rateLimit"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/api-errors",
+        "@/lib/builds/validation",
+        "@/lib/albion/market-client",
+        "@/lib/albion/region-config",
+        "@/lib/albion/freshness",
+        "@/lib/redis"
+      ]
+    },
+    {
+      "route": "/api/builds/[id]/duplicate",
+      "source": "src/app/api/builds/[id]/duplicate/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser"],
+      "imports": ["next/server", "@/lib/api-errors", "@/lib/http", "@/lib/builds/service"]
+    },
+    {
+      "route": "/api/builds/[id]/restore",
+      "source": "src/app/api/builds/[id]/restore/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/builds/validation",
+        "@/lib/builds/service"
+      ]
+    },
+    {
+      "route": "/api/builds/[id]",
+      "source": "src/app/api/builds/[id]/route.ts",
+      "methods": ["DELETE", "GET", "PUT"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/builds/validation",
+        "@/lib/http",
+        "@/lib/api-errors"
+      ]
+    },
+    {
+      "route": "/api/builds",
+      "source": "src/app/api/builds/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": [
+        "next/server",
+        "@/lib/db",
+        "@/lib/builds/validation",
+        "@/lib/http",
+        "@/lib/api-errors"
+      ]
+    },
+    {
+      "route": "/api/community/[kind]/[id]",
+      "source": "src/app/api/community/[kind]/[id]/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/community/validation",
+        "@/lib/community/access",
+        "@/lib/community/service"
+      ]
+    },
+    {
+      "route": "/api/compositions/[id]/duplicate",
+      "source": "src/app/api/compositions/[id]/duplicate/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser"],
+      "imports": ["next/server", "@/lib/api-errors", "@/lib/http", "@/lib/compositions/service"]
+    },
+    {
+      "route": "/api/compositions/[id]",
+      "source": "src/app/api/compositions/[id]/route.ts",
+      "methods": ["DELETE", "GET", "PUT"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/compositions/service",
+        "@/lib/groups/permissions",
+        "@/lib/compositions/validation"
+      ]
+    },
+    {
+      "route": "/api/compositions/loadout",
+      "source": "src/app/api/compositions/loadout/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@/lib/api-errors",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/compositions/validation"
+      ]
+    },
+    {
+      "route": "/api/compositions",
+      "source": "src/app/api/compositions/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": ["next/server", "@/lib/api-errors", "@/lib/http", "@/lib/compositions/service"]
+    },
+    {
+      "route": "/api/economy/prices",
+      "source": "src/app/api/economy/prices/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/api-errors",
+        "@/lib/albion/recipes",
+        "@/lib/albion/region-config",
+        "@/lib/albion/market-client",
+        "@/lib/redis",
+        "@/lib/albion/production"
+      ]
+    },
+    {
+      "route": "/api/groups/[id]/actions",
+      "source": "src/app/api/groups/[id]/actions/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": ["next/server", "@/lib/api-errors", "@/lib/http", "@/lib/groups/service"]
+    },
+    {
+      "route": "/api/groups/[id]/events/[eventId]/calendar",
+      "source": "src/app/api/groups/[id]/events/[eventId]/calendar/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/groups/calendar"
+      ]
+    },
+    {
+      "route": "/api/groups/[id]",
+      "source": "src/app/api/groups/[id]/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/api-errors",
+        "@/lib/groups/dashboard"
+      ]
+    },
+    {
+      "route": "/api/groups",
+      "source": "src/app/api/groups/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/db",
+        "@/lib/albion/region-config",
+        "@/lib/api-errors",
+        "@/lib/http"
+      ]
+    },
+    {
+      "route": "/api/health",
+      "source": "src/app/api/health/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": [],
+      "imports": ["next/server", "@/lib/db", "@/lib/redis", "@/lib/api-errors"]
+    },
+    {
+      "route": "/api/history",
+      "source": "src/app/api/history/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/albion/region-config",
+        "@/lib/albion/history-client",
+        "@/lib/redis"
+      ]
+    },
+    {
+      "route": "/api/invitations/[token]",
+      "source": "src/app/api/invitations/[token]/route.ts",
+      "methods": ["POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser"],
+      "imports": ["next/server", "@/lib/api-errors", "@/lib/http", "@/lib/groups/service"]
+    },
+    {
+      "route": "/api/item-icon",
+      "source": "src/app/api/item-icon/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": [],
+      "imports": ["next/server", "zod", "@/lib/albion/icon-cache"]
+    },
+    {
+      "route": "/api/items",
+      "source": "src/app/api/items/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": [],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/albion/equipment-catalog"
+      ]
+    },
+    {
+      "route": "/api/market-watch/[id]",
+      "source": "src/app/api/market-watch/[id]/route.ts",
+      "methods": ["DELETE"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser"],
+      "imports": ["next/server", "zod", "@/lib/db", "@/lib/api-errors", "@/lib/http"]
+    },
+    {
+      "route": "/api/market-watch",
+      "source": "src/app/api/market-watch/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@prisma/client",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/market-watch",
+        "@/lib/serialization-retry"
+      ]
+    },
+    {
+      "route": "/api/market",
+      "source": "src/app/api/market/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/albion/region-config",
+        "@/lib/redis",
+        "@/lib/albion/market-client"
+      ]
+    },
+    {
+      "route": "/api/opportunities",
+      "source": "src/app/api/opportunities/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/api-errors",
+        "@/lib/albion/transport",
+        "@/lib/albion/transport-prices",
+        "@/lib/albion/market-client",
+        "@/lib/redis"
+      ]
+    },
+    {
+      "route": "/api/scenarios/[id]",
+      "source": "src/app/api/scenarios/[id]/route.ts",
+      "methods": ["DELETE"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser"],
+      "imports": ["next/server", "@/lib/db", "@/lib/api-errors", "@/lib/http"]
+    },
+    {
+      "route": "/api/scenarios",
+      "source": "src/app/api/scenarios/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/db",
+        "@/lib/auth",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/albion/transport",
+        "@/lib/albion/calculations",
+        "@/lib/albion/production"
+      ]
+    },
+    {
+      "route": "/api/search",
+      "source": "src/app/api/search/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["getServerSession", "rateLimit"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "zod",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/redis",
+        "@/lib/api-errors"
+      ]
+    },
+    {
+      "route": "/api/timers/[id]",
+      "source": "src/app/api/timers/[id]/route.ts",
+      "methods": ["DELETE", "PATCH"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "boundedJson"],
+      "imports": [
+        "next/server",
+        "@/lib/http",
+        "@/lib/api-errors",
+        "@/lib/db",
+        "@/lib/timers/engine"
+      ]
+    },
+    {
+      "route": "/api/timers",
+      "source": "src/app/api/timers/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/timers/engine"
+      ]
+    },
+    {
+      "route": "/api/transport/prices",
+      "source": "src/app/api/transport/prices/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "@/lib/albion/transport",
+        "@/lib/albion/transport-prices",
+        "@/lib/albion/market-client",
+        "@/lib/redis",
+        "@/lib/api-errors"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "source": "src/components/accept-invite.tsx",
+      "client": true,
+      "imports": ["react", "next/navigation"],
+      "exports": ["AcceptInvite"]
+    },
+    {
+      "source": "src/components/albion-scene.tsx",
+      "client": false,
+      "imports": ["next/image", "next/link", "@/lib/albion/assets"],
+      "exports": ["AlbionScene"]
+    },
+    {
+      "source": "src/components/build-actions.tsx",
+      "client": true,
+      "imports": ["react", "next/navigation"],
+      "exports": ["BuildActions"]
+    },
+    {
+      "source": "src/components/build-cost.tsx",
+      "client": true,
+      "imports": ["react", "./region-context", "@/lib/albion/region-config"],
+      "exports": ["BuildCost"]
+    },
+    {
+      "source": "src/components/build-editor.tsx",
+      "client": true,
+      "imports": [
+        "./equipment-picker",
+        "@/lib/albion/equipment-catalog",
+        "@/lib/compositions/validation",
+        "react",
+        "next/link",
+        "next/navigation",
+        "@/lib/builds/validation"
+      ],
+      "exports": ["BuildEditor"]
+    },
+    {
+      "source": "src/components/build-loadout-view.tsx",
+      "client": false,
+      "imports": [
+        "next/link",
+        "./item-icon",
+        "./equipment-overview",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["BuildLoadoutView"]
+    },
+    {
+      "source": "src/components/build-preview-card.tsx",
+      "client": false,
+      "imports": [
+        "next/link",
+        "./favorite-build-button",
+        "./item-icon",
+        "./equipment-strip",
+        "./equipment-overview",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["BuildPreviewCard", "PreviewBuild"]
+    },
+    {
+      "source": "src/components/catalog-item-picker.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "lucide-react",
+        "@/lib/albion/item-database",
+        "./item-icon",
+        "@/lib/catalog/search"
+      ],
+      "exports": ["CatalogItemPicker", "CatalogOption"]
+    },
+    {
+      "source": "src/components/community-panel.tsx",
+      "client": true,
+      "imports": ["react", "next/link"],
+      "exports": ["CommunityPanel"]
+    },
+    {
+      "source": "src/components/composition-editor.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "next/navigation",
+        "lucide-react",
+        "@/lib/compositions/validation",
+        "./party-board",
+        "./composition-png-export",
+        "./equipment-picker",
+        "./equipment-strip",
+        "./editor-dialog"
+      ],
+      "exports": ["CompositionEditor"]
+    },
+    {
+      "source": "src/components/composition-png-export.tsx",
+      "client": true,
+      "imports": ["react", "@/lib/compositions/validation", "@/lib/albion/equipment-catalog"],
+      "exports": ["CompositionPngExport"]
+    },
+    {
+      "source": "src/components/composition-view.tsx",
+      "client": true,
+      "imports": [
+        "./party-board",
+        "./composition-png-export",
+        "./equipment-strip",
+        "@/components/item-icon",
+        "react",
+        "next/navigation",
+        "next/link",
+        "@/lib/compositions/validation",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["CompositionView"]
+    },
+    {
+      "source": "src/components/discord-mark.tsx",
+      "client": false,
+      "imports": ["next/image"],
+      "exports": ["DiscordMark"]
+    },
+    {
+      "source": "src/components/editor-dialog.tsx",
+      "client": true,
+      "imports": ["react", "lucide-react"],
+      "exports": ["EditorDialog"]
+    },
+    {
+      "source": "src/components/equipment-overview.tsx",
+      "client": false,
+      "imports": [
+        "lucide-react",
+        "./item-icon",
+        "@/lib/albion/equipment-catalog",
+        "@/app/equipment-workspace.css"
+      ],
+      "exports": ["EquipmentGlyph", "EquipmentOverview"]
+    },
+    {
+      "source": "src/components/equipment-picker.tsx",
+      "client": true,
+      "imports": [],
+      "exports": ["EquipmentPicker"]
+    },
+    {
+      "source": "src/components/equipment-strip.tsx",
+      "client": false,
+      "imports": ["./item-icon", "./equipment-overview", "@/lib/albion/equipment-catalog"],
+      "exports": ["EquipmentStrip"]
+    },
+    {
+      "source": "src/components/equipment-workbench.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "lucide-react",
+        "@/lib/albion/equipment-catalog",
+        "@/lib/compositions/validation",
+        "./item-icon",
+        "./equipment-overview"
+      ],
+      "exports": ["EquipmentWorkbench"]
+    },
+    {
+      "source": "src/components/favorite-build-button.tsx",
+      "client": true,
+      "imports": ["react", "lucide-react", "next/link"],
+      "exports": ["FavoriteBuildButton"]
+    },
+    {
+      "source": "src/components/feature-emblem.tsx",
+      "client": false,
+      "imports": [],
+      "exports": ["FeatureEmblem"]
+    },
+    {
+      "source": "src/components/global-search.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "./item-icon",
+        "./tool-icon",
+        "./region-context"
+      ],
+      "exports": ["GlobalSearch"]
+    },
+    {
+      "source": "src/components/group-create.tsx",
+      "client": true,
+      "imports": ["react", "next/navigation"],
+      "exports": ["GroupCreate"]
+    },
+    {
+      "source": "src/components/group-dashboard.tsx",
+      "client": true,
+      "imports": [
+        "./group-event-editor",
+        "react",
+        "./editor-dialog",
+        "./equipment-strip",
+        "./item-icon",
+        "@/lib/albion/equipment-catalog",
+        "next/navigation",
+        "next/link",
+        "@/lib/groups/dashboard",
+        "@/lib/groups/permissions"
+      ],
+      "exports": ["GroupDashboard", "GroupRequest"]
+    },
+    {
+      "source": "src/components/group-event-editor.tsx",
+      "client": true,
+      "imports": ["./editor-dialog", "react", "next/navigation"],
+      "exports": ["GroupEventEditor"]
+    },
+    {
+      "source": "src/components/group-profile-editor.tsx",
+      "client": true,
+      "imports": ["react", "next/navigation"],
+      "exports": ["GroupProfileEditor"]
+    },
+    {
+      "source": "src/components/guide-directory.tsx",
+      "client": true,
+      "imports": ["react", "./mobile-filter-panel", "lucide-react"],
+      "exports": ["GuideDirectory"]
+    },
+    {
+      "source": "src/components/history.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "./region-context",
+        "@/lib/albion/freshness",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["History"]
+    },
+    {
+      "source": "src/components/home-build-card.tsx",
+      "client": false,
+      "imports": [
+        "next/link",
+        "./item-icon",
+        "./equipment-overview",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["HomeBuildCard"]
+    },
+    {
+      "source": "src/components/home-equipment-showcase.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "next/image",
+        "./tool-icon",
+        "./region-context"
+      ],
+      "exports": ["HomeEquipmentShowcase"]
+    },
+    {
+      "source": "src/components/home-market-pulse.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "./use-visible-refresh",
+        "./region-context",
+        "./item-icon",
+        "@/lib/albion/market-preview"
+      ],
+      "exports": ["HomeMarketPulse"]
+    },
+    {
+      "source": "src/components/home-market-terminal.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "zod",
+        "./item-icon",
+        "./region-context",
+        "@/lib/albion/region-config",
+        "@/lib/albion/market-preview",
+        "@/lib/albion/freshness"
+      ],
+      "exports": ["HomeCompPreview", "HomeEconomyPreview", "HomeMarketTerminal"]
+    },
+    {
+      "source": "src/components/home-player-preview.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "./item-icon",
+        "./catalog-item-picker",
+        "./region-context",
+        "@/lib/albion/region-config",
+        "@/lib/albion/market-preview"
+      ],
+      "exports": ["HomeEquipmentPreview", "HomeMarketSearch"]
+    },
+    {
+      "source": "src/components/item-catalog.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "./region-context",
+        "next/link",
+        "@/lib/albion/item-database",
+        "./item-icon",
+        "@/lib/catalog/search",
+        "zod"
+      ],
+      "exports": ["ItemCatalog"]
+    },
+    {
+      "source": "src/components/item-icon.tsx",
+      "client": true,
+      "imports": ["next/image", "react", "@/lib/albion/item-renderer"],
+      "exports": ["ItemIcon"]
+    },
+    {
+      "source": "src/components/item-market-link.tsx",
+      "client": true,
+      "imports": ["next/link", "./region-context"],
+      "exports": ["ItemMarketLink"]
+    },
+    {
+      "source": "src/components/login-button.tsx",
+      "client": true,
+      "imports": ["./discord-mark", "next-auth/react"],
+      "exports": ["LoginButton", "LogoutButton"]
+    },
+    {
+      "source": "src/components/market-watchlist.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "next/link",
+        "@/lib/market-watch",
+        "@/lib/albion/equipment-catalog",
+        "./item-icon",
+        "zod"
+      ],
+      "exports": ["MarketWatchlist"]
+    },
+    {
+      "source": "src/components/market.tsx",
+      "client": true,
+      "imports": [
+        "./history",
+        "next/link",
+        "./catalog-item-picker",
+        "./item-icon",
+        "./market-watchlist",
+        "@/lib/albion/equipment-catalog",
+        "next/navigation",
+        "react",
+        "@/lib/albion/market-client",
+        "@/lib/albion/freshness",
+        "@/lib/albion/quote-summary",
+        "./region-context",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["Market"]
+    },
+    {
+      "source": "src/components/mobile-filter-panel.tsx",
+      "client": true,
+      "imports": ["react", "lucide-react"],
+      "exports": ["MobileFilterPanel"]
+    },
+    {
+      "source": "src/components/moderation-queue.tsx",
+      "client": true,
+      "imports": ["react"],
+      "exports": ["ModerationQueue"]
+    },
+    {
+      "source": "src/components/opportunity-scanner.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "./region-context",
+        "@/lib/albion/region-config",
+        "@/lib/albion/transport",
+        "@/lib/albion/transport-prices"
+      ],
+      "exports": ["OpportunityScanner"]
+    },
+    {
+      "source": "src/components/party-board.tsx",
+      "client": true,
+      "imports": [
+        "./item-icon",
+        "./equipment-overview",
+        "@/lib/albion/equipment-catalog",
+        "@/lib/compositions/validation"
+      ],
+      "exports": ["PartyBoard"]
+    },
+    {
+      "source": "src/components/production-calculator.tsx",
+      "client": true,
+      "imports": [
+        "@/app/production-workspace.css",
+        "react",
+        "next/navigation",
+        "next/link",
+        "./region-context",
+        "@/lib/albion/region-config",
+        "@/lib/albion/recipes",
+        "@/lib/albion/production",
+        "./item-icon",
+        "./scenario-controls",
+        "@/lib/albion/production-observations"
+      ],
+      "exports": ["ProductionCalculator"]
+    },
+    {
+      "source": "src/components/region-context.tsx",
+      "client": true,
+      "imports": ["react", "@/lib/albion/region-config"],
+      "exports": ["RegionContext", "useAtlasRegion"]
+    },
+    {
+      "source": "src/components/scenario-controls.tsx",
+      "client": true,
+      "imports": ["react", "zod", "@/lib/albion/region-config"],
+      "exports": ["ScenarioControls"]
+    },
+    {
+      "source": "src/components/settings-forms.tsx",
+      "client": true,
+      "imports": ["react", "@/app/settings/actions"],
+      "exports": ["DeleteAccountForm", "PreferencesForm"]
+    },
+    {
+      "source": "src/components/shell.tsx",
+      "client": true,
+      "imports": [
+        "next/link",
+        "react-dom",
+        "react",
+        "next/navigation",
+        "lucide-react",
+        "./discord-mark",
+        "./tool-icon",
+        "@/lib/tool-directory",
+        "./global-search",
+        "./wordmark",
+        "./region-context",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["Shell"]
+    },
+    {
+      "source": "src/components/timer-manager.tsx",
+      "client": true,
+      "imports": ["react", "@/lib/timers/engine"],
+      "exports": ["TimerManager"]
+    },
+    {
+      "source": "src/components/tool-directory.tsx",
+      "client": true,
+      "imports": [
+        "next/link",
+        "react",
+        "lucide-react",
+        "@/lib/tool-directory",
+        "./tool-icon",
+        "./item-icon",
+        "./region-context"
+      ],
+      "exports": ["ToolDirectory"]
+    },
+    {
+      "source": "src/components/tool-icon.tsx",
+      "client": false,
+      "imports": [],
+      "exports": ["ToolIcon"]
+    },
+    {
+      "source": "src/components/trade-calculator.tsx",
+      "client": true,
+      "imports": [
+        "next/navigation",
+        "./scenario-controls",
+        "./region-context",
+        "react",
+        "@/lib/albion/calculations"
+      ],
+      "exports": ["TradeCalculator"]
+    },
+    {
+      "source": "src/components/transport-calculator.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "./region-context",
+        "@/lib/albion/transport",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["TransportCalculator"]
+    },
+    {
+      "source": "src/components/use-visible-refresh.ts",
+      "client": true,
+      "imports": ["react"],
+      "exports": ["useVisibleRefresh"]
+    },
+    {
+      "source": "src/components/wordmark.tsx",
+      "client": false,
+      "imports": ["next/image"],
+      "exports": ["Wordmark"]
+    },
+    {
+      "source": "src/components/workspace-navigation.tsx",
+      "client": true,
+      "imports": ["next/link", "lucide-react", "@/lib/tool-directory", "./tool-icon"],
+      "exports": ["WorkspaceNavigation"]
+    }
+  ],
+  "modules": [
+    {
+      "source": "src/lib/albion/assets.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["AlbionScene", "SceneKey", "albionArtSources", "albionScenes"]
+    },
+    {
+      "source": "src/lib/albion/backoff.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["retryDelay"]
+    },
+    {
+      "source": "src/lib/albion/calculations.ts",
+      "client": false,
+      "imports": ["zod", "./region-config"],
+      "exports": ["returnedMaterialCost", "trade", "tradeScenarioSchema", "tradeSchema"]
+    },
+    {
+      "source": "src/lib/albion/data-client.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "../redis", "./backoff"],
+      "exports": ["requestData"]
+    },
+    {
+      "source": "src/lib/albion/equipment-catalog.ts",
+      "client": false,
+      "imports": ["./item-database"],
+      "exports": [
+        "EquipmentSlot",
+        "Family",
+        "equipmentFamilies",
+        "equipmentId",
+        "equipmentName",
+        "equipmentSlots",
+        "findEquipment"
+      ]
+    },
+    {
+      "source": "src/lib/albion/equipment-validation.ts",
+      "client": false,
+      "imports": ["zod", "./equipment-catalog"],
+      "exports": ["equipmentChoice"]
+    },
+    {
+      "source": "src/lib/albion/freshness.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["isStale", "sourceTimestamp"]
+    },
+    {
+      "source": "src/lib/albion/history-client.ts",
+      "client": false,
+      "imports": ["zod", "./data-client", "./region-config"],
+      "exports": ["getGold", "getHistory"]
+    },
+    {
+      "source": "src/lib/albion/icon-cache.ts",
+      "client": false,
+      "imports": ["./item-renderer"],
+      "exports": ["renderIcon"]
+    },
+    {
+      "source": "src/lib/albion/item-database.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["items"]
+    },
+    {
+      "source": "src/lib/albion/item-renderer.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["itemIconUrl"]
+    },
+    {
+      "source": "src/lib/albion/market-client.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "./data-client"],
+      "exports": ["MarketPrice", "getPrices", "isStale"]
+    },
+    {
+      "source": "src/lib/albion/market-preview.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "./freshness"],
+      "exports": ["PreviewPrice", "observationLabel", "parseMarketPreview"]
+    },
+    {
+      "source": "src/lib/albion/production-observations.ts",
+      "client": false,
+      "imports": ["./production"],
+      "exports": ["mergeProductionObservations", "productionPriceQuery"]
+    },
+    {
+      "source": "src/lib/albion/production.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "./recipes", "./freshness"],
+      "exports": [
+        "ProductionInput",
+        "estimatedFocusCost",
+        "initialProduction",
+        "observation",
+        "production",
+        "productionOutputQuality",
+        "productionSchema",
+        "returnRateFromBonus"
+      ]
+    },
+    {
+      "source": "src/lib/albion/quote-summary.ts",
+      "client": false,
+      "imports": ["./market-client", "./freshness"],
+      "exports": ["summarizeQuotes"]
+    },
+    {
+      "source": "src/lib/albion/recipes.ts",
+      "client": false,
+      "imports": ["./equipment-catalog", "./reviewed-crafting.json"],
+      "exports": ["Recipe", "enchantable", "recipeFor", "recipes"]
+    },
+    {
+      "source": "src/lib/albion/region-config.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["Region", "cities", "regionSchema", "regions"]
+    },
+    {
+      "source": "src/lib/albion/transport-prices.ts",
+      "client": false,
+      "imports": ["./market-client", "./transport"],
+      "exports": ["transportObservations"]
+    },
+    {
+      "source": "src/lib/albion/transport.ts",
+      "client": false,
+      "imports": ["zod", "./production", "./region-config", "./calculations", "./freshness"],
+      "exports": [
+        "TransportInput",
+        "initialTransport",
+        "transport",
+        "transportBase",
+        "transportSchema"
+      ]
+    },
+    {
+      "source": "src/lib/api-errors.ts",
+      "client": false,
+      "imports": ["next/server", "zod", "./logging"],
+      "exports": ["HttpError", "apiHandler"]
+    },
+    {
+      "source": "src/lib/auth.ts",
+      "client": false,
+      "imports": ["next-auth", "next-auth/providers/discord", "@next-auth/prisma-adapter", "./db"],
+      "exports": ["authOptions"]
+    },
+    {
+      "source": "src/lib/builds/service.ts",
+      "client": false,
+      "imports": ["../db", "../api-errors", "./validation"],
+      "exports": ["duplicateBuild", "reviseBuild"]
+    },
+    {
+      "source": "src/lib/builds/validation.ts",
+      "client": false,
+      "imports": ["../albion/equipment-validation", "zod", "../albion/region-config"],
+      "exports": ["BuildInput", "buildInput", "canReadBuild", "contentTypes", "slots"]
+    },
+    {
+      "source": "src/lib/catalog/item-snapshot.ts",
+      "client": false,
+      "imports": ["zod", "./validation"],
+      "exports": ["normalizeItemSnapshot", "snapshotSlots"]
+    },
+    {
+      "source": "src/lib/catalog/png-verification.ts",
+      "client": false,
+      "imports": ["node:zlib"],
+      "exports": ["validRendererPng"]
+    },
+    {
+      "source": "src/lib/catalog/release-state.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["existingReleaseState"]
+    },
+    {
+      "source": "src/lib/catalog/search.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["CatalogOption", "catalogSearchResponse", "mergeCatalogOptions"]
+    },
+    {
+      "source": "src/lib/catalog/validation.ts",
+      "client": false,
+      "imports": ["zod", "../albion/equipment-catalog"],
+      "exports": ["catalogBundle", "catalogItem"]
+    },
+    {
+      "source": "src/lib/catalog/verification.ts",
+      "client": false,
+      "imports": [
+        "./png-verification",
+        "node:crypto",
+        "zod",
+        "../albion/equipment-catalog",
+        "../albion/item-renderer",
+        "./validation"
+      ],
+      "exports": [
+        "ImageCheck",
+        "SourceDefinition",
+        "VerificationItem",
+        "byteHash",
+        "contentHash",
+        "downloadSnapshot",
+        "normalizeSource",
+        "readySource",
+        "reviewEvidence",
+        "sourceDefinition",
+        "sourceUrl",
+        "validateImages",
+        "verificationDataset",
+        "verificationFields",
+        "verificationItem",
+        "verifySnapshot"
+      ]
+    },
+    {
+      "source": "src/lib/community/access.ts",
+      "client": false,
+      "imports": ["@prisma/client", "../db", "../api-errors", "zod", "./validation"],
+      "exports": ["communityTarget", "requireModerator"]
+    },
+    {
+      "source": "src/lib/community/service.ts",
+      "client": false,
+      "imports": ["@prisma/client", "zod", "../db", "../api-errors", "./access", "./validation"],
+      "exports": ["communityMutation"]
+    },
+    {
+      "source": "src/lib/community/validation.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["communityAction", "moderatorAction", "targetKind"]
+    },
+    {
+      "source": "src/lib/compositions/repository.ts",
+      "client": false,
+      "imports": ["../db"],
+      "exports": ["editorOptions"]
+    },
+    {
+      "source": "src/lib/compositions/service.ts",
+      "client": false,
+      "imports": [
+        "@prisma/client",
+        "../db",
+        "../serialization-retry",
+        "../api-errors",
+        "../groups/permissions",
+        "./validation"
+      ],
+      "exports": ["canEdit", "duplicateComposition", "groupRole", "requireRead", "saveComposition"]
+    },
+    {
+      "source": "src/lib/compositions/validation.ts",
+      "client": false,
+      "imports": ["zod", "../albion/region-config", "../albion/equipment-validation"],
+      "exports": [
+        "CompositionInput",
+        "EquipmentChoice",
+        "MemberSlot",
+        "compositionInput",
+        "equipmentChoice",
+        "memberSlot",
+        "roles"
+      ]
+    },
+    {
+      "source": "src/lib/db.ts",
+      "client": false,
+      "imports": ["@prisma/client"],
+      "exports": ["db"]
+    },
+    {
+      "source": "src/lib/env.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["environmentSchema", "validateEnvironment"]
+    },
+    {
+      "source": "src/lib/groups/calendar.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["calendarText", "eventCalendar"]
+    },
+    {
+      "source": "src/lib/groups/dashboard.ts",
+      "client": false,
+      "imports": [
+        "../db",
+        "../api-errors",
+        "./permissions",
+        "../builds/validation",
+        "../compositions/validation"
+      ],
+      "exports": ["GroupDashboardData", "groupDashboard"]
+    },
+    {
+      "source": "src/lib/groups/permissions.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["GroupRole", "canEditShared", "canManageMembers", "groupRoles"]
+    },
+    {
+      "source": "src/lib/groups/service.ts",
+      "client": false,
+      "imports": [
+        "@prisma/client",
+        "node:crypto",
+        "../db",
+        "../api-errors",
+        "./permissions",
+        "./validation"
+      ],
+      "exports": ["acceptInvitation", "inviteHash", "mutateGroup"]
+    },
+    {
+      "source": "src/lib/groups/validation.ts",
+      "client": false,
+      "imports": ["zod", "../albion/region-config"],
+      "exports": ["groupAction"]
+    },
+    {
+      "source": "src/lib/http.ts",
+      "client": false,
+      "imports": ["./api-errors", "next/server", "next-auth", "./auth", "./redis"],
+      "exports": ["boundedJson", "mutationUser"]
+    },
+    {
+      "source": "src/lib/logging.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["logEvent"]
+    },
+    {
+      "source": "src/lib/market-watch.ts",
+      "client": false,
+      "imports": ["zod", "./albion/region-config", "./catalog/validation"],
+      "exports": ["watchInput", "watchResponse"]
+    },
+    {
+      "source": "src/lib/redis.ts",
+      "client": false,
+      "imports": ["ioredis"],
+      "exports": ["rateLimit", "redis"]
+    },
+    {
+      "source": "src/lib/serialization-retry.ts",
+      "client": false,
+      "imports": ["@prisma/client"],
+      "exports": ["retrySerialization"]
+    },
+    {
+      "source": "src/lib/timers/engine.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["TimerState", "remainingTime", "timerAction", "timerInput", "timerTransition"]
+    },
+    {
+      "source": "src/lib/tool-directory.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["toolGroups", "tools"]
+    }
+  ],
+  "database": {
+    "schema": "prisma/schema.prisma",
+    "sha256": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f",
+    "definitions": [
+      {
+        "kind": "model",
+        "name": "User",
+        "definition": "model User {\n marketWatchItems MarketWatchItem[]\n timers Timer[]\n  id String @id @default(cuid())\n  name String?\n  email String? @unique\n  emailVerified DateTime?\n  image String?\n  role String @default(\"USER\")\n  region String @default(\"europe\")\n  characterName String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  compositions Composition[]\n  ownedGroups Group[]\n  memberships GroupMember[]\n  builds Build[]\n  accounts Account[]\n  sessions Session[]\n  groupRequests GroupMembershipRequest[]\n  groupRsvps EventRSVP[]\n\n  authoredAnnouncements GroupAnnouncement[]\n  authoredGroupEvents GroupEvent[]\n  authoredGroupBuilds GroupBuild[]\n  issuedGroupInvites GroupInvitation[]\n\n  savedScenarios SavedScenario[]\n\n  buildFavorites BuildFavorite[]\n  compositionFavorites CompositionFavorite[]\n  buildVotes BuildVote[]\n  comments ContentComment[]\n  reports ContentReport[] @relation(\"ReportAuthor\")\n  reviewedReports ContentReport[] @relation(\"ReportReviewer\")\n  moderationLogs ModerationLog[]\n\n}",
+        "entries": [
+          "marketWatchItems MarketWatchItem[]",
+          "timers Timer[]",
+          "id String @id @default(cuid())",
+          "name String?",
+          "email String? @unique",
+          "emailVerified DateTime?",
+          "image String?",
+          "role String @default(\"USER\")",
+          "region String @default(\"europe\")",
+          "characterName String?",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "compositions Composition[]",
+          "ownedGroups Group[]",
+          "memberships GroupMember[]",
+          "builds Build[]",
+          "accounts Account[]",
+          "sessions Session[]",
+          "groupRequests GroupMembershipRequest[]",
+          "groupRsvps EventRSVP[]",
+          "authoredAnnouncements GroupAnnouncement[]",
+          "authoredGroupEvents GroupEvent[]",
+          "authoredGroupBuilds GroupBuild[]",
+          "issuedGroupInvites GroupInvitation[]",
+          "savedScenarios SavedScenario[]",
+          "buildFavorites BuildFavorite[]",
+          "compositionFavorites CompositionFavorite[]",
+          "buildVotes BuildVote[]",
+          "comments ContentComment[]",
+          "reports ContentReport[] @relation(\"ReportAuthor\")",
+          "reviewedReports ContentReport[] @relation(\"ReportReviewer\")",
+          "moderationLogs ModerationLog[]"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "Account",
+        "definition": "model Account {\n  id String @id @default(cuid())\n  userId String\n  type String\n  provider String\n  providerAccountId String\n  refresh_token String? @db.Text\n  access_token String? @db.Text\n  expires_at Int?\n  token_type String?\n  scope String?\n  id_token String? @db.Text\n  session_state String?\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n  @@unique([provider, providerAccountId])\n  @@index([userId])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "userId String",
+          "type String",
+          "provider String",
+          "providerAccountId String",
+          "refresh_token String? @db.Text",
+          "access_token String? @db.Text",
+          "expires_at Int?",
+          "token_type String?",
+          "scope String?",
+          "id_token String? @db.Text",
+          "session_state String?",
+          "user User @relation(fields: [userId], references: [id], onDelete: Cascade)",
+          "@@unique([provider, providerAccountId])",
+          "@@index([userId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "Session",
+        "definition": "model Session {\n  id String @id @default(cuid())\n  sessionToken String @unique\n  userId String\n  expires DateTime\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n  @@index([userId])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "sessionToken String @unique",
+          "userId String",
+          "expires DateTime",
+          "user User @relation(fields: [userId], references: [id], onDelete: Cascade)",
+          "@@index([userId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "VerificationToken",
+        "definition": "model VerificationToken {\n  identifier String\n  token String @unique\n  expires DateTime\n  @@unique([identifier, token])\n}",
+        "entries": [
+          "identifier String",
+          "token String @unique",
+          "expires DateTime",
+          "@@unique([identifier, token])"
+        ]
+      },
+      {
+        "kind": "enum",
+        "name": "BuildVisibility",
+        "definition": "enum BuildVisibility {\n  PUBLIC\n  PRIVATE\n  UNLISTED\n}",
+        "entries": ["PUBLIC", "PRIVATE", "UNLISTED"]
+      },
+      {
+        "kind": "model",
+        "name": "Build",
+        "definition": "model Build {\n  id String @id @default(cuid())\n  authorId String\n  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  title String\n  description String @db.Text\n  contentType String\n  region String\n  visibility BuildVisibility @default(PRIVATE)\n  playerCount Int @default(1)\n  recommendedIP Int @default(0)\n  strategy String @db.Text\n  patchNotes String @db.Text\n  version Int @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  equipment BuildEquipment[]\n  versions BuildVersion[]\n  @@index([visibility, updatedAt])\n  @@index([authorId, updatedAt])\n  groupSnapshots GroupBuild[]\n\n hiddenAt DateTime?\n comments ContentComment[]\n reports ContentReport[]\n favorites BuildFavorite[]\n votes BuildVote[]\n\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "authorId String",
+          "author User @relation(fields: [authorId], references: [id], onDelete: Cascade)",
+          "title String",
+          "description String @db.Text",
+          "contentType String",
+          "region String",
+          "visibility BuildVisibility @default(PRIVATE)",
+          "playerCount Int @default(1)",
+          "recommendedIP Int @default(0)",
+          "strategy String @db.Text",
+          "patchNotes String @db.Text",
+          "version Int @default(1)",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "equipment BuildEquipment[]",
+          "versions BuildVersion[]",
+          "@@index([visibility, updatedAt])",
+          "@@index([authorId, updatedAt])",
+          "groupSnapshots GroupBuild[]",
+          "hiddenAt DateTime?",
+          "comments ContentComment[]",
+          "reports ContentReport[]",
+          "favorites BuildFavorite[]",
+          "votes BuildVote[]"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "BuildEquipment",
+        "definition": "model BuildEquipment {\n  id String @id @default(cuid())\n  buildId String\n  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)\n  slot String\n  itemId String\n  quality Int\n  abilities String @db.Text\n  alternatives String @db.Text\n  @@unique([buildId, slot])\n  abilitySelections Json @default(\"{}\")\n  alternativeItemIds String[] @default([])\n\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "buildId String",
+          "build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)",
+          "slot String",
+          "itemId String",
+          "quality Int",
+          "abilities String @db.Text",
+          "alternatives String @db.Text",
+          "@@unique([buildId, slot])",
+          "abilitySelections Json @default(\"{}\")",
+          "alternativeItemIds String[] @default([])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "BuildVersion",
+        "definition": "model BuildVersion {\n  id String @id @default(cuid())\n  buildId String\n  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)\n  version Int\n  snapshot Json\n  createdAt DateTime @default(now())\n  @@unique([buildId, version])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "buildId String",
+          "build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)",
+          "version Int",
+          "snapshot Json",
+          "createdAt DateTime @default(now())",
+          "@@unique([buildId, version])"
+        ]
+      },
+      {
+        "kind": "enum",
+        "name": "GroupRole",
+        "definition": "enum GroupRole {\n OWNER\n ADMIN\n OFFICER\n MEMBER\n}",
+        "entries": ["OWNER", "ADMIN", "OFFICER", "MEMBER"]
+      },
+      {
+        "kind": "enum",
+        "name": "ContentVisibility",
+        "definition": "enum ContentVisibility {\n PUBLIC\n PRIVATE\n GROUP\n}",
+        "entries": ["PUBLIC", "PRIVATE", "GROUP"]
+      },
+      {
+        "kind": "model",
+        "name": "Group",
+        "definition": "model Group {\n id String @id @default(cuid())\n name String\n slug String @unique\n description String @db.Text\n region String\n visibility String @default(\"PRIVATE\")\n ownerId String\n owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n members GroupMember[]\n compositions Composition[]\n @@index([visibility,updatedAt])\n @@index([ownerId])\n  invitations GroupInvitation[]\n  requests GroupMembershipRequest[]\n  announcements GroupAnnouncement[]\n  events GroupEvent[]\n  builds GroupBuild[]\n\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "name String",
+          "slug String @unique",
+          "description String @db.Text",
+          "region String",
+          "visibility String @default(\"PRIVATE\")",
+          "ownerId String",
+          "owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "members GroupMember[]",
+          "compositions Composition[]",
+          "@@index([visibility,updatedAt])",
+          "@@index([ownerId])",
+          "invitations GroupInvitation[]",
+          "requests GroupMembershipRequest[]",
+          "announcements GroupAnnouncement[]",
+          "events GroupEvent[]",
+          "builds GroupBuild[]"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupMember",
+        "definition": "model GroupMember {\n groupId String\n userId String\n role GroupRole @default(MEMBER)\n joinedAt DateTime @default(now())\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n @@id([groupId,userId])\n @@index([userId])\n}",
+        "entries": [
+          "groupId String",
+          "userId String",
+          "role GroupRole @default(MEMBER)",
+          "joinedAt DateTime @default(now())",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "@@id([groupId,userId])",
+          "@@index([userId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "Composition",
+        "definition": "model Composition {\n id String @id @default(cuid())\n authorId String\n author User @relation(fields:[authorId],references:[id],onDelete:Cascade)\n groupId String?\n group Group? @relation(fields:[groupId],references:[id],onDelete:Cascade)\n title String\n description String @db.Text\n region String\n contentType String\n visibility ContentVisibility @default(PRIVATE)\n slots Json\n notes String @db.Text\n version Int @default(1)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n versions CompositionVersion[]\n @@index([authorId,updatedAt])\n @@index([visibility,updatedAt])\n @@index([groupId,updatedAt])\n  events GroupEvent[]\n\n hiddenAt DateTime?\n comments ContentComment[]\n reports ContentReport[]\n favorites CompositionFavorite[]\n\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "authorId String",
+          "author User @relation(fields:[authorId],references:[id],onDelete:Cascade)",
+          "groupId String?",
+          "group Group? @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "title String",
+          "description String @db.Text",
+          "region String",
+          "contentType String",
+          "visibility ContentVisibility @default(PRIVATE)",
+          "slots Json",
+          "notes String @db.Text",
+          "version Int @default(1)",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "versions CompositionVersion[]",
+          "@@index([authorId,updatedAt])",
+          "@@index([visibility,updatedAt])",
+          "@@index([groupId,updatedAt])",
+          "events GroupEvent[]",
+          "hiddenAt DateTime?",
+          "comments ContentComment[]",
+          "reports ContentReport[]",
+          "favorites CompositionFavorite[]"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "CompositionVersion",
+        "definition": "model CompositionVersion {\n id String @id @default(cuid())\n compositionId String\n composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)\n version Int\n snapshot Json\n createdAt DateTime @default(now())\n @@unique([compositionId,version])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "compositionId String",
+          "composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)",
+          "version Int",
+          "snapshot Json",
+          "createdAt DateTime @default(now())",
+          "@@unique([compositionId,version])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupInvitation",
+        "definition": "model GroupInvitation {\n id String @id @default(cuid())\n groupId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n tokenHash String @unique\n createdById String?\n createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)\n expiresAt DateTime\n acceptedAt DateTime?\n revokedAt DateTime?\n createdAt DateTime @default(now())\n @@index([groupId,createdAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "groupId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "tokenHash String @unique",
+          "createdById String?",
+          "createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)",
+          "expiresAt DateTime",
+          "acceptedAt DateTime?",
+          "revokedAt DateTime?",
+          "createdAt DateTime @default(now())",
+          "@@index([groupId,createdAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupMembershipRequest",
+        "definition": "model GroupMembershipRequest {\n groupId String\n userId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n status String @default(\"PENDING\")\n message String @db.Text\n updatedAt DateTime @updatedAt\n @@id([groupId,userId])\n @@index([groupId,status])\n}",
+        "entries": [
+          "groupId String",
+          "userId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "status String @default(\"PENDING\")",
+          "message String @db.Text",
+          "updatedAt DateTime @updatedAt",
+          "@@id([groupId,userId])",
+          "@@index([groupId,status])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupAnnouncement",
+        "definition": "model GroupAnnouncement {\n id String @id @default(cuid())\n groupId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n title String\n body String @db.Text\n authorId String?\n author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)\n createdAt DateTime @default(now())\n @@index([groupId,createdAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "groupId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "title String",
+          "body String @db.Text",
+          "authorId String?",
+          "author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)",
+          "createdAt DateTime @default(now())",
+          "@@index([groupId,createdAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupEvent",
+        "definition": "model GroupEvent {\n version Int @default(1)\n id String @id @default(cuid())\n groupId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n title String\n description String @db.Text\n startsAt DateTime\n timezone String\n expectedParticipants Int\n voiceInfo String\n compositionId String?\n composition Composition? @relation(fields:[compositionId],references:[id],onDelete:SetNull)\n cancelled Boolean @default(false)\n authorId String?\n author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)\n createdAt DateTime @default(now())\n rsvps EventRSVP[]\n @@index([groupId,startsAt])\n}",
+        "entries": [
+          "version Int @default(1)",
+          "id String @id @default(cuid())",
+          "groupId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "title String",
+          "description String @db.Text",
+          "startsAt DateTime",
+          "timezone String",
+          "expectedParticipants Int",
+          "voiceInfo String",
+          "compositionId String?",
+          "composition Composition? @relation(fields:[compositionId],references:[id],onDelete:SetNull)",
+          "cancelled Boolean @default(false)",
+          "authorId String?",
+          "author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)",
+          "createdAt DateTime @default(now())",
+          "rsvps EventRSVP[]",
+          "@@index([groupId,startsAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "EventRSVP",
+        "definition": "model EventRSVP {\n eventId String\n userId String\n event GroupEvent @relation(fields:[eventId],references:[id],onDelete:Cascade)\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n status String\n role String\n updatedAt DateTime @updatedAt\n @@id([eventId,userId])\n}",
+        "entries": [
+          "eventId String",
+          "userId String",
+          "event GroupEvent @relation(fields:[eventId],references:[id],onDelete:Cascade)",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "status String",
+          "role String",
+          "updatedAt DateTime @updatedAt",
+          "@@id([eventId,userId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupBuild",
+        "definition": "model GroupBuild {\n id String @id @default(cuid())\n groupId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n title String\n snapshot Json\n sourceBuildId String?\n sourceBuild Build? @relation(fields:[sourceBuildId],references:[id],onDelete:SetNull)\n authorId String?\n author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)\n createdAt DateTime @default(now())\n @@index([groupId,createdAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "groupId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "title String",
+          "snapshot Json",
+          "sourceBuildId String?",
+          "sourceBuild Build? @relation(fields:[sourceBuildId],references:[id],onDelete:SetNull)",
+          "authorId String?",
+          "author User? @relation(fields:[authorId],references:[id],onDelete:SetNull)",
+          "createdAt DateTime @default(now())",
+          "@@index([groupId,createdAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "SavedScenario",
+        "definition": "model SavedScenario {\n id String @id @default(cuid())\n authorId String\n author User @relation(fields:[authorId],references:[id],onDelete:Cascade)\n title String\n kind String\n configuration Json\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n @@index([authorId,updatedAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "authorId String",
+          "author User @relation(fields:[authorId],references:[id],onDelete:Cascade)",
+          "title String",
+          "kind String",
+          "configuration Json",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "@@index([authorId,updatedAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "CatalogRelease",
+        "definition": "model CatalogRelease {\n id String @id @default(cuid())\n version String @unique\n sourceUrl String\n rightsReference String\n checksum String\n importedAt DateTime @default(now())\n itemCount Int\n items ItemMetadata[]\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "version String @unique",
+          "sourceUrl String",
+          "rightsReference String",
+          "checksum String",
+          "importedAt DateTime @default(now())",
+          "itemCount Int",
+          "items ItemMetadata[]"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "ItemMetadata",
+        "definition": "model ItemMetadata {\n id String @id\n name String\n slot String\n tier Int\n enchantment Int\n itemPower Int?\n abilities Json\n recipe Json?\n releaseId String\n release CatalogRelease @relation(fields:[releaseId],references:[id],onDelete:Restrict)\n active Boolean @default(true)\n @@index([active,slot,tier])\n @@index([name])\n}",
+        "entries": [
+          "id String @id",
+          "name String",
+          "slot String",
+          "tier Int",
+          "enchantment Int",
+          "itemPower Int?",
+          "abilities Json",
+          "recipe Json?",
+          "releaseId String",
+          "release CatalogRelease @relation(fields:[releaseId],references:[id],onDelete:Restrict)",
+          "active Boolean @default(true)",
+          "@@index([active,slot,tier])",
+          "@@index([name])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "BuildFavorite",
+        "definition": "model BuildFavorite {\n userId String\n buildId String\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)\n createdAt DateTime @default(now())\n @@id([userId,buildId])\n @@index([buildId])\n}",
+        "entries": [
+          "userId String",
+          "buildId String",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)",
+          "createdAt DateTime @default(now())",
+          "@@id([userId,buildId])",
+          "@@index([buildId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "CompositionFavorite",
+        "definition": "model CompositionFavorite {\n userId String\n compositionId String\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)\n createdAt DateTime @default(now())\n @@id([userId,compositionId])\n @@index([compositionId])\n}",
+        "entries": [
+          "userId String",
+          "compositionId String",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "composition Composition @relation(fields:[compositionId],references:[id],onDelete:Cascade)",
+          "createdAt DateTime @default(now())",
+          "@@id([userId,compositionId])",
+          "@@index([compositionId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "BuildVote",
+        "definition": "model BuildVote {\n userId String\n buildId String\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)\n createdAt DateTime @default(now())\n @@id([userId,buildId])\n @@index([buildId])\n}",
+        "entries": [
+          "userId String",
+          "buildId String",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "build Build @relation(fields:[buildId],references:[id],onDelete:Cascade)",
+          "createdAt DateTime @default(now())",
+          "@@id([userId,buildId])",
+          "@@index([buildId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "ContentComment",
+        "definition": "model ContentComment {\n id String @id @default(cuid())\n authorId String\n author User @relation(fields:[authorId],references:[id],onDelete:Cascade)\n buildId String?\n build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)\n compositionId String?\n composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)\n body String @db.Text\n version Int @default(1)\n hiddenAt DateTime?\n deletedAt DateTime?\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n revisions CommentRevision[]\n reports ContentReport[]\n @@index([buildId,createdAt])\n @@index([compositionId,createdAt])\n @@index([authorId])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "authorId String",
+          "author User @relation(fields:[authorId],references:[id],onDelete:Cascade)",
+          "buildId String?",
+          "build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)",
+          "compositionId String?",
+          "composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)",
+          "body String @db.Text",
+          "version Int @default(1)",
+          "hiddenAt DateTime?",
+          "deletedAt DateTime?",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "revisions CommentRevision[]",
+          "reports ContentReport[]",
+          "@@index([buildId,createdAt])",
+          "@@index([compositionId,createdAt])",
+          "@@index([authorId])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "CommentRevision",
+        "definition": "model CommentRevision {\n id String @id @default(cuid())\n commentId String\n comment ContentComment @relation(fields:[commentId],references:[id],onDelete:Cascade)\n version Int\n body String @db.Text\n createdAt DateTime @default(now())\n @@unique([commentId,version])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "commentId String",
+          "comment ContentComment @relation(fields:[commentId],references:[id],onDelete:Cascade)",
+          "version Int",
+          "body String @db.Text",
+          "createdAt DateTime @default(now())",
+          "@@unique([commentId,version])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "ContentReport",
+        "definition": "model ContentReport {\n version Int @default(1)\n id String @id @default(cuid())\n authorId String?\n author User? @relation(\"ReportAuthor\",fields:[authorId],references:[id],onDelete:SetNull)\n buildId String?\n build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)\n compositionId String?\n composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)\n commentId String?\n comment ContentComment? @relation(fields:[commentId],references:[id],onDelete:Cascade)\n reason String @db.Text\n status String @default(\"OPEN\")\n reviewerId String?\n reviewer User? @relation(\"ReportReviewer\",fields:[reviewerId],references:[id],onDelete:SetNull)\n reviewNote String @default(\"\") @db.Text\n createdAt DateTime @default(now())\n reviewedAt DateTime?\n @@index([status,createdAt])\n}",
+        "entries": [
+          "version Int @default(1)",
+          "id String @id @default(cuid())",
+          "authorId String?",
+          "author User? @relation(\"ReportAuthor\",fields:[authorId],references:[id],onDelete:SetNull)",
+          "buildId String?",
+          "build Build? @relation(fields:[buildId],references:[id],onDelete:Cascade)",
+          "compositionId String?",
+          "composition Composition? @relation(fields:[compositionId],references:[id],onDelete:Cascade)",
+          "commentId String?",
+          "comment ContentComment? @relation(fields:[commentId],references:[id],onDelete:Cascade)",
+          "reason String @db.Text",
+          "status String @default(\"OPEN\")",
+          "reviewerId String?",
+          "reviewer User? @relation(\"ReportReviewer\",fields:[reviewerId],references:[id],onDelete:SetNull)",
+          "reviewNote String @default(\"\") @db.Text",
+          "createdAt DateTime @default(now())",
+          "reviewedAt DateTime?",
+          "@@index([status,createdAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "ModerationLog",
+        "definition": "model ModerationLog {\n id String @id @default(cuid())\n actorId String?\n actor User? @relation(fields:[actorId],references:[id],onDelete:SetNull)\n targetType String\n targetId String\n action String\n reason String @db.Text\n createdAt DateTime @default(now())\n @@index([createdAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "actorId String?",
+          "actor User? @relation(fields:[actorId],references:[id],onDelete:SetNull)",
+          "targetType String",
+          "targetId String",
+          "action String",
+          "reason String @db.Text",
+          "createdAt DateTime @default(now())",
+          "@@index([createdAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "Timer",
+        "definition": "model Timer {\n id String @id @default(cuid())\n userId String\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n title String\n category String\n status String @default(\"RUNNING\")\n durationMs Int\n dueAt DateTime?\n remainingMs Int?\n version Int @default(1)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n @@index([userId,updatedAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "userId String",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "title String",
+          "category String",
+          "status String @default(\"RUNNING\")",
+          "durationMs Int",
+          "dueAt DateTime?",
+          "remainingMs Int?",
+          "version Int @default(1)",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "@@index([userId,updatedAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "MarketWatchItem",
+        "definition": "model MarketWatchItem {\n id String @id @default(cuid())\n userId String\n user User @relation(fields:[userId],references:[id],onDelete:Cascade)\n region String\n itemId String\n quality Int @default(1)\n createdAt DateTime @default(now())\n @@unique([userId,region,itemId,quality])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "userId String",
+          "user User @relation(fields:[userId],references:[id],onDelete:Cascade)",
+          "region String",
+          "itemId String",
+          "quality Int @default(1)",
+          "createdAt DateTime @default(now())",
+          "@@unique([userId,region,itemId,quality])"
+        ]
+      }
+    ],
+    "migrations": [
+      {
+        "name": "20261025194321_foundation",
+        "source": "prisma/migrations/20261025194321_foundation/migration.sql",
+        "sha256": "eec39c694939395f0fac7fefaaf1224bcd190c864a7ce254009a3e7950387d9e"
+      },
+      {
+        "name": "20261025195551_build_platform",
+        "source": "prisma/migrations/20261025195551_build_platform/migration.sql",
+        "sha256": "0dc693d959ac177f4cfb45770517570fa11468fb34579f86fd7967d477e339a4"
+      },
+      {
+        "name": "20261025211414_compositions_and_group_access",
+        "source": "prisma/migrations/20261025211414_compositions_and_group_access/migration.sql",
+        "sha256": "62894f81927ec6d3931b9b0ac449f881fd9a872e334ad06c147e507a92cd1f18"
+      },
+      {
+        "name": "20261025212501_group_collaboration",
+        "source": "prisma/migrations/20261025212501_group_collaboration/migration.sql",
+        "sha256": "00a7beee25b5e813a292b721c4345d6d4f98a2adc972b94f77c3391edc0fc601"
+      },
+      {
+        "name": "20261025213500_qa_invariants",
+        "source": "prisma/migrations/20261025213500_qa_invariants/migration.sql",
+        "sha256": "4c630e30f5818e81dfc0b6e3dee2bd025fb347ad5c45eba2d9603d27a68a8408"
+      },
+      {
+        "name": "20261025214851_collaboration_foreign_keys",
+        "source": "prisma/migrations/20261025214851_collaboration_foreign_keys/migration.sql",
+        "sha256": "2a59cbdb07dba63a9e9006d491cbf7618160cb19d48b8228593b89ec561f0ee5"
+      },
+      {
+        "name": "20261025215723_structured_build_abilities",
+        "source": "prisma/migrations/20261025215723_structured_build_abilities/migration.sql",
+        "sha256": "c01d4758c424788b7e427872e76641c66c968fd49422f0f6e4b2a310ad837976"
+      },
+      {
+        "name": "20261025220602_saved_economy_scenarios",
+        "source": "prisma/migrations/20261025220602_saved_economy_scenarios/migration.sql",
+        "sha256": "946c36507e0a3504a43354043fef97118d7eba0a9bac4754b0646dd6ba12216a"
+      },
+      {
+        "name": "20261025222653_catalog_metadata",
+        "source": "prisma/migrations/20261025222653_catalog_metadata/migration.sql",
+        "sha256": "b9d588776f02fce238e1ecfbfafaccc97bd517f9c93942e621434ddbc38c1d63"
+      },
+      {
+        "name": "20261025223720_community_interactions",
+        "source": "prisma/migrations/20261025223720_community_interactions/migration.sql",
+        "sha256": "2a55c221dfb6fe0e542f4d5d33511a9e78996e4c1bb798182c1becc2915065fd"
+      },
+      {
+        "name": "20261025223807_moderation_version",
+        "source": "prisma/migrations/20261025223807_moderation_version/migration.sql",
+        "sha256": "051586d1e974ba4c885e6cd487125483b712d0da76cd45c7b33a37e1bddf8510"
+      },
+      {
+        "name": "20261025224025_community_invariants",
+        "source": "prisma/migrations/20261025224025_community_invariants/migration.sql",
+        "sha256": "d030f41b257aa51ae7c3a56bfd784d22571b9918637382fcb90c3c44a49af9a9"
+      },
+      {
+        "name": "20261025224426_group_event_revisions",
+        "source": "prisma/migrations/20261025224426_group_event_revisions/migration.sql",
+        "sha256": "7105ec42cdc5110abb34db8895c67719740a3fdae0d0226307e72083e5561dbc"
+      },
+      {
+        "name": "20261025224924_personal_timers",
+        "source": "prisma/migrations/20261025224924_personal_timers/migration.sql",
+        "sha256": "db3018a97a20cd7e235d4d160d49b3b7f75bc967903ddb03ea216914f7f277e8"
+      },
+      {
+        "name": "20261025225221_personal_data_invariants",
+        "source": "prisma/migrations/20261025225221_personal_data_invariants/migration.sql",
+        "sha256": "c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e"
+      },
+      {
+        "name": "20261025225359_timer_null_state",
+        "source": "prisma/migrations/20261025225359_timer_null_state/migration.sql",
+        "sha256": "96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd"
+      },
+      {
+        "name": "20261026110000_market_watch_items",
+        "source": "prisma/migrations/20261026110000_market_watch_items/migration.sql",
+        "sha256": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": ".dockerignore",
+      "bytes": 193,
+      "sha256": "261667ce566eecfd85134a16f7ada8d4c3efa3c18fcb2cf167cb430a836f260b"
+    },
+    {
+      "path": ".editorconfig",
+      "bytes": 139,
+      "sha256": "0236baaa876eef2fbe3d4a9b01aac87d148b925fac3f58e1bc0cc9819ed88dab"
+    },
+    {
+      "path": ".env.example",
+      "bytes": 235,
+      "sha256": "c03b23f326ff98c05fdd66f5421084b658f0f6a9a43313994da48be37033091f"
+    },
+    {
+      "path": ".github/dependabot.yml",
+      "bytes": 381,
+      "sha256": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66"
+    },
+    {
+      "path": ".github/workflows/quality.yml",
+      "bytes": 1792,
+      "sha256": "fc172d673bbdda669250bbb5c8867a60f4ab01dc2e562141284783f4def2ecce"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 337,
+      "sha256": "7832d64bf25021a3c9c6c74a80650d0597f716aefe9d5287d260ed8e86c4ecbd"
+    },
+    {
+      "path": ".nvmrc",
+      "bytes": 3,
+      "sha256": "f14b4987904bcb5814e4459a057ed4d20f58a633152288a761214dcd28780b56"
+    },
+    {
+      "path": ".prettierignore",
+      "bytes": 408,
+      "sha256": "0fb631976b48557b45368e81a77f5d96c080f92223e1be18ebbc12c526e9ef92"
+    },
+    {
+      "path": ".prettierrc.json",
+      "bytes": 68,
+      "sha256": "fe7261fc2b58d77165dd136f09d15a6ce66a22c91da453cf5c105a1978469457"
+    },
+    {
+      "path": "Dockerfile",
+      "bytes": 877,
+      "sha256": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73"
+    },
+    {
+      "path": "assets/source/homepage-illustrations-v1/build-v1.png",
+      "bytes": 2335164,
+      "sha256": "6a6a5747b46f89ce9f6f0826538450fbd2f54b443aada44de2fb7fbaa9e5f018"
+    },
+    {
+      "path": "assets/source/homepage-illustrations-v1/composition-v1.png",
+      "bytes": 2290161,
+      "sha256": "9eb92a8eed4b96a473d1f42e1fa615fbd7be5dd15e019496f0dc6b5df0fc4cd9"
+    },
+    {
+      "path": "assets/source/homepage-illustrations-v1/hero-v1.png",
+      "bytes": 2455086,
+      "sha256": "0eebae7683bc8ac7aeec438085350962ce146590887027c441693ff682393792"
+    },
+    {
+      "path": "assets/source/homepage-illustrations-v1/market-v1.png",
+      "bytes": 2530999,
+      "sha256": "521cb3d5dbdaafc30304e21466a0f76d786153813cd1738cfc0e55006049917e"
+    },
+    {
+      "path": "data/catalog/ao-snapshot-20260712.json",
+      "bytes": 1523963,
+      "sha256": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0"
+    },
+    {
+      "path": "docker-compose.yml",
+      "bytes": 507,
+      "sha256": "4249856b0879ff85903a39f3c450daf04888d1dea1d873b70422b153ce39d4b9"
+    },
+    {
+      "path": "docs/assets/HOMEPAGE_EQUIPMENT.json",
+      "bytes": 2011,
+      "sha256": "7bdc21f89612025dee709a80c8c4d39b5d4f7ef16561d367459217a01c1aefb5"
+    },
+    {
+      "path": "docs/assets/OUTPOST_LOGO.json",
+      "bytes": 772,
+      "sha256": "ce0868fbc5af2d1bf3bdfde8b4d13f264969b8535ddada5741fbacfa51ce12e2"
+    },
+    {
+      "path": "docs/assets/OUTPOST_MEDIA_INVENTORY.md",
+      "bytes": 3724,
+      "sha256": "80b5e11a86f5b36783b40c1bd208947330c1db7fd8b75b0e28cb8d9243af3628"
+    },
+    {
+      "path": "docs/data/ao-source.example.json",
+      "bytes": 294,
+      "sha256": "cd56897ac9207c2a44b9cd3525e64ebba8457ef2980b66478b29e0f2611af185"
+    },
+    {
+      "path": "docs/data/item-snapshot-coverage.json",
+      "bytes": 11542,
+      "sha256": "303e6633776c522c0293c4280f3c2443de6b78b5cc4d48927282f80b1d7fe53d"
+    },
+    {
+      "path": "docs/data/item-snapshot-source.json",
+      "bytes": 3338,
+      "sha256": "b0a1199c44146db148f73e106f481b25aba784a86a507899eef60627ba93169f"
+    },
+    {
+      "path": "e2e/account.spec.ts",
+      "bytes": 2094,
+      "sha256": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877"
+    },
+    {
+      "path": "e2e/build-discovery-visual.spec.ts",
+      "bytes": 7767,
+      "sha256": "20621969d4699afabdaf7d7496b6e789c9d2768b3c6658cdc668af21e45c368b"
+    },
+    {
+      "path": "e2e/build-editor-visual.spec.ts",
+      "bytes": 6095,
+      "sha256": "9f5404e4f24475bbc2af93ad0d57d2841265ced791c42cc9d0624b84b1945dbe"
+    },
+    {
+      "path": "e2e/builds.spec.ts",
+      "bytes": 4844,
+      "sha256": "b711bcad122ca8fd489b30e791c8bf9f1e622b15aa988a856aab70f8cba6c0d1"
+    },
+    {
+      "path": "e2e/catalog.spec.ts",
+      "bytes": 4018,
+      "sha256": "86caadbdd3a95c54e5a25fb3e6df88489dd119cd94a8d2d62eedb6d67c9740c7"
+    },
+    {
+      "path": "e2e/community.spec.ts",
+      "bytes": 11295,
+      "sha256": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b"
+    },
+    {
+      "path": "e2e/composition-visual.spec.ts",
+      "bytes": 5542,
+      "sha256": "886c21ba4f674903af6078ecc334108d1f8f45f9be6a9c326fdd7c8f35dd5b68"
+    },
+    {
+      "path": "e2e/compositions.spec.ts",
+      "bytes": 10298,
+      "sha256": "cd285f95911dfc6811073e546114538c05d96d8f42d68a0e022bf1b6620c2bef"
+    },
+    {
+      "path": "e2e/dashboard-loadouts.spec.ts",
+      "bytes": 2559,
+      "sha256": "09daa65244cb9cf2c5f1f213b6bce153a39b4b5b00eb10dcdde68907dd3ab327"
+    },
+    {
+      "path": "e2e/design-review.spec.ts",
+      "bytes": 7270,
+      "sha256": "c425c982220f25d5b765428585506576c6adda51d823b550a18309fa00e13cf7"
+    },
+    {
+      "path": "e2e/group-editing.spec.ts",
+      "bytes": 4860,
+      "sha256": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418"
+    },
+    {
+      "path": "e2e/groups.spec.ts",
+      "bytes": 10201,
+      "sha256": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832"
+    },
+    {
+      "path": "e2e/guild-visual.spec.ts",
+      "bytes": 7739,
+      "sha256": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647"
+    },
+    {
+      "path": "e2e/history.spec.ts",
+      "bytes": 3428,
+      "sha256": "a1dab29d6d7ccdee2c42ebe8acdc88ad4ca81bacbd842fd1dd4fb71fb9c06a1a"
+    },
+    {
+      "path": "e2e/home-market-pulse.spec.ts",
+      "bytes": 2423,
+      "sha256": "7db6681c766e556fdfeb234208b917d9db77e7be2421bb846886957785056018"
+    },
+    {
+      "path": "e2e/home-market-terminal.spec.ts",
+      "bytes": 2348,
+      "sha256": "d12a538d13c08f024cd4122b9ffd729645b40fede1df925f7f172639fe7637d9"
+    },
+    {
+      "path": "e2e/homepage-polish.spec.ts",
+      "bytes": 8074,
+      "sha256": "821695f7915f247535e708e897feaa3d7b01977ee31b1aae56f6c113481ec198"
+    },
+    {
+      "path": "e2e/homepage-visual-correction.spec.ts",
+      "bytes": 10231,
+      "sha256": "42f28609ece000572d6389844f09fc0dd6c8c4fcf15b385b9cc7dec22e2dee5e"
+    },
+    {
+      "path": "e2e/market-visual.spec.ts",
+      "bytes": 3823,
+      "sha256": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06"
+    },
+    {
+      "path": "e2e/market-watchlist.spec.ts",
+      "bytes": 5114,
+      "sha256": "05cc05844c1896f298902b849f34156e3f062b4fbb4a6de1092764181f6e938b"
+    },
+    {
+      "path": "e2e/outpost.spec.ts",
+      "bytes": 2524,
+      "sha256": "1a507a70c5ee1b09eadc3ab07a5bf851c0a949528cf2b03e646cf8b8a6743e59"
+    },
+    {
+      "path": "e2e/personal-tools.spec.ts",
+      "bytes": 8115,
+      "sha256": "52fb2e34a7b00867d1eaaae88a1fb9e608b2c8d27884403699f4cdd69725abf1"
+    },
+    {
+      "path": "e2e/player-workflows.spec.ts",
+      "bytes": 4949,
+      "sha256": "514fd1a7d83b6836d62a5f3392527f2f7893e0518e051aee55dff743b2999ee9"
+    },
+    {
+      "path": "e2e/playful-ui.spec.ts",
+      "bytes": 2228,
+      "sha256": "4ae19c2b63d1bcc3070a4438a284f9eff97078ec60bb2cfbb49b7449f720bc01"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts",
+      "bytes": 6832,
+      "sha256": "4f7f189b71c1275d70bf0f8616604a5e45e23418132ad8def419eb327ab46a04"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png",
+      "bytes": 38427,
+      "sha256": "e6bade7c4ec05c13180bed6fdacb113be252a0eff2b1728de8e2dc5ae802ac69"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png",
+      "bytes": 34057,
+      "sha256": "2123642f08b394fc55c9163fa1b28b65eec5fe6ce1b1c268fd142f2ab9b5ae59"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png",
+      "bytes": 34163,
+      "sha256": "4900fe63ecb74f7931539260399f1bed4f35fb620881d929f0dd61b2ba591320"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png",
+      "bytes": 35354,
+      "sha256": "8ebdfcfbcdd517b4f0a30aa681f51db8998c6c0e4e9adf0abe979618b86404de"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png",
+      "bytes": 91912,
+      "sha256": "86e39dccd2347104b91800ef29d8a0230cbc232313f3729cf2fe9b5597557cca"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png",
+      "bytes": 25968,
+      "sha256": "d3b38e0f1f0f5cd976be46b8b9267f79c4008dc73e50080789c7dfc227f1ed61"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png",
+      "bytes": 26033,
+      "sha256": "c7d9ddc84ace55ab018eda84928f3eed2fc2c92b9a78b26461358981683134dc"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png",
+      "bytes": 28306,
+      "sha256": "515e088280d3e850e3c3d47af2434263ec8de9ac37abdaf3dce036d954a15769"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png",
+      "bytes": 35482,
+      "sha256": "aecba27c79369e9a40f71d6d8f6ad383e67a6a314ec97f701ace59705dd8595c"
+    },
+    {
+      "path": "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png",
+      "bytes": 35549,
+      "sha256": "b1e8a2d9aa31222324f63f920970d36fffee887285d480c9aa51fb4004c040d8"
+    },
+    {
+      "path": "e2e/production-freshness.spec.ts",
+      "bytes": 3336,
+      "sha256": "67656412628b34c1bf2e3b77dc8d6261682164631b73008e3b476f7469712be4"
+    },
+    {
+      "path": "e2e/production-modes.spec.ts",
+      "bytes": 6785,
+      "sha256": "f371d56172d1a828745d08e5f2e560f3648ecbb9ee411a8b9660921782becc68"
+    },
+    {
+      "path": "e2e/production.spec.ts",
+      "bytes": 3628,
+      "sha256": "31b07fe06bca1ed80bc7c4d5e659ec7df5070aef809f42741afafa622439db76"
+    },
+    {
+      "path": "e2e/public.spec.ts",
+      "bytes": 4425,
+      "sha256": "4d3cf5d6ad7ad873793c8887af90c274d2033781946b901bfaa2aa6d4a827017"
+    },
+    {
+      "path": "e2e/qa-audit.spec.ts",
+      "bytes": 4241,
+      "sha256": "44758c6d62538dd1255c67dd1af46728fdf44aeeef3ba7cb3a913aae8453dcd4"
+    },
+    {
+      "path": "e2e/qa-light.spec.ts",
+      "bytes": 1970,
+      "sha256": "b6bf1a49a446f00041f5cd299bb671d28c7c15743f2c40955d1ee9c23f509550"
+    },
+    {
+      "path": "e2e/qa-regressions.spec.ts",
+      "bytes": 6025,
+      "sha256": "7d2b6001ce1630913ac18ce13c2441a5615889a4d3cea08945c972951c6c84fb"
+    },
+    {
+      "path": "e2e/qa-security.spec.ts",
+      "bytes": 4619,
+      "sha256": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044"
+    },
+    {
+      "path": "e2e/reference-ui.spec.ts",
+      "bytes": 8007,
+      "sha256": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7"
+    },
+    {
+      "path": "e2e/refinement.spec.ts",
+      "bytes": 5550,
+      "sha256": "bd1abd5e54618c01b9e87a76aabdaf83d3ef602ad3ea3c9e9da9278842d8f6d2"
+    },
+    {
+      "path": "e2e/settings-recovery.spec.ts",
+      "bytes": 3512,
+      "sha256": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70"
+    },
+    {
+      "path": "e2e/support/db.ts",
+      "bytes": 367,
+      "sha256": "18028d9a156cd46571ff71e75ac317db1632029feba0da695188a55427b9c90b"
+    },
+    {
+      "path": "e2e/tool-directory.spec.ts",
+      "bytes": 1429,
+      "sha256": "a63a911012262e1bfc5eaecd131921f3f812b93ad16571b3022c7ee6be308c37"
+    },
+    {
+      "path": "e2e/trade-scenarios.spec.ts",
+      "bytes": 7774,
+      "sha256": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc"
+    },
+    {
+      "path": "e2e/transport.spec.ts",
+      "bytes": 2458,
+      "sha256": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819"
+    },
+    {
+      "path": "e2e/verified-builds.spec.ts",
+      "bytes": 5565,
+      "sha256": "7fa4dfeb76647279694ca5d7b76cbbab739c60710003d3b525b3f4b70fb6c37e"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "bytes": 467,
+      "sha256": "3b76d729b7892a71ab8b10bcbcbf877d53b4e7ec9983760a30e51b3ff5457421"
+    },
+    {
+      "path": "next-env.d.ts",
+      "bytes": 288,
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "path": "next.config.ts",
+      "bytes": 883,
+      "sha256": "1eae45f8ba32dc7309dedc5cc2675c85de7737e1ada51a433c23558f357f20d7"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 294580,
+      "sha256": "bd581ec9ccf09b0edcdf94b761caaf4c83ad47203b34d414491be04d8fae788a"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1921,
+      "sha256": "daeabd515e65b2ceedac90b238d39d164ff0d6b544fc22fca554e7ae1e88336b"
+    },
+    {
+      "path": "playwright.config.ts",
+      "bytes": 406,
+      "sha256": "7f3c144613f2aa1d96db22f311f6a4d1f2df9337cd5f4d2363f4beb19f918fe4"
+    },
+    {
+      "path": "prisma/migrations/20261025194321_foundation/migration.sql",
+      "bytes": 2169,
+      "sha256": "eec39c694939395f0fac7fefaaf1224bcd190c864a7ce254009a3e7950387d9e"
+    },
+    {
+      "path": "prisma/migrations/20261025195551_build_platform/migration.sql",
+      "bytes": 2247,
+      "sha256": "0dc693d959ac177f4cfb45770517570fa11468fb34579f86fd7967d477e339a4"
+    },
+    {
+      "path": "prisma/migrations/20261025211414_compositions_and_group_access/migration.sql",
+      "bytes": 3580,
+      "sha256": "62894f81927ec6d3931b9b0ac449f881fd9a872e334ad06c147e507a92cd1f18"
+    },
+    {
+      "path": "prisma/migrations/20261025212501_group_collaboration/migration.sql",
+      "bytes": 4239,
+      "sha256": "00a7beee25b5e813a292b721c4345d6d4f98a2adc972b94f77c3391edc0fc601"
+    },
+    {
+      "path": "prisma/migrations/20261025213500_qa_invariants/migration.sql",
+      "bytes": 1023,
+      "sha256": "4c630e30f5818e81dfc0b6e3dee2bd025fb347ad5c45eba2d9603d27a68a8408"
+    },
+    {
+      "path": "prisma/migrations/20261025214851_collaboration_foreign_keys/migration.sql",
+      "bytes": 1464,
+      "sha256": "2a59cbdb07dba63a9e9006d491cbf7618160cb19d48b8228593b89ec561f0ee5"
+    },
+    {
+      "path": "prisma/migrations/20261025215723_structured_build_abilities/migration.sql",
+      "bytes": 175,
+      "sha256": "c01d4758c424788b7e427872e76641c66c968fd49422f0f6e4b2a310ad837976"
+    },
+    {
+      "path": "prisma/migrations/20261025220602_saved_economy_scenarios/migration.sql",
+      "bytes": 642,
+      "sha256": "946c36507e0a3504a43354043fef97118d7eba0a9bac4754b0646dd6ba12216a"
+    },
+    {
+      "path": "prisma/migrations/20261025222653_catalog_metadata/migration.sql",
+      "bytes": 1230,
+      "sha256": "b9d588776f02fce238e1ecfbfafaccc97bd517f9c93942e621434ddbc38c1d63"
+    },
+    {
+      "path": "prisma/migrations/20261025223720_community_interactions/migration.sql",
+      "bytes": 6256,
+      "sha256": "2a55c221dfb6fe0e542f4d5d33511a9e78996e4c1bb798182c1becc2915065fd"
+    },
+    {
+      "path": "prisma/migrations/20261025223807_moderation_version/migration.sql",
+      "bytes": 95,
+      "sha256": "051586d1e974ba4c885e6cd487125483b712d0da76cd45c7b33a37e1bddf8510"
+    },
+    {
+      "path": "prisma/migrations/20261025224025_community_invariants/migration.sql",
+      "bytes": 661,
+      "sha256": "d030f41b257aa51ae7c3a56bfd784d22571b9918637382fcb90c3c44a49af9a9"
+    },
+    {
+      "path": "prisma/migrations/20261025224426_group_event_revisions/migration.sql",
+      "bytes": 92,
+      "sha256": "7105ec42cdc5110abb34db8895c67719740a3fdae0d0226307e72083e5561dbc"
+    },
+    {
+      "path": "prisma/migrations/20261025224924_personal_timers/migration.sql",
+      "bytes": 728,
+      "sha256": "db3018a97a20cd7e235d4d160d49b3b7f75bc967903ddb03ea216914f7f277e8"
+    },
+    {
+      "path": "prisma/migrations/20261025225221_personal_data_invariants/migration.sql",
+      "bytes": 790,
+      "sha256": "c2dbaa5c64eb5e6f5dcf0d9f33de1336430802df54e8efc2e0026dafa430d56e"
+    },
+    {
+      "path": "prisma/migrations/20261025225359_timer_null_state/migration.sql",
+      "bytes": 370,
+      "sha256": "96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd"
+    },
+    {
+      "path": "prisma/migrations/20261026110000_market_watch_items/migration.sql",
+      "bytes": 923,
+      "sha256": "f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9"
+    },
+    {
+      "path": "prisma/migrations/migration_lock.toml",
+      "bytes": 128,
+      "sha256": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "bytes": 12167,
+      "sha256": "affb1f1ace4db6f1927dd3e1edb9127b9e99360eb1500cd0468ff987e7f0a57f"
+    },
+    {
+      "path": "prisma/seed.ts",
+      "bytes": 400,
+      "sha256": "7286d68bd2296862e0bee354fb7ca79aa9e33a648743e6f68ef6f0d1cf3a0679"
+    },
+    {
+      "path": "public/albion/equipment/T4_2H_BOW.png",
+      "bytes": 80485,
+      "sha256": "21d323adfaba0afcbcb7e86d7010c840fef1e7bfbffe48f02a45580332539932"
+    },
+    {
+      "path": "public/albion/equipment/T4_ARMOR_LEATHER_SET1.png",
+      "bytes": 86155,
+      "sha256": "1181eec2bd8f842d1bce58b183a47a1db7554e73e7ffe6ee74fb927db7014462"
+    },
+    {
+      "path": "public/albion/equipment/T4_HEAD_CLOTH_SET1.png",
+      "bytes": 71304,
+      "sha256": "3c64672675337db4b68dbc6a5b190594c574de468e4dc61b578ae3269e27e379"
+    },
+    {
+      "path": "public/albion/equipment/T4_MAIN_AXE.png",
+      "bytes": 80323,
+      "sha256": "cd59da708f7329be8bb2bf2b68edab977c514b502f5ec2a4099d36d5226b09c6"
+    },
+    {
+      "path": "public/albion/equipment/T4_MAIN_SWORD.png",
+      "bytes": 74617,
+      "sha256": "838395584afef3461344e4d9c1e388488fc40c26cc7f1a9f5dcf379557acea4e"
+    },
+    {
+      "path": "public/albion/illustrations/build-v1.webp",
+      "bytes": 108052,
+      "sha256": "318639a9fce3784fe15e07da2ece53f2afe864d4d3d1fb198898f5785cdea924"
+    },
+    {
+      "path": "public/albion/illustrations/composition-v1.webp",
+      "bytes": 98964,
+      "sha256": "d1db0094df10949241766ab2f258912a08825a81ccfb941b685226352554401b"
+    },
+    {
+      "path": "public/albion/illustrations/hero-v1.webp",
+      "bytes": 239818,
+      "sha256": "64b6f1de9ed9eeb6ef8dddf1fa0245f4d427b4ad46933f9dfe4b26c939d3d5b2"
+    },
+    {
+      "path": "public/albion/illustrations/market-v1.webp",
+      "bytes": 128976,
+      "sha256": "ff763c2e144dc45331a4ffb1157ffaf5b890d849df1070f17f3a2a9c2904db7e"
+    },
+    {
+      "path": "public/brand/discord-symbol.svg",
+      "bytes": 1302,
+      "sha256": "3efc001289994d74fa3f919397259d1e7b8e77188c9161880243965ee284466e"
+    },
+    {
+      "path": "public/brand/outpost-logo.png",
+      "bytes": 1115199,
+      "sha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48"
+    },
+    {
+      "path": "public/licenses/ao-item-snapshot.txt",
+      "bytes": 1066,
+      "sha256": "7cd65919fd845d6160f2ec1b4afee97e0f58625a712723fd5ff972f54074555c"
+    },
+    {
+      "path": "public/licenses/archivo-black-OFL.txt",
+      "bytes": 4398,
+      "sha256": "4cafdbbd100af37a23805af09b7068e4daafb4516dc3d6d52436f4a9d7b4c0d3"
+    },
+    {
+      "path": "public/licenses/barlow-condensed-OFL.txt",
+      "bytes": 6167,
+      "sha256": "046ee27d8bddc6b6ee08eee53c96dbf3ec1f6df561644e018507dd8ffcb11d31"
+    },
+    {
+      "path": "public/licenses/geist-mono-OFL.txt",
+      "bytes": 4498,
+      "sha256": "cc815ed4fc045f0e991abb10395b7932bd028c6a067deb13316d6002105074e6"
+    },
+    {
+      "path": "public/licenses/inter-OFL.txt",
+      "bytes": 4477,
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "path": "scripts/audit-game-data.ts",
+      "bytes": 7623,
+      "sha256": "a2f632ee51daa1fcec88249dd5a03e16ca5a26c8924033808b8559660fd2360d"
+    },
+    {
+      "path": "scripts/db-diagnose.mjs",
+      "bytes": 1708,
+      "sha256": "19339c02128e40dae9d6f514d0cf8b74e5917d7ceca2dbcf4e1ae9c87983f4de"
+    },
+    {
+      "path": "scripts/docs-validate.py",
+      "bytes": 15045,
+      "sha256": "5900cc3fb613be798cc6842fb7dd8fbdfde264dbc8f43fb583a18201b5eba362"
+    },
+    {
+      "path": "scripts/github-setup.mjs",
+      "bytes": 12163,
+      "sha256": "88456a3e98fd0d9678b239b40b9bca7cbc9e561cd2461efa4a9d524e8f1972e7"
+    },
+    {
+      "path": "scripts/install-project-skills.py",
+      "bytes": 3112,
+      "sha256": "42a0dcca1c158e1a0927bbb14c409a97c951b058f079521ae60a08ba957c815b"
+    },
+    {
+      "path": "scripts/prepare-item-snapshot.ts",
+      "bytes": 2581,
+      "sha256": "e223439295c4dc54d80008b42725c37c919b7f5f963238260e4fce275dc843b7"
+    },
+    {
+      "path": "scripts/prepare-standalone.mjs",
+      "bytes": 216,
+      "sha256": "23f7697dbb6115d681c200b905f2caaf5ddf1ac7582eb2c4c9d2182a19f69b36"
+    },
+    {
+      "path": "scripts/qa-api-timings.mjs",
+      "bytes": 943,
+      "sha256": "2e039828f0ac970e064ac607bc17d9695c485e094769e86a7af8bd40315f4177"
+    },
+    {
+      "path": "scripts/qa-container.mjs",
+      "bytes": 2257,
+      "sha256": "d68949f2a185100d764220b72416545f2eab3a4d751f825ea75673071182d528"
+    },
+    {
+      "path": "scripts/qa-database.mjs",
+      "bytes": 6224,
+      "sha256": "9bb31a24ba8ff6aa2b588358588bbe069b0b4d9c7e1642a3ea69296a852e1c8c"
+    },
+    {
+      "path": "scripts/qa-live-compare.mjs",
+      "bytes": 1535,
+      "sha256": "685fccb8ce130e317e2339c0170cd80a2bcbd8c010c149a9300cf18341a3d86a"
+    },
+    {
+      "path": "scripts/qa-market-performance.mjs",
+      "bytes": 2672,
+      "sha256": "f28d68a1969756173e61e31cb274a6c1fa9f04bfa9f21a26ece03f518597f12f"
+    },
+    {
+      "path": "scripts/qa-phase.mjs",
+      "bytes": 2035,
+      "sha256": "31a6bc226b7556ce2b700f2fbdd4620851a39d93f9ee1ec5188f00170b2426ed"
+    },
+    {
+      "path": "scripts/qa-reports.py",
+      "bytes": 20881,
+      "sha256": "562601b9bc08dbf91c8d7345213c36e53e881072d8ef515b7597807cab178dba"
+    },
+    {
+      "path": "scripts/qa-secret-scan.mjs",
+      "bytes": 930,
+      "sha256": "396d04242014924d7e64134df4176f071b32f822bd2536ada9e891821911e087"
+    },
+    {
+      "path": "scripts/qa-source-secrets.mjs",
+      "bytes": 2507,
+      "sha256": "785b358ab6cb53248f3ab37483118cda0b98c43158a59b2dbb9c1049d6496f9c"
+    },
+    {
+      "path": "scripts/rebuild-inventory.mjs",
+      "bytes": 10604,
+      "sha256": "bdbbd2147c8cb6e221d570775883ec368a997a5582ca92ed02006840e887b1e5"
+    },
+    {
+      "path": "scripts/start.mjs",
+      "bytes": 391,
+      "sha256": "d96d56642b492efd22944485190a0c1b33c03799794208e3a58956893997db5c"
+    },
+    {
+      "path": "scripts/sync-catalog.ts",
+      "bytes": 3207,
+      "sha256": "c67f2af9b0896c8b09ab4dec5436c35d421f55dd5ece1c71e953d50a27f864c8"
+    },
+    {
+      "path": "scripts/sync-game-source.ts",
+      "bytes": 4111,
+      "sha256": "9402880813d3a1134f2bc4c35bc184f2858244238dbea63e8e83f19b1e355d1a"
+    },
+    {
+      "path": "scripts/test-docs-validation.py",
+      "bytes": 5701,
+      "sha256": "19bda2ac006514382b0e7605c464e2fc5f9e24c8cdc8b6853b8111cabdc7475a"
+    },
+    {
+      "path": "scripts/validate-skills.py",
+      "bytes": 4353,
+      "sha256": "9b5ef023cc22d5186dad81de37dc4a790847b93d6ed6dfc38444a8386f2ee90b"
+    },
+    {
+      "path": "scripts/verify-live.ts",
+      "bytes": 940,
+      "sha256": "6aa86def1093bfd00a1072de8706bd58b37e5afd77f76345e24cb9f6e51e3397"
+    },
+    {
+      "path": "skill-system/skills/outpost-albion-data/SKILL.md",
+      "bytes": 4695,
+      "sha256": "5d2dbef3bf5a518aef5d3fb9bd302001217bb8138e5ed3be0e2f85f9e97889f8"
+    },
+    {
+      "path": "skill-system/skills/outpost-calculators/SKILL.md",
+      "bytes": 4274,
+      "sha256": "38f4eeb8b62e94cf2c8835e73d59767f42e254cdacc0354a3975047bf5c988d2"
+    },
+    {
+      "path": "skill-system/skills/outpost-calculators/references/formula-protocol.md",
+      "bytes": 3846,
+      "sha256": "b6fed26dbf2fe0fab922a33f907abc0a4feca3d102ce20f0d5c4f2348c5c6597"
+    },
+    {
+      "path": "skill-system/skills/outpost-frontend/SKILL.md",
+      "bytes": 4861,
+      "sha256": "13f2a72a86223b81f1489e4e7320d29063599bead212564e26c1254249f5be25"
+    },
+    {
+      "path": "skill-system/skills/outpost-frontend/references/page-patterns.md",
+      "bytes": 4170,
+      "sha256": "6503236be60fdd3ff89d0ac78cf7bbadd48a7814008b8ed43adbec95db7f9e0a"
+    },
+    {
+      "path": "skill-system/skills/outpost-performance/SKILL.md",
+      "bytes": 4230,
+      "sha256": "31558338884236cd286f3bbcae023ea46ead52d17fedddbfda6500d177e203c9"
+    },
+    {
+      "path": "skill-system/skills/outpost-release/SKILL.md",
+      "bytes": 4579,
+      "sha256": "b3900251058e8aa30fa7eda6088451d5de192e72d559747b2fc8c4a3bc643a89"
+    },
+    {
+      "path": "skill-system/skills/outpost-security/SKILL.md",
+      "bytes": 4274,
+      "sha256": "d7358902e3d98fc667c446e646cf73eb45a8959b4465a105cbcc6dd4266ad356"
+    },
+    {
+      "path": "skill-system/skills/outpost-security/references/authorization-matrix.md",
+      "bytes": 4557,
+      "sha256": "c014cfbd2cbe47e0d6997faa3f8871984d95cf469f810e0929dd13ba49516b0c"
+    },
+    {
+      "path": "skill-system/skills/outpost-visual-qa/SKILL.md",
+      "bytes": 4958,
+      "sha256": "da2ab6c5f22282a7d2d94752eaa4478e1a5e0ab1558e01cb5ff4dbf709ce4318"
+    },
+    {
+      "path": "src/app/admin/reports/page.tsx",
+      "bytes": 776,
+      "sha256": "b5e6aa96074f36409675a4a0d2b0722a622c8a32851933d15828fe939aaf66b6"
+    },
+    {
+      "path": "src/app/api/account/export/route.ts",
+      "bytes": 1863,
+      "sha256": "b983eff724f3e17b0b8616551dc9cd4e3ff523b4040256dd5c41462f0d4c480c"
+    },
+    {
+      "path": "src/app/api/admin/reports/route.ts",
+      "bytes": 3958,
+      "sha256": "60ba0cf030bf55d2119b9b30d236d64aceb1d86769e14b0f0aa5bd1dd506973e"
+    },
+    {
+      "path": "src/app/api/auth/[...nextauth]/route.ts",
+      "bytes": 539,
+      "sha256": "116de1e2ea44f1393dafc708ecf7515d1c3a8f683b0d9ae918dd25641b605838"
+    },
+    {
+      "path": "src/app/api/builds/[id]/cost/route.ts",
+      "bytes": 2623,
+      "sha256": "bde1ac7f8e173330790e39d6925088db3e2e1a3a2f39298d87036ebba50fc525"
+    },
+    {
+      "path": "src/app/api/builds/[id]/duplicate/route.ts",
+      "bytes": 535,
+      "sha256": "fb63e72dca9366fee19ebfde96519968cf931b48ef4edee4529ff3ae165c4a5c"
+    },
+    {
+      "path": "src/app/api/builds/[id]/restore/route.ts",
+      "bytes": 1373,
+      "sha256": "b83e5709b9cfeb09d5ab28321a8b9b74726ec95fd2ab20f63ead8e043a23056c"
+    },
+    {
+      "path": "src/app/api/builds/[id]/route.ts",
+      "bytes": 2500,
+      "sha256": "62eb16e4fcfc1e024ad22b7180a462bae584aa0022efd44f97835089aa889304"
+    },
+    {
+      "path": "src/app/api/builds/route.ts",
+      "bytes": 810,
+      "sha256": "5dc3acdef908419a6175ff11cc55dd37ae207363614c993ef52730c537ab6fe0"
+    },
+    {
+      "path": "src/app/api/community/[kind]/[id]/route.ts",
+      "bytes": 3495,
+      "sha256": "cbbdded78ccaaed8ad119baa499651d69fcbb1f1085c0035ffc69d2826442c95"
+    },
+    {
+      "path": "src/app/api/compositions/[id]/duplicate/route.ts",
+      "bytes": 559,
+      "sha256": "9dcd33eebe15e5f54b5361449a4243994cf630a2bec758ba155dd5c35bc55d4d"
+    },
+    {
+      "path": "src/app/api/compositions/[id]/route.ts",
+      "bytes": 2065,
+      "sha256": "b4465d94aab6b19824ac7f3e31bb90eac2b4dbdf752aff1a4be38d2a83541d06"
+    },
+    {
+      "path": "src/app/api/compositions/loadout/route.ts",
+      "bytes": 1631,
+      "sha256": "fbd978b676c4f5d38f784580becf20428f795c2ef3174c5d2b560535d9cc1c18"
+    },
+    {
+      "path": "src/app/api/compositions/route.ts",
+      "bytes": 508,
+      "sha256": "194fa9fc8f75c122c7fd720017f576f8d7fa180805b48716ba2d59d2bce3d8c8"
+    },
+    {
+      "path": "src/app/api/economy/prices/route.ts",
+      "bytes": 2430,
+      "sha256": "57333582465b9055cde0bcdec71076bdfbda0edd2c018b7e7d4b3f561c537d34"
+    },
+    {
+      "path": "src/app/api/groups/[id]/actions/route.ts",
+      "bytes": 548,
+      "sha256": "37fc1bd8735f6616617d3323da9487d807db6d57ca1f94c2c3788745bb6e09ab"
+    },
+    {
+      "path": "src/app/api/groups/[id]/events/[eventId]/calendar/route.ts",
+      "bytes": 1130,
+      "sha256": "c5346309f604fd64a572658b8af37a13eb8417a3fadd3459f6d28e41e0b54727"
+    },
+    {
+      "path": "src/app/api/groups/[id]/route.ts",
+      "bytes": 530,
+      "sha256": "c1b01c1e30d390101997342722bc407fa028cdbc9ae2ec9a08debf04385a2b5f"
+    },
+    {
+      "path": "src/app/api/groups/route.ts",
+      "bytes": 1195,
+      "sha256": "eaf8c555e932f2ced3e86afc0b760b6758ff1514e79c5f783093e11714d05649"
+    },
+    {
+      "path": "src/app/api/health/route.ts",
+      "bytes": 785,
+      "sha256": "ece12b3b9e34ae3d13eef97d15c0aa72b125f40b64c08f59bb37d0e70717bfd0"
+    },
+    {
+      "path": "src/app/api/history/route.ts",
+      "bytes": 1527,
+      "sha256": "270f89977685a3bda3517f0bc155d34913cb8e258daa773ea21c2f43503dbcd5"
+    },
+    {
+      "path": "src/app/api/invitations/[token]/route.ts",
+      "bytes": 519,
+      "sha256": "d687fb1eb245c1fcb8f5c26054319f1ae11ac6d35998dbca3037d9ffa13aa68c"
+    },
+    {
+      "path": "src/app/api/item-icon/route.ts",
+      "bytes": 946,
+      "sha256": "30a9098c2d7c93fa72ad3fe67b74a36fe53937bf33dc3df9849b1c7f519e7625"
+    },
+    {
+      "path": "src/app/api/items/route.ts",
+      "bytes": 1440,
+      "sha256": "6914300ab06965c423a49e436c32dd0f61451bdca3daaf12390f01c64c8d1d6e"
+    },
+    {
+      "path": "src/app/api/market-watch/[id]/route.ts",
+      "bytes": 759,
+      "sha256": "0b71f41e85649298acc2acf5a64171748dab9b64fb80c7a5d424f43e840c6b7c"
+    },
+    {
+      "path": "src/app/api/market-watch/route.ts",
+      "bytes": 2116,
+      "sha256": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0"
+    },
+    {
+      "path": "src/app/api/market/route.ts",
+      "bytes": 1261,
+      "sha256": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98"
+    },
+    {
+      "path": "src/app/api/opportunities/route.ts",
+      "bytes": 2086,
+      "sha256": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025"
+    },
+    {
+      "path": "src/app/api/scenarios/[id]/route.ts",
+      "bytes": 662,
+      "sha256": "9652ac481f62f38390d08103a83920c00177ca84801527d3641fa8943821ec4d"
+    },
+    {
+      "path": "src/app/api/scenarios/route.ts",
+      "bytes": 1844,
+      "sha256": "3834ab6a67f58bb6f0eb212da22e5ae20f60aed8ac9a44327d5b89a0a03d5342"
+    },
+    {
+      "path": "src/app/api/search/route.ts",
+      "bytes": 3038,
+      "sha256": "8af7b103b6085504ae5efe2d6b96c6feeb0f5e7e05c00da052dcb270031c5bf3"
+    },
+    {
+      "path": "src/app/api/timers/[id]/route.ts",
+      "bytes": 1790,
+      "sha256": "2e662d5c53f410d89384c6b21c5acc8d15d159fd930c2dd3c1b58984df6aae22"
+    },
+    {
+      "path": "src/app/api/timers/route.ts",
+      "bytes": 1206,
+      "sha256": "26a61dad097afbb0338bc14d093dc117628ba44374fd3cfaf2fb29b342548d0e"
+    },
+    {
+      "path": "src/app/api/transport/prices/route.ts",
+      "bytes": 1106,
+      "sha256": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec"
+    },
+    {
+      "path": "src/app/brand-interactions.css",
+      "bytes": 15541,
+      "sha256": "179ca99d458c086fb65809195f74ed982e639804d48b87ad07675022bf93a3d9"
+    },
+    {
+      "path": "src/app/builds/[id]/edit/page.tsx",
+      "bytes": 889,
+      "sha256": "2dc8e833809a3d4b2eeaaf8f3e232b2566c2ecc8ae4215c9c34d4eab3fc109b2"
+    },
+    {
+      "path": "src/app/builds/[id]/page.tsx",
+      "bytes": 3637,
+      "sha256": "b8aba1ed31a998fa6965cdcaa27fe23f87b1fea691d288fb0656758a027341f8"
+    },
+    {
+      "path": "src/app/builds/new/page.tsx",
+      "bytes": 457,
+      "sha256": "83634f6aa8ce7b28b75141fa2da2b8e1bb3c8c2b824855754e509faeedc330cd"
+    },
+    {
+      "path": "src/app/builds/page.tsx",
+      "bytes": 7816,
+      "sha256": "b265f30980d4da4845b84ed7a49e4548f889057e6482c959d415dea6398f45d9"
+    },
+    {
+      "path": "src/app/compositions/[id]/edit/page.tsx",
+      "bytes": 1220,
+      "sha256": "a83b0ff4d5cfd24145278408e60b592260425e2c46916e0036a30c51ae189635"
+    },
+    {
+      "path": "src/app/compositions/[id]/page.tsx",
+      "bytes": 2266,
+      "sha256": "0ffccd6fffa37a191f98dc3071501898f0874f58af599914618caae10e061072"
+    },
+    {
+      "path": "src/app/compositions/new/page.tsx",
+      "bytes": 626,
+      "sha256": "8f1fa18ca3db3ca7b960412e0c86354e94488c3972e116e84ca6c3fa0bc93fa4"
+    },
+    {
+      "path": "src/app/compositions/page.tsx",
+      "bytes": 6396,
+      "sha256": "6460050113e7ad1a32a2a81f5e20b3accf018462c2c21b0857a6adfa8c4408b0"
+    },
+    {
+      "path": "src/app/dashboard/page.tsx",
+      "bytes": 5542,
+      "sha256": "fe106711c3d719a06da2919d404615a247e54fc33bc229c0b14546e434564262"
+    },
+    {
+      "path": "src/app/equipment-workspace.css",
+      "bytes": 18869,
+      "sha256": "14eed291c7cda81409c8244d641237fbcf9cc76dcb2eb78e0cfe8b38c740cbba"
+    },
+    {
+      "path": "src/app/error.tsx",
+      "bytes": 540,
+      "sha256": "8e8112ae108fdc60ca5892991728e302d475ccc93e2b6620300af6f51f3add75"
+    },
+    {
+      "path": "src/app/favorites/page.tsx",
+      "bytes": 2533,
+      "sha256": "85fd86aea6bf112f6027b251327315daf435409d820101a17bf7cda47b604b5b"
+    },
+    {
+      "path": "src/app/fonts.ts",
+      "bytes": 1394,
+      "sha256": "18f68daac6bc6f7408f16945f8b4470add8daeb37fd1eccdb675a282a0692604"
+    },
+    {
+      "path": "src/app/globals.css",
+      "bytes": 102761,
+      "sha256": "8286adb44257349b5dc1bd0c0e3a9d28650b2e688305f652ac41baeb1ca1a8d3"
+    },
+    {
+      "path": "src/app/groups/[slug]/page.tsx",
+      "bytes": 2291,
+      "sha256": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72"
+    },
+    {
+      "path": "src/app/groups/new/page.tsx",
+      "bytes": 431,
+      "sha256": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a"
+    },
+    {
+      "path": "src/app/groups/page.tsx",
+      "bytes": 6360,
+      "sha256": "a1b4b0227f273094973cd8597a9dcd077849bbe4e2cd932b8045a0af4518e64e"
+    },
+    {
+      "path": "src/app/guides/page.tsx",
+      "bytes": 5413,
+      "sha256": "63b3e4c5abf030da15dccb35346d03fbf2fc91d2e8b2d9744d47b3235436bd78"
+    },
+    {
+      "path": "src/app/home-market-terminal.css",
+      "bytes": 7245,
+      "sha256": "adb39fd99ce8919c07123627bf136e7d52919fb8db7dff20e51a31026d5ee0d2"
+    },
+    {
+      "path": "src/app/homepage.css",
+      "bytes": 13599,
+      "sha256": "d1c480064e8f0007594b1ef52e99690b1ec08250f0b3a253db70ca51d0862e77"
+    },
+    {
+      "path": "src/app/invitations/[token]/page.tsx",
+      "bytes": 1734,
+      "sha256": "67484fbee448ce8bb5dcda2481f7e5e292abe9ade6dc85cabefae41a5cc1b15d"
+    },
+    {
+      "path": "src/app/items/[id]/page.tsx",
+      "bytes": 3324,
+      "sha256": "944638edf62753d74909c5ecb79c3ecf6374807bb2689a548c6b4dacd9038288"
+    },
+    {
+      "path": "src/app/items/page.tsx",
+      "bytes": 956,
+      "sha256": "c9f1f9582a30f992703a438db6a9e09f22e5f89cfc4ec42dd256f453115b213c"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "bytes": 1920,
+      "sha256": "6b1bde74ca93150a1a27c4855a4284a16df7181b52bd2efa639423c4b2d583dc"
+    },
+    {
+      "path": "src/app/legal/page.tsx",
+      "bytes": 3474,
+      "sha256": "42b7d083b2b4a2e3cf3a09f689ddd1cee7e2adf291aa0311d3bb644c278f7a45"
+    },
+    {
+      "path": "src/app/loading.tsx",
+      "bytes": 863,
+      "sha256": "9352287a856a37239f9e53de283ad4c8b370d7be164565dd2243760b555192ba"
+    },
+    {
+      "path": "src/app/not-found.tsx",
+      "bytes": 737,
+      "sha256": "6d29aeec0e1ff6bc55d3503373adc04ef9a53a289d2ec7b0dbffe78e9d6810a8"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "bytes": 6142,
+      "sha256": "cd0bfe47e3045e6576f5216bd238e3482e0842720cb90d2f50f19cd66a4d1788"
+    },
+    {
+      "path": "src/app/player-workspaces.css",
+      "bytes": 25895,
+      "sha256": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a"
+    },
+    {
+      "path": "src/app/players/[id]/page.tsx",
+      "bytes": 1625,
+      "sha256": "eef8fb26a21dfda9ffde78177b9dba9f8ab4376c9bc8b5728a087c984eaf2e39"
+    },
+    {
+      "path": "src/app/playful-ui.css",
+      "bytes": 20787,
+      "sha256": "38b9b6df74b4556b3f2dd8dad9c2f6a52882b5dc7954ca4f2e6edb3e45bc810c"
+    },
+    {
+      "path": "src/app/product-shell.css",
+      "bytes": 3771,
+      "sha256": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4"
+    },
+    {
+      "path": "src/app/production-workspace.css",
+      "bytes": 8597,
+      "sha256": "fa8d5599d7469b1fd2abfe705fb74c59dd1feba6c2f34eca8121639eb3113e01"
+    },
+    {
+      "path": "src/app/settings/actions.ts",
+      "bytes": 3413,
+      "sha256": "d371ccaec4161dc5ee19b298a91ff184c1207092f35d7c13ffe7331899b298f4"
+    },
+    {
+      "path": "src/app/settings/page.tsx",
+      "bytes": 2153,
+      "sha256": "6f6b0d4dfe0c0da8678583413484447ecbb6183eb239163b9697356f959edc3e"
+    },
+    {
+      "path": "src/app/signin/page.tsx",
+      "bytes": 1129,
+      "sha256": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4"
+    },
+    {
+      "path": "src/app/timers/page.tsx",
+      "bytes": 869,
+      "sha256": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933"
+    },
+    {
+      "path": "src/app/tools/crafting/page.tsx",
+      "bytes": 485,
+      "sha256": "1a4139e26519302c374367aa330ac60d7c964a012b61d16fde9052a0fc4d3145"
+    },
+    {
+      "path": "src/app/tools/enchanting/page.tsx",
+      "bytes": 489,
+      "sha256": "7774f6fbdb6a2bbbd71316bf3d2417f2deaee3e556223bdd0a34baaa7c9e7762"
+    },
+    {
+      "path": "src/app/tools/flipping/page.tsx",
+      "bytes": 584,
+      "sha256": "1ca4d18f7de3595d67c1c23088cc9bee52e8c2ab92448e759a05a4baecd8c969"
+    },
+    {
+      "path": "src/app/tools/gold/page.tsx",
+      "bytes": 314,
+      "sha256": "52830ea986fca24d3b459191040830f4959318323d3d44e147f1f23a80a6328d"
+    },
+    {
+      "path": "src/app/tools/market/page.tsx",
+      "bytes": 532,
+      "sha256": "11aaee8eee3165c660b3a794884a25ad291d50e003738d487d31402cc801dd97"
+    },
+    {
+      "path": "src/app/tools/page.tsx",
+      "bytes": 125,
+      "sha256": "e1d4ef00b2eae0356f18c76918e49f0781ab36f01f3951afdbb45c46e978df7b"
+    },
+    {
+      "path": "src/app/tools/refining/page.tsx",
+      "bytes": 485,
+      "sha256": "343a8d67f074e78c3c647a23bdad021d30eff10f7eabc8bc4f2d1338842da083"
+    },
+    {
+      "path": "src/app/tools/transporting/page.tsx",
+      "bytes": 377,
+      "sha256": "f333053ed871deb65a98f90c393f7acaf8a2cbf93abae5ec8cf02f991230df92"
+    },
+    {
+      "path": "src/app/workspace.css",
+      "bytes": 10097,
+      "sha256": "ea5fe9a4290fc364fe821780ee118f97aabc282263c66e1fdc6b1251d295871c"
+    },
+    {
+      "path": "src/components/accept-invite.tsx",
+      "bytes": 1012,
+      "sha256": "d11ccf02b13292093d4de451f51a1f26708d1206325ee54fe4a1cd4d78fb1162"
+    },
+    {
+      "path": "src/components/albion-scene.tsx",
+      "bytes": 1236,
+      "sha256": "aa289808f3926da00f78cbde2da31c011219ebcdcdc7ede8b2b6489e3ddae350"
+    },
+    {
+      "path": "src/components/build-actions.tsx",
+      "bytes": 2523,
+      "sha256": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019"
+    },
+    {
+      "path": "src/components/build-cost.tsx",
+      "bytes": 3685,
+      "sha256": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda"
+    },
+    {
+      "path": "src/components/build-editor.tsx",
+      "bytes": 11769,
+      "sha256": "3eb74b86120412379b2c6c24d0341a993eb66e1cf0f22378b90abdb0ef813b52"
+    },
+    {
+      "path": "src/components/build-loadout-view.tsx",
+      "bytes": 3760,
+      "sha256": "2cc9ed65457ba2d25eff0e6763f24369a071eb288170e86f8b04a6eac91c97f2"
+    },
+    {
+      "path": "src/components/build-preview-card.tsx",
+      "bytes": 2440,
+      "sha256": "0bf7800d57b25fa6bbf4e00cac2860cbcbd5f81d02ad44d33a71efa0f882ef3a"
+    },
+    {
+      "path": "src/components/catalog-item-picker.tsx",
+      "bytes": 5787,
+      "sha256": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559"
+    },
+    {
+      "path": "src/components/community-panel.tsx",
+      "bytes": 10764,
+      "sha256": "810bc12b93a77df5e6d096aebc5a0551933e17afbcde3ec0b4169c2bd53de795"
+    },
+    {
+      "path": "src/components/composition-editor.tsx",
+      "bytes": 27095,
+      "sha256": "72ba03be3214095818fe0e171dd1f8e1705bc97e251672baaa8e4a72b91c9b91"
+    },
+    {
+      "path": "src/components/composition-png-export.tsx",
+      "bytes": 8420,
+      "sha256": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769"
+    },
+    {
+      "path": "src/components/composition-view.tsx",
+      "bytes": 7252,
+      "sha256": "28ed93e1ec46026b840590b7b626b70195c54b1db38b42e3c13d8f0ae133aa9e"
+    },
+    {
+      "path": "src/components/discord-mark.tsx",
+      "bytes": 261,
+      "sha256": "a71ac7c9bcee1f4027a2a9f8db89c2de652c7f058c122a5efc3900ec91aaf458"
+    },
+    {
+      "path": "src/components/editor-dialog.tsx",
+      "bytes": 1255,
+      "sha256": "f2f35b1418231a7af409ff7f1526975422caa104ef23aefda5ada240fb89a404"
+    },
+    {
+      "path": "src/components/equipment-overview.tsx",
+      "bytes": 1612,
+      "sha256": "5b1192d49e49d0a95f993bd5eb78d3016f1f7954e1d124d932f8fdfdf20d4437"
+    },
+    {
+      "path": "src/components/equipment-picker.tsx",
+      "bytes": 93,
+      "sha256": "cca7d84ea6cdf8bb15d1bc0e5e74a3a28b76bb89214ca537c6fe2e834d40ddbc"
+    },
+    {
+      "path": "src/components/equipment-strip.tsx",
+      "bytes": 1052,
+      "sha256": "23bea5d7e65c71b871f52dfad92e7b63af012663d7424090a6ca4a679051f5cf"
+    },
+    {
+      "path": "src/components/equipment-workbench.tsx",
+      "bytes": 19955,
+      "sha256": "7ef2cba880df6e20453ddc5f4d8ae1239b005f5b2b051cd74857f9260102cc55"
+    },
+    {
+      "path": "src/components/favorite-build-button.tsx",
+      "bytes": 2406,
+      "sha256": "b8534a90d60c0a75cf2f68ee57389e210a7b769578f3ce391c3c210997692a84"
+    },
+    {
+      "path": "src/components/feature-emblem.tsx",
+      "bytes": 1743,
+      "sha256": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128"
+    },
+    {
+      "path": "src/components/global-search.tsx",
+      "bytes": 9697,
+      "sha256": "99f9b69edadd361cf8815279a19d75a1cd5a209a515019acd627c3b7ae069258"
+    },
+    {
+      "path": "src/components/group-create.tsx",
+      "bytes": 2286,
+      "sha256": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945"
+    },
+    {
+      "path": "src/components/group-dashboard.tsx",
+      "bytes": 30541,
+      "sha256": "0fe9127abb680fd2989d948fabf4efee2f8b91c7e1ace5f7dbfe63784bd54f8d"
+    },
+    {
+      "path": "src/components/group-event-editor.tsx",
+      "bytes": 3702,
+      "sha256": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97"
+    },
+    {
+      "path": "src/components/group-profile-editor.tsx",
+      "bytes": 2539,
+      "sha256": "2c5b103c36a2aa5bf57ee338b4a289d068feee21d17f7bc64f0f55742441735b"
+    },
+    {
+      "path": "src/components/guide-directory.tsx",
+      "bytes": 2260,
+      "sha256": "e4e3167b54e1f42047648388dd9624cfdfabcd0d312ebd4d8be7f7a8b4ebdd4c"
+    },
+    {
+      "path": "src/components/history.tsx",
+      "bytes": 6708,
+      "sha256": "93c8db65f7a8cb63fa1c29bce8ed90a968e5669ed3067f473954496f051383c8"
+    },
+    {
+      "path": "src/components/home-build-card.tsx",
+      "bytes": 2427,
+      "sha256": "e2af1beb06dc453fcdc70b9fe713b7fe7f759b06f3c125e12fe12a627b49584a"
+    },
+    {
+      "path": "src/components/home-equipment-showcase.tsx",
+      "bytes": 2908,
+      "sha256": "a60823ce483141b41f344d0d6c384f5f1d0882bc596b3fd27724bfb7ce2c1ee9"
+    },
+    {
+      "path": "src/components/home-market-pulse.tsx",
+      "bytes": 5557,
+      "sha256": "6ec95b39d59241757f2d16f5339d7e7b2b7660af55bfe57c5ac94e9b69f3f488"
+    },
+    {
+      "path": "src/components/home-market-terminal.tsx",
+      "bytes": 16348,
+      "sha256": "5a28afb16f5593e3731646a7fc7c6ffc61ebbd6275a8b7a60e8dd164c7f1d0dd"
+    },
+    {
+      "path": "src/components/home-player-preview.tsx",
+      "bytes": 7770,
+      "sha256": "2ef698a0dd61b64f26512f720fe48d3363378d3651a3e767d04bb24d0aba272e"
+    },
+    {
+      "path": "src/components/item-catalog.tsx",
+      "bytes": 7670,
+      "sha256": "7d61332400c3ea1e438b2eac7a3ad734474328da4c4e96ac64b9820b71dc9be0"
+    },
+    {
+      "path": "src/components/item-icon.tsx",
+      "bytes": 920,
+      "sha256": "7e3ac5611c479eee1f7b5f67884fd4417740b21d51338032725df503540afa08"
+    },
+    {
+      "path": "src/components/item-market-link.tsx",
+      "bytes": 374,
+      "sha256": "4ce8b16231e9bb9b469ade59b583e1498aeeb6f7aa13b1d7a772da5dd45ba56e"
+    },
+    {
+      "path": "src/components/login-button.tsx",
+      "bytes": 522,
+      "sha256": "de599dafb5eda7a57b83bc7afe16c9771fee2c6de171b80923bb23789986ac9a"
+    },
+    {
+      "path": "src/components/market-watchlist.tsx",
+      "bytes": 3655,
+      "sha256": "7d6a496f6dca254942bcda3d11dfd7fb58a9f12f49d48cc579b04e7e5e9125e4"
+    },
+    {
+      "path": "src/components/market.tsx",
+      "bytes": 15362,
+      "sha256": "e0a1f77fc62e1b5003de25c9c7829c9f18ac9b507ca4d6e03666ae3cc00feac0"
+    },
+    {
+      "path": "src/components/mobile-filter-panel.tsx",
+      "bytes": 810,
+      "sha256": "018ce3a07a4fbfeed5833c5636bc14acaaa65be9215f50fa006420a0d1ed995d"
+    },
+    {
+      "path": "src/components/moderation-queue.tsx",
+      "bytes": 4523,
+      "sha256": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c"
+    },
+    {
+      "path": "src/components/opportunity-scanner.tsx",
+      "bytes": 5595,
+      "sha256": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd"
+    },
+    {
+      "path": "src/components/party-board.tsx",
+      "bytes": 3806,
+      "sha256": "6d0f5a40017d3747bc50608bde33773008bd9dc696cf9a7d41d9e6dc9c4e6394"
+    },
+    {
+      "path": "src/components/production-calculator.tsx",
+      "bytes": 25815,
+      "sha256": "dfc8bd32dbc2e672f377da4e9e35f5f28ec4d36053de254ff0e745b5b7d43382"
+    },
+    {
+      "path": "src/components/region-context.tsx",
+      "bytes": 258,
+      "sha256": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382"
+    },
+    {
+      "path": "src/components/scenario-controls.tsx",
+      "bytes": 6032,
+      "sha256": "ae859faa59706b5f56d2444fdbbe12fdc242fbc39e0f9c2e3dbb58ef05c7d675"
+    },
+    {
+      "path": "src/components/settings-forms.tsx",
+      "bytes": 2507,
+      "sha256": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951"
+    },
+    {
+      "path": "src/components/shell.tsx",
+      "bytes": 16023,
+      "sha256": "2cba12fd97a7747c063d72c37ffac18db5089612e9e9b9f6795457eaed6656cc"
+    },
+    {
+      "path": "src/components/timer-manager.tsx",
+      "bytes": 7468,
+      "sha256": "88d53c5fd4acaba6a24d50149b6c0bf73cc47e90c76b89e2da2b6e2fd9af62e0"
+    },
+    {
+      "path": "src/components/tool-directory.tsx",
+      "bytes": 5134,
+      "sha256": "4b3950e44441ad8d4b6bede068a69a355beaa567966a5fd1bc72e49610d14b97"
+    },
+    {
+      "path": "src/components/tool-icon.tsx",
+      "bytes": 1690,
+      "sha256": "4cf701bed76759e5c4bc9e4f13a7959d6d4e0bbfc150eb0a43acf7cfdbd89304"
+    },
+    {
+      "path": "src/components/trade-calculator.tsx",
+      "bytes": 7883,
+      "sha256": "3c400f4cd813467332616813d9daa922eacd4aa1ce5776a44a58e67d5d3d9d2f"
+    },
+    {
+      "path": "src/components/transport-calculator.tsx",
+      "bytes": 11467,
+      "sha256": "a4275e74b9b50963d4c40950603689e0252663cf622dc98f8a4c99aa8fa1f4e7"
+    },
+    {
+      "path": "src/components/use-visible-refresh.ts",
+      "bytes": 1117,
+      "sha256": "d921ea46e961ac7dc9892e8fd14617c656a0b20ddf8447d59f887d83e6a0d813"
+    },
+    {
+      "path": "src/components/wordmark.tsx",
+      "bytes": 337,
+      "sha256": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082"
+    },
+    {
+      "path": "src/components/workspace-navigation.tsx",
+      "bytes": 1680,
+      "sha256": "73a7a62e8625acbe3780fe36416fb4069f233f489c91eb26e5f9275eed1885af"
+    },
+    {
+      "path": "src/instrumentation.ts",
+      "bytes": 256,
+      "sha256": "aabdb2f5ad5f215467de2450c0063a80606c1457f62c2cb60821dced7e9940d9"
+    },
+    {
+      "path": "src/lib/albion/assets.ts",
+      "bytes": 3584,
+      "sha256": "17dd3cf7fb75dddfe3277b6d954e09febde2f5e589f2de7031e15b5fa1f69cb3"
+    },
+    {
+      "path": "src/lib/albion/backoff.ts",
+      "bytes": 689,
+      "sha256": "9658bc2e31b3e192604fcc2e413fe0f2a0f3b3f6a92029d84e4ffef9a0a0ea26"
+    },
+    {
+      "path": "src/lib/albion/calculations.ts",
+      "bytes": 3323,
+      "sha256": "00e4ff80128853d113a3551b7e06bc1503723bee6cf7147dcc0cbe59778f3356"
+    },
+    {
+      "path": "src/lib/albion/data-client.ts",
+      "bytes": 4218,
+      "sha256": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c"
+    },
+    {
+      "path": "src/lib/albion/equipment-catalog.ts",
+      "bytes": 3956,
+      "sha256": "2ae952ae0378fa66a800e85ce35725e0f5c9e85c706ff71082ef7cefcf6b78c6"
+    },
+    {
+      "path": "src/lib/albion/equipment-validation.ts",
+      "bytes": 1081,
+      "sha256": "81d9cacac4d530deceae608629c80b5943ceaad36b99073e7f6407f8b89946f6"
+    },
+    {
+      "path": "src/lib/albion/freshness.ts",
+      "bytes": 309,
+      "sha256": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244"
+    },
+    {
+      "path": "src/lib/albion/history-client.ts",
+      "bytes": 1625,
+      "sha256": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1"
+    },
+    {
+      "path": "src/lib/albion/icon-cache.ts",
+      "bytes": 3893,
+      "sha256": "1fa9bf230864aabb21c54c9319a3505e512945ec0c34cf712e749df5e08b2e57"
+    },
+    {
+      "path": "src/lib/albion/item-database.ts",
+      "bytes": 749,
+      "sha256": "0ec703bb5bd14fd93f6fa65c2bbc0de2561faf3cc09ac441b9ecb2a732725069"
+    },
+    {
+      "path": "src/lib/albion/item-renderer.ts",
+      "bytes": 459,
+      "sha256": "11416fd556db05cce534c4f321fb737911712587960f497a883d9b12c1c5654f"
+    },
+    {
+      "path": "src/lib/albion/market-client.ts",
+      "bytes": 1290,
+      "sha256": "bb76d9a1c4de8a109a0c9c2cd719bc99a2a259359052d8c893ef1e0259365c36"
+    },
+    {
+      "path": "src/lib/albion/market-preview.ts",
+      "bytes": 1727,
+      "sha256": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b"
+    },
+    {
+      "path": "src/lib/albion/production-observations.ts",
+      "bytes": 1356,
+      "sha256": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75"
+    },
+    {
+      "path": "src/lib/albion/production.ts",
+      "bytes": 6603,
+      "sha256": "95786307a52502aa48fe4e0b64a8f7afe6e465dc0d49d2e0b4929f1e58be74f0"
+    },
+    {
+      "path": "src/lib/albion/quote-summary.ts",
+      "bytes": 720,
+      "sha256": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a"
+    },
+    {
+      "path": "src/lib/albion/recipes.ts",
+      "bytes": 2655,
+      "sha256": "43256904bcf0c0039016ef431368c9a83654dd0bc5b70e036e5ba1a4a41cbda9"
+    },
+    {
+      "path": "src/lib/albion/region-config.ts",
+      "bytes": 572,
+      "sha256": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f"
+    },
+    {
+      "path": "src/lib/albion/reviewed-crafting.json",
+      "bytes": 4797,
+      "sha256": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66"
+    },
+    {
+      "path": "src/lib/albion/transport-prices.ts",
+      "bytes": 1240,
+      "sha256": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82"
+    },
+    {
+      "path": "src/lib/albion/transport.ts",
+      "bytes": 3142,
+      "sha256": "e12a77763b80e3660e51094f01954e3c477a2013acc70bbf071ff32c025c4689"
+    },
+    {
+      "path": "src/lib/api-errors.ts",
+      "bytes": 1276,
+      "sha256": "39c7c15a57538971ac9a462e6c8e6f212f3835bfc71789f393e9157a8253546b"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "bytes": 872,
+      "sha256": "0bd660b0ad76a65d5ca618a9ec6b0f11f60db5f5da0b0e9cb03d67a158c7ec9f"
+    },
+    {
+      "path": "src/lib/builds/service.ts",
+      "bytes": 1687,
+      "sha256": "295d996660f8e8a48b4fa793fd5ba9be227ff4fb686e21cf0f497ae0ec47d720"
+    },
+    {
+      "path": "src/lib/builds/validation.ts",
+      "bytes": 2690,
+      "sha256": "ef962c70a1ef1db73b502231108699157c6869d223f8c87880fb017077f041e2"
+    },
+    {
+      "path": "src/lib/catalog/item-snapshot.ts",
+      "bytes": 4664,
+      "sha256": "d03e658c987c62598efaf6a680a0678f757a14708033f5ac586bb21cfb9d364b"
+    },
+    {
+      "path": "src/lib/catalog/png-verification.ts",
+      "bytes": 2212,
+      "sha256": "e4defcef5dfdca99cfb32bdd4dce085ae7cb259bb43f01ed1bc72d76c90eb535"
+    },
+    {
+      "path": "src/lib/catalog/release-state.ts",
+      "bytes": 600,
+      "sha256": "582cece21596dfbe14dfda20ec03f2e083de9897e791a4c22bdcba4c611dab93"
+    },
+    {
+      "path": "src/lib/catalog/search.ts",
+      "bytes": 834,
+      "sha256": "e6f1cde3c7788cbeaec12188f093d2b5190fe98b171c130cc3ddf9a6abfb0382"
+    },
+    {
+      "path": "src/lib/catalog/validation.ts",
+      "bytes": 2918,
+      "sha256": "c9af147e83f53274e1a79ec9383049984fbf424836589e9820982ada0df3a194"
+    },
+    {
+      "path": "src/lib/catalog/verification.ts",
+      "bytes": 14964,
+      "sha256": "03af1b14fff1861df5c13398c3b456652a670798573014cd2745d6b9ddc4a753"
+    },
+    {
+      "path": "src/lib/community/access.ts",
+      "bytes": 1663,
+      "sha256": "4928bba4568bd16c5f382d76b56ee87290bb5d5c1793c312e002eb33285b1e8f"
+    },
+    {
+      "path": "src/lib/community/service.ts",
+      "bytes": 4799,
+      "sha256": "761b67c7d604ac0691bf8dd815c0b4d9256128392c11eeb075a77dd9569af0a3"
+    },
+    {
+      "path": "src/lib/community/validation.ts",
+      "bytes": 1066,
+      "sha256": "ef13a55b4a8c547148f7652df45b0f18edb60457ccf1e8242c943dd585f658a0"
+    },
+    {
+      "path": "src/lib/compositions/repository.ts",
+      "bytes": 590,
+      "sha256": "2c254f0ac035b5d9c5c2d67296a903a47559dac467bcacd17ad5953371266f74"
+    },
+    {
+      "path": "src/lib/compositions/service.ts",
+      "bytes": 4991,
+      "sha256": "ee2ac0d80e89be2317776ffdd3793da4ccb7f49ea70058483b6821946d89d194"
+    },
+    {
+      "path": "src/lib/compositions/validation.ts",
+      "bytes": 1786,
+      "sha256": "174417e1707f3b2f30cde9258fdc0dd6fd0c0f65effd7fe06347731d7c336447"
+    },
+    {
+      "path": "src/lib/db.ts",
+      "bytes": 238,
+      "sha256": "12d5ef697cb4e454d538a7c0c70bc7078398aaa5087e885d088a2117b4f95aeb"
+    },
+    {
+      "path": "src/lib/env.ts",
+      "bytes": 1385,
+      "sha256": "7625ac2d77eb09b8c58eff8ac6115aeedec341ac424852c54ac40a67e8f61c71"
+    },
+    {
+      "path": "src/lib/groups/calendar.ts",
+      "bytes": 1755,
+      "sha256": "951af8d7b49e1a7fe63405a58493b6f48ac53e15f886301f945015f51837ae50"
+    },
+    {
+      "path": "src/lib/groups/dashboard.ts",
+      "bytes": 6405,
+      "sha256": "9384c24b6a03d8cfe52a99626ab2d5a4393a25880d2d86b8191075a873b57910"
+    },
+    {
+      "path": "src/lib/groups/permissions.ts",
+      "bytes": 360,
+      "sha256": "1f1eeb2ff199bb78396c41888f137c5a80adfbe15ce02f2c434bb372aa7542c4"
+    },
+    {
+      "path": "src/lib/groups/service.ts",
+      "bytes": 14322,
+      "sha256": "70d907ea07532503524e499edce18da3a2ef2ad7aa1feebb18f492183f4862cd"
+    },
+    {
+      "path": "src/lib/groups/validation.ts",
+      "bytes": 2975,
+      "sha256": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4"
+    },
+    {
+      "path": "src/lib/http.ts",
+      "bytes": 1692,
+      "sha256": "5d3eb14af183ea674be8cc90e14f2e1b7e3642c4f1263464544c165d25fbdad2"
+    },
+    {
+      "path": "src/lib/logging.ts",
+      "bytes": 404,
+      "sha256": "7fdcfbfa64a6b145e0e36462db19acc128ca507bce4343ba3911c7b424d28b55"
+    },
+    {
+      "path": "src/lib/market-watch.ts",
+      "bytes": 403,
+      "sha256": "c2da0e2a843910852448e1d00b477a54c1afce37a9d5ea52d1988f50c3617a2a"
+    },
+    {
+      "path": "src/lib/redis.ts",
+      "bytes": 989,
+      "sha256": "75dae4d2a99d02bfeb9c1f7e48f51a002c6f38b41a84a5d570dab149e8869663"
+    },
+    {
+      "path": "src/lib/serialization-retry.ts",
+      "bytes": 673,
+      "sha256": "b172e69decca5af44c0e0657626711949ec031f0dc7a37033e26839f3edb0c44"
+    },
+    {
+      "path": "src/lib/timers/engine.ts",
+      "bytes": 1708,
+      "sha256": "3949b57b6bbe957534eba82b4bd270fccdf7abaf40caa01154237722a4d18175"
+    },
+    {
+      "path": "src/lib/tool-directory.ts",
+      "bytes": 3260,
+      "sha256": "c387b4f3bb512bc10f34ee70abb60f69872c3b1ef3e9a46d29d03ea4bcb57251"
+    },
+    {
+      "path": "src/proxy.ts",
+      "bytes": 1519,
+      "sha256": "ca7d6f253134b04d99f51d6b3e1a0a5461bcf5ae3ba36252e50edf9fa94b2acf"
+    },
+    {
+      "path": "src/types/next-auth.d.ts",
+      "bytes": 177,
+      "sha256": "70a09cb8382980b4232f3aaa931137b0fc62aafc3cb41bbb7c23352c04860b90"
+    },
+    {
+      "path": "tests/api-errors.test.ts",
+      "bytes": 679,
+      "sha256": "f85232767db1ddbd74498343d5709fe7a6cf465fe760cd16edbfb74baedd5f27"
+    },
+    {
+      "path": "tests/backoff.test.ts",
+      "bytes": 740,
+      "sha256": "bdd440a3424ee202efeffb1b92265d7f2d9ecb3f6c6bf7cfbf8fc6817ddf81d5"
+    },
+    {
+      "path": "tests/build-cost.test.ts",
+      "bytes": 1842,
+      "sha256": "846ff4a2ee8597c5f5f97a546aec2ce32f7019d76f89604733632eca28094382"
+    },
+    {
+      "path": "tests/builds.test.ts",
+      "bytes": 1349,
+      "sha256": "0702111f7ced595ea8dc2346d051a099d558cbc37c2e4b333dd82b0e111b7b0b"
+    },
+    {
+      "path": "tests/cache-expiry.test.ts",
+      "bytes": 2357,
+      "sha256": "7a45b3beca6f050efd248a24917fb01f1d0693b0e8107a8d8ea43fc686668bf5"
+    },
+    {
+      "path": "tests/calculations.test.ts",
+      "bytes": 5020,
+      "sha256": "1e8d636684111bafca2b41a869889c737c4c0d61ed53c8234952f67f0963c212"
+    },
+    {
+      "path": "tests/calendar.test.ts",
+      "bytes": 899,
+      "sha256": "8d42a6fb4729ad72b3c10282d0a1487aea5a6b5ec3822ec29c5cad24b7fd9f47"
+    },
+    {
+      "path": "tests/catalog-release-state.test.ts",
+      "bytes": 511,
+      "sha256": "8d166797f04d04db28c923d94cb4da1029cd5927fca5ce0bc153318347d28ca5"
+    },
+    {
+      "path": "tests/catalog-search.test.ts",
+      "bytes": 956,
+      "sha256": "55f7c7706fb23f46bd4938428584f3a2b818a2bfb1b5e5a81943fb9376d194a9"
+    },
+    {
+      "path": "tests/catalog-source-cli.test.ts",
+      "bytes": 2988,
+      "sha256": "07507cf8c3e8c54d706d8eded804213d4f8283100e251b72ae83645b8a232282"
+    },
+    {
+      "path": "tests/catalog-verification.test.ts",
+      "bytes": 9214,
+      "sha256": "e99a982bd40edf696eaa099bb835147b28c0d38e0063c86680dc9679ae080ef7"
+    },
+    {
+      "path": "tests/catalog.test.ts",
+      "bytes": 4101,
+      "sha256": "0899d27ca4a8b2d8168bce08d71f18159a6aced8d4cb0b6e68c8183c3fbe94b1"
+    },
+    {
+      "path": "tests/community.test.ts",
+      "bytes": 892,
+      "sha256": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207"
+    },
+    {
+      "path": "tests/compositions.test.ts",
+      "bytes": 2479,
+      "sha256": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed"
+    },
+    {
+      "path": "tests/data-client.test.ts",
+      "bytes": 1645,
+      "sha256": "4a4451e49a115c5deceb1165c869e2de935d5bfdffd677dcfb76599a62e3f745"
+    },
+    {
+      "path": "tests/env.test.ts",
+      "bytes": 1044,
+      "sha256": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba"
+    },
+    {
+      "path": "tests/github-setup.test.ts",
+      "bytes": 9401,
+      "sha256": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03"
+    },
+    {
+      "path": "tests/icon-cache.test.ts",
+      "bytes": 5002,
+      "sha256": "5a5698e14e82dd5a14616f491575372b347288c9ca74790a316cc90cd588732b"
+    },
+    {
+      "path": "tests/item-snapshot.test.ts",
+      "bytes": 2661,
+      "sha256": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12"
+    },
+    {
+      "path": "tests/market-payload.test.ts",
+      "bytes": 2793,
+      "sha256": "15ebd5ea0715be2951773f1d7359d5f95b65273ebd034b84ad688229a92c0515"
+    },
+    {
+      "path": "tests/market-preview.test.ts",
+      "bytes": 2611,
+      "sha256": "48ce3681a1039d97eb1ed5ff3cfce51cda3af6fe30f133c66e6fc9aac777ed1f"
+    },
+    {
+      "path": "tests/market.test.ts",
+      "bytes": 2192,
+      "sha256": "e5f421f8c90384b5e89ded8b19ea80733411b17983921325fdce508baed72e48"
+    },
+    {
+      "path": "tests/opportunities.test.ts",
+      "bytes": 1546,
+      "sha256": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39"
+    },
+    {
+      "path": "tests/production-market.test.ts",
+      "bytes": 3120,
+      "sha256": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9"
+    },
+    {
+      "path": "tests/production-observations.test.ts",
+      "bytes": 2261,
+      "sha256": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36"
+    },
+    {
+      "path": "tests/production.test.ts",
+      "bytes": 6509,
+      "sha256": "48b1a3dd61413ee6e7bc7cc36ad180a1b83cfa88f5584a9f44924db8635f9139"
+    },
+    {
+      "path": "tests/qa-regressions.test.ts",
+      "bytes": 710,
+      "sha256": "36f116ed01cfa912d8787db4680acbe221ae75ce03d63ac7477314babc444382"
+    },
+    {
+      "path": "tests/quote-summary.test.ts",
+      "bytes": 1350,
+      "sha256": "b1530ecfbab74f9e5531435841799aabc8b82151f249b28710c94553c8351b07"
+    },
+    {
+      "path": "tests/redis-recovery.test.ts",
+      "bytes": 551,
+      "sha256": "4fefd4a8863bf430dc9c00ddd41b066bda7a764c1f9ba46562e9765d8c4a260d"
+    },
+    {
+      "path": "tests/reviewed-recipes.test.ts",
+      "bytes": 2957,
+      "sha256": "105c0eab5f6d953d4f4250833a80be455cb953e2a295599d9871e4d1392277ba"
+    },
+    {
+      "path": "tests/serialization-retry.test.ts",
+      "bytes": 1380,
+      "sha256": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9"
+    },
+    {
+      "path": "tests/settings-recovery.test.ts",
+      "bytes": 1847,
+      "sha256": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8"
+    },
+    {
+      "path": "tests/source-secret-scan.test.ts",
+      "bytes": 751,
+      "sha256": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c"
+    },
+    {
+      "path": "tests/timers.test.ts",
+      "bytes": 991,
+      "sha256": "2f8dbcea1ae80e90169792bc8cae145f11aae6a7ffaf31fad19e09c0f39d0963"
+    },
+    {
+      "path": "tests/transport.test.ts",
+      "bytes": 3091,
+      "sha256": "a98a86cf7caf79e42fb6dbc1ac4290a65c5738c2a84e7875007450744ba57ce2"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 654,
+      "sha256": "2bbd1ea18863cadea4a4757648f91c6b65725a5cb1e19edc55d54f4e2a25f6b4"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 248,
+      "sha256": "d0d6a8eb253ac7099822cc17cd388eac87e66d3d6a461c8c5a3bd6eec02dc56d"
+    }
+  ]
+}

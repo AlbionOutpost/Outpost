@@ -2,6 +2,10 @@
 
 Outpost is an independent Albion Online companion under active development. Working market tools, starter calculators, builds, compositions, guild collaboration and personal tools coexist with substantial missing data and product scope. [Current implementation](IMPLEMENTATION_STATUS.md), [executed QA](QA_REPORT.md) and [release readiness](RELEASE_READINESS.md) are the authoritative status documents.
 
+## Rebuild or hand off to another AI
+
+Start with the [complete single-file rebuild handbook](docs/rebuild/HANDBOOK.md) or the [chapter index and copyable AI instruction](docs/rebuild/README.md). It covers every route/API, exact schema/migrations, setup, security, data, formulas, design, components, assets, tests and known limits. The generated source inventory is checked with `node scripts/rebuild-inventory.mjs --check`. Original assets, the pinned dataset and private configuration remain separate required inputs.
+
 ## Run locally
 
 Requires Node 22.12+ (use Node22), npm, Docker and Docker Compose.
@@ -51,6 +55,6 @@ Follow [the phase workflow](docs/QA_WORKFLOW.md): review supported scopes and sc
 
 The app uses Next.js/React/TypeScript, PostgreSQL/Prisma and Redis with a standalone Node runtime. [Architecture](ARCHITECTURE.md), [API](docs/API.md), [source/formula provenance](DATA_SOURCES.md), [deployment runbook](docs/DEPLOYMENT.md), [private GitHub setup](docs/deployment/GITHUB_SETUP.md) and [prioritized plan](PROJECT_PLAN.md) provide implementation detail.
 
-Homepage scenes are disclosed generated illustrations; they do not meet authentic permitted game-scene acceptance. Equipment icons use the official renderer with fallback. Font notices are retained under [public/licenses](public/licenses). Original application-code licensing remains an owner decision; no open-source license grant is implied. See [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
+The current homepage uses genuine source-pinned equipment artwork and an interactive selector; all generated scenery is archived. General equipment icons use the official renderer with bounded fallback. Authentic gameplay-scene permission remains a separate open requirement. Font notices are retained under [public/licenses](public/licenses). Original application-code licensing remains an owner decision; no open-source license grant is implied. See [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
 
 Outpost is not affiliated with or endorsed by Sandbox Interactive. Game artwork/data rights remain separate from original application code. Historical technical identifiers retain their existing names for compatibility; the product name is Outpost.

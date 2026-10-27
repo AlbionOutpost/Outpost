@@ -1,11 +1,11 @@
 {
   "schema_version": 2,
-  "evidence_checked_at": "2026-10-27T00:31:46.009Z",
-  "inputs_sha256": "c7360d2ff63f6841be8cdc4e3e6fd4fc61a36353e326ff4fdd07219e4b35362d",
+  "evidence_checked_at": "2026-10-27T01:08:37.389Z",
+  "inputs_sha256": "a8e7fb4a86096b95f0556ff9d3eb8f1e482a94e1dd47517d6364afe44957d53b",
   "coverage_indices": {
     "implementation": 59.25,
-    "verification": 58.13,
-    "joint": 45.16
+    "verification": 57.82,
+    "joint": 45.0
   },
   "categories": {
     "core": {
@@ -54,8 +54,8 @@
       "weight": 5,
       "scopes": 8,
       "implementation": 43.75,
-      "verification": 31.25,
-      "joint": 15.625
+      "verification": 25.0,
+      "joint": 12.5
     }
   },
   "implementation_counts": {
@@ -67,8 +67,8 @@
     "VERIFIED": 30,
     "NOT_TESTED": 5,
     "BLOCKED": 11,
-    "PARTIALLY_TESTED": 13,
-    "FAILED": 1
+    "PARTIALLY_TESTED": 12,
+    "FAILED": 2
   },
   "open_release_gates": 17,
   "verdict": "NO-GO"

@@ -25,6 +25,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run format:check
+      - name: Verify rebuild documentation and source inventory
+        run: node scripts/rebuild-inventory.mjs --check
       - name: Configure isolated local services
         run: |
           cp .env.example .env

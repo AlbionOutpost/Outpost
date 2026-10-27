@@ -1,5 +1,7 @@
 # Outpost implementation report
 
+Complete current rebuild/AI handoff: [single-file handbook](docs/rebuild/HANDBOOK.md), [chapter index](docs/rebuild/README.md) and [source inventory](docs/rebuild/INVENTORY.md). This dated report below remains historical.
+
 Subsequent work is recorded in [the next development milestone](docs/engineering/NEXT_MILESTONE_2026-10-26.md), including the activated July catalog, calculator fixes, watchlists and updated performance evidence. The account below preserves the earlier checkpoint.
 
 Report date: **26 October 2026**. This is a dated account of the skill-system work and the subsequent frontend improvement pass. It explains the implementation, the files involved, the checks performed and the remaining limitations. The generated [QA report](QA_REPORT.md), [implementation status](IMPLEMENTATION_STATUS.md) and [release readiness](RELEASE_READINESS.md) remain authoritative for current project status.

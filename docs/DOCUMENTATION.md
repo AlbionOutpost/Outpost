@@ -14,6 +14,10 @@
 
 [QA_CHECKLIST.md](../QA_CHECKLIST.md) is the complete current acceptance view of [qa-inventory.json](qa-inventory.json). Engineering runbooks describe mechanisms and evidence boundaries; they link to current results and gates instead of repeating a release paragraph. Per-page design reviews link preserved iteration evidence and state the remaining acceptance.
 
+## Rebuild specification
+
+[Rebuild handoff](rebuild/README.md) and its generated [single-file handbook](rebuild/HANDBOOK.md) describe the complete implemented application. Domain chapters are maintained prose; `node scripts/rebuild-inventory.mjs` derives inventory/schema/reference/handbook outputs from source. `--check` detects drift and is part of hosted quality checks. This specification supplements executable source and the existing status authorities; it does not replace current QA/release/source-rights evidence or contain private credentials/data.
+
 ## Independent status dimensions
 
 Implementation: COMPLETE for the declared scope; PARTIAL where supported behavior exists with material remaining scope; MISSING (displayed NOT IMPLEMENTED) where the operational feature is absent; NOT APPLICABLE only with a recorded rationale.
