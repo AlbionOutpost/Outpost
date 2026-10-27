@@ -2515,8 +2515,8 @@
     },
     {
       "path": ".github/workflows/quality.yml",
-      "bytes": 2239,
-      "sha256": "4e9dcafac7b6d80bba5bbb9dedeb68de202c7a224bf8b501067594635e3edf10"
+      "bytes": 1907,
+      "sha256": "4d893f1c2544a6e1b3ad462cfcc8dd19a46f267ed28cbe2f2f1be4a78b3266ef"
     },
     {
       "path": ".gitignore",

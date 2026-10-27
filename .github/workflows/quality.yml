@@ -48,15 +48,6 @@ jobs:
       - name: Prepare sanitized failure evidence
         if: always()
         run: node scripts/qa-ci-evidence.mjs
-      - name: Retain sanitized quality logs
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: quality-evidence
-          path: .qa/ci-evidence/
-          retention-days: 7
-          include-hidden-files: true
-          if-no-files-found: warn
       - name: Remove ephemeral CI services
         if: always()
         run: docker compose down --volumes
