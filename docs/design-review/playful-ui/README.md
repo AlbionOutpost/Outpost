@@ -37,3 +37,7 @@ The existing private AlbionOutpost/Outpost remote was empty and writable. Cloned
 Docker remains blocked before build by the read-only builder activity directory. No field performance, full conformance or owner visual approval is implied.
 
 The last rendered phone review removed a decorative caption overlapping the jacket label and adjusted card headings so “Calculators” no longer breaks inside the word. Those presentation corrections were rebuilt and the three focused browser tests rerun; final screenshots were recaptured.
+
+## Publication read-back
+
+Published implementation commit [226e3ae](https://github.com/AlbionOutpost/Outpost/commit/226e3aec087f96a2d7fc4f12b47ae8afb22bdf8f) to the existing private `AlbionOutpost/Outpost` repository on `main`. GitHub’s commit endpoint returned the same SHA. It is the repository’s first source commit, with865 explicitly reviewed files; there was no prior remote history to rewrite. The clean candidate build and exact staged-blob/configured-secret scan passed. The initial [hosted Quality gates run](https://github.com/AlbionOutpost/Outpost/actions/runs/40427701027) was observed running; that does not establish hosted success. The following documentation commit records this read-back. No hosted site was deployed.

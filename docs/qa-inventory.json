@@ -758,10 +758,10 @@
       "id": "CODE-005",
       "category": "code",
       "title": "Fresh checkout and source history verification",
-      "implementation": "MISSING",
-      "verification": "BLOCKED",
-      "verified_scope": "Workspace is not a Git repository; remote repositories are empty.",
-      "remaining": "Establish reviewed history, source scan and independently verified clean install before hosted use.",
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Published private Outpost source commit 226e3aec087f96a2d7fc4f12b47ae8afb22bdf8f. Actual empty remote cloned into writable /tmp;865 reviewed staged blobs match source, configured-secret patterns clean, clean npm installation and production build pass. Original workspace Git metadata remains protected/unusable.",
+      "remaining": "Use an authorized writable checkout for continued version control; complete maintained history/security review. No existing remote history was overwritten.",
       "evidence": ["docs/engineering/REPOSITORY_READINESS.md"]
     },
     {
@@ -838,9 +838,9 @@
       "category": "operations",
       "title": "Hosted repository CI",
       "implementation": "PARTIAL",
-      "verification": "NOT_TESTED",
-      "verified_scope": "Pinned-action quality workflow and dependency-update configuration prepared locally; live repositories empty and zero hosted runs.",
-      "remaining": "Reviewed source upload, clean-checkout secrets exclusion and successful hosted run needed.",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Pinned-action quality workflow and dependency-update configuration published to private Outpost main. GitHub Quality gates run40427701027 was triggered and observed in_progress; not a hosted pass.",
+      "remaining": "Successful hosted Quality gates completion and ongoing operational ownership remain open.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

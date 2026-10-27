@@ -1,11 +1,11 @@
 {
   "schema_version": 2,
   "evidence_checked_at": "2026-10-27T00:31:46.009Z",
-  "inputs_sha256": "f6859ff310b5580fbe0f2bd5dab26bc39922135c2d20240b000f3d378a0622bf",
+  "inputs_sha256": "c7360d2ff63f6841be8cdc4e3e6fd4fc61a36353e326ff4fdd07219e4b35362d",
   "coverage_indices": {
-    "implementation": 58.75,
-    "verification": 57.32,
-    "joint": 44.75
+    "implementation": 59.25,
+    "verification": 58.13,
+    "joint": 45.16
   },
   "categories": {
     "core": {
@@ -46,28 +46,28 @@
     "code": {
       "weight": 5,
       "scopes": 5,
-      "implementation": 60.0,
-      "verification": 50.0,
-      "joint": 45.0
+      "implementation": 70.0,
+      "verification": 60.0,
+      "joint": 50.0
     },
     "operations": {
       "weight": 5,
       "scopes": 8,
       "implementation": 43.75,
-      "verification": 25.0,
-      "joint": 12.5
+      "verification": 31.25,
+      "joint": 15.625
     }
   },
   "implementation_counts": {
     "COMPLETE": 19,
-    "PARTIAL": 32,
-    "MISSING": 9
+    "PARTIAL": 33,
+    "MISSING": 8
   },
   "verification_counts": {
     "VERIFIED": 30,
-    "NOT_TESTED": 6,
-    "BLOCKED": 12,
-    "PARTIALLY_TESTED": 11,
+    "NOT_TESTED": 5,
+    "BLOCKED": 11,
+    "PARTIALLY_TESTED": 13,
     "FAILED": 1
   },
   "open_release_gates": 17,
