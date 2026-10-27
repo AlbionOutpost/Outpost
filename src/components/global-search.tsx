@@ -39,6 +39,7 @@ export function GlobalSearch() {
   const dialog = useRef<HTMLDialogElement>(null),
     input = useRef<HTMLInputElement>(null);
   const region = useAtlasRegion();
+  const [ready, setReady] = useState(false);
   const [opened, setOpened] = useState(false),
     [query, setQuery] = useState("");
   const [result, setResult] = useState<{ key: string; results: SearchRow[] } | null>(null);
@@ -59,7 +60,11 @@ export function GlobalSearch() {
       }
     };
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    const frame = requestAnimationFrame(() => setReady(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("keydown", key);
+    };
   }, []);
   useEffect(() => {
     if (!opened || query.trim().length < 2) return;
@@ -102,6 +107,7 @@ export function GlobalSearch() {
         onClick={open}
         aria-label="Search Albion… Ctrl K"
         className="button secondary search-trigger"
+        disabled={!ready}
       >
         <Search size={18} />
         <span className="search-shortcut">

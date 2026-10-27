@@ -9,7 +9,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
   page,
   context,
 }) => {
-  test.setTimeout(180000);
+  test.setTimeout(process.env.CI ? 360000 : 180000);
   const id = `atlas-test-${randomUUID()}`,
     token = randomUUID();
   await db.user.create({

@@ -2640,8 +2640,8 @@
     },
     {
       "path": "e2e/compositions.spec.ts",
-      "bytes": 10298,
-      "sha256": "cd285f95911dfc6811073e546114538c05d96d8f42d68a0e022bf1b6620c2bef"
+      "bytes": 10367,
+      "sha256": "a27cef6342336b580122269354e94ef2f6a0dfec779f9b93e677de9305f04708"
     },
     {
       "path": "e2e/dashboard-loadouts.spec.ts",
@@ -2650,8 +2650,8 @@
     },
     {
       "path": "e2e/design-review.spec.ts",
-      "bytes": 7302,
-      "sha256": "7cd2f8d01c2b5e072979aeb931adf8d525c5a0c088a1c4161700ee4a3902473b"
+      "bytes": 7328,
+      "sha256": "dd3a07b81ff010a416043746a80ad4d77b516c7bbd8d05e3e6fe5d818fdabd61"
     },
     {
       "path": "e2e/group-editing.spec.ts",
@@ -2710,8 +2710,8 @@
     },
     {
       "path": "e2e/personal-tools.spec.ts",
-      "bytes": 8115,
-      "sha256": "52fb2e34a7b00867d1eaaae88a1fb9e608b2c8d27884403699f4cdd69725abf1"
+      "bytes": 8180,
+      "sha256": "80baa098d14fde4b79c48932f9a8c9c2535f095ac02ba69ae06214f6df5899d9"
     },
     {
       "path": "e2e/player-workflows.spec.ts",
@@ -2805,8 +2805,8 @@
     },
     {
       "path": "e2e/qa-light.spec.ts",
-      "bytes": 1970,
-      "sha256": "b6bf1a49a446f00041f5cd299bb671d28c7c15743f2c40955d1ee9c23f509550"
+      "bytes": 2022,
+      "sha256": "4584c542e3eb077b70161c4d7201340b476c42cb83fccc1ca58e036273d6de70"
     },
     {
       "path": "e2e/qa-regressions.spec.ts",
@@ -2890,8 +2890,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "bytes": 406,
-      "sha256": "7f3c144613f2aa1d96db22f311f6a4d1f2df9337cd5f4d2363f4beb19f918fe4"
+      "bytes": 427,
+      "sha256": "a266fb2a62ee192701b3e10d65dc1d18cafa0f38b11978c9e2b2a2cffd54987e"
     },
     {
       "path": "prisma/migrations/20261025194321_foundation/migration.sql",
@@ -3700,8 +3700,8 @@
     },
     {
       "path": "src/components/composition-editor.tsx",
-      "bytes": 27095,
-      "sha256": "72ba03be3214095818fe0e171dd1f8e1705bc97e251672baaa8e4a72b91c9b91"
+      "bytes": 27247,
+      "sha256": "e5a73faf5df7fb3548a50284cc5c6d81a883e9814888ca4eac067924cb6aca3d"
     },
     {
       "path": "src/components/composition-png-export.tsx",
@@ -3755,8 +3755,8 @@
     },
     {
       "path": "src/components/global-search.tsx",
-      "bytes": 9697,
-      "sha256": "99f9b69edadd361cf8815279a19d75a1cd5a209a515019acd627c3b7ae069258"
+      "bytes": 9881,
+      "sha256": "6b6bebb18f9d2e733ffd69780a02bf6a035a5c55fa4e79e36918c8d689675881"
     },
     {
       "path": "src/components/group-create.tsx",

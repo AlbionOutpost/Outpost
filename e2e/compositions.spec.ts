@@ -171,6 +171,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     const exportPath = await (await download).path();
     expect(exportPath).not.toBeNull();
     await page.goto("/compositions/new");
+    await expect(page.getByLabel("Import comp file")).toBeEnabled();
     await page.getByLabel("Import comp file").setInputFiles(exportPath!);
     await expect(page.getByLabel("Comp title")).toHaveValue("Independent public copy");
     await expect(page.getByRole("listitem")).toHaveCount(20);

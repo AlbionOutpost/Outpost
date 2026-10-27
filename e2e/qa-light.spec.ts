@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { writeFile, mkdir } from "node:fs/promises";
 test("light theme accessibility and anonymous sign in", async ({ page, context }) => {
+  test.setTimeout(process.env.CI ? 180000 : 30000);
   const rows = [];
   await mkdir(".qa/screenshots", { recursive: true });
   for (const width of [375, 768, 1440, 1920]) {

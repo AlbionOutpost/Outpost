@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GripVertical, ArrowUp, ArrowDown, Copy, Trash2, Plus, Swords } from "lucide-react";
@@ -41,6 +41,11 @@ export function CompositionEditor({
   builds?: { id: string; title: string }[];
 }) {
   const router = useRouter();
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [draft, setDraft] = useState<CompositionInput>(
     initial || {
       title: "",
@@ -712,6 +717,7 @@ export function CompositionEditor({
           ref={file}
           className="sr-only"
           aria-label="Import comp file"
+          disabled={!hydrated}
           type="file"
           accept="application/json,.json"
           onChange={async (e) => {

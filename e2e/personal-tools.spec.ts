@@ -104,6 +104,7 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
       page.getByRole("heading", { name: "Welcome, Personal planner.", exact: true }),
     ).toBeVisible();
     await expect(page.getByText("Manual crop reminder · RUNNING", { exact: true })).toBeVisible();
+    await expect(page.locator(".search-trigger")).toBeEnabled();
     await page.keyboard.press("Control+k");
     await expect(page.getByRole("dialog", { name: "Global search", exact: true })).toBeVisible();
     await page
