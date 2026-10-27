@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-27T03:57:20.472Z",
+  "scope": "Actual local production browser → batch API → AODP, no intercepted requests or synthetic quotes",
+  "status": 200,
+  "region": "europe",
+  "source": "Albion Online Data Project",
+  "requestedItems": ["T4_BAG", "T4_CAPE"],
+  "quality": 1,
+  "rows": 16,
+  "wrongIdentities": 0
+}

@@ -3,7 +3,7 @@
   "build": "Next16.4.3 production, local PostgreSQL/Redis, Node22",
   "viewports": [1920, 1440, 768, 390, 375, 320],
   "sessions": "Local isolated fixture sessions for Build/Comp and saved profiles, not genuine Discord OAuth",
-  "prices": "Research captures use explicit test-only synthetic1234-silver stale observations and forced source failure, not live market activity",
+  "prices": "Research captures use explicit test-only synthetic1234-silver stale observations and forced source failure, not live market activity Separate observed-* captures use an actual unintercepted Europe/quality1 batch response at2026-10-27T03:57:20Z (16 rows, zero unexpected identities); these are dated source observations, not executable offers.",
   "review": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention.",
   "files": [
     {
@@ -57,6 +57,14 @@
     {
       "path": "docs/design-review/product-milestone/comp-gear-320.png",
       "sha256": "5e7357cc7d81e8780b6b2f0e8b12df31d11964bab078bb53ad66b5efed87b980"
+    },
+    {
+      "path": "docs/design-review/product-milestone/observed-1440.png",
+      "sha256": "4aeda9ae4e9ec6fd40e9bd32f7a9d6a609107354d204fa71b5c9b816f5618a51"
+    },
+    {
+      "path": "docs/design-review/product-milestone/observed-390.png",
+      "sha256": "ab0e932b6d06c2a89b928b15c969d3433c8c53a6d2fae99c9ae79751a0d55b49"
     }
   ]
 }

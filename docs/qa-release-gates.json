@@ -60,7 +60,7 @@
     {
       "id": "REL-012",
       "requirement": "OPS-007",
-      "acceptance": "Hosted CI succeeded on45b0acd (run40440298944). Later product commits require their own actual hosted result; local passes do not imply hosted success."
+      "acceptance": "Product-source commitae887a6 passed actual hosted run40446609588. Future product commits need their own observed hosted result; local success alone is insufficient."
     },
     {
       "id": "REL-013",

@@ -1188,7 +1188,7 @@
     "watchTablePresent": true
   },
   "remote": {
-    "checkedAt": "2026-10-27T03:19:18.846040+00:00",
+    "checkedAt": "2026-10-27T04:05:08.211145+00:00",
     "scope": "Read-only repository/organization/hosted CI status; no policy changes",
     "organization": {
       "login": "AlbionOutpost",
@@ -1209,8 +1209,8 @@
         "hostedRuns": 0
       }
     ],
-    "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40440298944",
-    "successfulCommit": "45b0acd7ce2d767d9bd105f3522e86ae0c78af41"
+    "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40446609588",
+    "successfulCommit": "ae887a6dbcb7aad94e57ea9df556d7270a8eb11c"
   },
   "dependency_maintenance": {
     "checkedAt": "2026-10-26T12:40:53.488543+00:00",
@@ -1221,9 +1221,9 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-27T03:52:05.494289+00:00",
+    "checkedAt": "2026-10-27T04:05:08.211145+00:00",
     "phase": "2026-10-27T03:49:12.511Z",
-    "scope": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention. Latest research captures wait for visible images and distinguish source failure from an actual empty response. Fixture sessions are not real OAuth; source unlocks/patch and owner acceptance remain open.",
+    "scope": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention. Separate actual AODP batch captures were opened at1440/390; no intercepted responses. Fixture captures remain explicitly synthetic; actual OAuth/owner acceptance/patch verification remain open.",
     "files": [
       {
         "path": "docs/design-review/product-milestone/before-build-1440.png",
@@ -1276,11 +1276,19 @@
       {
         "path": "docs/design-review/product-milestone/comp-gear-320.png",
         "sha256": "5e7357cc7d81e8780b6b2f0e8b12df31d11964bab078bb53ad66b5efed87b980"
+      },
+      {
+        "path": "docs/design-review/product-milestone/observed-1440.png",
+        "sha256": "4aeda9ae4e9ec6fd40e9bd32f7a9d6a609107354d204fa71b5c9b816f5618a51"
+      },
+      {
+        "path": "docs/design-review/product-milestone/observed-390.png",
+        "sha256": "ab0e932b6d06c2a89b928b15c969d3433c8c53a6d2fae99c9ae79751a0d55b49"
       }
     ]
   },
   "source_scan": {
-    "filesScanned": 676,
+    "filesScanned": 678,
     "configuredKeys": ["NEXTAUTH_SECRET"],
     "findings": [],
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
@@ -1308,7 +1316,7 @@
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "059ede95573d9d83318103eda80f220f4e24066f1360c1f92d98f1754f63e2dd",
+      "sha256": "e7411af353dd26bc3ceec00ade2e536ae81ad749e68047f6575a76c8f909de07",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1373,7 +1381,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/remote-state.json",
-      "sha256": "2f36939f9447dae1d305e0c100435aadf393610db6ef9e6e29a0e683d2aaaf5a",
+      "sha256": "c9ddc6a82c108108dc88b3765058c84a00d5f12f34b3ef056a6bb001f9d3a3e2",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1383,7 +1391,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "d1074b8c24e000e47f8d9c21cc821090627db7fdb5dd63c688e1f16873ec6786",
+      "sha256": "85da71624ca25b52abb668b7b930e667703662d5e55d6cf18eab076ab03c91cb",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
