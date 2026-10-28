@@ -4642,9 +4642,13 @@
       {
         "path": ".qa/full-review/free-check.log",
         "sha256": "3915c6f8323e9e32bc4e69b48243baaa54c39fceea305582e21484359c3857be"
+      },
+      {
+        "path": ".qa/full-review/github-runs.json",
+        "sha256": "bf6bfa97244b7504949b2c09ef6d24f6339711f35a878a3ba44aea2af3309965"
       }
     ],
-    "latestImplementationNote": "Owner-requested product review: provisional6/10,12 confirmed accounting/state/layout findings fixed. Node250unit104browser15DB9regions ten gatesPASS after final changes. Cloudflare104browser/native19PASS before final layout-only corrections. Final24 six-width container captures200/no overflow/page errors/axe violations; actual images inspected. Shopping first alignment attempt rejected and corrected. Public publication pending. Personal OAuth/current-patch/legal/recovery/owner acceptance and full mechanics remain open. LIVE web6ceb778c-3a2a-4f30-a53e-c9421a80da64. Strict public smoke25/OAuth-start pass; actual hosted390 transport330instant/292.5listing,1440 shopping center,768 crafting12px gap pass. This is not personal consent/admin proof. Github source synchronization pending."
+    "latestImplementationNote": "Owner-requested product review: provisional6/10,12 confirmed accounting/state/layout findings fixed. Node250unit104browser15DB9regions ten gatesPASS after final changes. Cloudflare104browser/native19PASS before final layout-only corrections. Final24 six-width container captures200/no overflow/page errors/axe violations; actual images inspected. Shopping first alignment attempt rejected and corrected. Public publication pending. Personal OAuth/current-patch/legal/recovery/owner acceptance and full mechanics remain open. LIVE web6ceb778c-3a2a-4f30-a53e-c9421a80da64. Strict public smoke25/OAuth-start pass; actual hosted390 transport330instant/292.5listing,1440 shopping center,768 crafting12px gap pass. This is not personal consent/admin proof. Github source synchronization pending. Source327e1d3 pushed; CI40781352764 in progress (not PASS)."
   },
   "source_scan": {
     "filesScanned": 4164,
@@ -4770,7 +4774,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "8ae50744e16c67520b1f61086a834b98a4679623a5e73defafcd27ec687d9971",
+      "sha256": "639252e765b34b7fcc578ade6257422740d9462949639bef170aaf50b0a7a705",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
