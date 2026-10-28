@@ -272,7 +272,9 @@ export function FishingCalculator({
                   value={yieldValue}
                   onChange={(e) => edit("yield", e.target.value)}
                 />
-                <small>Captured recipe: {selected.choppedPerFish}. Confirm in game.</small>
+                <small>
+                  Chops per fish: {selected.choppedPerFish}. Confirm your yield in game.
+                </small>
               </label>
               <label>
                 Total sale fees (%)
@@ -479,9 +481,9 @@ export function FishingCalculator({
           )}
         </div>
         <p className="fishing-source-note">
-          Game reference values: your 27 October 2026 Grind archive. Prices: Albion Online Data
-          Project, on request. Only recent matching-region/city observations enter results; manual
-          overrides stay manual. Current game coefficients remain subject to in-game confirmation.
+          Check yields and fame against your in-game setup. Prices: Albion Online Data Project, on
+          request. Only recent matching-region/city observations enter results; manual overrides
+          stay manual. Current game coefficients remain subject to in-game confirmation.
         </p>
       </div>
     </section>

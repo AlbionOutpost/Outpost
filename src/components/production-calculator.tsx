@@ -277,7 +277,7 @@ export function ProductionCalculator({
     </aside>
   );
   return (
-    <div className="production-journey" data-step={step}>
+    <div className="production-journey premium-production" data-step={step}>
       <nav className="production-mode-nav" aria-label="Production calculators">
         {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
           <Link
@@ -326,7 +326,9 @@ export function ProductionCalculator({
         <div className="calculator-inputs">
           <section className="panel" id="production-setup" tabIndex={-1}>
             <h2 className="production-inputs-heading">
-              <ItemIcon id={recipe.output} quality={outputQuality} size={36} />
+              <span className="workspace-step" aria-hidden="true">
+                1
+              </span>
               Selected recipe
             </h2>
             {kind === "enchanting" && (
@@ -403,7 +405,7 @@ export function ProductionCalculator({
                       : "Enchantment upgrade"}{" "}
                   · {recipe.outputCount} output per craft
                 </p>
-                <small>Archived recipe source · current patch unverified</small>
+                <small>Check the recipe and your station settings in game.</small>
               </div>
             </div>
             <button
@@ -415,7 +417,12 @@ export function ProductionCalculator({
             </button>
           </section>
           <section className="panel reference-assumptions">
-            <h2>City & assumptions</h2>
+            <h2>
+              <span className="workspace-step" aria-hidden="true">
+                2
+              </span>
+              City & assumptions
+            </h2>
             <div className="input-grid production-city-choices">
               {" "}
               <label>
@@ -608,9 +615,9 @@ export function ProductionCalculator({
               )}
               <p className="production-coverage">
                 {kind === "crafting"
-                  ? "45 crafting recipes, T4–T8 · archived sources, current patch unverified."
+                  ? "45 equipment recipes, T4–T8. Confirm quantities and station settings in game."
                   : kind === "refining"
-                    ? "25 refining recipes, T4–T8 · archived sources, current patch unverified."
+                    ? "25 refining recipes, T4–T8. Confirm quantities and station settings in game."
                     : "Rune enchanting for the original supported equipment families."}{" "}
                 Enter your own station and market assumptions.
               </p>
@@ -639,14 +646,25 @@ export function ProductionCalculator({
                   random-quality probabilities. Crafting/refining currently cover a small factual
                   recipe subset.
                 </p>
-                <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                  Recipe source
-                </a>
+                {/albiononlinegrind|albionutil/i.test(recipe.source) ? (
+                  <Link className="text-link" href="/guides">
+                    Recipe & planning guides →
+                  </Link>
+                ) : (
+                  <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                    Recipe reference
+                  </a>
+                )}
               </details>
             </details>
           </section>
           <section className="panel reference-quantity">
-            <h2>Quantity & quality</h2>
+            <h2>
+              <span className="workspace-step" aria-hidden="true">
+                3
+              </span>
+              Quantity & quality
+            </h2>
             <p className="muted">
               Set the size of your run. Focus and return assumptions are available in the adjacent
               settings.
@@ -706,7 +724,12 @@ export function ProductionCalculator({
           tabIndex={-1}
         >
           <div className="section-heading">
-            <h2>Material costs</h2>
+            <h2>
+              <span className="workspace-step" aria-hidden="true">
+                4
+              </span>
+              Material costs
+            </h2>
             <button className="button secondary" disabled={busy} onClick={load}>
               {busy ? "Fetching observations…" : "Load market observations"}
             </button>
@@ -861,7 +884,12 @@ export function ProductionCalculator({
           <div className="production-result-item">
             <ItemIcon id={recipe.output} quality={outputQuality} size={56} />
             <div>
-              <h2>Results summary</h2>
+              <h2>
+                <span className="workspace-step" aria-hidden="true">
+                  5
+                </span>
+                Results summary
+              </h2>
               <span>
                 {recipe.name} · {recipe.outputCount * draft.batches} output
                 {recipe.outputCount * draft.batches === 1 ? "" : "s"}

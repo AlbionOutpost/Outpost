@@ -10,6 +10,15 @@ export const tools = [
     state: "Observed prices",
   },
   {
+    href: "/shopping-list",
+    title: "Shopping list",
+    short: "Shopping list",
+    group: "Economy",
+    icon: "transport",
+    description: "Combine equipment and materials, count owned stock and price your purchases.",
+    state: "Saved on this device",
+  },
+  {
     href: "/tools/flipping",
     title: "Market flipping",
     short: "Trade profit",
@@ -24,8 +33,8 @@ export const tools = [
     short: "Crafting",
     group: "Economy",
     icon: "craft",
-    description: "Price supported starter recipes and material returns.",
-    state: "Starter recipes",
+    description: "Plan equipment batches, material purchases and resource returns.",
+    state: "Production planning",
   },
   {
     href: "/tools/cooking",
@@ -34,7 +43,7 @@ export const tools = [
     group: "Economy",
     icon: "farm",
     description: "Plan meal batches, ingredients, focus and shared shopping lists.",
-    state: "Restored recipes · manual mechanics",
+    state: "Batch planning · adjustable settings",
   },
   {
     href: "/tools/alchemy",
@@ -43,7 +52,7 @@ export const tools = [
     group: "Economy",
     icon: "enchant",
     description: "Price potion batches and compare ingredient costs with sale proceeds.",
-    state: "Restored recipes · manual mechanics",
+    state: "Batch planning · adjustable settings",
   },
   {
     href: "/tools/fishing",
@@ -52,7 +61,7 @@ export const tools = [
     group: "Economy",
     icon: "fish",
     description: "Compare whole fish, chopped output and the cost of fishing fame.",
-    state: "41 captured recipes · editable assumptions",
+    state: "41 fish recipes · adjustable yields",
   },
   {
     href: "/tools/refining",
@@ -61,7 +70,7 @@ export const tools = [
     group: "Economy",
     icon: "refine",
     description: "Compare input costs, return assumptions and output value.",
-    state: "Starter recipes",
+    state: "Production planning",
   },
   {
     href: "/tools/enchanting",

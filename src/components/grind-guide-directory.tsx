@@ -56,8 +56,8 @@ export function GrindGuideDirectory({
         <button className="button secondary">Find guides</button>
       </form>
       <div className="library-section-heading">
-        <h2>The Grind field guide</h2>
-        <span>{matches.length} articles · original authors preserved</span>
+        <h2>The Outpost field guide</h2>
+        <span>{matches.length} guides to explore</span>
       </div>
       {featured && (
         <article className="guide-feature-story">

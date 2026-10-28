@@ -27,6 +27,7 @@ import "./grind-rebuild.css";
 import "./journal-workspace.css";
 import "./fishing-workspace.css";
 import "./build-archive-details.css";
+import "./premium-system.css";
 export const metadata: Metadata = {
   title: { default: "Outpost | Albion tools", template: "%s | Outpost" },
   description:

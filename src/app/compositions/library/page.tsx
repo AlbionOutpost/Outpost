@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { ItemIcon } from "@/components/item-icon";
-export const metadata = { title: "Grind group composition library" };
+export const metadata = { title: "Group composition library" };
 export default async function Page({
   searchParams,
 }: {
@@ -27,7 +27,9 @@ export default async function Page({
       <div className="section-heading">
         <div>
           <h1 className="page-title display-title">A plan for every party.</h1>
-          <p className="intro">{total} group compositions recovered from your Grind library.</p>
+          <p className="intro">
+            {total} group compositions. Find a role, build a party and get ready together.
+          </p>
         </div>
         <Link href="/compositions/new" className="button primary">
           Create a comp
@@ -35,14 +37,14 @@ export default async function Page({
       </div>
       <nav className="discovery-tabs" aria-label="Composition collections">
         <Link href="/compositions/library" aria-current="page">
-          Grind compositions
+          Composition library
         </Link>
-        <Link href="/compositions">Outpost comps</Link>
+        <Link href="/compositions">Player comps</Link>
         <Link href="/builds/library">Build library</Link>
       </nav>
       <p className="library-provenance">
-        Public archive · 27 October 2026. Original member order, repeated roles and optional slots
-        are preserved. These are historical party plans.
+        Explore complete party plans, equipment swaps and optional roles. Adapt a composition to
+        your group and activity.
       </p>
       <form className="library-filter-bar" action="/compositions/library">
         <label>

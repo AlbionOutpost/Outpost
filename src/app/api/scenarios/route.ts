@@ -9,6 +9,7 @@ import { transportSchema } from "@/lib/albion/transport";
 import { tradeScenarioSchema } from "@/lib/albion/calculations";
 import { productionSchema } from "@/lib/albion/production";
 import { productionPlanSchema, productionPlan } from "@/lib/albion/production-plan";
+import { savedShoppingSchema } from "@/lib/albion/shopping";
 import { farmingSchema, farming } from "@/lib/albion/farming";
 export const GET = apiHandler("scenario.list", async (req: NextRequest) => {
   const user = await getServerSession(authOptions);
@@ -22,6 +23,7 @@ export const GET = apiHandler("scenario.list", async (req: NextRequest) => {
       "flipping",
       "production-plan",
       "farming",
+      "shopping-list",
     ])
     .optional()
     .parse(req.nextUrl.searchParams.get("kind") || undefined);
@@ -46,6 +48,7 @@ export const POST = apiHandler("scenario.save", async (req: NextRequest) => {
         tradeScenarioSchema,
         productionPlanSchema,
         farmingSchema,
+        savedShoppingSchema,
       ]),
     })
     .parse(await boundedJson(req));

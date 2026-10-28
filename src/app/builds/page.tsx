@@ -83,15 +83,15 @@ export default async function Builds({
         <Link href="/builds" aria-current="page">
           Outpost builds
         </Link>
-        <Link href="/builds/library">Grind library · 10,770</Link>
-        <Link href="/compositions/library">Recovered comps</Link>
+        <Link href="/builds/library">Browse the build library</Link>
+        <Link href="/compositions/library">Composition library</Link>
       </nav>
       {!mine && !q && !content && !weapon && page === 1 && (
         <section className="library-featured">
           <div className="library-section-heading">
             <div>
-              <h2>Your Grind library, at home in Outpost.</h2>
-              <p>Recovered loadouts, original authors, real equipment and recorded spells.</p>
+              <h2>Find a loadout for your next adventure.</h2>
+              <p>Explore community equipment choices, abilities and useful alternatives.</p>
             </div>
             <Link className="text-link" href="/builds/library">
               Browse all 10,770 builds →

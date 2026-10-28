@@ -48,6 +48,7 @@ const sections = [
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
+  ["/shopping-list", "Shopping list"],
   ["/favorites", "My favorites"],
   ["/settings", "Settings"],
   ["/signin", "Sign in"],
@@ -409,7 +410,7 @@ export function Shell({
             </Link>
             <span>Independent Albion Online tools. Make your next move count.</span>
             <Link href="/legal">
-              Sources, privacy & attribution <ArrowUpRight size={13} />
+              Privacy & terms <ArrowUpRight size={13} />
             </Link>
           </footer>
         </div>

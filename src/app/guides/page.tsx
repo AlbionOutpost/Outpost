@@ -14,10 +14,7 @@ export default async function Guides({
   return (
     <div className="guide-discovery-page">
       <h1 className="page-title display-title">A little knowledge goes a long way.</h1>
-      <p className="intro">
-        Find your footing, plan your next run, or learn a new way to earn. Your Grind guides now
-        have a home in Outpost.
-      </p>
+      <p className="intro">Find your footing, plan your next run, or learn a new way to earn.</p>
       <nav className="discovery-tabs" aria-label="Builds and guides">
         <Link href="/builds/library">Build library</Link>
         <Link href="/guides" aria-current="page">
@@ -25,8 +22,8 @@ export default async function Guides({
         </Link>
       </nav>
       <p className="library-provenance">
-        Your Grind guides, captured 27 October 2026. Check each article’s date before using older
-        game advice.
+        Practical guides for your next adventure. Check the update date and current game balance
+        before making a big investment.
       </p>
       <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
       <div className="library-section-heading outpost-guide-heading">

@@ -1,5 +1,7 @@
 # Outpost visual direction
 
+Active owner implementation: [premium workspaces and connected planning](docs/design-review/premium-workspaces/README.md). The five supplied UI-system/crafting/build-comp/market/homepage images are the current target. Use one coherent theme, real data and useful private workflows. Remove migration-history and competitor copy from the public UI while retaining truthful prices, assumptions, credits and internal provenance. Implementation and acceptance are in progress.
+
 Current owner-requested recovery: [equipment-led editor, recovered builds/guides/media, journal, cooking/alchemy and fishing](docs/design-review/grind-recovery/README.md). Guide discovery uses actual editorial imagery, reading titles grow naturally, and mobile contents collapse. Fishing separates catch browsing, price/fee assumptions and results; the journal prioritizes objectives and device progress.
 
 Search refinement: [single field, contained scrolling and compact responsive palette](docs/design-review/search-palette/README.md). Header/footer stay visible, results scroll, Clear preserves focus and rapid keyboard reopen remains usable.

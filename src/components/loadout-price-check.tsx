@@ -1,17 +1,21 @@
 "use client";
 import { useState } from "react";
 import { useAtlasRegion } from "./region-context";
-import { cities } from "@/lib/albion/region-config";
+import { cities, type Region } from "@/lib/albion/region-config";
 import { useBatchQuotes, BatchQuote, quoteKey } from "./market-batch-quotes";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
+import { AddToShopping } from "./add-to-shopping";
 import { isStale } from "@/lib/albion/freshness";
 export function LoadoutPriceCheck({
   equipment,
+  region: sourceRegion,
 }: {
   equipment: { slot: string; itemId: string; quality: number }[];
+  region?: Region;
 }) {
-  const region = useAtlasRegion();
+  const selectedRegion = useAtlasRegion();
+  const region = sourceRegion ?? selectedRegion;
   const [city, setCity] = useState("Fort Sterling");
   const { quotes, busy, refresh } = useBatchQuotes(region);
   const selected = equipment.filter((e) => e.itemId);
@@ -29,6 +33,22 @@ export function LoadoutPriceCheck({
           <p>Check community market observations on {region}. Each item keeps its source date.</p>
         </div>
         <div className="loadout-quote-actions">
+          <AddToShopping
+            region={region}
+            label="Shop this loadout"
+            entries={selected.map((item) => ({
+              itemId: item.itemId,
+              name: equipmentName(item.itemId),
+              city: city as (typeof cities)[number],
+              quality: item.quality,
+              quantity: 1,
+              owned: 0,
+              unitPrice: null,
+              priceKind: "manual" as const,
+              observedAt: null,
+            }))}
+          />
+
           <label>
             Purchase city
             <select

@@ -146,8 +146,8 @@ export function ItemCatalog({
         </label>
       </div>
       <p className="muted">
-        {busy ? "Loading selection…" : `${result.total.toLocaleString()} imported records`} · Source
-        coverage is incomplete; current-patch verification is pending.
+        {busy ? "Loading selection…" : `${result.total.toLocaleString()} items`} · Source coverage
+        is incomplete; current-patch verification is pending.
       </p>
       {error && (
         <p role="alert">
@@ -226,7 +226,7 @@ export function ItemCatalog({
       {!!shortcuts.length && (
         <details>
           <summary>Original market shortcuts ({shortcuts.length})</summary>
-          <p className="muted">Original starter names; separate from imported metadata.</p>
+          <p className="muted">Quick picks for your next loadout.</p>
           {shortcuts.map((i) => (
             <p key={i.id}>
               <Link

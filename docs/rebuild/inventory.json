@@ -103,15 +103,15 @@
     }
   },
   "counts": {
-    "pages": 41,
+    "pages": 42,
     "apiRoutes": 34,
     "httpOperations": 45,
-    "components": 75,
-    "libraryModules": 70,
+    "components": 81,
+    "libraryModules": 72,
     "models": 29,
     "enums": 3,
     "migrations": 18,
-    "files": 608
+    "files": 620
   },
   "pages": [
     {
@@ -484,6 +484,13 @@
       "exports": ["Settings", "default"]
     },
     {
+      "route": "/shopping-list",
+      "source": "src/app/shopping-list/page.tsx",
+      "client": false,
+      "imports": ["@/components/shopping-workspace"],
+      "exports": ["Page", "default", "metadata"]
+    },
+    {
       "route": "/signin",
       "source": "src/app/signin/page.tsx",
       "client": false,
@@ -513,28 +520,28 @@
       "route": "/tools/alchemy",
       "source": "src/app/tools/alchemy/page.tsx",
       "client": false,
-      "imports": ["@/components/production-calculator"],
+      "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
       "exports": ["Page", "default", "metadata"]
     },
     {
       "route": "/tools/cooking",
       "source": "src/app/tools/cooking/page.tsx",
       "client": false,
-      "imports": ["@/components/production-calculator"],
+      "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
       "exports": ["Page", "default", "metadata"]
     },
     {
       "route": "/tools/crafting",
       "source": "src/app/tools/crafting/page.tsx",
       "client": false,
-      "imports": ["@/components/production-calculator"],
+      "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
       "exports": ["Page", "default", "metadata"]
     },
     {
       "route": "/tools/enchanting",
       "source": "src/app/tools/enchanting/page.tsx",
       "client": false,
-      "imports": ["@/components/production-calculator"],
+      "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
       "exports": ["Page", "default"]
     },
     {
@@ -583,7 +590,7 @@
       "route": "/tools/refining",
       "source": "src/app/tools/refining/page.tsx",
       "client": false,
-      "imports": ["@/components/production-calculator"],
+      "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
       "exports": ["Page", "default"]
     },
     {
@@ -997,6 +1004,7 @@
         "@/lib/albion/calculations",
         "@/lib/albion/production",
         "@/lib/albion/production-plan",
+        "@/lib/albion/shopping",
         "@/lib/albion/farming"
       ]
     },
@@ -1070,6 +1078,20 @@
       "exports": ["AcceptInvite"]
     },
     {
+      "source": "src/components/add-to-shopping.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "lucide-react",
+        "@/components/link",
+        "./region-context",
+        "@/lib/albion/shopping",
+        "./shopping-storage",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["AddToShopping"]
+    },
+    {
       "source": "src/components/albion-scene.tsx",
       "client": false,
       "imports": ["next/image", "@/components/link", "@/lib/albion/assets"],
@@ -1097,6 +1119,8 @@
       "source": "src/components/build-editor.tsx",
       "client": true,
       "imports": [
+        "./loadout-price-check",
+        "./region-context",
         "./equipment-sets",
         "./equipment-picker",
         "@/lib/albion/equipment-catalog",
@@ -1173,6 +1197,7 @@
       "source": "src/components/composition-editor.tsx",
       "client": true,
       "imports": [
+        "./party-readiness",
         "react",
         "@/components/link",
         "next/navigation",
@@ -1197,6 +1222,7 @@
       "source": "src/components/composition-view.tsx",
       "client": true,
       "imports": [
+        "./party-readiness",
         "./saved-equipment-sets",
         "./party-board",
         "./composition-png-export",
@@ -1540,6 +1566,7 @@
         "./market-batch-quotes",
         "@/lib/albion/equipment-catalog",
         "./item-icon",
+        "./add-to-shopping",
         "@/lib/albion/freshness"
       ],
       "exports": ["LoadoutPriceCheck"]
@@ -1646,6 +1673,18 @@
       "exports": ["PartyBoard"]
     },
     {
+      "source": "src/components/party-readiness.tsx",
+      "client": true,
+      "imports": [
+        "lucide-react",
+        "@/lib/compositions/validation",
+        "./add-to-shopping",
+        "@/lib/albion/shopping-equipment",
+        "@/lib/albion/region-config"
+      ],
+      "exports": ["PartyReadiness"]
+    },
+    {
       "source": "src/components/production-calculator.tsx",
       "client": true,
       "imports": [
@@ -1676,6 +1715,8 @@
         "@/lib/albion/production-plan",
         "@/lib/albion/production",
         "./scenario-controls",
+        "./add-to-shopping",
+        "@/lib/albion/shopping",
         "./item-icon",
         "@/app/production-plan.css",
         "@/lib/albion/production-observations"
@@ -1736,6 +1777,36 @@
         "@/lib/albion/region-config"
       ],
       "exports": ["Shell"]
+    },
+    {
+      "source": "src/components/shopping-account-lists.tsx",
+      "client": true,
+      "imports": ["react", "@/components/link", "@/lib/albion/shopping"],
+      "exports": ["ShoppingAccountLists"]
+    },
+    {
+      "source": "src/components/shopping-storage.ts",
+      "client": true,
+      "imports": ["@/lib/albion/shopping", "@/lib/albion/region-config"],
+      "exports": ["readShopping", "writeShopping"]
+    },
+    {
+      "source": "src/components/shopping-workspace.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "lucide-react",
+        "@/components/link",
+        "./shopping-account-lists",
+        "./region-context",
+        "./item-icon",
+        "@/lib/albion/region-config",
+        "@/lib/albion/shopping",
+        "./shopping-storage",
+        "@/lib/albion/market-quotes",
+        "@/lib/albion/freshness"
+      ],
+      "exports": ["ShoppingWorkspace"]
     },
     {
       "source": "src/components/spell-icon.tsx",
@@ -1813,6 +1884,12 @@
       "client": false,
       "imports": ["next/image"],
       "exports": ["Wordmark"]
+    },
+    {
+      "source": "src/components/workspace-heading.tsx",
+      "client": false,
+      "imports": ["lucide-react"],
+      "exports": ["WorkspaceHeading"]
     },
     {
       "source": "src/components/workspace-navigation.tsx",
@@ -2024,6 +2101,28 @@
       "client": false,
       "imports": ["zod"],
       "exports": ["Region", "cities", "regionSchema", "regions"]
+    },
+    {
+      "source": "src/lib/albion/shopping-equipment.ts",
+      "client": false,
+      "imports": ["./equipment-catalog", "./shopping", "./shopping", "./region-config"],
+      "exports": ["equipmentShoppingEntries"]
+    },
+    {
+      "source": "src/lib/albion/shopping.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "./freshness"],
+      "exports": [
+        "ShoppingEntry",
+        "ShoppingList",
+        "mergeShopping",
+        "savedShoppingSchema",
+        "shoppingEntrySchema",
+        "shoppingFromProduction",
+        "shoppingKey",
+        "shoppingListSchema",
+        "shoppingSummary"
+      ]
     },
     {
       "source": "src/lib/albion/transport-prices.ts",
@@ -3425,8 +3524,8 @@
     },
     {
       "path": "e2e/catalog.spec.ts",
-      "bytes": 4052,
-      "sha256": "17049c4d7305dbe0a16be237b675da475175929b4be000cc9f013d70fc4d5c16"
+      "bytes": 3845,
+      "sha256": "1d57532a0dfde235a2a18f8fec9e536187541d7bdc2031d281dfb7bc5f097075"
     },
     {
       "path": "e2e/community.spec.ts",
@@ -3570,43 +3669,43 @@
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png",
-      "bytes": 34895,
-      "sha256": "9617b83dc701d0b314d64a3d1285e798a160e35b9a940e48cc6d9e712c6f7862"
+      "bytes": 34813,
+      "sha256": "db31fc7f75c0e48cba6712147efe8e2695537612051ce1a7b4f8f1771a256045"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png",
-      "bytes": 31867,
-      "sha256": "76244d1f39039d3b1662c0e388056b3651673551707a86f95679dff91f64712d"
+      "bytes": 32318,
+      "sha256": "ac81613472d16c5588bda1981fc8f39158d2eb21db638d90fc7ea35bd63a3af1"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png",
-      "bytes": 32295,
-      "sha256": "c30e4b857a01d3c01bb27bf6ea70d3b87b1ce0080fbc0633a9969cda5913af66"
+      "bytes": 32813,
+      "sha256": "fae676d847c4f8fb48fa8e711f0b3204d4c6e2b7b24d36a0ee155b845589924c"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png",
-      "bytes": 33356,
-      "sha256": "11139d396af43942721529ab1062437047bd99bef3433343bca98389da772204"
+      "bytes": 34042,
+      "sha256": "4210a71fbddb99a3465e3a3075774e5e4017d45243975bba2cc22fb2d56d4870"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png",
-      "bytes": 114320,
-      "sha256": "5d424429f1e2932cdb037dbeb367134cf78fabc55370330a4627032bc9622354"
+      "bytes": 130655,
+      "sha256": "17c72a418b8270e018e0e6a62482460486ba6a0a0178ac85a8e9832a45919342"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png",
-      "bytes": 77227,
-      "sha256": "aba6902cea2beef16e4a609455428898940806189bd1bf395a08bc3446f7a419"
+      "bytes": 85300,
+      "sha256": "9b5734a385513f38226e4d88a8be23a2d9371551e3e7426344fc4d91fb0e77d7"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png",
-      "bytes": 77275,
-      "sha256": "bab5542454a3e16d73dba3654b9e3e2b9a0a01bb3e6488e2fd52f4878a959867"
+      "bytes": 84905,
+      "sha256": "c2a814ff1dff36dca4270c5e091cd19ac6aaa080937faa6d0b77cbeee0b9bc15"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png",
-      "bytes": 88901,
-      "sha256": "a4971b96166b07f3854c66e15ac7dda164ad634b6a6c5fbaef6b2e13e09e6ff3"
+      "bytes": 103128,
+      "sha256": "fd3980351df5b367c4371864eeb0733d6c8a2aab7fdf0761106511cff9942730"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png",
@@ -3685,8 +3784,8 @@
     },
     {
       "path": "e2e/refinement.spec.ts",
-      "bytes": 5631,
-      "sha256": "efc111d4590a154ba2443ca7bb7268f5460a95040bb140907d7fb9f44edeac5b"
+      "bytes": 5787,
+      "sha256": "1ab494782f73e84462d144d9a0ba42b7e5220e9216f856c7fc74a495c11a43a8"
     },
     {
       "path": "e2e/search-palette.spec.ts",
@@ -3697,6 +3796,11 @@
       "path": "e2e/settings-recovery.spec.ts",
       "bytes": 2629,
       "sha256": "26b0e0373cdc2c2ff9b2e88ab65ca9cd13a09ec3983e3a1de7a4d2722e917b4c"
+    },
+    {
+      "path": "e2e/shopping.spec.ts",
+      "bytes": 4745,
+      "sha256": "1c7915facc504e8349c6ac7bc3a39b8bb2b4265da2da1eec778bdc4c3ffb79a8"
     },
     {
       "path": "e2e/source-equipment.spec.ts",
@@ -3730,8 +3834,8 @@
     },
     {
       "path": "e2e/tool-directory.spec.ts",
-      "bytes": 1462,
-      "sha256": "312933d9ee37329b7a3bc61e2f8c096642fb0a117863807c08d4ea893b91d4ef"
+      "bytes": 1466,
+      "sha256": "e711cddded1a5abc3f8afa780bc07904f4dd0036b749e6893ebccd2743a92197"
     },
     {
       "path": "e2e/trade-scenarios.spec.ts",
@@ -4700,8 +4804,8 @@
     },
     {
       "path": "src/app/api/scenarios/route.ts",
-      "bytes": 2573,
-      "sha256": "803a41586cded666cc6043f796a31781ed6bcbe685898179342f0e684cfc1350"
+      "bytes": 2686,
+      "sha256": "31d587cb4d30966c23202e4fc8bdd07cf1a0378f9765874effa3943d95b684c0"
     },
     {
       "path": "src/app/api/search/route.ts",
@@ -4750,13 +4854,13 @@
     },
     {
       "path": "src/app/builds/library/[slug]/page.tsx",
-      "bytes": 3477,
-      "sha256": "a0b5b0788f0fb74403ca50b582d2744dc0c4374a2c1a516561609200fdd77e77"
+      "bytes": 3071,
+      "sha256": "e6a57486882422183ef6326df0f4e19e49d5ee760cb89f2289bf5ee7b6266649"
     },
     {
       "path": "src/app/builds/library/page.tsx",
-      "bytes": 4684,
-      "sha256": "1e5667d99b6c497585b7bd90a83f66716773194befdb43b4957c3c7da7926404"
+      "bytes": 4618,
+      "sha256": "026987a85a536404b4b4a487b7d53c63806fdf2e0e3002e1ce295abdf5e6b455"
     },
     {
       "path": "src/app/builds/new/page.tsx",
@@ -4765,8 +4869,8 @@
     },
     {
       "path": "src/app/builds/page.tsx",
-      "bytes": 9826,
-      "sha256": "228bc33ddee69848eb026763db3a285e8c364f3fe921b787bc92ac1e1781ba6f"
+      "bytes": 9829,
+      "sha256": "41792ea29ca0afaf2815c49dd9abe7dcd25f4d39a8174040267c590389d3f0ef"
     },
     {
       "path": "src/app/compositions/[id]/edit/page.tsx",
@@ -4780,13 +4884,13 @@
     },
     {
       "path": "src/app/compositions/library/[slug]/page.tsx",
-      "bytes": 2228,
-      "sha256": "181907acb2dcc096dd6df36be590c0125d5f26a3df4cdb92c5817e3d91d1d164"
+      "bytes": 2179,
+      "sha256": "137f3b3e1da310fbbfaf7c11c75b73e2c7aa72e5a81b2f13211bb85baa0333cb"
     },
     {
       "path": "src/app/compositions/library/page.tsx",
-      "bytes": 4601,
-      "sha256": "ac66a61054b4eb02e74bdda237f542a43aa5f7e98103380fa8402afb94cba053"
+      "bytes": 4609,
+      "sha256": "78e5a43990c7832ec2ce9867ed9e5dbe154cea49e551bae24abeb6e4fc653f67"
     },
     {
       "path": "src/app/compositions/new/page.tsx",
@@ -4860,13 +4964,13 @@
     },
     {
       "path": "src/app/guides/[slug]/page.tsx",
-      "bytes": 4337,
-      "sha256": "a97545fabc7e875ef991272b13a1d6cb515ca5e4b5ebc705579327a21b26d744"
+      "bytes": 4026,
+      "sha256": "aaa00b28c50ab2a5c055497730bfe3a1808ca8acb78809fc3db3f2a169fb4239"
     },
     {
       "path": "src/app/guides/page.tsx",
-      "bytes": 6324,
-      "sha256": "0fcb4d24bae8b8ede7ffd23e5eccb7c0ebe1ed7af99b6478911ae8d372f8784e"
+      "bytes": 6270,
+      "sha256": "22123a5e50de0c14645404d808b96192d9e6a50c39697cf1578bb2ae9bc95724"
     },
     {
       "path": "src/app/home-fidelity.css",
@@ -4890,8 +4994,8 @@
     },
     {
       "path": "src/app/items/[id]/page.tsx",
-      "bytes": 3332,
-      "sha256": "6a0df2ab2d182cce36eed695a007978b13671d132ca790771a64017bbf94dad8"
+      "bytes": 2663,
+      "sha256": "e80a8871332c30cb4467a63f83e0318c7799ac1cfdcdccf571cb41a70609daee"
     },
     {
       "path": "src/app/items/page.tsx",
@@ -4905,13 +5009,13 @@
     },
     {
       "path": "src/app/layout.tsx",
-      "bytes": 2342,
-      "sha256": "99cdea59f06542afd8c66fe1b7edc3e70c736e777d18847d34a4cbe4100bc91d"
+      "bytes": 2373,
+      "sha256": "dd79616a3970c21a7584f1f3a02ff7caa615eca1ef66bc99e9be51ad6a337156"
     },
     {
       "path": "src/app/legal/page.tsx",
-      "bytes": 4092,
-      "sha256": "b242df93e06670aa464da2f0a804da19bae0ae25c3ea02259b4591290d221ba0"
+      "bytes": 3636,
+      "sha256": "55db6619a56236c890f0c723eb54dc7c83364dc0c788862bd943252057a56ae3"
     },
     {
       "path": "src/app/loading.tsx",
@@ -4954,6 +5058,11 @@
       "sha256": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6"
     },
     {
+      "path": "src/app/premium-system.css",
+      "bytes": 31737,
+      "sha256": "cf20c1e5ef24743a9f13c27592a76b98155b5f01d1e7fccd7debc76aecc274ac"
+    },
+    {
       "path": "src/app/product-controls.css",
       "bytes": 7788,
       "sha256": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635"
@@ -4994,6 +5103,11 @@
       "sha256": "2a82f809deebded9a66f58c03493480583c12104ff8eb5510d31987758b76461"
     },
     {
+      "path": "src/app/shopping-list/page.tsx",
+      "bytes": 188,
+      "sha256": "2cfce9c0f9fa6ff908865e83e70a2c73974dad1b4b84d5b53688ce4687bee2e6"
+    },
+    {
       "path": "src/app/signin/page.tsx",
       "bytes": 1137,
       "sha256": "cfcde77707603c0d93d38c3cb3a4d0dabd558845844f54820bfc7f4e12cc74de"
@@ -5010,23 +5124,23 @@
     },
     {
       "path": "src/app/tools/alchemy/page.tsx",
-      "bytes": 774,
-      "sha256": "a7eb82b12f63c4e0101d55fb33bcdf231d3620c8364bac5a39f73da2f3141f03"
+      "bytes": 565,
+      "sha256": "158262a3baa8135c5d04d4516f4f7ae5fd4b972cb681839138fee648f1250b32"
     },
     {
       "path": "src/app/tools/cooking/page.tsx",
-      "bytes": 828,
-      "sha256": "601e9564943d0658436cfe1bc8ff84c0c590ed476a1b0ba6cad506e44a62f8e4"
+      "bytes": 571,
+      "sha256": "8db24f4ff2f235e7686386fc9d5781a6d735c3a62423468c6e2b9939a13856e0"
     },
     {
       "path": "src/app/tools/crafting/page.tsx",
-      "bytes": 523,
-      "sha256": "f5ecc6179feae2095954ff49eb9d7196dd24489fe73fe3d6d29f11ce13a20e32"
+      "bytes": 568,
+      "sha256": "5945a20fc64ca6fdfcec6d12834cf1aae03dd69a1534131c3bfd122837a02cfc"
     },
     {
       "path": "src/app/tools/enchanting/page.tsx",
-      "bytes": 449,
-      "sha256": "6ee759329b98c27adfd7935b0da88335dc22600a33901eb5280aa6ce99ef8dfe"
+      "bytes": 477,
+      "sha256": "d77731d168ed3cfc36a4795628cd9d6d1b9d33b1fd63b862c6158cec0718cc53"
     },
     {
       "path": "src/app/tools/farming/page.tsx",
@@ -5060,8 +5174,8 @@
     },
     {
       "path": "src/app/tools/refining/page.tsx",
-      "bytes": 469,
-      "sha256": "fda9d810f6008606f1813901980e7dd7ca780bc23784ad5c4872160fce6644c6"
+      "bytes": 497,
+      "sha256": "258450fd7c715d28862d5053eab07720ff0a459c293ceea959e0009fd87aef94"
     },
     {
       "path": "src/app/tools/transporting/page.tsx",
@@ -5089,6 +5203,11 @@
       "sha256": "d11ccf02b13292093d4de451f51a1f26708d1206325ee54fe4a1cd4d78fb1162"
     },
     {
+      "path": "src/components/add-to-shopping.tsx",
+      "bytes": 1657,
+      "sha256": "979daa59916c26af7808e3e231117c319f07e8f568196b7e60172ceed46bba43"
+    },
+    {
       "path": "src/components/albion-scene.tsx",
       "bytes": 1244,
       "sha256": "74326c3890fd8a374a1ce7cf027cb5f09cfa17593f20965c45fdba0437f03b79"
@@ -5110,8 +5229,8 @@
     },
     {
       "path": "src/components/build-editor.tsx",
-      "bytes": 18891,
-      "sha256": "b76f48d1862fba619011a9b8bac648ba73853f16a4443b15a4c1b96068ce6969"
+      "bytes": 19793,
+      "sha256": "c6fe96fd007e8ce25f9044ce6288b600986828d275b95959912476e57a2c0a76"
     },
     {
       "path": "src/components/build-equipment-studio.tsx",
@@ -5140,8 +5259,8 @@
     },
     {
       "path": "src/components/composition-editor.tsx",
-      "bytes": 33215,
-      "sha256": "1bc600d146b995ef8fe14c6366eed411e7e1f4864b510dd7d8eca56d4f822bb6"
+      "bytes": 33296,
+      "sha256": "c54222e1dc4d1ebc48ee54295934d5dcd66eb33fe9892c9169998de2804744e4"
     },
     {
       "path": "src/components/composition-png-export.tsx",
@@ -5150,8 +5269,8 @@
     },
     {
       "path": "src/components/composition-view.tsx",
-      "bytes": 7404,
-      "sha256": "b55d55422ea038551a23b1d0c4e3eb1f7f6c84924d1813d5203a0dad2ce8778f"
+      "bytes": 7537,
+      "sha256": "35ebc53ea2df451782d67f6188114847bdffa25d1dd91a34ef27b245437ecd48"
     },
     {
       "path": "src/components/discord-mark.tsx",
@@ -5185,13 +5304,13 @@
     },
     {
       "path": "src/components/equipment-workbench.tsx",
-      "bytes": 33423,
-      "sha256": "25700a7ea779221f8a44b25658bebdd8a18a2e6adf16f1eae0767849fcf5bcef"
+      "bytes": 33378,
+      "sha256": "5eb438e71bbd5c0a771ea5290267d7eaa429ace15ea6ac99f9d28ea742c682d9"
     },
     {
       "path": "src/components/farming-calculator.tsx",
-      "bytes": 15931,
-      "sha256": "3114d3d7941246ffacfd5c64af18916b45d15b5e0bb23b8d58305ac4dc9aa3ec"
+      "bytes": 15935,
+      "sha256": "a78582fef3c6ab7d30bd8b6dc82704b504651dfa7787feba136f04ac1cca0d32"
     },
     {
       "path": "src/components/favorite-build-button.tsx",
@@ -5205,8 +5324,8 @@
     },
     {
       "path": "src/components/fishing-calculator.tsx",
-      "bytes": 17702,
-      "sha256": "c9075e580e2031588838452a6d7ddef3136d6abd920ab15c9af75fa5223dba0a"
+      "bytes": 17739,
+      "sha256": "449bdd66b8286b071fdd3e2440603b51ff1e81ec2495cfbee64344bda30ddafa"
     },
     {
       "path": "src/components/global-search.tsx",
@@ -5215,8 +5334,8 @@
     },
     {
       "path": "src/components/grind-guide-directory.tsx",
-      "bytes": 4381,
-      "sha256": "d3aadf0d2ad7393e07c359c4cd3ef59f93850353e6b53da73e9637a9c93015a7"
+      "bytes": 4362,
+      "sha256": "f1c4ab540d55e8c5ce6ec37c7a6851d01dfde2b375793851527c1437649e419a"
     },
     {
       "path": "src/components/group-create.tsx",
@@ -5240,8 +5359,8 @@
     },
     {
       "path": "src/components/guide-article-content.tsx",
-      "bytes": 2474,
-      "sha256": "75b0a6b8123e3bf62ada39b1547269b4bfa8962072db75506f5379b8516f44fd"
+      "bytes": 3379,
+      "sha256": "2289fb6663010150348d19e1f0c2f6b3fdc47731afae534d55207c36200f55c3"
     },
     {
       "path": "src/components/guide-directory.tsx",
@@ -5280,8 +5399,8 @@
     },
     {
       "path": "src/components/item-catalog.tsx",
-      "bytes": 7678,
-      "sha256": "434596107cabaf154729f41fdb423dee1281c0c391429aa6a0c5d1c28c236d75"
+      "bytes": 7645,
+      "sha256": "fa284d1f8cf20f2ebd5535482dcda14022044d82770605dc0e2103d9e61eb5cd"
     },
     {
       "path": "src/components/item-icon.tsx",
@@ -5295,18 +5414,18 @@
     },
     {
       "path": "src/components/journal-checklist.tsx",
-      "bytes": 9594,
-      "sha256": "9c6233a131f7572b517533be8a08191e27962b0a36c61703acf89669952a387b"
+      "bytes": 9574,
+      "sha256": "a2f5e03794a9cd10dbd022a87e4b73d7caf579338f242f03962bcff3d4f5d77b"
     },
     {
       "path": "src/components/library-build-card.tsx",
-      "bytes": 1379,
-      "sha256": "52e95b6015413c578fda335925eda084d91f7b9f0b03cf948acfe2ded15c2b9d"
+      "bytes": 1369,
+      "sha256": "2fc1befbe6a599f57797071edf6fe83f9a15af1e0c4ce289f530631af1b8510c"
     },
     {
       "path": "src/components/library-build-metadata.tsx",
-      "bytes": 2738,
-      "sha256": "3c507c2be7fc4d194d240cc8298789cba0d28ee7d6cc73209e5ed6b770334652"
+      "bytes": 2727,
+      "sha256": "eaf52caf36cd4f80329f9c37e0520b423ca7c328057fa9c1d747a3ff0937fa7e"
     },
     {
       "path": "src/components/link.tsx",
@@ -5315,8 +5434,8 @@
     },
     {
       "path": "src/components/loadout-price-check.tsx",
-      "bytes": 3338,
-      "sha256": "bf74de69a7719d85533da1b07620240465dc83774bab234548ef8b7f00a8283c"
+      "bytes": 4002,
+      "sha256": "27b331aa4746c22292f0be23014553fc7b4e4b630f0d8be1a7f68d82a586e6e9"
     },
     {
       "path": "src/components/login-button.tsx",
@@ -5364,14 +5483,19 @@
       "sha256": "88b82707e58dfc229cbdb5c5b9be3be700d23d240398c4f46cc47b3956f00df1"
     },
     {
+      "path": "src/components/party-readiness.tsx",
+      "bytes": 2365,
+      "sha256": "fc53bbbe30a6f35889fe3cb4964c5bd4209741ebff280a1f7b962f95f4125880"
+    },
+    {
       "path": "src/components/production-calculator.tsx",
-      "bytes": 44847,
-      "sha256": "4be0f59ef9a3371c648e328e2889e02b87504105f667b332a2af3ccddd4c7e71"
+      "bytes": 45711,
+      "sha256": "65bf85708f365d22e0517c3d7527ba5d23b33f47250eb41b6e7fd1f5b4d06092"
     },
     {
       "path": "src/components/production-plan.tsx",
-      "bytes": 15429,
-      "sha256": "8971e708254c687f2e8f5b833d2a5eca63045644c32ef2adbd8814a333559186"
+      "bytes": 15793,
+      "sha256": "669e1ff984dc02ec02b70130947c887a85d971f5a97921cea9c142321d412e5e"
     },
     {
       "path": "src/components/production-profile.tsx",
@@ -5405,8 +5529,23 @@
     },
     {
       "path": "src/components/shell.tsx",
-      "bytes": 15016,
-      "sha256": "530b7e22306925339f25a8da072550bfc3841eea71f39c8a15df6652465a25dc"
+      "bytes": 15040,
+      "sha256": "60f4663214ae79627084dc283858d64f67c64caceb9914c67234bc30218d5980"
+    },
+    {
+      "path": "src/components/shopping-account-lists.tsx",
+      "bytes": 5249,
+      "sha256": "96cd9a1cb234018078970e4000b9447b94047e69cf5de3ab90d14881df7db923"
+    },
+    {
+      "path": "src/components/shopping-storage.ts",
+      "bytes": 993,
+      "sha256": "b28f05b72a11f67e938006702f0783805ff8092f821cebadb94bd54b4fd099bd"
+    },
+    {
+      "path": "src/components/shopping-workspace.tsx",
+      "bytes": 17861,
+      "sha256": "6271b97b6cced1fa36ecc92ffd82bc6e47e86e96e698d1f580832f2f6c672120"
     },
     {
       "path": "src/components/spell-icon.tsx",
@@ -5452,6 +5591,11 @@
       "path": "src/components/wordmark.tsx",
       "bytes": 337,
       "sha256": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082"
+    },
+    {
+      "path": "src/components/workspace-heading.tsx",
+      "bytes": 925,
+      "sha256": "a69d42914d07a30a8d49a76be59b098be193e90386bffbc99432defa0e8b0f8b"
     },
     {
       "path": "src/components/workspace-navigation.tsx",
@@ -5617,6 +5761,16 @@
       "path": "src/lib/albion/reviewed-crafting.json",
       "bytes": 4797,
       "sha256": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66"
+    },
+    {
+      "path": "src/lib/albion/shopping-equipment.ts",
+      "bytes": 916,
+      "sha256": "1163fb95de9b1504ed9c11a4321822a7e3151c5249d045a43bcc1328d0aa0448"
+    },
+    {
+      "path": "src/lib/albion/shopping.ts",
+      "bytes": 4904,
+      "sha256": "fc5064a28a9076747ac4d5d0ac0a9dde474079fa9d6ab9a290c92c370eb8a3b0"
     },
     {
       "path": "src/lib/albion/source-abilities.json",
@@ -5845,8 +5999,8 @@
     },
     {
       "path": "src/lib/tool-directory.ts",
-      "bytes": 4297,
-      "sha256": "f3d89a35068592ca7c29a48ace1aaff222d4707eb90bc0ff50358199ccdc3c0c"
+      "bytes": 4581,
+      "sha256": "3e43b01b7d66a90a28e7bde04a13f7e1498639c9ce3ea1077480ad5c0f3d2ad6"
     },
     {
       "path": "src/lib/turnstile.ts",
@@ -6107,6 +6261,11 @@
       "path": "tests/settings-recovery.test.ts",
       "bytes": 1847,
       "sha256": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8"
+    },
+    {
+      "path": "tests/shopping.test.ts",
+      "bytes": 3600,
+      "sha256": "4f04835a310d2b4492724a5a5500dd4f3ddbf9b4c0f525c06fffed96b3856e84"
     },
     {
       "path": "tests/source-secret-scan.test.ts",

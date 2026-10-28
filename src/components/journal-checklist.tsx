@@ -66,13 +66,13 @@ export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
   const pages = Math.max(1, Math.ceil(matches.length / 25));
   const page = Math.min(pageIndex, pages);
   return (
-    <section className="journal-checklist" aria-label="Recovered journal objectives">
+    <section className="journal-checklist" aria-label="Journal objectives">
       <div className="journal-introduction">
         <div>
           <h2>Your next little adventure.</h2>
           <p>
-            {entries.length.toLocaleString()} captured objectives. Find something to work toward,
-            and tick it off when you’re done.
+            {entries.length.toLocaleString()} objectives. Find something to work toward, and tick it
+            off when you’re done.
           </p>
         </div>
         <div className="journal-progress-count">
@@ -156,7 +156,7 @@ export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
               {/^T[1-8]_[A-Z0-9_]+$/.test(entry.rewardId) && (
                 <ItemIcon id={entry.rewardId} size={36} />
               )}
-              <span>{entry.reward || "Reward not captured"}</span>
+              <span>{entry.reward || "Reward unavailable"}</span>
             </div>
           </div>
         ))}
@@ -204,7 +204,7 @@ export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
         <summary>Backup & restore progress</summary>
         <p>
           Manual progress for one character in the selected region, kept in this browser. No account
-          or game progress is imported.
+          or game progress is accessed.
         </p>
         <div>
           <button

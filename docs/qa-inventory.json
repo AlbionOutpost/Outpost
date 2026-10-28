@@ -291,11 +291,17 @@
       "id": "CORE-018",
       "category": "core",
       "title": "Islands, Avalon mapping, shopping lists and mastery tools",
-      "implementation": "MISSING",
-      "verification": "NOT_TESTED",
-      "verified_scope": "No dedicated islands/Avalon/mastery/general shopping-list implementations. The October28 production planner now provides a narrower gross-material shopping list for its supported recipes.",
-      "remaining": "Implement the remaining dedicated domain models, persistence, permissions and player workflows; production material aggregation is not general shopping-list parity.",
-      "evidence": ["src/app/tools/page.tsx"]
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Device/server-specific equipment and production shopping lists now support owned quantities, incomplete/stale prices, manual overrides, undo/export and private account snapshots. Focused two-browser journeys pass. Islands, Avalon and mastery remain missing.",
+      "remaining": "Complete full-phase/native-runtime acceptance for shopping; implement dedicated islands/Avalon/mastery models and journeys.",
+      "evidence": [
+        "src/app/tools/page.tsx",
+        "src/components/shopping-workspace.tsx",
+        "src/lib/albion/shopping.ts",
+        "tests/shopping.test.ts",
+        "e2e/shopping.spec.ts"
+      ]
     },
     {
       "id": "CORE-019",

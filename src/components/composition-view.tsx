@@ -1,4 +1,5 @@
 "use client";
+import { PartyReadiness } from "./party-readiness";
 import { SavedEquipmentSets } from "./saved-equipment-sets";
 import { PartyBoard } from "./party-board";
 import { CompositionPngExport } from "./composition-png-export";
@@ -144,6 +145,7 @@ export function CompositionView({
       <p role="status" className="comp-action-status">
         {message}
       </p>
+      <PartyReadiness members={composition.slots} region={composition.region} />
       {mode === "board" && <PartyBoard members={composition.slots} title={composition.title} />}
       <div hidden={mode === "board"} className={`composition-cards ${mode}`}>
         {composition.slots.map((s, i) => (

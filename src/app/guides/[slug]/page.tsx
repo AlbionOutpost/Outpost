@@ -22,11 +22,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <h1 className="page-title display-title">{guide.title}</h1>
         <p className="intro">Pick an objective for your next run. Keep track as you explore.</p>
         <details className="journal-source-details">
-          <summary>Historical journal · about the source & saved progress</summary>
+          <summary>About your journal progress</summary>
           <p>
-            By {guide.author} · Objectives recovered from the 27 October 2026 archive. Progress is
-            entered manually for this browser and region. Game-account progress and current-patch
-            completeness are not inferred.
+            By {guide.author} · Progress is entered manually for this browser and region.
+            Game-account progress and current-patch completeness are not inferred.
           </p>
         </details>
         <JournalChecklist entries={await libraryJournal()} />
@@ -79,8 +78,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </aside>
         <div className="guide-reading-body">
           <div className="library-provenance">
-            Restored article · archive captured 27 October 2026. Historical game facts and
-            recommendations await current-patch review.
+            Game balance changes. Check current requirements, yields and costs in game.
             {guide.slug === "fishing-leveling-guide" &&
               " The rebuilt fame calculator is below the article."}
           </div>
@@ -91,9 +89,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <FishingCalculator fish={await libraryFishing()} initialMode="leveling" compact />
           )}
           <footer>
-            <Link className="text-link" href={`https://albiononlinegrind.com/guides/${guide.slug}`}>
-              Original article ↗
-            </Link>
             <Link href="/guides" className="text-link">
               Back to the field guide →
             </Link>

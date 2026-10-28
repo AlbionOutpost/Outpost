@@ -2,7 +2,7 @@
 
 Generated from the current source, without private environment values or database contents. Regenerate with `node scripts/rebuild-inventory.mjs`; verify with `--check`. [Full JSON](inventory.json) includes exports, imports, schema definitions, locked runtime versions and file hashes. Auth-boundary mentions are textual navigation aids; [security contracts](SECURITY_AND_AUTH.md) and actual handlers govern permissions.
 
-## Page routes (41)
+## Page routes (42)
 
 | Route                          | Source                                                                                             | Direct client component |
 | ------------------------------ | -------------------------------------------------------------------------------------------------- | ----------------------- |
@@ -33,6 +33,7 @@ Generated from the current source, without private environment values or databas
 | `/`                            | [src/app/page.tsx](../../src/app/page.tsx)                                                         | No (server component)   |
 | `/players/[id]`                | [src/app/players/[id]/page.tsx](../../src/app/players/[id]/page.tsx)                               | No (server component)   |
 | `/settings`                    | [src/app/settings/page.tsx](../../src/app/settings/page.tsx)                                       | No (server component)   |
+| `/shopping-list`               | [src/app/shopping-list/page.tsx](../../src/app/shopping-list/page.tsx)                             | No (server component)   |
 | `/signin`                      | [src/app/signin/page.tsx](../../src/app/signin/page.tsx)                                           | No (server component)   |
 | `/timers`                      | [src/app/timers/page.tsx](../../src/app/timers/page.tsx)                                           | No (server component)   |
 | `/tools/alchemy`               | [src/app/tools/alchemy/page.tsx](../../src/app/tools/alchemy/page.tsx)                             | No (server component)   |
@@ -87,11 +88,12 @@ Generated from the current source, without private environment values or databas
 | `/api/timers`                                | GET, POST        | [src/app/api/timers/route.ts](../../src/app/api/timers/route.ts)                                                               |
 | `/api/transport/prices`                      | GET              | [src/app/api/transport/prices/route.ts](../../src/app/api/transport/prices/route.ts)                                           |
 
-## Components (75)
+## Components (81)
 
 | Source                                                                                         | Boundary                 | Exports                                                       |
 | ---------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------- |
 | [src/components/accept-invite.tsx](../../src/components/accept-invite.tsx)                     | Client                   | `AcceptInvite`                                                |
+| [src/components/add-to-shopping.tsx](../../src/components/add-to-shopping.tsx)                 | Client                   | `AddToShopping`                                               |
 | [src/components/albion-scene.tsx](../../src/components/albion-scene.tsx)                       | Server-compatible module | `AlbionScene`                                                 |
 | [src/components/archive-build-links.tsx](../../src/components/archive-build-links.tsx)         | Client                   | `ArchiveBuildCopyLink`, `EquipmentMarketLink`                 |
 | [src/components/build-actions.tsx](../../src/components/build-actions.tsx)                     | Client                   | `BuildActions`                                                |
@@ -147,6 +149,7 @@ Generated from the current source, without private environment values or databas
 | [src/components/moderation-queue.tsx](../../src/components/moderation-queue.tsx)               | Client                   | `ModerationQueue`                                             |
 | [src/components/opportunity-scanner.tsx](../../src/components/opportunity-scanner.tsx)         | Client                   | `OpportunityScanner`                                          |
 | [src/components/party-board.tsx](../../src/components/party-board.tsx)                         | Client                   | `PartyBoard`                                                  |
+| [src/components/party-readiness.tsx](../../src/components/party-readiness.tsx)                 | Client                   | `PartyReadiness`                                              |
 | [src/components/production-calculator.tsx](../../src/components/production-calculator.tsx)     | Client                   | `ProductionCalculator`                                        |
 | [src/components/production-plan.tsx](../../src/components/production-plan.tsx)                 | Client                   | `ProductionPlan`                                              |
 | [src/components/production-profile.tsx](../../src/components/production-profile.tsx)           | Client                   | `ProductionProfile`                                           |
@@ -156,6 +159,9 @@ Generated from the current source, without private environment values or databas
 | [src/components/scenario-controls.tsx](../../src/components/scenario-controls.tsx)             | Client                   | `ScenarioControls`                                            |
 | [src/components/settings-forms.tsx](../../src/components/settings-forms.tsx)                   | Client                   | `DeleteAccountForm`, `PreferencesForm`                        |
 | [src/components/shell.tsx](../../src/components/shell.tsx)                                     | Client                   | `Shell`                                                       |
+| [src/components/shopping-account-lists.tsx](../../src/components/shopping-account-lists.tsx)   | Client                   | `ShoppingAccountLists`                                        |
+| [src/components/shopping-storage.ts](../../src/components/shopping-storage.ts)                 | Client                   | `readShopping`, `writeShopping`                               |
+| [src/components/shopping-workspace.tsx](../../src/components/shopping-workspace.tsx)           | Client                   | `ShoppingWorkspace`                                           |
 | [src/components/spell-icon.tsx](../../src/components/spell-icon.tsx)                           | Client                   | `SpellIcon`                                                   |
 | [src/components/timer-manager.tsx](../../src/components/timer-manager.tsx)                     | Client                   | `TimerManager`                                                |
 | [src/components/tool-directory.tsx](../../src/components/tool-directory.tsx)                   | Client                   | `ToolDirectory`                                               |
@@ -165,9 +171,10 @@ Generated from the current source, without private environment values or databas
 | [src/components/turnstile-challenge.tsx](../../src/components/turnstile-challenge.tsx)         | Client                   | `TurnstileChallenge`                                          |
 | [src/components/use-visible-refresh.ts](../../src/components/use-visible-refresh.ts)           | Client                   | `useVisibleRefresh`                                           |
 | [src/components/wordmark.tsx](../../src/components/wordmark.tsx)                               | Server-compatible module | `Wordmark`                                                    |
+| [src/components/workspace-heading.tsx](../../src/components/workspace-heading.tsx)             | Server-compatible module | `WorkspaceHeading`                                            |
 | [src/components/workspace-navigation.tsx](../../src/components/workspace-navigation.tsx)       | Client                   | `WorkspaceNavigation`                                         |
 
-## Domain and infrastructure modules (70)
+## Domain and infrastructure modules (72)
 
 | Source                                                                                       | Exports                                                                                                                                                                                                                                                                                                                  |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -196,6 +203,8 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/quote-summary.ts](../../src/lib/albion/quote-summary.ts)                     | `summarizeQuotes`                                                                                                                                                                                                                                                                                                        |
 | [src/lib/albion/recipes.ts](../../src/lib/albion/recipes.ts)                                 | `Recipe`, `enchantable`, `recipeFor`, `recipes`                                                                                                                                                                                                                                                                          |
 | [src/lib/albion/region-config.ts](../../src/lib/albion/region-config.ts)                     | `Region`, `cities`, `regionSchema`, `regions`                                                                                                                                                                                                                                                                            |
+| [src/lib/albion/shopping-equipment.ts](../../src/lib/albion/shopping-equipment.ts)           | `equipmentShoppingEntries`                                                                                                                                                                                                                                                                                               |
+| [src/lib/albion/shopping.ts](../../src/lib/albion/shopping.ts)                               | `ShoppingEntry`, `ShoppingList`, `mergeShopping`, `savedShoppingSchema`, `shoppingEntrySchema`, `shoppingFromProduction`, `shoppingKey`, `shoppingListSchema`, `shoppingSummary`                                                                                                                                         |
 | [src/lib/albion/transport-prices.ts](../../src/lib/albion/transport-prices.ts)               | `transportObservations`                                                                                                                                                                                                                                                                                                  |
 | [src/lib/albion/transport.ts](../../src/lib/albion/transport.ts)                             | `TransportInput`, `initialTransport`, `transport`, `transportBase`, `transportSchema`                                                                                                                                                                                                                                    |
 | [src/lib/api-errors.ts](../../src/lib/api-errors.ts)                                         | `HttpError`, `apiHandler`                                                                                                                                                                                                                                                                                                |

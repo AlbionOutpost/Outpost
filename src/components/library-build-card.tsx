@@ -14,7 +14,7 @@ export function LibraryBuildCard({ build }: { build: LibraryBuild }) {
             <small>By {build.author}</small>
           </div>
         </div>
-        <div className="library-build-equipment" aria-label="Recorded equipment">
+        <div className="library-build-equipment" aria-label="Equipment">
           {build.equipment
             .filter((row) => row.slot !== "Main hand")
             .map((row) => (
@@ -28,7 +28,7 @@ export function LibraryBuildCard({ build }: { build: LibraryBuild }) {
         </div>
         <div className="library-card-caption">
           <span>{build.weaponName || "Equipment plan"}</span>
-          <span>Grind archive</span>
+          <span>View loadout</span>
         </div>
       </Link>
     </article>

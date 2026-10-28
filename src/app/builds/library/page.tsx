@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { queryLibraryBuilds, featuredLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { LibraryBuildCard } from "@/components/library-build-card";
-export const metadata = { title: "Grind build library" };
+export const metadata = { title: "Build library" };
 export default async function Library({
   searchParams,
 }: {
@@ -27,8 +27,8 @@ export default async function Library({
         <div>
           <h1 className="page-title display-title">Find your next loadout.</h1>
           <p className="intro">
-            {total.toLocaleString("en-GB")} builds from your Albion Online Grind library. Every
-            weapon, every kind of adventure.
+            {total.toLocaleString("en-GB")} community loadouts. Find the right gear for your next
+            adventure.
           </p>
         </div>
         <Link className="button primary" href="/builds/new">
@@ -37,29 +37,16 @@ export default async function Library({
       </div>
       <nav className="discovery-tabs" aria-label="Build collections">
         <Link href="/builds/library" aria-current="page">
-          Grind library
+          Build library
         </Link>
-        <Link href="/builds">Outpost builds</Link>
+        <Link href="/builds">Player builds</Link>
         <Link href="/compositions/library">Group compositions</Link>
         <Link href="/guides">Guides</Link>
       </nav>
       <p className="library-provenance">
-        Recovered from the public archive captured 27 October 2026. Authors and recorded selections
-        are preserved; current-meta status is unverified.
+        Find a playstyle, compare equipment and make a loadout your own. Check each build’s update
+        date before heading out.
       </p>
-      {!q && !category && page === 1 && !sort && (
-        <section className="library-featured">
-          <div className="library-section-heading">
-            <h2>A place to start</h2>
-            <span>Selected from the recovered library</span>
-          </div>
-          <div className="library-build-grid">
-            {(await featuredLibraryBuilds()).slice(0, 3).map((b) => (
-              <LibraryBuildCard key={b.id} build={b} />
-            ))}
-          </div>
-        </section>
-      )}
       <form className="library-filter-bar" action="/builds/library">
         <label>
           Search builds
@@ -85,12 +72,25 @@ export default async function Library({
         <label>
           Sort
           <select name="sort" defaultValue={sort}>
-            <option value="">Archive order</option>
+            <option value="">Featured order</option>
             <option value="title">Build title</option>
           </select>
         </label>
         <button className="button secondary">Find builds</button>
       </form>
+      {!q && !category && page === 1 && !sort && (
+        <section className="library-featured">
+          <div className="library-section-heading">
+            <h2>A place to start</h2>
+            <span>Loadouts to explore</span>
+          </div>
+          <div className="library-build-grid">
+            {(await featuredLibraryBuilds()).slice(0, 3).map((b) => (
+              <LibraryBuildCard key={b.id} build={b} />
+            ))}
+          </div>
+        </section>
+      )}
       <div className="library-section-heading">
         <h2>{q || category ? "Matching loadouts" : "The full library"}</h2>
         <span>

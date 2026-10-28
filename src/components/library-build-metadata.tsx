@@ -15,7 +15,7 @@ export function LibraryBuildTraits({ ids, traits }: { ids: string[]; traits: Awa
         <h2>
           <Sparkles size={17} /> Recommended traits
         </h2>
-        <span>Archived author recommendations</span>
+        <span>Author recommendations</span>
       </div>
       <div className="library-trait-grid">
         {ids.map((id) => {
@@ -36,7 +36,7 @@ export function LibraryBuildTraits({ ids, traits }: { ids: string[]; traits: Awa
                   </p>
                 </>
               ) : (
-                <p>Trait details were not captured.</p>
+                <p>Trait details are unavailable.</p>
               )}
             </article>
           );

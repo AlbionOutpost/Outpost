@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T17:46:10.486Z",
+  "phase_checked_at": "2026-10-28T19:34:35.809Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,12 +11,12 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 2.3
+      "seconds": 3.4
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 6.58
+      "seconds": 6.94
     },
     {
       "name": "unit",
@@ -26,43 +26,43 @@
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.35
+      "seconds": 0.37
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.55
+      "seconds": 3.49
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 4.81
+      "seconds": 7.11
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 116.7
+      "seconds": 125.47
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.44
+      "seconds": 0.48
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.37
+      "seconds": 0.42
     }
   ],
   "counts": {
-    "unit_passed": 232,
-    "browser_passed": 102,
+    "unit_passed": 239,
+    "browser_passed": 104,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T17:47:02.501Z",
+    "checkedAt": "2026-10-28T19:35:20.023Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4413,8 +4413,8 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T18:25:17.562072+00:00",
-    "phase": "2026-10-28T17:46:10.486Z",
+    "checkedAt": "2026-10-28T19:35:18.616326+00:00",
+    "phase": "2026-10-28T19:34:35.809Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
@@ -4492,11 +4492,28 @@
       {
         "path": ".qa/cloudflare-launch/runtime-parity.json",
         "sha256": "ac14cb2ed376f649b9e88bdbd6c80dff804478d1fea6fee9e81426ea86aa058f"
+      },
+      {
+        "path": ".qa/premium-workspaces/capture-six-width.json",
+        "sha256": "1d6bf85f40fea9b101bbfdb6d520cbd2b9c1701f81eb20702f27a2bee6586441"
+      },
+      {
+        "path": ".qa/premium-workspaces/six-width-scroll.log",
+        "sha256": "5c2a7a406573c86d109a1200b044b42504a8c6cb1782158bd9f5d54c5baf2bc9"
+      },
+      {
+        "path": ".qa/premium-workspaces/cf-browser.log",
+        "sha256": "aa220c6629157776007d463325d73adc7943031c0cf295f4d175609d90ac3631"
+      },
+      {
+        "path": ".qa/premium-workspaces/cf-native.log",
+        "sha256": "6d289d699a24160199fa7d1f2d9b620db2fe35fc096cbe664892f76af654cc89"
       }
-    ]
+    ],
+    "latestImplementationNote": "Premium workspaces: ten Node gates pass239 unit/104 browser/15 DB/nine region reads. Final production-container42 captures across320/375/390/768/1440/1920 all200/nooverflow. Actual images and ten deliberate updated pixel baselines inspected. Native Cloudflare19/browser104 pass before one final isolated shopping scroll-position CSS correction; CI exact-revision retest pending. Prior hosted files below apply only to prior deployment. Full roadmap/owner acceptance/personal OAuth remain open."
   },
   "source_scan": {
-    "filesScanned": 4146,
+    "filesScanned": 4158,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4512,7 +4529,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 58,
+    "filesScanned": 59,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -4529,7 +4546,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "e4c63e4b87e522cac4c45bdeca271050623c28fdc00dc08cd5dd368f86688718",
+      "sha256": "6f9b1a1fb75bf0c7ad4adc35621ca15d1a6eb6e32b907958e626cba3f12af27e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4539,22 +4556,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "1fa4e71a2c350ed53b9583ad2540346fe97be530eefa24bb7a6cea56b3604fa2",
+      "sha256": "7aedfdf1e22d10674ec8a6b5fa86f1cde474b216aa13b34dc24893cc4c4b8f95",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "a98dee70a39cc4ecc05e1c1769f7e2a7fa95390bf82fa6fbad92ea17c645b64b",
+      "sha256": "cef5b02371bdc7ea0b1359001bc13445b181d06ec5e1fa27496c1fe2bc2455d2",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "2a34e9218c2a0b02ef1b1dcae2c24414cdbb535e0b8c9c6c6f5fdd89fc28d8f0",
+      "sha256": "b424bc486f41d20fb6234ed408c79a3fb560699207adc8bbf52fd2a42e215e72",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "4a55da8f0c567e40bed7b1d37cf1956c34c61b677e61451cc6c2bfa46b6fbbcb",
+      "sha256": "cefbefd89d67ff31c21684a6aaa75e361ab450648ff0d3076a20655b2c95cfbd",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4569,7 +4586,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "b001ecc5911e05dc7b455581892e80a75aa2d0329c483ec581109963f023cb11",
+      "sha256": "f7e1c87625ccb92f2534b2efcf27a24d3853059f2019eddd0dd128b7b1b26980",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4584,12 +4601,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "7626634bc161a960d28c2527688fd73a4d1b7145b7fde40c30178ccaa528274e",
+      "sha256": "edeca922fd3d20bfa6d74a7774acaf2af563e8505b1995ba66daa7146ae5ae43",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "510aa4f30f853d8ec114844c0bd4c81822511e554bf1f0366a3b28ac0dac982a",
+      "sha256": "65f1cdf192300afcbc50b53602f058ba98e4e9c45fdb19a10b34444046f87eac",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4619,7 +4636,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "74127ede8326dff4845b203a0c9758cdc14f8a64395a1077c509f9d0aa381585",
+      "sha256": "bff00794b2f295b7d3a2fb93028448683b81edcfa9bfad1cba2443cc3ffb130b",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -4634,7 +4651,7 @@
     "e2e/build-discovery-visual.spec.ts": "6ceeea7743e89b66be182be3b528131c99474e11f57328fed75f8dc2ca0df1a6",
     "e2e/build-editor-visual.spec.ts": "98579944bbdf9ec11cac99018179fa33d442e0df9d8fd7921fcb9be2826a6ce5",
     "e2e/builds.spec.ts": "b711bcad122ca8fd489b30e791c8bf9f1e622b15aa988a856aab70f8cba6c0d1",
-    "e2e/catalog.spec.ts": "17049c4d7305dbe0a16be237b675da475175929b4be000cc9f013d70fc4d5c16",
+    "e2e/catalog.spec.ts": "1d57532a0dfde235a2a18f8fec9e536187541d7bdc2031d281dfb7bc5f097075",
     "e2e/community.spec.ts": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b",
     "e2e/composition-visual.spec.ts": "74e163287aa9a397418439b5b24a10f83f6350e9e8bd1e6c8199220eabbb6c54",
     "e2e/compositions.spec.ts": "507dda15fc3767f2719109cec265f2ffce493c2b2f906da632d1923da98f2d0b",
@@ -4663,14 +4680,14 @@
     "e2e/player-workflows.spec.ts": "da12d482cb85adf7549a3f736d7c8858f69947c074ccaa10c8fe26878eaf3da7",
     "e2e/playful-ui.spec.ts": "c576a00b35abfa246331df99f1f70ef2d9b4b815515c8cd9c5cca9fea38b079e",
     "e2e/premium-visual.spec.ts": "4f7f189b71c1275d70bf0f8616604a5e45e23418132ad8def419eb327ab46a04",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png": "9617b83dc701d0b314d64a3d1285e798a160e35b9a940e48cc6d9e712c6f7862",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "76244d1f39039d3b1662c0e388056b3651673551707a86f95679dff91f64712d",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "c30e4b857a01d3c01bb27bf6ea70d3b87b1ce0080fbc0633a9969cda5913af66",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "11139d396af43942721529ab1062437047bd99bef3433343bca98389da772204",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "5d424429f1e2932cdb037dbeb367134cf78fabc55370330a4627032bc9622354",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "aba6902cea2beef16e4a609455428898940806189bd1bf395a08bc3446f7a419",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "bab5542454a3e16d73dba3654b9e3e2b9a0a01bb3e6488e2fd52f4878a959867",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "a4971b96166b07f3854c66e15ac7dda164ad634b6a6c5fbaef6b2e13e09e6ff3",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png": "db31fc7f75c0e48cba6712147efe8e2695537612051ce1a7b4f8f1771a256045",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "ac81613472d16c5588bda1981fc8f39158d2eb21db638d90fc7ea35bd63a3af1",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "fae676d847c4f8fb48fa8e711f0b3204d4c6e2b7b24d36a0ee155b845589924c",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "4210a71fbddb99a3465e3a3075774e5e4017d45243975bba2cc22fb2d56d4870",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "17c72a418b8270e018e0e6a62482460486ba6a0a0178ac85a8e9832a45919342",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "9b5734a385513f38226e4d88a8be23a2d9371551e3e7426344fc4d91fb0e77d7",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "c2a814ff1dff36dca4270c5e091cd19ac6aaa080937faa6d0b77cbeee0b9bc15",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "fd3980351df5b367c4371864eeb0733d6c8a2aab7fdf0761106511cff9942730",
     "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png": "6c6a8f1be8cc9173a9420895ec9ff4ac88e694d7b862f1aec0e7ddd5db32a22e",
     "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png": "553fa9fa2df9a0e35f1f27d5f30e9cdb44eb6e700d36c77ca8ea01f36ac96291",
     "e2e/product-controls.spec.ts": "4d4f0c972a4cc1feff27faa4d4be897b66270dc844133ddbe604cecd686fd8f4",
@@ -4686,16 +4703,17 @@
     "e2e/qa-security.spec.ts": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044",
     "e2e/reference-ui.spec.ts": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7",
     "e2e/reference-workspaces.spec.ts": "b48a6e082c575917cef16ad9682a5dee519cf0ab1ac7ade6bef3f32f4ddb2c11",
-    "e2e/refinement.spec.ts": "efc111d4590a154ba2443ca7bb7268f5460a95040bb140907d7fb9f44edeac5b",
+    "e2e/refinement.spec.ts": "1ab494782f73e84462d144d9a0ba42b7e5220e9216f856c7fc74a495c11a43a8",
     "e2e/search-palette.spec.ts": "74a2b75bad94db1918d0a197d31d1aae8205b4bdcacef9259053c3bd1c08b696",
     "e2e/settings-recovery.spec.ts": "26b0e0373cdc2c2ff9b2e88ab65ca9cd13a09ec3983e3a1de7a4d2722e917b4c",
+    "e2e/shopping.spec.ts": "1c7915facc504e8349c6ac7bc3a39b8bb2b4265da2da1eec778bdc4c3ffb79a8",
     "e2e/source-equipment.spec.ts": "c168b665e6d634e30cc43ab8671176fd9db71a89265065be4ace67c39f7ae80b",
     "e2e/support/cloudflare-db.ts": "83effd1940527c1ea40a81d08aff20c0e7ca16afe1e5615a247dee63b83a4ab9",
     "e2e/support/db.ts": "531e3a5d5efd5c9fbd72d2f5bdc87ec58f4bb13ae015533aa7b9cf2fc4407dac",
     "e2e/support/fixture-fault.ts": "6cfb32170f160a17d860f053dc974ce044954e92bcbeadc08e5f9645aaabb718",
     "e2e/support/region.ts": "4b99541cbf5e2bce8b8731b5b74c277a1aa613cd7ff838972d7b1cd3bd01d222",
     "e2e/support/wire.ts": "c77a4b5969f8ac3f178269ecc47659e0701d54be59540718710f28a3f4203f32",
-    "e2e/tool-directory.spec.ts": "312933d9ee37329b7a3bc61e2f8c096642fb0a117863807c08d4ea893b91d4ef",
+    "e2e/tool-directory.spec.ts": "e711cddded1a5abc3f8afa780bc07904f4dd0036b749e6893ebccd2743a92197",
     "e2e/trade-scenarios.spec.ts": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc",
     "e2e/transport.spec.ts": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819",
     "e2e/ux-task-flow.spec.ts": "e84bc65a03b01b8262b516df62db9a869ccb6656ffba8205c6fc94dfcb98707e",
@@ -4814,7 +4832,7 @@
     "src/app/api/market-watch/route.ts": "053d043b4b8992e46bd8077b1edc1d38fa0040780615d1dd3308a0d4d929b496",
     "src/app/api/opportunities/route.ts": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025",
     "src/app/api/scenarios/[id]/route.ts": "9652ac481f62f38390d08103a83920c00177ca84801527d3641fa8943821ec4d",
-    "src/app/api/scenarios/route.ts": "803a41586cded666cc6043f796a31781ed6bcbe685898179342f0e684cfc1350",
+    "src/app/api/scenarios/route.ts": "31d587cb4d30966c23202e4fc8bdd07cf1a0378f9765874effa3943d95b684c0",
     "src/app/api/search/route.ts": "8af7b103b6085504ae5efe2d6b96c6feeb0f5e7e05c00da052dcb270031c5bf3",
     "src/app/api/timers/[id]/route.ts": "2e662d5c53f410d89384c6b21c5acc8d15d159fd930c2dd3c1b58984df6aae22",
     "src/app/api/timers/route.ts": "26a61dad097afbb0338bc14d093dc117628ba44374fd3cfaf2fb29b342548d0e",
@@ -4824,14 +4842,14 @@
     "src/app/build-grind-workspace.css": "1c46124aa60eddb2bfd769e1dd6bbe9653c1600bb1f5e4ee6fdf2f12493d182a",
     "src/app/builds/[id]/edit/page.tsx": "2dc8e833809a3d4b2eeaaf8f3e232b2566c2ecc8ae4215c9c34d4eab3fc109b2",
     "src/app/builds/[id]/page.tsx": "249574c8372fc5505658491025e5b1b5dadb65bd05eb1a6c6624811901324af6",
-    "src/app/builds/library/[slug]/page.tsx": "a0b5b0788f0fb74403ca50b582d2744dc0c4374a2c1a516561609200fdd77e77",
-    "src/app/builds/library/page.tsx": "1e5667d99b6c497585b7bd90a83f66716773194befdb43b4957c3c7da7926404",
+    "src/app/builds/library/[slug]/page.tsx": "e6a57486882422183ef6326df0f4e19e49d5ee760cb89f2289bf5ee7b6266649",
+    "src/app/builds/library/page.tsx": "026987a85a536404b4b4a487b7d53c63806fdf2e0e3002e1ce295abdf5e6b455",
     "src/app/builds/new/page.tsx": "5f773c276693ca91f990b99ed6e1fc6cb83ef7c5df2a6eab860bd246018b3d2a",
-    "src/app/builds/page.tsx": "228bc33ddee69848eb026763db3a285e8c364f3fe921b787bc92ac1e1781ba6f",
+    "src/app/builds/page.tsx": "41792ea29ca0afaf2815c49dd9abe7dcd25f4d39a8174040267c590389d3f0ef",
     "src/app/compositions/[id]/edit/page.tsx": "a83b0ff4d5cfd24145278408e60b592260425e2c46916e0036a30c51ae189635",
     "src/app/compositions/[id]/page.tsx": "0ffccd6fffa37a191f98dc3071501898f0874f58af599914618caae10e061072",
-    "src/app/compositions/library/[slug]/page.tsx": "181907acb2dcc096dd6df36be590c0125d5f26a3df4cdb92c5817e3d91d1d164",
-    "src/app/compositions/library/page.tsx": "ac66a61054b4eb02e74bdda237f542a43aa5f7e98103380fa8402afb94cba053",
+    "src/app/compositions/library/[slug]/page.tsx": "137f3b3e1da310fbbfaf7c11c75b73e2c7aa72e5a81b2f13211bb85baa0333cb",
+    "src/app/compositions/library/page.tsx": "78e5a43990c7832ec2ce9867ed9e5dbe154cea49e551bae24abeb6e4fc653f67",
     "src/app/compositions/new/page.tsx": "8f1fa18ca3db3ca7b960412e0c86354e94488c3972e116e84ca6c3fa0bc93fa4",
     "src/app/compositions/page.tsx": "824d86293aedc2c56b4c8ebd55684d1a8c78ca54f01811648b2e2c5c4dff3107",
     "src/app/dashboard/page.tsx": "20d8cd53da6c70596d60af4c188d3ef407d226d0cad592d4600f5f8762f3927a",
@@ -4846,17 +4864,17 @@
     "src/app/groups/[slug]/page.tsx": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72",
     "src/app/groups/new/page.tsx": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a",
     "src/app/groups/page.tsx": "08816c71b2462a51f4e1f4e8986bb88708c6c5da1391609864dba1f46c392cc9",
-    "src/app/guides/[slug]/page.tsx": "a97545fabc7e875ef991272b13a1d6cb515ca5e4b5ebc705579327a21b26d744",
-    "src/app/guides/page.tsx": "0fcb4d24bae8b8ede7ffd23e5eccb7c0ebe1ed7af99b6478911ae8d372f8784e",
+    "src/app/guides/[slug]/page.tsx": "aaa00b28c50ab2a5c055497730bfe3a1808ca8acb78809fc3db3f2a169fb4239",
+    "src/app/guides/page.tsx": "22123a5e50de0c14645404d808b96192d9e6a50c39697cf1578bb2ae9bc95724",
     "src/app/home-fidelity.css": "6ac671f49d7d52355df734bf040b5cc3cc1a9a5c87132e635d8a6fe7d0f520d8",
     "src/app/home-market-terminal.css": "ea0ac53b36508f36fb04e7a6f36a250372fccede0706e19d37e76f5c3245abb4",
     "src/app/homepage.css": "3bbcdba4a3acc24063ef0a1b32428730a8a0f3a7d0c68c0732d3d0e12b9d5a27",
     "src/app/invitations/[token]/page.tsx": "73063d841dacc36ea4b7517798e4ac3656aa97651bae4ff4d76a1c5049bf9af1",
-    "src/app/items/[id]/page.tsx": "6a0df2ab2d182cce36eed695a007978b13671d132ca790771a64017bbf94dad8",
+    "src/app/items/[id]/page.tsx": "e80a8871332c30cb4467a63f83e0318c7799ac1cfdcdccf571cb41a70609daee",
     "src/app/items/page.tsx": "c9f1f9582a30f992703a438db6a9e09f22e5f89cfc4ec42dd256f453115b213c",
     "src/app/journal-workspace.css": "c4b0c4ce87b38e2f430eb7eca333e0213babedebfbe81bd0ac2627abaa541d2a",
-    "src/app/layout.tsx": "99cdea59f06542afd8c66fe1b7edc3e70c736e777d18847d34a4cbe4100bc91d",
-    "src/app/legal/page.tsx": "b242df93e06670aa464da2f0a804da19bae0ae25c3ea02259b4591290d221ba0",
+    "src/app/layout.tsx": "dd79616a3970c21a7584f1f3a02ff7caa615eca1ef66bc99e9be51ad6a337156",
+    "src/app/legal/page.tsx": "55db6619a56236c890f0c723eb54dc7c83364dc0c788862bd943252057a56ae3",
     "src/app/loading.tsx": "9352287a856a37239f9e53de283ad4c8b370d7be164565dd2243760b555192ba",
     "src/app/loadout-cards.css": "cc9d05b329f10362d843f4bb8c8d5be69f460b75ec9441c9032f6fc9d7094779",
     "src/app/motion-system.css": "fcfa481da858e37a3cdfe2df9f67308cd0bc8f82898de51483c83cf8fe275852",
@@ -4865,6 +4883,7 @@
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480",
     "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
+    "src/app/premium-system.css": "cf20c1e5ef24743a9f13c27592a76b98155b5f01d1e7fccd7debc76aecc274ac",
     "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
     "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
@@ -4873,56 +4892,58 @@
     "src/app/search-palette.css": "40d611e52f4e3aa0175f197c384fc68b3b982196c05087e71af44c2c4d6d546a",
     "src/app/settings/actions.ts": "d371ccaec4161dc5ee19b298a91ff184c1207092f35d7c13ffe7331899b298f4",
     "src/app/settings/page.tsx": "2a82f809deebded9a66f58c03493480583c12104ff8eb5510d31987758b76461",
+    "src/app/shopping-list/page.tsx": "2cfce9c0f9fa6ff908865e83e70a2c73974dad1b4b84d5b53688ce4687bee2e6",
     "src/app/signin/page.tsx": "cfcde77707603c0d93d38c3cb3a4d0dabd558845844f54820bfc7f4e12cc74de",
     "src/app/task-ui.css": "c866f11ca7b6d8e7876c9ec19b6a5764443190c3f519bcfbb6872456b7b58a80",
     "src/app/timers/page.tsx": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933",
-    "src/app/tools/alchemy/page.tsx": "a7eb82b12f63c4e0101d55fb33bcdf231d3620c8364bac5a39f73da2f3141f03",
-    "src/app/tools/cooking/page.tsx": "601e9564943d0658436cfe1bc8ff84c0c590ed476a1b0ba6cad506e44a62f8e4",
-    "src/app/tools/crafting/page.tsx": "f5ecc6179feae2095954ff49eb9d7196dd24489fe73fe3d6d29f11ce13a20e32",
-    "src/app/tools/enchanting/page.tsx": "6ee759329b98c27adfd7935b0da88335dc22600a33901eb5280aa6ce99ef8dfe",
+    "src/app/tools/alchemy/page.tsx": "158262a3baa8135c5d04d4516f4f7ae5fd4b972cb681839138fee648f1250b32",
+    "src/app/tools/cooking/page.tsx": "8db24f4ff2f235e7686386fc9d5781a6d735c3a62423468c6e2b9939a13856e0",
+    "src/app/tools/crafting/page.tsx": "5945a20fc64ca6fdfcec6d12834cf1aae03dd69a1534131c3bfd122837a02cfc",
+    "src/app/tools/enchanting/page.tsx": "d77731d168ed3cfc36a4795628cd9d6d1b9d33b1fd63b862c6158cec0718cc53",
     "src/app/tools/farming/page.tsx": "145ee25b6a865619d4c090b239d4581af2fcdf13a53462112d7cd9084699e6c7",
     "src/app/tools/fishing/page.tsx": "f1031a8304f80ef32914453678c4e592346aaa24f89722716df06c33fbab4091",
     "src/app/tools/flipping/page.tsx": "1ca4d18f7de3595d67c1c23088cc9bee52e8c2ab92448e759a05a4baecd8c969",
     "src/app/tools/gold/page.tsx": "52830ea986fca24d3b459191040830f4959318323d3d44e147f1f23a80a6328d",
     "src/app/tools/market/page.tsx": "1b9ffe125e88b9d4156c69a257f38e4b5a507ca3a90e5c4789d9c07b41593132",
     "src/app/tools/page.tsx": "e1d4ef00b2eae0356f18c76918e49f0781ab36f01f3951afdbb45c46e978df7b",
-    "src/app/tools/refining/page.tsx": "fda9d810f6008606f1813901980e7dd7ca780bc23784ad5c4872160fce6644c6",
+    "src/app/tools/refining/page.tsx": "258450fd7c715d28862d5053eab07720ff0a459c293ceea959e0009fd87aef94",
     "src/app/tools/transporting/page.tsx": "f333053ed871deb65a98f90c393f7acaf8a2cbf93abae5ec8cf02f991230df92",
     "src/app/workspace-depth.css": "113cf2d81ddbfb5e3ce75f8d86fdffc6223ca1d6d432f9b5cd20eea66ebbba37",
     "src/app/workspace-fidelity.css": "db6d37896202991864d7be880c9c474539bdd813816a7569be53a1d1ecb4df0c",
     "src/app/workspace.css": "ea5fe9a4290fc364fe821780ee118f97aabc282263c66e1fdc6b1251d295871c",
     "src/components/accept-invite.tsx": "d11ccf02b13292093d4de451f51a1f26708d1206325ee54fe4a1cd4d78fb1162",
+    "src/components/add-to-shopping.tsx": "979daa59916c26af7808e3e231117c319f07e8f568196b7e60172ceed46bba43",
     "src/components/albion-scene.tsx": "74326c3890fd8a374a1ce7cf027cb5f09cfa17593f20965c45fdba0437f03b79",
     "src/components/archive-build-links.tsx": "8ad451dcbec19b3757bbb047eea7b9846f01017389e9a5728aed54d613e01d00",
     "src/components/build-actions.tsx": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019",
     "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
-    "src/components/build-editor.tsx": "b76f48d1862fba619011a9b8bac648ba73853f16a4443b15a4c1b96068ce6969",
+    "src/components/build-editor.tsx": "c6fe96fd007e8ce25f9044ce6288b600986828d275b95959912476e57a2c0a76",
     "src/components/build-equipment-studio.tsx": "9367855f03ab7d1d0d9c889ec6e1c6ddc87818ff0db096aab06d9ffda6d99bc5",
     "src/components/build-loadout-view.tsx": "6fdf9839b3da3e713d376a06ab9dfe1054c4d57ed7e5f21ce05bd7a000d5ead7",
     "src/components/build-preview-card.tsx": "31475d836857282ebcac5d58120287e61eff35eacb28c9a58ed7e555919b03b9",
     "src/components/catalog-item-picker.tsx": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559",
     "src/components/community-panel.tsx": "3f5d79654b9147a0196fd3e11bf92c167db3a6111435ed08665cec4a56d80293",
-    "src/components/composition-editor.tsx": "1bc600d146b995ef8fe14c6366eed411e7e1f4864b510dd7d8eca56d4f822bb6",
+    "src/components/composition-editor.tsx": "c54222e1dc4d1ebc48ee54295934d5dcd66eb33fe9892c9169998de2804744e4",
     "src/components/composition-png-export.tsx": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769",
-    "src/components/composition-view.tsx": "b55d55422ea038551a23b1d0c4e3eb1f7f6c84924d1813d5203a0dad2ce8778f",
+    "src/components/composition-view.tsx": "35ebc53ea2df451782d67f6188114847bdffa25d1dd91a34ef27b245437ecd48",
     "src/components/discord-mark.tsx": "a71ac7c9bcee1f4027a2a9f8db89c2de652c7f058c122a5efc3900ec91aaf458",
     "src/components/editor-dialog.tsx": "ecc2de41c2df2f96d2f4ec6f62ddf53842e958e51722ad32c2082ccc59b2a0ff",
     "src/components/equipment-overview.tsx": "5b1192d49e49d0a95f993bd5eb78d3016f1f7954e1d124d932f8fdfdf20d4437",
     "src/components/equipment-picker.tsx": "429348051a7af8381e5052e29cd379a4142612a3d9f92549edd1355e8d8f0c99",
     "src/components/equipment-sets.tsx": "adf6cf95ee9b68fa8b845c8ad35fa0383b6f4573371f222c31c0767c1be2e9f7",
     "src/components/equipment-strip.tsx": "7d36f44c92a661e2baf657e2e51d8433d2a4acf039b02f7ee22118301a96271c",
-    "src/components/equipment-workbench.tsx": "25700a7ea779221f8a44b25658bebdd8a18a2e6adf16f1eae0767849fcf5bcef",
-    "src/components/farming-calculator.tsx": "3114d3d7941246ffacfd5c64af18916b45d15b5e0bb23b8d58305ac4dc9aa3ec",
+    "src/components/equipment-workbench.tsx": "5eb438e71bbd5c0a771ea5290267d7eaa429ace15ea6ac99f9d28ea742c682d9",
+    "src/components/farming-calculator.tsx": "a78582fef3c6ab7d30bd8b6dc82704b504651dfa7787feba136f04ac1cca0d32",
     "src/components/favorite-build-button.tsx": "c686f60f19addc4c03779e20385a919d9876503749a61bc9b9d282a359d4e967",
     "src/components/feature-emblem.tsx": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128",
-    "src/components/fishing-calculator.tsx": "c9075e580e2031588838452a6d7ddef3136d6abd920ab15c9af75fa5223dba0a",
+    "src/components/fishing-calculator.tsx": "449bdd66b8286b071fdd3e2440603b51ff1e81ec2495cfbee64344bda30ddafa",
     "src/components/global-search.tsx": "eeed8d065a851f72c95faa03eceae02a02f8747af8b22ed3bdfee7246a6f59f0",
-    "src/components/grind-guide-directory.tsx": "d3aadf0d2ad7393e07c359c4cd3ef59f93850353e6b53da73e9637a9c93015a7",
+    "src/components/grind-guide-directory.tsx": "f1c4ab540d55e8c5ce6ec37c7a6851d01dfde2b375793851527c1437649e419a",
     "src/components/group-create.tsx": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945",
     "src/components/group-dashboard.tsx": "f0156ec146b22b7cab639ed9ef6930308e6893f24b6c54d0deab02485e6e15ca",
     "src/components/group-event-editor.tsx": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97",
     "src/components/group-profile-editor.tsx": "2c5b103c36a2aa5bf57ee338b4a289d068feee21d17f7bc64f0f55742441735b",
-    "src/components/guide-article-content.tsx": "75b0a6b8123e3bf62ada39b1547269b4bfa8962072db75506f5379b8516f44fd",
+    "src/components/guide-article-content.tsx": "2289fb6663010150348d19e1f0c2f6b3fdc47731afae534d55207c36200f55c3",
     "src/components/guide-directory.tsx": "e4e3167b54e1f42047648388dd9624cfdfabcd0d312ebd4d8be7f7a8b4ebdd4c",
     "src/components/history.tsx": "d414bfd025ee21f9e6b966985c5a3e9247fcdae14ba30c2174fe372e3320e200",
     "src/components/home-build-card.tsx": "238ee786391ce49ef0967d7ceb976a72de750f8830c21b603a20d8e426a7c53a",
@@ -4930,14 +4951,14 @@
     "src/components/home-market-pulse.tsx": "b551177cd74dad596a4f18b232ded0149245acc70a8c3ebeacdf9d5dda96f430",
     "src/components/home-market-terminal.tsx": "1168345bfd951cd6bd4c01adb4d346c9c83ba77f2e2f277cc69679396d4c9bcf",
     "src/components/home-player-preview.tsx": "b45234a84ba821ae352dc144e4202da54e3c941562bbbaf50be1fb0aa949ff5f",
-    "src/components/item-catalog.tsx": "434596107cabaf154729f41fdb423dee1281c0c391429aa6a0c5d1c28c236d75",
+    "src/components/item-catalog.tsx": "fa284d1f8cf20f2ebd5535482dcda14022044d82770605dc0e2103d9e61eb5cd",
     "src/components/item-icon.tsx": "7e3ac5611c479eee1f7b5f67884fd4417740b21d51338032725df503540afa08",
     "src/components/item-market-link.tsx": "4b2b618a5dd6612dff49a5d2049d98847da6dc63796979ae42a1a6db3fed2fa2",
-    "src/components/journal-checklist.tsx": "9c6233a131f7572b517533be8a08191e27962b0a36c61703acf89669952a387b",
-    "src/components/library-build-card.tsx": "52e95b6015413c578fda335925eda084d91f7b9f0b03cf948acfe2ded15c2b9d",
-    "src/components/library-build-metadata.tsx": "3c507c2be7fc4d194d240cc8298789cba0d28ee7d6cc73209e5ed6b770334652",
+    "src/components/journal-checklist.tsx": "a2f5e03794a9cd10dbd022a87e4b73d7caf579338f242f03962bcff3d4f5d77b",
+    "src/components/library-build-card.tsx": "2fc1befbe6a599f57797071edf6fe83f9a15af1e0c4ce289f530631af1b8510c",
+    "src/components/library-build-metadata.tsx": "eaf52caf36cd4f80329f9c37e0520b423ca7c328057fa9c1d747a3ff0937fa7e",
     "src/components/link.tsx": "39f459a5fb801d3b4fe6716c3219799562c22e6c4b616bbb615bd8b564982f56",
-    "src/components/loadout-price-check.tsx": "bf74de69a7719d85533da1b07620240465dc83774bab234548ef8b7f00a8283c",
+    "src/components/loadout-price-check.tsx": "27b331aa4746c22292f0be23014553fc7b4e4b630f0d8be1a7f68d82a586e6e9",
     "src/components/login-button.tsx": "74a6ac203e958959978ede93bfe124667dc6002bc463c706dd1d2b5df4f92a80",
     "src/components/market-batch-quotes.tsx": "6d5ef282385b21fc2863ff6d8cd3626e56b250ff3a9d25833012b1c13bc64d35",
     "src/components/market-research.tsx": "f0c803bbf80a651fd6655f568b741b8a43324ca57ccdba56c2cad17dabfbff8c",
@@ -4947,15 +4968,19 @@
     "src/components/moderation-queue.tsx": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c",
     "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
     "src/components/party-board.tsx": "88b82707e58dfc229cbdb5c5b9be3be700d23d240398c4f46cc47b3956f00df1",
-    "src/components/production-calculator.tsx": "4be0f59ef9a3371c648e328e2889e02b87504105f667b332a2af3ccddd4c7e71",
-    "src/components/production-plan.tsx": "8971e708254c687f2e8f5b833d2a5eca63045644c32ef2adbd8814a333559186",
+    "src/components/party-readiness.tsx": "fc53bbbe30a6f35889fe3cb4964c5bd4209741ebff280a1f7b962f95f4125880",
+    "src/components/production-calculator.tsx": "65bf85708f365d22e0517c3d7527ba5d23b33f47250eb41b6e7fd1f5b4d06092",
+    "src/components/production-plan.tsx": "669e1ff984dc02ec02b70130947c887a85d971f5a97921cea9c142321d412e5e",
     "src/components/production-profile.tsx": "70de84cb5cfcd118d9de793185205522057869ce279f0a4fcc802f7ba81947e2",
     "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
     "src/components/region-picker.tsx": "93a43eadc7934373130f64a0085d584017aad30e33a3d4c11b0cdf181d60a3ed",
     "src/components/saved-equipment-sets.tsx": "602099ef393aadf081f32c0995f343493bd65e2f4d2e14e9069dae41e30270d8",
     "src/components/scenario-controls.tsx": "f989391d64ff8d2c0266fcf22b9dccdf6766b529bcc62caa4ad43c71474d7f5e",
     "src/components/settings-forms.tsx": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951",
-    "src/components/shell.tsx": "530b7e22306925339f25a8da072550bfc3841eea71f39c8a15df6652465a25dc",
+    "src/components/shell.tsx": "60f4663214ae79627084dc283858d64f67c64caceb9914c67234bc30218d5980",
+    "src/components/shopping-account-lists.tsx": "96cd9a1cb234018078970e4000b9447b94047e69cf5de3ab90d14881df7db923",
+    "src/components/shopping-storage.ts": "b28f05b72a11f67e938006702f0783805ff8092f821cebadb94bd54b4fd099bd",
+    "src/components/shopping-workspace.tsx": "6271b97b6cced1fa36ecc92ffd82bc6e47e86e96e698d1f580832f2f6c672120",
     "src/components/spell-icon.tsx": "91725d6f86da39782ee3d8b53a3f0bf51d3cf65c061f5b6ee75462865e56deb4",
     "src/components/timer-manager.tsx": "88d53c5fd4acaba6a24d50149b6c0bf73cc47e90c76b89e2da2b6e2fd9af62e0",
     "src/components/tool-directory.tsx": "e5f420e55d6c39d1726ab68f22307414149510a3bdcabd268460f1a9059c4394",
@@ -4965,6 +4990,7 @@
     "src/components/turnstile-challenge.tsx": "6d4a0afd336ffccca01a15179d98a467705721069f214d8c6e13edffd0688b46",
     "src/components/use-visible-refresh.ts": "d921ea46e961ac7dc9892e8fd14617c656a0b20ddf8447d59f887d83e6a0d813",
     "src/components/wordmark.tsx": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082",
+    "src/components/workspace-heading.tsx": "a69d42914d07a30a8d49a76be59b098be193e90386bffbc99432defa0e8b0f8b",
     "src/components/workspace-navigation.tsx": "e0d35eb8f0cc916bde952924b2e88e6b248f7614345b8a8dd05c7d6cc0d57e03",
     "src/instrumentation.ts": "aabdb2f5ad5f215467de2450c0063a80606c1457f62c2cb60821dced7e9940d9",
     "src/lib/albion/archived-item-spells.json": "679a76d8bb303242e7883338fda354161b3cc468ac200d964f09d635f7b30a7a",
@@ -4998,6 +5024,8 @@
     "src/lib/albion/recipes.ts": "7f52fe632456583fa75d48bec7136b63e5980fb76375a2091a6ec04bcc46116f",
     "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
     "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
+    "src/lib/albion/shopping-equipment.ts": "1163fb95de9b1504ed9c11a4321822a7e3151c5249d045a43bcc1328d0aa0448",
+    "src/lib/albion/shopping.ts": "fc5064a28a9076747ac4d5d0ac0a9dde474079fa9d6ab9a290c92c370eb8a3b0",
     "src/lib/albion/source-abilities.json": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937",
     "src/lib/albion/source-equipment.json": "6f685c9d983f280b4ec1dc4ae3f07823a8bb7aeb6993abc6513151172b5dd337",
     "src/lib/albion/transport-prices.ts": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82",
@@ -5043,7 +5071,7 @@
     "src/lib/redis.ts": "75dae4d2a99d02bfeb9c1f7e48f51a002c6f38b41a84a5d570dab149e8869663",
     "src/lib/serialization-retry.ts": "f711ef61db4fa68daeb8246f531b4d7e2885eb5eb413471932c7733eaeb41359",
     "src/lib/timers/engine.ts": "3949b57b6bbe957534eba82b4bd270fccdf7abaf40caa01154237722a4d18175",
-    "src/lib/tool-directory.ts": "f3d89a35068592ca7c29a48ace1aaff222d4707eb90bc0ff50358199ccdc3c0c",
+    "src/lib/tool-directory.ts": "3e43b01b7d66a90a28e7bde04a13f7e1498639c9ce3ea1077480ad5c0f3d2ad6",
     "src/lib/turnstile.ts": "b7aa056c0837bb3a73b210d43981934925fabb66ece42b7a42b9c63641937758",
     "src/proxy.ts": "becb06ecdb0048d25eb32d6b097c195d2d9ba07d9751db289645a885228b8809",
     "src/types/next-auth.d.ts": "70a09cb8382980b4232f3aaa931137b0fc62aafc3cb41bbb7c23352c04860b90",
@@ -5096,6 +5124,7 @@
     "tests/reviewed-recipes.test.ts": "105c0eab5f6d953d4f4250833a80be455cb953e2a295599d9871e4d1392277ba",
     "tests/serialization-retry.test.ts": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9",
     "tests/settings-recovery.test.ts": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8",
+    "tests/shopping.test.ts": "4f04835a310d2b4492724a5a5500dd4f3ddbf9b4c0f525c06fffed96b3856e84",
     "tests/source-secret-scan.test.ts": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c",
     "tests/source-workbench.test.ts": "1d238c535177eeb1fd3f9a7d34452c29e6f0b738b4626ee85e8dd744a5d6d559",
     "tests/timers.test.ts": "2f8dbcea1ae80e90169792bc8cae145f11aae6a7ffaf31fad19e09c0f39d0963",

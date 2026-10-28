@@ -18,14 +18,9 @@ export default function Legal() {
       <p>
         Market observations:{" "}
         <a href="https://www.albion-online-data.com/api/">Albion Online Data Project public API</a>.
-        Prices are player-contributed observations, not guaranteed live offers. The Grind library
-        restores the operator’s previously owned public builds, compositions and guides, preserving
-        authors and the archive date. Historical selections are not verified as current meta. No
-        invented combat statistics are distributed. Item icons are requested from Sandbox
-        Interactive’s public render service. These image requests disclose your IP address to the
-        render host. When direct artwork loading fails, Outpost uses its bounded server-side image
-        cache or an original neutral fallback. Artwork remains the property of its respective
-        owners.
+        Prices are player-contributed observations, not guaranteed live offers. Community builds and
+        guides retain their named authors. Check update dates and confirm current game balance
+        before relying on a recommendation.
       </p>
       <h2 id="scene-artwork">Scene artwork</h2>
       <p>
@@ -53,7 +48,7 @@ export default function Legal() {
         account. No advertising or analytics cookies are implemented.
       </p>
       <p>
-        The hosted preview uses Cloudflare Workers, D1 for public item and archive data, and
+        The hosted preview uses Cloudflare Workers, D1 for public item and content data, and
         SQLite-backed Durable Objects for account and collaboration records. A signed, temporary
         routing cookie coordinates page requests; Discord controls your account login. Public
         artwork and fonts are served as static assets. No R2 upload service is currently enabled.

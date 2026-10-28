@@ -1,4 +1,5 @@
 "use client";
+import { PartyReadiness } from "./party-readiness";
 import { useState, useRef, useSyncExternalStore } from "react";
 import Link from "@/components/link";
 import { useRouter } from "next/navigation";
@@ -368,6 +369,7 @@ export function CompositionEditor({
         )}
       </div>
       <div className="reference-party-workspace">
+        <PartyReadiness members={draft.slots} region={draft.region} />
         {(layout === "board" ||
           (layout === "auto" && draft.slots.length >= 2 && draft.slots.length <= 7)) && (
           <PartyBoard
@@ -697,8 +699,8 @@ export function CompositionEditor({
                     </select>
                   </label>
                   <p className="muted">
-                    July source catalog with equipment, consumables and spare sets. Confirm spell
-                    availability and unlocks in game. Build copies are independent snapshots.
+                    Choose equipment, consumables and spare sets. Confirm ability unlocks in game.
+                    Build copies stay independent.
                   </p>
                   <EquipmentSets
                     key={selected.id}

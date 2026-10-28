@@ -119,7 +119,7 @@ test("populated equipment and party controls include visible names at phone, tab
   }
 });
 
-test("long item provenance fits 320px and remains readable and copyable", async ({ page }) => {
+test("item detail keeps source records internal and fits all review widths", async ({ page }) => {
   const release = await db.catalogRelease.create({
     data: {
       version: `qa-reflow-${randomUUID()}`,
@@ -150,7 +150,10 @@ test("long item provenance fits 320px and remains readable and copyable", async 
         width,
       );
       const provenance = page.locator(".item-metadata-detail");
-      await expect(provenance).toContainText("b".repeat(64));
+      await expect(provenance).not.toContainText("b".repeat(64));
+      expect(
+        (await db.catalogRelease.findUniqueOrThrow({ where: { id: release.id } })).rightsReference,
+      ).toContain("b".repeat(64));
       expect(await provenance.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
       await accessible(page);
     }

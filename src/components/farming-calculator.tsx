@@ -299,9 +299,9 @@ export function FarmingCalculator() {
           <section className="panel">
             <h2>Seed returns & fees</h2>
             <p>
-              Seed-return defaults come from your archived AlbionOnlineGrind data. They are editable
-              historical assumptions, not current-patch certification. 200% means two expected seeds
-              per plant.
+              Seed-return assumptions are editable. Confirm the values for your crop and setup. They
+              are historical assumptions, not current-patch certification. 200% means two expected
+              seeds per plant.
             </p>
             <div className="input-grid">
               {(

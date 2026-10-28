@@ -31,12 +31,12 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           <ItemMarketLink id={id} />
         </div>
         <p className="item-data-notice">
-          Imported item data. Manual and current-patch verification are not recorded.
+          Item values and unlocks may change with game updates. Confirm your setup in game.
         </p>
         <section className="item-abilities" aria-labelledby="item-abilities-heading">
-          <h2 id="item-abilities-heading">Imported abilities</h2>
+          <h2 id="item-abilities-heading">Abilities</h2>
           <p className="muted">
-            Ability names from the imported release. Missing unlock requirements are not verified.
+            Available ability choices. Unlock requirements are shown when known.
           </p>
           <div className="item-ability-groups">
             {[...new Set(metadata.abilities.map((ability) => ability.slot))].map((slot) => (
@@ -55,24 +55,8 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
               </section>
             ))}
           </div>
-          {!metadata.abilities.length && (
-            <p>No ability data for this item in the imported release.</p>
-          )}
+          {!metadata.abilities.length && <p>Ability details are unavailable for this item.</p>}
         </section>
-        <details className="item-provenance">
-          <summary>Item data source & verification</summary>
-          <p>
-            Data status: source-imported and schema-validated. Manual verification: not recorded.
-            Patch verification: not recorded.
-          </p>
-          <p>
-            Release {item.release.version} · Imported {item.release.importedAt.toISOString()}
-          </p>
-          <a className="text-link" href={item.release.sourceUrl} rel="noreferrer" target="_blank">
-            Source reference
-          </a>
-          <p>{item.release.rightsReference}</p>
-        </details>
       </section>
     </div>
   );

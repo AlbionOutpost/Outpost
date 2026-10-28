@@ -78,14 +78,8 @@ test("catalog release persists, filters, paginates and exposes honest provenance
       page.getByText("Base item power (IP): Not verified", { exact: true }),
     ).toBeVisible();
     await page.reload();
-    await page.getByText("Item data source & verification", { exact: true }).click();
-    await expect(page.getByText(/Release test-/)).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Imported abilities", exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByText(/Manual verification: not recorded\. Patch verification: not recorded\./),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Abilities", exact: true })).toBeVisible();
+    expect((await db.itemMetadata.findUniqueOrThrow({ where: { id } })).releaseId).toBe(release.id);
     await page.getByRole("link", { name: "Compare market observations", exact: true }).click();
     await expect(page.getByLabel("Albion region", { exact: true })).toHaveAttribute(
       "data-region",

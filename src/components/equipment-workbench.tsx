@@ -680,7 +680,7 @@ export function EquipmentWorkbench({
             <h3 className="ability-heading">Abilities & passives</h3>
             <p className="gear-coverage">
               {archivedSpellOptions(current.itemId).length ? (
-                "Archived AlbionOnlineGrind spell options. Confirm unlocks, tier restrictions and current-patch availability in game."
+                "Confirm ability unlocks, tier requirements and current balance in game."
               ) : (
                 <>
                   July 2026 source options and retained starter references. Character unlocks, tier

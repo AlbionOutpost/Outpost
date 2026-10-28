@@ -48,7 +48,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             {activityName(build.category)} · By {build.author}
           </p>
           {!!build.tags.length && (
-            <div className="library-author-tags" aria-label="Archived author tags">
+            <div className="library-author-tags" aria-label="Build tags">
               {build.tags.map((tag, i) => (
                 <span key={`${tag}-${i}`}>{tag}</span>
               ))}
@@ -57,11 +57,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
         {(await libraryBuildDraft(build)) && <ArchiveBuildCopyLink slug={build.slug} />}
       </div>
-      <div className="library-provenance">
-        Grind archive · captured 27 October 2026. Recorded spells and alternatives are historical.
-        Confirm unlocks and current balance in game. Quality was not captured; price checks use
-        Normal.
-      </div>
+      <p className="library-provenance">
+        Check ability unlocks and current balance in game. Price checks start with Normal quality.
+      </p>
       <BuildLoadoutView equipment={equipment} />
       <LibraryBuildTraits ids={build.recommendedTraits} traits={await libraryTraits()} />
       {build.description && (
@@ -73,16 +71,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <LibraryBuildVideos build={build} />
       <LoadoutPriceCheck equipment={equipment} />
       <div className="library-detail-footer">
-        <Link
-          href={`https://albiononlinegrind.com/build/${encodeURIComponent(build.sourceSlug)}`}
-          className="text-link"
-        >
-          Original build page ↗
-        </Link>
-        <span>
-          Author update: {build.updatedAt.slice(0, 10) || "Unknown"} · Archive is separate from your
-          Outpost saves.
-        </span>
+        <span>Author update: {build.updatedAt.slice(0, 10) || "Unknown"}</span>
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ import {
 } from "@/lib/albion/production-plan";
 import { productionSchema, type ProductionInput } from "@/lib/albion/production";
 import { ScenarioControls } from "./scenario-controls";
+import { AddToShopping } from "./add-to-shopping";
+import { shoppingFromProduction } from "@/lib/albion/shopping";
 import { ItemIcon } from "./item-icon";
 import "@/app/production-plan.css";
 import {
@@ -292,7 +294,14 @@ export function ProductionPlan({
               <strong>{result.margin === null ? "Incomplete" : `${silver(result.margin)}%`}</strong>
             </div>
           </div>
-          <h3>Shopping list</h3>
+          <div className="section-heading">
+            <h3>Shopping list</h3>
+            <AddToShopping
+              region={plan.region}
+              label="Send to shopping list"
+              entries={shoppingFromProduction(result.materials)}
+            />
+          </div>
           <p>
             Gross materials required before crafting. Returned resources are valued as a credit;
             they are not deducted from your shopping quantities. Different markets and qualities

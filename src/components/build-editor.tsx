@@ -1,4 +1,6 @@
 "use client";
+import { LoadoutPriceCheck } from "./loadout-price-check";
+import { useAtlasRegion } from "./region-context";
 import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
@@ -44,7 +46,8 @@ export function BuildEditor({
   version?: number;
   guest?: boolean;
 }) {
-  const [draft, setDraft] = useState<BuildInput>(initial || empty);
+  const region = useAtlasRegion();
+  const [draft, setDraft] = useState<BuildInput>(initial || { ...empty, region });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
@@ -69,6 +72,20 @@ export function BuildEditor({
     });
     return () => cancelAnimationFrame(frame);
   }, [guest, initial]);
+  useEffect(() => {
+    if (!guest || (!restored.current && !initial)) return;
+    const parsed = buildInput.safeParse(draft);
+    if (!parsed.success) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
+        setShareMessage("Draft saved on this device.");
+      } catch {
+        setShareMessage("Automatic save is unavailable. Export your build to keep a backup.");
+      }
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [draft, guest, initial]);
   const router = useRouter();
   const update = <K extends keyof BuildInput>(key: K, value: BuildInput[K]) =>
     setDraft({ ...draft, [key]: value });
@@ -145,34 +162,6 @@ export function BuildEditor({
   }
   return (
     <form onSubmit={save} className="build-editor">
-      {guest && !initial && (
-        <div className="guest-build-notice">
-          <div>
-            <strong>A loadout for your next adventure.</strong>
-            <p>
-              Choose your gear, pick your spells, keep a swap ready. Guest drafts save on this
-              device.
-            </p>
-          </div>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => {
-              if (
-                supportedEquipment.length &&
-                !window.confirm(
-                  "Replace your current equipment with the example set? Save your draft first to keep it.",
-                )
-              )
-                return;
-              updateEquipment(templateEquipment("battleaxe"));
-              if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
-            }}
-          >
-            Load example equipment
-          </button>
-        </div>
-      )}
       <div className="build-command-bar">
         <label>
           Build title
@@ -212,15 +201,18 @@ export function BuildEditor({
             </select>
           </label>
         )}
-        <button className="button primary" disabled={saving}>
-          {saving
-            ? "Saving…"
-            : guest
-              ? "Save on this device"
-              : id
-                ? "Save new revision"
-                : "Save build"}
-        </button>
+        <div className="build-save-action">
+          <button className="button primary" disabled={saving}>
+            {saving
+              ? "Saving…"
+              : guest
+                ? "Save on this device"
+                : id
+                  ? "Save new revision"
+                  : "Save build"}
+          </button>
+          {shareMessage && <span role="status">{shareMessage}</span>}
+        </div>
         {!guest && (
           <button
             type="button"
@@ -304,6 +296,31 @@ export function BuildEditor({
           </div>
         </details>
       </div>
+      {guest && !initial && !supportedEquipment.length && (
+        <div className="guest-build-notice">
+          <div>
+            <strong>Build your next adventure.</strong>
+            <p>Choose equipment, spells and a few useful swaps. Your draft stays on this device.</p>
+          </div>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              if (
+                supportedEquipment.length &&
+                !window.confirm(
+                  "Replace your current equipment with the example set? Save your draft first to keep it.",
+                )
+              )
+                return;
+              updateEquipment(templateEquipment("battleaxe"));
+              if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
+            }}
+          >
+            Load example equipment
+          </button>
+        </div>
+      )}
       {preview && (
         <EditorDialog open wide title="Build preview" onClose={() => setPreview(false)}>
           <div className="guest-build-preview">
@@ -317,11 +334,6 @@ export function BuildEditor({
             />
           </div>
         </EditorDialog>
-      )}
-      {shareMessage && (
-        <p role="status" className="muted">
-          {shareMessage}
-        </p>
       )}
       <div className="build-editor-context">
         <span>Equipment, spells & swaps</span>
@@ -356,6 +368,12 @@ export function BuildEditor({
           }))}
         onChange={updateEquipment}
       />
+      {supportedEquipment.length > 0 && (
+        <LoadoutPriceCheck
+          region={draft.region}
+          equipment={draft.equipment.filter((row) => row.itemId)}
+        />
+      )}
       <EquipmentSets
         equipment={supportedEquipment}
         sets={draft.equipmentSets}

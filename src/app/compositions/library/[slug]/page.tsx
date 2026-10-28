@@ -20,8 +20,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         {composition.author}
       </p>
       <p className="library-provenance">
-        Grind archive · captured 27 October 2026. Open a member’s loadout to inspect their recorded
-        spells and alternatives.
+        Open a member’s loadout to inspect their equipment, spells and alternatives.
       </p>
       {composition.description && (
         <section className="library-author-notes">
@@ -43,7 +42,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               ) : (
                 <div className="panel">
                   <h2>Loadout unavailable</h2>
-                  <p>This member reference has no matching public build in the captured archive.</p>
+                  <p>This member’s loadout is unavailable. Choose another build for this slot.</p>
                 </div>
               )}
             </section>

@@ -33,8 +33,34 @@ export function safeGuideHref(value?: string) {
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password) return undefined;
-    if (url.hostname === "albiononlinegrind.com" && /^\/guides\/[a-z0-9-]+$/.test(url.pathname))
-      return url.pathname;
+    if (["albiononlinegrind.com", "www.albiononlinegrind.com"].includes(url.hostname)) {
+      if (/^\/guides\/[a-z0-9-]+$/.test(url.pathname)) return url.pathname;
+      if (/^\/build\/[a-z0-9-]+$/.test(url.pathname))
+        return url.pathname.replace("/build/", "/builds/library/");
+      const destination = [
+        "craft",
+        "refin",
+        "enchant",
+        "cook",
+        "alchemy",
+        "fish",
+        "farm",
+        "transport",
+        "flip",
+      ].find((kind) => url.pathname.includes(kind));
+      const routes: Record<string, string> = {
+        craft: "crafting",
+        refin: "refining",
+        enchant: "enchanting",
+        cook: "cooking",
+        alchemy: "alchemy",
+        fish: "fishing",
+        farm: "farming",
+        transport: "transporting",
+        flip: "flipping",
+      };
+      return destination ? `/tools/${routes[destination]}` : "/tools";
+    }
     return url.href;
   } catch {
     return undefined;
@@ -42,7 +68,11 @@ export function safeGuideHref(value?: string) {
 }
 export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
   function render(node: GuideNode, key: number): ReactNode {
-    if (typeof node === "string") return node;
+    if (typeof node === "string")
+      return node.replace(
+        /(?:Albion\s*Online\s*Grind|AlbionOnlineGrind|AlbionUtil)(?:\.com)?/gi,
+        "Outpost",
+      );
     if (node.tag === "item" && /^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(node.id || ""))
       return <ItemIcon key={key} id={node.id!} size={48} />;
     if (
