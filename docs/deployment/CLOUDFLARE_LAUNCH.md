@@ -48,3 +48,7 @@ Market observations are requested on demand from AODP, with regional caches/budg
 The deployment initially hit Error1102 on cold SSR. Per-session rendering objects and disabled automatic page prefetch fixed the reproduced failures; bounded probes and30 hosted responsive checks pass. This does not certify sustained traffic, cold lifecycle behavior at scale or unlimited free use. [Cloudflare errors](https://developers.cloudflare.com/workers/observability/errors/) and [Durable Object limits](https://developers.cloudflare.com/durable-objects/platform/limits/) describe the distinct execution limits.
 
 No private PostgreSQL export was imported. Local migration/backup tests and fixtures do not establish production recovery or real Discord lifecycle. Keep operator/legal, current-patch data and remaining product gates explicit. [Discord setup](DISCORD_APP_SETUP.md).
+
+## GitHub monitoring limitations
+
+An actual GitHub runner was challenged by Bot Fight Mode before reaching the app; the event was read back from Cloudflare analytics. This is distinct from Error1102. The deployment-check wrapper records exact managed challenges as BLOCKED only in explicitly configured GitHub CI, retaining a visible warning and no application-PASS claim. Other errors remain failures; normal operator checks remain strict. No bot setting or IP allowlist was weakened. Documentation-only commits have separate portable checks and do not redeploy the app.

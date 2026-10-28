@@ -877,7 +877,7 @@
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
       "verified_scope": "Public Cloudflare Free deployment observed. Reproduced Error1102 fixed with per-browser rendering objects;8/8 fresh probes and30/30 six-width hosted checks pass.102 Cloudflare browser cases and19 native database integration checks pass. Public D1 imports and44 constraint triggers verified. No private account export. Access removed at owner request. GitHub environment and narrowly scoped deployment credential configured. Native owner-link SQL rejects the wrong provider and promotes the configured Discord account idempotently.",
-      "remaining": "Latest GitHub automatic delivery is being observed. Genuine Discord consent/admin/logout/expiry, production recovery/monitoring, operator/legal/current-patch acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO.",
+      "remaining": "Final main delivery after explicit edge-challenge reporting is being observed. Genuine personal OAuth, recovery/monitoring, operator/legal/patch acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO.",
       "evidence": [
         "Dockerfile",
         "scripts/start.mjs",
@@ -956,8 +956,8 @@
       "title": "Hosted repository CI",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Hosted run40732709235 on7df41f4 passed the complete reusable Node quality job (types/lint/units/migrations/build/102 browser cases/advisories/regional reads). Its Cloudflare deployment job is still executing. Earlier completed workflows40447885597 and40446609588 remain historical whole-workflow evidence.",
-      "remaining": "Observe the final main Cloudflare job and public deployment read-back. Hosted fixtures do not establish real personal OAuth, patch/legal acceptance or production recovery.",
+      "verified_scope": "GitHub run40732709235 on7df41f4 passed its complete Node job and native Cloudflare/browser/Free bundle gates, and deployed both Workers successfully. Its final HTTP step failed on an independently confirmed Bot Fight Mode managed challenge, before the app. Normal-network hosted smoke/auth-start and30 responsive cases pass. Main7ef23c8 quality passed; its redundant deployment was superseded for explicit challenge reporting.",
+      "remaining": "Observe the final pipeline. CI edge challenges must stay explicitly BLOCKED, not public-app PASS. Genuine personal OAuth and hosted recovery remain unverified.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

@@ -1,68 +1,68 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T17:05:09.707Z",
+  "phase_checked_at": "2026-10-28T17:46:10.486Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
       "name": "database-connectivity",
       "status": "PASS",
-      "seconds": 0.03
+      "seconds": 0.02
     },
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 5.94
+      "seconds": 2.3
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 7.65
+      "seconds": 6.58
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.42
+      "seconds": 2.36
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.4
+      "seconds": 0.35
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.97
+      "seconds": 3.55
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 6.79
+      "seconds": 4.81
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 129.83
+      "seconds": 116.7
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.47
+      "seconds": 0.44
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.43
+      "seconds": 0.37
     }
   ],
   "counts": {
-    "unit_passed": 228,
+    "unit_passed": 232,
     "browser_passed": 102,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T17:05:56.673Z",
+    "checkedAt": "2026-10-28T17:47:02.501Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4413,9 +4413,9 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T17:09:24.834076+00:00",
-    "phase": "2026-10-28T17:05:09.707Z",
-    "scope": "Latest Node22 gate228unit/102browser/15database/nine regional reads: ten gates PASS. Cloudflare102browser and17nativeDB checks pass. Public hosted30cases at six widths pass sampled axe/overflow/browser checks. Actual builder320/375/1440/1920, library390 and guides768 screenshots reviewed; image-loaded guides capture confirms real original media. Initial lazy-image screenshots captured before image load; capture helper now waits for visible images. Error1102 and prefetch429 historical failures retained, subsequent fresh probes8/8 and hosted30/30 pass. Public Access removal is owner-authorized, no paid plan/R2. Current Docker starts nonroot with no embedded env and dependencies healthy. One mobile lab sample home84/A11y100 LCP4506ms; builder92/A11y100 LCP3310ms, CLS0: target still missed; no field/performance improvement claim. Genuine Discord consent/admin/logout/expiry, human Turnstile, production recovery and independent legal/current-patch gates remain unverified. Final public version2daa0d14:30/30 recaptured hosted cases pass after visible-image waits; actual tablet builder reviewed. Public smoke and OAuth-start checks pass. Native SQLite owner-link positive, wrong-provider negative and idempotency checks pass,19 integration cases total.",
+    "checkedAt": "2026-10-28T17:47:04.791126+00:00",
+    "phase": "2026-10-28T17:46:10.486Z",
+    "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified.",
     "files": [
       {
         "path": ".qa/cloudflare-hosted-visual/manifest.json",
@@ -4459,24 +4459,36 @@
       },
       {
         "path": "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md",
-        "sha256": "e81ff59f3a2cc0898bde236250044402043d709118652c84911c4804aceea8ab"
+        "sha256": "c5323adafb5398e605d245b8ceabfcee3305fbc701299ba2c595db745672e85f"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-smoke.json",
-        "sha256": "35e5480c370a0c11620efe54f3037f591adb0f1370b2f2eb679f62352a5b110c"
+        "sha256": "cfdbd3ac43f3e4a1e39137b0dd2c6ca93bcee508924f3fe1723ceda80d318e03"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-auth-start.json",
-        "sha256": "02c46690e68393048c20885663c5bf621dd9df47b42c86564692109fea60c653"
+        "sha256": "94a0a5dc7f4998f2f08ac777fb6e4285583dbca8e593c79692a41d83fcf0e2e5"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-768.png",
         "sha256": "c65637fb6161faa59940bfe5550fdd047f8f03b831f74df3f65ffa977edb7f70"
+      },
+      {
+        "path": ".qa/cloudflare-launch/deployment-check.json",
+        "sha256": "0bee390c0b4c1ea3ca20edd9c1cff69e7701a2e437b8dacd34e931d081e73273"
+      },
+      {
+        "path": ".qa/cloudflare-launch/github-firewall-events.json",
+        "sha256": "c94513b4371c8deac7bfe51101759ee7810b3235098dd3d0ae040e784b88e86c"
+      },
+      {
+        "path": ".qa/cloudflare-database-test/result.json",
+        "sha256": "d719d041c5071f4ca418ff39ca9ef703cc0eefc762832a019821ea5436111f74"
       }
     ]
   },
   "source_scan": {
-    "filesScanned": 4143,
+    "filesScanned": 4146,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4492,7 +4504,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 123,
+    "filesScanned": 58,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -4509,7 +4521,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "ba76178227439b2933edf836e4abaea375e2c347fb87042abdf35fd0d1c9b37b",
+      "sha256": "e4c63e4b87e522cac4c45bdeca271050623c28fdc00dc08cd5dd368f86688718",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4519,22 +4531,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "00b32d654ea10367aab192ea278aeff5434871bef569370af0519832a4f7c5b7",
+      "sha256": "1fa4e71a2c350ed53b9583ad2540346fe97be530eefa24bb7a6cea56b3604fa2",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "600a5c434ace9ef38a421feca7b7a25b95afb75bcca9852c2a358008762d67f6",
+      "sha256": "a98dee70a39cc4ecc05e1c1769f7e2a7fa95390bf82fa6fbad92ea17c645b64b",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "6b25c05b07cd4650a0255d99efc2558d5bc93f9327325b59a8bb4bba587f3aea",
+      "sha256": "2a34e9218c2a0b02ef1b1dcae2c24414cdbb535e0b8c9c6c6f5fdd89fc28d8f0",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "857d256a30e3d9e9fdb83a3d5f900c2633f81bdf7cbf056c477a0c163f52efdb",
+      "sha256": "4a55da8f0c567e40bed7b1d37cf1956c34c61b677e61451cc6c2bfa46b6fbbcb",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4549,7 +4561,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "fd93e22832a4dc9650bbe5c048067338bb98690844b93ce8a9e45eac140d1b65",
+      "sha256": "b001ecc5911e05dc7b455581892e80a75aa2d0329c483ec581109963f023cb11",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4564,12 +4576,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "70b4d82423a75efc813feadec1dcd9820db4ee514f38c68a33f3a1f49e243103",
+      "sha256": "7626634bc161a960d28c2527688fd73a4d1b7145b7fde40c30178ccaa528274e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "fca44b236ab0127a88f572d439e33b5f9dc33a5be268720c5f4425b8bfadc220",
+      "sha256": "510aa4f30f853d8ec114844c0bd4c81822511e554bf1f0366a3b28ac0dac982a",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4599,13 +4611,14 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "e492aee10cc05a45bb0944ba2d5232098d5ee3ff6cdb01bc1fc4eb343dc0c3f0",
+      "sha256": "dca7f7ef70f44320d76c317edd00a2b169781a84f5b7b3dcbd57f61bb8e3a8be",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
   "reviewed_sources": {
     ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
-    ".github/workflows/cloudflare-preview.yml": "68acd40d5f6ed2e5c8e94534c093a97f968d3ead5bc44191253933a76f0b3583",
+    ".github/workflows/cloudflare-preview.yml": "b473a6d17585f0a9d0d4d235a350bfe128bfb4e47b690a51a0814b191c87dd92",
+    ".github/workflows/documentation.yml": "a72306feae154c7cef27e6afd94e65b4c78e5e009ba5fa1ca45338eec83d56b0",
     ".github/workflows/quality.yml": "5c8f888df4478ab9979dfc1f82136fb7bafa74df38d5abaf33964b9d94ba2d24",
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
@@ -5041,6 +5054,7 @@
     "tests/ci-evidence.test.ts": "58210bd5cbdefb7a4f456806cf2366399dc11733dd22ca5b267b365ad44bd5d6",
     "tests/cloudflare-connection.test.ts": "c32b20adda49888cf3b1da469c520f123f269090466a91084c1d43653b098acf",
     "tests/cloudflare-database.test.ts": "c2803fe667429616ee99bae893199fd292ef34e5e31ff7f8ade851d146da74e8",
+    "tests/cloudflare-deployment-check.test.ts": "c2a78c3621aaeb3fa68cac86e78ddceca13475a9c01d50a9d1ed024595515bcf",
     "tests/cloudflare-dnssec.test.ts": "e9d9ddc94ab210b29bcb9033d40f18f6eba49c0567c9a365d2f0c0f51a5e6282",
     "tests/cloudflare-mail.test.ts": "309bb433eb8db700c8ac68ad8fd8d3c2a193fc92ec82965c03226523358688a6",
     "tests/cloudflare-security.test.ts": "05d2b8187debb29941a0825e586070e8c181a64b4690b75b8cca02edfc704cb1",

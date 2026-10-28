@@ -2,6 +2,7 @@ name: Cloudflare deployment
 on:
   push:
     branches: [main, codex/cloudflare-free-launch]
+    paths-ignore: ["docs/**", "**/*.md"]
   workflow_dispatch:
   release:
     types: [published]
@@ -79,10 +80,10 @@ jobs:
           node scripts/cloudflare-free-check.mjs
           npx wrangler deploy --config .qa/cloudflare-release/data.jsonc
           npx wrangler deploy --config .qa/cloudflare-release/web.jsonc
-      - name: Verify the public deployment and OAuth start
-        run: |
-          node scripts/qa-cloudflare-hosted.mjs
-          node scripts/qa-cloudflare-auth.mjs
+      - name: Check public HTTPS and report edge challenges separately
+        env:
+          OUTPOST_CI_REPORT_EDGE_CHALLENGE: "1"
+        run: node scripts/cloudflare-deployment-check.mjs
       - name: Remove ephemeral CI services
         if: always()
         run: docker compose down --volumes

@@ -915,6 +915,23 @@
         "scripts/qa-cloudflare-visual.mjs",
         "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
       ]
+    },
+    {
+      "id": "QA-065",
+      "title": "CI conflates an edge bot challenge with an application outage",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Run the post-deployment Node HTTP smoke from a GitHub runner challenged by Cloudflare Bot Fight Mode.",
+      "expected": "Report the public check as BLOCKED, without claiming app verification or weakening bot protection; actual application errors must fail.",
+      "current": "Explicit CI policy recognizes only HTTP403 plus cf-mitigated:challenge, records BLOCKED and a job warning/summary. Strict operator checks remain nonzero on a challenge.",
+      "historical_cause": "The original strict smoke asserted200 before distinguishing Cloudflare managed challenges.",
+      "historical_files": "scripts/qa-cloudflare-hosted.mjs; .github/workflows/cloudflare-preview.yml",
+      "verification": "Actual run40732709235 deployed successfully but its probe failed403; read-only security analytics confirms source botFight. Four classification/policy unit cases cover challenge recognition, unmarked403,503 and explicit CI opt-in. Full gate and revised hosted pipeline are recorded separately.",
+      "evidence": [
+        "scripts/cloudflare-deployment-check.mjs",
+        "tests/cloudflare-deployment-check.test.ts",
+        "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
+      ]
     }
   ]
 }

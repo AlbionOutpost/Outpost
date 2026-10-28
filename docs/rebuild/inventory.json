@@ -111,7 +111,7 @@
     "models": 29,
     "enums": 3,
     "migrations": 18,
-    "files": 605
+    "files": 608
   },
   "pages": [
     {
@@ -3130,8 +3130,13 @@
     },
     {
       "path": ".github/workflows/cloudflare-preview.yml",
-      "bytes": 4112,
-      "sha256": "68acd40d5f6ed2e5c8e94534c093a97f968d3ead5bc44191253933a76f0b3583"
+      "bytes": 4175,
+      "sha256": "b473a6d17585f0a9d0d4d235a350bfe128bfb4e47b690a51a0814b191c87dd92"
+    },
+    {
+      "path": ".github/workflows/documentation.yml",
+      "bytes": 834,
+      "sha256": "a72306feae154c7cef27e6afd94e65b4c78e5e009ba5fa1ca45338eec83d56b0"
     },
     {
       "path": ".github/workflows/quality.yml",
@@ -4212,6 +4217,11 @@
       "path": "scripts/cloudflare-database-generate.mjs",
       "bytes": 782,
       "sha256": "f9c8a61f3cc585a9f57b89c973b1fd128631d4b3bd2281440264c5f0650559b5"
+    },
+    {
+      "path": "scripts/cloudflare-deployment-check.mjs",
+      "bytes": 2769,
+      "sha256": "58df2fed43946557274c7782218def0b74624a34354213da947da4475f276d76"
     },
     {
       "path": "scripts/cloudflare-dnssec.mjs",
@@ -5927,6 +5937,11 @@
       "path": "tests/cloudflare-database.test.ts",
       "bytes": 5273,
       "sha256": "c2803fe667429616ee99bae893199fd292ef34e5e31ff7f8ade851d146da74e8"
+    },
+    {
+      "path": "tests/cloudflare-deployment-check.test.ts",
+      "bytes": 1230,
+      "sha256": "c2a78c3621aaeb3fa68cac86e78ddceca13475a9c01d50a9d1ed024595515bcf"
     },
     {
       "path": "tests/cloudflare-dnssec.test.ts",

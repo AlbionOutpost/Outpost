@@ -1,0 +1,28 @@
+name: Documentation checks
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "**/*.md"]
+  pull_request:
+    paths: ["docs/**", "**/*.md"]
+permissions:
+  contents: read
+jobs:
+  documentation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: node scripts/rebuild-inventory.mjs --check
+      - run: node scripts/qa-source-secrets.mjs
+      - run: python3 scripts/test-docs-validation.py
+      - run: python3 scripts/qa-reports.py --check
+      - run: python3 scripts/docs-validate.py
