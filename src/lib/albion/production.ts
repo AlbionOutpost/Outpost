@@ -53,7 +53,10 @@ export type ProductionInput = z.infer<typeof productionSchema>;
 export function productionOutputQuality(
   v: Pick<ProductionInput, "kind" | "quality"> & { recipeId?: string },
 ) {
-  const consumable = v.recipeId && recipes.find((r) => r.id === v.recipeId)?.category;
+  const consumable =
+    v.kind === "crafting" &&
+    v.recipeId &&
+    recipes.find((r) => r.id === v.recipeId && r.kind === v.kind)?.category;
   return v.kind === "refining" || consumable ? 1 : v.quality;
 }
 /** Historical focus-efficiency model; fractional estimate, not station rounding or current spec coefficients. */

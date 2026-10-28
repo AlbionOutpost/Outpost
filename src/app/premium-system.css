@@ -1511,3 +1511,104 @@
 #transport-prices {
   scroll-margin-top: 104px;
 }
+.market-quality-availability {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .market-quality-availability .section-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.app.outpost .market-quality-availability h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.market-quality-availability .section-heading p {
+  max-width: 58ch;
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+.market-quality-availability table {
+  min-width: 640px;
+  width: 100%;
+}
+.market-quality-availability caption {
+  padding: 0 0 12px;
+  text-align: left;
+  color: var(--muted);
+}
+.app.outpost .market-explorer-page .market-board .market-quality-availability :is(td, th) {
+  display: table-cell;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.market-quality-availability td small {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 24ch;
+  margin-top: 4px;
+  color: var(--muted);
+  font: 400 12px/1.5 var(--font-ui);
+}
+.market-quality-availability > p {
+  color: var(--muted);
+}
+.market-quality-cards {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .market-quality-availability > .table-scroll {
+    display: none;
+  }
+  .market-quality-cards {
+    display: grid;
+    gap: 12px;
+  }
+  .market-quality-cards > article {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    padding: 16px;
+  }
+  .app.outpost .market-quality-cards h4 {
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+  .market-quality-cards dl {
+    display: grid;
+    gap: 12px;
+    margin: 0 0 16px;
+  }
+  .app.outpost .market-quality-cards dl > div {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+  .market-quality-cards dt {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .market-quality-cards dd {
+    margin: 4px 0 0;
+    text-align: left;
+  }
+  .market-quality-cards dd small {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font: 400 12px/1.5 var(--font-ui);
+  }
+  .market-quality-cards .button {
+    width: 100%;
+  }
+}
+@media (min-width: 650px) and (max-width: 1100px) {
+  .market-quality-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

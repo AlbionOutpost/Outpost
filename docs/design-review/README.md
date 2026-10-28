@@ -1,5 +1,7 @@
 # Current Outpost visual reviews
 
+Latest pricing workflow: [quality discovery, historical loadout estimates and contribution guide](market-reliability/README.md). Explicit identities and source dates stay visible; all six widths are reviewed.
+
 Latest product correction: [transport feedback, shopping alignment and tablet crafting spacing](product-review/README.md), with the owner-requested accounting audit.
 
 Latest work: [Grind recovery and equipment-led redesign](grind-recovery/README.md). Source content, current-patch verification and owner visual acceptance are independent.

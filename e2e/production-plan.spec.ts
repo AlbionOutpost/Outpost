@@ -1,7 +1,67 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
+import { initialProduction } from "../src/lib/albion/production";
+import { recipeFor } from "../src/lib/albion/recipes";
 const db = createTestDb();
+
+test("a large restored plan stays exportable without copying a broken share link", async ({
+  page,
+}) => {
+  const run = initialProduction("crafting", "europe");
+  run.recipeId = "grind-t8_potion_lifeward-e3";
+  const recipe = recipeFor(run);
+  for (const id of [...recipe.ingredients.map((i) => i.id), recipe.output])
+    run.prices[id] = {
+      value: 100,
+      manual: false,
+      observedAt: "2026-10-28T10:00:00+00:00",
+      region: "europe",
+      city: "Lymhurst",
+      quality: 1,
+    };
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      value: {
+        writeText: async () => {
+          throw new Error("An oversized link must never reach the clipboard");
+        },
+      },
+    });
+  });
+  await page.route("**/api/scenarios?kind=production-plan", (route) =>
+    route.fulfill({
+      json: [
+        {
+          id: "large-plan-fixture",
+          title: "Large plan fixture",
+          kind: "production-plan",
+          configuration: { kind: "production-plan", region: "europe", runs: Array(30).fill(run) },
+        },
+      ],
+    }),
+  );
+  await page.goto("/tools/alchemy?region=europe");
+  const planner = page.getByRole("region", { name: "One run. Every recipe.", exact: true });
+  await planner.getByText("Save or restore a production plan", { exact: true }).click();
+  await planner.getByRole("button", { name: "Load saved production plans", exact: true }).click();
+  await planner.getByRole("button", { name: "Restore Large plan fixture", exact: true }).click();
+  await expect(planner.locator(".production-plan-run")).toHaveCount(30);
+  await planner.getByRole("button", { name: "Copy production plan link", exact: true }).click();
+  await expect(
+    planner.getByText(
+      "This plan is too large for a share link. Save it to your account or use Export plan JSON.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    planner.getByRole("button", { name: "Save production plan", exact: true }),
+  ).toBeEnabled();
+  const downloaded = page.waitForEvent("download");
+  await planner.getByRole("button", { name: "Export plan JSON", exact: true }).click();
+  expect((await downloaded).suggestedFilename()).toBe("outpost-production-europe.json");
+  await expect(planner.locator(".production-plan-run")).toHaveCount(30);
+});
 
 test("multi-recipe plan combines materials, refreshes safely and persists with ownership boundaries", async ({
   page,

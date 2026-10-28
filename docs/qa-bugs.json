@@ -971,6 +971,91 @@
       "historical_files": "See dated review finding matrix.",
       "verification": "Six-width final screenshot review and104-case browser regressions; owner acceptance remains open.",
       "evidence": ["docs/engineering/reviews/2026-10-28-full-product-review.md"]
+    },
+    {
+      "id": "QA-069",
+      "title": "Overlapping quote batches exhaust an unnecessarily tight shared source budget",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Request overlapping equipment and recipe item sets;21 uncached requests in one region/minute are rejected locally.",
+      "expected": "Reuse exact public identities and reserve safe short/long windows per actual fetch, including retries.",
+      "current": "Bounded item/quality cache, URL chunking, sparse-hit preservation,50/minute+250/five-minute reservations, cancelled error bodies and one multi-quality build-cost batch.",
+      "historical_cause": "Confirmed owner-requested market reliability/calculator follow-up.",
+      "historical_files": "See current review ledgers and source paths.",
+      "verification": "Independent overlap/expiry/window/retry/operation-count tests; live regional source baseline remains distinct from fixtures.",
+      "evidence": [
+        "docs/engineering/MARKET_RELIABILITY_PLAN_2026-10-28.md",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md",
+        "docs/engineering/reviews/2026-10-28-calculator-followup.md"
+      ]
+    },
+    {
+      "id": "QA-070",
+      "title": "Loadout cost suppresses all older observations and details ignore the selected purchase city",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Check a loadout when the source timestamps exceed one hour or select a city different from the cheapest city.",
+      "expected": "Show selected-city known/historical estimate and exact item details; never substitute quality or zero for missing.",
+      "current": "Selected-city quote helper and explicit historical labels, error-preserving refresh, bounded known subtotal and explicit five-quality discovery with contextual scan guidance.",
+      "historical_cause": "Confirmed owner-requested market reliability/calculator follow-up.",
+      "historical_files": "See current review ledgers and source paths.",
+      "verification": "Unit missing/stale/identity cases, explicit user-action quality browser journey and six-width production captures.",
+      "evidence": [
+        "docs/engineering/MARKET_RELIABILITY_PLAN_2026-10-28.md",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md",
+        "docs/engineering/reviews/2026-10-28-calculator-followup.md"
+      ]
+    },
+    {
+      "id": "QA-071",
+      "title": "Calculator precision and unused recipe state change valid results",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Fame target21 at0.7 per fish gives31 rather than30; enchanting carries a cooking recipeId and selected equipment quality2.",
+      "expected": "Exact fish ceiling30; enchanting uses the selected equipment quality, independent of an unused recipe.",
+      "current": "Shared exact decimal ratios and crafting-only consumable quality normalization.",
+      "historical_cause": "Confirmed owner-requested market reliability/calculator follow-up.",
+      "historical_files": "See current review ledgers and source paths.",
+      "verification": "Independent target21/0.7=30, over-target rounding and4000\u22122000\u2212288\u00d73=1136 quality2 fixture.",
+      "evidence": [
+        "docs/engineering/MARKET_RELIABILITY_PLAN_2026-10-28.md",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md",
+        "docs/engineering/reviews/2026-10-28-calculator-followup.md"
+      ]
+    },
+    {
+      "id": "QA-072",
+      "title": "Valid large plans copy links that cannot be restored",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Copy a30-run seven-ingredient alchemy plan with encoded hash68596 characters.",
+      "expected": "Enforce the same65536 encoded hash bound for copy and restore, preserve every input and offer save/export.",
+      "current": "Shared scenarioLink size guard with actionable error; no truncation.",
+      "historical_cause": "Confirmed owner-requested market reliability/calculator follow-up.",
+      "historical_files": "See current review ledgers and source paths.",
+      "verification": "Unit normal round trip/oversize and browser retained30runs/export checks.",
+      "evidence": [
+        "docs/engineering/MARKET_RELIABILITY_PLAN_2026-10-28.md",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md",
+        "docs/engineering/reviews/2026-10-28-calculator-followup.md"
+      ]
+    },
+    {
+      "id": "QA-073",
+      "title": "Extreme source prices silently round loadout aggregate costs",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Sum three Number.MAX_SAFE_INTEGER source quotes or multiply a maximum-safe quote by multiple sets.",
+      "expected": "Return unsupported aggregate without discarding raw observations or showing a rounded total.",
+      "current": "Safe whole-silver pre-multiply/pre-add guard shared by loadout and build-cost API; knownCost null and explicit UI range state.",
+      "historical_cause": "Confirmed owner-requested market reliability/calculator follow-up.",
+      "historical_files": "See current review ledgers and source paths.",
+      "verification": "Independent arithmetic helper, API and UI regression;11 focused tests passed before final phase.",
+      "evidence": [
+        "docs/engineering/MARKET_RELIABILITY_PLAN_2026-10-28.md",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md",
+        "docs/engineering/reviews/2026-10-28-calculator-followup.md"
+      ]
     }
   ]
 }

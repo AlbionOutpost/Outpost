@@ -31,3 +31,12 @@ it("keeps empty quotes empty and warns on positive undated observations", () => 
   expect(summarizeQuotes([], now)).toEqual({ ask: null, bid: null, available: 0, stale: 0 });
   expect(summarizeQuotes([{ ...row, sell_price_min_date: "" }], now).stale).toBe(1);
 });
+it("never suggests a Black Market listing as a player purchase", () => {
+  const blackMarket = { ...row, city: "Black Market", sell_price_min: 1, buy_price_max: 500 };
+  const result = summarizeQuotes([blackMarket, row], now);
+  expect(result.ask?.city).toBe("Lymhurst");
+  expect(result.ask?.sell_price_min).toBe(100);
+  expect(result.bid?.city).toBe("Black Market");
+  expect(summarizeQuotes([blackMarket], now).ask).toBeNull();
+  expect(result.available).toBe(4);
+});

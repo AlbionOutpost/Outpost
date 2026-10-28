@@ -3,6 +3,7 @@ import {
   initialProduction,
   production,
   productionSchema,
+  productionOutputQuality,
   returnRateFromBonus,
 } from "@/lib/albion/production";
 import { recipeFor } from "@/lib/albion/recipes";
@@ -176,6 +177,30 @@ describe("production economics", () => {
     expect(result.profit).toBe(1372);
     expect(result.profitPerItem).toBe(686);
     v.prices.T4_RUNE.quality = 2;
+    expect(production(v).profit).toBeNull();
+  });
+  it("preserves enchantment output quality regardless of the unused crafting recipe selection", () => {
+    const v = initialProduction("enchanting", "europe");
+    v.recipeId = "grind-t4_butter";
+    v.quality = 2;
+    for (const [id, value] of Object.entries({
+      T4_MAIN_AXE: 2000,
+      T4_RUNE: 3,
+      "T4_MAIN_AXE@1": 4000,
+    }))
+      v.prices[id] = {
+        value,
+        manual: true,
+        observedAt: null,
+        region: null,
+        city: null,
+        quality: id === "T4_RUNE" ? 1 : 2,
+      };
+    // A cooking tab's saved recipeId must not make selected-quality equipment Normal.
+    // One item: 4,000 sale - 2,000 base - 288 × 3 runes = 1,136 silver.
+    expect(productionOutputQuality(v)).toBe(2);
+    expect(production(v).profit).toBe(1136);
+    v.prices["T4_MAIN_AXE@1"].quality = 1;
     expect(production(v).profit).toBeNull();
   });
 });

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-28T22:33:42.482912+00:00",
+  "reviewed_at": "2026-10-28T23:20:43.728523+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -32,7 +32,7 @@
       "title": "Regional market, item discovery and observation history",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Market starts with guided setup and retains independent watchlist/history access. The homepage has one searchable source-price/history preview with exact item/region identity and independent side timestamps. Temporary12-selection research batches by quality and region, with last observations retained and labelled on refresh failure.",
+      "verified_scope": "Three-region item/city/quality selection, buy/sell direction, history/gold, missing and stale observations. Market starts with guided setup and retains independent watchlist/history access. The homepage has one searchable source-price/history preview with exact item/region identity and independent side timestamps. Temporary12-selection research batches by quality and region, with last observations retained and labelled on refresh failure. Explicit five-quality discovery and contextual client contribution guide; selected-city loadout known/historical estimates keep missing items unknown.",
       "remaining": "Full catalog is DATA-001; watchlists are CORE-020.",
       "evidence": [
         "src/components/market.tsx",
@@ -40,7 +40,12 @@
         "e2e/qa-regressions.spec.ts",
         "e2e/homepage-polish.spec.ts",
         "tests/market-preview.test.ts",
-        "e2e/market-research.spec.ts"
+        "e2e/market-research.spec.ts",
+        "src/app/api/market/qualities/route.ts",
+        "src/app/market-data/page.tsx",
+        "tests/market-availability.test.ts",
+        "e2e/market-data-guide.spec.ts",
+        "e2e/home-market-pulse.spec.ts"
       ]
     },
     {
@@ -452,12 +457,14 @@
       "title": "Market identity, missing values and observation freshness",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Region/item/quality/city checks, zero/unknown timestamp handling, stale labels, cancellation and retry.",
+      "verified_scope": "Region/item/quality/city checks, zero/unknown timestamp handling, stale labels, cancellation and retry. Exact per-item/quality cache slices preserve valid hits during sparse union responses; purchase summaries exclude Black Market asks.",
       "remaining": "Point-in-time live source checks are not continuous availability evidence.",
       "evidence": [
         "src/lib/albion/market-client.ts",
         "tests/market-payload.test.ts",
-        "e2e/qa-regressions.spec.ts"
+        "e2e/qa-regressions.spec.ts",
+        "tests/market-cache.test.ts",
+        "tests/loadout-quotes.test.ts"
       ]
     },
     {
@@ -761,12 +768,15 @@
       "title": "Bounded caches, deduplication and source budgets",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "TTL, byte/entry caps, source identity, cooldown, retry, artwork queue/concurrency and eviction regressions.",
+      "verified_scope": "TTL, byte/entry caps, source identity, cooldown, retry, artwork queue/concurrency and eviction regressions. Overlapping quote requests reuse bounded public slices.50/minute and250/five-minute quotas count every actual source attempt; request/cache fan-out and long URLs remain bounded.",
       "remaining": "Per-process safeguards do not certify cross-instance throughput or upstream allowances.",
       "evidence": [
         "src/lib/albion/data-client.ts",
         "tests/cache-expiry.test.ts",
-        "tests/icon-cache.test.ts"
+        "tests/icon-cache.test.ts",
+        "tests/data-budget.test.ts",
+        "tests/market-cache.test.ts",
+        "docs/engineering/reviews/2026-10-28-price-coverage.md"
       ]
     },
     {

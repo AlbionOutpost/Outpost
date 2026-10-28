@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { fetchQuoteBatch, type QuoteSelection, type MarketPrice } from "@/lib/albion/market-quotes";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
+import Link from "@/components/link";
+import { useAtlasRegion } from "./region-context";
 export function quoteKey(i: QuoteSelection) {
   return `${i.itemId}:${i.quality}`;
 }
@@ -49,11 +51,26 @@ export function useBatchQuotes(region: string) {
   }
   return { quotes: state.region === region ? state.quotes : {}, busy: pending === region, refresh };
 }
-export function BatchQuote({ quote }: { quote?: Quote }) {
-  if (!quote) return <span className="muted">Not loaded</span>;
-  const { ask, bid } = summarizeQuotes(quote.prices);
+export function BatchQuote({
+  quote,
+  city,
+  purchaseOnly = false,
+}: {
+  quote?: Quote;
+  city?: string;
+  purchaseOnly?: boolean;
+}) {
+  const region = useAtlasRegion();
+  if (!quote) return <span className="muted">Check prices to load community scans.</span>;
+  const prices = city ? quote.prices.filter((row) => row.city === city) : quote.prices;
+  const { ask, bid } = summarizeQuotes(prices);
   function side(row: MarketPrice | null, kind: "sell" | "buy") {
-    if (!row) return <span>No {kind === "sell" ? "sell listings" : "buy orders"} observed</span>;
+    if (!row)
+      return (
+        <span>
+          No {kind === "sell" ? "sell listing" : "buy order"} observed{city ? ` in ${city}` : ""}.
+        </span>
+      );
     const date = kind === "sell" ? row.sell_price_min_date : row.buy_price_max_date;
     const stamp = sourceTimestamp(date);
     return (
@@ -81,16 +98,28 @@ export function BatchQuote({ quote }: { quote?: Quote }) {
             : "No observations loaded."}
         </small>
       )}
-      {!quote.prices.length ? (
+      {!ask && (purchaseOnly || !bid) ? (
         quote.error ? null : (
-          <span>No observations returned. Try another quality or open city prices.</span>
+          <span>
+            No {purchaseOnly ? "purchase listings" : "observations"} returned
+            {city ? ` for ${city}` : ""}. This is missing scan coverage, not a zero price.{" "}
+            <Link
+              href={`/market-data?${new URLSearchParams({ region, ...(city ? { city } : {}) })}`}
+            >
+              Get market coverage →
+            </Link>
+          </span>
         )
       ) : (
         <>
           <span className="muted">Lowest sell listing</span>
           {side(ask, "sell")}
-          <span className="muted">Highest buy order</span>
-          {side(bid, "buy")}
+          {!purchaseOnly && (
+            <>
+              <span className="muted">Highest buy order</span>
+              {side(bid, "buy")}
+            </>
+          )}
         </>
       )}
     </div>

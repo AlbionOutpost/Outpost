@@ -1,17 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtlasRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { sourceTimestamp } from "@/lib/albion/freshness";
+import Link from "@/components/link";
 type Cost = {
   region: string;
   city: string;
   sets: number;
-  knownCost: number;
+  knownCost: number | null;
   total: number | null;
   stale: boolean;
   rows: {
     slot: string;
     itemId: string;
+    quality: number;
     price: number | null;
     observedAt: string | null;
     stale: boolean;
@@ -22,8 +26,12 @@ export function BuildCost({ id }: { id: string }) {
   const [city, setCity] = useState("Lymhurst");
   const [sets, setSets] = useState(1);
   const [result, setResult] = useState<Cost | null>(null);
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<{ key: string; message: string } | null>(null);
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const controller = useRef<AbortController | null>(null);
+  const requestKey = `${id}:${region}:${city}:${sets}`;
+  const busy = pendingKey === requestKey;
+  useEffect(() => () => controller.current?.abort(), [requestKey]);
   return (
     <section className="panel section">
       <h2>Loadout replacement cost</h2>
@@ -35,29 +43,42 @@ export function BuildCost({ id }: { id: string }) {
         className="market-form"
         onSubmit={async (e) => {
           e.preventDefault();
-          setBusy(true);
-          setError("");
+          controller.current?.abort();
+          const active = new AbortController();
+          controller.current = active;
+          const key = requestKey;
+          setPendingKey(key);
+          setError(null);
           setResult(null);
           try {
             const response = await fetch(
               `/api/builds/${id}/cost?${new URLSearchParams({ region, city, sets: String(sets) })}`,
+              { signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]) },
             );
             const body = await response.json();
             if (!response.ok) throw new Error(body.error);
-            setResult(body);
+            if (body.region !== region || body.city !== city || body.sets !== sets)
+              throw new Error("Price selection changed. Estimate again for this market.");
+            if (!active.signal.aborted) setResult(body);
           } catch (e) {
-            setError(e instanceof Error ? e.message : "Could not estimate cost");
+            if (!active.signal.aborted)
+              setError({
+                key,
+                message: e instanceof Error ? e.message : "Could not estimate cost",
+              });
           } finally {
-            setBusy(false);
+            if (controller.current === active) setPendingKey(null);
           }
         }}
       >
         <label>
           Purchase city
           <select aria-label="Purchase city" value={city} onChange={(e) => setCity(e.target.value)}>
-            {cities.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
+            {cities
+              .filter((c) => c !== "Black Market")
+              .map((c) => (
+                <option key={c}>{c}</option>
+              ))}
           </select>
         </label>
         <label>
@@ -75,37 +96,51 @@ export function BuildCost({ id }: { id: string }) {
           {busy ? "Fetching prices…" : "Estimate build cost"}
         </button>
       </form>
-      {error && (
+      {error?.key === requestKey && (
         <p role="alert" className="error">
-          {error}
+          {error.message}
         </p>
       )}
       {result && result.region === region && result.city === city && result.sets === sets && (
         <>
           <h3>
-            {result.total === null
-              ? `Incomplete estimate · known subtotal ${result.knownCost.toLocaleString()}`
-              : `${result.total.toLocaleString()} silver`}
-            {result.stale ? " · STALE OBSERVATIONS" : ""}
+            {result.knownCost === null
+              ? "Estimate exceeds supported silver range"
+              : result.total === null
+                ? `Known subtotal · ${result.knownCost.toLocaleString()} silver`
+                : `${result.total.toLocaleString()} silver`}
+            {result.stale ? " · Check observation dates" : ""}
           </h3>
           <p className="muted">
-            Missing observations stay unavailable; an incomplete subtotal is not a complete loadout
-            price.
+            {result.rows.filter((row) => row.price !== null).length}/{result.rows.length} items
+            priced. {result.total === null ? "The estimate is incomplete. " : ""}
+            Older scans remain estimates; no missing item counts as free.{" "}
+            <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
+              How market scans work →
+            </Link>
           </p>
           <ul className="equipment-summary">
             {result.rows.map((r) => (
               <li key={r.slot}>
                 <strong>
-                  {r.slot}: {r.itemId}
+                  {r.slot}: {equipmentName(r.itemId)}
                 </strong>
                 <span>
-                  {r.price === null ? "Unavailable" : `${r.price.toLocaleString()} per item`}
+                  {r.price === null
+                    ? `No sell listing observed in ${city}`
+                    : `${r.price.toLocaleString()} per item`}
                 </span>
                 <small>
-                  {r.observedAt
-                    ? `${r.observedAt} UTC${r.stale ? " · STALE" : ""}`
+                  {r.observedAt && Number.isFinite(sourceTimestamp(r.observedAt))
+                    ? `${new Date(sourceTimestamp(r.observedAt)).toLocaleString("en-GB", { timeZone: "UTC" })} UTC${r.stale ? " · STALE" : ""}`
                     : "No source observation"}
                 </small>
+                <Link
+                  className="text-link"
+                  href={`/tools/market?${new URLSearchParams({ region, item: r.itemId, quality: String(r.quality) })}`}
+                >
+                  Compare cities & qualities →
+                </Link>
               </li>
             ))}
           </ul>

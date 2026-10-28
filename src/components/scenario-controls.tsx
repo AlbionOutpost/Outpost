@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { z } from "zod";
 import type { Region } from "@/lib/albion/region-config";
+import { scenarioHashLimit, scenarioLink, type ScenarioHashKey } from "@/lib/scenario-link";
 type Saved = { id: string; title: string; kind: string; configuration: unknown };
 export function ScenarioControls<T extends { kind: string; region: Region }>({
   configuration,
@@ -12,7 +13,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
   configuration: T;
   onLoad: (data: T) => void;
   schema: z.ZodType<T>;
-  hashKey?: "scenario" | "production-plan";
+  hashKey?: ScenarioHashKey;
 }) {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -27,7 +28,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
       const prefix = `#${hashKey}=`;
       if (!hash.startsWith(prefix)) return;
       try {
-        if (hash.length > 65536) throw new Error();
+        if (hash.length > scenarioHashLimit) throw new Error();
         const parsed = schema.parse(JSON.parse(decodeURIComponent(hash.slice(prefix.length))));
         if (parsed.kind !== configuration.kind) throw new Error();
         onLoad(parsed);
@@ -106,10 +107,16 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
           onClick={async () => {
             try {
               const parsed = schema.parse(configuration);
-              const url = new URL(window.location.href);
-              url.searchParams.set("region", parsed.region);
-              url.hash = `${hashKey}=${encodeURIComponent(JSON.stringify(parsed))}`;
-              await navigator.clipboard.writeText(url.href);
+              const url = scenarioLink(window.location.href, parsed, hashKey);
+              if (!url) {
+                setMessage(
+                  hashKey === "production-plan"
+                    ? "This plan is too large for a share link. Save it to your account or use Export plan JSON."
+                    : "This scenario is too large for a share link. Save it to your account or reduce its inputs.",
+                );
+                return;
+              }
+              await navigator.clipboard.writeText(url);
               setMessage(
                 "Scenario link copied. It shares static assumptions and source timestamps.",
               );

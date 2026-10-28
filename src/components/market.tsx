@@ -6,6 +6,7 @@ import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { MarketResearch } from "./market-research";
 import { MarketWatchlist } from "./market-watchlist";
+import { MarketQualityAvailability } from "./market-quality-availability";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
@@ -28,12 +29,13 @@ export function Market() {
   );
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(() => cities.find((name) => name === params.get("city")) || "");
   const [researchOpen, setResearchOpen] = useState<boolean | null>(null);
   const [selectedCity, setSelectedCity] = useState("");
   const [extraCities, setExtraCities] = useState<string[]>([]);
   const [sort, setSort] = useState("city");
   const controller = useRef<AbortController | null>(null);
+  const qualityControl = useRef<HTMLSelectElement | null>(null);
   const current = `${region}:${item.trim().toUpperCase()}:${quality}`;
   useEffect(() => () => controller.current?.abort(), [current]);
   const loading = pendingKey === current;
@@ -78,7 +80,7 @@ export function Market() {
       if (controller.current === active) setPendingKey(null);
     }
   }
-  const format = (n: number) => (n ? n.toLocaleString() : "No quote");
+  const format = (n: number) => (n ? n.toLocaleString() : "Not observed");
   const dateLabel = (value: string) => {
     const stamp = sourceTimestamp(value);
     return Number.isFinite(stamp)
@@ -120,6 +122,7 @@ export function Market() {
             Quality
             <select
               aria-label="Quality"
+              ref={qualityControl}
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
             >
@@ -264,7 +267,7 @@ export function Market() {
             {hasResult ? `${visible.length} city observations` : "Choose an item to compare cities"}
           </span>
         </div>
-        {hasResult && (
+        {hasResult && summary.available > 0 && (
           <div className="market-observation-legend" aria-label="Market observation context">
             <span>
               <strong>
@@ -280,7 +283,7 @@ export function Market() {
             <span>Source times in UTC</span>
           </div>
         )}
-        {hasResult && (
+        {hasResult && summary.available > 0 && (
           <>
             <div className="market-table-toolbar" aria-label="Observation filters">
               <label>
@@ -362,12 +365,14 @@ export function Market() {
                       </td>
                       <td className="numeric">
                         <span className={!r.sell_price_min ? "market-price-missing" : undefined}>
-                          {format(r.sell_price_min)}
+                          {r.city === "Black Market" ? "Not sold here" : format(r.sell_price_min)}
                         </span>
                         <small className="market-inline-time" title={r.sell_price_min_date}>
                           {r.sell_price_min
                             ? `${dateLabel(r.sell_price_min_date).replace(/^\d{4}-/, "")}${isStale(r.sell_price_min_date) ? " · STALE" : ""}`
-                            : "No observation"}
+                            : r.city === "Black Market"
+                              ? "Buys items from players"
+                              : "No sell observation"}
                         </small>
                       </td>
                       <td className="numeric">
@@ -377,7 +382,7 @@ export function Market() {
                         <small className="market-inline-time" title={r.buy_price_max_date}>
                           {r.buy_price_max
                             ? `${dateLabel(r.buy_price_max_date).replace(/^\d{4}-/, "")}${isStale(r.buy_price_max_date) ? " · STALE" : ""}`
-                            : "No observation"}
+                            : "No buy observation"}
                         </small>
                       </td>
                       <td className="observation-time" title={r.sell_price_min_date}>
@@ -402,7 +407,7 @@ export function Market() {
                   : error?.key === current
                     ? "No observations loaded. Compare prices to retry."
                     : result?.key === current
-                      ? "No observations available for this selection."
+                      ? "No city matches these filters. Reset filters to see the scanned markets."
                       : "Choose an item and compare markets to begin."}
               </div>
             )}
@@ -456,20 +461,36 @@ export function Market() {
         )}
         {hasResult && !summary.available && (
           <div className="task-state" role="status">
-            <h3>No usable prices returned</h3>
+            <h3>No price observations for this selection</h3>
             <p>
-              Albion Online Data Project relies on players scanning markets. This item and quality
-              have no valid quotes in this response. No last observation is known.
+              No last observation is known for this selection. Albion Online Data Project collects
+              prices when players running its client open markets in game. A missing observation is
+              not a zero price or proof that the item is unavailable.
             </p>
-            <p>
-              Try Normal quality, another item, or compare again after visiting the market in game.
-            </p>
+            <Link
+              className="text-link"
+              href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
+            >
+              See how to get market coverage →
+            </Link>
           </div>
         )}
         <small className="muted market-source-note">
           Source: Albion Online Data Project · Observations older than one hour or unexpectedly in
           the future are marked stale. Observations do not guarantee executable trades or liquidity.
         </small>
+        {hasResult && (
+          <MarketQualityAvailability
+            region={region}
+            item={item}
+            city={city || (extraCities.length === 1 ? extraCities[0] : "")}
+            quality={quality}
+            onChoose={(next) => {
+              setQuality(next);
+              requestAnimationFrame(() => qualityControl.current?.focus());
+            }}
+          />
+        )}
         <div className="market-secondary-controls">
           <details className="market-advanced">
             <summary>Advanced item identifier</summary>{" "}
@@ -512,7 +533,11 @@ export function Market() {
                 <dl>
                   <div>
                     <dt>Observed sell order</dt>
-                    <dd className="numeric">{format(selectedQuote.sell_price_min)}</dd>
+                    <dd className="numeric">
+                      {selectedQuote.city === "Black Market"
+                        ? "Not sold here"
+                        : format(selectedQuote.sell_price_min)}
+                    </dd>
                   </div>
                   <div>
                     <dt>Observed buy order</dt>
@@ -552,15 +577,15 @@ export function Market() {
               <div>
                 <dt>Lowest observed sell order</dt>
                 <dd className={`numeric${summary.ask ? "" : " quote-unavailable"}`}>
-                  {summary.ask ? format(summary.ask.sell_price_min) : "No quote"}
-                  <small>{summary.ask?.city || "No available quote"}</small>
+                  {summary.ask ? format(summary.ask.sell_price_min) : "Not observed"}
+                  <small>{summary.ask?.city || "No sell listing recorded"}</small>
                 </dd>
               </div>
               <div>
                 <dt>Highest observed buy order</dt>
                 <dd className={`numeric${summary.bid ? "" : " quote-unavailable"}`}>
-                  {summary.bid ? format(summary.bid.buy_price_max) : "No quote"}
-                  <small>{summary.bid?.city || "No available quote"}</small>
+                  {summary.bid ? format(summary.bid.buy_price_max) : "Not observed"}
+                  <small>{summary.bid?.city || "No buy order recorded"}</small>
                 </dd>
               </div>
             </dl>

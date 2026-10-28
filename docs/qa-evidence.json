@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T22:33:13.306Z",
+  "phase_checked_at": "2026-10-28T23:19:05.591Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,58 +11,58 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 3.41
+      "seconds": 2.99
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 7.09
+      "seconds": 6.83
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.39
+      "seconds": 2.33
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.45
+      "seconds": 0.3
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.47
+      "seconds": 3.48
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 4.66
+      "seconds": 4.24
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 106.7
+      "seconds": 122.82
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.38
+      "seconds": 0.43
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.31
+      "seconds": 0.33
     }
   ],
   "counts": {
-    "unit_passed": 250,
-    "browser_passed": 104,
+    "unit_passed": 286,
+    "browser_passed": 107,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T22:36:11.661Z",
+    "checkedAt": "2026-10-28T23:21:46.522Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4408,6 +4408,13 @@
       "headSha": "1031ddac9d3c57d8925f2a2545ee8292252d9256",
       "status": "completed",
       "url": "https://github.com/AlbionOutpost/Outpost/actions/runs/40768213832"
+    },
+    "latestPreMarketReliabilityRun": {
+      "run": 40781352764,
+      "commit": "327e1d3",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/AlbionOutpost/Outpost/actions/runs/40781352764"
     }
   },
   "dependency_maintenance": {
@@ -4419,8 +4426,8 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T22:33:57.693279+00:00",
-    "phase": "2026-10-28T22:33:13.306Z",
+    "checkedAt": "2026-10-28T23:23:45.607320+00:00",
+    "phase": "2026-10-28T23:19:05.591Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
@@ -4457,7 +4464,7 @@
       },
       {
         "path": ".qa/docker.json",
-        "sha256": "ff7ecb7744b8edc824462e13a569b3aa517da26b33ee3447fd75d1c5c31767f4"
+        "sha256": "dc7b1d337b9927f8a0a149b72f98172c8b8781f3c550a46c6f290a895246f561"
       },
       {
         "path": ".qa/cloudflare-launch/final-free-check.log",
@@ -4541,7 +4548,7 @@
       },
       {
         "path": ".qa/cloudflare-release/free-bundles.json",
-        "sha256": "4c073d5635f21f9ed743a9f223ea2263d3b0615cf85290add3d6207db549b196"
+        "sha256": "e6cb15035e1531238c0f8d903bb92d1598b82f303b869f179466e10ed111aabe"
       },
       {
         "path": ".qa/compact-loadout/final.json",
@@ -4646,12 +4653,124 @@
       {
         "path": ".qa/full-review/github-runs.json",
         "sha256": "bf6bfa97244b7504949b2c09ef6d24f6339711f35a878a3ba44aea2af3309965"
+      },
+      {
+        "path": ".qa/market-reliability/manifest.json",
+        "sha256": "335bcbfff77bacf9fff034b455c67b933559da1b2bdc914e8006bb40e5d2470b"
+      },
+      {
+        "path": ".qa/market-reliability/help-manifest.json",
+        "sha256": "c2e9250ccb212086645999424c81cb6fadfc08f97052ffeb144cfb0eec4f1348"
+      },
+      {
+        "path": ".qa/market-reliability/quality-390.png",
+        "sha256": "499d84369e429b100953f41f777ad7912027c4ccff24a93c26c7bd557369260d"
+      },
+      {
+        "path": ".qa/market-reliability/quality-1440.png",
+        "sha256": "dacccefa3845c6278506b159a5a0c531112ce29061ee9d6288fc0762e8e95ecd"
+      },
+      {
+        "path": ".qa/market-reliability/loadout-390.png",
+        "sha256": "c43c529e7abadfbd5048e1dea6cefae5c10aea5561d15db3cabb309e7695365a"
+      },
+      {
+        "path": ".qa/market-reliability/help-390.png",
+        "sha256": "74af142a751206c8b0c7c5ee759846ef1e408949d80566d49d3f4b8d3e208d02"
+      },
+      {
+        "path": ".qa/market-reliability/range-375.png",
+        "sha256": "4daf140e30854847bc0e06e14951a1bebd0d950ac6b7512cbc74c54801bbb5f5"
+      },
+      {
+        "path": ".qa/market-reliability/lighthouse-summary.json",
+        "sha256": "ee4b6a5f77c5ddf8d987ad86872d4184ac7f58ad7e07b1db33accd64a52ed446"
+      },
+      {
+        "path": ".qa/market-reliability/phase-closed.log",
+        "sha256": "5545db7d0abeb8eddd6b3fc5d848e856180f95969b23d53f8349446c640d096f"
+      },
+      {
+        "path": ".qa/market-reliability/cloudflare-browser.log",
+        "sha256": "9bf79232ff9687fbed6e13bc60c3e5190cd595fe90e3e30ce8a6bbe19a0f5564"
+      },
+      {
+        "path": ".qa/market-reliability/native.log",
+        "sha256": "6d289d699a24160199fa7d1f2d9b620db2fe35fc096cbe664892f76af654cc89"
+      },
+      {
+        "path": ".qa/market-reliability/free-check.log",
+        "sha256": "490f48a17a7cf9cad2093574acbd5b304f2def38d6293d86a93fa70a89b2dc10"
+      },
+      {
+        "path": ".qa/market-reliability/prior-ci-status.json",
+        "sha256": "50b4e7b7452d017326e5da1d841d0871122c70d8fc8c46ec5a8d03a7955ce51b"
+      },
+      {
+        "path": ".qa/quote-audit/live-coverage.json",
+        "sha256": "a891e0afc1180eba80f73377c8954126c9913662fa69c79402af926793ebc15b"
+      },
+      {
+        "path": ".qa/quote-audit/live-quality-coverage.json",
+        "sha256": "2a346ad5713d1d31e3d548dcaf955a0f8e83248dd89635f117c0dda071b1bc38"
+      },
+      {
+        "path": ".qa/quote-audit/cache-before.json",
+        "sha256": "d8c94a9e637cdf00aa81feac7711c6441ac837882ff391757bea3a9378f4b967"
+      },
+      {
+        "path": ".qa/quote-audit/cache-after.json",
+        "sha256": "e71912af8318f3f6d2d453065c28f1b6e1b439adb88eadff5d7cd860fa76a800"
+      },
+      {
+        "path": ".qa/market-reliability/phase-wrap.log",
+        "sha256": "724f50818b91ab0f70ac83e42ff5fe026ede5f587a0f3eb1bfb2ef7fc67f7074"
+      },
+      {
+        "path": ".qa/market-reliability/cloudflare-wrap-browser.log",
+        "sha256": "f02a75d01152ac61d4bd847d66a1d3a4a6ab88cc3f9bfb18fa467470b7eae258"
+      },
+      {
+        "path": ".qa/market-reliability/light.json",
+        "sha256": "9dc78b27e3f82d6dfb3a9dbaa022d797c852f4fa03c478649359f0f3fd328420"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-quality-before-wrap.png",
+        "sha256": "1590b31df3e4a4898f4cbd9ea54992f1e8b7c0336d182d8e45dcb944d42d8488"
+      },
+      {
+        "path": ".qa/market-reliability/free-wrap-check.log",
+        "sha256": "010443d85a4bd1ba3ea94313db18f08a16748b8348292d948816f3678d62b726"
+      },
+      {
+        "path": ".qa/market-reliability/hosted.json",
+        "sha256": "0b8fc54eeaccdce032f4492bfc8ec68172b0c23555937cfdde417affa4c7e753"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-smoke.json",
+        "sha256": "b1236ea42331349d85b4084f52d140e233be5d043a9b4099644b4d80f99cb5b2"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-auth-start.json",
+        "sha256": "6187dd268aca1fbee430085d199aa0538ab48273c924a757d7c28d31e8d98330"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-quality-1440.png",
+        "sha256": "beea470c473c8e35c2a908d9e5863cb497b61e1dff0e81e123f143204f010256"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-guide-390.png",
+        "sha256": "79934751fbb9ecd1e46c0f587ad7dab7e258b042e4d6428e6ba54597424a1c99"
+      },
+      {
+        "path": ".qa/market-reliability/hosted-loadout-390.png",
+        "sha256": "993999f404a19fc986c6ea2784d89d4965061335050e8929eb67e3e4c65cba50"
       }
     ],
-    "latestImplementationNote": "Owner-requested product review: provisional6/10,12 confirmed accounting/state/layout findings fixed. Node250unit104browser15DB9regions ten gatesPASS after final changes. Cloudflare104browser/native19PASS before final layout-only corrections. Final24 six-width container captures200/no overflow/page errors/axe violations; actual images inspected. Shopping first alignment attempt rejected and corrected. Public publication pending. Personal OAuth/current-patch/legal/recovery/owner acceptance and full mechanics remain open. LIVE web6ceb778c-3a2a-4f30-a53e-c9421a80da64. Strict public smoke25/OAuth-start pass; actual hosted390 transport330instant/292.5listing,1440 shopping center,768 crafting12px gap pass. This is not personal consent/admin proof. Github source synchronization pending. Source327e1d3 pushed; CI40781352764 in progress (not PASS)."
+    "latestImplementationNote": "Market reliability follow-up: exact Node22 phase286unit107browser15DB9regions allPASS;107Cloudflarebrowser and19nativeSQLitePASS. Public exact-item/quality cache reuse,50/minute+250/five-minute perattempt reservations, explicitqualitydiscovery, contextualclientguide, selectedcityhistorical/known costs andaggregateguards implemented. Twenty productionstates acrosssixwidths inspected; nooverflow/pageerrors/sampledaxeviolations. Perf94market/95guide,accessibility100each,LCP3008/2853ms,CLS0,initialmobilewarmappcachelabsamplesonly. No field, throughput, conformance, allmechanics orperfection claim. Publicpublication inprogress; realOAuth/patch/legal/recovery/owneracceptance remainopen. Final live-data review found wrapping overlap for filled bid+ask source dates; fixed explicit whitespace, strengthened fixture, all Node286unit107browser gates PASS again,7affectedCloudflare journeys PASS after priorfull107. Sixwidthpaired quote captures retested; light375/1440guide noaxes/overflow. Latest initialmobilelab94/95performance,100accessibility,LCP3004/2854ms,CLS0; warmcache,notfield/conformance. Final wrappublication verification pending. LIVE final93975c07,25strictpublicchecks and5real-sourceHTTPSjourneys PASS including wrappedfulltimestamps; OAuth-startPASS butpersonalconsent/adminunverified. GitHubsourcepending."
   },
   "source_scan": {
-    "filesScanned": 4164,
+    "filesScanned": 4184,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4667,7 +4786,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 126,
+    "filesScanned": 129,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -4684,7 +4803,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "e960f321699b53e2cb843b467bb27928a84a3011026c3b5a3c9f6920721dfa93",
+      "sha256": "3cc2150de41bf75e8ee67e684f86151f5dda6bd0535af6ca0fc307144d9b12c9",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4694,22 +4813,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "aeae39baa4534314954a868ddd11e812254ae5022144c101f017e9fb05b69eb0",
+      "sha256": "dbff806492d34ef6e3aeaad797a03bbfc61411cb1f9dfa98319273933ee4a1d9",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "e7c0c7f83d906ffbd2dec8ce6725b0ca8dca81bfaf02d99a6395542c9cdf5c44",
+      "sha256": "8b74aba3c56c9f92d77cc9eef67fa8b0acb81b5b60330d5693d1fe7d4fc62485",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "e61a06f9a720458fef89b8ecf28dfa1458068602dbae520c8dd61a98bf99fa2f",
+      "sha256": "6cdc7f0899fb1f700953ae385d3989d75ae4271bcdd90ef2e0b582fb5ab964de",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "79aa7495c1d13deba1fa65c3e5403a7ff60fe6f9a6c5257cf78d74b26b664949",
+      "sha256": "453aa2d2c0362beb87108c63e0d356bb5e277a09f9ee80245bc0418cc955bad5",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4724,7 +4843,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "87fca6fd4a202af06465c4cf504254c35cff3dbfe1e3c2f85868a955683fec6d",
+      "sha256": "2e1fc6ce0915e6dbea83a146bef47c76f4dfdba8c9e751844d1617b46493849c",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4739,12 +4858,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "2fcfc808ade6b3fc8fa0adc776ba7f0446da3933cbcb1b9aa8f53a5e3f443550",
+      "sha256": "0de9ecded9bdc3e2f15d6cec6b27c5cf5914ce2f29da71b386608e58a5cb4f50",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "f95158677034e7dad4f36251ff8e4ec1be2ef023116a9e0201f3adb61cb9c4c7",
+      "sha256": "b90d65fcf58c8eac10932cf12c6a61e4c8d8f88c276c889bf0a27b35b593637e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4764,7 +4883,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/remote-state.json",
-      "sha256": "99f11485b2a9ab7134ced5d897c4a74a8043dd63b546f1c8361168fcb4c00f9f",
+      "sha256": "6df84886f8554d74dcb97ddf533ee571404ecf7f3ecf22cfeb2a206b4038d58d",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4774,7 +4893,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "639252e765b34b7fcc578ade6257422740d9462949639bef170aaf50b0a7a705",
+      "sha256": "cdbf7004e750122ab37a27ce2c744b7df1154d6c321aeb0def76244936022707",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -4799,17 +4918,18 @@
     "e2e/farming.spec.ts": "94bafedceffa3f5661ea4816d017af476a49e3456eac53742411d2a264676c37",
     "e2e/fishing-journal.spec.ts": "153518a7c5dd9316d6fdb8924e929b6a84c419f812bd7600663afc3c29370140",
     "e2e/grind-build-fidelity.spec.ts": "e812eb52b68e7971d6ca5270edffa35470e9f4b0d271802e34262be629725e75",
-    "e2e/grind-library.spec.ts": "3cd5c77648b550c7a2b0e137dc15158f4d05b68d0995bed7c56c0debc39a9ec0",
+    "e2e/grind-library.spec.ts": "88a02632582d47149e06a6fec039b77ccef3e160c5236ff691ddbd1e2cd94e72",
     "e2e/group-editing.spec.ts": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418",
     "e2e/groups.spec.ts": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832",
     "e2e/guest-build.spec.ts": "c9ae3873a13bf716320743ab0744060d85d3eac375b1688c4f5d9179581bb99d",
     "e2e/guild-visual.spec.ts": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647",
     "e2e/history.spec.ts": "34baafe2bf51108edcdaf8b1a5ed2d7422a8ed8511a4ddebfb9656d79d4a5709",
-    "e2e/home-market-pulse.spec.ts": "23b8ca028d5c4e3e549d6f03dd13a56477e0aee6fcaba0c70e7f66d68b090565",
+    "e2e/home-market-pulse.spec.ts": "82f241d27022410cc91ed68115365c2df247729a7eb4a1d28fb9cf29e44d6713",
     "e2e/home-market-terminal.spec.ts": "894cdaf4c8b13ac2cda939d4864c01ac904609814c02418726af2c46fdba20ff",
     "e2e/homepage-polish.spec.ts": "0abd4db74c3d24d0ba2e3ab0fdc27a526282bd83ab10cd797512c3610a75db6f",
     "e2e/homepage-visual-correction.spec.ts": "8d78c3df4789acd51c5b91396c796b7ece24485ce5ca2f3be16448afa389b3b4",
-    "e2e/market-research.spec.ts": "7283da4d19a318b89e48a0cce30d854ae07d75875cd16194dfce1ac5ba482538",
+    "e2e/market-data-guide.spec.ts": "bb911b4b0fafe679a92cc98dc03cf4f57f6ccd019826d91738c9dbe09a066947",
+    "e2e/market-research.spec.ts": "1337c2817d1e5a906a426a7483d14a4cf5046d474d93528399508c8ea0799221",
     "e2e/market-visual.spec.ts": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06",
     "e2e/market-watchlist.spec.ts": "29227ec0216e0d229eebbb0cea54804537051ed6fcab535e65bc64cf08f5fa56",
     "e2e/motion-system.spec.ts": "3625bf37c68211199325c2d0f834d76b3d5bfbcf0e2d6603e5ddc02bc5032c91",
@@ -4831,7 +4951,7 @@
     "e2e/product-controls.spec.ts": "4d4f0c972a4cc1feff27faa4d4be897b66270dc844133ddbe604cecd686fd8f4",
     "e2e/production-freshness.spec.ts": "a3d7a3d88842bccd1fa2c0122650a2e4c360b7cd10dcd577147693a6bf400f28",
     "e2e/production-modes.spec.ts": "d15d4e19ea0684268116cda00cf728d7970c41fade485162565119caea649c0a",
-    "e2e/production-plan.spec.ts": "256cc90222b1d0a75cb7050797dc8fd2c8c0c69a91958ce4364c20c7d31b8bb4",
+    "e2e/production-plan.spec.ts": "89bb827da31a4df92342f2701681c3e40c889760efb05d82cc584ae5da03ae48",
     "e2e/production-profile.spec.ts": "4035fe5b88a1544b7e32d6e6fed866e9b11c7752df32d10ef6064e07baf3cef9",
     "e2e/production.spec.ts": "2f0791c383b4524c1cfb3a0ed70a8c6cef27e0b809e963ea3ff5de0f2186d8b5",
     "e2e/public.spec.ts": "3a39dfb1d7c09bdd798b32048ceb06afa3b9c0597fbf76d509d1034f90170970",
@@ -4840,7 +4960,7 @@
     "e2e/qa-regressions.spec.ts": "3cba78a518afc24c275b96d5df6221911bfacb515c27931d715c554afc6a9083",
     "e2e/qa-security.spec.ts": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044",
     "e2e/reference-ui.spec.ts": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7",
-    "e2e/reference-workspaces.spec.ts": "b48a6e082c575917cef16ad9682a5dee519cf0ab1ac7ade6bef3f32f4ddb2c11",
+    "e2e/reference-workspaces.spec.ts": "355e34707678a976597f6056d530ac6cd0f81465549fbaad7f80ef9dc745cf67",
     "e2e/refinement.spec.ts": "1ab494782f73e84462d144d9a0ba42b7e5220e9216f856c7fc74a495c11a43a8",
     "e2e/search-palette.spec.ts": "74a2b75bad94db1918d0a197d31d1aae8205b4bdcacef9259053c3bd1c08b696",
     "e2e/settings-recovery.spec.ts": "26b0e0373cdc2c2ff9b2e88ab65ca9cd13a09ec3983e3a1de7a4d2722e917b4c",
@@ -4944,7 +5064,7 @@
     "src/app/api/account/export/route.ts": "b983eff724f3e17b0b8616551dc9cd4e3ff523b4040256dd5c41462f0d4c480c",
     "src/app/api/admin/reports/route.ts": "e5a15518d9536121bceaa59d7ec0b47beb610bcd1b126839ce99dc599c37dcd6",
     "src/app/api/auth/[...nextauth]/route.ts": "116de1e2ea44f1393dafc708ecf7515d1c3a8f683b0d9ae918dd25641b605838",
-    "src/app/api/builds/[id]/cost/route.ts": "bde1ac7f8e173330790e39d6925088db3e2e1a3a2f39298d87036ebba50fc525",
+    "src/app/api/builds/[id]/cost/route.ts": "ac7dae128a53bc5aeb59332bd892c53d67e99e0a30d0aaa0fac681b5c04bfc84",
     "src/app/api/builds/[id]/duplicate/route.ts": "fb63e72dca9366fee19ebfde96519968cf931b48ef4edee4529ff3ae165c4a5c",
     "src/app/api/builds/[id]/restore/route.ts": "b83e5709b9cfeb09d5ab28321a8b9b74726ec95fd2ab20f63ead8e043a23056c",
     "src/app/api/builds/[id]/route.ts": "9ba78dbfb9089cbcc7228d656acc9a795fd98974efa1c49cc76bc4ce10a568dd",
@@ -4965,6 +5085,7 @@
     "src/app/api/item-icon/route.ts": "30a9098c2d7c93fa72ad3fe67b74a36fe53937bf33dc3df9849b1c7f519e7625",
     "src/app/api/items/route.ts": "6914300ab06965c423a49e436c32dd0f61451bdca3daaf12390f01c64c8d1d6e",
     "src/app/api/market/batch/route.ts": "e91f57b080add147fb5852c7fb0c8e1695d48e651aaef3407a96e59a20451006",
+    "src/app/api/market/qualities/route.ts": "a541d1ebd1fecc64a6296fac1b6d556c0620c715ad1d347ece24c84f1083b9d9",
     "src/app/api/market/route.ts": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98",
     "src/app/api/market-watch/[id]/route.ts": "0b71f41e85649298acc2acf5a64171748dab9b64fb80c7a5d424f43e840c6b7c",
     "src/app/api/market-watch/route.ts": "053d043b4b8992e46bd8077b1edc1d38fa0040780615d1dd3308a0d4d929b496",
@@ -5015,13 +5136,15 @@
     "src/app/legal/page.tsx": "55db6619a56236c890f0c723eb54dc7c83364dc0c788862bd943252057a56ae3",
     "src/app/loading.tsx": "9352287a856a37239f9e53de283ad4c8b370d7be164565dd2243760b555192ba",
     "src/app/loadout-cards.css": "cc9d05b329f10362d843f4bb8c8d5be69f460b75ec9441c9032f6fc9d7094779",
+    "src/app/market-data/page.module.css": "abc23fcf751d41c6ab7c02e366f2de12e9413c52e4abef72f614c4d37ae6dce1",
+    "src/app/market-data/page.tsx": "640d437300e32afeecb48d23ad72b0a4447165031351c39678a952257842a7e6",
     "src/app/motion-system.css": "fcfa481da858e37a3cdfe2df9f67308cd0bc8f82898de51483c83cf8fe275852",
     "src/app/not-found.tsx": "41f445e42414006fc52b8a9fecab64c567498b2d7e2963704ed392dba905fe03",
     "src/app/page.tsx": "4c2deaa4ffd27db3ffb2eb737f562b13c5a7002f95031c442dda91f0292d40d1",
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480",
     "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
-    "src/app/premium-system.css": "868f57d7fa5ba064584d8a01d9a4dd8db852d100ff0925cdc80de0554e250f60",
+    "src/app/premium-system.css": "0b300f8d815632e42687d41b26d44649e85501c8244f16de3135f926a577b67c",
     "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
     "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
@@ -5054,7 +5177,7 @@
     "src/components/albion-scene.tsx": "74326c3890fd8a374a1ce7cf027cb5f09cfa17593f20965c45fdba0437f03b79",
     "src/components/archive-build-links.tsx": "8ad451dcbec19b3757bbb047eea7b9846f01017389e9a5728aed54d613e01d00",
     "src/components/build-actions.tsx": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019",
-    "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
+    "src/components/build-cost.tsx": "04ced2cd6b084afbde3e4a2e7f3d490f7dae6792d7bda2d732852c9a7476d127",
     "src/components/build-editor.tsx": "c6fe96fd007e8ce25f9044ce6288b600986828d275b95959912476e57a2c0a76",
     "src/components/build-equipment-studio.tsx": "9367855f03ab7d1d0d9c889ec6e1c6ddc87818ff0db096aab06d9ffda6d99bc5",
     "src/components/build-loadout-view.tsx": "3b3aa726b63e357039bb0ffcbb1631d298f933706152741cfc91bcc1b54b1052",
@@ -5096,12 +5219,13 @@
     "src/components/library-build-card.tsx": "2fc1befbe6a599f57797071edf6fe83f9a15af1e0c4ce289f530631af1b8510c",
     "src/components/library-build-metadata.tsx": "eaf52caf36cd4f80329f9c37e0520b423ca7c328057fa9c1d747a3ff0937fa7e",
     "src/components/link.tsx": "39f459a5fb801d3b4fe6716c3219799562c22e6c4b616bbb615bd8b564982f56",
-    "src/components/loadout-price-check.tsx": "27b331aa4746c22292f0be23014553fc7b4e4b630f0d8be1a7f68d82a586e6e9",
+    "src/components/loadout-price-check.tsx": "a600b0c3c62a16fdadf6deeef2b77484412a1884e2d0c78ffdc1cc741b19b85c",
     "src/components/login-button.tsx": "74a6ac203e958959978ede93bfe124667dc6002bc463c706dd1d2b5df4f92a80",
-    "src/components/market-batch-quotes.tsx": "6d5ef282385b21fc2863ff6d8cd3626e56b250ff3a9d25833012b1c13bc64d35",
+    "src/components/market-batch-quotes.tsx": "b94ccf2e3253ff3611f8210db2595254d3ec8542395bd3696906da1fd423a39b",
+    "src/components/market-quality-availability.tsx": "22699da66edb921f23c2a0bef48c391fdb0fadc34c35664a59b95aa61f7f70b7",
     "src/components/market-research.tsx": "f0c803bbf80a651fd6655f568b741b8a43324ca57ccdba56c2cad17dabfbff8c",
     "src/components/market-watchlist.tsx": "a670fd7cec6bef18240368a17bca144eeef3f07d4f73c154a04faf870aa6430d",
-    "src/components/market.tsx": "78508e61359ee95203f07861e4d6865effc87d1ffef2c76427301f36ed34d26d",
+    "src/components/market.tsx": "c0fe1cd39521aa56a31f24f54e81306da3a01ed13db0939d90806935b75f0e19",
     "src/components/mobile-filter-panel.tsx": "018ce3a07a4fbfeed5833c5636bc14acaaa65be9215f50fa006420a0d1ed995d",
     "src/components/moderation-queue.tsx": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c",
     "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
@@ -5113,7 +5237,7 @@
     "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
     "src/components/region-picker.tsx": "93a43eadc7934373130f64a0085d584017aad30e33a3d4c11b0cdf181d60a3ed",
     "src/components/saved-equipment-sets.tsx": "602099ef393aadf081f32c0995f343493bd65e2f4d2e14e9069dae41e30270d8",
-    "src/components/scenario-controls.tsx": "f989391d64ff8d2c0266fcf22b9dccdf6766b529bcc62caa4ad43c71474d7f5e",
+    "src/components/scenario-controls.tsx": "c7e684557de53c6041e991eccfd887d9c07be4c25447c6b7d71520dcc8411148",
     "src/components/settings-forms.tsx": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951",
     "src/components/shell.tsx": "60f4663214ae79627084dc283858d64f67c64caceb9914c67234bc30218d5980",
     "src/components/shopping-account-lists.tsx": "96cd9a1cb234018078970e4000b9447b94047e69cf5de3ab90d14881df7db923",
@@ -5136,8 +5260,9 @@
     "src/lib/albion/archived-spell-options.json": "4c667cf38a2e94662f538b575c4416c0ad4afc84df89cd949dc3c533071ea424",
     "src/lib/albion/assets.ts": "17dd3cf7fb75dddfe3277b6d954e09febde2f5e589f2de7031e15b5fa1f69cb3",
     "src/lib/albion/backoff.ts": "9658bc2e31b3e192604fcc2e413fe0f2a0f3b3f6a92029d84e4ffef9a0a0ea26",
-    "src/lib/albion/calculations.ts": "00e4ff80128853d113a3551b7e06bc1503723bee6cf7147dcc0cbe59778f3356",
-    "src/lib/albion/data-client.ts": "a5018810595017187a76b4f305afa288767354e58c0176fb2300e5d618e4f39e",
+    "src/lib/albion/calculations.ts": "4dea63886fbec40080f2f5721c7d1f3ce87f503b4466b7a547c9706030a37efa",
+    "src/lib/albion/data-client.ts": "679462728ce7763ebdedbfc3f9cb234c1361c15fb75b15ff77d73889f0af679b",
+    "src/lib/albion/decimal.ts": "eaa2f1ea693071cc9648e63c46892af1ba0fa1eefe39807e42fc59921c663fb5",
     "src/lib/albion/equipment-abilities.ts": "79280668d65a831fc8de09dc7c0fe1d7c953d1da0f8cbb1c54c50fa426890c2e",
     "src/lib/albion/equipment-catalog.ts": "5f4577dcbed60ea4739cda763245ae6e9ae77d56d9bfaa0dc036eece6febca1f",
     "src/lib/albion/equipment-sets.ts": "964339a04bb7a1d1129e1eb309898cb255cc50eafd2bec18deb89442d6584e77",
@@ -5145,20 +5270,23 @@
     "src/lib/albion/expanded-recipes.json": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c",
     "src/lib/albion/farming-crops.json": "f3c8c10dc9fdfa4855f9174d970f7afc3c392c3f05ce062fccdaa93a4943da24",
     "src/lib/albion/farming.ts": "c7efeb366a0be8318d4abd68c71509c010bf9b5cb5db41bdd5b7f676b58d64fd",
-    "src/lib/albion/fishing.ts": "4b8fcd854662657cf4042dbbf843ac5ec33037b6c574ccd58d7bdbd11e89ea08",
+    "src/lib/albion/fishing.ts": "0e3b44e7d824cd0e6c6619f5f1ac65e6d93c637ceab29db19ad4a0748d0262d8",
     "src/lib/albion/freshness.ts": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244",
     "src/lib/albion/history-client.ts": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1",
     "src/lib/albion/icon-cache.ts": "791245d0dc38c24c3450c3398a2a1fb974bca1f4ac5b03980529a2f98eb4b01f",
     "src/lib/albion/item-database.ts": "0ec703bb5bd14fd93f6fa65c2bbc0de2561faf3cc09ac441b9ecb2a732725069",
     "src/lib/albion/item-renderer.ts": "11416fd556db05cce534c4f321fb737911712587960f497a883d9b12c1c5654f",
-    "src/lib/albion/market-client.ts": "64021c723b8ce1c0a225ea3002334fa6d82243adeb4f525324a6baedabf87dd8",
+    "src/lib/albion/loadout-quotes.ts": "d2b0a1ef97287008acd6cc363e7d9ecb511d2c8be52fc0826a856491993756ac",
+    "src/lib/albion/market-availability.ts": "bc5fa954149a429bcd4997313b9380ea27220b1fd6edcac18de02a7543e04eae",
+    "src/lib/albion/market-client.ts": "e07951802dea3d85c99003729ca73bb38db1ef7b23018bb137d96c6f68ef0c2d",
     "src/lib/albion/market-preview.ts": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b",
     "src/lib/albion/market-quotes.ts": "fbefff5ad4b14cc45747ec04ccf5492141c18ed5316831165e0dfbb3955b11a3",
+    "src/lib/albion/observed-costs.ts": "85d0914c79ba62a238acd29936a8c1e6291d8ef1e81213f6bb20d5e4a2c76e04",
     "src/lib/albion/production-observations.ts": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75",
     "src/lib/albion/production-plan.ts": "5849b47636a6d52a1893f3bffd4aa0cdd9cbc3414ae6c264ffe1cf72e9577874",
     "src/lib/albion/production-profile.ts": "45b9ac346df60d8cc97c67d5e793b1008b7ab0a7ae93bef712d25b4ee6a64014",
-    "src/lib/albion/production.ts": "5a5ef3d722846a959145bef96be16b09e57c5005bd4f0430c4cca7ca2cad54cc",
-    "src/lib/albion/quote-summary.ts": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a",
+    "src/lib/albion/production.ts": "f5bd02d6546b86e910dfa79971e3d76db7fcfe440b9e808b7c1c617b91f24901",
+    "src/lib/albion/quote-summary.ts": "4a6ab088ba137a3ad8b8153997dc701971ce9ba79669fce6ffc8d34d10336aeb",
     "src/lib/albion/recipes.ts": "7f52fe632456583fa75d48bec7136b63e5980fb76375a2091a6ec04bcc46116f",
     "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
     "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
@@ -5207,6 +5335,7 @@
     "src/lib/owner-admin.ts": "32a4fb6a5e0b80123a250d60e1de847772292659b09d9bbd73e2aa71713896aa",
     "src/lib/prisma-runtime.ts": "9eb9b82c3ce73b5b1f639a8fd04d8dcbfc29cec6779a0dc6e8081f828b70a2cd",
     "src/lib/redis.ts": "75dae4d2a99d02bfeb9c1f7e48f51a002c6f38b41a84a5d570dab149e8869663",
+    "src/lib/scenario-link.ts": "bf8195de445080a9f9bc039a7c17c7fe47334fb88a6fd916a35f7199d9433602",
     "src/lib/serialization-retry.ts": "f711ef61db4fa68daeb8246f531b4d7e2885eb5eb413471932c7733eaeb41359",
     "src/lib/timers/engine.ts": "3949b57b6bbe957534eba82b4bd270fccdf7abaf40caa01154237722a4d18175",
     "src/lib/tool-directory.ts": "3e43b01b7d66a90a28e7bde04a13f7e1498639c9ce3ea1077480ad5c0f3d2ad6",
@@ -5215,7 +5344,8 @@
     "src/types/next-auth.d.ts": "70a09cb8382980b4232f3aaa931137b0fc62aafc3cb41bbb7c23352c04860b90",
     "tests/api-errors.test.ts": "f85232767db1ddbd74498343d5709fe7a6cf465fe760cd16edbfb74baedd5f27",
     "tests/backoff.test.ts": "bdd440a3424ee202efeffb1b92265d7f2d9ecb3f6c6bf7cfbf8fc6817ddf81d5",
-    "tests/build-cost.test.ts": "846ff4a2ee8597c5f5f97a546aec2ce32f7019d76f89604733632eca28094382",
+    "tests/build-cost-market.test.ts": "f89aeabb3c867ae75d27595edd7e5c920c9fb9ceb1972b1df9aa1ea0cad33deb",
+    "tests/build-cost.test.ts": "2f3e5fdf543434bbee993a7b49f5a3241becc59650597f99cd670cd85762ac35",
     "tests/builds.test.ts": "0702111f7ced595ea8dc2346d051a099d558cbc37c2e4b333dd82b0e111b7b0b",
     "tests/cache-expiry.test.ts": "7a45b3beca6f050efd248a24917fb01f1d0693b0e8107a8d8ea43fc686668bf5",
     "tests/calculations.test.ts": "1e8d636684111bafca2b41a869889c737c4c0d61ed53c8234952f67f0963c212",
@@ -5235,32 +5365,38 @@
     "tests/cloudflare-security.test.ts": "05d2b8187debb29941a0825e586070e8c181a64b4690b75b8cca02edfc704cb1",
     "tests/community.test.ts": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207",
     "tests/compositions.test.ts": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed",
-    "tests/data-client.test.ts": "4a4451e49a115c5deceb1165c869e2de935d5bfdffd677dcfb76599a62e3f745",
+    "tests/data-budget.test.ts": "d6179f4969dad64b41c84c2cff2379f6446ccb0022a3a90d615705a9992f0545",
+    "tests/data-client.test.ts": "229bbaf09bdf75714b2a89306ae0553dd491fbb65a82a906c350ab005a874001",
     "tests/discord-management.test.ts": "4ad465302cb7aa565bcbb840d776be04d7e118aa0d976f3158a0fa3566c6892b",
     "tests/env.test.ts": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba",
     "tests/equipment-sets.test.ts": "0506bd304e96d6172bc43b1f96938b15c6a9723db74ff071eaa4008b47ab01cd",
     "tests/farming.test.ts": "d7bce8bbe079d57296dcc5e4ea2838e5654bad1b428321b5c9101fa88047bba9",
-    "tests/fishing-journal.test.ts": "672de74dc2db0402bd5ecdf7972121b04901f556103318534c937c47bc651586",
+    "tests/fishing-journal.test.ts": "a636704e9e7ac89aa16465285d92b9ea9265dac689337051f9661601bab1d354",
     "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
     "tests/grind-build-fidelity.test.ts": "5bdad33be5c622a6cfcc0269402791cda6c80e0a919bd23d1dfcc7a8c4cb6b82",
     "tests/grind-library.test.ts": "2b45c406d796bc87d7c2315c73f318929c1c4bc58160dde64397d24ef19c72cd",
     "tests/icon-cache.test.ts": "a6a671b3ff34d1525234e2822726974aff3dae41fda742c8cc7c8d449a54cae7",
     "tests/item-snapshot.test.ts": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12",
+    "tests/loadout-quotes.test.ts": "3128203d5e6a5d6ed795f6408df7942089750d66c2b0c994b82c7bc711b4abd9",
+    "tests/market-availability.test.ts": "58c2b9f7d3335dff0c0465326669cbf43fe872a9f707ec557e585e29a4888a6f",
     "tests/market-batch.test.ts": "b12e79aa4e236c8e1e8e24f758db632a2b1d92e7fe5505afe1115f8b64ca950d",
+    "tests/market-cache.test.ts": "ab2bada4aba557c6af5c77c8d37b1578e08ee68a9bd24de436449fa5ade0d8bb",
     "tests/market-payload.test.ts": "df7963c2bf9d6906ba7fe209211b378575f171e4614171a1e9f29966458c1879",
     "tests/market-preview.test.ts": "48ce3681a1039d97eb1ed5ff3cfce51cda3af6fe30f133c66e6fc9aac777ed1f",
     "tests/market.test.ts": "e5f421f8c90384b5e89ded8b19ea80733411b17983921325fdce508baed72e48",
+    "tests/observed-costs.test.ts": "cd20ae8e7c9cf30893122690804cb976ae0f1256db38ec693bc0470501c973a2",
     "tests/opportunities.test.ts": "94e18e55bd1d99f1cd38c55566755844cd7bc08bc633382c5ced4f8d1c816c51",
     "tests/owner-admin.test.ts": "de43d9fcd018c3946cfbf81bc62ec6ada3c8e0876b0a8b673c2b650b0dcc2817",
     "tests/production-market.test.ts": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9",
     "tests/production-observations.test.ts": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36",
     "tests/production-plan.test.ts": "dd8340fb09ef5de41558fe69e9e45c5da5afdcf64c662168fceffc6e570b255b",
     "tests/production-profile.test.ts": "28944d94f1cb696a85a89a6118f16f91e576b7f1747d09bd7656b149a82f9ae5",
-    "tests/production.test.ts": "48b1a3dd61413ee6e7bc7cc36ad180a1b83cfa88f5584a9f44924db8635f9139",
+    "tests/production.test.ts": "891f5ce39811e19a5f3bf4968cda5dfb2e301764ad5902a30e3b74886bbc6c43",
     "tests/qa-regressions.test.ts": "36f116ed01cfa912d8787db4680acbe221ae75ce03d63ac7477314babc444382",
-    "tests/quote-summary.test.ts": "b1530ecfbab74f9e5531435841799aabc8b82151f249b28710c94553c8351b07",
+    "tests/quote-summary.test.ts": "61e859500f5fe3ae9536e4aefb84813bd3768163743ac7cea683e41b3b3a5150",
     "tests/redis-recovery.test.ts": "4fefd4a8863bf430dc9c00ddd41b066bda7a764c1f9ba46562e9765d8c4a260d",
     "tests/reviewed-recipes.test.ts": "105c0eab5f6d953d4f4250833a80be455cb953e2a295599d9871e4d1392277ba",
+    "tests/scenario-link.test.ts": "460d5a88a5b7a3809c8b97810ac9cb0985240c597ee13526fbf29950714645c1",
     "tests/serialization-retry.test.ts": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9",
     "tests/settings-recovery.test.ts": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8",
     "tests/shopping.test.ts": "1582dc13572fec4ec4799f0ca5be8094df78cb494ca06edab21268141f9c69aa",

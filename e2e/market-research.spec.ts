@@ -40,7 +40,7 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   await tray.getByRole("button", { name: "Refresh research quotes", exact: true }).click();
   await expect(tray).toContainText("1,234 silver");
   await expect(tray).toContainText("Stale");
-  await expect(tray).toContainText("No buy orders observed");
+  await expect(tray).toContainText("No buy order observed");
   const popupPromise = page.waitForEvent("popup");
   await tray.getByRole("link").first().click();
   const detail = await popupPromise;
@@ -57,7 +57,7 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   await expect(tray).toContainText("Last observations retained");
   await expect(tray.locator(".research-items > li").nth(1)).toContainText("No observations loaded");
   await expect(tray.locator(".research-items > li").nth(1)).not.toContainText(
-    "No sell listings observed",
+    "No sell listing observed",
   );
   expect(calls).toHaveLength(2);
   expect(calls[1].searchParams.get("items")).toBe("T4_BAG,T4_MAIN_AXE");

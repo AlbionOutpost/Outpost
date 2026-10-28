@@ -6,7 +6,8 @@ import { useBatchQuotes, BatchQuote, quoteKey } from "./market-batch-quotes";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
 import { AddToShopping } from "./add-to-shopping";
-import { isStale } from "@/lib/albion/freshness";
+import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
+import Link from "@/components/link";
 export function LoadoutPriceCheck({
   equipment,
   region: sourceRegion,
@@ -19,18 +20,13 @@ export function LoadoutPriceCheck({
   const [city, setCity] = useState("Fort Sterling");
   const { quotes, busy, refresh } = useBatchQuotes(region);
   const selected = equipment.filter((e) => e.itemId);
-  const observations = selected.map((item) =>
-    quotes[quoteKey(item)]?.prices.find(
-      (p) => p.city === city && p.sell_price_min > 0 && !isStale(p.sell_price_min_date),
-    ),
-  );
-  const complete = !!selected.length && observations.every(Boolean);
+  const estimate = summarizeLoadoutQuotes(selected, quotes, city);
   return (
     <section className="loadout-price-check">
       <div className="library-section-heading">
         <div>
           <h2>What will this loadout cost?</h2>
-          <p>Check community market observations on {region}. Each item keeps its source date.</p>
+          <p>Check one of each equipped item on {region}, at its selected quality.</p>
         </div>
         <div className="loadout-quote-actions">
           <AddToShopping
@@ -73,17 +69,22 @@ export function LoadoutPriceCheck({
           </button>
         </div>
       </div>
-      <div className="loadout-price-total">
+      <div className="loadout-price-total" aria-live="polite">
         <strong>
-          {complete
-            ? observations.reduce((sum, row) => sum + row!.sell_price_min, 0).toLocaleString() +
-              " silver"
-            : "Total unavailable"}
+          {estimate.knownCost === null
+            ? "Estimate exceeds supported silver range"
+            : estimate.total !== null
+              ? `${estimate.total.toLocaleString()} silver`
+              : estimate.priced
+                ? `${estimate.knownCost.toLocaleString()} silver known`
+                : estimate.checked
+                  ? "No purchase prices observed"
+                  : "Prices not checked"}
         </strong>
         <span>
-          {complete
-            ? `Observed sell listings in ${city}`
-            : "Every slot needs a recent sell listing in the selected city."}
+          {estimate.checked
+            ? `${estimate.priced}/${selected.length} items priced in ${city} · ${estimate.recent} recent${estimate.stale ? ` · ${estimate.stale} need a freshness check` : ""}${estimate.knownCost === null ? " · Total outside supported range" : estimate.missing ? " · Estimate incomplete" : estimate.stale ? " · Historical / unverified cost estimate" : " · Estimated listing cost"}${estimate.failed ? " · Refresh incomplete; last scans retained" : ""}`
+            : "Choose a purchase city, then check community scans. A price check is not a purchase guarantee."}
         </span>
       </div>
       <details>
@@ -100,14 +101,26 @@ export function LoadoutPriceCheck({
                   </small>
                 </span>
               </span>
-              <BatchQuote quote={quotes[quoteKey(e)]} />
+              <div>
+                <BatchQuote quote={quotes[quoteKey(e)]} city={city} purchaseOnly />
+                <Link
+                  className="text-link"
+                  href={`/tools/market?${new URLSearchParams({ region, item: e.itemId, quality: String(e.quality) })}`}
+                >
+                  Compare cities & qualities →
+                </Link>
+              </div>
             </div>
           ))}
         </div>
       </details>
       <p className="library-provenance">
         Albion Online Data Project · crowdsourced observations, not a full order book or guaranteed
-        purchase price. Missing or stale observations never count as zero.
+        purchase price. Older scans remain visible with their dates; missing scans are excluded from
+        the known subtotal.{" "}
+        <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
+          How market scans work →
+        </Link>
       </p>
     </section>
   );

@@ -17,7 +17,7 @@ The [October27 functionality milestone](../engineering/PRODUCT_MILESTONE_2026-10
 5. Run [testing and acceptance](TESTING_AND_ACCEPTANCE.md). Keep [incomplete/blocked scope](DECISIONS_AND_LIMITS.md) explicit.
 6. Use the generated [inventory](INVENTORY.md), [exact database reference](DATABASE_REFERENCE.md) and [machine inventory](inventory.json) to check completeness.
 
-The current inventory has **32 page routes, 34 API route files exposing 45 HTTP operations, 60 component modules, 54 library modules, 29 database models, three enums and 18 SQL migrations**. These are source inventory counts, not test results or a completeness score for Albion mechanics. The generator captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
+The [generated inventory](INVENTORY.md) is the authority for current page/API/component/module counts and database definitions. These are source counts, not test results or a completeness score for Albion mechanics. The generator also captures locked dependency versions, exported symbols/imports and hashes of the rebuild inputs.
 
 ```bash
 node scripts/rebuild-inventory.mjs

@@ -333,7 +333,7 @@ try {
     await call("upstreamBlock", "asia", 1000);
     assert.equal(await call("upstreamBlocked", "asia"), true);
     assert.equal(await call("upstreamBlocked", "europe"), false);
-    assert.equal(await call("rateLimit", "upstream:asia", 20, 60), false);
+    assert.equal(await call("rateLimit", "upstream:asia", 50, 60), false);
   });
   await check(
     "public item catalog count, filter, release relation and parameter bounds",

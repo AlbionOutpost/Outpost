@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { decimalRatio } from "./decimal";
 export type FishReference = {
   id: string;
   name: string;
@@ -59,7 +60,12 @@ export const fishFameInput = z
   .strict();
 export function fishFame(input: z.infer<typeof fishFameInput>) {
   const v = fishFameInput.parse(input);
-  const needed = v.famePerFish ? Math.ceil(v.target / v.famePerFish) : null;
+  let needed: number | null = null;
+  if (v.famePerFish) {
+    // Whole fish use the entered decimal ratio: 21 / 0.7 is exactly 30, not 31.
+    const [fameN, fameD] = decimalRatio(v.famePerFish);
+    needed = Number((BigInt(v.target) * fameD + fameN - 1n) / fameN);
+  }
   if (needed !== null && (!Number.isSafeInteger(needed) || needed > 1e9))
     throw Error("The target requires more than one billion fish.");
   const cost =

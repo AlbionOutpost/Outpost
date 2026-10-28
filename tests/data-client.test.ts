@@ -36,4 +36,25 @@ describe("source safety", () => {
     const { requestData } = await import("../src/lib/albion/data-client");
     await expect(requestData("europe", "https://localhost/admin", z.unknown())).rejects.toThrow();
   });
+  it.each([429, 503])(
+    "releases an unread HTTP%s body before reporting source failure",
+    async (status) => {
+      const cancel = vi.fn();
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(
+          async () =>
+            new Response(new ReadableStream({ cancel }), {
+              status,
+              headers: { "Retry-After": "60" },
+            }),
+        ),
+      );
+      const { requestData } = await import("../src/lib/albion/data-client");
+      await expect(
+        requestData("europe", "/api/v2/stats/prices/T4_BAG.json", z.array(z.unknown())),
+      ).rejects.toThrow();
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
 });

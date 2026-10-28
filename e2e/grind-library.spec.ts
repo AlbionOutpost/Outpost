@@ -66,10 +66,12 @@ test("restored guides are readable documents and compositions retain every membe
     );
   }
 });
-test("loadout quotes use only recent selected-city observations and never total missing items as zero", async ({
+test("loadout estimates retain dated scans and never total missing or other-city items as zero", async ({
   page,
 }) => {
   let omit = false;
+  let older = false;
+  let extreme = false;
   await page.route("**/api/market/batch?**", async (route) => {
     const url = new URL(route.request().url());
     const items = url.searchParams.get("items")!.split(",");
@@ -82,8 +84,8 @@ test("loadout quotes use only recent selected-city observations and never total 
           item_id,
           city: "Fort Sterling",
           quality: Number(url.searchParams.get("quality")),
-          sell_price_min: 100,
-          sell_price_min_date: new Date().toISOString(),
+          sell_price_min: extreme ? Number.MAX_SAFE_INTEGER : 100,
+          sell_price_min_date: older ? "2020-01-01T12:00:00Z" : new Date().toISOString(),
           sell_price_max: 0,
           sell_price_max_date: "0001-01-01T00:00:00",
           buy_price_min: 0,
@@ -97,12 +99,35 @@ test("loadout quotes use only recent selected-city observations and never total 
   await page.goto("/builds/library/battleaxe-mist-build");
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
   await expect(page.locator(".loadout-price-total strong")).toHaveText("800 silver");
+  older = true;
+  await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
+  await expect(page.locator(".loadout-price-total strong")).toHaveText("800 silver");
+  await expect(page.locator(".loadout-price-total")).toContainText("8 need a freshness check");
+  await expect(page.locator(".loadout-price-total")).toContainText(
+    "Historical / unverified cost estimate",
+  );
   await page.getByLabel("Loadout purchase city", { exact: true }).selectOption("Lymhurst");
-  await expect(page.locator(".loadout-price-total strong")).toHaveText("Total unavailable");
+  await expect(page.locator(".loadout-price-total strong")).toHaveText(
+    "No purchase prices observed",
+  );
+  await page.getByText("Individual item observations", { exact: true }).click();
+  await expect(page.locator(".loadout-quote-list")).toContainText(
+    "No purchase listings returned for Lymhurst",
+  );
   await page.getByLabel("Loadout purchase city", { exact: true }).selectOption("Fort Sterling");
   omit = true;
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
-  await expect(page.locator(".loadout-price-total strong")).toHaveText("Total unavailable");
+  await expect(page.locator(".loadout-price-total")).toContainText("Estimate incomplete");
+  await expect(page.locator(".loadout-price-total strong")).toContainText("silver known");
+  omit = false;
+  extreme = true;
+  await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
+  await expect(page.locator(".loadout-price-total strong")).toHaveText(
+    "Estimate exceeds supported silver range",
+  );
+  await expect(page.locator(".loadout-quote-list")).toContainText(
+    Number.MAX_SAFE_INTEGER.toLocaleString(),
+  );
 });
 test("restored libraries, reading pages and consumable tools reflow at narrow widths", async ({
   page,

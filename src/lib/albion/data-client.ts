@@ -50,10 +50,15 @@ export async function requestData<T>(
         if (e instanceof Error && e.message.startsWith("Data source")) throw e;
       }
     }
-    if (!(await rateLimit(`upstream:${region}`, 20, 60)))
-      throw new Error("Data source request budget exhausted. Please retry later.");
     let response: Response | undefined;
     for (let attempt = 0; attempt < 2; attempt++) {
+      // Published compressed source limits are100/minute and300/five minutes.
+      // Reserve conservative shared windows for every attempt, including retries.
+      if (
+        !(await rateLimit(`upstream:${region}`, 50, 60)) ||
+        !(await rateLimit(`upstream-window:${region}:5m`, 250, 300))
+      )
+        throw new Error("Data source request budget exhausted. Please retry later.");
       response = await fetch(`${regions[region].host}${path}`, {
         headers: { Accept: "application/json", "Accept-Encoding": "gzip, deflate" },
         signal: AbortSignal.timeout(12000),
@@ -61,6 +66,7 @@ export async function requestData<T>(
         redirect: "manual",
       });
       if (response.status !== 429) break;
+      await response.body?.cancel().catch(() => {});
       const delay = retryDelay(response.headers);
       blocked.set(region, Date.now() + delay);
       if (client) {
@@ -74,7 +80,10 @@ export async function requestData<T>(
       }
       throw new Error("Data source rate limit reached. Please retry later.");
     }
-    if (!response?.ok) throw new Error("Market source unavailable");
+    if (!response?.ok) {
+      await response?.body?.cancel().catch(() => {});
+      throw new Error("Market source unavailable");
+    }
     const reader = response.body?.getReader();
     if (!reader) throw new Error("Empty source response");
     const chunks: Uint8Array[] = [];

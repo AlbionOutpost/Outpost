@@ -32,7 +32,7 @@ test("market city comparison selects details, removes city chips and invalidates
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.getByRole("button", { name: "Lymhurst market details", exact: true }).click();
   await expect(page.locator(".reference-city-summary")).toContainText("1,300");
-  await expect(page.locator(".reference-city-summary")).toContainText("No quote");
+  await expect(page.locator(".reference-city-summary")).toContainText("Not observed");
   await expect(page.locator(".reference-city-summary")).toContainText("No observation");
   const priceBounds = await page.locator(".reference-city-summary .numeric").first().boundingBox();
   expect(priceBounds!.height).toBeLessThan(40);

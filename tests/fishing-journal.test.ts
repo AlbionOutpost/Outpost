@@ -80,6 +80,16 @@ describe("fish processing accounting", () => {
       fishFame({ target: 1e12, famePerFish: 0.1, purchasePrice: 1, purchaseFee: 0 }),
     ).toThrow();
   });
+  it("does not buy an extra fish at an exact decimal fame boundary", () => {
+    // 30 fish × 0.7 fame = 21 fame, costing 30 × 2.5 = 75 silver.
+    // Raising the target to 22 requires 32 fish (31 yield only 21.7).
+    const input = { target: 21, famePerFish: 0.7, purchasePrice: 2.5, purchaseFee: 0 };
+    expect(fishFame(input)).toMatchObject({ needed: 30, actualFame: 21, cost: 75 });
+    expect(fishFame({ ...input, target: 22 })).toMatchObject({ needed: 32, cost: 80 });
+    expect(fishFame({ ...input, target: 57, famePerFish: 0.57 }).needed).toBe(100);
+    expect(fishFame({ ...input, target: 1, famePerFish: 1e-7 }).needed).toBe(10000000);
+    expect(() => fishFame({ ...input, famePerFish: 5e-324 })).toThrow(/one billion/);
+  });
   it("pins imported recipe yields and fame separately and excludes captured market prices", () => {
     const fish = JSON.parse(readFileSync("public/library/grind-fishing.json", "utf8"));
     expect(fish).toHaveLength(41);

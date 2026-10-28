@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { regionSchema } from "./region-config";
+import { decimalRatio } from "./decimal";
 export const tradeSchema = z
   .object({
     buy: z.number().nonnegative().max(1e12),
@@ -26,13 +27,6 @@ export const tradeScenarioSchema = tradeSchema.safeExtend({
   kind: z.literal("flipping"),
   region: regionSchema,
 });
-function decimalRatio(value: number): [bigint, bigint] {
-  const [coefficient, exponent = "0"] = value.toString().toLowerCase().split("e");
-  const [whole, fraction = ""] = coefficient.split(".");
-  const numerator = BigInt(whole + fraction),
-    scale = fraction.length - Number(exponent);
-  return scale >= 0 ? [numerator, 10n ** BigInt(scale)] : [numerator * 10n ** BigInt(-scale), 1n];
-}
 export function trade(input: z.input<typeof tradeSchema>) {
   const v = tradeSchema.parse(input);
   const purchaseFees = v.buyMode === "buy-order" ? (v.buy * v.quantity * v.buyFee) / 100 : 0;

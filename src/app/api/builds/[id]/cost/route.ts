@@ -9,6 +9,7 @@ import { getPrices } from "@/lib/albion/market-client";
 import { cities, regionSchema } from "@/lib/albion/region-config";
 import { isStale } from "@/lib/albion/freshness";
 import { rateLimit } from "@/lib/redis";
+import { sumObservedCosts } from "@/lib/albion/observed-costs";
 export const GET = apiHandler(
   "build.cost",
   async (req: NextRequest, ctx: { params: Promise<{ id: string }> }) => {
@@ -30,19 +31,17 @@ export const GET = apiHandler(
         sets: z.coerce.number().int().min(1).max(1000),
       })
       .parse(Object.fromEntries(req.nextUrl.searchParams));
+    if (q.city === "Black Market")
+      throw new HttpError(400, "The Black Market buys from players; choose a purchase market.");
     if (!(await rateLimit("build-cost-public", 60, 60)))
       throw new HttpError(429, "Price request budget exhausted. Retry later.");
-    const prices = (
-      await Promise.all(
-        [...new Set(build.equipment.map((e) => e.quality))].map((quality) =>
-          getPrices(
-            q.region,
-            [...new Set(build.equipment.filter((e) => e.quality === quality).map((e) => e.itemId))],
-            quality,
-          ),
-        ),
-      )
-    ).flat();
+    const prices = build.equipment.length
+      ? await getPrices(
+          q.region,
+          [...new Set(build.equipment.map((e) => e.itemId))],
+          [...new Set(build.equipment.map((e) => e.quality))],
+        )
+      : [];
     const rows = build.equipment.map((e) => {
       const p = prices.find(
         (p) => p.item_id === e.itemId && p.quality === e.quality && p.city === q.city,
@@ -56,7 +55,10 @@ export const GET = apiHandler(
         stale: p?.sell_price_min ? isStale(p.sell_price_min_date) : false,
       };
     });
-    const knownCost = rows.reduce((sum, r) => sum + (r.price || 0) * q.sets, 0);
+    const knownCost = sumObservedCosts(
+      rows.flatMap((row) => (row.price === null ? [] : [row.price])),
+      q.sets,
+    );
     return NextResponse.json({
       region: q.region,
       city: q.city,
@@ -65,6 +67,7 @@ export const GET = apiHandler(
       fetchedAt: new Date().toISOString(),
       rows,
       knownCost,
+      unsupportedRange: knownCost === null,
       total: rows.some((r) => r.price === null) ? null : knownCost,
       stale: rows.some((r) => r.stale),
     });
