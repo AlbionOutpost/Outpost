@@ -12,7 +12,10 @@ export const GET = apiHandler("health.read", async () => {
     throw new HttpError(503, "Dependencies unavailable");
   return NextResponse.json({
     status: "ok",
-    dependencies: { postgres: "ok", redis: "ok" },
+    dependencies:
+      process.env.OUTPOST_RUNTIME === "cloudflare"
+        ? { sqlite: "ok", cache: "ok" }
+        : { postgres: "ok", redis: "ok" },
     authentication:
       process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
         ? "configured-unverified"

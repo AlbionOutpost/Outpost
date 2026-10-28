@@ -1,9 +1,9 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/prisma-runtime";
 import { memberSlot } from "@/lib/compositions/validation";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { ItemIcon } from "@/components/item-icon";

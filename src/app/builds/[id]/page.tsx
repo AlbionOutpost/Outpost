@@ -4,7 +4,7 @@ import { equipmentSets } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "@/components/build-loadout-view";
 import { BuildActions } from "@/components/build-actions";
 import { BuildCost } from "@/components/build-cost";
-import Link from "next/link";
+import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";

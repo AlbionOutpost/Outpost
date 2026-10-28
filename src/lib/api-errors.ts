@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { logEvent } from "./logging";
-export class HttpError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+import { HttpError } from "./http-error";
+export { HttpError } from "./http-error";
 export function apiHandler<T extends unknown[]>(
   operation: string,
   handler: (...args: T) => Promise<Response>,

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import type { QuoteSelection } from "@/lib/albion/market-quotes";
 import { ItemIcon } from "./item-icon";

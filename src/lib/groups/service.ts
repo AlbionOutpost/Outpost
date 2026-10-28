@@ -1,13 +1,13 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/prisma-runtime";
 import { randomBytes, createHash } from "node:crypto";
-import { db } from "../db";
-import { HttpError } from "../api-errors";
+import { db, databaseService } from "../db";
+import { HttpError } from "../http-error";
 import { canEditShared, canManageMembers } from "./permissions";
 import { groupAction } from "./validation";
 export function inviteHash(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
-export async function mutateGroup(groupId: string, userId: string, input: unknown) {
+async function localMutateGroup(groupId: string, userId: string, input: unknown) {
   const action = groupAction.parse(input);
   return db
     .$transaction(
@@ -273,7 +273,7 @@ export async function mutateGroup(groupId: string, userId: string, input: unknow
       throw error;
     });
 }
-export async function acceptInvitation(token: string, userId: string) {
+async function localAcceptInvitation(token: string, userId: string) {
   if (!/^[a-f0-9]{64}$/.test(token)) throw new HttpError(404, "Invitation unavailable");
   return db
     .$transaction(
@@ -311,3 +311,11 @@ export async function acceptInvitation(token: string, userId: string) {
       throw error;
     });
 }
+
+export const mutateGroup: typeof localMutateGroup = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localMutateGroup>>>("mutateGroup", args) ??
+  localMutateGroup(...args);
+
+export const acceptInvitation: typeof localAcceptInvitation = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localAcceptInvitation>>>("acceptInvitation", args) ??
+  localAcceptInvitation(...args);

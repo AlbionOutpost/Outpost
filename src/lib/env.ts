@@ -2,15 +2,26 @@ import { z } from "zod";
 const url = z.string().url();
 export const environmentSchema = z
   .object({
-    DATABASE_URL: url.refine((v) => /^postgres(ql)?:/.test(v)),
-    REDIS_URL: url.refine((v) => /^rediss?:/.test(v)),
+    DATABASE_URL: url.refine((v) => /^postgres(ql)?:/.test(v)).optional(),
+    REDIS_URL: url.refine((v) => /^rediss?:/.test(v)).optional(),
+    OUTPOST_RUNTIME: z.enum(["node", "cloudflare"]).optional(),
     NEXTAUTH_URL: url,
     NEXTAUTH_SECRET: z.string().min(32),
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
+    OUTPOST_OWNER_DISCORD_ID: z
+      .string()
+      .regex(/^\d{17,20}$/)
+      .or(z.literal(""))
+      .optional(),
     NODE_ENV: z.string().optional(),
   })
   .superRefine((e, ctx) => {
+    if (e.OUTPOST_RUNTIME !== "cloudflare") {
+      for (const key of ["DATABASE_URL", "REDIS_URL"] as const)
+        if (!e[key])
+          ctx.addIssue({ code: "custom", path: [key], message: "Node runtime dependency missing" });
+    }
     if (Boolean(e.DISCORD_CLIENT_ID) !== Boolean(e.DISCORD_CLIENT_SECRET))
       ctx.addIssue({
         code: "custom",

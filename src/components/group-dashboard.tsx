@@ -6,7 +6,7 @@ import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { canEditShared, canManageMembers } from "@/lib/groups/permissions";
 export function GroupDashboard({

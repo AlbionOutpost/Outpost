@@ -337,7 +337,7 @@ export async function downloadSnapshot(source: SourceDefinition, fetcher: typeof
   source = sourceDefinition.parse(source);
   readySource(source);
   const response = await fetcher(sourceUrl(source), {
-    redirect: "error",
+    redirect: "manual",
     signal: AbortSignal.timeout(15000),
     headers: { Accept: "application/json" },
   });
@@ -386,7 +386,7 @@ export async function validateImages(
     let checked: ImageCheck = { id: item.id, quality: 1, formatValidated: false, sha256: null };
     try {
       const response = await fetcher(itemIconUrl(item.id, 1, 96), {
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(2500),
         headers: { Accept: "image/png" },
       });

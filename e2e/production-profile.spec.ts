@@ -70,6 +70,17 @@ test("refining city and specialization profile derives returns and estimates foc
         .mechanicsProfile,
     ).toMatchObject({ city: "Thetford", refiningLevels: [100, 100, 100, 100, 100] });
     await page.reload();
+    await expect
+      .poll(
+        async () =>
+          (await page
+            .getByRole("button", { name: "Load saved scenarios", exact: true })
+            .isVisible()) ||
+          (await page
+            .getByRole("button", { name: "Saved runs & sharing", exact: true })
+            .isVisible()),
+      )
+      .toBe(true);
     if (
       !(await page.getByRole("button", { name: "Load saved scenarios", exact: true }).isVisible())
     )

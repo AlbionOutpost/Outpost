@@ -1,7 +1,7 @@
 "use client";
 import { Search, MapPin, ChartNoAxesCombined, ArrowRight } from "lucide-react";
 import { History } from "./history";
-import Link from "next/link";
+import Link from "@/components/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { MarketResearch } from "./market-research";

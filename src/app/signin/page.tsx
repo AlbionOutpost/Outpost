@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginButton } from "@/components/login-button";
-import Link from "next/link";
+import Link from "@/components/link";
 export default async function Signin() {
   if (await getServerSession(authOptions)) redirect("/settings");
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);

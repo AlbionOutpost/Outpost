@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { Search, X, ArrowUpRight, CornerDownLeft, LoaderCircle } from "lucide-react";
 import { ItemIcon } from "./item-icon";
 import { ToolIcon } from "./tool-icon";

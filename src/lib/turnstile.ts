@@ -57,7 +57,7 @@ export async function verifyTurnstile(
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ secret: config.secret, response: token }),
-      redirect: "error",
+      redirect: "manual",
       signal: AbortSignal.timeout(10000),
       cache: "no-store",
     });

@@ -1,5 +1,7 @@
 # Authentication, privacy and authorization
 
+Cloudflare deployment addendum (28 October2026): production is public Workers hosting with a private data service, EU D1 public catalog/archive and SQLite Durable Object account transactions. Next SSR runs in signed, expiring browser-session objects with request budgets; no private HTML/role cache. PostgreSQL/Redis below remains the supported local runtime. Cloudflare Access is removed. Only server-verified persisted Discord account303585687460904970 receives owner ADMIN. See [current runtime and verification](../deployment/CLOUDFLARE_PORT_PROGRESS.md); fixture sessions are not real OAuth, and production recovery is not certified.
+
 ## Login lifecycle
 
 Use NextAuth with PrismaAdapter, Discord and **database sessions**. Provider registration is conditional on both Discord credentials. Scope is `identify email`, checks are state+PKCE, the custom sign-in page is `/signin` and the database session max age is14days. The session callback exposes `user.id` to server/client consumers. The login button calls the actual provider with `/settings` callback; it is not a fake login selector or a permanent seeded account.

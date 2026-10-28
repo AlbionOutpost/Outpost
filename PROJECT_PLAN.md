@@ -1,5 +1,7 @@
 # Outpost remaining work
 
+Current active delivery: [Cloudflare Free deployment and GitHub automation](docs/deployment/CLOUDFLARE_PORT_PROGRESS.md). The public application is deployed; Error1102 cold rendering failures were reproduced and corrected. Access gating is removed at the owner's request, and verified owner Discord account303585687460904970 maps to ADMIN. Complete hosted automation and real personal OAuth/recovery evidence while preserving independent NO-GO gates.
+
 Persistent owner-authorized [Cloudflare management access](docs/deployment/CLOUDFLARE_ACCESS.md) is configured for future sessions in this workspace. Authentication is separate from website runtime credentials and does not close deployment/release gates.
 
 Latest owner direction: [Grind feature/content recovery and equipment-led redesign](docs/engineering/GRIND_FEATURE_RECOVERY_2026-10-28.md). Owner-authorized public builds/compositions and eight guide articles are restored; cooking/alchemy add399 captured recipes. Journal objectives, regional device progress/backups, original guide media and dedicated fish conversion/fame tools are implemented. Animals/laborers, full island/mastery/Avalon workflows and site-wide visual acceptance remain active work. The accepted homepage is preserved.

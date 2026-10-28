@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
+import { grantOwnerAdmin, promotePersistedOwner } from "./owner-admin";
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   pages: { signIn: "/signin" },
@@ -17,8 +18,14 @@ export const authOptions: NextAuthOptions = {
           }),
         ]
       : [],
+  events: {
+    async signIn({ user, account }) {
+      await grantOwnerAdmin(user.id, account);
+    },
+  },
   callbacks: {
     async session({ session, user }) {
+      if (!("role" in user) || user.role !== "ADMIN") await promotePersistedOwner(user.id);
       if (session.user) session.user.id = user.id;
       return session;
     },

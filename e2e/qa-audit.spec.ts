@@ -41,7 +41,10 @@ test("audit page layouts, accessibility and local browser timings", async ({ pag
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => {
-    if (m.type() === "error") errors.push(m.text());
+    if (m.type() === "error")
+      errors.push(
+        `${m.text()} [${m.location().url ? new URL(m.location().url).pathname : "console"}]`,
+      );
   });
   await context.addCookies([
     {

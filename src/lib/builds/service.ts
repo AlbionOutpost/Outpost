@@ -1,7 +1,7 @@
-import { db } from "../db";
-import { HttpError } from "../api-errors";
+import { db, databaseService } from "../db";
+import { HttpError } from "../http-error";
 import { buildInput, type BuildInput, canReadBuild } from "./validation";
-export async function reviseBuild(id: string, userId: string, data: BuildInput, version: number) {
+async function localReviseBuild(id: string, userId: string, data: BuildInput, version: number) {
   const { equipment, ...fields } = buildInput.parse(data);
   return db.$transaction(async (tx) => {
     const changed = await tx.build.updateMany({
@@ -16,7 +16,7 @@ export async function reviseBuild(id: string, userId: string, data: BuildInput, 
     return { id, version: version + 1 };
   });
 }
-export async function duplicateBuild(id: string, userId: string) {
+async function localDuplicateBuild(id: string, userId: string) {
   const build = await db.build.findUnique({ where: { id }, include: { equipment: true } });
   if (
     !build ||
@@ -40,3 +40,11 @@ export async function duplicateBuild(id: string, userId: string) {
     select: { id: true, version: true },
   });
 }
+
+export const reviseBuild: typeof localReviseBuild = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localReviseBuild>>>("reviseBuild", args) ??
+  localReviseBuild(...args);
+
+export const duplicateBuild: typeof localDuplicateBuild = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localDuplicateBuild>>>("duplicateBuild", args) ??
+  localDuplicateBuild(...args);

@@ -1,8 +1,9 @@
-import { Prisma, type ContentVisibility } from "@prisma/client";
-import { db } from "../db";
+import { Prisma } from "@/lib/prisma-runtime";
+import type { ContentVisibility } from "@prisma/client";
+import { db, databaseService } from "../db";
 import { retrySerialization } from "../serialization-retry";
-import { HttpError } from "../api-errors";
-import { canEditShared } from "../groups/permissions";
+import { HttpError } from "../http-error";
+import { canEditShared, canManageMembers } from "../groups/permissions";
 import { compositionInput, type CompositionInput } from "./validation";
 type Client = Prisma.TransactionClient;
 export async function groupRole(client: Client, groupId: string, userId?: string) {
@@ -48,12 +49,7 @@ async function validateDestination(
       throw new HttpError(403, "An attached build is not accessible");
   }
 }
-export async function saveComposition(
-  userId: string,
-  input: unknown,
-  id?: string,
-  version?: number,
-) {
+async function localSaveComposition(userId: string, input: unknown, id?: string, version?: number) {
   const data = compositionInput.parse(input);
   return retrySerialization(() =>
     db.$transaction(
@@ -110,7 +106,7 @@ export async function saveComposition(
     throw error;
   });
 }
-export async function duplicateComposition(id: string, userId: string) {
+async function localDuplicateComposition(id: string, userId: string) {
   const row = await requireRead(id, userId);
   const input = compositionInput.parse({
     ...row,
@@ -125,3 +121,30 @@ export async function duplicateComposition(id: string, userId: string) {
   }));
   return saveComposition(userId, input);
 }
+
+async function localDeleteComposition(id: string, userId: string) {
+  await db.$transaction(async (tx) => {
+    const row = await requireRead(id, userId, tx);
+    const role = row.groupId ? await groupRole(tx, row.groupId, userId) : null;
+    const permitted =
+      row.visibility === "GROUP"
+        ? (row.authorId === userId && canEditShared(role)) || canManageMembers(role)
+        : row.authorId === userId;
+    if (!permitted) throw new HttpError(403, "You cannot delete this composition");
+    await tx.composition.delete({ where: { id } });
+  });
+}
+
+export const saveComposition: typeof localSaveComposition = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localSaveComposition>>>("saveComposition", args) ??
+  localSaveComposition(...args);
+
+export const duplicateComposition: typeof localDuplicateComposition = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localDuplicateComposition>>>(
+    "duplicateComposition",
+    args,
+  ) ?? localDuplicateComposition(...args);
+
+export const deleteComposition: typeof localDeleteComposition = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localDeleteComposition>>>("deleteComposition", args) ??
+  localDeleteComposition(...args);

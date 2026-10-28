@@ -10,6 +10,7 @@ import type {
 } from "./grind-library-types";
 import type { JournalEntry } from "./journal-progress";
 import type { FishReference } from "./albion/fishing";
+import { paginateLibrary, type LibraryQuery } from "./grind-library-query";
 
 // Immutable PUBLIC snapshots only; no user/account state enters these process-local indexes.
 let builds: LibraryBuild[] | undefined;
@@ -32,6 +33,14 @@ export const libraryTraits = () => (traits ||= read<AwakeningTrait[]>("traits"))
 export const findLibraryBuild = (slugOrId: string) =>
   libraryBuilds().find((b) => b.slug === slugOrId || b.id === slugOrId);
 export const findLibraryGuide = (slug: string) => libraryGuides().find((g) => g.slug === slug);
+export const findLibraryComposition = (slug: string) =>
+  libraryCompositions().find((c) => c.slug === slug);
+export const findLibraryBuilds = (ids: string[]) =>
+  libraryBuilds().filter((build) => ids.includes(build.id) || ids.includes(build.slug));
+export const queryLibraryBuilds = (query: LibraryQuery) =>
+  paginateLibrary(libraryBuilds(), query, 24);
+export const queryLibraryCompositions = (query: LibraryQuery) =>
+  paginateLibrary(libraryCompositions(), query, 18);
 
 const featured = [
   "battleaxe-mist-build",

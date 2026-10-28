@@ -1,0 +1,59 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { cache } from "react";
+import { databaseBinding } from "./web-driver";
+import { createLibraryBuildDraft } from "../../src/lib/grind-build-draft";
+import type {
+  LibraryBuild,
+  LibraryComposition,
+  LibraryGuide,
+  AwakeningTrait,
+} from "../../src/lib/grind-library-types";
+import type { JournalEntry } from "../../src/lib/journal-progress";
+import type { FishReference } from "../../src/lib/albion/fishing";
+import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
+
+// React cache deduplicates within a render/request, without retaining request-bound I/O globally.
+const read = cache(async <T>(name: string): Promise<T> => {
+  const binding = getCloudflareContext().env.ASSETS;
+  if (!binding) throw new Error("Static assets binding missing");
+  const response = await binding.fetch(
+    new Request(`https://outpost-assets.invalid/library/grind-${name}.json`),
+  );
+  if (!response.ok) throw new Error("Public archive asset unavailable");
+  const text = await response.text();
+  if (text.length > 500_000) throw new Error("Unexpected archive asset size");
+  return JSON.parse(text);
+});
+export const libraryGuides = () => read<LibraryGuide[]>("guides");
+export const librarySpellNames = () => read<Record<string, string>>("spell-names");
+export const libraryJournal = () => read<JournalEntry[]>("journal");
+export const libraryFishing = () => read<FishReference[]>("fishing");
+export const libraryTraits = () => read<AwakeningTrait[]>("traits");
+export const findLibraryGuide = async (slug: string) =>
+  (await libraryGuides()).find((guide) => guide.slug === slug);
+export const findLibraryBuilds = async (keys: string[]) =>
+  (await databaseBinding().archiveFind("builds", keys)) as LibraryBuild[];
+export const findLibraryBuild = cache(async (key: string) => (await findLibraryBuilds([key]))[0]);
+export const findLibraryComposition = async (key: string) =>
+  (await databaseBinding().archiveFind("compositions", [key]))[0] as LibraryComposition | undefined;
+export const queryLibraryBuilds = async (input: LibraryQuery) =>
+  (await databaseBinding().archiveList("builds", input)) as LibraryPage<LibraryBuild>;
+export const queryLibraryCompositions = async (input: LibraryQuery) =>
+  (await databaseBinding().archiveList("compositions", input)) as LibraryPage<LibraryComposition>;
+const featured = [
+  "battleaxe-mist-build",
+  "bloodmoon-staff-group-dungeon-solo-build",
+  "carving-sword-mist-build",
+  "blight-staff-group-dungeon-build",
+  "great-hammer-zvz-build",
+  "light-crossbow-solo-dungeon-build",
+];
+export const featuredLibraryBuilds = async () => {
+  const rows = await findLibraryBuilds(featured);
+  return featured.flatMap((slug) => {
+    const row = rows.find((build) => build.slug === slug);
+    return row ? [row] : [];
+  });
+};
+export const libraryBuildDraft = async (build: LibraryBuild) =>
+  createLibraryBuildDraft(build, await librarySpellNames());

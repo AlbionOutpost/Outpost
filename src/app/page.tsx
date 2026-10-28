@@ -3,7 +3,7 @@ import "./home-fidelity.css";
 import { HomeMarketTerminal } from "@/components/home-market-terminal";
 import { ItemIcon } from "@/components/item-icon";
 import { cookies } from "next/headers";
-import Link from "next/link";
+import Link from "@/components/link";
 import Image from "next/image";
 import {
   ArrowRight,

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/link";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 export default async function Favorites() {

@@ -1,24 +1,21 @@
-# AlbionOutpost Cloudflare setup
+# AlbionOutpost Cloudflare deployment
 
-Owner-authorized infrastructure work on28 October2026. **The full application is not deployed or connected to D1. Release remains NO-GO.** Cloudflare access persists in this workspace without a browser session; it is not a global connector.
+The complete application is publicly deployed at https://albionoutpost.com on Cloudflare Free, at the owner's explicit instruction. Access gating is removed. [Current runtime, tests and delivery progress](CLOUDFLARE_PORT_PROGRESS.md) is the operational record. The formal release assessment remains NO-GO for missing independent acceptance and recovery evidence; public availability does not close those gates.
 
-## Applied and checked
+## Current services
 
-| Service        | Actual state                                                                                                                                                                                                                                                                                                                                        |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DNS zone       | `albionoutpost.com` active on Cloudflare nameservers. Registry still identifies Namecheap as registrar; no registrar transfer was performed here.                                                                                                                                                                                                   |
-| TLS            | Full (strict), minimum TLS1.2, TLS1.3 enabled, Always Use HTTPS enabled. An owned HTTP HEAD request redirects301 to HTTPS. The existing parking origin does not establish working Outpost HTTPS.                                                                                                                                                    |
-| WAF            | Managed Free Ruleset enabled; one custom rule blocks `.env`, `.git` and `/api/internal` probes on the apex/www hosts. Owned `.env` and `.git/config` HEAD requests return403. No attack-load or comprehensive WAF certification.                                                                                                                    |
-| Cache          | Explicit bypass for `/api/`, NextAuth session-bearing requests and invitation links. App-level private/no-store and server authorization remain necessary.                                                                                                                                                                                          |
-| Email          | Owner chose no email. Imported Namecheap forwarding MX/SPF defaults were backed up and replaced with null MX, `v=spf1 -all`, strict reject DMARC including subdomains, and an empty wildcard DKIM key. All four policies resolve through public DNS. No mailboxes, routing, sending or reporting inbox were created.                                |
-| DNSSEC         | Cloudflare signing requested and currently pending. No parent DS is published, so the chain is **not validated**. See the registrar step below.                                                                                                                                                                                                     |
-| D1             | EU-jurisdiction `albionoutpost-staging` contains29 application tables,40 indexes and an infrastructure marker. Foreign-key check is clean; users/builds/accounts are empty. This is an isolated schema candidate, not an app migration.                                                                                                             |
-| Turnstile      | Managed `albionoutpost-community` widget created and metadata read back. Comments, comment edits and reports have frontend challenge and server Siteverify integration. Production activation and genuine browser/provider handoff are pending. Favorites, votes and other authenticated actions retain existing authorization and request budgets. |
-| Access         | Account API reads returned403/9999. No organization/application/policy was changed; no Access protection is claimed. App moderator permissions remain server-enforced.                                                                                                                                                                              |
-| Bot Fight Mode | Settings read returned403/10000. No change or successful activation claimed. WAF and the scoped Turnstile integration are separate controls.                                                                                                                                                                                                        |
-| R2/billing     | No bucket, metered R2 activation, plan upgrade or billing change. Current assets can remain static/official renderer assets; there is no new upload requirement.                                                                                                                                                                                    |
-
-The old parked apex A/www CNAME are preserved until a working application target passes its gates. HSTS preload/includeSubDomains and restrictive CAA changes are deferred until the real origin, certificates and subdomain inventory are verified. API configuration read-back is not application HTTPS or Secure-cookie acceptance.
+| Service   | Applied state                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web       | Workers custom domains apex/www; canonical www redirect to apex; static assets and per-browser rendering objects                                  |
+| Data      | Private service binding; public EU D1 catalog/archive; private SQLite Durable Object transactions                                                 |
+| DNS/TLS   | Active Cloudflare zone, Full strict, TLS1.2 minimum/TLS1.3, forced HTTPS; old parking targets backed up                                           |
+| WAF/bots  | Managed Free rules, sensitive-path custom block, Bot Fight Mode; application authorization and budgets still required                             |
+| Cache     | Private/API/session/invitation bypass; public regional market Cache API cache only                                                                |
+| Mail      | Owner selected no email: nullMX, SPF `v=spf1 -all`, reject DMARC including subdomains, empty wildcard DKIM                                        |
+| Turnstile | Managed widget and production server secret configured for comments/edits/reports; genuine human flow pending                                     |
+| Discord   | Real provider configuration and HTTPS auth start verified; owner Discord ID303585687460904970 maps server-side to ADMIN; personal consent pending |
+| Access    | Public site has no Access application; unused organization is not a site gate                                                                     |
+| Billing   | Free plan read back; no R2 or paid activation; finite product quotas remain                                                                       |
 
 ## DNSSEC registrar step
 
@@ -33,47 +30,21 @@ Digest:      EA0B08B0302525D84DAC1BCC9162267D745FC6EAAB32E95340CCA567BAB30465
 
 Re-read the live generated DS before submitting it, since a future key rotation can change it. Run `npm run cloudflare:dnssec` after publication; matching parent DS still requires a validating-resolver child-zone check. If rolling back, remove the registrar DS first and retain signing until its parent TTL expires. Do not disable signing first.
 
-## Measured workload and free-tier fit
+## Operations and delivery
 
-Read-only local PostgreSQL statistics measured **13,743,795 bytes** across30 user tables, including the migration table. The largest table is ItemMetadata at approximately7510 rows. Statistics are approximate; this is not a SQLite size forecast, production traffic sample or complete record export. No private records were copied to Cloudflare.
-
-Market observations are fetched on demand from AODP. There is no scheduled ingestion job or price-history database table. Public data uses a60-second in-process/Redis cache, bounded response sizes, regional cooldowns and a20-request/minute regional upstream budget. Private market watchlists store item identities, not continuous price observations. Therefore the quoted180,000 scheduled writes/day example does not describe this app. Future ingestion needs a separately measured read/write budget, including indexes and retention deletes.
-
-D1's staging schema occupies442,368 bytes before user data. No Worker SSR CPU, deployed bundle-size, request-volume or production D1 read/write benchmark has been obtained. The dynamic root layout reads cookies/session and calls `connection()`; the existing site cannot be counted as unlimited free static requests. Free-tier feasibility remains **unproven**, even with modest database size.
-
-## Why application cutover is blocked
-
-The application uses PostgreSQL/Prisma6, scalar arrays, case-insensitive filters, interactive/RepeatableRead/Serializable transactions, Redis coordination, Node filesystem archive reads and Next16.4.3 server rendering. Prisma's D1 adapter does not preserve its transaction guarantees. Replacing the connection string or ignoring those transactions would break atomic gear/version saves and current-membership authorization. The29-table D1 schema is deliberately disconnected.
-
-The generated candidate converts scalar alternatives to validated JSON arrays, JSONB to validated JSON text and enums to CHECK constraints, retaining foreign keys and indexes. Nine isolated SQLite checks cover private defaults, ownership constraints, malformed JSON, enum denial, array shape, spell/set round-trip, unique slots and cascade. They do **not** prove D1 runtime authorization, transactions, concurrency or restore parity. The first fixture omitted required gear fields; the fixture was corrected rather than changing the schema.
-
-The next migration must port transaction-dependent services to safe atomic D1 batches/conditional writes, preserve current-role checks and optimistic versions, replace Redis without weakening global budgets/private-cache isolation, make archive reads asset-compatible, and validate a current Workers/Next adapter against the installed framework. Cloudflare currently recommends beta vinext for new migrations; OpenNext remains a separate supported path. No beta framework swap, ignored transaction or untested production deployment was introduced.
-
-After that: migrate only reviewed data using encrypted backups and counts/checksums; prove restore and denied-user journeys; measure actual Worker CPU/bundle and D1 rows; activate Turnstile secrets; verify genuine Discord OAuth/Secure cookies on owned HTTPS; configure monitored operator/security contacts, alerts and rollback; then switch parked DNS to the verified target. Current local PostgreSQL and all18 existing migrations remain intact.
-
-## Reusable operations
-
-Credentials remain only in owner-only `.env.cloudflare`, excluded from Git/Docker/formatting and app environments. `CLOUDFLARE_API_TOKEN` handles account resources; the separate `CLOUDFLARE_DNS_API_TOKEN` supplies verified zone permissions. Initial broad account tokens lacked zone DNS/settings rights; the scoped user token fixed that boundary. Never print or copy either token into runtime secrets.
+Private0600 `.env.cloudflare` contains persistent management access; `.env.cloudflare-runtime` contains only application secrets/configuration. Do not copy management tokens into application bindings or GitHub. GitHub uses a separately scoped Workers deploy token, expiring26 January2027. Source push/release delivery is defined by `.github/workflows/cloudflare-preview.yml`; actual run evidence is recorded in the progress document.
 
 ```bash
 npm run cloudflare:status
-npm run cloudflare:security -- --apply
+npm run cloudflare:security
 npm run cloudflare:mail
-npm run cloudflare:mail -- --apply-no-mail --replace-registrar-defaults
 npm run cloudflare:dnssec
-npm run cloudflare:d1:schema -- --check
-python3 scripts/qa-d1-schema.py
-npm run cloudflare:d1:provision -- --apply
+node scripts/qa-cloudflare-hosted.mjs
+node scripts/qa-cloudflare-auth.mjs
 ```
 
-Security writes preserve unrelated rules and reject changed owned refs. Mail changes reject unexpected existing providers; the explicit registrar-default switch retires only exact Namecheap defaults under the owner's no-mail choice. Ignored timestamped snapshots retain rollback values. D1 provisioning refuses populated/unrecognized schemas and schema-hash drift; it never connects to the PostgreSQL database or exports records.
+Market observations are requested on demand from AODP, with regional caches/budgets/cooldowns. There is no scheduled full-market ingestion or continuous price-history SQL table. D1 writes include imports and indexes; batching does not remove row-write charges. New ingestion requires a measured retention/write budget.
 
-Turnstile production configuration requires all three: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` at build time, `TURNSTILE_SECRET` in runtime secret storage, and `TURNSTILE_HOSTNAMES=albionoutpost.com,www.albionoutpost.com`. The widget permits local development, but production Siteverify rejects localhost/127.0.0.1 allowlists and requires exact hostname/action, strict success, bounded output and single-use provider verification. Owned production comments/reports fail closed when unconfigured. Secrets currently remain only in Cloudflare's widget configuration; no runtime activation is claimed.
+The deployment initially hit Error1102 on cold SSR. Per-session rendering objects and disabled automatic page prefetch fixed the reproduced failures; bounded probes and30 hosted responsive checks pass. This does not certify sustained traffic, cold lifecycle behavior at scale or unlimited free use. [Cloudflare errors](https://developers.cloudflare.com/workers/observability/errors/) and [Durable Object limits](https://developers.cloudflare.com/durable-objects/platform/limits/) describe the distinct execution limits.
 
-The verified Outpost application ID and OAuth Client Secret are configured locally with the exact `https://albionoutpost.com/api/auth/callback/discord` redirect. No mock provider or public fixture login was added.
-
-Local evidence: `.qa/cloudflare-launch/` contains sanitized infrastructure read-backs, public DNS/HTTP checks, schema checks, full phase logs, container/browser captures and lab samples. Private environment files are excluded from evidence.
-
-Official references: [D1 pricing and row/index accounting](https://developers.cloudflare.com/d1/platform/pricing/), [Prisma6 D1 transaction limitations](https://www.prisma.io/docs/orm/v6/overview/databases/cloudflare-d1), [Workers Next.js migration](https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/), [zone managed WAF deployment](https://developers.cloudflare.com/waf/managed-rules/deploy-api/), [Turnstile Siteverify](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/) and [DNSSEC registrar publication/rollback](https://developers.cloudflare.com/dns/dnssec/).
-
-Discord profile follow-up: the owner supplied a bot credential; its application/bot icons, description/tags and disabled installation link are verified. The OAuth callback is correct, and its OAuth Client Secret is configured locally; actual consent/session lifecycle remains pending. [Current settings and exact remaining steps](DISCORD_APP_SETUP.md).
+No private PostgreSQL export was imported. Local migration/backup tests and fixtures do not establish production recovery or real Discord lifecycle. Keep operator/legal, current-patch data and remaining product gates explicit. [Discord setup](DISCORD_APP_SETUP.md).

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { regions, regionSchema, type Region } from "./region-config";
 import { redis, rateLimit } from "../redis";
 import { retryDelay } from "./backoff";
+import { inflightCache } from "../inflight-cache";
 const cache = new Map<string, { until: number; data: unknown; bytes: number }>();
 let cacheBytes = 0;
 const maxCacheBytes = 8 * 1024 * 1024;
@@ -10,7 +11,6 @@ function removeCached(key: string) {
   if (row) cacheBytes -= row.bytes;
   cache.delete(key);
 }
-const pending = new Map<string, Promise<unknown>>();
 const blocked = new Map<Region, number>();
 export async function requestData<T>(
   region: Region,
@@ -18,6 +18,7 @@ export async function requestData<T>(
   schema: z.ZodType<T>,
   ttl = 60,
 ): Promise<T> {
+  const pending = inflightCache("market");
   regionSchema.parse(region);
   if (
     !/^\/api\/v2\/stats\/(prices|history|gold)[/?.]/.test(path) ||
@@ -57,7 +58,7 @@ export async function requestData<T>(
         headers: { Accept: "application/json", "Accept-Encoding": "gzip, deflate" },
         signal: AbortSignal.timeout(12000),
         cache: "no-store",
-        redirect: "error",
+        redirect: "manual",
       });
       if (response.status !== 429) break;
       const delay = retryDelay(response.headers);

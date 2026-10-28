@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { templateEquipment } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "./build-loadout-view";
 import { EditorDialog } from "./editor-dialog";
-import Link from "next/link";
+import Link from "@/components/link";
 import { useRouter } from "next/navigation";
 import { buildInput, slots, contentTypes, type BuildInput } from "@/lib/builds/validation";
 const empty: BuildInput = {

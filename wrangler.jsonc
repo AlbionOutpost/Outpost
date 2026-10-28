@@ -1,11 +1,16 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "albionoutpost-web",
-  "main": ".open-next/worker.js",
+  "main": "cloudflare/web/worker.ts",
   "compatibility_date": "2026-10-28",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": false,
   "preview_urls": false,
+  "minify": true,
+  "vars": { "OUTPOST_RUNTIME": "cloudflare" },
+  "services": [{ "binding": "OUTPOST_DATA", "service": "albionoutpost-data" }],
+  "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "OutpostSession" }] },
+  "migrations": [{ "tag": "v1-sessions", "new_sqlite_classes": ["OutpostSession"] }],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "observability": { "enabled": true, "head_sampling_rate": 0.1 }
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
 }

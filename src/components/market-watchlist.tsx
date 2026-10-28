@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { watchResponse } from "@/lib/market-watch";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";

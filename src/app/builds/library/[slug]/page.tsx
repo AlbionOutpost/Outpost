@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound } from "next/navigation";
 import {
   findLibraryBuild,
@@ -12,14 +12,14 @@ import { LoadoutPriceCheck } from "@/components/loadout-price-check";
 import { LibraryBuildTraits, LibraryBuildVideos } from "@/components/library-build-metadata";
 import { ArchiveBuildCopyLink } from "@/components/archive-build-links";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const build = findLibraryBuild((await params).slug);
+  const build = await findLibraryBuild((await params).slug);
   return { title: build?.title || "Build not found" };
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const build = findLibraryBuild(slug);
+  const build = await findLibraryBuild(slug);
   if (!build) notFound();
-  const names = librarySpellNames();
+  const names = await librarySpellNames();
   const equipment = build.equipment.map((row) => ({
     slot: row.slot,
     itemId: row.itemId,
@@ -55,7 +55,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </div>
           )}
         </div>
-        {libraryBuildDraft(build) && <ArchiveBuildCopyLink slug={build.slug} />}
+        {(await libraryBuildDraft(build)) && <ArchiveBuildCopyLink slug={build.slug} />}
       </div>
       <div className="library-provenance">
         Grind archive · captured 27 October 2026. Recorded spells and alternatives are historical.
@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         Normal.
       </div>
       <BuildLoadoutView equipment={equipment} />
-      <LibraryBuildTraits ids={build.recommendedTraits} traits={libraryTraits()} />
+      <LibraryBuildTraits ids={build.recommendedTraits} traits={await libraryTraits()} />
       {build.description && (
         <section className="library-author-notes">
           <h2>From the author</h2>

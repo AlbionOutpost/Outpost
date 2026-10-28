@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 root = pathlib.Path(__file__).resolve().parents[1]
 db = sqlite3.connect(":memory:")
 db.executescript((root / "cloudflare/d1/migrations/0001_schema_candidate.sql").read_text())
+db.executescript((root / "cloudflare/d1/migrations/0003_domain_invariants.sql").read_text())
 checks = []
 
 def check(name, fn):
@@ -27,7 +28,7 @@ check("29 application tables and 40 explicit indexes", counts)
 
 db.execute('INSERT INTO "User"(id,updatedAt) VALUES(?,?)', ("qa-d1-owner", "2026-10-28T00:00:00Z"))
 build = 'INSERT INTO "Build"(id,authorId,title,description,contentType,region,strategy,patchNotes,updatedAt) VALUES(?,?,?,?,?,?,?,?,?)'
-parameters = ("qa-d1-build", "qa-d1-owner", "Fixture", "", "SOLO", "europe", "", "", "2026-10-28T00:00:00Z")
+parameters = ("qa-d1-build", "qa-d1-owner", "Fixture", "", "Other", "europe", "", "", "2026-10-28T00:00:00Z")
 db.execute(build, parameters)
 
 def defaults():
@@ -39,7 +40,7 @@ check("unknown visibility rejected", lambda: denied('UPDATE "Build" SET visibili
 check("malformed JSON rejected", lambda: denied('UPDATE "Build" SET equipmentSets=? WHERE id=?', ("{broken", "qa-d1-build")))
 
 gear = 'INSERT INTO "BuildEquipment"(id,buildId,slot,itemId,quality,abilities,alternatives) VALUES(?,?,?,?,?,?,?)'
-db.execute(gear, ("qa-gear", "qa-d1-build", "MAIN_HAND", "T4_MAIN_AXE", 1, "", ""))
+db.execute(gear, ("qa-gear", "qa-d1-build", "Main hand", "T4_MAIN_AXE", 1, "", ""))
 check("scalar alternatives require JSON arrays", lambda: denied('UPDATE "BuildEquipment" SET alternativeItemIds=? WHERE id=?', ('{"wrong":"object"}', "qa-gear")))
 
 def independent_sets():
@@ -47,7 +48,7 @@ def independent_sets():
     db.execute('UPDATE "Build" SET equipmentSets=? WHERE id=?', (json.dumps(value), "qa-d1-build"))
     assert json.loads(db.execute('SELECT equipmentSets FROM "Build" WHERE id=?', ("qa-d1-build",)).fetchone()[0]) == value
 check("independent gear sets and spell data survive JSON round-trip", independent_sets)
-check("unique build-slot identity enforced", lambda: denied(gear, ("qa-duplicate", "qa-d1-build", "MAIN_HAND", "T4_MAIN_SWORD", 1, "", "")))
+check("unique build-slot identity enforced", lambda: denied(gear, ("qa-duplicate", "qa-d1-build", "Main hand", "T4_MAIN_SWORD", 1, "", "")))
 
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))

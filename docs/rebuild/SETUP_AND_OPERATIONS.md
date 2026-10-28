@@ -1,5 +1,7 @@
 # Setup, deployment and recovery
 
+Cloudflare deployment addendum (28 October2026): production is public Workers hosting with a private data service, EU D1 public catalog/archive and SQLite Durable Object account transactions. Next SSR runs in signed, expiring browser-session objects with request budgets; no private HTML/role cache. PostgreSQL/Redis below remains the supported local runtime. Cloudflare Access is removed. Only server-verified persisted Discord account303585687460904970 receives owner ADMIN. See [current runtime and verification](../deployment/CLOUDFLARE_PORT_PROGRESS.md); fixture sessions are not real OAuth, and production recovery is not certified.
+
 ## Reproducible runtime
 
 Use the committed `package-lock.json` with `npm ci`, not floating dependency upgrades. [Inventory JSON](inventory.json) records both requested ranges and the exact installed lockfile versions; for example, the installed React API includes `ViewTransition` even though the package range began earlier. Node must satisfy `>=22.12.0`; `.nvmrc` selects22. The documented local execution uses Node22.22.2. PostgreSQL17 and Redis7 are the Compose service families. This is a Node server application, not a static HTML export.

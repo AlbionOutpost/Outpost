@@ -18,7 +18,9 @@ export default function Legal() {
       <p>
         Market observations:{" "}
         <a href="https://www.albion-online-data.com/api/">Albion Online Data Project public API</a>.
-        Prices are player-contributed observations, not guaranteed live offers. No copied guides or
+        Prices are player-contributed observations, not guaranteed live offers. The Grind library
+        restores the operator’s previously owned public builds, compositions and guides, preserving
+        authors and the archive date. Historical selections are not verified as current meta. No
         invented combat statistics are distributed. Item icons are requested from Sandbox
         Interactive’s public render service. These image requests disclose your IP address to the
         render host. When direct artwork loading fails, Outpost uses its bounded server-side image
@@ -43,12 +45,18 @@ export default function Legal() {
         external provider. No environment screenshots or promotional backgrounds are bundled without
         recorded source and permission information.
       </p>
-      <h2>Privacy policy draft (deployment blocked pending completion)</h2>
+      <h2>Privacy policy draft</h2>
       <p>
         Discord authentication stores account identifiers, profile details, email and database
         session records. Session cookies are necessary for authentication. Theme and region
         preferences use first-party preference cookies. Public calculators do not require an
         account. No advertising or analytics cookies are implemented.
+      </p>
+      <p>
+        The hosted preview uses Cloudflare Workers, D1 for public item and archive data, and
+        SQLite-backed Durable Objects for account and collaboration records. A signed, temporary
+        routing cookie coordinates page requests; Discord controls your account login. Public
+        artwork and fonts are served as static assets. No R2 upload service is currently enabled.
       </p>
       <p>
         The operator must establish the legal basis, retention schedule, hosting providers,

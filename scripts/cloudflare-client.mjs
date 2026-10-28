@@ -44,9 +44,11 @@ export function redactValues(text, secrets) {
 
 /** Retain incomplete lines/token suffixes so credentials split across chunks are still redacted. */
 export function pipeRedacted(stream, output, secret) {
+  const secrets = (Array.isArray(secret) ? secret : [secret]).filter(Boolean);
+  const retained = Math.max(1, ...secrets.map((value) => value.length)) - 1;
   const decoder = new StringDecoder("utf8");
   let pending = "";
-  const write = (text) => output.write(redactValues(text, [secret]));
+  const write = (text) => output.write(redactValues(text, secrets));
   stream.on("data", (chunk) => {
     pending += decoder.write(chunk);
     let end;
@@ -55,8 +57,13 @@ export function pipeRedacted(stream, output, secret) {
       pending = pending.slice(end + 1);
     }
     if (pending.length > 65536) {
-      pending = redactValues(pending, [secret]);
-      const keep = secret.length - 1;
+      pending = redactValues(pending, secrets);
+      const keep = retained;
+      if (!keep) {
+        write(pending);
+        pending = "";
+        return;
+      }
       write(pending.slice(0, -keep));
       pending = pending.slice(-keep);
     }

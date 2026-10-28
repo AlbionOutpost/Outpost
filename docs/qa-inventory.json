@@ -516,8 +516,8 @@
       "title": "HTTPS staging and Secure cookies",
       "implementation": "PARTIAL",
       "verification": "BLOCKED",
-      "verified_scope": "Canonical-origin validation, nonce CSP/HSTS logic and local session checks exist.",
-      "remaining": "No deployed TLS/proxy or Secure-cookie browser verification.",
+      "verified_scope": "Public owned HTTPS serves real application pages without Access. Hosted OAuth start verifies PKCE S256, state, exact callback and Secure/HttpOnly/SameSite pre-login cookies. Native Cloudflare fixture sessions pass102 browser journeys. Owner-admin mapping has seven focused unit cases.",
+      "remaining": "Genuine personal consent/token exchange/admin assignment, login/logout/expiry cookies and DNSSEC parent DS remain unverified; fixtures are not real OAuth.",
       "evidence": [
         "src/proxy.ts",
         "src/lib/env.ts",
@@ -545,9 +545,14 @@
       "title": "Community abuse resistance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current role moderation and request budgets tested.",
-      "remaining": "Broader spam, appeals, provisioning and incident operations not comprehensively tested.",
-      "evidence": ["src/lib/community/service.ts", "e2e/community.spec.ts"]
+      "verified_scope": "Node and Cloudflare allowed/denied role and community journeys pass. WAF and existing Bot Fight Mode are read back enabled. Regional distributed budgets/cooldowns, Turnstile hostname/action/redirect failures and partial configuration fail-closed behavior are tested.",
+      "remaining": "Production widget/public key/server secret are configured; genuine human challenge lifecycle and broader spam/appeals/incident operations remain unverified.",
+      "evidence": [
+        "src/lib/community/service.ts",
+        "e2e/community.spec.ts",
+        "src/lib/turnstile.ts",
+        "tests/turnstile.test.ts"
+      ]
     },
     {
       "id": "SEC-006",
@@ -871,9 +876,20 @@
       "title": "Deployable standalone/container foundation",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current standalone build plus fresh local nonroot Docker image, UID 1000, no copied environment file, homepage and dependency health smoke.",
-      "remaining": "Owned staging deployment, operational configuration and rollback remain unverified.",
-      "evidence": ["Dockerfile", "scripts/start.mjs", "docs/DEPLOYMENT.md"]
+      "verified_scope": "Public Cloudflare Free deployment observed. Reproduced Error1102 fixed with per-browser rendering objects;8/8 fresh probes and30/30 six-width hosted checks pass.102 Cloudflare browser cases and17 native database integration checks pass. Public D1 imports and44 constraint triggers verified. No private account export. Access removed at owner request. GitHub environment and narrowly scoped deployment credential configured.",
+      "remaining": "Latest GitHub automatic delivery is being observed. Genuine Discord consent/admin/logout/expiry, production recovery/monitoring, operator/legal/current-patch acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO.",
+      "evidence": [
+        "Dockerfile",
+        "scripts/start.mjs",
+        "docs/DEPLOYMENT.md",
+        "docs/deployment/CLOUDFLARE_LAUNCH.md",
+        "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md",
+        "docs/deployment/DISCORD_APP_SETUP.md",
+        "cloudflare/database/worker.ts",
+        "cloudflare/database/wrangler.jsonc",
+        ".github/workflows/cloudflare-preview.yml",
+        "scripts/qa-cloudflare-database.mjs"
+      ]
     },
     {
       "id": "OPS-002",

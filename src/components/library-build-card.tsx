@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import { activityName, type LibraryBuild } from "@/lib/grind-library-types";
 export function LibraryBuildCard({ build }: { build: LibraryBuild }) {

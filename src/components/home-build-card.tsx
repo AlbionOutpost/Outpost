@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import { EquipmentGlyph } from "./equipment-overview";
 import { equipmentName } from "@/lib/albion/equipment-catalog";

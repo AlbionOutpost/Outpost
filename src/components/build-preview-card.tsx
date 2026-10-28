@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { FavoriteBuildButton } from "./favorite-build-button";
 import { EquipmentStrip } from "./equipment-strip";
 import { EquipmentGlyph } from "./equipment-overview";

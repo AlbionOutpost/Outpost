@@ -207,7 +207,7 @@ it("pins downloads to a commit, verifies bytes and denies redirects", async () =
   await expect(downloadSnapshot(s, fetcher)).resolves.toEqual(data);
   expect(fetcher).toHaveBeenCalledWith(
     `https://raw.githubusercontent.com/ao-data/ao-bin-dumps/${"a".repeat(40)}/formatted/items.json`,
-    expect.objectContaining({ redirect: "error" }),
+    expect.objectContaining({ redirect: "manual" }),
   );
   await expect(
     downloadSnapshot(

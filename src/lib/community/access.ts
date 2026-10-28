@@ -1,6 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/prisma-runtime";
 import { db } from "../db";
-import { HttpError } from "../api-errors";
+import { HttpError } from "../http-error";
 import type { z } from "zod";
 import { targetKind } from "./validation";
 export async function requireModerator(userId: string, client: Prisma.TransactionClient = db) {

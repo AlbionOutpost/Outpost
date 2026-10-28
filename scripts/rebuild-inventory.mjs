@@ -13,6 +13,8 @@ const hash = (path) =>
 const excluded = new Set([
   "node_modules",
   ".next",
+  ".open-next",
+  ".wrangler",
   ".git",
   ".qa",
   "__pycache__",
@@ -24,6 +26,7 @@ function walk(directory) {
     .flatMap((entry) => {
       if (excluded.has(entry.name) || entry.isSymbolicLink()) return [];
       const path = join(directory, entry.name).replaceAll("\\", "/");
+      if (path === "cloudflare/generated") return [];
       return entry.isDirectory() ? walk(path) : [path];
     })
     .sort();
@@ -129,11 +132,14 @@ const roots = [
   "docs/data",
   "skill-system/skills",
   ".github",
+  "cloudflare",
 ];
 const rootFiles = [
   "package.json",
   "package-lock.json",
   "next.config.ts",
+  "open-next.config.ts",
+  "wrangler.jsonc",
   "next-env.d.ts",
   "tsconfig.json",
   "playwright.config.ts",

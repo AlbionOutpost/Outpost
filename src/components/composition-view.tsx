@@ -6,7 +6,7 @@ import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "@/components/item-icon";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/link";
 import { compositionInput, type CompositionInput } from "@/lib/compositions/validation";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 export function CompositionView({

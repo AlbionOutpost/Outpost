@@ -1,6 +1,6 @@
 import { FishingCalculator } from "@/components/fishing-calculator";
 import { libraryFishing } from "@/lib/grind-library";
-import Link from "next/link";
+import Link from "@/components/link";
 export const metadata = { title: "Fishing calculator" };
 export default async function Page({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
         </Link>
       </p>
       <FishingCalculator
-        fish={libraryFishing()}
+        fish={await libraryFishing()}
         initialMode={mode === "leveling" ? "leveling" : "chopping"}
       />
     </div>

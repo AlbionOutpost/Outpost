@@ -1,4 +1,5 @@
 import { itemIconUrl } from "./item-renderer";
+import { inflightCache } from "../inflight-cache";
 const fallback = new TextEncoder().encode(
   '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" rx="12" fill="#202529"/><path d="M48 27L69 48L48 69L27 48Z" fill="none" stroke="#8b949e" stroke-width="2"/><title>Item icon unavailable</title></svg>',
 );
@@ -31,10 +32,10 @@ function remember(url: string, icon: Icon) {
   cache.set(url, { icon, expires: now + icon.maxAge * 1000 });
 }
 const cache = new Map<string, { icon: Icon; expires: number }>();
-const inflight = new Map<string, Promise<Icon>>();
 let windowStart = 0,
   requests = 0;
 export async function renderIcon(id: string, quality: number): Promise<Icon> {
+  const inflight = inflightCache("renderer") as Map<string, Promise<Icon>>;
   const url = itemIconUrl(id, quality, 96),
     now = Date.now(),
     old = cache.get(url);
@@ -57,7 +58,7 @@ export async function renderIcon(id: string, quality: number): Promise<Icon> {
     try {
       const response = await fetch(url, {
         signal: AbortSignal.timeout(2500),
-        redirect: "error",
+        redirect: "manual",
         headers: { Accept: "image/png" },
       });
       if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png"))

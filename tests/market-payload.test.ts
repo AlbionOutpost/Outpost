@@ -11,6 +11,22 @@ const row = {
 };
 beforeEach(() => vi.resetModules());
 afterEach(() => vi.unstubAllGlobals());
+it("rejects upstream redirects without following or caching them", async () => {
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(
+      new Response(null, {
+        status: 302,
+        headers: { Location: "https://untrusted.example/prices" },
+      }),
+    )
+    .mockResolvedValueOnce(new Response(JSON.stringify([row])));
+  vi.stubGlobal("fetch", fetcher);
+  const { getPrices } = await import("../src/lib/albion/market-client");
+  await expect(getPrices("europe", ["T4_BAG"], 1)).rejects.toThrow("Market source unavailable");
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(await getPrices("europe", ["T4_BAG"], 1)).toEqual([row]);
+});
 it.each([
   ["unsafe ask precision", { sell_price_min: Number.MAX_SAFE_INTEGER + 1 }],
   ["unsafe bid precision", { buy_price_max: Number.MAX_SAFE_INTEGER + 1 }],
@@ -46,7 +62,7 @@ it("shares the same pending/cache identity for reordered duplicate batches", asy
   expect(fetcher).toHaveBeenCalledTimes(1);
   expect(fetcher).toHaveBeenCalledWith(
     "https://east.albion-online-data.com/api/v2/stats/prices/T4_BAG,T4_CAPE.json?qualities=1",
-    expect.objectContaining({ redirect: "error" }),
+    expect.objectContaining({ redirect: "manual" }),
   );
 });
 it("preserves missing-price and missing-date sentinels without manufacturing observations", async () => {

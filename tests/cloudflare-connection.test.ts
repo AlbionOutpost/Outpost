@@ -108,3 +108,17 @@ describe("persistent management authentication boundary", () => {
     expect(scanText("CLOUDFLARE_API_TOKEN=placeholder")).toEqual([]);
   });
 });
+
+it("redacts several configured secrets when log chunks split their boundaries", async () => {
+  const input = new PassThrough(),
+    output: string[] = [];
+  const first = "fixture-first-private-value",
+    second = "fixture-second-private-value";
+  pipeRedacted(input, { write: (value: string) => output.push(value) }, [first, second]);
+  const ended = new Promise<void>((resolve) => input.on("end", resolve));
+  input.write("value=" + first.slice(0, 11));
+  input.write(first.slice(11) + "\nsecond=" + second.slice(0, 7));
+  input.end(second.slice(7));
+  await ended;
+  expect(output.join("")).toBe("value=[redacted]\nsecond=[redacted]");
+});

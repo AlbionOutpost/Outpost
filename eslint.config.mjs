@@ -6,7 +6,10 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     ".next/**",
-    ".qa/**",
+    ".open-next/**",
+    "**/.wrangler/**",
+    "cloudflare/generated/**",
+    "**/.qa/**",
     "node_modules/**",
     "test-results/**",
     "playwright-report/**",

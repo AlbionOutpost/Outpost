@@ -711,7 +711,7 @@
       "current": "Directory content header resets fixed height, border/background/padding and uses a normal mobile block layout.",
       "historical_cause": "Global element-level site-header styles reached the page content header.",
       "historical_files": "src/components/tool-directory.tsx, src/app/globals.css",
-      "verification": "Actual before/after 390px comparison and final 320–1920 captures inspected; tool-directory navigation, search and full phase regressions pass.",
+      "verification": "Actual before/after 390px comparison and final 320\u20131920 captures inspected; tool-directory navigation, search and full phase regressions pass.",
       "evidence": [
         "src/app/player-workspaces.css",
         "docs/design-review/frontend-pass/tools-comparison.webp",
@@ -778,7 +778,7 @@
       "title": "Long item provenance overflows a narrow phone",
       "severity": "P1",
       "status": "FIXED",
-      "reproduction": "Open /items/T4_MAIN_AXE?region=europe at 320×844 and inspect provenance.",
+      "reproduction": "Open /items/T4_MAIN_AXE?region=europe at 320\u00d7844 and inspect provenance.",
       "expected": "Full provenance wraps and the document fits without hiding source values.",
       "current": "Item metadata wraps unbroken source text locally without hiding or truncating it.",
       "historical_cause": "Pinned commit is an unbroken word in a plain paragraph without local wrapping.",
@@ -878,6 +878,42 @@
         "e2e/qa-audit.spec.ts",
         "e2e/playful-ui.spec.ts",
         "docs/design-review/professional-redesign/README.md"
+      ]
+    },
+    {
+      "id": "QA-063",
+      "title": "Public Cloudflare pages exceed Free CPU limits",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Open cold public pages and run successive responsive navigation checks.",
+      "expected": "Public navigation serves pages within configured Cloudflare Free budgets.",
+      "current": "Bounded cold and responsive hosted checks pass; sustained load remains unverified.",
+      "historical_cause": "Cold dynamic Next SSR exceeded the normal Worker CPU allowance; bundle fit alone was insufficient.",
+      "historical_files": "cloudflare/web/worker.ts; src/components/link.tsx",
+      "verification": "Initial3/8 HTTP probes and live exceededCpu events reproduced Error1102. Per-browser rendering objects then passed8/8 fresh probes and30 hosted viewport cases.",
+      "evidence": [
+        "cloudflare/web/worker.ts",
+        "src/components/link.tsx",
+        "scripts/qa-cloudflare-visual.mjs",
+        "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
+      ]
+    },
+    {
+      "id": "QA-064",
+      "title": "Background page prefetch exhausts browser rendering budget",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Open cold public pages and run successive responsive navigation checks.",
+      "expected": "Public navigation serves pages within configured Cloudflare Free budgets.",
+      "current": "Bounded cold and responsive hosted checks pass; sustained load remains unverified.",
+      "historical_cause": "Automatic viewport/hover Next Link prefetch produced redundant rendering requests.",
+      "historical_files": "cloudflare/web/worker.ts; src/components/link.tsx",
+      "verification": "First session-actor visual run hit429 at case22. Shared Link defaults prefetch false; subsequent30/30 hosted cases pass.",
+      "evidence": [
+        "cloudflare/web/worker.ts",
+        "src/components/link.tsx",
+        "scripts/qa-cloudflare-visual.mjs",
+        "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
       ]
     }
   ]

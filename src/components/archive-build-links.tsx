@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/link";
 import { useAtlasRegion } from "./region-context";
 
 export function ArchiveBuildCopyLink({ slug }: { slug: string }) {

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useSyncExternalStore } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { useRouter } from "next/navigation";
 import { GripVertical, ArrowUp, ArrowDown, Copy, Trash2, Plus, Swords } from "lucide-react";
 import {

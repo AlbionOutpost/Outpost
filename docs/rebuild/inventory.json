@@ -106,12 +106,12 @@
     "pages": 41,
     "apiRoutes": 34,
     "httpOperations": 45,
-    "components": 74,
-    "libraryModules": 62,
+    "components": 75,
+    "libraryModules": 70,
     "models": 29,
     "enums": 3,
     "migrations": 18,
-    "files": 542
+    "files": 605
   },
   "pages": [
     {
@@ -152,7 +152,7 @@
         "@/components/build-loadout-view",
         "@/components/build-actions",
         "@/components/build-cost",
-        "next/link",
+        "@/components/link",
         "next-auth",
         "next/navigation",
         "@/lib/auth",
@@ -166,7 +166,7 @@
       "source": "src/app/builds/library/[slug]/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "@/lib/grind-library",
         "@/lib/grind-library-types",
@@ -182,7 +182,7 @@
       "source": "src/app/builds/library/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "@/lib/grind-library",
         "@/lib/grind-library-types",
         "@/components/library-build-card"
@@ -198,7 +198,7 @@
         "@/lib/auth",
         "@/components/build-editor",
         "@/lib/grind-library",
-        "next/link",
+        "@/components/link",
         "@/lib/albion/region-config"
       ],
       "exports": ["NewBuild", "default"]
@@ -212,7 +212,7 @@
         "@/components/mobile-filter-panel",
         "@/components/build-preview-card",
         "@/lib/builds/validation",
-        "next/link",
+        "@/components/link",
         "next-auth",
         "@/lib/auth",
         "@/lib/db",
@@ -261,7 +261,7 @@
       "source": "src/app/compositions/library/[slug]/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "@/lib/grind-library",
         "@/lib/grind-library-types",
@@ -274,7 +274,7 @@
       "source": "src/app/compositions/library/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "@/lib/grind-library",
         "@/lib/grind-library-types",
         "@/components/item-icon"
@@ -299,12 +299,12 @@
       "source": "src/app/compositions/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "next-auth",
         "@/lib/auth",
         "@/lib/db",
         "zod",
-        "@prisma/client",
+        "@/lib/prisma-runtime",
         "@/lib/compositions/validation",
         "@/components/mobile-filter-panel",
         "@/components/item-icon",
@@ -320,7 +320,7 @@
       "imports": [
         "next-auth",
         "next/navigation",
-        "next/link",
+        "@/components/link",
         "@/lib/auth",
         "@/lib/db",
         "@/components/equipment-strip",
@@ -333,7 +333,7 @@
       "route": "/favorites",
       "source": "src/app/favorites/page.tsx",
       "client": false,
-      "imports": ["next-auth", "next/navigation", "next/link", "@/lib/auth", "@/lib/db"],
+      "imports": ["next-auth", "next/navigation", "@/components/link", "@/lib/auth", "@/lib/db"],
       "exports": ["Favorites", "default"]
     },
     {
@@ -364,7 +364,13 @@
       "route": "/groups",
       "source": "src/app/groups/page.tsx",
       "client": false,
-      "imports": ["next/link", "next-auth", "@/lib/auth", "@/lib/db", "@/lib/albion/region-config"],
+      "imports": [
+        "@/components/link",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/db",
+        "@/lib/albion/region-config"
+      ],
       "exports": ["Groups", "default"]
     },
     {
@@ -372,7 +378,7 @@
       "source": "src/app/guides/[slug]/page.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "@/lib/grind-library",
         "@/components/fishing-calculator",
@@ -389,7 +395,7 @@
       "client": false,
       "imports": [
         "@/components/guide-directory",
-        "next/link",
+        "@/components/link",
         "@/lib/grind-library",
         "@/components/grind-guide-directory"
       ],
@@ -401,7 +407,7 @@
       "client": false,
       "imports": [
         "next-auth",
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "@/lib/auth",
         "@/lib/db",
@@ -420,7 +426,7 @@
         "@/lib/db",
         "@/components/item-icon",
         "@/lib/catalog/validation",
-        "next/link"
+        "@/components/link"
       ],
       "exports": ["Item", "default"]
     },
@@ -448,7 +454,7 @@
         "@/components/home-market-terminal",
         "@/components/item-icon",
         "next/headers",
-        "next/link",
+        "@/components/link",
         "next/image",
         "lucide-react",
         "@/lib/albion/region-config"
@@ -459,7 +465,7 @@
       "route": "/players/[id]",
       "source": "src/app/players/[id]/page.tsx",
       "client": false,
-      "imports": ["next/navigation", "next/link", "@/lib/db"],
+      "imports": ["next/navigation", "@/components/link", "@/lib/db"],
       "exports": ["Profile", "default"]
     },
     {
@@ -472,7 +478,8 @@
         "@/lib/auth",
         "@/lib/db",
         "@/components/settings-forms",
-        "@/components/login-button"
+        "@/components/login-button",
+        "@/components/link"
       ],
       "exports": ["Settings", "default"]
     },
@@ -485,7 +492,7 @@
         "next/navigation",
         "@/lib/auth",
         "@/components/login-button",
-        "next/link"
+        "@/components/link"
       ],
       "exports": ["Signin", "default"]
     },
@@ -541,7 +548,7 @@
       "route": "/tools/fishing",
       "source": "src/app/tools/fishing/page.tsx",
       "client": false,
-      "imports": ["@/components/fishing-calculator", "@/lib/grind-library", "next/link"],
+      "imports": ["@/components/fishing-calculator", "@/lib/grind-library", "@/components/link"],
       "exports": ["Page", "default", "metadata"]
     },
     {
@@ -562,7 +569,7 @@
       "route": "/tools/market",
       "source": "src/app/tools/market/page.tsx",
       "client": false,
-      "imports": ["next/link", "lucide-react", "@/components/market"],
+      "imports": ["@/components/link", "lucide-react", "@/components/market"],
       "exports": ["Page", "default"]
     },
     {
@@ -612,13 +619,13 @@
       "imports": [
         "next/server",
         "next-auth",
-        "@prisma/client",
         "zod",
         "@/lib/auth",
         "@/lib/db",
         "@/lib/api-errors",
         "@/lib/http",
         "@/lib/community/access",
+        "@/lib/community/moderation",
         "@/lib/community/validation"
       ]
     },
@@ -686,6 +693,7 @@
         "zod",
         "@/lib/auth",
         "@/lib/db",
+        "@/lib/builds/service",
         "@/lib/builds/validation",
         "@/lib/http",
         "@/lib/api-errors"
@@ -743,12 +751,10 @@
         "next/server",
         "next-auth",
         "zod",
-        "@/lib/db",
         "@/lib/auth",
         "@/lib/api-errors",
         "@/lib/http",
         "@/lib/compositions/service",
-        "@/lib/groups/permissions",
         "@/lib/compositions/validation"
       ]
     },
@@ -914,13 +920,12 @@
       "imports": [
         "next/server",
         "next-auth",
-        "@prisma/client",
         "@/lib/auth",
         "@/lib/db",
         "@/lib/api-errors",
         "@/lib/http",
         "@/lib/market-watch",
-        "@/lib/serialization-retry"
+        "@/lib/market-watch-service"
       ]
     },
     {
@@ -1067,13 +1072,13 @@
     {
       "source": "src/components/albion-scene.tsx",
       "client": false,
-      "imports": ["next/image", "next/link", "@/lib/albion/assets"],
+      "imports": ["next/image", "@/components/link", "@/lib/albion/assets"],
       "exports": ["AlbionScene"]
     },
     {
       "source": "src/components/archive-build-links.tsx",
       "client": true,
-      "imports": ["next/link", "./region-context"],
+      "imports": ["@/components/link", "./region-context"],
       "exports": ["ArchiveBuildCopyLink", "EquipmentMarketLink"]
     },
     {
@@ -1100,7 +1105,7 @@
         "@/lib/albion/equipment-sets",
         "./build-loadout-view",
         "./editor-dialog",
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "@/lib/builds/validation"
       ],
@@ -1139,7 +1144,7 @@
       "source": "src/components/build-preview-card.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "./favorite-build-button",
         "./equipment-strip",
         "./equipment-overview"
@@ -1161,7 +1166,7 @@
     {
       "source": "src/components/community-panel.tsx",
       "client": true,
-      "imports": ["react", "next/link", "./turnstile-challenge"],
+      "imports": ["react", "@/components/link", "./turnstile-challenge"],
       "exports": ["CommunityPanel"]
     },
     {
@@ -1169,7 +1174,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "next/navigation",
         "lucide-react",
         "@/lib/compositions/validation",
@@ -1199,7 +1204,7 @@
         "@/components/item-icon",
         "react",
         "next/navigation",
-        "next/link",
+        "@/components/link",
         "@/lib/compositions/validation",
         "@/lib/albion/equipment-catalog"
       ],
@@ -1291,7 +1296,7 @@
     {
       "source": "src/components/favorite-build-button.tsx",
       "client": true,
-      "imports": ["react", "lucide-react", "next/link"],
+      "imports": ["react", "lucide-react", "@/components/link"],
       "exports": ["FavoriteBuildButton"]
     },
     {
@@ -1320,7 +1325,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "lucide-react",
         "./item-icon",
         "./tool-icon",
@@ -1332,7 +1337,7 @@
       "source": "src/components/grind-guide-directory.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "next/image",
         "lucide-react",
         "./item-icon",
@@ -1357,7 +1362,7 @@
         "./item-icon",
         "@/lib/albion/equipment-catalog",
         "next/navigation",
-        "next/link",
+        "@/components/link",
         "@/lib/groups/dashboard",
         "@/lib/groups/permissions"
       ],
@@ -1402,7 +1407,7 @@
       "source": "src/components/home-build-card.tsx",
       "client": false,
       "imports": [
-        "next/link",
+        "@/components/link",
         "./item-icon",
         "./equipment-overview",
         "@/lib/albion/equipment-catalog"
@@ -1414,7 +1419,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "lucide-react",
         "next/image",
         "./tool-icon",
@@ -1427,7 +1432,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "lucide-react",
         "./use-visible-refresh",
         "./region-context",
@@ -1441,7 +1446,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "next/image",
         "lucide-react",
         "zod",
@@ -1460,7 +1465,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "./item-icon",
         "./catalog-item-picker",
         "./region-context",
@@ -1475,7 +1480,7 @@
       "imports": [
         "react",
         "./region-context",
-        "next/link",
+        "@/components/link",
         "@/lib/albion/item-database",
         "./item-icon",
         "@/lib/catalog/search",
@@ -1492,7 +1497,7 @@
     {
       "source": "src/components/item-market-link.tsx",
       "client": true,
-      "imports": ["next/link", "./region-context"],
+      "imports": ["@/components/link", "./region-context"],
       "exports": ["ItemMarketLink"]
     },
     {
@@ -1510,7 +1515,7 @@
     {
       "source": "src/components/library-build-card.tsx",
       "client": false,
-      "imports": ["next/link", "./item-icon", "@/lib/grind-library-types"],
+      "imports": ["@/components/link", "./item-icon", "@/lib/grind-library-types"],
       "exports": ["LibraryBuildCard"]
     },
     {
@@ -1518,6 +1523,12 @@
       "client": false,
       "imports": ["lucide-react", "@/lib/grind-library-types"],
       "exports": ["LibraryBuildTraits", "LibraryBuildVideos", "safeYouTubeLink"]
+    },
+    {
+      "source": "src/components/link.tsx",
+      "client": true,
+      "imports": ["next/link", "react"],
+      "exports": ["Link", "default"]
     },
     {
       "source": "src/components/loadout-price-check.tsx",
@@ -1555,7 +1566,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "@/lib/albion/equipment-catalog",
         "@/lib/albion/market-quotes",
         "./item-icon",
@@ -1568,7 +1579,7 @@
       "client": true,
       "imports": [
         "react",
-        "next/link",
+        "@/components/link",
         "@/lib/market-watch",
         "@/lib/albion/equipment-catalog",
         "./item-icon",
@@ -1583,7 +1594,7 @@
       "imports": [
         "lucide-react",
         "./history",
-        "next/link",
+        "@/components/link",
         "./catalog-item-picker",
         "./item-icon",
         "./market-research",
@@ -1644,7 +1655,7 @@
         "lucide-react",
         "react",
         "next/navigation",
-        "next/link",
+        "@/components/link",
         "./region-context",
         "@/lib/albion/region-config",
         "@/lib/albion/recipes",
@@ -1711,7 +1722,7 @@
       "source": "src/components/shell.tsx",
       "client": true,
       "imports": [
-        "next/link",
+        "@/components/link",
         "react",
         "next/navigation",
         "lucide-react",
@@ -1742,7 +1753,7 @@
       "source": "src/components/tool-directory.tsx",
       "client": true,
       "imports": [
-        "next/link",
+        "@/components/link",
         "react",
         "lucide-react",
         "@/lib/tool-directory",
@@ -1806,7 +1817,7 @@
     {
       "source": "src/components/workspace-navigation.tsx",
       "client": true,
-      "imports": ["next/link", "lucide-react", "@/lib/tool-directory", "./tool-icon"],
+      "imports": ["@/components/link", "lucide-react", "@/lib/tool-directory", "./tool-icon"],
       "exports": ["WorkspaceNavigation"]
     }
   ],
@@ -1832,7 +1843,7 @@
     {
       "source": "src/lib/albion/data-client.ts",
       "client": false,
-      "imports": ["zod", "./region-config", "../redis", "./backoff"],
+      "imports": ["zod", "./region-config", "../redis", "./backoff", "../inflight-cache"],
       "exports": ["requestData"]
     },
     {
@@ -1911,7 +1922,7 @@
     {
       "source": "src/lib/albion/icon-cache.ts",
       "client": false,
-      "imports": ["./item-renderer"],
+      "imports": ["./item-renderer", "../inflight-cache"],
       "exports": ["renderIcon"]
     },
     {
@@ -2035,19 +2046,25 @@
     {
       "source": "src/lib/api-errors.ts",
       "client": false,
-      "imports": ["next/server", "zod", "./logging"],
+      "imports": ["next/server", "zod", "./logging", "./http-error"],
       "exports": ["HttpError", "apiHandler"]
     },
     {
       "source": "src/lib/auth.ts",
       "client": false,
-      "imports": ["next-auth", "next-auth/providers/discord", "@next-auth/prisma-adapter", "./db"],
+      "imports": [
+        "next-auth",
+        "next-auth/providers/discord",
+        "@next-auth/prisma-adapter",
+        "./db",
+        "./owner-admin"
+      ],
       "exports": ["authOptions"]
     },
     {
       "source": "src/lib/builds/service.ts",
       "client": false,
-      "imports": ["../db", "../api-errors", "./validation"],
+      "imports": ["../db", "../http-error", "./validation"],
       "exports": ["duplicateBuild", "reviseBuild"]
     },
     {
@@ -2124,13 +2141,33 @@
     {
       "source": "src/lib/community/access.ts",
       "client": false,
-      "imports": ["@prisma/client", "../db", "../api-errors", "zod", "./validation"],
+      "imports": ["@/lib/prisma-runtime", "../db", "../http-error", "zod", "./validation"],
       "exports": ["communityTarget", "requireModerator"]
+    },
+    {
+      "source": "src/lib/community/moderation.ts",
+      "client": false,
+      "imports": [
+        "@/lib/prisma-runtime",
+        "zod",
+        "../db",
+        "../http-error",
+        "./access",
+        "./validation"
+      ],
+      "exports": ["moderateReport"]
     },
     {
       "source": "src/lib/community/service.ts",
       "client": false,
-      "imports": ["@prisma/client", "zod", "../db", "../api-errors", "./access", "./validation"],
+      "imports": [
+        "@/lib/prisma-runtime",
+        "zod",
+        "../db",
+        "../http-error",
+        "./access",
+        "./validation"
+      ],
       "exports": ["communityMutation"]
     },
     {
@@ -2149,14 +2186,22 @@
       "source": "src/lib/compositions/service.ts",
       "client": false,
       "imports": [
+        "@/lib/prisma-runtime",
         "@prisma/client",
         "../db",
         "../serialization-retry",
-        "../api-errors",
+        "../http-error",
         "../groups/permissions",
         "./validation"
       ],
-      "exports": ["canEdit", "duplicateComposition", "groupRole", "requireRead", "saveComposition"]
+      "exports": [
+        "canEdit",
+        "deleteComposition",
+        "duplicateComposition",
+        "groupRole",
+        "requireRead",
+        "saveComposition"
+      ]
     },
     {
       "source": "src/lib/compositions/validation.ts",
@@ -2178,10 +2223,16 @@
       ]
     },
     {
-      "source": "src/lib/db.ts",
+      "source": "src/lib/database-driver.ts",
       "client": false,
       "imports": ["@prisma/client"],
-      "exports": ["db"]
+      "exports": ["databaseService", "db"]
+    },
+    {
+      "source": "src/lib/db.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["databaseService", "db"]
     },
     {
       "source": "src/lib/env.ts",
@@ -2201,6 +2252,12 @@
         "./grind-library-types"
       ],
       "exports": ["createLibraryBuildDraft"]
+    },
+    {
+      "source": "src/lib/grind-library-query.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["LibraryPage", "LibraryQuery", "paginateLibrary"]
     },
     {
       "source": "src/lib/grind-library-types.ts",
@@ -2226,11 +2283,14 @@
         "node:path",
         "./grind-library-types",
         "./journal-progress",
-        "./albion/fishing"
+        "./albion/fishing",
+        "./grind-library-query"
       ],
       "exports": [
         "featuredLibraryBuilds",
         "findLibraryBuild",
+        "findLibraryBuilds",
+        "findLibraryComposition",
         "findLibraryGuide",
         "libraryBuildDraft",
         "libraryBuilds",
@@ -2239,7 +2299,9 @@
         "libraryGuides",
         "libraryJournal",
         "librarySpellNames",
-        "libraryTraits"
+        "libraryTraits",
+        "queryLibraryBuilds",
+        "queryLibraryCompositions"
       ]
     },
     {
@@ -2270,10 +2332,10 @@
       "source": "src/lib/groups/service.ts",
       "client": false,
       "imports": [
-        "@prisma/client",
+        "@/lib/prisma-runtime",
         "node:crypto",
         "../db",
-        "../api-errors",
+        "../http-error",
         "./permissions",
         "./validation"
       ],
@@ -2286,10 +2348,22 @@
       "exports": ["groupAction"]
     },
     {
+      "source": "src/lib/http-error.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["HttpError"]
+    },
+    {
       "source": "src/lib/http.ts",
       "client": false,
       "imports": ["./api-errors", "next/server", "next-auth", "./auth", "./redis"],
       "exports": ["boundedJson", "mutationUser"]
+    },
+    {
+      "source": "src/lib/inflight-cache.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["inflightCache"]
     },
     {
       "source": "src/lib/journal-progress.ts",
@@ -2304,10 +2378,35 @@
       "exports": ["logEvent"]
     },
     {
+      "source": "src/lib/market-watch-service.ts",
+      "client": false,
+      "imports": [
+        "@/lib/prisma-runtime",
+        "zod",
+        "./db",
+        "./http-error",
+        "./market-watch",
+        "./serialization-retry"
+      ],
+      "exports": ["saveWatchItem"]
+    },
+    {
       "source": "src/lib/market-watch.ts",
       "client": false,
       "imports": ["zod", "./albion/region-config", "./catalog/validation"],
       "exports": ["watchInput", "watchResponse"]
+    },
+    {
+      "source": "src/lib/owner-admin.ts",
+      "client": false,
+      "imports": ["./db"],
+      "exports": ["grantOwnerAdmin", "promotePersistedOwner"]
+    },
+    {
+      "source": "src/lib/prisma-runtime.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["Prisma"]
     },
     {
       "source": "src/lib/redis.ts",
@@ -2318,7 +2417,7 @@
     {
       "source": "src/lib/serialization-retry.ts",
       "client": false,
-      "imports": ["@prisma/client"],
+      "imports": ["@/lib/prisma-runtime"],
       "exports": ["retrySerialization"]
     },
     {
@@ -3021,8 +3120,8 @@
     },
     {
       "path": ".env.example",
-      "bytes": 306,
-      "sha256": "b4e63505bcdd0cd98b00fb8e645ad1dd601eba4f3a2c7ba55e402f619406f556"
+      "bytes": 419,
+      "sha256": "7efdedd4caa3691738667a65cbd14bf69169f018b7d74d826519df936f376a7b"
     },
     {
       "path": ".github/dependabot.yml",
@@ -3030,9 +3129,14 @@
       "sha256": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66"
     },
     {
+      "path": ".github/workflows/cloudflare-preview.yml",
+      "bytes": 4100,
+      "sha256": "ede84f0e8ff8e9f4e9b7157f2ae1945bb3f4b9e49d975c694017f5a6b9799851"
+    },
+    {
       "path": ".github/workflows/quality.yml",
-      "bytes": 1907,
-      "sha256": "4d893f1c2544a6e1b3ad462cfcc8dd19a46f267ed28cbe2f2f1be4a78b3266ef"
+      "bytes": 1924,
+      "sha256": "e3b9d5207b75fc4da80aae87592ebf9687d1eded12763a3bad25f08a79688b8c"
     },
     {
       "path": ".gitignore",
@@ -3078,6 +3182,136 @@
       "path": "assets/source/homepage-illustrations-v1/market-v1.png",
       "bytes": 2530999,
       "sha256": "521cb3d5dbdaafc30304e21466a0f76d786153813cd1738cfc0e55006049917e"
+    },
+    {
+      "path": "cloudflare/d1/manifest.json",
+      "bytes": 738,
+      "sha256": "e33ce519a5c726c0f74c68780251dc42853342fff23b86ea6aefe5933e091cab"
+    },
+    {
+      "path": "cloudflare/d1/migrations/0001_schema_candidate.sql",
+      "bytes": 19974,
+      "sha256": "d2ea0bc38e519bb042d0a9cee840143351845295671a17bc459a0c30e6a3447a"
+    },
+    {
+      "path": "cloudflare/d1/migrations/0002_owned_library.sql",
+      "bytes": 909,
+      "sha256": "050f4e416ef8c942969a407c4b4a762a6b09a977cff1c327f4a2ee34452f2aad"
+    },
+    {
+      "path": "cloudflare/d1/migrations/0003_domain_invariants.sql",
+      "bytes": 12327,
+      "sha256": "ca08db33c83125abefc7ef60b766ae93ddd4e057a2e971f7811a2348c60b3e1f"
+    },
+    {
+      "path": "cloudflare/d1/schema.prisma",
+      "bytes": 12157,
+      "sha256": "dc5eea8d98c16402de9b9eea9a5474be3bb32530ec1d24c90ed74efdca4f7e68"
+    },
+    {
+      "path": "cloudflare/database/archive.ts",
+      "bytes": 3063,
+      "sha256": "1d144c1e0a160e01a7940484cd9799eb8d314b4a68d3d2515fc6b9721d70c2e3"
+    },
+    {
+      "path": "cloudflare/database/budget.ts",
+      "bytes": 2397,
+      "sha256": "2a9427583c50e119e02bc53bb65883e41c836d05e7b1c72f750eb51292aaecea"
+    },
+    {
+      "path": "cloudflare/database/context.ts",
+      "bytes": 990,
+      "sha256": "585246646664950a780894fd459cc7f888b5e4bc37c5811d0bd3c28b22dce6f6"
+    },
+    {
+      "path": "cloudflare/database/create-client.mjs",
+      "bytes": 674,
+      "sha256": "3c57f7c71e02942ce6530d886b2df88b6f0288a5a121cfb3db95c60ce872a157"
+    },
+    {
+      "path": "cloudflare/database/env.d.ts",
+      "bytes": 1204,
+      "sha256": "3a322778fbee95fd1e04b12f855082c8de033acbbf08ac358d58ce7fe61157bd"
+    },
+    {
+      "path": "cloudflare/database/inflight-web.ts",
+      "bytes": 685,
+      "sha256": "206a909a6c1c40d03f6703304e6f48dd63cd3f6517947ebf92e0c55ed277dccc"
+    },
+    {
+      "path": "cloudflare/database/library-web.ts",
+      "bytes": 2975,
+      "sha256": "c581bd56c824d1031c3ee375c685f7b28d31172311b48a8a84c724ebdf68015a"
+    },
+    {
+      "path": "cloudflare/database/long-like.mjs",
+      "bytes": 1698,
+      "sha256": "76c9e4f2bd2e6d52c46c0f32208d6c9396fed276e846f245756b1d57a74377f6"
+    },
+    {
+      "path": "cloudflare/database/prisma-web.ts",
+      "bytes": 582,
+      "sha256": "b8104fe6466db8bcab1a854091d58da40812c2fb15dcfd6e8a901a371fedff22"
+    },
+    {
+      "path": "cloudflare/database/protocol.ts",
+      "bytes": 4210,
+      "sha256": "479b2addc848f70e632369f4b21a90033b1b3d601a9c904e3dc25abd46bf4365"
+    },
+    {
+      "path": "cloudflare/database/redis-web.ts",
+      "bytes": 2039,
+      "sha256": "32c813a3050b7d960b9c8102fcb8f6947b8e50e8e2f63be7ceccf4f811c062ea"
+    },
+    {
+      "path": "cloudflare/database/services.ts",
+      "bytes": 1348,
+      "sha256": "683be45f5bf68194eb4d7573a0648459f5db0f678022c62d1b5f8c1f6746ed10"
+    },
+    {
+      "path": "cloudflare/database/sqlite-bridge.mjs",
+      "bytes": 1443,
+      "sha256": "776941639e501aab340387192d99b16b089fe076bbf3c70e2277f01af2f676a8"
+    },
+    {
+      "path": "cloudflare/database/web-driver.ts",
+      "bytes": 4105,
+      "sha256": "79bd4ac2e24414d272c73859413c14483e167b73e85abc9d090f0521cfab3bd6"
+    },
+    {
+      "path": "cloudflare/database/worker.ts",
+      "bytes": 6788,
+      "sha256": "728028e51459dd5c43caa36415e5882a03d34a2b4a468383d06acf3efe425e19"
+    },
+    {
+      "path": "cloudflare/database/wrangler.jsonc",
+      "bytes": 1014,
+      "sha256": "5f2184ddbeea35d5f6550f85a22ac72227d128172d85a95676397f42ceb0a2dd"
+    },
+    {
+      "path": "cloudflare/tsconfig.json",
+      "bytes": 317,
+      "sha256": "4de547787de6fe03a0bc1a15031be728558d3292d11e0a95e576398e903af2b1"
+    },
+    {
+      "path": "cloudflare/web/env.d.ts",
+      "bytes": 1448,
+      "sha256": "13d36634d4cb12ae43eb2a5aaf695d19f4be6baa3ecd38c93194b59f91c07ee3"
+    },
+    {
+      "path": "cloudflare/web/secrets.d.ts",
+      "bytes": 69,
+      "sha256": "4c17520ee7fba1ee82fc0058dc6d7916c4ec779a490f88ae5f178a1fa97e259c"
+    },
+    {
+      "path": "cloudflare/web/tsconfig.json",
+      "bytes": 207,
+      "sha256": "9cf9fae9bd58cf2de42f1c0822760e429d9d07b8125721944d614d2ea1f24023"
+    },
+    {
+      "path": "cloudflare/web/worker.ts",
+      "bytes": 3996,
+      "sha256": "2f5f212ff7ebdc930ba966b7fbae1dd6bd0157275aef21590cd89dc90bdd018d"
     },
     {
       "path": "data/catalog/ao-snapshot-20260712.json",
@@ -3401,8 +3635,8 @@
     },
     {
       "path": "e2e/production-profile.spec.ts",
-      "bytes": 4083,
-      "sha256": "315f43bffa1b0b8ecf9d913931cc0539a0177fd026e3529a23f2f9e376230f01"
+      "bytes": 4420,
+      "sha256": "4035fe5b88a1544b7e32d6e6fed866e9b11c7752df32d10ef6064e07baf3cef9"
     },
     {
       "path": "e2e/production.spec.ts",
@@ -3416,8 +3650,8 @@
     },
     {
       "path": "e2e/qa-audit.spec.ts",
-      "bytes": 4241,
-      "sha256": "44758c6d62538dd1255c67dd1af46728fdf44aeeef3ba7cb3a913aae8453dcd4"
+      "bytes": 4340,
+      "sha256": "a79c2fc2c2b4a78a62c78e7c274e03a4d259a7fc529552442bd4661b18d56d77"
     },
     {
       "path": "e2e/qa-light.spec.ts",
@@ -3456,8 +3690,8 @@
     },
     {
       "path": "e2e/settings-recovery.spec.ts",
-      "bytes": 3512,
-      "sha256": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70"
+      "bytes": 2629,
+      "sha256": "26b0e0373cdc2c2ff9b2e88ab65ca9cd13a09ec3983e3a1de7a4d2722e917b4c"
     },
     {
       "path": "e2e/source-equipment.spec.ts",
@@ -3465,14 +3699,29 @@
       "sha256": "c168b665e6d634e30cc43ab8671176fd9db71a89265065be4ace67c39f7ae80b"
     },
     {
+      "path": "e2e/support/cloudflare-db.ts",
+      "bytes": 1959,
+      "sha256": "83effd1940527c1ea40a81d08aff20c0e7ca16afe1e5615a247dee63b83a4ab9"
+    },
+    {
       "path": "e2e/support/db.ts",
-      "bytes": 367,
-      "sha256": "18028d9a156cd46571ff71e75ac317db1632029feba0da695188a55427b9c90b"
+      "bytes": 488,
+      "sha256": "531e3a5d5efd5c9fbd72d2f5bdc87ec58f4bb13ae015533aa7b9cf2fc4407dac"
+    },
+    {
+      "path": "e2e/support/fixture-fault.ts",
+      "bytes": 1220,
+      "sha256": "6cfb32170f160a17d860f053dc974ce044954e92bcbeadc08e5f9645aaabb718"
     },
     {
       "path": "e2e/support/region.ts",
       "bytes": 475,
       "sha256": "4b99541cbf5e2bce8b8731b5b74c277a1aa613cd7ff838972d7b1cd3bd01d222"
+    },
+    {
+      "path": "e2e/support/wire.ts",
+      "bytes": 1246,
+      "sha256": "c77a4b5969f8ac3f178269ecc47659e0701d54be59540718710f28a3f4203f32"
     },
     {
       "path": "e2e/tool-directory.spec.ts",
@@ -3501,8 +3750,8 @@
     },
     {
       "path": "eslint.config.mjs",
-      "bytes": 553,
-      "sha256": "ea1d4bc2aea4b7afb931b1a059425cd222ad43a49f1bc4835662d55536485a9c"
+      "bytes": 631,
+      "sha256": "c3598ea976bf9309d81eb4f26421eda43ec70a5903007af46fe4a9e9e851e5a4"
     },
     {
       "path": "next-env.d.ts",
@@ -3511,8 +3760,13 @@
     },
     {
       "path": "next.config.ts",
-      "bytes": 883,
-      "sha256": "1eae45f8ba32dc7309dedc5cc2675c85de7737e1ada51a433c23558f357f20d7"
+      "bytes": 2743,
+      "sha256": "a0dd2e8e4f89890b32f742584e452422d0ea7a951dfd3137edac9b600ca8bdd8"
+    },
+    {
+      "path": "open-next.config.ts",
+      "bytes": 556,
+      "sha256": "e19f61a23c257d063db95bf27c35295f52ee300148c58715c38373f7bdeac52d"
     },
     {
       "path": "package-lock.json",
@@ -3526,8 +3780,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "bytes": 427,
-      "sha256": "a266fb2a62ee192701b3e10d65dc1d18cafa0f38b11978c9e2b2a2cffd54987e"
+      "bytes": 551,
+      "sha256": "acb676d346ccd52d253c0a660f4391682af13b3845ca0ffc8cfc97fe4967c873"
     },
     {
       "path": "prisma/migrations/20261025194321_foundation/migration.sql",
@@ -3936,13 +4190,13 @@
     },
     {
       "path": "scripts/cloudflare-build.mjs",
-      "bytes": 783,
-      "sha256": "10c06a5d6302284821ea7e9e5d4d9f4d4e311506395c434ea1256501b201a105"
+      "bytes": 1445,
+      "sha256": "7907c5c8a28d3291924479c69ff53b68a6eb73c56f27a96326ab710e0fe2bc15"
     },
     {
       "path": "scripts/cloudflare-client.mjs",
-      "bytes": 5403,
-      "sha256": "9418a5b3234263fd205b17a1c8bfa3093fa24ebbd11a0fca2bd6ea78aa27aa02"
+      "bytes": 5637,
+      "sha256": "eb6897ee1369039c7276043fc98c4fbe89372d9e45a923c9c9bb633ec7f508f3"
     },
     {
       "path": "scripts/cloudflare-d1-provision.mjs",
@@ -3955,9 +4209,39 @@
       "sha256": "b407332445ce67fafa09429b45fbf044551d6cb43c6a76259f71cf4e46750913"
     },
     {
+      "path": "scripts/cloudflare-database-generate.mjs",
+      "bytes": 782,
+      "sha256": "f9c8a61f3cc585a9f57b89c973b1fd128631d4b3bd2281440264c5f0650559b5"
+    },
+    {
       "path": "scripts/cloudflare-dnssec.mjs",
       "bytes": 2893,
       "sha256": "847d149ec32f2acfbbaead6b4119b74ffc786610d8b3935ed4140c88e42fb79c"
+    },
+    {
+      "path": "scripts/cloudflare-domain-attach.mjs",
+      "bytes": 4733,
+      "sha256": "522bc3bcba569a9d8b0a9c8d8474b99dd104ab181157039661867dd614068972"
+    },
+    {
+      "path": "scripts/cloudflare-domain-constraints.mjs",
+      "bytes": 4416,
+      "sha256": "700cba32406dd1326e9c4f75b005eb7647548f70cf745e758908f95566841227"
+    },
+    {
+      "path": "scripts/cloudflare-free-check.mjs",
+      "bytes": 2453,
+      "sha256": "c7ae464665cde71ed6500bedac8bfe5ecc423bd3dad326f9140259f84dd905a0"
+    },
+    {
+      "path": "scripts/cloudflare-github-setup.mjs",
+      "bytes": 5237,
+      "sha256": "56e74a3870c9fc8847bce88cdf43d516c9883d4b5e64d23c60d4a6d974eb3d05"
+    },
+    {
+      "path": "scripts/cloudflare-local-server.mjs",
+      "bytes": 6962,
+      "sha256": "757a2733174bde7c143fc37a7481ec888ce2f41610431b177ca1721a7ea7aaff"
     },
     {
       "path": "scripts/cloudflare-mail.mjs",
@@ -3965,9 +4249,54 @@
       "sha256": "e9306c1d65d87b9085222b8be623826b5cd6b13b90ed85b65e746be85cd14997"
     },
     {
+      "path": "scripts/cloudflare-preview-access.mjs",
+      "bytes": 4167,
+      "sha256": "c1c77fcf40a5e1e8906a658dc7ce90f96cf3da9a1851dbd6208e9b1617f70b41"
+    },
+    {
+      "path": "scripts/cloudflare-preview-service.mjs",
+      "bytes": 4488,
+      "sha256": "26f614da60a17ff3ca0b6be91969c704287a183d40bf6f1450a444611ade16c8"
+    },
+    {
+      "path": "scripts/cloudflare-public-access.mjs",
+      "bytes": 1715,
+      "sha256": "92c524203bb1eb842f7f4f8232d363fd624f64d0e60610f37a792dd3483520fc"
+    },
+    {
+      "path": "scripts/cloudflare-release-config.mjs",
+      "bytes": 1953,
+      "sha256": "a8ace64088c433c5b09000b60bb0f391db3c24cc3b0e753340bf3caafa9e1557"
+    },
+    {
+      "path": "scripts/cloudflare-runtime-prepare.mjs",
+      "bytes": 2665,
+      "sha256": "b97c71e13472740f3984cf36ea126fe2a61b78ca6bc1bc6e24bdd66e91bc4282"
+    },
+    {
+      "path": "scripts/cloudflare-runtime-upload.mjs",
+      "bytes": 2130,
+      "sha256": "d4df7e2b7df5d17d2d90758e9b75cc687bb58289d1ebfd8c6d3a832b14f1fca2"
+    },
+    {
       "path": "scripts/cloudflare-security.mjs",
       "bytes": 6742,
       "sha256": "ad13de67d794d67f5e574f3f780ea23a180148df74c931b4e7caa66a057c0526"
+    },
+    {
+      "path": "scripts/cloudflare-stage-catalog.mjs",
+      "bytes": 5315,
+      "sha256": "e1c308f01bbd7b2681027af3f6a6426f2fcc67c785ba51038a45c82b3eca5276"
+    },
+    {
+      "path": "scripts/cloudflare-stage-invariants.mjs",
+      "bytes": 2477,
+      "sha256": "d0ea5e10038afa592e5477d4af189ed31ad9d21e8cd7a8ffa739a8f3c8b2e3c3"
+    },
+    {
+      "path": "scripts/cloudflare-stage-library.mjs",
+      "bytes": 7723,
+      "sha256": "bfb6f85cdeedf379ba7bbb3d65c7deedec3cbf1d15e0601351e0be7894273769"
     },
     {
       "path": "scripts/cloudflare.mjs",
@@ -4055,14 +4384,34 @@
       "sha256": "7b80c04a3a09ef444df36a67b4aa87c4d8f0a8463b1badf84e5a3d883f3529ef"
     },
     {
+      "path": "scripts/qa-cloudflare-auth.mjs",
+      "bytes": 3237,
+      "sha256": "3dfe5b0c853b97e9c807609de5cd034c808223475b16a657aae0361723881adb"
+    },
+    {
+      "path": "scripts/qa-cloudflare-database.mjs",
+      "bytes": 16411,
+      "sha256": "01662a0a0fe123fba5c77bf4b0258d3e0265adf9aef5553c33f9a801dae88653"
+    },
+    {
+      "path": "scripts/qa-cloudflare-hosted.mjs",
+      "bytes": 5471,
+      "sha256": "f0f75f1d3b73be8ab959bb054af220b4817d0fe727df41ab12df9ecee6cbfcf7"
+    },
+    {
+      "path": "scripts/qa-cloudflare-visual.mjs",
+      "bytes": 5025,
+      "sha256": "e72fe1cfa3808c194929f35db5ac7c9af8b0d32235d0178eb264d0a0b46be518"
+    },
+    {
       "path": "scripts/qa-container.mjs",
       "bytes": 2988,
       "sha256": "17844efb2a39c570984aecd4769f6839955a00d2b61f55ef4bf4bfe323514e1f"
     },
     {
       "path": "scripts/qa-d1-schema.py",
-      "bytes": 3756,
-      "sha256": "c2017f88a0d96837bd4553b6128dedd79d7342c8cd8b2c03d8b1917ae439b57a"
+      "bytes": 3850,
+      "sha256": "252a728f1b62d268414c41c99f176dca873fecbb6e6d95077e0f114d4ddc81d1"
     },
     {
       "path": "scripts/qa-database.mjs",
@@ -4091,18 +4440,23 @@
     },
     {
       "path": "scripts/qa-secret-scan.mjs",
-      "bytes": 1326,
-      "sha256": "43376568f4b876b2dd5012de7854d2166ff87745f99079115aae3ab2892d1021"
+      "bytes": 881,
+      "sha256": "e9f9cab3020ee2fbef2ca83fbaefe21e3b1ba8cc5d88e830a78a40fdf9c37043"
     },
     {
       "path": "scripts/qa-source-secrets.mjs",
-      "bytes": 3040,
-      "sha256": "278a2a38ba9880fdedf31cbcf71bde81128c06e4795cfef66f080a4783e8df2b"
+      "bytes": 2642,
+      "sha256": "b8955f6090a5d2179b40bb52d85c77f6d0d161f0011c0ac2410eff5d2443ecd1"
     },
     {
       "path": "scripts/rebuild-inventory.mjs",
-      "bytes": 10604,
-      "sha256": "bdbbd2147c8cb6e221d570775883ec368a997a5582ca92ed02006840e887b1e5"
+      "bytes": 10750,
+      "sha256": "7e1510e09b6a6ac8be8b8d1e9b1e8baa3e185467b398e7711a8b024fe1a4f058"
+    },
+    {
+      "path": "scripts/secret-values.mjs",
+      "bytes": 1180,
+      "sha256": "e7c2eb75a1126872820aad9062a84d04367b83fd659e6773e493b818b82c8505"
     },
     {
       "path": "scripts/start.mjs",
@@ -4196,8 +4550,8 @@
     },
     {
       "path": "src/app/api/admin/reports/route.ts",
-      "bytes": 3958,
-      "sha256": "60ba0cf030bf55d2119b9b30d236d64aceb1d86769e14b0f0aa5bd1dd506973e"
+      "bytes": 1846,
+      "sha256": "e5a15518d9536121bceaa59d7ec0b47beb610bcd1b126839ce99dc599c37dcd6"
     },
     {
       "path": "src/app/api/auth/[...nextauth]/route.ts",
@@ -4221,8 +4575,8 @@
     },
     {
       "path": "src/app/api/builds/[id]/route.ts",
-      "bytes": 2500,
-      "sha256": "62eb16e4fcfc1e024ad22b7180a462bae584aa0022efd44f97835089aa889304"
+      "bytes": 1900,
+      "sha256": "9ba78dbfb9089cbcc7228d656acc9a795fd98974efa1c49cc76bc4ce10a568dd"
     },
     {
       "path": "src/app/api/builds/route.ts",
@@ -4241,8 +4595,8 @@
     },
     {
       "path": "src/app/api/compositions/[id]/route.ts",
-      "bytes": 2065,
-      "sha256": "b4465d94aab6b19824ac7f3e31bb90eac2b4dbdf752aff1a4be38d2a83541d06"
+      "bytes": 1492,
+      "sha256": "ebd57df8c45dfb8de52bc8fb7e34442b67ae5c29f5f6c91e9584d59876d307f1"
     },
     {
       "path": "src/app/api/compositions/loadout/route.ts",
@@ -4281,8 +4635,8 @@
     },
     {
       "path": "src/app/api/health/route.ts",
-      "bytes": 785,
-      "sha256": "ece12b3b9e34ae3d13eef97d15c0aa72b125f40b64c08f59bb37d0e70717bfd0"
+      "bytes": 886,
+      "sha256": "597cdc2e9a2dd32726ecc431e6243fc799d0e553930055e6baaa24f6164ec222"
     },
     {
       "path": "src/app/api/history/route.ts",
@@ -4311,8 +4665,8 @@
     },
     {
       "path": "src/app/api/market-watch/route.ts",
-      "bytes": 2116,
-      "sha256": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0"
+      "bytes": 1209,
+      "sha256": "053d043b4b8992e46bd8077b1edc1d38fa0040780615d1dd3308a0d4d929b496"
     },
     {
       "path": "src/app/api/market/batch/route.ts",
@@ -4381,28 +4735,28 @@
     },
     {
       "path": "src/app/builds/[id]/page.tsx",
-      "bytes": 4263,
-      "sha256": "6e963b3a9a2cb97d928f745dc052ec495331bdb326ac95647516d28ee020e605"
+      "bytes": 4271,
+      "sha256": "249574c8372fc5505658491025e5b1b5dadb65bd05eb1a6c6624811901324af6"
     },
     {
       "path": "src/app/builds/library/[slug]/page.tsx",
-      "bytes": 3437,
-      "sha256": "a9ecdf14e7a929eacc7496ec8327333a8a1d7d62d5ff9d3cf27d8a54114eb0aa"
+      "bytes": 3477,
+      "sha256": "a0b5b0788f0fb74403ca50b582d2744dc0c4374a2c1a516561609200fdd77e77"
     },
     {
       "path": "src/app/builds/library/page.tsx",
-      "bytes": 5142,
-      "sha256": "8d2c4b0c2615c780e75d154502728bf2e358b5f6aa0d3d1fe1683ec9cb27b96b"
+      "bytes": 4684,
+      "sha256": "1e5667d99b6c497585b7bd90a83f66716773194befdb43b4957c3c7da7926404"
     },
     {
       "path": "src/app/builds/new/page.tsx",
-      "bytes": 1272,
-      "sha256": "0868e5d638881986ce2614bd3fc79d2c48ab28101c0647e0c883bfe64dad1c94"
+      "bytes": 1292,
+      "sha256": "5f773c276693ca91f990b99ed6e1fc6cb83ef7c5df2a6eab860bd246018b3d2a"
     },
     {
       "path": "src/app/builds/page.tsx",
-      "bytes": 9844,
-      "sha256": "05340615aa4c44d252aae02846342eccd31502cf0ba6cb3cb5a4c05d6881af53"
+      "bytes": 9826,
+      "sha256": "228bc33ddee69848eb026763db3a285e8c364f3fe921b787bc92ac1e1781ba6f"
     },
     {
       "path": "src/app/compositions/[id]/edit/page.tsx",
@@ -4416,13 +4770,13 @@
     },
     {
       "path": "src/app/compositions/library/[slug]/page.tsx",
-      "bytes": 2081,
-      "sha256": "4effb0b16f57eb10b3c5ebe710ce570a93d7818e7a8d19e85290c0c7fb68ce11"
+      "bytes": 2228,
+      "sha256": "181907acb2dcc096dd6df36be590c0125d5f26a3df4cdb92c5817e3d91d1d164"
     },
     {
       "path": "src/app/compositions/library/page.tsx",
-      "bytes": 4723,
-      "sha256": "9130df0d8ea00d48f05db182033e5317c884d4d6dc47cde56b41f7e1b5a6c54f"
+      "bytes": 4601,
+      "sha256": "ac66a61054b4eb02e74bdda237f542a43aa5f7e98103380fa8402afb94cba053"
     },
     {
       "path": "src/app/compositions/new/page.tsx",
@@ -4431,13 +4785,13 @@
     },
     {
       "path": "src/app/compositions/page.tsx",
-      "bytes": 6483,
-      "sha256": "d4e917fb0f0a0b8ce991b4abed0586efd2c3496ba610c8bbd133abe081f80d27"
+      "bytes": 6497,
+      "sha256": "824d86293aedc2c56b4c8ebd55684d1a8c78ca54f01811648b2e2c5c4dff3107"
     },
     {
       "path": "src/app/dashboard/page.tsx",
-      "bytes": 6011,
-      "sha256": "9ebba5b5bbc20325e9e359940d5a76fad104b3e586278e8074d9854b96867f21"
+      "bytes": 6019,
+      "sha256": "20d8cd53da6c70596d60af4c188d3ef407d226d0cad592d4600f5f8762f3927a"
     },
     {
       "path": "src/app/equipment-workspace.css",
@@ -4446,8 +4800,8 @@
     },
     {
       "path": "src/app/error.tsx",
-      "bytes": 540,
-      "sha256": "8e8112ae108fdc60ca5892991728e302d475ccc93e2b6620300af6f51f3add75"
+      "bytes": 548,
+      "sha256": "80d3d76c6b3d5336277c115910947c6d51a5607ee1535d141e97610a7ce87bbd"
     },
     {
       "path": "src/app/farming-workspace.css",
@@ -4456,8 +4810,8 @@
     },
     {
       "path": "src/app/favorites/page.tsx",
-      "bytes": 2533,
-      "sha256": "85fd86aea6bf112f6027b251327315daf435409d820101a17bf7cda47b604b5b"
+      "bytes": 2541,
+      "sha256": "5d4995e4e3898e135f28eb0433da92de47f38130fe671c85edc063d0f6b5d10b"
     },
     {
       "path": "src/app/fishing-workspace.css",
@@ -4491,18 +4845,18 @@
     },
     {
       "path": "src/app/groups/page.tsx",
-      "bytes": 6360,
-      "sha256": "a1b4b0227f273094973cd8597a9dcd077849bbe4e2cd932b8045a0af4518e64e"
+      "bytes": 6368,
+      "sha256": "08816c71b2462a51f4e1f4e8986bb88708c6c5da1391609864dba1f46c392cc9"
     },
     {
       "path": "src/app/guides/[slug]/page.tsx",
-      "bytes": 4305,
-      "sha256": "17f9091f7eb0e1c279fd7c265ddf2fa9fa04ecbdf3588182ec4eb7b88959f5fb"
+      "bytes": 4337,
+      "sha256": "a97545fabc7e875ef991272b13a1d6cb515ca5e4b5ebc705579327a21b26d744"
     },
     {
       "path": "src/app/guides/page.tsx",
-      "bytes": 6310,
-      "sha256": "17c6f4500b55fcc20760470a55152cfe40953d17b6394df8741ff28af49e4cdb"
+      "bytes": 6324,
+      "sha256": "0fcb4d24bae8b8ede7ffd23e5eccb7c0ebe1ed7af99b6478911ae8d372f8784e"
     },
     {
       "path": "src/app/home-fidelity.css",
@@ -4521,13 +4875,13 @@
     },
     {
       "path": "src/app/invitations/[token]/page.tsx",
-      "bytes": 1734,
-      "sha256": "67484fbee448ce8bb5dcda2481f7e5e292abe9ade6dc85cabefae41a5cc1b15d"
+      "bytes": 1742,
+      "sha256": "73063d841dacc36ea4b7517798e4ac3656aa97651bae4ff4d76a1c5049bf9af1"
     },
     {
       "path": "src/app/items/[id]/page.tsx",
-      "bytes": 3324,
-      "sha256": "944638edf62753d74909c5ecb79c3ecf6374807bb2689a548c6b4dacd9038288"
+      "bytes": 3332,
+      "sha256": "6a0df2ab2d182cce36eed695a007978b13671d132ca790771a64017bbf94dad8"
     },
     {
       "path": "src/app/items/page.tsx",
@@ -4546,8 +4900,8 @@
     },
     {
       "path": "src/app/legal/page.tsx",
-      "bytes": 3532,
-      "sha256": "e86c9ebce97d7ad93310e1e3c4efb93faae8e1cd6088da1a412be6a67c89a26c"
+      "bytes": 4092,
+      "sha256": "b242df93e06670aa464da2f0a804da19bae0ae25c3ea02259b4591290d221ba0"
     },
     {
       "path": "src/app/loading.tsx",
@@ -4566,13 +4920,13 @@
     },
     {
       "path": "src/app/not-found.tsx",
-      "bytes": 737,
-      "sha256": "6d29aeec0e1ff6bc55d3503373adc04ef9a53a289d2ec7b0dbffe78e9d6810a8"
+      "bytes": 745,
+      "sha256": "41f445e42414006fc52b8a9fecab64c567498b2d7e2963704ed392dba905fe03"
     },
     {
       "path": "src/app/page.tsx",
-      "bytes": 6558,
-      "sha256": "fb1679053e70c79c2a473277e1e2631cf325fa4b8199a300c440d76c359cec6a"
+      "bytes": 6566,
+      "sha256": "4c2deaa4ffd27db3ffb2eb737f562b13c5a7002f95031c442dda91f0292d40d1"
     },
     {
       "path": "src/app/player-workspaces.css",
@@ -4581,8 +4935,8 @@
     },
     {
       "path": "src/app/players/[id]/page.tsx",
-      "bytes": 1625,
-      "sha256": "eef8fb26a21dfda9ffde78177b9dba9f8ab4376c9bc8b5728a087c984eaf2e39"
+      "bytes": 1633,
+      "sha256": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480"
     },
     {
       "path": "src/app/playful-ui.css",
@@ -4626,13 +4980,13 @@
     },
     {
       "path": "src/app/settings/page.tsx",
-      "bytes": 2561,
-      "sha256": "2dd7ba1308c98e46fd1c67b4c2ee58c7abdbeada7ba36771b01d15e8bfd3400c"
+      "bytes": 2739,
+      "sha256": "2a82f809deebded9a66f58c03493480583c12104ff8eb5510d31987758b76461"
     },
     {
       "path": "src/app/signin/page.tsx",
-      "bytes": 1129,
-      "sha256": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4"
+      "bytes": 1137,
+      "sha256": "cfcde77707603c0d93d38c3cb3a4d0dabd558845844f54820bfc7f4e12cc74de"
     },
     {
       "path": "src/app/task-ui.css",
@@ -4671,8 +5025,8 @@
     },
     {
       "path": "src/app/tools/fishing/page.tsx",
-      "bytes": 977,
-      "sha256": "ec34369e174bfab8e5e6b0ef6be8f0eadd7696ffe9fccaf527c0e809c7f8339f"
+      "bytes": 991,
+      "sha256": "f1031a8304f80ef32914453678c4e592346aaa24f89722716df06c33fbab4091"
     },
     {
       "path": "src/app/tools/flipping/page.tsx",
@@ -4686,8 +5040,8 @@
     },
     {
       "path": "src/app/tools/market/page.tsx",
-      "bytes": 1899,
-      "sha256": "25e69c4adb00a3d9182ae8d055c230f6afdf0d61a510b0913db97a280a342b3a"
+      "bytes": 1907,
+      "sha256": "1b9ffe125e88b9d4156c69a257f38e4b5a507ca3a90e5c4789d9c07b41593132"
     },
     {
       "path": "src/app/tools/page.tsx",
@@ -4726,13 +5080,13 @@
     },
     {
       "path": "src/components/albion-scene.tsx",
-      "bytes": 1236,
-      "sha256": "aa289808f3926da00f78cbde2da31c011219ebcdcdc7ede8b2b6489e3ddae350"
+      "bytes": 1244,
+      "sha256": "74326c3890fd8a374a1ce7cf027cb5f09cfa17593f20965c45fdba0437f03b79"
     },
     {
       "path": "src/components/archive-build-links.tsx",
-      "bytes": 775,
-      "sha256": "55e95efcac543a69482ed2281e79301b21fe96e885e248a5e5fb7bdb03474251"
+      "bytes": 783,
+      "sha256": "8ad451dcbec19b3757bbb047eea7b9846f01017389e9a5728aed54d613e01d00"
     },
     {
       "path": "src/components/build-actions.tsx",
@@ -4746,8 +5100,8 @@
     },
     {
       "path": "src/components/build-editor.tsx",
-      "bytes": 18883,
-      "sha256": "d118e9e77e5cdf1902f092da7f89fb4b3aa7756202bac0e9157ab4db14d2e94b"
+      "bytes": 18891,
+      "sha256": "b76f48d1862fba619011a9b8bac648ba73853f16a4443b15a4c1b96068ce6969"
     },
     {
       "path": "src/components/build-equipment-studio.tsx",
@@ -4761,8 +5115,8 @@
     },
     {
       "path": "src/components/build-preview-card.tsx",
-      "bytes": 2209,
-      "sha256": "03632c556fbae10fdd45487f911f16dd129a236bdaf5be4d6099090852d64d6a"
+      "bytes": 2217,
+      "sha256": "31475d836857282ebcac5d58120287e61eff35eacb28c9a58ed7e555919b03b9"
     },
     {
       "path": "src/components/catalog-item-picker.tsx",
@@ -4771,13 +5125,13 @@
     },
     {
       "path": "src/components/community-panel.tsx",
-      "bytes": 11647,
-      "sha256": "6dd6eb4f18b8ed749482fba49b05e3717c8d74fb837c80c0eb4557c05c435eff"
+      "bytes": 11655,
+      "sha256": "3f5d79654b9147a0196fd3e11bf92c167db3a6111435ed08665cec4a56d80293"
     },
     {
       "path": "src/components/composition-editor.tsx",
-      "bytes": 33207,
-      "sha256": "4e45620d62cc23427a06ba2047581cd06bbc62576c6a379f6c5fc5e5b32a847d"
+      "bytes": 33215,
+      "sha256": "1bc600d146b995ef8fe14c6366eed411e7e1f4864b510dd7d8eca56d4f822bb6"
     },
     {
       "path": "src/components/composition-png-export.tsx",
@@ -4786,8 +5140,8 @@
     },
     {
       "path": "src/components/composition-view.tsx",
-      "bytes": 7396,
-      "sha256": "2f113258765270f0e459c478e2117fbfef5590dbf87f9b6e8cf5cc3fb52f448c"
+      "bytes": 7404,
+      "sha256": "b55d55422ea038551a23b1d0c4e3eb1f7f6c84924d1813d5203a0dad2ce8778f"
     },
     {
       "path": "src/components/discord-mark.tsx",
@@ -4831,8 +5185,8 @@
     },
     {
       "path": "src/components/favorite-build-button.tsx",
-      "bytes": 2406,
-      "sha256": "b8534a90d60c0a75cf2f68ee57389e210a7b769578f3ce391c3c210997692a84"
+      "bytes": 2414,
+      "sha256": "c686f60f19addc4c03779e20385a919d9876503749a61bc9b9d282a359d4e967"
     },
     {
       "path": "src/components/feature-emblem.tsx",
@@ -4846,13 +5200,13 @@
     },
     {
       "path": "src/components/global-search.tsx",
-      "bytes": 11072,
-      "sha256": "ba0996abe33e02cb3d995e9d68be0bd00dd6d7569d5ee7402beed235ed3d07c8"
+      "bytes": 11080,
+      "sha256": "eeed8d065a851f72c95faa03eceae02a02f8747af8b22ed3bdfee7246a6f59f0"
     },
     {
       "path": "src/components/grind-guide-directory.tsx",
-      "bytes": 4373,
-      "sha256": "202b0886da0112f610ae05040795eb5bfa6c55bf253f25685d163693608273fe"
+      "bytes": 4381,
+      "sha256": "d3aadf0d2ad7393e07c359c4cd3ef59f93850353e6b53da73e9637a9c93015a7"
     },
     {
       "path": "src/components/group-create.tsx",
@@ -4861,8 +5215,8 @@
     },
     {
       "path": "src/components/group-dashboard.tsx",
-      "bytes": 30541,
-      "sha256": "0fe9127abb680fd2989d948fabf4efee2f8b91c7e1ace5f7dbfe63784bd54f8d"
+      "bytes": 30549,
+      "sha256": "f0156ec146b22b7cab639ed9ef6930308e6893f24b6c54d0deab02485e6e15ca"
     },
     {
       "path": "src/components/group-event-editor.tsx",
@@ -4891,33 +5245,33 @@
     },
     {
       "path": "src/components/home-build-card.tsx",
-      "bytes": 2427,
-      "sha256": "e2af1beb06dc453fcdc70b9fe713b7fe7f759b06f3c125e12fe12a627b49584a"
+      "bytes": 2435,
+      "sha256": "238ee786391ce49ef0967d7ceb976a72de750f8830c21b603a20d8e426a7c53a"
     },
     {
       "path": "src/components/home-equipment-showcase.tsx",
-      "bytes": 2908,
-      "sha256": "a60823ce483141b41f344d0d6c384f5f1d0882bc596b3fd27724bfb7ce2c1ee9"
+      "bytes": 2916,
+      "sha256": "8c18149694da2203f0e0b273c3138d7a327c6d8c85dd0c9a6d7c72f749c4bec0"
     },
     {
       "path": "src/components/home-market-pulse.tsx",
-      "bytes": 5557,
-      "sha256": "6ec95b39d59241757f2d16f5339d7e7b2b7660af55bfe57c5ac94e9b69f3f488"
+      "bytes": 5565,
+      "sha256": "b551177cd74dad596a4f18b232ded0149245acc70a8c3ebeacdf9d5dda96f430"
     },
     {
       "path": "src/components/home-market-terminal.tsx",
-      "bytes": 26876,
-      "sha256": "88f0b873022a1a031076570c20b1239b85dd0df8b8860f9fc59c8575d99f6738"
+      "bytes": 26884,
+      "sha256": "1168345bfd951cd6bd4c01adb4d346c9c83ba77f2e2f277cc69679396d4c9bcf"
     },
     {
       "path": "src/components/home-player-preview.tsx",
-      "bytes": 7770,
-      "sha256": "2ef698a0dd61b64f26512f720fe48d3363378d3651a3e767d04bb24d0aba272e"
+      "bytes": 7778,
+      "sha256": "b45234a84ba821ae352dc144e4202da54e3c941562bbbaf50be1fb0aa949ff5f"
     },
     {
       "path": "src/components/item-catalog.tsx",
-      "bytes": 7670,
-      "sha256": "7d61332400c3ea1e438b2eac7a3ad734474328da4c4e96ac64b9820b71dc9be0"
+      "bytes": 7678,
+      "sha256": "434596107cabaf154729f41fdb423dee1281c0c391429aa6a0c5d1c28c236d75"
     },
     {
       "path": "src/components/item-icon.tsx",
@@ -4926,8 +5280,8 @@
     },
     {
       "path": "src/components/item-market-link.tsx",
-      "bytes": 374,
-      "sha256": "4ce8b16231e9bb9b469ade59b583e1498aeeb6f7aa13b1d7a772da5dd45ba56e"
+      "bytes": 382,
+      "sha256": "4b2b618a5dd6612dff49a5d2049d98847da6dc63796979ae42a1a6db3fed2fa2"
     },
     {
       "path": "src/components/journal-checklist.tsx",
@@ -4936,13 +5290,18 @@
     },
     {
       "path": "src/components/library-build-card.tsx",
-      "bytes": 1371,
-      "sha256": "99602d3b160f7520ae552297b5bed5ca32ea978c277d161e603f079ea0e91407"
+      "bytes": 1379,
+      "sha256": "52e95b6015413c578fda335925eda084d91f7b9f0b03cf948acfe2ded15c2b9d"
     },
     {
       "path": "src/components/library-build-metadata.tsx",
       "bytes": 2738,
       "sha256": "3c507c2be7fc4d194d240cc8298789cba0d28ee7d6cc73209e5ed6b770334652"
+    },
+    {
+      "path": "src/components/link.tsx",
+      "bytes": 416,
+      "sha256": "39f459a5fb801d3b4fe6716c3219799562c22e6c4b616bbb615bd8b564982f56"
     },
     {
       "path": "src/components/loadout-price-check.tsx",
@@ -4961,18 +5320,18 @@
     },
     {
       "path": "src/components/market-research.tsx",
-      "bytes": 3703,
-      "sha256": "939a75d96845be260ead9617da219c187bc455d9b6ca5af6eb11e29e4d7506e5"
+      "bytes": 3711,
+      "sha256": "f0c803bbf80a651fd6655f568b741b8a43324ca57ccdba56c2cad17dabfbff8c"
     },
     {
       "path": "src/components/market-watchlist.tsx",
-      "bytes": 4581,
-      "sha256": "6594551a7d0d0b17db7a8d331ca51dfa7aab5c155dde320e39c47ef0f932ba4e"
+      "bytes": 4589,
+      "sha256": "a670fd7cec6bef18240368a17bca144eeef3f07d4f73c154a04faf870aa6430d"
     },
     {
       "path": "src/components/market.tsx",
-      "bytes": 25892,
-      "sha256": "7b6b451b76be7fdaf79405c7aeabaedb939ceccd0b04ead09a03f0cc7e56d713"
+      "bytes": 25900,
+      "sha256": "78508e61359ee95203f07861e4d6865effc87d1ffef2c76427301f36ed34d26d"
     },
     {
       "path": "src/components/mobile-filter-panel.tsx",
@@ -4996,8 +5355,8 @@
     },
     {
       "path": "src/components/production-calculator.tsx",
-      "bytes": 44839,
-      "sha256": "3258b023c1aeac28adaa3e64b3ae51a0be55c3e0c263c692033f97608f75cb4a"
+      "bytes": 44847,
+      "sha256": "4be0f59ef9a3371c648e328e2889e02b87504105f667b332a2af3ccddd4c7e71"
     },
     {
       "path": "src/components/production-plan.tsx",
@@ -5036,8 +5395,8 @@
     },
     {
       "path": "src/components/shell.tsx",
-      "bytes": 15008,
-      "sha256": "fcb601f9520b0d66896aa53e8b9ce0f2df513ade84b8f24c0fef04416e9a5fa9"
+      "bytes": 15016,
+      "sha256": "530b7e22306925339f25a8da072550bfc3841eea71f39c8a15df6652465a25dc"
     },
     {
       "path": "src/components/spell-icon.tsx",
@@ -5051,8 +5410,8 @@
     },
     {
       "path": "src/components/tool-directory.tsx",
-      "bytes": 5178,
-      "sha256": "fe08b016f418227a283009b1bf44c4df1a0f1a140660c9aeceabe0e7f13966b5"
+      "bytes": 5186,
+      "sha256": "e5f420e55d6c39d1726ab68f22307414149510a3bdcabd268460f1a9059c4394"
     },
     {
       "path": "src/components/tool-icon.tsx",
@@ -5086,8 +5445,8 @@
     },
     {
       "path": "src/components/workspace-navigation.tsx",
-      "bytes": 1680,
-      "sha256": "73a7a62e8625acbe3780fe36416fb4069f233f489c91eb26e5f9275eed1885af"
+      "bytes": 1688,
+      "sha256": "e0d35eb8f0cc916bde952924b2e88e6b248f7614345b8a8dd05c7d6cc0d57e03"
     },
     {
       "path": "src/instrumentation.ts",
@@ -5126,8 +5485,8 @@
     },
     {
       "path": "src/lib/albion/data-client.ts",
-      "bytes": 4218,
-      "sha256": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c"
+      "bytes": 4260,
+      "sha256": "a5018810595017187a76b4f305afa288767354e58c0176fb2300e5d618e4f39e"
     },
     {
       "path": "src/lib/albion/equipment-abilities.ts",
@@ -5181,8 +5540,8 @@
     },
     {
       "path": "src/lib/albion/icon-cache.ts",
-      "bytes": 3893,
-      "sha256": "1fa9bf230864aabb21c54c9319a3505e512945ec0c34cf712e749df5e08b2e57"
+      "bytes": 3970,
+      "sha256": "791245d0dc38c24c3450c3398a2a1fb974bca1f4ac5b03980529a2f98eb4b01f"
     },
     {
       "path": "src/lib/albion/item-database.ts",
@@ -5271,18 +5630,18 @@
     },
     {
       "path": "src/lib/api-errors.ts",
-      "bytes": 1276,
-      "sha256": "39c7c15a57538971ac9a462e6c8e6f212f3835bfc71789f393e9157a8253546b"
+      "bytes": 1226,
+      "sha256": "0b63c48116f9d34137d692ccc99b7db9721225b9807e1696c5e3c0297ea2afe7"
     },
     {
       "path": "src/lib/auth.ts",
-      "bytes": 872,
-      "sha256": "0bd660b0ad76a65d5ca618a9ec6b0f11f60db5f5da0b0e9cb03d67a158c7ec9f"
+      "bytes": 1145,
+      "sha256": "aee3ee854fde4badab204732bde1f0523aeb1658a0f3d50bb4d4bcec9063fdef"
     },
     {
       "path": "src/lib/builds/service.ts",
-      "bytes": 1687,
-      "sha256": "295d996660f8e8a48b4fa793fd5ba9be227ff4fb686e21cf0f497ae0ec47d720"
+      "bytes": 2081,
+      "sha256": "c6dbfb559924b034c8f83d5fa561ebb13d6f6e8fdb2d7a25cee9555a43eacd50"
     },
     {
       "path": "src/lib/builds/validation.ts",
@@ -5316,18 +5675,23 @@
     },
     {
       "path": "src/lib/catalog/verification.ts",
-      "bytes": 14964,
-      "sha256": "03af1b14fff1861df5c13398c3b456652a670798573014cd2745d6b9ddc4a753"
+      "bytes": 14966,
+      "sha256": "7800aa6ef301167fc6921d149d19bcd31dfda5bc0152891a812027621552082e"
     },
     {
       "path": "src/lib/community/access.ts",
-      "bytes": 1663,
-      "sha256": "4928bba4568bd16c5f382d76b56ee87290bb5d5c1793c312e002eb33285b1e8f"
+      "bytes": 1669,
+      "sha256": "1bbdd38ff1456d212b0bfdd8af751d5a8acb704c3017aaeed1959e0173bfa61e"
+    },
+    {
+      "path": "src/lib/community/moderation.ts",
+      "bytes": 2736,
+      "sha256": "81eedac33d7311474bdc71ca9064c34773e9639e55247ec8f418183e189284c2"
     },
     {
       "path": "src/lib/community/service.ts",
-      "bytes": 4799,
-      "sha256": "761b67c7d604ac0691bf8dd815c0b4d9256128392c11eeb075a77dd9569af0a3"
+      "bytes": 5033,
+      "sha256": "751cfd1c3dfeaf91e82d47c5b5293ca86e4bfd17de422e0b5c2062748ab3e4c7"
     },
     {
       "path": "src/lib/community/validation.ts",
@@ -5341,8 +5705,8 @@
     },
     {
       "path": "src/lib/compositions/service.ts",
-      "bytes": 4991,
-      "sha256": "ee2ac0d80e89be2317776ffdd3793da4ccb7f49ea70058483b6821946d89d194"
+      "bytes": 6264,
+      "sha256": "3ab55eeb71be688ec343f720ff7ba4cb8c86a722a5917b77ae9cf886ba4e3d6f"
     },
     {
       "path": "src/lib/compositions/validation.ts",
@@ -5350,19 +5714,29 @@
       "sha256": "86c7f5c28fce12673e8fc6d798d991a18d9ba26d6aff58bd6319a79d684f0f94"
     },
     {
+      "path": "src/lib/database-driver.ts",
+      "bytes": 469,
+      "sha256": "000896d61c9bf729694f667aa881fc4cfe4e7435fab7bc849c3c7ecf2a1fe7c6"
+    },
+    {
       "path": "src/lib/db.ts",
-      "bytes": 238,
-      "sha256": "12d5ef697cb4e454d538a7c0c70bc7078398aaa5087e885d088a2117b4f95aeb"
+      "bytes": 61,
+      "sha256": "a13ec42296672a3e8e3a8b17b5f428df5e4386ac96217a7f72e46cb134b92857"
     },
     {
       "path": "src/lib/env.ts",
-      "bytes": 1385,
-      "sha256": "7625ac2d77eb09b8c58eff8ac6115aeedec341ac424852c54ac40a67e8f61c71"
+      "bytes": 1829,
+      "sha256": "2a95fd755f1e238f03144fcf72865666456250e90b60568c1a06887b70f51827"
     },
     {
       "path": "src/lib/grind-build-draft.ts",
       "bytes": 5178,
       "sha256": "5bb4e9183b25a59c0641d97462d2c459be9ad736841ccec71bb6dd0a6340da18"
+    },
+    {
+      "path": "src/lib/grind-library-query.ts",
+      "bytes": 1255,
+      "sha256": "a245e2ff8646e259ee6721e84d3f5a3a9bbef1a35935157d8c5eb395cc2eecbd"
     },
     {
       "path": "src/lib/grind-library-types.ts",
@@ -5371,8 +5745,8 @@
     },
     {
       "path": "src/lib/grind-library.ts",
-      "bytes": 2516,
-      "sha256": "3fa52bffcf39d7e79826cc1afec1333c50ca9503ac973cfa4bc1f2a5e6110856"
+      "bytes": 3067,
+      "sha256": "19f89245106b546f542d6d361080546c9ddc333a3a9151efcab67dbe305c164a"
     },
     {
       "path": "src/lib/groups/calendar.ts",
@@ -5391,8 +5765,8 @@
     },
     {
       "path": "src/lib/groups/service.ts",
-      "bytes": 14322,
-      "sha256": "70d907ea07532503524e499edce18da3a2ef2ad7aa1feebb18f492183f4862cd"
+      "bytes": 14732,
+      "sha256": "1c4804a4c99410118bb2be25ce5962e093b8505eb3c35b1e968eb087e9b605d7"
     },
     {
       "path": "src/lib/groups/validation.ts",
@@ -5400,9 +5774,19 @@
       "sha256": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4"
     },
     {
+      "path": "src/lib/http-error.ts",
+      "bytes": 198,
+      "sha256": "27b98b257307e18b2298bd2d6372dd35cfaad778c3b3b578ca241c1f975a9b0b"
+    },
+    {
       "path": "src/lib/http.ts",
       "bytes": 1692,
       "sha256": "5d3eb14af183ea674be8cc90e14f2e1b7e3642c4f1263464544c165d25fbdad2"
+    },
+    {
+      "path": "src/lib/inflight-cache.ts",
+      "bytes": 349,
+      "sha256": "4507f1a51e583bc9a88d2eb619cbd1983ef5e59ecde082648e9f07fa3ecd988a"
     },
     {
       "path": "src/lib/journal-progress.ts",
@@ -5415,9 +5799,24 @@
       "sha256": "7fdcfbfa64a6b145e0e36462db19acc128ca507bce4343ba3911c7b424d28b55"
     },
     {
+      "path": "src/lib/market-watch-service.ts",
+      "bytes": 1500,
+      "sha256": "770a549121edbfada5e6cd24f9d9d65d91c9b0d84cbf2bb4abe957a92f16a2de"
+    },
+    {
       "path": "src/lib/market-watch.ts",
       "bytes": 403,
       "sha256": "c2da0e2a843910852448e1d00b477a54c1afce37a9d5ea52d1988f50c3617a2a"
+    },
+    {
+      "path": "src/lib/owner-admin.ts",
+      "bytes": 1171,
+      "sha256": "32a4fb6a5e0b80123a250d60e1de847772292659b09d9bbd73e2aa71713896aa"
+    },
+    {
+      "path": "src/lib/prisma-runtime.ts",
+      "bytes": 123,
+      "sha256": "9eb9b82c3ce73b5b1f639a8fd04d8dcbfc29cec6779a0dc6e8081f828b70a2cd"
     },
     {
       "path": "src/lib/redis.ts",
@@ -5426,8 +5825,8 @@
     },
     {
       "path": "src/lib/serialization-retry.ts",
-      "bytes": 673,
-      "sha256": "b172e69decca5af44c0e0657626711949ec031f0dc7a37033e26839f3edb0c44"
+      "bytes": 679,
+      "sha256": "f711ef61db4fa68daeb8246f531b4d7e2885eb5eb413471932c7733eaeb41359"
     },
     {
       "path": "src/lib/timers/engine.ts",
@@ -5441,8 +5840,8 @@
     },
     {
       "path": "src/lib/turnstile.ts",
-      "bytes": 3290,
-      "sha256": "286122a372dc75bccaeb705177a03d7bb562ab1119918881636dd8eedd6dd0cf"
+      "bytes": 3291,
+      "sha256": "b7aa056c0837bb3a73b210d43981934925fabb66ece42b7a42b9c63641937758"
     },
     {
       "path": "src/proxy.ts",
@@ -5506,8 +5905,8 @@
     },
     {
       "path": "tests/catalog-verification.test.ts",
-      "bytes": 9214,
-      "sha256": "e99a982bd40edf696eaa099bb835147b28c0d38e0063c86680dc9679ae080ef7"
+      "bytes": 9215,
+      "sha256": "98aa1155caef9289e39a2d70e4ac658a92a20c462d699c372fb5847e7ecd4eac"
     },
     {
       "path": "tests/catalog.test.ts",
@@ -5521,8 +5920,13 @@
     },
     {
       "path": "tests/cloudflare-connection.test.ts",
-      "bytes": 4210,
-      "sha256": "706270228add3404cc10f9cf447f6fd1a4fa83a854a1b72519d0e3c14ef802ca"
+      "bytes": 4856,
+      "sha256": "c32b20adda49888cf3b1da469c520f123f269090466a91084c1d43653b098acf"
+    },
+    {
+      "path": "tests/cloudflare-database.test.ts",
+      "bytes": 5273,
+      "sha256": "c2803fe667429616ee99bae893199fd292ef34e5e31ff7f8ade851d146da74e8"
     },
     {
       "path": "tests/cloudflare-dnssec.test.ts",
@@ -5596,8 +6000,8 @@
     },
     {
       "path": "tests/icon-cache.test.ts",
-      "bytes": 5002,
-      "sha256": "5a5698e14e82dd5a14616f491575372b347288c9ca74790a316cc90cd588732b"
+      "bytes": 5003,
+      "sha256": "a6a671b3ff34d1525234e2822726974aff3dae41fda742c8cc7c8d449a54cae7"
     },
     {
       "path": "tests/item-snapshot.test.ts",
@@ -5611,8 +6015,8 @@
     },
     {
       "path": "tests/market-payload.test.ts",
-      "bytes": 2793,
-      "sha256": "15ebd5ea0715be2951773f1d7359d5f95b65273ebd034b84ad688229a92c0515"
+      "bytes": 3450,
+      "sha256": "df7963c2bf9d6906ba7fe209211b378575f171e4614171a1e9f29966458c1879"
     },
     {
       "path": "tests/market-preview.test.ts",
@@ -5628,6 +6032,11 @@
       "path": "tests/opportunities.test.ts",
       "bytes": 1546,
       "sha256": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39"
+    },
+    {
+      "path": "tests/owner-admin.test.ts",
+      "bytes": 3029,
+      "sha256": "de43d9fcd018c3946cfbf81bc62ec6ada3c8e0876b0a8b673c2b650b0dcc2817"
     },
     {
       "path": "tests/production-market.test.ts",
@@ -5706,18 +6115,23 @@
     },
     {
       "path": "tests/turnstile.test.ts",
-      "bytes": 3946,
-      "sha256": "b1f22190322d62e9df32455599376c665c27977c8ab140de178e05f2b6d58263"
+      "bytes": 4469,
+      "sha256": "c81cc681528059a376aa28f5d55acede5fd9bf2ddfcfbc7767eb195b4e14cea3"
     },
     {
       "path": "tsconfig.json",
-      "bytes": 654,
-      "sha256": "2bbd1ea18863cadea4a4757648f91c6b65725a5cb1e19edc55d54f4e2a25f6b4"
+      "bytes": 671,
+      "sha256": "ad5dd875d62f26b5aeaf9002513181755faeea73eda052f9ddb72216fefb97ca"
     },
     {
       "path": "vitest.config.ts",
       "bytes": 248,
       "sha256": "d0d6a8eb253ac7099822cc17cd388eac87e66d3d6a461c8c5a3bd6eec02dc56d"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "bytes": 759,
+      "sha256": "81dbfccc89ecc4fa238a0a36e565eb6486d7e872fd306e179cbfbda28f09971c"
     }
   ]
 }

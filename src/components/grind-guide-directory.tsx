@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import Image from "next/image";
 import { ArrowUpRight, BookOpen } from "lucide-react";
 import { ItemIcon } from "./item-icon";

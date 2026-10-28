@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/prisma-runtime";
 /** Retry only transactions Prisma confirms were rolled back for serialization/deadlock.
  * The operation must contain database-only transactional work, with no external side effects.
  */

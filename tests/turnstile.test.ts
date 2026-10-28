@@ -10,6 +10,20 @@ const config = {
 const answer = (value: unknown, status = 200) =>
   vi.fn<typeof fetch>(async () => new Response(JSON.stringify(value), { status }));
 describe("Turnstile server boundary", () => {
+  it("rejects redirect responses without forwarding the secret", async () => {
+    const send = vi.fn<typeof fetch>(
+      async () =>
+        new Response(null, {
+          status: 302,
+          headers: { Location: "https://untrusted.example/collect" },
+        }),
+    );
+    await expect(
+      verifyTurnstile("fixture-token", "community_write", config, send),
+    ).rejects.toMatchObject({ status: 503 });
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][1]?.redirect).toBe("manual");
+  });
   it("allows only provider-confirmed success, exact hostname and expected action", async () => {
     const send = answer({
       success: true,
@@ -24,7 +38,7 @@ describe("Turnstile server boundary", () => {
     );
     expect(send.mock.calls[0][1]).toMatchObject({
       method: "POST",
-      redirect: "error",
+      redirect: "manual",
       cache: "no-store",
     });
     const form = send.mock.calls[0][1]!.body as URLSearchParams;

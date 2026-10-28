@@ -1,7 +1,7 @@
 "use client";
 import { useId, useState } from "react";
 import { Star } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/link";
 export function FavoriteBuildButton({
   id,
   title,

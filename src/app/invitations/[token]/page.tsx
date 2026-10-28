@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";

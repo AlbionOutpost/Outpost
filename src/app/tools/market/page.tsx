@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { ChartNoAxesCombined, History, Calculator, Star, BookOpen, ArrowRight } from "lucide-react";
 import { Market } from "@/components/market";
 export default async function Page({

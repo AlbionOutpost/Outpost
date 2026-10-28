@@ -2,7 +2,7 @@ import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { BuildPreviewCard } from "@/components/build-preview-card";
 import { contentTypes } from "@/lib/builds/validation";
-import Link from "next/link";
+import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -98,11 +98,9 @@ export default async function Builds({
             </Link>
           </div>
           <div className="library-build-grid">
-            {featuredLibraryBuilds()
-              .slice(0, 3)
-              .map((b) => (
-                <LibraryBuildCard key={b.id} build={b} />
-              ))}
+            {(await featuredLibraryBuilds()).slice(0, 3).map((b) => (
+              <LibraryBuildCard key={b.id} build={b} />
+            ))}
           </div>
         </section>
       )}

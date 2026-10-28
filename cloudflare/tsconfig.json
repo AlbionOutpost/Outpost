@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2022"],
+    "types": ["@cloudflare/workers-types", "node"],
+    "incremental": false,
+    "paths": { "@/*": ["../src/*"] }
+  },
+  "include": ["database/**/*.ts"],
+  "exclude": ["generated", "database/web-driver.ts", "database/prisma-web.ts"]
+}

@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/link";
 import { Compass, Bookmark } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";

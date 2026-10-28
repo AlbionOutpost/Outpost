@@ -99,7 +99,7 @@ it("rejects non-PNG or oversized source bodies and caches failures briefly", asy
   expect((await renderIcon("T4_CAPE", 1)).available).toBe(false);
   await renderIcon("T4_BAG", 1);
   expect(fetch).toHaveBeenCalledTimes(2);
-  expect(fetch.mock.calls[0][1]).toMatchObject({ redirect: "error" });
+  expect(fetch.mock.calls[0][1]).toMatchObject({ redirect: "manual" });
 });
 it("evicts artwork by byte budget rather than retaining hundreds of maximum-size images", async () => {
   vi.resetModules();

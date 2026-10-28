@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { TurnstileChallenge } from "./turnstile-challenge";
 type Comment = {
   id: string;

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
+import Link from "@/components/link";
 export default async function Settings({
   searchParams,
 }: {
@@ -21,6 +22,9 @@ export default async function Settings({
         <nav className="account-settings-navigation" aria-label="Settings sections">
           <a href="#profile-preferences">Profile & preferences</a>
           <a href="#account-data">Data & account</a>
+          {["ADMIN", "MODERATOR"].includes(user.role) && (
+            <Link href="/admin/reports">Moderation dashboard</Link>
+          )}
         </nav>
         <div className="account-settings-content">
           <section className="panel" id="profile-preferences">

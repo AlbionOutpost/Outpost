@@ -1,10 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/prisma-runtime";
 import { z } from "zod";
-import { db } from "../db";
-import { HttpError } from "../api-errors";
+import { db, databaseService } from "../db";
+import { HttpError } from "../http-error";
 import { communityTarget } from "./access";
 import { communityAction, targetKind } from "./validation";
-export async function communityMutation(
+async function localCommunityMutation(
   kind: z.infer<typeof targetKind>,
   id: string,
   userId: string,
@@ -120,3 +120,7 @@ export async function communityMutation(
     throw e;
   }
 }
+
+export const communityMutation: typeof localCommunityMutation = (...args) =>
+  databaseService<Awaited<ReturnType<typeof localCommunityMutation>>>("communityMutation", args) ??
+  localCommunityMutation(...args);

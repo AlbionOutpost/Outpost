@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { useAtlasRegion } from "./region-context";

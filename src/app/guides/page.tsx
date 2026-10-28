@@ -1,5 +1,5 @@
 import { GuideDirectory } from "@/components/guide-directory";
-import Link from "next/link";
+import Link from "@/components/link";
 import { libraryGuides } from "@/lib/grind-library";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
 export const metadata = { title: "Guides" };
@@ -28,7 +28,7 @@ export default async function Guides({
         Your Grind guides, captured 27 October 2026. Check each article’s date before using older
         game advice.
       </p>
-      <GrindGuideDirectory guides={libraryGuides()} query={query} category={category} />
+      <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
       <div className="library-section-heading outpost-guide-heading">
         <div>
           <h2>Getting comfortable with Outpost</h2>

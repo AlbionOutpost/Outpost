@@ -1,23 +1,9 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { parseEnv } from "node:util";
+import { configuredSecrets } from "./secret-values.mjs";
 try {
   process.loadEnvFile(".env");
 } catch {}
-let managementSecrets = {};
-for (const path of [".env.cloudflare", ".env.discord"])
-  try {
-    Object.assign(managementSecrets, parseEnv(readFileSync(path, "utf8")));
-  } catch {}
-const values = { ...process.env, ...managementSecrets };
-const secrets = [
-  "NEXTAUTH_SECRET",
-  "DISCORD_CLIENT_SECRET",
-  "DISCORD_BOT_TOKEN",
-  "TURNSTILE_SECRET",
-  "CLOUDFLARE_API_TOKEN",
-  "CLOUDFLARE_DNS_API_TOKEN",
-  "CLOUDFLARE_API_KEY",
-].flatMap((key) => (values[key] ? [{ key, value: values[key] }] : []));
+const secrets = configuredSecrets();
 const matches = [];
 let files = 0;
 function walk(path) {

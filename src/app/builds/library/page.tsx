@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { libraryBuilds, featuredLibraryBuilds } from "@/lib/grind-library";
+import Link from "@/components/link";
+import { queryLibraryBuilds, featuredLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { LibraryBuildCard } from "@/components/library-build-card";
 export const metadata = { title: "Grind build library" };
@@ -13,18 +13,12 @@ export default async function Library({
   const q = str("q").trim(),
     category = str("category"),
     sort = str("sort");
-  const rows = libraryBuilds();
-  const categories = [...new Set(rows.map((b) => b.category))].filter(Boolean).sort();
-  const matches = rows.filter(
-    (b) =>
-      (!category || b.category === category) &&
-      `${b.title} ${b.weaponName} ${b.author} ${b.tags.join(" ")}`
-        .toLowerCase()
-        .includes(q.toLowerCase()),
-  );
-  if (sort === "title") matches.sort((a, b) => a.title.localeCompare(b.title));
-  const pages = Math.max(1, Math.ceil(matches.length / 24));
-  const page = Math.min(pages, Math.max(1, Number.parseInt(str("page")) || 1));
+  const { rows, total, matched, categories, pages, page } = await queryLibraryBuilds({
+    q,
+    category,
+    sort,
+    page: Number.parseInt(str("page")) || 1,
+  });
   const pageHref = (n: number) =>
     `/builds/library?${new URLSearchParams({ q, category, sort, page: String(n) })}`;
   return (
@@ -33,8 +27,8 @@ export default async function Library({
         <div>
           <h1 className="page-title display-title">Find your next loadout.</h1>
           <p className="intro">
-            {rows.length.toLocaleString("en-GB")} builds from your Albion Online Grind library.
-            Every weapon, every kind of adventure.
+            {total.toLocaleString("en-GB")} builds from your Albion Online Grind library. Every
+            weapon, every kind of adventure.
           </p>
         </div>
         <Link className="button primary" href="/builds/new">
@@ -60,11 +54,9 @@ export default async function Library({
             <span>Selected from the recovered library</span>
           </div>
           <div className="library-build-grid">
-            {featuredLibraryBuilds()
-              .slice(0, 3)
-              .map((b) => (
-                <LibraryBuildCard key={b.id} build={b} />
-              ))}
+            {(await featuredLibraryBuilds()).slice(0, 3).map((b) => (
+              <LibraryBuildCard key={b.id} build={b} />
+            ))}
           </div>
         </section>
       )}
@@ -102,15 +94,15 @@ export default async function Library({
       <div className="library-section-heading">
         <h2>{q || category ? "Matching loadouts" : "The full library"}</h2>
         <span>
-          {matches.length.toLocaleString("en-GB")} builds · page {page} of {pages}
+          {matched.toLocaleString("en-GB")} builds · page {page} of {pages}
         </span>
       </div>
       <div className="library-build-grid">
-        {matches.slice((page - 1) * 24, page * 24).map((b) => (
+        {rows.map((b) => (
           <LibraryBuildCard key={b.id} build={b} />
         ))}
       </div>
-      {!matches.length && (
+      {!rows.length && (
         <div className="panel empty">
           <h2>No loadouts match that search</h2>
           <p>Try a different weapon, author or activity.</p>

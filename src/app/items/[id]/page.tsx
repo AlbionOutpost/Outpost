@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ItemIcon } from "@/components/item-icon";
 import { catalogItem } from "@/lib/catalog/validation";
-import Link from "next/link";
+import Link from "@/components/link";
 export default async function Item({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await db.itemMetadata.findUnique({ where: { id }, include: { release: true } });

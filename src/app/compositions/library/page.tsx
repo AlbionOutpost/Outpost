@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { libraryCompositions, findLibraryBuild } from "@/lib/grind-library";
+import Link from "@/components/link";
+import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { ItemIcon } from "@/components/item-icon";
 export const metadata = { title: "Grind group composition library" };
@@ -11,15 +11,15 @@ export default async function Page({
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.slice(0, 100) : "";
   const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
-  const all = libraryCompositions();
-  const categories = [...new Set(all.map((c) => c.category))].filter(Boolean).sort();
-  const rows = all.filter(
-    (c) =>
-      (!category || c.category === category) &&
-      `${c.title} ${c.author}`.toLowerCase().includes(q.toLowerCase()),
-  );
-  const pages = Math.max(1, Math.ceil(rows.length / 18));
-  const page = Math.min(pages, Math.max(1, Number.parseInt(params.page || "1") || 1));
+  const { rows, total, matched, categories, pages, page } = await queryLibraryCompositions({
+    q,
+    category,
+    page: Number.parseInt(params.page || "1") || 1,
+  });
+  const builds = await findLibraryBuilds([
+    ...new Set(rows.flatMap((comp) => comp.members.slice(0, 12))),
+  ]);
+  const memberBuilds = new Map(builds.map((build) => [build.id, build]));
   const href = (n: number) =>
     `/compositions/library?${new URLSearchParams({ q, category, page: String(n) })}`;
   return (
@@ -27,9 +27,7 @@ export default async function Page({
       <div className="section-heading">
         <div>
           <h1 className="page-title display-title">A plan for every party.</h1>
-          <p className="intro">
-            {all.length} group compositions recovered from your Grind library.
-          </p>
+          <p className="intro">{total} group compositions recovered from your Grind library.</p>
         </div>
         <Link href="/compositions/new" className="button primary">
           Create a comp
@@ -71,13 +69,13 @@ export default async function Page({
         <button className="button secondary">Find compositions</button>
       </form>
       <div className="library-section-heading">
-        <h2>{rows.length} compositions</h2>
+        <h2>{matched} compositions</h2>
         <span>
           Page {page} / {pages}
         </span>
       </div>
       <div className="library-comp-grid">
-        {rows.slice((page - 1) * 18, page * 18).map((comp) => (
+        {rows.map((comp) => (
           <article className="library-comp-card" key={comp.slug}>
             <Link href={`/compositions/library/${encodeURIComponent(comp.slug)}`}>
               <span>
@@ -86,7 +84,7 @@ export default async function Page({
               <h2>{comp.title}</h2>
               <div className="library-comp-weapons">
                 {comp.members.slice(0, 12).map((id, i) => {
-                  const build = findLibraryBuild(id);
+                  const build = memberBuilds.get(id);
                   const main = build?.equipment.find((e) => e.slot === "Main hand");
                   return (
                     <span key={i} title={build?.title || "Unresolved loadout"}>

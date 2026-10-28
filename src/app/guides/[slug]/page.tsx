@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound } from "next/navigation";
 import { findLibraryGuide, libraryJournal, libraryFishing } from "@/lib/grind-library";
 import { FishingCalculator } from "@/components/fishing-calculator";
@@ -7,11 +7,11 @@ import { GuideArticleContent } from "@/components/guide-article-content";
 import { guideArtwork } from "@/components/grind-guide-directory";
 import { ItemIcon } from "@/components/item-icon";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const guide = findLibraryGuide((await params).slug);
+  const guide = await findLibraryGuide((await params).slug);
   return { title: guide?.title || "Guide not found", description: guide?.summary };
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const guide = findLibraryGuide((await params).slug);
+  const guide = await findLibraryGuide((await params).slug);
   if (!guide) notFound();
   if (guide.slug === "albion-journal-guide")
     return (
@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             completeness are not inferred.
           </p>
         </details>
-        <JournalChecklist entries={libraryJournal()} />
+        <JournalChecklist entries={await libraryJournal()} />
       </div>
     );
   return (
@@ -88,7 +88,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <GuideArticleContent nodes={guide.content} />
           </article>
           {guide.slug === "fishing-leveling-guide" && (
-            <FishingCalculator fish={libraryFishing()} initialMode="leveling" compact />
+            <FishingCalculator fish={await libraryFishing()} initialMode="leveling" compact />
           )}
           <footer>
             <Link className="text-link" href={`https://albiononlinegrind.com/guides/${guide.slug}`}>

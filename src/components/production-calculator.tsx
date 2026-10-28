@@ -5,7 +5,7 @@ import { ProductionProfile } from "./production-profile";
 import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/link";
 import { useAtlasRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import { recipes, recipeFor, enchantable } from "@/lib/albion/recipes";

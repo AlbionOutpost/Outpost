@@ -93,7 +93,7 @@ NEXTAUTH_URL=http://localhost:3000
 
 Keep the existing `NEXTAUTH_SECRET`; do not copy any secret into a `NEXT_PUBLIC_` variable. The deployment will need its own strong secret and production `NEXTAUTH_URL=https://albionoutpost.com` in runtime secret configuration. The administration tokens in `.env.cloudflare` are never application/Discord credentials.
 
-Both Discord values are now configured locally. Do not paste the Client Secret into chat. Local login additionally needs the localhost redirect above. Production verification remains pending a working deployment: real consent/callback, session reload, logout/expiry, state/PKCE rejection, Secure/HttpOnly/SameSite cookies and denied access from a second account. An avatar upload or successful fixture session does not prove those checks.
+Both Discord values are now configured locally. Do not paste the Client Secret into chat. Local login additionally needs the localhost redirect above. The public deployment and OAuth start now verify the exact callback, state/PKCE and Secure/HttpOnly/SameSite pre-login cookies. Real personal consent/callback exchange, session reload, owner-admin assignment, logout/expiry and denied access from a second real account remain pending. Owner Discord ID303585687460904970 is configured server-side; only its persisted verified provider link receives ADMIN. Cloudflare Access is removed. An avatar upload or successful fixture session does not prove those checks.
 
 ## Sources and asset provenance
 

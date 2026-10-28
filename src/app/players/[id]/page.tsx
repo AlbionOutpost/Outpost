@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/link";
 import { db } from "@/lib/db";
 export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -1,5 +1,7 @@
 # Architecture and execution model
 
+Cloudflare deployment addendum (28 October2026): production is public Workers hosting with a private data service, EU D1 public catalog/archive and SQLite Durable Object account transactions. Next SSR runs in signed, expiring browser-session objects with request budgets; no private HTML/role cache. PostgreSQL/Redis below remains the supported local runtime. Cloudflare Access is removed. Only server-verified persisted Discord account303585687460904970 receives owner ADMIN. See [current runtime and verification](../deployment/CLOUDFLARE_PORT_PROGRESS.md); fixture sessions are not real OAuth, and production recovery is not certified.
+
 ## Shape of the application
 
 Outpost is a modular monolith. Next.js server components render pages and query PostgreSQL; focused client components manage interactive drafts, source requests and local calculations; App Router handlers validate and persist changes. Prisma owns relational persistence. Redis and bounded process caches protect fixed Albion source integrations. There is no separate microservice frontend, generic CMS, websocket market feed or background game simulation to recreate.

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAtlasRegion } from "./region-context";
-import Link from "next/link";
+import Link from "@/components/link";
 import { items } from "@/lib/albion/item-database";
 import { ItemIcon } from "./item-icon";
 import { catalogSearchResponse } from "@/lib/catalog/search";

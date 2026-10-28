@@ -1,12 +1,14 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { notFound } from "next/navigation";
-import { findLibraryBuild, libraryCompositions } from "@/lib/grind-library";
+import { findLibraryBuilds, findLibraryComposition } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { LibraryBuildCard } from "@/components/library-build-card";
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const composition = libraryCompositions().find((c) => c.slug === slug);
+  const composition = await findLibraryComposition(slug);
   if (!composition) notFound();
+  const builds = await findLibraryBuilds([...new Set(composition.members)]);
+  const memberBuilds = new Map(builds.map((build) => [build.id, build]));
   return (
     <div className="library-page">
       <Link className="library-back-link" href="/compositions/library">
@@ -29,7 +31,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       )}
       <div className="library-comp-members">
         {composition.members.map((id, index) => {
-          const build = findLibraryBuild(id);
+          const build = memberBuilds.get(id);
           return (
             <section key={index}>
               <div className="library-member-label">

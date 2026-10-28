@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { parseEnv } from "node:util";
+import { configuredSecrets } from "./secret-values.mjs";
 
 /** Return categories only: never include matched credential values in logs or artifacts. */
 export function scanText(text, configured = {}) {
@@ -19,29 +19,15 @@ function main() {
   try {
     process.loadEnvFile(".env");
   } catch {}
-  let managementSecrets = {};
-  for (const path of [".env.cloudflare", ".env.discord"])
-    try {
-      Object.assign(managementSecrets, parseEnv(readFileSync(path, "utf8")));
-    } catch {}
-  const values = { ...process.env, ...managementSecrets };
   const configured = Object.fromEntries(
-    [
-      "NEXTAUTH_SECRET",
-      "DISCORD_CLIENT_SECRET",
-      "DISCORD_BOT_TOKEN",
-      "TURNSTILE_SECRET",
-      "CLOUDFLARE_API_TOKEN",
-      "CLOUDFLARE_DNS_API_TOKEN",
-      "CLOUDFLARE_API_KEY",
-    ]
-      .filter((key) => values[key])
-      .map((key) => [key, values[key]]),
+    configuredSecrets().map(({ key, value, source }) => [`${key}@${source}`, value]),
   );
   const skipped = new Set([
     "node_modules",
     ".git",
     ".next",
+    ".open-next",
+    ".wrangler",
     ".qa",
     "test-results",
     "playwright-report",
@@ -50,7 +36,7 @@ function main() {
     ".aws",
     "assets",
   ]);
-  const textFile = /\.(?:[cm]?js|tsx?|py|md|json|ya?ml|toml)$/;
+  const textFile = /\.(?:[cm]?js|tsx?|py|md|jsonc?|ya?ml|toml)$/;
   const findings = [];
   let filesScanned = 0;
   function walk(directory) {
