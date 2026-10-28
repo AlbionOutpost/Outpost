@@ -4765,9 +4765,13 @@
       {
         "path": ".qa/market-reliability/hosted-loadout-390.png",
         "sha256": "993999f404a19fc986c6ea2784d89d4965061335050e8929eb67e3e4c65cba50"
+      },
+      {
+        "path": ".qa/market-reliability/github-runs.json",
+        "sha256": "3dd200b3576bd3d0800540fdf38b54265ab539b41dd53aa66aaf35a22f51e387"
       }
     ],
-    "latestImplementationNote": "Market reliability follow-up: exact Node22 phase286unit107browser15DB9regions allPASS;107Cloudflarebrowser and19nativeSQLitePASS. Public exact-item/quality cache reuse,50/minute+250/five-minute perattempt reservations, explicitqualitydiscovery, contextualclientguide, selectedcityhistorical/known costs andaggregateguards implemented. Twenty productionstates acrosssixwidths inspected; nooverflow/pageerrors/sampledaxeviolations. Perf94market/95guide,accessibility100each,LCP3008/2853ms,CLS0,initialmobilewarmappcachelabsamplesonly. No field, throughput, conformance, allmechanics orperfection claim. Publicpublication inprogress; realOAuth/patch/legal/recovery/owneracceptance remainopen. Final live-data review found wrapping overlap for filled bid+ask source dates; fixed explicit whitespace, strengthened fixture, all Node286unit107browser gates PASS again,7affectedCloudflare journeys PASS after priorfull107. Sixwidthpaired quote captures retested; light375/1440guide noaxes/overflow. Latest initialmobilelab94/95performance,100accessibility,LCP3004/2854ms,CLS0; warmcache,notfield/conformance. Final wrappublication verification pending. LIVE final93975c07,25strictpublicchecks and5real-sourceHTTPSjourneys PASS including wrappedfulltimestamps; OAuth-startPASS butpersonalconsent/adminunverified. GitHubsourcepending."
+    "latestImplementationNote": "Market reliability follow-up: exact Node22 phase286unit107browser15DB9regions allPASS;107Cloudflarebrowser and19nativeSQLitePASS. Public exact-item/quality cache reuse,50/minute+250/five-minute perattempt reservations, explicitqualitydiscovery, contextualclientguide, selectedcityhistorical/known costs andaggregateguards implemented. Twenty productionstates acrosssixwidths inspected; nooverflow/pageerrors/sampledaxeviolations. Perf94market/95guide,accessibility100each,LCP3008/2853ms,CLS0,initialmobilewarmappcachelabsamplesonly. No field, throughput, conformance, allmechanics orperfection claim. Publicpublication inprogress; realOAuth/patch/legal/recovery/owneracceptance remainopen. Final live-data review found wrapping overlap for filled bid+ask source dates; fixed explicit whitespace, strengthened fixture, all Node286unit107browser gates PASS again,7affectedCloudflare journeys PASS after priorfull107. Sixwidthpaired quote captures retested; light375/1440guide noaxes/overflow. Latest initialmobilelab94/95performance,100accessibility,LCP3004/2854ms,CLS0; warmcache,notfield/conformance. Final wrappublication verification pending. LIVE final93975c07,25strictpublicchecks and5real-sourceHTTPSjourneys PASS including wrappedfulltimestamps; OAuth-startPASS butpersonalconsent/adminunverified. GitHubsourcepending. Source94665c4pushed; independentCI40787444103inprogress(notPASS)."
   },
   "source_scan": {
     "filesScanned": 4184,
@@ -4893,7 +4897,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "cdbf7004e750122ab37a27ce2c744b7df1154d6c321aeb0def76244936022707",
+      "sha256": "fd36bd0d4a67a32d41074f685004db853aeb64ed4394b8da21499d5232cb5f1a",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
