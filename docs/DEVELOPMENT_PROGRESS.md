@@ -445,3 +445,5 @@ Recovery source synchronized to GitHub main0438b04; workflow40764103923 is reche
 ### October28 — compact build overview
 
 Implemented the owner's compact nine-slot reference layout on read-only build views and previews: large gear artwork, attached recorded spells, consumable alternative overlays, quiet empty X marks, and accessible names/detail links. Removed tall labelled overview cards; mount data remains in equipment details. Six widths pass geometry/axe checks. A duplicated hidden preview spell label was caught and fixed; full Node phase244unit104browser15DB9regional passes. Production container passes; one mobile library-detail Lighthouse sample94/100, LCP3007ms/CLS0. Cloudflare checks and publication pending; owner acceptance remains open.
+
+Compact overview deployed on web b93431df-a341-4bb0-ba5e-3dd7a0cffae5 and checked on live desktop/phone. Final anchor offset keeps detail headings below sticky navigation (104px). Node244unit104browser and Cloudflare104browser pass; all six responsive/axe captures reviewed. Superseded40764103923 cancelled to avoid replacing this revision; newer CI pending.

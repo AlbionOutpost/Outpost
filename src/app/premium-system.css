@@ -1477,3 +1477,6 @@
 .compact-loadout-grid > :nth-child(3n + 2) {
   top: -12px;
 }
+.app.outpost .build-loadout-view .loadout-ability-row {
+  scroll-margin-block-start: 104px;
+}

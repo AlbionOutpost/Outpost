@@ -4413,7 +4413,7 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T20:51:24.650451+00:00",
+    "checkedAt": "2026-10-28T20:59:26.724518+00:00",
     "phase": "2026-10-28T20:46:28.584Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
@@ -4568,9 +4568,25 @@
       {
         "path": ".qa/compact-loadout/cloudflare-browser.log",
         "sha256": "e39dcde0e5491b111a2267a5985a960e60cf34feb5a07d577e9ba3af95a2b16e"
+      },
+      {
+        "path": ".qa/compact-loadout/hosted.json",
+        "sha256": "8fff1592603683670a98700a8f65115e47bc0664a047a2f18ff7f7f943077ac8"
+      },
+      {
+        "path": ".qa/compact-loadout/hosted-390.png",
+        "sha256": "f3a1c6e3d6a46b6fa6cd9a65608a231511e3279dfd45ee880a348fd0694b8a9b"
+      },
+      {
+        "path": ".qa/compact-loadout/hosted-1440.png",
+        "sha256": "1f5219ea3eddb6f1b9441bffb9550b0361b10791cc617a7b196e695eb4c18003"
+      },
+      {
+        "path": ".qa/compact-loadout/anchor-free-check.log",
+        "sha256": "4d7137754f3e6c084457085f6e2494e0a4e8c20d1bd2e8a31d54ece4a68eeb1f"
       }
     ],
-    "latestImplementationNote": "Compact read-only overview follows owner reference: nine icon slots, raised centre, attached spells/consumable alternatives, no labelled cards. Final Node244unit104browser15DB9regional allPASS; Cloudflare104PASS. Production6widths reviewed: nooverflow/pageerror/axeviolations. Container nonroot/health/no-env PASS. Single mobile detail sample94perf100accessibility LCP3007ms CLS0; no field or full conformance claim. Earlier deployment40764103923 still pending; compact UI publication pending. Whole-product/source-patch/legal/personalOAuth/owner acceptance remain open."
+    "latestImplementationNote": "Compact overview LIVE on web b93431df: nine icon slots, raised centre, attached spells/alternatives. Six production widths inspected: nooverflow/pageerror/automated axe violations. Node244unit104browser15DB9regions allPASS; Cloudflare104PASS; container healthy/nonroot/no-env. Single mobile detail94perf100accessibility LCP3007ms CLS0; no field/conformance claim. Targeted live1440/390 both200 and gear keyboard anchors land104px below top after final CSS offset. Earlier40764103923 cancelled as superseded; current source8f68c4a CI40767272900 pending and final anchor commit pending. Whole-product/realOAuth/patch/legal/recovery/owner acceptance gates remain open."
   },
   "source_scan": {
     "filesScanned": 4162,
@@ -4696,7 +4712,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "33cc3199f0a4d5317a09d128c15c42ad93b047140ca4b7297b150a6838f44e5f",
+      "sha256": "4507cda70f4596dee65b971fdf3f0e2c5e72cd119527259349fdee1bea4074e4",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -4943,7 +4959,7 @@
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480",
     "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
-    "src/app/premium-system.css": "431ae85aafd0d3766868164886220aaa97a2d360f997b6dd88972392cb4ccd59",
+    "src/app/premium-system.css": "62918b9059b57ec8c410db2942222edfdabda70a225863b9e1c0d8e71a2b8c4b",
     "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
     "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
