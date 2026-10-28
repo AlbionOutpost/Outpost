@@ -1,6 +1,6 @@
 # Outpost remaining work
 
-Current active delivery: [Cloudflare Free deployment and GitHub automation](docs/deployment/CLOUDFLARE_PORT_PROGRESS.md). The public application is deployed; Error1102 cold rendering failures were reproduced and corrected. Access gating is removed at the owner's request, and verified owner Discord account303585687460904970 maps to ADMIN. Complete hosted automation and real personal OAuth/recovery evidence while preserving independent NO-GO gates.
+Public [Cloudflare Free delivery and GitHub automation](docs/deployment/CLOUDFLARE_PORT_PROGRESS.md) are verified by hosted run40740329022 on main sourcea2d70d3. The Error1102 correction is deployed, Access gating is removed, and the configured Discord owner receives ADMIN from its verified provider link. Next unfinished priorities are genuine personal account lifecycle, production recovery/monitoring, current-patch/source review and remaining feature/visual acceptance. Formal NO-GO remains independent of the owner's explicit public-availability instruction.
 
 Persistent owner-authorized [Cloudflare management access](docs/deployment/CLOUDFLARE_ACCESS.md) is configured for future sessions in this workspace. Authentication is separate from website runtime credentials and does not close deployment/release gates.
 

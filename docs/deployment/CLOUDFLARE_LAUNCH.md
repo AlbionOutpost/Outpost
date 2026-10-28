@@ -52,3 +52,5 @@ No private PostgreSQL export was imported. Local migration/backup tests and fixt
 ## GitHub monitoring limitations
 
 An actual GitHub runner was challenged by Bot Fight Mode before reaching the app; the event was read back from Cloudflare analytics. This is distinct from Error1102. The deployment-check wrapper records exact managed challenges as BLOCKED only in explicitly configured GitHub CI, retaining a visible warning and no application-PASS claim. Other errors remain failures; normal operator checks remain strict. No bot setting or IP allowlist was weakened. Documentation-only commits have separate portable checks and do not redeploy the app.
+
+Verified final main delivery: [run40740329022](https://github.com/AlbionOutpost/Outpost/actions/runs/40740329022), sourcea2d70d3, both Workers deployed. The CI HTTP probe is explicitly BLOCKED by managed challenge; independent post-deployment public smoke/auth-start passes. Genuine personal OAuth and production recovery remain unverified.

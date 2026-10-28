@@ -3135,8 +3135,8 @@
     },
     {
       "path": ".github/workflows/documentation.yml",
-      "bytes": 834,
-      "sha256": "6e813166c29e6067847f977487a3dcb1725d2fa9314c009df64efe8c643d672d"
+      "bytes": 912,
+      "sha256": "9b8b8ef2e42b827c91d924bd871a4a5cbe8ae09efd558da468b4f6fc6c0b6b86"
     },
     {
       "path": ".github/workflows/quality.yml",

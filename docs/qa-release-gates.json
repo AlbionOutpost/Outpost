@@ -60,7 +60,7 @@
     {
       "id": "REL-012",
       "requirement": "OPS-007",
-      "acceptance": "Product-source commitae887a6 passed actual hosted run40446609588. Future product commits need their own observed hosted result; local success alone is insufficient."
+      "acceptance": "Main sourcea2d70d3 passed actual hosted workflow40740329022 and deployed both Workers. Future product commits need their own observed result. Managed-challenge CI HTTP remains explicitly BLOCKED; independent post-deployment smoke/auth-start passes, without genuine personal OAuth certification."
     },
     {
       "id": "REL-013",

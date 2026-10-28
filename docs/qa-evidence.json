@@ -4380,8 +4380,8 @@
     "watchTablePresent": true
   },
   "remote": {
-    "checkedAt": "2026-10-27T04:05:08.211145+00:00",
-    "scope": "Read-only repository/organization/hosted CI status; no policy changes",
+    "checkedAt": "2026-10-28T18:23:48.504399+00:00",
+    "scope": "Observed actual main Node/native Cloudflare/browser/Free bundle/deployment success. Public CI probe BLOCKED by managed challenge; independent normal-network checks pass. Not real personal OAuth or production recovery.",
     "organization": {
       "login": "AlbionOutpost",
       "plan": "free",
@@ -4401,8 +4401,8 @@
         "hostedRuns": 0
       }
     ],
-    "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40446609588",
-    "successfulCommit": "ae887a6dbcb7aad94e57ea9df556d7270a8eb11c"
+    "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40740329022",
+    "successfulCommit": "a2d70d32e2254b22252aaeb8c1c69f74e5bf8f5c"
   },
   "dependency_maintenance": {
     "checkedAt": "2026-10-26T12:40:53.488543+00:00",
@@ -4413,9 +4413,9 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T17:47:04.791126+00:00",
+    "checkedAt": "2026-10-28T18:25:17.562072+00:00",
     "phase": "2026-10-28T17:46:10.486Z",
-    "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified.",
+    "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
         "path": ".qa/cloudflare-hosted-visual/manifest.json",
@@ -4459,15 +4459,15 @@
       },
       {
         "path": "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md",
-        "sha256": "c5323adafb5398e605d245b8ceabfcee3305fbc701299ba2c595db745672e85f"
+        "sha256": "6d1313268fdec107dedd45049e8c3ff6f61317264d9cf9d55a8240c4cf2e53e7"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-smoke.json",
-        "sha256": "cfdbd3ac43f3e4a1e39137b0dd2c6ca93bcee508924f3fe1723ceda80d318e03"
+        "sha256": "c5cf8a22391ba228033a4b1137c97a196727739e9f2513c0c05e493d42f0964c"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-auth-start.json",
-        "sha256": "94a0a5dc7f4998f2f08ac777fb6e4285583dbca8e593c79692a41d83fcf0e2e5"
+        "sha256": "b9396cf96c4a6b1743992489505d44d15af720500bf85291caa88fd91e06366a"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-768.png",
@@ -4475,7 +4475,7 @@
       },
       {
         "path": ".qa/cloudflare-launch/deployment-check.json",
-        "sha256": "0bee390c0b4c1ea3ca20edd9c1cff69e7701a2e437b8dacd34e931d081e73273"
+        "sha256": "4cb6560c473cd3c536efa7ac1e107d05aa2892545abfd76c817fc1d544915443"
       },
       {
         "path": ".qa/cloudflare-launch/github-firewall-events.json",
@@ -4484,6 +4484,14 @@
       {
         "path": ".qa/cloudflare-database-test/result.json",
         "sha256": "d719d041c5071f4ca418ff39ca9ef703cc0eefc762832a019821ea5436111f74"
+      },
+      {
+        "path": ".qa/cloudflare-launch/github-release-summary.json",
+        "sha256": "214dd2e2f6254bd33f959ed960c3eeb8ee58268fc446181a3bfff532b87f1da6"
+      },
+      {
+        "path": ".qa/cloudflare-launch/runtime-parity.json",
+        "sha256": "ac14cb2ed376f649b9e88bdbd6c80dff804478d1fea6fee9e81426ea86aa058f"
       }
     ]
   },
@@ -4601,7 +4609,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/remote-state.json",
-      "sha256": "c9ddc6a82c108108dc88b3765058c84a00d5f12f34b3ef056a6bb001f9d3a3e2",
+      "sha256": "d5d07e3252a794863f037e36da736d21c7da6b9214e6a9bc0302e63e8828008f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4611,14 +4619,14 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "dca7f7ef70f44320d76c317edd00a2b169781a84f5b7b3dcbd57f61bb8e3a8be",
+      "sha256": "74127ede8326dff4845b203a0c9758cdc14f8a64395a1077c509f9d0aa381585",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
   "reviewed_sources": {
     ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
     ".github/workflows/cloudflare-preview.yml": "32c996e8c510520637c1512ea61654d41b83d69a83574f3caf61bf1442049675",
-    ".github/workflows/documentation.yml": "6e813166c29e6067847f977487a3dcb1725d2fa9314c009df64efe8c643d672d",
+    ".github/workflows/documentation.yml": "9b8b8ef2e42b827c91d924bd871a4a5cbe8ae09efd558da468b4f6fc6c0b6b86",
     ".github/workflows/quality.yml": "5c8f888df4478ab9979dfc1f82136fb7bafa74df38d5abaf33964b9d94ba2d24",
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",

@@ -2,9 +2,9 @@ name: Documentation checks
 on:
   push:
     branches: [main]
-    paths: ["docs/**", "**/*.md"]
+    paths: ["docs/**", "**/*.md", ".github/workflows/documentation.yml"]
   pull_request:
-    paths: ["docs/**", "**/*.md"]
+    paths: ["docs/**", "**/*.md", ".github/workflows/documentation.yml"]
 permissions:
   contents: read
 jobs:

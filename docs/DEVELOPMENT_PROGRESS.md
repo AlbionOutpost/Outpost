@@ -1,5 +1,9 @@
 # Outpost development history
 
+## 2026-10-28 — Public Free deployment and main automation verified
+
+Main sourcea2d70d3 passed actual hosted workflow40740329022 and deployed both Workers. Node quality,19 native SQLite checks,102 Cloudflare browser cases and both Free bundle checks pass. The GitHub HTTP probe records an explicit managed-challenge BLOCKED result without disabling bot protection; independent strict public page/API/WAF/regional-data/OAuth-start checks pass after the final deployment. Local phase232unit/102browser/15disposableDB/nine regional reads passes all ten gates.30 hosted viewport cases and121 sanitized successful Worker events support the Error1102 correction, with bounded scope. Documentation-only CI is verified in a clean checkout and on GitHub. No Access gate, paid plan or R2 activation. Owner Discord303585687460904970 maps server-side to ADMIN; genuine owner consent/admin assignment and production recovery remain unverified. [Versions, workflow and operational limits](deployment/CLOUDFLARE_PORT_PROGRESS.md).
+
 ## 2026-10-28 — GitHub delivery and bot-challenge evidence
 
 Application source is on main at7ef23c8. Run40732709235 passed the complete Node quality job and native Cloudflare/browser gates, then successfully deployed both Workers using the separately scoped script-deploy credential. Its final HTTP smoke failed403; security analytics confirms Bot Fight Mode challenged the runner before the application. Normal-network strict smoke, owned HTTPS auth-start and30 responsive cases pass. A read-only temporary analytics token was revoked after diagnosis. The revised wrapper reports exact edge challenges as BLOCKED, visibly, without weakening bot protection or excusing app/resource-limit failures. Documentation-only updates receive portable checks without an app redeployment. Final pipeline verification is active; genuine personal Discord lifecycle, human Turnstile and production recovery remain unverified.

@@ -877,7 +877,7 @@
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
       "verified_scope": "Public Cloudflare Free deployment observed. Reproduced Error1102 fixed with per-browser rendering objects;8/8 fresh probes and30/30 six-width hosted checks pass.102 Cloudflare browser cases and19 native database integration checks pass. Public D1 imports and44 constraint triggers verified. No private account export. Access removed at owner request. GitHub environment and narrowly scoped deployment credential configured. Native owner-link SQL rejects the wrong provider and promotes the configured Discord account idempotently.",
-      "remaining": "Final main delivery after explicit edge-challenge reporting is being observed. Genuine personal OAuth, recovery/monitoring, operator/legal/patch acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO.",
+      "remaining": "Genuine personal OAuth, production recovery/monitoring, operator/legal/patch/visual acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO; main automatic delivery is observed successful.",
       "evidence": [
         "Dockerfile",
         "scripts/start.mjs",
@@ -956,15 +956,18 @@
       "title": "Hosted repository CI",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "GitHub run40732709235 on7df41f4 passed its complete Node job and native Cloudflare/browser/Free bundle gates, and deployed both Workers successfully. Its final HTTP step failed on an independently confirmed Bot Fight Mode managed challenge, before the app. Normal-network hosted smoke/auth-start and30 responsive cases pass. Main7ef23c8 quality passed; its redundant deployment was superseded for explicit challenge reporting.",
-      "remaining": "Observe the final pipeline. CI edge challenges must stay explicitly BLOCKED, not public-app PASS. Genuine personal OAuth and hosted recovery remain unverified.",
+      "verified_scope": "Main sourcea2d70d3 passed actual hosted workflow40740329022: complete Node quality job,19 native SQLite checks,102 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40740328218 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent post-deployment strict public smoke/auth-start passes. Historical failures and superseded runs remain retained.",
+      "remaining": "Future product commits need their own observed hosted result. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery are separate unverified gates.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",
         "docs/engineering/REPOSITORY_READINESS.md",
         "scripts/qa-ci-evidence.mjs",
         "tests/ci-evidence.test.ts",
-        "docs/design-review/product-milestone/hosted-ci.json"
+        "docs/design-review/product-milestone/hosted-ci.json",
+        ".github/workflows/cloudflare-preview.yml",
+        ".github/workflows/documentation.yml",
+        "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
       ]
     },
     {
