@@ -439,3 +439,5 @@ Premium workspace retest: final Node phase ten gates PASS (239 unit/104 browser/
 ### October28 — live quota recovery
 
 The premium UI shipped through successful GitHub run40755799066 on8ebaceb. Postdeployment catalog search exposed D1's exhausted daily read allowance. Reviewed public catalog/library assets now provide bounded fallback reads; private account content remains database-only and fails closed.244 unit,104 Cloudflare browser and19 native SQLite checks pass. Actual exhausted-quota long/short searches, item detail and uncached library pages now200; strict public smoke and OAuth-start pass. Hotfix web24484c0e-6c9e-4a46-a0c5-4e29afbcf51d/data de7e1572-668f-4831-888f-68fb5dddfed4. GitHub recovery-source synchronization and final evidence regeneration are in progress. Whole-product, personal OAuth, source-patch, legal/recovery and owner acceptance gates remain open.
+
+Recovery source synchronized to GitHub main0438b04; workflow40764103923 is rechecking the already-deployed hotfix. Public verification is complete; CI rerun pending.

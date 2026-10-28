@@ -45,3 +45,5 @@ Five forced-unavailability/parity/denial tests and the current244-unit suite pas
 The published UI includes shared surfaces/controls, build autosave and equipment workspaces, production layout, private account shopping snapshots and party preparation. Mastery profiles, islands/laborers, additional notifications and the other roadmap gaps remain unfinished. Owner visual acceptance remains open; no universal superiority or full-product completion claim is made.
 
 Final quota-recovery Node phase: ten gates PASS with244unit/104browser/15DB/nine regional checks. Final live smoke25/25 and14desktop/mobile captures all200/nooverflow; actual builder1440, crafting390 and shopping390 inspected. Safe operator quota diagnostics and source fallback are not yet certified by the GitHub recovery-source workflow.
+
+Recovery source is now pushed on main0438b042035e2bdaa0de26ad1315b3f2534a8940. GitHub independently rechecks it in workflow40764103923; the hotfix is already deployed and verified above, but this new CI rerun is still pending.
