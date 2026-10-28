@@ -434,9 +434,13 @@ export function ProductionCalculator({
                     update("materialCity", e.target.value as ProductionInput["materialCity"])
                   }
                 >
-                  {cities.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
+                  {cities
+                    .filter((c) => c !== "Black Market" || draft.materialCity === c)
+                    .map((c) => (
+                      <option key={c} disabled={c === "Black Market"}>
+                        {c}
+                      </option>
+                    ))}
                 </select>
               </label>
               <label>

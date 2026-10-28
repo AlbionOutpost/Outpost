@@ -932,6 +932,45 @@
         "tests/cloudflare-deployment-check.test.ts",
         "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md"
       ]
+    },
+    {
+      "id": "QA-066",
+      "title": "Transport instant execution charged sell-listing setup",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Set10 cargo at100 purchase/150 sale,8% tax,2.5% setup and50 transport/risk; choose instant sale.",
+      "expected": "Profit330 with no listing setup; listing remains292.5.",
+      "current": "Execution-specific setup; manual Black Market listing targets supported, NPC purchase origin rejected.",
+      "historical_cause": "Confirmed in owner-requested full-product review.",
+      "historical_files": "See dated review finding matrix.",
+      "verification": "Independent unit cases and transport save/reload/browser journey; opportunities expected150\u221212\u2212100=38.",
+      "evidence": ["docs/engineering/reviews/2026-10-28-full-product-review.md"]
+    },
+    {
+      "id": "QA-067",
+      "title": "Price identity and pending refresh could misvalue saved plans",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Change crop/item/market or clear a manual price while a quote request is pending; restore legacy observed prices without item identity.",
+      "expected": "Preserve edits and refuse mismatched/missing source values; reject oversized snapshots before persistence.",
+      "current": "Farming exact item identity; shopping/transport guarded merges; source-zero and impossible purchases incomplete; timezone-aware oldest price; API aggregate validation.",
+      "historical_cause": "Confirmed in owner-requested full-product review.",
+      "historical_files": "See dated review finding matrix.",
+      "verification": "Unit identity/zero/route/clear/timezone cases plus authenticated invalid snapshot400 and unchanged database.",
+      "evidence": ["docs/engineering/reviews/2026-10-28-full-product-review.md"]
+    },
+    {
+      "id": "QA-068",
+      "title": "Secondary workflows had hidden feedback and inconsistent responsive alignment",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open transport onphone, shopping empty state ondesktop and crafting setup at768px.",
+      "expected": "Feedback near the active workflow, centred empty-state heading, separated tablet panels.",
+      "current": "Live transport strip includes profit/staleness/invalid capacity; explicit shopping heading alignment;12px tablet crafting gaps.",
+      "historical_cause": "Confirmed in owner-requested full-product review.",
+      "historical_files": "See dated review finding matrix.",
+      "verification": "Six-width final screenshot review and104-case browser regressions; owner acceptance remains open.",
+      "evidence": ["docs/engineering/reviews/2026-10-28-full-product-review.md"]
     }
   ]
 }

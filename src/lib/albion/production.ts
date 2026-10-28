@@ -89,6 +89,7 @@ export function production(input: ProductionInput) {
   function price(id: string, quality: number, city: string) {
     const p = v.prices[id];
     if (
+      (city === "Black Market" && id !== recipe.output) ||
       !p ||
       p.value === null ||
       (!p.manual && p.value === 0) ||

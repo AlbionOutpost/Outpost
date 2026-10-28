@@ -1,8 +1,12 @@
 import { it, expect } from "vitest";
 import { initialTransport, transport, transportSchema } from "../src/lib/albion/transport";
-import { transportObservations } from "../src/lib/albion/transport-prices";
+import {
+  transportObservations,
+  mergeTransportObservations,
+} from "../src/lib/albion/transport-prices";
 it("calculates capacity-constrained trips, fees and independent transport profit", () => {
   const v = initialTransport("europe");
+  v.saleMode = "listing";
   v.quantity = 10;
   v.weight = 15;
   v.capacity = 100;
@@ -65,13 +69,12 @@ it("does not silently reuse prices for another item, region, city, quality or sa
   v.region = "europe";
   expect(transport(v).profit).toBeNull();
 });
-it("rejects zero capacity and unsupported Black Market listings", () => {
+it("rejects zero capacity and purchases from the Black Market", () => {
   const v = initialTransport("europe");
   v.capacity = 0;
   expect(transportSchema.safeParse(v).success).toBe(false);
   v.capacity = 100;
-  v.toCity = "Black Market";
-  v.saleMode = "listing";
+  v.fromCity = "Black Market";
   expect(transportSchema.safeParse(v).success).toBe(false);
 });
 it("maps source sell minimum and destination buy maximum without reversing them", () => {
@@ -103,4 +106,36 @@ it("maps source sell minimum and destination buy maximum without reversing them"
   p = transportObservations(v, rows);
   expect(p.sell.value).toBe(150);
   expect(transportObservations(v, []).sell.value).toBeNull();
+});
+
+it("does not charge a listing fee for an instant sale and accepts manual Black Market targets", () => {
+  const v = initialTransport("europe");
+  v.quantity = 10;
+  v.buy.value = 100;
+  v.sell.value = 150;
+  v.tax = 8;
+  v.fee = 2.5;
+  v.risk = 50;
+  expect(transport(v).fees).toBe(120);
+  expect(transport(v).profit).toBe(330);
+  v.toCity = "Black Market";
+  v.saleMode = "listing";
+  expect(transport(v).fees).toBe(157.5);
+  expect(transport(v).profit).toBe(292.5);
+  v.sell.manual = false;
+  v.sell.execution = "listing";
+  v.sell.region = v.region;
+  v.sell.city = v.toCity;
+  v.sell.itemId = v.itemId;
+  expect(transport(v).complete).toBe(false);
+});
+
+it("keeps edits made during a transport refresh and rejects another route", () => {
+  const v = initialTransport("europe"),
+    observed = { buy: { ...v.buy, value: 100 }, sell: { ...v.sell, value: 150 } };
+  const current = { ...v, buy: { ...v.buy, value: 0 } };
+  expect(mergeTransportObservations(current, v, observed).buy.value).toBe(0);
+  expect(mergeTransportObservations(current, v, observed).sell.value).toBe(150);
+  const other = { ...v, region: "asia" as const };
+  expect(mergeTransportObservations(other, v, observed)).toBe(other);
 });

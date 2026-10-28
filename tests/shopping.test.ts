@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   mergeShopping,
+  mergeShoppingQuotes,
   shoppingListSchema,
   savedShoppingSchema,
   shoppingFromProduction,
@@ -98,4 +99,80 @@ describe("inventory-aware shopping", () => {
     expect(entries[0].unitPrice).toBe(100);
     expect(shoppingSummary({ ...list, entries }).missing).toBe(1);
   });
+});
+
+it("preserves price edits while a shopping refresh is pending, including a cleared manual price", () => {
+  const requested = {
+    ...row,
+    priceKind: "observed" as const,
+    observedAt: new Date().toISOString(),
+  };
+  const current = {
+    ...list,
+    entries: [{ ...requested, unitPrice: null, priceKind: "manual" as const }],
+  };
+  const quotes = [
+    {
+      itemId: row.itemId,
+      quality: 1,
+      prices: [
+        {
+          item_id: row.itemId,
+          quality: 1,
+          city: row.city,
+          sell_price_min: 200,
+          sell_price_min_date: new Date().toISOString(),
+          buy_price_max: 0,
+          buy_price_max_date: "",
+        },
+      ],
+    },
+  ];
+  expect(mergeShoppingQuotes(current, [requested], quotes).entries[0].unitPrice).toBeNull();
+  const changed = mergeShoppingQuotes(
+    { ...list, entries: [{ ...requested, owned: 5 }] },
+    [requested],
+    quotes,
+  );
+  expect(changed.entries[0].unitPrice).toBe(200);
+  expect(changed.entries[0].owned).toBe(5);
+  expect(
+    mergeShoppingQuotes(
+      { ...list, entries: [{ ...requested, city: "Lymhurst" }] },
+      [requested],
+      quotes,
+    ).entries[0].unitPrice,
+  ).toBe(100);
+});
+it("does not turn a source zero sentinel or Black Market purchase into a free priced line", () => {
+  expect(
+    shoppingSummary({
+      ...list,
+      entries: [
+        { ...row, unitPrice: 0, priceKind: "observed", observedAt: new Date().toISOString() },
+      ],
+    }).total,
+  ).toBeNull();
+  expect(
+    shoppingSummary({ ...list, entries: [{ ...row, city: "Black Market" }] }).total,
+  ).toBeNull();
+});
+
+it("keeps the oldest plan observation even when a newer one has a timezone offset", () => {
+  const entries = shoppingFromProduction([
+    {
+      id: row.itemId,
+      name: row.name,
+      city: row.city,
+      quality: 1,
+      quantity: 1,
+      gross: 100,
+      sources: new Set([
+        "Observed " + new Date().toISOString().replace("Z", "+00:00"),
+        "Observed 2020-01-01T00:00:00Z",
+      ]),
+    },
+  ]);
+  expect(entries[0].observedAt).toBe("2020-01-01T00:00:00Z");
+  expect(shoppingSummary({ ...list, entries }).total).toBeNull();
 });

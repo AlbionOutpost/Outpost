@@ -5,9 +5,9 @@ import { db } from "@/lib/db";
 import { authOptions } from "@/lib/auth";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
-import { transportSchema } from "@/lib/albion/transport";
+import { transportSchema, transport } from "@/lib/albion/transport";
 import { tradeScenarioSchema } from "@/lib/albion/calculations";
-import { productionSchema } from "@/lib/albion/production";
+import { productionSchema, production } from "@/lib/albion/production";
 import { productionPlanSchema, productionPlan } from "@/lib/albion/production-plan";
 import { savedShoppingSchema } from "@/lib/albion/shopping";
 import { farmingSchema, farming } from "@/lib/albion/farming";
@@ -52,6 +52,13 @@ export const POST = apiHandler("scenario.save", async (req: NextRequest) => {
       ]),
     })
     .parse(await boundedJson(req));
+  try {
+    if (input.configuration.kind === "transporting") transport(input.configuration);
+    if (["crafting", "refining", "enchanting"].includes(input.configuration.kind))
+      production(productionSchema.parse(input.configuration));
+  } catch {
+    throw new HttpError(400, "Scenario inputs or totals exceed supported limits");
+  }
   if (input.configuration.kind === "production-plan") {
     try {
       productionPlan(input.configuration);

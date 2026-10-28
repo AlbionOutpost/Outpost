@@ -26,6 +26,7 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
       },
     ]);
     await page.goto("/tools/transporting?region=europe");
+    await page.getByLabel("Sale execution", { exact: true }).selectOption("listing");
     for (const [label, value] of [
       ["Cargo quantity", "10"],
       ["Weight per item (kg)", "15"],
@@ -39,6 +40,13 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
     ])
       await page.getByLabel(label, { exact: true }).fill(value);
     await expect(page.locator(".panel.result > strong")).toHaveText("292.5");
+    await page.getByLabel("Sale execution", { exact: true }).selectOption("instant");
+    await expect(page.locator(".panel.result > strong")).toHaveText("330");
+    await expect(page.getByLabel("Transport listing fee (%)", { exact: true })).toBeDisabled();
+    await page.getByLabel("Sale execution", { exact: true }).selectOption("listing");
+    await page.getByLabel("Available cargo capacity (kg)", { exact: true }).fill("0");
+    await expect(page.locator(".transport-route-profit")).toContainText("positive capacity");
+    await page.getByLabel("Available cargo capacity (kg)", { exact: true }).fill("100");
     await page.getByLabel("Transport plan title", { exact: true }).fill("Verified cargo run");
     await page.getByRole("button", { name: "Save transport plan", exact: true }).click();
     await expect(

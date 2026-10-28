@@ -20,8 +20,12 @@ export const GET = apiHandler("opportunities.scan", async (req: NextRequest) => 
         .pipe(z.array(transportBase.shape.itemId).min(1).max(25)),
     })
     .parse(p);
+  if (v.fromCity === "Black Market") throw new HttpError(400, "Choose a player purchase market");
   if (v.toCity === "Black Market" && v.saleMode === "listing")
-    throw new HttpError(400, "Black Market scenarios use observed buy orders only");
+    throw new HttpError(
+      400,
+      "This scanner uses Black Market buy orders; use a manual transport target for a sell listing",
+    );
   if (!(await rateLimit("opportunities", 30, 60)))
     throw new HttpError(429, "Scanner budget exhausted; retry later");
   const items = [...new Set(v.items)],

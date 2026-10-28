@@ -4,10 +4,18 @@ export function transportObservations(
   v: Pick<TransportInput, "region" | "itemId" | "quality" | "fromCity" | "toCity" | "saleMode">,
   rows: MarketPrice[],
 ) {
-  const from = rows.find(
-      (r) => r.item_id === v.itemId && r.quality === v.quality && r.city === v.fromCity,
-    ),
-    to = rows.find((r) => r.item_id === v.itemId && r.quality === v.quality && r.city === v.toCity);
+  const from =
+      v.fromCity === "Black Market"
+        ? undefined
+        : rows.find(
+            (r) => r.item_id === v.itemId && r.quality === v.quality && r.city === v.fromCity,
+          ),
+    to =
+      v.toCity === "Black Market" && v.saleMode === "listing"
+        ? undefined
+        : rows.find(
+            (r) => r.item_id === v.itemId && r.quality === v.quality && r.city === v.toCity,
+          );
   return {
     buy: {
       itemId: v.itemId,
@@ -35,5 +43,30 @@ export function transportObservations(
       city: v.toCity,
       quality: v.quality,
     },
+  };
+}
+
+export function transportPriceQuery(
+  v: Pick<TransportInput, "region" | "itemId" | "quality" | "fromCity" | "toCity" | "saleMode">,
+) {
+  return new URLSearchParams({
+    region: v.region,
+    itemId: v.itemId,
+    quality: String(v.quality),
+    fromCity: v.fromCity,
+    toCity: v.toCity,
+    saleMode: v.saleMode,
+  }).toString();
+}
+export function mergeTransportObservations(
+  current: TransportInput,
+  requested: TransportInput,
+  observed: Pick<TransportInput, "buy" | "sell">,
+): TransportInput {
+  if (transportPriceQuery(current) !== transportPriceQuery(requested)) return current;
+  return {
+    ...current,
+    buy: current.buy === requested.buy ? observed.buy : current.buy,
+    sell: current.sell === requested.sell ? observed.sell : current.sell,
   };
 }

@@ -28,10 +28,10 @@ export const transportBase = z.object({
   }),
 });
 export const transportSchema = transportBase.superRefine((v, c) => {
-  if (v.toCity === "Black Market" && v.saleMode !== "instant")
+  if (v.fromCity === "Black Market")
     c.addIssue({
       code: "custom",
-      message: "Black Market scenarios use observed buy orders, not player sell listings",
+      message: "The Black Market buys from players; choose a player purchase market",
     });
 });
 export type TransportInput = z.infer<typeof transportSchema>;
@@ -64,21 +64,28 @@ export function initialTransport(region: TransportInput["region"]): TransportInp
     sell: { ...p, execution: null },
   };
 }
+/** One identity check is shared by accounting and the editable price display. */
+export function transportPriceMatches(v: TransportInput, side: "buy" | "sell") {
+  const p = v[side];
+  return (
+    p.value !== null &&
+    p.quality === v.quality &&
+    (p.manual ||
+      (p.value > 0 &&
+        p.region === v.region &&
+        p.city === (side === "buy" ? v.fromCity : v.toCity) &&
+        p.itemId === v.itemId)) &&
+    (side !== "sell" || p.manual || v.sell.execution === v.saleMode) &&
+    (side !== "sell" || v.toCity !== "Black Market" || v.saleMode === "instant" || p.manual)
+  );
+}
 export function transport(input: TransportInput) {
   const v = transportSchema.parse(input),
     totalWeight = v.quantity * v.weight,
     trips = Math.max(1, Math.ceil(totalWeight / v.capacity)),
     transportCost = trips * v.costPerTrip + v.risk;
   if (transportCost > 1e12) throw new Error("Transport costs exceed one trillion silver");
-  const valid = (p: TransportInput["buy"], city: string) =>
-    p.value !== null &&
-    (p.manual || p.value > 0) &&
-    p.quality === v.quality &&
-    (p.manual || (p.region === v.region && p.city === city && p.itemId === v.itemId));
-  const complete =
-    valid(v.buy, v.fromCity) &&
-    valid(v.sell, v.toCity) &&
-    (v.sell.manual || v.sell.execution === v.saleMode);
+  const complete = transportPriceMatches(v, "buy") && transportPriceMatches(v, "sell");
   const stale = [v.buy, v.sell].some((p) => !p.manual && (!p.observedAt || isStale(p.observedAt)));
   const result = complete
     ? trade({
@@ -86,7 +93,7 @@ export function transport(input: TransportInput) {
         sell: v.sell.value!,
         quantity: v.quantity,
         tax: v.tax,
-        fee: v.fee,
+        fee: v.saleMode === "listing" ? v.fee : 0,
         transport: transportCost,
       })
     : null;

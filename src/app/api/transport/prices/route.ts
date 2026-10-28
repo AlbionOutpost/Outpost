@@ -18,8 +18,7 @@ export const GET = apiHandler("transport.prices", async (req: NextRequest) => {
       ...Object.fromEntries(req.nextUrl.searchParams),
       quality: Number(req.nextUrl.searchParams.get("quality")),
     });
-  if (v.toCity === "Black Market" && v.saleMode === "listing")
-    throw new HttpError(400, "Black Market accepts observed buy orders only");
+  if (v.fromCity === "Black Market") throw new HttpError(400, "Choose a player purchase market");
   if (!(await rateLimit("transport-prices", 60, 60)))
     throw new HttpError(429, "Price request budget exhausted");
   return NextResponse.json(

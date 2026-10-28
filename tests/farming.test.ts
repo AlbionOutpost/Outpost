@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { farming, farmingSchema, initialFarming } from "@/lib/albion/farming";
+import { farming, farmingSchema, initialFarming, crops } from "@/lib/albion/farming";
 function fixture() {
   const v = initialFarming("europe");
   v.plants = 10;
@@ -91,4 +91,34 @@ describe("single-harvest farming accounting", () => {
     v.seedPrice.value = 1e12;
     expect(() => farming(v)).toThrow("Farming totals");
   });
+});
+
+it("cannot reuse observed seed/product prices after a saved crop identity changes", () => {
+  const v = initialFarming("europe");
+  v.harvestPerPlant = 8;
+  const crop = crops.find((c) => c.productId === v.cropId)!;
+  v.seedPrice = {
+    ...v.seedPrice,
+    itemId: crop.seedId,
+    manual: false,
+    value: 2000,
+    region: v.region,
+    city: v.materialCity,
+    observedAt: new Date().toISOString(),
+  };
+  v.productPrice = {
+    ...v.productPrice,
+    itemId: crop.productId,
+    manual: false,
+    value: 100,
+    region: v.region,
+    city: v.outputCity,
+    observedAt: new Date().toISOString(),
+  };
+  expect(farming(v).complete).toBe(true);
+  v.cropId = crops.find((c) => c.productId !== v.cropId)!.productId;
+  expect(farming(v).profit).toBeNull();
+  v.seedPrice.manual = true;
+  v.productPrice.manual = true;
+  expect(farming(v).complete).toBe(true);
 });

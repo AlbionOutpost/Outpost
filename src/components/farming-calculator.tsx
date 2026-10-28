@@ -81,6 +81,7 @@ export function FarmingCalculator() {
             (p) => p.item_id === id && p.city === city && p.quality === 1,
           );
           next[key] = {
+            itemId: id,
             value: row?.sell_price_min || null,
             manual: false,
             quality: 1,
@@ -103,7 +104,12 @@ export function FarmingCalculator() {
   }
   function priceField(key: "seedPrice" | "productPrice", label: string, city: string) {
     const p = config[key];
-    const matches = p.quality === 1 && (p.manual || (p.region === region && p.city === city));
+    const matches =
+      p.quality === 1 &&
+      (p.manual ||
+        (p.region === region &&
+          p.city === city &&
+          p.itemId === (key === "seedPrice" ? crop.seedId : crop.productId)));
     return (
       <label>
         {label}
@@ -285,9 +291,13 @@ export function FarmingCalculator() {
                     value={draft[key]}
                     onChange={(e) => update(key, e.target.value as FarmingInput[typeof key])}
                   >
-                    {cities.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
+                    {cities
+                      .filter((c) => c !== "Black Market" || draft[key] === c)
+                      .map((c) => (
+                        <option key={c} disabled={c === "Black Market"}>
+                          {c}
+                        </option>
+                      ))}
                   </select>
                 </label>
               ))}

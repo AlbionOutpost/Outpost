@@ -9,6 +9,7 @@ import { cities } from "@/lib/albion/region-config";
 import {
   shoppingListSchema,
   shoppingSummary,
+  mergeShoppingQuotes,
   shoppingKey,
   type ShoppingList,
   type ShoppingEntry,
@@ -89,7 +90,12 @@ export function ShoppingWorkspace() {
     setMessage("");
     try {
       const candidates = requested.entries
-        .filter((r) => r.quantity > r.owned && (r.priceKind !== "manual" || r.unitPrice === null))
+        .filter(
+          (r) =>
+            r.city !== "Black Market" &&
+            r.quantity > r.owned &&
+            (r.priceKind !== "manual" || r.unitPrice === null),
+        )
         .sort(
           (a, b) =>
             Number(a.unitPrice !== null && !isStale(a.observedAt || "")) -
@@ -100,27 +106,17 @@ export function ShoppingWorkspace() {
       const items = candidates
         .filter((row) => !checkedPrices.current.has(shoppingKey(row)))
         .slice(0, 20);
+      if (!items.length) {
+        setMessage("No unpriced purchases need refreshing. Manual prices are kept.");
+        return;
+      }
       const quotes = await fetchQuoteBatch(region, items, active.signal);
       if (active.signal.aborted) return;
       items.forEach((row) => checkedPrices.current.add(shoppingKey(row)));
       const current = readShopping(region);
-      let changed = 0;
-      const entries = current.entries.map((row) => {
-        if (row.priceKind === "manual" && row.unitPrice !== null) return row;
-        const quote = quotes.find((q) => q.itemId === row.itemId && q.quality === row.quality);
-        const price = quote?.prices.find(
-          (p) => p.city === row.city && p.sell_price_min > 0 && !isStale(p.sell_price_min_date),
-        );
-        if (!price) return row;
-        changed++;
-        return {
-          ...row,
-          unitPrice: price.sell_price_min,
-          priceKind: "observed" as const,
-          observedAt: price.sell_price_min_date,
-        };
-      });
-      if (changed) commit({ ...current, entries });
+      const next = mergeShoppingQuotes(current, items, quotes);
+      const changed = next.entries.filter((row, i) => row !== current.entries[i]).length;
+      if (changed) commit(next);
       setMessage(
         changed
           ? `Updated ${changed} recent city prices. Manual prices were kept. ${items.length === 20 ? "Refresh checks up to 20 purchase lines at a time." : ""}`
@@ -288,9 +284,15 @@ export function ShoppingWorkspace() {
                                       })
                                     }
                                   >
-                                    {cities.map((city) => (
-                                      <option key={city}>{city}</option>
-                                    ))}
+                                    {cities
+                                      .filter(
+                                        (city) => city !== "Black Market" || row.city === city,
+                                      )
+                                      .map((city) => (
+                                        <option key={city} disabled={city === "Black Market"}>
+                                          {city}
+                                        </option>
+                                      ))}
                                   </select>
                                 </div>
                               </div>
@@ -336,15 +338,17 @@ export function ShoppingWorkspace() {
                                 }
                               />
                               <small>
-                                {row.stale
-                                  ? "Stale · refresh needed"
-                                  : row.unitPrice === null
-                                    ? "Not priced"
-                                    : row.priceKind === "manual"
-                                      ? "Manual price"
-                                      : row.priceKind === "plan"
-                                        ? "Plan estimate"
-                                        : `Observed ${row.observedAt} UTC`}
+                                {row.unavailableMarket
+                                  ? "Choose a player purchase market"
+                                  : row.stale
+                                    ? "Stale · refresh needed"
+                                    : row.unitPrice === null
+                                      ? "Not priced"
+                                      : row.priceKind === "manual"
+                                        ? "Manual price"
+                                        : row.priceKind === "plan"
+                                          ? "Plan estimate"
+                                          : `Observed ${row.observedAt} UTC`}
                               </small>
                             </td>
                             <td className="numeric" data-label="Total">

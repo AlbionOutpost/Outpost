@@ -838,6 +838,10 @@
 .shopping-empty > svg {
   color: var(--accent-ink);
 }
+.app.outpost .shopping-empty > h2 {
+  text-align: center;
+  justify-content: center;
+}
 .shopping-empty p {
   max-width: 58ch;
   margin: 12px auto 24px;
@@ -1032,6 +1036,11 @@
     > :is(.production-accounting-panel, .production-assumption-summary) {
     grid-column: 1/-1;
     grid-row: auto;
+  }
+}
+@media (max-width: 900px) {
+  .app.outpost .premium-production .production-workspace .calculator-inputs > .panel {
+    margin-bottom: 12px;
   }
 }
 @media (max-width: 600px) {
@@ -1479,4 +1488,26 @@
 }
 .app.outpost .build-loadout-view .loadout-ability-row {
   scroll-margin-block-start: 104px;
+}
+.transport-route-profit {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.app.outpost .transport-route-profit strong {
+  font: 600 18px/1.3 var(--font-data);
+}
+@media (max-width: 780px) {
+  .app.outpost .transport-route-strip {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .transport-route-profit {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+}
+#transport-prices {
+  scroll-margin-top: 104px;
 }

@@ -1,5 +1,7 @@
 # Current Outpost visual reviews
 
+Latest product correction: [transport feedback, shopping alignment and tablet crafting spacing](product-review/README.md), with the owner-requested accounting audit.
+
 Latest work: [Grind recovery and equipment-led redesign](grind-recovery/README.md). Source content, current-patch verification and owner visual acceptance are independent.
 
 Search refinement: [single field, contained scrolling and compact responsive palette](search-palette/README.md). Header/footer stay visible, results scroll, Clear preserves focus and rapid keyboard reopen remains usable.

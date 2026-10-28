@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAtlasRegion } from "./region-context";
 import {
   initialTransport,
   transport,
   transportSchema,
+  transportPriceMatches,
   type TransportInput,
 } from "@/lib/albion/transport";
 import { cities } from "@/lib/albion/region-config";
@@ -12,18 +13,26 @@ import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ArrowRight, Truck } from "lucide-react";
+import { transportPriceQuery, mergeTransportObservations } from "@/lib/albion/transport-prices";
 export function TransportCalculator() {
   const region = useAtlasRegion(),
     [draft, setDraft] = useState(() => initialTransport(region)),
     [message, setMessage] = useState(""),
-    [busy, setBusy] = useState(false),
+    [pendingKey, setPendingKey] = useState<string | null>(null),
     [title, setTitle] = useState(""),
     [saved, setSaved] = useState<{ id: string; title: string; configuration: unknown }[]>([]);
   const config = { ...draft, region };
+  const requestKey = transportPriceQuery(config),
+    busy = pendingKey === requestKey;
+  const controller = useRef<AbortController | null>(null);
+  useEffect(() => () => controller.current?.abort(), [requestKey]);
   let result: ReturnType<typeof transport> | null = null;
+  let validationError = "";
   try {
     result = transport(config);
-  } catch {}
+  } catch {
+    validationError = "Check cargo quantity, positive capacity, prices and cost limits.";
+  }
   const update = <K extends keyof TransportInput>(k: K, value: TransportInput[K]) =>
     setDraft((d) => ({ ...d, [k]: value }));
   const money = (n: number | null | undefined) =>
@@ -31,27 +40,28 @@ export function TransportCalculator() {
       ? "Unavailable"
       : n.toLocaleString(undefined, { maximumFractionDigits: 2 });
   async function load() {
-    setBusy(true);
+    controller.current?.abort();
+    const active = new AbortController();
+    controller.current = active;
+    const requested = config;
+    setPendingKey(requestKey);
     try {
-      const q = new URLSearchParams({
-        region,
-        itemId: draft.itemId,
-        quality: String(draft.quality),
-        fromCity: draft.fromCity,
-        toCity: draft.toCity,
-        saleMode: draft.saleMode,
-      });
-      const r = await fetch(`/api/transport/prices?${q}`),
+      const q = transportPriceQuery(requested);
+      const r = await fetch(`/api/transport/prices?${q}`, {
+          signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]),
+        }),
         b = await r.json();
       if (!r.ok) throw new Error(b.error);
       const buy = transportSchema.shape.buy.parse(b.buy),
         sell = transportSchema.shape.sell.parse(b.sell);
-      setDraft((d) => ({ ...d, buy, sell }));
+      if (active.signal.aborted) return;
+      setDraft((d) => mergeTransportObservations({ ...d, region }, requested, { buy, sell }));
       setMessage("Loaded actual source observations. Missing orders remain unavailable.");
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Price service unavailable");
+      if (!active.signal.aborted)
+        setMessage(e instanceof Error ? e.message : "Price service unavailable");
     } finally {
-      setBusy(false);
+      if (controller.current === active) setPendingKey(null);
     }
   }
   return (
@@ -70,6 +80,20 @@ export function TransportCalculator() {
         <span className="transport-route-region">
           {region} · {draft.saleMode === "instant" ? "Sell to buy orders" : "Sell listing estimate"}
         </span>
+        <div className="transport-route-profit" aria-live="polite">
+          <small>Estimated net profit{result?.stale ? " · stale prices" : ""}</small>
+          {validationError ? (
+            <span>{validationError}</span>
+          ) : result?.complete ? (
+            <strong className={result.profit! < 0 ? "negative" : "positive"}>
+              {money(result.profit)} silver
+            </strong>
+          ) : (
+            <a className="text-link" href="#transport-prices">
+              Add purchase & sale prices
+            </a>
+          )}
+        </div>
       </div>
       <div className="calculator-grid transport-workspace">
         <div className="calculator-inputs">
@@ -107,20 +131,23 @@ export function TransportCalculator() {
                     value={draft[key]}
                     onChange={(e) => update(key, e.target.value as TransportInput[typeof key])}
                   >
-                    {cities.map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
+                    {cities
+                      .filter((c) => key !== "fromCity" || c !== "Black Market")
+                      .map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
                   </select>
                 </label>
               ))}
               <label>
                 Sale execution
                 <select
+                  aria-label="Sale execution"
                   value={draft.saleMode}
                   onChange={(e) => update("saleMode", e.target.value as TransportInput["saleMode"])}
                 >
                   <option value="instant">Sell to observed buy order</option>
-                  <option value="listing">Estimate a player sell listing</option>
+                  <option value="listing">Estimate a sell listing</option>
                 </select>
               </label>
               <label>
@@ -155,6 +182,7 @@ export function TransportCalculator() {
                     type="number"
                     min={key === "quantity" || key === "capacity" ? 1 : 0}
                     step="any"
+                    disabled={key === "fee" && draft.saleMode === "instant"}
                     value={Number.isNaN(draft[key]) ? "" : draft[key]}
                     onChange={(e) =>
                       update(key, e.target.value === "" ? NaN : Number(e.target.value))
@@ -164,9 +192,11 @@ export function TransportCalculator() {
               ))}
             </div>
             <p className="muted">
-              Capacity, item weight, fees and risk are manual assumptions. Trips = ceiling(total
-              weight / available capacity), minimum one. This model does not simulate mount skills,
-              route safety, liquidity, volume limits or order execution.
+              Listing fees apply only to sell listings, not instant sales. Black Market listings
+              need a manual target price. Capacity, item weight, fees and risk are manual
+              assumptions. Trips = ceiling(total weight / available capacity), minimum one. This
+              model does not simulate mount skills, route safety, liquidity, volume limits or order
+              execution.
             </p>
           </section>
           <section className="panel section" id="transport-prices">
@@ -187,7 +217,7 @@ export function TransportCalculator() {
                     aria-label={
                       key === "buy" ? "Transport purchase unit price" : "Transport sale unit price"
                     }
-                    value={draft[key].value ?? ""}
+                    value={transportPriceMatches(config, key) ? (draft[key].value ?? "") : ""}
                     onChange={(e) =>
                       update(key, {
                         ...draft[key],
@@ -290,7 +320,10 @@ export function TransportCalculator() {
             className="button secondary"
             disabled={busy || !transportSchema.safeParse(config).success}
             onClick={async () => {
-              setBusy(true);
+              controller.current?.abort();
+              const active = new AbortController();
+              controller.current = active;
+              setPendingKey(requestKey);
               try {
                 const r = await fetch("/api/scenarios", {
                     method: "POST",
@@ -306,7 +339,7 @@ export function TransportCalculator() {
               } catch (e) {
                 setMessage(e instanceof Error ? e.message : "Save failed");
               } finally {
-                setBusy(false);
+                if (controller.current === active) setPendingKey(null);
               }
             }}
           >

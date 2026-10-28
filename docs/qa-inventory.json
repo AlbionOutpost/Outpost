@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-28",
+  "reviewed_at": "2026-10-28T22:33:42.482912+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -230,7 +230,7 @@
       "title": "Cargo transport planner",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Manual weight/capacity/trip/risk accounting, source/manual prices, private scenarios.",
+      "verified_scope": "Manual weight/capacity/trip/risk accounting; instant execution excludes listing setup, manual Black Market sell-listing targets remain supported, purchase origins there are rejected. Source identity and pending-edit guards; private scenarios and visible mobile estimate/invalid-capacity feedback. Current-patch rates, mount weights and execution liquidity remain unverified.",
       "remaining": "Verified weight/mount metadata, full route scanning and complete sharing/region workflows remain.",
       "evidence": [
         "src/lib/albion/transport.ts",
@@ -293,7 +293,7 @@
       "title": "Islands, Avalon mapping, shopping lists and mastery tools",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Device/server-specific equipment and production shopping lists support owned quantities, missing/stale prices, manual overrides, undo/export and private account snapshots. Reload/region isolation/outsider denial pass in Node and Cloudflare browser suites. Islands, Avalon and mastery remain missing.",
+      "verified_scope": "Device/server-specific equipment and production shopping lists support owned quantities, missing/stale prices, manual overrides, undo/export and private account snapshots. Reload/region isolation/outsider denial pass in Node and Cloudflare browser suites. Islands, Avalon and mastery remain missing. Source zero and impossible Black Market purchases remain unpriced; pending quote merges preserve edited/cleared prices and market identity. Mixed timezone observations retain the oldest contributing timestamp.",
       "remaining": "Implement dedicated islands/Avalon/mastery models and journeys; verify real owner OAuth independently.",
       "evidence": [
         "src/app/tools/page.tsx",

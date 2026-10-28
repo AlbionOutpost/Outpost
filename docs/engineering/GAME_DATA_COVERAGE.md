@@ -1,6 +1,6 @@
 # Game-data coverage
 
-Generated 2026-10-28T20:51:25.782Z. Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.
+Generated 2026-10-28T22:36:11.661Z. Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.
 
 - Equipment variants: 7510; local search names: 100; combined unique IDs: 7510. These are not counts of fully verified current-game records.
 - Structurally invalid mappings: 0; duplicate equipment IDs: 0.

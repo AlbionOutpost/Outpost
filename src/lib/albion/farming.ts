@@ -17,8 +17,8 @@ export const farmingSchema = z
     harvestPerPlant: z.number().min(0).max(1000).nullable(),
     seedYieldBase: z.number().min(0).max(300),
     seedYieldWatered: z.number().min(0).max(300),
-    seedPrice: observation,
-    productPrice: observation,
+    seedPrice: observation.extend({ itemId: z.string().max(100).nullable().optional() }),
+    productPrice: observation.extend({ itemId: z.string().max(100).nullable().optional() }),
     buyFee: z.number().min(0).max(100),
     sellFee: z.number().min(0).max(100),
     operatingCost: z.number().min(0).max(1e12),
@@ -59,13 +59,19 @@ export function initialFarming(region: FarmingInput["region"]): FarmingInput {
 }
 export function farming(input: FarmingInput) {
   const v = farmingSchema.parse(input);
-  const known = (price: FarmingInput["seedPrice"], city: string) =>
+  const crop = crops.find((c) => c.productId === v.cropId)!;
+  const known = (price: FarmingInput["seedPrice"], city: string, itemId: string) =>
+    city !== "Black Market" &&
     price.value !== null &&
     price.quality === 1 &&
-    (price.manual || (price.value > 0 && price.region === v.region && price.city === city));
+    (price.manual ||
+      (price.value > 0 &&
+        price.region === v.region &&
+        price.city === city &&
+        price.itemId === itemId));
   const complete =
-    known(v.seedPrice, v.materialCity) &&
-    known(v.productPrice, v.outputCity) &&
+    known(v.seedPrice, v.materialCity, crop.seedId) &&
+    known(v.productPrice, v.outputCity, crop.productId) &&
     v.harvestPerPlant !== null;
   const stale = [v.seedPrice, v.productPrice].some(
     (price) => !price.manual && (!price.observedAt || isStale(price.observedAt)),

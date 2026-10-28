@@ -1863,7 +1863,8 @@
         "./catalog-item-picker",
         "./item-icon",
         "@/lib/albion/equipment-catalog",
-        "lucide-react"
+        "lucide-react",
+        "@/lib/albion/transport-prices"
       ],
       "exports": ["TransportCalculator"]
     },
@@ -2116,6 +2117,7 @@
         "ShoppingEntry",
         "ShoppingList",
         "mergeShopping",
+        "mergeShoppingQuotes",
         "savedShoppingSchema",
         "shoppingEntrySchema",
         "shoppingFromProduction",
@@ -2128,7 +2130,7 @@
       "source": "src/lib/albion/transport-prices.ts",
       "client": false,
       "imports": ["./market-client", "./transport"],
-      "exports": ["transportObservations"]
+      "exports": ["mergeTransportObservations", "transportObservations", "transportPriceQuery"]
     },
     {
       "source": "src/lib/albion/transport.ts",
@@ -2139,6 +2141,7 @@
         "initialTransport",
         "transport",
         "transportBase",
+        "transportPriceMatches",
         "transportSchema"
       ]
     },
@@ -3749,8 +3752,8 @@
     },
     {
       "path": "e2e/production.spec.ts",
-      "bytes": 3719,
-      "sha256": "7980d35373f31a08b51a0d72fc4d534e49889c4314281bbf48f587b20ec320a8"
+      "bytes": 4488,
+      "sha256": "2f0791c383b4524c1cfb3a0ed70a8c6cef27e0b809e963ea3ff5de0f2186d8b5"
     },
     {
       "path": "e2e/public.spec.ts",
@@ -3849,8 +3852,8 @@
     },
     {
       "path": "e2e/transport.spec.ts",
-      "bytes": 2458,
-      "sha256": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819"
+      "bytes": 3158,
+      "sha256": "fe506857a76fba4e41a79a92cb4c0364f22a32dd72da40b74c49ca78d7580993"
     },
     {
       "path": "e2e/ux-task-flow.spec.ts",
@@ -4804,8 +4807,8 @@
     },
     {
       "path": "src/app/api/opportunities/route.ts",
-      "bytes": 2086,
-      "sha256": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025"
+      "bytes": 2243,
+      "sha256": "6fe3ce6aa02f584557fa596d11d7996b9553e8ffd69da5ad42336d7eccc2f7d0"
     },
     {
       "path": "src/app/api/scenarios/[id]/route.ts",
@@ -4814,8 +4817,8 @@
     },
     {
       "path": "src/app/api/scenarios/route.ts",
-      "bytes": 2686,
-      "sha256": "31d587cb4d30966c23202e4fc8bdd07cf1a0378f9765874effa3943d95b684c0"
+      "bytes": 3047,
+      "sha256": "9f0487ed60577f6c26fcb22c08b99824dab362b12265ef848635faeccb453daa"
     },
     {
       "path": "src/app/api/search/route.ts",
@@ -4834,8 +4837,8 @@
     },
     {
       "path": "src/app/api/transport/prices/route.ts",
-      "bytes": 1106,
-      "sha256": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec"
+      "bytes": 1062,
+      "sha256": "883255c5075c22713925dcf752f02058130121b261507245b72b4ef300dd5c79"
     },
     {
       "path": "src/app/brand-interactions.css",
@@ -5069,8 +5072,8 @@
     },
     {
       "path": "src/app/premium-system.css",
-      "bytes": 34438,
-      "sha256": "62918b9059b57ec8c410db2942222edfdabda70a225863b9e1c0d8e71a2b8c4b"
+      "bytes": 35104,
+      "sha256": "868f57d7fa5ba064584d8a01d9a4dd8db852d100ff0925cdc80de0554e250f60"
     },
     {
       "path": "src/app/product-controls.css",
@@ -5319,8 +5322,8 @@
     },
     {
       "path": "src/components/farming-calculator.tsx",
-      "bytes": 15935,
-      "sha256": "a78582fef3c6ab7d30bd8b6dc82704b504651dfa7787feba136f04ac1cca0d32"
+      "bytes": 16258,
+      "sha256": "07fda153e0bafae60122e25b9e501b3cf5f6e82c96c2e62c1599279c51cc4459"
     },
     {
       "path": "src/components/favorite-build-button.tsx",
@@ -5499,8 +5502,8 @@
     },
     {
       "path": "src/components/production-calculator.tsx",
-      "bytes": 45711,
-      "sha256": "65bf85708f365d22e0517c3d7527ba5d23b33f47250eb41b6e7fd1f5b4d06092"
+      "bytes": 45901,
+      "sha256": "aaed46ad0effe04341e02207735be1eeb6c47aa92c9b5141386f237d5cc6265f"
     },
     {
       "path": "src/components/production-plan.tsx",
@@ -5554,8 +5557,8 @@
     },
     {
       "path": "src/components/shopping-workspace.tsx",
-      "bytes": 17861,
-      "sha256": "6271b97b6cced1fa36ecc92ffd82bc6e47e86e96e698d1f580832f2f6c672120"
+      "bytes": 18090,
+      "sha256": "51a8738336445ceac2751b159132abc7b3309ae5e9c155efeaf5164a625d0ed2"
     },
     {
       "path": "src/components/spell-icon.tsx",
@@ -5584,8 +5587,8 @@
     },
     {
       "path": "src/components/transport-calculator.tsx",
-      "bytes": 14079,
-      "sha256": "54c9f1aaddf1deb3bd4b691d2084ede8d5e8935a99b2afb4468272f01b4e6892"
+      "bytes": 15977,
+      "sha256": "74897a37e3e74c5a451fd48e6d9e8c28c0fe0ae335830d38d8a64a7fe31c1ae0"
     },
     {
       "path": "src/components/turnstile-challenge.tsx",
@@ -5684,8 +5687,8 @@
     },
     {
       "path": "src/lib/albion/farming.ts",
-      "bytes": 3862,
-      "sha256": "c35600d8aac6c612cfa9a4031c9495f18229683ed4837ee2bdb647550863c58d"
+      "bytes": 4180,
+      "sha256": "c7efeb366a0be8318d4abd68c71509c010bf9b5cb5db41bdd5b7f676b58d64fd"
     },
     {
       "path": "src/lib/albion/fishing.ts",
@@ -5749,8 +5752,8 @@
     },
     {
       "path": "src/lib/albion/production.ts",
-      "bytes": 6892,
-      "sha256": "81ba9191fbac717bed1537dbe5d74253cd351fb7db8c3ec82cb774315b9e6a25"
+      "bytes": 6951,
+      "sha256": "5a5ef3d722846a959145bef96be16b09e57c5005bd4f0430c4cca7ca2cad54cc"
     },
     {
       "path": "src/lib/albion/quote-summary.ts",
@@ -5779,8 +5782,8 @@
     },
     {
       "path": "src/lib/albion/shopping.ts",
-      "bytes": 4904,
-      "sha256": "fc5064a28a9076747ac4d5d0ac0a9dde474079fa9d6ab9a290c92c370eb8a3b0"
+      "bytes": 6426,
+      "sha256": "eaa5cac49826d75648662fb5b3dc143ff3e1c1eecdcfa29ceadb58e35dd909d5"
     },
     {
       "path": "src/lib/albion/source-abilities.json",
@@ -5794,13 +5797,13 @@
     },
     {
       "path": "src/lib/albion/transport-prices.ts",
-      "bytes": 1240,
-      "sha256": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82"
+      "bytes": 2208,
+      "sha256": "07c207560bbb5c816f044313edd0852e9d4f042e7f5c1d84e7c28d929da7ff03"
     },
     {
       "path": "src/lib/albion/transport.ts",
-      "bytes": 3142,
-      "sha256": "e12a77763b80e3660e51094f01954e3c477a2013acc70bbf071ff32c025c4689"
+      "bytes": 3449,
+      "sha256": "8974601591d5156e424e2b24d4ce8a1acb3764ec69bd61dec2c5eeeed7e50ae0"
     },
     {
       "path": "src/lib/api-errors.ts",
@@ -6159,8 +6162,8 @@
     },
     {
       "path": "tests/farming.test.ts",
-      "bytes": 3017,
-      "sha256": "d94fe2a38e14e2a301479508edbfa28d67ecf6f24b21dbca91881cd9ad8b7bca"
+      "bytes": 3893,
+      "sha256": "d7bce8bbe079d57296dcc5e4ea2838e5654bad1b428321b5c9101fa88047bba9"
     },
     {
       "path": "tests/fishing-journal.test.ts",
@@ -6214,8 +6217,8 @@
     },
     {
       "path": "tests/opportunities.test.ts",
-      "bytes": 1546,
-      "sha256": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39"
+      "bytes": 1612,
+      "sha256": "94e18e55bd1d99f1cd38c55566755844cd7bc08bc633382c5ced4f8d1c816c51"
     },
     {
       "path": "tests/owner-admin.test.ts",
@@ -6279,8 +6282,8 @@
     },
     {
       "path": "tests/shopping.test.ts",
-      "bytes": 3600,
-      "sha256": "4f04835a310d2b4492724a5a5500dd4f3ddbf9b4c0f525c06fffed96b3856e84"
+      "bytes": 5786,
+      "sha256": "1582dc13572fec4ec4799f0ca5be8094df78cb494ca06edab21268141f9c69aa"
     },
     {
       "path": "tests/source-secret-scan.test.ts",
@@ -6299,8 +6302,8 @@
     },
     {
       "path": "tests/transport.test.ts",
-      "bytes": 3091,
-      "sha256": "a98a86cf7caf79e42fb6dbc1ac4290a65c5738c2a84e7875007450744ba57ce2"
+      "bytes": 4330,
+      "sha256": "733ee9c0cb2c658cb3266779d25bc93474dabdcdfdf6cf32d64118fd99e16398"
     },
     {
       "path": "tests/turnstile.test.ts",

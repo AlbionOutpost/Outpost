@@ -30,7 +30,8 @@ it("batches items, separates regions, calculates direct flips and leaves missing
   const r = await GET(new NextRequest(url));
   expect(r.status).toBe(200);
   const b = await r.json();
-  expect(b.rows[0].profit).toBe(34.25);
+  // Instant sale:150 gross -12 tax -100 purchase; no listing setup.
+  expect(b.rows[0].profit).toBe(38);
   expect(b.rows[0].stale).toBe(true);
   expect(b.rows[1].profit).toBeNull();
   expect(mocks.prices).toHaveBeenCalledWith("asia", ["T4_BAG", "T4_MAIN_AXE"], 1);

@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
+import { initialProduction } from "../src/lib/albion/production";
+import { initialTransport } from "../src/lib/albion/transport";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
 test("production calculations save, reload, share and enforce scenario ownership", async ({
@@ -27,6 +29,21 @@ test("production calculations save, reload, share and enforce scenario ownership
         sameSite: "Lax",
       },
     ]);
+    const oversized = initialProduction("crafting", "europe");
+    oversized.batches = 100000;
+    oversized.stationFee = 1e9;
+    const cargo = initialTransport("europe");
+    cargo.quantity = 1000000;
+    cargo.buy.value = 1e12;
+    cargo.sell.value = 1;
+    for (const configuration of [oversized, cargo]) {
+      const denied = await context.request.post("/api/scenarios", {
+        headers: { origin: "http://localhost:3000" },
+        data: { title: "Invalid oversized scenario", configuration },
+      });
+      expect(denied.status()).toBe(400);
+    }
+    expect(await db.savedScenario.count({ where: { authorId: id } })).toBe(0);
     await page.goto("/tools/crafting?region=europe");
     await page.getByText("Station settings, focus & sources", { exact: true }).click();
     await page.getByText("Markets & transaction fees", { exact: true }).click();

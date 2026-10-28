@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { cities, regionSchema, type Region } from "./region-config";
-import { isStale } from "./freshness";
+import { isStale, sourceTimestamp } from "./freshness";
 
 export const shoppingEntrySchema = z
   .object({
@@ -52,8 +52,18 @@ export function shoppingSummary(list: ShoppingList) {
     const stale =
       (row.priceKind === "observed" && (!row.observedAt || isStale(row.observedAt))) ||
       (row.priceKind === "plan" && !!row.observedAt && isStale(row.observedAt));
-    const cost = buy === 0 ? 0 : row.unitPrice === null || stale ? null : buy * row.unitPrice;
-    return { ...row, buy, stale, cost };
+    const unavailableMarket = row.city === "Black Market";
+    const cost =
+      buy === 0
+        ? 0
+        : row.unitPrice === null ||
+            stale ||
+            unavailableMarket ||
+            (row.unitPrice === 0 &&
+              (row.priceKind === "observed" || (row.priceKind === "plan" && !!row.observedAt)))
+          ? null
+          : buy * row.unitPrice;
+    return { ...row, buy, stale, cost, unavailableMarket };
   });
   const missing = rows.filter((row) => row.cost === null).length;
   return {
@@ -113,16 +123,9 @@ export function shoppingFromProduction(
     const dates = [...row.sources]
       .filter((source) => source.startsWith("Observed "))
       .map((source) => source.slice(9));
-    const invalid = dates.find(
-      (date) => !Number.isFinite(Date.parse(date.endsWith("Z") ? date : date + "Z")),
-    );
+    const invalid = dates.find((date) => !Number.isFinite(sourceTimestamp(date)));
     const oldest =
-      invalid ??
-      dates.sort(
-        (a, b) =>
-          Date.parse(a.endsWith("Z") ? a : a + "Z") - Date.parse(b.endsWith("Z") ? b : b + "Z"),
-      )[0] ??
-      null;
+      invalid ?? dates.sort((a, b) => sourceTimestamp(a) - sourceTimestamp(b))[0] ?? null;
     return shoppingEntrySchema.parse({
       itemId: row.id,
       name: row.name,
@@ -135,4 +138,44 @@ export function shoppingFromProduction(
       observedAt: oldest,
     });
   });
+}
+
+/** Merge only requested, unchanged prices. Quantity/inventory edits remain independent. */
+export function mergeShoppingQuotes(
+  current: ShoppingList,
+  requested: ShoppingEntry[],
+  quotes: { itemId: string; quality: number; prices: import("./market-quotes").MarketPrice[] }[],
+): ShoppingList {
+  return {
+    ...current,
+    entries: current.entries.map((row) => {
+      const original = requested.find((r) => shoppingKey(r) === shoppingKey(row));
+      if (
+        !original ||
+        row.city === "Black Market" ||
+        row.unitPrice !== original.unitPrice ||
+        row.priceKind !== original.priceKind ||
+        row.observedAt !== original.observedAt ||
+        (row.priceKind === "manual" && row.unitPrice !== null)
+      )
+        return row;
+      const quote = quotes.find((q) => q.itemId === row.itemId && q.quality === row.quality);
+      const price = quote?.prices.find(
+        (p) =>
+          p.item_id === row.itemId &&
+          p.quality === row.quality &&
+          p.city === row.city &&
+          p.sell_price_min > 0 &&
+          !isStale(p.sell_price_min_date),
+      );
+      return price
+        ? {
+            ...row,
+            unitPrice: price.sell_price_min,
+            priceKind: "observed",
+            observedAt: price.sell_price_min_date,
+          }
+        : row;
+    }),
+  };
 }

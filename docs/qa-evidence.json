@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T20:46:28.584Z",
+  "phase_checked_at": "2026-10-28T22:33:13.306Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,58 +11,58 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 2.45
+      "seconds": 3.41
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 7.08
+      "seconds": 7.09
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.34
+      "seconds": 2.39
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.34
+      "seconds": 0.45
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.71
+      "seconds": 3.47
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 5.18
+      "seconds": 4.66
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 119.88
+      "seconds": 106.7
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.41
+      "seconds": 0.38
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.35
+      "seconds": 0.31
     }
   ],
   "counts": {
-    "unit_passed": 244,
+    "unit_passed": 250,
     "browser_passed": 104,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T20:51:25.782Z",
+    "checkedAt": "2026-10-28T22:36:11.661Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4381,7 +4381,7 @@
   },
   "remote": {
     "checkedAt": "2026-10-28T18:23:48.504399+00:00",
-    "scope": "Observed actual main Node/native Cloudflare/browser/Free bundle/deployment success. Public CI probe BLOCKED by managed challenge; independent normal-network checks pass. Not real personal OAuth or production recovery.",
+    "scope": "Observed actual main Node/native Cloudflare/browser/Free bundle/deployment success. Public CI probe BLOCKED by managed challenge; independent normal-network checks pass. Not real personal OAuth or production recovery. Prior compact-overview source CI also completed successfully; current audit source publication is pending.",
     "organization": {
       "login": "AlbionOutpost",
       "plan": "free",
@@ -4402,7 +4402,13 @@
       }
     ],
     "successfulHostedRun": "https://github.com/AlbionOutpost/Outpost/actions/runs/40740329022",
-    "successfulCommit": "a2d70d32e2254b22252aaeb8c1c69f74e5bf8f5c"
+    "successfulCommit": "a2d70d32e2254b22252aaeb8c1c69f74e5bf8f5c",
+    "latestPreAuditHostedRun": {
+      "conclusion": "success",
+      "headSha": "1031ddac9d3c57d8925f2a2545ee8292252d9256",
+      "status": "completed",
+      "url": "https://github.com/AlbionOutpost/Outpost/actions/runs/40768213832"
+    }
   },
   "dependency_maintenance": {
     "checkedAt": "2026-10-26T12:40:53.488543+00:00",
@@ -4413,8 +4419,8 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T20:59:26.724518+00:00",
-    "phase": "2026-10-28T20:46:28.584Z",
+    "checkedAt": "2026-10-28T22:33:57.693279+00:00",
+    "phase": "2026-10-28T22:33:13.306Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
@@ -4451,7 +4457,7 @@
       },
       {
         "path": ".qa/docker.json",
-        "sha256": "f3d4189aa3d2007a89987d2e2075c1de189f2d422a0759f7ce655495d9b61421"
+        "sha256": "ff7ecb7744b8edc824462e13a569b3aa517da26b33ee3447fd75d1c5c31767f4"
       },
       {
         "path": ".qa/cloudflare-launch/final-free-check.log",
@@ -4535,7 +4541,7 @@
       },
       {
         "path": ".qa/cloudflare-release/free-bundles.json",
-        "sha256": "ef1e7ce233f28ab00038fc6574318b77d6e391b327543e5098f2a87653cdb96e"
+        "sha256": "4c073d5635f21f9ed743a9f223ea2263d3b0615cf85290add3d6207db549b196"
       },
       {
         "path": ".qa/compact-loadout/final.json",
@@ -4584,12 +4590,64 @@
       {
         "path": ".qa/compact-loadout/anchor-free-check.log",
         "sha256": "4d7137754f3e6c084457085f6e2494e0a4e8c20d1bd2e8a31d54ece4a68eeb1f"
+      },
+      {
+        "path": ".qa/full-review/final.json",
+        "sha256": "43981c9730841e8c8d1b9551d8579f4b5168cd715b760f07fff4abe0c0e69fc9"
+      },
+      {
+        "path": ".qa/full-review/final-transport-390.png",
+        "sha256": "9da67c210851174a08acc16d2d803565693b41f89b694e4dc640c2f25b4edc65"
+      },
+      {
+        "path": ".qa/full-review/final-shopping-1440.png",
+        "sha256": "de4f0fb1b803e2b646d21324bd8edb410e1bd4b39f88ffc658f043a1920872cd"
+      },
+      {
+        "path": ".qa/full-review/final-craft-768.png",
+        "sha256": "8d737877578d0d596ede2b06818318e994f3bac053b61938e53a08518e4cf96c"
+      },
+      {
+        "path": ".qa/full-review/lighthouse-summary.json",
+        "sha256": "48622ea4f34e301a5f11656292ced9d1214f600895043b5a348a7972c502ad20"
+      },
+      {
+        "path": ".qa/full-review/phase-final-verified.log",
+        "sha256": "3d90175edbba38a0d6e7b0f4eb86281b613a983cd1f856a82a5832ebf4b36f7b"
+      },
+      {
+        "path": ".qa/full-review/cloudflare-browser.log",
+        "sha256": "de2bcbe2bedd5bc76407976ec8f19c4187b1fffc5d45639ce9dd04a3345e464b"
+      },
+      {
+        "path": ".qa/full-review/native.log",
+        "sha256": "6d289d699a24160199fa7d1f2d9b620db2fe35fc096cbe664892f76af654cc89"
+      },
+      {
+        "path": ".qa/full-review/prior-ci.json",
+        "sha256": "2ab18e71fa3ce7323119b498af6b51305ffefe4f97a9a479698b1e6b3e4f520b"
+      },
+      {
+        "path": ".qa/full-review/hosted.json",
+        "sha256": "7b574056712a76b76e8ea2f0f17114e266c7f324170b88bd9af483e2317d423f"
+      },
+      {
+        "path": ".qa/full-review/hosted-smoke.json",
+        "sha256": "a3663b8edf135a282f1b6125e19f44e9cbf4a62c53058fae6247065cbe09f39d"
+      },
+      {
+        "path": ".qa/full-review/hosted-auth-start.json",
+        "sha256": "d30288adb3db9f16767e98ccb76ec5ad1ebc510c26c5af4464ef9463be146124"
+      },
+      {
+        "path": ".qa/full-review/free-check.log",
+        "sha256": "3915c6f8323e9e32bc4e69b48243baaa54c39fceea305582e21484359c3857be"
       }
     ],
-    "latestImplementationNote": "Compact overview LIVE on web b93431df: nine icon slots, raised centre, attached spells/alternatives. Six production widths inspected: nooverflow/pageerror/automated axe violations. Node244unit104browser15DB9regions allPASS; Cloudflare104PASS; container healthy/nonroot/no-env. Single mobile detail94perf100accessibility LCP3007ms CLS0; no field/conformance claim. Targeted live1440/390 both200 and gear keyboard anchors land104px below top after final CSS offset. Earlier40764103923 cancelled as superseded; current source8f68c4a CI40767272900 pending and final anchor commit pending. Whole-product/realOAuth/patch/legal/recovery/owner acceptance gates remain open."
+    "latestImplementationNote": "Owner-requested product review: provisional6/10,12 confirmed accounting/state/layout findings fixed. Node250unit104browser15DB9regions ten gatesPASS after final changes. Cloudflare104browser/native19PASS before final layout-only corrections. Final24 six-width container captures200/no overflow/page errors/axe violations; actual images inspected. Shopping first alignment attempt rejected and corrected. Public publication pending. Personal OAuth/current-patch/legal/recovery/owner acceptance and full mechanics remain open. LIVE web6ceb778c-3a2a-4f30-a53e-c9421a80da64. Strict public smoke25/OAuth-start pass; actual hosted390 transport330instant/292.5listing,1440 shopping center,768 crafting12px gap pass. This is not personal consent/admin proof. Github source synchronization pending."
   },
   "source_scan": {
-    "filesScanned": 4162,
+    "filesScanned": 4164,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4622,7 +4680,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "3f891319387c1a8ff45d7ec68df6d83a1d5dce74372b34de32684f8271050de6",
+      "sha256": "e960f321699b53e2cb843b467bb27928a84a3011026c3b5a3c9f6920721dfa93",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4632,12 +4690,12 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "2a33aba9edbc60a261861a7432c6978c0a5b4c17b6351b6d6425c6a50583f518",
+      "sha256": "aeae39baa4534314954a868ddd11e812254ae5022144c101f017e9fb05b69eb0",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "4665f77310791553313e144397e73ae08922e8d26edae7d57ee2c398e8105b93",
+      "sha256": "e7c0c7f83d906ffbd2dec8ce6725b0ca8dca81bfaf02d99a6395542c9cdf5c44",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4647,7 +4705,7 @@
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "ba1da8512f806a095e7b84ed486efd8304bf01d6c39b2f49ac73ce308928871c",
+      "sha256": "79aa7495c1d13deba1fa65c3e5403a7ff60fe6f9a6c5257cf78d74b26b664949",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4662,7 +4720,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "19dc9da8788a9e76a54fce71ef906dd0ecf1f546f9f8defaf216f3160f1ea477",
+      "sha256": "87fca6fd4a202af06465c4cf504254c35cff3dbfe1e3c2f85868a955683fec6d",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4677,12 +4735,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "f5d83e53da10769b526a2ab9902b4b5a9e660961166e5aa66be2aa01a397447f",
+      "sha256": "2fcfc808ade6b3fc8fa0adc776ba7f0446da3933cbcb1b9aa8f53a5e3f443550",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "719007854eff23a34f3e4cf5d92739f22b202af926a85157527fe7d323ff78aa",
+      "sha256": "f95158677034e7dad4f36251ff8e4ec1be2ef023116a9e0201f3adb61cb9c4c7",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4702,7 +4760,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/remote-state.json",
-      "sha256": "d5d07e3252a794863f037e36da736d21c7da6b9214e6a9bc0302e63e8828008f",
+      "sha256": "99f11485b2a9ab7134ced5d897c4a74a8043dd63b546f1c8361168fcb4c00f9f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4712,7 +4770,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "4507cda70f4596dee65b971fdf3f0e2c5e72cd119527259349fdee1bea4074e4",
+      "sha256": "8ae50744e16c67520b1f61086a834b98a4679623a5e73defafcd27ec687d9971",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -4771,7 +4829,7 @@
     "e2e/production-modes.spec.ts": "d15d4e19ea0684268116cda00cf728d7970c41fade485162565119caea649c0a",
     "e2e/production-plan.spec.ts": "256cc90222b1d0a75cb7050797dc8fd2c8c0c69a91958ce4364c20c7d31b8bb4",
     "e2e/production-profile.spec.ts": "4035fe5b88a1544b7e32d6e6fed866e9b11c7752df32d10ef6064e07baf3cef9",
-    "e2e/production.spec.ts": "7980d35373f31a08b51a0d72fc4d534e49889c4314281bbf48f587b20ec320a8",
+    "e2e/production.spec.ts": "2f0791c383b4524c1cfb3a0ed70a8c6cef27e0b809e963ea3ff5de0f2186d8b5",
     "e2e/public.spec.ts": "3a39dfb1d7c09bdd798b32048ceb06afa3b9c0597fbf76d509d1034f90170970",
     "e2e/qa-audit.spec.ts": "a79c2fc2c2b4a78a62c78e7c274e03a4d259a7fc529552442bd4661b18d56d77",
     "e2e/qa-light.spec.ts": "85e75ee9e099c5c70da16efdf42d18039cc7876b83bb7b73a5815eef8b79996b",
@@ -4791,7 +4849,7 @@
     "e2e/support/wire.ts": "c77a4b5969f8ac3f178269ecc47659e0701d54be59540718710f28a3f4203f32",
     "e2e/tool-directory.spec.ts": "e711cddded1a5abc3f8afa780bc07904f4dd0036b749e6893ebccd2743a92197",
     "e2e/trade-scenarios.spec.ts": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc",
-    "e2e/transport.spec.ts": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819",
+    "e2e/transport.spec.ts": "fe506857a76fba4e41a79a92cb4c0364f22a32dd72da40b74c49ca78d7580993",
     "e2e/ux-task-flow.spec.ts": "e84bc65a03b01b8262b516df62db9a869ccb6656ffba8205c6fc94dfcb98707e",
     "e2e/verified-builds.spec.ts": "75b6b45c378f35a924fe08e8c14c037e06fd680bd677df39c033bf322f7d0e07",
     "next.config.ts": "a0dd2e8e4f89890b32f742584e452422d0ea7a951dfd3137edac9b600ca8bdd8",
@@ -4906,13 +4964,13 @@
     "src/app/api/market/route.ts": "b5db26b3ddb1ffabd43a130c04a98e362488351422b00601c2ef2d87da4e6e98",
     "src/app/api/market-watch/[id]/route.ts": "0b71f41e85649298acc2acf5a64171748dab9b64fb80c7a5d424f43e840c6b7c",
     "src/app/api/market-watch/route.ts": "053d043b4b8992e46bd8077b1edc1d38fa0040780615d1dd3308a0d4d929b496",
-    "src/app/api/opportunities/route.ts": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025",
+    "src/app/api/opportunities/route.ts": "6fe3ce6aa02f584557fa596d11d7996b9553e8ffd69da5ad42336d7eccc2f7d0",
     "src/app/api/scenarios/[id]/route.ts": "9652ac481f62f38390d08103a83920c00177ca84801527d3641fa8943821ec4d",
-    "src/app/api/scenarios/route.ts": "31d587cb4d30966c23202e4fc8bdd07cf1a0378f9765874effa3943d95b684c0",
+    "src/app/api/scenarios/route.ts": "9f0487ed60577f6c26fcb22c08b99824dab362b12265ef848635faeccb453daa",
     "src/app/api/search/route.ts": "8af7b103b6085504ae5efe2d6b96c6feeb0f5e7e05c00da052dcb270031c5bf3",
     "src/app/api/timers/[id]/route.ts": "2e662d5c53f410d89384c6b21c5acc8d15d159fd930c2dd3c1b58984df6aae22",
     "src/app/api/timers/route.ts": "26a61dad097afbb0338bc14d093dc117628ba44374fd3cfaf2fb29b342548d0e",
-    "src/app/api/transport/prices/route.ts": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec",
+    "src/app/api/transport/prices/route.ts": "883255c5075c22713925dcf752f02058130121b261507245b72b4ef300dd5c79",
     "src/app/brand-interactions.css": "651aff8ea5c82466a4756e490f541167b402450282ead2bd1e56890ae21dcf1d",
     "src/app/build-archive-details.css": "823e7f51cbf47c711d4c474af26e124ce0f801ce1e1b14cc89b995dafa736c5c",
     "src/app/build-grind-workspace.css": "1c46124aa60eddb2bfd769e1dd6bbe9653c1600bb1f5e4ee6fdf2f12493d182a",
@@ -4959,7 +5017,7 @@
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480",
     "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
-    "src/app/premium-system.css": "62918b9059b57ec8c410db2942222edfdabda70a225863b9e1c0d8e71a2b8c4b",
+    "src/app/premium-system.css": "868f57d7fa5ba064584d8a01d9a4dd8db852d100ff0925cdc80de0554e250f60",
     "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
     "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
@@ -5009,7 +5067,7 @@
     "src/components/equipment-sets.tsx": "adf6cf95ee9b68fa8b845c8ad35fa0383b6f4573371f222c31c0767c1be2e9f7",
     "src/components/equipment-strip.tsx": "7d36f44c92a661e2baf657e2e51d8433d2a4acf039b02f7ee22118301a96271c",
     "src/components/equipment-workbench.tsx": "5eb438e71bbd5c0a771ea5290267d7eaa429ace15ea6ac99f9d28ea742c682d9",
-    "src/components/farming-calculator.tsx": "a78582fef3c6ab7d30bd8b6dc82704b504651dfa7787feba136f04ac1cca0d32",
+    "src/components/farming-calculator.tsx": "07fda153e0bafae60122e25b9e501b3cf5f6e82c96c2e62c1599279c51cc4459",
     "src/components/favorite-build-button.tsx": "c686f60f19addc4c03779e20385a919d9876503749a61bc9b9d282a359d4e967",
     "src/components/feature-emblem.tsx": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128",
     "src/components/fishing-calculator.tsx": "449bdd66b8286b071fdd3e2440603b51ff1e81ec2495cfbee64344bda30ddafa",
@@ -5045,7 +5103,7 @@
     "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
     "src/components/party-board.tsx": "88b82707e58dfc229cbdb5c5b9be3be700d23d240398c4f46cc47b3956f00df1",
     "src/components/party-readiness.tsx": "fc53bbbe30a6f35889fe3cb4964c5bd4209741ebff280a1f7b962f95f4125880",
-    "src/components/production-calculator.tsx": "65bf85708f365d22e0517c3d7527ba5d23b33f47250eb41b6e7fd1f5b4d06092",
+    "src/components/production-calculator.tsx": "aaed46ad0effe04341e02207735be1eeb6c47aa92c9b5141386f237d5cc6265f",
     "src/components/production-plan.tsx": "669e1ff984dc02ec02b70130947c887a85d971f5a97921cea9c142321d412e5e",
     "src/components/production-profile.tsx": "70de84cb5cfcd118d9de793185205522057869ce279f0a4fcc802f7ba81947e2",
     "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
@@ -5056,13 +5114,13 @@
     "src/components/shell.tsx": "60f4663214ae79627084dc283858d64f67c64caceb9914c67234bc30218d5980",
     "src/components/shopping-account-lists.tsx": "96cd9a1cb234018078970e4000b9447b94047e69cf5de3ab90d14881df7db923",
     "src/components/shopping-storage.ts": "b28f05b72a11f67e938006702f0783805ff8092f821cebadb94bd54b4fd099bd",
-    "src/components/shopping-workspace.tsx": "6271b97b6cced1fa36ecc92ffd82bc6e47e86e96e698d1f580832f2f6c672120",
+    "src/components/shopping-workspace.tsx": "51a8738336445ceac2751b159132abc7b3309ae5e9c155efeaf5164a625d0ed2",
     "src/components/spell-icon.tsx": "91725d6f86da39782ee3d8b53a3f0bf51d3cf65c061f5b6ee75462865e56deb4",
     "src/components/timer-manager.tsx": "88d53c5fd4acaba6a24d50149b6c0bf73cc47e90c76b89e2da2b6e2fd9af62e0",
     "src/components/tool-directory.tsx": "e5f420e55d6c39d1726ab68f22307414149510a3bdcabd268460f1a9059c4394",
     "src/components/tool-icon.tsx": "0f1e7e61e726c84b8e402ef252d2c62a91d22d5ef33b8e270e44a94f74adc4c6",
     "src/components/trade-calculator.tsx": "0c8575b69b76f74c7f05a9e6a8919899277363cc350cdf4933379a4748c858a4",
-    "src/components/transport-calculator.tsx": "54c9f1aaddf1deb3bd4b691d2084ede8d5e8935a99b2afb4468272f01b4e6892",
+    "src/components/transport-calculator.tsx": "74897a37e3e74c5a451fd48e6d9e8c28c0fe0ae335830d38d8a64a7fe31c1ae0",
     "src/components/turnstile-challenge.tsx": "6d4a0afd336ffccca01a15179d98a467705721069f214d8c6e13edffd0688b46",
     "src/components/use-visible-refresh.ts": "d921ea46e961ac7dc9892e8fd14617c656a0b20ddf8447d59f887d83e6a0d813",
     "src/components/wordmark.tsx": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082",
@@ -5082,7 +5140,7 @@
     "src/lib/albion/equipment-validation.ts": "25f63bdc9f4e7b857ebd4e80e18cfabb8078786a6db3905383701bd131c33d9f",
     "src/lib/albion/expanded-recipes.json": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c",
     "src/lib/albion/farming-crops.json": "f3c8c10dc9fdfa4855f9174d970f7afc3c392c3f05ce062fccdaa93a4943da24",
-    "src/lib/albion/farming.ts": "c35600d8aac6c612cfa9a4031c9495f18229683ed4837ee2bdb647550863c58d",
+    "src/lib/albion/farming.ts": "c7efeb366a0be8318d4abd68c71509c010bf9b5cb5db41bdd5b7f676b58d64fd",
     "src/lib/albion/fishing.ts": "4b8fcd854662657cf4042dbbf843ac5ec33037b6c574ccd58d7bdbd11e89ea08",
     "src/lib/albion/freshness.ts": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244",
     "src/lib/albion/history-client.ts": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1",
@@ -5095,17 +5153,17 @@
     "src/lib/albion/production-observations.ts": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75",
     "src/lib/albion/production-plan.ts": "5849b47636a6d52a1893f3bffd4aa0cdd9cbc3414ae6c264ffe1cf72e9577874",
     "src/lib/albion/production-profile.ts": "45b9ac346df60d8cc97c67d5e793b1008b7ab0a7ae93bef712d25b4ee6a64014",
-    "src/lib/albion/production.ts": "81ba9191fbac717bed1537dbe5d74253cd351fb7db8c3ec82cb774315b9e6a25",
+    "src/lib/albion/production.ts": "5a5ef3d722846a959145bef96be16b09e57c5005bd4f0430c4cca7ca2cad54cc",
     "src/lib/albion/quote-summary.ts": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a",
     "src/lib/albion/recipes.ts": "7f52fe632456583fa75d48bec7136b63e5980fb76375a2091a6ec04bcc46116f",
     "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
     "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
     "src/lib/albion/shopping-equipment.ts": "1163fb95de9b1504ed9c11a4321822a7e3151c5249d045a43bcc1328d0aa0448",
-    "src/lib/albion/shopping.ts": "fc5064a28a9076747ac4d5d0ac0a9dde474079fa9d6ab9a290c92c370eb8a3b0",
+    "src/lib/albion/shopping.ts": "eaa5cac49826d75648662fb5b3dc143ff3e1c1eecdcfa29ceadb58e35dd909d5",
     "src/lib/albion/source-abilities.json": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937",
     "src/lib/albion/source-equipment.json": "6f685c9d983f280b4ec1dc4ae3f07823a8bb7aeb6993abc6513151172b5dd337",
-    "src/lib/albion/transport-prices.ts": "1d3d552c19b8935b53e8513b0b6034b42533d6e049c8b6a938cc18eb39ea8a82",
-    "src/lib/albion/transport.ts": "e12a77763b80e3660e51094f01954e3c477a2013acc70bbf071ff32c025c4689",
+    "src/lib/albion/transport-prices.ts": "07c207560bbb5c816f044313edd0852e9d4f042e7f5c1d84e7c28d929da7ff03",
+    "src/lib/albion/transport.ts": "8974601591d5156e424e2b24d4ce8a1acb3764ec69bd61dec2c5eeeed7e50ae0",
     "src/lib/api-errors.ts": "0b63c48116f9d34137d692ccc99b7db9721225b9807e1696c5e3c0297ea2afe7",
     "src/lib/auth.ts": "aee3ee854fde4badab204732bde1f0523aeb1658a0f3d50bb4d4bcec9063fdef",
     "src/lib/builds/service.ts": "c6dbfb559924b034c8f83d5fa561ebb13d6f6e8fdb2d7a25cee9555a43eacd50",
@@ -5177,7 +5235,7 @@
     "tests/discord-management.test.ts": "4ad465302cb7aa565bcbb840d776be04d7e118aa0d976f3158a0fa3566c6892b",
     "tests/env.test.ts": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba",
     "tests/equipment-sets.test.ts": "0506bd304e96d6172bc43b1f96938b15c6a9723db74ff071eaa4008b47ab01cd",
-    "tests/farming.test.ts": "d94fe2a38e14e2a301479508edbfa28d67ecf6f24b21dbca91881cd9ad8b7bca",
+    "tests/farming.test.ts": "d7bce8bbe079d57296dcc5e4ea2838e5654bad1b428321b5c9101fa88047bba9",
     "tests/fishing-journal.test.ts": "672de74dc2db0402bd5ecdf7972121b04901f556103318534c937c47bc651586",
     "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
     "tests/grind-build-fidelity.test.ts": "5bdad33be5c622a6cfcc0269402791cda6c80e0a919bd23d1dfcc7a8c4cb6b82",
@@ -5188,7 +5246,7 @@
     "tests/market-payload.test.ts": "df7963c2bf9d6906ba7fe209211b378575f171e4614171a1e9f29966458c1879",
     "tests/market-preview.test.ts": "48ce3681a1039d97eb1ed5ff3cfce51cda3af6fe30f133c66e6fc9aac777ed1f",
     "tests/market.test.ts": "e5f421f8c90384b5e89ded8b19ea80733411b17983921325fdce508baed72e48",
-    "tests/opportunities.test.ts": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39",
+    "tests/opportunities.test.ts": "94e18e55bd1d99f1cd38c55566755844cd7bc08bc633382c5ced4f8d1c816c51",
     "tests/owner-admin.test.ts": "de43d9fcd018c3946cfbf81bc62ec6ada3c8e0876b0a8b673c2b650b0dcc2817",
     "tests/production-market.test.ts": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9",
     "tests/production-observations.test.ts": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36",
@@ -5201,11 +5259,11 @@
     "tests/reviewed-recipes.test.ts": "105c0eab5f6d953d4f4250833a80be455cb953e2a295599d9871e4d1392277ba",
     "tests/serialization-retry.test.ts": "105d7f6049187492196b6be7490305e8b1183f83051b2d1c687c45a7cb0b25e9",
     "tests/settings-recovery.test.ts": "78ac50b08e8c75a339696f54331a5b2b976904fd77d9ed29b5bc54a9d33da7e8",
-    "tests/shopping.test.ts": "4f04835a310d2b4492724a5a5500dd4f3ddbf9b4c0f525c06fffed96b3856e84",
+    "tests/shopping.test.ts": "1582dc13572fec4ec4799f0ca5be8094df78cb494ca06edab21268141f9c69aa",
     "tests/source-secret-scan.test.ts": "7c2e346a8aef5b8269c9ca75a2e4f66929a15c9a2bbeebfb58ca628ee13d940c",
     "tests/source-workbench.test.ts": "1d238c535177eeb1fd3f9a7d34452c29e6f0b738b4626ee85e8dd744a5d6d559",
     "tests/timers.test.ts": "2f8dbcea1ae80e90169792bc8cae145f11aae6a7ffaf31fad19e09c0f39d0963",
-    "tests/transport.test.ts": "a98a86cf7caf79e42fb6dbc1ac4290a65c5738c2a84e7875007450744ba57ce2",
+    "tests/transport.test.ts": "733ee9c0cb2c658cb3266779d25bc93474dabdcdfdf6cf32d64118fd99e16398",
     "tests/turnstile.test.ts": "c81cc681528059a376aa28f5d55acede5fd9bf2ddfcfbc7767eb195b4e14cea3",
     "tsconfig.json": "ad5dd875d62f26b5aeaf9002513181755faeea73eda052f9ddb72216fefb97ca",
     "vitest.config.ts": "d0d6a8eb253ac7099822cc17cd388eac87e66d3d6a461c8c5a3bd6eec02dc56d"
