@@ -11,3 +11,5 @@ The first full browser run caught a duplicate hidden spell label in guest previe
 Cloudflare browser suite104/104 passes after the label fix. Final production captures at all six widths inspected, without DOM mutation. No game data, account permissions, slot-picker state or calculator formulas changed. Publication is pending the existing earlier Cloudflare deployment finishing, to prevent it replacing this newer UI.
 
 Published and checked on owned HTTPS at1440px/390px: both200, nine overview slots, no overflow. Keyboard gear links reach their detail rows at104px below the viewport top after a final scroll-margin correction. Current web versionb93431df-a341-4bb0-ba5e-3dd7a0cffae5. The superseded earlier run40764103923 was cancelled; newer source8f68c4a is on GitHub with its own CI run40767272900, pending. The final anchor correction is verified by targeted live interaction; it does not change the overview pixels or game data.
+
+Final source1031dda is pushed, including the verified anchor offset. Independent CI40768213832 is pending; obsolete40767272900 was cancelled. The manually deployed b93431df version already passes the live desktop/phone checks above.
