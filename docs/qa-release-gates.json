@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "owner_release_approval": "NOT_RECORDED",
+  "owner_release_approval": "Public Cloudflare availability explicitly authorized on28 October2026; formal acceptance of every product/security/legal gate is not recorded.",
   "gates": [
     {
       "id": "REL-001",
@@ -25,12 +25,12 @@
     {
       "id": "REL-005",
       "requirement": "SEC-003",
-      "acceptance": "No deployed TLS/proxy or Secure-cookie browser verification."
+      "acceptance": "Owned public HTTPS, auth-start state/PKCE and Secure/HttpOnly/SameSite pre-login cookies observed. Real consent/session/logout/expiry and second-account production checks remain required."
     },
     {
       "id": "REL-006",
       "requirement": "OPS-002",
-      "acceptance": "Local additive migrations through18, including watchlists and full spare equipment sets, are verified. Owned staging/production rollout, compatibility and operational recovery remain unverified."
+      "acceptance": "Local18 PostgreSQL migrations and Cloudflare public catalog/archive/additive constraint deployment verified. Private account lifecycle, compatibility under real users and operational recovery remain unverified."
     },
     {
       "id": "REL-007",

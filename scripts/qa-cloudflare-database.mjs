@@ -395,6 +395,38 @@ try {
     assert.equal(comps.total, 682);
     assert.equal(comps.rows.length, 18);
   });
+  // Persisted provider links are the authority used by owner-admin promotion. These are
+  // isolated database fixtures, never evidence of a Discord consent/token exchange.
+  const ownerDiscordId = "303585687460904970";
+  await query("account", "create", {
+    data: { userId: userA, type: "oauth", provider: "discord", providerAccountId: ownerDiscordId },
+  });
+  await query("account", "create", {
+    data: {
+      userId: userB,
+      type: "oauth",
+      provider: "fixture-other-provider",
+      providerAccountId: ownerDiscordId,
+    },
+  });
+  const promote = (id) =>
+    query("user", "updateMany", {
+      where: {
+        id,
+        role: { not: "ADMIN" },
+        accounts: { some: { provider: "discord", providerAccountId: ownerDiscordId } },
+      },
+      data: { role: "ADMIN" },
+    });
+  await check("matching claimed ID on the wrong provider cannot grant owner admin", async () => {
+    assert.equal((await promote(userB)).count, 0);
+    assert.equal((await query("user", "findUnique", { where: { id: userB } })).role, "USER");
+  });
+  await check("persisted Discord owner link promotes once and remains idempotent", async () => {
+    assert.equal((await promote(userA)).count, 1);
+    assert.equal((await query("user", "findUnique", { where: { id: userA } })).role, "ADMIN");
+    assert.equal((await promote(userA)).count, 0);
+  });
   await check("fixture cleanup cascades related private records", async () => {
     await query("group", "delete", { where: { id: groupId } });
     await query("user", "deleteMany", { where: { id: { in: [userA, userB] } } });

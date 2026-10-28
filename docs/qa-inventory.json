@@ -866,7 +866,7 @@
       "title": "Fresh checkout and source history verification",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Published private Outpost source commit 226e3aec087f96a2d7fc4f12b47ae8afb22bdf8f. Actual empty remote cloned into writable /tmp;865 reviewed staged blobs match source, configured-secret patterns clean, clean npm installation and production build pass. Original workspace Git metadata remains protected/unusable.",
+      "verified_scope": "Published private Outpost source commit 226e3aec087f96a2d7fc4f12b47ae8afb22bdf8f. Actual empty remote cloned into writable /tmp;865 reviewed staged blobs match source, configured-secret patterns clean, clean npm installation and production build pass. Original workspace Git metadata remains protected/unusable. Current Cloudflare delivery commit7df41f4 was pushed after174 staged files scanned with zero configured-secret/path findings; preserved origin/main history. GitHub clean installation and quality workflow are being observed.",
       "remaining": "Use an authorized writable checkout for continued version control; complete maintained history/security review. No existing remote history was overwritten.",
       "evidence": ["docs/engineering/REPOSITORY_READINESS.md"]
     },
@@ -876,7 +876,7 @@
       "title": "Deployable standalone/container foundation",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Public Cloudflare Free deployment observed. Reproduced Error1102 fixed with per-browser rendering objects;8/8 fresh probes and30/30 six-width hosted checks pass.102 Cloudflare browser cases and17 native database integration checks pass. Public D1 imports and44 constraint triggers verified. No private account export. Access removed at owner request. GitHub environment and narrowly scoped deployment credential configured.",
+      "verified_scope": "Public Cloudflare Free deployment observed. Reproduced Error1102 fixed with per-browser rendering objects;8/8 fresh probes and30/30 six-width hosted checks pass.102 Cloudflare browser cases and19 native database integration checks pass. Public D1 imports and44 constraint triggers verified. No private account export. Access removed at owner request. GitHub environment and narrowly scoped deployment credential configured. Native owner-link SQL rejects the wrong provider and promotes the configured Discord account idempotently.",
       "remaining": "Latest GitHub automatic delivery is being observed. Genuine Discord consent/admin/logout/expiry, production recovery/monitoring, operator/legal/current-patch acceptance and finite-quota capacity remain open. Public availability is owner-authorized despite formal NO-GO.",
       "evidence": [
         "Dockerfile",
@@ -897,8 +897,8 @@
       "title": "Existing application migration deployment",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Local development backup followed by authorized additive migration 17; read-back confirms all 17 complete and MarketWatchItem present. Disposable migrations/constraints/restore and operational watchlist regressions pass.",
-      "remaining": "Intended owned HTTPS staging/production migration and compatible rollout/backup/restore evidence remain required; local deployment is not external rollout.",
+      "verified_scope": "All18 PostgreSQL migrations pass disposable constraint/backup/restore checks. Public Cloudflare D1 schema/catalog/archive and44 additive triggers are deployed with clean FK read-back; private account schema initializes transactionally in SQLite objects. No old private account export was imported.",
+      "remaining": "Real account compatibility, production backup/restore and owned rollback exercise remain unverified; local restore tests do not establish production recovery.",
       "evidence": [
         "prisma/migrations/20261026110000_market_watch_items/migration.sql",
         "scripts/qa-database.mjs",
@@ -956,8 +956,8 @@
       "title": "Hosted repository CI",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Hosted product-source Quality gates run40446609588 succeeded onae887a6dbcb7aad94e57ea9df556d7270a8eb11c. Earlier CI-fix run40440298944 also succeeded on45b0acd. Sanitized diagnostics exposed hydration races, hosted CPU contention and insufficient visual-test budgets; readiness controls, serial hosted workers and appropriate budgets fixed them without weakening repository policy.",
-      "remaining": "Observe future product commits independently. Hosted checks do not certify deployment, actual OAuth, current-patch data, legal review or production readiness.",
+      "verified_scope": "Hosted run40732709235 on7df41f4 passed the complete reusable Node quality job (types/lint/units/migrations/build/102 browser cases/advisories/regional reads). Its Cloudflare deployment job is still executing. Earlier completed workflows40447885597 and40446609588 remain historical whole-workflow evidence.",
+      "remaining": "Observe the final main Cloudflare job and public deployment read-back. Hosted fixtures do not establish real personal OAuth, patch/legal acceptance or production recovery.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

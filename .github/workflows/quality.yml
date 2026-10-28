@@ -2,7 +2,7 @@ name: Quality gates
 on:
   pull_request:
   push:
-    branches: [main, master]
+    branches: [master]
   workflow_dispatch:
   workflow_call:
 permissions:

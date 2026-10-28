@@ -3130,13 +3130,13 @@
     },
     {
       "path": ".github/workflows/cloudflare-preview.yml",
-      "bytes": 4100,
-      "sha256": "ede84f0e8ff8e9f4e9b7157f2ae1945bb3f4b9e49d975c694017f5a6b9799851"
+      "bytes": 4112,
+      "sha256": "68acd40d5f6ed2e5c8e94534c093a97f968d3ead5bc44191253933a76f0b3583"
     },
     {
       "path": ".github/workflows/quality.yml",
-      "bytes": 1924,
-      "sha256": "e3b9d5207b75fc4da80aae87592ebf9687d1eded12763a3bad25f08a79688b8c"
+      "bytes": 1918,
+      "sha256": "5c8f888df4478ab9979dfc1f82136fb7bafa74df38d5abaf33964b9d94ba2d24"
     },
     {
       "path": ".gitignore",
@@ -4390,8 +4390,8 @@
     },
     {
       "path": "scripts/qa-cloudflare-database.mjs",
-      "bytes": 16411,
-      "sha256": "01662a0a0fe123fba5c77bf4b0258d3e0265adf9aef5553c33f9a801dae88653"
+      "bytes": 17766,
+      "sha256": "e83b110038660e226a38a3178b078c462a5a3a8e4df8433b919b0fc316e9438d"
     },
     {
       "path": "scripts/qa-cloudflare-hosted.mjs",

@@ -7,9 +7,6 @@ on:
     types: [published]
 permissions:
   contents: read
-concurrency:
-  group: cloudflare-production
-  cancel-in-progress: false
 jobs:
   quality:
     if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/codex/cloudflare-free-launch' || startsWith(github.ref, 'refs/tags/v'))
@@ -19,6 +16,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: cloudflare-production
+    concurrency:
+      group: cloudflare-production
+      cancel-in-progress: false
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       WRANGLER_SEND_METRICS: "false"

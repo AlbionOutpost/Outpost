@@ -1,5 +1,7 @@
 # Outpost deployment runbook
 
+Production addendum (28 October2026): AlbionOutpost is publicly hosted on Cloudflare Free Workers/D1/SQLite Durable Objects. [Current deployment, CPU correction and GitHub automation](deployment/CLOUDFLARE_PORT_PROGRESS.md) supersedes Node hosting assumptions for this target. The Node/Docker path below remains supported locally. Access gating was removed at owner request; personal Discord consent and production recovery remain unverified.
+
 There is no verified owned hosted deployment. [RELEASE_READINESS.md](../RELEASE_READINESS.md) is the authoritative release-gate list. Current local standalone/session tests and the fresh homepage-phase container smoke do not prove production operation.
 
 ## Runtime and controlled rollout

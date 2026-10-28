@@ -4413,25 +4413,25 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T17:06:41.524068+00:00",
+    "checkedAt": "2026-10-28T17:09:24.834076+00:00",
     "phase": "2026-10-28T17:05:09.707Z",
-    "scope": "Latest Node22 gate228unit/102browser/15database/nine regional reads: ten gates PASS. Cloudflare102browser and17nativeDB checks pass. Public hosted30cases at six widths pass sampled axe/overflow/browser checks. Actual builder320/375/1440/1920, library390 and guides768 screenshots reviewed; image-loaded guides capture confirms real original media. Initial lazy-image screenshots captured before image load; capture helper now waits for visible images. Error1102 and prefetch429 historical failures retained, subsequent fresh probes8/8 and hosted30/30 pass. Public Access removal is owner-authorized, no paid plan/R2. Current Docker starts nonroot with no embedded env and dependencies healthy. One mobile lab sample home84/A11y100 LCP4506ms; builder92/A11y100 LCP3310ms, CLS0: target still missed; no field/performance improvement claim. Genuine Discord consent/admin/logout/expiry, human Turnstile, production recovery and independent legal/current-patch gates remain unverified.",
+    "scope": "Latest Node22 gate228unit/102browser/15database/nine regional reads: ten gates PASS. Cloudflare102browser and17nativeDB checks pass. Public hosted30cases at six widths pass sampled axe/overflow/browser checks. Actual builder320/375/1440/1920, library390 and guides768 screenshots reviewed; image-loaded guides capture confirms real original media. Initial lazy-image screenshots captured before image load; capture helper now waits for visible images. Error1102 and prefetch429 historical failures retained, subsequent fresh probes8/8 and hosted30/30 pass. Public Access removal is owner-authorized, no paid plan/R2. Current Docker starts nonroot with no embedded env and dependencies healthy. One mobile lab sample home84/A11y100 LCP4506ms; builder92/A11y100 LCP3310ms, CLS0: target still missed; no field/performance improvement claim. Genuine Discord consent/admin/logout/expiry, human Turnstile, production recovery and independent legal/current-patch gates remain unverified. Final public version2daa0d14:30/30 recaptured hosted cases pass after visible-image waits; actual tablet builder reviewed. Public smoke and OAuth-start checks pass. Native SQLite owner-link positive, wrong-provider negative and idempotency checks pass,19 integration cases total.",
     "files": [
       {
         "path": ".qa/cloudflare-hosted-visual/manifest.json",
-        "sha256": "f5490a4b30a2fd7b832e1cea1f36cf30a672bcdcf9c30d24a8b095ef67078061"
+        "sha256": "7a856922b7c226312d4261bd59b8bff2c3518abe72a3d7f3c569d51ec69d26ad"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-320.png",
-        "sha256": "91a6634af43171c6ab90c3a3a9625d99245ecf18df43b763ce6cda4fe70fb7b8"
+        "sha256": "46996c741e2eec6ff0844a399005b8a56058f530e782b3ed628fc17e75c966de"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-375.png",
-        "sha256": "fab906460a5d2d6cdf8552bbb909241f28c04fbc1d2a68661428ac7616a0da6a"
+        "sha256": "fc552de2fb935ce9f50ec419d64ff907da50857f4b3725f407171410dccf5de5"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-1440.png",
-        "sha256": "4064654371c09e30311a7848d6b25d86e331b784f39985c5d941d975239f9593"
+        "sha256": "134216d00a8a7d5b64469ec70e231b24828a3522a31fb79593869c919a88d59d"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-1920.png",
@@ -4451,7 +4451,7 @@
       },
       {
         "path": ".qa/docker.json",
-        "sha256": "f405d98f2502ea1437a44808982f2ba78c661e3ee3d7a91585c36c4560c3b14a"
+        "sha256": "f3d4189aa3d2007a89987d2e2075c1de189f2d422a0759f7ce655495d9b61421"
       },
       {
         "path": ".qa/cloudflare-launch/final-free-check.log",
@@ -4459,7 +4459,19 @@
       },
       {
         "path": "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md",
-        "sha256": "b341d53c3a5b5d318db55d644a0feb636fd984740c324c7a952f47f81dc36787"
+        "sha256": "e81ff59f3a2cc0898bde236250044402043d709118652c84911c4804aceea8ab"
+      },
+      {
+        "path": ".qa/cloudflare-launch/hosted-smoke.json",
+        "sha256": "35e5480c370a0c11620efe54f3037f591adb0f1370b2f2eb679f62352a5b110c"
+      },
+      {
+        "path": ".qa/cloudflare-launch/hosted-auth-start.json",
+        "sha256": "02c46690e68393048c20885663c5bf621dd9df47b42c86564692109fea60c653"
+      },
+      {
+        "path": ".qa/cloudflare-hosted-visual/builds-new-768.png",
+        "sha256": "c65637fb6161faa59940bfe5550fdd047f8f03b831f74df3f65ffa977edb7f70"
       }
     ]
   },
@@ -4587,14 +4599,14 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "6615a170b496b20b4a00ee5579ef5d5e44058b531d37aa5199187698eb96360c",
+      "sha256": "e492aee10cc05a45bb0944ba2d5232098d5ee3ff6cdb01bc1fc4eb343dc0c3f0",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
   "reviewed_sources": {
     ".github/dependabot.yml": "0817fc406d3eba0833f1b6cbba9fd6d84822715111b85cd2ed10685d6e9acc66",
-    ".github/workflows/cloudflare-preview.yml": "ede84f0e8ff8e9f4e9b7157f2ae1945bb3f4b9e49d975c694017f5a6b9799851",
-    ".github/workflows/quality.yml": "e3b9d5207b75fc4da80aae87592ebf9687d1eded12763a3bad25f08a79688b8c",
+    ".github/workflows/cloudflare-preview.yml": "68acd40d5f6ed2e5c8e94534c093a97f968d3ead5bc44191253933a76f0b3583",
+    ".github/workflows/quality.yml": "5c8f888df4478ab9979dfc1f82136fb7bafa74df38d5abaf33964b9d94ba2d24",
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
     "e2e/account.spec.ts": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877",
