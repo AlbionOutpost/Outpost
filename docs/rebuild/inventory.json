@@ -3130,13 +3130,13 @@
     },
     {
       "path": ".github/workflows/cloudflare-preview.yml",
-      "bytes": 4175,
-      "sha256": "b473a6d17585f0a9d0d4d235a350bfe128bfb4e47b690a51a0814b191c87dd92"
+      "bytes": 4214,
+      "sha256": "32c996e8c510520637c1512ea61654d41b83d69a83574f3caf61bf1442049675"
     },
     {
       "path": ".github/workflows/documentation.yml",
       "bytes": 834,
-      "sha256": "a72306feae154c7cef27e6afd94e65b4c78e5e009ba5fa1ca45338eec83d56b0"
+      "sha256": "6e813166c29e6067847f977487a3dcb1725d2fa9314c009df64efe8c643d672d"
     },
     {
       "path": ".github/workflows/quality.yml",

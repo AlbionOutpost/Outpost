@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: node scripts/rebuild-inventory.mjs --check
-      - run: node scripts/qa-source-secrets.mjs
       - run: python3 scripts/test-docs-validation.py
       - run: python3 scripts/qa-reports.py --check
       - run: python3 scripts/docs-validate.py
+      - run: node scripts/qa-source-secrets.mjs
