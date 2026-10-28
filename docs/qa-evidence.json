@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T20:28:45.300Z",
+  "phase_checked_at": "2026-10-28T20:46:28.584Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,17 +11,17 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 2.25
+      "seconds": 2.45
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 7.02
+      "seconds": 7.08
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.41
+      "seconds": 2.34
     },
     {
       "name": "game-data-structure",
@@ -31,27 +31,27 @@
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.58
+      "seconds": 3.71
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 5.69
+      "seconds": 5.18
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 118.94
+      "seconds": 119.88
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.44
+      "seconds": 0.41
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.38
+      "seconds": 0.35
     }
   ],
   "counts": {
@@ -62,7 +62,7 @@
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T20:30:29.231Z",
+    "checkedAt": "2026-10-28T20:51:25.782Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4413,8 +4413,8 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T20:30:28.030841+00:00",
-    "phase": "2026-10-28T20:28:45.300Z",
+    "checkedAt": "2026-10-28T20:51:24.650451+00:00",
+    "phase": "2026-10-28T20:46:28.584Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
@@ -4536,12 +4536,44 @@
       {
         "path": ".qa/cloudflare-release/free-bundles.json",
         "sha256": "ef1e7ce233f28ab00038fc6574318b77d6e391b327543e5098f2a87653cdb96e"
+      },
+      {
+        "path": ".qa/compact-loadout/final.json",
+        "sha256": "5138bb1f6668a03a3258f81dc944d139b3725ed30b758af969fc53c162736bb7"
+      },
+      {
+        "path": ".qa/compact-loadout/final-390.png",
+        "sha256": "f3a1c6e3d6a46b6fa6cd9a65608a231511e3279dfd45ee880a348fd0694b8a9b"
+      },
+      {
+        "path": ".qa/compact-loadout/final-320.png",
+        "sha256": "435647c3e14f3342271a8a21fcda429398c4212d71efc1d67760a7a11f669404"
+      },
+      {
+        "path": ".qa/compact-loadout/final-768.png",
+        "sha256": "768d620458a324932c88a396e1e0dc1456f6d6a2427dc797ca91bff4e7986b4c"
+      },
+      {
+        "path": ".qa/compact-loadout/final-1440.png",
+        "sha256": "ba3a7a6a0dd282bee40e7eb7e2eb03280146739b9b7a4a513ec7348b354d62c0"
+      },
+      {
+        "path": ".qa/compact-loadout/final-1920.png",
+        "sha256": "ba3a7a6a0dd282bee40e7eb7e2eb03280146739b9b7a4a513ec7348b354d62c0"
+      },
+      {
+        "path": ".qa/compact-loadout/lighthouse-summary.json",
+        "sha256": "e9996015311135bf5124005cbe8ba225d194d64bb5e119f934e617d8eb45e0da"
+      },
+      {
+        "path": ".qa/compact-loadout/cloudflare-browser.log",
+        "sha256": "e39dcde0e5491b111a2267a5985a960e60cf34feb5a07d577e9ba3af95a2b16e"
       }
     ],
-    "latestImplementationNote": "Premium workspaces live. Final Node phase ten gates244unit104browser15DB9regionalPASS; Cloudflare104/native19PASS. Local42six-width captures nooverflow and shopping axe6widths no violations. Live14desktop/mobile captures200/nooverflow inspected. Initial GitHub8ebaceb release workflow40755799066 passed; subsequent live catalog503 traced to D1 daily account read allowance. Bounded reviewed PUBLIC static snapshot fallback hotfix manually deployed web24484c0e/data de7e1572; strict25public checks and OAuth-start pass under exhausted D1 allowance. Private reads fail closed; five new parity/denial tests. Recovery code GitHub synchronization pending. Personal OAuth/admin, game patch/legal/recovery/owner acceptance remain open; full productNO-GO."
+    "latestImplementationNote": "Compact read-only overview follows owner reference: nine icon slots, raised centre, attached spells/consumable alternatives, no labelled cards. Final Node244unit104browser15DB9regional allPASS; Cloudflare104PASS. Production6widths reviewed: nooverflow/pageerror/axeviolations. Container nonroot/health/no-env PASS. Single mobile detail sample94perf100accessibility LCP3007ms CLS0; no field or full conformance claim. Earlier deployment40764103923 still pending; compact UI publication pending. Whole-product/source-patch/legal/personalOAuth/owner acceptance remain open."
   },
   "source_scan": {
-    "filesScanned": 4161,
+    "filesScanned": 4162,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4557,7 +4589,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 59,
+    "filesScanned": 126,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -4574,7 +4606,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "0a69a3c0782ea2a3c58b10a15470f59eb06220419e42ac80b0479040b8a571da",
+      "sha256": "3f891319387c1a8ff45d7ec68df6d83a1d5dce74372b34de32684f8271050de6",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4584,22 +4616,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "dba00aad48a23cd6fcee716912f05a164b8d746ebdba07beb246530479b0f612",
+      "sha256": "2a33aba9edbc60a261861a7432c6978c0a5b4c17b6351b6d6425c6a50583f518",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "e9b02e76c9c92508738742b93987eedcb966d353ae3fdaec2e088319fefa9666",
+      "sha256": "4665f77310791553313e144397e73ae08922e8d26edae7d57ee2c398e8105b93",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "b424bc486f41d20fb6234ed408c79a3fb560699207adc8bbf52fd2a42e215e72",
+      "sha256": "e61a06f9a720458fef89b8ecf28dfa1458068602dbae520c8dd61a98bf99fa2f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "f4169a779af4501e4a961b8799cc759979672349e7582ac5e1a6096a57d38517",
+      "sha256": "ba1da8512f806a095e7b84ed486efd8304bf01d6c39b2f49ac73ce308928871c",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4614,7 +4646,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "9761d04b70cff07256523bd2a39a7a29e26e52cf44503f4ddad6ecc606d0f31c",
+      "sha256": "19dc9da8788a9e76a54fce71ef906dd0ecf1f546f9f8defaf216f3160f1ea477",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4629,12 +4661,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "2196b3b75253517b754422d45dbc9868732babf99a410570c9360aaf6b47f241",
+      "sha256": "f5d83e53da10769b526a2ab9902b4b5a9e660961166e5aa66be2aa01a397447f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "be070cddbec1bd73dc8db5e2d03a559c75058c840ff350871f82d565c6bcf88b",
+      "sha256": "719007854eff23a34f3e4cf5d92739f22b202af926a85157527fe7d323ff78aa",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4664,7 +4696,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "c7bda9447003fd9459d9af4b0f53dbc32c219c59de99b760bc1016b56ad6193c",
+      "sha256": "33cc3199f0a4d5317a09d128c15c42ad93b047140ca4b7297b150a6838f44e5f",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -4911,7 +4943,7 @@
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "08796604ec4cda4a98be216221896800b03d53d82622d866ca384bd6e8ec8480",
     "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
-    "src/app/premium-system.css": "cf20c1e5ef24743a9f13c27592a76b98155b5f01d1e7fccd7debc76aecc274ac",
+    "src/app/premium-system.css": "431ae85aafd0d3766868164886220aaa97a2d360f997b6dd88972392cb4ccd59",
     "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
     "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
@@ -4947,7 +4979,7 @@
     "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
     "src/components/build-editor.tsx": "c6fe96fd007e8ce25f9044ce6288b600986828d275b95959912476e57a2c0a76",
     "src/components/build-equipment-studio.tsx": "9367855f03ab7d1d0d9c889ec6e1c6ddc87818ff0db096aab06d9ffda6d99bc5",
-    "src/components/build-loadout-view.tsx": "6fdf9839b3da3e713d376a06ab9dfe1054c4d57ed7e5f21ce05bd7a000d5ead7",
+    "src/components/build-loadout-view.tsx": "3b3aa726b63e357039bb0ffcbb1631d298f933706152741cfc91bcc1b54b1052",
     "src/components/build-preview-card.tsx": "31475d836857282ebcac5d58120287e61eff35eacb28c9a58ed7e555919b03b9",
     "src/components/catalog-item-picker.tsx": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559",
     "src/components/community-panel.tsx": "3f5d79654b9147a0196fd3e11bf92c167db3a6111435ed08665cec4a56d80293",

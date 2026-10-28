@@ -1157,7 +1157,7 @@
       "imports": [
         "./archive-build-links",
         "./item-icon",
-        "./equipment-overview",
+        "lucide-react",
         "@/lib/albion/equipment-catalog",
         "@/lib/albion/equipment-abilities",
         "./spell-icon"
@@ -5069,8 +5069,8 @@
     },
     {
       "path": "src/app/premium-system.css",
-      "bytes": 31737,
-      "sha256": "cf20c1e5ef24743a9f13c27592a76b98155b5f01d1e7fccd7debc76aecc274ac"
+      "bytes": 34344,
+      "sha256": "431ae85aafd0d3766868164886220aaa97a2d360f997b6dd88972392cb4ccd59"
     },
     {
       "path": "src/app/product-controls.css",
@@ -5249,8 +5249,8 @@
     },
     {
       "path": "src/components/build-loadout-view.tsx",
-      "bytes": 8067,
-      "sha256": "6fdf9839b3da3e713d376a06ab9dfe1054c4d57ed7e5f21ce05bd7a000d5ead7"
+      "bytes": 9440,
+      "sha256": "3b3aa726b63e357039bb0ffcbb1631d298f933706152741cfc91bcc1b54b1052"
     },
     {
       "path": "src/components/build-preview-card.tsx",

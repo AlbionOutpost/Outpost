@@ -1,6 +1,6 @@
 import { EquipmentMarketLink } from "./archive-build-links";
 import { ItemIcon } from "./item-icon";
-import { EquipmentGlyph } from "./equipment-overview";
+import { X } from "lucide-react";
 import { equipmentSlots, equipmentName } from "@/lib/albion/equipment-catalog";
 import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { SpellIcon } from "./spell-icon";
@@ -22,47 +22,84 @@ export function BuildLoadoutView({ equipment, region }: { equipment: Gear[]; reg
       id="build-equipment"
       aria-label="Build equipment and abilities"
     >
-      <div className="build-loadout-inventory">
+      <div className="build-loadout-inventory compact-loadout-overview">
         <div className="loadout-surface-heading">
-          <h2>The loadout</h2>
-          <span>{equipment.filter((item) => item.itemId).length}/10 equipped</span>
+          <h2>Overview</h2>
+          <span className="sr-only">
+            {equipment.filter((item) => item.itemId).length}/10 equipped
+          </span>
         </div>
-        <div className="character-slots">
-          {equipmentSlots.map((slot) => {
+        <div className="compact-loadout-grid" aria-label="Equipment overview">
+          {(
+            [
+              "Bag",
+              "Helmet",
+              "Cape",
+              "Main hand",
+              "Chest",
+              "Off hand",
+              "Potion",
+              "Boots",
+              "Food",
+            ] as const
+          ).map((slot) => {
             const item = equipment.find((e) => e.slot === slot && e.itemId);
+            const label = `${slot}: ${item ? equipmentName(item.itemId) : "Empty"}`;
+            if (!item)
+              return (
+                <span key={slot} className="compact-loadout-empty" data-slot={slot} title={label}>
+                  <X size={30} />
+                  <span className="sr-only">{label}</span>
+                </span>
+              );
+            const selections =
+              item.abilitySelections &&
+              typeof item.abilitySelections === "object" &&
+              !Array.isArray(item.abilitySelections)
+                ? Object.entries(item.abilitySelections)
+                : [];
+            const spells = item.recordedSkills?.length
+              ? item.recordedSkills
+              : selections.flatMap(([key, name]) => {
+                  const spell = archivedSpellOptions(item.itemId).find(
+                    (s) => s.key === key && s.name === name,
+                  );
+                  return spell ? [{ id: spell.id, name: spell.name }] : [];
+                });
             return (
               <a
                 key={slot}
-                href={item ? `#build-gear-${slot.replaceAll(" ", "-")}` : undefined}
-                className={`character-slot${item ? " equipped" : ""}`}
+                href={`#build-gear-${slot.replaceAll(" ", "-")}`}
+                className="compact-loadout-item"
                 data-slot={slot}
-                title={`${slot}: ${item ? equipmentName(item.itemId) : "Empty"}`}
+                title={label}
+                aria-label={label}
               >
-                <span className="slot-caption">{slot}</span>
-                {item ? (
-                  <ItemIcon id={item.itemId} quality={item.quality} size={64} />
-                ) : (
-                  <EquipmentGlyph slot={slot} />
-                )}
-                <span className="slot-item-name">
-                  {item ? equipmentName(item.itemId) : "Empty"}
-                </span>
-                {!!item?.recordedSkills?.length && (
-                  <span className="studio-tile-spells">
-                    {item.recordedSkills.map((spell) => (
+                <ItemIcon id={item.itemId} quality={item.quality} size={96} />
+                {spells.length > 0 && (
+                  <span className="compact-loadout-spells">
+                    {spells.map((spell) => (
                       <span key={spell.id} title={spell.name}>
-                        <SpellIcon id={spell.id} name={spell.name} size={22} />
+                        <SpellIcon id={spell.id} name={spell.name} size={25} />
                       </span>
                     ))}
+                  </span>
+                )}
+                {(slot === "Food" || slot === "Potion") && item.alternativeItemIds[0] && (
+                  <span
+                    className="compact-loadout-consumable-swap"
+                    title={`Alternative: ${equipmentName(item.alternativeItemIds[0])}`}
+                  >
+                    <ItemIcon id={item.alternativeItemIds[0]} size={42} />
+                    <span className="sr-only">
+                      Alternative: {equipmentName(item.alternativeItemIds[0])}
+                    </span>
                   </span>
                 )}
               </a>
             );
           })}
         </div>
-        <p className="loadout-inventory-note">
-          Select equipped gear to inspect its recorded abilities and alternatives.
-        </p>
       </div>
       <div className="build-loadout-abilities">
         <div className="loadout-surface-heading">

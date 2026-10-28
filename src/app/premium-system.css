@@ -1353,3 +1353,127 @@
 .app.outpost .shopping-table-panel .table-scroll {
   position: relative;
 }
+
+/* Readable build overview: the equipment artwork is the layout, rather than nested slot cards. */
+.app.outpost .build-loadout-view > .compact-loadout-overview {
+  padding: 4px 0 20px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.app.outpost .compact-loadout-overview .loadout-surface-heading {
+  border: 0;
+  padding: 0;
+  margin: 0 0 22px;
+}
+.app.outpost .compact-loadout-overview h2 {
+  font: 700 24px/1.3 var(--font-ui);
+}
+.compact-loadout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 96px);
+  grid-auto-rows: 104px;
+  column-gap: 8px;
+  row-gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  align-items: center;
+}
+.app.outpost .compact-loadout-item,
+.app.outpost .compact-loadout-empty {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-decoration: none;
+}
+.app.outpost .compact-loadout-item > img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.app.outpost .compact-loadout-item:hover {
+  background: transparent;
+  transform: translateY(-2px);
+}
+.app.outpost .compact-loadout-item:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.compact-loadout-empty {
+  color: var(--muted);
+  opacity: 0.65;
+}
+.compact-loadout-spells {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1px;
+  width: max-content;
+}
+.compact-loadout-spells > span {
+  display: flex;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+.compact-loadout-spells img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+.compact-loadout-consumable-swap {
+  position: absolute;
+  right: -2px;
+  bottom: -3px;
+  width: 42px;
+  height: 42px;
+}
+.compact-loadout-consumable-swap img {
+  width: 42px;
+  height: 42px;
+}
+@media (max-width: 360px) {
+  .compact-loadout-grid {
+    grid-template-columns: repeat(3, 78px);
+    column-gap: 8px;
+    grid-auto-rows: 92px;
+  }
+  .app.outpost .compact-loadout-item,
+  .app.outpost .compact-loadout-empty {
+    width: 78px;
+    height: 78px;
+  }
+  .app.outpost .compact-loadout-item > img {
+    width: 78px;
+    height: 78px;
+  }
+  .compact-loadout-spells {
+    gap: 0;
+  }
+  .compact-loadout-spells > span,
+  .compact-loadout-spells img {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+.compact-loadout-grid > :nth-child(3n + 2) {
+  top: -12px;
+}
