@@ -32,8 +32,9 @@ test("source catalog supports staff and bow sets with safe two-hand changes and 
       .click();
     await page.getByRole("button", { name: "Apply template", exact: true }).click();
     await expect(page.locator(".character-slot.equipped")).toHaveCount(10);
+    await page.getByRole("button", { name: "Item details", exact: true }).click();
     await page.getByLabel("Main hand equipment", { exact: true }).selectOption("2H_BOW");
-    await expect(page.locator(".gear-change-notice")).toContainText("Off hand cleared");
+    await expect(page.locator(".studio-notice")).toContainText("Off hand cleared");
     await expect(page.locator(".character-slot.equipped")).toHaveCount(9);
     await page.getByRole("button", { name: "Undo equipment change", exact: true }).click();
     await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue("MAIN_AXE");
@@ -41,8 +42,9 @@ test("source catalog supports staff and bow sets with safe two-hand changes and 
     await page.getByLabel("Main hand equipment", { exact: true }).selectOption("2H_BOW");
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Multishot");
     await expect(page.getByLabel("Main hand Q", { exact: true })).toHaveValue("Multishot");
+    await page.getByRole("button", { name: "Choose Main hand equipment", exact: false }).click();
     await page.getByRole("button", { name: "Next items", exact: true }).click();
-    await expect(page.locator(".gear-browser-paging")).toContainText("13–24");
+    await expect(page.locator(".studio-picker-pagination")).toContainText("25–48");
   } finally {
     await db.user.deleteMany({ where: { id } });
   }

@@ -98,12 +98,10 @@ test("populated build editor preserves gear, choices and revisions across respon
           (width) => ({
             width,
             overflow: document.documentElement.scrollWidth > innerWidth,
-            panes: [".gear-studio", ".gear-browser", ".gear-character", ".gear-details"].map(
-              (selector) => {
-                const r = document.querySelector(selector)!.getBoundingClientRect();
-                return { selector, x: r.x, y: r.y, width: r.width, height: r.height };
-              },
-            ),
+            panes: [".build-studio", ".studio-loadout-list", ".studio-overview"].map((selector) => {
+              const r = document.querySelector(selector)!.getBoundingClientRect();
+              return { selector, x: r.x, y: r.y, width: r.width, height: r.height };
+            }),
           }),
           width,
         ),
@@ -116,8 +114,8 @@ test("populated build editor preserves gear, choices and revisions across respon
     await expect(page.getByLabel("Main hand alternative 2", { exact: true })).toHaveValue(
       "T5_MAIN_AXE",
     );
-    await page.getByRole("button", { name: "Equipment", exact: true }).click();
-    await page.getByRole("button", { name: /^Select Main hand slot\b/ }).click();
+    await page.getByRole("button", { name: "Close item details", exact: true }).click();
+    await page.getByRole("button", { name: "Choose Main hand equipment", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("3");
     await expect(page.getByRole("button", { name: /^Equip Battleaxe\b/ })).toHaveCount(0);
     await expect(
@@ -125,8 +123,9 @@ test("populated build editor preserves gear, choices and revisions across respon
         exact: false,
       }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Equipment", exact: true }).click();
-    await page.getByRole("button", { name: /^Select Helmet slot\b/ }).click();
+    await page.keyboard.press("Escape");
+
+    await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();
     await expect(page.getByLabel("Search equipment")).toBeVisible();
     await page.getByRole("button", { name: /^Equip Scholar Cowl\b/ }).focus();
     await page.keyboard.press("Enter");
@@ -134,7 +133,8 @@ test("populated build editor preserves gear, choices and revisions across respon
     await page.getByRole("button", { name: "Save new revision", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/builds/${build.id}$`));
     await page.goto(`/builds/${build.id}/edit`);
-    await page.getByRole("button", { name: /^Select Helmet slot\b/ }).click();
+    await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();
+    await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "Item details", exact: true }).click();
     await expect(page.getByLabel("Helmet Active", { exact: true })).toHaveValue("Energy Shield");
     const saved = await db.build.findUniqueOrThrow({

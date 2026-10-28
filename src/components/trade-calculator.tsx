@@ -127,10 +127,15 @@ export function TradeCalculator() {
           <p role="status">{message}</p>
         </section>
         <section className="panel result">
-          <div className="eyebrow">ESTIMATED NET PROFIT</div>
+          <h2>Estimated net profit</h2>
           <strong
-            key={result?.profit ?? "empty"}
-            className={`value-update${result && result.profit < 0 ? " negative" : ""}`}
+            className={
+              !result || result.profit === 0
+                ? "neutral"
+                : result.profit < 0
+                  ? "negative"
+                  : "positive"
+            }
           >
             {result ? result.profit.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
             <small> silver</small>

@@ -108,7 +108,7 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
     await page.keyboard.press("Control+k");
     await expect(page.getByRole("dialog", { name: "Global search", exact: true })).toBeVisible();
     await page
-      .getByLabel("Search items, builds, groups and tools", { exact: true })
+      .getByLabel("Search items, builds, comps, guilds and tools", { exact: true })
       .fill("transport");
     await expect(page.getByRole("link", { name: "Tools Transport planner" })).toBeVisible();
     await page.keyboard.press("ArrowDown");

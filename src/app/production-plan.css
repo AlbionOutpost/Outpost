@@ -1,0 +1,208 @@
+.app.outpost .production-plan {
+  margin-top: 32px;
+  padding: 24px;
+}
+.production-mode-nav {
+  flex-wrap: wrap;
+}
+#production-plan-title {
+  scroll-margin-top: 100px;
+}
+.production-plan-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.production-plan-heading .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.production-plan-heading h2 {
+  margin: 8px 0;
+}
+.production-plan-heading p,
+.production-plan > p {
+  color: var(--muted);
+  max-width: 84ch;
+}
+.production-plan-heading button {
+  flex-shrink: 0;
+}
+.production-plan-empty {
+  padding: 24px 0;
+}
+.production-plan-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 20px 0 12px;
+  font-size: 13px;
+}
+.production-plan-status span {
+  color: var(--muted);
+}
+.production-plan-run {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border, #262d36);
+}
+.production-plan-identity {
+  flex: 1;
+  min-width: 0;
+}
+.production-plan-identity h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+.production-plan-identity p {
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+.production-plan-run small,
+.production-plan-run label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.production-plan-run label {
+  display: grid;
+  gap: 4px;
+}
+.app.outpost .production-plan-run input {
+  width: 88px;
+  min-height: 40px;
+}
+.production-plan-profit {
+  text-align: right;
+  min-width: 120px;
+  display: grid;
+  gap: 4px;
+}
+.production-plan-profit strong,
+.production-plan-stats strong,
+.production-plan-accounting dd {
+  font-variant-numeric: tabular-nums;
+}
+.production-plan-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  padding: 24px 0;
+  margin: 8px 0 24px;
+  border-block: 1px solid var(--border, #262d36);
+}
+.production-plan-stats small {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+.production-plan-stats strong {
+  font-size: clamp(20px, 2vw, 28px);
+  overflow-wrap: anywhere;
+}
+.production-plan-table {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+.production-plan-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.production-plan-table th,
+.production-plan-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border, #262d36);
+  font-size: 13px;
+  text-align: left;
+  vertical-align: middle;
+}
+.production-plan-table thead th {
+  color: var(--muted);
+  font-weight: 500;
+}
+.production-plan-table :is(th, td):nth-child(n + 2):nth-child(-n + 4) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.production-plan-table small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+}
+.production-plan-material {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+}
+.production-plan-edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 0;
+}
+.production-plan-accounting {
+  display: grid;
+  gap: 12px;
+  max-width: 640px;
+}
+.production-plan-accounting > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.production-plan-accounting dd {
+  margin: 0;
+  text-align: right;
+}
+.production-plan-actions {
+  margin: 24px 0;
+}
+.app.outpost .production-plan > .panel {
+  border: 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--border, #262d36);
+  margin: 24px 0 0;
+  background: transparent;
+}
+@media (max-width: 900px) {
+  .production-plan-run {
+    flex-wrap: wrap;
+  }
+  .production-plan-identity {
+    flex-basis: calc(100% - 60px);
+  }
+  .production-plan-profit {
+    flex: 1;
+  }
+  .production-plan-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .production-mode-nav .production-plan-jump {
+    flex-basis: 100%;
+    text-align: left;
+  }
+  .app.outpost .production-plan {
+    padding: 16px;
+  }
+  .production-plan-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .production-plan-stats {
+    gap: 20px 12px;
+  }
+  .production-plan-run > .button {
+    min-height: 40px;
+  }
+  .production-plan-accounting {
+    font-size: 13px;
+  }
+}

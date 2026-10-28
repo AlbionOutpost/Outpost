@@ -15,5 +15,7 @@ export default defineConfig([
     ".codex/**",
     ".aws/**",
     "skill-system/vendor/**",
+    // Downloaded reference-site evidence is not application source.
+    "Scrape/**",
   ]),
 ]);

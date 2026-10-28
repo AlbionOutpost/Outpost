@@ -5,7 +5,8 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
-import { targetKind } from "@/lib/community/validation";
+import { targetKind, communityAction } from "@/lib/community/validation";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { communityTarget, requireModerator } from "@/lib/community/access";
 import { communityMutation } from "@/lib/community/service";
 type Context = { params: Promise<{ kind: string; id: string }> };
@@ -89,7 +90,11 @@ export const POST = apiHandler("community.mutate", async (req: NextRequest, ctx:
   const auth = await mutationUser(req);
   if (auth.error) return auth.error;
   const { kind, id } = await ctx.params;
+  const input = communityAction.parse(await boundedJson(req));
+  // Authentication, same-origin checks and the existing user request budget run first.
+  if (["comment", "edit-comment", "report"].includes(input.action))
+    await verifyTurnstile(req.headers.get("x-turnstile-token"), "community_write");
   return NextResponse.json(
-    await communityMutation(targetKind.parse(kind), id, auth.userId!, await boundedJson(req)),
+    await communityMutation(targetKind.parse(kind), id, auth.userId!, input),
   );
 });

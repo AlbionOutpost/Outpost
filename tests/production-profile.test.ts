@@ -29,7 +29,7 @@ it("computes refining specialization separately from returns and keeps station r
   expect(() => refiningEfficiency(4, [101, 0, 0, 0, 0])).toThrow();
 });
 it("resolves plain steel and expands only explicit normal recipes with independently checked higher-tier inputs", () => {
-  expect(recipes.filter((r) => r.kind === "crafting")).toHaveLength(45);
+  expect(recipes.filter((r) => r.kind === "crafting" && !r.historical)).toHaveLength(45);
   expect(recipes.filter((r) => r.kind === "refining")).toHaveLength(25);
   const steel = recipes.find((r) => r.id === "steel-bar-t4")!;
   expect(steel.source).not.toContain("Pristine");

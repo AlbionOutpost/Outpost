@@ -1,5 +1,8 @@
 node_modules
 .next
+.open-next
+.wrangler
+cloudflare/generated
 .git
 .env
 .env.*
@@ -20,3 +23,4 @@ playwright-report
 backups
 assets/source
 skill-system/vendor
+Scrape

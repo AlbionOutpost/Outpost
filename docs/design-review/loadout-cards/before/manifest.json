@@ -1,0 +1,72 @@
+[
+  {
+    "name": "builds",
+    "width": 1440,
+    "url": "http://localhost:3100/builds?q=QA+Card",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "builds",
+    "width": 390,
+    "url": "http://localhost:3100/builds?q=QA+Card",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "build-detail",
+    "width": 1440,
+    "url": "http://localhost:3100/builds/cmvr4wn1i0002rh05pcgqq9fn",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "build-detail",
+    "width": 390,
+    "url": "http://localhost:3100/builds/cmvr4wn1i0002rh05pcgqq9fn",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "build-editor",
+    "width": 1440,
+    "url": "http://localhost:3100/builds/cmvr4wn1i0002rh05pcgqq9fn/edit",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "build-editor",
+    "width": 390,
+    "url": "http://localhost:3100/builds/cmvr4wn1i0002rh05pcgqq9fn/edit",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "compositions",
+    "width": 1440,
+    "url": "http://localhost:3100/compositions?q=QA+Card&mine=1",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "compositions",
+    "width": 390,
+    "url": "http://localhost:3100/compositions?q=QA+Card&mine=1",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "tools",
+    "width": 1440,
+    "url": "http://localhost:3100/tools",
+    "fixture": true,
+    "overflow": false
+  },
+  {
+    "name": "tools",
+    "width": 390,
+    "url": "http://localhost:3100/tools",
+    "fixture": true,
+    "overflow": false
+  }
+]

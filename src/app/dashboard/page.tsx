@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { EquipmentStrip } from "@/components/equipment-strip";
 import { Swords, Users, Flag, Clock3, Coins } from "lucide-react";
+import { productionPlanSchema } from "@/lib/albion/production-plan";
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) redirect("/signin");
@@ -27,7 +28,7 @@ export default async function Dashboard() {
       memberships: { include: { group: { select: { name: true, slug: true } } }, take: 8 },
       timers: { where: { status: { not: "COMPLETED" } }, orderBy: { updatedAt: "desc" }, take: 8 },
       savedScenarios: {
-        select: { id: true, title: true, kind: true },
+        select: { id: true, title: true, kind: true, configuration: true },
         take: 8,
         orderBy: { updatedAt: "desc" },
       },
@@ -145,14 +146,21 @@ export default async function Dashboard() {
             <Coins size={18} />
             Recent calculator plans
           </h2>
-          {u.savedScenarios.map((c) => (
-            <p key={c.id}>
-              {c.title} ·{" "}
-              <Link className="text-link" href={`/tools/${c.kind}`}>
-                Open calculator and load plans
-              </Link>
-            </p>
-          ))}
+          {u.savedScenarios.map((c) => {
+            const plan =
+              c.kind === "production-plan" ? productionPlanSchema.safeParse(c.configuration) : null;
+            const href = plan?.success
+              ? `/tools/${plan.data.runs[0].kind}?region=${plan.data.region}#production-plan-title`
+              : `/tools/${c.kind === "production-plan" ? "crafting" : c.kind}`;
+            return (
+              <p key={c.id}>
+                {c.title} ·{" "}
+                <Link className="text-link" href={href}>
+                  Open calculator and load plans
+                </Link>
+              </p>
+            );
+          })}
           {!u.savedScenarios.length && <p>No saved calculator plans yet.</p>}
         </section>
       </div>

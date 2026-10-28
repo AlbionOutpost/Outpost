@@ -1,5 +1,6 @@
 "use client";
 import "@/app/production-workspace.css";
+import { EditorDialog } from "./editor-dialog";
 import { ProductionProfile } from "./production-profile";
 import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -19,15 +20,30 @@ import {
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
 import { ScenarioControls } from "./scenario-controls";
+import { ProductionPlan } from "./production-plan";
 import {
   productionPriceQuery,
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
-export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }) {
+export function ProductionCalculator({
+  kind,
+  category,
+}: {
+  kind: ProductionInput["kind"];
+  category?: "cooking" | "alchemy";
+}) {
   const region = useAtlasRegion();
   const router = useRouter();
-  const [draft, setDraft] = useState(() => initialProduction(kind, region));
+  const [draft, setDraft] = useState(() => ({
+    ...initialProduction(kind, region),
+    ...(category ? { recipeId: recipes.find((r) => r.category === category)!.id } : {}),
+  }));
+  const availableRecipes = recipes.filter(
+    (r) => r.kind === kind && (!category || r.category === category),
+  );
   const [error, setError] = useState("");
+  const [recipeSearch, setRecipeSearch] = useState("");
+  const [recipePickerOpen, setRecipePickerOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [showScenarios, setShowScenarios] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
@@ -141,18 +157,140 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
       if (matchMedia("(max-width: 780px)").matches) panel?.scrollIntoView({ block: "start" });
     });
   }
+  const recipeBrowser = (
+    <aside className="production-recipe-browser" aria-label="Recipe browser">
+      <div className="recipe-browser-title">
+        <h2>{kind === "enchanting" ? "Equipment" : "Recipe library"}</h2>
+        <span>{kind === "enchanting" ? enchantable.length : availableRecipes.length}</span>
+      </div>
+      <label className="recipe-browser-search">
+        {kind === "enchanting" ? "Find equipment" : "Find a recipe"}
+        <input
+          type="search"
+          aria-label="Search crafting recipes"
+          placeholder="Search by item name…"
+          value={recipeSearch}
+          onChange={(e) => setRecipeSearch(e.target.value)}
+        />
+      </label>
+      {kind !== "enchanting" && (
+        <>
+          <div className="recipe-tier-options" role="group" aria-label="Recipe tier">
+            {[4, 5, 6, 7, 8].map((tier) => (
+              <button
+                type="button"
+                key={tier}
+                aria-label={`Browse T${tier} recipes`}
+                aria-pressed={Number(recipe.output.match(/^T(\d)_/)?.[1]) === tier}
+                onClick={() => {
+                  const same = availableRecipes.find(
+                    (r) =>
+                      r.kind === kind && r.output === recipe.output.replace(/^T\d_/, `T${tier}_`),
+                  );
+                  if (same) update("recipeId", same.id);
+                }}
+              >
+                T{tier}
+              </button>
+            ))}
+          </div>
+          <div className="recipe-browser-list">
+            {availableRecipes
+              .filter(
+                (r) =>
+                  r.kind === kind &&
+                  (recipeSearch
+                    ? r.name.toLowerCase().includes(recipeSearch.toLowerCase())
+                    : r.output.slice(0, 2) === recipe.output.slice(0, 2)),
+              )
+              .map((r) => (
+                <button
+                  type="button"
+                  key={r.id}
+                  aria-pressed={r.id === draft.recipeId}
+                  onClick={() => {
+                    update("recipeId", r.id);
+                    setRecipePickerOpen(false);
+                  }}
+                >
+                  <ItemIcon id={r.output} size={38} />
+                  <span>
+                    <strong>{r.name.replace(/^T\d /, "")}</strong>
+                    <small>
+                      {r.name.match(/^T\d/)?.[0]} · {r.ingredients.length} materials
+                    </small>
+                  </span>
+                  {r.id === draft.recipeId && <CircleCheck size={15} aria-hidden="true" />}
+                </button>
+              ))}
+            {recipeSearch &&
+              !availableRecipes.some(
+                (r) => r.kind === kind && r.name.toLowerCase().includes(recipeSearch.toLowerCase()),
+              ) && <p role="status">No supported recipe matches. Try another item name.</p>}
+          </div>
+          <details className="recipe-exact-selection">
+            <summary>All supported recipes</summary>
+            <label>
+              Recipe
+              <select
+                aria-label="Production recipe"
+                value={draft.recipeId}
+                onChange={(e) => update("recipeId", e.target.value)}
+              >
+                {availableRecipes
+                  .filter((r) => r.kind === kind)
+                  .map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </details>
+        </>
+      )}
+      {kind === "enchanting" && (
+        <div className="recipe-browser-list">
+          {enchantable
+            .filter((f) => f.name.toLowerCase().includes(recipeSearch.toLowerCase()))
+            .map((f) => (
+              <button
+                type="button"
+                key={f.code}
+                aria-pressed={draft.enchantFamily === f.code}
+                onClick={() => {
+                  update("enchantFamily", f.code);
+                  setRecipePickerOpen(false);
+                }}
+              >
+                <span>
+                  <strong>{f.name}</strong>
+                  <small>{f.slot}</small>
+                </span>
+              </button>
+            ))}
+        </div>
+      )}
+      <p className="recipe-browser-footnote">
+        Source-backed subset. Only supported recipes are selectable.
+      </p>
+    </aside>
+  );
   return (
     <div className="production-journey" data-step={step}>
       <nav className="production-mode-nav" aria-label="Production calculators">
-        {(["crafting", "refining", "enchanting"] as const).map((mode) => (
+        {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
           <Link
             key={mode}
             href={`/tools/${mode}?region=${region}`}
-            aria-current={kind === mode ? "page" : undefined}
+            aria-current={(category || kind) === mode ? "page" : undefined}
           >
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
           </Link>
         ))}
+        <a className="production-plan-jump" href="#production-plan-title">
+          Production plan ↓
+        </a>
       </nav>
       <nav className="task-progress production-steps" aria-label="Crafting workflow">
         {[
@@ -171,31 +309,27 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
           </button>
         ))}
       </nav>
-      <div className="calculator-grid production-workspace">
+      <div className={`calculator-grid production-workspace production-${kind}`}>
+        {recipePickerOpen ? (
+          <EditorDialog
+            open
+            title="Choose recipe"
+            drawer
+            onClose={() => setRecipePickerOpen(false)}
+          >
+            {recipeBrowser}
+          </EditorDialog>
+        ) : (
+          <div className="production-desktop-browser">{recipeBrowser}</div>
+        )}
+
         <div className="calculator-inputs">
           <section className="panel" id="production-setup" tabIndex={-1}>
             <h2 className="production-inputs-heading">
               <ItemIcon id={recipe.output} quality={outputQuality} size={36} />
-              Choose your recipe
+              Selected recipe
             </h2>
-            {kind !== "enchanting" ? (
-              <label>
-                Recipe
-                <select
-                  aria-label="Production recipe"
-                  value={draft.recipeId}
-                  onChange={(e) => update("recipeId", e.target.value)}
-                >
-                  {recipes
-                    .filter((r) => r.kind === kind)
-                    .map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.name}
-                      </option>
-                    ))}
-                </select>
-              </label>
-            ) : (
+            {kind === "enchanting" && (
               <div className="input-grid">
                 <label>
                   Equipment family
@@ -257,46 +391,31 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                 </label>
               </div>
             )}
-            <div className="input-grid">
-              <label>
-                Crafts / upgrades
-                <input
-                  type="number"
-                  min={1}
-                  max={100000}
-                  value={draft.batches}
-                  onChange={(e) => update("batches", Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Output quality assumption
-                <select
-                  aria-label="Output quality assumption"
-                  value={outputQuality}
-                  disabled={kind === "refining"}
-                  onChange={(e) => update("quality", Number(e.target.value))}
-                >
-                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
-                    <option key={q} value={i + 1}>
-                      {q}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            <div className="reference-recipe-identity">
+              <ItemIcon id={recipe.output} quality={outputQuality} size={80} />
+              <div>
+                <h3>{recipe.name}</h3>
+                <p>
+                  {kind === "crafting"
+                    ? "Crafting recipe"
+                    : kind === "refining"
+                      ? "Refining recipe"
+                      : "Enchantment upgrade"}{" "}
+                  · {recipe.outputCount} output per craft
+                </p>
+                <small>Archived recipe source · current patch unverified</small>
+              </div>
             </div>
-            <div className="production-batch-actions" aria-label="Batch quantity shortcuts">
-              {[1, 10, 100].map((n) => (
-                <button
-                  type="button"
-                  key={n}
-                  aria-label={`Set ${n} batches`}
-                  aria-pressed={draft.batches === n}
-                  onClick={() => update("batches", n)}
-                >
-                  {n.toLocaleString()}×
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              className="button secondary production-change-recipe"
+              onClick={() => setRecipePickerOpen(true)}
+            >
+              Change recipe
+            </button>
+          </section>
+          <section className="panel reference-assumptions">
+            <h2>City & assumptions</h2>
             <div className="input-grid production-city-choices">
               {" "}
               <label>
@@ -328,6 +447,250 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                 </select>
               </label>
             </div>
+            <details className="reference-advanced-assumptions">
+              <summary>Station settings, focus & sources</summary>
+              <details className="production-fees">
+                <summary>Markets & transaction fees</summary>
+                <div className="input-grid">
+                  <label>
+                    Station / upgrade fee per craft
+                    <input
+                      type="number"
+                      min={0}
+                      step="any"
+                      value={draft.stationFee}
+                      onChange={(e) => update("stationFee", Number(e.target.value))}
+                    />
+                  </label>
+                  <label>
+                    Sales tax (%)
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step="any"
+                      value={draft.tax}
+                      onChange={(e) => update("tax", Number(e.target.value))}
+                    />
+                  </label>
+                  <label>
+                    Sell order setup fee (%)
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step="any"
+                      value={draft.setupFee}
+                      onChange={(e) => update("setupFee", Number(e.target.value))}
+                    />
+                  </label>
+                </div>
+              </details>
+              {kind !== "enchanting" && (
+                <details
+                  className="production-returns"
+                  open={draft.returnRate > 0 || draft.useFocus}
+                >
+                  <summary>Returns & focus</summary>
+                  <p className="muted">
+                    Enter the return rates and focus cost shown by your station. Select eligible
+                    ingredients below. Retained resources are valued at purchase cost; per-craft
+                    rounding is outside this estimate.
+                  </p>
+                  <div className="input-grid">
+                    <label>
+                      Return rate without focus (%)
+                      <input
+                        type="number"
+                        min={0}
+                        max={99.9}
+                        step="any"
+                        value={draft.returnRate}
+                        onChange={(e) => update("returnRate", Number(e.target.value))}
+                      />
+                    </label>
+                    <label>
+                      Use focus assumptions
+                      <select
+                        aria-label="Use focus assumptions"
+                        value={draft.useFocus ? "yes" : "no"}
+                        onChange={(e) => update("useFocus", e.target.value === "yes")}
+                      >
+                        <option value="no">No focus</option>
+                        <option value="yes">Use entered focus values</option>
+                      </select>
+                    </label>
+                    {draft.useFocus && (
+                      <>
+                        <label>
+                          Return rate with focus (%)
+                          <input
+                            type="number"
+                            min={0}
+                            max={99.9}
+                            step="any"
+                            value={draft.focusReturnRate}
+                            onChange={(e) => update("focusReturnRate", Number(e.target.value))}
+                          />
+                        </label>
+                        <label>
+                          Total focus used
+                          <input
+                            type="number"
+                            min={1}
+                            value={draft.focusUsed}
+                            onChange={(e) => update("focusUsed", Number(e.target.value))}
+                          />
+                        </label>
+                      </>
+                    )}
+                  </div>
+                  {draft.useFocus && recipe.baseFocus !== undefined && (
+                    <details>
+                      <summary>Estimate focus from total efficiency</summary>
+                      <p className="muted">
+                        July source base cost: {recipe.baseFocus} focus per craft. Enter your total
+                        focus cost efficiency from the Destiny Board, including specialization. This
+                        historical model does not verify current coefficients or station rounding;
+                        confirm the total at your station before entering it above.
+                      </p>
+                      <label>
+                        Total focus cost efficiency
+                        <input
+                          type="number"
+                          min={0}
+                          max={100000}
+                          value={efficiency}
+                          onChange={(e) => setEfficiency(Number(e.target.value))}
+                        />
+                      </label>
+                      <p>
+                        Estimated total focus:{" "}
+                        {efficiency >= 0 &&
+                        efficiency <= 100000 &&
+                        Number.isInteger(draft.batches) &&
+                        draft.batches > 0 &&
+                        draft.batches <= 100000
+                          ? money(estimatedFocusCost(recipe.baseFocus, efficiency, draft.batches))
+                          : "Invalid inputs"}
+                      </p>
+                      <a
+                        className="text-link"
+                        href="https://forum.albiononline.com/index.php/Thread/167434-Explaining-Crafting-Tax-and-more/"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Historical focus formula and limitations
+                      </a>
+                    </details>
+                  )}
+                  <details>
+                    <summary>Convert a station production bonus to return rate</summary>
+                    <label>
+                      Production bonus (%)
+                      <input
+                        type="number"
+                        min={0}
+                        max={1000}
+                        value={bonus}
+                        onChange={(e) => setBonus(Number(e.target.value))}
+                      />
+                    </label>
+                    <p>
+                      {bonus >= 0 && bonus <= 1000
+                        ? (returnRateFromBonus(bonus) * 100).toFixed(3)
+                        : "Invalid"}
+                      % = 100 × (1 − 1 / (1 + bonus / 100)). Apply this rate manually above after
+                      verifying your station.
+                    </p>
+                  </details>
+                </details>
+              )}
+              <p className="production-coverage">
+                {kind === "crafting"
+                  ? "45 crafting recipes, T4–T8 · archived sources, current patch unverified."
+                  : kind === "refining"
+                    ? "25 refining recipes, T4–T8 · archived sources, current patch unverified."
+                    : "Rune enchanting for the original supported equipment families."}{" "}
+                Enter your own station and market assumptions.
+              </p>
+              {kind !== "enchanting" && (
+                <ProductionProfile
+                  kind={kind}
+                  output={recipe.output}
+                  baseFocus={recipe.baseFocus}
+                  batches={draft.batches}
+                  saved={draft.mechanicsProfile}
+                  onApply={(profile, rates) =>
+                    setDraft((d) => ({
+                      ...d,
+                      mechanicsProfile: profile,
+                      returnRate: rates.returnRate,
+                      focusReturnRate: rates.focusReturnRate,
+                      returns: Object.fromEntries(recipe.ingredients.map((i) => [i.id, true])),
+                    }))
+                  }
+                />
+              )}
+              <details className="production-model-notes">
+                <summary>Model notes & recipe source</summary>{" "}
+                <p className="muted">
+                  Tax/fees and output quality are assumptions, not verified current game defaults or
+                  random-quality probabilities. Crafting/refining currently cover a small factual
+                  recipe subset.
+                </p>
+                <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                  Recipe source
+                </a>
+              </details>
+            </details>
+          </section>
+          <section className="panel reference-quantity">
+            <h2>Quantity & quality</h2>
+            <p className="muted">
+              Set the size of your run. Focus and return assumptions are available in the adjacent
+              settings.
+            </p>{" "}
+            <div className="input-grid">
+              <label>
+                Crafts / upgrades
+                <input
+                  type="number"
+                  min={1}
+                  max={100000}
+                  value={draft.batches}
+                  onChange={(e) => update("batches", Number(e.target.value))}
+                />
+              </label>
+              <label>
+                Output quality assumption
+                <select
+                  aria-label="Output quality assumption"
+                  value={outputQuality}
+                  disabled={kind === "refining" || !!recipe.category}
+                  onChange={(e) => update("quality", Number(e.target.value))}
+                >
+                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
+                    <option key={q} value={i + 1}>
+                      {q}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="production-batch-actions" aria-label="Batch quantity shortcuts">
+              {[1, 10, 100].map((n) => (
+                <button
+                  type="button"
+                  key={n}
+                  aria-label={`Set ${n} batches`}
+                  aria-pressed={draft.batches === n}
+                  onClick={() => update("batches", n)}
+                >
+                  {n.toLocaleString()}×
+                </button>
+              ))}
+            </div>
             <button
               className="button primary production-next"
               type="button"
@@ -335,197 +698,6 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             >
               Next: price materials <ArrowRight size={16} aria-hidden="true" />
             </button>
-            <details className="production-fees">
-              <summary>Markets & transaction fees</summary>
-              <div className="input-grid">
-                <label>
-                  Station / upgrade fee per craft
-                  <input
-                    type="number"
-                    min={0}
-                    step="any"
-                    value={draft.stationFee}
-                    onChange={(e) => update("stationFee", Number(e.target.value))}
-                  />
-                </label>
-                <label>
-                  Sales tax (%)
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    step="any"
-                    value={draft.tax}
-                    onChange={(e) => update("tax", Number(e.target.value))}
-                  />
-                </label>
-                <label>
-                  Sell order setup fee (%)
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    step="any"
-                    value={draft.setupFee}
-                    onChange={(e) => update("setupFee", Number(e.target.value))}
-                  />
-                </label>
-              </div>
-            </details>
-            {kind !== "enchanting" && (
-              <details className="production-returns" open={draft.returnRate > 0 || draft.useFocus}>
-                <summary>Returns & focus</summary>
-                <p className="muted">
-                  Enter the return rates and focus cost shown by your station. Select eligible
-                  ingredients below. Retained resources are valued at purchase cost; per-craft
-                  rounding is outside this estimate.
-                </p>
-                <div className="input-grid">
-                  <label>
-                    Return rate without focus (%)
-                    <input
-                      type="number"
-                      min={0}
-                      max={99.9}
-                      step="any"
-                      value={draft.returnRate}
-                      onChange={(e) => update("returnRate", Number(e.target.value))}
-                    />
-                  </label>
-                  <label>
-                    Use focus assumptions
-                    <select
-                      aria-label="Use focus assumptions"
-                      value={draft.useFocus ? "yes" : "no"}
-                      onChange={(e) => update("useFocus", e.target.value === "yes")}
-                    >
-                      <option value="no">No focus</option>
-                      <option value="yes">Use entered focus values</option>
-                    </select>
-                  </label>
-                  {draft.useFocus && (
-                    <>
-                      <label>
-                        Return rate with focus (%)
-                        <input
-                          type="number"
-                          min={0}
-                          max={99.9}
-                          step="any"
-                          value={draft.focusReturnRate}
-                          onChange={(e) => update("focusReturnRate", Number(e.target.value))}
-                        />
-                      </label>
-                      <label>
-                        Total focus used
-                        <input
-                          type="number"
-                          min={1}
-                          value={draft.focusUsed}
-                          onChange={(e) => update("focusUsed", Number(e.target.value))}
-                        />
-                      </label>
-                    </>
-                  )}
-                </div>
-                {draft.useFocus && recipe.baseFocus !== undefined && (
-                  <details>
-                    <summary>Estimate focus from total efficiency</summary>
-                    <p className="muted">
-                      July source base cost: {recipe.baseFocus} focus per craft. Enter your total
-                      focus cost efficiency from the Destiny Board, including specialization. This
-                      historical model does not verify current coefficients or station rounding;
-                      confirm the total at your station before entering it above.
-                    </p>
-                    <label>
-                      Total focus cost efficiency
-                      <input
-                        type="number"
-                        min={0}
-                        max={100000}
-                        value={efficiency}
-                        onChange={(e) => setEfficiency(Number(e.target.value))}
-                      />
-                    </label>
-                    <p>
-                      Estimated total focus:{" "}
-                      {efficiency >= 0 &&
-                      efficiency <= 100000 &&
-                      Number.isInteger(draft.batches) &&
-                      draft.batches > 0 &&
-                      draft.batches <= 100000
-                        ? money(estimatedFocusCost(recipe.baseFocus, efficiency, draft.batches))
-                        : "Invalid inputs"}
-                    </p>
-                    <a
-                      className="text-link"
-                      href="https://forum.albiononline.com/index.php/Thread/167434-Explaining-Crafting-Tax-and-more/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Historical focus formula and limitations
-                    </a>
-                  </details>
-                )}
-                <details>
-                  <summary>Convert a station production bonus to return rate</summary>
-                  <label>
-                    Production bonus (%)
-                    <input
-                      type="number"
-                      min={0}
-                      max={1000}
-                      value={bonus}
-                      onChange={(e) => setBonus(Number(e.target.value))}
-                    />
-                  </label>
-                  <p>
-                    {bonus >= 0 && bonus <= 1000
-                      ? (returnRateFromBonus(bonus) * 100).toFixed(3)
-                      : "Invalid"}
-                    % = 100 × (1 − 1 / (1 + bonus / 100)). Apply this rate manually above after
-                    verifying your station.
-                  </p>
-                </details>
-              </details>
-            )}
-            <p className="production-coverage">
-              {kind === "crafting"
-                ? "45 crafting recipes, T4–T8 · archived sources, current patch unverified."
-                : kind === "refining"
-                  ? "25 refining recipes, T4–T8 · archived sources, current patch unverified."
-                  : "Rune enchanting for the original supported equipment families."}{" "}
-              Enter your own station and market assumptions.
-            </p>
-            {kind !== "enchanting" && (
-              <ProductionProfile
-                kind={kind}
-                output={recipe.output}
-                baseFocus={recipe.baseFocus}
-                batches={draft.batches}
-                saved={draft.mechanicsProfile}
-                onApply={(profile, rates) =>
-                  setDraft((d) => ({
-                    ...d,
-                    mechanicsProfile: profile,
-                    returnRate: rates.returnRate,
-                    focusReturnRate: rates.focusReturnRate,
-                    returns: Object.fromEntries(recipe.ingredients.map((i) => [i.id, true])),
-                  }))
-                }
-              />
-            )}
-            <details className="production-model-notes">
-              <summary>Model notes & recipe source</summary>{" "}
-              <p className="muted">
-                Tax/fees and output quality are assumptions, not verified current game defaults or
-                random-quality probabilities. Crafting/refining currently cover a small factual
-                recipe subset.
-              </p>
-              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                Recipe source
-              </a>
-            </details>
           </section>
         </div>
         <section
@@ -566,72 +738,88 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             </p>
           )}
           <div className="production-price-list">
-            {recipe.ingredients.map((i) => {
-              const q = i.quality === "selected" ? draft.quality : 1;
-              const p = current(i.id, q);
-              return (
-                <section className="material-price-row" key={i.id}>
-                  <div className="material-item-heading">
-                    <ItemIcon id={i.id} size={42} />
-                    <strong>{i.name}</strong>
-                    <span
-                      className="numeric"
-                      title={`${i.quantity} per craft · ${i.quantity * draft.batches} required upfront · ${i.id}`}
-                    >
-                      ×{i.quantity * draft.batches}
-                    </span>
-                  </div>
-                  <div className="material-pricing-controls">
-                    <label>
-                      <span>Unit price</span>
-                      <input
-                        aria-label={`${i.name} unit price`}
-                        type="number"
-                        min={0}
-                        step="any"
-                        placeholder="Enter price"
-                        value={p?.value ?? ""}
-                        onChange={(e) => price(i.id, q, e.target.value)}
-                      />
-                    </label>
-
-                    {kind !== "enchanting" && (
-                      <label className="material-return-choice">
-                        <input
-                          type="checkbox"
-                          aria-label={`Apply returns to ${i.name}`}
-                          checked={!!draft.returns[i.id]}
-                          onChange={(e) =>
-                            update("returns", { ...draft.returns, [i.id]: e.target.checked })
-                          }
-                        />
-                        Apply returns
-                      </label>
-                    )}
-                  </div>
-                  <div className="material-row-cost">
-                    <span className="muted" title={p?.observedAt || i.id}>
-                      {p?.manual
-                        ? "Manual override"
-                        : p?.observedAt
-                          ? `${p.observedAt} UTC`
-                          : attempted
-                            ? "No source observation"
-                            : "Enter or load a price"}
-                    </span>
-                    <span>
-                      Cost{" "}
-                      <strong className="numeric">
-                        {money(result?.rows.find((row) => row.id === i.id)?.gross).replace(
-                          "Unavailable",
-                          "pending",
-                        )}
-                      </strong>
-                    </span>
-                  </div>
-                </section>
-              );
-            })}
+            <div
+              className="table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="Material requirements and pricing"
+            >
+              <table className="reference-material-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Resource</th>
+                    <th scope="col" className="numeric">
+                      <abbr title="Recipe quantity before returned materials">Gross qty</abbr>
+                    </th>
+                    <th scope="col">Unit price · silver</th>
+                    <th scope="col" className="numeric">
+                      Total · silver
+                    </th>
+                    <th scope="col">Price source / returns</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recipe.ingredients.map((i) => {
+                    const q = i.quality === "selected" ? draft.quality : 1;
+                    const p = current(i.id, q);
+                    return (
+                      <tr key={i.id}>
+                        <th scope="row">
+                          <span className="material-item-heading">
+                            <ItemIcon id={i.id} size={36} />
+                            <strong>{i.name}</strong>
+                          </span>
+                        </th>
+                        <td className="numeric" title={`${i.quantity} per craft`}>
+                          {i.quantity * draft.batches}
+                        </td>
+                        <td>
+                          <input
+                            aria-label={`${i.name} unit price`}
+                            type="number"
+                            min={0}
+                            step="any"
+                            placeholder="Enter price"
+                            value={p?.value ?? ""}
+                            onChange={(e) => price(i.id, q, e.target.value)}
+                          />
+                        </td>
+                        <td className="numeric">
+                          {money(result?.rows.find((row) => row.id === i.id)?.gross).replace(
+                            "Unavailable",
+                            "pending",
+                          )}
+                        </td>
+                        <td>
+                          <small className="muted" title={p?.observedAt || i.id}>
+                            {p?.manual
+                              ? "Manual override"
+                              : p?.observedAt
+                                ? `${p.observedAt} UTC`
+                                : attempted
+                                  ? "No source observation"
+                                  : "Enter or load a price"}
+                          </small>
+                          {kind !== "enchanting" && (
+                            <label className="material-return-choice">
+                              <input
+                                type="checkbox"
+                                aria-label={`Apply returns to ${i.name}`}
+                                checked={!!draft.returns[i.id]}
+                                onChange={(e) =>
+                                  update("returns", { ...draft.returns, [i.id]: e.target.checked })
+                                }
+                              />
+                              Apply returns
+                            </label>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
             <section className="production-output-price">
               <div className="material-item-heading">
                 <ItemIcon id={recipe.output} quality={outputQuality} size={42} />
@@ -670,7 +858,19 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
           </button>
         </section>
         <section className="panel result" id="production-results" tabIndex={-1}>
-          <h2>Profit breakdown</h2>
+          <div className="production-result-item">
+            <ItemIcon id={recipe.output} quality={outputQuality} size={56} />
+            <div>
+              <h2>Results summary</h2>
+              <span>
+                {recipe.name} · {recipe.outputCount * draft.batches} output
+                {recipe.outputCount * draft.batches === 1 ? "" : "s"}
+              </span>
+            </div>
+          </div>
+          <p className="muted">
+            Estimated costs and profit in silver, based on your selected prices and assumptions.
+          </p>
           {!result?.complete ? (
             <div className="production-result-start" role="status">
               <Calculator size={32} aria-hidden="true" />
@@ -696,15 +896,7 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
                 Add material prices <ArrowRight size={16} aria-hidden="true" />
               </button>
             </div>
-          ) : (
-            <strong
-              key={result.profit}
-              className={`value-update${(result.profit ?? 0) < 0 ? " negative" : ""}`}
-            >
-              {money(result.profit)}
-              <small> silver</small>
-            </strong>
-          )}
+          ) : null}
           {result?.stale && (
             <p className="error">
               Stale or undated source observations included. Refresh before acting.
@@ -729,31 +921,87 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             </p>
           )}
           {result?.complete && (
-            <dl>
-              {[
-                ["Total material cost", result?.grossMaterials],
-                ["Station / upgrade fees", result?.stationCost],
-                ["Upfront silver requirement", result?.upfront],
-                ["Expected returned material value", result?.returnCredit],
-                ["Effective production cost", result?.cost],
-                ["Gross output revenue", result?.revenue],
-                ["Taxes and setup fees", result?.fees],
-                ["Cash profit before valuing retained returns", result?.cashProfit],
-                ["Profit margin (%)", result?.margin],
-                ["ROI on effective cost (%)", result?.roi],
-                ["Profit per output", result?.profitPerItem],
-                ...(draft.useFocus
-                  ? [
-                      ["Profit per focus", result?.profitPerFocus],
-                      ["Additional material value per focus", result?.incrementalPerFocus],
-                    ]
-                  : []),
-              ].map(([label, value]) => (
-                <div key={String(label)}>
-                  <dt>{label}</dt>
-                  <dd>{money(value as number | null | undefined)}</dd>
+            <>
+              <div className="reference-result-cards">
+                <div
+                  className={
+                    result.profitPerItem === 0
+                      ? "neutral"
+                      : (result.profitPerItem ?? 0) < 0
+                        ? "negative"
+                        : "positive"
+                  }
+                >
+                  <span>Profit per output</span>
+                  <strong>{money(result.profitPerItem)}</strong>
+                  <small>silver / item</small>
                 </div>
-              ))}
+                <div
+                  className={
+                    result.profit === 0
+                      ? "neutral"
+                      : (result.profit ?? 0) < 0
+                        ? "negative"
+                        : "positive"
+                  }
+                >
+                  <span>Total profit</span>
+                  <output aria-label="Estimated total profit" data-result="total-profit">
+                    {money(result.profit)}
+                  </output>
+                  <small>silver / run</small>
+                </div>
+                <div>
+                  <span>Cost per output</span>
+                  <strong>
+                    {money(
+                      result.cost === null
+                        ? null
+                        : result.cost / (recipe.outputCount * draft.batches),
+                    )}
+                  </strong>
+                  <small>silver / item</small>
+                </div>
+                <div
+                  className={
+                    !result.margin ? "neutral" : result.margin < 0 ? "negative" : "positive"
+                  }
+                >
+                  <span>Profit margin</span>
+                  <strong>
+                    {result.margin === null ? "Unavailable" : `${money(result.margin)}%`}
+                  </strong>
+                  <small>of gross revenue</small>
+                </div>
+              </div>
+              <p className="muted">
+                {Object.values(draft.prices).some((p) => p.manual)
+                  ? "Includes manual prices. "
+                  : "Source observations with recorded timestamps. "}
+                Station fees, returns and taxes use your assumptions.
+              </p>
+            </>
+          )}
+          {result?.complete && (
+            <dl className="production-cash-summary">
+              <div>
+                <dt>Upfront silver</dt>
+                <dd>{money(result.upfront)}</dd>
+              </div>
+              <div>
+                <dt>Net cash profit</dt>
+                <dd>{money(result.cashProfit)}</dd>
+              </div>
+              <div>
+                <dt>Retained return value</dt>
+                <dd>{money(result.returnCredit)}</dd>
+              </div>
+              {draft.useFocus && (
+                <div>
+                  <dt>Profit / focus</dt>
+                  <dd>{money(result.profitPerFocus)}</dd>
+                </div>
+              )}
             </dl>
           )}
           {result?.complete && (
@@ -764,7 +1012,93 @@ export function ProductionCalculator({ kind }: { kind: ProductionInput["kind"] }
             </p>
           )}
         </section>
+        {result?.complete && (
+          <section
+            className="panel production-accounting-panel"
+            aria-label="Detailed production accounting"
+          >
+            {" "}
+            {result?.complete && (
+              <details className="reference-accounting" open>
+                <summary>Detailed accounting · entire run</summary>
+                <dl>
+                  {[
+                    ["Total material cost", result?.grossMaterials],
+                    ["Station / upgrade fees", result?.stationCost],
+                    ["Upfront silver requirement", result?.upfront],
+                    ["Expected returned material value", result?.returnCredit],
+                    ["Effective production cost", result?.cost],
+                    ["Gross output revenue", result?.revenue],
+                    ["Taxes and setup fees", result?.fees],
+                    ["Cash profit before valuing retained returns", result?.cashProfit],
+                    ["Profit margin (%)", result?.margin],
+                    ["ROI on effective cost (%)", result?.roi],
+                    ["Profit per output", result?.profitPerItem],
+                    ...(draft.useFocus
+                      ? [
+                          ["Profit per focus", result?.profitPerFocus],
+                          ["Additional material value per focus", result?.incrementalPerFocus],
+                        ]
+                      : []),
+                  ].map(([label, value]) => (
+                    <div key={String(label)}>
+                      <dt>{label}</dt>
+                      <dd>{money(value as number | null | undefined)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </details>
+            )}
+          </section>
+        )}
+        {result?.complete && (
+          <aside className="panel production-assumption-summary">
+            <h2>Your assumptions</h2>
+            <dl>
+              <div>
+                <dt>Crafts / upgrades</dt>
+                <dd>{draft.batches.toLocaleString()}</dd>
+              </div>
+              <div>
+                <dt>Material market</dt>
+                <dd>{draft.materialCity}</dd>
+              </div>
+              <div>
+                <dt>Sale market</dt>
+                <dd>{draft.outputCity}</dd>
+              </div>
+              <div>
+                <dt>Station fee / craft</dt>
+                <dd>{money(draft.stationFee)} silver</dd>
+              </div>
+              <div>
+                <dt>Sales tax</dt>
+                <dd>{draft.tax}%</dd>
+              </div>
+              <div>
+                <dt>Setup fee</dt>
+                <dd>{draft.setupFee}%</dd>
+              </div>
+            </dl>
+            <p className="muted">
+              These inputs define your estimate. Confirm fees and return assumptions at your station
+              before crafting.
+            </p>
+            <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+              Recipe source & limitations
+            </a>
+          </aside>
+        )}
       </div>
+      <ProductionPlan
+        current={configuration}
+        onEdit={(run) => {
+          request.current?.abort();
+          setDraft(run);
+          setStep(1);
+          document.getElementById("production-setup")?.focus();
+        }}
+      />
       <button
         type="button"
         className="button secondary production-scenarios-toggle"

@@ -22,10 +22,18 @@ export function History({
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [rangeDays, setRangeDays] = useState(30);
   const current = `${kind}:${region}:${item}:${quality}:${city}`;
   const busy = pendingKey === current;
   useEffect(() => () => request.current?.abort(), [current]);
-  const visible = key === current ? points : [];
+  const returned = key === current ? points : [];
+  const latest = returned.length ? sourceTimestamp(returned[returned.length - 1].timestamp) : 0;
+  const visible =
+    kind === "history"
+      ? returned.filter(
+          (point) => sourceTimestamp(point.timestamp) >= latest - rangeDays * 86400000,
+        )
+      : returned;
   async function load(e: React.FormEvent) {
     e.preventDefault();
     request.current?.abort();
@@ -76,7 +84,7 @@ export function History({
   const xy = visible
     .map(
       (p) =>
-        `${25 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 650},${175 - ((p.price - min) / Math.max(1, max - min)) * 145}`,
+        `${64 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 616},${175 - ((p.price - min) / Math.max(1, max - min)) * 145}`,
     )
     .join(" ");
   return (
@@ -109,28 +117,80 @@ export function History({
       )}
       {visible.length > 0 ? (
         <>
-          <svg
-            role="img"
-            aria-label={`${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in table below.`}
-            viewBox="0 0 700 210"
-            className="price-chart"
-          >
-            <line x1="25" x2="675" y1="180" y2="180" stroke="currentColor" opacity=".2" />
-            <polyline points={xy} fill="none" stroke="#d9b777" strokeWidth="2" />
-            {visible.map((p, i) => (
-              <circle
-                key={i}
-                cx={25 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 650}
-                cy={175 - ((p.price - min) / Math.max(1, max - min)) * 145}
-                r="3"
-                fill="#d9b777"
-              >
-                <title>
-                  {p.timestamp} UTC: {p.price} silver
-                </title>
-              </circle>
-            ))}
-          </svg>
+          <div className="reference-history-toolbar">
+            <span className="history-series-key">
+              {kind === "gold" ? "Gold price" : "Daily sell-order average"} · silver
+            </span>
+            {kind === "history" && (
+              <div className="actions" role="group" aria-label="History date range">
+                {[7, 30].map((days) => (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    aria-pressed={rangeDays === days}
+                    key={days}
+                    onClick={() => setRangeDays(days)}
+                  >
+                    {days} days
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {kind === "history" && (
+            <p className="muted">
+              Window ends at the latest returned observation,{" "}
+              {new Date(latest).toISOString().slice(0, 10)} UTC. Source coverage can be older than
+              today.
+            </p>
+          )}
+          <div className="reference-price-figure">
+            <div className="reference-price-axis" aria-hidden="true">
+              {[max, (min + max) / 2, min].map((price, i) => (
+                <span key={i} title={`${price} silver`}>
+                  {price.toLocaleString(undefined, {
+                    notation: "compact",
+                    maximumFractionDigits: 1,
+                  })}
+                </span>
+              ))}
+            </div>
+            <svg
+              role="img"
+              aria-label={`${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in table below.`}
+              viewBox="0 0 700 210"
+              preserveAspectRatio="none"
+              className="price-chart"
+            >
+              {[0, 0.5, 1].map((fraction) => (
+                <line
+                  key={fraction}
+                  x1="64"
+                  x2="680"
+                  y1={175 - fraction * 145}
+                  y2={175 - fraction * 145}
+                  stroke="currentColor"
+                  opacity=".15"
+                />
+              ))}
+              <polyline points={xy} fill="none" stroke="var(--accent-ink)" strokeWidth="2" />
+              {visible.map((p, i) => (
+                <circle
+                  key={i}
+                  cx={
+                    64 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 616
+                  }
+                  cy={175 - ((p.price - min) / Math.max(1, max - min)) * 145}
+                  r="3"
+                  fill="var(--accent-ink)"
+                >
+                  <title>
+                    {p.timestamp} UTC: {p.price} silver
+                  </title>
+                </circle>
+              ))}
+            </svg>
+          </div>
           <div className="chart-range">
             <span>{visible[0].timestamp.replace("T", " ")} UTC</span>
             <span>{visible[visible.length - 1].timestamp.replace("T", " ")} UTC</span>

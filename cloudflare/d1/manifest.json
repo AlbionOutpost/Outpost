@@ -1,0 +1,16 @@
+{
+  "status": "STAGING_ONLY_NOT_APPLICATION_COMPATIBLE",
+  "sourceSchemaSha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969",
+  "schemaSha256": "dc5eea8d98c16402de9b9eea9a5474be3bb32530ec1d24c90ed74efdca4f7e68",
+  "sqlSha256": "d2ea0bc38e519bb042d0a9cee840143351845295671a17bc459a0c30e6a3447a",
+  "tables": 29,
+  "indexes": 40,
+  "differences": [
+    "PostgreSQL scalar arrays become JSON arrays",
+    "JSONB becomes validated JSON text",
+    "Enums have SQLite CHECK constraints",
+    "Prisma D1 does not preserve the application's interactive transaction guarantees",
+    "Redis, case-insensitive search, archive filesystem reads and Next runtime still require migration"
+  ],
+  "privateRecordsExported": false
+}

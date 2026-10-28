@@ -1,7 +1,7 @@
 import { mechanicsProfile } from "./production-profile";
 import { z } from "zod";
 import { regionSchema, cities } from "./region-config";
-import { recipeFor } from "./recipes";
+import { recipeFor, recipes } from "./recipes";
 import { isStale } from "./freshness";
 export const observation = z.object({
   value: z.number().nonnegative().max(1e12).nullable(),
@@ -50,8 +50,11 @@ export const productionSchema = z
       });
   });
 export type ProductionInput = z.infer<typeof productionSchema>;
-export function productionOutputQuality(v: Pick<ProductionInput, "kind" | "quality">) {
-  return v.kind === "refining" ? 1 : v.quality;
+export function productionOutputQuality(
+  v: Pick<ProductionInput, "kind" | "quality"> & { recipeId?: string },
+) {
+  const consumable = v.recipeId && recipes.find((r) => r.id === v.recipeId)?.category;
+  return v.kind === "refining" || consumable ? 1 : v.quality;
 }
 /** Historical focus-efficiency model; fractional estimate, not station rounding or current spec coefficients. */
 export function estimatedFocusCost(base: number, efficiency: number, batches: number) {

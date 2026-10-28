@@ -1,8 +1,28 @@
 import { describe, it, expect } from "vitest";
 import { equipmentSet, equipmentSets, templateEquipment } from "../src/lib/albion/equipment-sets";
 import { memberSlot } from "../src/lib/compositions/validation";
+import { abilitiesFor, archivedSpellOptions } from "../src/lib/albion/equipment-abilities";
 const id = "bced1850-1359-4c67-85db-e691a2fc6c51";
 describe("whole equipment snapshots", () => {
+  it("resolves Bloodmoon inherited spells and its replacement E without inventing unlock rules", () => {
+    const choices = abilitiesFor("T8_2H_SHAPESHIFTER_MORGANA");
+    expect(choices.Q).toContain("Reality Fissure");
+    expect(choices.W).toContain("Distortion");
+    expect(choices.Passive).toContain("Altered Beast");
+    expect(choices.E).toEqual(["Werewolf Transformation"]);
+    expect(
+      archivedSpellOptions("T8_2H_SHAPESHIFTER_MORGANA").find(
+        (s) => s.name === "Werewolf Transformation",
+      )?.id,
+    ).toBe("SHAPESHIFT_WEREWOLF");
+  });
+  it("reconstructs only the archived example's equipment, without guessing spells or an off hand", () => {
+    const rows = templateEquipment("archived-bloodmoon");
+    expect(rows).toHaveLength(7);
+    expect(rows.find((r) => r.slot === "Main hand")?.itemId).toBe("T8_2H_SHAPESHIFTER_MORGANA");
+    expect(rows.some((r) => r.slot === "Off hand")).toBe(false);
+    expect(rows.every((r) => Object.keys(r.abilities).length === 0)).toBe(true);
+  });
   it("creates a full ten-slot template with supported consumables, without invented ability selections", () => {
     const rows = templateEquipment("battleaxe");
     expect(rows).toHaveLength(10);

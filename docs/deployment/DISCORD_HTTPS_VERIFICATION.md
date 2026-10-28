@@ -2,6 +2,8 @@
 
 Status: preparation only. No real Discord exchange or owned HTTPS staging deployment has been executed. Local database-session fixtures verify application access controls, not OAuth.
 
+Portal setup and avatar: [exact Discord application settings](DISCORD_APP_SETUP.md).
+
 Required operator inputs: an owned staging hostname/hosting target; its DNS/TLS access; a Discord developer application client ID and client secret; a strong independently generated NEXTAUTH_SECRET; private PostgreSQL/Redis connections; legal/operator contact details and source/media permission decisions. Keep all secrets in the deployment secret store or an ignored local environment file. Never commit them or paste them into reports.
 
 1. Configure an isolated staging database/cache and backup policy. Review/apply migrations from [MIGRATIONS.md](MIGRATIONS.md); do not point test/reset tools at production.

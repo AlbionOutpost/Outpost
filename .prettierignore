@@ -1,6 +1,7 @@
 node_modules
 .next
 .env
+.env.*
 package-lock.json
 test-results
 playwright-report
@@ -16,6 +17,14 @@ data/catalog
 
 # Reviewed third-party skills retain their pinned upstream bytes.
 skill-system/vendor
+
+# Downloaded reference-site evidence retains upstream bytes.
+Scrape
+
+# Reproducible owner archive imports preserve preparer serialization and hashes.
+public/library
+src/lib/albion/archived-item-spells.json
+src/lib/albion/archived-production-recipes.json
 
 # Immutable historical documentation snapshots retain original bytes.
 docs/history/2026-10-26-before-reconciliation

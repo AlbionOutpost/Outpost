@@ -1,3 +1,4 @@
+import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 const stamp = new Date(Date.now() - 60000).toISOString();
@@ -84,9 +85,39 @@ test("selecting an item cancels the previous identity and preserves region in th
     "href",
     /item=T4_CAPE/,
   );
-  await page.getByLabel("Albion region", { exact: true }).selectOption("asia");
+  await chooseRegion(page, "asia");
   await expect(page.getByRole("link", { name: "Explore market", exact: true })).toHaveAttribute(
     "href",
     /region=asia.*item=T4_CAPE/,
   );
+});
+
+test("hero and research views share one observed-price request and stay in sync", async ({
+  page,
+}) => {
+  let requests = 0;
+  await page.route("**/api/market?*", (route) => {
+    requests++;
+    const query = new URL(route.request().url()).searchParams;
+    return route.fulfill({
+      json: { region: query.get("region"), prices: quotes(query.get("item")!) },
+    });
+  });
+  await page.route("**/api/items?*", (route) =>
+    route.fulfill({ json: { items: [], total: 0, page: 1, pageSize: 30 } }),
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/?region=europe");
+  await expect(page.locator(".hero-market-table tbody tr")).toHaveCount(2);
+  await expect(page.locator(".terminal-city-prices")).toContainText("2,400");
+  expect(requests).toBe(1);
+  await page.getByRole("combobox", { name: "Search preview items", exact: true }).fill("Cape");
+  await page.getByRole("option").filter({ hasText: "Cape" }).first().click();
+  await expect(page.locator(".terminal-item h2")).toContainText("Cape");
+  await expect(page.locator(".hero-market-table tbody")).toContainText("Cape");
+  await expect.poll(() => requests).toBe(2);
+  await page.getByLabel("Preview city", { exact: true }).selectOption("Lymhurst");
+  await expect(page.locator(".hero-market-table tbody tr")).toHaveCount(1);
+  await expect(page.locator(".hero-market-table tbody")).toContainText("2,100");
+  expect(requests).toBe(2);
 });

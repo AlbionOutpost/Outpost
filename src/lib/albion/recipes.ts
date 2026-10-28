@@ -1,5 +1,6 @@
 import { equipmentFamilies, equipmentId, equipmentName } from "./equipment-catalog";
 import expandedRecipes from "./expanded-recipes.json" with { type: "json" };
+import archivedRecipes from "./archived-production-recipes.json" with { type: "json" };
 export type Recipe = {
   id: string;
   name: string;
@@ -9,8 +10,10 @@ export type Recipe = {
   ingredients: { id: string; name: string; quantity: number; quality: "normal" | "selected" }[];
   source: string;
   baseFocus?: number;
+  category?: "cooking" | "alchemy";
+  historical?: boolean;
 };
-export const recipes: Recipe[] = expandedRecipes as Recipe[];
+export const recipes: Recipe[] = [...expandedRecipes, ...archivedRecipes] as Recipe[];
 export const enchantable = equipmentFamilies.filter((f) =>
   [
     "MAIN_AXE",

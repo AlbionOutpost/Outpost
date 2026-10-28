@@ -1,0 +1,152 @@
+[
+  {
+    "seedId": "T1_FARM_CARROT_SEED",
+    "productId": "T1_CARROT",
+    "seedName": "Carrot Seeds",
+    "productName": "Carrot",
+    "tier": 1,
+    "type": "crop",
+    "seedYieldBase": 0,
+    "seedYieldWatered": 200
+  },
+  {
+    "seedId": "T2_FARM_BEAN_SEED",
+    "productId": "T2_BEAN",
+    "seedName": "Bean Seeds",
+    "productName": "Bean",
+    "tier": 2,
+    "type": "crop",
+    "seedYieldBase": 33,
+    "seedYieldWatered": 167
+  },
+  {
+    "seedId": "T3_FARM_WHEAT_SEED",
+    "productId": "T3_WHEAT",
+    "seedName": "Wheat Seeds",
+    "productName": "Wheat",
+    "tier": 3,
+    "type": "crop",
+    "seedYieldBase": 60,
+    "seedYieldWatered": 140
+  },
+  {
+    "seedId": "T4_FARM_TURNIP_SEED",
+    "productId": "T4_TURNIP",
+    "seedName": "Turnip Seeds",
+    "productName": "Turnip",
+    "tier": 4,
+    "type": "crop",
+    "seedYieldBase": 73,
+    "seedYieldWatered": 127
+  },
+  {
+    "seedId": "T5_FARM_CABBAGE_SEED",
+    "productId": "T5_CABBAGE",
+    "seedName": "Cabbage Seeds",
+    "productName": "Cabbage",
+    "tier": 5,
+    "type": "crop",
+    "seedYieldBase": 80,
+    "seedYieldWatered": 120
+  },
+  {
+    "seedId": "T6_FARM_POTATO_SEED",
+    "productId": "T6_POTATO",
+    "seedName": "Potato Seeds",
+    "productName": "Potatoes",
+    "tier": 6,
+    "type": "crop",
+    "seedYieldBase": 87,
+    "seedYieldWatered": 113
+  },
+  {
+    "seedId": "T7_FARM_CORN_SEED",
+    "productId": "T7_CORN",
+    "seedName": "Corn Seeds",
+    "productName": "Bunch of Corn",
+    "tier": 7,
+    "type": "crop",
+    "seedYieldBase": 91,
+    "seedYieldWatered": 109
+  },
+  {
+    "seedId": "T8_FARM_PUMPKIN_SEED",
+    "productId": "T8_PUMPKIN",
+    "seedName": "Pumpkin Seeds",
+    "productName": "Pumpkin",
+    "tier": 8,
+    "type": "crop",
+    "seedYieldBase": 93,
+    "seedYieldWatered": 107
+  },
+  {
+    "seedId": "T2_FARM_AGARIC_SEED",
+    "productId": "T2_AGARIC",
+    "seedName": "Arcane Agaric Seeds",
+    "productName": "Arcane Agaric",
+    "tier": 2,
+    "type": "herb",
+    "seedYieldBase": 33,
+    "seedYieldWatered": 167
+  },
+  {
+    "seedId": "T3_FARM_COMFREY_SEED",
+    "productId": "T3_COMFREY",
+    "seedName": "Brightleaf Comfrey Seeds",
+    "productName": "Brightleaf Comfrey",
+    "tier": 3,
+    "type": "herb",
+    "seedYieldBase": 60,
+    "seedYieldWatered": 140
+  },
+  {
+    "seedId": "T4_FARM_BURDOCK_SEED",
+    "productId": "T4_BURDOCK",
+    "seedName": "Crenellated Burdock Seeds",
+    "productName": "Crenellated Burdock",
+    "tier": 4,
+    "type": "herb",
+    "seedYieldBase": 73,
+    "seedYieldWatered": 127
+  },
+  {
+    "seedId": "T5_FARM_TEASEL_SEED",
+    "productId": "T5_TEASEL",
+    "seedName": "Dragon Teasel Seeds",
+    "productName": "Dragon Teasel",
+    "tier": 5,
+    "type": "herb",
+    "seedYieldBase": 80,
+    "seedYieldWatered": 120
+  },
+  {
+    "seedId": "T6_FARM_FOXGLOVE_SEED",
+    "productId": "T6_FOXGLOVE",
+    "seedName": "Elusive Foxglove Seeds",
+    "productName": "Elusive Foxglove",
+    "tier": 6,
+    "type": "herb",
+    "seedYieldBase": 87,
+    "seedYieldWatered": 113
+  },
+  {
+    "seedId": "T7_FARM_MULLEIN_SEED",
+    "productId": "T7_MULLEIN",
+    "seedName": "Firetouched Mullein Seeds",
+    "productName": "Firetouched Mullein",
+    "tier": 7,
+    "type": "herb",
+    "seedYieldBase": 91,
+    "seedYieldWatered": 109
+  },
+  {
+    "seedId": "T8_FARM_YARROW_SEED",
+    "productId": "T8_YARROW",
+    "seedName": "Ghoul Yarrow Seeds",
+    "productName": "Ghoul Yarrow",
+    "tier": 8,
+    "type": "herb",
+    "seedYieldBase": 93,
+    "seedYieldWatered": 107
+  }
+]

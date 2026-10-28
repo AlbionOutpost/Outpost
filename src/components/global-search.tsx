@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, X, ArrowUpRight, CornerDownLeft, LoaderCircle } from "lucide-react";
 import { ItemIcon } from "./item-icon";
@@ -45,17 +45,28 @@ export function GlobalSearch() {
   const [result, setResult] = useState<{ key: string; results: SearchRow[] } | null>(null);
   const [message, setMessage] = useState(""),
     [loading, setLoading] = useState(false);
-  const open = () => {
+  const resetSearch = useCallback(() => {
+    setQuery("");
+    setResult(null);
+    setMessage("");
+    setLoading(false);
+  }, []);
+  const open = useCallback(() => {
+    resetSearch();
     if (!dialog.current?.open) dialog.current?.showModal();
     setOpened(true);
     input.current?.focus();
-  };
-  const close = () => dialog.current?.close();
+  }, [resetSearch]);
+  const close = useCallback(() => {
+    setOpened(false);
+    resetSearch();
+    dialog.current?.close();
+  }, [resetSearch]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (dialog.current?.open) dialog.current.close();
+        if (dialog.current?.open) close();
         else open();
       }
     };
@@ -65,7 +76,7 @@ export function GlobalSearch() {
       cancelAnimationFrame(frame);
       window.removeEventListener("keydown", key);
     };
-  }, []);
+  }, [open, close]);
   useEffect(() => {
     if (!opened || query.trim().length < 2) return;
     const controller = new AbortController();
@@ -104,14 +115,15 @@ export function GlobalSearch() {
   return (
     <>
       <button
+        type="button"
         onClick={open}
-        aria-label="Search Albion… Ctrl K"
+        aria-label="Search items, builds… Ctrl K"
         className="button secondary search-trigger"
         disabled={!ready}
       >
         <Search size={18} />
         <span className="search-shortcut">
-          <span>Search Albion…</span>
+          <span>Search items, builds…</span>
           <kbd>Ctrl K</kbd>
         </span>
       </button>
@@ -120,14 +132,21 @@ export function GlobalSearch() {
         aria-label="Global search"
         className="search-dialog command-search"
         onClose={() => {
+          // A native close event can arrive after a rapid keyboard reopen.
+          if (dialog.current?.open) return;
           setOpened(false);
-          setQuery("");
-          setResult(null);
-          setMessage("");
-          setLoading(false);
+          resetSearch();
         }}
         onClick={(e) => {
-          if (e.target === dialog.current) close();
+          if (e.target !== e.currentTarget) return;
+          const bounds = e.currentTarget.getBoundingClientRect();
+          if (
+            e.clientX < bounds.left ||
+            e.clientX > bounds.right ||
+            e.clientY < bounds.top ||
+            e.clientY > bounds.bottom
+          )
+            close();
         }}
         onKeyDown={(e) => {
           if (e.key === "Escape") {
@@ -154,16 +173,21 @@ export function GlobalSearch() {
       >
         <div className="command-search-inner">
           <div className="command-heading">
-            <span>Search Outpost</span>
+            <h2>Search Outpost</h2>
             <span className="command-dismiss">
               <kbd>Esc</kbd>
-              <button className="command-close" onClick={close} aria-label="Close search">
+              <button
+                type="button"
+                className="command-close"
+                onClick={close}
+                aria-label="Close search"
+              >
                 <X size={19} />
               </button>
             </span>
           </div>
           <div className="command-input-wrap">
-            <Search size={23} aria-hidden="true" />
+            <Search size={20} aria-hidden="true" />
             <input
               ref={input}
               type="search"
@@ -171,7 +195,7 @@ export function GlobalSearch() {
               maxLength={100}
               autoComplete="off"
               spellCheck={false}
-              aria-label="Search items, builds, groups and tools"
+              aria-label="Search items, builds, comps, guilds and tools"
               placeholder="Items, builds, comps…"
               aria-describedby="global-search-status"
               onChange={(e) => {
@@ -181,6 +205,19 @@ export function GlobalSearch() {
               }}
             />
             {loading && <LoaderCircle className="search-loading" size={20} aria-hidden="true" />}
+            {query && (
+              <button
+                type="button"
+                className="command-clear"
+                aria-label="Clear search"
+                onClick={() => {
+                  resetSearch();
+                  input.current?.focus();
+                }}
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            )}
           </div>
           <div className="command-body">
             {query.trim().length < 2 ? (
@@ -243,7 +280,11 @@ export function GlobalSearch() {
                 ))}
               </div>
             )}
-            <p id="global-search-status" className="command-status" role="status">
+            <p
+              id="global-search-status"
+              className={`command-status${query ? "" : " sr-only"}`}
+              role="status"
+            >
               {query.trim().length < 2
                 ? query
                   ? "Add one more character to search."
@@ -262,7 +303,7 @@ export function GlobalSearch() {
               </kbd>{" "}
               Open
             </span>
-            <span>Private content stays private</span>
+            <span>Items · Builds · Comps · Guilds</span>
           </div>
         </div>
       </dialog>

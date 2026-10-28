@@ -1,9 +1,11 @@
 /** Original Outpost task glyphs. Decorative icons always accompany a text label. */
 const paths = {
+  fish: ["M3 12c4-8 11-8 16 0-5 8-12 8-16 0Z", "m19 12 3-4v8l-3-4M8 10h.01M12 6l2-3 3 5"],
   market: ["M3 20h18M5 17v-5h3v5m3 0V8h3v9m3 0V4h3v13", "m4 8 5-4 4 2 7-4"],
   trade: ["M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"],
   craft: ["m5 3 5 5-3 3-5-5m6 4 11 11 3-3L11 7M14 5l4-3 4 4-3 4m-2-3L3 21"],
   refine: ["M3 6h18l-4 5h-5v4h5v4H5v-4h4v-4H6L3 6Z", "M14 2v4m4-4v4"],
+  farm: ["M12 22v-8M12 14C4 14 3 8 3 5c6 0 9 3 9 9Z", "M12 11C12 5 15 2 21 2c0 6-3 9-9 9Z"],
   enchant: ["m12 2 8 10-8 10L4 12 12 2Z", "m12 7 4 5-4 5-4-5 4-5Z"],
   transport: ["m3 7 9-4 9 4v11l-9 4-9-4V7Z", "m3 0 9 4 9-4M12 11v11M8 5l9 4v5"],
   history: ["M5 6a9 9 0 1 1-2 8M3 3v5h5", "M12 7v5l4 2"],

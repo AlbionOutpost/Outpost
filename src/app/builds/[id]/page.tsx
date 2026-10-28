@@ -33,7 +33,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
     notFound();
   return (
     <div className="build-detail-page">
-      <div className="eyebrow">
+      <div className="build-detail-classification">
         {build.contentType} · {build.visibility} · REVISION {build.version}
       </div>
       <div className="section-heading">
@@ -52,6 +52,15 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         · {build.region} · {build.playerCount} {build.playerCount === 1 ? "player" : "players"} ·
         Recommended IP {build.recommendedIP || "not specified"} (author estimate)
       </p>
+      {build.description && (
+        <p className="build-detail-description preserve">{build.description}</p>
+      )}
+      <nav className="build-section-navigation" aria-label="Build sections">
+        <a href="#build-equipment">Loadout</a>
+        <a href="#build-notes">Strategy & notes</a>
+        <a href="#build-cost">Replacement cost</a>
+        <a href="#build-discussion">Discussion</a>
+      </nav>
       <BuildLoadoutView equipment={build.equipment} region={build.region} />
       <p className="muted">
         Created{" "}
@@ -63,10 +72,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           {build.updatedAt.toISOString().slice(0, 10)}
         </time>
       </p>
-      <section className="panel prose">
-        <p className="preserve">{build.description || "No description provided."}</p>
-      </section>
-      <section className="panel section">
+      <section className="panel section build-author-notes" id="build-notes">
         <h2>Author strategy</h2>
         <p className="preserve">{build.strategy || "No strategy notes provided."}</p>
         <h2 className="section">Patch / version notes</h2>
@@ -87,8 +93,12 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         owner={session?.user?.id === build.authorId}
         revisions={build.versions.map((v) => v.version)}
       />
-      <BuildCost id={id} />
-      <CommunityPanel kind="build" id={id} />
+      <div id="build-cost">
+        <BuildCost id={id} />
+      </div>
+      <div id="build-discussion">
+        <CommunityPanel kind="build" id={id} />
+      </div>
       <p className="muted">
         Share this page’s URL. Unlisted links grant read access; private builds are visible only to
         the author. Item and ability coverage is limited to the supported catalog.

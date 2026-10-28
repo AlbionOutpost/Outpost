@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { TurnstileChallenge } from "./turnstile-challenge";
 type Comment = {
   id: string;
   body: string;
@@ -21,6 +22,8 @@ type Activity = {
   page: number;
 };
 export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id: string }) {
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [verificationAttempt, setVerificationAttempt] = useState(0);
   const [data, setData] = useState<Activity | null>(null),
     [message, setMessage] = useState(""),
     [body, setBody] = useState(""),
@@ -51,12 +54,21 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
     return () => controller.abort();
   }, [url]);
   async function act(input: unknown, success: string) {
+    const action = (input as { action?: string }).action;
+    const protectedAction = ["comment", "edit-comment", "report"].includes(action || "");
+    if (protectedAction && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setMessage("Complete the bot verification before posting.");
+      return false;
+    }
     setBusy(true);
     setMessage("");
     try {
       const r = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(protectedAction && turnstileToken ? { "x-turnstile-token": turnstileToken } : {}),
+          },
           body: JSON.stringify(input),
         }),
         b = await r.json();
@@ -69,11 +81,18 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
       return false;
     } finally {
       setBusy(false);
+      if (protectedAction) {
+        setTurnstileToken("");
+        setVerificationAttempt((n) => n + 1);
+      }
     }
   }
   return (
     <section className="panel section">
       <h2>Community discussion</h2>
+      {data?.viewerId && (
+        <TurnstileChallenge onToken={setTurnstileToken} attempt={verificationAttempt} />
+      )}
       <p className="muted">
         Ratings are community votes, not verified combat statistics. Visibility rules apply to every
         action.

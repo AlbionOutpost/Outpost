@@ -102,11 +102,13 @@ export default async function Compositions({
               href={`/compositions/${r.id}`}
               key={r.id}
             >
-              <span className="card-category">
-                {r.contentType} ·{" "}
-                {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Guild only" }[r.visibility]}
-              </span>
-              <h2>{r.title}</h2>
+              <div className="loadout-card-heading">
+                <h2>{r.title}</h2>
+                <span className="loadout-activity">
+                  {r.contentType} ·{" "}
+                  {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Guild only" }[r.visibility]}
+                </span>
+              </div>
               <span className="composition-roster-preview" aria-label="Recorded roster preview">
                 {slots ? (
                   <strong>
@@ -122,7 +124,7 @@ export default async function Compositions({
                     title={`${item.role} · ${item.main ? equipmentName(item.main.itemId) : "No weapon assigned"}`}
                   >
                     {item.main ? (
-                      <ItemIcon id={item.main.itemId} quality={item.main.quality} size={60} />
+                      <ItemIcon id={item.main.itemId} quality={item.main.quality} size={44} />
                     ) : (
                       <EquipmentGlyph slot="Main hand" />
                     )}

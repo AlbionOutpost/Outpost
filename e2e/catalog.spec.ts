@@ -87,7 +87,10 @@ test("catalog release persists, filters, paginates and exposes honest provenance
       page.getByText(/Manual verification: not recorded\. Patch verification: not recorded\./),
     ).toBeVisible();
     await page.getByRole("link", { name: "Compare market observations", exact: true }).click();
-    await expect(page.getByLabel("Albion region", { exact: true })).toHaveValue("asia");
+    await expect(page.getByLabel("Albion region", { exact: true })).toHaveAttribute(
+      "data-region",
+      "asia",
+    );
     await page.getByText("Advanced item identifier", { exact: true }).click();
     await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue(id);
   } finally {

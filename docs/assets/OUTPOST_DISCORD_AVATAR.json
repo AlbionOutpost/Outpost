@@ -1,0 +1,11 @@
+{
+  "path": "public/brand/outpost-discord-avatar.png",
+  "width": 1254,
+  "height": 1254,
+  "bytes": 2170022,
+  "sha256": "9256aa9911b3dd3ace509d9268331ffcdf0de4187c1b48cb6bcd5e12b6291cf6",
+  "source": "AI-generated through the imagegen skill and built-in image generation, requested by the owner on 2026-10-28",
+  "purpose": "Discord application icon / optional bot avatar; not a replacement for the supplied site wordmark",
+  "transparency": false,
+  "activation": "Uploaded to both owned Discord bot avatar and application icon, API read-back verified on 2026-10-28; no messages or server installation"
+}

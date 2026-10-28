@@ -1,0 +1,649 @@
+/* Gear-led cards: one title, one loadout, and a compact provenance/action footer. */
+.app.outpost {
+  --card-surface: #1a1e23;
+  --card-surface-hover: #20262d;
+  --card-border: #343b44;
+}
+.app.outpost.light {
+  --card-surface: #fff;
+  --card-surface-hover: #f1f4f7;
+  --card-border: #c9d1db;
+}
+.app.outpost .build-discovery-workspace {
+  display: block;
+}
+.build-discovery-toolbar {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .build-discovery-toolbar .build-discovery-querybar {
+  grid-template-columns: minmax(0, 1fr) 180px auto;
+  margin-bottom: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.app.outpost .build-discovery-toolbar .build-discovery-filters {
+  position: static;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.app.outpost .build-discovery-toolbar .build-filter-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto auto;
+  align-items: end;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.app.outpost .build-discovery-toolbar .build-filter-form > .text-link {
+  padding-block: 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.weapon-shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.app.outpost .weapon-shortcuts > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .weapon-shortcuts > a[aria-current="true"] {
+  background: var(--elevated);
+  color: var(--text);
+  border-color: var(--border);
+}
+.app.outpost .weapon-shortcuts > a:hover {
+  background: var(--elevated);
+  color: var(--text);
+}
+.app.outpost .build-discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .loadout-card {
+  min-width: 0;
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  box-shadow: none;
+  overflow: hidden;
+  position: relative;
+  transition:
+    border-color 140ms ease-out,
+    background-color 140ms ease-out;
+}
+.app.outpost .loadout-card:hover {
+  transform: none;
+  border-color: var(--muted);
+  background: var(--card-surface-hover);
+  box-shadow: none;
+}
+.app.outpost .loadout-card .build-preview-link {
+  display: block;
+  min-height: 0;
+  height: auto;
+  padding: 16px 16px 12px;
+  color: var(--text);
+}
+.loadout-card-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.app.outpost .loadout-card-heading h2 {
+  margin: 0;
+  font: 650 16px/1.45 var(--font-ui);
+  overflow-wrap: anywhere;
+}
+.loadout-activity {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.loadout-activity[data-activity="Arena"] {
+  color: #a4c8ff;
+  background: #3b82f61c;
+}
+.app.outpost.light .loadout-activity[data-activity="Arena"] {
+  color: #2359a8;
+  background: #3b82f610;
+}
+.app.outpost .loadout-card .equipment-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  min-height: 46px;
+  padding: 0;
+}
+.app.outpost .loadout-card .equipment-strip .strip-slot {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+}
+.app.outpost .loadout-card .equipment-strip .strip-slot img {
+  width: 44px;
+  height: 44px;
+}
+.app.outpost .loadout-card .equipment-strip .strip-slot[data-slot="Main hand"] {
+  margin-right: 4px;
+}
+.loadout-card-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--card-border);
+}
+.loadout-card-author {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.loadout-card-author > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.loadout-card-author small {
+  font-size: 11px;
+}
+.app.outpost .loadout-card-footer .build-card-save {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: auto;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+}
+.app.outpost .loadout-card-footer .build-card-save:is(:hover, [aria-pressed="true"]) {
+  color: var(--accent-ink);
+  border-color: var(--accent-ink);
+}
+.app.outpost .loadout-card-footer .build-card-save-error {
+  position: static;
+  flex-basis: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--error);
+}
+.loadout-card-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  color: var(--muted);
+  font-size: 13px;
+}
+/* Composition cards show the actual ordered roster; repeated builds remain separate players. */
+.app.outpost .composition-directory .composition-results {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .composition-directory .composition-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: none;
+}
+.app.outpost .composition-directory .composition-preview-card:hover {
+  transform: none;
+  background: var(--card-surface-hover);
+  border-color: var(--muted);
+}
+.app.outpost .composition-directory .composition-preview-card > .loadout-card-heading {
+  width: 100%;
+  margin: 0;
+}
+.app.outpost .composition-directory .composition-preview-card h2 {
+  font: 650 16px/1.45 var(--font-ui);
+  margin: 0;
+}
+.app.outpost .composition-directory .composition-preview-card p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .composition-directory .composition-roster-preview {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  border: 0;
+}
+.app.outpost .composition-directory .composition-roster-preview > strong {
+  flex-basis: 100%;
+  font: 400 11px/1.5 var(--font-ui);
+  color: var(--muted);
+}
+.app.outpost .composition-directory .composition-roster-preview [data-albion-icon] {
+  width: 44px;
+  height: 44px;
+}
+.app.outpost .composition-directory .comp-preview-player {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  max-width: 64px;
+}
+.app.outpost .composition-directory .comp-preview-player small {
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-align: center;
+}
+.app.outpost .composition-directory .composition-preview-card .card-footer {
+  width: 100%;
+  padding-top: 10px;
+  margin-top: 0;
+  border-top: 1px solid var(--card-border);
+  font-size: 11px;
+  color: var(--muted);
+}
+/* Saved build: two purposeful surfaces with divider rows, not one card per item. */
+.build-detail-classification {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.build-detail-description {
+  max-width: 75ch;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+.build-section-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding-block: 12px;
+  border-block: 1px solid var(--border);
+  margin-top: 20px;
+}
+.build-section-navigation a {
+  color: var(--muted);
+  padding-block: 4px;
+  font-size: 13px;
+}
+.build-section-navigation a:hover {
+  color: var(--text);
+}
+.app.outpost .build-detail-page .build-loadout-view {
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 20px;
+  margin-block: 24px;
+}
+.app.outpost .build-loadout-inventory,
+.app.outpost .build-loadout-abilities {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: var(--card-surface);
+}
+.app.outpost .build-detail-page .build-loadout-inventory {
+  position: sticky;
+  top: 88px;
+}
+.loadout-surface-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--card-border);
+}
+.app.outpost .loadout-surface-heading h2 {
+  margin: 0;
+  font: 650 17px/1.5 var(--font-ui);
+}
+.loadout-surface-heading > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.app.outpost .build-loadout-view .character-slot {
+  border: 1px solid var(--card-border);
+  border-radius: 5px;
+  background: var(--bg);
+  padding: 8px 4px;
+  gap: 6px;
+}
+.app.outpost .build-loadout-view .character-slot[href]:hover {
+  border-color: var(--accent-ink);
+  background: var(--elevated);
+}
+.app.outpost .build-loadout-view .slot-item-name {
+  font-size: 11px;
+  line-height: 1.4;
+}
+.loadout-inventory-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  margin-top: 20px;
+}
+.app.outpost .build-loadout-abilities .loadout-ability-row {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--card-border);
+  padding: 16px 0;
+}
+.app.outpost .build-loadout-abilities .loadout-ability-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.app.outpost .build-loadout-abilities .selected-gear-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.app.outpost .build-loadout-abilities h3 {
+  font: 600 15px/1.45 var(--font-ui);
+  margin: 4px 0;
+}
+.loadout-slot-label {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.app.outpost .loadout-ability-row small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.app.outpost .loadout-ability-row .text-link {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app.outpost .loadout-ability-row .loadout-spells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0 60px;
+}
+.loadout-ability-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+.loadout-ability-chip b {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  font: 500 10px/1 var(--font-ui);
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  color: var(--muted);
+}
+.app.outpost .loadout-author-note {
+  font-size: 13px;
+  line-height: 1.65;
+  margin: 12px 0 0 60px;
+  color: var(--muted);
+}
+.app.outpost .loadout-ability-row .loadout-swaps {
+  margin: 12px 0 0 60px;
+  gap: 8px 12px;
+}
+.app.outpost .loadout-swaps > span {
+  font-size: 12px;
+}
+.app.outpost .build-detail-page > .build-author-notes {
+  border-radius: 0;
+  border-width: 0 0 1px;
+  background: transparent;
+  padding: 24px 0;
+}
+.app.outpost .build-author-notes p {
+  max-width: 75ch;
+}
+#build-equipment,
+#build-notes,
+#build-cost,
+#build-discussion {
+  scroll-margin-top: 90px;
+}
+/* Tool destinations are compact navigational entries, distinct from build cards. */
+.app.outpost .directory-entries .directory-entry {
+  min-height: 112px;
+  padding: 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: var(--card-surface);
+  box-shadow: none;
+  gap: 16px;
+}
+.app.outpost .directory-entries .directory-entry:hover {
+  transform: none;
+  background: var(--card-surface-hover);
+  border-color: var(--muted);
+}
+.app.outpost .directory-entry .tool-symbol {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: 0;
+}
+.app.outpost .directory-entry .tool-symbol [data-albion-icon] {
+  width: 48px;
+  height: 48px;
+}
+.app.outpost .directory-entry h3 {
+  font-size: 16px;
+}
+@media (max-width: 1099px) {
+  .app.outpost .build-discovery-toolbar .build-filter-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .app.outpost .build-detail-page .build-loadout-view {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+  .app.outpost .build-loadout-abilities .selected-gear-heading {
+    flex-wrap: wrap;
+  }
+  .app.outpost .loadout-ability-row .text-link {
+    flex-basis: 100%;
+    margin-left: 60px;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .build-discovery-grid,
+  .app.outpost .composition-directory .composition-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .build-discovery-toolbar .build-discovery-querybar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  .build-discovery-querybar > label:first-child {
+    grid-column: 1/-1;
+  }
+  .app.outpost .build-discovery-toolbar .build-filter-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .build-discovery-toolbar .build-filter-form > .text-link {
+    padding-block: 6px;
+  }
+  .app.outpost .loadout-card .build-preview-link {
+    padding: 16px 12px 12px;
+  }
+  .loadout-card-heading {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .app.outpost .loadout-card-heading h2 {
+    flex-basis: 100%;
+  }
+  .loadout-card-footer {
+    padding: 10px 12px;
+  }
+  .app.outpost .loadout-card .equipment-strip .strip-slot,
+  .app.outpost .loadout-card .equipment-strip .strip-slot img {
+    width: 40px;
+    height: 40px;
+  }
+  .app.outpost .build-detail-page .build-loadout-view {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .build-detail-page .build-loadout-inventory {
+    position: static;
+  }
+  .app.outpost .loadout-ability-row .loadout-spells,
+  .app.outpost .loadout-author-note,
+  .app.outpost .loadout-ability-row .loadout-swaps {
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost .loadout-card {
+    transition: none;
+  }
+}
+.app.outpost .loadout-card-footer {
+  padding-block: 6px;
+}
+@media (min-width: 1100px) {
+  .app.outpost .build-discovery-toolbar {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.5fr) repeat(4, minmax(120px, 1fr)) auto;
+    gap: 12px 16px;
+  }
+  .app.outpost .build-discovery-toolbar .weapon-shortcuts {
+    grid-column: 1/-1;
+    grid-row: 1;
+    margin: 0 0 4px;
+    padding-bottom: 16px;
+  }
+  .app.outpost
+    .build-discovery-toolbar
+    :is(
+      .build-discovery-querybar,
+      .build-discovery-filters,
+      .responsive-filter-panel,
+      .mobile-filter-content,
+      .build-filter-form
+    ) {
+    display: contents;
+  }
+  .app.outpost .build-discovery-querybar > label:first-child {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .app.outpost .build-discovery-querybar > label:nth-child(2) {
+    grid-column: 5;
+    grid-row: 2;
+  }
+  .app.outpost .build-discovery-querybar > button {
+    grid-column: 6;
+    grid-row: 2;
+    align-self: end;
+  }
+  .app.outpost .build-filter-form > label:nth-child(1) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .app.outpost .build-filter-form > label:nth-child(2) {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .app.outpost .build-filter-form > label:nth-child(3) {
+    grid-column: 4;
+    grid-row: 2;
+  }
+  .app.outpost .build-filter-form > .text-link {
+    padding-block: 2px;
+    grid-row: 3;
+  }
+  .app.outpost .build-filter-form > .text-link:nth-of-type(1) {
+    grid-column: 1;
+  }
+  .app.outpost .build-filter-form > .text-link:nth-of-type(2) {
+    grid-column: 2;
+  }
+  .app.outpost .build-filter-form > .text-link:nth-of-type(3) {
+    grid-column: 3/5;
+  }
+  .app.outpost .build-discovery-querybar > label,
+  .app.outpost .build-filter-form > label {
+    min-width: 0;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .loadout-card-heading {
+    flex-wrap: nowrap;
+  }
+  .app.outpost .loadout-card-heading h2 {
+    flex: 1;
+    min-width: 0;
+  }
+}

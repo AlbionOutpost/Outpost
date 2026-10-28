@@ -1,3 +1,4 @@
+import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 test("calculate a trade with real input", async ({ page }) => {
   await page.goto("/tools/flipping");
@@ -42,7 +43,7 @@ test("regional market request and region invalidation", async ({ page }) => {
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Compare prices" }).click();
   await expect(page.locator("tbody")).toContainText("STALE");
-  await page.getByLabel("Albion region").selectOption("asia");
+  await chooseRegion(page, "asia");
   await expect(page.locator("main")).toContainText("Region changed");
   await expect(page.locator("tbody tr")).toHaveCount(0);
 });
@@ -75,13 +76,13 @@ test("theme and region survive reload, and desktop tool navigation supports Esca
   await expect(page.locator(".app")).toHaveClass(/light/);
   await page.reload();
   await expect(page.locator(".app")).toHaveClass(/light/);
-  await page.getByLabel("Albion region").selectOption("asia");
+  await chooseRegion(page, "asia");
   await page.locator(".desktop-navigation summary").click();
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
     .getByRole("link", { name: /^Market explorer City prices/ })
     .click();
-  await expect(page.getByLabel("Albion region")).toHaveValue("asia");
+  await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   const tools = page.locator(".desktop-navigation summary");
   await tools.click();
   await page.getByRole("link", { name: /^Crafting Materials/ }).focus();

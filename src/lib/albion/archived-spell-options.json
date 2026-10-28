@@ -1,0 +1,69 @@
+{
+  "2H_SHAPESHIFTER_MORGANA": [
+    {
+      "key": "Q",
+      "id": "SHAPE_Q_CAST",
+      "name": "Unstable Projectile"
+    },
+    {
+      "key": "Q",
+      "id": "SHAPE_Q_SKILLSHOT",
+      "name": "Reality Fissure"
+    },
+    {
+      "key": "W",
+      "id": "SHAPE_W_DAMAGE_AOE",
+      "name": "Distortion"
+    },
+    {
+      "key": "W",
+      "id": "SHAPE_W_AREA_PULL",
+      "name": "Positional Drift"
+    },
+    {
+      "key": "Q",
+      "id": "SHAPE_Q_DAMAGE_AND_SHIELD",
+      "name": "Adapting Matter"
+    },
+    {
+      "key": "W",
+      "id": "SHAPE_W_TETHERBEAM",
+      "name": "Tether Shift"
+    },
+    {
+      "key": "Q",
+      "id": "SHAPE_Q_CONE_MELEE",
+      "name": "Pulse Shock"
+    },
+    {
+      "key": "W",
+      "id": "SHAPE_W_POLYMORPH",
+      "name": "Polymorph"
+    },
+    {
+      "key": "Passive",
+      "id": "PASSIVE_SHAPESHIFT_ATTACK_BUFF",
+      "name": "Altered Beast"
+    },
+    {
+      "key": "Passive",
+      "id": "PASSIVE_SHAPESHIFT_Q_CAST_DAMAGE_REDUCE",
+      "name": "Intimidating Presence"
+    },
+    {
+      "key": "Passive",
+      "id": "PASSIVE_SHAPESHIFT_GATHER_CHARGES",
+      "name": "Innate Power"
+    },
+    {
+      "key": "Passive",
+      "id": "PASSIVE_SHAPESHIFT_W_CAST_SPEED_BUFF",
+      "name": "Rule Bender"
+    },
+    {
+      "key": "E",
+      "id": "SHAPESHIFT_WEREWOLF",
+      "name": "Werewolf Transformation"
+    }
+  ]
+}

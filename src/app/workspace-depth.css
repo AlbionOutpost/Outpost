@@ -1,0 +1,601 @@
+/* Recipe research and run accounting share a workspace, not a sequence of cards. */
+.production-recipe-browser {
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 0;
+}
+.recipe-browser-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.app.outpost .recipe-browser-title h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.recipe-browser-title > span {
+  font: 12px/1 var(--font-data);
+  color: var(--muted);
+}
+.app.outpost .recipe-browser-search {
+  font-size: 12px;
+}
+.app.outpost .recipe-browser-search input {
+  min-height: 38px;
+  margin-top: 8px;
+}
+.recipe-tier-options {
+  display: flex;
+  gap: 4px;
+  margin: 16px 0;
+}
+.app.outpost .recipe-tier-options button {
+  flex: 1;
+  padding: 6px 0;
+  min-height: 34px;
+  font: 600 12px/1.4 var(--font-ui);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.app.outpost .recipe-tier-options button[aria-pressed="true"] {
+  background: var(--accent);
+  color: #18100c;
+  border-color: var(--accent);
+}
+.recipe-browser-list {
+  display: grid;
+  gap: 4px;
+}
+.app.outpost .recipe-browser-list > button {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  min-height: 62px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text);
+}
+.app.outpost .recipe-browser-list > button:hover {
+  background: var(--elevated);
+}
+.app.outpost .recipe-browser-list > button[aria-pressed="true"] {
+  border-color: var(--border);
+  background: var(--elevated);
+}
+.recipe-browser-list > button > span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.recipe-browser-list strong {
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.4;
+}
+.recipe-browser-list small {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.recipe-browser-list > button > svg {
+  flex-shrink: 0;
+  color: var(--accent-ink);
+}
+.recipe-browser-list p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.recipe-browser-footnote {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  margin: 20px 0 0;
+}
+.recipe-exact-selection {
+  margin-top: 16px;
+}
+.recipe-exact-selection summary {
+  font-size: 12px;
+}
+.recipe-exact-selection select {
+  font-size: 12px;
+}
+.production-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .production-result-item h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
+}
+.production-result-item span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.production-cash-summary {
+  margin: 20px 0;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.production-cash-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 8px;
+  font-size: 12px;
+}
+.production-cash-summary dt {
+  color: var(--muted);
+}
+.production-cash-summary dd {
+  margin: 0;
+  font-family: var(--font-data);
+  text-align: right;
+}
+.app.outpost .production-recipe-browser .recipe-browser-list :is(img, [data-albion-icon]) {
+  flex-shrink: 0;
+}
+@media (min-width: 1100px) {
+  .production-journey > .production-steps {
+    display: none;
+  }
+  .app.outpost .production-workspace {
+    grid-template-columns: 220px minmax(0, 1fr) 300px;
+    gap: 16px;
+    align-items: start;
+  }
+  .app.outpost .production-workspace > .production-desktop-browser {
+    grid-column: 1;
+    grid-row: 1/5;
+    min-width: 0;
+    position: sticky;
+    top: 88px;
+  }
+  .production-desktop-browser .production-recipe-browser {
+    max-height: calc(100dvh - 110px);
+    overflow-y: auto;
+  }
+  .app.outpost .production-workspace > .calculator-inputs {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .app.outpost .production-workspace .calculator-inputs > .panel {
+    grid-column: auto;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+  }
+  .app.outpost .production-workspace .calculator-inputs > #production-setup {
+    grid-column: 1/-1;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+  }
+  .app.outpost .production-inputs-heading {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .production-inputs-heading [data-albion-icon] {
+    display: none;
+  }
+  .app.outpost .production-workspace .reference-recipe-identity {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+  }
+  .app.outpost .production-workspace .reference-recipe-identity h3 {
+    font-size: 22px;
+  }
+  .app.outpost .production-workspace .reference-recipe-identity p {
+    margin-bottom: 6px;
+  }
+  .app.outpost .production-workspace .reference-recipe-identity small {
+    font-size: 11px;
+  }
+  .production-change-recipe {
+    display: none;
+  }
+  .app.outpost .production-workspace .reference-quantity > p {
+    display: none;
+  }
+  .app.outpost .production-workspace .reference-quantity .input-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .production-workspace .reference-advanced-assumptions {
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+  .app.outpost .production-workspace > .production-materials {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 20px;
+  }
+  .app.outpost .production-workspace > .result {
+    grid-column: 3;
+    grid-row: 1/3;
+    padding: 20px;
+    position: sticky;
+    top: 88px;
+  }
+  .app.outpost .production-workspace > .production-accounting-panel {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .app.outpost .production-workspace > .production-assumption-summary {
+    grid-column: 3;
+    grid-row: 3;
+  }
+  .app.outpost .production-workspace .production-next {
+    display: none;
+  }
+  .app.outpost .production-workspace .reference-result-cards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 16px;
+    margin-top: 20px;
+  }
+  .app.outpost .production-workspace .reference-result-cards > div {
+    background: transparent;
+    padding: 12px 0;
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .app.outpost .production-workspace .reference-result-cards > div:nth-child(2) {
+    grid-column: 1/-1;
+    grid-row: 1;
+    margin-bottom: 4px;
+  }
+  .app.outpost .production-workspace .reference-result-cards output {
+    font-size: 36px;
+  }
+  .app.outpost .production-workspace .reference-result-cards strong {
+    font-size: 21px;
+  }
+  .app.outpost .production-workspace .reference-result-cards > div:last-child {
+    grid-column: 1/-1;
+  }
+  .app.outpost .production-workspace .reference-material-table {
+    min-width: 500px;
+  }
+}
+@media (max-width: 1099px) {
+  .production-desktop-browser {
+    display: none;
+  }
+  .production-change-recipe {
+    margin-top: 16px;
+  }
+  .app.outpost .production-workspace > .production-desktop-browser {
+    grid-column: 1/-1;
+  }
+}
+.app.outpost .editor-dialog .production-recipe-browser {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.app.outpost .editor-dialog .recipe-browser-list {
+  max-height: none;
+}
+@media (min-width: 1100px) {
+  .app.outpost .production-journey > .production-steps {
+    display: none;
+  }
+  .app.outpost .build-command-bar {
+    grid-template-columns: minmax(0, 1fr) 140px 130px auto auto;
+  }
+}
+.transport-route-strip {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.transport-route-strip > svg {
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+.transport-route-strip > span:not(.transport-route-region) {
+  display: grid;
+  gap: 6px;
+}
+.transport-route-strip small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.transport-route-strip strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.transport-route-region {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .transport-workspace {
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+  gap: 24px;
+}
+.transport-item-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+.transport-item-identity > div {
+  display: grid;
+  gap: 8px;
+}
+.transport-item-identity strong {
+  font-size: 16px;
+}
+.transport-item-identity small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.transport-workspace .catalog-picker {
+  margin-bottom: 12px;
+}
+.cargo-capacity-summary {
+  margin-block: 24px;
+  border-block: 1px solid var(--border);
+  padding-block: 8px;
+}
+.cargo-capacity-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 10px;
+  gap: 16px;
+}
+.cargo-capacity-summary span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.cargo-capacity-summary strong {
+  font: 600 14px/1.5 var(--font-data);
+}
+.result-unit {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .result > .neutral {
+  color: var(--text);
+}
+.app.outpost .result > .positive {
+  color: var(--success);
+}
+.app.outpost .result > .negative {
+  color: var(--error);
+}
+@media (min-width: 900px) {
+  .transport-workspace > .result,
+  .manual-trade-workspace > .result {
+    position: sticky;
+    top: 88px;
+    align-self: start;
+  }
+}
+@media (max-width: 899px) {
+  .app.outpost .transport-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .transport-route-strip {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+  .transport-route-region {
+    flex-basis: 100%;
+    margin: 0;
+  }
+}
+.party-card-edit {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
+.party-loadout-card:is(:hover, [aria-pressed="true"]) .party-card-edit {
+  color: var(--accent-ink);
+}
+/* Guide discovery reads like an editorial index; content uses a reading measure. */
+.app.outpost .guide-directory-grid {
+  display: block;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .guide-discovery-card {
+  display: block;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  background: transparent;
+}
+.app.outpost .guide-discovery-card h2 {
+  font: 650 24px/1.35 var(--font-ui);
+  margin-block: 8px;
+}
+.guide-discovery-card > p {
+  max-width: 65ch;
+  font-size: 14px;
+}
+.app.outpost .guide-discovery-card > details {
+  border: 0;
+  margin-top: 16px;
+  padding: 0;
+  background: transparent;
+}
+.app.outpost .guide-discovery-card .guide-body {
+  max-width: 70ch;
+  padding: 16px 0 8px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+.app.outpost .guide-discovery-card .guide-body p + p {
+  margin-top: 20px;
+}
+.guide-card-kicker {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .build-discovery-page > .section-heading,
+.app.outpost .composition-discovery-page > .section-heading {
+  margin-bottom: 12px;
+}
+.app.outpost .build-discovery-page .intro,
+.app.outpost .guide-discovery-page .intro {
+  max-width: 70ch;
+}
+/* Administrative settings use section navigation, a clear reading order and bounded forms. */
+.account-settings-workspace {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 32px;
+}
+.account-settings-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.account-settings-navigation a {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.account-settings-navigation a:hover {
+  background: var(--elevated);
+  color: var(--text);
+}
+.account-settings-content {
+  min-width: 0;
+}
+.app.outpost .account-settings-content > .panel {
+  padding: 0 0 32px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 32px;
+}
+.account-settings-content .settings-form {
+  max-width: 600px;
+}
+.account-settings-content p {
+  max-width: 70ch;
+}
+@media (max-width: 780px) {
+  .account-settings-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .account-settings-navigation {
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+}
+.market-observation-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.market-observation-legend strong {
+  color: var(--text);
+  font-family: var(--font-data);
+}
+.app.outpost .market-results-heading {
+  margin-bottom: 12px;
+}
+.app.outpost .guild-discovery-list {
+  gap: 12px;
+}
+.app.outpost .guild-discovery-card {
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 20px 24px;
+  box-shadow: none;
+}
+.app.outpost .guild-discovery-card > p {
+  max-width: 75ch;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.app.outpost .guild-discovery-card footer {
+  border: 0;
+  padding-top: 16px;
+  margin: 0;
+  background: transparent;
+}
+.app.outpost .guild-discovery-context {
+  margin-block: 16px 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.cargo-capacity-summary strong {
+  margin: 0;
+  letter-spacing: 0;
+}
+.app.outpost.light .recipe-tier-options button[aria-pressed="true"] {
+  color: #fff;
+}
+.transport-initial-state {
+  padding-block: 24px 8px;
+}
+.transport-initial-state > svg {
+  color: var(--muted);
+}
+.app.outpost .transport-initial-state h3 {
+  font: 600 20px/1.4 var(--font-ui);
+  margin-block: 16px 8px;
+}
+.transport-initial-state p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+  margin-bottom: 20px;
+}

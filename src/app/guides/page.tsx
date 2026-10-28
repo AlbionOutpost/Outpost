@@ -1,20 +1,40 @@
 import { GuideDirectory } from "@/components/guide-directory";
 import Link from "next/link";
+import { libraryGuides } from "@/lib/grind-library";
+import { GrindGuideDirectory } from "@/components/grind-guide-directory";
 export const metadata = { title: "Guides" };
-export default function Guides() {
+export default async function Guides({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; category?: string }>;
+}) {
+  const params = await searchParams;
+  const query = typeof params.q === "string" ? params.q.slice(0, 100) : "";
+  const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
   return (
     <div className="guide-discovery-page">
-      <h1 className="page-title display-title">Builds & guides</h1>
+      <h1 className="page-title display-title">A little knowledge goes a long way.</h1>
       <p className="intro">
-        Short, practical guides to the tools. These explain Outpost’s workflows; they aren’t current
-        meta rankings or a complete game guide.
+        Find your footing, plan your next run, or learn a new way to earn. Your Grind guides now
+        have a home in Outpost.
       </p>
       <nav className="discovery-tabs" aria-label="Builds and guides">
-        <Link href="/builds">Community builds</Link>
+        <Link href="/builds/library">Build library</Link>
         <Link href="/guides" aria-current="page">
-          Practical guides
+          Guides
         </Link>
       </nav>
+      <p className="library-provenance">
+        Your Grind guides, captured 27 October 2026. Check each article’s date before using older
+        game advice.
+      </p>
+      <GrindGuideDirectory guides={libraryGuides()} query={query} category={category} />
+      <div className="library-section-heading outpost-guide-heading">
+        <div>
+          <h2>Getting comfortable with Outpost</h2>
+          <p>Short notes for the tools you use here.</p>
+        </div>
+      </div>
       <GuideDirectory
         guides={[
           {

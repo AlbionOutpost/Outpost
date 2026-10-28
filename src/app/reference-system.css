@@ -1,0 +1,1745 @@
+/* The five supplied October 27 references are the active visual authority.
+   Legacy route styles remain scoped; these tokens and shared primitives own the shell. */
+.app.outpost {
+  --radius-control: 6px;
+  --radius-panel: 8px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --accent-active: #c85a2f;
+  --accent-soft: #f0b498;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --font-heading: var(--font-ui);
+  font-size: 14px;
+}
+.app.outpost:not(.light) {
+  --bg: #0b0e12;
+  --sidebar: #11161d;
+  --panel: #11161d;
+  --elevated: #171d24;
+  --surface-3: #202833;
+  --border: #303a46;
+  --text: #f1f5f9;
+  --muted: #a3acb8;
+  --text-muted: #8793a0;
+  --accent: #f9733a;
+  --accent-hover: #ff975e;
+  --accent-ink: #ff975e;
+  --accent-wash: #f9733a14;
+  --action: #f9733a;
+  --action-hover: #ff975e;
+  --success: #4ade80;
+  --error: #f87171;
+  --shadow: 0 8px 24px #0003;
+  background: var(--bg);
+}
+.app.outpost.light {
+  --action: #ad3c0d;
+  --action-hover: #8c300a;
+  --accent: #ad3c0d;
+  --accent-ink: #a53b12;
+  --accent-hover: #8c300a;
+  --accent-wash: #ad3c0d0d;
+  --surface-3: #e1e6ec;
+}
+.app.outpost ::selection {
+  background: var(--accent);
+  color: #0b0e12;
+}
+.app.outpost :is(input, textarea) {
+  caret-color: var(--accent);
+}
+.app.outpost :is(.table-scroll, .item-browser-grid, .gear-pane) {
+  scrollbar-color: var(--border) var(--panel);
+  scrollbar-width: thin;
+}
+.app.outpost :is(h1, h2, h3, h4) {
+  color: var(--text);
+}
+.app.outpost :is(h2, h3, h4) {
+  font-family: var(--font-ui);
+}
+.app.outpost .page-title {
+  font: 700 36px/1.25 var(--font-ui);
+  letter-spacing: -0.025em;
+}
+.app.outpost .intro {
+  margin: 8px 0 24px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.app.outpost .eyebrow {
+  color: var(--accent-ink);
+  font: 650 11px/1.5 var(--font-ui);
+  letter-spacing: 0.07em;
+}
+.app.outpost .button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--action);
+  color: #15100c;
+  font: 650 14px/1.4 var(--font-ui);
+  box-shadow: none;
+  transform: none;
+}
+.app.outpost.light .button {
+  color: white;
+}
+.app.outpost .button:hover {
+  background: var(--action-hover);
+  transform: none;
+}
+.app.outpost .button:active {
+  background: var(--accent-active);
+}
+.app.outpost .button.secondary {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--elevated);
+  box-shadow: none;
+}
+.app.outpost .button.secondary:hover {
+  border-color: var(--muted);
+  background: var(--surface-3);
+}
+.app.outpost .button.tertiary {
+  color: var(--accent-ink);
+  background: transparent;
+}
+.app.outpost .button.negative {
+  color: var(--error);
+  border-color: var(--error);
+  background: transparent;
+}
+.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 42px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font: 400 14px/1.5 var(--font-ui);
+  background-color: var(--bg);
+  color: var(--text);
+}
+.app.outpost :is(input, textarea)::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.app.outpost input:is([type="checkbox"], [type="radio"]) {
+  accent-color: var(--accent);
+}
+.app.outpost :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 3px;
+}
+.app.outpost
+  :is(.panel, .gear-pane, .market-item-panel, .party-board-card, .roster-row, .build-preview-card) {
+  border-color: var(--border);
+  border-radius: 8px;
+  background-color: var(--panel);
+}
+.app.outpost .numeric,
+.app.outpost td.numeric {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.app.outpost table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.app.outpost th {
+  background: var(--elevated);
+  color: var(--muted);
+  font: 500 12px/1.5 var(--font-ui);
+  padding: 12px;
+}
+.app.outpost td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.app.outpost tbody tr:hover {
+  background: var(--elevated);
+}
+.app.outpost .site-header {
+  height: 72px;
+  gap: 24px;
+  padding-inline: max(24px, calc((100vw - 1440px) / 2 + 32px));
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: none;
+}
+.app.outpost .top-brand {
+  width: 140px;
+  min-width: 140px;
+}
+.app.outpost .top-brand .outpost-logo {
+  width: 140px;
+}
+.app.outpost .desktop-navigation {
+  gap: 20px;
+}
+.app.outpost .desktop-navigation > a,
+.app.outpost .desktop-navigation > .nav-dropdown > summary {
+  padding: 8px 0;
+  font: 500 13px/1.5 var(--font-ui);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--muted);
+  box-shadow: none;
+}
+.app.outpost .desktop-navigation > a[aria-current="page"] {
+  color: var(--text);
+  box-shadow: 0 2px var(--accent);
+}
+.app.outpost .desktop-navigation > .nav-dropdown > summary > svg:first-child {
+  display: none;
+}
+.app.outpost .header-actions {
+  gap: 12px;
+}
+.app.outpost .site-header .search-trigger {
+  width: 220px;
+  min-height: 36px;
+  height: 36px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.app.outpost .search-shortcut {
+  font-size: 12px;
+  font-weight: 400;
+}
+.app.outpost .region {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.app.outpost .region select {
+  min-height: 36px;
+  height: 36px;
+  font-size: 12px;
+  background: transparent;
+  border: 0;
+}
+.app.outpost .theme-toggle {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.app.outpost .discord-login {
+  min-height: 36px;
+  height: 36px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app.outpost .discord-login:hover {
+  background: var(--elevated);
+  border-color: var(--accent);
+}
+.app.outpost .product-frame {
+  max-width: 1440px;
+}
+.app.outpost main {
+  padding: 32px;
+}
+.app.outpost main[data-width="reading"] {
+  max-width: 880px;
+  margin-inline: auto;
+}
+.app.outpost footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+/* Homepage: a compact two-column product introduction, then distinct destinations. */
+.reference-home {
+  max-width: 1280px;
+  margin: auto;
+}
+.reference-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
+  gap: 40px;
+  align-items: center;
+  padding-block: 16px 40px;
+}
+.reference-hero-copy h1 {
+  margin: 12px 0 16px;
+  font: 800 56px/1.05 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.reference-hero-copy h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.reference-hero-copy > p {
+  max-width: 45ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.reference-hero-facts {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.reference-hero-facts > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.reference-hero-facts svg {
+  color: var(--accent);
+}
+.reference-hero-product {
+  min-width: 0;
+}
+.app.outpost .reference-hero-product .home-terminal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px #0003;
+}
+.reference-hero-product .terminal-toolbar {
+  padding: 12px 16px;
+}
+.reference-hero-product .terminal-search {
+  padding: 12px 16px 0;
+}
+.reference-hero-product .terminal-item {
+  padding: 12px 16px;
+}
+.reference-hero-product .terminal-item h2 {
+  font-size: 16px;
+}
+.reference-hero-product .terminal-data-grid {
+  padding: 0 16px 12px;
+  gap: 16px;
+}
+.reference-hero-product .terminal-chart-area {
+  min-height: 140px;
+}
+.reference-hero-product .terminal-chart-area svg {
+  max-height: 170px;
+}
+.reference-hero-product .terminal-source {
+  margin: 0 16px 12px;
+}
+.reference-hero-product .terminal-city-prices > div {
+  padding-block: 12px;
+}
+.reference-section-heading {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.reference-section-heading h2,
+.reference-market-entry h2 {
+  font: 700 28px/1.25 var(--font-ui);
+  letter-spacing: -0.02em;
+  margin: 8px 0;
+}
+.reference-section-heading p,
+.reference-market-entry p {
+  margin: 0;
+  color: var(--muted);
+}
+.reference-guide-link {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+.reference-guide-link > svg:first-child {
+  color: var(--accent);
+}
+.reference-guide-link strong,
+.reference-guide-link small {
+  display: block;
+}
+.reference-guide-link small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+.reference-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.reference-feature {
+  position: relative;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.reference-feature .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.reference-feature h3 {
+  margin: 16px 0 8px;
+  font: 650 21px/1.35 var(--font-ui);
+}
+.reference-feature p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.reference-feature .button {
+  margin-top: auto;
+}
+.feature-loadout {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.feature-role-preview {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 4px 0 28px;
+}
+.feature-role-preview span {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  font-size: 12px;
+}
+.feature-role-preview span:first-child {
+  color: #8cbfff;
+}
+.feature-role-preview span:nth-child(2) {
+  color: var(--success);
+}
+.feature-market-preview {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding-block: 12px;
+  border-block: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.reference-market-entry {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 32px;
+  padding-top: 24px;
+}
+.reference-market-entry > div:first-child {
+  max-width: 75ch;
+}
+.reference-benefits {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-block: 8px 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.reference-benefits > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.reference-benefits svg {
+  width: 20px;
+  color: var(--accent);
+}
+/* Market: task rail, dominant comparison table, contextual selected-item summary. */
+.reference-market-layout {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  gap: 24px;
+}
+.reference-market-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid var(--border);
+  padding-right: 16px;
+}
+.reference-market-rail .eyebrow {
+  margin-block: 4px 12px;
+}
+.reference-market-rail > :is(a, p) {
+  font-size: 13px;
+}
+.reference-market-rail > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.reference-market-rail > a:hover {
+  background: var(--elevated);
+  color: var(--text);
+}
+.reference-market-rail > a[aria-current="page"] {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  border: 1px solid var(--border);
+}
+.reference-market-rail p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 24px 8px;
+}
+.reference-rail-divider {
+  border-top: 1px solid var(--border);
+  margin-block: 12px;
+}
+.market-explorer-page {
+  min-width: 0;
+}
+.app.outpost .market-explorer-page > .page-title {
+  font-size: 28px;
+  margin: 8px 0;
+}
+.app.outpost .market-workspace,
+.app.outpost .market-workspace.is-setup {
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+  align-items: start;
+}
+.app.outpost .market-workspace > .task-progress {
+  display: none;
+}
+.app.outpost .market-board {
+  min-width: 0;
+  border: 1px solid var(--border);
+  padding: 16px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+.app.outpost .market-setup-heading h2 {
+  font-size: 18px;
+}
+.app.outpost .market-setup-heading p {
+  font-size: 13px;
+}
+.app.outpost .market-item-panel {
+  padding: 16px;
+  min-width: 0;
+}
+.app.outpost .market-getting-started {
+  padding: 0;
+  border: 0;
+}
+.app.outpost .market-getting-started h2 {
+  font-size: 18px;
+}
+.app.outpost .market-getting-started ul {
+  gap: 16px;
+}
+.app.outpost .market-getting-started li p {
+  font-size: 13px;
+}
+.app.outpost .market-form {
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr) auto;
+  gap: 12px;
+}
+.app.outpost .market-form > .catalog-item-picker {
+  grid-column: 1/-1;
+}
+.app.outpost .market-first-use {
+  padding: 16px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+.app.outpost .market-first-use p {
+  font-size: 13px;
+}
+.app.outpost .market-selected-item {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app.outpost .market-selected-item h2 {
+  font-size: 19px;
+}
+.app.outpost .market-selected-item img {
+  max-width: 64px;
+  max-height: 64px;
+}
+.app.outpost .market-table-item {
+  min-width: 110px;
+}
+.app.outpost .market-table-toolbar {
+  margin-block: 16px;
+}
+.app.outpost .market-table-toolbar select {
+  max-width: 220px;
+}
+.app.outpost .market-quote-summary > div {
+  padding-block: 16px;
+}
+.app.outpost .market-quote-summary dt {
+  font-size: 12px;
+}
+.app.outpost .market-quote-summary dd {
+  font-size: 18px;
+}
+.app.outpost .market-table-caption {
+  padding-block: 12px;
+}
+.reference-city-filter {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.reference-city-filter summary {
+  cursor: pointer;
+  padding-block: 8px;
+}
+.reference-city-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding-block: 12px;
+}
+.reference-city-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+.reference-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.reference-filter-chips button {
+  min-height: 32px;
+  border: 1px solid var(--border);
+  background: var(--elevated);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.app.outpost .selected-market-row {
+  background: var(--accent-wash);
+  box-shadow: inset 2px 0 var(--accent);
+}
+.market-row-select {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  padding: 8px 0;
+  text-align: left;
+}
+.reference-city-summary {
+  border-block: 1px solid var(--border);
+  padding-block: 12px;
+  margin-block: 16px;
+}
+.reference-city-summary h3 {
+  margin: 0 0 12px;
+}
+.reference-city-summary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block: 8px;
+}
+.reference-city-summary dd {
+  margin: 0;
+}
+.reference-city-summary p {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.reference-market-history {
+  grid-column: 1/-1;
+  padding: 20px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 8px;
+  scroll-margin-top: 96px;
+}
+.reference-market-history h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.app.outpost .reference-market-history .history-panel {
+  border: 0;
+  padding: 0;
+  margin-top: 16px;
+}
+/* Production: recipe, assumptions and quantity, followed by materials and results. */
+.app.outpost .production-calculator-page {
+  max-width: 1280px;
+}
+.app.outpost .production-calculator-page > .page-title {
+  font: 700 36px/1.2 var(--font-ui);
+}
+.app.outpost .production-workspace {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+.app.outpost .production-workspace > .calculator-inputs {
+  display: contents;
+}
+.app.outpost .production-workspace .calculator-inputs > .panel {
+  grid-column: span 2;
+  margin: 0;
+  padding: 20px;
+}
+.app.outpost .production-workspace > .production-materials {
+  grid-column: 1/4;
+  grid-row: auto;
+  padding: 20px;
+}
+.app.outpost .production-workspace > .result {
+  grid-column: 4/7;
+  grid-row: auto;
+  padding: 20px;
+  position: static;
+}
+.app.outpost .production-workspace h2 {
+  font: 650 18px/1.5 var(--font-ui);
+}
+.app.outpost .production-workspace .input-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.app.outpost .production-city-choices {
+  margin-top: 0;
+}
+.reference-recipe-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-block: 24px;
+}
+.reference-recipe-identity > div {
+  flex: 1;
+  min-width: 140px;
+}
+.reference-recipe-identity h3 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+.reference-recipe-identity :is(p, small) {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.app.outpost .production-price-list {
+  display: block;
+}
+.app.outpost .material-price-row {
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.app.outpost .material-pricing-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+.app.outpost .production-output-price {
+  background: var(--elevated);
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.app.outpost .production-steps {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0;
+  background: var(--panel);
+  margin-bottom: 24px;
+}
+.app.outpost .production-steps button {
+  flex: 1;
+  padding: 16px;
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.app.outpost .production-steps button[aria-current="step"] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.app.outpost .production-steps button[aria-current="step"] span {
+  background: var(--accent);
+  color: #15100c;
+}
+.app.outpost .production-mode-nav {
+  margin-bottom: 16px;
+}
+/* Equipment and parties retain separate editing models and real item art. */
+.app.outpost .build-command-bar {
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.app.outpost .gear-studio.build-gear-studio {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 16px;
+}
+.app.outpost .gear-studio.build-gear-studio .gear-character {
+  grid-column: 1;
+  grid-row: 1;
+}
+.app.outpost .gear-studio.build-gear-studio .gear-browser {
+  grid-column: 2;
+  grid-row: 1;
+}
+.app.outpost .gear-studio.build-gear-studio .gear-details {
+  grid-column: 3;
+  grid-row: 1;
+}
+.app.outpost .gear-pane {
+  padding: 16px;
+}
+.app.outpost .studio-heading h2 {
+  font: 650 18px/1.4 var(--font-ui);
+}
+.app.outpost .character-slot {
+  border-radius: 6px;
+  background: var(--bg);
+}
+.app.outpost .character-slot.selected {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.app.outpost .gear-category-nav button,
+.app.outpost .production-batch-actions button {
+  border-radius: 6px;
+}
+.app.outpost .item-browser-choice {
+  border-radius: 6px;
+  background: var(--bg);
+}
+.app.outpost .item-browser-choice.selected {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.app.outpost .party-command-bar,
+.app.outpost .party-tools-bar {
+  border-radius: 8px;
+}
+.app.outpost .party-board-card {
+  box-shadow: none;
+}
+.app.outpost .party-board-role {
+  font-family: var(--font-ui);
+}
+.app.outpost .build-settings,
+.app.outpost .advanced-build,
+.app.outpost .party-notes {
+  margin-block: 16px;
+}
+@media (min-width: 1600px) {
+  .app.outpost .site-header {
+    padding-inline: max(32px, calc((100vw - 1440px) / 2 + 32px));
+  }
+}
+@media (max-width: 1279px) {
+  .app.outpost .site-header {
+    gap: 16px;
+    padding-inline: 24px;
+  }
+  .app.outpost .desktop-navigation {
+    gap: 16px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 160px;
+  }
+  .reference-market-layout {
+    grid-template-columns: 156px minmax(0, 1fr);
+    gap: 16px;
+  }
+  .app.outpost .market-workspace,
+  .app.outpost .market-workspace.is-setup {
+    grid-template-columns: minmax(0, 1fr) 240px;
+  }
+  .reference-hero {
+    gap: 24px;
+  }
+}
+@media (max-width: 1099px) {
+  .app.outpost .desktop-navigation {
+    display: none;
+  }
+  .reference-market-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reference-market-rail {
+    display: none;
+  }
+  .app.outpost .gear-studio.build-gear-studio {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .gear-studio.build-gear-studio .gear-character {
+    grid-column: 1;
+  }
+  .app.outpost .gear-studio.build-gear-studio .gear-browser {
+    grid-column: 2;
+  }
+  .app.outpost .gear-studio.build-gear-studio .gear-details {
+    grid-column: 1/-1;
+    grid-row: 2;
+  }
+  .reference-hero {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+  .reference-hero-copy h1 {
+    font-size: 44px;
+  }
+  .reference-hero-product .terminal-data-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reference-hero-product .terminal-history {
+    display: none;
+  }
+  .reference-feature {
+    padding: 20px;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost main {
+    padding: 24px 16px;
+  }
+  .app.outpost .site-header {
+    height: 64px;
+    padding-inline: 16px;
+    gap: 12px;
+  }
+  .app.outpost .top-brand,
+  .app.outpost .top-brand .outpost-logo {
+    width: 112px;
+    min-width: 112px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 36px;
+  }
+  .app.outpost .site-header .search-shortcut {
+    display: none;
+  }
+  .app.outpost .discord-login {
+    display: none;
+  }
+  .app.outpost .theme-toggle {
+    display: none;
+  }
+  .app.outpost .header-actions {
+    gap: 4px;
+  }
+  .app.outpost .page-title,
+  .app.outpost .production-calculator-page > .page-title {
+    font-size: 28px;
+  }
+  .app.outpost .market-explorer-page > .page-title {
+    font-size: 26px;
+  }
+  .reference-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    padding-block: 0 24px;
+  }
+  .reference-hero-copy h1 {
+    font-size: 44px;
+    max-width: 16ch;
+    margin-top: 12px;
+  }
+  .reference-hero-copy > p {
+    font-size: 15px;
+    margin-block: 16px 20px;
+  }
+  .reference-hero-copy .actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .reference-hero-facts {
+    display: none;
+  }
+  .reference-hero-product {
+    order: 2;
+  }
+  .reference-hero-product .terminal-item {
+    flex-wrap: wrap;
+  }
+  .reference-section-heading {
+    display: block;
+  }
+  .reference-section-heading h2,
+  .reference-market-entry h2 {
+    font-size: 24px;
+  }
+  .reference-guide-link {
+    display: none;
+  }
+  .reference-feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .reference-feature {
+    padding: 16px;
+  }
+  .reference-feature h3 {
+    font-size: 20px;
+    margin-top: 12px;
+  }
+  .reference-feature h3 br {
+    display: none;
+  }
+  .reference-feature :is(.feature-loadout, .feature-market-preview, .feature-role-preview) {
+    display: none;
+  }
+  .reference-feature .button {
+    min-height: 40px;
+  }
+  .reference-market-entry {
+    display: none;
+  }
+  .app.outpost .market-workspace,
+  .app.outpost .market-workspace.is-setup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .market-item-panel {
+    grid-column: 1;
+  }
+  .app.outpost .market-getting-started ul {
+    display: none;
+  }
+  .app.outpost .market-first-use {
+    padding: 12px;
+  }
+  .app.outpost .market-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .market-form > .button {
+    grid-column: 1/-1;
+  }
+  .app.outpost .market-start-examples {
+    flex-wrap: wrap;
+  }
+  .reference-market-history {
+    padding: 16px;
+  }
+  .reference-market-history > .section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .app.outpost .production-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .production-workspace .calculator-inputs > .panel,
+  .app.outpost .production-workspace > .production-materials,
+  .app.outpost .production-workspace > .result {
+    grid-column: 1;
+    grid-row: auto;
+    padding: 16px;
+  }
+  .app.outpost .production-journey[data-step="1"] .calculator-inputs {
+    display: contents;
+  }
+  .app.outpost .production-journey:not([data-step="1"]) .calculator-inputs {
+    display: none;
+  }
+  .app.outpost .production-steps {
+    position: sticky;
+    top: 64px;
+    z-index: 3;
+  }
+  .app.outpost .production-steps button {
+    padding: 12px 8px;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .app.outpost .gear-studio.build-gear-studio {
+    display: block;
+  }
+  .app.outpost .gear-studio .gear-pane {
+    display: none;
+  }
+  .app.outpost .gear-studio .gear-pane.mobile-active {
+    display: block;
+    margin-top: 16px;
+  }
+  .reference-city-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost *,
+  .app.outpost *::before,
+  .app.outpost *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Measured corrections from the first rendered comparison. */
+.app.outpost .site-header {
+  min-height: 72px;
+}
+.app.outpost .discord-login .discord-mark {
+  filter: brightness(0) invert(1);
+}
+.app.outpost.light .discord-login .discord-mark {
+  filter: none;
+}
+.app.outpost .reference-hero-product .terminal-data-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  padding: 0 16px 12px;
+  gap: 12px;
+}
+.app.outpost .reference-hero-product .terminal-chart-area {
+  height: 150px;
+  min-height: 150px;
+}
+.app.outpost .reference-hero-product .terminal-chart-area svg {
+  height: 150px;
+}
+.app.outpost .reference-hero-product .terminal-city-prices {
+  margin: 0;
+}
+.app.outpost .reference-hero-product .terminal-city-prices > div {
+  min-height: 42px;
+  padding: 8px 0;
+  font-size: 12px;
+}
+.app.outpost .reference-hero-product .terminal-history {
+  padding: 0;
+}
+.app.outpost .reference-hero-product .terminal-chart-heading {
+  padding: 0 0 8px;
+}
+.app.outpost .reference-hero-product .terminal-chart-controls {
+  padding: 8px 0;
+}
+.app.outpost .reference-hero-product .terminal-source {
+  padding: 8px 0;
+}
+.reference-advanced-assumptions {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 12px;
+}
+.reference-advanced-assumptions > summary {
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--accent-ink);
+}
+.app.outpost .reference-material-table th[scope="row"] {
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+.app.outpost .reference-material-table {
+  min-width: 580px;
+}
+.app.outpost .reference-material-table input[type="number"] {
+  min-width: 90px;
+  width: 100%;
+}
+.app.outpost .reference-material-table .material-item-heading {
+  margin: 0;
+  min-width: 140px;
+}
+.app.outpost .reference-material-table .material-return-choice {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.app.outpost .reference-material-table :is(th, td) {
+  padding: 12px 8px;
+}
+.reference-result-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.reference-result-cards > div {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+}
+.reference-result-cards :is(span, small) {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.reference-result-cards strong {
+  display: block;
+  font: 600 24px/1.5 var(--font-data);
+  overflow-wrap: anywhere;
+  margin-block: 8px;
+}
+.reference-result-cards .positive strong {
+  color: var(--success);
+}
+.reference-result-cards .negative strong {
+  color: var(--error);
+}
+.reference-accounting {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.reference-accounting summary {
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.reference-party-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  margin-block: 20px;
+}
+.reference-party-summary h2 {
+  font-size: 18px;
+  margin: 0;
+}
+.reference-party-summary p {
+  color: var(--muted);
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.reference-party-summary > p {
+  flex-basis: 100%;
+}
+.reference-role-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.reference-role-counts > span {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+.reference-role-counts strong {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--accent-ink);
+}
+.app.outpost .party-board[data-party-size="5"] .party-board-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .party-board[data-party-size="5"] .party-board-title {
+  grid-column: 1/-1;
+  grid-row: auto;
+  text-align: left;
+  padding: 0 0 12px;
+}
+.app.outpost .party-board[data-party-size="5"] .party-loadout-card:nth-child(n) {
+  grid-column: auto;
+  grid-row: auto;
+  width: auto;
+  margin: 0;
+}
+.app.outpost .party-loadout-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 8px;
+}
+.app.outpost .party-loadout-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+@media (max-width: 1099px) {
+  .app.outpost .reference-hero-product .terminal-data-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .site-header {
+    min-height: 64px;
+  }
+  .reference-home {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .reference-hero {
+    display: contents;
+  }
+  .reference-hero-copy {
+    order: 0;
+  }
+  .reference-discovery {
+    order: 1;
+  }
+  .reference-hero-product {
+    order: 2;
+  }
+  .app.outpost .production-journey[data-step="1"] .reference-quantity {
+    order: -1;
+  }
+  .app.outpost .production-workspace .calculator-inputs > .panel {
+    margin-bottom: 12px;
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-board-title {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.reference-party-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 16px;
+  align-items: start;
+}
+.reference-party-workspace > .party-board {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  padding: 16px;
+}
+.reference-party-workspace > .party-workspace {
+  display: contents;
+}
+.reference-party-workspace .party-roster {
+  grid-column: 1;
+  grid-row: 1;
+}
+.reference-available-builds {
+  grid-column: 2;
+  grid-row: 1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+.reference-available-builds h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+.reference-available-builds label {
+  margin-block: 12px;
+}
+.reference-available-builds ul {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  max-height: 520px;
+  overflow-y: auto;
+}
+.reference-available-builds li {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 12px;
+  border-top: 1px solid var(--border);
+}
+.reference-available-builds li > a {
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.reference-available-builds p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.app.outpost .reference-available-builds .button {
+  min-height: 36px;
+  padding: 8px;
+  font-size: 12px;
+}
+.app.outpost .contextual-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: min(480px, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  border: 0;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  padding: 20px;
+  background: var(--panel);
+  color: var(--text);
+  overflow-y: auto;
+}
+.app.outpost .contextual-drawer .gear-pane {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.app.outpost .contextual-drawer .item-browser-grid {
+  max-height: none;
+}
+.app.outpost .gear-studio .gear-search > div {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+.app.outpost .gear-studio .gear-search input {
+  border: 0;
+  background: transparent;
+  min-width: 0;
+}
+.app.outpost .build-gear-studio {
+  align-items: start;
+  border-radius: 8px;
+}
+.app.outpost .build-gear-studio .gear-pane {
+  align-self: start;
+}
+.app.outpost .guide-discovery-card {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 24px 0;
+}
+.app.outpost .guide-directory-grid {
+  display: block;
+}
+.app.outpost .guide-discovery-card h2 {
+  font: 650 24px/1.35 var(--font-ui);
+}
+.app.outpost .guide-body {
+  max-width: 72ch;
+  font-size: 16px;
+  line-height: 1.8;
+}
+.app.outpost .guild-discovery-card,
+.app.outpost .group-announcement {
+  background: var(--panel);
+  border-color: var(--border);
+  border-radius: 8px;
+}
+.app.outpost .item-reference-page {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+.app.outpost .item-reference-summary {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .item-data-notice {
+  background: var(--accent-wash);
+  border-color: var(--border);
+  color: var(--muted);
+}
+.app.outpost .item-ability-group {
+  border-color: var(--border);
+  background: var(--bg);
+  border-radius: 6px;
+}
+.app.outpost .item-provenance {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 1099px) {
+  .reference-party-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reference-available-builds {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+@media (min-width: 1100px) {
+  .app.outpost .reference-party-workspace .party-board[data-party-size="5"] .party-board-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .reference-party-workspace .party-gear-cell {
+    min-width: 0;
+  }
+  .reference-party-workspace .party-gear-cell img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .contextual-drawer {
+    width: 100vw;
+    border: 0;
+    padding: 16px;
+  }
+  .app.outpost .production-journey[data-step="1"] .reference-quantity {
+    order: 0;
+  }
+}
+.app.outpost:not(.light) .reference-hero-product .terminal-item > a {
+  color: #15100c;
+}
+.app.outpost:not(.light) .reference-hero-product .terminal-period button[aria-pressed="true"] {
+  color: #15100c;
+}
+.app.outpost.light .feature-role-preview span:first-child {
+  color: #225a94;
+}
+.app.outpost .market-explorer-page .market-board table {
+  min-width: 0;
+  table-layout: auto;
+}
+.app.outpost .market-explorer-page .market-board :is(th, td):nth-child(n + 5) {
+  display: none;
+}
+.app.outpost .market-explorer-page .market-inline-time {
+  display: block;
+}
+@media (max-width: 600px) {
+  .app.outpost .market-explorer-page .market-board :is(th, td):first-child {
+    display: none;
+  }
+  .app.outpost .market-explorer-page .market-board :is(th, td) {
+    padding: 10px 4px;
+    font-size: 12px;
+  }
+  .app.outpost .market-row-select {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+}
+.app.outpost:not(.light) .reference-hero-product .terminal-item > a {
+  color: var(--accent-ink);
+}
+.app.outpost .reference-hero-product .terminal-chart-area:has(.terminal-chart-empty) {
+  height: auto;
+  min-height: 150px;
+}
+.app.outpost .reference-hero-product .terminal-chart-empty {
+  padding: 16px 12px;
+  min-height: 150px;
+}
+.app.outpost .market-table-caption {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.app.outpost .market-table-caption > span {
+  white-space: normal;
+}
+@media (max-width: 780px) {
+  .app.outpost:not(.light) .reference-hero-product .terminal-item > a {
+    color: #15100c;
+  }
+}
+.app.outpost .reference-material-table {
+  min-width: 0;
+  table-layout: fixed;
+}
+.app.outpost .reference-material-table :is(th, td) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-family: var(--font-ui);
+}
+.app.outpost .reference-material-table .numeric {
+  font-family: var(--font-data);
+}
+.app.outpost .reference-material-table .material-item-heading {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.app.outpost .reference-material-table .material-item-heading strong {
+  min-width: 0;
+}
+.app.outpost .reference-material-table th:nth-child(1) {
+  width: 26%;
+}
+.app.outpost .reference-material-table th:nth-child(2) {
+  width: 11%;
+}
+.app.outpost .reference-material-table th:nth-child(3) {
+  width: 23%;
+}
+.app.outpost .reference-material-table th:nth-child(4) {
+  width: 17%;
+}
+.app.outpost .reference-material-table th:nth-child(5) {
+  width: 23%;
+}
+.app.outpost .reference-material-table input[type="number"] {
+  min-width: 0;
+  padding-inline: 8px;
+}
+@media (min-width: 781px) {
+  .app.outpost .production-workspace .reference-quantity .input-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .reference-material-table {
+    min-width: 520px;
+  }
+}
+/* Final six-width review: keep contextual prices and party labels readable. */
+.app.outpost .market-explorer-page .market-item-panel {
+  display: block;
+}
+.app.outpost .market-quote-summary {
+  display: block;
+}
+.app.outpost .market-quote-summary > div {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.app.outpost .market-quote-summary dd {
+  margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-loadout-card {
+    display: block;
+    min-width: 0;
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-card-heading {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-gear-matrix {
+    width: 100%;
+    max-width: 162px;
+    margin-block: 12px;
+  }
+  .app.outpost .party-board[data-party-size="5"] .party-card-status {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.app.outpost .reference-material-table th {
+  overflow-wrap: normal;
+}
+.reference-history-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.history-series-key {
+  color: var(--muted);
+  font-size: 13px;
+}
+.history-series-key::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: var(--accent-ink);
+}
+.app.outpost .reference-history-toolbar .button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.reference-price-figure {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  margin-block: 16px 0;
+}
+.reference-price-axis {
+  position: relative;
+  color: var(--muted);
+  font: 12px/1.5 var(--font-data);
+}
+.reference-price-axis span {
+  position: absolute;
+  right: 4px;
+  transform: translateY(-50%);
+}
+.reference-price-axis span:nth-child(1) {
+  top: 14.286%;
+}
+.reference-price-axis span:nth-child(2) {
+  top: 48.81%;
+}
+.reference-price-axis span:nth-child(3) {
+  top: 83.333%;
+}
+.app.outpost .reference-price-figure .price-chart {
+  height: 240px;
+  width: 100%;
+  margin: 0;
+}

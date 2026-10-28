@@ -5,7 +5,7 @@ test("search palette clears on dismissal, supports keyboard navigation and keeps
   page,
 }) => {
   await page.goto("/?region=asia");
-  await page.getByRole("button", { name: "Search Albion… Ctrl K", exact: true }).click();
+  await page.getByRole("button", { name: "Search items, builds… Ctrl K", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Global search", exact: true });
   const input = dialog.getByRole("searchbox");
   await expect(input).toBeFocused();
@@ -24,7 +24,10 @@ test("search palette clears on dismissal, supports keyboard navigation and keeps
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/tools\/transporting\?region=asia/);
-  await expect(page.getByLabel("Albion region", { exact: true })).toHaveValue("asia");
+  await expect(page.getByLabel("Albion region", { exact: true })).toHaveAttribute(
+    "data-region",
+    "asia",
+  );
 });
 
 test("equipment selection opens the real item, and the redesigned search and menus remain accessible", async ({

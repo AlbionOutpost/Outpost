@@ -1,0 +1,372 @@
+/* Workspace anatomy follows the supplied Market, production and equipment references. */
+.app.outpost .market-query-panel {
+  grid-column: 1/-1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 16px;
+  min-width: 0;
+}
+.app.outpost .market-query-panel .market-setup-heading {
+  display: none;
+}
+.app.outpost .market-query-panel .market-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(120px, 0.7fr) minmax(140px, 0.8fr) auto;
+  gap: 12px;
+  margin: 0;
+  align-items: end;
+}
+.app.outpost .market-query-panel .market-filters .catalog-picker {
+  grid-column: auto;
+  min-width: 0;
+}
+.market-query-panel > .reference-city-filter,
+.market-query-panel > .market-catalog-filters {
+  display: inline-block;
+  margin: 8px 20px 0 0;
+  vertical-align: top;
+}
+.market-query-panel .reference-city-options {
+  min-width: 280px;
+}
+.market-query-panel .reference-filter-chips {
+  margin-top: 8px;
+}
+.market-results-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+.app.outpost .market-results-heading h2 {
+  font: 650 19px/1.4 var(--font-ui);
+  margin: 0;
+}
+.market-results-heading > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .market-table-toolbar {
+  padding: 0 0 12px;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .market-table-toolbar label {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+}
+.app.outpost .market-table-toolbar select {
+  min-height: 34px;
+  height: 34px;
+  padding: 6px 10px;
+  margin: 0;
+  font-size: 12px;
+}
+/* Crafting: one visible answer, then separately auditable accounting. */
+.crafting-page-heading {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+.app.outpost .crafting-page-heading .page-title {
+  font: 800 44px/1.1 var(--font-display);
+  margin: 8px 0 12px;
+  letter-spacing: -0.01em;
+}
+.crafting-page-heading .page-title em {
+  font-style: normal;
+  color: var(--accent-ink);
+}
+.app.outpost .crafting-page-heading .intro {
+  font-size: 14px;
+  margin: 0;
+}
+.crafting-proof-points {
+  display: flex;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.crafting-proof-points > span {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 6px;
+  max-width: 130px;
+}
+.crafting-proof-points svg {
+  color: var(--accent-ink);
+  margin-bottom: 2px;
+}
+.crafting-proof-points strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+.crafting-proof-points small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.app.outpost .production-workspace .reference-result-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.app.outpost .reference-result-cards :is(strong, output) {
+  display: block;
+  font: 650 26px/1.45 var(--font-data);
+  font-style: normal;
+  margin-block: 8px;
+  overflow-wrap: anywhere;
+}
+.app.outpost .reference-result-cards .positive :is(strong, output) {
+  color: var(--success);
+}
+.app.outpost .reference-result-cards .negative :is(strong, output) {
+  color: var(--error);
+}
+.app.outpost .reference-result-cards .neutral :is(strong, output) {
+  color: var(--text);
+}
+.app.outpost .production-workspace > .production-accounting-panel {
+  grid-column: 1/5;
+  padding: 20px;
+}
+.app.outpost .production-workspace > .production-assumption-summary {
+  grid-column: 5/7;
+  padding: 20px;
+}
+.app.outpost .production-accounting-panel .reference-accounting {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .production-accounting-panel .reference-accounting > summary {
+  font: 650 18px/1.4 var(--font-ui);
+}
+.production-accounting-panel dl > div,
+.production-assumption-summary dl > div {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.production-accounting-panel :is(dt, dd),
+.production-assumption-summary :is(dt, dd) {
+  font-size: 13px;
+}
+.production-accounting-panel dd,
+.production-assumption-summary dd {
+  margin: 0;
+  text-align: right;
+  font-family: var(--font-data);
+  flex-shrink: 0;
+}
+.production-assumption-summary p {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+/* Equipment is the object, abilities are its editor, and the summary is separate. */
+.app.outpost .gear-studio.build-gear-studio {
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.2fr) 250px;
+  gap: 16px;
+  border: 0;
+  overflow: visible;
+}
+.app.outpost .build-gear-studio > .gear-browser {
+  display: none;
+}
+.app.outpost .gear-studio.build-gear-studio > .gear-character {
+  grid-column: 1;
+  grid-row: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.app.outpost .gear-studio.build-gear-studio > .gear-details {
+  grid-column: 2;
+  grid-row: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-height: none;
+  overflow: visible;
+}
+.app.outpost .gear-studio.build-gear-studio > .gear-summary {
+  grid-column: 3;
+  grid-row: 1;
+  display: block;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.app.outpost .gear-summary h2 {
+  font: 650 18px/1.4 var(--font-ui);
+  margin: 0 0 20px;
+}
+.gear-completion strong {
+  display: block;
+  font: 650 44px/1.2 var(--font-data);
+}
+.gear-completion small {
+  font-size: 20px;
+  color: var(--muted);
+}
+.gear-completion > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.gear-summary dl {
+  margin-block: 24px;
+}
+.gear-summary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.gear-summary dd {
+  margin: 0;
+  font-family: var(--font-data);
+}
+.gear-summary-note {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+}
+.app.outpost .gear-summary-note h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+.gear-summary-note p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.app.outpost .gear-summary .gear-coverage {
+  margin-top: 20px;
+  font-size: 12px;
+}
+.app.outpost .build-command-bar {
+  grid-template-columns: minmax(0, 1fr) 160px auto auto;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.app.outpost .build-command-bar > label:first-child input {
+  font-size: 20px;
+  font-weight: 600;
+}
+.app.outpost .party-command-bar {
+  grid-template-columns: minmax(0, 1fr) 220px auto;
+  align-items: end;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .party-command-bar > label:first-child input {
+  font-size: 20px;
+  font-weight: 600;
+}
+@media (max-width: 1199px) {
+  .crafting-proof-points {
+    display: none;
+  }
+}
+@media (max-width: 1099px) {
+  .app.outpost .gear-studio.build-gear-studio {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .gear-studio.build-gear-studio > .gear-summary {
+    grid-column: 1/-1;
+    grid-row: 2;
+  }
+  .app.outpost .build-command-bar {
+    grid-template-columns: minmax(0, 1fr) 150px auto;
+  }
+  .app.outpost .build-command-bar > button:last-child {
+    grid-column: 3;
+  }
+  .app.outpost .market-query-panel .market-filters {
+    grid-template-columns: minmax(0, 2fr) minmax(120px, 1fr) minmax(120px, 1fr);
+  }
+  .app.outpost .market-query-panel .market-filters > button {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .market-query-panel {
+    padding: 16px;
+  }
+  .app.outpost .market-query-panel .market-filters {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .market-query-panel .market-filters .catalog-picker {
+    grid-column: 1/-1;
+  }
+  .app.outpost .market-query-panel .market-filters > button {
+    grid-column: 1/-1;
+  }
+  .app.outpost .market-table-toolbar label {
+    justify-content: start;
+  }
+  .crafting-page-heading {
+    display: block;
+    padding-bottom: 20px;
+  }
+  .app.outpost .crafting-page-heading .page-title {
+    font-size: 34px;
+  }
+  .app.outpost .production-workspace > .production-accounting-panel,
+  .app.outpost .production-workspace > .production-assumption-summary {
+    grid-column: 1;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .production-journey:not([data-step="3"])
+    :is(.production-accounting-panel, .production-assumption-summary) {
+    display: none;
+  }
+  .app.outpost .gear-studio.build-gear-studio {
+    display: block;
+  }
+  .app.outpost .gear-studio.build-gear-studio > .gear-pane {
+    display: none;
+  }
+  .app.outpost .gear-studio.build-gear-studio > .gear-pane.mobile-active {
+    display: block;
+  }
+  .app.outpost .gear-studio.build-gear-studio > .gear-summary {
+    display: none;
+  }
+  .app.outpost .build-command-bar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+  .app.outpost .build-command-bar > label:first-child {
+    grid-column: 1/-1;
+  }
+  .app.outpost .build-command-bar > button:last-child {
+    grid-column: 1/-1;
+  }
+  .app.outpost .party-command-bar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .production-workspace .reference-result-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

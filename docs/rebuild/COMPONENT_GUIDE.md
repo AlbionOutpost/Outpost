@@ -1,6 +1,6 @@
 # Component and module responsibility map
 
-The [generated inventory](INVENTORY.md#components-60) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
+The [generated inventory](INVENTORY.md) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
 
 | Concern                 | Components                                                                                                | Important contract                                                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |

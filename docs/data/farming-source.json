@@ -1,0 +1,28 @@
+{
+  "source": "Owner-supplied AlbionOnlineGrind captured factual table",
+  "archivePath": "Scrape/albiononlinegrind.com/report/data/static-tables/farm-profit-calculator-95bd4c2a744fc339.json",
+  "sourceSha256": "3163614d1f7aa20de18266f04c34ac594dd63d39a1c10bba2178736aa655592e",
+  "outputPath": "src/lib/albion/farming-crops.json",
+  "outputSha256": "f3c8c10dc9fdfa4855f9174d970f7afc3c392c3f05ce062fccdaa93a4943da24",
+  "rows": 15,
+  "fields": [
+    "seedId",
+    "productId",
+    "seedName",
+    "productName",
+    "tier",
+    "type",
+    "seedYieldBase",
+    "seedYieldWatered"
+  ],
+  "verification": {
+    "imported": true,
+    "typedAndSchemaConsumed": true,
+    "sourceFieldsReviewed": true,
+    "inGameManuallyVerified": false,
+    "currentPatchVerified": false
+  },
+  "runtimeScope": "Selectable crop/herb IDs and editable historical seed-return defaults; no automatic harvest or current-game fee/yield preset",
+  "rightsBoundary": "Owner explicitly identifies old website as theirs and requests feature reuse. Minimal factual fields only; no blanket third-party asset/source redistribution rights inferred. Existing official item-renderer integration supplies imagery.",
+  "mechanicsSource": "https://albiononline.com/news/guide-farming"
+}

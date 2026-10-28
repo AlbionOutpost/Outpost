@@ -7,6 +7,7 @@ import { ToolIcon } from "./tool-icon";
 import { ItemIcon } from "./item-icon";
 import { useAtlasRegion } from "./region-context";
 const toolArtwork: Record<string, string[]> = {
+  fish: ["T7_FISH_FRESHWATER_FOREST_RARE"],
   market: ["T4_BAG"],
   craft: ["T4_MAIN_AXE"],
   refine: ["T4_METALBAR"],

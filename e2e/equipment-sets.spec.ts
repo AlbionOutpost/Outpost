@@ -36,7 +36,9 @@ test("full sets persist in builds, copy into comps independently, and retain pri
     await page.getByRole("button", { name: "Apply template", exact: true }).click();
     await expect(page.locator(".character-slot.equipped")).toHaveCount(10);
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Rending Spin");
-    await page.getByLabel("Main hand alternative", { exact: true }).selectOption("T5_MAIN_AXE");
+    await page.getByRole("button", { name: "Choose alternative Main hand", exact: false }).click();
+    await page.getByLabel("Browse tier", { exact: true }).selectOption("5");
+    await page.getByRole("button", { name: /^Equip Battleaxe/ }).click();
     await page.getByLabel("Spare set name", { exact: true }).fill("Boss swap");
     await page.getByRole("button", { name: "Save active as spare set", exact: true }).click();
     await expect(tools).toContainText("Boss swap");

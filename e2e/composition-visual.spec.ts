@@ -69,6 +69,14 @@ test("populated five and twenty player fixtures remain editable and export a wid
       for (const width of [1440, 390, 320]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
         await page.goto(`/compositions/${comp.id}/edit`);
+        if (count === 5 && width <= 390) {
+          const card = page.locator(".party-loadout-card").first();
+          await expect(card).toBeVisible();
+          const cardBounds = await card.boundingBox();
+          const headingBounds = await card.locator(".party-card-heading").boundingBox();
+          expect(cardBounds!.height).toBeLessThan(600);
+          expect(headingBounds!.width).toBeGreaterThan(120);
+        }
         await expect(page.getByLabel("Comp title", { exact: true })).toBeVisible();
         await expect(page.getByLabel("Comp title", { exact: true })).toHaveValue(
           `${count} player visual QA fixture`,

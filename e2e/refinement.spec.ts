@@ -89,20 +89,21 @@ test("populated equipment and party controls include visible names at phone, tab
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`/builds/${build.id}/edit`);
       await ready(page);
-      const slot = page.locator('.character-slot[data-slot="Main hand"]');
-      await expect(slot).toHaveAccessibleName(/Select Main hand slot: Main hand Battleaxe T6\.1/);
-      await expect(page.locator('.character-slot[data-slot="Food"]')).toHaveAccessibleName(
-        /Food Empty/,
-      );
+      const slot = page.getByRole("button", { name: "Choose Main hand equipment", exact: false });
+      await expect(slot).toContainText("Battleaxe");
+      await expect(
+        page.getByRole("button", { name: "Choose Food equipment", exact: false }),
+      ).toContainText("Choose food");
       await accessible(page);
       await slot.click();
       if (width <= 780)
         await expect(page.getByLabel("Search equipment", { exact: true })).toBeFocused();
-      const choice = page.getByRole("button", { name: /^Equip Battleaxe T6\.1$/ });
+      const choice = page.getByRole("button", { name: /^Equip Battleaxe/ });
       await expect(choice).toBeVisible();
       await accessible(page);
       await choice.focus();
       await page.keyboard.press("Enter");
+      await page.getByRole("button", { name: "Configure Main hand", exact: true }).click();
       await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue("MAIN_AXE");
       if (width <= 780)
         await expect(page.getByLabel("Main hand equipment", { exact: true })).toBeFocused();

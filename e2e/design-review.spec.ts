@@ -113,13 +113,15 @@ test("design review covers application pages, equipment, guilds and reduced moti
               .first()
               .evaluate((el) => getComputedStyle(el).fontFamily),
           ).toMatch(
-            route !== "/" && (await page.locator("main h1.display-title:not(.page-title)").count())
+            route === "/" || (await page.locator("main h1.display-title:not(.page-title)").count())
               ? /barlow/i
               : /inter/i,
           );
           if (route === "/tools/market") {
             await page.getByRole("button", { name: "Compare prices", exact: true }).click();
-            await expect(page.getByRole("cell", { name: "Caerleon", exact: true })).toBeVisible();
+            await expect(
+              page.getByRole("button", { name: "Caerleon market details", exact: true }),
+            ).toBeVisible();
             expect(
               await page
                 .locator("td.numeric")
@@ -128,13 +130,34 @@ test("design review covers application pages, equipment, guilds and reduced moti
             ).toMatch(/geistMono/i);
           }
           if (route === "/builds/new") {
-            await page.getByRole("button", { name: /^Select Main hand slot\b/ }).click();
+            await page
+              .getByRole("button", { name: "Choose Main hand equipment", exact: false })
+              .click();
             await page.getByRole("button", { name: /^Equip Battleaxe\b/ }).click();
-            if (width <= 780)
-              await page.getByRole("button", { name: "Equipment", exact: true }).click();
           }
-          if (route === "/compositions/new")
+          if (route === "/compositions/new") {
             await page.getByRole("button", { name: "20 players", exact: true }).click();
+            if (width >= 1440) {
+              const row = page.locator(".party-roster .roster-row").first();
+              await row.evaluate((el) =>
+                el.scrollIntoView({ block: "center", behavior: "instant" }),
+              );
+              await row.locator(".member-select").hover();
+              await expect
+                .poll(async () => {
+                  const member = (await row.locator(".member-select").boundingBox())!;
+                  const drag = (await row.locator(".drag-handle").boundingBox())!;
+                  const move = (await row.locator(".roster-move").boundingBox())!;
+                  return (
+                    member.x >= drag.x + drag.width - 1 && member.x + member.width <= move.x + 1
+                  );
+                })
+                .toBe(true);
+              // Restore the route audit's original viewport after testing the row hit areas.
+              await page.mouse.move(0, 0);
+              await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+            }
+          }
           const top = await page.locator(".site-header").boundingBox();
           const content = await page.locator("main").boundingBox();
           // Redesigned chrome is 88px on desktop and 76px on mobile/tablet.

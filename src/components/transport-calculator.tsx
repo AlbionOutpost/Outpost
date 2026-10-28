@@ -8,6 +8,10 @@ import {
   type TransportInput,
 } from "@/lib/albion/transport";
 import { cities } from "@/lib/albion/region-config";
+import { CatalogItemPicker } from "./catalog-item-picker";
+import { ItemIcon } from "./item-icon";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { ArrowRight, Truck } from "lucide-react";
 export function TransportCalculator() {
   const region = useAtlasRegion(),
     [draft, setDraft] = useState(() => initialTransport(region)),
@@ -52,10 +56,36 @@ export function TransportCalculator() {
   }
   return (
     <>
-      <div className="calculator-grid">
+      <div className="transport-route-strip" aria-label="Transport route">
+        <Truck size={20} aria-hidden="true" />
+        <span>
+          <small>Purchase market</small>
+          <strong>{draft.fromCity}</strong>
+        </span>
+        <ArrowRight size={18} aria-hidden="true" />
+        <span>
+          <small>Destination market</small>
+          <strong>{draft.toCity}</strong>
+        </span>
+        <span className="transport-route-region">
+          {region} · {draft.saleMode === "instant" ? "Sell to buy orders" : "Sell listing estimate"}
+        </span>
+      </div>
+      <div className="calculator-grid transport-workspace">
         <div className="calculator-inputs">
           <section className="panel">
             <h2>Route & cargo</h2>
+            <CatalogItemPicker
+              label="Find transport cargo"
+              onSelect={(item) => update("itemId", item.id)}
+            />
+            <div className="transport-item-identity">
+              <ItemIcon id={draft.itemId} quality={draft.quality} size={56} />
+              <div>
+                <strong>{equipmentName(draft.itemId)}</strong>
+                <small>Selected cargo · weight is entered below</small>
+              </div>
+            </div>
             <label>
               Transport item identifier
               <input
@@ -99,8 +129,10 @@ export function TransportCalculator() {
                   value={draft.quality}
                   onChange={(e) => setDraft((d) => ({ ...d, quality: Number(e.target.value) }))}
                 >
-                  {[1, 2, 3, 4, 5].map((q) => (
-                    <option key={q}>{q}</option>
+                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
+                    <option key={q} value={i + 1}>
+                      {q}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -137,7 +169,7 @@ export function TransportCalculator() {
               route safety, liquidity, volume limits or order execution.
             </p>
           </section>
-          <section className="panel section">
+          <section className="panel section" id="transport-prices">
             <h2>Purchase & sale observations</h2>
             <button className="button secondary" disabled={busy} onClick={load}>
               Load transport market prices
@@ -176,40 +208,75 @@ export function TransportCalculator() {
           </section>
         </div>
         <section className="panel result">
-          <div className="eyebrow">TRANSPORT NET PROFIT</div>
-          <strong
-            key={result?.profit ?? "empty"}
-            className={`value-update${(result?.profit ?? 0) < 0 ? " negative" : ""}`}
-          >
-            {money(result?.profit)}
-          </strong>
+          <h2>Transport net profit</h2>
+          {result?.complete ? (
+            <>
+              <strong
+                className={
+                  result?.profit == null || result.profit === 0
+                    ? "neutral"
+                    : result.profit < 0
+                      ? "negative"
+                      : "positive"
+                }
+              >
+                {money(result?.profit)}
+              </strong>
+              <p className="result-unit">silver after configured costs and fees</p>
+            </>
+          ) : (
+            <div className="transport-initial-state" role="status">
+              <Truck size={28} aria-hidden="true" />
+              <h3>Price your cargo</h3>
+              <p>
+                Choose an item and route, then load observations or enter purchase and sale prices.
+                Your profit will appear here.
+              </p>
+              <a className="button secondary" href="#transport-prices">
+                Enter cargo prices <ArrowRight size={15} />
+              </a>
+            </div>
+          )}
+          {result && (
+            <div className="cargo-capacity-summary">
+              <div>
+                <span>Cargo weight</span>
+                <strong>{money(result.totalWeight)} kg</strong>
+              </div>
+              <div>
+                <span>Available capacity / trip</span>
+                <strong>{money(draft.capacity)} kg</strong>
+              </div>
+              <div>
+                <span>Trips required</span>
+                <strong>{result.trips.toLocaleString()}</strong>
+              </div>
+            </div>
+          )}
           {!result && (
             <p role="alert">
               Check item ID, quantities, capacity, fees and market mode. Black Market uses buy
               orders only.
             </p>
           )}
-          {result && !result.complete && (
-            <p role="status">Missing or mismatched prices. Enter overrides or load observations.</p>
-          )}
           {result?.stale && <p className="error">Stale source observations included.</p>}
-          <dl>
-            {[
-              ["Cargo weight", result?.totalWeight],
-              ["Estimated trips", result?.trips],
-              ["Transport and risk costs", result?.transportCost],
-              ["Total cost", result?.cost],
-              ["Revenue", result?.revenue],
-              ["Taxes and listing fees", result?.fees],
-              ["ROI (%)", result?.roi],
-              ["Margin (%)", result?.margin],
-            ].map(([label, value]) => (
-              <div key={String(label)}>
-                <dt>{label}</dt>
-                <dd>{money(value as number | null)}</dd>
-              </div>
-            ))}
-          </dl>
+          {result?.complete && (
+            <dl>
+              {[
+                ["Transport and risk costs", result?.transportCost],
+                ["Total cost", result?.cost],
+                ["Revenue", result?.revenue],
+                ["Taxes and listing fees", result?.fees],
+                ["ROI (%)", result?.roi],
+                ["Margin (%)", result?.margin],
+              ].map(([label, value]) => (
+                <div key={String(label)}>
+                  <dt>{label}</dt>
+                  <dd>{money(value as number | null)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </section>
       </div>
       <section className="panel section">

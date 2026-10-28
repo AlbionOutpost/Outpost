@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-10-27",
+  "permission": "Owner-authorized old-page recovery,2026-10-28",
+  "sources": {
+    "Scrape/albiononlinegrind.com/report/data/game-item-definitions.json": "66e5518b13414e641d7422a7698e8c2d1dbcd407cc63ab961ff773ecbd274d5b",
+    "Scrape/albiononlinegrind.com/report/data/item-names.json": "3f2df82c67766a7c44e0a14580766454b5442db1030c710fa1c3203ed93ccc47",
+    "Scrape/albiononlinegrind.com/report/data/static-tables/chopped-fish-calculator-5b928be004725cc2.json": "9a3f3b20d4778fa6f4cce253b90c1a8d1084238e1ba381c1dc279ee86db5ca87",
+    "Scrape/albiononlinegrind.com/report/evidence/source/pages/guides/fishing-leveling-guide-b41f41c834d12087.js": "4470de66e88b81596057941db783b573ac03c87fd0a0b8586ed9f0a69957beda"
+  },
+  "fish": 41,
+  "matchingChopTableRows": 37,
+  "fameRows": 36,
+  "tierDiscrepancies": [
+    {
+      "id": "T1_FISH_SALTWATER_ALL_COMMON",
+      "declaredTier": 2,
+      "idTier": 1
+    }
+  ],
+  "method": "Explicit T1_FISHCHOPS single-fish recipe amounts; independently cross-checked against all37 old-tool rows. Fame from literal four-argument calls in the archived guide, without executing captured code. Old prices, volumes, date snapshots and frontend functions excluded.",
+  "fameScope": "Historical in-game Premium values from the guide; user editable, not current modifiers/LP/level thresholds",
+  "currentPatchVerified": false,
+  "output": "public/library/grind-fishing.json",
+  "outputSha256": "7f497cfabef815b54f00296f87369b47c8f575c482a1c920651189fff25d0198"
+}

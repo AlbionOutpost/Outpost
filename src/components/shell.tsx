@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { flushSync } from "react-dom";
-import { useState, useRef, useEffect, ViewTransition } from "react";
+import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Menu,
@@ -15,7 +14,6 @@ import {
   BookOpen,
   Castle,
   Grid2X2,
-  Globe2,
 } from "lucide-react";
 import { DiscordMark } from "./discord-mark";
 import { ToolIcon } from "./tool-icon";
@@ -23,6 +21,7 @@ import { tools } from "@/lib/tool-directory";
 import { GlobalSearch } from "./global-search";
 import { Wordmark } from "./wordmark";
 import { RegionContext } from "./region-context";
+import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
 
 const toolLinks = [
@@ -30,8 +29,12 @@ const toolLinks = [
   ["/tools/market", "Market explorer"],
   ["/tools/flipping", "Profit calculator"],
   ["/tools/crafting", "Crafting"],
+  ["/tools/cooking", "Cooking"],
+  ["/tools/alchemy", "Alchemy"],
+  ["/tools/fishing", "Fishing"],
   ["/tools/refining", "Refining"],
   ["/tools/enchanting", "Enchanting"],
+  ["/tools/farming", "Farming"],
   ["/tools/transporting", "Transport planner"],
   ["/tools/gold", "Gold history"],
   ["/items", "Item reference"],
@@ -47,7 +50,7 @@ const accountLinks = [
   ["/timers", "Personal timers"],
   ["/favorites", "My favorites"],
   ["/settings", "Settings"],
-  ["/signin", "Sign in with Discord"],
+  ["/signin", "Sign in"],
 ];
 
 export function Shell({
@@ -103,17 +106,8 @@ export function Shell({
   }, []);
   const toggleTheme = () => {
     const next = !light;
-    const update = () => {
-      flushSync(() => setLight(next));
-      document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-    };
-    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      update();
-      return;
-    }
-    const transition = document.startViewTransition(update);
-    transition.types.add("theme");
-    void transition.ready.catch(() => {});
+    setLight(next);
+    document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
   };
   const navigate = () => {
     setOpen(false);
@@ -121,13 +115,6 @@ export function Shell({
   };
   const primaryNavigation = (
     <nav className="desktop-navigation" aria-label="Main navigation">
-      <Link
-        href={href("/tools/market")}
-        onClick={navigate}
-        aria-current={path === "/tools/market" ? "page" : undefined}
-      >
-        Market
-      </Link>
       <details
         className={`nav-dropdown${active("/tools") || active("/items") ? " is-active" : ""}`}
       >
@@ -168,11 +155,13 @@ export function Shell({
                               ? "Raw to refined"
                               : url === "/tools/enchanting"
                                 ? "Rune, soul & relic costs"
-                                : url === "/tools/transporting"
-                                  ? "Cargo & city margins"
-                                  : url === "/tools/gold"
-                                    ? "Regional observations"
-                                    : "Gear & item details"}
+                                : url === "/tools/farming"
+                                  ? "Crops, seeds & watering"
+                                  : url === "/tools/transporting"
+                                    ? "Cargo & city margins"
+                                    : url === "/tools/gold"
+                                      ? "Regional observations"
+                                      : "Gear & item details"}
                     </small>
                   </span>
                   <ArrowUpRight size={15} />
@@ -203,11 +192,19 @@ export function Shell({
           {label}
         </Link>
       ))}
+      <Link
+        href={href("/tools/market")}
+        onClick={navigate}
+        aria-current={path === "/tools/market" ? "page" : undefined}
+      >
+        Market
+      </Link>
     </nav>
   );
   return (
     <RegionContext.Provider value={region}>
       <div
+        data-motion-enabled="true"
         className={`app outpost${light ? " light" : ""}${path === "/" ? " home-route" : ""}${workspace ? " workspace-route" : ""}${productShell ? " product-route" : ""}`}
       >
         <a className="skip-link" href="#main-content">
@@ -321,48 +318,38 @@ export function Shell({
             {primaryNavigation}
             <div className="header-actions">
               <GlobalSearch />
-              <label className="region" title="Market server. Prices are separate for each region.">
-                <Globe2 className="region-globe" size={15} aria-hidden="true" />
-                <select
-                  aria-label="Albion region"
-                  value={region}
-                  onChange={(e) => {
-                    const p = new URLSearchParams(search.toString());
-                    p.set("region", e.target.value);
-                    setSavedRegion(e.target.value);
-                    document.cookie = `atlas-region=${e.target.value}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-                    router.push(`${path}?${p}`);
-                  }}
-                >
-                  <option value="europe">Europe</option>
-                  <option value="americas">Americas</option>
-                  <option value="asia">Asia</option>
-                </select>
-                <ChevronDown className="region-chevron" size={12} aria-hidden="true" />
-              </label>
+              <RegionPicker
+                value={region}
+                onChange={(next) => {
+                  const p = new URLSearchParams(search.toString());
+                  p.set("region", next);
+                  setSavedRegion(next);
+                  document.cookie = `atlas-region=${next}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+                  router.push(`${path}?${p}`);
+                }}
+              />
               <button
                 type="button"
-                className="theme-toggle"
+                className="theme-toggle theme-single"
                 aria-label="Toggle theme"
                 aria-pressed={light}
                 title={light ? "Switch to dark mode" : "Switch to light mode"}
                 onClick={toggleTheme}
               >
-                <span className="theme-choice theme-sun">
-                  <Sun size={16} />
-                </span>
-                <span className="theme-choice theme-moon">
-                  <Moon size={16} />
-                </span>
+                {light ? (
+                  <Sun size={18} aria-hidden="true" />
+                ) : (
+                  <Moon size={18} aria-hidden="true" />
+                )}
               </button>
-              {path === "/" && !authenticated ? (
+              {!authenticated ? (
                 <Link
                   className="button secondary home-auth-action discord-login"
-                  aria-label="Log in with Discord"
+                  aria-label="Sign in"
                   href={href("/signin")}
                 >
                   <DiscordMark />
-                  <span className="discord-label">Log in with Discord</span>
+                  <span className="discord-label">Sign in</span>
                 </Link>
               ) : (
                 <details className="nav-dropdown account-dropdown">
@@ -399,31 +386,22 @@ export function Shell({
           <div
             className={`${productShell ? "product-frame " : ""}${workspace ? "workspace-frame" : "page-frame"}`}
           >
-            <ViewTransition
-              key={path}
-              name="outpost-page"
-              default="none"
-              share="route-change"
-              enter="route-enter"
-              exit="route-exit"
+            <main
+              id="main-content"
+              tabIndex={-1}
+              data-page={path.split("/")[1] || "home"}
+              data-width={
+                path.startsWith("/compositions/")
+                  ? "board"
+                  : path.startsWith("/guides/") || path === "/legal"
+                    ? "reading"
+                    : workspace
+                      ? "workspace"
+                      : "marketing"
+              }
             >
-              <main
-                id="main-content"
-                tabIndex={-1}
-                data-page={path.split("/")[1] || "home"}
-                data-width={
-                  path.startsWith("/compositions/")
-                    ? "board"
-                    : path.startsWith("/guides/") || path === "/legal"
-                      ? "reading"
-                      : workspace
-                        ? "workspace"
-                        : "marketing"
-                }
-              >
-                {children}
-              </main>
-            </ViewTransition>
+              {children}
+            </main>
           </div>
           <footer>
             <Link href={href("/")} className="footer-wordmark">

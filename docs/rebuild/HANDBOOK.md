@@ -580,7 +580,7 @@ Settings Server Actions are `saveSettings(previous,FormData)` and `deleteAccount
 
 ## 08. Pages, workflows and state contracts
 
-The [generated page table](INVENTORY.md#page-routes-32) is the exhaustive32-route list. Every route must render inside the shared shell with a primary heading, correct access state and functional links/actions. `/loading`, `/error` and `/not-found` are not extra content routes: Next loading/error/not-found files provide boundary states.
+The [generated page table](INVENTORY.md) is the exhaustive current route list. Every route must render inside the shared shell with a primary heading, correct access state and functional links/actions. `/loading`, `/error` and `/not-found` are not extra content routes: Next loading/error/not-found files provide boundary states.
 
 ### Homepage and global navigation
 
@@ -623,7 +623,7 @@ Desktop production is assumptions/materials/results in distinct working columns;
 | Route               | Access and behavior                                                                                                                      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `/builds`           | Public discovery or session-owned collection; q/content/weapon/sort/mine/page filters; actual favorites/recent dates and image-led cards |
-| `/builds/new`       | Sign-in redirect if unauthenticated; create full draft through equipment workbench and save real version1                                |
+| `/builds/new`       | Guest editor with browser-local save/restore/import/export/preview; authenticated visitors save real version1                            |
 | `/builds/[id]`      | Read policy, loadout/abilities/notes, source cost, actual author/revision and supported community actions; unavailable404                |
 | `/builds/[id]/edit` | Owner editing, expected-version save, independent swaps, restore/duplicate/delete according to actual actions                            |
 
@@ -674,6 +674,10 @@ Timers are manual reminders, not verified automatic game cooldowns. Paused state
 ### Universal state acceptance
 
 Every rebuild must retain initial/loading, complete/partial data, valid empty, source failure, validation failure, auth redirect/404/403, stale version409 and retained-draft recovery as appropriate. Distinguish real anonymous pages from isolated authenticated browser fixtures. Use actual screenshots for desktop/tablet/phone and verify navigation after state changes; a route existing in the file tree is not sufficient acceptance.
+
+### Aggregate production and farming
+
+Crafting/refining/enchanting embed a30-recipe production planner with item/quality/city shopping aggregation, preserved per-recipe prices, upfront/cash/economic accounting, bounded manual-preserving observation refresh, private plans and static share/export. `/tools/farming` adds15 historical crops/herbs, user-supplied yield and partial watering, seed asset value, supplied fees, observations and private scenarios. Dashboard links resolve a production plan to its first recipe kind and saved region. These are declared subsets, not full old-site/current-patch parity; [source/formula/evidence ledger](../engineering/ALBION_GRIND_PARITY_2026-10-28.md).
 
 ---
 
@@ -759,7 +763,7 @@ Inspect actual1440×900,1920×1080,768px tablet,390×844,375px and320px pages. C
 
 ## 10. Component and module responsibility map
 
-The [generated inventory](INVENTORY.md#components-60) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
+The [generated inventory](INVENTORY.md) lists every component export, client boundary and source link; `inventory.json` includes import edges and file hashes. This chapter explains which modules compose into each workflow so another AI does not flatten them into a generic dashboard.
 
 | Concern                 | Components                                                                                                | Important contract                                                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1781,42 +1785,51 @@ model MarketWatchItem {
 
 Generated from the current source, without private environment values or database contents. Regenerate with `node scripts/rebuild-inventory.mjs`; verify with `--check`. [Full JSON](inventory.json) includes exports, imports, schema definitions, locked runtime versions and file hashes. Auth-boundary mentions are textual navigation aids; [security contracts](SECURITY_AND_AUTH.md) and actual handlers govern permissions.
 
-### Page routes (32)
+### Page routes (41)
 
-| Route                     | Source                                                                                   | Direct client component |
-| ------------------------- | ---------------------------------------------------------------------------------------- | ----------------------- |
-| `/admin/reports`          | [src/app/admin/reports/page.tsx](../../src/app/admin/reports/page.tsx)                   | No (server component)   |
-| `/builds/[id]/edit`       | [src/app/builds/[id]/edit/page.tsx](../../src/app/builds/[id]/edit/page.tsx)             | No (server component)   |
-| `/builds/[id]`            | [src/app/builds/[id]/page.tsx](../../src/app/builds/[id]/page.tsx)                       | No (server component)   |
-| `/builds/new`             | [src/app/builds/new/page.tsx](../../src/app/builds/new/page.tsx)                         | No (server component)   |
-| `/builds`                 | [src/app/builds/page.tsx](../../src/app/builds/page.tsx)                                 | No (server component)   |
-| `/compositions/[id]/edit` | [src/app/compositions/[id]/edit/page.tsx](../../src/app/compositions/[id]/edit/page.tsx) | No (server component)   |
-| `/compositions/[id]`      | [src/app/compositions/[id]/page.tsx](../../src/app/compositions/[id]/page.tsx)           | No (server component)   |
-| `/compositions/new`       | [src/app/compositions/new/page.tsx](../../src/app/compositions/new/page.tsx)             | No (server component)   |
-| `/compositions`           | [src/app/compositions/page.tsx](../../src/app/compositions/page.tsx)                     | No (server component)   |
-| `/dashboard`              | [src/app/dashboard/page.tsx](../../src/app/dashboard/page.tsx)                           | No (server component)   |
-| `/favorites`              | [src/app/favorites/page.tsx](../../src/app/favorites/page.tsx)                           | No (server component)   |
-| `/groups/[slug]`          | [src/app/groups/[slug]/page.tsx](../../src/app/groups/[slug]/page.tsx)                   | No (server component)   |
-| `/groups/new`             | [src/app/groups/new/page.tsx](../../src/app/groups/new/page.tsx)                         | No (server component)   |
-| `/groups`                 | [src/app/groups/page.tsx](../../src/app/groups/page.tsx)                                 | No (server component)   |
-| `/guides`                 | [src/app/guides/page.tsx](../../src/app/guides/page.tsx)                                 | No (server component)   |
-| `/invitations/[token]`    | [src/app/invitations/[token]/page.tsx](../../src/app/invitations/[token]/page.tsx)       | No (server component)   |
-| `/items/[id]`             | [src/app/items/[id]/page.tsx](../../src/app/items/[id]/page.tsx)                         | No (server component)   |
-| `/items`                  | [src/app/items/page.tsx](../../src/app/items/page.tsx)                                   | No (server component)   |
-| `/legal`                  | [src/app/legal/page.tsx](../../src/app/legal/page.tsx)                                   | No (server component)   |
-| `/`                       | [src/app/page.tsx](../../src/app/page.tsx)                                               | No (server component)   |
-| `/players/[id]`           | [src/app/players/[id]/page.tsx](../../src/app/players/[id]/page.tsx)                     | No (server component)   |
-| `/settings`               | [src/app/settings/page.tsx](../../src/app/settings/page.tsx)                             | No (server component)   |
-| `/signin`                 | [src/app/signin/page.tsx](../../src/app/signin/page.tsx)                                 | No (server component)   |
-| `/timers`                 | [src/app/timers/page.tsx](../../src/app/timers/page.tsx)                                 | No (server component)   |
-| `/tools/crafting`         | [src/app/tools/crafting/page.tsx](../../src/app/tools/crafting/page.tsx)                 | No (server component)   |
-| `/tools/enchanting`       | [src/app/tools/enchanting/page.tsx](../../src/app/tools/enchanting/page.tsx)             | No (server component)   |
-| `/tools/flipping`         | [src/app/tools/flipping/page.tsx](../../src/app/tools/flipping/page.tsx)                 | No (server component)   |
-| `/tools/gold`             | [src/app/tools/gold/page.tsx](../../src/app/tools/gold/page.tsx)                         | No (server component)   |
-| `/tools/market`           | [src/app/tools/market/page.tsx](../../src/app/tools/market/page.tsx)                     | No (server component)   |
-| `/tools`                  | [src/app/tools/page.tsx](../../src/app/tools/page.tsx)                                   | No (server component)   |
-| `/tools/refining`         | [src/app/tools/refining/page.tsx](../../src/app/tools/refining/page.tsx)                 | No (server component)   |
-| `/tools/transporting`     | [src/app/tools/transporting/page.tsx](../../src/app/tools/transporting/page.tsx)         | No (server component)   |
+| Route                          | Source                                                                                             | Direct client component |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- | ----------------------- |
+| `/admin/reports`               | [src/app/admin/reports/page.tsx](../../src/app/admin/reports/page.tsx)                             | No (server component)   |
+| `/builds/[id]/edit`            | [src/app/builds/[id]/edit/page.tsx](../../src/app/builds/[id]/edit/page.tsx)                       | No (server component)   |
+| `/builds/[id]`                 | [src/app/builds/[id]/page.tsx](../../src/app/builds/[id]/page.tsx)                                 | No (server component)   |
+| `/builds/library/[slug]`       | [src/app/builds/library/[slug]/page.tsx](../../src/app/builds/library/[slug]/page.tsx)             | No (server component)   |
+| `/builds/library`              | [src/app/builds/library/page.tsx](../../src/app/builds/library/page.tsx)                           | No (server component)   |
+| `/builds/new`                  | [src/app/builds/new/page.tsx](../../src/app/builds/new/page.tsx)                                   | No (server component)   |
+| `/builds`                      | [src/app/builds/page.tsx](../../src/app/builds/page.tsx)                                           | No (server component)   |
+| `/compositions/[id]/edit`      | [src/app/compositions/[id]/edit/page.tsx](../../src/app/compositions/[id]/edit/page.tsx)           | No (server component)   |
+| `/compositions/[id]`           | [src/app/compositions/[id]/page.tsx](../../src/app/compositions/[id]/page.tsx)                     | No (server component)   |
+| `/compositions/library/[slug]` | [src/app/compositions/library/[slug]/page.tsx](../../src/app/compositions/library/[slug]/page.tsx) | No (server component)   |
+| `/compositions/library`        | [src/app/compositions/library/page.tsx](../../src/app/compositions/library/page.tsx)               | No (server component)   |
+| `/compositions/new`            | [src/app/compositions/new/page.tsx](../../src/app/compositions/new/page.tsx)                       | No (server component)   |
+| `/compositions`                | [src/app/compositions/page.tsx](../../src/app/compositions/page.tsx)                               | No (server component)   |
+| `/dashboard`                   | [src/app/dashboard/page.tsx](../../src/app/dashboard/page.tsx)                                     | No (server component)   |
+| `/favorites`                   | [src/app/favorites/page.tsx](../../src/app/favorites/page.tsx)                                     | No (server component)   |
+| `/groups/[slug]`               | [src/app/groups/[slug]/page.tsx](../../src/app/groups/[slug]/page.tsx)                             | No (server component)   |
+| `/groups/new`                  | [src/app/groups/new/page.tsx](../../src/app/groups/new/page.tsx)                                   | No (server component)   |
+| `/groups`                      | [src/app/groups/page.tsx](../../src/app/groups/page.tsx)                                           | No (server component)   |
+| `/guides/[slug]`               | [src/app/guides/[slug]/page.tsx](../../src/app/guides/[slug]/page.tsx)                             | No (server component)   |
+| `/guides`                      | [src/app/guides/page.tsx](../../src/app/guides/page.tsx)                                           | No (server component)   |
+| `/invitations/[token]`         | [src/app/invitations/[token]/page.tsx](../../src/app/invitations/[token]/page.tsx)                 | No (server component)   |
+| `/items/[id]`                  | [src/app/items/[id]/page.tsx](../../src/app/items/[id]/page.tsx)                                   | No (server component)   |
+| `/items`                       | [src/app/items/page.tsx](../../src/app/items/page.tsx)                                             | No (server component)   |
+| `/legal`                       | [src/app/legal/page.tsx](../../src/app/legal/page.tsx)                                             | No (server component)   |
+| `/`                            | [src/app/page.tsx](../../src/app/page.tsx)                                                         | No (server component)   |
+| `/players/[id]`                | [src/app/players/[id]/page.tsx](../../src/app/players/[id]/page.tsx)                               | No (server component)   |
+| `/settings`                    | [src/app/settings/page.tsx](../../src/app/settings/page.tsx)                                       | No (server component)   |
+| `/signin`                      | [src/app/signin/page.tsx](../../src/app/signin/page.tsx)                                           | No (server component)   |
+| `/timers`                      | [src/app/timers/page.tsx](../../src/app/timers/page.tsx)                                           | No (server component)   |
+| `/tools/alchemy`               | [src/app/tools/alchemy/page.tsx](../../src/app/tools/alchemy/page.tsx)                             | No (server component)   |
+| `/tools/cooking`               | [src/app/tools/cooking/page.tsx](../../src/app/tools/cooking/page.tsx)                             | No (server component)   |
+| `/tools/crafting`              | [src/app/tools/crafting/page.tsx](../../src/app/tools/crafting/page.tsx)                           | No (server component)   |
+| `/tools/enchanting`            | [src/app/tools/enchanting/page.tsx](../../src/app/tools/enchanting/page.tsx)                       | No (server component)   |
+| `/tools/farming`               | [src/app/tools/farming/page.tsx](../../src/app/tools/farming/page.tsx)                             | No (server component)   |
+| `/tools/fishing`               | [src/app/tools/fishing/page.tsx](../../src/app/tools/fishing/page.tsx)                             | No (server component)   |
+| `/tools/flipping`              | [src/app/tools/flipping/page.tsx](../../src/app/tools/flipping/page.tsx)                           | No (server component)   |
+| `/tools/gold`                  | [src/app/tools/gold/page.tsx](../../src/app/tools/gold/page.tsx)                                   | No (server component)   |
+| `/tools/market`                | [src/app/tools/market/page.tsx](../../src/app/tools/market/page.tsx)                               | No (server component)   |
+| `/tools`                       | [src/app/tools/page.tsx](../../src/app/tools/page.tsx)                                             | No (server component)   |
+| `/tools/refining`              | [src/app/tools/refining/page.tsx](../../src/app/tools/refining/page.tsx)                           | No (server component)   |
+| `/tools/transporting`          | [src/app/tools/transporting/page.tsx](../../src/app/tools/transporting/page.tsx)                   | No (server component)   |
 
 ### HTTP routes (34)
 
@@ -1857,15 +1870,17 @@ Generated from the current source, without private environment values or databas
 | `/api/timers`                                | GET, POST        | [src/app/api/timers/route.ts](../../src/app/api/timers/route.ts)                                                               |
 | `/api/transport/prices`                      | GET              | [src/app/api/transport/prices/route.ts](../../src/app/api/transport/prices/route.ts)                                           |
 
-### Components (60)
+### Components (74)
 
 | Source                                                                                         | Boundary                 | Exports                                                       |
 | ---------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------- |
 | [src/components/accept-invite.tsx](../../src/components/accept-invite.tsx)                     | Client                   | `AcceptInvite`                                                |
 | [src/components/albion-scene.tsx](../../src/components/albion-scene.tsx)                       | Server-compatible module | `AlbionScene`                                                 |
+| [src/components/archive-build-links.tsx](../../src/components/archive-build-links.tsx)         | Client                   | `ArchiveBuildCopyLink`, `EquipmentMarketLink`                 |
 | [src/components/build-actions.tsx](../../src/components/build-actions.tsx)                     | Client                   | `BuildActions`                                                |
 | [src/components/build-cost.tsx](../../src/components/build-cost.tsx)                           | Client                   | `BuildCost`                                                   |
 | [src/components/build-editor.tsx](../../src/components/build-editor.tsx)                       | Client                   | `BuildEditor`                                                 |
+| [src/components/build-equipment-studio.tsx](../../src/components/build-equipment-studio.tsx)   | Client                   | `BuildEquipmentStudio`                                        |
 | [src/components/build-loadout-view.tsx](../../src/components/build-loadout-view.tsx)           | Server-compatible module | `BuildLoadoutView`                                            |
 | [src/components/build-preview-card.tsx](../../src/components/build-preview-card.tsx)           | Server-compatible module | `BuildPreviewCard`, `PreviewBuild`                            |
 | [src/components/catalog-item-picker.tsx](../../src/components/catalog-item-picker.tsx)         | Client                   | `CatalogItemPicker`, `CatalogOption`                          |
@@ -1880,13 +1895,17 @@ Generated from the current source, without private environment values or databas
 | [src/components/equipment-sets.tsx](../../src/components/equipment-sets.tsx)                   | Client                   | `EquipmentSets`                                               |
 | [src/components/equipment-strip.tsx](../../src/components/equipment-strip.tsx)                 | Server-compatible module | `EquipmentStrip`                                              |
 | [src/components/equipment-workbench.tsx](../../src/components/equipment-workbench.tsx)         | Client                   | `EquipmentWorkbench`                                          |
+| [src/components/farming-calculator.tsx](../../src/components/farming-calculator.tsx)           | Client                   | `FarmingCalculator`                                           |
 | [src/components/favorite-build-button.tsx](../../src/components/favorite-build-button.tsx)     | Client                   | `FavoriteBuildButton`                                         |
 | [src/components/feature-emblem.tsx](../../src/components/feature-emblem.tsx)                   | Server-compatible module | `FeatureEmblem`                                               |
+| [src/components/fishing-calculator.tsx](../../src/components/fishing-calculator.tsx)           | Client                   | `FishingCalculator`                                           |
 | [src/components/global-search.tsx](../../src/components/global-search.tsx)                     | Client                   | `GlobalSearch`                                                |
+| [src/components/grind-guide-directory.tsx](../../src/components/grind-guide-directory.tsx)     | Server-compatible module | `GrindGuideDirectory`, `guideArtwork`                         |
 | [src/components/group-create.tsx](../../src/components/group-create.tsx)                       | Client                   | `GroupCreate`                                                 |
 | [src/components/group-dashboard.tsx](../../src/components/group-dashboard.tsx)                 | Client                   | `GroupDashboard`, `GroupRequest`                              |
 | [src/components/group-event-editor.tsx](../../src/components/group-event-editor.tsx)           | Client                   | `GroupEventEditor`                                            |
 | [src/components/group-profile-editor.tsx](../../src/components/group-profile-editor.tsx)       | Client                   | `GroupProfileEditor`                                          |
+| [src/components/guide-article-content.tsx](../../src/components/guide-article-content.tsx)     | Server-compatible module | `GuideArticleContent`, `safeGuideHref`                        |
 | [src/components/guide-directory.tsx](../../src/components/guide-directory.tsx)                 | Client                   | `GuideDirectory`                                              |
 | [src/components/history.tsx](../../src/components/history.tsx)                                 | Client                   | `History`                                                     |
 | [src/components/home-build-card.tsx](../../src/components/home-build-card.tsx)                 | Server-compatible module | `HomeBuildCard`                                               |
@@ -1897,6 +1916,10 @@ Generated from the current source, without private environment values or databas
 | [src/components/item-catalog.tsx](../../src/components/item-catalog.tsx)                       | Client                   | `ItemCatalog`                                                 |
 | [src/components/item-icon.tsx](../../src/components/item-icon.tsx)                             | Client                   | `ItemIcon`                                                    |
 | [src/components/item-market-link.tsx](../../src/components/item-market-link.tsx)               | Client                   | `ItemMarketLink`                                              |
+| [src/components/journal-checklist.tsx](../../src/components/journal-checklist.tsx)             | Client                   | `JournalChecklist`                                            |
+| [src/components/library-build-card.tsx](../../src/components/library-build-card.tsx)           | Server-compatible module | `LibraryBuildCard`                                            |
+| [src/components/library-build-metadata.tsx](../../src/components/library-build-metadata.tsx)   | Server-compatible module | `LibraryBuildTraits`, `LibraryBuildVideos`, `safeYouTubeLink` |
+| [src/components/loadout-price-check.tsx](../../src/components/loadout-price-check.tsx)         | Client                   | `LoadoutPriceCheck`                                           |
 | [src/components/login-button.tsx](../../src/components/login-button.tsx)                       | Client                   | `LoginButton`, `LogoutButton`                                 |
 | [src/components/market-batch-quotes.tsx](../../src/components/market-batch-quotes.tsx)         | Client                   | `BatchQuote`, `quoteKey`, `useBatchQuotes`                    |
 | [src/components/market-research.tsx](../../src/components/market-research.tsx)                 | Client                   | `MarketResearch`                                              |
@@ -1907,22 +1930,26 @@ Generated from the current source, without private environment values or databas
 | [src/components/opportunity-scanner.tsx](../../src/components/opportunity-scanner.tsx)         | Client                   | `OpportunityScanner`                                          |
 | [src/components/party-board.tsx](../../src/components/party-board.tsx)                         | Client                   | `PartyBoard`                                                  |
 | [src/components/production-calculator.tsx](../../src/components/production-calculator.tsx)     | Client                   | `ProductionCalculator`                                        |
+| [src/components/production-plan.tsx](../../src/components/production-plan.tsx)                 | Client                   | `ProductionPlan`                                              |
 | [src/components/production-profile.tsx](../../src/components/production-profile.tsx)           | Client                   | `ProductionProfile`                                           |
 | [src/components/region-context.tsx](../../src/components/region-context.tsx)                   | Client                   | `RegionContext`, `useAtlasRegion`                             |
+| [src/components/region-picker.tsx](../../src/components/region-picker.tsx)                     | Client                   | `RegionPicker`                                                |
 | [src/components/saved-equipment-sets.tsx](../../src/components/saved-equipment-sets.tsx)       | Server-compatible module | `SavedEquipmentSets`                                          |
 | [src/components/scenario-controls.tsx](../../src/components/scenario-controls.tsx)             | Client                   | `ScenarioControls`                                            |
 | [src/components/settings-forms.tsx](../../src/components/settings-forms.tsx)                   | Client                   | `DeleteAccountForm`, `PreferencesForm`                        |
 | [src/components/shell.tsx](../../src/components/shell.tsx)                                     | Client                   | `Shell`                                                       |
+| [src/components/spell-icon.tsx](../../src/components/spell-icon.tsx)                           | Client                   | `SpellIcon`                                                   |
 | [src/components/timer-manager.tsx](../../src/components/timer-manager.tsx)                     | Client                   | `TimerManager`                                                |
 | [src/components/tool-directory.tsx](../../src/components/tool-directory.tsx)                   | Client                   | `ToolDirectory`                                               |
 | [src/components/tool-icon.tsx](../../src/components/tool-icon.tsx)                             | Server-compatible module | `ToolIcon`                                                    |
 | [src/components/trade-calculator.tsx](../../src/components/trade-calculator.tsx)               | Client                   | `TradeCalculator`                                             |
 | [src/components/transport-calculator.tsx](../../src/components/transport-calculator.tsx)       | Client                   | `TransportCalculator`                                         |
+| [src/components/turnstile-challenge.tsx](../../src/components/turnstile-challenge.tsx)         | Client                   | `TurnstileChallenge`                                          |
 | [src/components/use-visible-refresh.ts](../../src/components/use-visible-refresh.ts)           | Client                   | `useVisibleRefresh`                                           |
 | [src/components/wordmark.tsx](../../src/components/wordmark.tsx)                               | Server-compatible module | `Wordmark`                                                    |
 | [src/components/workspace-navigation.tsx](../../src/components/workspace-navigation.tsx)       | Client                   | `WorkspaceNavigation`                                         |
 
-### Domain and infrastructure modules (54)
+### Domain and infrastructure modules (62)
 
 | Source                                                                                       | Exports                                                                                                                                                                                                                                                                                       |
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1930,10 +1957,12 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/backoff.ts](../../src/lib/albion/backoff.ts)                                 | `retryDelay`                                                                                                                                                                                                                                                                                  |
 | [src/lib/albion/calculations.ts](../../src/lib/albion/calculations.ts)                       | `returnedMaterialCost`, `trade`, `tradeScenarioSchema`, `tradeSchema`                                                                                                                                                                                                                         |
 | [src/lib/albion/data-client.ts](../../src/lib/albion/data-client.ts)                         | `requestData`                                                                                                                                                                                                                                                                                 |
-| [src/lib/albion/equipment-abilities.ts](../../src/lib/albion/equipment-abilities.ts)         | `abilitiesFor`                                                                                                                                                                                                                                                                                |
+| [src/lib/albion/equipment-abilities.ts](../../src/lib/albion/equipment-abilities.ts)         | `abilitiesFor`, `archivedSpellOptions`                                                                                                                                                                                                                                                        |
 | [src/lib/albion/equipment-catalog.ts](../../src/lib/albion/equipment-catalog.ts)             | `EquipmentSlot`, `Family`, `equipmentFamilies`, `equipmentId`, `equipmentName`, `equipmentSlots`, `findEquipment`                                                                                                                                                                             |
 | [src/lib/albion/equipment-sets.ts](../../src/lib/albion/equipment-sets.ts)                   | `EquipmentSet`, `equipmentSet`, `equipmentSets`, `loadoutTemplates`, `templateEquipment`                                                                                                                                                                                                      |
 | [src/lib/albion/equipment-validation.ts](../../src/lib/albion/equipment-validation.ts)       | `equipmentChoice`, `validHandCombination`                                                                                                                                                                                                                                                     |
+| [src/lib/albion/farming.ts](../../src/lib/albion/farming.ts)                                 | `FarmingInput`, `crops`, `farming`, `farmingSchema`, `initialFarming`                                                                                                                                                                                                                         |
+| [src/lib/albion/fishing.ts](../../src/lib/albion/fishing.ts)                                 | `FishReference`, `fishConversion`, `fishConversionInput`, `fishFame`, `fishFameInput`                                                                                                                                                                                                         |
 | [src/lib/albion/freshness.ts](../../src/lib/albion/freshness.ts)                             | `isStale`, `sourceTimestamp`                                                                                                                                                                                                                                                                  |
 | [src/lib/albion/history-client.ts](../../src/lib/albion/history-client.ts)                   | `getGold`, `getHistory`                                                                                                                                                                                                                                                                       |
 | [src/lib/albion/icon-cache.ts](../../src/lib/albion/icon-cache.ts)                           | `renderIcon`                                                                                                                                                                                                                                                                                  |
@@ -1943,6 +1972,7 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/market-preview.ts](../../src/lib/albion/market-preview.ts)                   | `PreviewPrice`, `observationLabel`, `parseMarketPreview`                                                                                                                                                                                                                                      |
 | [src/lib/albion/market-quotes.ts](../../src/lib/albion/market-quotes.ts)                     | `MarketPrice`, `QuoteSelection`, `batchQuery`, `fetchQuoteBatch`, `marketPrice`, `quoteResponse`                                                                                                                                                                                              |
 | [src/lib/albion/production-observations.ts](../../src/lib/albion/production-observations.ts) | `mergeProductionObservations`, `productionPriceQuery`                                                                                                                                                                                                                                         |
+| [src/lib/albion/production-plan.ts](../../src/lib/albion/production-plan.ts)                 | `ProductionPlanInput`, `productionPlan`, `productionPlanSchema`                                                                                                                                                                                                                               |
 | [src/lib/albion/production-profile.ts](../../src/lib/albion/production-profile.ts)           | `MechanicsProfile`, `mechanicsProfile`, `productionCities`, `refiningEfficiency`, `refiningSpecSource`, `returnProfileSource`, `sourcedReturnRates`                                                                                                                                           |
 | [src/lib/albion/production.ts](../../src/lib/albion/production.ts)                           | `ProductionInput`, `estimatedFocusCost`, `initialProduction`, `observation`, `production`, `productionOutputQuality`, `productionSchema`, `returnRateFromBonus`                                                                                                                               |
 | [src/lib/albion/quote-summary.ts](../../src/lib/albion/quote-summary.ts)                     | `summarizeQuotes`                                                                                                                                                                                                                                                                             |
@@ -1968,17 +1998,22 @@ Generated from the current source, without private environment values or databas
 | [src/lib/compositions/validation.ts](../../src/lib/compositions/validation.ts)               | `CompositionInput`, `EquipmentChoice`, `MemberSlot`, `compositionInput`, `equipmentChoice`, `memberSlot`, `roles`                                                                                                                                                                             |
 | [src/lib/db.ts](../../src/lib/db.ts)                                                         | `db`                                                                                                                                                                                                                                                                                          |
 | [src/lib/env.ts](../../src/lib/env.ts)                                                       | `environmentSchema`, `validateEnvironment`                                                                                                                                                                                                                                                    |
+| [src/lib/grind-build-draft.ts](../../src/lib/grind-build-draft.ts)                           | `createLibraryBuildDraft`                                                                                                                                                                                                                                                                     |
+| [src/lib/grind-library-types.ts](../../src/lib/grind-library-types.ts)                       | `AwakeningTrait`, `GuideNode`, `LibraryBuild`, `LibraryComposition`, `LibraryEquipment`, `LibraryGuide`, `activityName`                                                                                                                                                                       |
+| [src/lib/grind-library.ts](../../src/lib/grind-library.ts)                                   | `featuredLibraryBuilds`, `findLibraryBuild`, `findLibraryGuide`, `libraryBuildDraft`, `libraryBuilds`, `libraryCompositions`, `libraryFishing`, `libraryGuides`, `libraryJournal`, `librarySpellNames`, `libraryTraits`                                                                       |
 | [src/lib/groups/calendar.ts](../../src/lib/groups/calendar.ts)                               | `calendarText`, `eventCalendar`                                                                                                                                                                                                                                                               |
 | [src/lib/groups/dashboard.ts](../../src/lib/groups/dashboard.ts)                             | `GroupDashboardData`, `groupDashboard`                                                                                                                                                                                                                                                        |
 | [src/lib/groups/permissions.ts](../../src/lib/groups/permissions.ts)                         | `GroupRole`, `canEditShared`, `canManageMembers`, `groupRoles`                                                                                                                                                                                                                                |
 | [src/lib/groups/service.ts](../../src/lib/groups/service.ts)                                 | `acceptInvitation`, `inviteHash`, `mutateGroup`                                                                                                                                                                                                                                               |
 | [src/lib/groups/validation.ts](../../src/lib/groups/validation.ts)                           | `groupAction`                                                                                                                                                                                                                                                                                 |
 | [src/lib/http.ts](../../src/lib/http.ts)                                                     | `boundedJson`, `mutationUser`                                                                                                                                                                                                                                                                 |
+| [src/lib/journal-progress.ts](../../src/lib/journal-progress.ts)                             | `JournalEntry`, `journalProgress`, `parseJournalProgress`                                                                                                                                                                                                                                     |
 | [src/lib/logging.ts](../../src/lib/logging.ts)                                               | `logEvent`                                                                                                                                                                                                                                                                                    |
 | [src/lib/market-watch.ts](../../src/lib/market-watch.ts)                                     | `watchInput`, `watchResponse`                                                                                                                                                                                                                                                                 |
 | [src/lib/redis.ts](../../src/lib/redis.ts)                                                   | `rateLimit`, `redis`                                                                                                                                                                                                                                                                          |
 | [src/lib/serialization-retry.ts](../../src/lib/serialization-retry.ts)                       | `retrySerialization`                                                                                                                                                                                                                                                                          |
 | [src/lib/timers/engine.ts](../../src/lib/timers/engine.ts)                                   | `TimerState`, `remainingTime`, `timerAction`, `timerInput`, `timerTransition`                                                                                                                                                                                                                 |
 | [src/lib/tool-directory.ts](../../src/lib/tool-directory.ts)                                 | `toolGroups`, `tools`                                                                                                                                                                                                                                                                         |
+| [src/lib/turnstile.ts](../../src/lib/turnstile.ts)                                           | `turnstileConfiguration`, `verifyTurnstile`                                                                                                                                                                                                                                                   |
 
 ---

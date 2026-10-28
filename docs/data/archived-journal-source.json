@@ -1,0 +1,26 @@
+{
+  "source": "Scrape/albiononlinegrind.com/report/evidence/source/pages/guides/albion-journal-guide-4108b1b72e7b4be0.js",
+  "sourceSha256": "b99827743589e1436473423dd0b3b7739efe60df4f3bc8fc95d68624bc5483cc",
+  "capturedAt": "2026-10-27",
+  "permission": "Owner authorized old-page republication in the 2026-10-28 session",
+  "method": "Static JSX-runtime object literals with explicit entryID/name/reward fields, in source order and explicit section context. Captured code never executed.",
+  "entries": 1784,
+  "categories": [
+    "First Steps",
+    "PvE Activities",
+    "Economy",
+    "Gathering",
+    "Exploration",
+    "PvP",
+    "Social & Guild",
+    "Islands",
+    "Creatures",
+    "Character Progression",
+    "Lore",
+    "Archive"
+  ],
+  "output": "public/library/grind-journal.json",
+  "outputSha256": "d2f792f6cc86f52f4bfec3c60a62d723f284a2ab44df0bd4f852a1c412a21c46",
+  "currentPatchVerified": false,
+  "completionDataImported": false
+}

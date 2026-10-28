@@ -170,7 +170,7 @@
 .app.outpost .tools-menu-grid > a:hover,
 .app.outpost .tools-menu-grid > a:focus-visible {
   background: var(--elevated);
-  transform: translateY(-2px);
+  transform: none;
 }
 .tools-menu-grid strong {
   display: block;
@@ -699,63 +699,6 @@ a:hover .task-glyph {
 .app.outpost .featured-tool p {
   font-size: 14px;
 }
-/* React 19.3 route transitions leave the persistent header in place. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-::view-transition-group(.route-change),
-::view-transition-group(.route-enter),
-::view-transition-group(.route-exit) {
-  animation-duration: 240ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-::view-transition-old(.route-change),
-::view-transition-old(.route-exit) {
-  animation: route-leave 130ms ease both;
-}
-::view-transition-new(.route-change),
-::view-transition-new(.route-enter) {
-  animation: route-arrive 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-@keyframes route-leave {
-  to {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-}
-@keyframes route-arrive {
-  from {
-    opacity: 0;
-    transform: translateY(9px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-html:active-view-transition-type(theme)::view-transition-new(root) {
-  animation: theme-arrive 280ms ease-out both;
-}
-html:active-view-transition-type(theme)::view-transition-old(root) {
-  animation: theme-leave 280ms ease-out both;
-}
-@keyframes theme-arrive {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes theme-leave {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
 @media (max-width: 1350px) and (min-width: 1101px) {
   .app.outpost .desktop-navigation {
     gap: 2px;
@@ -920,11 +863,6 @@ html:active-view-transition-type(theme)::view-transition-old(root) {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
   }
   .app.outpost .region select::picker(select) {
     transition: none;

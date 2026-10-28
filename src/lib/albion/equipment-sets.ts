@@ -26,6 +26,21 @@ export const equipmentSets = z
 export type EquipmentSet = z.infer<typeof equipmentSet>;
 export const loadoutTemplates = [
   {
+    id: "archived-bloodmoon",
+    name: "Bloodmoon · archived AlbionOnlineGrind example",
+    description:
+      "Equipment-only snapshot from the owner's archived Bloodmoon example. Confirm current mechanics and choose abilities yourself; not a current-meta recommendation.",
+    items: [
+      ["Main hand", "T8_2H_SHAPESHIFTER_MORGANA"],
+      ["Helmet", "T8_HEAD_LEATHER_MORGANA"],
+      ["Chest", "T8_ARMOR_LEATHER_SET1"],
+      ["Boots", "T8_SHOES_CLOTH_AVALON"],
+      ["Cape", "T8_CAPEITEM_FW_CAERLEON"],
+      ["Food", "T7_MEAL_ROAST"],
+      ["Potion", "T8_POTION_CLEANSE"],
+    ],
+  },
+  {
     id: "battleaxe",
     name: "Battleaxe starting set",
     description:

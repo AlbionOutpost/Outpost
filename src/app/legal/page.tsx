@@ -28,11 +28,11 @@ export default function Legal() {
       <h2 id="scene-artwork">Scene artwork</h2>
       <p>
         Retained environment and party scenes are AI-generated illustrations created for Outpost
-        with the user’s express authorisation. All four scenes are archived and no longer used by
-        the homepage. They are not actual Albion Online gameplay screenshots, official promotional
-        images or representations of verified equipment builds. Genuine item icons continue to come
-        from Sandbox Interactive’s renderer. Generated scenes do not replace game data or item
-        artwork.
+        with the user’s express authorisation. The market illustration is used as a small homepage
+        vignette and muted background; the other three scenes remain archived. They are not actual
+        Albion Online gameplay screenshots, official promotional images or representations of
+        verified equipment builds. Genuine item icons continue to come from Sandbox Interactive’s
+        renderer. Generated scenes do not replace game data or item artwork.
       </p>
       <h2>Typography & media</h2>
       <p>

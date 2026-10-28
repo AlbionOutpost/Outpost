@@ -1,13 +1,32 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { BuildEditor } from "@/components/build-editor";
-export default async function NewBuild() {
-  if (!(await getServerSession(authOptions))) redirect("/signin");
+import { findLibraryBuild, libraryBuildDraft } from "@/lib/grind-library";
+import Link from "next/link";
+import { regionSchema } from "@/lib/albion/region-config";
+export default async function NewBuild({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; region?: string }>;
+}) {
+  const session = await getServerSession(authOptions);
+  const { from, region } = await searchParams;
+  const source = typeof from === "string" ? findLibraryBuild(from) : undefined;
+  const initial = source ? libraryBuildDraft(source) : null;
+  if (initial && region) initial.region = regionSchema.catch("europe").parse(region);
   return (
     <div className="build-editor-page">
       <h1 className="page-title display-title">Create a build</h1>
-      <BuildEditor />
+      {source && (
+        <p className="library-provenance">
+          Adapted from{" "}
+          <Link className="text-link" href={`/builds/library/${encodeURIComponent(source.slug)}`}>
+            {source.title}
+          </Link>{" "}
+          · {source.author}
+        </p>
+      )}
+      <BuildEditor initial={initial || undefined} guest={!session?.user?.id} />
     </div>
   );
 }

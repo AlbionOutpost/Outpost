@@ -1,3 +1,4 @@
+import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 
 test("market overview plots source observations, preserves gaps and rejects another city or region", async ({
@@ -46,7 +47,7 @@ test("market overview plots source observations, preserves gaps and rejects anot
   await expect(terminal.locator(".chart-observation")).toHaveCount(0);
   await terminal.getByRole("combobox", { name: "History city" }).selectOption("Lymhurst");
   await expect(terminal.locator(".chart-observation")).toHaveCount(3);
-  await page.getByLabel("Albion region").selectOption("asia");
+  await chooseRegion(page, "asia");
   await expect(terminal.getByRole("status")).toContainText("temporarily unavailable");
   await expect(terminal.locator(".chart-observation")).toHaveCount(0);
 });

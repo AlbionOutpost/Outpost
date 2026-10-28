@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-27T04:05:08.211145+00:00",
+  "reviewed_at": "2026-10-28",
   "scoring": {
     "weights": {
       "core": 25,
@@ -49,15 +49,24 @@
       "title": "Build equipment editor and persistence",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "7510 pinned-source equipment variants across all ten slots, source-listed spell selectors, quality, per-slot alternatives, up to five named full spare sets, starting templates, persistence/revisions and independent copying into comps. Two-handed weapons clear incompatible off hands with undo.",
-      "remaining": "Character unlock/tier restrictions, current-patch spell availability and calculated combat statistics remain unverified.",
+      "verified_scope": "7510 pinned-source equipment variants across all ten slots, source-listed spell selectors, quality, per-slot alternatives, up to five named full spare sets, starting templates, persistence/revisions and independent copying into comps. Two-handed weapons clear incompatible off hands with undo. Anonymous creation now supports validated device-local save/reload, import/export and real loadout preview. Recommended/alternative rows now use the equipment-led studio with direct spell controls and an overview. Account saves and protected API permissions remain. A seven-item archived Bloodmoon equipment example has no guessed spells. Tier-specific preview names now match item identities (T7 Roast Pork regression). Thirteen source-reviewed historical Bloodmoon spell choices and selected official spell icons are available; its template still selects no spells automatically. The October28 replacement uses compact equipment/spell rows, image-led browsing, adjacent alternatives and direct per-item settings. Recovered public builds become independent validated drafts;1195 explicit archived item-spell records provide11873 historical options. Original source slugs and authors are retained.",
+      "remaining": "Current-patch unlocks, full statistics and complete item coverage remain unverified. Narrow overview disclosure now passes regression; owner visual acceptance stays open.",
       "evidence": [
         "src/lib/builds/validation.ts",
         "src/components/build-editor.tsx",
         "e2e/build-editor-visual.spec.ts",
         "e2e/homepage-visual-correction.spec.ts",
         "e2e/equipment-sets.spec.ts",
-        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md",
+        "e2e/guest-build.spec.ts",
+        "docs/design-review/guest-build/README.md",
+        "docs/design-review/guest-build/data-comparison.json",
+        "src/lib/albion/archived-spell-options.json",
+        "docs/data/archived-spell-options-source.json",
+        "src/components/build-equipment-studio.tsx",
+        "e2e/grind-library.spec.ts",
+        "docs/design-review/grind-recovery/README.md",
+        "docs/data/archived-item-spells-source.json"
       ]
     },
     {
@@ -76,13 +85,15 @@
       "title": "Party compositions and shared loadouts",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Comps retain roles, substitutes, mandatory slots, copy-from-build, equipment/ability/consumable choices and independent named spare sets. A five-player role template and missing-role/weapon counts support first use. Existing access/revision/export behavior is preserved.",
+      "verified_scope": "Comps retain roles, substitutes, mandatory slots, copy-from-build, equipment/ability/consumable choices and independent named spare sets. A five-player role template and missing-role/weapon counts support first use. Existing access/revision/export behavior is preserved. A separate682-record owner archive library preserves public group-build member order, duplicate positions, original authors and optional slots without assigning old content to current accounts.",
       "remaining": "Current-patch role/build meta, character unlocks and full combat statistics are not certified.",
       "evidence": [
         "src/lib/compositions/service.ts",
         "e2e/compositions.spec.ts",
         "e2e/reference-ui.spec.ts",
-        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md",
+        "src/app/compositions/library/page.tsx",
+        "src/app/compositions/library/[slug]/page.tsx"
       ]
     },
     {
@@ -159,7 +170,7 @@
       "title": "Crafting calculator",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "45 normal T4\u2013T8 recipes across nine source-reviewed base families; manual/observed prices, historical five-city return profile, supplied crafting FCE estimates, explicit focus assumptions and private scenario save/reload.",
+      "verified_scope": "45 normal T4\u2013T8 recipes across nine source-reviewed base families; manual/observed prices, historical five-city return profile, supplied crafting FCE estimates, explicit focus assumptions and private scenario save/reload. Thirty-recipe production planning now consolidates gross materials by item/quality/city and preserves per-recipe prices, missing/stale inputs, actual focus, cash/economic accounting and private plans.",
       "remaining": "Full enchanted/artifact/food/potion recipes, crafting specialization trees, journals, station rounding and current patch remain incomplete.",
       "evidence": [
         "src/lib/albion/recipes.ts",
@@ -167,7 +178,11 @@
         "e2e/production-modes.spec.ts",
         "tests/reviewed-recipes.test.ts",
         "src/lib/albion/reviewed-crafting.json",
-        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md",
+        "src/lib/albion/production-plan.ts",
+        "tests/production-plan.test.ts",
+        "e2e/production-plan.spec.ts",
+        "docs/engineering/ALBION_GRIND_PARITY_2026-10-28.md"
       ]
     },
     {
@@ -255,11 +270,22 @@
       "id": "CORE-017",
       "category": "core",
       "title": "Guide CMS and editorial workflows",
-      "implementation": "MISSING",
-      "verification": "NOT_TESTED",
-      "verified_scope": "Searchable original guide notes exist, but no CMS implementation.",
-      "remaining": "Authoring/review/publishing and complete guide content are absent.",
-      "evidence": ["src/app/guides/page.tsx", "src/components/guide-directory.tsx"]
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Eight owner-authorized captured guide articles preserve authors, update dates and safe React-rendered prose/reference tables, with searchable discovery and table-of-contents anchors. Four original Outpost notes remain available. Original cover/instructional media is locally allowlisted and hashed. The rebuilt journal has1784 unique historical objectives/12 categories with search, region-local device saves and validated backups; the fishing guide embeds a target-fame budget.",
+      "remaining": "Editorial authoring/revisions/moderation, old account progress migration and full current-patch review remain pending.",
+      "evidence": [
+        "src/app/guides/page.tsx",
+        "src/app/guides/[slug]/page.tsx",
+        "src/components/guide-article-content.tsx",
+        "e2e/grind-library.spec.ts",
+        "tests/grind-library.test.ts",
+        "src/components/journal-checklist.tsx",
+        "src/lib/journal-progress.ts",
+        "docs/data/archived-journal-source.json",
+        "e2e/fishing-journal.spec.ts",
+        "tests/fishing-journal.test.ts"
+      ]
     },
     {
       "id": "CORE-018",
@@ -267,19 +293,36 @@
       "title": "Islands, Avalon mapping, shopping lists and mastery tools",
       "implementation": "MISSING",
       "verification": "NOT_TESTED",
-      "verified_scope": "No dedicated implementations or routes found.",
-      "remaining": "Implement verified domain models, persistence, permissions and player workflows.",
+      "verified_scope": "No dedicated islands/Avalon/mastery/general shopping-list implementations. The October28 production planner now provides a narrower gross-material shopping list for its supported recipes.",
+      "remaining": "Implement the remaining dedicated domain models, persistence, permissions and player workflows; production material aggregation is not general shopping-list parity.",
       "evidence": ["src/app/tools/page.tsx"]
     },
     {
       "id": "CORE-019",
       "category": "core",
       "title": "Remaining specialized calculator engines",
-      "implementation": "MISSING",
-      "verification": "BLOCKED",
-      "verified_scope": "Farming, animals, cooking, alchemy, laborers, fish and calculated IP remain absent. Source-backed historical city/refining-specialization/focus estimates are now implemented for the supported production recipes, separately from current-patch certification.",
-      "remaining": "Remaining engines need versioned source data and independent fixtures; crafting specialization trees and station rounding remain open.",
-      "evidence": ["src/lib/albion/recipes.ts", "docs/engineering/CALCULATOR_PARITY.md"]
+      "implementation": "PARTIAL",
+      "verification": "VERIFIED",
+      "verified_scope": "Single-harvest farming for15 historical crop/herb records: partial watering, supplied harvest yield, seed-return assumptions, prices/fees, upfront cash versus retained seed value and incremental focus. Private scenarios and static shares. Existing city/refining-specialization/focus estimates remain separate from current-patch certification. Cooking/alchemy now expose399 exact captured base/enchantment recipes through dedicated routes and the existing aggregate planner, preserving batch quantities and enforcing Normal output price identity. Independent stew/potion fixtures and complete/missing quote checks pass. Dedicated fishing compares raw/chopped net proceeds, cash profit, opportunity difference and break-even; whole-fish fame targets use explicit editable historical coefficients. Forty-one captured yields cross-check against37 old-tool rows. Missing/stale/other-city observations remain unknown and manual overrides stay regional.",
+      "remaining": "Animals, laborers, production-journal/recursive material consumption, calculated IP and complete current-patch specialization/recipe coefficients remain pending.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "docs/engineering/CALCULATOR_PARITY.md",
+        "src/lib/albion/farming.ts",
+        "src/lib/albion/farming-crops.json",
+        "tests/farming.test.ts",
+        "e2e/farming.spec.ts",
+        "docs/engineering/ALBION_GRIND_PARITY_2026-10-28.md",
+        "src/app/tools/cooking/page.tsx",
+        "src/app/tools/alchemy/page.tsx",
+        "docs/data/archived-production-source.json",
+        "tests/grind-library.test.ts",
+        "src/lib/albion/fishing.ts",
+        "src/components/fishing-calculator.tsx",
+        "docs/data/archived-fishing-source.json",
+        "tests/fishing-journal.test.ts",
+        "e2e/fishing-journal.spec.ts"
+      ]
     },
     {
       "id": "CORE-020",
@@ -560,8 +603,8 @@
       "title": "Current reference design acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current task-led implementation replaces the equipment collage and repeated market/community widgets with a short introduction, direct planning tasks and one searchable market preview. Market guides setup before quotes; mobile production has persistent recipe/pricing/profit steps. Shared typography,8px controls,12px panels and theme tokens replace the isolated brown terminal. Actual before/after captures are opened in docs/design-review/ux-transformation/README.md. Historical owner corrections remain linked; no global owner acceptance is inferred.",
-      "remaining": "Global owner visual acceptance, full equipment-set layout and asset-dependent differences remain open.",
+      "verified_scope": "Current search refinement fixes nested field borders and responsive palette spacing, with pinned controls/footer, contained results scrolling and explicit Clear. Grow-and-hold motion, transparent navigation and fixed roster bounds remain. See docs/design-review/search-palette/README.md; owner acceptance remains open. The October28 follow-up corrects the inherited fixed-height article header, redundant production tabs and copied-build mobile setup density; original guide media, journal and fish workspaces receive six-width production review.",
+      "remaining": "Global owner visual acceptance, broader page-specific refinement and asset-dependent/current-patch differences remain open. Automated overflow/axe checks do not establish subjective visual completion.",
       "evidence": [
         "docs/design-review/README.md",
         "docs/OUTPOST_ACCEPTANCE.md",
@@ -578,7 +621,17 @@
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
         "docs/design-review/playful-ui/README.md",
-        "docs/design-review/ux-transformation/README.md"
+        "docs/design-review/ux-transformation/README.md",
+        "docs/design-review/professional-redesign/README.md",
+        "e2e/reference-workspaces.spec.ts",
+        "docs/design-review/home-fidelity/README.md",
+        "docs/design-review/workspace-depth/README.md",
+        "docs/design-review/loadout-cards/README.md",
+        "docs/design-review/region-picker/README.md",
+        "docs/design-review/motion-system/README.md",
+        "e2e/motion-system.spec.ts",
+        "docs/design-review/search-palette/README.md",
+        "docs/design-review/grind-recovery/README.md"
       ]
     },
     {
@@ -587,7 +640,7 @@
       "title": "Responsive navigation, editors and data tables",
       "implementation": "COMPLETE",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current homepage/Market/crafting are captured at1440/1920/768/390/375/320px. Phone preview details expand on demand, crafting renders one persistent step at a time and saved-run controls expand separately. Related navigation, equipment/comp goldens, filtering, scenario and watchlist persistence regressions remain exercised. See the current task-led UX review for actual scope and artifacts.",
+      "verified_scope": "Current local-library production search review covers14 viewport/theme configurations plus8 result/loading/error states across320/390/768/1024/1440/1920 and short landscape, without page overflow. Long-list, keyboard/scroll, clear focus, internal/backdrop clicks and rapid reopen are exercised alongside existing full route/ownership/persistence regressions.",
       "remaining": "Physical devices, all states/browser engines, complete layout acceptance and owner visual approval remain open. Equipment names deliberately increase panel height for readability.",
       "evidence": [
         "e2e/design-review.spec.ts",
@@ -611,7 +664,16 @@
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
         "docs/design-review/playful-ui/README.md",
-        "docs/design-review/ux-transformation/README.md"
+        "docs/design-review/ux-transformation/README.md",
+        "docs/design-review/professional-redesign/README.md",
+        "e2e/reference-workspaces.spec.ts",
+        "docs/design-review/home-fidelity/README.md",
+        "docs/design-review/workspace-depth/README.md",
+        "docs/design-review/loadout-cards/README.md",
+        "docs/design-review/region-picker/README.md",
+        "docs/design-review/motion-system/README.md",
+        "e2e/motion-system.spec.ts",
+        "docs/design-review/search-palette/README.md"
       ]
     },
     {
@@ -620,7 +682,7 @@
       "title": "Accessibility acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current sampled initial and populated desktop/mobile axe scans, keyboard item selection, dialog/search focus, persistent mobile-step focus and reduced-motion regressions remain exercised. Current artifacts and final counts are recorded in the task-led UX review. Full conformance and physical-device acceptance remain open.",
+      "verified_scope": "Current88-test production browser gate and22 sampled search axe states pass. The palette field has one focus treatment; header/search/close/footer stay reachable while results scroll. Reduced-motion, keyboard, visible labels and existing contrast/roster fixes remain. Physical-device/screen-reader/full WCAG/owner acceptance remain open.",
       "remaining": "Complete screen-reader, voice-control, contrast/zoom and physical-device acceptance; sampled axe and Lighthouse are not conformance evidence.",
       "evidence": [
         "e2e/qa-light.spec.ts",
@@ -639,7 +701,16 @@
         "docs/design-review/immersive/README.md",
         "docs/design-review/brand-interaction/README.md",
         "docs/design-review/playful-ui/README.md",
-        "docs/design-review/ux-transformation/README.md"
+        "docs/design-review/ux-transformation/README.md",
+        "docs/design-review/professional-redesign/README.md",
+        "e2e/reference-workspaces.spec.ts",
+        "docs/design-review/home-fidelity/README.md",
+        "docs/design-review/workspace-depth/README.md",
+        "docs/design-review/loadout-cards/README.md",
+        "docs/design-review/region-picker/README.md",
+        "docs/design-review/motion-system/README.md",
+        "e2e/motion-system.spec.ts",
+        "docs/design-review/search-palette/README.md"
       ]
     },
     {
@@ -648,7 +719,7 @@
       "title": "Authentic permitted scene media",
       "implementation": "MISSING",
       "verification": "BLOCKED",
-      "verified_scope": "All four generated scenes are archived. The homepage now uses genuine source-pinned equipment art through Next Image optimization, with original task glyphs; no authentic gameplay-scene replacement or blanket artwork permission is claimed. See docs/assets/HOMEPAGE_EQUIPMENT.json and docs/design-review/playful-ui/README.md.",
+      "verified_scope": "The previously authorized generated market scene is reused as a bounded homepage feature vignette and muted hero background with explicit legal disclosure. Other three generated scenes remain archived. Actual equipment uses approved renderer infrastructure. No authentic gameplay-scene permission or blanket asset license is claimed.",
       "remaining": "Official press-kit/terms retrieval again returned 403; no current image-specific reuse permission verified. Genuine replacement still required; no new generated substitute.",
       "evidence": [
         "src/lib/albion/assets.ts",
@@ -662,11 +733,16 @@
       "id": "UI-005",
       "category": "ui",
       "title": "Genuine ability artwork and full visual data coverage",
-      "implementation": "MISSING",
-      "verification": "BLOCKED",
-      "verified_scope": "Named starter ability controls exist; no complete genuine ability artwork.",
-      "remaining": "Permitted mapped ability/consumable assets and current metadata needed.",
-      "evidence": ["src/lib/albion/equipment-catalog.ts", "docs/assets/OUTPOST_MEDIA_INVENTORY.md"]
+      "implementation": "PARTIAL",
+      "verification": "PARTIALLY_TESTED",
+      "verified_scope": "Official renderer spell images now have1195 exact historical item-option records /11873 choices, plus recorded skill IDs on10770 archived builds. Representative gear/spell artwork was inspected; failed artwork has explicit fallback.",
+      "remaining": "Universal availability, actual character/tier unlocks, full content/current-patch verification and owner visual acceptance remain open.",
+      "evidence": [
+        "src/components/spell-icon.tsx",
+        "src/lib/albion/archived-item-spells.json",
+        "docs/data/archived-item-spells-source.json",
+        "e2e/grind-library.spec.ts"
+      ]
     },
     {
       "id": "PERF-001",
@@ -688,8 +764,8 @@
       "title": "Current representative page performance measurements",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Three production Lighthouse13.5 mobile runs per homepage/Market before and after. Actual LCP nodes are introductory text. Font transfer reduced48256\u219236992bytes while retaining230 mapped glyphs/400\u2013800 weights; no meaningful LCP gain observed.",
-      "remaining": "Both route medians remain approximately2.55s, above2.5s. Full route/field/load and container evidence remain incomplete.",
+      "verified_scope": "Guest-build checkpoint: fresh UID1000/env-absent production-container smoke and one initial-route mobile Lighthouse sample per home/guest-builder/crafting route: performance85/94/95, accessibility100, LCP4.306/3.080/2.855s and CLS0. No populated-editor speedup, device or field claim.",
+      "remaining": "All sampled LCP values miss2.5s; homepage performance misses90. Sustained/device samples, populated-editor interaction timing, field INP and reliable comparisons remain open.",
       "evidence": [
         "docs/engineering/PERFORMANCE_REPORT.md",
         "docs/design-review/homepage/POLISH.md",
@@ -699,7 +775,15 @@
         "docs/design-review/refinement/README.md",
         "docs/design-review/homepage-redesign/README.md",
         "docs/design-review/player-polish/README.md",
-        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md"
+        "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md",
+        "docs/design-review/home-fidelity/README.md",
+        "docs/design-review/workspace-depth/README.md",
+        "docs/design-review/loadout-cards/README.md",
+        "docs/design-review/region-picker/README.md",
+        "docs/design-review/motion-system/README.md",
+        "docs/design-review/search-palette/README.md",
+        "docs/design-review/production-planning/README.md",
+        "docs/design-review/guest-build/README.md"
       ]
     },
     {

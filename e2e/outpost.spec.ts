@@ -6,7 +6,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/?region=asia");
   await expect(page).toHaveTitle(/Outpost/);
-  await expect(page.locator("h1")).toHaveText("Better trades.Better prepared.");
+  await expect(page.locator("h1")).toHaveText("Better tools.For a richer Albion.");
   await expect(page.locator(".top-brand")).toHaveAccessibleName("Outpost home");
   await expect(page.locator(".product-sidebar")).toHaveCount(0);
   await expect(page.locator(".site-header .desktop-navigation")).toBeVisible();
@@ -19,19 +19,18 @@ test("Outpost branding, landing actions and navigation retain working destinatio
     "href",
     "/tools/market?region=asia&item=T4_BAG",
   );
-  await expect(page.getByRole("link", { name: /Create a build Choose gear/ })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Create a build", exact: true })).toHaveAttribute(
     "href",
     "/builds/new?region=asia",
   );
-  await expect(page.locator(".home-task-list a")).toHaveCount(3);
+  await expect(page.locator(".reference-feature-grid > article")).toHaveCount(3);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
   await page.getByRole("link", { name: "Guides", exact: true }).click();
   await expect(page.locator(".desktop-navigation a[aria-current=page]")).toHaveText("Guides");
   await expect(
     page.getByRole("heading", { name: "Read a market quote", exact: true }),
   ).toBeVisible();
-  await page.locator(".account-dropdown summary").click();
-  await page.getByRole("link", { name: "Sign in with Discord", exact: true }).click();
+  await page.getByRole("link", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/signin/);
   await expect(page.locator("main")).toContainText(/Discord/);
   await page.setViewportSize({ width: 375, height: 812 });

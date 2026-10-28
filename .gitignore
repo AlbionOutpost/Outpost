@@ -1,5 +1,8 @@
 node_modules/
 .next/
+.open-next/
+.wrangler/
+cloudflare/generated/
 .env
 .env.*
 !.env.example

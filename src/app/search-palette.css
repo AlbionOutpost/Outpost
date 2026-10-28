@@ -1,0 +1,215 @@
+/* The command palette owns its field and scrolling; shared form rules stay outside. */
+.app.outpost dialog.command-search {
+  --search-gap: clamp(12px, 8dvh, 72px);
+  width: min(640px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(640px, calc(100dvh - var(--search-gap) * 2));
+  margin: var(--search-gap) auto auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  transition: none;
+}
+.app.outpost dialog.command-search[open] {
+  display: flex;
+  flex-direction: column;
+}
+.app.outpost .command-search-inner {
+  display: contents;
+}
+.app.outpost .command-heading {
+  flex: 0 0 auto;
+  padding: 16px 20px 12px;
+}
+.app.outpost .command-heading h2 {
+  margin: 0;
+  font: 600 14px/20px var(--font-ui);
+  color: var(--text);
+}
+.app.outpost .command-dismiss {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app.outpost .command-input-wrap {
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 52px;
+  min-height: 52px;
+  margin: 0 20px 16px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--muted);
+}
+.app.outpost .command-input-wrap:focus-within {
+  border-color: transparent;
+  outline: 2px solid var(--accent-ink);
+  outline-offset: -1px;
+  box-shadow: none;
+  color: var(--accent-ink);
+}
+.app.outpost .command-input-wrap > svg {
+  flex-shrink: 0;
+}
+.app.outpost dialog.command-search .command-input-wrap input[type="search"] {
+  appearance: none;
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  height: 48px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  color: var(--text);
+  font: 400 16px/24px var(--font-ui);
+}
+.app.outpost .command-input-wrap input::-webkit-search-cancel-button {
+  display: none;
+}
+.app.outpost .command-clear,
+.app.outpost .command-close {
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+}
+.app.outpost .command-clear:hover,
+.app.outpost .command-close:hover {
+  color: var(--text);
+}
+.app.outpost .command-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.app.outpost .command-results {
+  max-height: none;
+  overflow: visible;
+}
+.app.outpost .command-shortcuts {
+  gap: 8px;
+}
+.app.outpost .command-shortcuts a {
+  min-width: 0;
+  min-height: 68px;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  transform: none;
+  transition: transform 160ms ease-out;
+}
+.app.outpost .command-shortcuts a > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .command-shortcuts a > svg {
+  flex-shrink: 0;
+}
+.app.outpost .command-destination-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+.app.outpost .command-examples {
+  margin-top: 16px;
+  padding: 16px 0 0;
+  gap: 8px;
+}
+.app.outpost .command-examples button {
+  min-height: 32px;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.app.outpost .command-footer {
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 12px 20px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.app.outpost .command-result > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app.outpost .command-shortcuts a:hover {
+    transform: scale(1.02);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root .app.outpost[data-motion-enabled] dialog.command-search[open] {
+    animation: search-palette-enter 150ms ease-out both;
+  }
+  @keyframes search-palette-enter {
+    from {
+      translate: 0 -4px;
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+}
+@media (max-width: 640px) {
+  .app.outpost dialog.command-search {
+    --search-gap: 12px;
+    width: calc(100vw - 24px);
+  }
+  .app.outpost .command-heading,
+  .app.outpost .command-body,
+  .app.outpost .command-footer {
+    padding-inline: 14px;
+  }
+  .app.outpost .command-input-wrap {
+    margin-inline: 14px;
+  }
+  .app.outpost .command-shortcuts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .app.outpost .command-footer > span:first-child {
+    display: none;
+  }
+  .app.outpost .command-footer > span:last-child {
+    display: inline;
+  }
+}
+@media (max-height: 660px) {
+  .app.outpost dialog.command-search {
+    --search-gap: 12px;
+  }
+  .app.outpost .command-body {
+    padding-block: 12px;
+  }
+  .app.outpost .command-shortcuts a {
+    min-height: 56px;
+    padding-block: 6px;
+  }
+  .app.outpost .command-destination-icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .app.outpost .command-examples {
+    display: none;
+  }
+}

@@ -1,6 +1,6 @@
 # Pages, workflows and state contracts
 
-The [generated page table](INVENTORY.md#page-routes-32) is the exhaustive32-route list. Every route must render inside the shared shell with a primary heading, correct access state and functional links/actions. `/loading`, `/error` and `/not-found` are not extra content routes: Next loading/error/not-found files provide boundary states.
+The [generated page table](INVENTORY.md) is the exhaustive current route list. Every route must render inside the shared shell with a primary heading, correct access state and functional links/actions. `/loading`, `/error` and `/not-found` are not extra content routes: Next loading/error/not-found files provide boundary states.
 
 ## Homepage and global navigation
 
@@ -43,7 +43,7 @@ Desktop production is assumptions/materials/results in distinct working columns;
 | Route               | Access and behavior                                                                                                                      |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `/builds`           | Public discovery or session-owned collection; q/content/weapon/sort/mine/page filters; actual favorites/recent dates and image-led cards |
-| `/builds/new`       | Sign-in redirect if unauthenticated; create full draft through equipment workbench and save real version1                                |
+| `/builds/new`       | Guest editor with browser-local save/restore/import/export/preview; authenticated visitors save real version1                            |
 | `/builds/[id]`      | Read policy, loadout/abilities/notes, source cost, actual author/revision and supported community actions; unavailable404                |
 | `/builds/[id]/edit` | Owner editing, expected-version save, independent swaps, restore/duplicate/delete according to actual actions                            |
 
@@ -94,3 +94,7 @@ Timers are manual reminders, not verified automatic game cooldowns. Paused state
 ## Universal state acceptance
 
 Every rebuild must retain initial/loading, complete/partial data, valid empty, source failure, validation failure, auth redirect/404/403, stale version409 and retained-draft recovery as appropriate. Distinguish real anonymous pages from isolated authenticated browser fixtures. Use actual screenshots for desktop/tablet/phone and verify navigation after state changes; a route existing in the file tree is not sufficient acceptance.
+
+## Aggregate production and farming
+
+Crafting/refining/enchanting embed a30-recipe production planner with item/quality/city shopping aggregation, preserved per-recipe prices, upfront/cash/economic accounting, bounded manual-preserving observation refresh, private plans and static share/export. `/tools/farming` adds15 historical crops/herbs, user-supplied yield and partial watering, seed asset value, supplied fees, observations and private scenarios. Dashboard links resolve a production plan to its first recipe kind and saved region. These are declared subsets, not full old-site/current-patch parity; [source/formula/evidence ledger](../engineering/ALBION_GRIND_PARITY_2026-10-28.md).

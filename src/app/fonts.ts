@@ -27,7 +27,7 @@ export const barlowCondensed = localFont({
 export const barlowDisplay = localFont({
   src: "../../node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-800-normal.woff2",
   variable: "--font-barlow-display",
-  preload: false,
+  preload: true,
   weight: "800",
   display: "swap",
   fallback: ["Arial Narrow", "Arial", "sans-serif"],

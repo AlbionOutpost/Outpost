@@ -8,11 +8,21 @@ import { mutationUser, boundedJson } from "@/lib/http";
 import { transportSchema } from "@/lib/albion/transport";
 import { tradeScenarioSchema } from "@/lib/albion/calculations";
 import { productionSchema } from "@/lib/albion/production";
+import { productionPlanSchema, productionPlan } from "@/lib/albion/production-plan";
+import { farmingSchema, farming } from "@/lib/albion/farming";
 export const GET = apiHandler("scenario.list", async (req: NextRequest) => {
   const user = await getServerSession(authOptions);
   if (!user?.user?.id) throw new HttpError(401, "Sign in to load saved scenarios");
   const kind = z
-    .enum(["crafting", "refining", "enchanting", "transporting", "flipping"])
+    .enum([
+      "crafting",
+      "refining",
+      "enchanting",
+      "transporting",
+      "flipping",
+      "production-plan",
+      "farming",
+    ])
     .optional()
     .parse(req.nextUrl.searchParams.get("kind") || undefined);
   return NextResponse.json(
@@ -30,9 +40,29 @@ export const POST = apiHandler("scenario.save", async (req: NextRequest) => {
   const input = z
     .object({
       title: z.string().trim().min(3).max(100),
-      configuration: z.union([productionSchema, transportSchema, tradeScenarioSchema]),
+      configuration: z.union([
+        productionSchema,
+        transportSchema,
+        tradeScenarioSchema,
+        productionPlanSchema,
+        farmingSchema,
+      ]),
     })
     .parse(await boundedJson(req));
+  if (input.configuration.kind === "production-plan") {
+    try {
+      productionPlan(input.configuration);
+    } catch {
+      throw new HttpError(400, "Plan inputs or totals exceed supported limits");
+    }
+  }
+  if (input.configuration.kind === "farming") {
+    try {
+      farming(input.configuration);
+    } catch {
+      throw new HttpError(400, "Farming inputs or totals exceed supported limits");
+    }
+  }
   return NextResponse.json(
     await db.savedScenario.create({
       data: {

@@ -60,24 +60,30 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     await page.goto("/compositions/new");
     await page.getByLabel("Comp title").fill("Twenty player ZvZ roster");
     await page.getByRole("button", { name: "20 players", exact: true }).click();
-    await expect(page.getByRole("listitem")).toHaveCount(20);
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),
+    ).toHaveCount(20);
     await page.getByRole("button", { name: /^Configure member 1\b/ }).click();
     await page.getByLabel("Player name", { exact: true }).fill("Caller One");
     await page.getByLabel("Member role").selectOption("Caller");
-    await page.getByLabel("Main hand equipment").selectOption("MAIN_AXE");
+    await page.getByLabel("Main hand equipment", { exact: true }).selectOption("MAIN_AXE");
     await page.getByLabel("Main hand tier").selectOption("6");
     await page.getByLabel("Main hand enchantment").selectOption("1");
     await page.getByLabel("Main hand E", { exact: true }).selectOption("Blood Bandit");
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Rending Strike");
     await page.getByRole("button", { name: /^Select Helmet slot\b/ }).click();
-    await page.getByLabel("Helmet equipment").selectOption("HEAD_CLOTH_SET1");
+    await page.getByLabel("Helmet equipment", { exact: true }).selectOption("HEAD_CLOTH_SET1");
     await page.getByLabel("Helmet Active").selectOption("Energy Shield");
     await page.getByLabel("Member notes").fill("First engage caller");
     await page.getByRole("button", { name: "Done editing member", exact: true }).click();
     await page
       .getByRole("button", { name: "Drag member 1", exact: true })
-      .dragTo(page.getByRole("listitem").nth(1));
-    await expect(page.getByRole("listitem").nth(1)).toContainText("Caller One");
+      .dragTo(
+        page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem").nth(1),
+      );
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem").nth(1),
+    ).toContainText("Caller One");
     await page.getByRole("button", { name: /^Configure member 20\b/ }).click();
     await page.getByLabel("Player name", { exact: true }).fill("Scout Twenty");
     await page.getByLabel("Member role").selectOption("Scout");
@@ -174,7 +180,9 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     await expect(page.getByLabel("Import comp file")).toBeEnabled();
     await page.getByLabel("Import comp file").setInputFiles(exportPath!);
     await expect(page.getByLabel("Comp title")).toHaveValue("Independent public copy");
-    await expect(page.getByRole("listitem")).toHaveCount(20);
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),
+    ).toHaveCount(20);
     await expect(page.getByLabel("Comp visibility")).toHaveValue("PRIVATE");
     await page.setViewportSize({ width: 375, height: 844 });
     await mkdir(".qa/screenshots", { recursive: true });

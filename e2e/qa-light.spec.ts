@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { writeFile, mkdir } from "node:fs/promises";
 test("light theme accessibility and anonymous sign in", async ({ page, context }) => {
   test.setTimeout(process.env.CI ? 180000 : 30000);
+  const providers = await (await page.request.get("/api/auth/providers")).json();
   const rows = [];
   await mkdir(".qa/screenshots", { recursive: true });
   for (const width of [375, 768, 1440, 1920]) {
@@ -12,6 +13,10 @@ test("light theme accessibility and anonymous sign in", async ({ page, context }
     for (const path of ["/", "/tools/market", "/tools/flipping", "/items", "/signin"]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto(path);
+      if (path === "/signin" && providers.discord)
+        await expect(
+          page.getByRole("button", { name: "Continue with Discord", exact: true }),
+        ).toBeVisible();
       const result = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"])
         .analyze();

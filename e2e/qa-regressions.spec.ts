@@ -1,3 +1,4 @@
+import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 test("preference cookie and market request agree without a region URL", async ({
   page,
@@ -15,7 +16,7 @@ test("preference cookie and market request agree without a region URL", async ({
     });
   });
   await page.goto("/tools/market");
-  await expect(page.getByLabel("Albion region")).toHaveValue("asia");
+  await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   await page.getByRole("button", { name: "Compare prices" }).click();
   await expect.poll(() => requested).toBe("asia");
 });
@@ -137,7 +138,7 @@ test("visitor journey from named item search to a verified trade result", async 
     }),
   );
   await page.goto("/");
-  await page.getByLabel("Albion region").selectOption("europe");
+  await chooseRegion(page, "europe");
   await page.locator(".desktop-navigation summary").click();
   await page.getByRole("link", { name: /^Item reference Gear/ }).click();
   await page.getByLabel("Search item name").fill("Bag");
@@ -155,5 +156,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Quantity", { exact: true }).fill("10");
   await expect(page.locator(".result strong")).toContainText("500");
   await page.goBack();
-  await expect(page.getByRole("heading", { name: "Market explorer" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Find, compare, and track Albion markets." }),
+  ).toBeVisible();
 });

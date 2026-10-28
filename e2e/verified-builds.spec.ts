@@ -29,22 +29,30 @@ test("verified equipment and ability choices persist, copy into comps and restor
     await page.goto("/builds/new");
     await page.getByLabel("Build title").fill("Verified ability loadout");
 
-    await page.getByLabel("Main hand equipment").selectOption("MAIN_AXE");
+    await page.getByRole("button", { name: "Item details", exact: true }).click();
+    await page.getByLabel("Main hand equipment", { exact: true }).selectOption("MAIN_AXE");
     await page.getByLabel("Main hand tier").selectOption("6");
+    await page.getByLabel("Main hand quality", { exact: true }).selectOption("3");
     await page.getByLabel("Main hand E", { exact: true }).selectOption("Blood Bandit");
     await page.getByLabel("Main hand Passive", { exact: true }).selectOption("Deep Cuts");
-    await page.getByLabel("Main hand alternative").selectOption("T5_MAIN_AXE");
-    await page.getByRole("button", { name: /^Select Food slot\b/ }).click();
+    await page.getByRole("button", { name: "Choose alternative Main hand", exact: false }).click();
+    await page.getByLabel("Browse tier", { exact: true }).selectOption("5");
+    await page.getByRole("button", { name: /^Equip Battleaxe/ }).click();
+    await page.getByRole("button", { name: "Choose Food equipment", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("8");
     await page.getByRole("button", { name: /^Equip Beef Stew\b/ }).click();
-    await page.getByRole("button", { name: /^Select Potion slot\b/ }).click();
+    await page.getByRole("button", { name: "Choose Potion equipment", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("4");
     await page.getByRole("button", { name: /^Equip Healing Potion\b/ }).click();
     await page.getByRole("button", { name: "Save build", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Verified ability loadout" })).toBeVisible();
     const buildId = page.url().split("/").pop()!;
     await page.reload();
-    await expect(page.getByText(/Recorded selections:.*Blood Bandit/)).toBeVisible();
+    await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Blood Bandit");
+    await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Deep Cuts");
+    await expect(
+      page.locator("#build-gear-Main-hand").getByRole("link", { name: "Compare prices" }),
+    ).toHaveAttribute("href", "/tools/market?region=europe&item=T6_MAIN_AXE&quality=3");
     const equipment = await db.buildEquipment.findFirstOrThrow({
       where: { buildId, slot: "Main hand" },
     });

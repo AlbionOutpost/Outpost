@@ -4,7 +4,8 @@ export function proxy(request: NextRequest) {
   const dev = process.env.NODE_ENV === "development";
   const policy = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${dev ? " 'unsafe-eval'" : ""}`,
+    "frame-src https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://render.albiononline.com",
     "font-src 'self'",
@@ -12,7 +13,7 @@ export function proxy(request: NextRequest) {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    `connect-src 'self'${dev ? " ws: wss:" : ""}`,
+    `connect-src 'self' https://challenges.cloudflare.com${dev ? " ws: wss:" : ""}`,
   ].join("; ");
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);

@@ -95,6 +95,11 @@ export function PartyBoard({
                       : "Optional"}
                 </span>
               </div>
+              {onSelect && (
+                <span className="party-card-edit">
+                  Edit loadout <span aria-hidden="true">→</span>
+                </span>
+              )}
             </>
           );
           return onSelect ? (

@@ -1,3 +1,4 @@
+import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { BuildPreviewCard } from "@/components/build-preview-card";
 import { contentTypes } from "@/lib/builds/validation";
@@ -6,6 +7,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { featuredLibraryBuilds } from "@/lib/grind-library";
+import { LibraryBuildCard } from "@/components/library-build-card";
 export const dynamic = "force-dynamic";
 export default async function Builds({
   searchParams,
@@ -29,6 +32,8 @@ export default async function Builds({
   const sort = value("sort") === "saved" ? "saved" : "recent";
   const pagination = (n: number) =>
     `/builds?${new URLSearchParams({ q, mine: mine ? "1" : "0", content, weapon, sort, page: String(n) })}`;
+  const weaponHref = (weapon: string) =>
+    `/builds?${new URLSearchParams({ q, mine: mine ? "1" : "0", content, sort, weapon })}`;
   // Relation reads must share a snapshot if an author is deleted during discovery.
   const builds = await db.$transaction(
     (tx) =>
@@ -68,60 +73,61 @@ export default async function Builds({
   return (
     <div className="build-discovery-page">
       <div className="section-heading">
-        <h1 className="page-title display-title">Builds & guides</h1>
+        <h1 className="page-title display-title">Builds</h1>
         <Link className="button primary" href="/builds/new">
           Create a build
         </Link>
       </div>
       <p className="intro">Equipment plans and tactics from Albion players.</p>
-      <nav className="discovery-tabs" aria-label="Builds and guides">
+      <nav className="discovery-tabs" aria-label="Build collections">
         <Link href="/builds" aria-current="page">
-          Community builds
+          Outpost builds
         </Link>
-        <Link href="/guides">Practical guides</Link>
+        <Link href="/builds/library">Grind library · 10,770</Link>
+        <Link href="/compositions/library">Recovered comps</Link>
       </nav>
+      {!mine && !q && !content && !weapon && page === 1 && (
+        <section className="library-featured">
+          <div className="library-section-heading">
+            <div>
+              <h2>Your Grind library, at home in Outpost.</h2>
+              <p>Recovered loadouts, original authors, real equipment and recorded spells.</p>
+            </div>
+            <Link className="text-link" href="/builds/library">
+              Browse all 10,770 builds →
+            </Link>
+          </div>
+          <div className="library-build-grid">
+            {featuredLibraryBuilds()
+              .slice(0, 3)
+              .map((b) => (
+                <LibraryBuildCard key={b.id} build={b} />
+              ))}
+          </div>
+        </section>
+      )}
+
       <div className="build-discovery-workspace">
-        <aside className="build-discovery-filters">
-          <MobileFilterPanel>
-            <form id="build-discovery-query" action="/builds" className="build-filter-form">
-              <label>
-                Collection
-                <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
-                  <option value="0">Public builds</option>
-                  <option value="1">My builds</option>
-                </select>
-              </label>
-              <label>
-                Content type
-                <select name="content" defaultValue={content} aria-label="Filter build content">
-                  <option value="">All activities</option>
-                  {contentTypes.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Weapon family
-                <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
-                  <option value="">All weapons</option>
-                  <option value="MAIN_AXE">Battleaxe</option>
-                  <option value="MAIN_SWORD">Broadsword</option>
-                  <option value="2H_BOW">Bow</option>
-                </select>
-              </label>
-              <Link className="text-link" href="/builds">
-                Reset filters
+        <div className="build-discovery-toolbar">
+          <nav className="weapon-shortcuts" aria-label="Weapon shortcuts">
+            <Link href={weaponHref("")} aria-current={!weapon ? "true" : undefined}>
+              All weapons
+            </Link>
+            {[
+              ["MAIN_AXE", "Battleaxe", "T4_MAIN_AXE"],
+              ["MAIN_SWORD", "Broadsword", "T4_MAIN_SWORD"],
+              ["2H_BOW", "Bow", "T4_2H_BOW"],
+            ].map(([code, name, item]) => (
+              <Link
+                key={code}
+                href={weaponHref(code)}
+                aria-current={weapon === code ? "true" : undefined}
+              >
+                <ItemIcon id={item} size={36} />
+                <span>{name}</span>
               </Link>
-              <Link className="text-link" href="/favorites">
-                Your favorites →
-              </Link>
-              <Link className="text-link" href="/guides">
-                Browse practical guides →
-              </Link>
-            </form>
-          </MobileFilterPanel>
-        </aside>
-        <section className="build-discovery-results" aria-label="Matching builds">
+            ))}
+          </nav>
           <div className="build-discovery-querybar">
             <label>
               Search build titles
@@ -150,6 +156,49 @@ export default async function Builds({
               Search builds
             </button>
           </div>
+          <aside className="build-discovery-filters">
+            <MobileFilterPanel>
+              <form id="build-discovery-query" action="/builds" className="build-filter-form">
+                <label>
+                  Collection
+                  <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
+                    <option value="0">Public builds</option>
+                    <option value="1">My builds</option>
+                  </select>
+                </label>
+                <label>
+                  Content type
+                  <select name="content" defaultValue={content} aria-label="Filter build content">
+                    <option value="">All activities</option>
+                    {contentTypes.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Weapon family
+                  <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
+                    <option value="">All weapons</option>
+                    <option value="MAIN_AXE">Battleaxe</option>
+                    <option value="MAIN_SWORD">Broadsword</option>
+                    <option value="2H_BOW">Bow</option>
+                  </select>
+                </label>
+                <Link className="text-link" href="/builds">
+                  Reset filters
+                </Link>
+                <Link className="text-link" href="/favorites">
+                  Your favorites →
+                </Link>
+                <Link className="text-link" href="/guides">
+                  Browse practical guides →
+                </Link>
+              </form>
+            </MobileFilterPanel>
+          </aside>
+        </div>
+
+        <section className="build-discovery-results" aria-label="Matching builds">
           <div className="build-results-heading">
             <h2>{mine ? "Your loadouts" : "Community loadouts"}</h2>
             <span>{builds.length > 24 ? "More than 24" : builds.length} on this page</span>

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-27T03:49:12.511Z",
+  "phase_checked_at": "2026-10-28T12:24:39.178Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,58 +11,58 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 1.36
+      "seconds": 1.55
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 3.82
+      "seconds": 5.85
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.3
+      "seconds": 2.38
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.2
+      "seconds": 0.34
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 2.99
+      "seconds": 3.49
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 3.26
+      "seconds": 6.4
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 84.35
+      "seconds": 119.72
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.36
+      "seconds": 0.46
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.32
+      "seconds": 0.34
     }
   ],
   "counts": {
-    "unit_passed": 156,
-    "browser_passed": 76,
+    "unit_passed": 187,
+    "browser_passed": 99,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-27T03:52:05.734Z",
+    "checkedAt": "2026-10-28T12:26:29.479Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -516,7 +516,7 @@
         "variants": 168
       }
     ],
-    "uniqueAbilityNames": 534,
+    "uniqueAbilityNames": 546,
     "verifiedUnlockRequirements": 0,
     "currentPatchVerifiedEntries": 0,
     "statisticEntries": 0,
@@ -1080,6 +1080,3198 @@
         "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml#T8_STONEBLOCK",
         "currentPatchVerified": false,
         "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_butter",
+        "kind": "crafting",
+        "output": "T4_BUTTER",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_butter",
+        "kind": "crafting",
+        "output": "T6_BUTTER",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_butter",
+        "kind": "crafting",
+        "output": "T8_BUTTER",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_alcohol",
+        "kind": "crafting",
+        "output": "T6_ALCOHOL",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_alcohol",
+        "kind": "crafting",
+        "output": "T7_ALCOHOL",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_alcohol",
+        "kind": "crafting",
+        "output": "T8_ALCOHOL",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_bread",
+        "kind": "crafting",
+        "output": "T4_BREAD",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_flour",
+        "kind": "crafting",
+        "output": "T3_FLOUR",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_heal",
+        "kind": "crafting",
+        "output": "T2_POTION_HEAL",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_heal-e1",
+        "kind": "crafting",
+        "output": "T2_POTION_HEAL@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_heal-e2",
+        "kind": "crafting",
+        "output": "T2_POTION_HEAL@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_heal-e3",
+        "kind": "crafting",
+        "output": "T2_POTION_HEAL@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_heal",
+        "kind": "crafting",
+        "output": "T4_POTION_HEAL",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_heal-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_HEAL@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_heal-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_HEAL@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_heal-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_HEAL@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_heal",
+        "kind": "crafting",
+        "output": "T6_POTION_HEAL",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_heal-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_HEAL@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_heal-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_HEAL@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_heal-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_HEAL@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_energy",
+        "kind": "crafting",
+        "output": "T2_POTION_ENERGY",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_energy-e1",
+        "kind": "crafting",
+        "output": "T2_POTION_ENERGY@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_energy-e2",
+        "kind": "crafting",
+        "output": "T2_POTION_ENERGY@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_potion_energy-e3",
+        "kind": "crafting",
+        "output": "T2_POTION_ENERGY@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_energy",
+        "kind": "crafting",
+        "output": "T4_POTION_ENERGY",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_energy-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_ENERGY@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_energy-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_ENERGY@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_energy-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_ENERGY@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_energy",
+        "kind": "crafting",
+        "output": "T6_POTION_ENERGY",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_energy-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_ENERGY@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_energy-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_ENERGY@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_energy-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_ENERGY@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_revive",
+        "kind": "crafting",
+        "output": "T3_POTION_REVIVE",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_revive-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_REVIVE@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_revive-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_REVIVE@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_revive-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_REVIVE@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_revive",
+        "kind": "crafting",
+        "output": "T5_POTION_REVIVE",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_revive-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_REVIVE@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_revive-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_REVIVE@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_revive-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_REVIVE@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_revive",
+        "kind": "crafting",
+        "output": "T7_POTION_REVIVE",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_revive-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_REVIVE@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_revive-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_REVIVE@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_revive-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_REVIVE@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_stoneskin",
+        "kind": "crafting",
+        "output": "T3_POTION_STONESKIN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_stoneskin-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_STONESKIN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_stoneskin-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_STONESKIN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_stoneskin-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_STONESKIN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_stoneskin",
+        "kind": "crafting",
+        "output": "T5_POTION_STONESKIN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_stoneskin-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_STONESKIN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_stoneskin-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_STONESKIN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_stoneskin-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_STONESKIN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_stoneskin",
+        "kind": "crafting",
+        "output": "T7_POTION_STONESKIN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_stoneskin-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_STONESKIN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_stoneskin-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_STONESKIN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_stoneskin-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_STONESKIN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_slowfield",
+        "kind": "crafting",
+        "output": "T3_POTION_SLOWFIELD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_slowfield-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_SLOWFIELD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_slowfield-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_SLOWFIELD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_slowfield-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_SLOWFIELD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_slowfield",
+        "kind": "crafting",
+        "output": "T5_POTION_SLOWFIELD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_slowfield-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_SLOWFIELD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_slowfield-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_SLOWFIELD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_slowfield-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_SLOWFIELD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_slowfield",
+        "kind": "crafting",
+        "output": "T7_POTION_SLOWFIELD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_slowfield-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_SLOWFIELD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_slowfield-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_SLOWFIELD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_slowfield-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_SLOWFIELD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_cooldown",
+        "kind": "crafting",
+        "output": "T4_POTION_COOLDOWN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_cooldown-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_COOLDOWN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_cooldown-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_COOLDOWN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_cooldown-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_COOLDOWN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_cooldown",
+        "kind": "crafting",
+        "output": "T6_POTION_COOLDOWN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_cooldown-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_COOLDOWN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_cooldown-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_COOLDOWN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_cooldown-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_COOLDOWN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cooldown",
+        "kind": "crafting",
+        "output": "T8_POTION_COOLDOWN",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cooldown-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_COOLDOWN@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cooldown-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_COOLDOWN@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cooldown-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_COOLDOWN@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cleanse",
+        "kind": "crafting",
+        "output": "T8_POTION_CLEANSE",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cleanse-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_CLEANSE@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cleanse-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_CLEANSE@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_cleanse-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_CLEANSE@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_mob_reset",
+        "kind": "crafting",
+        "output": "T3_POTION_MOB_RESET",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_mob_reset-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_MOB_RESET@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_mob_reset-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_MOB_RESET@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_mob_reset-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_MOB_RESET@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_mob_reset",
+        "kind": "crafting",
+        "output": "T5_POTION_MOB_RESET",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_mob_reset-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_MOB_RESET@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_mob_reset-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_MOB_RESET@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_mob_reset-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_MOB_RESET@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_mob_reset",
+        "kind": "crafting",
+        "output": "T7_POTION_MOB_RESET",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_mob_reset-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_MOB_RESET@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_mob_reset-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_MOB_RESET@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_mob_reset-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_MOB_RESET@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_cleanse2",
+        "kind": "crafting",
+        "output": "T3_POTION_CLEANSE2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_cleanse2-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_CLEANSE2@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_cleanse2-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_CLEANSE2@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_cleanse2-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_CLEANSE2@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_cleanse2",
+        "kind": "crafting",
+        "output": "T5_POTION_CLEANSE2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_cleanse2-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_CLEANSE2@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_cleanse2-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_CLEANSE2@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_cleanse2-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_CLEANSE2@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_cleanse2",
+        "kind": "crafting",
+        "output": "T7_POTION_CLEANSE2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_cleanse2-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_CLEANSE2@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_cleanse2-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_CLEANSE2@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_cleanse2-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_CLEANSE2@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_acid",
+        "kind": "crafting",
+        "output": "T3_POTION_ACID",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_acid-e1",
+        "kind": "crafting",
+        "output": "T3_POTION_ACID@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_acid-e2",
+        "kind": "crafting",
+        "output": "T3_POTION_ACID@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_potion_acid-e3",
+        "kind": "crafting",
+        "output": "T3_POTION_ACID@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_acid",
+        "kind": "crafting",
+        "output": "T5_POTION_ACID",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_acid-e1",
+        "kind": "crafting",
+        "output": "T5_POTION_ACID@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_acid-e2",
+        "kind": "crafting",
+        "output": "T5_POTION_ACID@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_potion_acid-e3",
+        "kind": "crafting",
+        "output": "T5_POTION_ACID@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_acid",
+        "kind": "crafting",
+        "output": "T7_POTION_ACID",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_acid-e1",
+        "kind": "crafting",
+        "output": "T7_POTION_ACID@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_acid-e2",
+        "kind": "crafting",
+        "output": "T7_POTION_ACID@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_potion_acid-e3",
+        "kind": "crafting",
+        "output": "T7_POTION_ACID@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_berserk",
+        "kind": "crafting",
+        "output": "T4_POTION_BERSERK",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_berserk-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_BERSERK@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_berserk-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_BERSERK@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_berserk-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_BERSERK@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_berserk",
+        "kind": "crafting",
+        "output": "T6_POTION_BERSERK",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_berserk-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_BERSERK@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_berserk-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_BERSERK@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_berserk-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_BERSERK@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_berserk",
+        "kind": "crafting",
+        "output": "T8_POTION_BERSERK",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_berserk-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_BERSERK@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_berserk-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_BERSERK@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_berserk-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_BERSERK@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lava",
+        "kind": "crafting",
+        "output": "T4_POTION_LAVA",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lava-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_LAVA@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lava-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_LAVA@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lava-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_LAVA@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lava",
+        "kind": "crafting",
+        "output": "T6_POTION_LAVA",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lava-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_LAVA@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lava-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_LAVA@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lava-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_LAVA@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lava",
+        "kind": "crafting",
+        "output": "T8_POTION_LAVA",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lava-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_LAVA@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lava-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_LAVA@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lava-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_LAVA@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_gather",
+        "kind": "crafting",
+        "output": "T4_POTION_GATHER",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_gather-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_GATHER@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_gather-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_GATHER@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_gather-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_GATHER@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_gather",
+        "kind": "crafting",
+        "output": "T6_POTION_GATHER",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_gather-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_GATHER@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_gather-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_GATHER@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_gather-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_GATHER@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_gather",
+        "kind": "crafting",
+        "output": "T8_POTION_GATHER",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_gather-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_GATHER@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_gather-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_GATHER@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_gather-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_GATHER@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_tornado",
+        "kind": "crafting",
+        "output": "T4_POTION_TORNADO",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_tornado-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_TORNADO@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_tornado-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_TORNADO@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_tornado-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_TORNADO@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_tornado",
+        "kind": "crafting",
+        "output": "T6_POTION_TORNADO",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_tornado-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_TORNADO@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_tornado-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_TORNADO@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_tornado-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_TORNADO@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_tornado",
+        "kind": "crafting",
+        "output": "T8_POTION_TORNADO",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_tornado-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_TORNADO@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_tornado-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_TORNADO@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_tornado-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_TORNADO@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lifeward",
+        "kind": "crafting",
+        "output": "T4_POTION_LIFEWARD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lifeward-e1",
+        "kind": "crafting",
+        "output": "T4_POTION_LIFEWARD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lifeward-e2",
+        "kind": "crafting",
+        "output": "T4_POTION_LIFEWARD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_potion_lifeward-e3",
+        "kind": "crafting",
+        "output": "T4_POTION_LIFEWARD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lifeward",
+        "kind": "crafting",
+        "output": "T6_POTION_LIFEWARD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lifeward-e1",
+        "kind": "crafting",
+        "output": "T6_POTION_LIFEWARD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lifeward-e2",
+        "kind": "crafting",
+        "output": "T6_POTION_LIFEWARD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_potion_lifeward-e3",
+        "kind": "crafting",
+        "output": "T6_POTION_LIFEWARD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lifeward",
+        "kind": "crafting",
+        "output": "T8_POTION_LIFEWARD",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lifeward-e1",
+        "kind": "crafting",
+        "output": "T8_POTION_LIFEWARD@1",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lifeward-e2",
+        "kind": "crafting",
+        "output": "T8_POTION_LIFEWARD@2",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_potion_lifeward-e3",
+        "kind": "crafting",
+        "output": "T8_POTION_LIFEWARD@3",
+        "source": "https://albiononlinegrind.com/alchemy-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_grilledfish",
+        "kind": "crafting",
+        "output": "T1_MEAL_GRILLEDFISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_seaweedsalad",
+        "kind": "crafting",
+        "output": "T1_MEAL_SEAWEEDSALAD",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup-e1",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup-e2",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup-e3",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup_fish",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup_fish-e1",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup_fish-e2",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t1_meal_soup_fish-e3",
+        "kind": "crafting",
+        "output": "T1_MEAL_SOUP_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup_fish",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup_fish-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup_fish-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_soup_fish-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_SOUP_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup_fish",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup_fish-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup_fish-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_soup_fish-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_SOUP_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad-e1",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad-e2",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad-e3",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad_fish",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad_fish-e1",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad_fish-e2",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t2_meal_salad_fish-e3",
+        "kind": "crafting",
+        "output": "T2_MEAL_SALAD_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad_fish",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad_fish-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad_fish-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_salad_fish-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_SALAD_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad_fish",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad_fish-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad_fish-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_salad_fish-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_SALAD_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie_fish",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie_fish-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie_fish-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_pie_fish-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_PIE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie_fish",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie_fish-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie_fish-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_pie_fish-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_PIE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie_fish",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie_fish-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie_fish-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_pie_fish-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_PIE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_fish",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_fish-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_fish-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_fish-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_fish",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_fish-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_fish-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_fish-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_fish",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_fish-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_fish-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_fish-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_avalon",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_avalon-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_avalon-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_avalon-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_avalon",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_avalon-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_avalon-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_avalon-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_avalon",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_avalon-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_avalon-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_avalon-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_dragonarea",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_DRAGONAREA",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_dragonarea-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_DRAGONAREA@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_dragonarea-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_DRAGONAREA@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_omelette_dragonarea-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_OMELETTE_DRAGONAREA@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_dragonarea",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_DRAGONAREA",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_dragonarea-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_DRAGONAREA@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_dragonarea-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_DRAGONAREA@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_omelette_dragonarea-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_OMELETTE_DRAGONAREA@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_dragonarea",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_DRAGONAREA",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_dragonarea-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_DRAGONAREA@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_dragonarea-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_DRAGONAREA@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_omelette_dragonarea-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_OMELETTE_DRAGONAREA@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_fish",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_fish-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_fish-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_fish-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_fish",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_fish-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_fish-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_fish-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_fish",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_fish-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_fish-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_fish-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_avalon",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_avalon-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_avalon-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_stew_avalon-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_STEW_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_avalon",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_avalon-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_avalon-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_stew_avalon-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_STEW_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_avalon",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_avalon-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_avalon-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_stew_avalon-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_STEW_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_fish",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_fish-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_fish-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_fish-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_fish",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_fish-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_fish-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_fish-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_fish",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_fish-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_fish-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_fish-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_avalon",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_avalon-e1",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_avalon-e2",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t4_meal_sandwich_avalon-e3",
+        "kind": "crafting",
+        "output": "T4_MEAL_SANDWICH_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_avalon",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_avalon-e1",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_avalon-e2",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t6_meal_sandwich_avalon-e3",
+        "kind": "crafting",
+        "output": "T6_MEAL_SANDWICH_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_avalon",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_AVALON",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_avalon-e1",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_AVALON@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_avalon-e2",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_AVALON@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_sandwich_avalon-e3",
+        "kind": "crafting",
+        "output": "T8_MEAL_SANDWICH_AVALON@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast_fish",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast_fish-e1",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast_fish-e2",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t3_meal_roast_fish-e3",
+        "kind": "crafting",
+        "output": "T3_MEAL_ROAST_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast_fish",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast_fish-e1",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast_fish-e2",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t5_meal_roast_fish-e3",
+        "kind": "crafting",
+        "output": "T5_MEAL_ROAST_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast_fish",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST_FISH",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast_fish-e1",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST_FISH@1",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast_fish-e2",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST_FISH@2",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t7_meal_roast_fish-e3",
+        "kind": "crafting",
+        "output": "T7_MEAL_ROAST_FISH@3",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
+      },
+      {
+        "id": "grind-t8_meal_special_food_drake_egg",
+        "kind": "crafting",
+        "output": "T8_MEAL_SPECIAL_FOOD_DRAKE_EGG",
+        "source": "https://albiononlinegrind.com/cooking-profit-calculator",
+        "currentPatchVerified": false,
+        "review": "Current source/patch recheck required."
       }
     ],
     "rendererCompatible": 7510,
@@ -1221,87 +4413,163 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-27T04:05:08.211145+00:00",
-    "phase": "2026-10-27T03:49:12.511Z",
-    "scope": "Images opened and visually inspected; expanded source catalog was constrained after an actual tall-editor regression;320px spare-preview overflow corrected Full comp member gear reviewed at all six widths after moving tier labels out of absolute positioning;1920 capture is1080px high. Supplementary browser probe verifies three research selections grouped into two qualities and partial failure retention. Separate actual AODP batch captures were opened at1440/390; no intercepted responses. Fixture captures remain explicitly synthetic; actual OAuth/owner acceptance/patch verification remain open.",
+    "checkedAt": "2026-10-28T12:32:03.310071+00:00",
+    "phase": "2026-10-28T12:24:39.178Z",
+    "scope": "Persistent owner-authorized Cloudflare account-token setup: live API token/zone and pinned Wrangler whoami succeed without browser login. Private0600 environment file is outside app runtime and excluded from source/Docker; current image lacks credential file and token environment. Six negative security tests cover fixed origin/version, redirect policy, reflected errors, body bounds, provider prefixes and chunked UTF8 redaction. Source/client artifact scans include configured management token and find no matches. No remote writes/deployments, global auth overwrite or Discord OAuth acceptance. Ordinary phase all ten gates PASS:187unit/99browser/15disposableDB/nine regional reads. Runtime UI is preserved from the preceding96-case equipment/journal/fishing/media phase. Current production Docker local-library fallback16 representative guest/public captures: editor/guides six widths and selected light, home initial desktop/mobile (market loading-state only), zero overflow/page exceptions/sampled axe violations. Two sheets and actual images inspected. Current two single initial-mobile lab samples home87/builder92 performance,100 sampled accessibility,CLS0,LCP3.98/3.23s still miss2.5s; no speedup/field/conformance claim. Additional archived tags/traits/video/alternative-spell metadata is staged but not yet surfaced, so no fidelity completion is claimed. Remaining economy/island/mastery/Avalon/currentpatch/realOAuth/private oldsystem/owner/release gates remain open. NO-GO.",
     "files": [
       {
-        "path": "docs/design-review/product-milestone/before-build-1440.png",
-        "sha256": "144e12136501bbf70a647ddb58c1d82aa7e1c52d34828e744b4e0741e7e174a7"
+        "path": ".qa/grind-recovery-two/phase-summary.json",
+        "sha256": "b95f072f67b37d940e3a55060541aa8b44f1124fddb715b23384ea928e87c254"
       },
       {
-        "path": "docs/design-review/product-milestone/build-1440.png",
-        "sha256": "552ff45a3d3d4e61bac3f794b009969fef892ecdee61cd1078725668a44fefb3"
+        "path": ".qa/grind-recovery-two/phase-browser.log",
+        "sha256": "f8932fd73a85f86ae86a1be8412532740f951d4bfc4d02818ec8453adebac863"
       },
       {
-        "path": "docs/design-review/product-milestone/build-390.png",
-        "sha256": "cab9c15658d48dc929d912fbe43b3e92f1d6480711d6f514a0decc4951b9fdb6"
+        "path": ".qa/grind-recovery-two/visual-complete/manifest.json",
+        "sha256": "62ecdda14d8c6175ae595994347a7201855907d8c0c95791b37e33e50f1ba1f6"
       },
       {
-        "path": "docs/design-review/product-milestone/build-320.png",
-        "sha256": "1a56826157ce4b8e45653978ac0042b7926a40693e6fd2e6e8b798c8050041c3"
+        "path": ".qa/grind-recovery-two/first-phase-failures/phase-summary.json",
+        "sha256": "f51cdf2b52a2d7591b92677c0689fe5089a54336e6c0d9e2e46c367c50ed2211"
       },
       {
-        "path": "docs/design-review/product-milestone/research-1440.png",
-        "sha256": "6752371698fab92adb8487ff67afa81fcc9ad90a63bca5412533f93d52e8ee16"
+        "path": ".qa/grind-recovery-two/fixture-isolation-failure/phase-summary.json",
+        "sha256": "55213a82a8610e4035739dbd2e639516c9ae9b3d468a7a77f6676493c808c238"
       },
       {
-        "path": "docs/design-review/product-milestone/research-390.png",
-        "sha256": "adb3c99eff08c6e5b03da15ae6dea88a34adfac038a148b04c4a6611e50615f8"
+        "path": ".qa/grind-recovery-two/container-final.log",
+        "sha256": "ff75d785fb7a300f8ffb64ea5029fddd388c8dbeb9c9bf8852c811b4b9405094"
       },
       {
-        "path": "docs/design-review/product-milestone/research-320.png",
-        "sha256": "7f38bae0290bae9099018f65732395323937a63c9cf3188ee68075f9beddb10b"
+        "path": ".qa/grind-recovery-two/docker-build-result-fix.log",
+        "sha256": "03f9e940d4d28b6e5b5bd0ca8d34d816cd38b07bc1413560905918634b112d13"
       },
       {
-        "path": "docs/design-review/product-milestone/profile-1440.png",
-        "sha256": "def374789b56d22c2e9091cca525cf3dfcd8ab2ee95a859614d5f53135d4ee55"
+        "path": ".qa/grind-recovery-two/lighthouse-phase-two-summary.json",
+        "sha256": "52b01ac222cafa1d3b66ce2ea4f47ab6a0b06551a8d0b060f35d51f8432a9955"
       },
       {
-        "path": "docs/design-review/product-milestone/profile-320.png",
-        "sha256": "98b91ed80d3d912635ba8727448a787ef189bf42f035ad4cb8604a0a70137eda"
+        "path": "docs/data/archived-journal-source.json",
+        "sha256": "e2b8830d4c03fae76a00a8dec2c2cadb3cd9396112038ac7bef6f6713c4a0356"
       },
       {
-        "path": "docs/design-review/product-milestone/refining-1440.png",
-        "sha256": "236821290aae22df58da341d66ac8565b55ca74878fead6e0b244958be57697e"
+        "path": "docs/data/archived-fishing-source.json",
+        "sha256": "bd8ff79b8f9903e03e2e619587f3c62bf75f0c1900f8fe7a801b41e089b2cb71"
       },
       {
-        "path": "docs/design-review/product-milestone/comp-gear-1440.png",
-        "sha256": "858d8be01aafd1123ff8f674e9f996f165deccb34e8dfe5443c3a564d0aeb988"
+        "path": "public/library/grind-guide-media.json",
+        "sha256": "5ee45e08b302846e370ce6c22fd82b804536fdaba0530a44c37dcb83e86edc6f"
       },
       {
-        "path": "docs/design-review/product-milestone/comp-gear-390.png",
-        "sha256": "3b0a345af281883dedce374530bca69d0123a30ea55347bcbe5fe312c7b61472"
+        "path": ".qa/grind-rebuild/gameinfo-probe.json",
+        "sha256": "8503a24b483ebccab22e7dc7d197e3f82daa8abffbf17c4b7e1dd3004be6370c"
       },
       {
-        "path": "docs/design-review/product-milestone/comp-gear-320.png",
-        "sha256": "5e7357cc7d81e8780b6b2f0e8b12df31d11964bab078bb53ad66b5efed87b980"
+        "path": ".qa/grind-recovery-two/visual-complete/editor-six-viewports.jpg",
+        "sha256": "a91dfd7dc2c5d2ea84f33c771eeda7be84d28accd45feca2b6c9d1237c41576e"
       },
       {
-        "path": "docs/design-review/product-milestone/observed-1440.png",
-        "sha256": "4aeda9ae4e9ec6fd40e9bd32f7a9d6a609107354d204fa71b5c9b816f5618a51"
+        "path": ".qa/grind-recovery-two/visual-complete/loadout-six-viewports.jpg",
+        "sha256": "f8e247e3eb387cfc852ba79bbc8d61687773d7381f9652824abbd03acda4dd3d"
       },
       {
-        "path": "docs/design-review/product-milestone/observed-390.png",
-        "sha256": "ab0e932b6d06c2a89b928b15c969d3433c8c53a6d2fae99c9ae79751a0d55b49"
+        "path": ".qa/grind-recovery-two/visual-complete/guides-six-viewports.jpg",
+        "sha256": "016ff8366a40dc800785836bf67c1f7cbb433e979eeb13682210092733594d22"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/article-six-viewports.jpg",
+        "sha256": "ef8e06a3ba78dcfb501f8d65008159928f89ef9310393494c157da267b85cbac"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/marketguide-six-viewports.jpg",
+        "sha256": "4e5f672da7ce332a04a0516a65939d6cd6ca48a92dcc6c3e23d115f750787934"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/journal-six-viewports.jpg",
+        "sha256": "4a9eb49271c579088990009eee3c824b36733f990c6ace2ee653ed6cfaaae321"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/fish-six-viewports.jpg",
+        "sha256": "7a79c6bac36cc9da5d636c2b975a3a91427e2351961098ba82959dcf092632bf"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/fame-six-viewports.jpg",
+        "sha256": "896a5fa1b4755e9c1c359c659ebd0c8692ecdd8350d21f4d8d667b48fe125572"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/cooking-six-viewports.jpg",
+        "sha256": "8974078398d2df53fef7587cecbb60d115bcdee4d482a1776cb0e7e9b02c6e74"
+      },
+      {
+        "path": ".qa/grind-recovery-two/visual-complete/alchemy-six-viewports.jpg",
+        "sha256": "143e558ecd89bb41cedf2cb88c7701d6b8f371633ebc20ea0fa8719615255c32"
+      },
+      {
+        "path": "public/library/grind-manifest.json",
+        "sha256": "398260e435adb5eb767a34f331fe7460235caa2024bf1e813746bfdc0bd2efe3"
+      },
+      {
+        "path": "docs/deployment/CLOUDFLARE_ACCESS.md",
+        "sha256": "be1ce45e61c0ee7bd891279fd374f668f476fc8c6af774fdef36fc3ce7edbcfe"
+      },
+      {
+        "path": ".qa/cloudflare/connection-evidence.json",
+        "sha256": "f948b7ab872c5ce07e2e89a90837f937bef739b1825825469f0885dc3f223328"
+      },
+      {
+        "path": ".qa/cloudflare/image-private-file-check.json",
+        "sha256": "8f95828c70e08f56a84aa723377859cc72aac122144e716bdd81419cfda208e5"
+      },
+      {
+        "path": ".qa/cloudflare/phase/phase-summary.json",
+        "sha256": "61d9f4fb606524053f92bc2243ed4983083b9a55231417d1e6f6c512c797bd73"
+      },
+      {
+        "path": ".qa/cloudflare/phase/phase-browser.log",
+        "sha256": "badc089acd8dbe66a709068ae60cd572105fa402127fac2fd79ec4d1957b8a68"
+      },
+      {
+        "path": ".qa/cloudflare/visual/manifest.json",
+        "sha256": "f514f3b6f42e76d9efe7cf096ec37a8461c7c7350d1bd75acc02a83ffb63efa8"
+      },
+      {
+        "path": ".qa/cloudflare/visual/editor-six-viewports.jpg",
+        "sha256": "9abdf8ec2d7ee736638108e97a6da11c0b38bfeec83eb7b8c1fff8cb4ed8021f"
+      },
+      {
+        "path": ".qa/cloudflare/visual/guides-six-viewports.jpg",
+        "sha256": "4f55454e35a4925e19a842206dd6edae1a9a73612164c0e6c09011de689c36c7"
+      },
+      {
+        "path": ".qa/cloudflare/lighthouse-summary.json",
+        "sha256": "00540345da6b584a189dfab4d61ba219684be691db1d2bda60e9c4bb194083ee"
+      },
+      {
+        "path": ".qa/cloudflare/container.json.log",
+        "sha256": "ac819d63a241bc64fb81bfd969ca77bffe45834ac1c2604ddc52b33ee3e7363e"
+      },
+      {
+        "path": ".qa/cloudflare/docker-build.log",
+        "sha256": "7b53f1af44cab2531cb2ec9d023e8203c8e2eda5d52822fd407c03754ec95e6a"
       }
     ]
   },
   "source_scan": {
-    "filesScanned": 678,
-    "configuredKeys": ["NEXTAUTH_SECRET"],
+    "filesScanned": 4035,
+    "configuredKeys": ["NEXTAUTH_SECRET", "CLOUDFLARE_API_TOKEN"],
     "findings": [],
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 51,
-    "configuredSecretKeys": ["NEXTAUTH_SECRET"],
+    "filesScanned": 59,
+    "configuredSecretKeys": ["NEXTAUTH_SECRET", "CLOUDFLARE_API_TOKEN"],
     "matches": []
   },
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "ca3e06ca4d66694ffbdc4a0733bf5e93d0fd50fadb0e6bad978b5b86dd15903f",
+      "sha256": "61d9f4fb606524053f92bc2243ed4983083b9a55231417d1e6f6c512c797bd73",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1311,22 +4579,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "4ed54d8cde3f055a99ceb33624ceb0f8bb604acdcebe46315b51c499c8ab8e65",
+      "sha256": "ee5dfebecf675902e17933a864ddb452ef303ef40b454068c374fc150cee2b7e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "e7411af353dd26bc3ceec00ade2e536ae81ad749e68047f6575a76c8f909de07",
+      "sha256": "d537e8e27c475a1b909af98bfaf88c74f1cb6b5ede0716310a895f438a3ed28f",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "4dce8fcaadeaa5183dab077a1040b3a6c41941245d723d139725dbe9c3d9f679",
+      "sha256": "5fd9bc80723e4bcd705a23ca13b64960954b5d987cb21e0a288c6e999dab70d8",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "b3cc7bbd64eaa20ee468c3f1da0ddb11f128c40e03d71ea3f226d5769449db4e",
+      "sha256": "f09afe5523413978bd872a542fd175b994e495e6dd84da2ad2e8f88491aacde9",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1341,7 +4609,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "cd25f0c5af90420389f83f47bf4f1a3f69ef2dfb1c49bd53bfd02e228239b66e",
+      "sha256": "fdbb66eb19842a043c871c30ba6147630ebb8db8518bfa54a521ba19ae62bff6",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1356,17 +4624,17 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "6c8f379bb995efcb9298a17ff08461b90b8d40ae3dca2633c3a983b924fc268a",
+      "sha256": "f1b24eb05f8850f04ca6d204104b8b907ebf1accc8d49b39bbe3db0089771fb9",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "c36c9bd9eda596f78127f2883fa8ef55bb4161e5da249307d2a7a495bf4c755d",
+      "sha256": "badc089acd8dbe66a709068ae60cd572105fa402127fac2fd79ec4d1957b8a68",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-dependencies.log",
-      "sha256": "8d32c16b0c912eaf39e44257fd00995d54a72f68179aa82853c2d292291ff257",
+      "sha256": "3de413b82633d1998e3d0cd3d95f4dfd8843f8701d297fd55bb34aa6f08f40f0",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -1391,7 +4659,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "85da71624ca25b52abb668b7b930e667703662d5e55d6cf18eab076ab03c91cb",
+      "sha256": "2a796b2b4835b3d18696034e9634f6ce42b99918cadb92e84f54a849f6f1de47",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -1401,64 +4669,74 @@
     "Dockerfile": "a9cc5958a0e8609683e6917a0bd6ca19f73ac2c2bab19bcb19922e50b311bb73",
     "data/catalog/ao-snapshot-20260712.json": "6dadc1b765e07208b105ba754845405f6da2e049bcaa06e7b2e2dd73fe2ba4f0",
     "e2e/account.spec.ts": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877",
-    "e2e/build-discovery-visual.spec.ts": "20621969d4699afabdaf7d7496b6e789c9d2768b3c6658cdc668af21e45c368b",
-    "e2e/build-editor-visual.spec.ts": "9f5404e4f24475bbc2af93ad0d57d2841265ced791c42cc9d0624b84b1945dbe",
+    "e2e/build-discovery-visual.spec.ts": "6ceeea7743e89b66be182be3b528131c99474e11f57328fed75f8dc2ca0df1a6",
+    "e2e/build-editor-visual.spec.ts": "98579944bbdf9ec11cac99018179fa33d442e0df9d8fd7921fcb9be2826a6ce5",
     "e2e/builds.spec.ts": "b711bcad122ca8fd489b30e791c8bf9f1e622b15aa988a856aab70f8cba6c0d1",
-    "e2e/catalog.spec.ts": "67b81777ec1234e635e1a323035f3ad5fbfa1b0e8265312244db1cb5b170cbc2",
+    "e2e/catalog.spec.ts": "17049c4d7305dbe0a16be237b675da475175929b4be000cc9f013d70fc4d5c16",
     "e2e/community.spec.ts": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b",
-    "e2e/composition-visual.spec.ts": "886c21ba4f674903af6078ecc334108d1f8f45f9be6a9c326fdd7c8f35dd5b68",
-    "e2e/compositions.spec.ts": "a27cef6342336b580122269354e94ef2f6a0dfec779f9b93e677de9305f04708",
+    "e2e/composition-visual.spec.ts": "74e163287aa9a397418439b5b24a10f83f6350e9e8bd1e6c8199220eabbb6c54",
+    "e2e/compositions.spec.ts": "507dda15fc3767f2719109cec265f2ffce493c2b2f906da632d1923da98f2d0b",
     "e2e/dashboard-loadouts.spec.ts": "09daa65244cb9cf2c5f1f213b6bce153a39b4b5b00eb10dcdde68907dd3ab327",
-    "e2e/design-review.spec.ts": "dd3a07b81ff010a416043746a80ad4d77b516c7bbd8d05e3e6fe5d818fdabd61",
-    "e2e/equipment-sets.spec.ts": "7d1ead64219a72319647945d2976028123ad3c955a7275f4dd08119740a5de4c",
+    "e2e/design-review.spec.ts": "559c01558e1dfd6b16e64c46797c7f2f982a5ba1334b368d357cbebab0fb7a5a",
+    "e2e/equipment-sets.spec.ts": "21e03a2274b652b89d2e0c8d0d32fb1069f8fb02c69c7cd17004ecc9f326dae1",
+    "e2e/farming.spec.ts": "94bafedceffa3f5661ea4816d017af476a49e3456eac53742411d2a264676c37",
+    "e2e/fishing-journal.spec.ts": "153518a7c5dd9316d6fdb8924e929b6a84c419f812bd7600663afc3c29370140",
+    "e2e/grind-library.spec.ts": "3cd5c77648b550c7a2b0e137dc15158f4d05b68d0995bed7c56c0debc39a9ec0",
     "e2e/group-editing.spec.ts": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418",
     "e2e/groups.spec.ts": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832",
+    "e2e/guest-build.spec.ts": "c9ae3873a13bf716320743ab0744060d85d3eac375b1688c4f5d9179581bb99d",
     "e2e/guild-visual.spec.ts": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647",
-    "e2e/history.spec.ts": "3af63d8bae0a38e08ba5aed90d5c8b93fb98d5b7dab8c6b5a25cfb44daa6aae8",
+    "e2e/history.spec.ts": "34baafe2bf51108edcdaf8b1a5ed2d7422a8ed8511a4ddebfb9656d79d4a5709",
     "e2e/home-market-pulse.spec.ts": "23b8ca028d5c4e3e549d6f03dd13a56477e0aee6fcaba0c70e7f66d68b090565",
-    "e2e/home-market-terminal.spec.ts": "d12a538d13c08f024cd4122b9ffd729645b40fede1df925f7f172639fe7637d9",
-    "e2e/homepage-polish.spec.ts": "fdc3573adfd9bf36dc31ed0b39abdba9caef1662f50ade60a0c6fcadec4c8d29",
-    "e2e/homepage-visual-correction.spec.ts": "0851184cf977d46536803ff5dea36439aa412abd7d1b1a0115f408632962c267",
+    "e2e/home-market-terminal.spec.ts": "894cdaf4c8b13ac2cda939d4864c01ac904609814c02418726af2c46fdba20ff",
+    "e2e/homepage-polish.spec.ts": "0abd4db74c3d24d0ba2e3ab0fdc27a526282bd83ab10cd797512c3610a75db6f",
+    "e2e/homepage-visual-correction.spec.ts": "8d78c3df4789acd51c5b91396c796b7ece24485ce5ca2f3be16448afa389b3b4",
     "e2e/market-research.spec.ts": "7283da4d19a318b89e48a0cce30d854ae07d75875cd16194dfce1ac5ba482538",
     "e2e/market-visual.spec.ts": "abeb845e8abe61a8242f9fa76ccfeb62ad032d6982b6ae6ea1b2585faa32ce06",
     "e2e/market-watchlist.spec.ts": "29227ec0216e0d229eebbb0cea54804537051ed6fcab535e65bc64cf08f5fa56",
-    "e2e/outpost.spec.ts": "4ee19048b59a33062f1b0213e0766d9e48779f36d1e37ffbe52fc472819bbf77",
-    "e2e/personal-tools.spec.ts": "80baa098d14fde4b79c48932f9a8c9c2535f095ac02ba69ae06214f6df5899d9",
-    "e2e/player-workflows.spec.ts": "0094f3583bc45005e86afb1cbbc4c5f88faa8603edd3a627cb1a613d47f590ff",
-    "e2e/playful-ui.spec.ts": "9aeda13238f0e8b288fabece9c3ad110f1b255113c8c876f6afa15140e2fe82d",
+    "e2e/motion-system.spec.ts": "3625bf37c68211199325c2d0f834d76b3d5bfbcf0e2d6603e5ddc02bc5032c91",
+    "e2e/outpost.spec.ts": "eabeeb3a46e1e0f659ce054810cd550b41519c1e808d75c283fd6631e6f595b3",
+    "e2e/personal-tools.spec.ts": "e635c242d448955acbcbfee61da5ac4894f4a065b0e9cf957dac5969b2fcef05",
+    "e2e/player-workflows.spec.ts": "da12d482cb85adf7549a3f736d7c8858f69947c074ccaa10c8fe26878eaf3da7",
+    "e2e/playful-ui.spec.ts": "c576a00b35abfa246331df99f1f70ef2d9b4b815515c8cd9c5cca9fea38b079e",
     "e2e/premium-visual.spec.ts": "4f7f189b71c1275d70bf0f8616604a5e45e23418132ad8def419eb327ab46a04",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png": "9decc1c8252bc3f10f3394b4d9f14d8f1595f245d83171838061db073e108e25",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "19bdcaf760a50c384f97400de0adf1d8d722d4246555e0abee04730d225f285d",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "86a214d06400f4fbbaa781c848c03600f9dbd353b0f63e8ba23ec748b16da68d",
-    "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "97d62894c54ca2d6156af6c5705e6b970e0d78e3d794143e007b78e39cacb304",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "9824e40af7bcceedb342b0c8ba1bac36e75cfb962af3934d3ee23b3a2a29a0e4",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "a0facfbcfef75ff2840f016d9a4ad4994d99f1cbab5482635b676dd44163952e",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "a1813b703e7308aa21d08acbb2e456ef639970e4ec6166c5cc0ba73145d3332c",
-    "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "4a14af4e1f02b4449828593396f936686f67a03725d413f4002d70a3446e6586",
-    "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png": "aecba27c79369e9a40f71d6d8f6ad383e67a6a314ec97f701ace59705dd8595c",
-    "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png": "b1e8a2d9aa31222324f63f920970d36fffee887285d480c9aa51fb4004c040d8",
-    "e2e/production-freshness.spec.ts": "b3bf4dd175b24b7df763d0c3e8bdc50a220cb2aec0cec9b25916b61b022016fc",
-    "e2e/production-modes.spec.ts": "a9a3238097c979abbb7aa1dab5c1a44a94397c65d9c6fbe1d23e039702adbb4d",
-    "e2e/production-profile.spec.ts": "dbcf6891e4794f1e27550da07b7cda922bc5f2d9027dfa6fc752f3dc6a01c3c1",
-    "e2e/production.spec.ts": "31b07fe06bca1ed80bc7c4d5e659ec7df5070aef809f42741afafa622439db76",
-    "e2e/public.spec.ts": "4d3cf5d6ad7ad873793c8887af90c274d2033781946b901bfaa2aa6d4a827017",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png": "9617b83dc701d0b314d64a3d1285e798a160e35b9a940e48cc6d9e712c6f7862",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png": "76244d1f39039d3b1662c0e388056b3651673551707a86f95679dff91f64712d",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png": "c30e4b857a01d3c01bb27bf6ea70d3b87b1ce0080fbc0633a9969cda5913af66",
+    "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png": "11139d396af43942721529ab1062437047bd99bef3433343bca98389da772204",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png": "5d424429f1e2932cdb037dbeb367134cf78fabc55370330a4627032bc9622354",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png": "aba6902cea2beef16e4a609455428898940806189bd1bf395a08bc3446f7a419",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png": "bab5542454a3e16d73dba3654b9e3e2b9a0a01bb3e6488e2fd52f4878a959867",
+    "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png": "a4971b96166b07f3854c66e15ac7dda164ad634b6a6c5fbaef6b2e13e09e6ff3",
+    "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png": "6c6a8f1be8cc9173a9420895ec9ff4ac88e694d7b862f1aec0e7ddd5db32a22e",
+    "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png": "553fa9fa2df9a0e35f1f27d5f30e9cdb44eb6e700d36c77ca8ea01f36ac96291",
+    "e2e/product-controls.spec.ts": "4d4f0c972a4cc1feff27faa4d4be897b66270dc844133ddbe604cecd686fd8f4",
+    "e2e/production-freshness.spec.ts": "a3d7a3d88842bccd1fa2c0122650a2e4c360b7cd10dcd577147693a6bf400f28",
+    "e2e/production-modes.spec.ts": "d15d4e19ea0684268116cda00cf728d7970c41fade485162565119caea649c0a",
+    "e2e/production-plan.spec.ts": "256cc90222b1d0a75cb7050797dc8fd2c8c0c69a91958ce4364c20c7d31b8bb4",
+    "e2e/production-profile.spec.ts": "315f43bffa1b0b8ecf9d913931cc0539a0177fd026e3529a23f2f9e376230f01",
+    "e2e/production.spec.ts": "7980d35373f31a08b51a0d72fc4d534e49889c4314281bbf48f587b20ec320a8",
+    "e2e/public.spec.ts": "3a39dfb1d7c09bdd798b32048ceb06afa3b9c0597fbf76d509d1034f90170970",
     "e2e/qa-audit.spec.ts": "44758c6d62538dd1255c67dd1af46728fdf44aeeef3ba7cb3a913aae8453dcd4",
     "e2e/qa-light.spec.ts": "4584c542e3eb077b70161c4d7201340b476c42cb83fccc1ca58e036273d6de70",
-    "e2e/qa-regressions.spec.ts": "7d2b6001ce1630913ac18ce13c2441a5615889a4d3cea08945c972951c6c84fb",
+    "e2e/qa-regressions.spec.ts": "3cba78a518afc24c275b96d5df6221911bfacb515c27931d715c554afc6a9083",
     "e2e/qa-security.spec.ts": "e898ba56e1319cb14f0efb10fe6bc6f46332ea0e8f3094bb6a46cdda4a868044",
     "e2e/reference-ui.spec.ts": "5dd420178767688649eaf162b771e703dd913bd92f85f6cbaf723e1ac6913cd7",
-    "e2e/refinement.spec.ts": "bd1abd5e54618c01b9e87a76aabdaf83d3ef602ad3ea3c9e9da9278842d8f6d2",
+    "e2e/reference-workspaces.spec.ts": "b48a6e082c575917cef16ad9682a5dee519cf0ab1ac7ade6bef3f32f4ddb2c11",
+    "e2e/refinement.spec.ts": "efc111d4590a154ba2443ca7bb7268f5460a95040bb140907d7fb9f44edeac5b",
+    "e2e/search-palette.spec.ts": "74a2b75bad94db1918d0a197d31d1aae8205b4bdcacef9259053c3bd1c08b696",
     "e2e/settings-recovery.spec.ts": "b6119b446b0a4215fcf3163bd7af71ed508f2b6b3982abf8bd415b87ae41ee70",
-    "e2e/source-equipment.spec.ts": "1bfb1ba655907b2352ab44e9628d625b33c96ba7291d693c6a056661e3748418",
+    "e2e/source-equipment.spec.ts": "c168b665e6d634e30cc43ab8671176fd9db71a89265065be4ace67c39f7ae80b",
     "e2e/support/db.ts": "18028d9a156cd46571ff71e75ac317db1632029feba0da695188a55427b9c90b",
-    "e2e/tool-directory.spec.ts": "a63a911012262e1bfc5eaecd131921f3f812b93ad16571b3022c7ee6be308c37",
+    "e2e/support/region.ts": "4b99541cbf5e2bce8b8731b5b74c277a1aa613cd7ff838972d7b1cd3bd01d222",
+    "e2e/tool-directory.spec.ts": "312933d9ee37329b7a3bc61e2f8c096642fb0a117863807c08d4ea893b91d4ef",
     "e2e/trade-scenarios.spec.ts": "edf0c915a96b4e0857fcde77bee0837c943c3b592cd5fa263066694d87f655bc",
     "e2e/transport.spec.ts": "402cd5deb2a9137cf7c9407bebbf118f3fb976efc46abfba5826a3871740e819",
-    "e2e/ux-task-flow.spec.ts": "0a75b653de5cbae8c9198eab8ab7217ff187311d00c1b60cb54845ae67034b7a",
-    "e2e/verified-builds.spec.ts": "7fa4dfeb76647279694ca5d7b76cbbab739c60710003d3b525b3f4b70fb6c37e",
+    "e2e/ux-task-flow.spec.ts": "e84bc65a03b01b8262b516df62db9a869ccb6656ffba8205c6fc94dfcb98707e",
+    "e2e/verified-builds.spec.ts": "75b6b45c378f35a924fe08e8c14c037e06fd680bd677df39c033bf322f7d0e07",
     "next.config.ts": "1eae45f8ba32dc7309dedc5cc2675c85de7737e1ada51a433c23558f357f20d7",
-    "package-lock.json": "bd581ec9ccf09b0edcdf94b761caaf4c83ad47203b34d414491be04d8fae788a",
-    "package.json": "daeabd515e65b2ceedac90b238d39d164ff0d6b544fc22fca554e7ae1e88336b",
+    "package-lock.json": "764cf54f145f7016d70ee0f9ec3bc8a58046a9dd697ed46fd34f533539db2a1b",
+    "package.json": "2822670f6adeddca546dd390e3b92009c169736a55db4296283c3cf3121d0109",
     "playwright.config.ts": "a266fb2a62ee192701b3e10d65dc1d18cafa0f38b11978c9e2b2a2cffd54987e",
     "prisma/migrations/20261025194321_foundation/migration.sql": "eec39c694939395f0fac7fefaaf1224bcd190c864a7ce254009a3e7950387d9e",
     "prisma/migrations/20261025195551_build_platform/migration.sql": "0dc693d959ac177f4cfb45770517570fa11468fb34579f86fd7967d477e339a4",
@@ -1493,6 +4771,47 @@
     "public/brand/discord-symbol.svg": "3efc001289994d74fa3f919397259d1e7b8e77188c9161880243965ee284466e",
     "public/brand/outpost-logo.png": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48",
     "public/fonts/inter-latin-400-800.woff2": "69a6704255300c984ecd962610f034dc9ba3e82e9b6eca87884f93d8a78a6826",
+    "public/library/grind-builds.json": "155d3fce8602a3d89c732809874a4967d9f654fc862f5f4e04684bfca233e86c",
+    "public/library/grind-compositions.json": "a21e94441162fd487d04d75af62334528ea345d97762ddfea099153d25674de3",
+    "public/library/grind-fishing.json": "7f497cfabef815b54f00296f87369b47c8f575c482a1c920651189fff25d0198",
+    "public/library/grind-guide-media.json": "5ee45e08b302846e370ce6c22fd82b804536fdaba0530a44c37dcb83e86edc6f",
+    "public/library/grind-guides.json": "44011c08b1c669d2be50ddfcac0473682dab03dcd8936dfd112a86ced5e3f9bf",
+    "public/library/grind-journal.json": "d2f792f6cc86f52f4bfec3c60a62d723f284a2ab44df0bd4f852a1c412a21c46",
+    "public/library/grind-manifest.json": "398260e435adb5eb767a34f331fe7460235caa2024bf1e813746bfdc0bd2efe3",
+    "public/library/grind-spell-names.json": "5f71e9cc3cf6bbac841ad76530b92b1af6508ddb0bbc0db569ab5716b13791c5",
+    "public/library/grind-traits.json": "9b292ac3c4df4c84e8724a107a15d68dabcc11b4c26f3202f5e116039b386177",
+    "public/library/media/09ee684b982c-map-connections.webp": "09ee684b982c3b3d8925714173d6dfb0192632c2b78ed3888f242d4d7a0e1a38",
+    "public/library/media/3174e1bf3f8c-ancient-lands.webp": "3174e1bf3f8c5da826b05b4362b95ad3c04ac47d17dc6bd9c5ce3fb86a0451fe",
+    "public/library/media/32cbbac8c259-dragon-lair-map.webp": "32cbbac8c2598439bb77cb0e1e68167e6ca1e33cb8f2ba2c0c071e6e91717641",
+    "public/library/media/3b55d1558041-dragonfire-items.jpg": "3b55d155804175d85d5af4766d01510029ecb47bbcff4c65433c71dc5807f7ac",
+    "public/library/media/40718319e552-dragonslayer-shoes.webp": "40718319e552e26d7f2e6f546ce9f75fba0f237ceef0ee873dff729ca73954f3",
+    "public/library/media/4b512729a0d1-achievements.webp": "4b512729a0d1934386332847af9600469bd3990fba5c59eda0f226ec52a0f13f",
+    "public/library/media/553b6100209e-albion-journal-guide.webp": "553b6100209eec5593d963f374ec65e8b8056304244495f65c1192d49dbcea72",
+    "public/library/media/57f89b1f63ca-new-potion.webp": "57f89b1f63ca1fcb0a063c569eb0751fb947c6db8ec2c982dffc2c50743789c1",
+    "public/library/media/5813e570d1a0-fishing-leveling-guide-v2.webp": "5813e570d1a0ee8dcc295c25ead2c857e2e10f4fc0e7b5707d87261adf4fbbcc",
+    "public/library/media/5854468db5da-dragon-egg.webp": "5854468db5daf22afa798dfcf2fd4a572f9380f291d4ae1761295bda57e21f6d",
+    "public/library/media/5dd9f6c7499b-dragonslayer-jacket.webp": "5dd9f6c7499bb4281a5ca827673ca849b30b87e840cfea9ee3b67a0794e9badd",
+    "public/library/media/6f34f567d493-new-food-2.webp": "6f34f567d49348c52c2919595e7039afd2a39c4686be300a4eaed072e2f8eeed",
+    "public/library/media/75c4d0bdaf55-hide-resource-hotspot.webp": "75c4d0bdaf5595588e1531fb3d6dd732cf38b0111698197d326cdd444add3c2e",
+    "public/library/media/7f3d1fc981d1-7.webp": "7f3d1fc981d1d9438e9851b81e08e16985d44845e846f1d5cc89c3e93c85c06d",
+    "public/library/media/85f98cf0e723-9.webp": "85f98cf0e7238744355cbe401e5de7a569a04d96bc9cb8a74eb080a0b7c87c11",
+    "public/library/media/8993edf4cf03-dragonslayer-hood.webp": "8993edf4cf035e12b6395c191e13dab32d245fb342dfde19e2589b5b4fc2bdaa",
+    "public/library/media/945c81a5a18c-6.webp": "945c81a5a18c66a27ba0708e502cca158b6d852e621afe48c7703fa514fe449e",
+    "public/library/media/a0527892a285-8.webp": "a0527892a285886b479a0e981c397b331284fbf94f2ede0a06b76d40605c30fb",
+    "public/library/media/a1917e79275b-new-food-1.webp": "a1917e79275b645c242f53d5fc1a9974b2d77b70b0712005ee8e2492689f2802",
+    "public/library/media/a63b40023750-drake-mount-and-armor.webp": "a63b400237507dfcb55553ecc83e3786860fb3adb40f7144d08c4b7652bb2dad",
+    "public/library/media/acabc36b7305-waystone-fragment.webp": "acabc36b73058cea25083d72bc9c44e553f9c3a81fa2a1addce3be65a52d784c",
+    "public/library/media/b070b15ba33e-bleedout.webp": "b070b15ba33e41bf0b4bb9f3b673dbea8f7643b37837903e3ae79c95485b6bde",
+    "public/library/media/bd034bd40f8a-black-zone-gathering-guide.jpeg": "bd034bd40f8a084757a4734378adea6987692bda4907f404877598be14c13b3f",
+    "public/library/media/c6b8514a1c9d-market-flipping-guide.webp": "c6b8514a1c9d7b48f73e82347653e795d2775d4f154e604328dd8d95e464603c",
+    "public/library/media/d0a7cf6c2ac1-1.webp": "d0a7cf6c2ac164393b40ef996fb0c858511e288b6b3c96874d1cd07eb1aad993",
+    "public/library/media/d0a7cf6c2ac1-4.webp": "d0a7cf6c2ac164393b40ef996fb0c858511e288b6b3c96874d1cd07eb1aad993",
+    "public/library/media/d1fc224368c7-3.webp": "d1fc224368c70a4b89e476d6e16b1133284b0645ec92b233f9d480502293e2d2",
+    "public/library/media/d28014edcd9f-2.webp": "d28014edcd9fd6b9472dd6c59bea263ec952a4a6328fee40e1b1638ebfebe385",
+    "public/library/media/dc880a70a575-corrupted-dungeon-ratting-guide.jpeg": "dc880a70a575a0f6346b016a50531a84d96b37af85bc6771b34be8a45618aa94",
+    "public/library/media/e6a75bb15be2-dragon-blood.webp": "e6a75bb15be2a14c0ecbdf690d92c7346d30136c861d366500914a0bee3d5c4c",
+    "public/library/media/ec35e66a187f-island-exploration.webp": "ec35e66a187f16cebfebc6dc2996730e5c21aafec73d3ae19829418839951b74",
+    "public/library/media/f4c11b892ad4-5.webp": "f4c11b892ad4f1a9c4c1fbaf8ac740a4fe9e17d9b07078cd9fc405b10ce1b8c3",
     "public/licenses/ao-item-snapshot.txt": "7cd65919fd845d6160f2ec1b4afee97e0f58625a712723fd5ff972f54074555c",
     "public/licenses/archivo-black-OFL.txt": "4cafdbbd100af37a23805af09b7068e4daafb4516dc3d6d52436f4a9d7b4c0d3",
     "public/licenses/barlow-condensed-OFL.txt": "046ee27d8bddc6b6ee08eee53c96dbf3ec1f6df561644e018507dd8ffcb11d31",
@@ -1528,129 +4847,169 @@
     "src/app/api/market-watch/route.ts": "f6d5061f80369cbf5a86281195d4f7f7906608c3cef9fc21b282c26fdd8812c0",
     "src/app/api/opportunities/route.ts": "22a48ffccaadea4a6c6f6ef7c6835a7fba02427ea9d80932c8818419da1f3025",
     "src/app/api/scenarios/[id]/route.ts": "9652ac481f62f38390d08103a83920c00177ca84801527d3641fa8943821ec4d",
-    "src/app/api/scenarios/route.ts": "3834ab6a67f58bb6f0eb212da22e5ae20f60aed8ac9a44327d5b89a0a03d5342",
+    "src/app/api/scenarios/route.ts": "803a41586cded666cc6043f796a31781ed6bcbe685898179342f0e684cfc1350",
     "src/app/api/search/route.ts": "8af7b103b6085504ae5efe2d6b96c6feeb0f5e7e05c00da052dcb270031c5bf3",
     "src/app/api/timers/[id]/route.ts": "2e662d5c53f410d89384c6b21c5acc8d15d159fd930c2dd3c1b58984df6aae22",
     "src/app/api/timers/route.ts": "26a61dad097afbb0338bc14d093dc117628ba44374fd3cfaf2fb29b342548d0e",
     "src/app/api/transport/prices/route.ts": "db3f0ac2cbdb9a8c8639ed4afa771e1c2b9dabad2dadd25a970ad970e8bf13ec",
-    "src/app/brand-interactions.css": "806330221afaa4d7e56e0ba3263fa0f3c07abca735d48bcbd3aaae6a1dbf1328",
+    "src/app/brand-interactions.css": "651aff8ea5c82466a4756e490f541167b402450282ead2bd1e56890ae21dcf1d",
+    "src/app/build-grind-workspace.css": "1c46124aa60eddb2bfd769e1dd6bbe9653c1600bb1f5e4ee6fdf2f12493d182a",
     "src/app/builds/[id]/edit/page.tsx": "2dc8e833809a3d4b2eeaaf8f3e232b2566c2ecc8ae4215c9c34d4eab3fc109b2",
-    "src/app/builds/[id]/page.tsx": "c27efd2f8bf698220cffc4a4b13bc896959ca54dc8d7d3537e7d0bafb08850ae",
-    "src/app/builds/new/page.tsx": "83634f6aa8ce7b28b75141fa2da2b8e1bb3c8c2b824855754e509faeedc330cd",
-    "src/app/builds/page.tsx": "b265f30980d4da4845b84ed7a49e4548f889057e6482c959d415dea6398f45d9",
+    "src/app/builds/[id]/page.tsx": "6e963b3a9a2cb97d928f745dc052ec495331bdb326ac95647516d28ee020e605",
+    "src/app/builds/library/[slug]/page.tsx": "c60160eb59b0034b8faf4ba101fdfed383663fccdb7af9f9470b729a7206b96f",
+    "src/app/builds/library/page.tsx": "3fb9ac2652b46336ebbdbab81472db7aaf353a622aecde720dda9f865d483c7d",
+    "src/app/builds/new/page.tsx": "ea62f6e753c4582f0b0fdda4cc4e8efe5573d4cd9304f9b7a2e8006ca5e00025",
+    "src/app/builds/page.tsx": "05340615aa4c44d252aae02846342eccd31502cf0ba6cb3cb5a4c05d6881af53",
     "src/app/compositions/[id]/edit/page.tsx": "a83b0ff4d5cfd24145278408e60b592260425e2c46916e0036a30c51ae189635",
     "src/app/compositions/[id]/page.tsx": "0ffccd6fffa37a191f98dc3071501898f0874f58af599914618caae10e061072",
+    "src/app/compositions/library/[slug]/page.tsx": "4effb0b16f57eb10b3c5ebe710ce570a93d7818e7a8d19e85290c0c7fb68ce11",
+    "src/app/compositions/library/page.tsx": "9130df0d8ea00d48f05db182033e5317c884d4d6dc47cde56b41f7e1b5a6c54f",
     "src/app/compositions/new/page.tsx": "8f1fa18ca3db3ca7b960412e0c86354e94488c3972e116e84ca6c3fa0bc93fa4",
-    "src/app/compositions/page.tsx": "6460050113e7ad1a32a2a81f5e20b3accf018462c2c21b0857a6adfa8c4408b0",
-    "src/app/dashboard/page.tsx": "fe106711c3d719a06da2919d404615a247e54fc33bc229c0b14546e434564262",
+    "src/app/compositions/page.tsx": "d4e917fb0f0a0b8ce991b4abed0586efd2c3496ba610c8bbd133abe081f80d27",
+    "src/app/dashboard/page.tsx": "9ebba5b5bbc20325e9e359940d5a76fad104b3e586278e8074d9854b96867f21",
     "src/app/equipment-workspace.css": "89c848c2ab7d92682d58c1390b2b36a4c5cbd87a2672224a311bf7ad17d80295",
     "src/app/error.tsx": "8e8112ae108fdc60ca5892991728e302d475ccc93e2b6620300af6f51f3add75",
+    "src/app/farming-workspace.css": "7248b2c95426b71fceb206015367db3a39d03d4bc4e4d1374385cfb3c05266d5",
     "src/app/favorites/page.tsx": "85fd86aea6bf112f6027b251327315daf435409d820101a17bf7cda47b604b5b",
-    "src/app/fonts.ts": "0b0d898fabd80e8b1ba5d8c363d83a7c85932dbd0f8358a2c117b266c3a467ff",
+    "src/app/fishing-workspace.css": "a770ca227a42a344f10fa87c17746001ffb50a73e1df403bd3c72c49306c0b47",
+    "src/app/fonts.ts": "5ff222b210bc6505b0b60331632d32e66dc39b9549d7b17e55280aaf14090eab",
     "src/app/globals.css": "8286adb44257349b5dc1bd0c0e3a9d28650b2e688305f652ac41baeb1ca1a8d3",
+    "src/app/grind-rebuild.css": "445227bd48406cd5f4b184b3dd5c2b1dcf47e4cd09f28296ee8dc30eeff82e1e",
     "src/app/groups/[slug]/page.tsx": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72",
     "src/app/groups/new/page.tsx": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a",
     "src/app/groups/page.tsx": "a1b4b0227f273094973cd8597a9dcd077849bbe4e2cd932b8045a0af4518e64e",
-    "src/app/guides/page.tsx": "63b3e4c5abf030da15dccb35346d03fbf2fc91d2e8b2d9744d47b3235436bd78",
+    "src/app/guides/[slug]/page.tsx": "17f9091f7eb0e1c279fd7c265ddf2fa9fa04ecbdf3588182ec4eb7b88959f5fb",
+    "src/app/guides/page.tsx": "17c6f4500b55fcc20760470a55152cfe40953d17b6394df8741ff28af49e4cdb",
+    "src/app/home-fidelity.css": "6ac671f49d7d52355df734bf040b5cc3cc1a9a5c87132e635d8a6fe7d0f520d8",
     "src/app/home-market-terminal.css": "ea0ac53b36508f36fb04e7a6f36a250372fccede0706e19d37e76f5c3245abb4",
     "src/app/homepage.css": "3bbcdba4a3acc24063ef0a1b32428730a8a0f3a7d0c68c0732d3d0e12b9d5a27",
     "src/app/invitations/[token]/page.tsx": "67484fbee448ce8bb5dcda2481f7e5e292abe9ade6dc85cabefae41a5cc1b15d",
     "src/app/items/[id]/page.tsx": "944638edf62753d74909c5ecb79c3ecf6374807bb2689a548c6b4dacd9038288",
     "src/app/items/page.tsx": "c9f1f9582a30f992703a438db6a9e09f22e5f89cfc4ec42dd256f453115b213c",
-    "src/app/layout.tsx": "9be832c8e2659e8d57559e67d9c25bd59ffe88ed8e28c4d28943ee5c59d31350",
-    "src/app/legal/page.tsx": "42b7d083b2b4a2e3cf3a09f689ddd1cee7e2adf291aa0311d3bb644c278f7a45",
+    "src/app/journal-workspace.css": "c4b0c4ce87b38e2f430eb7eca333e0213babedebfbe81bd0ac2627abaa541d2a",
+    "src/app/layout.tsx": "99a3803e7ddee6ec1bbca8170bc7cf774e72b6c1e1151d1b38f133b59476c9ca",
+    "src/app/legal/page.tsx": "e86c9ebce97d7ad93310e1e3c4efb93faae8e1cd6088da1a412be6a67c89a26c",
     "src/app/loading.tsx": "9352287a856a37239f9e53de283ad4c8b370d7be164565dd2243760b555192ba",
+    "src/app/loadout-cards.css": "cc9d05b329f10362d843f4bb8c8d5be69f460b75ec9441c9032f6fc9d7094779",
+    "src/app/motion-system.css": "fcfa481da858e37a3cdfe2df9f67308cd0bc8f82898de51483c83cf8fe275852",
     "src/app/not-found.tsx": "6d29aeec0e1ff6bc55d3503373adc04ef9a53a289d2ec7b0dbffe78e9d6810a8",
-    "src/app/page.tsx": "f7aa60af2dcc75f96da85f88cf81ac973c8da9e76cb71766446fa51cb7e05d41",
+    "src/app/page.tsx": "fb1679053e70c79c2a473277e1e2631cf325fa4b8199a300c440d76c359cec6a",
     "src/app/player-workspaces.css": "58465c5c0bfd0cd5505b345cea2ac00f3d17787561d2fad4e0f5c13bb265cb2a",
     "src/app/players/[id]/page.tsx": "eef8fb26a21dfda9ffde78177b9dba9f8ab4376c9bc8b5728a087c984eaf2e39",
-    "src/app/playful-ui.css": "38b9b6df74b4556b3f2dd8dad9c2f6a52882b5dc7954ca4f2e6edb3e45bc810c",
+    "src/app/playful-ui.css": "0c17362db388f5bad3a429d6f6be28eb9f7e8fcbc8057f9435a047633ff9c4e6",
+    "src/app/product-controls.css": "25f05820d09edc3ca0645fbf91f7445ec59a6eaea8984e62bb499a6cd1da8635",
     "src/app/product-shell.css": "745957b47b6ef19b5743e3283ed70f8b11bac896b6c31686c922fbabff291cc4",
+    "src/app/production-plan.css": "f0586558d50b1fcc72c46bf0a727ff333f47c9c036be91617ccf21db02433566",
     "src/app/production-workspace.css": "fa8d5599d7469b1fd2abfe705fb74c59dd1feba6c2f34eca8121639eb3113e01",
+    "src/app/reference-system.css": "ecc786780a1bfa19c351c8470ea6a99a9775755a531020cac803fa014e605590",
+    "src/app/search-palette.css": "40d611e52f4e3aa0175f197c384fc68b3b982196c05087e71af44c2c4d6d546a",
     "src/app/settings/actions.ts": "d371ccaec4161dc5ee19b298a91ff184c1207092f35d7c13ffe7331899b298f4",
-    "src/app/settings/page.tsx": "6f6b0d4dfe0c0da8678583413484447ecbb6183eb239163b9697356f959edc3e",
+    "src/app/settings/page.tsx": "2dd7ba1308c98e46fd1c67b4c2ee58c7abdbeada7ba36771b01d15e8bfd3400c",
     "src/app/signin/page.tsx": "6908df111a2ff4bf7af5aa665a8f36653c47d8db6a7e67e18aaf6e80f69638c4",
     "src/app/task-ui.css": "c866f11ca7b6d8e7876c9ec19b6a5764443190c3f519bcfbb6872456b7b58a80",
     "src/app/timers/page.tsx": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933",
-    "src/app/tools/crafting/page.tsx": "e0c9a1189c0eb6170c37718fc203603ef67f311f9e0faef9975f2f23918675b5",
-    "src/app/tools/enchanting/page.tsx": "7774f6fbdb6a2bbbd71316bf3d2417f2deaee3e556223bdd0a34baaa7c9e7762",
+    "src/app/tools/alchemy/page.tsx": "a7eb82b12f63c4e0101d55fb33bcdf231d3620c8364bac5a39f73da2f3141f03",
+    "src/app/tools/cooking/page.tsx": "601e9564943d0658436cfe1bc8ff84c0c590ed476a1b0ba6cad506e44a62f8e4",
+    "src/app/tools/crafting/page.tsx": "f5ecc6179feae2095954ff49eb9d7196dd24489fe73fe3d6d29f11ce13a20e32",
+    "src/app/tools/enchanting/page.tsx": "6ee759329b98c27adfd7935b0da88335dc22600a33901eb5280aa6ce99ef8dfe",
+    "src/app/tools/farming/page.tsx": "145ee25b6a865619d4c090b239d4581af2fcdf13a53462112d7cd9084699e6c7",
+    "src/app/tools/fishing/page.tsx": "ec34369e174bfab8e5e6b0ef6be8f0eadd7696ffe9fccaf527c0e809c7f8339f",
     "src/app/tools/flipping/page.tsx": "1ca4d18f7de3595d67c1c23088cc9bee52e8c2ab92448e759a05a4baecd8c969",
     "src/app/tools/gold/page.tsx": "52830ea986fca24d3b459191040830f4959318323d3d44e147f1f23a80a6328d",
-    "src/app/tools/market/page.tsx": "a9768bb5983eb1ab9b0472f7b50e3c53b8f4f3cf7991f392b08dce57bae9aecc",
+    "src/app/tools/market/page.tsx": "25e69c4adb00a3d9182ae8d055c230f6afdf0d61a510b0913db97a280a342b3a",
     "src/app/tools/page.tsx": "e1d4ef00b2eae0356f18c76918e49f0781ab36f01f3951afdbb45c46e978df7b",
-    "src/app/tools/refining/page.tsx": "343a8d67f074e78c3c647a23bdad021d30eff10f7eabc8bc4f2d1338842da083",
+    "src/app/tools/refining/page.tsx": "fda9d810f6008606f1813901980e7dd7ca780bc23784ad5c4872160fce6644c6",
     "src/app/tools/transporting/page.tsx": "f333053ed871deb65a98f90c393f7acaf8a2cbf93abae5ec8cf02f991230df92",
+    "src/app/workspace-depth.css": "113cf2d81ddbfb5e3ce75f8d86fdffc6223ca1d6d432f9b5cd20eea66ebbba37",
+    "src/app/workspace-fidelity.css": "db6d37896202991864d7be880c9c474539bdd813816a7569be53a1d1ecb4df0c",
     "src/app/workspace.css": "ea5fe9a4290fc364fe821780ee118f97aabc282263c66e1fdc6b1251d295871c",
     "src/components/accept-invite.tsx": "d11ccf02b13292093d4de451f51a1f26708d1206325ee54fe4a1cd4d78fb1162",
     "src/components/albion-scene.tsx": "aa289808f3926da00f78cbde2da31c011219ebcdcdc7ede8b2b6489e3ddae350",
     "src/components/build-actions.tsx": "d69fb8b709e90a193288e06ea17b95c0d70aedf4ee8fcabf1c12253b51e8c019",
     "src/components/build-cost.tsx": "d0f74113c0e53a3b05ac21a985d0d492731c24b27de9f2d5975d7a101be66fda",
-    "src/components/build-editor.tsx": "f513014dcdf021a6fb84420a7343d99c406d501fcd559ed9927562ac489d3dc4",
-    "src/components/build-loadout-view.tsx": "2cc9ed65457ba2d25eff0e6763f24369a071eb288170e86f8b04a6eac91c97f2",
-    "src/components/build-preview-card.tsx": "0bf7800d57b25fa6bbf4e00cac2860cbcbd5f81d02ad44d33a71efa0f882ef3a",
+    "src/components/build-editor.tsx": "d118e9e77e5cdf1902f092da7f89fb4b3aa7756202bac0e9157ab4db14d2e94b",
+    "src/components/build-equipment-studio.tsx": "9367855f03ab7d1d0d9c889ec6e1c6ddc87818ff0db096aab06d9ffda6d99bc5",
+    "src/components/build-loadout-view.tsx": "7d7a9f465b76f240437de107bb529efeb54ca765848c236a7a9d1e1b1a66ebc6",
+    "src/components/build-preview-card.tsx": "03632c556fbae10fdd45487f911f16dd129a236bdaf5be4d6099090852d64d6a",
     "src/components/catalog-item-picker.tsx": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559",
     "src/components/community-panel.tsx": "810bc12b93a77df5e6d096aebc5a0551933e17afbcde3ec0b4169c2bd53de795",
-    "src/components/composition-editor.tsx": "c364faa7a2fc1426217d606089e997978a27552eb779c5f0b4d6744a0f885935",
+    "src/components/composition-editor.tsx": "4e45620d62cc23427a06ba2047581cd06bbc62576c6a379f6c5fc5e5b32a847d",
     "src/components/composition-png-export.tsx": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769",
     "src/components/composition-view.tsx": "2f113258765270f0e459c478e2117fbfef5590dbf87f9b6e8cf5cc3fb52f448c",
     "src/components/discord-mark.tsx": "a71ac7c9bcee1f4027a2a9f8db89c2de652c7f058c122a5efc3900ec91aaf458",
-    "src/components/editor-dialog.tsx": "f2f35b1418231a7af409ff7f1526975422caa104ef23aefda5ada240fb89a404",
+    "src/components/editor-dialog.tsx": "ecc2de41c2df2f96d2f4ec6f62ddf53842e958e51722ad32c2082ccc59b2a0ff",
     "src/components/equipment-overview.tsx": "5b1192d49e49d0a95f993bd5eb78d3016f1f7954e1d124d932f8fdfdf20d4437",
-    "src/components/equipment-picker.tsx": "cca7d84ea6cdf8bb15d1bc0e5e74a3a28b76bb89214ca537c6fe2e834d40ddbc",
+    "src/components/equipment-picker.tsx": "429348051a7af8381e5052e29cd379a4142612a3d9f92549edd1355e8d8f0c99",
     "src/components/equipment-sets.tsx": "adf6cf95ee9b68fa8b845c8ad35fa0383b6f4573371f222c31c0767c1be2e9f7",
-    "src/components/equipment-strip.tsx": "23bea5d7e65c71b871f52dfad92e7b63af012663d7424090a6ca4a679051f5cf",
-    "src/components/equipment-workbench.tsx": "e8de85031eaa4f319f82a6bb3441f9feb4265e8d6a201a5ec2259f4f5c6d2abc",
+    "src/components/equipment-strip.tsx": "7d36f44c92a661e2baf657e2e51d8433d2a4acf039b02f7ee22118301a96271c",
+    "src/components/equipment-workbench.tsx": "25700a7ea779221f8a44b25658bebdd8a18a2e6adf16f1eae0767849fcf5bcef",
+    "src/components/farming-calculator.tsx": "3114d3d7941246ffacfd5c64af18916b45d15b5e0bb23b8d58305ac4dc9aa3ec",
     "src/components/favorite-build-button.tsx": "b8534a90d60c0a75cf2f68ee57389e210a7b769578f3ce391c3c210997692a84",
     "src/components/feature-emblem.tsx": "5bd69de515f5059f0ab345fd408d2648a176d475e99ecd4bb49e15912ffd8128",
-    "src/components/global-search.tsx": "6b6bebb18f9d2e733ffd69780a02bf6a035a5c55fa4e79e36918c8d689675881",
+    "src/components/fishing-calculator.tsx": "c9075e580e2031588838452a6d7ddef3136d6abd920ab15c9af75fa5223dba0a",
+    "src/components/global-search.tsx": "ba0996abe33e02cb3d995e9d68be0bd00dd6d7569d5ee7402beed235ed3d07c8",
+    "src/components/grind-guide-directory.tsx": "202b0886da0112f610ae05040795eb5bfa6c55bf253f25685d163693608273fe",
     "src/components/group-create.tsx": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945",
     "src/components/group-dashboard.tsx": "0fe9127abb680fd2989d948fabf4efee2f8b91c7e1ace5f7dbfe63784bd54f8d",
     "src/components/group-event-editor.tsx": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97",
     "src/components/group-profile-editor.tsx": "2c5b103c36a2aa5bf57ee338b4a289d068feee21d17f7bc64f0f55742441735b",
+    "src/components/guide-article-content.tsx": "75b0a6b8123e3bf62ada39b1547269b4bfa8962072db75506f5379b8516f44fd",
     "src/components/guide-directory.tsx": "e4e3167b54e1f42047648388dd9624cfdfabcd0d312ebd4d8be7f7a8b4ebdd4c",
-    "src/components/history.tsx": "93c8db65f7a8cb63fa1c29bce8ed90a968e5669ed3067f473954496f051383c8",
+    "src/components/history.tsx": "d414bfd025ee21f9e6b966985c5a3e9247fcdae14ba30c2174fe372e3320e200",
     "src/components/home-build-card.tsx": "e2af1beb06dc453fcdc70b9fe713b7fe7f759b06f3c125e12fe12a627b49584a",
     "src/components/home-equipment-showcase.tsx": "a60823ce483141b41f344d0d6c384f5f1d0882bc596b3fd27724bfb7ce2c1ee9",
     "src/components/home-market-pulse.tsx": "6ec95b39d59241757f2d16f5339d7e7b2b7660af55bfe57c5ac94e9b69f3f488",
-    "src/components/home-market-terminal.tsx": "908ffaf8e9ba0b9225e3c8776357578ead64f55e24126650ca28539e9bde22a7",
+    "src/components/home-market-terminal.tsx": "88f0b873022a1a031076570c20b1239b85dd0df8b8860f9fc59c8575d99f6738",
     "src/components/home-player-preview.tsx": "2ef698a0dd61b64f26512f720fe48d3363378d3651a3e767d04bb24d0aba272e",
     "src/components/item-catalog.tsx": "7d61332400c3ea1e438b2eac7a3ad734474328da4c4e96ac64b9820b71dc9be0",
     "src/components/item-icon.tsx": "7e3ac5611c479eee1f7b5f67884fd4417740b21d51338032725df503540afa08",
     "src/components/item-market-link.tsx": "4ce8b16231e9bb9b469ade59b583e1498aeeb6f7aa13b1d7a772da5dd45ba56e",
+    "src/components/journal-checklist.tsx": "9c6233a131f7572b517533be8a08191e27962b0a36c61703acf89669952a387b",
+    "src/components/library-build-card.tsx": "99602d3b160f7520ae552297b5bed5ca32ea978c277d161e603f079ea0e91407",
+    "src/components/loadout-price-check.tsx": "bf74de69a7719d85533da1b07620240465dc83774bab234548ef8b7f00a8283c",
     "src/components/login-button.tsx": "de599dafb5eda7a57b83bc7afe16c9771fee2c6de171b80923bb23789986ac9a",
     "src/components/market-batch-quotes.tsx": "6d5ef282385b21fc2863ff6d8cd3626e56b250ff3a9d25833012b1c13bc64d35",
     "src/components/market-research.tsx": "939a75d96845be260ead9617da219c187bc455d9b6ca5af6eb11e29e4d7506e5",
     "src/components/market-watchlist.tsx": "6594551a7d0d0b17db7a8d331ca51dfa7aab5c155dde320e39c47ef0f932ba4e",
-    "src/components/market.tsx": "72c3b20d9c6ead1b20d24745cc621775073026a9c03f1ccfb34c4a70eb81c5c8",
+    "src/components/market.tsx": "7b6b451b76be7fdaf79405c7aeabaedb939ceccd0b04ead09a03f0cc7e56d713",
     "src/components/mobile-filter-panel.tsx": "018ce3a07a4fbfeed5833c5636bc14acaaa65be9215f50fa006420a0d1ed995d",
     "src/components/moderation-queue.tsx": "61c6a228b857399d6d310892ddd720f69e09712837cccc891b3a96f58780a93c",
     "src/components/opportunity-scanner.tsx": "17a80724403d77f43fd73bce0f8e950c93a9aa37b39425a1da688a65e2167efd",
-    "src/components/party-board.tsx": "83eca33b337979992a4fd717fee8d92f4b6d51e7b1ee5b3e46c66dce1326e959",
-    "src/components/production-calculator.tsx": "4158561135a27e9f68cccd3f8a6cb5848987f1c979ad4859a24c154c874e71fe",
+    "src/components/party-board.tsx": "88b82707e58dfc229cbdb5c5b9be3be700d23d240398c4f46cc47b3956f00df1",
+    "src/components/production-calculator.tsx": "3258b023c1aeac28adaa3e64b3ae51a0be55c3e0c263c692033f97608f75cb4a",
+    "src/components/production-plan.tsx": "8971e708254c687f2e8f5b833d2a5eca63045644c32ef2adbd8814a333559186",
     "src/components/production-profile.tsx": "70de84cb5cfcd118d9de793185205522057869ce279f0a4fcc802f7ba81947e2",
     "src/components/region-context.tsx": "dbde5917067aff90a99fbd6ae093ab0f39c1089f61302d53329fd8fd6dbfc382",
+    "src/components/region-picker.tsx": "93a43eadc7934373130f64a0085d584017aad30e33a3d4c11b0cdf181d60a3ed",
     "src/components/saved-equipment-sets.tsx": "602099ef393aadf081f32c0995f343493bd65e2f4d2e14e9069dae41e30270d8",
-    "src/components/scenario-controls.tsx": "ae859faa59706b5f56d2444fdbbe12fdc242fbc39e0f9c2e3dbb58ef05c7d675",
+    "src/components/scenario-controls.tsx": "f989391d64ff8d2c0266fcf22b9dccdf6766b529bcc62caa4ad43c71474d7f5e",
     "src/components/settings-forms.tsx": "ebdbdd3fb5a68e27c1070e381ef019b11a35377a0192416c0dc68e0938429951",
-    "src/components/shell.tsx": "2cba12fd97a7747c063d72c37ffac18db5089612e9e9b9f6795457eaed6656cc",
+    "src/components/shell.tsx": "fcb601f9520b0d66896aa53e8b9ce0f2df513ade84b8f24c0fef04416e9a5fa9",
+    "src/components/spell-icon.tsx": "91725d6f86da39782ee3d8b53a3f0bf51d3cf65c061f5b6ee75462865e56deb4",
     "src/components/timer-manager.tsx": "88d53c5fd4acaba6a24d50149b6c0bf73cc47e90c76b89e2da2b6e2fd9af62e0",
-    "src/components/tool-directory.tsx": "4b3950e44441ad8d4b6bede068a69a355beaa567966a5fd1bc72e49610d14b97",
-    "src/components/tool-icon.tsx": "4cf701bed76759e5c4bc9e4f13a7959d6d4e0bbfc150eb0a43acf7cfdbd89304",
-    "src/components/trade-calculator.tsx": "3c400f4cd813467332616813d9daa922eacd4aa1ce5776a44a58e67d5d3d9d2f",
-    "src/components/transport-calculator.tsx": "a4275e74b9b50963d4c40950603689e0252663cf622dc98f8a4c99aa8fa1f4e7",
+    "src/components/tool-directory.tsx": "fe08b016f418227a283009b1bf44c4df1a0f1a140660c9aeceabe0e7f13966b5",
+    "src/components/tool-icon.tsx": "0f1e7e61e726c84b8e402ef252d2c62a91d22d5ef33b8e270e44a94f74adc4c6",
+    "src/components/trade-calculator.tsx": "0c8575b69b76f74c7f05a9e6a8919899277363cc350cdf4933379a4748c858a4",
+    "src/components/transport-calculator.tsx": "54c9f1aaddf1deb3bd4b691d2084ede8d5e8935a99b2afb4468272f01b4e6892",
     "src/components/use-visible-refresh.ts": "d921ea46e961ac7dc9892e8fd14617c656a0b20ddf8447d59f887d83e6a0d813",
     "src/components/wordmark.tsx": "daf6a59b67e3636f63bdfbed039e69485cb242345d3177fa5baff787fac88082",
     "src/components/workspace-navigation.tsx": "73a7a62e8625acbe3780fe36416fb4069f233f489c91eb26e5f9275eed1885af",
     "src/instrumentation.ts": "aabdb2f5ad5f215467de2450c0063a80606c1457f62c2cb60821dced7e9940d9",
+    "src/lib/albion/archived-item-spells.json": "679a76d8bb303242e7883338fda354161b3cc468ac200d964f09d635f7b30a7a",
+    "src/lib/albion/archived-production-recipes.json": "75d4a3fcd7bc84678d3ee9669d9978f472863be7376e717015565faee979ee6f",
+    "src/lib/albion/archived-spell-options.json": "4c667cf38a2e94662f538b575c4416c0ad4afc84df89cd949dc3c533071ea424",
     "src/lib/albion/assets.ts": "17dd3cf7fb75dddfe3277b6d954e09febde2f5e589f2de7031e15b5fa1f69cb3",
     "src/lib/albion/backoff.ts": "9658bc2e31b3e192604fcc2e413fe0f2a0f3b3f6a92029d84e4ffef9a0a0ea26",
     "src/lib/albion/calculations.ts": "00e4ff80128853d113a3551b7e06bc1503723bee6cf7147dcc0cbe59778f3356",
     "src/lib/albion/data-client.ts": "11324aace342ace7446fdef6bb205c54c67e392b3c9761e14f8fccf8fcd60e3c",
-    "src/lib/albion/equipment-abilities.ts": "21955a3d6d9aede663c304f967c436cc04aa37c75b51bce19357fe03d6e2af3b",
+    "src/lib/albion/equipment-abilities.ts": "79280668d65a831fc8de09dc7c0fe1d7c953d1da0f8cbb1c54c50fa426890c2e",
     "src/lib/albion/equipment-catalog.ts": "5f4577dcbed60ea4739cda763245ae6e9ae77d56d9bfaa0dc036eece6febca1f",
-    "src/lib/albion/equipment-sets.ts": "7c78aedc51db61e7e2839546e12d288a3aab4d39c4f9c6cf73a9ab7bee295a6f",
+    "src/lib/albion/equipment-sets.ts": "964339a04bb7a1d1129e1eb309898cb255cc50eafd2bec18deb89442d6584e77",
     "src/lib/albion/equipment-validation.ts": "25f63bdc9f4e7b857ebd4e80e18cfabb8078786a6db3905383701bd131c33d9f",
     "src/lib/albion/expanded-recipes.json": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c",
+    "src/lib/albion/farming-crops.json": "f3c8c10dc9fdfa4855f9174d970f7afc3c392c3f05ce062fccdaa93a4943da24",
+    "src/lib/albion/farming.ts": "c35600d8aac6c612cfa9a4031c9495f18229683ed4837ee2bdb647550863c58d",
+    "src/lib/albion/fishing.ts": "4b8fcd854662657cf4042dbbf843ac5ec33037b6c574ccd58d7bdbd11e89ea08",
     "src/lib/albion/freshness.ts": "e9f127783b21785b915f2907e7704a88196f58715fb6cc6de7576aa485443244",
     "src/lib/albion/history-client.ts": "0de3effaa81c4d7b16a325c64eec10091927d13d713c5e9f8f3835e4cca92de1",
     "src/lib/albion/icon-cache.ts": "1fa9bf230864aabb21c54c9319a3505e512945ec0c34cf712e749df5e08b2e57",
@@ -1660,10 +5019,11 @@
     "src/lib/albion/market-preview.ts": "ed2598094a1bf48648208314ed73a1c623adf4e327c2abc7183ed74db0089e6b",
     "src/lib/albion/market-quotes.ts": "fbefff5ad4b14cc45747ec04ccf5492141c18ed5316831165e0dfbb3955b11a3",
     "src/lib/albion/production-observations.ts": "8b7438eea33a547855d62efe5bc32ae9d5189d18eb32d292804d8d553e452b75",
+    "src/lib/albion/production-plan.ts": "5849b47636a6d52a1893f3bffd4aa0cdd9cbc3414ae6c264ffe1cf72e9577874",
     "src/lib/albion/production-profile.ts": "45b9ac346df60d8cc97c67d5e793b1008b7ab0a7ae93bef712d25b4ee6a64014",
-    "src/lib/albion/production.ts": "b68cb3414c771edd0957d911000ab5da32dfb8c5e6ae44e43c2de6e770409599",
+    "src/lib/albion/production.ts": "81ba9191fbac717bed1537dbe5d74253cd351fb7db8c3ec82cb774315b9e6a25",
     "src/lib/albion/quote-summary.ts": "41cf74580c9e130d97d47e846f1bc766bccbebf96d4ceb2924c5d68ce2d8778a",
-    "src/lib/albion/recipes.ts": "aea10dfc15074a6b741dd86508444e96e0627d1d03cdce9e3a16ded1e0f20509",
+    "src/lib/albion/recipes.ts": "7f52fe632456583fa75d48bec7136b63e5980fb76375a2091a6ec04bcc46116f",
     "src/lib/albion/region-config.ts": "e34915fa650af58d73a8e9d95a56549cc9cfd1c71c4d757f7ff762c096735a1f",
     "src/lib/albion/reviewed-crafting.json": "50fb6fff7362db94731ac1d4fab909735df320b0aa64e7a3d76bfc8d57d82d66",
     "src/lib/albion/source-abilities.json": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937",
@@ -1688,18 +5048,21 @@
     "src/lib/compositions/validation.ts": "86c7f5c28fce12673e8fc6d798d991a18d9ba26d6aff58bd6319a79d684f0f94",
     "src/lib/db.ts": "12d5ef697cb4e454d538a7c0c70bc7078398aaa5087e885d088a2117b4f95aeb",
     "src/lib/env.ts": "7625ac2d77eb09b8c58eff8ac6115aeedec341ac424852c54ac40a67e8f61c71",
+    "src/lib/grind-library-types.ts": "177d8c95de06e97b14c3599ef462847952c618b80c7a54eda57f4fc178315fd2",
+    "src/lib/grind-library.ts": "7b22a3921d0c8989ea2a9f92a09b9efcec517d43392273b40f64f933f50e22dd",
     "src/lib/groups/calendar.ts": "951af8d7b49e1a7fe63405a58493b6f48ac53e15f886301f945015f51837ae50",
     "src/lib/groups/dashboard.ts": "9384c24b6a03d8cfe52a99626ab2d5a4393a25880d2d86b8191075a873b57910",
     "src/lib/groups/permissions.ts": "1f1eeb2ff199bb78396c41888f137c5a80adfbe15ce02f2c434bb372aa7542c4",
     "src/lib/groups/service.ts": "70d907ea07532503524e499edce18da3a2ef2ad7aa1feebb18f492183f4862cd",
     "src/lib/groups/validation.ts": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4",
     "src/lib/http.ts": "5d3eb14af183ea674be8cc90e14f2e1b7e3642c4f1263464544c165d25fbdad2",
+    "src/lib/journal-progress.ts": "58ebafb0dea960154fb4615e804a318f26a27200ea35ac8994c0bc570d857414",
     "src/lib/logging.ts": "7fdcfbfa64a6b145e0e36462db19acc128ca507bce4343ba3911c7b424d28b55",
     "src/lib/market-watch.ts": "c2da0e2a843910852448e1d00b477a54c1afce37a9d5ea52d1988f50c3617a2a",
     "src/lib/redis.ts": "75dae4d2a99d02bfeb9c1f7e48f51a002c6f38b41a84a5d570dab149e8869663",
     "src/lib/serialization-retry.ts": "b172e69decca5af44c0e0657626711949ec031f0dc7a37033e26839f3edb0c44",
     "src/lib/timers/engine.ts": "3949b57b6bbe957534eba82b4bd270fccdf7abaf40caa01154237722a4d18175",
-    "src/lib/tool-directory.ts": "c387b4f3bb512bc10f34ee70abb60f69872c3b1ef3e9a46d29d03ea4bcb57251",
+    "src/lib/tool-directory.ts": "f3d89a35068592ca7c29a48ace1aaff222d4707eb90bc0ff50358199ccdc3c0c",
     "src/proxy.ts": "ca7d6f253134b04d99f51d6b3e1a0a5461bcf5ae3ba36252e50edf9fa94b2acf",
     "src/types/next-auth.d.ts": "70a09cb8382980b4232f3aaa931137b0fc62aafc3cb41bbb7c23352c04860b90",
     "tests/api-errors.test.ts": "f85232767db1ddbd74498343d5709fe7a6cf465fe760cd16edbfb74baedd5f27",
@@ -1715,12 +5078,16 @@
     "tests/catalog-verification.test.ts": "e99a982bd40edf696eaa099bb835147b28c0d38e0063c86680dc9679ae080ef7",
     "tests/catalog.test.ts": "7aa8af2630c874f09db3512f2435b17bf7fc73d4e981e722972d20c5acebde15",
     "tests/ci-evidence.test.ts": "58210bd5cbdefb7a4f456806cf2366399dc11733dd22ca5b267b365ad44bd5d6",
+    "tests/cloudflare-connection.test.ts": "706270228add3404cc10f9cf447f6fd1a4fa83a854a1b72519d0e3c14ef802ca",
     "tests/community.test.ts": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207",
     "tests/compositions.test.ts": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed",
     "tests/data-client.test.ts": "4a4451e49a115c5deceb1165c869e2de935d5bfdffd677dcfb76599a62e3f745",
     "tests/env.test.ts": "cf46a323270c32004f650483d12319fa1016512e1509bfd3e74c5e4e262c1bba",
-    "tests/equipment-sets.test.ts": "145badbd87b1fc1e3acab965115e89c10bf514051e531b7f2512d723eb05f5d6",
+    "tests/equipment-sets.test.ts": "0506bd304e96d6172bc43b1f96938b15c6a9723db74ff071eaa4008b47ab01cd",
+    "tests/farming.test.ts": "d94fe2a38e14e2a301479508edbfa28d67ecf6f24b21dbca91881cd9ad8b7bca",
+    "tests/fishing-journal.test.ts": "672de74dc2db0402bd5ecdf7972121b04901f556103318534c937c47bc651586",
     "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
+    "tests/grind-library.test.ts": "2b45c406d796bc87d7c2315c73f318929c1c4bc58160dde64397d24ef19c72cd",
     "tests/icon-cache.test.ts": "5a5698e14e82dd5a14616f491575372b347288c9ca74790a316cc90cd588732b",
     "tests/item-snapshot.test.ts": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12",
     "tests/market-batch.test.ts": "b12e79aa4e236c8e1e8e24f758db632a2b1d92e7fe5505afe1115f8b64ca950d",
@@ -1730,7 +5097,8 @@
     "tests/opportunities.test.ts": "b8eb08e1b07e3ec15517f5be6f8bb7d547466f118150ffec2de1a652a3658d39",
     "tests/production-market.test.ts": "4cab4b99862770365a3252ab60f9498b6f3ce206c849720c66cfa67d947d58d9",
     "tests/production-observations.test.ts": "8bbe56f282a79bda37caec91da24364733dbb589c6a0fd168a5816bea4fd0c36",
-    "tests/production-profile.test.ts": "a3752f5a4632a9afd80913d12c7998d0739945c836c3ba19172cc7926497cc13",
+    "tests/production-plan.test.ts": "dd8340fb09ef5de41558fe69e9e45c5da5afdcf64c662168fceffc6e570b255b",
+    "tests/production-profile.test.ts": "28944d94f1cb696a85a89a6118f16f91e576b7f1747d09bd7656b149a82f9ae5",
     "tests/production.test.ts": "48b1a3dd61413ee6e7bc7cc36ad180a1b83cfa88f5584a9f44924db8635f9139",
     "tests/qa-regressions.test.ts": "36f116ed01cfa912d8787db4680acbe221ae75ce03d63ac7477314babc444382",
     "tests/quote-summary.test.ts": "b1530ecfbab74f9e5531435841799aabc8b82151f249b28710c94553c8351b07",

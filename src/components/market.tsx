@@ -29,7 +29,9 @@ export function Market() {
   const [error, setError] = useState<{ key: string; message: string } | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [city, setCity] = useState("");
-  const [researchOpen, setResearchOpen] = useState(false);
+  const [researchOpen, setResearchOpen] = useState<boolean | null>(null);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [extraCities, setExtraCities] = useState<string[]>([]);
   const [sort, setSort] = useState("city");
   const controller = useRef<AbortController | null>(null);
   const current = `${region}:${item.trim().toUpperCase()}:${quality}`;
@@ -40,7 +42,9 @@ export function Market() {
   const rows = result?.key === current ? result.rows : [];
   const summary = summarizeQuotes(rows);
   const visible = rows
-    .filter((r) => !city || r.city === city)
+    .filter(
+      (r) => (!city || r.city === city) && (!extraCities.length || extraCities.includes(r.city)),
+    )
     .toSorted((a, b) =>
       sort === "sell"
         ? (a.sell_price_min || Infinity) - (b.sell_price_min || Infinity)
@@ -48,6 +52,7 @@ export function Market() {
           ? b.buy_price_max - a.buy_price_max
           : a.city.localeCompare(b.city),
     );
+  const selectedQuote = visible.find((row) => row.city === selectedCity);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     controller.current?.abort();
@@ -96,9 +101,9 @@ export function Market() {
           <span>3</span> Compare prices
         </li>
       </ol>
-      <section className="market-board">
+      <section className="market-query-panel" aria-label="Market search and filters">
         <div className="market-setup-heading">
-          <h2>What are you trading?</h2>
+          <h2>Search the markets</h2>
           <p>Search by name, select an item, then compare observed city prices.</p>
         </div>
         <form className="market-form market-filters" onSubmit={submit}>
@@ -139,6 +144,107 @@ export function Market() {
             {loading ? "Fetching observations…" : "Compare prices"}
           </button>
         </form>
+        <details className="reference-city-filter">
+          <summary>
+            Compare multiple cities
+            {extraCities.length ? ` · ${extraCities.length} selected` : " · All cities"}
+          </summary>
+          <div className="reference-city-options">
+            {cities.map((name) => (
+              <label key={name}>
+                <input
+                  type="checkbox"
+                  checked={extraCities.includes(name)}
+                  onChange={(e) => {
+                    setCity("");
+                    setExtraCities(
+                      e.target.checked
+                        ? [...extraCities, name]
+                        : extraCities.filter((c) => c !== name),
+                    );
+                  }}
+                />
+                {name}
+              </label>
+            ))}
+          </div>
+        </details>
+        <details className="market-catalog-filters">
+          <summary>Item filters</summary>
+          <div className="market-discovery-filters">
+            <label>
+              Item category
+              <select
+                aria-label="Item category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="">All categories</option>
+                {equipmentSlots.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Item tier
+              <select
+                aria-label="Market item tier"
+                value={tier}
+                onChange={(e) => setTier(e.target.value)}
+              >
+                <option value="">All tiers</option>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Enchantment
+              <select
+                aria-label="Market enchantment"
+                value={enchantment}
+                onChange={(e) => setEnchantment(e.target.value)}
+              >
+                <option value="">All enchantments</option>
+                {[0, 1, 2, 3, 4].map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </details>
+        <div className="reference-filter-chips">
+          {extraCities.map((name) => (
+            <button
+              type="button"
+              key={name}
+              aria-label={`Remove ${name} filter`}
+              onClick={() => setExtraCities(extraCities.filter((c) => c !== name))}
+            >
+              {name} ×
+            </button>
+          ))}
+          {(extraCities.length > 0 ||
+            city ||
+            tier ||
+            category ||
+            enchantment ||
+            quality !== "1") && (
+            <button
+              type="button"
+              onClick={() => {
+                setExtraCities([]);
+                setCity("");
+                setTier("");
+                setCategory("");
+                setEnchantment("");
+                setQuality("1");
+              }}
+            >
+              Reset filters
+            </button>
+          )}
+        </div>
         {error?.key === current && (
           <p role="alert" className="error">
             {error.message}
@@ -149,6 +255,30 @@ export function Market() {
             {result.region !== region ? "Region changed." : "Selection changed."} Request new
             observations for the selected item and quality.
           </p>
+        )}
+      </section>
+      <section className="market-board">
+        <div className="market-results-heading">
+          <h2>{hasResult ? "Market results" : "Your market research"}</h2>
+          <span>
+            {hasResult ? `${visible.length} city observations` : "Choose an item to compare cities"}
+          </span>
+        </div>
+        {hasResult && (
+          <div className="market-observation-legend" aria-label="Market observation context">
+            <span>
+              <strong>
+                {
+                  visible.filter((r) => r.sell_price_min > 0 && !isStale(r.sell_price_min_date))
+                    .length
+                }
+              </strong>{" "}
+              recent sell observations
+            </span>
+            <span>Sell orders: seller listings</span>
+            <span>Buy orders: buyer offers</span>
+            <span>Source times in UTC</span>
+          </div>
         )}
         {hasResult && (
           <>
@@ -206,7 +336,10 @@ export function Market() {
                   className={rows.length ? "price-refresh" : undefined}
                 >
                   {visible.map((r, i) => (
-                    <tr key={`${r.city}-${i}`}>
+                    <tr
+                      key={`${r.city}-${i}`}
+                      className={selectedQuote === r ? "selected-market-row" : undefined}
+                    >
                       <td>
                         <span className="market-table-item">
                           <ItemIcon id={r.item_id} quality={r.quality} size={36} />
@@ -217,7 +350,15 @@ export function Market() {
                         <span className="city-indicator" aria-hidden="true">
                           {r.city.slice(0, 2).toUpperCase()}
                         </span>
-                        {r.city}
+                        <button
+                          type="button"
+                          className="market-row-select"
+                          aria-pressed={selectedQuote === r}
+                          onClick={() => setSelectedCity(r.city)}
+                        >
+                          {r.city}
+                          <span className="sr-only"> market details</span>
+                        </button>
                       </td>
                       <td className="numeric">
                         <span className={!r.sell_price_min ? "market-price-missing" : undefined}>
@@ -330,50 +471,6 @@ export function Market() {
           the future are marked stale. Observations do not guarantee executable trades or liquidity.
         </small>
         <div className="market-secondary-controls">
-          <details className="market-catalog-filters">
-            <summary>Item filters</summary>
-            <div className="market-discovery-filters">
-              <label>
-                Item category
-                <select
-                  aria-label="Item category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="">All categories</option>
-                  {equipmentSlots.map((s) => (
-                    <option key={s}>{s}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Item tier
-                <select
-                  aria-label="Market item tier"
-                  value={tier}
-                  onChange={(e) => setTier(e.target.value)}
-                >
-                  <option value="">All tiers</option>
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Enchantment
-                <select
-                  aria-label="Market enchantment"
-                  value={enchantment}
-                  onChange={(e) => setEnchantment(e.target.value)}
-                >
-                  <option value="">All enchantments</option>
-                  {[0, 1, 2, 3, 4].map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          </details>
           <details className="market-advanced">
             <summary>Advanced item identifier</summary>{" "}
             <label>
@@ -409,6 +506,39 @@ export function Market() {
                 </p>
               </div>
             </div>
+            {selectedQuote && (
+              <section className="reference-city-summary" aria-live="polite">
+                <h3>{selectedQuote.city}</h3>
+                <dl>
+                  <div>
+                    <dt>Observed sell order</dt>
+                    <dd className="numeric">{format(selectedQuote.sell_price_min)}</dd>
+                  </div>
+                  <div>
+                    <dt>Observed buy order</dt>
+                    <dd className="numeric">{format(selectedQuote.buy_price_max)}</dd>
+                  </div>
+                </dl>
+                <p>
+                  Sell observed:{" "}
+                  {selectedQuote.sell_price_min
+                    ? dateLabel(selectedQuote.sell_price_min_date) + " UTC"
+                    : "No observation"}
+                  {selectedQuote.sell_price_min && isStale(selectedQuote.sell_price_min_date)
+                    ? " · STALE"
+                    : ""}
+                </p>
+                <p>
+                  Buy observed:{" "}
+                  {selectedQuote.buy_price_max
+                    ? dateLabel(selectedQuote.buy_price_max_date) + " UTC"
+                    : "No observation"}
+                  {selectedQuote.buy_price_max && isStale(selectedQuote.buy_price_max_date)
+                    ? " · STALE"
+                    : ""}
+                </p>
+              </section>
+            )}
             <p className="quote-freshness">
               {rows.length
                 ? !summary.available
@@ -477,23 +607,32 @@ export function Market() {
             </ul>
           </div>
         )}
-        {!hasResult && (
+        <div id="market-saved-research">
+          <MarketResearch region={region} itemId={item} quality={Number(quality)} />
+          <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
+        </div>
+      </aside>
+      <section className="reference-market-history" id="market-history-research">
+        <div className="section-heading">
+          <h2>Price history</h2>
           <button
             type="button"
-            className="button secondary market-research-toggle"
-            aria-expanded={researchOpen}
-            aria-controls="market-history-research"
-            onClick={() => setResearchOpen(!researchOpen)}
+            className="button secondary"
+            aria-expanded={researchOpen ?? hasResult}
+            onClick={() => setResearchOpen(!(researchOpen ?? hasResult))}
           >
-            {researchOpen ? "Hide price history" : "Research price history"}
+            {(researchOpen ?? hasResult) ? "Hide price history" : "Research price history"}
           </button>
-        )}
-        <div id="market-history-research" hidden={!hasResult && !researchOpen}>
-          <History item={item} quality={Number(quality)} />
         </div>
-        <MarketResearch region={region} itemId={item} quality={Number(quality)} />
-        <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
-      </aside>
+        {(researchOpen ?? hasResult) ? (
+          <History item={item} quality={Number(quality)} />
+        ) : (
+          <p className="muted">
+            Compare current prices or open history to research daily observations. Gaps remain gaps;
+            prices are in silver.
+          </p>
+        )}
+      </section>
     </div>
   );
 }

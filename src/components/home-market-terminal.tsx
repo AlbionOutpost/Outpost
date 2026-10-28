@@ -1,8 +1,20 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ChartNoAxesCombined, ArrowUpRight, Shield, Users, Coins } from "lucide-react";
+import Image from "next/image";
+import {
+  ChartNoAxesCombined,
+  ArrowUpRight,
+  Shield,
+  Users,
+  Coins,
+  History,
+  Calculator,
+  Star,
+  ArrowRight,
+  SlidersHorizontal,
+} from "lucide-react";
 import { z } from "zod";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -42,7 +54,10 @@ const silver = (n: number) => n.toLocaleString("en-GB", { maximumFractionDigits:
 const date = (n: number) =>
   new Date(n).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 
-export function HomeMarketTerminal() {
+export function HomeMarketTerminal({
+  hero,
+  children,
+}: { hero?: ReactNode; children?: ReactNode } = {}) {
   const region = useAtlasRegion();
   const [item, setItem] = useState("T4_BAG");
   const [expanded, setExpanded] = useState(false);
@@ -50,6 +65,8 @@ export function HomeMarketTerminal() {
   const gradient = useId().replaceAll(":", "");
   const [city, setCity] = useState("Lymhurst");
   const [days, setDays] = useState(30);
+  const [previewCity, setPreviewCity] = useState("");
+  const [previewTier, setPreviewTier] = useState("");
   const [history, setHistory] = useState<{
     key: string;
     points: Point[];
@@ -157,7 +174,7 @@ export function HomeMarketTerminal() {
     )
     .join(" ");
   const selected = points[hover ?? points.length - 1];
-  return (
+  const terminal = (
     <section
       className={`home-terminal${expanded ? " is-expanded" : ""}`}
       aria-label="Observed market overview"
@@ -205,7 +222,7 @@ export function HomeMarketTerminal() {
               <strong>Price history</strong>
               <span>Daily sell-order averages · silver</span>
             </div>
-            <div className="terminal-period" aria-label="History range">
+            <div className="terminal-period" role="group" aria-label="History range">
               {[7, 30].map((n) => (
                 <button
                   key={n}
@@ -448,6 +465,240 @@ export function HomeMarketTerminal() {
         )}
       </details>
     </section>
+  );
+  if (!hero) return terminal;
+  const previewRows =
+    market?.key === `${region}:${item}`
+      ? market.rows
+          .filter(
+            (row) => row.city !== "Black Market" && (!previewCity || row.city === previewCity),
+          )
+          .slice(0, 5)
+      : [];
+  return (
+    <div className="home-reference-composition">
+      <section className="reference-hero" aria-labelledby="home-title">
+        <div className="home-hero-atmosphere" data-asset-status="generated">
+          <Image
+            src="/albion/illustrations/market-v1.webp"
+            alt=""
+            fill
+            sizes="(max-width:780px) 600px, 1280px"
+            loading="eager"
+            fetchPriority="high"
+          />
+        </div>
+        {hero}
+        <section className="hero-market-workspace" aria-label="Market Explorer preview">
+          <nav className="hero-market-rail" aria-label="Market preview tools">
+            <Link className="selected" href={`/tools/market?region=${region}`}>
+              <Coins size={15} />
+              Market
+            </Link>
+            <a href="#home-market-insights">
+              <History size={15} />
+              Price history
+            </a>
+            <Link href={`/tools/flipping?region=${region}`}>
+              <Calculator size={15} />
+              Profit calculator
+            </Link>
+            <Link href={`/tools/market?region=${region}`}>
+              <SlidersHorizontal size={15} />
+              Compare
+            </Link>
+            <Link href={`/tools/market?region=${region}#market-saved-research`}>
+              <Star size={15} />
+              Watchlist
+            </Link>
+          </nav>
+          <div className="hero-market-main">
+            <div className="hero-market-heading">
+              <h2>Market Explorer</h2>
+              <span>Observed prices</span>
+              <Link
+                href={`/tools/market?region=${region}&item=${item}`}
+                aria-label="Open market workspace"
+              >
+                <ArrowUpRight size={15} />
+              </Link>
+            </div>
+            <CatalogItemPicker
+              label="Search preview items"
+              tier={previewTier}
+              onSelect={(selection) => {
+                setItem(selection.id);
+                setHover(null);
+              }}
+            />
+            <div className="hero-market-filters">
+              <label>
+                City
+                <select
+                  aria-label="Preview city"
+                  value={previewCity}
+                  onChange={(event) => setPreviewCity(event.target.value)}
+                >
+                  <option value="">All cities</option>
+                  {[
+                    "Bridgewatch",
+                    "Martlock",
+                    "Lymhurst",
+                    "Thetford",
+                    "Fort Sterling",
+                    "Caerleon",
+                    "Brecilien",
+                  ].map((name) => (
+                    <option key={name}>{name}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Browse tier
+                <select
+                  aria-label="Preview catalog tier"
+                  value={previewTier}
+                  onChange={(event) => setPreviewTier(event.target.value)}
+                >
+                  <option value="">All</option>
+                  {[4, 5, 6, 7, 8].map((tier) => (
+                    <option key={tier} value={tier}>
+                      {tier}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="hero-quality">
+                <span>Quality</span>
+                <strong>Normal</strong>
+              </div>
+              <button
+                type="button"
+                className="button primary"
+                onClick={() => setRevision((n) => n + 1)}
+              >
+                Refresh
+              </button>
+            </div>
+            <div className="hero-market-table-wrap">
+              <table className="hero-market-table">
+                <caption className="sr-only">
+                  {equipmentName(item)} · {regions[region].label} · Normal quality · AODP source
+                  observations in silver
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">City</th>
+                    <th scope="col" className="numeric">
+                      Sell order
+                    </th>
+                    <th scope="col" className="numeric">
+                      Buy order
+                    </th>
+                    <th scope="col">Sell age</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewRows.map((row) => (
+                    <tr key={row.city}>
+                      <td>
+                        <ItemIcon id={item} size={28} />
+                        <span>{equipmentName(item)}</span>
+                      </td>
+                      <td>{row.city}</td>
+                      <td className="numeric">
+                        {row.sell_price_min > 0 ? silver(row.sell_price_min) : "—"}
+                      </td>
+                      <td className="numeric">
+                        {row.buy_price_max > 0 ? silver(row.buy_price_max) : "—"}
+                      </td>
+                      <td>
+                        <span
+                          className="preview-quote-age"
+                          title={
+                            observationLabel(row.sell_price_min, row.sell_price_min_date)
+                              .dateTime ?? "No source date"
+                          }
+                        >
+                          {observationLabel(row.sell_price_min, row.sell_price_min_date).label}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!previewRows.length && (
+                <div className="hero-market-empty" role="status">
+                  {market?.key !== `${region}:${item}`
+                    ? "Loading source observations…"
+                    : market.error
+                      ? "Price observations are unavailable. Refresh to retry."
+                      : "No observations for this selection. Try another city or item."}
+                </div>
+              )}
+            </div>
+            <div className="hero-market-footnote">
+              <span>{regions[region].label} · Source dates, not executable offers</span>
+              <a href="#home-market-insights">
+                Inspect observations <ArrowRight size={12} />
+              </a>
+            </div>
+          </div>
+        </section>
+      </section>
+      {children}
+      <section
+        className="home-market-insights"
+        id="home-market-insights"
+        aria-labelledby="market-entry-title"
+      >
+        <div className="reference-section-heading">
+          <div>
+            <span className="eyebrow">MARKET INSIGHTS</span>
+            <h2 id="market-entry-title">Research. Compare. Plan.</h2>
+            <p>Search any item, compare city observations and follow its price history.</p>
+          </div>
+          <Link className="button secondary" href={`/tools/market?region=${region}&item=${item}`}>
+            Go to Market Explorer <ArrowRight size={15} />
+          </Link>
+        </div>
+        {terminal}
+        <div className="home-research-benefits">
+          <span>
+            <Coins size={20} />
+            <span>
+              <strong>Dated market observations</strong>
+              <small>See when each price was reported</small>
+            </span>
+          </span>
+          <span>
+            <Users size={20} />
+            <span>
+              <strong>Separate regional markets</strong>
+              <small>Europe, Americas and Asia</small>
+            </span>
+          </span>
+          <span>
+            <History size={20} />
+            <span>
+              <strong>Price history</strong>
+              <small>Trace source-reported averages</small>
+            </span>
+          </span>
+          <span>
+            <Calculator size={20} />
+            <span>
+              <strong>Transparent calculations</strong>
+              <small>Inspect fees, returns and assumptions</small>
+            </span>
+          </span>
+        </div>
+      </section>
+      <div className="home-illustration-credit">
+        <Link href="/legal#scene-artwork">Illustration credits</Link>
+      </div>
+    </div>
   );
 }
 

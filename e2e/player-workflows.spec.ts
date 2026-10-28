@@ -31,21 +31,24 @@ test("mobile equipment selection and member dialog support keyboard editing", as
   try {
     await page.setViewportSize({ width: 375, height: 844 });
     await page.goto("/builds/new");
-    await page.getByRole("button", { name: /^Select Helmet slot\b/ }).click();
+    await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();
     await expect(page.getByLabel("Search equipment")).toBeVisible();
     await page.getByRole("button", { name: /^Equip Scholar Cowl\b/ }).focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByLabel("Helmet equipment")).toBeVisible();
+    await page.getByRole("button", { name: "Configure Helmet", exact: true }).click();
+    await expect(page.getByLabel("Helmet equipment", { exact: true })).toBeVisible();
     await page.getByLabel("Helmet Active").selectOption("Energy Shield");
-    await page.getByRole("button", { name: "Equipment", exact: true }).click();
-    await expect(page.getByRole("button", { name: /^Select Helmet slot\b/ })).toContainText(
-      "Scholar Cowl",
-    );
+    await page.getByRole("button", { name: "Close item details", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: "Choose Helmet equipment", exact: false }),
+    ).toContainText("Scholar Cowl");
     await mkdir(".qa/player-workflows", { recursive: true });
     await page.screenshot({ path: ".qa/player-workflows/build-equipment-375.png", fullPage: true });
     await page.goto("/compositions/new");
     await page.getByRole("button", { name: "20 players", exact: true }).click();
-    await expect(page.getByRole("listitem")).toHaveCount(20);
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),
+    ).toHaveCount(20);
     const trigger = page.getByRole("button", { name: /^Configure member 1\b/ });
     await trigger.click();
     const dialog = page.getByRole("dialog");
@@ -69,11 +72,15 @@ test("mobile equipment selection and member dialog support keyboard editing", as
     await page.keyboard.press("Escape");
     await expect(dialog).not.toBeVisible();
     await expect(trigger).toBeFocused();
-    await expect(page.getByRole("listitem").first()).toContainText("Mobile caller");
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem").first(),
+    ).toContainText("Mobile caller");
     const handle = page.getByRole("button", { name: "Drag member 1", exact: true });
     await handle.focus();
     await page.keyboard.press("ArrowDown");
-    await expect(page.getByRole("listitem").nth(1)).toContainText("Mobile caller");
+    await expect(
+      page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem").nth(1),
+    ).toContainText("Mobile caller");
     await page.getByRole("button", { name: /^Configure member 2\b/ }).click();
     await expect(page.getByLabel("Player name", { exact: true })).toHaveValue("Mobile caller");
     await page.getByRole("button", { name: "Item details", exact: true }).click();
@@ -98,7 +105,7 @@ test("market item names can be selected with the keyboard", async ({ page }) => 
   await input.press("Enter");
   await expect(input).toHaveAttribute("aria-expanded", "false");
   await expect(page.locator(".market-selection")).toContainText("Battleaxe");
-  await expect(page.getByLabel("Albion region")).toHaveValue("asia");
+  await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   await input.fill("no matching equipment xxxxx");
   await expect(page.getByText("No matching items. Adjust the name or filters.")).toBeVisible();
   await input.press("Escape");

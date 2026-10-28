@@ -23,7 +23,7 @@ for (const width of [390, 320]) {
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
     await page.getByRole("button", { name: "Review profit", exact: true }).click();
     // 10 × (3,000 - 16 × 100 - 8 × 50) = 10,000 silver, no supplied fees or returns.
-    await expect(page.locator("#production-results > strong")).toHaveText("10,000 silver");
+    await expect(page.locator("output[data-result=total-profit]")).toHaveText("10,000");
     await expect(page.locator("#production-results")).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.getByRole("button", { name: "1 Choose recipe", exact: true }).click();

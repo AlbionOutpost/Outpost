@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { parseEnv } from "node:util";
 
 /** Return categories only: never include matched credential values in logs or artifacts. */
 export function scanText(text, configured = {}) {
@@ -10,6 +11,7 @@ export function scanText(text, configured = {}) {
   if (/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text)) matches.push("private-key");
   if (/\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,})\b/.test(text))
     matches.push("github-token");
+  if (/\bcf(?:at|ut|k)_[A-Za-z0-9_-]{40,}\b/.test(text)) matches.push("cloudflare-token");
   return matches;
 }
 
@@ -17,10 +19,24 @@ function main() {
   try {
     process.loadEnvFile(".env");
   } catch {}
+  let managementSecrets = {};
+  for (const path of [".env.cloudflare", ".env.discord"])
+    try {
+      Object.assign(managementSecrets, parseEnv(readFileSync(path, "utf8")));
+    } catch {}
+  const values = { ...process.env, ...managementSecrets };
   const configured = Object.fromEntries(
-    ["NEXTAUTH_SECRET", "DISCORD_CLIENT_SECRET"]
-      .filter((key) => process.env[key])
-      .map((key) => [key, process.env[key]]),
+    [
+      "NEXTAUTH_SECRET",
+      "DISCORD_CLIENT_SECRET",
+      "DISCORD_BOT_TOKEN",
+      "TURNSTILE_SECRET",
+      "CLOUDFLARE_API_TOKEN",
+      "CLOUDFLARE_DNS_API_TOKEN",
+      "CLOUDFLARE_API_KEY",
+    ]
+      .filter((key) => values[key])
+      .map((key) => [key, values[key]]),
   );
   const skipped = new Set([
     "node_modules",

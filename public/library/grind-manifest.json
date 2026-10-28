@@ -1,0 +1,53 @@
+{
+  "source": "Owner-supplied Albion Online Grind public archive",
+  "capturedAt": "2026-10-27",
+  "permission": "Owner confirmed ownership and authorized republication in the 2026-10-28 development session",
+  "scope": "Published, listed records and static guide prose/tables only. No accounts, private drafts, payments, sessions, votes or external code.",
+  "counts": {
+    "builds": 10770,
+    "compositions": 682,
+    "guides": 8
+  },
+  "sourceSha256": {
+    "data/static-tables/weapon-attunement-traits-fd5046cdfb2b3995.json": "075ba4541698ce808ae1c20afc2491e6bde0b9f73d053e60f877c90e1f731aa4",
+    "public-builds.json": "698884a77fd36cd6d8ee1bd9e87e444dd1ca9a3a430f38938c0e55b6a6645118",
+    "public-group-builds.json": "80aeb1f1a8e353fd79da84de4a2c54bc6393b62d3f0329540dc602c0629b63e8",
+    "evidence/pages/guides__achievements.html": "1a0f485fa6cb1f572154c634615b5d7c9bb8f22e603926de2717b068b1151cbd",
+    "evidence/pages/guides__albion-journal-guide.html": "72826e204c3b9efbd7febdb0ac0e02db563167d70fbbc6f9264a059b20b8bc6f",
+    "evidence/pages/guides__ancient-lands.html": "58536353e6840e80158352804c9372a81933f12a0d06f940bf3c9157f48c4a8f",
+    "evidence/pages/guides__black-zone-gathering-guide.html": "032895391d528ae6daa4d277233e36b529f3732cb6dab9e6ba0d9d7d1a8ad9f2",
+    "evidence/pages/guides__corrupted-dungeon-ratting.html": "cbe4b359d32ce71ee9647d18404298360bc1a5b4050f52643e00890614cbae43",
+    "evidence/pages/guides__dragonfire-items.html": "c203ab377b9acfe14230abbda6ae9612f1dc06563c830c7d29b2fedbdba26d72",
+    "evidence/pages/guides__fishing-leveling-guide.html": "c0d9825828d3714e169ef483f21760b4e10b07be2b09417718ecf6ba271ec43d",
+    "evidence/pages/guides__market-flipping-guide.html": "c0acdaff9b2f28f516ae19545f8baa3c27cb038b3a2c1a77a629b9dcc93972f7"
+  },
+  "outputSha256": {
+    "grind-builds.json": "155d3fce8602a3d89c732809874a4967d9f654fc862f5f4e04684bfca233e86c",
+    "grind-compositions.json": "a21e94441162fd487d04d75af62334528ea345d97762ddfea099153d25674de3",
+    "grind-fishing.json": "7f497cfabef815b54f00296f87369b47c8f575c482a1c920651189fff25d0198",
+    "grind-guide-media.json": "5ee45e08b302846e370ce6c22fd82b804536fdaba0530a44c37dcb83e86edc6f",
+    "grind-guides.json": "44011c08b1c669d2be50ddfcac0473682dab03dcd8936dfd112a86ced5e3f9bf",
+    "grind-journal.json": "d2f792f6cc86f52f4bfec3c60a62d723f284a2ab44df0bd4f852a1c412a21c46",
+    "grind-spell-names.json": "5f71e9cc3cf6bbac841ad76530b92b1af6508ddb0bbc0db569ab5716b13791c5",
+    "grind-traits.json": "9b292ac3c4df4c84e8724a107a15d68dabcc11b4c26f3202f5e116039b386177"
+  },
+  "currentPatchVerified": false,
+  "guideWidgetsRestored": false,
+  "slugNormalizations": [
+    {
+      "id": "ceef532a-96e3-4e60-bc12-3d84b1d02c7e",
+      "original": "bloodletter-open-world-safe-build ",
+      "slug": "bloodletter-open-world-safe-build"
+    },
+    {
+      "id": "eff69305-da02-44f3-92b0-8789990eac81",
+      "original": "infernal-scythe-zvz-build ",
+      "slug": "infernal-scythe-zvz-build"
+    },
+    {
+      "id": "40274828-c2aa-4e11-ba41-ca37978cac96",
+      "original": "infernal-scythe-zvz-build",
+      "slug": "infernal-scythe-zvz-build-40274828-c2aa-4e11-ba41-ca37978cac96"
+    }
+  ]
+}

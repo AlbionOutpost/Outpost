@@ -17,41 +17,47 @@ export default async function Settings({
   return (
     <>
       <h1 className="page-title display-title">Account settings</h1>
-      <div className="calculator-grid">
-        <section className="panel">
-          <h2>Profile & preferences</h2>
-          {query.saved && <p role="status">Preferences saved.</p>}
-          {query.error && (
-            <p role="alert" className="error">
-              {query.error === "ownership"
-                ? "Transfer group ownership or delete owned groups before deleting this account."
-                : query.error === "rate"
-                  ? "Too many requests. Please try again later."
-                  : "Check the entered values and try again."}
+      <div className="account-settings-workspace">
+        <nav className="account-settings-navigation" aria-label="Settings sections">
+          <a href="#profile-preferences">Profile & preferences</a>
+          <a href="#account-data">Data & account</a>
+        </nav>
+        <div className="account-settings-content">
+          <section className="panel" id="profile-preferences">
+            <h2>Profile & preferences</h2>
+            {query.saved && <p role="status">Preferences saved.</p>}
+            {query.error && (
+              <p role="alert" className="error">
+                {query.error === "ownership"
+                  ? "Transfer group ownership or delete owned groups before deleting this account."
+                  : query.error === "rate"
+                    ? "Too many requests. Please try again later."
+                    : "Check the entered values and try again."}
+              </p>
+            )}
+            <PreferencesForm
+              initial={{
+                name: user.name || "Adventurer",
+                region: user.region,
+                characterName: user.characterName || "",
+              }}
+            />
+          </section>
+          <section className="panel" id="account-data">
+            <h2>Your data, your choice</h2>
+            <p>
+              Export the profile data held by Outpost. Account deletion permanently removes your
+              account, connected OAuth records and active sessions.
             </p>
-          )}
-          <PreferencesForm
-            initial={{
-              name: user.name || "Adventurer",
-              region: user.region,
-              characterName: user.characterName || "",
-            }}
-          />
-        </section>
-        <section className="panel">
-          <h2>Your data, your choice</h2>
-          <p>
-            Export the profile data held by Outpost. Account deletion permanently removes your
-            account, connected OAuth records and active sessions.
-          </p>
-          <div className="actions">
-            <a className="button secondary" href="/api/account/export">
-              Export personal data
-            </a>
-            <LogoutButton />
-          </div>
-          <DeleteAccountForm />
-        </section>
+            <div className="actions">
+              <a className="button secondary" href="/api/account/export">
+                Export personal data
+              </a>
+              <LogoutButton />
+            </div>
+            <DeleteAccountForm />
+          </section>
+        </div>
       </div>
     </>
   );

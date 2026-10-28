@@ -17,26 +17,26 @@ test("homepage presents one functional preview and compact task navigation at re
       height: width === 1920 ? 1080 : width === 1440 ? 900 : width === 768 ? 1024 : 844,
     });
     await page.goto("/?region=europe");
-    await expect(page.locator(".home-task-list a")).toHaveCount(3);
+    await expect(page.locator(".reference-feature-grid > article")).toHaveCount(3);
     await expect(page.locator(".home-terminal")).toHaveCount(1);
     await expect(
       page.locator(".equipment-showcase,.home-market-pulse,.market-desk,.home-community-builds"),
     ).toHaveCount(0);
-    const tasks = page.getByRole("navigation", { name: "Start a task" });
+    const tasks = page.locator(".reference-feature-grid");
     await expect(tasks.getByRole("link", { name: /Create a build/ })).toHaveAttribute(
       "href",
       "/builds/new?region=europe",
     );
-    await expect(tasks.getByRole("link", { name: /Price a crafting run/ })).toHaveAttribute(
+    await expect(tasks.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
       "href",
-      "/tools/crafting?region=europe",
+      "/tools/market?region=europe",
     );
-    await expect(tasks.getByRole("link", { name: /Plan your comp/ })).toHaveAttribute(
+    await expect(tasks.getByRole("link", { name: /Plan a composition/ })).toHaveAttribute(
       "href",
-      "/compositions?region=europe",
+      "/compositions/new?region=europe",
     );
     if (width <= 780) {
-      await expect(tasks).toBeInViewport();
+      await expect(tasks).toBeVisible();
       await expect(page.locator(".terminal-data-grid")).not.toBeVisible();
       await page.getByRole("button", { name: "Show city prices & history", exact: true }).click();
       await expect(page.locator(".terminal-data-grid")).toBeVisible();

@@ -1,0 +1,17 @@
+{
+  "scope": "Bloodmoon T4-T8 existing variants only. Historical options, no character unlock, tier-specific availability, numerical effect or current-patch certification.",
+  "inputs": {
+    "Scrape/albiononlinegrind.com/report/assets/_next/static/chunks/1015-20150b4a5c8aefc7.js": "6c62e8f224bb314a1f6eb8bd1a7d6b38e3597c833ac5fac89e968419ff50e545",
+    "Scrape/albiononlinegrind.com/report/data/game-item-definitions.json": "66e5518b13414e641d7422a7698e8c2d1dbcd407cc63ab961ff773ecbd274d5b"
+  },
+  "root": "T4_2H_SHAPESHIFTER_MORGANA",
+  "method": "Resolve explicit craftingspelllist reference recursively; apply removespell; map explicit mainhand slots1/2/3 to Q/W/E and PASSIVE_ IDs to Passive; retain only exact spell-ID/name dictionary pairs. No executed scraped JavaScript.",
+  "records": 13,
+  "currentPatchVerified": false,
+  "rightsBoundary": "Owner-supplied archive, minimal factual IDs/short names/slot relationships only. No proprietary code, prose, artwork or statistics copied. Official renderer provides spell imagery.",
+  "output": {
+    "path": "src/lib/albion/archived-spell-options.json",
+    "sha256": "4c667cf38a2e94662f538b575c4416c0ad4afc84df89cd949dc3c533071ea424"
+  },
+  "rendererDocumentation": "https://forum.albiononline.com/index.php/Thread/131017-Update-on-API-New-Endpoints/"
+}

@@ -1,19 +1,19 @@
 {
   "schema_version": 2,
-  "evidence_checked_at": "2026-10-27T03:49:12.511Z",
-  "inputs_sha256": "7fa4d678cd081db60c9ba85b1f8dd9b310c20783c13c122074c97a3999232f93",
+  "evidence_checked_at": "2026-10-28T12:24:39.178Z",
+  "inputs_sha256": "f20a1a17aebc4bdb3ae2e7cf2c03b5ac18ae2a6218e4d1d3d3c7b73eb1791847",
   "coverage_indices": {
-    "implementation": 59.56,
-    "verification": 58.44,
-    "joint": 45.63
+    "implementation": 62.25,
+    "verification": 62.32,
+    "joint": 47.57
   },
   "categories": {
     "core": {
       "weight": 25,
       "scopes": 21,
-      "implementation": 61.904761904761905,
-      "verification": 85.71428571428571,
-      "joint": 61.904761904761905
+      "implementation": 66.66666666666667,
+      "verification": 95.23809523809524,
+      "joint": 66.66666666666667
     },
     "data": {
       "weight": 20,
@@ -32,9 +32,9 @@
     "ui": {
       "weight": 15,
       "scopes": 5,
-      "implementation": 40.0,
-      "verification": 30.0,
-      "joint": 20.0
+      "implementation": 50.0,
+      "verification": 40.0,
+      "joint": 25.0
     },
     "performance": {
       "weight": 10,
@@ -60,14 +60,14 @@
   },
   "implementation_counts": {
     "COMPLETE": 20,
-    "PARTIAL": 32,
-    "MISSING": 8
+    "PARTIAL": 35,
+    "MISSING": 5
   },
   "verification_counts": {
-    "VERIFIED": 31,
-    "NOT_TESTED": 5,
-    "BLOCKED": 11,
-    "PARTIALLY_TESTED": 12,
+    "VERIFIED": 33,
+    "NOT_TESTED": 4,
+    "BLOCKED": 9,
+    "PARTIALLY_TESTED": 13,
     "FAILED": 1
   },
   "open_release_gates": 16,

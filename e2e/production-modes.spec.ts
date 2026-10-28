@@ -35,6 +35,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
     ]);
     try {
       await page.goto(`/tools/${kind}?region=${kind === "enchanting" ? "asia" : "europe"}`);
+      await page.getByText("Station settings, focus & sources", { exact: true }).click();
       await page.getByText("Markets & transaction fees", { exact: true }).click();
       if (kind === "enchanting")
         await page.getByLabel("Output quality assumption", { exact: true }).selectOption("2");
@@ -67,16 +68,15 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
               ];
       for (const [label, value] of fields)
         await page.getByLabel(label, { exact: true }).fill(value);
-      const expected =
-        kind === "crafting" ? "600 silver" : kind === "refining" ? "2,125 silver" : "1,372 silver";
-      await expect(page.locator(".panel.result > strong")).toHaveText(expected);
+      const expected = kind === "crafting" ? "600" : kind === "refining" ? "2,125" : "1,372";
+      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
       const batches = kind === "crafting" ? "1" : kind === "refining" ? "10" : "2";
       await page.getByLabel("Crafts / upgrades", { exact: true }).fill("0");
       await expect(page.getByRole("alert").filter({ hasText: "Check quantities" })).toContainText(
         "Check quantities",
       );
       await page.getByLabel("Crafts / upgrades", { exact: true }).fill(batches);
-      await expect(page.locator(".panel.result > strong")).toHaveText(expected);
+      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
       const title = `QA ${kind} manual scenario`;
       await page.getByLabel("Scenario title", { exact: true }).fill(title);
       await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
@@ -86,7 +86,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
       await page.reload();
       await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
       await page.getByRole("button", { name: `Restore ${title}`, exact: true }).click();
-      await expect(page.locator(".panel.result > strong")).toHaveText(expected);
+      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
       await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue(batches);
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
@@ -114,11 +114,12 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
       }
       if (kind === "crafting") {
         await page.setViewportSize({ width: 1440, height: 900 });
+        await page.getByText("Station settings, focus & sources", { exact: true }).click();
         await page.getByText("Returns & focus", { exact: true }).click();
         await page.getByLabel("Return rate without focus (%)", { exact: true }).fill("20");
         await page.getByLabel("Apply returns to Steel Bar", { exact: true }).check();
         await page.getByLabel("Apply returns to Pine Planks", { exact: true }).check();
-        await expect(page.locator(".panel.result > strong")).toHaveText("1,000 silver");
+        await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
         await page
           .getByLabel("Scenario title", { exact: true })
           .fill("QA retained resource returns");
@@ -135,7 +136,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         await expect(page.getByLabel("Return rate without focus (%)", { exact: true })).toHaveValue(
           "20",
         );
-        await expect(page.locator(".panel.result > strong")).toHaveText("1,000 silver");
+        await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
       }
       expect(await db.savedScenario.count({ where: { authorId: id, kind } })).toBe(
         kind === "crafting" ? 2 : 1,

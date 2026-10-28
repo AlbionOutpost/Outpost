@@ -4,7 +4,7 @@ import { signIn, signOut } from "next-auth/react";
 export function LoginButton() {
   return (
     <button
-      className="button primary discord-login"
+      className="button primary"
       onClick={() => signIn("discord", { callbackUrl: "/settings" })}
     >
       <DiscordMark /> Continue with Discord

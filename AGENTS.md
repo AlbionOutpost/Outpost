@@ -59,6 +59,16 @@ The seven Outpost skills above are already installed and discovered in the curre
 - Browser MCP availability requires an actual successful call. Preserve the permitted local Playwright/CDP/Lighthouse fallback and label it. Never disable sandboxing, expose debugging ports externally, overwrite global config, or install browser plugins to conceal a restriction. Existing `.qa` and documentation artifacts remain the project's authorized evidence locations.
 - Vendor installation does not enable Impeccable hooks, live editing, remote asset generation, automatic updates, telemetry or subordinate agents. Inspect executable helpers before use; use a writable task-local `IMPECCABLE_HOME`, `IMPECCABLE_NO_TELEMETRY=1`, and `IMPECCABLE_NO_UPDATE_CHECK=1`. An upstream workflow never authorizes unrelated publication, permissions changes or application edits.
 
+## Persistent Cloudflare authentication
+
+The owner authorized token-based management access across sessions in this workspace. Read [Cloudflare access](docs/deployment/CLOUDFLARE_ACCESS.md); use `npm run cloudflare:status` and `npm run cloudflare -- <wrangler arguments>`. Credentials live only in the ignored, owner-only `.env.cloudflare`, separate from application runtime environments. Never print, commit, bundle or copy that file into a container. The CLI/API wrapper reloads credentials per invocation; connection setup does not change release gates or authorize unrelated publication.
+
 ## Rebuild and AI handoff documentation
 
 For reconstructing or onboarding to the whole application, start with [docs/rebuild/README.md](docs/rebuild/README.md) and the consolidated [handbook](docs/rebuild/HANDBOOK.md). It records implemented routes, APIs, schema, security, formulas, visual behavior, source assets and missing scope. Keep executable source/current QA authorities above stale prose. After source/config/asset/migration changes regenerate with `node scripts/rebuild-inventory.mjs`, inspect changes and run `node scripts/rebuild-inventory.mjs --check`. Do not hand-edit generated inventory, database reference or consolidated handbook. Preserve credentials/private data outside documentation and retain all existing project instructions.
+
+## Owner-authorized Discord profile management
+
+The owner explicitly authorized configuring the existing Outpost Discord application/bot on28 October2026. Owner-only `.env.discord` holds its management bot credential; never print it or place it in app runtime, Docker images, reports or client variables. Use `npm run discord:status` for sanitized self-profile reads and `npm run discord:setup -- --apply` for the explicitly requested profile configuration. The helper permits only the documented `/users/@me` and `/applications/@me` endpoints, requires a matching Outpost bot/application and does not send messages or install anything in servers. Existing avatars are retained unless `--replace-avatar` is deliberately supplied.
+
+The OAuth Client Secret is a different credential. Bot authentication does not authorize Developer Portal user-account automation or retrieving that secret. Current API read-back and remaining portal steps: [Discord setup](docs/deployment/DISCORD_APP_SETUP.md). The account/zone Cloudflare tokens remain separate in `.env.cloudflare`. Keep all existing project/release rules intact.

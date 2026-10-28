@@ -4,8 +4,8 @@ export default function Page() {
     <div className="production-calculator-page">
       <h1 className="page-title display-title">Refining calculator</h1>
       <p className="intro">
-        Price a starter recipe with your own assumptions and available market observations. Full
-        recipe coverage remains incomplete.
+        Choose a resource, configure your station, and compare material costs with the value of your
+        refined output.
       </p>
       <ProductionCalculator kind="refining" />
     </div>

@@ -1,5 +1,21 @@
 # Current Outpost visual reviews
 
+Latest work: [Grind recovery and equipment-led redesign](grind-recovery/README.md). Source content, current-patch verification and owner visual acceptance are independent.
+
+Search refinement: [single field, contained scrolling and compact responsive palette](search-palette/README.md). Header/footer stay visible, results scroll, Clear preserves focus and rapid keyboard reopen remains usable.
+
+Current hover implementation: [grow and hold](motion-system/README.md#grow-only-hover-follow-up). Hover is scale-only; click/disclosure feedback remains. Earlier tilt behavior is historical.
+
+Region-menu refinement: [compact anchored selector](region-picker/README.md), preserving region/query persistence and distinct keyboard focus.
+
+Latest build/card refinement: [Grind-informed loadout cards and panels](loadout-cards/README.md). Equipment-led previews, compact filter toolbar, distinct inventory/ability surfaces, ordered party previews and smaller tool destinations. Existing permissions, persistence, formulas and real assets remain authoritative. Owner acceptance remains open.
+
+Latest owner-requested control/workspace correction: [custom header controls and workspace depth](workspace-depth/README.md). Custom region picker, stable hover feedback, compact search/theme/Sign in, source-backed recipe browser with separate cash/return accounting, transport cargo workflow, and task-specific editor/content/settings refinements. The accepted landing direction is retained. Full planner/journal/mechanics and owner acceptance remain separate.
+
+Latest owner-feedback correction: [reference fidelity implementation](home-fidelity/README.md). The preceding professional redesign was rejected by the owner; it is retained as historical evidence, not accepted visual completion.
+
+Latest owner-supplied five-reference implementation: [professional UI redesign](professional-redesign/README.md). Earlier iterations below are historical where their visual direction conflicts.
+
 Latest implementation: [task-led homepage, Market and crafting](ux-transformation/README.md).
 
 Previous shared interaction work: [search, transitions, menus and real equipment](playful-ui/README.md).

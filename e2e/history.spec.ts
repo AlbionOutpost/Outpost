@@ -78,7 +78,7 @@ test("named item search preserves selected item and region", async ({ page }) =>
   await page.getByRole("link", { name: "Compare prices →" }).click();
   await page.getByText("Advanced item identifier", { exact: true }).click();
   await expect(page.getByLabel("Item identifier")).toHaveValue("T6_MAIN_AXE@1");
-  await expect(page.getByLabel("Albion region")).toHaveValue("asia");
+  await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
 });
 test("capture desktop and mobile dashboard", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1100 });
@@ -86,4 +86,33 @@ test("capture desktop and mobile dashboard", async ({ page }) => {
   await page.screenshot({ path: "test-results/dashboard-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: "test-results/dashboard-mobile.png", fullPage: true });
+});
+
+test("history dates filter returned observations without inventing missing days", async ({
+  page,
+}) => {
+  await page.route("**/api/history?*", (route) =>
+    route.fulfill({
+      json: {
+        data: [
+          {
+            data: [
+              { timestamp: "2026-10-01T00:00:00", avg_price: 900, item_count: 2 },
+              { timestamp: "2026-10-20T00:00:00", avg_price: 1200, item_count: 3 },
+              { timestamp: "2026-10-25T00:00:00", avg_price: 1100, item_count: 4 },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+  await page.goto("/tools/market?region=europe");
+  await page.getByRole("button", { name: "Research price history", exact: true }).click();
+  await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
+  await expect(page.locator(".price-chart circle")).toHaveCount(3);
+  await page.getByRole("button", { name: "7 days", exact: true }).click();
+  await expect(page.locator(".price-chart circle")).toHaveCount(2);
+  await expect(page.locator(".reference-price-axis")).toContainText("1.2K");
+  await page.getByRole("button", { name: "30 days", exact: true }).click();
+  await expect(page.locator(".price-chart circle")).toHaveCount(3);
 });

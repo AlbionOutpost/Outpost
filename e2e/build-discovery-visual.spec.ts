@@ -36,12 +36,13 @@ test("equipment discovery preserves filters, private boundaries and saved favori
     },
   ]);
   const ids: string[] = [];
+  const label = `QA Discovery ${randomUUID().slice(0, 8)}`;
   try {
     for (let i = 0; i < 8; i++) {
       const b = await db.build.create({
         data: {
           authorId: i === 7 ? other : id,
-          title: `QA Discovery ${["Battleaxe expedition", "Bow roaming", "Sword arena", "Battleaxe roaming", "Bow arena", "Sword expedition", "private plan", "hidden private plan"][i]}`,
+          title: `${label} ${["Battleaxe expedition", "Bow roaming", "Sword arena", "Battleaxe roaming", "Bow arena", "Sword expedition", "private plan", "hidden private plan"][i]}`,
           description: "Isolated equipment layout fixture, not a recommended combat build.",
           contentType: i % 2 ? "Roaming" : "Arena",
           region: "europe",
@@ -68,7 +69,7 @@ test("equipment discovery preserves filters, private boundaries and saved favori
     }
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
-      await page.goto("/builds?q=QA+Discovery");
+      await page.goto(`/builds?q=${encodeURIComponent(label)}`);
       await expect(page.locator(".build-preview-card")).toHaveCount(6);
       await expect(page.locator(".build-preview-card").first()).toBeVisible();
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -99,38 +100,45 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       await expect(page.locator(".build-preview-card")).toHaveCount(2);
       const card = page
         .locator(".build-preview-card")
-        .filter({ hasText: "QA Discovery Battleaxe expedition" });
+        .filter({ hasText: `${label} Battleaxe expedition` });
       const favoriteUrl = `/api/community/build/${ids[0]}`;
       await page.route(favoriteUrl, (route) =>
         route.fulfill({ status: 503, json: { error: "QA temporary favorite failure" } }),
       );
       await card
-        .getByRole("button", { name: "Save QA Discovery Battleaxe expedition", exact: true })
+        .getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true })
         .click();
       await expect(card.getByRole("alert")).toHaveText("QA temporary favorite failure");
       await expect(
-        card.getByRole("button", { name: "Save QA Discovery Battleaxe expedition", exact: true }),
+        card.getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true }),
       ).toHaveAttribute("aria-pressed", "false");
       await page.unroute(favoriteUrl);
       await card
-        .getByRole("button", { name: "Save QA Discovery Battleaxe expedition", exact: true })
+        .getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true })
         .click();
       await expect(
-        card.getByRole("button", { name: "Unsave QA Discovery Battleaxe expedition", exact: true }),
+        card.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
       ).toHaveAttribute("aria-pressed", "true");
       await page.reload();
       await expect(
-        page.getByRole("button", { name: "Unsave QA Discovery Battleaxe expedition", exact: true }),
+        page.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
       ).toHaveAttribute("aria-pressed", "true");
       expect(await db.buildFavorite.count({ where: { userId: id, buildId: ids[0] } })).toBe(1);
       await page
-        .getByRole("button", { name: "Unsave QA Discovery Battleaxe expedition", exact: true })
+        .getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true })
         .click();
       await expect(
-        page.getByRole("button", { name: "Save QA Discovery Battleaxe expedition", exact: true }),
+        page.getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true }),
       ).toHaveAttribute("aria-pressed", "false");
-      await page.goto("/builds?mine=1&q=QA+Discovery");
+      await page.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
       await expect(page.locator(".build-preview-card")).toHaveCount(7);
+      await page
+        .getByRole("navigation", { name: "Weapon shortcuts" })
+        .getByRole("link", { name: /Battleaxe/ })
+        .click();
+      await expect(page).toHaveURL(/mine=1/);
+      await expect(page.getByLabel("Search build titles")).toHaveValue(`${label}`);
+      await expect(page.locator(".build-preview-card")).toHaveCount(3);
       await page.goto("/builds?q=not-a-qa-discovery-948");
       await expect(
         page.getByRole("heading", { name: "No matching loadouts", exact: true }),
@@ -139,7 +147,7 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       const anonymous = await browser.newContext();
       try {
         const guest = await anonymous.newPage();
-        await guest.goto("/builds?mine=1&q=QA+Discovery");
+        await guest.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
         await expect(
           guest.getByRole("heading", { name: "No matching loadouts", exact: true }),
         ).toBeVisible();

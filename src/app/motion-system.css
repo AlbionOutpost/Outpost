@@ -1,0 +1,228 @@
+/* Hover grows once and holds; press and disclosure feedback stay separate. */
+.app.outpost {
+  --motion-ease: ease-out;
+  --motion-control-time: 160ms;
+  --motion-card-time: 160ms;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root .app.outpost[data-motion-enabled] :is(button:disabled, .button[aria-disabled="true"]) {
+    transform: none;
+    transition: none;
+  }
+  @keyframes outpost-drawer-open {
+    from {
+      translate: 20px 0;
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+  @keyframes outpost-navigation-open {
+    from {
+      translate: -16px 0;
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      button,
+      .button,
+      summary,
+      .desktop-navigation > a,
+      .weapon-shortcuts > a,
+      .top-brand,
+      .footer-wordmark
+    ) {
+    transition:
+      transform var(--motion-control-time) var(--motion-ease),
+      border-color 150ms ease-out;
+    transform-origin: center;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      button,
+      .button,
+      summary,
+      .desktop-navigation > a,
+      .weapon-shortcuts > a,
+      .top-brand,
+      .footer-wordmark
+    ):active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(0.96);
+    transition-duration: 90ms;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(.region-picker-panel, details[open] > .dropdown-panel, dialog[open], .mobile-navigation) {
+    animation: outpost-surface-open 180ms var(--motion-ease) both;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      .reference-feature,
+      .loadout-card,
+      .directory-entry,
+      .composition-preview-card,
+      .guide-discovery-card,
+      .guild-discovery-card
+    ):active:not(:has(button:active, input:active, select:active, textarea:active)) {
+    transform: scale(0.985);
+    transition: transform 90ms var(--motion-ease);
+  }
+  :root .app.outpost[data-motion-enabled] .contextual-drawer[open] {
+    animation: outpost-drawer-open 220ms var(--motion-ease) both;
+  }
+  :root .app.outpost[data-motion-enabled] .mobile-navigation {
+    animation: outpost-navigation-open 200ms var(--motion-ease) both;
+  }
+  @keyframes outpost-surface-open {
+    from {
+      clip-path: inset(0 0 12% 0);
+      translate: 0 -5px;
+    }
+    to {
+      clip-path: inset(-48px);
+      translate: 0 0;
+    }
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      button,
+      .button,
+      summary,
+      .desktop-navigation > a,
+      .weapon-shortcuts > a,
+      .top-brand,
+      .footer-wordmark
+    ):hover:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(1.045);
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      button,
+      .button,
+      summary,
+      .desktop-navigation > a,
+      .weapon-shortcuts > a,
+      .top-brand,
+      .footer-wordmark
+    ):active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(0.96);
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(.button > svg, .tool-symbol > svg, .dropdown-tool-icon > svg, .task-glyph) {
+    transform: none;
+    rotate: none;
+    scale: none;
+    transition: none;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      .reference-feature,
+      .loadout-card,
+      .directory-entry,
+      .composition-preview-card,
+      .guide-discovery-card,
+      .guild-discovery-card
+    ) {
+    transform: none;
+    transition:
+      transform var(--motion-card-time) var(--motion-ease),
+      border-color 180ms ease-out;
+    transform-origin: center;
+    position: relative;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      .reference-feature,
+      .loadout-card,
+      .directory-entry,
+      .composition-preview-card,
+      .guide-discovery-card,
+      .guild-discovery-card
+    ):hover {
+    transform: scale(1.018);
+    z-index: 2;
+    border-color: var(--muted);
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      .reference-feature,
+      .loadout-card,
+      .directory-entry,
+      .composition-preview-card,
+      .guide-discovery-card,
+      .guild-discovery-card
+    ):active:not(:has(button:active, input:active, select:active, textarea:active)) {
+    transform: scale(0.985);
+    transition-duration: 90ms;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(.character-slot, .strip-slot, .gear-browser-item):hover {
+    transform: scale(1.06);
+    transition:
+      transform 180ms var(--motion-ease),
+      border-color 150ms ease-out;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(.character-slot, .strip-slot, .gear-browser-item):active {
+    transform: scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root .app.outpost[data-motion-enabled] *,
+  :root .app.outpost[data-motion-enabled] *::before,
+  :root .app.outpost[data-motion-enabled] *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  :root
+    .app.outpost[data-motion-enabled]
+    :is(
+      button,
+      .button,
+      summary,
+      .desktop-navigation > a,
+      .weapon-shortcuts > a,
+      .top-brand,
+      .footer-wordmark,
+      .reference-feature,
+      .loadout-card,
+      .directory-entry,
+      .composition-preview-card,
+      .guide-discovery-card,
+      .guild-discovery-card,
+      .character-slot,
+      .strip-slot,
+      .gear-browser-item
+    ):is(:hover, :active) {
+    transform: none;
+    rotate: none;
+    scale: none;
+  }
+}
+
+/* Roster rows share a hit area with drag/move controls. Keep their bounds stable. */
+:root
+  .app.outpost[data-motion-enabled]
+  .party-roster
+  .roster-row
+  > .member-select:is(:hover, :active) {
+  transform: none;
+}

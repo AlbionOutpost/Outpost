@@ -7,10 +7,12 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
   configuration,
   onLoad,
   schema,
+  hashKey = "scenario",
 }: {
   configuration: T;
   onLoad: (data: T) => void;
   schema: z.ZodType<T>;
+  hashKey?: "scenario" | "production-plan";
 }) {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -22,10 +24,11 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
     const frame = window.requestAnimationFrame(() => {
       restored.current = true;
       const hash = window.location.hash;
-      if (!hash.startsWith("#scenario=")) return;
+      const prefix = `#${hashKey}=`;
+      if (!hash.startsWith(prefix)) return;
       try {
         if (hash.length > 65536) throw new Error();
-        const parsed = schema.parse(JSON.parse(decodeURIComponent(hash.slice(10))));
+        const parsed = schema.parse(JSON.parse(decodeURIComponent(hash.slice(prefix.length))));
         if (parsed.kind !== configuration.kind) throw new Error();
         onLoad(parsed);
         setMessage(
@@ -36,7 +39,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [configuration.kind, onLoad, schema]);
+  }, [configuration.kind, onLoad, schema, hashKey]);
   async function refresh() {
     setBusy(true);
     try {
@@ -60,7 +63,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
       </p>
       <div className="market-form">
         <label>
-          Scenario title
+          {hashKey === "production-plan" ? "Production plan title" : "Scenario title"}
           <input
             maxLength={100}
             value={title}
@@ -93,10 +96,10 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
             }
           }}
         >
-          Save new scenario
+          {hashKey === "production-plan" ? "Save production plan" : "Save new scenario"}
         </button>
         <button className="button secondary" disabled={busy} onClick={refresh}>
-          Load saved scenarios
+          {hashKey === "production-plan" ? "Load saved production plans" : "Load saved scenarios"}
         </button>
         <button
           className="button secondary"
@@ -105,7 +108,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
               const parsed = schema.parse(configuration);
               const url = new URL(window.location.href);
               url.searchParams.set("region", parsed.region);
-              url.hash = `scenario=${encodeURIComponent(JSON.stringify(parsed))}`;
+              url.hash = `${hashKey}=${encodeURIComponent(JSON.stringify(parsed))}`;
               await navigator.clipboard.writeText(url.href);
               setMessage(
                 "Scenario link copied. It shares static assumptions and source timestamps.",
@@ -117,7 +120,7 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
             }
           }}
         >
-          Copy scenario link
+          {hashKey === "production-plan" ? "Copy production plan link" : "Copy scenario link"}
         </button>
       </div>
       <p role="status">{message}</p>

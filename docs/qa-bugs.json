@@ -255,11 +255,19 @@
       "status": "BACKLOG",
       "reproduction": "Try focus/city crafting or reload saved scenario.",
       "expected": "Sourced production mechanics and persistence.",
-      "current": "45 normal crafting and25 normal refining recipes plus historical city/refining-specialization/focus profiles work with independent fixtures; broader recipes, crafting specialization trees, station rounding and current-patch certification remain incomplete.",
+      "current": "45 normal crafting and25 normal refining recipes plus historical city/refining-specialization/focus profiles work with independent fixtures; broader recipes, crafting specialization trees, station rounding and current-patch certification remain incomplete. October28 adds persisted30-recipe aggregate planning and15-crop/herb single-harvest farming with historical editable seed returns and manual harvest yield; full old-site parity remains open.",
       "historical_cause": "Calculator phase incomplete.",
       "historical_files": "calculations.ts; PROJECT_PLAN.md",
-      "verification": "tests/production.test.ts and e2e/production.spec.ts cover the implemented subset; automatic city/focus specialization and full recipes remain missing.",
-      "evidence": ["src/lib/albion/recipes.ts", "e2e/production-modes.spec.ts"]
+      "verification": "Independent production-plan/farming unit fixtures and account/private-list/denied-delete/save/reload/static-share browser journeys cover the implemented subset. Current-patch certification, full recipes, other specialized engines and station rounding remain open.",
+      "evidence": [
+        "src/lib/albion/recipes.ts",
+        "e2e/production-modes.spec.ts",
+        "tests/production-plan.test.ts",
+        "tests/farming.test.ts",
+        "e2e/production-plan.spec.ts",
+        "e2e/farming.spec.ts",
+        "docs/engineering/ALBION_GRIND_PARITY_2026-10-28.md"
+      ]
     },
     {
       "id": "QA-021",
@@ -703,7 +711,7 @@
       "current": "Directory content header resets fixed height, border/background/padding and uses a normal mobile block layout.",
       "historical_cause": "Global element-level site-header styles reached the page content header.",
       "historical_files": "src/components/tool-directory.tsx, src/app/globals.css",
-      "verification": "Actual before/after 390px comparison and final 320\u20131920 captures inspected; tool-directory navigation, search and full phase regressions pass.",
+      "verification": "Actual before/after 390px comparison and final 320–1920 captures inspected; tool-directory navigation, search and full phase regressions pass.",
       "evidence": [
         "src/app/player-workspaces.css",
         "docs/design-review/frontend-pass/tools-comparison.webp",
@@ -770,7 +778,7 @@
       "title": "Long item provenance overflows a narrow phone",
       "severity": "P1",
       "status": "FIXED",
-      "reproduction": "Open /items/T4_MAIN_AXE?region=europe at 320\u00d7844 and inspect provenance.",
+      "reproduction": "Open /items/T4_MAIN_AXE?region=europe at 320×844 and inspect provenance.",
       "expected": "Full provenance wraps and the document fits without hiding source values.",
       "current": "Item metadata wraps unbroken source text locally without hiding or truncating it.",
       "historical_cause": "Pinned commit is an unbroken word in a plain paragraph without local wrapping.",
@@ -819,6 +827,57 @@
         "e2e/qa-light.spec.ts",
         "docs/engineering/UI_UX_CODE_AUDIT_2026-10-26.md",
         "docs/design-review/refinement/README.md"
+      ]
+    },
+    {
+      "id": "QA-060",
+      "title": "Reference redesign squeezes party labels and contextual prices",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Open the five-player editor at390px and a selected market row at1024px.",
+      "expected": "Party headings and prices stay readable without one-character columns.",
+      "current": "Final card rules use one column on phones and the market context panel remains a single readable column.",
+      "historical_cause": "Legacy nested card and tablet-panel grid rules combined with the new outer layouts.",
+      "historical_files": "src/app/reference-system.css",
+      "verification": "Six-width screenshot review reproduced both failures after an otherwise passing automated gate; explicit card/price geometry regressions and recaptured screenshots verify the corrections.",
+      "evidence": [
+        "e2e/composition-visual.spec.ts",
+        "e2e/reference-workspaces.spec.ts",
+        "docs/design-review/professional-redesign/README.md"
+      ]
+    },
+    {
+      "id": "QA-061",
+      "title": "Empty homepage chart overlaps source controls",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Return an empty history response, then open source details or refresh observations.",
+      "expected": "Empty-state content stays within its own area and source controls can be clicked.",
+      "current": "Empty chart content has intrinsic height and bounded padding; source and retry controls remain reachable.",
+      "historical_cause": "A fixed chart height was shorter than the legacy empty-state minimum height.",
+      "historical_files": "src/app/reference-system.css",
+      "verification": "Initial phase and focused reproduction failed; production homepage source failure, missing observations and retry regressions pass.",
+      "evidence": [
+        "e2e/homepage-polish.spec.ts",
+        "docs/design-review/professional-redesign/README.md"
+      ]
+    },
+    {
+      "id": "QA-062",
+      "title": "Reference action colors and equipment-preview ARIA fail sampled accessibility checks",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Run axe on dark/light homepage and selected orange preview controls.",
+      "expected": "Labels meet normal-text contrast and groups use permitted ARIA semantics.",
+      "current": "Orange states use dark foregrounds, light role labels use a darker blue, and the equipment preview has an explicit group role.",
+      "historical_cause": "New accent tokens inherited white labels; a descriptive aria-label was placed on a generic div.",
+      "historical_files": "src/app/page.tsx; src/app/reference-system.css",
+      "verification": "Initial dark/light axe failures were preserved; final sampled accessibility regression passes.",
+      "evidence": [
+        "e2e/qa-light.spec.ts",
+        "e2e/qa-audit.spec.ts",
+        "e2e/playful-ui.spec.ts",
+        "docs/design-review/professional-redesign/README.md"
       ]
     }
   ]

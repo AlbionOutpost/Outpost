@@ -3,7 +3,10 @@ import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { templateEquipment } from "@/lib/albion/equipment-sets";
+import { BuildLoadoutView } from "./build-loadout-view";
+import { EditorDialog } from "./editor-dialog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { buildInput, slots, contentTypes, type BuildInput } from "@/lib/builds/validation";
@@ -34,14 +37,38 @@ export function BuildEditor({
   initial,
   id,
   version,
+  guest = false,
 }: {
   initial?: BuildInput;
   id?: string;
   version?: number;
+  guest?: boolean;
 }) {
   const [draft, setDraft] = useState<BuildInput>(initial || empty);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [shareMessage, setShareMessage] = useState("");
+  const [preview, setPreview] = useState(false);
+  const restored = useRef(false);
+  useEffect(() => {
+    if (!guest || initial || restored.current) return;
+    const frame = requestAnimationFrame(() => {
+      restored.current = true;
+      try {
+        const saved = localStorage.getItem("outpost-guest-build-v1");
+        if (!saved) return;
+        if (saved.length > 65536) throw new Error();
+        const parsed = buildInput.parse(JSON.parse(saved));
+        setDraft(parsed);
+        setShareMessage("Guest draft restored from this device.");
+      } catch {
+        setError(
+          "The saved guest draft could not be restored. You can start a new build or import JSON.",
+        );
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [guest, initial]);
   const router = useRouter();
   const update = <K extends keyof BuildInput>(key: K, value: BuildInput[K]) =>
     setDraft({ ...draft, [key]: value });
@@ -94,6 +121,13 @@ export function BuildEditor({
     setSaving(true);
     setError("");
     try {
+      if (guest) {
+        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
+        setShareMessage(
+          "Guest draft saved on this device. No account or public build was created.",
+        );
+        return;
+      }
       const response = await fetch(id ? `/api/builds/${id}` : "/api/builds", {
         method: id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,6 +145,34 @@ export function BuildEditor({
   }
   return (
     <form onSubmit={save} className="build-editor">
+      {guest && !initial && (
+        <div className="guest-build-notice">
+          <div>
+            <strong>A loadout for your next adventure.</strong>
+            <p>
+              Choose your gear, pick your spells, keep a swap ready. Guest drafts save on this
+              device.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              if (
+                supportedEquipment.length &&
+                !window.confirm(
+                  "Replace your current equipment with the example set? Save your draft first to keep it.",
+                )
+              )
+                return;
+              updateEquipment(templateEquipment("battleaxe"));
+              if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
+            }}
+          >
+            Load example equipment
+          </button>
+        </div>
+      )}
       <div className="build-command-bar">
         <label>
           Build title
@@ -124,29 +186,163 @@ export function BuildEditor({
           />
         </label>
         <label>
-          Build visibility
+          Activity
           <select
-            aria-label="Build visibility"
-            value={draft.visibility}
-            onChange={(e) => update("visibility", e.target.value as BuildInput["visibility"])}
+            aria-label="Content type"
+            value={draft.contentType}
+            onChange={(e) => update("contentType", e.target.value as BuildInput["contentType"])}
           >
-            <option value="PRIVATE">Private</option>
-            <option value="UNLISTED">Unlisted</option>
-            <option value="PUBLIC">Public</option>
+            {contentTypes.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
           </select>
         </label>
+
+        {!guest && (
+          <label>
+            Build visibility
+            <select
+              aria-label="Build visibility"
+              value={draft.visibility}
+              onChange={(e) => update("visibility", e.target.value as BuildInput["visibility"])}
+            >
+              <option value="PRIVATE">Private</option>
+              <option value="UNLISTED">Unlisted</option>
+              <option value="PUBLIC">Public</option>
+            </select>
+          </label>
+        )}
         <button className="button primary" disabled={saving}>
-          {saving ? "Saving…" : id ? "Save new revision" : "Save build"}
+          {saving
+            ? "Saving…"
+            : guest
+              ? "Save on this device"
+              : id
+                ? "Save new revision"
+                : "Save build"}
         </button>
+        {!guest && (
+          <button
+            type="button"
+            className="button secondary"
+            disabled={!id}
+            title={
+              id
+                ? "Copy a link to the saved build; access follows its visibility"
+                : "Save the build to get a share link"
+            }
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(`${location.origin}/builds/${id}`);
+                setShareMessage("Saved build link copied. Access follows build visibility.");
+              } catch {
+                setShareMessage("Open the saved build to copy its address.");
+              }
+            }}
+          >
+            Copy saved link
+          </button>
+        )}
+        <button
+          type="button"
+          className="button secondary"
+          disabled={!supportedEquipment.length}
+          onClick={() => setPreview(true)}
+        >
+          Preview build
+        </button>
+        <details className="build-file-tools">
+          <summary>Import & export</summary>
+          <div>
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => {
+                const parsed = buildInput.safeParse(draft);
+                if (!parsed.success) {
+                  setError("Add a title and valid equipment before exporting.");
+                  return;
+                }
+                const url = URL.createObjectURL(
+                  new Blob([JSON.stringify(parsed.data, null, 2)], { type: "application/json" }),
+                );
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "outpost-build.json";
+                link.click();
+                URL.revokeObjectURL(url);
+                setShareMessage(
+                  "Build JSON exported with your equipment, abilities, swaps and spare sets.",
+                );
+              }}
+            >
+              Export build JSON
+            </button>
+            <label className="build-import-label">
+              Import build JSON
+              <input
+                type="file"
+                accept="application/json,.json"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  try {
+                    if (file.size > 65536) throw new Error();
+                    const parsed = buildInput.parse(JSON.parse(await file.text()));
+                    setDraft(parsed);
+                    setError("");
+                    setShareMessage("Build imported. Review it before saving.");
+                  } catch {
+                    setError(
+                      "Choose a valid Outpost build JSON file under64KB. Your current build was kept.",
+                    );
+                  }
+                }}
+              />
+            </label>
+          </div>
+        </details>
       </div>
+      {preview && (
+        <EditorDialog open wide title="Build preview" onClose={() => setPreview(false)}>
+          <div className="guest-build-preview">
+            <h2>{draft.title || "Untitled build"}</h2>
+            <p>
+              {draft.contentType} · {guest ? "Guest draft" : "Unsaved preview"}
+            </p>
+            <BuildLoadoutView
+              region={draft.region}
+              equipment={draft.equipment.filter((row) => row.itemId)}
+            />
+          </div>
+        </EditorDialog>
+      )}
+      {shareMessage && (
+        <p role="status" className="muted">
+          {shareMessage}
+        </p>
+      )}
       <div className="build-editor-context">
-        <span className="eyebrow">LOADOUT WORKBENCH</span>
+        <span>Equipment, spells & swaps</span>
         <span>
           {id
             ? `Revision ${version ?? 1} · save to create the next revision`
-            : "New loadout · equip a slot to begin"}
+            : supportedEquipment.length
+              ? `${supportedEquipment.length} items equipped · draft`
+              : "New loadout · equip a slot to begin"}
         </span>
       </div>
+      {draft.equipment.some((row) => row.itemId && !findEquipment(row.itemId)) && (
+        <p className="studio-notice">
+          This build includes exact item IDs outside the visual picker. They are kept in your draft;
+          use{" "}
+          <a className="text-link" href="#advanced-build-items">
+            Advanced item IDs & notes
+          </a>{" "}
+          to edit them.
+        </p>
+      )}
       <EquipmentPicker
         variant="build"
         value={draft.equipment
@@ -169,19 +365,6 @@ export function BuildEditor({
       <details className="build-settings panel">
         <summary>Build settings & description</summary>
         <div className="input-grid">
-          <label>
-            Content type
-            <select
-              aria-label="Content type"
-              value={draft.contentType}
-              onChange={(e) => update("contentType", e.target.value as BuildInput["contentType"])}
-            >
-              {contentTypes.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-
           <label>
             Build region
             <select
@@ -224,7 +407,7 @@ export function BuildEditor({
           />
         </label>
       </details>
-      <details className="advanced-build panel">
+      <details className="advanced-build panel" id="advanced-build-items">
         <summary>Advanced item IDs & notes</summary>
         <p className="muted">
           Use exact IDs for items outside the supported picker. Author-entered ability notes are not

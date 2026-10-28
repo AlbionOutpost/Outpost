@@ -1,5 +1,25 @@
 # Outpost interface system
 
+Latest work: [Grind recovery and equipment-led redesign](design-review/grind-recovery/README.md). Source content, current-patch verification and owner visual acceptance are independent.
+
+Search refinement: [single field, contained scrolling and compact responsive palette](design-review/search-palette/README.md). Header/footer stay visible, results scroll, Clear preserves focus and rapid keyboard reopen remains usable.
+
+Current hover behavior is grow-and-hold only. Cursor tilt, vertical lift and independent icon hover motion are removed; click/disclosure feedback and reduced-motion support remain. This supersedes the earlier tilt direction.
+
+Navigation labels remain transparent on hover/open; growth feedback is retained without a filled box.
+
+Initial motion direction (superseded hover behavior): [shared growth, press and pointer depth](design-review/motion-system/README.md), requested by the owner after reviewing RocketClient. Hover growth and bounded tilt supersede earlier stable/no-growth rules. Reduced motion, readable workspaces and existing route behavior remain required.
+
+Region-menu refinement: [compact anchored selector](design-review/region-picker/README.md), preserving region/query persistence and distinct keyboard focus.
+
+Latest build/card refinement: [Grind-informed loadout cards and panels](design-review/loadout-cards/README.md). Equipment-led previews, compact filter toolbar, distinct inventory/ability surfaces, ordered party previews and smaller tool destinations. Existing permissions, persistence, formulas and real assets remain authoritative. Owner acceptance remains open.
+
+Latest owner-requested control/workspace correction: [custom header controls and workspace depth](design-review/workspace-depth/README.md). Custom region picker, stable hover feedback, compact search/theme/Sign in, source-backed recipe browser with separate cash/return accounting, transport cargo workflow, and task-specific editor/content/settings refinements. The accepted landing direction is retained. Full planner/journal/mechanics and owner acceptance remain separate.
+
+Latest implementation authority: [reference fidelity correction](design-review/home-fidelity/README.md), following explicit owner rejection of the first five-reference pass. `home-fidelity.css` owns the compact homepage composition and warm neutral surfaces; `workspace-fidelity.css` owns market query/results anatomy, crafting summary/accounting and equipment/abilities/summary columns. Both extend centralized shared tokens. Hero and research terminal share item/region/source state and requests. Original generated market scenery is disclosed; no fictional game figures or character art is introduced.
+
+Active visual authority: [the five supplied October 27 reference screens](design-review/professional-redesign/README.md). `src/app/reference-system.css` owns the shared cool charcoal/orange palette, 6px controls, 8px cards, Inter workspace headings and financial numerals. Earlier warm palettes and task-led layout notes below are historical where they conflict.
+
 Current October27 UX: [task-led homepage, Market and crafting](design-review/ux-transformation/README.md). The homepage has one searchable observed-market preview and three compact planning links. Market setup precedes quote results; independent watchlist and optional history access remain available. Crafting uses persistent recipe/pricing/profit steps on phones. `task-ui.css` defines8px controls,12px panels and shared page-heading/surface rules; the terminal inherits dark/light tokens. Earlier composition notes below are historical where they conflict.
 
 Current scope: implemented interface rules with sampled browser evidence; global owner visual acceptance is still open. [Current per-page reviews](design-review/README.md) replace the old homepage-only sequencing. [Original design history](history/2026-10-26-before-reconciliation/docs/DESIGN_SYSTEM.md) is preserved.
