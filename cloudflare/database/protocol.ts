@@ -119,6 +119,53 @@ export function sqliteArgs(
 }
 
 export function databaseFailure(error: unknown): DatabaseReply<never> {
+  if (error instanceof Error) {
+    const cause = error.cause as { originalMessage?: unknown; kind?: unknown } | undefined;
+    const message = [
+      error.message,
+      typeof cause?.originalMessage === "string" ? cause.originalMessage : "",
+    ]
+      .join(" ")
+      .toLowerCase();
+    console.error(
+      JSON.stringify({
+        event: "database_failure",
+        type: error.name,
+        reason: [
+          "wasm",
+          "no such column",
+          "no such table",
+          "quota",
+          "cpu",
+          "unsupported",
+          "not implemented",
+          "timeout",
+          "like",
+          "pattern",
+          "escape",
+          "syntax",
+          "bind",
+          "too complex",
+          "d1_error",
+          "too many",
+          "exceeded",
+          "time",
+          "limit",
+          "request",
+          "daily",
+          "account",
+          "rows",
+          "read",
+          "write",
+          "size",
+          "depth",
+          "complexity",
+          "too large",
+          "memory",
+        ].filter((term) => message.includes(term)),
+      }),
+    );
+  }
   if (error instanceof HttpError)
     return { ok: false, error: { kind: "http", status: error.status, message: error.message } };
   if (error instanceof Error && error.name === "ZodError")

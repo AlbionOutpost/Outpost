@@ -1,4 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { publicLibraryFind, publicLibraryPage } from "./public-assets";
 import { cache } from "react";
 import { databaseBinding } from "./web-driver";
 import { createLibraryBuildDraft } from "../../src/lib/grind-build-draft";
@@ -32,14 +33,24 @@ export const libraryTraits = () => read<AwakeningTrait[]>("traits");
 export const findLibraryGuide = async (slug: string) =>
   (await libraryGuides()).find((guide) => guide.slug === slug);
 export const findLibraryBuilds = async (keys: string[]) =>
-  (await databaseBinding().archiveFind("builds", keys)) as LibraryBuild[];
+  (await databaseBinding()
+    .archiveFind("builds", keys)
+    .catch(() => publicLibraryFind("builds", keys))) as LibraryBuild[];
 export const findLibraryBuild = cache(async (key: string) => (await findLibraryBuilds([key]))[0]);
 export const findLibraryComposition = async (key: string) =>
-  (await databaseBinding().archiveFind("compositions", [key]))[0] as LibraryComposition | undefined;
+  (
+    await databaseBinding()
+      .archiveFind("compositions", [key])
+      .catch(() => publicLibraryFind("compositions", [key]))
+  )[0] as LibraryComposition | undefined;
 export const queryLibraryBuilds = async (input: LibraryQuery) =>
-  (await databaseBinding().archiveList("builds", input)) as LibraryPage<LibraryBuild>;
+  (await databaseBinding()
+    .archiveList("builds", input)
+    .catch(() => publicLibraryPage("builds", input))) as LibraryPage<LibraryBuild>;
 export const queryLibraryCompositions = async (input: LibraryQuery) =>
-  (await databaseBinding().archiveList("compositions", input)) as LibraryPage<LibraryComposition>;
+  (await databaseBinding()
+    .archiveList("compositions", input)
+    .catch(() => publicLibraryPage("compositions", input))) as LibraryPage<LibraryComposition>;
 const featured = [
   "battleaxe-mist-build",
   "bloodmoon-staff-group-dungeon-solo-build",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-28T19:34:35.809Z",
+  "phase_checked_at": "2026-10-28T20:28:45.300Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,58 +11,58 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 3.4
+      "seconds": 2.25
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 6.94
+      "seconds": 7.02
     },
     {
       "name": "unit",
       "status": "PASS",
-      "seconds": 2.36
+      "seconds": 2.41
     },
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.37
+      "seconds": 0.34
     },
     {
       "name": "database-integration",
       "status": "PASS",
-      "seconds": 3.49
+      "seconds": 3.58
     },
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 7.11
+      "seconds": 5.69
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 125.47
+      "seconds": 118.94
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.48
+      "seconds": 0.44
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.42
+      "seconds": 0.38
     }
   ],
   "counts": {
-    "unit_passed": 239,
+    "unit_passed": 244,
     "browser_passed": 104,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-28T19:35:20.023Z",
+    "checkedAt": "2026-10-28T20:30:29.231Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4413,8 +4413,8 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-28T19:35:18.616326+00:00",
-    "phase": "2026-10-28T19:34:35.809Z",
+    "checkedAt": "2026-10-28T20:30:28.030841+00:00",
+    "phase": "2026-10-28T20:28:45.300Z",
     "scope": "Final CI reporting phase:232unit/102browser/15disposableDB/nine regional reads, ten Node22 gates PASS. Same application runtime previously passes102 Cloudflare browser cases and19 native database cases. No UI/runtime changes in this reporting phase; actual final hosted builder320/375/768/1440/1920, library390 and loaded guides768 captures reviewed.30 hosted cases pass. Docker nonroot/health/no-env and mobile lab samples remain scoped to the preceding unchanged app. Hosted strict public smoke/OAuth-start passes from this network. GitHub run40732709235 deployed both Workers after all build/native/browser gates but its final probe failed403; read-only analytics confirms botFight managed challenge. The read-only diagnostic token was revoked. Main follow-up superseded for explicit BLOCKED CI reporting. Bot protection unchanged. Genuine personal OAuth/admin assignment, human Turnstile, production recovery, legal/patch/owner acceptance remain unverified. Final main workflow40740329022 on sourcea2d70d3 completed successfully and deployed both Workers. CI HTTP is explicitly BLOCKED by managed challenge; normal-network strict public smoke and OAuth-start pass after the final deployment at18:21UTC. Documentation workflow40740328218 passed. Same source/runtime paths are unchanged; representative loaded guide screenshot reviewed again for this documentation-only record. Genuine owner consent/admin session and DNSSEC parent DS remain unverified/pending.",
     "files": [
       {
@@ -4508,12 +4508,40 @@
       {
         "path": ".qa/premium-workspaces/cf-native.log",
         "sha256": "6d289d699a24160199fa7d1f2d9b620db2fe35fc096cbe664892f76af654cc89"
+      },
+      {
+        "path": ".qa/premium-workspaces/quota-cf-browser-final.log",
+        "sha256": "227eaacf5a9278044be9956c367e9cb427accc34358239710d01b2a3a4db19ed"
+      },
+      {
+        "path": ".qa/premium-workspaces/quota-native-final.log",
+        "sha256": "6d289d699a24160199fa7d1f2d9b620db2fe35fc096cbe664892f76af654cc89"
+      },
+      {
+        "path": ".qa/premium-workspaces/hosted/hosted-smoke.json",
+        "sha256": "f2ed06225b48acf80557185b615389aabef884ba7f8ed67dd294796ca4fb5aa2"
+      },
+      {
+        "path": ".qa/premium-workspaces/hosted/hosted-auth-start.json",
+        "sha256": "053b973eef56d87f22a3123315a7dbe5ce15e54f08ffdf5e8b14de09c2c09020"
+      },
+      {
+        "path": ".qa/premium-workspaces/hosted/capture-six-width.json",
+        "sha256": "2c7a68adf3a2d969163145565a58a37020ca297ca2a1086ea1e28b16d3d44a26"
+      },
+      {
+        "path": ".qa/premium-workspaces/shopping-axe.json",
+        "sha256": "6d269fa8cee34785767d44f24fbfda6e7bf64f05766b63c49f53295f1e50ebf9"
+      },
+      {
+        "path": ".qa/cloudflare-release/free-bundles.json",
+        "sha256": "ef1e7ce233f28ab00038fc6574318b77d6e391b327543e5098f2a87653cdb96e"
       }
     ],
-    "latestImplementationNote": "Premium workspaces: ten Node gates pass239 unit/104 browser/15 DB/nine region reads. Final production-container42 captures across320/375/390/768/1440/1920 all200/nooverflow. Actual images and ten deliberate updated pixel baselines inspected. Native Cloudflare19/browser104 pass before one final isolated shopping scroll-position CSS correction; CI exact-revision retest pending. Prior hosted files below apply only to prior deployment. Full roadmap/owner acceptance/personal OAuth remain open."
+    "latestImplementationNote": "Premium workspaces live. Final Node phase ten gates244unit104browser15DB9regionalPASS; Cloudflare104/native19PASS. Local42six-width captures nooverflow and shopping axe6widths no violations. Live14desktop/mobile captures200/nooverflow inspected. Initial GitHub8ebaceb release workflow40755799066 passed; subsequent live catalog503 traced to D1 daily account read allowance. Bounded reviewed PUBLIC static snapshot fallback hotfix manually deployed web24484c0e/data de7e1572; strict25public checks and OAuth-start pass under exhausted D1 allowance. Private reads fail closed; five new parity/denial tests. Recovery code GitHub synchronization pending. Personal OAuth/admin, game patch/legal/recovery/owner acceptance remain open; full productNO-GO."
   },
   "source_scan": {
-    "filesScanned": 4158,
+    "filesScanned": 4161,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -4546,7 +4574,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "6f9b1a1fb75bf0c7ad4adc35621ca15d1a6eb6e32b907958e626cba3f12af27e",
+      "sha256": "0a69a3c0782ea2a3c58b10a15470f59eb06220419e42ac80b0479040b8a571da",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4556,12 +4584,12 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "7aedfdf1e22d10674ec8a6b5fa86f1cde474b216aa13b34dc24893cc4c4b8f95",
+      "sha256": "dba00aad48a23cd6fcee716912f05a164b8d746ebdba07beb246530479b0f612",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "cef5b02371bdc7ea0b1359001bc13445b181d06ec5e1fa27496c1fe2bc2455d2",
+      "sha256": "e9b02e76c9c92508738742b93987eedcb966d353ae3fdaec2e088319fefa9666",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4571,7 +4599,7 @@
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "cefbefd89d67ff31c21684a6aaa75e361ab450648ff0d3076a20655b2c95cfbd",
+      "sha256": "f4169a779af4501e4a961b8799cc759979672349e7582ac5e1a6096a57d38517",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4586,7 +4614,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "f7e1c87625ccb92f2534b2efcf27a24d3853059f2019eddd0dd128b7b1b26980",
+      "sha256": "9761d04b70cff07256523bd2a39a7a29e26e52cf44503f4ddad6ecc606d0f31c",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4601,12 +4629,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "edeca922fd3d20bfa6d74a7774acaf2af563e8505b1995ba66daa7146ae5ae43",
+      "sha256": "2196b3b75253517b754422d45dbc9868732babf99a410570c9360aaf6b47f241",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "65f1cdf192300afcbc50b53602f058ba98e4e9c45fdb19a10b34444046f87eac",
+      "sha256": "be070cddbec1bd73dc8db5e2d03a559c75058c840ff350871f82d565c6bcf88b",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -4636,7 +4664,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "bff00794b2f295b7d3a2fb93028448683b81edcfa9bfad1cba2443cc3ffb130b",
+      "sha256": "c7bda9447003fd9459d9af4b0f53dbc32c219c59de99b760bc1016b56ad6193c",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -5093,6 +5121,7 @@
     "tests/cloudflare-deployment-check.test.ts": "c2a78c3621aaeb3fa68cac86e78ddceca13475a9c01d50a9d1ed024595515bcf",
     "tests/cloudflare-dnssec.test.ts": "e9d9ddc94ab210b29bcb9033d40f18f6eba49c0567c9a365d2f0c0f51a5e6282",
     "tests/cloudflare-mail.test.ts": "309bb433eb8db700c8ac68ad8fd8d3c2a193fc92ec82965c03226523358688a6",
+    "tests/cloudflare-public-assets.test.ts": "c4e403ee9b3faefa6eca194539f5637e03fa57a9a2c02d634207b51805a92356",
     "tests/cloudflare-security.test.ts": "05d2b8187debb29941a0825e586070e8c181a64b4690b75b8cca02edfc704cb1",
     "tests/community.test.ts": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207",
     "tests/compositions.test.ts": "b4d69217059327db45f8813aa0f291c30441c2134cd0f29ad18d1191dc76abed",

@@ -65,7 +65,7 @@ try {
       return { bytes: Buffer.byteLength(body) };
     });
   }
-  await check("reviewed item catalog and long literal search use D1", async () => {
+  await check("reviewed item catalog and long literal search remain available", async () => {
     const response = await request("/api/items?search=axe&tier=4"),
       body = await response.json();
     assert.equal(response.status, 200);

@@ -3,6 +3,8 @@ import { Prisma } from "./prisma-web";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { HttpError } from "../../src/lib/http-error";
 import { models, type DatabaseQuery, type DatabaseReply, validateQuery } from "./protocol";
+import { publicCatalogQuery } from "./public-assets";
+import { publicModels } from "./protocol";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
 
 export interface OutpostDatabaseBinding {
@@ -32,6 +34,16 @@ function unwrap<T>(reply: DatabaseReply<T>): T {
     });
   throw new Error("Private database unavailable");
 }
+async function resolveQueries(queries: DatabaseQuery[]): Promise<unknown[]> {
+  const reply = await databaseBinding().query(queries);
+  if (
+    !reply.ok &&
+    reply.error.kind === "unavailable" &&
+    queries.every((q) => publicModels.has(q.model))
+  )
+    return Promise.all(queries.map(publicCatalogQuery));
+  return unwrap(reply);
+}
 // A lazy query preserves Prisma's array transaction interface. No request is made on construction.
 class RemoteQuery implements PromiseLike<unknown> {
   constructor(readonly query: DatabaseQuery) {
@@ -41,9 +53,7 @@ class RemoteQuery implements PromiseLike<unknown> {
     onfulfilled?: ((value: unknown) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    return databaseBinding()
-      .query([this.query])
-      .then(unwrap)
+    return resolveQueries([this.query])
       .then(([value]) => value)
       .then(onfulfilled, onrejected);
   }
@@ -56,10 +66,9 @@ const facade = new Proxy(
       if (property === "$transaction")
         return async (work: RemoteQuery[] | ((tx: object) => RemoteQuery)) => {
           const result = typeof work === "function" ? work(facade) : work;
-          if (result instanceof RemoteQuery)
-            return unwrap(await databaseBinding().query([result.query]))[0];
+          if (result instanceof RemoteQuery) return (await resolveQueries([result.query]))[0];
           if (Array.isArray(result) && result.every((q) => q instanceof RemoteQuery))
-            return unwrap(await databaseBinding().query(result.map((q) => q.query)));
+            return resolveQueries(result.map((q) => q.query));
           throw new Error(
             "Interactive transactions must execute in a named private database service",
           );

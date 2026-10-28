@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
@@ -37,6 +37,13 @@ const child = spawn(
 );
 child.on("exit", (code) => {
   process.exitCode = code ?? 1;
+  if (code === 0) {
+    const result = spawnSync(process.execPath, ["scripts/cloudflare-public-assets.mjs"], {
+      stdio: "inherit",
+      env: process.env,
+    });
+    process.exitCode = result.status ?? 1;
+  }
 });
 child.on("error", () => {
   console.error("The pinned OpenNext build could not start.");

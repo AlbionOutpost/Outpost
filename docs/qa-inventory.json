@@ -293,8 +293,8 @@
       "title": "Islands, Avalon mapping, shopping lists and mastery tools",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Device/server-specific equipment and production shopping lists now support owned quantities, incomplete/stale prices, manual overrides, undo/export and private account snapshots. Focused two-browser journeys pass. Islands, Avalon and mastery remain missing.",
-      "remaining": "Complete full-phase/native-runtime acceptance for shopping; implement dedicated islands/Avalon/mastery models and journeys.",
+      "verified_scope": "Device/server-specific equipment and production shopping lists support owned quantities, missing/stale prices, manual overrides, undo/export and private account snapshots. Reload/region isolation/outsider denial pass in Node and Cloudflare browser suites. Islands, Avalon and mastery remain missing.",
+      "remaining": "Implement dedicated islands/Avalon/mastery models and journeys; verify real owner OAuth independently.",
       "evidence": [
         "src/app/tools/page.tsx",
         "src/components/shopping-workspace.tsx",

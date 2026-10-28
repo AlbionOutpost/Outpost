@@ -111,7 +111,7 @@
     "models": 29,
     "enums": 3,
     "migrations": 18,
-    "files": 620
+    "files": 623
   },
   "pages": [
     {
@@ -3344,8 +3344,8 @@
     },
     {
       "path": "cloudflare/database/library-web.ts",
-      "bytes": 2975,
-      "sha256": "c581bd56c824d1031c3ee375c685f7b28d31172311b48a8a84c724ebdf68015a"
+      "bytes": 3302,
+      "sha256": "8b8ac9cf196c4918a242bdd2887ad43d4d5ea21ff089fd4bcf83ad9469fea9d7"
     },
     {
       "path": "cloudflare/database/long-like.mjs",
@@ -3359,8 +3359,13 @@
     },
     {
       "path": "cloudflare/database/protocol.ts",
-      "bytes": 4210,
-      "sha256": "479b2addc848f70e632369f4b21a90033b1b3d601a9c904e3dc25abd46bf4365"
+      "bytes": 5324,
+      "sha256": "d69e0cd87e239f061a1f96926ca381e810c3bc267d709449088a3f91ae1c49e3"
+    },
+    {
+      "path": "cloudflare/database/public-assets.ts",
+      "bytes": 5100,
+      "sha256": "6300f87d60c0e3994687a3a921653c5ab7f340cbfe5646f964e52fcd7910f0b2"
     },
     {
       "path": "cloudflare/database/redis-web.ts",
@@ -3379,8 +3384,8 @@
     },
     {
       "path": "cloudflare/database/web-driver.ts",
-      "bytes": 4105,
-      "sha256": "79bd4ac2e24414d272c73859413c14483e167b73e85abc9d090f0521cfab3bd6"
+      "bytes": 4455,
+      "sha256": "9c433d06e4d06216dee58fa24d4f037da025eff39c9f011841304a46e2518000"
     },
     {
       "path": "cloudflare/database/worker.ts",
@@ -4299,8 +4304,8 @@
     },
     {
       "path": "scripts/cloudflare-build.mjs",
-      "bytes": 1445,
-      "sha256": "7907c5c8a28d3291924479c69ff53b68a6eb73c56f27a96326ab710e0fe2bc15"
+      "bytes": 1670,
+      "sha256": "b3c115c65ac7d31201420a0f580d5c20cb5158d1a77508c9b076e65eb7d3999c"
     },
     {
       "path": "scripts/cloudflare-client.mjs",
@@ -4376,6 +4381,11 @@
       "path": "scripts/cloudflare-public-access.mjs",
       "bytes": 1715,
       "sha256": "92c524203bb1eb842f7f4f8232d363fd624f64d0e60610f37a792dd3483520fc"
+    },
+    {
+      "path": "scripts/cloudflare-public-assets.mjs",
+      "bytes": 2049,
+      "sha256": "9e4fca2b7e0661b827caa70e05dd4b3a71ad7dc142eb8920b5bb236f1b3ac421"
     },
     {
       "path": "scripts/cloudflare-release-config.mjs",
@@ -4509,8 +4519,8 @@
     },
     {
       "path": "scripts/qa-cloudflare-hosted.mjs",
-      "bytes": 5471,
-      "sha256": "f0f75f1d3b73be8ab959bb054af220b4817d0fe727df41ab12df9ecee6cbfcf7"
+      "bytes": 5481,
+      "sha256": "5c47aa241e63bac4b03c5f3833977c83e06653db0c1315639c58a7d67a407ceb"
     },
     {
       "path": "scripts/qa-cloudflare-visual.mjs",
@@ -6106,6 +6116,11 @@
       "path": "tests/cloudflare-mail.test.ts",
       "bytes": 2414,
       "sha256": "309bb433eb8db700c8ac68ad8fd8d3c2a193fc92ec82965c03226523358688a6"
+    },
+    {
+      "path": "tests/cloudflare-public-assets.test.ts",
+      "bytes": 5278,
+      "sha256": "c4e403ee9b3faefa6eca194539f5637e03fa57a9a2c02d634207b51805a92356"
     },
     {
       "path": "tests/cloudflare-security.test.ts",

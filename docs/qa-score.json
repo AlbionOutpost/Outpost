@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "evidence_checked_at": "2026-10-28T19:34:35.809Z",
-  "inputs_sha256": "788c07e70173e2c527b211636a3b62b9592b8c45b1ccf42b4a41837521f10283",
+  "evidence_checked_at": "2026-10-28T20:28:45.300Z",
+  "inputs_sha256": "dd8d5e5b12d7c5f4422b7ddd247ff112c0ee2c18bccc4c3badc2a4f8a05d9c3f",
   "coverage_indices": {
     "implementation": 62.85,
     "verification": 62.92,
