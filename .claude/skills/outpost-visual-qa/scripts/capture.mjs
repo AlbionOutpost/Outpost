@@ -34,7 +34,12 @@ const paths = args.filter((a) => !a.startsWith("--") && !skip.has(a));
 if (!paths.length) paths.push("/");
 
 mkdirSync(".qa/screens", { recursive: true });
-const browser = await chromium.launch();
+// PLAYWRIGHT_CHROMIUM_PATH lets you use an already-installed Chromium build.
+const browser = await chromium.launch(
+  process.env.PLAYWRIGHT_CHROMIUM_PATH
+    ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+    : {},
+);
 for (const path of paths) {
   for (const width of widths) {
     const context = await browser.newContext({
