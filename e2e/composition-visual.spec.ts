@@ -9,7 +9,7 @@ test("populated five and twenty player fixtures remain editable and export a wid
 }) => {
   test.setTimeout(90000);
   // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+  const iteration: string = "current";
   const folder = `.qa/composition-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

@@ -6,7 +6,7 @@ test("market source fixtures retain table, chart and filtering at review widths"
   page,
 }) => {
   // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+  const iteration: string = "current";
   const folder = `.qa/market-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   await page.route("**/api/market?*", (route) => {

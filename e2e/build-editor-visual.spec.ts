@@ -12,7 +12,7 @@ test("populated build editor preserves gear, choices and revisions across respon
 }) => {
   test.setTimeout(90000);
   // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+  const iteration: string = "current";
   const folder = `.qa/build-editor-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

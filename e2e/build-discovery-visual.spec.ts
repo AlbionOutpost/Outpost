@@ -10,7 +10,7 @@ test("equipment discovery preserves filters, private boundaries and saved favori
 }) => {
   test.setTimeout(60000);
   // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+  const iteration: string = "current";
   const folder = `.qa/build-discovery-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

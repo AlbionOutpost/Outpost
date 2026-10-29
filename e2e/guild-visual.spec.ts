@@ -10,7 +10,7 @@ test("guild activity and discovery remain readable with history, filters and pri
 }) => {
   test.setTimeout(60000);
   // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+  const iteration: string = "current";
   const folder = `.qa/guild-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const ids = [0, 1].map(() => `atlas-test-${randomUUID()}`),
