@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
 test.use({ trace: "retain-on-failure" });
@@ -9,9 +9,8 @@ test("guild activity and discovery remain readable with history, filters and pri
   context,
 }) => {
   test.setTimeout(60000);
-  const { iteration } = JSON.parse(
-    await readFile("docs/design-review/guilds/current-iteration.json", "utf8"),
-  );
+  // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration = "current";
   const folder = `.qa/guild-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const ids = [0, 1].map(() => `atlas-test-${randomUUID()}`),

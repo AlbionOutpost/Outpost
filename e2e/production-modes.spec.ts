@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
@@ -9,9 +9,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
     page,
     context,
   }) => {
-    const { iteration } = JSON.parse(
-      await readFile("docs/design-review/calculators/current-iteration.json", "utf8"),
-    );
+    // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration = "current";
     const folder = `.qa/calculator-correction/${iteration}`;
     await mkdir(folder, { recursive: true });
     const id = `atlas-test-${randomUUID()}`,

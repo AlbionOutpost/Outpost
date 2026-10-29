@@ -8,9 +8,8 @@ test("populated five and twenty player fixtures remain editable and export a wid
   context,
 }) => {
   test.setTimeout(90000);
-  const { iteration } = JSON.parse(
-    await readFile("docs/design-review/composition/current-iteration.json", "utf8"),
-  );
+  // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration = "current";
   const folder = `.qa/composition-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { cities } from "../src/lib/albion/region-config";
 
 test("market source fixtures retain table, chart and filtering at review widths", async ({
   page,
 }) => {
-  const { iteration } = JSON.parse(
-    await readFile("docs/design-review/market/current-iteration.json", "utf8"),
-  );
+  // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration = "current";
   const folder = `.qa/market-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   await page.route("**/api/market?*", (route) => {
