@@ -12,11 +12,13 @@ concurrency:
   cancel-in-progress: true
 jobs:
   quality:
-    runs-on: ubuntu-24.04
+    # The downloaded pinned Chromium requires working sandboxed user namespaces.
+    # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
+    # Reassess this supported runner before the published Ubuntu22 retirement.
+    runs-on: ubuntu-22.04
     timeout-minutes: 35
     env:
       NEXT_TELEMETRY_DISABLED: "1"
-      OUTPOST_BROWSER_CHANNEL: chrome
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,7 +43,7 @@ jobs:
           npm run db:deploy
           npm run data:sync
       - run: npx playwright install --with-deps chromium
-      - name: Verify the installed browser sandbox
+      - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
       - name: Source credential patterns
         run: node scripts/qa-source-secrets.mjs

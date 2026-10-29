@@ -5,7 +5,6 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 2,
   use: {
     baseURL: "http://localhost:3000",
-    channel: process.env.OUTPOST_BROWSER_CHANNEL === "chrome" ? "chrome" : undefined,
     launchOptions: { chromiumSandbox: true },
   },
   webServer: {

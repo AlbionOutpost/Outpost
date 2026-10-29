@@ -14,7 +14,10 @@ jobs:
     uses: ./.github/workflows/quality.yml
   deploy:
     needs: quality
-    runs-on: ubuntu-24.04
+    # The downloaded pinned Chromium requires working sandboxed user namespaces.
+    # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
+    # Reassess this supported runner before the published Ubuntu22 retirement.
+    runs-on: ubuntu-22.04
     timeout-minutes: 30
     environment: cloudflare-production
     concurrency:
@@ -22,7 +25,6 @@ jobs:
       cancel-in-progress: false
     env:
       NEXT_TELEMETRY_DISABLED: "1"
-      OUTPOST_BROWSER_CHANNEL: chrome
       WRANGLER_SEND_METRICS: "false"
       WRANGLER_SEND_ERROR_REPORTS: "false"
       CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
@@ -59,7 +61,7 @@ jobs:
           npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc --file "$GITHUB_WORKSPACE/.qa/cloudflare-library/local-import.sql" --persist-to "$GITHUB_WORKSPACE/.qa/cloudflare-database-test/state"
           node scripts/qa-cloudflare-database.mjs
       - run: npx playwright install --with-deps chromium
-      - name: Verify the installed browser sandbox
+      - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
       - name: Build and exercise Cloudflare with isolated fixture sessions
         run: |

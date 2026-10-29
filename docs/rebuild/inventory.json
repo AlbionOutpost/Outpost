@@ -3813,8 +3813,8 @@
     },
     {
       "path": ".github/workflows/cloudflare-preview.yml",
-      "bytes": 4352,
-      "sha256": "9676c68c9fbc84900cbd0ea4873014da538bcd3faca886e0d2441a5a6934f0ab"
+      "bytes": 4557,
+      "sha256": "417b52864c8b2f345856960fcd0a1c560906ef6a8a196cee4edfc99ca57499d7"
     },
     {
       "path": ".github/workflows/documentation.yml",
@@ -3823,8 +3823,8 @@
     },
     {
       "path": ".github/workflows/quality.yml",
-      "bytes": 2056,
-      "sha256": "15f40dc97de233bfed864f774b1c73b851aa91318600fbd0f2ee1eab064d7542"
+      "bytes": 2261,
+      "sha256": "4177ed1a04a754813f017136cd267524c6e6da8af1dc28e42c049bd834bc5c6c"
     },
     {
       "path": ".gitignore",
@@ -4543,8 +4543,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "bytes": 690,
-      "sha256": "08a8a5892c6a9246a23121883247c037796fd4a06aa18c022459202b8f37f709"
+      "bytes": 604,
+      "sha256": "9c78e0276c5f123bc90854c3054e215ef5efe7ace9b275cfbc9ea8443b25a49c"
     },
     {
       "path": "prisma/migrations/20261025194321_foundation/migration.sql",
@@ -5163,8 +5163,8 @@
     },
     {
       "path": "scripts/qa-browser-sandbox.mjs",
-      "bytes": 1557,
-      "sha256": "fe0c766ba1d5cdfa971854ab2d39fe7af83b86fe64b0c76c815b7270cfab8696"
+      "bytes": 652,
+      "sha256": "3100bda1bc1e4c036550bb38398f0dd5370db44b3a4167c50cef460e1c85c466"
     },
     {
       "path": "scripts/qa-ci-evidence.mjs",
