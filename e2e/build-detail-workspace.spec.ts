@@ -17,8 +17,11 @@ test("build details use a complete spatial inventory with synchronized equipment
   ).toContainText("Retaliate");
   await expect(page.locator("#build-alternatives-Helmet")).toHaveClass(/is-selected/);
   await expect(
-    page.locator("#build-gear-Helmet").getByRole("link", { name: "Compare prices →", exact: true }),
+    page
+      .locator(".detail-selected-item")
+      .getByRole("link", { name: "Compare prices", exact: true }),
   ).toHaveAttribute("href", /region=asia&item=T8_HEAD_LEATHER_SET2&quality=1/);
+  await page.locator("#build-alternatives > summary").click();
   const helmetTab = page.getByRole("tab", { name: /^Helmet/ });
   await helmetTab.focus();
   await page.keyboard.press("ArrowRight");
@@ -26,6 +29,14 @@ test("build details use a complete spatial inventory with synchronized equipment
   await expect(page.getByRole("tab", { name: /^Chest/ })).toBeFocused();
   await expect(page.locator("#build-alternatives-Chest")).toBeVisible();
   await helmetTab.click();
+  const alternativeSpellIcons = page.locator(
+    "#build-alternatives-Helmet .detail-alternative-spells img",
+  );
+  await expect(alternativeSpellIcons).toHaveCount(2);
+  const firstSpell = await alternativeSpellIcons.nth(0).boundingBox();
+  const secondSpell = await alternativeSpellIcons.nth(1).boundingBox();
+  expect(Math.abs(firstSpell!.y - secondSpell!.y)).toBeLessThan(2);
+
   await expect(
     page
       .locator("#build-alternatives-Helmet")
@@ -78,14 +89,20 @@ test("build details use a complete spatial inventory with synchronized equipment
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await inventory.locator('[data-slot="Helmet"]').focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator(".detail-workspace")).toHaveAttribute("data-selected-slot", "Helmet");
-  await expect(
-    inventory.locator('.inventory-equipment-cell[data-area="head"] [role="tooltip"]'),
-  ).toBeVisible();
   await expect(
     inventory.locator('.inventory-equipment-cell[data-area="head"] [role="tooltip"]'),
   ).toContainText("Retaliate");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".detail-workspace")).toHaveAttribute("data-selected-slot", "Helmet");
+  const inspector = page
+    .locator(".detail-summary-panel")
+    .getByRole("heading", { name: "Helmet", exact: true });
+  await expect(inspector).toBeFocused();
+  const inspectorBox = await inspector.boundingBox();
+  expect(inspectorBox!.y).toBeGreaterThanOrEqual(0);
+  expect(inspectorBox!.y + inspectorBox!.height).toBeLessThan(844);
+  await page.getByRole("link", { name: "Back to equipment", exact: false }).click();
+  await expect(inventory).toBeInViewport();
   expect(
     await inventory
       .locator(".inventory-slot-caption")

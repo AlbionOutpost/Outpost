@@ -14,7 +14,10 @@ for (const width of [390, 320]) {
     await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
     await expect(page.locator("#production-materials")).not.toBeVisible();
     await expect(page.locator("#production-results")).not.toBeVisible();
-    await expect(page.locator("main")).not.toContainText("Unavailable");
+    // Hidden material panels legitimately retain unknown prices until the pricing step.
+    // The active setup must not expose blank metrics or claim a calculated profit.
+    await expect(page.locator(".calculator-inputs")).not.toContainText("Unavailable");
+    await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
     await page.getByLabel("Crafts / upgrades", { exact: true }).fill("10");
     await page.getByRole("button", { name: "Next: price materials", exact: true }).click();
     await expect(page.locator("#production-materials")).toBeFocused();

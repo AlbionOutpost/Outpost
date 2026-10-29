@@ -1,5 +1,11 @@
 # Current Outpost visual reviews
 
+Latest correction: [owner warmth and atmosphere feedback](owner-warmth-correction/README.md). The prior navy rendering was rejected; charcoal/copper, warm atmosphere, larger genuine gear and compact discovery now supersede that treatment. Existing page workflows and factual data remain authoritative. Owner acceptance is open; no deployment is authorized.
+
+Previous owner-directed implementation (rendering rejected): [29 October five-reference full-product rebuild](product-rebuild-2026-10-29/README.md). The latest package supersedes earlier visual targets. It includes the restored weapon-family rail, larger authentic equipment abilities, genuine ten-slot anatomy, research and calculation workspaces, editors, Teams and account/reading pages. Functional verification, actual production screenshots, reference differences and open owner/data/operations gates are separate in that review. No deployment is authorized.
+
+## Earlier reviews and implementation history
+
 Active implementation: [complete Builds ecosystem](builds-system/README.md), following the new owner-supplied library/detail reference. Baselines captured; redesign and acceptance checks in progress.
 
 Latest pricing workflow: [quality discovery, historical loadout estimates and contribution guide](market-reliability/README.md). Explicit identities and source dates stay visible; all six widths are reviewed.
@@ -73,3 +79,9 @@ The [26 October read-only UI/UX and engineering audit](../engineering/UI_UX_CODE
 [The implemented homepage redesign](homepage-redesign/README.md) supersedes the earlier homepage composition: a field-guide palette, asymmetric hero, dedicated rail, ivory market workbench and new shared navigation. Real matched desktop/mobile screenshots and six-width checks are linked there. The scope is the homepage and navigation, not another whole-application audit.
 
 [October27 player functionality review](product-milestone/README.md): full spare sets, expanded source catalog, production profiles and Market research; accepted brand/layout retained.
+
+## Owner-supplied Codex-ready execution
+
+[29 October Phase A](codex-phase-a/README.md) implements Market first-use/results, compact searchable Build Library and the shared anatomical Build Detail inspector. The45-route matrix retains later editor/calculator/Teams/release phases and owner acceptance; current evidence is separate from the supplied historical screenshots. No deployment is authorized.
+
+Latest owner homepage correction: [cinematic landing composition](home-cinematic/README.md), superseding the rejected isometric homepage from the warmth correction. Actual local browser screenshots and verification remain distinct from owner approval.

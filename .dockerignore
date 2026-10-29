@@ -9,6 +9,7 @@ cloudflare/generated
 !.env.example
 test-results
 playwright-report
+dist
 
 .qa
 *.tsbuildinfo

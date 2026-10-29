@@ -64,9 +64,9 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     const page = await contexts[0].newPage();
     await page.goto(`/groups/${group.slug}`);
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
-    await page.getByText("Edit group profile", { exact: true }).click();
-    await page.getByLabel("Group profile name", { exact: true }).fill(profile.name);
-    await page.getByRole("button", { name: "Save group profile", exact: true }).click();
+    await page.getByText("Edit team profile", { exact: true }).click();
+    await page.getByLabel("Team profile name", { exact: true }).fill(profile.name);
+    await page.getByRole("button", { name: "Save team profile", exact: true }).click();
     await expect(page.getByRole("heading", { name: profile.name, exact: true })).toBeVisible();
     expect((await action(0, profile)).status()).toBe(409);
     const eventInput = {

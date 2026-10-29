@@ -142,12 +142,16 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     expect(
       (
         await outsider.request.delete(`/api/scenarios/${saved.id}`, {
-          headers: { origin: "http://localhost:3000" },
+          headers: {
+            origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+          },
         })
       ).status(),
     ).toBe(404);
     const invalid = await context.request.post("/api/scenarios", {
-      headers: { origin: "http://localhost:3000" },
+      headers: {
+        origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+      },
       data: {
         title: "Mixed servers",
         configuration: { ...(saved.configuration as object), region: "asia" },

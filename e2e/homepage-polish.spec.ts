@@ -48,21 +48,21 @@ test("the single homepage preview preserves exact quotes and independent source 
 test("preview distinguishes source failure and missing observations, then supports retry", async ({
   page,
 }) => {
-  let count = 0;
-  await page.route("**/api/market?*", (r) => {
-    count++;
-    return count === 1
+  let stage: "error" | "missing" | "observed" = "error";
+  await page.route("**/api/market?*", (r) =>
+    stage === "error"
       ? r.fulfill({ status: 503, json: { error: "outage" } })
-      : r.fulfill({ json: { region: "europe", prices: count === 2 ? [] : quotes() } });
-  });
+      : r.fulfill({ json: { region: "europe", prices: stage === "missing" ? [] : quotes() } }),
+  );
   await page.goto("/?region=europe");
   await expect(page.locator(".terminal-city-prices")).toContainText(
     "City prices could not be loaded",
   );
   await page.locator(".terminal-source summary").click();
+  stage = "missing";
   await page.getByRole("button", { name: "Refresh observations", exact: true }).click();
-  await expect.poll(() => count).toBe(2);
   await expect(page.locator(".terminal-city-prices")).toContainText("No city quotes were returned");
+  stage = "observed";
   await page.getByRole("button", { name: "Refresh observations", exact: true }).click();
   await expect(page.locator(".terminal-city-prices")).toContainText("2,400");
 });
@@ -92,7 +92,7 @@ test("selecting an item cancels the previous identity and preserves region in th
   );
 });
 
-test("hero and research views share one observed-price request and stay in sync", async ({
+test("homepage has one observed-price workspace with optional history and one request per item", async ({
   page,
 }) => {
   let requests = 0;
@@ -106,18 +106,53 @@ test("hero and research views share one observed-price request and stay in sync"
   await page.route("**/api/items?*", (route) =>
     route.fulfill({ json: { items: [], total: 0, page: 1, pageSize: 30 } }),
   );
-  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  await expect(page.locator(".hero-market-table tbody tr")).toHaveCount(2);
+  await expect(page.locator(".home-terminal")).toHaveCount(1);
+  await expect(page.locator(".hero-market-workspace")).toHaveCount(0);
   await expect(page.locator(".terminal-city-prices")).toContainText("2,400");
   expect(requests).toBe(1);
-  await page.getByRole("combobox", { name: "Search preview items", exact: true }).fill("Cape");
+  await page.getByRole("combobox", { name: "Search market items", exact: true }).fill("Cape");
   await page.getByRole("option").filter({ hasText: "Cape" }).first().click();
   await expect(page.locator(".terminal-item h2")).toContainText("Cape");
-  await expect(page.locator(".hero-market-table tbody")).toContainText("Cape");
   await expect.poll(() => requests).toBe(2);
-  await page.getByLabel("Preview city", { exact: true }).selectOption("Lymhurst");
-  await expect(page.locator(".hero-market-table tbody tr")).toHaveCount(1);
-  await expect(page.locator(".hero-market-table tbody")).toContainText("2,100");
+  await page.locator(".terminal-source summary").click();
+  await expect(page.getByRole("combobox", { name: "History city", exact: true })).toBeVisible();
+  await page
+    .getByRole("combobox", { name: "History city", exact: true })
+    .selectOption("Bridgewatch");
   expect(requests).toBe(2);
+});
+
+test("homepage quick selection shares the search identity and retains regional quotes", async ({
+  page,
+}) => {
+  const identities: string[] = [];
+  await page.route("**/api/market?*", (route) => {
+    const query = new URL(route.request().url()).searchParams;
+    identities.push(`${query.get("region")}:${query.get("item")}`);
+    return route.fulfill({
+      json: { region: query.get("region"), prices: quotes(query.get("item")!) },
+    });
+  });
+  await page.goto("/?region=europe");
+  const shortcuts = page.getByRole("group", { name: "Quick item selection" });
+  await expect(page.locator(".terminal-city-prices")).toContainText("2,400");
+  await shortcuts.getByRole("button", { name: "Cape", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(shortcuts.getByRole("button", { name: "Cape", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(shortcuts.getByRole("button", { name: "Bag", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await expect(page.locator(".terminal-item h2")).toContainText("Cape");
+  await expect(page.getByRole("link", { name: "Explore market", exact: true })).toHaveAttribute(
+    "href",
+    /region=europe&item=T4_CAPE/,
+  );
+  await expect.poll(() => identities).toEqual(["europe:T4_BAG", "europe:T4_CAPE"]);
+  await shortcuts.getByRole("button", { name: "Cape", exact: true }).click();
+  await expect.poll(() => identities.length).toBe(2);
 });

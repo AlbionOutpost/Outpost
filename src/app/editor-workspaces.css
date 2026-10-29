@@ -1,0 +1,769 @@
+/* Object-led editing and private collections. Domain state stays in the existing editors. */
+.app.outpost .build-editor-page,
+.app.outpost .composition-editor-page,
+.app.outpost .composition-directory,
+.app.outpost .group-build-library,
+.app.outpost .group-build-detail {
+  max-width: 1560px;
+}
+.app.outpost .object-editor-workspace .editor-backline {
+  gap: 16px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.editor-draft-label {
+  margin-left: auto;
+  color: var(--muted);
+}
+.app.outpost .object-editor-workspace .editor-backline > .editor-history-link {
+  margin-left: 0;
+}
+.app.outpost .object-editor-workspace .build-command-bar {
+  position: relative;
+  top: auto;
+  padding: 16px;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.app.outpost .object-editor-workspace .build-command-bar > label {
+  font-size: 13px;
+}
+.app.outpost .object-editor-workspace .build-command-bar > label:first-child input {
+  font-size: 19px;
+}
+.app.outpost .object-editor-workspace .guest-build-notice {
+  margin: 12px 0;
+  padding: 12px 16px;
+  border-left: 2px solid var(--accent);
+  background: var(--panel);
+  font-size: 13px;
+}
+.app.outpost .object-editor-workspace .editor-workspace-tabs {
+  margin-top: 16px;
+}
+.app.outpost .object-editor-workspace .build-editor-context {
+  padding-block: 12px;
+  font-size: 13px;
+}
+.app.outpost .object-editor-workspace .inventory-editor-studio {
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.25fr);
+  gap: 20px;
+}
+.app.outpost .object-editor-workspace .editor-inventory-panel,
+.app.outpost .object-editor-workspace .editor-slot-panel.studio-loadout-list {
+  padding: 20px;
+  border-radius: 10px;
+}
+.app.outpost .object-editor-workspace .editor-inventory-panel {
+  top: 20px;
+}
+.app.outpost .object-editor-workspace .editor-inventory-panel > header {
+  margin-bottom: 16px;
+}
+.app.outpost .object-editor-workspace .editor-slot-heading h2 {
+  font-size: 23px;
+  margin-top: 4px;
+}
+.app.outpost .object-editor-workspace .editor-slot-switcher {
+  gap: 6px;
+  padding-block: 12px;
+  margin-bottom: 16px;
+}
+.app.outpost .object-editor-workspace .editor-slot-switcher > button {
+  min-height: 36px;
+  font-size: 13px;
+}
+.editor-selection-jump {
+  display: none;
+}
+.app.outpost .object-editor-workspace .editor-inventory-note {
+  font-size: 13px;
+}
+.app.outpost .object-editor-workspace .editor-template-browser {
+  gap: 16px;
+}
+.app.outpost .object-editor-workspace .editor-template-browser > article {
+  padding: 16px;
+  border-radius: 8px;
+}
+.app.outpost .object-editor-workspace .editor-template-browser h3 {
+  font: 650 18px/1.3 var(--font-ui);
+}
+.app.outpost .object-editor-workspace .editor-template-browser p {
+  font-size: 13px;
+}
+.app.outpost .editor-preview-cost {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 24px;
+}
+.app.outpost .object-party-editor {
+  padding-bottom: 16px;
+}
+.app.outpost .object-party-editor .party-command-bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(140px, 220px) 110px auto;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.app.outpost .object-party-editor .party-command-bar > label {
+  min-width: 0;
+  font-size: 13px;
+}
+.app.outpost .object-party-editor .party-command-bar > label:first-child input {
+  font-size: 19px;
+  font-weight: 650;
+}
+.app.outpost .object-party-editor .party-command-bar input {
+  width: 100%;
+  min-width: 0;
+}
+.app.outpost .object-party-editor .party-command-bar datalist {
+  display: none;
+}
+.app.outpost .object-party-editor .party-settings {
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 0 0 12px;
+  background: transparent;
+}
+.app.outpost .object-party-editor .party-settings > summary {
+  font-size: 14px;
+  padding: 8px 0;
+  color: var(--muted);
+}
+.app.outpost .object-party-editor .party-tools-bar {
+  padding-block: 12px;
+  margin: 0;
+  gap: 16px;
+  align-items: end;
+}
+.app.outpost .object-party-editor .party-size-bar .actions {
+  margin: 0;
+  gap: 6px;
+}
+.app.outpost .object-party-editor .party-size-bar button {
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.app.outpost .object-party-editor .reference-party-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 16px;
+  align-items: start;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-readiness {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-role-counts {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .readiness-role {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  gap: 8px;
+  min-width: 0;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .readiness-role small {
+  display: none;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .readiness-role strong {
+  font-size: 13px;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .readiness-role svg {
+  width: 18px;
+  height: 18px;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-preparation-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+}
+.app.outpost
+  :is(.object-party-editor, .composition-detail-workspace)
+  .party-preparation-summary
+  > strong {
+  display: none;
+}
+.app.outpost
+  :is(.object-party-editor, .composition-detail-workspace)
+  .party-preparation-summary
+  .button {
+  font-size: 13px;
+  min-height: 36px;
+}
+.app.outpost .object-party-editor .party-workspace {
+  grid-column: 1;
+  display: block;
+  margin: 0;
+}
+.app.outpost .object-party-editor .party-workspace:has(> .party-roster[hidden]) {
+  display: contents;
+}
+.app.outpost .object-party-editor .reference-available-builds {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  position: sticky;
+  top: 20px;
+  padding: 16px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.app.outpost .object-party-editor .reference-available-builds h2 {
+  margin: 0 0 16px;
+  font: 650 19px/1.3 var(--font-ui);
+}
+.app.outpost .object-party-editor .reference-available-builds label {
+  font-size: 13px;
+}
+.app.outpost .object-party-editor .reference-available-builds p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.app.outpost .object-party-editor .reference-available-builds li {
+  padding-block: 10px;
+}
+.app.outpost .object-party-editor .reference-available-builds li a {
+  font-size: 14px;
+}
+.app.outpost .object-party-editor .party-notes {
+  margin-top: 16px;
+}
+.app.outpost .object-party-editor .party-save-bar {
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.app.outpost .object-party-editor .draft-status {
+  margin-right: auto;
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.app.outpost .object-party-editor .draft-status small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .party-board {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  min-width: 0;
+}
+.app.outpost .party-board .party-board-title {
+  grid-column: auto;
+  padding: 0 0 12px;
+  min-height: 0;
+  background: transparent;
+}
+.app.outpost .party-board .party-board-title .eyebrow {
+  display: none;
+}
+.app.outpost .party-board .party-board-title h2 {
+  margin: 0 0 4px;
+  font: 650 20px/1.3 var(--font-ui);
+}
+.app.outpost .party-board .party-board-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.app.outpost .party-board .party-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+.app.outpost .party-board .party-loadout-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: left;
+  color: var(--text);
+}
+.app.outpost .party-board .party-loadout-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.app.outpost .party-board .party-card-heading {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+}
+.app.outpost .party-board .party-card-heading > div {
+  min-width: 0;
+}
+.app.outpost .party-board .party-card-heading strong {
+  display: block;
+  font: 650 15px/1.4 var(--font-ui);
+}
+.app.outpost .party-board .party-card-heading div > span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.app.outpost .party-board .member-index {
+  font: 13px var(--font-mono);
+  color: var(--muted);
+}
+.app.outpost .party-board .party-gear-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 54px);
+  grid-template-rows: repeat(4, 54px);
+  justify-content: center;
+  gap: 7px;
+  margin: 0 auto 12px;
+  padding: 0;
+  width: auto;
+}
+.app.outpost .party-board .party-gear-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  padding: 0;
+}
+.app.outpost .party-board .party-gear-cell .item-icon {
+  width: 54px;
+  height: 54px;
+}
+.app.outpost .party-board .party-gear-cell > svg {
+  width: 25px;
+  height: 25px;
+  color: var(--muted);
+}
+.app.outpost .party-board .party-card-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 10px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .party-board .party-card-edit {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent-ink);
+}
+.app.outpost .composition-collection-page .composition-filters {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  padding: 16px;
+  margin-top: 20px;
+}
+.app.outpost .composition-collection-page .composition-filters > label {
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .composition-collection-page .composition-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.app.outpost .composition-collection-page .composition-preview-card {
+  padding: 20px;
+  border-radius: 10px;
+}
+.app.outpost .composition-collection-page .composition-preview-card h2 {
+  font: 650 20px/1.3 var(--font-ui);
+}
+.app.outpost .composition-collection-page .composition-roster-preview {
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-block: 16px;
+}
+.app.outpost .composition-collection-page .composition-roster-preview > strong {
+  flex-basis: 100%;
+  font-size: 13px;
+}
+.app.outpost .composition-collection-page .comp-preview-player {
+  max-width: 64px;
+  gap: 4px;
+}
+.app.outpost .composition-collection-page .comp-preview-player small {
+  font-size: 12px;
+}
+.app.outpost .group-build-library .library-comp-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app.outpost .group-build-library .group-build-preview {
+  padding: 20px;
+  border-radius: 10px;
+}
+.app.outpost .group-build-library .group-build-preview h2 {
+  margin-block: 8px 12px;
+  font-size: 20px;
+}
+.app.outpost .group-build-detail .group-build-detail-tools {
+  position: relative;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 10px;
+}
+.app.outpost .group-build-detail .library-comp-members {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app.outpost .group-build-detail .group-loadout-card {
+  padding: 20px;
+  border-radius: 10px;
+}
+.app.outpost .personal-favorites-collection > section[aria-label="Account favorites"] {
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.app.outpost .personal-favorites-collection .ecosystem-section-heading {
+  gap: 16px;
+}
+.app.outpost .personal-build-collection .ecosystem-result-toolbar {
+  background: var(--panel);
+}
+@media (max-width: 1150px) {
+  .app.outpost .object-party-editor .reference-party-workspace {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+  .app.outpost .composition-collection-page .composition-results,
+  .app.outpost .group-build-library .library-comp-grid,
+  .app.outpost .group-build-detail .library-comp-members {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .app.outpost .object-editor-workspace .editor-backline {
+    gap: 8px 12px;
+    font-size: 12px;
+  }
+  .app.outpost .object-editor-workspace .editor-draft-label {
+    margin-left: 0;
+    flex-basis: 100%;
+    order: 3;
+  }
+  .app.outpost .object-editor-workspace .build-command-bar {
+    padding: 12px;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .object-editor-workspace .build-command-bar > label:first-child input {
+    font-size: 17px;
+  }
+  .app.outpost .object-editor-workspace .editor-workspace-tabs {
+    margin-top: 12px;
+  }
+  .app.outpost .object-editor-workspace .editor-workspace-tabs > button {
+    padding-inline: 11px;
+  }
+  .app.outpost .object-editor-workspace .inventory-editor-studio {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .app.outpost .object-editor-workspace .editor-inventory-panel,
+  .app.outpost .object-editor-workspace .editor-slot-panel.studio-loadout-list {
+    padding: 16px;
+  }
+  .app.outpost .object-editor-workspace .editor-inventory-panel {
+    position: relative;
+    top: auto;
+  }
+  .app.outpost .object-editor-workspace .editor-selection-jump {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    text-align: left;
+  }
+  .editor-selection-jump > span {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+  .editor-selection-jump small {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .editor-selection-jump strong {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .editor-selection-jump > svg {
+    width: 18px;
+    flex-shrink: 0;
+    color: var(--accent-ink);
+  }
+  .app.outpost .object-editor-workspace .guest-build-notice {
+    align-items: start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .app.outpost .object-party-editor {
+    padding-bottom: 90px;
+  }
+  .app.outpost .object-party-editor .party-command-bar {
+    grid-template-columns: minmax(0, 1fr) 100px;
+    gap: 10px;
+    padding: 12px;
+  }
+  .app.outpost .object-party-editor .party-command-bar > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .object-party-editor .party-command-bar > label:first-child input {
+    font-size: 17px;
+  }
+  .app.outpost .object-party-editor .party-primary-save {
+    position: fixed;
+    bottom: 12px;
+    left: 16px;
+    right: 16px;
+    z-index: 35;
+    min-height: 46px;
+    box-shadow: 0 5px 20px #0006;
+  }
+  .app.outpost .object-party-editor .party-tools-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .app.outpost .object-party-editor .party-size-bar {
+    width: 100%;
+  }
+  .app.outpost .object-party-editor .party-size-bar .actions {
+    flex-wrap: wrap;
+  }
+  .app.outpost .object-party-editor .party-size-bar button {
+    flex: 1;
+    padding-inline: 8px;
+  }
+  .app.outpost .object-party-editor .reference-party-workspace {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-readiness {
+    padding: 12px;
+    gap: 12px;
+  }
+  .app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-role-counts {
+    gap: 10px 16px;
+  }
+  .app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-preparation-summary {
+    gap: 6px 12px;
+  }
+  .app.outpost .object-party-editor .reference-available-builds {
+    grid-column: 1;
+    grid-row: auto;
+    position: relative;
+    top: auto;
+  }
+  .app.outpost .party-board .party-board-grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+  .app.outpost .party-board .party-loadout-card {
+    padding: 16px;
+  }
+  .app.outpost .composition-collection-page .composition-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px;
+    gap: 12px;
+  }
+  .app.outpost .composition-collection-page .composition-filters > label {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .composition-collection-page .composition-results,
+  .app.outpost .group-build-library .library-comp-grid,
+  .app.outpost .group-build-detail .library-comp-members {
+    grid-template-columns: 1fr;
+  }
+  .app.outpost .personal-favorites-collection > section[aria-label="Account favorites"] {
+    padding: 16px;
+  }
+}
+/* Neutralize legacy five-player poster placement: every party size uses the same real geometry. */
+.app.outpost .party-board[data-party-size] .party-loadout-card:nth-child(n) {
+  grid-area: auto;
+  max-width: none;
+}
+.app.outpost .object-party-editor .reference-party-workspace > .party-board {
+  grid-row: 2;
+  padding: 0;
+}
+.app.outpost .party-board[data-party-size] .party-gear-cell {
+  display: flex;
+  visibility: visible;
+  opacity: 1;
+}
+.app.outpost .party-board[data-party-size] .party-gear-cell img {
+  width: 54px;
+  height: 54px;
+}
+.app.outpost .party-board[data-party-size] .party-gear-matrix {
+  max-width: none;
+}
+.app.outpost
+  .object-party-editor
+  .reference-party-workspace
+  .party-board[data-party-size]
+  .party-board-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.app.outpost .object-editor-workspace .editor-backline > .editor-draft-label {
+  display: inline;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .readiness-role {
+  flex: none;
+}
+.app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-role-counts {
+  flex: auto;
+}
+.app.outpost .object-party-editor .party-tools-bar {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 767px) {
+  .app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-role-counts {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+  .app.outpost :is(.object-party-editor, .composition-detail-workspace) .party-readiness {
+    margin-top: 12px;
+  }
+}
+@media (max-width: 980px) {
+  .app.outpost .object-editor-workspace .inventory-editor-studio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .object-editor-workspace .editor-inventory-panel {
+    position: relative;
+    top: auto;
+  }
+}
+@media (max-width: 767px) {
+  .app.outpost .object-editor-workspace .editor-backline > .editor-draft-label {
+    flex-basis: auto;
+    margin-left: auto;
+    order: 0;
+  }
+  .app.outpost .object-editor-workspace .build-command-bar .build-file-tools {
+    padding-block: 0;
+    grid-row: auto;
+  }
+}
+.app.outpost
+  .object-party-editor
+  .reference-party-workspace
+  .party-board[data-party-size]
+  .party-board-grid {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+@media (min-width: 1100px) {
+  .app.outpost .object-party-editor .party-board .party-loadout-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app.outpost .composition-collection-page .composition-directory-heading {
+    margin-bottom: 8px;
+  }
+  .app.outpost .composition-collection-page > .intro {
+    margin-block: 8px 12px;
+  }
+  .app.outpost .composition-collection-page .composition-filters {
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .app.outpost .composition-collection-page .composition-results {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 780px) {
+  .app.outpost .composition-collection-page .composition-filters > label {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+  .app.outpost .composition-collection-page .composition-filters > .responsive-filter-panel {
+    grid-row: 2;
+    grid-column: 1;
+    border-top: 0;
+    padding-top: 0;
+  }
+  .app.outpost .composition-collection-page .composition-filters > button {
+    grid-row: 2;
+    grid-column: 2;
+  }
+}
+
+.app.outpost .party-board[data-party-size] .party-board-grid {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.app.outpost .composition-detail-workspace .comp-action-status:empty {
+  display: none;
+}
+.app.outpost .composition-detail-workspace .party-readiness {
+  margin-block: 16px;
+}
+.app.outpost .group-build-library .library-comp-card small {
+  display: block;
+}

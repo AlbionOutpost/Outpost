@@ -1,21 +1,21 @@
 import "./homepage.css";
-import "./home-fidelity.css";
 import { HomeMarketTerminal } from "@/components/home-market-terminal";
 import { ItemIcon } from "@/components/item-icon";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { LibraryBuildCard } from "@/components/library-build-card";
+import { featuredLibraryBuilds } from "@/lib/grind-library";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
-import Image from "next/image";
 import {
   ArrowRight,
   ChartNoAxesCombined,
   Swords,
   Users,
-  BookOpen,
-  Database,
-  Globe2,
   Shield,
-  Crosshair,
   HeartPulse,
+  Search,
+  BookOpen,
+  MoveRight,
 } from "lucide-react";
 import { regionSchema } from "@/lib/albion/region-config";
 
@@ -29,147 +29,116 @@ export default async function Home({
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = `?region=${region}`;
+  const builds = (await featuredLibraryBuilds()).slice(0, 4);
+  const featured = (
+    <section className="home-library-picks" aria-labelledby="home-builds-title">
+      <div className="support-section-heading">
+        <div>
+          <h2 id="home-builds-title">Featured builds</h2>
+          <p>Find your next playstyle.</p>
+        </div>
+        <Link className="text-link" href={`/builds/library${suffix}`}>
+          Browse all builds <ArrowRight size={15} />
+        </Link>
+      </div>
+      <div className="home-build-grid">
+        {builds.map((build) => (
+          <LibraryBuildCard key={build.id} build={build} />
+        ))}
+      </div>
+    </section>
+  );
   return (
-    <div className="reference-home home-fidelity">
+    <div className="reference-home support-home home-cinematic">
       <HomeMarketTerminal
+        afterPreview={featured}
         hero={
           <div className="reference-hero-copy">
-            <span className="eyebrow">THE ALBION ONLINE COMPANION</span>
             <h1 id="home-title">
-              <span>Better tools.</span>
-              <span>
-                For a <em>richer Albion.</em>
-              </span>
+              Your Albion
+              <br />
+              <em>advantage.</em>
             </h1>
-            <p>
-              Market tools, profit calculators, builds, comps and guild management. Make better
-              decisions and get more from Albion Online.
-            </p>
+            <p>Markets, builds and group planning for Albion Online. Make your next move count.</p>
             <div className="actions">
-              <Link className="button primary" href={`/tools${suffix}`}>
-                Explore Tools <ArrowRight size={18} />
+              <Link href={`/tools/market${suffix}`} className="button primary">
+                <Search size={18} /> Explore Market <ArrowRight size={17} />
               </Link>
-              <Link className="button secondary" href={`/builds${suffix}`}>
-                Browse Builds <ArrowRight size={18} />
+              <Link href={`/builds/library${suffix}`} className="button secondary">
+                <BookOpen size={18} /> Browse Builds
               </Link>
-            </div>
-            <div className="reference-hero-facts">
-              <span>
-                <Database size={16} /> Player-observed prices
-              </span>
-              <span>
-                <Globe2 size={16} /> All three regions
-              </span>
-              <span>
-                <Users size={16} /> Built for your party
-              </span>
             </div>
           </div>
         }
       >
-        <section className="reference-discovery" aria-labelledby="discover-title">
-          <div className="reference-section-heading">
-            <div>
-              <span className="eyebrow">START HERE</span>
-              <h2 id="discover-title">Find what you need, faster.</h2>
-              <p>Powerful tools for every kind of player. Start with your next move.</p>
-            </div>
-            <Link className="reference-guide-link" href={`/guides${suffix}`}>
-              <span className="home-guide-mark">
-                <BookOpen size={23} />
-              </span>
-              <span>
-                <strong>New to Outpost?</strong>
-                <small>A quick guide to getting started</small>
-              </span>
-              <span className="home-guide-action">
-                View guides <ArrowRight size={14} />
-              </span>
-            </Link>
-          </div>
+        <section className="home-next-actions" aria-labelledby="home-next-title">
+          <h2 id="home-next-title" className="sr-only">
+            Choose your next task
+          </h2>
           <div className="reference-feature-grid">
-            <article className="reference-feature feature-market">
-              <span className="eyebrow">
-                <ChartNoAxesCombined size={18} /> MARKET EXPLORER
-              </span>
-              <h3>
-                Find opportunities in
-                <br />
-                any city market.
-              </h3>
-              <p>Compare city prices, check history and plan your next trade.</p>
-              <div className="home-market-illustration" data-asset-status="generated">
-                <Image
-                  src="/albion/illustrations/market-v1.webp"
-                  alt=""
-                  fill
-                  sizes="(max-width:780px) 240px, 320px"
-                />
+            <article className="home-destination home-destination-market">
+              <ChartNoAxesCombined size={25} />
+              <h3>Market Explorer</h3>
+              <p>Compare city prices. Spot the spread. Plan your next trade.</p>
+              <div className="destination-market-preview" aria-hidden="true">
+                <span>
+                  <ItemIcon id="T4_BAG" size={64} />
+                </span>
+                <span>
+                  <ItemIcon id="T4_MAIN_AXE" size={52} />
+                </span>
+                <MoveRight size={26} />
               </div>
-              <Link className="button primary" href={`/tools/market${suffix}`}>
+              <Link className="text-link" href={`/tools/market${suffix}`}>
                 Open Market Explorer <ArrowRight size={15} />
               </Link>
             </article>
-            <article className="reference-feature feature-build">
-              <span className="eyebrow">
-                <Swords size={18} /> BUILD CREATOR
-              </span>
-              <h3>
-                Plan and share
-                <br />
-                loadouts with ease.
-              </h3>
-              <p>Your equipment, abilities and alternatives. Ready for your next fight.</p>
-              <div
-                className="home-loadout-preview"
-                role="group"
-                aria-label="Equipment selection preview"
-              >
-                {[
-                  "T4_HEAD_LEATHER_SET1",
-                  "T4_MAIN_AXE",
-                  "T4_ARMOR_LEATHER_SET1",
-                  "T4_OFF_SHIELD",
-                  "T4_SHOES_LEATHER_SET1",
-                  "T4_CAPE",
-                ].map((id) => (
-                  <span key={id}>
-                    <ItemIcon id={id} size={58} />
-                  </span>
-                ))}
-              </div>
-              <Link className="button primary" href={`/builds/new${suffix}`}>
-                Create a build <ArrowRight size={15} />
+            <article className="home-destination home-destination-builds">
+              <Swords size={25} />
+              <h3>Build Library</h3>
+              <p>Find your playstyle with equipment, abilities and swaps in one place.</p>
+              {builds[0] && (
+                <div
+                  className="home-feature-equipment"
+                  aria-label={`Equipment from ${builds[0].title}`}
+                >
+                  {builds[0].equipment
+                    .filter((item) =>
+                      ["Main hand", "Helmet", "Chest", "Boots", "Cape", "Off hand"].includes(
+                        item.slot,
+                      ),
+                    )
+                    .slice(0, 6)
+                    .map((item) => (
+                      <span key={item.slot} title={equipmentName(item.itemId)}>
+                        <ItemIcon id={item.itemId} size={40} />
+                      </span>
+                    ))}
+                </div>
+              )}
+              <Link className="text-link" href={`/builds/library${suffix}`}>
+                Browse builds <ArrowRight size={15} />
               </Link>
             </article>
-            <article className="reference-feature feature-party">
-              <span className="eyebrow">
-                <Users size={18} /> COMPOSITION PLANNER
-              </span>
-              <h3>
-                Build stronger
-                <br />
-                groups and guilds.
-              </h3>
-              <p>Plan clear roles, party loadouts and equipment swaps together.</p>
-              <div className="home-party-preview" role="group" aria-label="Role planning preview">
-                <span>
-                  <Shield size={13} />
-                  <ItemIcon id="T4_OFF_SHIELD" size={48} />
-                  <small>Tank</small>
+            <article className="home-destination home-destination-comps">
+              <Users size={25} />
+              <h3>Composition Planner</h3>
+              <p>A stronger party starts with a plan. Bring roles, loadouts and swaps together.</p>
+              <div
+                className="destination-party-preview"
+                aria-label="Plan frontline, damage and support roles"
+              >
+                <span title="Frontline">
+                  <Shield size={23} />
                 </span>
-                <span>
-                  <HeartPulse size={13} />
-                  <ItemIcon id="T4_MAIN_HOLYSTAFF" size={48} />
-                  <small>Healer</small>
+                <span title="Damage">
+                  <Swords size={23} />
                 </span>
-                <span>
-                  <Crosshair size={13} />
-                  <ItemIcon id="T4_2H_BOW" size={48} />
-                  <small>DPS</small>
+                <span title="Support">
+                  <HeartPulse size={23} />
                 </span>
               </div>
-              <Link className="button primary" href={`/compositions/new${suffix}`}>
+              <Link className="text-link" href={`/compositions/new${suffix}`}>
                 Plan a composition <ArrowRight size={15} />
               </Link>
             </article>

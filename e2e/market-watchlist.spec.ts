@@ -32,12 +32,14 @@ test("private watchlists persist region/quality and deny foreign deletion, spoof
     await outsider.addCookies([cookie(users[1].token)]);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/tools/market?region=asia&item=T4_BAG&quality=2");
+    await page.getByRole("tab", { name: "Watchlist", exact: true }).click();
     await page.getByText("Your market watchlist", { exact: true }).click();
     await page.getByRole("button", { name: "Save selected item", exact: true }).click();
     await expect(page.locator(".market-watchlist").getByRole("status")).toContainText("Item saved");
     const row = await db.marketWatchItem.findFirstOrThrow({ where: { userId: users[0].id } });
     expect(row).toMatchObject({ region: "asia", itemId: "T4_BAG", quality: 2 });
     await page.reload();
+    await page.getByRole("tab", { name: "Watchlist", exact: true }).click();
     await page.getByText("Your market watchlist", { exact: true }).click();
     await page.getByRole("button", { name: "Load your watchlist", exact: true }).click();
     await expect(page.locator(".watchlist-items a")).toHaveAttribute(

@@ -1,0 +1,350 @@
+/* Market-only hierarchy: one selection, comparison first, optional city context. */
+.app.outpost .reference-market-layout > .market-explorer-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.app.outpost .market-explorer-page .market-workspace.market-focused {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.app.outpost .market-explorer-page .market-workspace.market-focused.has-city-detail {
+  grid-template-columns: minmax(0, 1fr) 280px;
+}
+.app.outpost
+  .market-focused
+  > :is(.market-query-panel, .reference-market-history, .market-saved-work) {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.app.outpost .market-focused .market-board {
+  padding: 18px;
+  min-height: 0;
+}
+.app.outpost .market-focused .market-query-panel .market-hydration-guard {
+  display: contents;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.app.outpost .market-focused .market-board .market-table-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.app.outpost .market-focused .market-selection-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  padding: 14px 0 10px;
+}
+.app.outpost .market-focused .market-selection {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  gap: 10px;
+  border: 0;
+}
+.app.outpost .market-focused .market-selection strong {
+  display: block;
+  font: 650 15px/1.4 var(--font-ui);
+  overflow-wrap: anywhere;
+}
+.app.outpost .market-focused .market-selection span {
+  display: block;
+  color: var(--muted);
+  font: 400 12px/1.5 var(--font-ui);
+}
+.app.outpost .market-focused .market-start-examples {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.app.outpost .market-focused .market-start-examples > span {
+  margin-right: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.app.outpost .market-focused .market-start-examples button {
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 12px;
+  background: var(--bg);
+}
+.app.outpost .market-focused .market-start-examples button[aria-pressed="true"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.app.outpost .market-focused .market-filter-disclosures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 8px 20px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .market-focused .market-filter-disclosures > details {
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+}
+.app.outpost .market-focused .market-filter-disclosures summary {
+  min-height: 28px;
+  padding-block: 4px;
+}
+.app.outpost .market-focused .market-filter-disclosures > details[open] {
+  flex-basis: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+}
+.app.outpost .market-focused .reference-filter-chips:empty {
+  display: none;
+}
+.app.outpost .market-focused .market-first-use {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  padding: 18px 0 8px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.app.outpost .market-focused .market-first-use > svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: var(--accent-ink);
+}
+.app.outpost .market-focused .market-first-use h3 {
+  margin: 0 0 7px;
+  font: 650 17px/1.4 var(--font-ui);
+}
+.app.outpost .market-focused .market-first-use p {
+  max-width: 75ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.app.outpost .market-focused .market-results-heading {
+  margin-bottom: 10px;
+}
+.app.outpost .market-focused .market-source-note {
+  max-width: 110ch;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.app.outpost .market-focused .market-observation-legend {
+  margin: 0 0 8px;
+  padding: 0 0 8px;
+}
+.app.outpost .market-focused .market-table-toolbar {
+  padding-bottom: 8px;
+}
+.app.outpost .market-focused .market-table-toolbar label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0;
+}
+.app.outpost .market-focused .market-table-toolbar select {
+  width: auto;
+  max-width: 180px;
+  margin: 0;
+}
+.app.outpost .market-focused .market-best-observations {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .market-focused .market-best-observations > p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.app.outpost .market-focused .market-best-observations .market-quote-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+}
+.app.outpost .market-focused .market-best-observations .market-quote-summary > div {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+.app.outpost .market-focused .market-best-observations dt {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.app.outpost .market-focused .market-best-observations dd {
+  margin: 0;
+  font-size: 18px;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.app.outpost .market-focused .market-best-observations dd small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font: 400 11px/1.6 var(--font-ui);
+  white-space: normal;
+}
+.app.outpost .market-focused .market-city-inspector {
+  display: block;
+  position: sticky;
+  top: 80px;
+  padding: 18px;
+}
+.app.outpost .market-focused .market-inspector-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.app.outpost .market-focused .market-inspector-heading span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.app.outpost .market-focused .market-inspector-heading h2 {
+  margin: 4px 0 0;
+  font: 650 19px/1.3 var(--font-ui);
+}
+.app.outpost .market-focused .market-inspector-heading button {
+  font-size: 11px;
+}
+.app.outpost .market-focused .market-city-inspector .muted {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.app.outpost .market-focused .market-saved-work {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.app.outpost .market-focused .market-saved-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.app.outpost .market-focused .market-saved-heading > svg {
+  color: var(--muted);
+}
+.app.outpost .market-focused .market-saved-heading h2 {
+  margin: 0;
+  font: 650 17px/1.4 var(--font-ui);
+}
+.app.outpost .market-focused .market-saved-heading > span {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .market-focused .market-saved-tabs {
+  display: flex;
+  gap: 18px;
+  margin: 12px 0 0;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .market-focused .market-saved-tabs > button {
+  padding: 10px 0;
+  min-height: 40px;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .market-focused .market-saved-tabs > button[aria-selected="true"] {
+  color: var(--accent-ink);
+  border-bottom-color: var(--accent);
+}
+.app.outpost .market-focused .market-saved-work .market-watchlist {
+  margin: 12px 0 0;
+}
+@media (max-width: 1100px) {
+  .app.outpost .market-explorer-page .market-workspace.market-focused.has-city-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .market-focused .market-city-inspector {
+    position: static;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .reference-market-layout .reference-market-rail {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 0 0 8px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .app.outpost .reference-market-layout .reference-market-rail > a {
+    flex: 0 0 auto;
+    min-height: 34px;
+    padding: 7px 9px;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  .app.outpost .reference-market-layout .workspace-identity {
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .app.outpost .reference-market-layout .workspace-identity .page-title {
+    font-size: 27px;
+  }
+  .app.outpost .reference-market-layout .workspace-identity .intro {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .app.outpost .market-focused .market-selection-row {
+    gap: 10px;
+    padding: 12px 0 8px;
+  }
+  .app.outpost .market-focused .market-start-examples {
+    margin-left: auto;
+  }
+  .app.outpost .market-focused .market-start-examples > span {
+    display: none;
+  }
+  .app.outpost .market-focused .market-board,
+  .app.outpost .market-focused .market-saved-work {
+    padding: 14px;
+  }
+  .app.outpost .market-focused .market-saved-heading > span {
+    width: 100%;
+    margin: 0;
+  }
+}

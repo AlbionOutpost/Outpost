@@ -32,6 +32,7 @@ test("market overview plots source observations, preserves gaps and rejects anot
   });
   await page.goto("/?region=europe");
   const terminal = page.getByRole("region", { name: "Observed market overview" });
+  await terminal.locator(".terminal-source > summary").click();
   await expect(terminal.getByRole("img")).toHaveAccessibleName(/4 observed daily/);
   await expect(terminal.locator(".chart-observation")).toHaveCount(4);
   // Gaps greater than 36 hours are separate segments, never filled-in invented dates.
@@ -40,7 +41,6 @@ test("market overview plots source observations, preserves gaps and rejects anot
   ).toBe(4);
   await terminal.getByRole("button", { name: "7d", exact: true }).click();
   await expect(terminal.locator(".chart-observation")).toHaveCount(3);
-  await terminal.locator("summary").click();
   await expect(terminal.getByRole("table")).toContainText("1,750.375");
   await terminal.getByRole("combobox", { name: "History city" }).selectOption("Bridgewatch");
   await expect(terminal.getByRole("status")).toContainText("temporarily unavailable");

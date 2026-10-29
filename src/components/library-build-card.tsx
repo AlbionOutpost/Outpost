@@ -1,12 +1,13 @@
 import Link from "@/components/build-region-link";
 import { useId } from "react";
-import { X } from "lucide-react";
+import { ArrowUpRight, Swords } from "lucide-react";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { SpellIcon } from "./spell-icon";
 import { LibrarySaveButton } from "./library-save-button";
 import { activityName, type LibraryBuild } from "@/lib/grind-library-types";
 import { librarySpellNames } from "@/lib/grind-library";
+import { brandCopy } from "@/lib/brand-copy";
 import { discoveryDate } from "@/lib/build-discovery";
 export function LibraryBuildCard({ build }: { build: LibraryBuild }) {
   const titleId = useId();
@@ -23,15 +24,25 @@ async function LibraryBuildCardContent({
     date = discoveryDate(build.updatedAt),
     names = await librarySpellNames();
   const slug = build.slug.length <= 200 ? build.slug : build.id;
-  const order = ["Main hand", "Off hand", "Helmet", "Chest", "Boots", "Cape", "Food", "Potion"];
+  const preview = ["Helmet", "Chest", "Boots", "Cape"].flatMap((slot) => {
+    const row = build.equipment.find((item) => item.slot === slot);
+    return row ? [row] : [];
+  });
   return (
     <article className="library-build-card ecosystem-build-card" data-activity={build.category}>
       <div className="ecosystem-card-main">
-        <div className="ecosystem-card-topline">
-          <span className="ecosystem-activity">{activityName(build.category) || "Other"}</span>
-        </div>
         <div className="library-build-identity">
-          <div>
+          <span
+            className="library-primary-weapon"
+            title={main ? equipmentName(main.itemId) : "Main hand not assigned"}
+          >
+            {main ? (
+              <ItemIcon id={main.itemId} size={76} />
+            ) : (
+              <Swords size={28} aria-hidden="true" />
+            )}
+          </span>
+          <div className="library-build-copy">
             <Link
               href={`/builds/library/${encodeURIComponent(slug)}`}
               aria-labelledby={titleId}
@@ -39,50 +50,62 @@ async function LibraryBuildCardContent({
             >
               <h2 id={titleId}>{build.title}</h2>
             </Link>
+            <p className="library-build-classification">
+              <span>{build.weaponName || "Equipment plan"}</span>
+              <span className="ecosystem-activity">{activityName(build.category) || "Other"}</span>
+            </p>
             <small>
               By {build.author || "Adventurer"}
               {date && (
-                <>
+                <span className="library-mobile-date">
                   {" "}
                   · <time dateTime={new Date(build.updatedAt).toISOString()}>{date}</time>
-                </>
+                </span>
               )}
             </small>
           </div>
         </div>
-        <div className="library-build-equipment" aria-label="Equipment">
-          {order.map((slot) => {
-            const row = build.equipment.find((row) => row.slot === slot);
-            return row ? (
-              <span key={slot} title={`${slot}: ${equipmentName(row.itemId)}`}>
-                <ItemIcon id={row.itemId} size={40} />
+        <div className="library-build-preview">
+          <div
+            className="library-build-equipment"
+            aria-label="Armor preview; full equipment on build detail"
+          >
+            {preview.map((row) => (
+              <span key={row.slot} title={`${row.slot}: ${equipmentName(row.itemId)}`}>
+                <ItemIcon id={row.itemId} size={32} />
                 <span className="sr-only">
                   {row.slot}: {equipmentName(row.itemId)}
                 </span>
               </span>
+            ))}
+          </div>
+          <div className="ecosystem-card-spells" aria-label="Recorded main hand abilities">
+            {main?.skills.length ? (
+              main.skills.slice(0, 4).map((id, i) => (
+                <span key={`${id}-${i}`} title={names[id] || id}>
+                  <SpellIcon id={id} name={names[id] || id} size={27} />
+                  <span className="sr-only">{names[id] || id}</span>
+                </span>
+              ))
             ) : (
-              <span key={slot} className="ecosystem-empty-slot" title={`${slot}: Empty`}>
-                <X size={18} />
-                <span className="sr-only">{slot}: Empty</span>
-              </span>
-            );
-          })}
+              <span className="ecosystem-no-spells">No recorded main hand abilities</span>
+            )}
+          </div>
         </div>
-        <div className="ecosystem-card-spells" aria-label="Recorded main hand abilities">
-          {main?.skills.length ? (
-            main.skills.slice(0, 4).map((id, i) => (
-              <span key={`${id}-${i}`} title={names[id] || id}>
-                <SpellIcon id={id} name={names[id] || id} size={27} />
-                <span className="sr-only">{names[id] || id}</span>
-              </span>
-            ))
-          ) : (
-            <span className="ecosystem-no-spells">No recorded main hand abilities</span>
-          )}
-        </div>
+        {brandCopy(build.description || "").trim().length >= 24 && (
+          <p className="library-card-description">{brandCopy(build.description)}</p>
+        )}
         <div className="library-card-caption">
-          <span>{build.weaponName || "Equipment plan"}</span>
-          <span>View loadout →</span>
+          <span>
+            {date ? (
+              <time dateTime={new Date(build.updatedAt).toISOString()}>Updated {date}</time>
+            ) : (
+              "Update date unavailable"
+            )}
+          </span>
+          <span>
+            View build <ArrowUpRight size={13} aria-hidden="true" />
+          </span>
         </div>
       </div>
       <LibrarySaveButton

@@ -2,18 +2,8 @@
 import { ItemIcon } from "./item-icon";
 import { EquipmentGlyph } from "./equipment-overview";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { buildInventoryLayout } from "@/lib/build-inventory-layout";
 import type { MemberSlot } from "@/lib/compositions/validation";
-const slots = [
-  "Helmet",
-  "Chest",
-  "Boots",
-  "Main hand",
-  "Off hand",
-  "Cape",
-  "Food",
-  "Potion",
-  "Mount",
-];
 export function PartyBoard({
   members,
   title,
@@ -25,7 +15,6 @@ export function PartyBoard({
   onSelect?: (index: number) => void;
   active?: number;
 }) {
-  const balanced = members.length === 5;
   const heading = (
     <div className="party-board-title">
       <span className="eyebrow">{members.length} PLAYER LOADOUTS</span>
@@ -41,9 +30,8 @@ export function PartyBoard({
       data-party-size={members.length}
       aria-label="Visual party loadouts"
     >
-      {!balanced && heading}
+      {heading}
       <div className="party-board-grid">
-        {balanced && heading}
         {members.map((member, i) => {
           const content = (
             <>
@@ -61,12 +49,14 @@ export function PartyBoard({
                 />
               </div>
               <div className="party-gear-matrix">
-                {slots.map((slot) => {
+                {buildInventoryLayout.map(({ slot, area, row, column }) => {
                   const item = member.equipment.find((e) => e.slot === slot);
                   return (
                     <span
                       key={slot}
                       data-slot={slot}
+                      data-area={area}
+                      style={{ gridRow: row + 1, gridColumn: column + 1 }}
                       className={`party-gear-cell${item ? " filled" : ""}`}
                       title={item ? `${slot}: ${equipmentName(item.itemId)}` : `${slot}: Empty`}
                     >

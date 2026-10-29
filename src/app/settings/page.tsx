@@ -17,7 +17,7 @@ export default async function Settings({
   if (!user) redirect("/signin");
   const query = await searchParams;
   return (
-    <>
+    <div className="support-settings">
       <WorkspaceHeading
         title="Account settings"
         description="Manage your profile, preferred server and account data."
@@ -26,7 +26,9 @@ export default async function Settings({
       <div className="account-settings-workspace">
         <nav className="account-settings-navigation" aria-label="Settings sections">
           <a href="#profile-preferences">Profile & preferences</a>
-          <a href="#account-data">Data & account</a>
+          <a href="#account-data">Export your data</a>
+          <a href="#account-session">Current session</a>
+          <a href="#account-delete">Close account</a>
           {["ADMIN", "MODERATOR"].includes(user.role) && (
             <Link href="/admin/reports">Moderation dashboard</Link>
           )}
@@ -52,22 +54,37 @@ export default async function Settings({
               }}
             />
           </section>
-          <section className="panel" id="account-data">
-            <h2>Your data, your choice</h2>
-            <p>
-              Export the profile data held by Outpost. Account deletion permanently removes your
-              account, connected OAuth records and active sessions.
-            </p>
-            <div className="actions">
-              <a className="button secondary" href="/api/account/export">
-                Export personal data
-              </a>
-              <LogoutButton />
+          <section className="panel settings-data-section" id="account-data">
+            <div>
+              <h2>Your data, your choice</h2>
+              <p>
+                Download the profile data and plans held by Outpost. Your export is created for your
+                signed-in account.
+              </p>
             </div>
+            <a className="button secondary" href="/api/account/export">
+              Export personal data
+            </a>
+          </section>
+          <section className="panel settings-session-section" id="account-session">
+            <div>
+              <h2>Current session</h2>
+              <p>
+                Signed in as <strong>{user.name || "Adventurer"}</strong> through Discord.
+              </p>
+            </div>
+            <LogoutButton />
+          </section>
+          <section className="panel settings-delete-section" id="account-delete">
+            <h2>Close your account</h2>
+            <p>
+              Account deletion permanently removes your account, connected OAuth records and active
+              sessions. Transfer or close teams you own first.
+            </p>
             <DeleteAccountForm />
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 }

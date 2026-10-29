@@ -50,7 +50,9 @@ export default async function Favorites({
     compPages = 1,
   } = result || {};
   return (
-    <div className={`builds-ecosystem ecosystem-favorites-page view-${view}`}>
+    <div
+      className={`builds-ecosystem ecosystem-favorites-page personal-favorites-collection view-${view}`}
+    >
       <BuildDiscoveryHeader
         active="favorites"
         title="Your favorite builds"

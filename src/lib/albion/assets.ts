@@ -27,16 +27,16 @@ type GeneratedScene = {
 export const albionScenes: Record<SceneKey, AlbionScene | GeneratedScene> = {
   homepageHero: {
     status: "generated",
-    title: "Market courtyard illustration",
-    src: "/albion/illustrations/hero-v1.webp",
+    title: "City overlook illustration",
+    src: "/albion/illustrations/city-overlook-v2.webp",
     source:
-      "Built-in image_gen; original retained at assets/source/homepage-illustrations-v1/hero-v1.png",
+      "Built-in image_gen; original retained at assets/source/homepage-cinematic-v2/city-overlook.png",
     permission:
-      "User expressly authorised generated Albion-like scenes on2026-10-26; not authentic gameplay or official artwork.",
-    alt: "Generated isometric illustration of a torch-lit medieval market courtyard",
-    width: 1600,
-    height: 900,
-    focalPoint: "65% 48%",
+      "Owner requested cinematic reference-led imagery on 2026-10-29; original generated fantasy scenery, not authentic gameplay or official artwork.",
+    alt: "A cloaked adventurer overlooking a lantern-lit medieval city at sunset",
+    width: 1800,
+    height: 772,
+    focalPoint: "65% 50%",
   },
   marketPreview: {
     status: "generated",

@@ -1,8 +1,14 @@
-import { Backpack, FlaskConical, Shield, Sword, UtensilsCrossed } from "lucide-react";
-/** Original functional outlines for empty equipment slots, never substitute item artwork. */
+import { ItemIcon } from "./item-icon";
+import { FlaskConical, Shield, Sword, UtensilsCrossed } from "lucide-react";
+/** Empty slot affordances. Bag/cape use faint real catalog art, never an equipped record. */
 export function InventorySlotGlyph({ slot }: { slot: string }) {
   const common = { size: 34, strokeWidth: 1.5, "aria-hidden": true as const };
-  if (slot === "Bag") return <Backpack {...common} />;
+  if (slot === "Bag" || slot === "Cape")
+    return (
+      <span className="slot-game-art" aria-hidden="true">
+        <ItemIcon id={slot === "Bag" ? "T4_BAG" : "T4_CAPE"} size={54} />
+      </span>
+    );
   if (slot === "Main hand") return <Sword {...common} />;
   if (slot === "Off hand") return <Shield {...common} />;
   if (slot === "Potion") return <FlaskConical {...common} />;

@@ -35,6 +35,10 @@ import "./builds-editor.css";
 import "./teams-compositions.css";
 import "./site-refinement.css";
 import "./inventory-board.css";
+import "./product-system.css";
+import "./product-research.css";
+import "./product-support.css";
+import "./editor-workspaces.css";
 export const metadata: Metadata = {
   title: { default: "Outpost | Albion tools", template: "%s | Outpost" },
   description:

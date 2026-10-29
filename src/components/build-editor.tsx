@@ -88,6 +88,7 @@ export function BuildEditor({
   const [recoveryMessage, setRecoveryMessage] = useState("");
   const [recoveryReady, setRecoveryReady] = useState(false);
   const [guestRecoveryReady, setGuestRecoveryReady] = useState(false);
+  const [deviceSaved, setDeviceSaved] = useState(false);
   const guestDeviceKey = guestBuildStorageKey(recoveryKey, !!initial);
   const protectedGuestRecord = useRef(false);
   const recoveryLease = useRef<number | undefined>(undefined);
@@ -224,6 +225,7 @@ export function BuildEditor({
         if (saved.status === "ready") {
           setDraft(saved.draft);
           setSavedDraft(JSON.stringify(saved.draft));
+          setDeviceSaved(true);
           setShareMessage("Guest draft restored from this device.");
         } else if (saved.status === "invalid") {
           protectedGuestRecord.current = true;
@@ -273,6 +275,7 @@ export function BuildEditor({
         const saved = writeGuestBuildDraft(localStorage, guestDeviceKey, parsed.data);
         if (saved.status === "saved") {
           setSavedDraft(saved.json);
+          setDeviceSaved(true);
           setShareMessage("Draft saved on this device.");
         } else
           setShareMessage(
@@ -348,6 +351,7 @@ export function BuildEditor({
         }
         protectedGuestRecord.current = false;
         setSavedDraft(saved.json);
+        setDeviceSaved(true);
         setShareMessage(
           "Guest draft saved on this device. No account or public build was created.",
         );
@@ -383,7 +387,7 @@ export function BuildEditor({
   return (
     <form
       onSubmit={save}
-      className="build-editor focused-build-editor"
+      className="build-editor focused-build-editor object-editor-workspace"
       aria-busy={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
     >
       <fieldset
@@ -394,9 +398,24 @@ export function BuildEditor({
           <Link href="/builds">
             <ArrowLeft size={14} /> Builds
           </Link>
-          <span>
-            {guest ? "Device draft" : id ? `Revision ${version ?? 1}` : "New private draft"}
+          <span className="editor-draft-label" aria-live="polite">
+            {saving
+              ? "Saving your build…"
+              : guest
+                ? dirty || !deviceSaved
+                  ? "Device draft · not saved yet"
+                  : "Saved on this device"
+                : id
+                  ? dirty
+                    ? `Unsaved changes · revision ${baseVersion ?? version ?? 1}`
+                    : `Saved revision ${baseVersion ?? version ?? 1}`
+                  : "Unsaved private draft"}
           </span>
+          {id && (
+            <Link className="editor-history-link text-link" href={`/builds/${id}#build-actions`}>
+              Revision history
+            </Link>
+          )}
           {id && !guest && (
             <BuildCompositionLink
               fromBuild={id}
@@ -455,7 +474,7 @@ export function BuildEditor({
                     : "Save build"}
             </button>
           </div>
-          {!guest && (
+          {!guest && id && (
             <button
               type="button"
               className="button secondary"
@@ -573,6 +592,16 @@ export function BuildEditor({
                 region={draft.region}
                 equipment={draft.equipment.filter((row) => row.itemId)}
               />
+              <section
+                id="build-cost"
+                className="editor-preview-cost"
+                aria-label="Preview loadout cost"
+              >
+                <LoadoutPriceCheck
+                  region={draft.region}
+                  equipment={draft.equipment.filter((row) => row.itemId)}
+                />
+              </section>
             </div>
           </EditorDialog>
         )}

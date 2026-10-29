@@ -18,7 +18,7 @@ export function GroupProfileEditor({
     router = useRouter();
   return (
     <details className="panel section">
-      <summary>Edit group profile</summary>
+      <summary>Edit team profile</summary>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -39,7 +39,7 @@ export function GroupProfileEditor({
               }),
               b = await r.json();
             if (!r.ok) throw new Error(b.error);
-            setMessage("Group profile saved.");
+            setMessage("Team profile saved.");
             router.refresh();
           } catch (e) {
             setMessage(e instanceof Error ? e.message : "Save failed; your draft is retained.");
@@ -49,15 +49,15 @@ export function GroupProfileEditor({
         }}
       >
         <label>
-          Group profile name
+          Team profile name
           <input name="name" defaultValue={group.name} minLength={3} maxLength={80} required />
         </label>
         <label>
-          Group profile description
+          Team profile description
           <textarea name="description" defaultValue={group.description} maxLength={4000} />
         </label>
         <label>
-          Group profile region
+          Team profile region
           <select name="region" defaultValue={group.region}>
             {["europe", "americas", "asia"].map((r) => (
               <option key={r}>{r}</option>
@@ -65,14 +65,14 @@ export function GroupProfileEditor({
           </select>
         </label>
         <label>
-          Group profile visibility
+          Team profile visibility
           <select name="visibility" defaultValue={group.visibility}>
             <option>PUBLIC</option>
             <option>PRIVATE</option>
           </select>
         </label>
         <button className="button primary" disabled={busy}>
-          Save group profile
+          Save team profile
         </button>
       </form>
       <p role="status">{message}</p>

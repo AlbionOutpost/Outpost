@@ -79,9 +79,9 @@ test("a zero source-price sentinel cannot produce a complete profit estimate", a
   await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
   await expect(page.locator(".production-result-start")).toContainText("Finish pricing your run");
-  await expect(
-    page.getByRole("status").filter({ hasText: "Missing or mismatched observations" }),
-  ).toContainText("T4 Battleaxe");
+  await expect(page.locator("#production-results .calculation-readiness")).toContainText(
+    "T4 Battleaxe",
+  );
   await page.getByLabel("Output unit sale price", { exact: true }).fill("0");
   await expect(page.locator("output[data-result=total-profit]")).toHaveText("-2,000");
 });

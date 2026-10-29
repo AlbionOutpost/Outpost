@@ -1,4 +1,4 @@
-import Link from "@/components/link";
+import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
 import Image from "next/image";
 import { ArrowUpRight, BookOpen } from "lucide-react";
@@ -30,11 +30,10 @@ export function GrindGuideDirectory({
       (!category || g.category === category) &&
       `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(query.toLowerCase()),
   );
-  const featured =
-    !query && !category ? matches.find((g) => g.slug === "ancient-lands") : undefined;
   return (
-    <section className="grind-guide-library">
+    <section className="grind-guide-library support-guide-library">
       <form action="/guides" className="library-filter-bar">
+        <BuildRegionInput />
         <label>
           Search the library
           <input
@@ -60,65 +59,38 @@ export function GrindGuideDirectory({
         <h2>The Outpost field guide</h2>
         <span>{matches.length} guides to explore</span>
       </div>
-      {featured && (
-        <article className="guide-feature-story">
-          <Link href={`/guides/${featured.slug}`}>
-            {featured.cover && (
-              <Image
-                unoptimized
-                src={featured.cover.src}
-                width={featured.cover.width}
-                height={featured.cover.height}
-                alt=""
-              />
-            )}
-            <div>
-              <span>{featured.category}</span>
-              <h2>{featured.title}</h2>
-              <p>{brandCopy(featured.summary)}</p>
-              <span>
-                By {featured.author} · {featured.updatedAt}
-              </span>
-              <strong>
-                Read the guide <ArrowUpRight size={15} />
-              </strong>
-            </div>
-          </Link>
-        </article>
-      )}
-      <div className="grind-guide-grid">
-        {matches
-          .filter((g) => g !== featured)
-          .map((guide) => (
-            <article key={guide.slug} className="grind-guide-card">
-              <Link href={`/guides/${guide.slug}`}>
-                <div className="grind-guide-art">
-                  {guide.cover ? (
-                    <Image
-                      unoptimized
-                      src={guide.cover.src}
-                      width={guide.cover.width}
-                      height={guide.cover.height}
-                      alt=""
-                    />
-                  ) : (
-                    <ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={100} />
-                  )}
-                  <span>{guide.category}</span>
+      <div className="grind-guide-grid guide-editorial-list">
+        {matches.map((guide) => (
+          <article key={guide.slug} className="grind-guide-card">
+            <Link href={`/guides/${guide.slug}`}>
+              <div className="guide-story-art">
+                {guide.cover ? (
+                  <Image
+                    unoptimized
+                    src={guide.cover.src}
+                    width={guide.cover.width}
+                    height={guide.cover.height}
+                    alt=""
+                  />
+                ) : (
+                  <ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={72} />
+                )}
+              </div>
+              <div className="grind-guide-copy">
+                <small className="guide-story-category">{guide.category}</small>
+                <h2>{guide.title}</h2>
+                <p>{brandCopy(guide.summary)}</p>
+                <div>
+                  <span>
+                    <BookOpen size={13} /> By {guide.author}
+                  </span>
+                  <span>{guide.updatedAt ? `Updated ${guide.updatedAt}` : "Date unavailable"}</span>
                 </div>
-                <div className="grind-guide-copy">
-                  <h2>{guide.title}</h2>
-                  <p>{brandCopy(guide.summary)}</p>
-                  <div>
-                    <span>
-                      <BookOpen size={13} /> By {guide.author}
-                    </span>
-                    <ArrowUpRight size={17} />
-                  </div>
-                </div>
-              </Link>
-            </article>
-          ))}
+              </div>
+              <ArrowUpRight className="guide-story-arrow" size={18} />
+            </Link>
+          </article>
+        ))}
       </div>
       {!matches.length && (
         <p className="panel empty">

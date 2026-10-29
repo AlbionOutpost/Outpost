@@ -1,13 +1,13 @@
 import type { BuildInput } from "./builds/validation";
 
 type DraftEntry = { json: string; baseVersion?: number; expires: number };
-export type RecoveredBuildDraft = { draft: BuildInput; baseVersion?: number };
+export type RecoveredBuildDraft<T = BuildInput> = { draft: T; baseVersion?: number };
 
 /** Private, document-memory recovery only. Never writes to browser storage or the server.
  * Invalid intermediate form values intentionally survive; saving still uses buildInput.
  * An owner switch/logout invalidates outstanding writer leases as well as entries.
  */
-export class AccountBuildDraftCache {
+export class AccountBuildDraftCache<T = BuildInput> {
   private owner?: string;
   private generation = 0;
   private entries = new Map<string, DraftEntry>();
@@ -33,14 +33,14 @@ export class AccountBuildDraftCache {
     for (const [key, entry] of this.entries)
       if (entry.expires <= this.now()) this.entries.delete(key);
   }
-  read(owner: string, key: string): RecoveredBuildDraft | undefined {
+  read(owner: string, key: string): RecoveredBuildDraft<T> | undefined {
     this.prune();
     if (owner !== this.owner) return;
     const entry = this.entries.get(key);
     if (!entry) return;
-    return { draft: JSON.parse(entry.json) as BuildInput, baseVersion: entry.baseVersion };
+    return { draft: JSON.parse(entry.json) as T, baseVersion: entry.baseVersion };
   }
-  remember(owner: string, key: string, lease: number, draft: BuildInput, baseVersion?: number) {
+  remember(owner: string, key: string, lease: number, draft: T, baseVersion?: number) {
     if (!owner || owner !== this.owner || lease !== this.generation) return false;
     this.prune();
     const json = JSON.stringify(draft);

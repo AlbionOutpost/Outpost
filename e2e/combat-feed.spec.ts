@@ -64,7 +64,7 @@ test("published combat feed retains server boundaries, source delay, equipment a
     .getByRole("textbox", { name: "Filter this feed page by player or guild" })
     .fill("no-result");
   await expect(
-    page.getByRole("heading", { name: "No player or guild matches this page" }),
+    page.getByRole("heading", { name: "No events match these page filters" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Clear filter", exact: true }).click();
   fail = true;

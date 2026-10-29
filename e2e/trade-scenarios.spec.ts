@@ -31,6 +31,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
   ]);
   try {
     await page.goto("/tools/flipping?region=europe");
+    await page.getByText("Fees & extra costs", { exact: true }).click();
     for (const [label, value] of [
       ["Purchase price per item", "100"],
       ["Sale price per item", "150"],
@@ -49,6 +50,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
         .locator(".panel.result dl > div")
         .filter({ hasText: "Minimum profitable whole-silver sale" }),
     ).toContainText("118");
+    await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("QA saved manual trade");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
@@ -72,6 +74,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
       })),
     });
     await page.reload();
+    await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore QA saved manual trade", exact: true }).click();
     await expect(page.getByLabel("Quantity", { exact: true })).toHaveValue("10");
@@ -82,7 +85,9 @@ test("manual trade thresholds persist privately and remain available beyond othe
       expect(
         (
           await guest.request.delete(`/api/scenarios/${saved.id}`, {
-            headers: { origin: "http://localhost:3000" },
+            headers: {
+              origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+            },
           })
         ).status(),
       ).toBe(401);
@@ -114,7 +119,9 @@ test("manual trade thresholds persist privately and remain available beyond othe
         expect(
           (
             await guest.request.delete(`/api/scenarios/${saved.id}`, {
-              headers: { origin: "http://localhost:3000" },
+              headers: {
+                origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+              },
             })
           ).status(),
         ).toBe(404);
@@ -144,6 +151,8 @@ test("manual trade thresholds persist privately and remain available beyond othe
         true,
       );
     }
+    if (!(await page.getByLabel("Purchase order setup fee (%)", { exact: true }).isVisible()))
+      await page.getByText("Fees & extra costs", { exact: true }).click();
     await page.getByLabel("Purchase execution", { exact: true }).selectOption("buy-order");
     await page.getByLabel("Purchase order setup fee (%)", { exact: true }).fill("2.5");
     await expect(page.locator(".panel.result > strong")).toContainText("267.5");
@@ -159,11 +168,13 @@ test("manual trade thresholds persist privately and remain available beyond othe
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
     await page.reload();
+    await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page
       .getByRole("button", { name: "Restore QA purchase order trade", exact: true })
       .click();
     await expect(page.getByLabel("Purchase execution", { exact: true })).toHaveValue("buy-order");
+    await page.getByText("Fees & extra costs", { exact: true }).click();
     await expect(page.getByLabel("Purchase order setup fee (%)", { exact: true })).toHaveValue(
       "2.5",
     );
@@ -186,6 +197,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
       );
     }
     await page.goto("/tools/transporting");
+    await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByRole("button", { name: "Load transport plans", exact: true }).click();
     await expect(
       page.getByRole("button", { name: "Restore Older QA transport plan", exact: true }),

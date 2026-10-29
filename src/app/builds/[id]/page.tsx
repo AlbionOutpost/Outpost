@@ -38,6 +38,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="build-detail-page build-detail-redesign">
       <BuildDetailHeader
+        collection="community"
         title={build.title}
         description={build.description}
         author={build.author.name || "Adventurer"}
@@ -90,26 +91,32 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           visibility: build.visibility,
         }}
       />
-      <section className="detail-notes-panel" id="build-notes">
-        {build.description && (
-          <>
-            <h2>Build overview</h2>
-            <p className="preserve">{build.description}</p>
-          </>
-        )}
-        <h2>Author strategy</h2>
-        <p className="preserve">{build.strategy || "No strategy notes provided."}</p>
-        <h2 className="section">Patch / version notes</h2>
-        <p className="preserve">{build.patchNotes || "No patch notes provided."}</p>
-        <details>
-          <summary>Revision timestamps</summary>
-          {build.versions.map((v) => (
-            <p key={v.version}>
-              Revision {v.version} · {v.createdAt.toISOString()}
-            </p>
-          ))}
-        </details>
-      </section>
+      <details className="detail-disclosure detail-secondary-notes" id="build-notes">
+        <summary>
+          <span>Strategy & version notes</span>
+          <small>From the author</small>
+        </summary>
+        <div className="detail-disclosure-content">
+          {build.description && (
+            <>
+              <h2>Build overview</h2>
+              <p className="preserve">{build.description}</p>
+            </>
+          )}
+          <h2>Author strategy</h2>
+          <p className="preserve">{build.strategy || "No strategy notes provided."}</p>
+          <h2 className="section">Patch / version notes</h2>
+          <p className="preserve">{build.patchNotes || "No patch notes provided."}</p>
+          <details>
+            <summary>Revision timestamps</summary>
+            {build.versions.map((v) => (
+              <p key={v.version}>
+                Revision {v.version} · {v.createdAt.toISOString()}
+              </p>
+            ))}
+          </details>
+        </div>
+      </details>
       <SavedEquipmentSets sets={equipmentSets.parse(build.equipmentSets)} />
       <div id="build-actions">
         <BuildActions

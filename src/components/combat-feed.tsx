@@ -57,7 +57,8 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const [offset, setOffset] = useState(0),
     [query, setQuery] = useState(""),
     [sort, setSort] = useState("latest"),
-    [automatic, setAutomatic] = useState(false);
+    [automatic, setAutomatic] = useState(false),
+    [minimumFame, setMinimumFame] = useState("0");
   const [result, setResult] = useState<{ key: string; feed: Feed } | null>(null),
     [error, setError] = useState<{ key: string; message: string } | null>(null),
     [pending, setPending] = useState<string | null>(null);
@@ -113,12 +114,13 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         value.toLowerCase().includes(needle),
       ),
     )
+    .filter((event) => event.fame >= Number(minimumFame))
     .toSorted((a, b) =>
       sort === "fame" ? b.fame - a.fame : Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
     );
   const loading = pending === key || (!feed && error?.key !== key);
   return (
-    <div className="combat-feed-page">
+    <div className="combat-feed-page support-combat-feed">
       <header className="workspace-identity">
         <span className="workspace-emblem" aria-hidden="true">
           {mode === "kills" ? <Swords /> : <Skull />}
@@ -161,6 +163,19 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
             <option value="latest">Latest event</option>
             <option value="fame">Highest kill fame</option>
+          </select>
+        </label>
+        <label>
+          Minimum fame
+          <select
+            aria-label="Minimum kill fame"
+            value={minimumFame}
+            onChange={(event) => setMinimumFame(event.target.value)}
+          >
+            <option value="0">Any fame</option>
+            <option value="10000">10,000+</option>
+            <option value="100000">100,000+</option>
+            <option value="1000000">1,000,000+</option>
           </select>
         </label>
         <label className="combat-auto">
@@ -211,17 +226,26 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </div>
       ) : feed && !events.length ? (
         <div className="task-state">
-          <h2>{query ? "No player or guild matches this page" : "No combat events returned"}</h2>
+          <h2>
+            {query || minimumFame !== "0"
+              ? "No events match these page filters"
+              : "No combat events returned"}
+          </h2>
           <p>
-            {query
-              ? "Clear the page filter or browse another page of published events."
+            {query || minimumFame !== "0"
+              ? "Clear the page filters or browse another page of published events."
               : "The source returned no events for this page. Try the latest page or refresh later."}
           </p>
           <button
             className="button secondary"
-            onClick={() => (query ? setQuery("") : setOffset(0))}
+            onClick={() => {
+              if (query || minimumFame !== "0") {
+                setQuery("");
+                setMinimumFame("0");
+              } else setOffset(0);
+            }}
           >
-            {query ? "Clear filter" : "Latest events"}
+            {query || minimumFame !== "0" ? "Clear filter" : "Latest events"}
           </button>
         </div>
       ) : (

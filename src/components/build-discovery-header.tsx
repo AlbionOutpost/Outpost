@@ -28,7 +28,8 @@ export function BuildDiscoveryHeader({
       <div className="builds-header-bottom">
         <nav className="builds-collection-tabs" aria-label="Build collections">
           {[
-            ["browse", "/builds/library", "Browse Builds", Compass],
+            ["library", "/builds/library", "Library", Compass],
+            ["community", "/builds", "Community", Swords],
             ["mine", "/builds?mine=1", "My Builds", UserRound],
             ["favorites", "/favorites", "Favorites", Bookmark],
             ["saved", "/builds/library?view=saved", "Saved Filters", SlidersHorizontal],
@@ -38,7 +39,9 @@ export function BuildDiscoveryHeader({
               <Link
                 key={String(id)}
                 href={String(href)}
-                aria-current={active === id ? "page" : undefined}
+                aria-current={
+                  (active === "browse" ? source === id : active === id) ? "page" : undefined
+                }
               >
                 <Glyph size={15} />
                 {String(label)}

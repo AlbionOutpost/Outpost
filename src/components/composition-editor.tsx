@@ -1,6 +1,9 @@
 "use client";
+import { accountCompositionDrafts } from "@/lib/account-composition-drafts";
+import { accountLogoutEvent } from "@/lib/account-build-drafts";
+import { contentTypes } from "@/lib/builds/validation";
 import { PartyReadiness } from "./party-readiness";
-import { useEffect, useState, useRef, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, useSyncExternalStore } from "react";
 import Link from "@/components/build-region-link";
 import { useRouter } from "next/navigation";
 import { GripVertical, ArrowUp, ArrowDown, Copy, Trash2, Plus, Swords } from "lucide-react";
@@ -33,6 +36,8 @@ function member(): MemberSlot {
 export function CompositionEditor({
   initial,
   initialNotice,
+  ownerId,
+  recoveryKey,
   id,
   version,
   groups = [],
@@ -40,6 +45,8 @@ export function CompositionEditor({
 }: {
   initial?: CompositionInput;
   initialNotice?: string;
+  ownerId?: string;
+  recoveryKey?: string;
   id?: string;
   version?: number;
   groups?: { id: string; name: string }[];
@@ -63,11 +70,109 @@ export function CompositionEditor({
       slots: [],
     },
   );
+  const [savedDraft] = useState(() => JSON.stringify(initial || null));
+  const dirty = !id || JSON.stringify(draft) !== savedDraft;
+  const [baseVersion, setBaseVersion] = useState(version);
+  const [recoveryReady, setRecoveryReady] = useState(false);
+  const [recoveryMessage, setRecoveryMessage] = useState("");
+  const recoveryLease = useRef<number | undefined>(undefined);
+  const navigationDraft = useRef<{
+    owner: string;
+    key: string;
+    lease: number;
+    draft: CompositionInput;
+    baseVersion?: number;
+    dirty: boolean;
+  } | null>(null);
+  useEffect(() => {
+    if (!ownerId || !recoveryKey) return;
+    recoveryLease.current = accountCompositionDrafts.activate(ownerId);
+    const recovered = accountCompositionDrafts.read(ownerId, recoveryKey);
+    const frame = requestAnimationFrame(() => {
+      if (recovered) {
+        setDraft(recovered.draft);
+        setBaseVersion(recovered.baseVersion);
+        setRecoveryMessage(
+          recovered.baseVersion !== version
+            ? "Your unsaved comp was restored. A newer revision exists; saving will report a conflict. Export JSON before reviewing the newer revision."
+            : "Your unsaved comp was restored after navigation. Save or export JSON to keep it permanently.",
+        );
+      }
+      setRecoveryReady(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [ownerId, recoveryKey, version]);
+  useLayoutEffect(() => {
+    if (!recoveryReady || !ownerId || !recoveryKey || recoveryLease.current === undefined) return;
+    navigationDraft.current = {
+      owner: ownerId,
+      key: recoveryKey,
+      lease: recoveryLease.current,
+      draft,
+      baseVersion,
+      dirty,
+    };
+    if (!dirty) accountCompositionDrafts.forget(ownerId, recoveryKey);
+    else if (
+      !accountCompositionDrafts.remember(
+        ownerId,
+        recoveryKey,
+        recoveryLease.current,
+        draft,
+        baseVersion,
+      )
+    ) {
+      const frame = requestAnimationFrame(() =>
+        setRecoveryMessage(
+          "Navigation recovery is unavailable for this comp. Save or export JSON before leaving.",
+        ),
+      );
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [recoveryReady, ownerId, recoveryKey, draft, baseVersion, dirty]);
+  useLayoutEffect(
+    () => () => {
+      const latest = navigationDraft.current;
+      if (latest?.dirty)
+        accountCompositionDrafts.remember(
+          latest.owner,
+          latest.key,
+          latest.lease,
+          latest.draft,
+          latest.baseVersion,
+        );
+    },
+    [],
+  );
+  useEffect(() => {
+    if (!dirty) return;
+    const unload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    const logout = (event: Event) => {
+      if (
+        !window.confirm(
+          "Sign out and discard this unsaved comp? Save or export JSON first to keep it.",
+        )
+      )
+        event.preventDefault();
+    };
+    window.addEventListener("beforeunload", unload);
+    window.addEventListener(accountLogoutEvent, logout);
+    return () => {
+      window.removeEventListener("beforeunload", unload);
+      window.removeEventListener(accountLogoutEvent, logout);
+    };
+  }, [dirty]);
   const [active, setActive] = useState(0);
   const latestDraft = useRef(draft);
   useEffect(() => {
     latestDraft.current = draft;
   }, [draft]);
+  const [rosterUndo, setRosterUndo] = useState<{ slots: MemberSlot[]; active: number } | null>(
+    null,
+  );
   const [editing, setEditing] = useState(false);
   const [grouping, setGrouping] = useState("party");
   const [layout, setLayout] = useState("auto");
@@ -88,12 +193,15 @@ export function CompositionEditor({
   const [dropTarget, setDropTarget] = useState<number | null>(null);
   const file = useRef<HTMLInputElement>(null);
   function update<K extends keyof CompositionInput>(key: K, value: CompositionInput[K]) {
+    if (key === "slots") setRosterUndo({ slots: structuredClone(draft.slots), active });
+    else setRosterUndo(null);
     setDraft((d) => ({ ...d, [key]: value }));
     setStatus("");
   }
   function patch(value: Partial<MemberSlot>) {
     const target = draft.slots[active]?.id;
     if (!target) return;
+    setRosterUndo(null);
     setDraft((current) => ({
       ...current,
       slots: current.slots.map((slot) => (slot.id === target ? { ...slot, ...value } : slot)),
@@ -104,6 +212,7 @@ export function CompositionEditor({
     const targetId = draft.slots[active]?.id;
     if (!buildId || !targetId || copyingBuild) return;
     setError("");
+    setRosterUndo(null);
     setCopyingBuild(true);
     try {
       const response = await fetch(`/api/compositions/loadout?id=${encodeURIComponent(buildId)}`);
@@ -180,10 +289,12 @@ export function CompositionEditor({
       const response = await fetch(id ? `/api/compositions/${id}` : "/api/compositions", {
         method: id ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(id ? { version, composition: parsed.data } : parsed.data),
+        body: JSON.stringify(id ? { version: baseVersion, composition: parsed.data } : parsed.data),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
+      if (ownerId && recoveryKey) accountCompositionDrafts.forget(ownerId, recoveryKey);
+      if (navigationDraft.current) navigationDraft.current.dirty = false;
       router.push(`/compositions/${body.id}?region=${parsed.data.region}`);
       router.refresh();
     } catch (e) {
@@ -194,11 +305,24 @@ export function CompositionEditor({
   }
   const selected = draft.slots[active];
   return (
-    <form method="post" onSubmit={save} className="party-editor" aria-busy={!hydrated}>
-      <fieldset className="composition-ready-guard" disabled={!hydrated}>
+    <form
+      method="post"
+      onSubmit={save}
+      className="party-editor object-party-editor"
+      aria-busy={!hydrated || (!!ownerId && !recoveryReady)}
+    >
+      <fieldset
+        className="composition-ready-guard"
+        disabled={!hydrated || (!!ownerId && !recoveryReady)}
+      >
         {initialNotice && (
           <p className="notice" role="status">
             {initialNotice}
+          </p>
+        )}
+        {recoveryMessage && (
+          <p className="notice" role="status">
+            {recoveryMessage}
           </p>
         )}
         <div className="party-command-bar">
@@ -216,6 +340,7 @@ export function CompositionEditor({
           <label className="party-activity">
             Activity
             <input
+              list="composition-activity-options"
               aria-label="Content type"
               required
               maxLength={80}
@@ -223,25 +348,29 @@ export function CompositionEditor({
               onChange={(event) => update("contentType", event.target.value)}
             />
           </label>
-          <button className="button primary" disabled={busy}>
+          <datalist id="composition-activity-options">
+            {contentTypes.map((activity) => (
+              <option key={activity} value={activity} />
+            ))}
+          </datalist>
+          <label className="party-size-input">
+            Party size
+            <input
+              aria-label="Custom comp size"
+              type="number"
+              min={1}
+              max={100}
+              value={draft.slots.length || ""}
+              onChange={(event) => resize(Number(event.target.value))}
+            />
+          </label>
+          <button className="button primary party-primary-save" disabled={busy}>
             {busy ? "Saving…" : id ? "Save comp revision" : "Save comp"}
           </button>
         </div>
         <details className="party-settings">
           <summary>Sharing, region & description</summary>
           <div className="input-grid">
-            <label>
-              Custom size
-              <input
-                aria-label="Custom comp size"
-                type="number"
-                min={1}
-                max={100}
-                value={draft.slots.length || ""}
-                onChange={(e) => resize(Number(e.target.value))}
-              />
-            </label>
-
             <label>
               Comp region
               <select
@@ -326,71 +455,6 @@ export function CompositionEditor({
             </button>
           </section>
         )}
-        {!!draft.slots.length && (
-          <p className="muted" role="status">
-            {draft.slots.filter((s) => s.mandatory && !s.playerName.trim()).length} required players
-            unassigned ·{" "}
-            {draft.slots.filter((s) => !s.equipment.some((e) => e.slot === "Main hand")).length}{" "}
-            loadouts need a weapon · {draft.slots.filter((s) => s.substitute.trim()).length}{" "}
-            substitutes recorded
-          </p>
-        )}
-        <section className="reference-party-summary" aria-label="Composition role summary">
-          <div>
-            <h2>Party readiness</h2>
-            <p>
-              {draft.slots.length
-                ? `${draft.slots.filter((s) => s.playerName.trim()).length} / ${draft.slots.length} players assigned`
-                : "Choose a party size or start with the five-player template."}
-            </p>
-          </div>
-          <div className="reference-role-counts">
-            {["Tank", "Healer", "Melee DPS", "Ranged DPS", "Support"].map((role) => (
-              <span key={role}>
-                <strong>{draft.slots.filter((s) => s.role === role).length}</strong>
-                {role}
-              </span>
-            ))}
-          </div>
-          <p className="muted">
-            Role counts describe your plan. Activity requirements and combat compatibility are not
-            inferred.
-          </p>
-        </section>
-        <div className="party-tools-bar">
-          <section className="party-size-bar">
-            <div className="actions section">
-              {[1, 2, 5, 7, 10, 20].map((n) => (
-                <button
-                  type="button"
-                  className="button secondary"
-                  aria-pressed={n === draft.slots.length}
-                  key={n}
-                  onClick={() => resize(n)}
-                >
-                  {n === 1 ? "Solo" : `${n} players`}
-                </button>
-              ))}
-            </div>
-          </section>
-          {draft.slots.length > 0 && (
-            <div className="composition-layout-controls">
-              <label>
-                View
-                <select
-                  aria-label="Comp layout"
-                  value={layout}
-                  onChange={(e) => setLayout(e.target.value)}
-                >
-                  <option value="auto">Auto layout</option>
-                  <option value="board">Party board</option>
-                  <option value="roster">Compact roster</option>
-                </select>
-              </label>
-              <CompositionPngExport composition={draft} />
-            </div>
-          )}
-        </div>
         <div className="reference-party-workspace">
           <PartyReadiness members={draft.slots} region={draft.region} />
           {(layout === "board" ||
@@ -824,6 +888,54 @@ export function CompositionEditor({
             </p>
           </aside>
         </div>
+        <div className="party-tools-bar">
+          {rosterUndo && (
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => {
+                setDraft((current) => ({ ...current, slots: rosterUndo.slots }));
+                setActive(Math.min(rosterUndo.active, Math.max(0, rosterUndo.slots.length - 1)));
+                setRosterUndo(null);
+                setStatus("Previous roster restored. Save to keep this plan.");
+              }}
+            >
+              Undo roster change
+            </button>
+          )}
+          <section className="party-size-bar">
+            <div className="actions section">
+              {[1, 2, 5, 7, 10, 20].map((n) => (
+                <button
+                  type="button"
+                  className="button secondary"
+                  aria-pressed={n === draft.slots.length}
+                  key={n}
+                  onClick={() => resize(n)}
+                >
+                  {n === 1 ? "Solo" : `${n} players`}
+                </button>
+              ))}
+            </div>
+          </section>
+          {draft.slots.length > 0 && (
+            <div className="composition-layout-controls">
+              <label>
+                View
+                <select
+                  aria-label="Comp layout"
+                  value={layout}
+                  onChange={(e) => setLayout(e.target.value)}
+                >
+                  <option value="auto">Auto layout</option>
+                  <option value="board">Party board</option>
+                  <option value="roster">Compact roster</option>
+                </select>
+              </label>
+              <CompositionPngExport composition={draft} />
+            </div>
+          )}
+        </div>
         <details className="party-notes">
           <summary>Shotcaller notes</summary>
           <label>
@@ -844,7 +956,14 @@ export function CompositionEditor({
         <p role="status">{status}</p>
         <div className="actions section party-save-bar">
           <span className="draft-status">
-            {busy ? "Saving party…" : "Draft · Save to keep changes"}
+            {busy
+              ? "Saving party…"
+              : dirty
+                ? "Unsaved comp changes"
+                : `Saved revision ${baseVersion || 1}`}
+            <small>
+              Account save · {draft.slots.length} party slots · {draft.region}
+            </small>
           </span>
 
           <button
@@ -896,6 +1015,7 @@ export function CompositionEditor({
                 if (json.format !== "albion-atlas-composition" || json.version !== 1)
                   throw new Error("Unsupported comp format");
                 const parsed = compositionInput.parse(json.composition);
+                setRosterUndo(null);
                 setDraft({
                   ...parsed,
                   visibility: "PRIVATE",

@@ -107,32 +107,43 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           ) : undefined
         }
       />
-      <div className="detail-notes-grid">
-        <section className="detail-notes-panel" id="build-notes">
-          <h2>From the author</h2>
-          <p className="preserve">
-            {brandCopy(build.description) || "No additional strategy notes provided."}
-          </p>
-          <p className="detail-muted">
-            Check ability unlocks and current balance in game. Price checks start with Normal
-            quality.
-          </p>
-        </section>
-        <LibraryBuildVideos build={build} />
-      </div>
+      <details className="detail-disclosure detail-secondary-notes" id="build-notes">
+        <summary>
+          <span>Strategy & creator recordings</span>
+          <small>From the author</small>
+        </summary>
+        <div className="detail-disclosure-content detail-notes-grid">
+          <section className="detail-notes-panel">
+            <h2>From the author</h2>
+            <p className="preserve">
+              {brandCopy(build.description) || "No additional strategy notes provided."}
+            </p>
+            <p className="detail-muted">
+              Check ability unlocks and current balance in game. Price checks start with Normal
+              quality.
+            </p>
+          </section>
+          <LibraryBuildVideos build={build} />
+        </div>
+      </details>
       <div id="build-cost">
         <LoadoutPriceCheck equipment={equipment} />
       </div>
-      <section className="detail-discussion-panel" id="build-discussion">
-        <h2>Build discussion</h2>
-        <p className="detail-muted">
-          Community builds support comments and shared feedback. Make a personal copy to adjust this
-          loadout, or explore player builds.
-        </p>
-        <Link className="button secondary" href="/builds">
-          Browse community builds →
-        </Link>
-      </section>
+      <details className="detail-disclosure detail-secondary-notes" id="build-discussion">
+        <summary>
+          <span>Build discussion</span>
+          <small>Community options</small>
+        </summary>
+        <div className="detail-disclosure-content">
+          <p className="detail-muted">
+            Community builds support comments and shared feedback. Make a personal copy to adjust
+            this loadout, or explore player builds.
+          </p>
+          <Link className="button secondary" href="/builds">
+            Browse community builds →
+          </Link>
+        </div>
+      </details>
       {!!related.length && (
         <section className="detail-related-builds" aria-label="Related builds">
           <div className="ecosystem-section-heading">

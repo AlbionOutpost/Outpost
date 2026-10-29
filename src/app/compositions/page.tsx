@@ -53,23 +53,22 @@ export default async function Compositions({
     },
   });
   return (
-    <div className="composition-directory">
+    <div className="composition-directory composition-collection-page">
       <div className="section-heading composition-directory-heading">
         <h1 className="page-title display-title">Comps</h1>
         <Link className="button primary" href="/compositions/new">
           Create comp
         </Link>
       </div>
-      <p className="intro">
-        Plan roles, assign players and share gear for your next party. Your private and team comps
-        stay protected.
-      </p>
+      <p className="intro">Plan roles, assign players and share your party’s gear.</p>
       <nav className="discovery-tabs" aria-label="Composition collections">
-        <Link href="/compositions" aria-current="page">
+        <Link href="/compositions" aria-current={p.mine !== "1" ? "page" : undefined}>
           Player comps
         </Link>
         <Link href="/compositions/library">Group Builds</Link>
-        <Link href="/compositions?mine=1">My comps</Link>
+        <Link href="/compositions?mine=1" aria-current={p.mine === "1" ? "page" : undefined}>
+          My comps
+        </Link>
       </nav>
       <form className="panel composition-filters">
         <label>

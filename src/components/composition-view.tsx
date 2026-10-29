@@ -52,7 +52,7 @@ export function CompositionView({
     }
   }
   return (
-    <>
+    <section className="composition-detail-workspace" aria-label="Composition workspace">
       <div className="actions composition-toolbar">
         <CompositionPngExport composition={composition} />
         {editable && (
@@ -197,6 +197,6 @@ export function CompositionView({
         <h2>Comp / shotcaller notes</h2>
         <p className="preserve">{composition.notes || "No additional notes."}</p>
       </section>
-    </>
+    </section>
   );
 }

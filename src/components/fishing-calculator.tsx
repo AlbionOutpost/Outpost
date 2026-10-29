@@ -1,4 +1,5 @@
 "use client";
+import { CalculationReadiness } from "./calculation-readiness";
 import { useId, useState } from "react";
 import { Fish, RefreshCw, Search } from "lucide-react";
 import { fishConversion, fishFame, type FishReference } from "@/lib/albion/fishing";
@@ -384,6 +385,27 @@ export function FishingCalculator({
           </p>
         )}
         <div className="fishing-results" aria-live="polite">
+          {((mode === "chopping" &&
+            (saleFee === "" || purchase === null || rawSale === null || choppedSale === null)) ||
+            (mode === "leveling" && (purchase === null || fameValue === ""))) && (
+            <CalculationReadiness
+              title={
+                mode === "chopping"
+                  ? "Complete the chop-or-sell comparison"
+                  : "Price your fame target"
+              }
+              missing={[
+                ...(purchase === null ? ["Fish purchase price"] : []),
+                ...(mode === "chopping" && rawSale === null ? ["Whole fish sale price"] : []),
+                ...(mode === "chopping" && choppedSale === null ? ["Chopped fish sale price"] : []),
+                ...(mode === "chopping" && saleFee === "" ? ["Sale fees (%)"] : []),
+                ...(mode === "leveling" && fameValue === "" ? ["Fame per consumed fish"] : []),
+              ]}
+            >
+              Use your own prices, or load observations for the selected server and city.
+            </CalculationReadiness>
+          )}
+
           {mode === "chopping" ? (
             <>
               <div className="fishing-result-heading">
@@ -397,53 +419,55 @@ export function FishingCalculator({
                   </p>
                 </div>
               </div>
-              <dl>
-                <div>
-                  <dt>Chopped output</dt>
-                  <dd>
-                    {amount(conversion?.quantity)} <small>chopped fish</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Buy-and-chop cash profit</dt>
-                  <dd data-result="fish-chop-profit">
-                    {amount(conversion?.choppedProfit)} <small>silver</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Buy-and-sell raw profit</dt>
-                  <dd>
-                    {amount(conversion?.rawProfit)} <small>silver</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Chopping advantage vs raw sale</dt>
-                  <dd
-                    data-result="fish-chop-advantage"
-                    className={
-                      conversion?.advantage === null || conversion?.advantage === undefined
-                        ? ""
-                        : conversion.advantage >= 0
-                          ? "positive"
-                          : "negative"
-                    }
-                  >
-                    {amount(conversion?.advantage)} <small>silver</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Upfront cash, including processing</dt>
-                  <dd>
-                    {amount(conversion?.upfront)} <small>silver</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Break-even chopped sale price</dt>
-                  <dd>
-                    {amount(conversion?.breakEven)} <small>silver / chopped fish</small>
-                  </dd>
-                </div>
-              </dl>
+              {conversion && (
+                <dl>
+                  <div>
+                    <dt>Chopped output</dt>
+                    <dd>
+                      {amount(conversion?.quantity)} <small>chopped fish</small>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Buy-and-chop cash profit</dt>
+                    <dd data-result="fish-chop-profit">
+                      {amount(conversion?.choppedProfit)} <small>silver</small>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Buy-and-sell raw profit</dt>
+                    <dd>
+                      {amount(conversion?.rawProfit)} <small>silver</small>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Chopping advantage vs raw sale</dt>
+                    <dd
+                      data-result="fish-chop-advantage"
+                      className={
+                        conversion?.advantage === null || conversion?.advantage === undefined
+                          ? ""
+                          : conversion.advantage >= 0
+                            ? "positive"
+                            : "negative"
+                      }
+                    >
+                      {amount(conversion?.advantage)} <small>silver</small>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Upfront cash, including processing</dt>
+                    <dd>
+                      {amount(conversion?.upfront)} <small>silver</small>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Break-even chopped sale price</dt>
+                    <dd>
+                      {amount(conversion?.breakEven)} <small>silver / chopped fish</small>
+                    </dd>
+                  </div>
+                </dl>
+              )}
             </>
           ) : (
             <>

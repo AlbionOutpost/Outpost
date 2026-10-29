@@ -47,6 +47,11 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   await expect(detail).toHaveURL(/region=asia&item=T4_BAG&quality=2/);
   await detail.close();
   await expect(tray.locator(".research-items > li")).toHaveCount(1);
+  await page.getByRole("tab", { name: "Watchlist", exact: true }).click();
+  await expect(tray).toBeHidden();
+  await page.getByRole("tab", { name: "Research list", exact: true }).click();
+  await expect(tray.locator(".research-items > li")).toHaveCount(1);
+  await expect(tray).toContainText("1,234 silver");
   expect(calls).toHaveLength(1);
   expect(calls[0].searchParams.get("region")).toBe("asia");
   expect(calls[0].searchParams.get("quality")).toBe("2");

@@ -1,0 +1,866 @@
+/* Economy and item research: uses the shared theme; contains no game formulas. */
+.app.outpost .calculation-readiness {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  margin-block: 16px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font: 400 14px/1.6 var(--font-ui);
+}
+.calculation-readiness > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent-ink);
+}
+.calculation-readiness > div {
+  min-width: 0;
+}
+.calculation-readiness strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+.calculation-readiness p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.calculation-readiness ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.calculation-readiness li + li {
+  margin-top: 4px;
+}
+.calculation-readiness-action {
+  margin-left: auto;
+}
+.app.outpost .production-result-start {
+  padding: 18px 0 6px;
+}
+.app.outpost .production-result-start h3 {
+  font: 650 19px/1.4 var(--font-ui);
+  margin: 12px 0 8px;
+}
+.app.outpost .production-result-start p {
+  max-width: 60ch;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.app.outpost .production-result-start > svg {
+  display: none;
+}
+.app.outpost .production-result-start .button {
+  width: auto;
+  margin-top: 8px;
+}
+.app.outpost .premium-production .production-scenarios:not(.is-open) {
+  display: none;
+}
+.app.outpost .production-cash-summary {
+  margin-top: 20px;
+}
+.app.outpost .production-cash-summary small {
+  line-height: 1.6;
+}
+.app.outpost .production-calculator-page .reference-material-table input {
+  min-height: 42px;
+}
+.app.outpost .manual-trade-workspace {
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: 20px;
+}
+.app.outpost .manual-trade-workspace .input-grid {
+  gap: 16px;
+}
+.app.outpost .manual-trade-workspace .result > strong {
+  display: block;
+  margin: 18px 0 6px;
+  font: 650 34px/1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .manual-trade-workspace .result dl {
+  margin-top: 24px;
+}
+.app.outpost .transport-initial-state > .calculation-readiness {
+  text-align: left;
+}
+.app.outpost .transport-initial-state > p {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.app.outpost .farming-results .calculation-readiness {
+  margin-bottom: 20px;
+}
+.app.outpost .fishing-page .fishing-browser {
+  padding: 16px;
+}
+.app.outpost .fishing-page .fishing-browser > div > button {
+  font-size: 13px;
+  padding: 8px;
+}
+.app.outpost .fishing-page .fishing-browser small {
+  font-size: 12px;
+}
+.app.outpost .fishing-page .fishing-browser > label {
+  font-size: 13px;
+}
+.app.outpost .fishing-page .fishing-selected {
+  gap: 16px;
+}
+.app.outpost .fishing-page .fishing-results {
+  padding-top: 20px;
+}
+.app.outpost .fishing-page .fishing-results dl {
+  gap: 12px 24px;
+}
+.app.outpost .fishing-page .fishing-results dl > div {
+  padding-block: 12px;
+}
+.app.outpost .fishing-page .fishing-results dd {
+  font-size: 23px;
+}
+.app.outpost .fishing-page .fishing-results dt {
+  font-size: 13px;
+}
+.app.outpost .gold-research-workspace {
+  max-width: 1200px;
+}
+.gold-observation-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+  margin: 20px 0;
+  border-block: 1px solid var(--border);
+}
+.gold-observation-summary dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+.gold-observation-summary dd {
+  margin: 8px 0 0;
+  font: 550 18px/1.5 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.gold-observation-summary small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .history-empty {
+  padding: 30px 20px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  background: var(--bg);
+  border-radius: 10px;
+  margin-block: 20px;
+}
+.app.outpost .history-empty h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--text);
+}
+.app.outpost .history-empty p {
+  margin: 0 auto;
+  max-width: 60ch;
+  font-size: 14px;
+}
+.app.outpost .item-reference-browser {
+  padding: 20px;
+}
+.app.outpost .item-reference-browser .item-category-nav {
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+}
+.app.outpost .item-reference-browser .item-category-nav button {
+  border-radius: 7px;
+  min-height: 40px;
+}
+.item-catalog-result-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 60px;
+}
+.item-catalog-result-bar p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.app.outpost .catalog-item-identity small {
+  font-size: 12px;
+}
+.app.outpost .item-reference-browser .catalog-item-identity .text-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+.app.outpost .item-reference-browser .catalog-item-identity .text-link:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+}
+.app.outpost .item-reference-browser td {
+  padding-block: 12px;
+  font-size: 13px;
+}
+.app.outpost .item-reference-browser td:nth-child(3) {
+  font-family: var(--font-data);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.item-data-coverage {
+  margin-top: 20px;
+}
+.item-data-coverage p {
+  max-width: 70ch;
+}
+.app.outpost .item-reference-page .item-ability-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.app.outpost .item-reference-page .item-ability-group {
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+}
+.app.outpost .item-reference-page .item-ability-group h3 {
+  font: 600 15px/1.4 var(--font-ui);
+  margin-top: 0;
+}
+.app.outpost .item-reference-page .item-ability-group li {
+  padding-block: 10px;
+  font-size: 14px;
+}
+.app.outpost .shopping-summary .calculation-readiness {
+  padding: 12px;
+  margin: 4px 0 20px;
+}
+@media (max-width: 900px) {
+  .app.outpost .manual-trade-workspace {
+    grid-template-columns: 1fr;
+  }
+  .app.outpost .item-reference-page .item-ability-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .calculation-readiness {
+    padding: 14px;
+    gap: 10px;
+  }
+  .app.outpost .manual-trade-workspace .input-grid {
+    grid-template-columns: 1fr;
+  }
+  .app.outpost .item-reference-browser {
+    padding: 14px;
+  }
+  .app.outpost .item-reference-page .item-ability-groups {
+    grid-template-columns: 1fr;
+  }
+  .gold-observation-summary {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .item-catalog-result-bar {
+    flex-wrap: wrap;
+    padding-block: 10px;
+  }
+}
+/* Reference 05: three aligned work areas rather than configuration cards above the result. */
+.app.outpost .production-calculator-page {
+  max-width: 1560px;
+}
+.app.outpost .production-calculator-page .premium-production .production-workspace {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.94fr) minmax(340px, 1.12fr) minmax(300px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-workspace
+  > .production-desktop-browser {
+  display: none;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-workspace
+  > .calculator-inputs {
+  display: flex;
+  flex-direction: column;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  gap: 0;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.app.outpost .production-calculator-page .premium-production .calculator-inputs > .panel {
+  display: block;
+  grid-area: auto;
+  padding: 20px 0 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  > #production-setup {
+  border: 0;
+  padding-top: 18px;
+  padding-bottom: 20px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  > .reference-assumptions {
+  padding-bottom: 20px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  h2:not(.production-configuration-title) {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  h2:not(.production-configuration-title)
+  .workspace-step {
+  display: none;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  h2.production-configuration-title {
+  margin: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 18px;
+}
+.app.outpost .production-calculator-page .premium-production .production-change-recipe {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 16px;
+}
+.app.outpost .production-calculator-page .premium-production .reference-recipe-identity {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  gap: 12px;
+}
+.app.outpost .production-calculator-page .premium-production .reference-recipe-identity h3 {
+  font: 650 18px/1.35 var(--font-ui);
+}
+.app.outpost .production-calculator-page .premium-production .reference-recipe-identity small {
+  font-size: 12px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-workspace
+  > .production-materials {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  padding: 20px;
+}
+.app.outpost .production-calculator-page .premium-production .production-workspace > .result {
+  grid-column: 3;
+  grid-row: 1;
+  position: static;
+  padding: 20px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-workspace
+  > .production-accounting-panel {
+  grid-column: 2;
+  grid-row: 2;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-workspace
+  > .production-assumption-summary {
+  grid-column: 3;
+  grid-row: 2;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-materials
+  .section-heading {
+  display: block;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .production-materials
+  .section-heading
+  > button {
+  margin: 12px 0 0;
+  width: 100%;
+}
+.app.outpost .production-calculator-page .premium-production .reference-material-table {
+  min-width: 0;
+}
+.app.outpost .production-calculator-page .premium-production .reference-material-table th,
+.app.outpost .production-calculator-page .premium-production .reference-material-table td {
+  padding: 12px 8px;
+  font-size: 12px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  th:nth-child(4),
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  td:nth-child(4) {
+  display: none;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  th:nth-child(1) {
+  width: 34%;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  th:nth-child(2) {
+  width: 12%;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  th:nth-child(3) {
+  width: 26%;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-material-table
+  th:nth-child(5) {
+  width: 28%;
+}
+.app.outpost .production-calculator-page .premium-production .material-item-heading {
+  flex-wrap: wrap;
+}
+.app.outpost .production-calculator-page .premium-production .material-item-heading strong {
+  font-size: 13px;
+}
+.app.outpost .production-calculator-page .premium-production .material-return-choice {
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.app.outpost .production-calculator-page .premium-production .reference-quantity > p {
+  display: none;
+}
+.app.outpost .production-calculator-page .premium-production .production-next {
+  display: none;
+}
+.app.outpost .production-calculator-page .premium-production .production-sensitivity {
+  margin-block: 20px;
+}
+.app.outpost .production-sensitivity > p {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 80ch;
+}
+.app.outpost .production-sensitivity td {
+  font-family: var(--font-data);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .production-sensitivity th:not(:first-child) {
+  text-align: right;
+}
+.app.outpost .production-sensitivity .sensitivity-current {
+  background: var(--accent-wash);
+}
+@media (max-width: 1199px) {
+  .app.outpost .production-calculator-page .premium-production .production-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .calculator-inputs {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-materials {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .app.outpost .production-calculator-page .premium-production .production-workspace > .result {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-accounting-panel {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-assumption-summary {
+    grid-column: 2;
+    grid-row: 4;
+  }
+}
+@media (max-width: 780px) {
+  .app.outpost .production-calculator-page .premium-production .production-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .calculator-inputs,
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-materials,
+  .app.outpost .production-calculator-page .premium-production .production-workspace > .result,
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-accounting-panel,
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .production-workspace
+    > .production-assumption-summary {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production:not([data-step="1"])
+    .production-workspace
+    > .calculator-inputs {
+    display: none;
+  }
+  .app.outpost .production-calculator-page .premium-production .production-next {
+    display: flex;
+  }
+  .app.outpost .production-calculator-page .premium-production .reference-material-table {
+    min-width: 480px;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(4),
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    td:nth-child(4) {
+    display: table-cell;
+  }
+  .app.outpost .production-sensitivity table {
+    min-width: 620px;
+  }
+}
+.app.outpost .calculation-readiness strong {
+  display: block;
+  margin: 0;
+  font: 650 14px/1.5 var(--font-ui);
+  color: var(--text);
+}
+.app.outpost .production-calculator-page .premium-production .material-row-total {
+  display: block;
+  flex-basis: 100%;
+  margin-top: 4px;
+  color: var(--muted);
+  font: 400 12px/1.5 var(--font-ui);
+}
+.app.outpost .production-calculator-page .premium-production .reference-material-table small {
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+@media (max-width: 780px) {
+  .app.outpost .production-calculator-page .premium-production .material-row-total {
+    display: none;
+  }
+}
+.item-catalog-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.item-catalog-view button[aria-pressed="true"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.item-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.item-catalog-grid article {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.app.outpost .item-catalog-grid article h2 {
+  margin: 0 0 6px;
+  font: 600 15px/1.4 var(--font-ui);
+}
+.item-catalog-grid article h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+.item-catalog-grid article h2 a:hover {
+  text-decoration: underline;
+  color: var(--accent-ink);
+}
+.item-catalog-grid article p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.item-catalog-grid article code {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.item-catalog-grid article > a {
+  grid-column: 1/-1;
+  font-size: 13px;
+}
+.item-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding-block: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.item-section-nav a {
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.item-section-nav a:hover {
+  color: var(--accent-ink);
+}
+.item-supported-recipe {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.item-supported-recipe > p {
+  max-width: 70ch;
+  color: var(--muted);
+}
+.item-supported-recipe > ul {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.item-supported-recipe li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.item-supported-recipe li strong {
+  margin-left: auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1000px) {
+  .item-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .item-catalog-grid,
+  .item-supported-recipe > ul {
+    grid-template-columns: 1fr;
+  }
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .calculator-inputs
+  > #production-setup {
+  padding: 18px 0 20px;
+}
+@media (min-width: 1600px) {
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(4),
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    td:nth-child(4) {
+    display: table-cell;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(1) {
+    width: 28%;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(2) {
+    width: 10%;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(3) {
+    width: 22%;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(4) {
+    width: 16%;
+  }
+  .app.outpost
+    .production-calculator-page
+    .premium-production
+    .reference-material-table
+    th:nth-child(5) {
+    width: 24%;
+  }
+  .app.outpost .production-calculator-page .premium-production .material-row-total {
+    display: none;
+  }
+}
+.app.outpost .production-calculator-page .production-cash-summary {
+  grid-template-columns: 1fr;
+}
+.app.outpost .production-assumptions-details > summary {
+  font: 600 15px/1.5 var(--font-ui);
+}
+@media (max-width: 780px) {
+  /* The global mobile header scrolls away; reserve space only for this sticky stepper. */
+  .app.outpost .production-calculator-page .production-steps {
+    top: 8px;
+  }
+}
+
+.app.outpost .calculation-readiness strong {
+  letter-spacing: normal;
+}
+/* Optional assumptions remain inspectable without pushing first-use results below every field. */
+.app.outpost .economy-assumption-readout {
+  margin: 14px 0 8px;
+  font: 400 13px/1.65 var(--font-ui);
+  color: var(--muted);
+}
+.app.outpost .economy-assumptions {
+  margin-block: 12px 16px;
+  padding-block: 10px;
+  border-block: 1px solid var(--border);
+}
+.app.outpost .economy-assumptions > summary {
+  min-height: 24px;
+  font: 600 14px/1.6 var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .economy-assumptions[open] > summary {
+  margin-bottom: 16px;
+}
+.app.outpost .economy-assumptions > p {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.app.outpost .economy-saved-scenarios {
+  margin-block: 20px;
+}
+.app.outpost .economy-saved-scenarios > summary {
+  min-height: 24px;
+  font: 600 15px/1.6 var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .economy-saved-scenarios > .panel {
+  border: 0;
+  background: transparent;
+  padding: 20px 0 0;
+  margin: 0;
+  border-radius: 0;
+}
+.app.outpost .economy-saved-scenarios > label {
+  margin-top: 20px;
+}
+.app.outpost
+  .production-calculator-page
+  .premium-production
+  .reference-recipe-identity
+  .recipe-historical-status {
+  display: block;
+  font: 400 12px/1.6 var(--font-ui);
+  color: var(--muted);
+}

@@ -1,11 +1,13 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TransportCalculator } from "@/components/transport-calculator";
+export const metadata = { title: "Transport calculator" };
 export default function Page() {
   return (
     <>
-      <h1 className="page-title display-title">Transport calculator</h1>
-      <p className="intro">
-        Compare city prices against your cargo weight, carrying capacity, fees and risk budget.
-      </p>
+      <WorkspaceHeading
+        title="Transport calculator"
+        description="Compare city prices against cargo weight, carrying capacity, fees and your risk budget."
+      />
       <TransportCalculator />
     </>
   );

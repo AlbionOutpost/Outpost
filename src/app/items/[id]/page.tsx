@@ -2,13 +2,16 @@ import { ItemMarketLink } from "@/components/item-market-link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ItemIcon } from "@/components/item-icon";
+import { recipes } from "@/lib/albion/recipes";
 import { catalogItem } from "@/lib/catalog/validation";
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
+import "@/components/economy-workspaces.css";
 export default async function Item({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await db.itemMetadata.findUnique({ where: { id }, include: { release: true } });
   if (!item || !item.active) notFound();
   const metadata = catalogItem.parse(item);
+  const recipe = recipes.find((recipe) => recipe.output === id);
   return (
     <div className="item-reference-page">
       <Link className="text-link item-back-link" href="/items">
@@ -33,6 +36,11 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
         <p className="item-data-notice">
           Item values and unlocks may change with game updates. Confirm your setup in game.
         </p>
+        <nav className="item-section-nav" aria-label="Item sections">
+          <a href="#item-abilities-heading">Abilities</a>
+          {recipe && <a href="#item-recipe-heading">Crafting</a>}
+          <Link href={`/tools/market?item=${encodeURIComponent(id)}`}>Market prices</Link>
+        </nav>
         <section className="item-abilities" aria-labelledby="item-abilities-heading">
           <h2 id="item-abilities-heading">Abilities</h2>
           <p className="muted">
@@ -57,6 +65,32 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           </div>
           {!metadata.abilities.length && <p>Ability details are unavailable for this item.</p>}
         </section>
+        {recipe && (
+          <section className="item-supported-recipe" aria-labelledby="item-recipe-heading">
+            <h2 id="item-recipe-heading">Supported recipe</h2>
+            <p>
+              {recipe.outputCount} output per craft.{" "}
+              {recipe.historical
+                ? "Historical recipe; confirm the ingredients in game."
+                : "Confirm the recipe and station assumptions in game."}
+            </p>
+            <ul>
+              {recipe.ingredients.map((ingredient) => (
+                <li key={ingredient.id}>
+                  <ItemIcon id={ingredient.id} size={36} />
+                  <span>{ingredient.name}</span>
+                  <strong>× {ingredient.quantity}</strong>
+                </li>
+              ))}
+            </ul>
+            <Link
+              className="button secondary"
+              href={`/tools/${recipe.category || recipe.kind}?recipe=${encodeURIComponent(recipe.id)}`}
+            >
+              Calculate this recipe
+            </Link>
+          </section>
+        )}
       </section>
     </div>
   );

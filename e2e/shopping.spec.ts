@@ -78,7 +78,9 @@ test("account shopping snapshots validate inputs and retain owner-only access", 
       },
     };
     const response = await context.request.post("/api/scenarios", {
-      headers: { origin: "http://localhost:3000" },
+      headers: {
+        origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+      },
       data: { title: "Private regear list", configuration },
     });
     expect(response.status()).toBe(201);
@@ -94,14 +96,18 @@ test("account shopping snapshots validate inputs and retain owner-only access", 
     expect(
       (
         await outsider.request.delete(`/api/scenarios/${saved.id}`, {
-          headers: { origin: "http://localhost:3000" },
+          headers: {
+            origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+          },
         })
       ).status(),
     ).toBe(404);
     expect(
       (
         await context.request.post("/api/scenarios", {
-          headers: { origin: "http://localhost:3000" },
+          headers: {
+            origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+          },
           data: { title: "Wrong server", configuration: { ...configuration, region: "asia" } },
         })
       ).status(),

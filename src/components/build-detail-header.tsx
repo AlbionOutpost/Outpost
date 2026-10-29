@@ -14,6 +14,7 @@ export function BuildDetailHeader({
   visibility,
   itemId,
   actions,
+  collection = "library",
 }: {
   title: string;
   description?: string;
@@ -26,11 +27,14 @@ export function BuildDetailHeader({
   visibility?: string;
   itemId?: string;
   actions?: ReactNode;
+  collection?: "library" | "community";
 }) {
   return (
     <section className="detail-hero" id="build-overview">
       <div className="detail-breadcrumb">
-        <Link href="/builds/library">Builds</Link>
+        <Link href={collection === "library" ? "/builds/library" : "/builds"}>
+          {collection === "library" ? "Build library" : "Community builds"}
+        </Link>
         <ChevronRight size={13} />
         <span>{title}</span>
       </div>

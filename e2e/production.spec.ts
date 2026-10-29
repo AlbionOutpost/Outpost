@@ -38,7 +38,9 @@ test("production calculations save, reload, share and enforce scenario ownership
     cargo.sell.value = 1;
     for (const configuration of [oversized, cargo]) {
       const denied = await context.request.post("/api/scenarios", {
-        headers: { origin: "http://localhost:3000" },
+        headers: {
+          origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+        },
         data: { title: "Invalid oversized scenario", configuration },
       });
       expect(denied.status()).toBe(400);
@@ -54,12 +56,14 @@ test("production calculations save, reload, share and enforce scenario ownership
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
     await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
+    await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("Verified crafting scenario");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
     const saved = await db.savedScenario.findFirstOrThrow({ where: { authorId: id } });
     await page.reload();
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("");
+    await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page
       .getByRole("button", { name: "Restore Verified crafting scenario", exact: true })
@@ -69,7 +73,9 @@ test("production calculations save, reload, share and enforce scenario ownership
     const outsider = await browser.newContext();
     try {
       const unauthorized = await outsider.request.delete(`/api/scenarios/${saved.id}`, {
-        headers: { origin: "http://localhost:3000" },
+        headers: {
+          origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+        },
       });
       expect(unauthorized.status()).toBe(401);
       const shared = await outsider.newPage();

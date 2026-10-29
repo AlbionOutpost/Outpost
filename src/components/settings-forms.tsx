@@ -8,6 +8,10 @@ export function PreferencesForm({
 }) {
   const [state, action, pending] = useActionState(saveSettings, { error: "" }),
     [values, setValues] = useState(initial);
+  const dirty =
+    values.name !== initial.name ||
+    values.region !== initial.region ||
+    values.characterName !== initial.characterName;
   return (
     <form action={action} className="settings-form">
       <label>
@@ -42,9 +46,22 @@ export function PreferencesForm({
           onChange={(e) => setValues({ ...values, characterName: e.target.value })}
         />
       </label>
-      <button className="button primary" disabled={pending}>
-        {pending ? "Saving preferences…" : "Save preferences"}
-      </button>
+      <div className="settings-save-bar">
+        <span className="settings-draft-state">
+          {dirty ? "Unsaved changes" : "Your current preferences"}
+        </span>
+        <button
+          className="button secondary"
+          type="button"
+          disabled={pending || !dirty}
+          onClick={() => setValues(initial)}
+        >
+          Reset changes
+        </button>
+        <button className="button primary" disabled={pending}>
+          {pending ? "Saving preferences…" : "Save preferences"}
+        </button>
+      </div>
       {state.error && (
         <p role="alert" className="error">
           {state.error}
