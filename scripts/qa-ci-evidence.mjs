@@ -25,8 +25,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     for (const check of summary.checks.filter((check) => check.status !== "PASS")) {
       const path = `.qa/ci-evidence/phase-${check.name}.log`;
       console.log(`Failed check: ${check.name} (${check.status})`);
-      if (existsSync(path))
-        console.log(readFileSync(path, "utf8").split("\n").slice(-70).join("\n"));
+      if (existsSync(path)) {
+        const log = readFileSync(path, "utf8");
+        // The final Playwright summary can contain only failed/skipped titles.
+        // Preserve the first actual error as well, using the already redacted log.
+        const failure = log.search(/\n\s+\d+\) /);
+        console.log(log.slice(failure < 0 ? 0 : failure, (failure < 0 ? 0 : failure) + 16000));
+        console.log(log.split("\n").slice(-70).join("\n"));
+      }
     }
   }
 }
