@@ -40,7 +40,11 @@ jobs:
           node --input-type=module <<'JS'
           import { readFileSync, writeFileSync } from 'node:fs';
           import { randomBytes } from 'node:crypto';
-          writeFileSync('.env', readFileSync('.env', 'utf8').replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`));
+          writeFileSync('.env', readFileSync('.env', 'utf8')
+            .replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`)
+            // Fixture-only Discord pair so the provider registers; tests never reach Discord.
+            .replace(/^DISCORD_CLIENT_ID=.*$/m, 'DISCORD_CLIENT_ID=100000000000000000')
+            .replace(/^DISCORD_CLIENT_SECRET=.*$/m, `DISCORD_CLIENT_SECRET=${randomBytes(24).toString('hex')}`));
           JS
           docker compose up -d --wait
           npm run db:deploy
