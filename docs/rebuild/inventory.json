@@ -111,7 +111,7 @@
     "models": 30,
     "enums": 3,
     "migrations": 19,
-    "files": 717
+    "files": 718
   },
   "pages": [
     {
@@ -3813,8 +3813,8 @@
     },
     {
       "path": ".github/workflows/cloudflare-preview.yml",
-      "bytes": 4214,
-      "sha256": "32c996e8c510520637c1512ea61654d41b83d69a83574f3caf61bf1442049675"
+      "bytes": 4398,
+      "sha256": "d56804b99bfd03200ee96e1770b0b3ac8a5a705701786e9e9f13d1bfdf012e7e"
     },
     {
       "path": ".github/workflows/documentation.yml",
@@ -3823,8 +3823,8 @@
     },
     {
       "path": ".github/workflows/quality.yml",
-      "bytes": 1918,
-      "sha256": "5c8f888df4478ab9979dfc1f82136fb7bafa74df38d5abaf33964b9d94ba2d24"
+      "bytes": 2102,
+      "sha256": "00e26cd008d0731db65a0e4d9aa01c1f1862e1a128d8f3ad4f7845bbe226ee90"
     },
     {
       "path": ".gitignore",
@@ -5160,6 +5160,11 @@
       "path": "scripts/qa-api-timings.mjs",
       "bytes": 943,
       "sha256": "2e039828f0ac970e064ac607bc17d9695c485e094769e86a7af8bd40315f4177"
+    },
+    {
+      "path": "scripts/qa-browser-sandbox.mjs",
+      "bytes": 1343,
+      "sha256": "607e7930f3cd6add765be2407118d8156c442cc5ccf63fa94185bb80db05f299"
     },
     {
       "path": "scripts/qa-ci-evidence.mjs",

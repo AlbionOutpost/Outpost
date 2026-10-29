@@ -22,6 +22,7 @@ jobs:
       cancel-in-progress: false
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      CHROME_DEVEL_SANDBOX: /opt/google/chrome/chrome-sandbox
       WRANGLER_SEND_METRICS: "false"
       WRANGLER_SEND_ERROR_REPORTS: "false"
       CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
@@ -58,6 +59,8 @@ jobs:
           npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc --file "$GITHUB_WORKSPACE/.qa/cloudflare-library/local-import.sql" --persist-to "$GITHUB_WORKSPACE/.qa/cloudflare-database-test/state"
           node scripts/qa-cloudflare-database.mjs
       - run: npx playwright install --with-deps chromium
+      - name: Verify sandboxed Chromium with the installed runner helper
+        run: node scripts/qa-browser-sandbox.mjs
       - name: Build and exercise Cloudflare with isolated fixture sessions
         run: |
           node scripts/cloudflare-build.mjs
