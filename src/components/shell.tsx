@@ -16,6 +16,7 @@ import {
   Grid2X2,
 } from "lucide-react";
 import { DiscordMark } from "./discord-mark";
+import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools } from "@/lib/tool-directory";
 import { GlobalSearch } from "./global-search";
@@ -40,6 +41,7 @@ const toolLinks = [
   ["/items", "Item reference"],
 ];
 const sections = [
+  ["/tools/market", "Market"],
   ["/builds", "Builds"],
   ["/compositions", "Comps"],
   ["/guides", "Guides"],
@@ -59,11 +61,13 @@ export function Shell({
   initialLight = false,
   initialRegion = "europe",
   authenticated = false,
+  account = null,
 }: {
   children: React.ReactNode;
   initialLight?: boolean;
   initialRegion?: string;
   authenticated?: boolean;
+  account?: { name: string | null; image: string | null } | null;
 }) {
   const [open, setOpen] = useState(false),
     [light, setLight] = useState(initialLight),
@@ -77,7 +81,7 @@ export function Shell({
     router = useRouter();
   const region = regionSchema.catch("europe").parse(search.get("region") || savedRegion);
   const active = (href: string) => path === href || (href !== "/" && path.startsWith(`${href}/`));
-  const href = (url: string) => `${url}?region=${region}`;
+  const href = (url: string) => `${url === "/builds" ? "/builds/library" : url}?region=${region}`;
   const productShell = !["/signin", "/legal"].includes(path);
   const workspace = !["/", "/signin", "/legal"].includes(path) && !path.startsWith("/guides");
   useEffect(() => {
@@ -116,8 +120,18 @@ export function Shell({
   };
   const primaryNavigation = (
     <nav className="desktop-navigation" aria-label="Main navigation">
+      {sections.slice(0, 3).map(([url, label]) => (
+        <Link
+          key={url}
+          href={href(url)}
+          onClick={navigate}
+          aria-current={(url === "/tools/market" ? path === url : active(url)) ? "page" : undefined}
+        >
+          {label}
+        </Link>
+      ))}
       <details
-        className={`nav-dropdown${active("/tools") || active("/items") ? " is-active" : ""}`}
+        className={`nav-dropdown${(active("/tools") && path !== "/tools/market") || active("/items") ? " is-active" : ""}`}
       >
         <summary>
           <Grid2X2 size={17} /> Tools <ChevronDown size={13} />
@@ -174,7 +188,7 @@ export function Shell({
           </Link>
         </div>
       </details>
-      {sections.map(([url, label]) => (
+      {sections.slice(3).map(([url, label]) => (
         <Link
           key={url}
           href={href(url)}
@@ -193,13 +207,25 @@ export function Shell({
           {label}
         </Link>
       ))}
-      <Link
-        href={href("/tools/market")}
-        onClick={navigate}
-        aria-current={path === "/tools/market" ? "page" : undefined}
-      >
-        Market
-      </Link>
+      <details className="nav-dropdown more-dropdown">
+        <summary>
+          More <ChevronDown size={13} />
+        </summary>
+        <div className="dropdown-panel">
+          {accountLinks
+            .filter(([url]) => url !== "/signin")
+            .map(([url, label]) => (
+              <Link
+                key={url}
+                href={href(url)}
+                onClick={navigate}
+                aria-current={path === url ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+        </div>
+      </details>
     </nav>
   );
   return (
@@ -283,11 +309,14 @@ export function Shell({
                 ))}
               </div>
               <div className="nav-label">YOUR WORKSPACE</div>
-              {accountLinks.map(([url, label]) => (
-                <Link key={url} href={href(url)} onClick={navigate}>
-                  {label}
-                </Link>
-              ))}
+              {accountLinks
+                .filter(([url]) => !authenticated || url !== "/signin")
+                .map(([url, label]) => (
+                  <Link key={url} href={href(url)} onClick={navigate}>
+                    {label}
+                  </Link>
+                ))}
+              {authenticated && <LogoutButton />}
             </nav>
             <button
               className="drawer-theme button secondary"
@@ -355,19 +384,34 @@ export function Shell({
               ) : (
                 <details className="nav-dropdown account-dropdown">
                   <summary>
-                    Your account <ChevronDown size={13} />
+                    {account?.image ? (
+                      // Discord profile imagery belongs to the signed-in user; no synthetic avatar.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        className="account-avatar"
+                        src={account.image}
+                        width={30}
+                        height={30}
+                        alt=""
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : null}
+                    <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
                   </summary>
                   <div className="dropdown-panel">
-                    {accountLinks.map(([url, label]) => (
-                      <Link
-                        key={url}
-                        href={href(url)}
-                        onClick={navigate}
-                        aria-current={path === url ? "page" : undefined}
-                      >
-                        {label}
-                      </Link>
-                    ))}
+                    {accountLinks
+                      .filter(([url]) => !authenticated || url !== "/signin")
+                      .map(([url, label]) => (
+                        <Link
+                          key={url}
+                          href={href(url)}
+                          onClick={navigate}
+                          aria-current={path === url ? "page" : undefined}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                    <LogoutButton />
                   </div>
                 </details>
               )}

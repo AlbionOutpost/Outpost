@@ -1,4 +1,5 @@
 "use client";
+import { brandCopy } from "@/lib/brand-copy";
 import { useState, type ReactNode } from "react";
 import { MobileFilterPanel } from "./mobile-filter-panel";
 import { BookOpen } from "lucide-react";
@@ -51,7 +52,7 @@ export function GuideDirectory({
               <span>{g.category}</span>
             </div>
             <h2>{g.title}</h2>
-            <p>{g.summary}</p>
+            <p>{brandCopy(g.summary)}</p>
             <details>
               <summary>Read guide</summary>
               <div className="guide-body">{g.content}</div>

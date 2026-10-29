@@ -28,6 +28,10 @@ import "./journal-workspace.css";
 import "./fishing-workspace.css";
 import "./build-archive-details.css";
 import "./premium-system.css";
+import "./outpost-workspaces.css";
+import "./builds-discovery.css";
+import "./builds-detail.css";
+import "./builds-editor.css";
 export const metadata: Metadata = {
   title: { default: "Outpost | Albion tools", template: "%s | Outpost" },
   description:
@@ -38,7 +42,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const jar = await cookies();
   const session = await getServerSession(authOptions);
   const user = session?.user?.id
-    ? await db.user.findUnique({ where: { id: session.user.id }, select: { region: true } })
+    ? await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { region: true, name: true, image: true },
+      })
     : null;
   const initialRegion = regionSchema
     .catch("europe")
@@ -53,6 +60,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           <Shell
             key={`${initialRegion}:${initialLight}`}
             authenticated={!!session?.user?.id}
+            account={user ? { name: user.name, image: user.image } : null}
             initialLight={initialLight}
             initialRegion={initialRegion}
           >

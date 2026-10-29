@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { randomUUID } from "node:crypto";
@@ -90,10 +91,12 @@ test("populated equipment and party controls include visible names at phone, tab
       await page.goto(`/builds/${build.id}/edit`);
       await ready(page);
       const slot = page.getByRole("button", { name: "Choose Main hand equipment", exact: false });
-      await expect(slot).toContainText("Battleaxe");
+      await expect(slot).toHaveAccessibleName(/Battleaxe/);
+      await selectEditorSlot(page, "Food");
       await expect(
         page.getByRole("button", { name: "Choose Food equipment", exact: false }),
-      ).toContainText("Choose food");
+      ).toHaveAccessibleName(/Food equipment: Empty/);
+      await selectEditorSlot(page, "Main hand");
       await accessible(page);
       await slot.click();
       if (width <= 780)
@@ -103,10 +106,13 @@ test("populated equipment and party controls include visible names at phone, tab
       await accessible(page);
       await choice.focus();
       await page.keyboard.press("Enter");
-      await page.getByRole("button", { name: "Configure Main hand", exact: true }).click();
+      const exactSelection = page.getByText("Exact equipment selection", { exact: true });
+      await exactSelection.click();
       await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue("MAIN_AXE");
-      if (width <= 780)
+      if (width <= 780) {
+        await exactSelection.press("Tab");
         await expect(page.getByLabel("Main hand equipment", { exact: true })).toBeFocused();
+      }
       await accessible(page);
       await page.goto(`/compositions/${comp.id}/edit`);
       await ready(page);

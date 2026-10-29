@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { Check, ChevronDown, Plus, Search, Settings2, Star, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, Plus, Search, X, ArrowRight, ShieldAlert } from "lucide-react";
 import {
   equipmentFamilies,
   equipmentId,
@@ -11,48 +11,26 @@ import {
   type EquipmentSlot,
 } from "@/lib/albion/equipment-catalog";
 import { abilitiesFor, archivedSpellOptions } from "@/lib/albion/equipment-abilities";
+import { equipmentChoice } from "@/lib/albion/equipment-validation";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { EditorDialog } from "./editor-dialog";
-import { EquipmentGlyph } from "./equipment-overview";
+import { InventoryEquipmentBoard } from "./inventory-equipment-board";
 import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
 
-const groups = [
-  {
-    title: "Equipment & abilities",
-    slots: ["Main hand", "Off hand", "Helmet", "Chest", "Boots", "Cape"],
-  },
-  { title: "Consumables", slots: ["Potion", "Food"] },
-  { title: "Travel & inventory", slots: ["Bag", "Mount"] },
-] as const;
-
-function SelectedSpells({ item }: { item: EquipmentChoice }) {
-  return (
-    <span className="studio-tile-spells" aria-hidden="true">
-      {Object.entries(item.abilities).map(([key, name]) => {
-        const spell = archivedSpellOptions(item.itemId).find(
-          (s) => s.key === key && s.name === name,
-        );
-        return (
-          <span key={key} title={`${key}: ${name}`}>
-            {spell ? (
-              <SpellIcon id={spell.id} name={name} size={22} />
-            ) : (
-              <b>{key === "Passive" ? "P" : key.slice(0, 1)}</b>
-            )}
-          </span>
-        );
-      })}
-    </span>
-  );
-}
+export type BuildStudioView = "equipment" | "abilities" | "alternatives";
+const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 
 export function BuildEquipmentStudio({
   value,
   onChange,
+  view = "equipment",
+  captureUndo,
 }: {
   value: EquipmentChoice[];
   onChange: (value: EquipmentChoice[]) => void;
+  view?: BuildStudioView;
+  captureUndo?: () => () => void;
 }) {
   const [slot, setSlot] = useState<EquipmentSlot>("Main hand");
   const [picker, setPicker] = useState<"recommended" | "alternative" | null>(null);
@@ -61,11 +39,10 @@ export function BuildEquipmentStudio({
   const [enchant, setEnchant] = useState(0);
   const [page, setPage] = useState(0);
   const [notice, setNotice] = useState("");
-  const [undo, setUndo] = useState<EquipmentChoice[] | null>(null);
-  const [settings, setSettings] = useState(false);
-  const [overviewOpen, setOverviewOpen] = useState(false);
-  const overviewId = useId();
-  const settingsRef = useRef<HTMLDivElement>(null);
+  const [undo, setUndo] = useState<{
+    equipment: EquipmentChoice[];
+    restore?: () => void;
+  } | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!picker) return;
@@ -76,38 +53,82 @@ export function BuildEquipmentStudio({
   const found = current ? findEquipment(current.itemId) : null;
   const twoHanded = !!findEquipment(value.find((row) => row.slot === "Main hand")?.itemId || "")
     ?.family.twoHanded;
+  const blocked = slot === "Off hand" && twoHanded;
+  const options = current ? abilitiesFor(current.itemId) : {};
+  function selectSlot(target: EquipmentSlot) {
+    setSlot(target);
+    if (matchMedia("(max-width: 980px)").matches)
+      requestAnimationFrame(() => {
+        const panel = document.getElementById("editor-selected-slot");
+        panel?.focus({ preventScroll: true });
+        panel?.scrollIntoView({ block: "start", behavior: "instant" });
+      });
+  }
 
-  function change(next: EquipmentChoice | null, target: EquipmentSlot = slot) {
+  function change(
+    next: EquipmentChoice | null,
+    target: EquipmentSlot = slot,
+    action?: { undoable: boolean; message: string },
+  ) {
     if (target === "Off hand" && next && twoHanded) {
       setNotice("This weapon uses both hands. Choose a one-handed weapon to equip an off hand.");
       return;
     }
-    let rows = value.filter((row) => row.slot !== target);
-    setUndo(null);
-    setNotice("");
-    if (
-      next?.slot === "Main hand" &&
-      findEquipment(next.itemId)?.family.twoHanded &&
-      rows.some((row) => row.slot === "Off hand")
-    ) {
-      setUndo(structuredClone(value));
-      rows = rows.filter((row) => row.slot !== "Off hand");
-      setNotice("Off hand cleared: this weapon uses both hands.");
-    }
     if (next) {
-      const itemId = next.itemId;
-      const options = abilitiesFor(next.itemId);
+      const allowed = abilitiesFor(next.itemId);
+      const selectedId = next.itemId;
       next = {
         ...next,
         abilities: Object.fromEntries(
-          Object.entries(next.abilities).filter(([key, name]) => options[key]?.includes(name)),
+          Object.entries(next.abilities).filter(([key, name]) => allowed[key]?.includes(name)),
         ),
-        alternatives: next.alternatives.filter((id) => id !== itemId),
+        alternatives: next.alternatives.filter((id) => id !== selectedId),
       };
+      if (!equipmentChoice.safeParse(next).success) {
+        setNotice(
+          "Choose supported equipment and alternatives for this slot before applying the change.",
+        );
+        return;
+      }
     }
+    let rows = value.filter((row) => row.slot !== target);
+    const clearsOffHand =
+      next?.slot === "Main hand" &&
+      findEquipment(next.itemId)?.family.twoHanded &&
+      rows.some((row) => row.slot === "Off hand");
+    setUndo(
+      action?.undoable || clearsOffHand
+        ? { equipment: structuredClone(value), restore: captureUndo?.() }
+        : null,
+    );
+    setNotice(
+      [action?.message, clearsOffHand ? "Off hand cleared: this weapon uses both hands." : ""]
+        .filter(Boolean)
+        .join(" "),
+    );
+    if (clearsOffHand) rows = rows.filter((row) => row.slot !== "Off hand");
     onChange([...rows, ...(next ? [next] : [])]);
   }
-
+  function applyAlternative(id: string) {
+    if (!current || findEquipment(id)?.family.slot !== slot) {
+      setNotice("This alternative is unavailable for the selected equipment slot.");
+      return;
+    }
+    change(
+      {
+        ...current,
+        itemId: id,
+        alternatives: [
+          ...new Set([current.itemId, ...current.alternatives.filter((alt) => alt !== id)]),
+        ],
+      },
+      slot,
+      {
+        undoable: true,
+        message: `Equipped ${equipmentName(id)}. The previous item is kept as an alternative.`,
+      },
+    );
+  }
   function browse(target: EquipmentSlot, mode: "recommended" | "alternative" = "recommended") {
     const item = value.find((row) => row.slot === target);
     const info = item ? findEquipment(item.itemId) : null;
@@ -119,16 +140,6 @@ export function BuildEquipmentStudio({
     setEnchant(info?.enchantment || 0);
     setPicker(mode);
   }
-
-  function configure(target: EquipmentSlot) {
-    setSlot(target);
-    setSettings(true);
-    requestAnimationFrame(() => {
-      settingsRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
-      settingsRef.current?.querySelector<HTMLElement>("select")?.focus({ preventScroll: true });
-    });
-  }
-
   function choose(id: string) {
     if (picker === "recommended" && current?.itemId === id) {
       setPicker(null);
@@ -146,7 +157,6 @@ export function BuildEquipmentStudio({
       });
     setPicker(null);
   }
-
   const matches = equipmentFamilies
     .filter(
       (f) =>
@@ -155,9 +165,70 @@ export function BuildEquipmentStudio({
         !!findEquipment(equipmentId(f, tier, enchant)),
     )
     .filter((f) => picker !== "alternative" || equipmentId(f, tier, enchant) !== current?.itemId);
+  const inventory = value.map((item) => {
+    const info = findEquipment(item.itemId);
+    const spells = archivedSpellOptions(item.itemId);
+    return {
+      ...item,
+      name: equipmentName(item.itemId),
+      tierLabel: info ? `T${info.tier}.${info.enchantment}` : undefined,
+      qualityLabel: qualityNames[item.quality - 1],
+      spells: Object.entries(item.abilities).map(([key, name]) => ({
+        key,
+        name,
+        id: spells.find((spell) => spell.key === key && spell.name === name)?.id,
+      })),
+      alternativeItemId: item.alternatives[0],
+    };
+  });
+  const abilityControls = current && (
+    <div
+      className="studio-spell-choices editor-ability-choices"
+      aria-label={`${slot} abilities & passives`}
+    >
+      {Object.entries(options).map(([key, choices]) => {
+        const name = current.abilities[key];
+        const spell = archivedSpellOptions(current.itemId).find(
+          (s) => s.key === key && s.name === name,
+        );
+        return (
+          <label key={key} className={`editor-ability-choice${name ? " chosen" : ""}`}>
+            <span className="editor-ability-art">
+              {spell ? (
+                <SpellIcon id={spell.id} name={name!} size={42} />
+              ) : (
+                <span>{key === "Passive" ? "P" : key === "Active" ? "A" : key}</span>
+              )}
+            </span>
+            <span>
+              <small>{key === "Passive" ? "Passive" : `${key} ability`}</small>
+              <select
+                aria-label={`${slot} ${key}`}
+                value={name || ""}
+                onChange={(event) => {
+                  const abilities = { ...current.abilities };
+                  if (event.target.value) abilities[key] = event.target.value;
+                  else delete abilities[key];
+                  change({ ...current, abilities });
+                }}
+              >
+                <option value="">Choose {key === "Passive" ? "passive" : `${key} ability`}</option>
+                {choices.map((name) => (
+                  <option key={name}>{name}</option>
+                ))}
+              </select>
+            </span>
+          </label>
+        );
+      })}
+      {!Object.keys(options).length && (
+        <p className="muted">This item has no selectable abilities in the supported references.</p>
+      )}
+    </div>
+  );
 
   return (
-    <div className="build-studio gear-studio" data-studio="immersive">
+    <div className="build-studio gear-studio inventory-editor-studio" data-studio="inventory">
       {notice && (
         <div className="studio-notice" role="status">
           {notice}
@@ -166,7 +237,8 @@ export function BuildEquipmentStudio({
               type="button"
               className="text-link"
               onClick={() => {
-                onChange(undo);
+                if (undo.restore) undo.restore();
+                else onChange(undo.equipment);
                 setUndo(null);
                 setNotice("");
               }}
@@ -176,396 +248,332 @@ export function BuildEquipmentStudio({
           )}
         </div>
       )}
-      <div className="studio-loadout-list">
-        {groups.map((group) => (
-          <section className="studio-equipment-section" key={group.title}>
-            <header>
-              <h2>{group.title}</h2>
-              {group.title === "Equipment & abilities" && (
-                <span className="studio-help">Click an item to equip it</span>
+      <aside className="editor-inventory-panel" aria-label="Character equipment">
+        <header>
+          <div>
+            <h2>Your loadout</h2>
+            <p>Select a slot to make it yours.</p>
+          </div>
+          <span>{value.length}/10</span>
+        </header>
+        <InventoryEquipmentBoard
+          equipment={inventory}
+          selectedSlot={slot}
+          onSelectSlot={(target) => {
+            if (equipmentSlots.includes(target as EquipmentSlot))
+              selectSlot(target as EquipmentSlot);
+          }}
+          label="Editor equipment inventory"
+        />
+        <p className="editor-inventory-note">
+          {twoHanded
+            ? "Two-handed weapon · off hand reserved"
+            : "Equipment, consumables & travel gear"}
+        </p>
+      </aside>
+      <section
+        className="editor-slot-panel studio-loadout-list"
+        id="editor-selected-slot"
+        tabIndex={-1}
+        aria-label="Selected equipment configuration"
+      >
+        <header className="editor-slot-heading">
+          <div>
+            <span>
+              {view === "abilities"
+                ? "Abilities & passives"
+                : view === "alternatives"
+                  ? "Alternative equipment"
+                  : "Equipment configuration"}
+            </span>
+            <h2>{slot}</h2>
+          </div>
+          <span>Selected slot</span>
+        </header>
+        <div className="editor-slot-switcher" role="group" aria-label="Select equipment slot">
+          {equipmentSlots.map((target) => (
+            <button
+              type="button"
+              key={target}
+              aria-pressed={slot === target}
+              onClick={() => setSlot(target)}
+            >
+              {target}
+            </button>
+          ))}
+        </div>
+        {blocked ? (
+          <div className="editor-empty-slot">
+            <ShieldAlert size={32} />
+            <h3>Your weapon uses both hands.</h3>
+            <p>Switch to a one-handed weapon before equipping an off hand.</p>
+            <button type="button" className="button secondary" onClick={() => setSlot("Main hand")}>
+              Inspect main hand <ArrowRight size={15} />
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className={`editor-selected-item${current ? " equipped" : ""}`}>
+              {current ? (
+                <ItemIcon id={current.itemId} quality={current.quality} size={80} />
+              ) : (
+                <span className="editor-empty-art">
+                  <Plus size={32} />
+                </span>
               )}
-            </header>
-            <div className="studio-column-headings">
-              <span>
-                <Star size={12} /> Recommended
-              </span>
-              <span>Alternatives</span>
+              <div>
+                <small>
+                  {current && found
+                    ? `T${found.tier}.${found.enchantment} · ${qualityNames[current.quality - 1]}`
+                    : "Empty equipment slot"}
+                </small>
+                <h3>
+                  {current ? equipmentName(current.itemId) : `Choose your ${slot.toLowerCase()}`}
+                </h3>
+              </div>
+              <button
+                type="button"
+                className="button secondary"
+                aria-label={`Choose ${slot} equipment: ${current ? equipmentName(current.itemId) : "Empty"}. ${current ? "Change item" : "Choose item"}`}
+                onClick={() => browse(slot)}
+              >
+                {current ? "Change item" : "Choose item"} <ArrowRight size={15} />
+              </button>
             </div>
-            {group.slots.map((target) => {
-              const item = value.find((row) => row.slot === target);
-              const blocked = target === "Off hand" && twoHanded;
-              const options = item ? abilitiesFor(item.itemId) : {};
-              const alt = item?.alternatives[0];
-              return (
-                <div
-                  className={`studio-equipment-row${slot === target ? " active" : ""}`}
-                  key={target}
-                >
-                  <div className="studio-equipped-item">
-                    <button
-                      type="button"
-                      className="studio-item-trigger"
-                      disabled={blocked}
-                      onClick={() => browse(target)}
-                    >
-                      <span className="sr-only">Choose {target} equipment: </span>
-                      <span className="studio-item-art">
-                        {item ? (
-                          <ItemIcon id={item.itemId} quality={item.quality} size={64} />
-                        ) : (
-                          <EquipmentGlyph slot={target} />
-                        )}
-                      </span>
-                      <span className="studio-item-copy">
-                        <small>{target}</small>
-                        <strong>
-                          {item
-                            ? equipmentName(item.itemId)
-                            : blocked
-                              ? "Two-handed weapon"
-                              : `Choose ${target.toLowerCase()}`}
-                        </strong>
-                        {!item && !blocked && (
-                          <span>
-                            Browse equipment <Plus size={12} />
-                          </span>
-                        )}
-                      </span>
-                    </button>
-                    {item && (
-                      <>
-                        <div
-                          className="studio-spell-choices"
-                          aria-label={`${target} abilities & passives`}
-                        >
-                          {Object.entries(options).map(([key, choices]) => {
-                            const name = item.abilities[key];
-                            const spell = archivedSpellOptions(item.itemId).find(
-                              (s) => s.key === key && s.name === name,
-                            );
-                            return (
-                              <label
-                                key={key}
-                                className={`studio-spell-choice${name ? " chosen" : ""}`}
-                                title={`${key}: ${name || "Choose ability"}`}
-                              >
-                                {spell ? (
-                                  <SpellIcon id={spell.id} name={name} size={32} />
-                                ) : (
-                                  <span aria-hidden="true">
-                                    {key === "Passive" ? "P" : key === "Active" ? "A" : key}
-                                  </span>
-                                )}
-                                <select
-                                  aria-label={`${target} ${key}`}
-                                  value={name || ""}
-                                  onChange={(event) => {
-                                    const abilities = { ...item.abilities };
-                                    if (event.target.value) abilities[key] = event.target.value;
-                                    else delete abilities[key];
-                                    change({ ...item, abilities }, target);
-                                  }}
-                                >
-                                  <option value="">
-                                    Choose {key === "Passive" ? "passive" : `${key} ability`}
-                                  </option>
-                                  {choices.map((name) => (
-                                    <option key={name}>{name}</option>
-                                  ))}
-                                </select>
-                              </label>
-                            );
-                          })}
-                          <button
-                            type="button"
-                            className="studio-configure"
-                            aria-label={`Configure ${target}`}
-                            title="Tier, enchantment, quality & swaps"
-                            onClick={() => configure(target)}
-                          >
-                            <Settings2 size={15} />
-                          </button>
-                        </div>
-                      </>
-                    )}
+            {current && found && view === "equipment" && (
+              <div className="gear-options editor-item-variants">
+                <label>
+                  Tier
+                  <select
+                    aria-label={`${slot} tier`}
+                    value={found.tier}
+                    onChange={(event) =>
+                      change({
+                        ...current,
+                        itemId: equipmentId(
+                          found.family,
+                          Number(event.target.value),
+                          found.enchantment,
+                        ),
+                      })
+                    }
+                  >
+                    {found.family.tiers
+                      .filter(
+                        (t) => !!findEquipment(equipmentId(found.family, t, found.enchantment)),
+                      )
+                      .map((t) => (
+                        <option key={t} value={t}>
+                          T{t}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <label>
+                  Enchantment
+                  <select
+                    aria-label={`${slot} enchantment`}
+                    value={found.enchantment}
+                    onChange={(event) =>
+                      change({
+                        ...current,
+                        itemId: equipmentId(found.family, found.tier, Number(event.target.value)),
+                      })
+                    }
+                  >
+                    {found.family.enchants
+                      .filter((e) => !!findEquipment(equipmentId(found.family, found.tier, e)))
+                      .map((e) => (
+                        <option key={e} value={e}>
+                          .{e}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <label>
+                  Quality
+                  <select
+                    aria-label={`${slot} quality`}
+                    value={current.quality}
+                    onChange={(event) =>
+                      change({ ...current, quality: Number(event.target.value) })
+                    }
+                  >
+                    {qualityNames.map((name, i) => (
+                      <option key={name} value={i + 1}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+            {(view === "abilities" || view === "equipment") && current && (
+              <section className="editor-current-abilities">
+                <h3>
+                  {view === "abilities" ? "Choose abilities & passives" : "Equipped abilities"}
+                </h3>
+                {abilityControls}
+              </section>
+            )}
+            {view === "alternatives" && (
+              <section className="editor-current-alternatives">
+                <div className="section-heading">
+                  <div>
+                    <h3>Swaps for {slot.toLowerCase()}</h3>
+                    <p>
+                      Keep up to four swaps. Equip one to try it, then undo to restore your loadout.
+                    </p>
                   </div>
-                  <div className="studio-alternative-item">
-                    <button
-                      type="button"
-                      className={`studio-item-trigger${alt ? "" : " studio-add-alternative"}`}
-                      disabled={!item || blocked}
-                      onClick={() => browse(target, "alternative")}
-                    >
-                      <span className="sr-only">Choose alternative {target}: </span>
-                      <span className="studio-item-art">
-                        {alt ? <ItemIcon id={alt} size={56} /> : <Plus size={18} />}
-                      </span>
-                      <span className="studio-item-copy">
-                        {alt ? (
-                          <>
-                            <small>{target} swap</small>
-                            <strong>{equipmentName(alt)}</strong>
-                          </>
-                        ) : (
-                          <span>Add alternative</span>
-                        )}
-                      </span>
-                    </button>
-                    {!!item && item.alternatives.length > 1 && (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    disabled={!current || current.alternatives.length >= 4}
+                    aria-label={`Choose alternative ${slot}: Add alternative`}
+                    onClick={() => browse(slot, "alternative")}
+                  >
+                    <Plus size={15} /> Add alternative
+                  </button>
+                </div>
+                {current?.alternatives.map((id, index) => (
+                  <div className="editor-swap-row" key={`${id}-${index}`}>
+                    <ItemIcon id={id} size={52} />
+                    <label>
+                      Alternative {index + 1}
+                      <select
+                        aria-label={`${slot} alternative${index ? ` ${index + 1}` : ""}`}
+                        value={id}
+                        onChange={(event) =>
+                          change({
+                            ...current,
+                            alternatives: current.alternatives
+                              .map((alt, i) => (i === index ? event.target.value : alt))
+                              .filter(Boolean),
+                          })
+                        }
+                      >
+                        <option value="">Remove alternative</option>
+                        {[
+                          ...new Set([
+                            id,
+                            ...equipmentFamilies
+                              .filter((f) => f.slot === slot)
+                              .flatMap((f) =>
+                                f.tiers.flatMap((t) => f.enchants.map((e) => equipmentId(f, t, e))),
+                              )
+                              .filter((id) => id !== current.itemId && !!findEquipment(id)),
+                          ]),
+                        ].map((id) => (
+                          <option key={id} value={id}>
+                            {equipmentName(id)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <div className="editor-swap-actions">
                       <button
                         type="button"
-                        className="text-link studio-more-swaps"
-                        onClick={() => configure(target)}
+                        className="button secondary"
+                        aria-label={`Equip alternative ${slot} ${index + 1}: ${equipmentName(id)}`}
+                        onClick={() => applyAlternative(id)}
                       >
-                        +{item.alternatives.length - 1} more{" "}
-                        {item.alternatives.length === 2 ? "swap" : "swaps"}
+                        Equip
                       </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </section>
-        ))}
-      </div>
-      <aside
-        className={`studio-overview${overviewOpen ? " expanded" : ""}`}
-        aria-label="Character equipment"
-      >
-        <div className="studio-overview-heading">
-          <h2>Your loadout</h2>
-          <span>{value.length}/10 equipped</span>
-          <button
-            type="button"
-            className="studio-overview-toggle"
-            aria-expanded={overviewOpen}
-            aria-controls={overviewId}
-            onClick={() => setOverviewOpen(!overviewOpen)}
-          >
-            {overviewOpen ? "Hide" : "Show"} overview <ChevronDown size={14} />
-          </button>
-        </div>
-        <div id={overviewId} className="character-slots studio-character-slots">
-          {equipmentSlots.map((target) => {
-            const item = value.find((row) => row.slot === target);
-            const blocked = target === "Off hand" && twoHanded;
-            return (
-              <button
-                type="button"
-                key={target}
-                data-slot={target}
-                className={`character-slot${item ? " equipped" : ""}${target === slot ? " selected" : ""}`}
-                aria-pressed={target === slot}
-                disabled={blocked}
-                onClick={() => browse(target)}
-              >
-                <span className="sr-only">Select {target} slot: </span>
-                <span className="slot-caption">{target}</span>
-                {item ? (
-                  <ItemIcon id={item.itemId} quality={item.quality} size={80} />
-                ) : (
-                  <EquipmentGlyph slot={target} />
-                )}
-                {item && <SelectedSpells item={item} />}
-                <span className="slot-item-name">
-                  {item ? equipmentName(item.itemId) : blocked ? "Two-handed" : "Empty"}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="studio-overview-actions">
-          <button type="button" className="button secondary" onClick={() => configure(slot)}>
-            <Settings2 size={15} /> Item details
-          </button>
-          <span>
-            {value.reduce((total, row) => total + Object.keys(row.abilities).length, 0)} abilities
-            chosen
-          </span>
-        </div>
-        {settings && (
-          <div
-            className="studio-item-settings"
-            ref={settingsRef}
-            aria-label="Selected equipment details"
-          >
-            <div className="studio-settings-heading">
-              <h3>{slot}</h3>
-              <button
-                type="button"
-                aria-label="Close item details"
-                onClick={() => setSettings(false)}
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <label>
-              {slot} equipment
-              <select
-                aria-label={`${slot} equipment`}
-                value={found?.family.code || ""}
-                onChange={(event) => {
-                  const f = equipmentFamilies.find(
-                    (f) => f.code === event.target.value && f.slot === slot,
-                  );
-                  change(
-                    f
-                      ? {
-                          slot,
-                          itemId: equipmentId(
-                            f,
-                            f.tiers.includes(found?.tier || 4) ? found?.tier || 4 : f.tiers[0],
-                            0,
-                          ),
-                          quality: current?.quality || 1,
-                          abilities: {},
-                          alternatives: [],
+                      <button
+                        type="button"
+                        className="button secondary"
+                        aria-label={`Remove ${slot} alternative ${index + 1}`}
+                        onClick={() =>
+                          change({
+                            ...current,
+                            alternatives: current.alternatives.filter((_, i) => i !== index),
+                          })
                         }
-                      : null,
-                  );
-                }}
-              >
-                <option value="">No equipment</option>
-                {equipmentFamilies
-                  .filter((f) => f.slot === slot)
-                  .map((f) => (
-                    <option key={f.code} value={f.code}>
-                      {f.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-            {current && found && (
-              <>
-                <div className="gear-options">
-                  <label>
-                    Tier
-                    <select
-                      aria-label={`${slot} tier`}
-                      value={found.tier}
-                      onChange={(event) =>
-                        change({
-                          ...current,
-                          itemId: equipmentId(
-                            found.family,
-                            Number(event.target.value),
-                            found.enchantment,
-                          ),
-                        })
-                      }
-                    >
-                      {found.family.tiers
-                        .filter(
-                          (t) => !!findEquipment(equipmentId(found.family, t, found.enchantment)),
-                        )
-                        .map((t) => (
-                          <option key={t} value={t}>
-                            T{t}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                  <label>
-                    Enchant
-                    <select
-                      aria-label={`${slot} enchantment`}
-                      value={found.enchantment}
-                      onChange={(event) =>
-                        change({
-                          ...current,
-                          itemId: equipmentId(found.family, found.tier, Number(event.target.value)),
-                        })
-                      }
-                    >
-                      {found.family.enchants
-                        .filter((e) => !!findEquipment(equipmentId(found.family, found.tier, e)))
-                        .map((e) => (
-                          <option key={e} value={e}>
-                            .{e}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                  <label>
-                    Quality
-                    <select
-                      aria-label={`${slot} quality`}
-                      value={current.quality}
-                      onChange={(event) =>
-                        change({ ...current, quality: Number(event.target.value) })
-                      }
-                    >
-                      {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
-                        <option key={q} value={i + 1}>
-                          {q}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                {current.alternatives.map((id, index) => (
-                  <label key={index}>
-                    Alternative {index + 1}
-                    <select
-                      aria-label={`${slot} alternative${index ? ` ${index + 1}` : ""}`}
-                      value={id}
-                      onChange={(event) =>
-                        change({
-                          ...current,
-                          alternatives: current.alternatives
-                            .map((alt, i) => (i === index ? event.target.value : alt))
-                            .filter(Boolean),
-                        })
-                      }
-                    >
-                      <option value="">Remove alternative</option>
-                      {[
-                        ...new Set([
-                          id,
-                          ...equipmentFamilies
-                            .filter((f) => f.slot === slot)
-                            .flatMap((f) =>
-                              f.tiers.flatMap((t) => f.enchants.map((e) => equipmentId(f, t, e))),
-                            )
-                            .filter((id) => id !== current.itemId && !!findEquipment(id)),
-                        ]),
-                      ].map((id) => (
-                        <option key={id} value={id}>
-                          {equipmentName(id)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                      >
+                        <X size={15} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
-                <button type="button" className="text-link" onClick={() => change(null)}>
-                  Remove {slot}
-                </button>
-              </>
+                {!current?.alternatives.length && (
+                  <p className="editor-no-swaps">
+                    No alternatives yet. Add a budget option, a counter pick or a situational swap.
+                  </p>
+                )}
+              </section>
             )}
-          </div>
+            {current && view === "equipment" && (
+              <details className="editor-exact-equipment">
+                <summary>Exact equipment selection</summary>
+                <label>
+                  {slot} equipment
+                  <select
+                    aria-label={`${slot} equipment`}
+                    value={found?.family.code || ""}
+                    onChange={(event) => {
+                      const family = equipmentFamilies.find(
+                        (f) => f.code === event.target.value && f.slot === slot,
+                      );
+                      change(
+                        family
+                          ? {
+                              slot,
+                              itemId: equipmentId(
+                                family,
+                                family.tiers.includes(found?.tier || 4)
+                                  ? found?.tier || 4
+                                  : family.tiers[0],
+                                0,
+                              ),
+                              quality: current.quality,
+                              abilities: {},
+                              alternatives: [],
+                            }
+                          : null,
+                      );
+                    }}
+                  >
+                    <option value="">No equipment</option>
+                    {equipmentFamilies
+                      .filter((f) => f.slot === slot)
+                      .map((f) => (
+                        <option key={f.code} value={f.code}>
+                          {f.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+              </details>
+            )}
+            {current && (
+              <button
+                type="button"
+                className="text-link editor-remove-item"
+                onClick={() => change(null)}
+              >
+                Remove {slot}
+              </button>
+            )}
+          </>
         )}
-        <details className="studio-source-note">
-          <summary>
-            About abilities & game data <ChevronDown size={13} />
-          </summary>
+        <details className="editor-game-note">
+          <summary>Abilities & character unlocks</summary>
           <p>
-            Recorded source options include historical references. Confirm character unlocks and
-            current patch availability in game. Item power and combat statistics are not inferred.
+            Choose from the recorded options, then confirm your character unlocks and current
+            availability in game. Combat statistics are not inferred.
           </p>
         </details>
-      </aside>
+      </section>
       {picker && (
-        <EditorDialog open wide title="Equipment picker" onClose={() => setPicker(null)}>
-          <div className="studio-picker">
+        <EditorDialog open drawer title="Equipment picker" onClose={() => setPicker(null)}>
+          <div className="studio-picker editor-catalog-drawer">
             <div className="studio-picker-heading">
-              <div>
-                <h3>
-                  {picker === "alternative"
-                    ? `${slot} alternatives`
-                    : `Choose your ${slot.toLowerCase()}`}
-                </h3>
-                <p>{matches.length} matching equipment families</p>
-              </div>
+              <h3>
+                {picker === "alternative"
+                  ? `${slot} alternatives`
+                  : `Choose your ${slot.toLowerCase()}`}
+              </h3>
+              <p>{matches.length} matching equipment families</p>
             </div>
             <div className="studio-picker-toolbar">
               <label className="studio-picker-search">
@@ -619,8 +627,8 @@ export function BuildEquipmentStudio({
               </label>
             </div>
             <div className="studio-picker-grid">
-              {matches.slice(page * 24, (page + 1) * 24).map((f) => {
-                const id = equipmentId(f, tier, enchant);
+              {matches.slice(page * 24, (page + 1) * 24).map((family) => {
+                const id = equipmentId(family, tier, enchant);
                 return (
                   <button
                     className={`studio-picker-item${current?.itemId === id ? " selected" : ""}`}
@@ -628,15 +636,17 @@ export function BuildEquipmentStudio({
                     key={id}
                     onClick={() => choose(id)}
                   >
-                    <ItemIcon id={id} size={80} />
-                    <strong>
-                      <span className="sr-only">Equip </span>
-                      {f.tierNames?.[tier] || f.name}
-                    </strong>
-                    <small>
-                      T{tier}.{enchant}
-                    </small>
-                    {current?.itemId === id && <Check size={14} />}
+                    <ItemIcon id={id} size={64} />
+                    <span>
+                      <strong>
+                        <span className="sr-only">Equip </span>
+                        {family.tierNames?.[tier] || family.name}
+                      </strong>
+                      <small>
+                        T{tier}.{enchant}
+                      </small>
+                    </span>
+                    {current?.itemId === id && <Check size={16} />}
                   </button>
                 );
               })}

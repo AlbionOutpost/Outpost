@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -27,16 +28,18 @@ test("archived traits, alternate spells and creator links survive an independent
     page.getByRole("link", { name: "Compare prices →", exact: true }).first(),
   ).toHaveAttribute("href", /region=asia/);
   await page.getByRole("link", { name: "Make this build yours", exact: true }).click();
-  await page.getByText("Build settings & description", { exact: true }).click();
+  await page.getByRole("tab", { name: "Notes", exact: true }).click();
   await expect(page.getByLabel("Build region", { exact: true })).toHaveValue("asia");
-  await page.locator(".equipment-set-tools summary").click();
+  await selectEditorSlot(page, "Helmet", "Alternatives");
   await expect(page.locator(".saved-equipment-sets > article")).toHaveCount(3);
   page.once("dialog", (dialog) => dialog.accept());
-  await page.getByRole("button", { name: /^Apply Helmet swap/ }).click();
+  await page.getByRole("button", { name: /^Apply set: Helmet swap/ }).click();
+  await selectEditorSlot(page, "Helmet", "Abilities");
   await expect(page.getByLabel("Helmet Active", { exact: true })).toHaveValue("Purge");
   await page.getByRole("button", { name: "Save on this device", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Guest draft saved" })).toBeVisible();
   await page.goto("/builds/new");
+  await selectEditorSlot(page, "Helmet", "Abilities");
   await expect(page.getByLabel("Helmet Active", { exact: true })).toHaveValue("Purge");
   await page.getByText("Import & export", { exact: true }).click();
   const download = page.waitForEvent("download");
@@ -45,7 +48,7 @@ test("archived traits, alternate spells and creator links survive an independent
   const saved = JSON.parse(readFileSync(path!, "utf8"));
   expect(saved.region).toBe("asia");
   expect(saved.equipmentSets).toHaveLength(3);
-  expect(saved.strategy).toContain("Archived awakening recommendations: cooldown-rate");
+  expect(saved.strategy).toContain("Author trait recommendations: cooldown-rate");
   expect(saved.strategy).toContain("https://www.youtube.com/watch?v=vtDHrCPH6c4");
   expect(saved.equipment.find((e: { slot: string }) => e.slot === "Helmet").itemId).toBe(
     "T8_HEAD_CLOTH_HELL",
@@ -81,7 +84,7 @@ test("archived alternative spell sets save behind normal account ownership and s
     await page.goto("/builds/new?from=battleaxe-mist-build&region=asia");
     await page.getByRole("button", { name: "Save build", exact: true }).click();
     await expect(page).toHaveURL(/\/builds\/[a-z0-9]+$/);
-    const buildId = page.url().split("/").pop()!;
+    const buildId = new URL(page.url()).pathname.split("/").pop()!;
     const saved = await db.build.findUniqueOrThrow({ where: { id: buildId } });
     expect(saved.authorId).toBe(id);
     expect(saved.visibility).toBe("PRIVATE");
@@ -89,7 +92,7 @@ test("archived alternative spell sets save behind normal account ownership and s
     expect(saved.equipmentSets).toHaveLength(3);
     expect((await outsider.request.get(`/api/builds/${buildId}`)).status()).toBe(404);
     await page.getByRole("link", { name: "Edit build", exact: true }).click();
-    await page.locator(".equipment-set-tools summary").click();
+    await selectEditorSlot(page, "Helmet", "Alternatives");
     await expect(page.locator(".saved-equipment-sets > article")).toHaveCount(3);
   } finally {
     await outsider.close();

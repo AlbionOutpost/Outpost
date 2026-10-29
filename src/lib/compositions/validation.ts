@@ -2,19 +2,8 @@ import { equipmentSets } from "../albion/equipment-sets";
 import { z } from "zod";
 import { regionSchema } from "../albion/region-config";
 import { equipmentChoice, validHandCombination } from "../albion/equipment-validation";
-export const roles = [
-  "Tank",
-  "Healer",
-  "Melee DPS",
-  "Ranged DPS",
-  "Support",
-  "Defensive support",
-  "Engage",
-  "Pierce",
-  "Caller",
-  "Scout",
-  "Custom",
-] as const;
+import { roles } from "./roles";
+export { roles } from "./roles";
 export { equipmentChoice } from "../albion/equipment-validation";
 export const memberSlot = z.object({
   equipmentSets,

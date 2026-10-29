@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
@@ -32,10 +33,12 @@ test("full sets persist in builds, copy into comps independently, and retain pri
     await page.goto("/builds/new");
     await page.getByLabel("Build title", { exact: true }).fill("Complete equipment set fixture");
     const tools = page.getByRole("region", { name: "Equipment sets and templates" });
-    await tools.locator("summary").click();
-    await page.getByRole("button", { name: "Apply template", exact: true }).click();
-    await expect(page.locator(".character-slot.equipped")).toHaveCount(10);
+    await selectEditorSlot(page, "Main hand", "Alternatives");
+    await page.getByRole("button", { name: "Use Battleaxe starting set", exact: true }).click();
+    await expect(page.locator(".inventory-equipment-slot.is-equipped")).toHaveCount(10);
+    await selectEditorSlot(page, "Main hand", "Abilities");
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Rending Spin");
+    await selectEditorSlot(page, "Main hand", "Alternatives");
     await page.getByRole("button", { name: "Choose alternative Main hand", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("5");
     await page.getByRole("button", { name: /^Equip Battleaxe/ }).click();
@@ -46,7 +49,7 @@ test("full sets persist in builds, copy into comps independently, and retain pri
     await expect(
       page.getByRole("heading", { name: "Complete equipment set fixture", exact: true }),
     ).toBeVisible();
-    const buildId = page.url().split("/").pop()!;
+    const buildId = new URL(page.url()).pathname.split("/").pop()!;
     const saved = await db.build.findUniqueOrThrow({
       where: { id: buildId },
       include: { equipment: true },
@@ -67,12 +70,9 @@ test("full sets persist in builds, copy into comps independently, and retain pri
       "Boss swap",
     );
     await page.getByRole("link", { name: "Edit build", exact: true }).click();
-    await page
-      .getByRole("region", { name: "Equipment sets and templates" })
-      .locator("summary")
-      .click();
+    await selectEditorSlot(page, "Main hand", "Alternatives");
     await expect(
-      page.getByRole("button", { name: "Apply Boss swap set", exact: true }),
+      page.getByRole("button", { name: "Apply set: Boss swap", exact: true }),
     ).toBeVisible();
     await page.goto("/compositions/new");
     await page.getByRole("button", { name: "Solo", exact: true }).click();
@@ -90,17 +90,15 @@ test("full sets persist in builds, copy into comps independently, and retain pri
     await expect(
       page.getByRole("heading", { name: "Comp equipment snapshots", exact: true }),
     ).toBeVisible();
-    const compId = page.url().split("/").pop()!;
+    await expect(page).toHaveURL(/\/compositions\/(?!new$)[^/]+$/);
+    const compId = new URL(page.url()).pathname.split("/").pop()!;
     const comp = await db.composition.findUniqueOrThrow({ where: { id: compId } });
     expect((comp.slots as { equipmentSets: unknown[] }[])[0].equipmentSets).toHaveLength(2);
     expect((await db.build.findUniqueOrThrow({ where: { id: buildId } })).equipmentSets).toEqual(
       saved.equipmentSets,
     );
     await page.goto(`/builds/${buildId}/edit`);
-    await page
-      .getByRole("region", { name: "Equipment sets and templates" })
-      .locator("summary")
-      .click();
+    await selectEditorSlot(page, "Main hand", "Alternatives");
     await mkdir(".qa/product-next/equipment", { recursive: true });
     for (const width of [1920, 1440, 768, 390, 375, 320]) {
       await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });

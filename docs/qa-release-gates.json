@@ -70,7 +70,7 @@
     {
       "id": "REL-014",
       "requirement": "UI-001",
-      "acceptance": "Global owner visual acceptance, full equipment-set layout and asset-dependent differences remain open."
+      "acceptance": "Builds discovery, inventory, full editing, named spare sets and composition integration are implemented and production-tested. Global owner visual acceptance, physical-device review, asset-dependent differences and broader product gaps remain open."
     },
     {
       "id": "REL-015",

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-28T23:20:43.728523+00:00",
+  "reviewed_at": "2026-10-29T00:46:15.473263+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -54,7 +54,7 @@
       "title": "Build equipment editor and persistence",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "7510 pinned-source equipment variants across all ten slots, source-listed spell selectors, quality, per-slot alternatives, up to five named full spare sets, starting templates, persistence/revisions and independent copying into comps. Two-handed weapons clear incompatible off hands with undo. Anonymous creation now supports validated device-local save/reload, import/export and real loadout preview. Recommended/alternative rows now use the equipment-led studio with direct spell controls and an overview. Account saves and protected API permissions remain. A seven-item archived Bloodmoon equipment example has no guessed spells. Tier-specific preview names now match item identities (T7 Roast Pork regression). Thirteen source-reviewed historical Bloodmoon spell choices and selected official spell icons are available; its template still selects no spells automatically. The October28 replacement uses compact equipment/spell rows, image-led browsing, adjacent alternatives and direct per-item settings. Recovered public builds become independent validated drafts;1195 explicit archived item-spell records provide11873 historical options. Original source slugs and authors are retained.",
+      "verified_scope": "7,510 pinned-source equipment variants across ten slots, historical ability choices, quality, per-item alternatives, three starting templates, up to five named spare sets and existing persistence/revisions. Builds now use a shared genuine spatial inventory board, selected-slot inspector and focused Equipment/Abilities/Alternatives/Notes editor. Alternative Equip filters incompatible abilities, handles two-handed/off-hand removal and Undo restores complete canonical equipment including raw notes. Save retry retains inputs; real409 conflicts retain exportable drafts. Owner/build/revision-scoped bounded document-memory recovery survives account SPA history without private browser storage, gates first edits until ready and clears on save/logout. Guest history unmounts flush only validated drafts. Source-library copies preserve supported equipment/skills/spares as independent drafts. Viewer quality assumptions, unknown abilities, missing/stale observations and source dates remain explicit. Current-patch mechanics and full metadata coverage remain separate.",
       "remaining": "Current-patch unlocks, full statistics and complete item coverage remain unverified. Narrow overview disclosure now passes regression; owner visual acceptance stays open.",
       "evidence": [
         "src/lib/builds/validation.ts",
@@ -71,7 +71,17 @@
         "src/components/build-equipment-studio.tsx",
         "e2e/grind-library.spec.ts",
         "docs/design-review/grind-recovery/README.md",
-        "docs/data/archived-item-spells-source.json"
+        "docs/data/archived-item-spells-source.json",
+        "src/components/inventory-equipment-board.tsx",
+        "src/components/build-detail-workspace.tsx",
+        "src/components/build-share-controls.tsx",
+        "e2e/build-detail-workspace.spec.ts",
+        "e2e/build-sharing.spec.ts",
+        "e2e/builds-system.spec.ts",
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "src/lib/account-build-drafts.ts",
+        "e2e/build-editor-recovery.spec.ts",
+        "e2e/build-composition.spec.ts"
       ]
     },
     {
@@ -136,13 +146,16 @@
       "title": "Persisted build and composition favorites",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Authorized favorite mutations, duplicate prevention, reload, visibility filtering and failed-request retry.",
+      "verified_scope": "Authorized favorite mutations, duplicate prevention, reload, visibility filtering and failed-request retry. Public library bookmarks and up to eight filter presets are validated, bounded and isolated per server on this device; signed-in build/comp favorites retain current visibility checks. My Builds owner-only menus duplicate privately, confirm deletion and preserve records on failed/cancelled deletion.",
       "remaining": "Market-item watchlists now have separate operational scope CORE-020.",
       "evidence": [
         "src/app/favorites/page.tsx",
         "src/lib/community/service.ts",
         "e2e/community.spec.ts",
-        "e2e/build-discovery-visual.spec.ts"
+        "e2e/build-discovery-visual.spec.ts",
+        "src/lib/build-device-collections.ts",
+        "src/components/build-card-owner-actions.tsx",
+        "e2e/builds-system.spec.ts"
       ]
     },
     {
@@ -621,7 +634,7 @@
       "title": "Current reference design acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "Current search refinement fixes nested field borders and responsive palette spacing, with pinned controls/footer, contained results scrolling and explicit Clear. Grow-and-hold motion, transparent navigation and fixed roster bounds remain. See docs/design-review/search-palette/README.md; owner acceptance remains open. The October28 follow-up corrects the inherited fixed-height article header, redundant production tabs and copied-build mobile setup density; original guide media, journal and fish workspaces receive six-width production review.",
+      "verified_scope": "The current navy/copper Builds ecosystem includes the populated public library, factual weapon/activity/tag filters, debounced URL search, grid/list cards, mobile drawer, owner account discovery, paginated account/device favorites and saved device filters. Inventory detail, readable abilities, alternatives, cost observations, PNG/clipboard sharing and focused full editing use existing records. Thirty-five production source/guest/account-fixture states at320/375/390/768/1024/1440/1920 and expanded390/1440 picker/alternative states are inspected. Final editor tabs account for the relative global header; full-height drawers and left-aligned rows are verified. Prior accepted homepage/search/navigation behavior remains. Owner visual acceptance, physical devices/screen readers, licensed scene differences and broader product gaps remain open.",
       "remaining": "Global owner visual acceptance, broader page-specific refinement and asset-dependent/current-patch differences remain open. Automated overflow/axe checks do not establish subjective visual completion.",
       "evidence": [
         "docs/design-review/README.md",
@@ -649,7 +662,15 @@
         "docs/design-review/motion-system/README.md",
         "e2e/motion-system.spec.ts",
         "docs/design-review/search-palette/README.md",
-        "docs/design-review/grind-recovery/README.md"
+        "docs/design-review/grind-recovery/README.md",
+        "docs/design-review/builds-system/README.md",
+        "src/app/builds-discovery.css",
+        "e2e/builds-system.spec.ts",
+        "docs/design-review/builds-system/detail.md",
+        "src/app/builds-detail.css",
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "src/app/builds-editor.css",
+        "src/components/build-device-collections.tsx"
       ]
     },
     {

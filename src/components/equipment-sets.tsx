@@ -8,16 +8,19 @@ import {
 } from "@/lib/albion/equipment-sets";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { EquipmentStrip } from "./equipment-strip";
+import { ItemIcon } from "./item-icon";
 export function EquipmentSets({
   equipment,
   sets,
   onEquipment,
   onSets,
+  expanded = false,
 }: {
   equipment: EquipmentChoice[];
   sets: EquipmentSet[];
   onEquipment: (rows: EquipmentChoice[]) => void;
   onSets: (sets: EquipmentSet[]) => void;
+  expanded?: boolean;
 }) {
   const [name, setName] = useState("");
   const [template, setTemplate] = useState("battleaxe");
@@ -35,36 +38,68 @@ export function EquipmentSets({
   }
   return (
     <section className="equipment-set-tools" aria-label="Equipment sets and templates">
-      <details>
+      <details open={expanded || undefined}>
         <summary>
           Templates & spare sets <span>{sets.length}/5 saved</span>
         </summary>
-        <div className="set-template-controls">
-          <label>
-            Starting template
-            <select value={template} onChange={(e) => setTemplate(e.target.value)}>
-              {loadoutTemplates.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() =>
-              restore({
-                id: crypto.randomUUID(),
-                name: loadoutTemplates.find((t) => t.id === template)!.name,
-                equipment: templateEquipment(template),
-              })
-            }
-          >
-            Apply template
-          </button>
-        </div>
-        <p className="muted">{loadoutTemplates.find((t) => t.id === template)?.description}</p>
+        {expanded && (
+          <div className="editor-template-browser" role="group" aria-label="Loadout templates">
+            {loadoutTemplates.map((item) => (
+              <article key={item.id}>
+                <div className="editor-template-art">
+                  {item.items.slice(0, 4).map(([slot, itemId]) => (
+                    <ItemIcon key={slot} id={itemId} size={42} />
+                  ))}
+                </div>
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() =>
+                    restore({
+                      id: crypto.randomUUID(),
+                      name: item.name,
+                      equipment: templateEquipment(item.id),
+                    })
+                  }
+                >
+                  Use {item.name}
+                </button>
+              </article>
+            ))}
+          </div>
+        )}
+        {!expanded && (
+          <>
+            <div className="set-template-controls">
+              <label>
+                Starting template
+                <select value={template} onChange={(e) => setTemplate(e.target.value)}>
+                  {loadoutTemplates.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() =>
+                  restore({
+                    id: crypto.randomUUID(),
+                    name: loadoutTemplates.find((t) => t.id === template)!.name,
+                    equipment: templateEquipment(template),
+                  })
+                }
+              >
+                Apply template
+              </button>
+            </div>
+            <p className="muted">{loadoutTemplates.find((t) => t.id === template)?.description}</p>
+          </>
+        )}
         <div className="set-template-controls">
           <label>
             Spare set name
@@ -102,7 +137,7 @@ export function EquipmentSets({
                   <button
                     type="button"
                     className="button secondary"
-                    aria-label={`Apply ${set.name} set`}
+                    aria-label={`Apply set: ${set.name}`}
                     onClick={() => restore(set)}
                   >
                     Apply set

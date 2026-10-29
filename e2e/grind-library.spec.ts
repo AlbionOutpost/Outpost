@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 test("recovered builds keep author, spells and swaps, and become independent validated guest drafts", async ({
@@ -10,7 +11,7 @@ test("recovered builds keep author, spells and swaps, and become independent val
     .first()
     .click();
   await expect(page.locator("h1")).toHaveText("Battleaxe Mist Build");
-  await expect(page.locator(".intro")).toContainText("Arreat Regaro");
+  await expect(page.locator(".detail-author-line")).toContainText("Arreat Regaro");
   await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Blood Bandit");
   for (const name of [
     "Mistcaller",
@@ -21,7 +22,7 @@ test("recovered builds keep author, spells and swaps, and become independent val
     "Roasted Puremist Snapper",
     "Major Gigantify Potion",
   ]) {
-    await expect(page.locator(".loadout-swaps").filter({ hasText: name })).toHaveCount(1);
+    await expect(page.locator(".detail-alternative-card").filter({ hasText: name })).toHaveCount(1);
   }
   await page.getByRole("link", { name: "Make this build yours", exact: true }).click();
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
@@ -34,12 +35,14 @@ test("recovered builds keep author, spells and swaps, and become independent val
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
     "Battleaxe Mist Build (copy)",
   );
+  await selectEditorSlot(page, "Helmet", "Alternatives");
   await page.getByRole("button", { name: "Choose alternative Helmet", exact: false }).click();
+  await page.getByLabel("Browse tier", { exact: true }).selectOption("4");
   await page.getByLabel("Search equipment", { exact: true }).fill("Scholar Cowl");
   await page.getByRole("button", { name: /^Equip Scholar Cowl/ }).click();
-  await expect(
-    page.getByRole("button", { name: "Choose alternative Helmet", exact: false }),
-  ).toContainText("Scholar Cowl");
+  await expect(page.getByLabel("Helmet alternative", { exact: true })).toHaveValue(
+    "T4_HEAD_CLOTH_SET1",
+  );
 });
 test("restored guides are readable documents and compositions retain every member position", async ({
   page,
@@ -157,12 +160,12 @@ test("restored libraries, reading pages and consumable tools reflow at narrow wi
     ).toEqual([]);
   }
   await page.goto("/builds/new?from=battleaxe-mist-build");
-  const toggle = page.getByRole("button", { name: "Show overview", exact: true });
-  await expect(toggle).toHaveAttribute("aria-expanded", "false");
-  await expect(page.locator(".studio-character-slots")).not.toBeVisible();
-  await toggle.click();
-  await expect(page.locator(".studio-character-slots")).toBeVisible();
+  const inventory = page.getByRole("group", { name: "Editor equipment inventory", exact: true });
+  await expect(inventory).toBeVisible();
+  await expect(inventory.getByRole("button")).toHaveCount(10);
+  await selectEditorSlot(page, "Helmet");
+  await expect(
+    page.getByRole("region", { name: "Selected equipment configuration" }),
+  ).toContainText("Helmet");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.getByRole("button", { name: "Hide overview", exact: true }).click();
-  await expect(page.locator(".studio-character-slots")).not.toBeVisible();
 });

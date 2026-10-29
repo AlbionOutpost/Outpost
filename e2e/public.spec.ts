@@ -77,18 +77,26 @@ test("theme and region survive reload, and desktop tool navigation supports Esca
   await page.reload();
   await expect(page.locator(".app")).toHaveClass(/light/);
   await chooseRegion(page, "asia");
-  await page.locator(".desktop-navigation summary").click();
+  await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
     .getByRole("link", { name: /^Market explorer City prices/ })
     .click();
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
-  const tools = page.locator(".desktop-navigation summary");
+  const tools = page.locator(".desktop-navigation summary").filter({ hasText: "Tools" });
   await tools.click();
   await page.getByRole("link", { name: /^Crafting Materials/ }).focus();
   await page.keyboard.press("Escape");
   await expect(tools).toBeFocused();
-  await expect(page.locator(".desktop-navigation details")).not.toHaveAttribute("open");
+  await expect(
+    page.locator(".desktop-navigation details").filter({ hasText: "Markets & calculators" }),
+  ).not.toHaveAttribute("open");
+  const more = page.locator(".more-dropdown > summary");
+  await more.click();
+  await expect(page.getByRole("link", { name: "My dashboard", exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(more).toBeFocused();
+  await expect(page.locator(".more-dropdown")).not.toHaveAttribute("open");
 });
 test("page policy uses per-request nonces and protected data is not publicly cached", async ({
   request,

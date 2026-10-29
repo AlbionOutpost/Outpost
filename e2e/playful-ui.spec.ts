@@ -41,7 +41,7 @@ test("equipment selection opens the real item, and the redesigned search and men
   await page.keyboard.press("Control+k");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
-  await page.locator(".desktop-navigation summary").click();
+  await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
   await item.click();

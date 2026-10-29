@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
@@ -29,24 +30,28 @@ test("verified equipment and ability choices persist, copy into comps and restor
     await page.goto("/builds/new");
     await page.getByLabel("Build title").fill("Verified ability loadout");
 
-    await page.getByRole("button", { name: "Item details", exact: true }).click();
-    await page.getByLabel("Main hand equipment", { exact: true }).selectOption("MAIN_AXE");
+    await selectEditorSlot(page, "Main hand");
+    await page.getByRole("button", { name: "Choose Main hand equipment", exact: false }).click();
+    await page.getByRole("button", { name: /^Equip Battleaxe\b/ }).click();
     await page.getByLabel("Main hand tier").selectOption("6");
     await page.getByLabel("Main hand quality", { exact: true }).selectOption("3");
     await page.getByLabel("Main hand E", { exact: true }).selectOption("Blood Bandit");
     await page.getByLabel("Main hand Passive", { exact: true }).selectOption("Deep Cuts");
+    await selectEditorSlot(page, "Main hand", "Alternatives");
     await page.getByRole("button", { name: "Choose alternative Main hand", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("5");
     await page.getByRole("button", { name: /^Equip Battleaxe/ }).click();
+    await selectEditorSlot(page, "Food");
     await page.getByRole("button", { name: "Choose Food equipment", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("8");
     await page.getByRole("button", { name: /^Equip Beef Stew\b/ }).click();
+    await selectEditorSlot(page, "Potion");
     await page.getByRole("button", { name: "Choose Potion equipment", exact: false }).click();
     await page.getByLabel("Browse tier", { exact: true }).selectOption("4");
     await page.getByRole("button", { name: /^Equip Healing Potion\b/ }).click();
     await page.getByRole("button", { name: "Save build", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Verified ability loadout" })).toBeVisible();
-    const buildId = page.url().split("/").pop()!;
+    const buildId = new URL(page.url()).pathname.split("/").pop()!;
     await page.reload();
     await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Blood Bandit");
     await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Deep Cuts");
@@ -79,7 +84,7 @@ test("verified equipment and ability choices persist, copy into comps and restor
     expect(await db.buildVersion.count({ where: { buildId } })).toBe(3);
     await page.getByRole("button", { name: "Duplicate build", exact: true }).click();
     await expect(page.getByLabel("Build title")).toHaveValue("Verified ability loadout (copy)");
-    const duplicateId = page.url().split("/").at(-2)!;
+    const duplicateId = new URL(page.url()).pathname.split("/").at(-2)!;
     expect(duplicateId).not.toBe(buildId);
     expect((await db.build.findUniqueOrThrow({ where: { id: duplicateId } })).visibility).toBe(
       "PRIVATE",

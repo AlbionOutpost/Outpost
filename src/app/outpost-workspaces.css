@@ -1,0 +1,551 @@
+/* Shared foundation for the inventory-led Outpost workspaces. Page layouts live with their feature. */
+.app.outpost:not(.light) {
+  --bg: #0b1016;
+  --sidebar: #080e14;
+  --panel: #101922;
+  --elevated: #15212b;
+  --surface-3: #1b2a36;
+  --border: #263542;
+  --premium-border: #263542;
+  --text: #f1f5f9;
+  --muted: #a8b4c0;
+  --text-muted: #a8b4c0;
+  --accent: #f9733a;
+  --accent-hover: #ff995f;
+  --accent-active: #dc5e28;
+  --accent-ink: #ff995f;
+  --accent-wash: #f9733a12;
+  --action: #f9733a;
+  --action-hover: #ff995f;
+  --brand-accent: #f9733a;
+  --premium-shadow: 0 2px 8px #00000018;
+}
+.app.outpost {
+  --build-bg: var(--bg);
+  --build-panel: var(--panel);
+  --build-raised: var(--elevated);
+  --build-border: var(--border);
+  --build-accent: var(--action);
+}
+.app.outpost.product-route .site-header,
+.app.outpost .site-header {
+  height: 64px;
+  min-height: 64px;
+  gap: 24px;
+  padding-inline: max(24px, calc((100vw - 1536px) / 2 + 24px));
+  background: var(--sidebar);
+  box-shadow: none;
+}
+.app.outpost .top-brand {
+  width: 130px;
+  min-width: 130px;
+  min-height: 44px;
+}
+.app.outpost .top-brand .outpost-wordmark {
+  width: 130px;
+}
+.app.outpost .desktop-navigation {
+  gap: 18px;
+  align-items: stretch;
+}
+.app.outpost .desktop-navigation > a,
+.app.outpost .desktop-navigation > .nav-dropdown > summary {
+  position: relative;
+  min-height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  font: 550 13px/1.4 var(--font-ui);
+  color: var(--muted);
+  box-shadow: none;
+  background: transparent;
+}
+.app.outpost .desktop-navigation > a:hover,
+.app.outpost .desktop-navigation > .nav-dropdown > summary:hover,
+.app.outpost .desktop-navigation > a[aria-current="page"],
+.app.outpost .desktop-navigation > .nav-dropdown.is-active > summary,
+.app.outpost .desktop-navigation > .nav-dropdown[open] > summary {
+  color: var(--accent-ink);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.app.outpost .desktop-navigation > a[aria-current="page"]::after,
+.app.outpost .desktop-navigation > .nav-dropdown.is-active > summary::after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  inset-inline: 0;
+  background: var(--action);
+  border-radius: 2px 2px 0 0;
+}
+.app.outpost .desktop-navigation > .nav-dropdown {
+  display: flex;
+  align-items: stretch;
+}
+.app.outpost .desktop-navigation > .nav-dropdown > summary > svg:first-child:not(:last-child) {
+  display: none;
+}
+.app.outpost .dropdown-panel {
+  background: var(--panel);
+  border-color: var(--border);
+}
+.app.outpost .header-actions {
+  gap: 10px;
+}
+.app.outpost .site-header .search-trigger {
+  width: 225px;
+  background: var(--panel);
+  border-radius: 5px;
+}
+.app.outpost .site-header .search-shortcut {
+  min-width: 0;
+  gap: 8px;
+}
+.app.outpost .site-header .search-shortcut > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .site-header .search-shortcut kbd {
+  display: inline;
+  flex: none;
+}
+.app.outpost .site-header .account-dropdown > summary {
+  min-height: 38px;
+  max-width: 160px;
+}
+.app.outpost .account-dropdown > summary > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+.app.outpost .account-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex: none;
+}
+.app.outpost .button.primary {
+  color: #19100a;
+  background: var(--action);
+}
+.app.outpost .button.primary:hover {
+  background: var(--action-hover);
+}
+.app.outpost .button.secondary {
+  background: var(--panel);
+}
+.app.outpost .product-frame > main {
+  padding-top: 24px;
+}
+@media (max-width: 1350px) and (min-width: 1101px) {
+  .app.outpost.product-route .site-header,
+  .app.outpost .site-header {
+    gap: 18px;
+  }
+  .app.outpost .desktop-navigation {
+    gap: 14px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 36px;
+    padding: 8px;
+    border: 0;
+    background: transparent;
+  }
+  .app.outpost .site-header .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost.product-route .site-header,
+  .app.outpost .site-header {
+    height: 60px;
+    min-height: 60px;
+    padding-inline: 20px;
+    gap: 12px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 36px;
+    padding: 8px;
+    background: transparent;
+    border: 0;
+  }
+  .app.outpost .site-header .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost.product-route .site-header,
+  .app.outpost .site-header {
+    height: 56px;
+    min-height: 56px;
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .app.outpost .top-brand {
+    width: 108px;
+    min-width: 108px;
+  }
+  .app.outpost .top-brand .outpost-wordmark {
+    width: 108px;
+  }
+  .app.outpost .header-actions {
+    gap: 4px;
+  }
+  .app.outpost .account-dropdown > summary > span {
+    display: none;
+  }
+  .app.outpost .product-frame > main {
+    padding: 16px 12px;
+  }
+}
+.app.outpost .filter-drawer-heading,
+.app.outpost .filter-drawer-backdrop {
+  display: none;
+}
+.device-favorites-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.device-favorites-controls > label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.device-favorites-controls > label:first-child {
+  flex: 1 1 230px;
+}
+.device-favorites-controls > label:nth-child(2) {
+  flex: 0 1 190px;
+}
+.device-favorites-controls .actions {
+  margin: 0;
+}
+.device-favorites-controls button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.device-favorites-count {
+  font-size: 12px;
+  color: var(--muted);
+}
+.device-favorites-empty-note {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ecosystem-favorites-page .collection-empty {
+  min-height: 0;
+  padding: 20px;
+}
+.device-favorites-grid.is-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+.device-favorites-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .app.outpost .filter-drawer .mobile-filter-trigger {
+    display: flex;
+  }
+  .app.outpost .filter-drawer:not(.expanded) .mobile-filter-content {
+    display: none;
+  }
+  .app.outpost .filter-drawer .ecosystem-filter-form {
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+  .app.outpost .filter-drawer.expanded .mobile-filter-content {
+    display: block;
+    position: fixed;
+    z-index: 151;
+    inset: 0 0 0 auto;
+    width: min(100%, 420px);
+    height: 100dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0 20px 24px;
+    border-left: 1px solid var(--border);
+    border-radius: 0;
+    background: var(--panel);
+    box-shadow: -12px 0 40px #0004;
+  }
+  .app.outpost .filter-drawer .filter-drawer-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    min-height: 64px;
+    margin: 0 0 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .app.outpost .filter-drawer-heading h2 {
+    margin: 0;
+    font: 650 18px/1.4 var(--font-ui);
+  }
+  .app.outpost .filter-drawer-heading button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: var(--text);
+  }
+  .app.outpost .filter-drawer-backdrop {
+    display: block;
+    position: fixed;
+    z-index: 150;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    background: #0009;
+  }
+}
+.app.outpost .build-card-owner-actions {
+  position: relative;
+  flex: none;
+}
+.app.outpost .build-card-owner-actions > summary {
+  list-style: none;
+  display: grid;
+  place-items: center;
+  min-height: 32px;
+  width: 32px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.app.outpost .build-card-owner-actions > summary::-webkit-details-marker {
+  display: none;
+}
+.app.outpost .build-card-owner-actions > summary:hover,
+.app.outpost .build-card-owner-actions[open] > summary {
+  color: var(--accent-ink);
+  border-color: var(--border);
+}
+.app.outpost .build-owner-menu {
+  position: absolute;
+  z-index: 15;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: min(260px, 75vw);
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  box-shadow: 0 8px 24px #0005;
+}
+.app.outpost .build-owner-menu > :is(a, button) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  font: 550 12px/1.4 var(--font-ui);
+  text-align: left;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+}
+.app.outpost .build-owner-menu > :is(a, button):hover {
+  background: var(--panel);
+}
+.app.outpost .build-owner-menu > .build-delete-action {
+  color: var(--error);
+}
+.app.outpost .build-owner-menu p {
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.app.outpost.light .button.primary {
+  color: #fff;
+}
+.app.outpost .library-comp-members > section {
+  min-width: 0;
+}
+.app.outpost .library-member-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.app.outpost .build-card-owner-actions {
+  z-index: 3;
+}
+.app.outpost .ecosystem-title-link {
+  min-height: 24px;
+}
+
+.app.outpost .ecosystem-build-card :is(.library-build-equipment > span, .strip-slot) {
+  position: relative;
+  z-index: 2;
+}
+.app.outpost .build-share-control {
+  position: relative;
+}
+.app.outpost .build-share-control summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  list-style: none;
+  cursor: pointer;
+}
+.app.outpost .build-share-control summary::-webkit-details-marker {
+  display: none;
+}
+.app.outpost .build-share-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  min-width: 185px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  box-shadow: 0 8px 24px #0005;
+}
+.app.outpost .build-share-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font-size: 12px;
+}
+.app.outpost .build-share-menu button:hover {
+  background: var(--panel);
+  color: var(--accent-ink);
+}
+.app.outpost .build-share-status:empty {
+  display: none;
+}
+.app.outpost .build-share-status:not(:empty) {
+  position: fixed;
+  z-index: 220;
+  right: 16px;
+  bottom: 16px;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  color: var(--text);
+  box-shadow: 0 8px 24px #0005;
+  font: 500 13px/1.5 var(--font-ui);
+}
+.app.outpost .account-dropdown .dropdown-panel > .button {
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 5px;
+}
+.app.outpost .detail-alternative-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  margin: 0 0 16px;
+  padding-bottom: 2px;
+}
+.app.outpost .detail-alternative-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 4px 4px 0 0;
+  color: var(--muted);
+  background: transparent;
+  font: 550 12px/1.4 var(--font-ui);
+}
+.app.outpost .detail-alternative-tabs button[aria-selected="true"] {
+  color: var(--accent-ink);
+  border-bottom-color: var(--action);
+  background: var(--accent-wash);
+}
+.app.outpost .detail-alternative-tabs button > span {
+  font-family: var(--font-data);
+  font-size: 12px;
+}
+.app.outpost .detail-alternative-groups > section[hidden] {
+  display: none;
+}
+.build-duplicate-control > p {
+  max-width: 32ch;
+  font-size: 12px;
+  color: var(--error);
+}
+@media (max-width: 700px) {
+  .app.outpost .detail-header-actions {
+    flex-wrap: wrap;
+  }
+  .app.outpost .detail-header-actions .build-duplicate-control .button.primary {
+    font-size: 12px;
+    min-height: 38px;
+    padding: 9px 12px;
+  }
+}
+.app.outpost .detail-title-row .page-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.app.outpost .detail-title-row > img {
+  flex: none;
+}
+.app.outpost .detail-author-line > span {
+  min-width: 0;
+  max-width: 100%;
+}
+.app.outpost .detail-author-line a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.app.outpost .detail-hero-tags > span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.detail-related-builds {
+  margin-top: 24px;
+}
+.detail-related-builds .ecosystem-section-heading {
+  align-items: center;
+}
+.app.outpost .detail-slot-list > div > .text-link {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}

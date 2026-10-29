@@ -39,7 +39,8 @@ it("makes supported alternative abilities into independent private spare sets wi
     itemId: "T8_HEAD_CLOTH_HELL",
     abilities: { Active: "Purge" },
   });
-  expect(draft.strategy).toContain("Archived awakening recommendations: cooldown-rate");
+  expect(draft.strategy).toContain("Author trait recommendations: cooldown-rate");
+  expect(draft.description).not.toMatch(/grind|imported|archived/i);
   expect(draft.strategy).toContain("https://www.youtube.com/watch?v=vtDHrCPH6c4");
   draft.equipment.find((e) => e.slot === "Main hand")!.abilitySelections.E = "changed";
   expect(

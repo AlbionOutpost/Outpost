@@ -2,6 +2,7 @@ import { createElement, type ReactNode } from "react";
 import type { GuideNode } from "@/lib/grind-library-types";
 import Image from "next/image";
 import { ItemIcon } from "./item-icon";
+import { brandCopy } from "@/lib/brand-copy";
 
 const allowed = new Set([
   "p",
@@ -68,11 +69,7 @@ export function safeGuideHref(value?: string) {
 }
 export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
   function render(node: GuideNode, key: number): ReactNode {
-    if (typeof node === "string")
-      return node.replace(
-        /(?:Albion\s*Online\s*Grind|AlbionOnlineGrind|AlbionUtil)(?:\.com)?/gi,
-        "Outpost",
-      );
+    if (typeof node === "string") return brandCopy(node);
     if (node.tag === "item" && /^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(node.id || ""))
       return <ItemIcon key={key} id={node.id!} size={48} />;
     if (
@@ -88,7 +85,7 @@ export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
           key={key}
           unoptimized
           src={node.src!}
-          alt={node.alt || ""}
+          alt={brandCopy(node.alt || "")}
           width={node.width!}
           height={node.height!}
           className="guide-article-image"

@@ -1,5 +1,7 @@
 # Current Outpost visual reviews
 
+Active implementation: [complete Builds ecosystem](builds-system/README.md), following the new owner-supplied library/detail reference. Baselines captured; redesign and acceptance checks in progress.
+
 Latest pricing workflow: [quality discovery, historical loadout estimates and contribution guide](market-reliability/README.md). Explicit identities and source dates stay visible; all six widths are reviewed.
 
 Latest product correction: [transport feedback, shopping alignment and tablet crafting spacing](product-review/README.md), with the owner-requested accounting audit.

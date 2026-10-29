@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { test, expect } from "@playwright/test";
 test("guest can edit, preview, save, restore and export a build without gaining account write access", async ({
   page,
@@ -7,8 +8,10 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   await expect(page).toHaveURL(/\/builds\/new$/);
   await page.getByRole("button", { name: "Load example equipment", exact: true }).click();
   await page.getByLabel("Build title", { exact: true }).fill("Guest equipment test");
+  await selectEditorSlot(page, "Helmet");
   await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();
   await page.getByRole("button", { name: /^Equip Mercenary Hood/ }).click();
+  await selectEditorSlot(page, "Helmet", "Alternatives");
   await page.getByRole("button", { name: "Choose alternative Helmet", exact: false }).click();
   await page.getByRole("button", { name: /^Equip Scholar Cowl/ }).click();
   await page.getByRole("button", { name: "Save on this device", exact: true }).click();
@@ -28,9 +31,10 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   expect(denied.status()).toBe(401);
   await page.reload();
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue("Guest equipment test");
+  await selectEditorSlot(page, "Helmet");
   await expect(
     page.getByRole("button", { name: "Choose Helmet equipment", exact: false }),
-  ).toContainText("Mercenary Hood");
+  ).toHaveAccessibleName(/Mercenary Hood/);
   await page.getByRole("button", { name: "Preview build", exact: true }).click();
   const preview = page.getByRole("dialog", { name: "Build preview", exact: true });
   await expect(
@@ -49,6 +53,12 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   });
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue("Guest equipment test");
   const tieredFood = structuredClone(stored);
+  await expect(page.locator(".focused-build-editor").getByRole("alert")).toContainText(
+    "Choose a valid Outpost build JSON file",
+  );
+  await expect(page.locator(".focused-build-editor").getByRole("alert")).not.toContainText(
+    '"path"',
+  );
   tieredFood.equipment.find((row: { slot: string }) => row.slot === "Food").itemId =
     "T7_MEAL_ROAST";
   await page.getByLabel("Import build JSON", { exact: true }).setInputFiles({
@@ -56,12 +66,15 @@ test("guest can edit, preview, save, restore and export a build without gaining 
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(tieredFood)),
   });
+  await selectEditorSlot(page, "Food");
   await expect(
     page.getByRole("button", { name: "Choose Food equipment", exact: false }),
-  ).toContainText("Roast Pork");
+  ).toHaveAccessibleName(/Roast Pork/);
+  await selectEditorSlot(page, "Main hand");
   await page.getByRole("button", { name: "Choose Main hand equipment", exact: false }).click();
   await page.getByLabel("Search equipment", { exact: true }).fill("Bloodmoon");
   await page.getByRole("button", { name: /^Equip Bloodmoon Staff/ }).click();
+  await selectEditorSlot(page, "Main hand", "Abilities");
   await page.getByLabel("Main hand Q", { exact: true }).selectOption("Reality Fissure");
   await expect(page.getByLabel("Main hand Q", { exact: true })).toHaveValue("Reality Fissure");
   await page.getByLabel("Main hand E", { exact: true }).selectOption("Werewolf Transformation");
@@ -92,6 +105,39 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   } finally {
     await isolated.close();
   }
+  await page.getByLabel("Build title", { exact: true }).fill("Guest navigation recovery");
+  await page.locator(".editor-backline").getByRole("link", { name: "Builds", exact: true }).click();
+  await expect(page).toHaveURL(/\/builds$/);
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
+  ).toBe("Guest navigation recovery");
+  await page.getByRole("link", { name: "Create a build", exact: true }).click();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Guest navigation recovery",
+  );
+  await page.getByLabel("Build title", { exact: true }).fill("Guest immediate history recovery");
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
+  ).toBe("Guest navigation recovery");
+  await page.goBack();
+  await expect(page).toHaveURL(/\/builds$/);
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
+  ).toBe("Guest immediate history recovery");
+  await page.goForward();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Guest immediate history recovery",
+  );
+  await page.getByLabel("Build title", { exact: true }).fill("x");
+  await page.goBack();
+  await expect(page).toHaveURL(/\/builds$/);
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
+  ).toBe("Guest immediate history recovery");
+  await page.goForward();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Guest immediate history recovery",
+  );
   for (const width of [320, 390, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

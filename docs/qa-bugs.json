@@ -1056,6 +1056,115 @@
         "docs/engineering/reviews/2026-10-28-price-coverage.md",
         "docs/engineering/reviews/2026-10-28-calculator-followup.md"
       ]
+    },
+    {
+      "id": "QA-074",
+      "title": "Detail gear price link misses minimum touch target",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open an account build with one main hand at375px and run target-size checks.",
+      "expected": "The selected gear comparison link is at least24px high.",
+      "current": "The price link now has a32px minimum target height.",
+      "historical_cause": "The redesigned compact row used text line height only (18.6px).",
+      "historical_files": "src/app/builds-detail.css; src/app/outpost-workspaces.css",
+      "verification": "Initial detail full phase112/113 failed; final293unit/113browser gate passes after the32px correction.",
+      "evidence": ["e2e/qa-audit.spec.ts", "docs/design-review/builds-system/detail.md"]
+    },
+    {
+      "id": "QA-075",
+      "title": "Account browser history can silently discard an unsaved build",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Create/save a build, open Edit, immediately change its title, then browser Back/Forward.",
+      "expected": "The unsaved title and original revision token survive SPA navigation.",
+      "current": "Account controls wait for recovery readiness; committed memory snapshots and lease-checked unmount recovery retain the draft without browser storage.",
+      "historical_cause": "The first-frame deferred readiness skipped the passive memory writer, especially after create/save navigation.",
+      "historical_files": "src/components/build-editor.tsx; src/lib/account-build-drafts.ts",
+      "verification": "Exact production failure reproduced; unchanged immediate history, conflict and logout assertions pass in the final334unit/118browser phase.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md"
+      ]
+    },
+    {
+      "id": "QA-076",
+      "title": "Composition member dialog siblings reuse one React key",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open an initialized composition member and change its notes or copied equipment.",
+      "expected": "Spare sets and equipment controls retain distinct component identities.",
+      "current": "Sibling keys are independently prefixed for sets and equipment.",
+      "historical_cause": "Both sibling components used selected.id as the same key.",
+      "historical_files": "src/components/composition-editor.tsx",
+      "verification": "Browser copy/notes journey asserts no duplicate-key console errors and validates exact bounded notes after copy.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md"
+      ]
+    },
+    {
+      "id": "QA-077",
+      "title": "Immediate guest browser history can cancel the autosave debounce",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Edit a valid guest title and immediately navigate Back before700ms.",
+      "expected": "The valid latest draft survives; invalid intermediate input does not replace the last valid stored draft.",
+      "current": "A guest-only unmount flush validates the latest committed draft after restoration readiness.",
+      "historical_cause": "SPA unmount cleared the debounce timer before it persisted the latest edit.",
+      "historical_files": "src/components/build-editor.tsx",
+      "verification": "Existing guest browser journey now verifies immediate Back/Forward and invalid-draft preservation in the final production phase.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md"
+      ]
+    },
+    {
+      "id": "QA-078",
+      "title": "Favorite build collection uses an invalid unnamed generic role",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open account Favorites and run the page accessibility checks.",
+      "expected": "A labelled collection has a valid role.",
+      "current": "Favorite player builds now have a labelled group role.",
+      "historical_cause": "The new account grid had aria-label on a generic div.",
+      "historical_files": "src/app/favorites/page.tsx",
+      "verification": "Initial phase116/118 exposed the violation; final334unit/118browser phase and full responsive page audit pass.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md"
+      ]
+    },
+    {
+      "id": "QA-079",
+      "title": "Editor mobile tabs and picker inherit incorrect scroll and surface styling",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Scroll from the mobile equipment board to Alternatives or open the picker.",
+      "expected": "Tabs sit at the viewport top after the header scrolls away; the picker fills the viewport with aligned labels.",
+      "current": "Tabs use top0, inspector margin64; the drawer resets native sizing and clip animation and aligns heading/row text.",
+      "historical_cause": "Tab offsets assumed a sticky header and global surface animation/heading/text rules overrode drawer intent.",
+      "historical_files": "src/app/builds-editor.css",
+      "verification": "Final rebuilt-production390/1440 captures, actual geometry, sampled axe and responsive browser assertions pass; defective captures are retained.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md"
+      ]
+    },
+    {
+      "id": "QA-080",
+      "title": "Discovery callback transactions fail across the Cloudflare web RPC boundary",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Open account discovery or favorites in the native Cloudflare application runtime.",
+      "expected": "Count and page rows execute atomically inside the approved private database service.",
+      "current": "Validated named discovery/favorites services execute complete count/row queries inside the approved private DO transaction. Node keeps RepeatableRead; stored JSON and Date values are preserved.",
+      "historical_cause": "Node callback transactions worked locally; the web RPC driver correctly rejected interactive callbacks, which had not been exercised by raw native-query parity.",
+      "historical_files": "src/lib/builds/discovery-service.ts; cloudflare/database/context.ts; cloudflare/database/services.ts",
+      "verification": "The initial native web suite107/118 failed. After the service-boundary correction335 Node units,118 Node browser cases,20 native database cases and the complete118-case Cloudflare browser suite pass. The web transaction guard remains unchanged.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "scripts/qa-cloudflare-database.mjs"
+      ]
     }
   ]
 }

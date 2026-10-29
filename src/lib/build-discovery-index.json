@@ -1,0 +1,1322 @@
+{
+  "sourceSha256": "155d3fce8602a3d89c732809874a4967d9f654fc862f5f4e04684bfca233e86c",
+  "total": 10770,
+  "families": [
+    {
+      "id": "arcanestaff",
+      "name": "Arcane Staffs",
+      "count": 645
+    },
+    {
+      "id": "axe",
+      "name": "Axes",
+      "count": 734
+    },
+    {
+      "id": "bow",
+      "name": "Bows",
+      "count": 1002
+    },
+    {
+      "id": "crossbow",
+      "name": "Crossbows",
+      "count": 351
+    },
+    {
+      "id": "cursestaff",
+      "name": "Cursed Staffs",
+      "count": 919
+    },
+    {
+      "id": "dagger",
+      "name": "Daggers",
+      "count": 430
+    },
+    {
+      "id": "firestaff",
+      "name": "Fire Staffs",
+      "count": 770
+    },
+    {
+      "id": "froststaff",
+      "name": "Frost Staffs",
+      "count": 571
+    },
+    {
+      "id": "hammer",
+      "name": "Hammers",
+      "count": 572
+    },
+    {
+      "id": "holystaff",
+      "name": "Holy Staffs",
+      "count": 1202
+    },
+    {
+      "id": "mace",
+      "name": "Maces",
+      "count": 1186
+    },
+    {
+      "id": "naturestaff",
+      "name": "Nature Staffs",
+      "count": 439
+    },
+    {
+      "id": "quarterstaff",
+      "name": "Quarterstaffs",
+      "count": 235
+    },
+    {
+      "id": "shapeshifterstaff",
+      "name": "Shapeshifter Staffs",
+      "count": 655
+    },
+    {
+      "id": "spear",
+      "name": "Spears",
+      "count": 352
+    },
+    {
+      "id": "sword",
+      "name": "Swords",
+      "count": 363
+    },
+    {
+      "id": "knuckles",
+      "name": "War Gloves",
+      "count": 344
+    }
+  ],
+  "weapons": [
+    {
+      "name": "Arcane Staff",
+      "code": "MAIN_ARCANESTAFF",
+      "family": "arcanestaff",
+      "itemId": "T8_MAIN_ARCANESTAFF",
+      "count": 61
+    },
+    {
+      "name": "Arclight Blasters",
+      "code": "2H_DUALCROSSBOW_CRYSTAL",
+      "family": "crossbow",
+      "itemId": "T8_2H_DUALCROSSBOW_CRYSTAL",
+      "count": 25
+    },
+    {
+      "name": "Arctic Staff",
+      "code": "2H_FROSTSTAFF_CRYSTAL",
+      "family": "froststaff",
+      "itemId": "T8_2H_FROSTSTAFF_CRYSTAL",
+      "count": 92
+    },
+    {
+      "name": "Astral Staff",
+      "code": "2H_ARCANESTAFF_CRYSTAL",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ARCANESTAFF_CRYSTAL",
+      "count": 86
+    },
+    {
+      "name": "Battle Bracers",
+      "code": "2H_KNUCKLES_SET2",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_SET2",
+      "count": 54
+    },
+    {
+      "name": "Battleaxe",
+      "code": "MAIN_AXE",
+      "family": "axe",
+      "itemId": "T8_MAIN_AXE",
+      "count": 66
+    },
+    {
+      "name": "Bear Paws",
+      "code": "2H_DUALAXE_KEEPER",
+      "family": "axe",
+      "itemId": "T8_2H_DUALAXE_KEEPER",
+      "count": 113
+    },
+    {
+      "name": "Bedrock Mace",
+      "code": "MAIN_ROCKMACE_KEEPER",
+      "family": "mace",
+      "itemId": "T8_MAIN_ROCKMACE_KEEPER",
+      "count": 84
+    },
+    {
+      "name": "Black Monk Staff",
+      "code": "2H_COMBATSTAFF_MORGANA",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_COMBATSTAFF_MORGANA",
+      "count": 8
+    },
+    {
+      "name": "Black Monk Stave",
+      "code": "2H_COMBATSTAFF_MORGANA",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_COMBATSTAFF_MORGANA",
+      "count": 41
+    },
+    {
+      "name": "Blazing Staff",
+      "code": "2H_INFERNOSTAFF_MORGANA",
+      "family": "firestaff",
+      "itemId": "T8_2H_INFERNOSTAFF_MORGANA",
+      "count": 367
+    },
+    {
+      "name": "Blight Staff",
+      "code": "2H_NATURESTAFF_HELL",
+      "family": "naturestaff",
+      "itemId": "T8_2H_NATURESTAFF_HELL",
+      "count": 163
+    },
+    {
+      "name": "Bloodletter",
+      "code": "MAIN_RAPIER_MORGANA",
+      "family": "dagger",
+      "itemId": "T8_MAIN_RAPIER_MORGANA",
+      "count": 119
+    },
+    {
+      "name": "Bloodmoon Staff",
+      "code": "2H_SHAPESHIFTER_MORGANA",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_MORGANA",
+      "count": 55
+    },
+    {
+      "name": "Boltcasters",
+      "code": "2H_DUALCROSSBOW_HELL",
+      "family": "crossbow",
+      "itemId": "T8_2H_DUALCROSSBOW_HELL",
+      "count": 48
+    },
+    {
+      "name": "Bow",
+      "code": "2H_BOW",
+      "family": "bow",
+      "itemId": "T8_2H_BOW",
+      "count": 56
+    },
+    {
+      "name": "Bow of Badon",
+      "code": "2H_BOW_KEEPER",
+      "family": "bow",
+      "itemId": "T8_2H_BOW_KEEPER",
+      "count": 233
+    },
+    {
+      "name": "Brawler Gloves",
+      "code": "2H_KNUCKLES_SET1",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_SET1",
+      "count": 10
+    },
+    {
+      "name": "Bridled Fury",
+      "code": "2H_DAGGER_KATAR_AVALON",
+      "family": "dagger",
+      "itemId": "T8_2H_DAGGER_KATAR_AVALON",
+      "count": 16
+    },
+    {
+      "name": "Brimstone Staff",
+      "code": "2H_FIRESTAFF_HELL",
+      "family": "firestaff",
+      "itemId": "T8_2H_FIRESTAFF_HELL",
+      "count": 30
+    },
+    {
+      "name": "Broadsword",
+      "code": "MAIN_SWORD",
+      "family": "sword",
+      "itemId": "T8_MAIN_SWORD",
+      "count": 16
+    },
+    {
+      "name": "Camlann Mace",
+      "code": "2H_MACE_MORGANA",
+      "family": "mace",
+      "itemId": "T8_2H_MACE_MORGANA",
+      "count": 14
+    },
+    {
+      "name": "Carrioncaller",
+      "code": "2H_HALBERD_MORGANA",
+      "family": "axe",
+      "itemId": "T8_2H_HALBERD_MORGANA",
+      "count": 76
+    },
+    {
+      "name": "Carving Sword",
+      "code": "2H_CLEAVER_HELL",
+      "family": "sword",
+      "itemId": "T8_2H_CLEAVER_HELL",
+      "count": 152
+    },
+    {
+      "name": "Chillhowl",
+      "code": "MAIN_FROSTSTAFF_AVALON",
+      "family": "froststaff",
+      "itemId": "T8_MAIN_FROSTSTAFF_AVALON",
+      "count": 58
+    },
+    {
+      "name": "Clarent Blade",
+      "code": "MAIN_SCIMITAR_MORGANA",
+      "family": "sword",
+      "itemId": "T8_MAIN_SCIMITAR_MORGANA",
+      "count": 18
+    },
+    {
+      "name": "Claws",
+      "code": "2H_CLAWPAIR",
+      "family": "dagger",
+      "itemId": "T8_2H_CLAWPAIR",
+      "count": 36
+    },
+    {
+      "name": "Claymore",
+      "code": "2H_CLAYMORE",
+      "family": "sword",
+      "itemId": "T8_2H_CLAYMORE",
+      "count": 16
+    },
+    {
+      "name": "Crossbow",
+      "code": "2H_CROSSBOW",
+      "family": "crossbow",
+      "itemId": "T8_2H_CROSSBOW",
+      "count": 15
+    },
+    {
+      "name": "Crystal Reaper",
+      "code": "2H_SCYTHE_CRYSTAL",
+      "family": "axe",
+      "itemId": "T8_2H_SCYTHE_CRYSTAL",
+      "count": 103
+    },
+    {
+      "name": "Cursed Skull",
+      "code": "2H_SKULLORB_HELL",
+      "family": "cursestaff",
+      "itemId": "T8_2H_SKULLORB_HELL",
+      "count": 29
+    },
+    {
+      "name": "Cursed Staff",
+      "code": "MAIN_CURSEDSTAFF",
+      "family": "cursestaff",
+      "itemId": "T8_MAIN_CURSEDSTAFF",
+      "count": 64
+    },
+    {
+      "name": "Dagger",
+      "code": "MAIN_DAGGER",
+      "family": "dagger",
+      "itemId": "T8_MAIN_DAGGER",
+      "count": 50
+    },
+    {
+      "name": "Dagger Pair",
+      "code": "2H_DAGGERPAIR",
+      "family": "dagger",
+      "itemId": "T8_2H_DAGGERPAIR",
+      "count": 96
+    },
+    {
+      "name": "Damnation Staff",
+      "code": "2H_CURSEDSTAFF_MORGANA",
+      "family": "cursestaff",
+      "itemId": "T8_2H_CURSEDSTAFF_MORGANA",
+      "count": 56
+    },
+    {
+      "name": "Dawnsong",
+      "code": "2H_FIRE_RINGPAIR_AVALON",
+      "family": "firestaff",
+      "itemId": "T8_2H_FIRE_RINGPAIR_AVALON",
+      "count": 233
+    },
+    {
+      "name": "Daybreaker",
+      "code": "MAIN_SPEAR_LANCE_AVALON",
+      "family": "spear",
+      "itemId": "T8_MAIN_SPEAR_LANCE_AVALON",
+      "count": 33
+    },
+    {
+      "name": "Deathgivers",
+      "code": "2H_DUALSICKLE_UNDEAD",
+      "family": "dagger",
+      "itemId": "T8_2H_DUALSICKLE_UNDEAD",
+      "count": 46
+    },
+    {
+      "name": "Demonfang",
+      "code": "MAIN_DAGGER_HELL",
+      "family": "dagger",
+      "itemId": "T8_MAIN_DAGGER_HELL",
+      "count": 43
+    },
+    {
+      "name": "Demonic Staff",
+      "code": "2H_DEMONICSTAFF",
+      "family": "cursestaff",
+      "itemId": "T8_2H_DEMONICSTAFF",
+      "count": 23
+    },
+    {
+      "name": "Divine Staff",
+      "code": "2H_DIVINESTAFF",
+      "family": "holystaff",
+      "itemId": "T8_2H_DIVINESTAFF",
+      "count": 20
+    },
+    {
+      "name": "Double Bladed Staff",
+      "code": "2H_DOUBLEBLADEDSTAFF",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_DOUBLEBLADEDSTAFF",
+      "count": 33
+    },
+    {
+      "name": "Dreadstorm Monarch",
+      "code": "MAIN_MACE_CRYSTAL",
+      "family": "mace",
+      "itemId": "T8_MAIN_MACE_CRYSTAL",
+      "count": 62
+    },
+    {
+      "name": "Druidic Staff",
+      "code": "MAIN_NATURESTAFF_KEEPER",
+      "family": "naturestaff",
+      "itemId": "T8_MAIN_NATURESTAFF_KEEPER",
+      "count": 20
+    },
+    {
+      "name": "Dual Swords",
+      "code": "2H_DUALSWORD",
+      "family": "sword",
+      "itemId": "T8_2H_DUALSWORD",
+      "count": 52
+    },
+    {
+      "name": "Earthrune Staff",
+      "code": "2H_SHAPESHIFTER_KEEPER",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_KEEPER",
+      "count": 115
+    },
+    {
+      "name": "Energy Shaper",
+      "code": "2H_CROSSBOW_CANNON_AVALON",
+      "family": "crossbow",
+      "itemId": "T8_2H_CROSSBOW_CANNON_AVALON",
+      "count": 80
+    },
+    {
+      "name": "Enigmatic Staff",
+      "code": "2H_ENIGMATICSTAFF",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ENIGMATICSTAFF",
+      "count": 93
+    },
+    {
+      "name": "Evensong",
+      "code": "2H_ARCANE_RINGPAIR_AVALON",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ARCANE_RINGPAIR_AVALON",
+      "count": 23
+    },
+    {
+      "name": "Exalted Staff",
+      "code": "2H_HOLYSTAFF_CRYSTAL",
+      "family": "holystaff",
+      "itemId": "T8_2H_HOLYSTAFF_CRYSTAL",
+      "count": 26
+    },
+    {
+      "name": "Fallen Staff",
+      "code": "2H_HOLYSTAFF_HELL",
+      "family": "holystaff",
+      "itemId": "T8_2H_HOLYSTAFF_HELL",
+      "count": 169
+    },
+    {
+      "name": "Fire Staff",
+      "code": "MAIN_FIRESTAFF",
+      "family": "firestaff",
+      "itemId": "T8_MAIN_FIRESTAFF",
+      "count": 59
+    },
+    {
+      "name": "Fists of Avalon",
+      "code": "2H_KNUCKLES_AVALON",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_AVALON",
+      "count": 39
+    },
+    {
+      "name": "Flamewalker Staff",
+      "code": "MAIN_FIRESTAFF_CRYSTAL",
+      "family": "firestaff",
+      "itemId": "T8_MAIN_FIRESTAFF_CRYSTAL",
+      "count": 16
+    },
+    {
+      "name": "Forcepulse Bracer",
+      "code": "2H_KNUCKLES_CRYSTAL",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_CRYSTAL",
+      "count": 1
+    },
+    {
+      "name": "Forcepulse Bracers",
+      "code": "2H_KNUCKLES_CRYSTAL",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_CRYSTAL",
+      "count": 15
+    },
+    {
+      "name": "Forge Hammers",
+      "code": "2H_DUALHAMMER_HELL",
+      "family": "hammer",
+      "itemId": "T8_2H_DUALHAMMER_HELL",
+      "count": 56
+    },
+    {
+      "name": "Forgebark Staff",
+      "code": "MAIN_NATURESTAFF_CRYSTAL",
+      "family": "naturestaff",
+      "itemId": "T8_MAIN_NATURESTAFF_CRYSTAL",
+      "count": 64
+    },
+    {
+      "name": "Frost Staff",
+      "code": "MAIN_FROSTSTAFF",
+      "family": "froststaff",
+      "itemId": "T8_MAIN_FROSTSTAFF",
+      "count": 33
+    },
+    {
+      "name": "Galatine Pair",
+      "code": "2H_DUALSCIMITAR_UNDEAD",
+      "family": "sword",
+      "itemId": "T8_2H_DUALSCIMITAR_UNDEAD",
+      "count": 29
+    },
+    {
+      "name": "Glacial Staff",
+      "code": "2H_GLACIALSTAFF",
+      "family": "froststaff",
+      "itemId": "T8_2H_GLACIALSTAFF",
+      "count": 13
+    },
+    {
+      "name": "Glaive",
+      "code": "2H_GLAIVE",
+      "family": "spear",
+      "itemId": "T8_2H_GLAIVE",
+      "count": 11
+    },
+    {
+      "name": "Grailseeker",
+      "code": "2H_QUARTERSTAFF_AVALON",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_QUARTERSTAFF_AVALON",
+      "count": 61
+    },
+    {
+      "name": "Great Arcane Staff",
+      "code": "2H_ARCANESTAFF",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ARCANESTAFF",
+      "count": 195
+    },
+    {
+      "name": "Great Cursed Staff",
+      "code": "2H_CURSEDSTAFF",
+      "family": "cursestaff",
+      "itemId": "T8_2H_CURSEDSTAFF",
+      "count": 11
+    },
+    {
+      "name": "Great Fire Staff",
+      "code": "2H_FIRESTAFF",
+      "family": "firestaff",
+      "itemId": "T8_2H_FIRESTAFF",
+      "count": 14
+    },
+    {
+      "name": "Great Frost",
+      "code": "2H_FROSTSTAFF",
+      "family": "froststaff",
+      "itemId": "T8_2H_FROSTSTAFF",
+      "count": 1
+    },
+    {
+      "name": "Great Frost Staff",
+      "code": "2H_FROSTSTAFF",
+      "family": "froststaff",
+      "itemId": "T8_2H_FROSTSTAFF",
+      "count": 32
+    },
+    {
+      "name": "Great Hammer",
+      "code": "2H_HAMMER",
+      "family": "hammer",
+      "itemId": "T8_2H_HAMMER",
+      "count": 92
+    },
+    {
+      "name": "Great Holy Staff",
+      "code": "2H_HOLYSTAFF",
+      "family": "holystaff",
+      "itemId": "T8_2H_HOLYSTAFF",
+      "count": 21
+    },
+    {
+      "name": "Great Nature Staff",
+      "code": "2H_NATURESTAFF",
+      "family": "naturestaff",
+      "itemId": "T8_2H_NATURESTAFF",
+      "count": 22
+    },
+    {
+      "name": "Greataxe",
+      "code": "2H_AXE",
+      "family": "axe",
+      "itemId": "T8_2H_AXE",
+      "count": 50
+    },
+    {
+      "name": "Grovekeeper",
+      "code": "2H_RAM_KEEPER",
+      "family": "hammer",
+      "itemId": "T8_2H_RAM_KEEPER",
+      "count": 11
+    },
+    {
+      "name": "Halberd",
+      "code": "2H_HALBERD",
+      "family": "axe",
+      "itemId": "T8_2H_HALBERD",
+      "count": 31
+    },
+    {
+      "name": "Hallowfall",
+      "code": "MAIN_HOLYSTAFF_AVALON",
+      "family": "holystaff",
+      "itemId": "T8_MAIN_HOLYSTAFF_AVALON",
+      "count": 428
+    },
+    {
+      "name": "Hammer",
+      "code": "MAIN_HAMMER",
+      "family": "hammer",
+      "itemId": "T8_MAIN_HAMMER",
+      "count": 78
+    },
+    {
+      "name": "Hand of Justice",
+      "code": "2H_HAMMER_AVALON",
+      "family": "hammer",
+      "itemId": "T8_2H_HAMMER_AVALON",
+      "count": 93
+    },
+    {
+      "name": "Heavy Crossbow",
+      "code": "2H_CROSSBOWLARGE",
+      "family": "crossbow",
+      "itemId": "T8_2H_CROSSBOWLARGE",
+      "count": 13
+    },
+    {
+      "name": "Heavy Mace",
+      "code": "2H_MACE",
+      "family": "mace",
+      "itemId": "T8_2H_MACE",
+      "count": 200
+    },
+    {
+      "name": "Hellfire Hands",
+      "code": "2H_KNUCKLES_HELL",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_HELL",
+      "count": 65
+    },
+    {
+      "name": "Hellspawn Staff",
+      "code": "2H_SHAPESHIFTER_HELL",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_HELL",
+      "count": 55
+    },
+    {
+      "name": "Heron Spear",
+      "code": "MAIN_SPEAR_KEEPER",
+      "family": "spear",
+      "itemId": "T8_MAIN_SPEAR_KEEPER",
+      "count": 65
+    },
+    {
+      "name": "Hoarfrost Staff",
+      "code": "MAIN_FROSTSTAFF_KEEPER",
+      "family": "froststaff",
+      "itemId": "T8_MAIN_FROSTSTAFF_KEEPER",
+      "count": 5
+    },
+    {
+      "name": "Holy Staff",
+      "code": "MAIN_HOLYSTAFF",
+      "family": "holystaff",
+      "itemId": "T8_MAIN_HOLYSTAFF",
+      "count": 226
+    },
+    {
+      "name": "Icicle Staff",
+      "code": "2H_ICEGAUNTLETS_HELL",
+      "family": "froststaff",
+      "itemId": "T8_2H_ICEGAUNTLETS_HELL",
+      "count": 17
+    },
+    {
+      "name": "Incubus Mace",
+      "code": "MAIN_MACE_HELL",
+      "family": "mace",
+      "itemId": "T8_MAIN_MACE_HELL",
+      "count": 535
+    },
+    {
+      "name": "Infernal Scythe",
+      "code": "2H_SCYTHE_HELL",
+      "family": "axe",
+      "itemId": "T8_2H_SCYTHE_HELL",
+      "count": 49
+    },
+    {
+      "name": "Infernal Staff",
+      "code": "2H_INFERNOSTAFF",
+      "family": "firestaff",
+      "itemId": "T8_2H_INFERNOSTAFF",
+      "count": 17
+    },
+    {
+      "name": "Infinity Blade",
+      "code": "MAIN_SWORD_CRYSTAL",
+      "family": "sword",
+      "itemId": "T8_MAIN_SWORD_CRYSTAL",
+      "count": 27
+    },
+    {
+      "name": "Iron-clad Staff",
+      "code": "2H_IRONCLADEDSTAFF",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_IRONCLADEDSTAFF",
+      "count": 2
+    },
+    {
+      "name": "Ironroot Staff",
+      "code": "MAIN_NATURESTAFF_AVALON",
+      "family": "naturestaff",
+      "itemId": "T8_MAIN_NATURESTAFF_AVALON",
+      "count": 87
+    },
+    {
+      "name": "Journeyman's Nature Staff",
+      "code": "MAIN_NATURESTAFF",
+      "family": "naturestaff",
+      "itemId": "T8_MAIN_NATURESTAFF",
+      "count": 18
+    },
+    {
+      "name": "Kingmaker",
+      "code": "2H_CLAYMORE_AVALON",
+      "family": "sword",
+      "itemId": "T8_2H_CLAYMORE_AVALON",
+      "count": 53
+    },
+    {
+      "name": "Lifecurse Staff",
+      "code": "MAIN_CURSEDSTAFF_UNDEAD",
+      "family": "cursestaff",
+      "itemId": "T8_MAIN_CURSEDSTAFF_UNDEAD",
+      "count": 108
+    },
+    {
+      "name": "Lifetouch Staff",
+      "code": "MAIN_HOLYSTAFF_MORGANA",
+      "family": "holystaff",
+      "itemId": "T8_MAIN_HOLYSTAFF_MORGANA",
+      "count": 45
+    },
+    {
+      "name": "Light Crossbow",
+      "code": "MAIN_1HCROSSBOW",
+      "family": "crossbow",
+      "itemId": "T8_MAIN_1HCROSSBOW",
+      "count": 76
+    },
+    {
+      "name": "Lightcaller",
+      "code": "2H_SHAPESHIFTER_AVALON",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_AVALON",
+      "count": 180
+    },
+    {
+      "name": "Longbow",
+      "code": "2H_LONGBOW",
+      "family": "bow",
+      "itemId": "T8_2H_LONGBOW",
+      "count": 215
+    },
+    {
+      "name": "Mace",
+      "code": "MAIN_MACE",
+      "family": "mace",
+      "itemId": "T8_MAIN_MACE",
+      "count": 183
+    },
+    {
+      "name": "Malevolent Locus",
+      "code": "2H_ENIGMATICORB_MORGANA",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ENIGMATICORB_MORGANA",
+      "count": 36
+    },
+    {
+      "name": "Mistpiercer",
+      "code": "2H_BOW_AVALON",
+      "family": "bow",
+      "itemId": "T8_2H_BOW_AVALON",
+      "count": 322
+    },
+    {
+      "name": "Morning Star",
+      "code": "2H_FLAIL",
+      "family": "mace",
+      "itemId": "T8_2H_FLAIL",
+      "count": 3
+    },
+    {
+      "name": "Nature Staff",
+      "code": "MAIN_NATURESTAFF",
+      "family": "naturestaff",
+      "itemId": "T8_MAIN_NATURESTAFF",
+      "count": 32
+    },
+    {
+      "name": "Oathkeepers",
+      "code": "2H_DUALMACE_AVALON",
+      "family": "mace",
+      "itemId": "T8_2H_DUALMACE_AVALON",
+      "count": 105
+    },
+    {
+      "name": "Occult Staff",
+      "code": "2H_ARCANESTAFF_HELL",
+      "family": "arcanestaff",
+      "itemId": "T8_2H_ARCANESTAFF_HELL",
+      "count": 72
+    },
+    {
+      "name": "Permafrost Prism",
+      "code": "2H_ICECRYSTAL_UNDEAD",
+      "family": "froststaff",
+      "itemId": "T8_2H_ICECRYSTAL_UNDEAD",
+      "count": 320
+    },
+    {
+      "name": "Phantom Twinblade",
+      "code": "2H_DOUBLEBLADEDSTAFF_CRYSTAL",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_DOUBLEBLADEDSTAFF_CRYSTAL",
+      "count": 19
+    },
+    {
+      "name": "Pike",
+      "code": "2H_SPEAR",
+      "family": "spear",
+      "itemId": "T8_2H_SPEAR",
+      "count": 6
+    },
+    {
+      "name": "Polehammer",
+      "code": "2H_POLEHAMMER",
+      "family": "hammer",
+      "itemId": "T8_2H_POLEHAMMER",
+      "count": 158
+    },
+    {
+      "name": "Primal Staff",
+      "code": "2H_SHAPESHIFTER_SET3",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_SET3",
+      "count": 51
+    },
+    {
+      "name": "Prowling Staff",
+      "code": "2H_SHAPESHIFTER_SET1",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_SET1",
+      "count": 10
+    },
+    {
+      "name": "Quarterstaff",
+      "code": "2H_QUARTERSTAFF",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_QUARTERSTAFF",
+      "count": 24
+    },
+    {
+      "name": "Rampant Staff",
+      "code": "2H_NATURESTAFF_KEEPER",
+      "family": "naturestaff",
+      "itemId": "T8_2H_NATURESTAFF_KEEPER",
+      "count": 21
+    },
+    {
+      "name": "Ravenstrike Cestus",
+      "code": "2H_KNUCKLES_MORGANA",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_MORGANA",
+      "count": 5
+    },
+    {
+      "name": "Realmbreaker",
+      "code": "2H_AXE_AVALON",
+      "family": "axe",
+      "itemId": "T8_2H_AXE_AVALON",
+      "count": 234
+    },
+    {
+      "name": "Redemption Staff",
+      "code": "2H_HOLYSTAFF_UNDEAD",
+      "family": "holystaff",
+      "itemId": "T8_2H_HOLYSTAFF_UNDEAD",
+      "count": 267
+    },
+    {
+      "name": "Rift Glaive",
+      "code": "2H_GLAIVE_CRYSTAL",
+      "family": "spear",
+      "itemId": "T8_2H_GLAIVE_CRYSTAL",
+      "count": 68
+    },
+    {
+      "name": "Rootbound Staff",
+      "code": "2H_SHAPESHIFTER_SET2",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_SET2",
+      "count": 164
+    },
+    {
+      "name": "Rotcaller Staff",
+      "code": "MAIN_CURSEDSTAFF_CRYSTAL",
+      "family": "cursestaff",
+      "itemId": "T8_MAIN_CURSEDSTAFF_CRYSTAL",
+      "count": 201
+    },
+    {
+      "name": "Shadowcaller",
+      "code": "MAIN_CURSEDSTAFF_AVALON",
+      "family": "cursestaff",
+      "itemId": "T8_MAIN_CURSEDSTAFF_AVALON",
+      "count": 427
+    },
+    {
+      "name": "Siegebow",
+      "code": "2H_CROSSBOWLARGE_MORGANA",
+      "family": "crossbow",
+      "itemId": "T8_2H_CROSSBOWLARGE_MORGANA",
+      "count": 29
+    },
+    {
+      "name": "Skystrider Bow",
+      "code": "2H_BOW_CRYSTAL",
+      "family": "bow",
+      "itemId": "T8_2H_BOW_CRYSTAL",
+      "count": 13
+    },
+    {
+      "name": "Soulscythe",
+      "code": "2H_TWINSCYTHE_HELL",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_TWINSCYTHE_HELL",
+      "count": 16
+    },
+    {
+      "name": "Spear",
+      "code": "MAIN_SPEAR",
+      "family": "spear",
+      "itemId": "T8_MAIN_SPEAR",
+      "count": 29
+    },
+    {
+      "name": "Spiked Gauntlets",
+      "code": "2H_KNUCKLES_SET3",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_SET3",
+      "count": 120
+    },
+    {
+      "name": "Spirithunter",
+      "code": "2H_HARPOON_HELL",
+      "family": "spear",
+      "itemId": "T8_2H_HARPOON_HELL",
+      "count": 127
+    },
+    {
+      "name": "Staff of Balance",
+      "code": "2H_ROCKSTAFF_KEEPER",
+      "family": "quarterstaff",
+      "itemId": "T8_2H_ROCKSTAFF_KEEPER",
+      "count": 31
+    },
+    {
+      "name": "Stillgaze Staff",
+      "code": "2H_SHAPESHIFTER_CRYSTAL",
+      "family": "shapeshifterstaff",
+      "itemId": "T8_2H_SHAPESHIFTER_CRYSTAL",
+      "count": 25
+    },
+    {
+      "name": "The Hand of Khor",
+      "code": "2H_AXE",
+      "family": "axe",
+      "itemId": "T8_2H_AXE",
+      "count": 12
+    },
+    {
+      "name": "Tombhammer",
+      "code": "2H_HAMMER_UNDEAD",
+      "family": "hammer",
+      "itemId": "T8_2H_HAMMER_UNDEAD",
+      "count": 48
+    },
+    {
+      "name": "Trinity Spear",
+      "code": "2H_TRIDENT_UNDEAD",
+      "family": "spear",
+      "itemId": "T8_2H_TRIDENT_UNDEAD",
+      "count": 13
+    },
+    {
+      "name": "Truebolt Hammer",
+      "code": "2H_HAMMER_CRYSTAL",
+      "family": "hammer",
+      "itemId": "T8_2H_HAMMER_CRYSTAL",
+      "count": 36
+    },
+    {
+      "name": "Twin Slayers",
+      "code": "2H_DAGGERPAIR_CRYSTAL",
+      "family": "dagger",
+      "itemId": "T8_2H_DAGGERPAIR_CRYSTAL",
+      "count": 24
+    },
+    {
+      "name": "Ursine Maulers",
+      "code": "2H_KNUCKLES_KEEPER",
+      "family": "knuckles",
+      "itemId": "T8_2H_KNUCKLES_KEEPER",
+      "count": 35
+    },
+    {
+      "name": "Wailing Bow",
+      "code": "2H_BOW_HELL",
+      "family": "bow",
+      "itemId": "T8_2H_BOW_HELL",
+      "count": 57
+    },
+    {
+      "name": "Warbow",
+      "code": "2H_WARBOW",
+      "family": "bow",
+      "itemId": "T8_2H_WARBOW",
+      "count": 20
+    },
+    {
+      "name": "Weeping Repeater",
+      "code": "2H_REPEATINGCROSSBOW_UNDEAD",
+      "family": "crossbow",
+      "itemId": "T8_2H_REPEATINGCROSSBOW_UNDEAD",
+      "count": 65
+    },
+    {
+      "name": "Whispering Bow",
+      "code": "2H_LONGBOW_UNDEAD",
+      "family": "bow",
+      "itemId": "T8_2H_LONGBOW_UNDEAD",
+      "count": 86
+    },
+    {
+      "name": "Wild Staff",
+      "code": "2H_WILDSTAFF",
+      "family": "naturestaff",
+      "itemId": "T8_2H_WILDSTAFF",
+      "count": 12
+    },
+    {
+      "name": "Wildfire Staff",
+      "code": "MAIN_FIRESTAFF_KEEPER",
+      "family": "firestaff",
+      "itemId": "T8_MAIN_FIRESTAFF_KEEPER",
+      "count": 28
+    },
+    {
+      "name": "Witchwork Staff",
+      "code": "MAIN_ARCANESTAFF_UNDEAD",
+      "family": "arcanestaff",
+      "itemId": "T8_MAIN_ARCANESTAFF_UNDEAD",
+      "count": 79
+    },
+    {
+      "name": "Wrath",
+      "code": "2H_FIRESTAFF",
+      "family": "firestaff",
+      "itemId": "T8_2H_FIRESTAFF",
+      "count": 6
+    }
+  ],
+  "activities": [
+    {
+      "id": "ABYSSAL_DEPTHS_2V2",
+      "count": 836
+    },
+    {
+      "id": "ABYSSAL_DEPTHS_3V3",
+      "count": 77
+    },
+    {
+      "id": "ANCIENT_LANDS",
+      "count": 44
+    },
+    {
+      "id": "BOMB_SQUAD",
+      "count": 315
+    },
+    {
+      "id": "CORRUPTED_DUNGEON",
+      "count": 106
+    },
+    {
+      "id": "CRYSTAL_ARENA",
+      "count": 247
+    },
+    {
+      "id": "CRYSTAL_ARENA_1V1",
+      "count": 31
+    },
+    {
+      "id": "CRYSTAL_CREATURES",
+      "count": 59
+    },
+    {
+      "id": "FAME_FARM_GROUP",
+      "count": 1925
+    },
+    {
+      "id": "FAME_FARM_GROUP_AVALON",
+      "count": 1057
+    },
+    {
+      "id": "FAME_FARM_SOLO",
+      "count": 114
+    },
+    {
+      "id": "GANK_DUO",
+      "count": 15
+    },
+    {
+      "id": "GANK_GROUP",
+      "count": 467
+    },
+    {
+      "id": "GANK_SOLO",
+      "count": 40
+    },
+    {
+      "id": "GATHERING",
+      "count": 31
+    },
+    {
+      "id": "HCE",
+      "count": 74
+    },
+    {
+      "id": "HELLGATE_10V10",
+      "count": 11
+    },
+    {
+      "id": "HELLGATE_2V2",
+      "count": 36
+    },
+    {
+      "id": "HELLGATE_5V5",
+      "count": 231
+    },
+    {
+      "id": "MISTS_DUO",
+      "count": 13
+    },
+    {
+      "id": "MISTS_SOLO",
+      "count": 141
+    },
+    {
+      "id": "OFF_META",
+      "count": 159
+    },
+    {
+      "id": "OPEN_WORLD",
+      "count": 630
+    },
+    {
+      "id": "SMALL_SCALE",
+      "count": 2040
+    },
+    {
+      "id": "TRACKING_GROUP",
+      "count": 474
+    },
+    {
+      "id": "TRACKING_SOLO",
+      "count": 12
+    },
+    {
+      "id": "TRANSPORTING",
+      "count": 20
+    },
+    {
+      "id": "WORLD_BOSS",
+      "count": 96
+    },
+    {
+      "id": "ZVZ",
+      "count": 1424
+    }
+  ],
+  "tags": [
+    {
+      "name": "PvP",
+      "value": "pvp",
+      "count": 3828
+    },
+    {
+      "name": "Group",
+      "value": "group",
+      "count": 2730
+    },
+    {
+      "name": "PvE",
+      "value": "pve",
+      "count": 2374
+    },
+    {
+      "name": "Fame Farm",
+      "value": "fame farm",
+      "count": 1516
+    },
+    {
+      "name": "Advanced",
+      "value": "advanced",
+      "count": 1130
+    },
+    {
+      "name": "Meta",
+      "value": "meta",
+      "count": 808
+    },
+    {
+      "name": "Roaming",
+      "value": "roaming",
+      "count": 640
+    },
+    {
+      "name": "Beginner",
+      "value": "beginner",
+      "count": 558
+    },
+    {
+      "name": "Solo",
+      "value": "solo",
+      "count": 301
+    },
+    {
+      "name": "Budget",
+      "value": "budget",
+      "count": 258
+    },
+    {
+      "name": "Off-Meta",
+      "value": "off-meta",
+      "count": 254
+    },
+    {
+      "name": "Bomb Squad",
+      "value": "bomb squad",
+      "count": 229
+    },
+    {
+      "name": "Small Scale",
+      "value": "small scale",
+      "count": 103
+    },
+    {
+      "name": "ZvZ",
+      "value": "zvz",
+      "count": 68
+    },
+    {
+      "name": "S.A.F.E. Portal",
+      "value": "s.a.f.e. portal",
+      "count": 66
+    },
+    {
+      "name": "Gank",
+      "value": "gank",
+      "count": 56
+    },
+    {
+      "name": "Hellgates",
+      "value": "hellgates",
+      "count": 33
+    },
+    {
+      "name": "Open World",
+      "value": "open world",
+      "count": 17
+    },
+    {
+      "name": "Group Dungeon",
+      "value": "group dungeon",
+      "count": 12
+    },
+    {
+      "name": "Duo",
+      "value": "duo",
+      "count": 11
+    },
+    {
+      "name": "Smallscale",
+      "value": "smallscale",
+      "count": 11
+    },
+    {
+      "name": "Solo Dungeon",
+      "value": "solo dungeon",
+      "count": 7
+    },
+    {
+      "name": "Mist",
+      "value": "mist",
+      "count": 5
+    }
+  ]
+}

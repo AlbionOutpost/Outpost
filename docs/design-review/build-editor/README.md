@@ -15,3 +15,7 @@ No fixture market price, test guild or example loadout is presented as live game
 ## Current frontend pass
 
 [Cross-page frontend review](../frontend-pass/README.md) records the latest scope, source-preserving corrections, actual six-width screenshots and performance limits. Original iteration evidence remains historical; full catalog/media and owner acceptance remain open.
+
+## 29 October — focused inventory editor
+
+[Current focused workspace and recovery evidence](../builds-system/editor.md) supersede the earlier ten-row layout: shared spatial inventory, one selected-slot inspector, real catalog drawer, keyboard sections, named sets/templates and preserved save/import/revision workflows. Final production phase and global acceptance remain with the parent gate.

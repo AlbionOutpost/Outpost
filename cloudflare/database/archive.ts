@@ -1,6 +1,7 @@
 import type { LibraryBuild, LibraryComposition } from "../../src/lib/grind-library-types";
 import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
 import { HttpError } from "../../src/lib/http-error";
+import { familyWeapons } from "../../src/lib/build-discovery";
 
 const kindCheck = (kind: string) => {
   if (!["builds", "compositions"].includes(kind))
@@ -20,10 +21,37 @@ export async function archiveList(
     .bind(kind)
     .first<{ total: number; categories: string }>();
   if (!manifest) throw new Error("Reviewed archive is not staged");
-  const where = "kind = ? AND (? = '' OR category = ?) AND (? = '' OR instr(searchText, ?) > 0)";
+  let where = "kind = ? AND (? = '' OR category = ?) AND (? = '' OR instr(searchText, ?) > 0)";
   const values = [kind, category, category, q, q];
+  const weapon = typeof input.weapon === "string" ? input.weapon.slice(0, 100) : "";
+  const family = typeof input.family === "string" ? input.family.slice(0, 100) : "";
+  const tag = typeof input.tag === "string" ? input.tag.slice(0, 100).toLowerCase() : "";
+  if (kind === "builds" && weapon) {
+    where += " AND json_extract(payload, '$.weaponName') = ?";
+    values.push(weapon);
+  }
+  if (kind === "builds" && family) {
+    const names = familyWeapons(family).map((row) => row.name);
+    if (family === "other") {
+      const known = familyWeapons("other").map((row) => row.name);
+      where += known.length
+        ? ` AND (json_extract(payload, '$.weaponName') IN (${known.map(() => "?").join(",")}) OR coalesce(json_extract(payload, '$.weaponName'), '') = '')`
+        : " AND coalesce(json_extract(payload, '$.weaponName'), '') = ''";
+      values.push(...known);
+    } else {
+      where += names.length
+        ? ` AND json_extract(payload, '$.weaponName') IN (${names.map(() => "?").join(",")})`
+        : " AND 0";
+      values.push(...names);
+    }
+  }
+  if (kind === "builds" && tag) {
+    where +=
+      " AND EXISTS (SELECT 1 FROM json_each(OwnedLibrary.payload, '$.tags') WHERE lower(value) = ?)";
+    values.push(tag);
+  }
   const matched =
-    q || category
+    q || category || weapon || family || tag
       ? (await binding
           .prepare(`SELECT COUNT(*) AS n FROM OwnedLibrary WHERE ${where}`)
           .bind(...values)
@@ -31,7 +59,12 @@ export async function archiveList(
       : manifest.total;
   const pages = Math.max(1, Math.ceil(matched / size));
   const page = Math.min(pages, Math.max(1, Math.trunc(Number(input.page)) || 1));
-  const order = input.sort === "title" ? "titleOrdinal" : "ordinal";
+  const order =
+    input.sort === "title"
+      ? "titleOrdinal"
+      : input.sort === "newest" && kind === "builds"
+        ? "julianday(json_extract(payload, '$.updatedAt')) DESC, ordinal"
+        : "ordinal";
   const result = await binding
     .prepare(`SELECT payload FROM OwnedLibrary WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`)
     .bind(...values, size, (page - 1) * size)

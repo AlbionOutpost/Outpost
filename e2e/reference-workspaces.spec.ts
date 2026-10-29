@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -79,6 +80,7 @@ test("equipment drawer contains keyboard focus and returns to the selected equip
     ]);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/builds/new");
+    await selectEditorSlot(page, "Helmet");
     const trigger = page.getByRole("button", { name: "Choose Helmet equipment", exact: false });
     await trigger.click();
     const drawer = page.getByRole("dialog", { name: "Equipment picker", exact: true });
@@ -91,7 +93,7 @@ test("equipment drawer contains keyboard focus and returns to the selected equip
     await trigger.click();
     await page.getByRole("button", { name: /^Equip Scholar Cowl\b/ }).click();
     await expect(drawer).not.toBeVisible();
-    await page.getByRole("button", { name: "Configure Helmet", exact: true }).click();
+    await page.getByText("Exact equipment selection", { exact: true }).click();
     await expect(page.getByLabel("Helmet equipment", { exact: true })).toHaveValue(
       "HEAD_CLOTH_SET1",
     );

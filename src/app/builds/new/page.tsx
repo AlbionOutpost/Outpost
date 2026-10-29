@@ -26,7 +26,13 @@ export default async function NewBuild({
           · {source.author}
         </p>
       )}
-      <BuildEditor initial={initial || undefined} guest={!session?.user?.id} />
+      <BuildEditor
+        key={`${session?.user?.id || "guest"}:${source?.slug || "blank"}:${initial?.region || "preferred"}`}
+        initial={initial || undefined}
+        guest={!session?.user?.id}
+        ownerId={session?.user?.id}
+        recoveryKey={`new:${source?.slug || "blank"}:${initial?.region || "preferred"}`}
+      />
     </div>
   );
 }

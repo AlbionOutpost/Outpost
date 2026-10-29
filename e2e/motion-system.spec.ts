@@ -15,7 +15,7 @@ test("shared controls grow, press and still navigate with the current region", a
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Builds", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/builds\?region=asia$/);
+  await expect(page).toHaveURL(/\/builds\/library\?region=asia$/);
 });
 
 test("card hover grows once, stays enlarged and returns on pointer leave", async ({ page }) => {

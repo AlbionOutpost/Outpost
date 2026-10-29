@@ -1,3 +1,4 @@
+import { selectEditorSlot } from "./support/build-editor";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { randomUUID } from "node:crypto";
@@ -31,19 +32,21 @@ test("mobile equipment selection and member dialog support keyboard editing", as
   try {
     await page.setViewportSize({ width: 375, height: 844 });
     await page.goto("/builds/new");
+    await selectEditorSlot(page, "Helmet");
     await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();
     await expect(page.getByLabel("Search equipment")).toBeVisible();
     await page.getByRole("button", { name: /^Equip Scholar Cowl\b/ }).focus();
     await page.keyboard.press("Enter");
-    await page.getByRole("button", { name: "Configure Helmet", exact: true }).click();
+    await page.getByText("Exact equipment selection", { exact: true }).click();
     await expect(page.getByLabel("Helmet equipment", { exact: true })).toBeVisible();
     await page.getByLabel("Helmet Active").selectOption("Energy Shield");
-    await page.getByRole("button", { name: "Close item details", exact: true }).click();
+    await page.getByText("Exact equipment selection", { exact: true }).click();
     await expect(
       page.getByRole("button", { name: "Choose Helmet equipment", exact: false }),
-    ).toContainText("Scholar Cowl");
+    ).toHaveAccessibleName(/Scholar Cowl/);
     await mkdir(".qa/player-workflows", { recursive: true });
     await page.screenshot({ path: ".qa/player-workflows/build-equipment-375.png", fullPage: true });
+    page.once("dialog", (dialog) => dialog.accept());
     await page.goto("/compositions/new");
     await page.getByRole("button", { name: "20 players", exact: true }).click();
     await expect(

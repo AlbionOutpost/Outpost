@@ -13,7 +13,7 @@ export function EquipmentStrip({
   hideEmpty?: boolean;
 }) {
   return (
-    <span className="equipment-strip" aria-label="Loadout preview">
+    <span className="equipment-strip" role="group" aria-label="Loadout preview">
       {slots.map((slot) => {
         const e = equipment.find((e) => e.slot === slot);
         if (hideEmpty && !e?.itemId) return null;
@@ -22,6 +22,7 @@ export function EquipmentStrip({
             className={`strip-slot${e ? " filled" : ""}`}
             key={slot}
             data-slot={slot}
+            role="img"
             title={e ? `${slot}: ${equipmentName(e.itemId)}` : `${slot}: Empty`}
             aria-label={e ? `${slot}: ${equipmentName(e.itemId)}` : `${slot}: Empty`}
           >

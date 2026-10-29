@@ -1,0 +1,55 @@
+# Builds ecosystem delivery
+
+The Builds library, account collections, inventory viewer and editor now share the owner's [navy/copper reference](references/target.png). These are working application screens backed by existing records and permission checks. Publication and exact latest command results remain governed by the root QA reports; this document does not certify personal Discord consent or current-patch game mechanics.
+
+## Before and after
+
+| Screen              | Before                                                 | After                                     | Phone                                |
+| ------------------- | ------------------------------------------------------ | ----------------------------------------- | ------------------------------------ |
+| Build Library       | [1440px baseline](before-library-1440.png)             | [1440px redesign](after-library-1440.png) | [390px](after-library-390.png)       |
+| Build Detail        | [1440px baseline](before-detail-1440.png)              | [1440px redesign](after-detail-1440.png)  | [390px](after-detail-390.png)        |
+| Inventory placement | —                                                      | [Desktop board](inventory-1440.png)       | [Phone board](inventory-390.png)     |
+| Editor              | Previous ten-row form in the baseline capture manifest | [Desktop editor](after-editor-1440.png)   | [Phone editor](after-editor-390.png) |
+| My Builds           | Previous account directory                             | [Desktop](after-my-builds-1440.png)       | [Phone](after-my-builds-390.png)     |
+| Favorites           | Previous bounded unpaged lists                         | [Desktop](after-favorites-1440.png)       | [Phone](after-favorites-390.png)     |
+
+Actual production screenshots use sandboxed local Playwright fallback. The final manifest is .qa/builds-redesign/final-matrix.json: five screens at320/375/390/768/1024/1440/1920, including source-library records, a guest source copy, and explicitly named isolated account fixtures. Fixtures are deleted after capture and are not real OAuth or community activity. Unmasked item art is retained; separate deterministic pixel regressions mask renderer pixels only.
+
+## Implemented journeys
+
+- Discovery:10,770 actual public library builds; factual weapon families and counts; specific weapons, activity and recorded-tag filters; debounced URL search; sorting; grid/list presentation; pagination; mobile filter drawer; empty/reset states.
+- Collections: current-owner My Builds, revision/visibility editing, independent duplication, confirmed deletion and retry feedback; account favorites with24-item pages, title search, actual saved/updated/title sorting and grid/list views; composition favorites have separate pagination and current-membership guards. Device library bookmarks have independent search, saved/title sorting, display modes and24-item pages, with100 records per server. Eight filter presets per server remain explicitly device-local.
+- Detail: real title/author/date/activity and author tags; deep-link section navigation; genuine Bag/Head/Cape, Main/Chest/Off hand, Potion/Shoes/Food and Mount coordinates; one selected slot drives the board, gear information, abilities, alternatives and market links.
+- Sharing and copies: actual URL copy; local PNG download/image clipboard with bounded artwork loading and named fallbacks; private links retain access restrictions. Public account copies are independent PRIVATE revisions. Library copies become independent validated drafts.
+- Editor: focused Equipment/Abilities/Alternatives/Notes sections; searchable catalog drawer; real tier/enchantment/quality and compatible abilities; per-item swaps with Equip and full equipment Undo; two-handed/off-hand recovery; real templates and named spare sets; full preview, validated JSON imports/exports and existing revision concurrency.
+- Recovery: failed saves retain inputs; newer revisions return conflicts and leave an exportable draft. Account SPA navigation uses bounded owner/build/revision-scoped document memory, never local/sessionStorage; logout clears it. Account controls wait for recovery readiness before accepting edits. Guest unmounts flush only validated drafts, preserving the last valid record when intermediate edits are invalid.
+- Calculations/community: existing itemized observation-based loadout costs, city/server selection, missing/stale status and shopping lists remain operational. Account-build comments, reports, moderation and revision history retain existing authorization. Author notes, videos, traits and actual related-library builds remain available.
+- Compositions: permitted source builds launch independent PRIVATE composition drafts. Copies retain valid abilities, alternatives and spare sets, preserve server selection, default to an unassigned role and recheck source access on save. Sign-in return paths are narrowly validated. Note shortening has explicit feedback.
+
+## Changed responsibilities and routes
+
+| Area                  | Routes                                                | Principal components/services                                                                                                                                                                               |
+| --------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Discovery/collections | /builds/library, /builds, /builds?mine=1, /favorites  | BuildDiscoveryHeader, BuildDiscoverySearch, LibraryBuildCard, BuildPreviewCard, BuildCardOwnerActions, BuildDeviceCollections, MobileFilterPanel; shared Node/D1/public-asset library predicates            |
+| Detail                | /builds/library/[slug], /builds/[id]                  | BuildDetailHeader, BuildDetailNavigation, BuildLoadoutView, BuildDetailWorkspace, InventoryEquipmentBoard, BuildShareControls, BuildImageExport, existing LoadoutPriceCheck and community/revision services |
+| Editing               | /builds/new, /builds/[id]/edit                        | BuildEditor, BuildEquipmentStudio, EquipmentPicker, EquipmentSets, AccountBuildDraftCache; existing validation and mutation APIs                                                                            |
+| Composition bridge    | /compositions/new, /api/compositions/loadout, /signin | BuildCompositionLink, BuildLoadoutSource, CompositionFromLoadout, SafeSignInReturn, CompositionEditor; existing current-session and source/destination permissions                                          |
+| Shared shell          | All application routes                                | Shell, LoginButton/LogoutButton, existing region/search/theme state, Outpost workspace and Builds feature styles                                                                                            |
+
+No database/authentication library or new schema migration was added. Existing routes, source records, revisions, imports/exports, public/private rules and Cloudflare execution boundaries remain.
+
+## Verification and limits
+
+The complete Node22 phase passes335 unit cases,118 production browser cases,15 disposable PostgreSQL checks, nine bounded regional checks, types/lint/build/dependencies and structural game-data checks. Twenty native Cloudflare database cases pass, including related favorites sorting/counts/pagination and live membership changes. Focused tests also exercise save retry, real409 conflicts, immediate account/guest browser history, logout memory clearing, alternative Equip/Undo, two-handed ability filtering and source immutability. Final Cloudflare build/browser/publication evidence is recorded separately before release.
+
+Initial failures are retained. Discovery and detail phases found contrast, card naming, containment and target-size issues. The editor phase found stale test navigation expectations, duplicate composition sibling keys, a real production first-frame recovery race and an invalid favorites collection role. The production first-frame failure was reproduced before changing recovery readiness; the original immediate interaction assertion remains. Screenshot inspection also rejected the oversized empty favorites panel. These are corrections, not waived checks.
+
+The reference's scenic character artwork, synthetic popularity/views, unsupported IP/combat rating bars and verification badges are absent. Recorded author tags and recommendations are identified as such. Historical trait values are not current verified mechanics. Unknown quality is explicitly a planning assumption; unknown abilities and missing/stale prices remain visible. Library records have no account-build comment foreign key, so they do not receive fabricated discussion activity. Device bookmarks retain their supported snapshot metadata rather than pretending to synchronize with the account.
+
+The editor uses a contextual picker drawer rather than a permanent third pane. Its equipment board preserves the actual ten-slot model, including Mount. Read-only alternatives are inspections; applying one requires a draft. Current-patch/unlock verification, real personal Discord consent/session lifecycle, physical-device/screen-reader review, global owner visual acceptance and operational/legal release gates remain open. One-sample mobile container lab LCP remains approximately3.3–3.7seconds; CLS is0 in these samples. These are not field performance, Worker CPU/quota or conformance certification.
+
+## Cloudflare service boundary correction
+
+The initial complete Cloudflare browser run failed107/118: page-local callback transactions had passed Node and raw native-query parity, but the web RPC guard correctly rejects interactive transactions. Discovery and favorites now call validated named private services; their complete count/row/membership queries execute inside the existing private DO transaction. Node retains RepeatableRead. Private model arguments reuse existing SQLite normalization without modifying stored JSON or Date values. No RPC/transaction guard was weakened. The native harness now calls these actual named services, rather than relying solely on raw query equivalence. The rebuilt complete Cloudflare web run passes118/118, with the same unmodified assertions.335 Node units,118 Node browser cases and20 native database cases also pass. Original107/118 output remains .qa/builds-redesign/final-runtime-browser.log; default per-test context directories were overwritten by a subsequent Node run and are not claimed as retained evidence.
+
+The final fixture-key Cloudflare application build, web types and full118-case browser run pass. Actual bundle dry-runs are within Free limits and enable no paid services. Production challenge configuration, publication, hosted CI and public read-back are tracked separately in the release closure below; fixture OAuth remains distinct from personal consent.

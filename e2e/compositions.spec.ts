@@ -92,7 +92,9 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     await page.getByLabel("Shotcaller / comp notes").fill("Wait for the caller before engaging.");
     await page.getByRole("button", { name: "Save comp", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Twenty player ZvZ roster" })).toBeVisible();
-    const id = page.url().split("/").pop()!;
+    const savedUrl = new URL(page.url());
+    expect(savedUrl.searchParams.get("region")).toBe("europe");
+    const id = savedUrl.pathname.split("/").pop()!;
     let stored = await (await context.request.get(`/api/compositions/${id}`)).json();
     expect(stored.slots).toHaveLength(20);
     expect(stored.slots[1].playerName).toBe("Caller One");
@@ -146,7 +148,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     await page.getByRole("button", { name: "Duplicate comp", exact: true }).click();
     await expect(page.getByLabel("Comp title")).toHaveValue("Twenty player ZvZ roster (copy)");
     await expect(page.getByLabel("Comp visibility")).toHaveValue("PRIVATE");
-    const copyId = page.url().split("/").at(-2)!;
+    const copyId = new URL(page.url()).pathname.split("/").at(-2)!;
     expect(copyId).not.toBe(id);
     const copy = await db.composition.findUniqueOrThrow({ where: { id: copyId } });
     expect(copy.authorId).toBe(ids[0]);

@@ -4,12 +4,16 @@ import { equipmentSets } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "@/components/build-loadout-view";
 import { BuildActions } from "@/components/build-actions";
 import { BuildCost } from "@/components/build-cost";
+import { BuildCompositionLink } from "@/components/build-composition-link";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canReadBuild } from "@/lib/builds/validation";
+import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
+import { BuildShareControls } from "@/components/build-share-controls";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
 export default async function BuildPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
@@ -32,47 +36,67 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
   )
     notFound();
   return (
-    <div className="build-detail-page">
-      <div className="build-detail-classification">
-        {build.contentType} · {build.visibility} · REVISION {build.version}
-      </div>
-      <div className="section-heading">
-        <h1 className="page-title display-title">{build.title}</h1>
-        {session?.user?.id === build.authorId && (
-          <Link className="button primary" href={`/builds/${id}/edit`}>
-            Edit build
-          </Link>
+    <div className="build-detail-page build-detail-redesign">
+      <BuildDetailHeader
+        title={build.title}
+        description={build.description}
+        author={build.author.name || "Adventurer"}
+        authorHref={`/players/${build.author.id}`}
+        activity={build.contentType}
+        updatedAt={build.updatedAt.toISOString()}
+        revision={build.version}
+        visibility={build.visibility}
+        itemId={build.equipment.find((item) => item.slot === "Main hand")?.itemId}
+        actions={
+          <>
+            {session?.user?.id !== build.authorId && (
+              <BuildActions id={id} version={build.version} owner={false} revisions={[]} compact />
+            )}
+            {session?.user?.id === build.authorId && (
+              <Link className="button primary" href={`/builds/${id}/edit`}>
+                Edit build
+              </Link>
+            )}
+            {session?.user?.id === build.authorId && (
+              <a className="button secondary" href="#build-actions">
+                Revisions
+              </a>
+            )}
+            <BuildShareControls
+              title={build.title}
+              equipment={build.equipment.map((item) => ({
+                slot: item.slot,
+                itemId: item.itemId,
+                quality: item.quality,
+                name: equipmentName(item.itemId),
+              }))}
+              privateBuild={build.visibility === "PRIVATE"}
+            />
+          </>
+        }
+      />
+      <BuildDetailNavigation />
+      <BuildLoadoutView
+        equipment={build.equipment}
+        region={build.region}
+        extraActions={<BuildCompositionLink fromBuild={build.id} />}
+        information={{
+          activity: build.contentType,
+          author: build.author.name || "Adventurer",
+          updatedAt: build.updatedAt.toISOString(),
+          version: build.version,
+          playerCount: build.playerCount,
+          recommendedIP: build.recommendedIP,
+          visibility: build.visibility,
+        }}
+      />
+      <section className="detail-notes-panel" id="build-notes">
+        {build.description && (
+          <>
+            <h2>Build overview</h2>
+            <p className="preserve">{build.description}</p>
+          </>
         )}
-      </div>
-      <p className="intro">
-        By{" "}
-        <Link className="text-link" href={`/players/${build.author.id}`}>
-          {build.author.name || "Adventurer"}
-        </Link>{" "}
-        · {build.region} · {build.playerCount} {build.playerCount === 1 ? "player" : "players"} ·
-        Recommended IP {build.recommendedIP || "not specified"} (author estimate)
-      </p>
-      {build.description && (
-        <p className="build-detail-description preserve">{build.description}</p>
-      )}
-      <nav className="build-section-navigation" aria-label="Build sections">
-        <a href="#build-equipment">Loadout</a>
-        <a href="#build-notes">Strategy & notes</a>
-        <a href="#build-cost">Replacement cost</a>
-        <a href="#build-discussion">Discussion</a>
-      </nav>
-      <BuildLoadoutView equipment={build.equipment} region={build.region} />
-      <p className="muted">
-        Created{" "}
-        <time dateTime={build.createdAt.toISOString()}>
-          {build.createdAt.toISOString().slice(0, 10)}
-        </time>{" "}
-        · Updated{" "}
-        <time dateTime={build.updatedAt.toISOString()}>
-          {build.updatedAt.toISOString().slice(0, 10)}
-        </time>
-      </p>
-      <section className="panel section build-author-notes" id="build-notes">
         <h2>Author strategy</h2>
         <p className="preserve">{build.strategy || "No strategy notes provided."}</p>
         <h2 className="section">Patch / version notes</h2>
@@ -87,12 +111,14 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         </details>
       </section>
       <SavedEquipmentSets sets={equipmentSets.parse(build.equipmentSets)} />
-      <BuildActions
-        id={id}
-        version={build.version}
-        owner={session?.user?.id === build.authorId}
-        revisions={build.versions.map((v) => v.version)}
-      />
+      <div id="build-actions">
+        <BuildActions
+          id={id}
+          version={build.version}
+          owner={session?.user?.id === build.authorId}
+          revisions={build.versions.map((v) => v.version)}
+        />
+      </div>
       <div id="build-cost">
         <BuildCost id={id} />
       </div>

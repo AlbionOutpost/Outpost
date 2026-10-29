@@ -10,7 +10,7 @@ mkdirSync(folder, { recursive: true });
 // has no HTTP query endpoint and always returns 404. Never deploy this harness.
 writeFileSync(
   `${folder}/harness.mjs`,
-  `export default {async fetch(request,env){if(new URL(request.url).pathname==='/local-only-worker-fetch')return env.DATA.fetch(request);if(new URL(request.url).pathname!=='/local-only-test')return new Response('Not found',{status:404});const {method,args}=await request.json();if(!['query','service','rateLimit','upstreamBlock','upstreamBlocked','health','archiveList','archiveFind'].includes(method))return new Response('Denied',{status:403});return Response.json((await env.DATA[method](...args)) ?? null);}};`,
+  `export default {async fetch(request,env){if(new URL(request.url).pathname==='/local-only-worker-fetch')return env.DATA.fetch(request);if(new URL(request.url).pathname!=='/local-only-test')return new Response('Not found',{status:404});const {method,args}=await request.json();if(method==='serviceShape'){const reply=await env.DATA.service(...args);return Response.json({reply,dates:reply.ok?(reply.value.builds||[]).map(row=>(row.build||row).updatedAt instanceof Date):[]});}if(!['query','service','rateLimit','upstreamBlock','upstreamBlocked','health','archiveList','archiveFind'].includes(method))return new Response('Denied',{status:403});return Response.json((await env.DATA[method](...args)) ?? null);}};`,
 );
 writeFileSync(
   `${folder}/wrangler.jsonc`,
@@ -313,6 +313,207 @@ try {
       body: "Owner fixture comment",
     });
   });
+  await check(
+    "account favorite counts, relation sorting and independent pages preserve access",
+    async () => {
+      const ids = Array.from({ length: 28 }, (_, i) => `${fixture}-favorite-build-${i}`),
+        compIds = Array.from({ length: 28 }, (_, i) => `${fixture}-favorite-comp-${i}`);
+      await query("build", "createMany", {
+        data: ids.map((id, i) => ({
+          ...fields,
+          id,
+          authorId: i === 25 ? userB : userA,
+          title: `Native favorite ${String(i).padStart(2, "0")}`,
+          visibility: i === 25 || i === 26 ? "PRIVATE" : i === 24 ? "UNLISTED" : "PUBLIC",
+          hiddenAt: i === 27 ? new Date().toISOString() : null,
+          updatedAt: new Date(Date.UTC(2025, 0, 28 - i)).toISOString(),
+        })),
+      });
+      await query("buildFavorite", "createMany", {
+        data: ids.map((buildId, i) => ({
+          userId: userB,
+          buildId,
+          createdAt: new Date(Date.UTC(2025, 0, i + 1)).toISOString(),
+        })),
+      });
+      const where = {
+        userId: userB,
+        build: {
+          hiddenAt: null,
+          OR: [{ visibility: { in: ["PUBLIC", "UNLISTED"] } }, { authorId: userB }],
+        },
+      };
+      assert.equal(await query("buildFavorite", "count", { where }), 26);
+      const recent = await query("buildFavorite", "findMany", {
+        where,
+        take: 24,
+        orderBy: [{ createdAt: "desc" }, { buildId: "asc" }],
+        select: { build: { select: { id: true, title: true } } },
+      });
+      assert.equal(recent.length, 24);
+      assert.equal(recent[0].build.id, ids[25]);
+      const byTitle = {
+        where,
+        take: 24,
+        orderBy: [{ build: { title: "asc" } }, { buildId: "asc" }],
+        select: { build: { select: { id: true, title: true } } },
+      };
+      const first = await query("buildFavorite", "findMany", byTitle),
+        second = await query("buildFavorite", "findMany", { ...byTitle, skip: 24 });
+      assert.equal(first[0].build.id, ids[0]);
+      assert.deepEqual(
+        second.map((row) => row.build.id),
+        [ids[24], ids[25]],
+      );
+      const updated = await query("buildFavorite", "findMany", {
+        ...byTitle,
+        orderBy: [{ build: { updatedAt: "desc" } }, { buildId: "asc" }],
+      });
+      assert.equal(updated[0].build.id, ids[0]);
+      const filtered = {
+        ...where,
+        build: { ...where.build, title: { contains: "NATIVE FAVORITE 25", mode: "insensitive" } },
+      };
+      assert.equal(await query("buildFavorite", "count", { where: filtered }), 1);
+      assert.equal(
+        (await query("buildFavorite", "findMany", { ...byTitle, where: filtered }))[0].build.id,
+        ids[25],
+      );
+      await query("composition", "createMany", {
+        data: compIds.map((id, i) => ({
+          id,
+          authorId: i === 24 ? userB : userA,
+          title: `Native favorite comp ${i}`,
+          description: "",
+          contentType: "Other",
+          region: "europe",
+          notes: "",
+          slots: [],
+          visibility: i === 24 || i === 25 ? "PRIVATE" : i === 26 ? "GROUP" : "PUBLIC",
+          groupId: i === 26 ? groupId : null,
+          hiddenAt: i === 27 ? new Date().toISOString() : null,
+        })),
+      });
+      await query("compositionFavorite", "createMany", {
+        data: compIds.map((compositionId, i) => ({
+          userId: userB,
+          compositionId,
+          createdAt: new Date(Date.UTC(2025, 0, i + 1)).toISOString(),
+        })),
+      });
+      const compWhere = {
+        userId: userB,
+        composition: {
+          hiddenAt: null,
+          OR: [
+            { visibility: "PUBLIC" },
+            { visibility: "PRIVATE", authorId: userB },
+            { visibility: "GROUP", group: { members: { some: { userId: userB } } } },
+          ],
+        },
+      };
+      assert.equal(await query("compositionFavorite", "count", { where: compWhere }), 25);
+      await query("groupMember", "create", { data: { groupId, userId: userB, role: "MEMBER" } });
+      assert.equal(await query("compositionFavorite", "count", { where: compWhere }), 26);
+      await query("groupMember", "delete", {
+        where: { groupId_userId: { groupId, userId: userB } },
+      });
+      assert.equal(await query("compositionFavorite", "count", { where: compWhere }), 25);
+      const compRows = await query("compositionFavorite", "findMany", {
+        where: compWhere,
+        take: 24,
+        skip: 24,
+        orderBy: [{ createdAt: "desc" }, { compositionId: "asc" }],
+        select: { composition: { select: { id: true, title: true } } },
+      });
+      assert.equal(compRows.length, 1);
+      assert.equal(compRows[0].composition.id, compIds[0]);
+      await query("buildEquipment", "create", { data: { ...gear, buildId: ids[0] } });
+      const favoriteInput = { q: "", sort: "saved", page: 1, compPage: 1 };
+      const favorites = await call("serviceShape", "listAccountFavorites", [userB, favoriteInput]);
+      assert.equal(favorites.reply.ok, true, JSON.stringify(favorites.reply));
+      assert.equal(favorites.reply.value.total, 26);
+      assert.equal(favorites.reply.value.compTotal, 25);
+      assert.equal(favorites.reply.value.builds.length, 24);
+      assert.equal(favorites.reply.value.builds[0].build.id, ids[25]);
+      assert.equal(
+        favorites.reply.value.builds[0].build.author.name,
+        "Cloudflare isolated QA outsider",
+      );
+      assert.ok(Array.isArray(favorites.reply.value.builds[0].build.equipment));
+      assert.equal(favorites.reply.value.builds[0].build._count.favorites, 1);
+      assert.ok(favorites.dates.every(Boolean), "RPC preserves real Date objects for build cards");
+      const secondFavorites = await service("listAccountFavorites", userB, {
+        ...favoriteInput,
+        sort: "title",
+        page: 2,
+        compPage: 2,
+      });
+      assert.deepEqual(
+        secondFavorites.builds.map((row) => row.build.id),
+        [ids[24], ids[25]],
+      );
+      assert.equal(secondFavorites.compositions.length, 1);
+      const searchFavorites = await service("listAccountFavorites", userB, {
+        ...favoriteInput,
+        q: "NATIVE FAVORITE 25",
+      });
+      assert.equal(searchFavorites.total, 1);
+      assert.equal(searchFavorites.builds[0].build.id, ids[25]);
+      await query("groupMember", "create", { data: { groupId, userId: userB, role: "MEMBER" } });
+      assert.equal((await service("listAccountFavorites", userB, favoriteInput)).compTotal, 26);
+      await query("groupMember", "delete", {
+        where: { groupId_userId: { groupId, userId: userB } },
+      });
+      assert.equal((await service("listAccountFavorites", userB, favoriteInput)).compTotal, 25);
+      const discoveryInput = {
+        q: "NATIVE FAVORITE",
+        mine: false,
+        content: "",
+        codes: [],
+        sort: "saved",
+        page: 1,
+      };
+      const discovery = await call("serviceShape", "listAccountBuilds", [null, discoveryInput]);
+      assert.equal(discovery.reply.ok, true, JSON.stringify(discovery.reply));
+      assert.equal(discovery.reply.value.total, 24);
+      assert.equal(discovery.reply.value.builds.length, 24);
+      assert.equal(discovery.reply.value.builds[0].id, ids[0]);
+      assert.equal(discovery.reply.value.builds[0].equipment[0].itemId, gear.itemId);
+      assert.deepEqual(discovery.reply.value.builds[0].favorites, []);
+      assert.ok(discovery.dates.every(Boolean), "RPC preserves build discovery Date objects");
+      const own = await service("listAccountBuilds", userB, {
+        ...discoveryInput,
+        mine: true,
+        sort: "recent",
+      });
+      assert.equal(own.total, 1);
+      assert.equal(own.builds[0].id, ids[25]);
+      assert.equal(
+        (await service("listAccountBuilds", null, { ...discoveryInput, mine: true })).total,
+        0,
+      );
+      assert.equal(
+        (await service("listAccountBuilds", null, { ...discoveryInput, codes: ["MAIN_AXE"] }))
+          .total,
+        1,
+      );
+      assert.equal((await call("service", "listAccountFavorites", ["", favoriteInput])).ok, false);
+      assert.equal(
+        (await call("service", "listAccountBuilds", [null, { ...discoveryInput, page: 10001 }])).ok,
+        false,
+      );
+      assert.equal(
+        (
+          await call("service", "listAccountBuilds", [
+            null,
+            { ...discoveryInput, codes: ["UNSUPPORTED"] },
+          ])
+        ).ok,
+        false,
+      );
+    },
+  );
   await check("watchlist identity is region and quality specific", async () => {
     const input = { region: "europe", itemId: "T4_MAIN_AXE", quality: 1 };
     const first = await service("saveWatchItem", userA, input),
@@ -385,6 +586,25 @@ try {
     });
     assert.equal(last.page, last.pages);
     assert.deepEqual(last.rows, expected.slice((last.page - 1) * 24));
+    const discovery = JSON.parse(readFileSync("src/lib/build-discovery-index.json", "utf8"));
+    const axeNames = new Set(
+      discovery.weapons.filter((w) => w.family === "axe").map((w) => w.name),
+    );
+    const facetedExpected = builds
+      .filter((b) => axeNames.has(b.weaponName) && b.tags.some((t) => t.toLowerCase() === "pvp"))
+      .sort((a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt));
+    const faceted = await call("archiveList", "builds", {
+      family: "axe",
+      tag: "PVP",
+      sort: "newest",
+      page: 1,
+    });
+    assert.equal(faceted.matched, facetedExpected.length);
+    assert.deepEqual(faceted.rows, facetedExpected.slice(0, 24));
+    const exactExpected = builds.filter((b) => b.weaponName === "Battleaxe");
+    const exactWeapon = await call("archiveList", "builds", { weapon: "Battleaxe", page: 1 });
+    assert.equal(exactWeapon.matched, exactExpected.length);
+    assert.deepEqual(exactWeapon.rows, exactExpected.slice(0, 24));
     const source = builds.find((b) => b.slug === "battleaxe-mist-build");
     const found = await call("archiveFind", "builds", [source.id, source.slug]);
     assert.equal(found.length, 1);

@@ -121,7 +121,11 @@ test("populated five and twenty player fixtures remain editable and export a wid
         await page.getByLabel("Player name", { exact: true }).fill("QA caller changed");
         await page.getByRole("button", { name: "Done editing member", exact: true }).click();
         await page.getByRole("button", { name: "Save comp revision", exact: true }).click();
-        await expect(page).toHaveURL(new RegExp(`/compositions/${comp.id}$`));
+        await expect(page).toHaveURL(
+          (url) =>
+            url.pathname === `/compositions/${comp.id}` &&
+            url.searchParams.get("region") === "europe",
+        );
         await page.reload();
         await expect(page.getByRole("region", { name: "Visual party loadouts" })).toContainText(
           "QA caller changed",

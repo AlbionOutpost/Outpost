@@ -139,7 +139,7 @@ test("visitor journey from named item search to a verified trade result", async 
   );
   await page.goto("/");
   await chooseRegion(page, "europe");
-  await page.locator(".desktop-navigation summary").click();
+  await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page.getByRole("link", { name: /^Item reference Gear/ }).click();
   await page.getByLabel("Search item name").fill("Bag");
   await page.getByLabel("Tier", { exact: true }).selectOption("4");
@@ -149,7 +149,7 @@ test("visitor journey from named item search to a verified trade result", async 
     .click();
   await page.getByRole("button", { name: "Compare prices" }).click();
   await expect(page.locator("tbody tr")).toHaveCount(2);
-  await page.locator(".desktop-navigation summary").click();
+  await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page.getByRole("link", { name: /^Profit calculator Fees/ }).click();
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");

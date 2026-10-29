@@ -1,23 +1,31 @@
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
 import { notFound } from "next/navigation";
 import {
   findLibraryBuild,
   libraryBuildDraft,
   librarySpellNames,
   libraryTraits,
+  queryLibraryBuilds,
 } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { BuildLoadoutView } from "@/components/build-loadout-view";
 import { LoadoutPriceCheck } from "@/components/loadout-price-check";
 import { LibraryBuildTraits, LibraryBuildVideos } from "@/components/library-build-metadata";
 import { ArchiveBuildCopyLink } from "@/components/archive-build-links";
+import { LibrarySaveButton } from "@/components/library-save-button";
+import { BuildCompositionLink } from "@/components/build-composition-link";
+import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
+import { LibraryBuildCard } from "@/components/library-build-card";
+import { BuildShareControls } from "@/components/build-share-controls";
+import { brandCopy } from "@/lib/brand-copy";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const build = await findLibraryBuild((await params).slug);
   return { title: build?.title || "Build not found" };
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const build = await findLibraryBuild(slug);
+  const { slug } = await params,
+    build = await findLibraryBuild(slug);
   if (!build) notFound();
   const names = await librarySpellNames();
   const equipment = build.equipment.map((row) => ({
@@ -36,43 +44,113 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       ]),
     ),
   }));
+  const main = equipment.find((row) => row.slot === "Main hand");
+  const savedBuild = {
+    id: build.id,
+    slug: build.slug.length <= 200 ? build.slug : build.id,
+    title: build.title,
+    author: build.author,
+    weaponName: build.weaponName,
+    category: build.category,
+    itemId: main?.itemId || "",
+    updatedAt: build.updatedAt,
+  };
+  const copyAvailable = await libraryBuildDraft(build);
+  const related = build.weaponName
+    ? (await queryLibraryBuilds({ weapon: build.weaponName, page: 1 })).rows
+        .filter((candidate) => candidate.id !== build.id)
+        .slice(0, 3)
+    : [];
   return (
-    <div className="build-detail-page library-build-detail">
-      <Link href="/builds/library" className="library-back-link">
-        ← Build library
-      </Link>
-      <div className="section-heading">
-        <div>
-          <h1 className="page-title display-title">{build.title}</h1>
-          <p className="intro">
-            {activityName(build.category)} · By {build.author}
-          </p>
-          {!!build.tags.length && (
-            <div className="library-author-tags" aria-label="Build tags">
-              {build.tags.map((tag, i) => (
-                <span key={`${tag}-${i}`}>{tag}</span>
-              ))}
-            </div>
-          )}
-        </div>
-        {(await libraryBuildDraft(build)) && <ArchiveBuildCopyLink slug={build.slug} />}
-      </div>
-      <p className="library-provenance">
-        Check ability unlocks and current balance in game. Price checks start with Normal quality.
-      </p>
-      <BuildLoadoutView equipment={equipment} />
-      <LibraryBuildTraits ids={build.recommendedTraits} traits={await libraryTraits()} />
-      {build.description && (
-        <section className="library-author-notes">
+    <div className="build-detail-page library-build-detail build-detail-redesign">
+      <BuildDetailHeader
+        title={build.title}
+        description={brandCopy(build.description)}
+        author={build.author}
+        activity={activityName(build.category)}
+        tags={build.tags}
+        updatedAt={build.updatedAt}
+        itemId={main?.itemId}
+        actions={
+          <>
+            {copyAvailable && <ArchiveBuildCopyLink slug={build.slug} />}
+            <LibrarySaveButton build={savedBuild} showLabel />
+            <BuildShareControls
+              title={build.title}
+              equipment={equipment.map((item) => ({
+                slot: item.slot,
+                itemId: item.itemId,
+                quality: item.quality,
+                name: equipmentName(item.itemId),
+                qualityNote: "Normal planning quality",
+              }))}
+            />
+          </>
+        }
+      />
+      <BuildDetailNavigation />
+      <BuildLoadoutView
+        equipment={equipment}
+        qualityAssumed
+        extraActions={
+          <BuildCompositionLink fromLibrary={build.slug.length <= 200 ? build.slug : build.id} />
+        }
+        information={{
+          activity: activityName(build.category),
+          author: build.author,
+          updatedAt: build.updatedAt,
+          tags: build.tags,
+        }}
+        recommendations={
+          build.recommendedTraits.length ? (
+            <LibraryBuildTraits ids={build.recommendedTraits} traits={await libraryTraits()} />
+          ) : undefined
+        }
+      />
+      <div className="detail-notes-grid">
+        <section className="detail-notes-panel" id="build-notes">
           <h2>From the author</h2>
-          <p className="preserve">{build.description}</p>
+          <p className="preserve">
+            {brandCopy(build.description) || "No additional strategy notes provided."}
+          </p>
+          <p className="detail-muted">
+            Check ability unlocks and current balance in game. Price checks start with Normal
+            quality.
+          </p>
+        </section>
+        <LibraryBuildVideos build={build} />
+      </div>
+      <div id="build-cost">
+        <LoadoutPriceCheck equipment={equipment} />
+      </div>
+      <section className="detail-discussion-panel" id="build-discussion">
+        <h2>Build discussion</h2>
+        <p className="detail-muted">
+          Community builds support comments and shared feedback. Make a personal copy to adjust this
+          loadout, or explore player builds.
+        </p>
+        <Link className="button secondary" href="/builds">
+          Browse community builds →
+        </Link>
+      </section>
+      {!!related.length && (
+        <section className="detail-related-builds" aria-label="Related builds">
+          <div className="ecosystem-section-heading">
+            <h2>More {build.weaponName} builds</h2>
+            <Link
+              href={`/builds/library?${new URLSearchParams({ q: build.weaponName })}`}
+              className="text-link"
+            >
+              Explore this weapon →
+            </Link>
+          </div>
+          <div className="ecosystem-build-grid">
+            {related.map((candidate) => (
+              <LibraryBuildCard key={candidate.id} build={candidate} />
+            ))}
+          </div>
         </section>
       )}
-      <LibraryBuildVideos build={build} />
-      <LoadoutPriceCheck equipment={equipment} />
-      <div className="library-detail-footer">
-        <span>Author update: {build.updatedAt.slice(0, 10) || "Unknown"}</span>
-      </div>
     </div>
   );
 }

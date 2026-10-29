@@ -16,7 +16,14 @@ export default async function EditBuild({ params }: { params: Promise<{ id: stri
   return (
     <div className="build-editor-page">
       <h1 className="page-title display-title">Edit build</h1>
-      <BuildEditor initial={buildInput.parse(build)} id={build.id} version={build.version} />
+      <BuildEditor
+        key={`${session.user.id}:${build.id}`}
+        initial={buildInput.parse(build)}
+        id={build.id}
+        version={build.version}
+        ownerId={session.user.id}
+        recoveryKey={`build:${build.id}`}
+      />
     </div>
   );
 }

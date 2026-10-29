@@ -52,8 +52,10 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     await expect(
       page.getByRole("heading", { name: "Five-player reference review", exact: true }),
     ).toBeVisible();
-    await expect(page).toHaveURL(/\/compositions\/(?!new$)[^/]+$/);
-    compositionId = page.url().split("/").pop()!;
+    await expect(page).toHaveURL(/\/compositions\/(?!new\?)[^/?]+\?region=europe$/);
+    const savedUrl = new URL(page.url());
+    expect(savedUrl.searchParams.get("region")).toBe("europe");
+    compositionId = savedUrl.pathname.split("/").pop()!;
     await page.reload();
     await expect(page.getByRole("region", { name: "Visual party loadouts" })).toContainText(
       "First caller",

@@ -1,7 +1,7 @@
 "use client";
 import { PartyReadiness } from "./party-readiness";
-import { useState, useRef, useSyncExternalStore } from "react";
-import Link from "@/components/link";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
+import Link from "@/components/build-region-link";
 import { useRouter } from "next/navigation";
 import { GripVertical, ArrowUp, ArrowDown, Copy, Trash2, Plus, Swords } from "lucide-react";
 import {
@@ -32,12 +32,14 @@ function member(): MemberSlot {
 }
 export function CompositionEditor({
   initial,
+  initialNotice,
   id,
   version,
   groups = [],
   builds = [],
 }: {
   initial?: CompositionInput;
+  initialNotice?: string;
   id?: string;
   version?: number;
   groups?: { id: string; name: string }[];
@@ -62,6 +64,10 @@ export function CompositionEditor({
     },
   );
   const [active, setActive] = useState(0);
+  const latestDraft = useRef(draft);
+  useEffect(() => {
+    latestDraft.current = draft;
+  }, [draft]);
   const [editing, setEditing] = useState(false);
   const [grouping, setGrouping] = useState("party");
   const [layout, setLayout] = useState("auto");
@@ -103,6 +109,9 @@ export function CompositionEditor({
       const response = await fetch(`/api/compositions/loadout?id=${encodeURIComponent(buildId)}`);
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
+      const target = latestDraft.current.slots.find((slot) => slot.id === targetId);
+      if (!target) return;
+      const combinedNotes = [target.notes, body.notes].filter(Boolean).join("\n");
       setDraft((current) => ({
         ...current,
         slots: current.slots.map((slot) =>
@@ -112,13 +121,21 @@ export function CompositionEditor({
                 equipment: body.equipment,
                 equipmentSets: body.equipmentSets || [],
                 sourceBuildId: body.sourceBuildId,
-                notes: [slot.notes, body.notes].filter(Boolean).join("\n").slice(0, 2000),
+                notes: combinedNotes.slice(0, 2000),
               }
             : slot,
         ),
       }));
       setStatus(
-        "Build equipment and supported ability selections copied; unvalidated author notes remain separate.",
+        [
+          "Loadout copied into this member. Review the equipment and notes before saving.",
+          body.notice || "",
+          combinedNotes.length > 2000
+            ? "Combined member notes were shortened to 2,000 characters. The original build remains unchanged."
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" "),
       );
     } catch (error) {
       setError(error instanceof Error ? error.message : "Could not copy build");
@@ -167,7 +184,7 @@ export function CompositionEditor({
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
-      router.push(`/compositions/${body.id}`);
+      router.push(`/compositions/${body.id}?region=${parsed.data.region}`);
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save comp");
@@ -178,6 +195,11 @@ export function CompositionEditor({
   const selected = draft.slots[active];
   return (
     <form onSubmit={save} className="party-editor">
+      {initialNotice && (
+        <p className="notice" role="status">
+          {initialNotice}
+        </p>
+      )}
       <div className="party-command-bar">
         <label>
           Comp title
@@ -703,14 +725,14 @@ export function CompositionEditor({
                     Build copies stay independent.
                   </p>
                   <EquipmentSets
-                    key={selected.id}
+                    key={`sets:${selected.id}`}
                     equipment={selected.equipment}
                     sets={selected.equipmentSets}
                     onEquipment={(equipment) => patch({ equipment })}
                     onSets={(equipmentSets) => patch({ equipmentSets })}
                   />
                   <EquipmentPicker
-                    key={selected.id}
+                    key={`equipment:${selected.id}`}
                     value={selected.equipment}
                     onChange={(equipment) => patch({ equipment })}
                   />

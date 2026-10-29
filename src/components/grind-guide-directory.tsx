@@ -1,4 +1,5 @@
 import Link from "@/components/link";
+import { brandCopy } from "@/lib/brand-copy";
 import Image from "next/image";
 import { ArrowUpRight, BookOpen } from "lucide-react";
 import { ItemIcon } from "./item-icon";
@@ -74,7 +75,7 @@ export function GrindGuideDirectory({
             <div>
               <span>{featured.category}</span>
               <h2>{featured.title}</h2>
-              <p>{featured.summary}</p>
+              <p>{brandCopy(featured.summary)}</p>
               <span>
                 By {featured.author} · {featured.updatedAt}
               </span>
@@ -107,7 +108,7 @@ export function GrindGuideDirectory({
                 </div>
                 <div className="grind-guide-copy">
                   <h2>{guide.title}</h2>
-                  <p>{guide.summary}</p>
+                  <p>{brandCopy(guide.summary)}</p>
                   <div>
                     <span>
                       <BookOpen size={13} /> By {guide.author}

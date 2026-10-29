@@ -1,5 +1,7 @@
 # Outpost interface system
 
+Current owner direction: [Builds ecosystem and shared navy shell](design-review/builds-system/README.md). The supplied library/detail reference controls the new Builds layouts, compact navigation and dark navy/copper tokens. Its inventory board retains genuine Albion slot geometry. Older layout rules below remain historical where they conflict; data, permissions and the established typography stay authoritative.
+
 Active owner implementation: [premium workspaces and connected planning](design-review/premium-workspaces/README.md). The five supplied UI-system/crafting/build-comp/market/homepage images are the current target. Use one coherent theme, real data and useful private workflows. Remove migration-history and competitor copy from the public UI while retaining truthful prices, assumptions, credits and internal provenance. Implementation and acceptance are in progress.
 
 Latest work: [Grind recovery and equipment-led redesign](design-review/grind-recovery/README.md). Source content, current-patch verification and owner visual acceptance are independent.

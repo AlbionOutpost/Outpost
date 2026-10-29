@@ -53,7 +53,7 @@ for (const kind of ["builds", "compositions"]) {
   writeFileSync(
     `${folder}/${kind}-index.json`,
     JSON.stringify(
-      index.map(({ id, slug, title, author, category, weaponName, tags, shard }) => ({
+      index.map(({ id, slug, title, author, category, weaponName, tags, updatedAt, shard }) => ({
         id,
         slug,
         title,
@@ -61,6 +61,7 @@ for (const kind of ["builds", "compositions"]) {
         category,
         weaponName,
         tags,
+        updatedAt,
         shard,
       })),
     ),

@@ -4,6 +4,7 @@ import { equipmentSet, type EquipmentSet } from "./albion/equipment-sets";
 import { archivedSpellOptions } from "./albion/equipment-abilities";
 import { equipmentName, findEquipment } from "./albion/equipment-catalog";
 import { activityName, type LibraryBuild } from "./grind-library-types";
+import { brandCopy } from "./brand-copy";
 
 function recordedSelections(itemId: string, ids: string[]) {
   const options = archivedSpellOptions(itemId);
@@ -88,9 +89,9 @@ export function createLibraryBuildDraft(
       if (parsed.success) sets.push(parsed.data);
     }
   const supplement = [
-    ...(build.tags.length ? [`Archived author tags: ${build.tags.join(", ")}`] : []),
+    ...(build.tags.length ? [`Author tags: ${build.tags.join(", ")}`] : []),
     ...(build.recommendedTraits.length
-      ? [`Archived awakening recommendations: ${build.recommendedTraits.join(", ")}`]
+      ? [`Author trait recommendations: ${build.recommendedTraits.join(", ")}`]
       : []),
     ...alternativeNotes,
     ...build.videos.map((video) => `Recorded YouTube ${video.kind}: ${video.url}`),
@@ -102,7 +103,7 @@ export function createLibraryBuildDraft(
   const candidate = {
     equipmentSets: sets,
     title: `${build.title} (copy)`.slice(0, 100),
-    description: `Adapted from ${build.author}'s Albion Online Grind build; archived 27 October 2026.`,
+    description: `A personal copy of ${build.author}'s ${build.title}.`.slice(0, 4000),
     contentType: contentTypes.includes(activity as (typeof contentTypes)[number])
       ? activity
       : "Other",
@@ -110,9 +111,9 @@ export function createLibraryBuildDraft(
     visibility: "PRIVATE",
     playerCount: 1,
     recommendedIP: 0,
-    strategy: build.description.slice(0, 12000 - suffix.length) + suffix,
+    strategy: brandCopy(build.description).slice(0, 12000 - suffix.length) + suffix,
     patchNotes:
-      "Historical equipment and recorded selections. Confirm current patch and character unlocks. Quality was not captured; Normal is an editable planning assumption. Supported alternative spell choices become separate spare sets; all recorded alternatives remain notes. Full author text stays in the archive if editor limits shorten this copy.",
+      "Recorded equipment and ability selections; confirm current balance and character unlocks. Normal quality is an editable planning assumption. Alternative ability choices are preserved as spare sets, with additional recommendations in notes.",
     equipment: filtered,
   };
   const parsed = buildInput.safeParse(candidate);

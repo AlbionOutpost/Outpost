@@ -42,13 +42,14 @@ test("create, revise and publish a build with ownership and conflict checks", as
     ]);
     await page.goto("/builds/new");
     await page.getByLabel("Build title").fill("Browser tested Battleaxe");
+    await page.getByRole("tab", { name: "Notes", exact: true }).click();
     await page.getByText("Advanced item IDs & notes", { exact: true }).click();
     await page.getByLabel("Item ID 1").fill("T6_MAIN_AXE@1");
     await page.getByRole("button", { name: "Save build", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Browser tested Battleaxe" })).toBeVisible();
     await page.reload();
     await expect(page.getByRole("heading", { name: "Browser tested Battleaxe" })).toBeVisible();
-    const id = page.url().split("/").pop()!;
+    const id = new URL(page.url()).pathname.split("/").pop()!;
     const initial = await db.build.findUniqueOrThrow({
       where: { id },
       include: { equipment: true },

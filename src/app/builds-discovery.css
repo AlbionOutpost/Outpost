@@ -1,0 +1,1011 @@
+/* Inventory-led build discovery. Counts, equipment and abilities come from recorded builds. */
+.app.outpost .builds-ecosystem {
+  max-width: 1488px;
+  margin: 0 auto;
+  min-width: 0;
+}
+.app.outpost .builds-ecosystem-header {
+  display: block;
+  position: static;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  padding: 22px 0 0;
+  background: linear-gradient(90deg, var(--bg), color-mix(in srgb, var(--panel) 45%, var(--bg)));
+}
+.app.outpost .builds-heading-copy {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 82px;
+  margin-bottom: 13px;
+}
+.builds-heading-mark {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.app.outpost .builds-ecosystem-header .page-title {
+  font: 750 28px/1.16 var(--font-ui);
+  letter-spacing: -0.7px;
+  margin: 0 0 8px;
+}
+.app.outpost .builds-heading-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 75ch;
+}
+.app.outpost .builds-heading-copy .builds-eyebrow {
+  font: 650 12px/1.2 var(--font-ui);
+  letter-spacing: 1.3px;
+  color: var(--accent-ink);
+  margin: 0 0 7px;
+}
+.builds-header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.builds-collection-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.app.outpost .builds-collection-tabs > a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 12px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+.app.outpost .builds-collection-tabs > a[aria-current="page"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.app.outpost .builds-header-bottom > .button {
+  min-height: 34px;
+  font-size: 12px;
+  padding: 7px 13px;
+  margin-bottom: 9px;
+  flex-shrink: 0;
+}
+.ecosystem-discovery-layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.ecosystem-filter-rail {
+  min-width: 0;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.ecosystem-filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.app.outpost .ecosystem-filter-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+}
+.app.outpost .ecosystem-filter-form :is(input, select) {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+  padding: 8px 9px;
+  min-height: 36px;
+}
+.ecosystem-filter-form fieldset {
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 14px 0 0;
+  margin: 0;
+  min-width: 0;
+}
+.app.outpost .ecosystem-filter-form legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ecosystem-family-list {
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  margin: 3px -5px 13px;
+  padding: 0 4px;
+}
+.app.outpost .ecosystem-family-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 4px 5px;
+  color: var(--muted);
+  font-size: 12px;
+  border-radius: 4px;
+}
+.ecosystem-family-option > .numeric {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.ecosystem-family-option > img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+.app.outpost .ecosystem-family-option[aria-current="true"] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.app.outpost .ecosystem-filter-form p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+.ecosystem-results {
+  min-width: 0;
+}
+.ecosystem-result-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-height: 48px;
+}
+.ecosystem-source-switch {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  margin-right: auto;
+}
+.app.outpost .ecosystem-source-switch > a {
+  padding: 7px 9px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.app.outpost .ecosystem-source-switch > a[aria-current="page"] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border-color: var(--border);
+}
+.ecosystem-source-switch .numeric {
+  font-size: 12px;
+  padding: 3px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  margin-left: 5px;
+}
+.app.outpost .ecosystem-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.app.outpost .ecosystem-sort-label select {
+  font-size: 12px;
+  min-height: 31px;
+  padding: 5px 24px 5px 8px;
+  max-width: 165px;
+}
+.app.outpost .ecosystem-apply-sort {
+  min-height: 31px;
+  font-size: 12px;
+  padding: 5px 9px;
+}
+.ecosystem-view-switch {
+  display: flex;
+  gap: 4px;
+  border-left: 1px solid var(--border);
+  padding-left: 8px;
+}
+.app.outpost .ecosystem-view-switch > a {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-view-switch > a[aria-current="true"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.ecosystem-results-subline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+}
+.app.outpost .ecosystem-results-subline > p {
+  font-size: 12px;
+  margin: 0;
+  color: var(--muted);
+}
+.ecosystem-results-subline strong {
+  color: var(--text);
+}
+.ecosystem-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.app.outpost .ecosystem-active-filters > a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-build-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .ecosystem-build-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  min-width: 0;
+  overflow: visible;
+  box-shadow: none;
+}
+.app.outpost .ecosystem-build-card:hover {
+  border-color: var(--accent);
+  background: var(--elevated);
+}
+.app.outpost .ecosystem-build-card > .ecosystem-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  color: var(--text);
+  min-width: 0;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent-wash), transparent 105px);
+}
+.ecosystem-card-topline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 27px;
+  min-height: 20px;
+}
+.app.outpost .ecosystem-activity {
+  display: inline-block;
+  padding: 3px 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ecosystem-card-kind {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-build-card .library-build-identity {
+  display: block;
+  min-height: 42px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+.app.outpost .ecosystem-build-card .library-build-identity h2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font: 700 14px/1.3 var(--font-ui);
+  letter-spacing: -0.15px;
+  margin: 0 0 5px;
+  text-align: left;
+}
+.app.outpost .ecosystem-build-card .library-build-identity small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: block;
+}
+.app.outpost .ecosystem-build-card .library-build-equipment {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  min-width: 0;
+  border-radius: 0;
+}
+.app.outpost .ecosystem-build-card .library-build-equipment > span {
+  display: block;
+  min-width: 0;
+  flex: 0 1 40px;
+  aspect-ratio: 1;
+}
+.app.outpost .ecosystem-build-card .library-build-equipment img {
+  width: 100%;
+  height: auto;
+  max-width: 40px;
+  display: block;
+  object-fit: contain;
+  border-radius: 3px;
+}
+.ecosystem-card-spells {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+}
+.ecosystem-card-spells > span {
+  display: inline-flex;
+  max-width: 100%;
+}
+.ecosystem-card-spells img {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+.ecosystem-no-spells {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.app.outpost .ecosystem-build-card .library-card-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding: 9px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.library-card-caption > span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.library-card-caption > span:last-child {
+  flex-shrink: 0;
+  color: var(--accent-ink);
+}
+.library-save-control {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.app.outpost .library-save-control .build-card-save {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  width: 30px;
+  min-height: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.app.outpost .library-save-control .build-card-save[aria-pressed="true"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.device-save-feedback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.app.outpost .view-list .ecosystem-build-grid {
+  grid-template-columns: 1fr;
+}
+.app.outpost .view-list .ecosystem-card-main {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(210px, 1.4fr) minmax(120px, 0.7fr);
+  align-items: center;
+  gap: 10px 18px;
+}
+.view-list .ecosystem-card-topline {
+  grid-column: 1;
+  grid-row: 1;
+}
+.view-list .library-build-identity {
+  grid-column: 1;
+  grid-row: 2/4;
+}
+.view-list .library-build-equipment {
+  grid-column: 2;
+  grid-row: 1/3;
+}
+.view-list .ecosystem-card-spells {
+  grid-column: 2;
+  grid-row: 3;
+}
+.view-list .library-card-caption {
+  grid-column: 3;
+  grid-row: 1/4;
+  flex-direction: column;
+  align-items: flex-start !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+.ecosystem-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 250px;
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  text-align: center;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-empty :is(h2, h3) {
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  margin: 12px 0 6px;
+  color: var(--text);
+}
+.app.outpost .ecosystem-empty p {
+  max-width: 55ch;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+.ecosystem-empty > svg {
+  color: var(--accent-ink);
+}
+.save-build-filter {
+  position: relative;
+  flex-shrink: 0;
+}
+.app.outpost .save-build-filter > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.save-build-filter > div {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  z-index: 12;
+  width: 260px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  box-shadow: var(--premium-shadow);
+}
+.app.outpost .save-build-filter label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.app.outpost .save-build-filter input {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+}
+.app.outpost .save-build-filter p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 9px 0 0;
+}
+.ecosystem-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0 16px;
+}
+.app.outpost .ecosystem-section-heading h2 {
+  font: 700 20px/1.3 var(--font-ui);
+  margin: 0 0 6px;
+}
+.app.outpost .ecosystem-section-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.device-favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.device-favorite-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+}
+.device-favorite-card > .device-favorite-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 44px 18px 16px;
+  min-width: 0;
+  height: 100%;
+}
+.device-favorite-card > .device-favorite-content > span {
+  min-width: 0;
+}
+.app.outpost .device-favorite-card h3 {
+  font-size: 14px;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.app.outpost .device-favorite-card small {
+  font-size: 12px;
+  color: var(--accent-ink);
+}
+.app.outpost .device-favorite-card > .device-favorite-content > span > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.saved-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.saved-filter-list > article {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.saved-filter-list > article > div {
+  min-width: 0;
+  margin-right: auto;
+}
+.app.outpost .saved-filter-list h3 {
+  font-size: 15px;
+  margin: 0 0 5px;
+}
+.app.outpost .saved-filter-list p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1180px) {
+  .app.outpost .ecosystem-build-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ecosystem-discovery-layout {
+    grid-template-columns: 195px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .device-favorites-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .app.outpost .builds-ecosystem-header {
+    padding-top: 14px;
+  }
+  .ecosystem-discovery-layout {
+    grid-template-columns: 1fr;
+  }
+  .ecosystem-filter-rail {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .ecosystem-filter-form {
+    padding: 15px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .ecosystem-family-list {
+    max-height: 200px;
+  }
+  .builds-header-bottom {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .builds-collection-tabs {
+    order: 2;
+    width: 100%;
+    gap: 0;
+  }
+  .builds-header-bottom > .button {
+    margin-left: auto;
+  }
+  .app.outpost .builds-heading-copy {
+    min-height: 74px;
+    gap: 12px;
+  }
+  .builds-heading-mark {
+    width: 44px;
+    height: 44px;
+  }
+  .app.outpost .builds-ecosystem-header .page-title {
+    font-size: 25px;
+  }
+  .app.outpost .view-list .ecosystem-card-main {
+    grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.3fr);
+  }
+  .view-list .library-card-caption {
+    grid-column: 1/-1;
+    grid-row: 4;
+    flex-direction: row !important;
+    border-top: 1px solid var(--border) !important;
+    padding-top: 8px !important;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .builds-heading-copy p {
+    font-size: 12px;
+  }
+  .app.outpost .builds-heading-copy .builds-eyebrow {
+    font-size: 12px;
+  }
+  .app.outpost .builds-ecosystem-header .page-title {
+    font-size: 23px;
+  }
+  .builds-heading-mark {
+    display: none;
+  }
+  .app.outpost .builds-collection-tabs > a {
+    font-size: 12px;
+    padding: 12px 10px;
+    gap: 5px;
+  }
+  .builds-collection-tabs svg {
+    width: 13px;
+  }
+  .ecosystem-result-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ecosystem-source-switch {
+    width: 100%;
+    margin-right: 0;
+  }
+  .ecosystem-sort-label {
+    margin-right: auto;
+  }
+  .app.outpost .ecosystem-sort-label select {
+    max-width: 145px;
+  }
+  .ecosystem-view-switch {
+    padding-left: 5px;
+  }
+  .app.outpost .ecosystem-build-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .app.outpost .ecosystem-build-card > .ecosystem-card-main {
+    padding: 14px;
+  }
+  .app.outpost .ecosystem-build-card .library-build-identity h2 {
+    font-size: 16px;
+  }
+  .app.outpost .ecosystem-build-card .library-build-equipment > span {
+    flex-basis: 44px;
+  }
+  .app.outpost .ecosystem-build-card .library-build-equipment img {
+    max-width: 44px;
+  }
+  .app.outpost .ecosystem-build-card .library-build-identity {
+    min-height: 50px;
+  }
+  .library-save-control {
+    top: 10px;
+    right: 10px;
+  }
+  .app.outpost .library-save-control .build-card-save {
+    width: 36px;
+    height: 36px;
+  }
+  .ecosystem-card-topline {
+    padding-right: 36px;
+  }
+  .app.outpost .view-list .ecosystem-card-main {
+    display: flex;
+  }
+  .view-list .library-card-caption {
+    width: 100%;
+  }
+  .device-favorites-grid {
+    grid-template-columns: 1fr;
+  }
+  .saved-filter-list > article {
+    flex-wrap: wrap;
+    padding: 14px;
+    gap: 12px;
+  }
+  .saved-filter-list > article > div {
+    width: calc(100% - 38px);
+  }
+  .saved-filter-list > article > .button {
+    margin-left: 32px;
+  }
+  .saved-filter-list > article > .icon-button {
+    margin-left: auto;
+  }
+  .ecosystem-section-heading {
+    align-items: flex-start;
+  }
+  .ecosystem-section-heading > .text-link {
+    font-size: 12px;
+  }
+  .ecosystem-results-subline {
+    align-items: flex-start;
+  }
+  .save-build-filter > div {
+    right: -3px;
+    width: 250px;
+  }
+}
+.app.outpost .ecosystem-build-card.build-preview-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.app.outpost .ecosystem-build-card .equipment-strip {
+  display: flex;
+  gap: 3px;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  min-width: 0;
+  justify-content: flex-start;
+}
+.app.outpost .ecosystem-build-card .equipment-strip > .strip-slot {
+  flex: 0 1 40px;
+  min-width: 0;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.app.outpost .ecosystem-build-card .equipment-strip img {
+  width: 100%;
+  height: auto;
+  max-width: 40px;
+  border-radius: 3px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-footer {
+  margin: 0 12px;
+  padding: 8px 0 10px;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  min-height: 42px;
+  gap: 6px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-author small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-build-card .loadout-card-footer .build-card-save {
+  min-height: 28px;
+  padding: 4px 7px;
+  font-size: 12px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-empty {
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .builds-ecosystem .account-build-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 1180px) {
+  .app.outpost .builds-ecosystem .account-build-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .builds-ecosystem .account-build-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.app.outpost .ecosystem-build-card .library-build-equipment > .ecosystem-empty-slot {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  opacity: 0.5;
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 31px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: var(--panel);
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a[aria-current="true"] {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.app.outpost .builds-ecosystem .build-results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+.app.outpost .builds-ecosystem .build-results-heading h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.app.outpost .builds-ecosystem .build-results-heading > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .builds-ecosystem.view-list .account-build-grid {
+  grid-template-columns: 1fr;
+}
+.app.outpost .favorite-compositions-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .favorite-compositions-list > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.favorite-compositions-list > a > span:first-of-type {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin-right: auto;
+}
+.favorite-compositions-list svg {
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+.ecosystem-favorites-page .ecosystem-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 900px) {
+  .app.outpost .favorite-compositions-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .favorite-compositions-list {
+    grid-template-columns: 1fr;
+  }
+  .ecosystem-favorites-page section[aria-label="Account favorites"] > .ecosystem-section-heading {
+    flex-wrap: wrap;
+  }
+}
+
+.app.outpost .ecosystem-title-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.app.outpost .ecosystem-title-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.app.outpost .ecosystem-title-link:focus-visible {
+  outline: 0;
+}
+.app.outpost .ecosystem-title-link:focus-visible::after {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+.app.outpost .ecosystem-build-card .build-card-save,
+.app.outpost .device-favorite-card .build-card-save {
+  position: relative;
+  z-index: 2;
+}
+.library-save-control {
+  z-index: 3;
+}

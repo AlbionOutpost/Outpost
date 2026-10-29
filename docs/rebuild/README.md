@@ -1,6 +1,6 @@
 # Outpost rebuild and AI handoff
 
-This is the entry point for another AI or engineer to reproduce the entire **implemented** Outpost website. It documents the application at the [implementation baseline](baseline.json), including the latest real-equipment homepage, search palette and animated top navigation. It is an implementation specification, not a proposal for another redesign or a claim that every planned Albion feature is finished.
+This is the entry point for another AI or engineer to reproduce the entire **implemented** Outpost website. It documents the application at the [implementation baseline](baseline.json), including the Builds discovery/inventory/editor ecosystem, owner-scoped memory recovery, composition bridge, real-equipment homepage and shared search/navigation. It is an implementation specification, not a proposal for another redesign or a claim that every planned Albion feature is finished.
 
 For an exact recreation, use the commit containing this handoff (or a reviewed later descendant), its versioned source, lockfile, migrations, dataset and original assets. The feature baseline identifies the preceding UI implementation; that earlier publication alone omitted unit tests, which this handoff restores. Prose cannot recover a missing logo, licensed dataset, OAuth credential or private production database. Those inputs are explicitly separated. Never invent their replacements and present them as authentic.
 
