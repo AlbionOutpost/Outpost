@@ -11,7 +11,7 @@ Status as of 29 Oct 2026. Update this file when something ships, breaks or gets 
 | 1   | **Fix CI on `main`.** The last deploy runs failed in the quality step (PR #6 merge `695bad4`, and `d3f7e9e`), so the latest rebuild is not live.                                                                                                                                                                                                     | Nothing else ships until this is green                |
 | 2   | **Design system reset.** Replace the 31 layered global stylesheets (~600 KB on every route) with one token file, one component layer (button, input, card, item well, table, tabs, chip, dialog) and per-archetype route styles. Remove the navy overrides on the homepage, warm the light theme, enforce the 12px text floor and the spacing scale. | Biggest single lever on polish, consistency and speed |
 | 3   | **Mobile speed.** Lab mobile LCP is 3.6–5.3 s on home, library, detail, market and crafting (target ≤2.5 s). Cut global CSS, check font and hero image loading, re-measure with a repeatable protocol.                                                                                                                                               | Phones are first-class users                          |
-| 4   | **Backups + alerting.** Scheduled export of the private Durable Object (users, builds, Teams) with a tested restore; uptime/error alert to the owner.                                                                                                                                                                                                | Real user data now exists                             |
+| 4   | **Verify recovery.** After the next deploy, run `node scripts/cloudflare-recovery.mjs bookmark` once to confirm point-in-time recovery works on the Free plan. Email alerts for Worker errors, DDoS, SSL and abuse reports are on.                                                                                                                   | Backups only count once a restore path is proven      |
 | 5   | **Legal page.** Operator name/contact and a privacy policy; then real Terms/Privacy URLs in the Discord portal.                                                                                                                                                                                                                                      | Required for an account-holding site                  |
 
 ## Next — best-in-class core
@@ -77,9 +77,9 @@ Only the owner can do these.
 | OA-4  | Provide operator name, address and contact email for the legal page; then set Discord Terms/Privacy URLs                                        |
 | OA-5  | Choose a code licence (none today)                                                                                                              |
 | OA-6  | Decide the current-patch data source and its rights (ao-bin-dumps has no declared licence)                                                      |
-| OA-7  | Choose backup storage/retention and an alert destination (email or Discord webhook)                                                             |
+| OA-7  | Run `node scripts/cloudflare-recovery.mjs bookmark` once after the next deploy to confirm recovery works                                        |
 | OA-8  | Enable required MFA on the GitHub org; decide on branch protection (paid plan for private repos)                                                |
-| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26**                                                                                    |
+| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26** (a reminder is scheduled for 5 Jan 2027)                                           |
 | OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                             |
 | OA-11 | Delete leftover merged branches on GitHub                                                                                                       |
 
@@ -100,8 +100,8 @@ A release is "done" when all of these hold:
 1. CI green on `main` and the deploy actually ran.
 2. Real Discord login lifecycle verified on production HTTPS.
 3. Legal page with real operator details and privacy policy.
-4. Private data backed up with a tested restore.
-5. Uptime/error alerting reaches the owner.
+4. Private data recoverable (30-day point-in-time recovery) with a verified restore path.
+5. Error alerting reaches the owner (done: email); uptime probe still missing.
 6. All data labelled with source and date; patch drift tracked.
 7. Every shipped calculator mode has sourced coefficients and hand-checked fixtures; unsupported modes are absent, not faked.
 8. Mobile LCP ≤2.5 s on home, market and builds.

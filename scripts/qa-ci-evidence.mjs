@@ -22,7 +22,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   }
   if (existsSync(".qa/phase-summary.json")) {
     const summary = JSON.parse(readFileSync(".qa/phase-summary.json", "utf8"));
-    for (const check of summary.checks.filter((check) => check.status !== "PASS")) {
+    for (const check of summary.checks.filter(
+      (check) => !["PASS", "SKIPPED"].includes(check.status),
+    )) {
       const path = `.qa/ci-evidence/phase-${check.name}.log`;
       console.log(`Failed check: ${check.name} (${check.status})`);
       if (existsSync(path)) {

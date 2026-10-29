@@ -98,6 +98,35 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
   async health() {
     return this.ctx.storage.sql.exec("SELECT 1 AS ok").one().ok === 1;
   }
+
+  /* Point-in-time recovery (Cloudflare keeps 30 days of SQLite history). These methods are
+   * reachable only through a Durable Object binding — the public data entrypoint below does not
+   * expose them. Operators use scripts/cloudflare-recovery.mjs; see docs/OPERATIONS.md. */
+  #recoveryStorage() {
+    return this.ctx.storage as unknown as {
+      getCurrentBookmark(): Promise<string>;
+      getBookmarkForTime(time: number): Promise<string>;
+      onNextSessionRestoreBookmark(bookmark: string): Promise<string>;
+    };
+  }
+  async recoveryBookmark(time?: number) {
+    const storage = this.#recoveryStorage();
+    if (time === undefined) return storage.getCurrentBookmark();
+    const limit = Date.now() - 30 * 24 * 3600 * 1000;
+    if (!Number.isFinite(time) || time < limit || time > Date.now())
+      throw new HttpError(400, "Recovery time must be within the last 30 days");
+    return storage.getBookmarkForTime(time);
+  }
+  /** Schedules the restore and returns a bookmark that undoes it. Call recoveryRestart next. */
+  async recoveryRestore(bookmark: string) {
+    if (typeof bookmark !== "string" || !/^[0-9a-f-]{16,200}$/i.test(bookmark))
+      throw new HttpError(400, "Invalid recovery bookmark");
+    return this.#recoveryStorage().onNextSessionRestoreBookmark(bookmark);
+  }
+  /** Restarts the object so a scheduled restore takes effect. The calling request fails. */
+  async recoveryRestart() {
+    this.ctx.abort("Point-in-time recovery restart");
+  }
 }
 
 /** All data methods are binding-only RPC. No public URL can execute a query or service. */

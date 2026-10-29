@@ -3,6 +3,11 @@ on:
   pull_request:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      skip:
+        description: Comma-separated qa:phase checks to skip
+        type: string
+        default: live-regions
 permissions:
   contents: read
 concurrency:
@@ -47,6 +52,10 @@ jobs:
         run: node scripts/qa-source-secrets.mjs
       - name: Types, lint, units, migrations, build, browsers, advisories and regional smoke
         run: npm run qa:phase
+        env:
+          # The live AODP check spends real upstream budget and depends on a third party;
+          # it runs from the manual "Live data check" workflow instead.
+          QA_SKIP: ${{ inputs.skip || 'live-regions' }}
       - name: Browser bundle configured-secret scan
         run: node scripts/qa-secret-scan.mjs
       - name: Prepare sanitized failure evidence

@@ -14,7 +14,14 @@ const commands = [
   ["dependencies", ["npm", "audit", "--json"]],
   ["live-regions", ["npm", "run", "test:live"]],
 ];
+// QA_SKIP=live-regions,browser skips named checks (recorded as SKIPPED, not failures).
+const skipped = new Set((process.env.QA_SKIP ?? "").split(",").filter(Boolean));
 for (const [name, [command, ...args]] of commands) {
+  if (skipped.has(name)) {
+    checks.push({ name, status: "SKIPPED" });
+    console.log(JSON.stringify(checks.at(-1)));
+    continue;
+  }
   if (name === "browser" && checks.find((c) => c.name === "build")?.status !== "PASS") {
     checks.push({ name, status: "BLOCKED", reason: "Build failed" });
     continue;
@@ -47,4 +54,4 @@ const summary = {
   releaseVerdict: "NO-GO",
 };
 writeFileSync(".qa/phase-summary.json", JSON.stringify(summary, null, 2));
-if (checks.some((c) => c.status !== "PASS")) process.exitCode = 1;
+if (checks.some((c) => c.status !== "PASS" && c.status !== "SKIPPED")) process.exitCode = 1;

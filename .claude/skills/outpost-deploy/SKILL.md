@@ -34,6 +34,7 @@ The private DO migrates one way. After a schema bump you cannot roll the data Wo
 - Secrets: `node scripts/cloudflare-runtime-upload.mjs` (dry run) then `--apply`.
 - D1 data: `cloudflare-stage-catalog.mjs` / `cloudflare-stage-library.mjs` with `--apply`, after `npm run data:sync` locally.
 - Web Worker rollback: `npm run cloudflare -- rollback --name albionoutpost-web`.
+- Private data recovery (30-day point-in-time): `node scripts/cloudflare-recovery.mjs bookmark | restore --at <ISO> [--apply]` — always dry-run first and get the owner's OK; keep the printed undo command.
 - Discord profile: `npm run discord:setup -- --apply`. DNS/zone: `npm run cloudflare:security|mail|dnssec`.
 
 ## Ask first

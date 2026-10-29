@@ -2,17 +2,17 @@
 
 Run what proves your change; let CI run the rest.
 
-| Suite           | Command                                                           | What it covers                                                                                                                          |
-| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Types           | `npm run typecheck`                                               | App TypeScript (`npx tsc -p cloudflare/tsconfig.json` and `cloudflare/web/tsconfig.json` for the Workers)                               |
-| Lint / format   | `npm run lint`, `npm run format:check`                            | ESLint (Next config), Prettier                                                                                                          |
-| Unit            | `npm test`                                                        | Vitest, `tests/**/*.test.ts` (~76 files): calculators, market clients, cache, Turnstile, auth helpers, RPC protocol, Cloudflare scripts |
-| Browser         | `npm run test:e2e`                                                | Playwright, `e2e/*.spec.ts` (~71 specs): journeys, permissions, accessibility (axe), visual captures                                    |
-| Database        | `npm run test:integration`                                        | Disposable Postgres databases: migrations, constraints, backup/restore, cascades                                                        |
-| Cloudflare data | `node scripts/qa-cloudflare-database.mjs` (after the setup below) | Real DO/D1 path under local workerd: transactions, rollback, denied access, archive parity, budgets                                     |
-| Live upstream   | `npm run test:live`                                               | Real AODP regions — uses real budget; run sparingly                                                                                     |
-| Docs            | `node scripts/docs-check.mjs`                                     | Markdown links/anchors, skill frontmatter                                                                                               |
-| Everything      | `npm run qa:phase`                                                | DB check → types → lint → unit → data audit → integration → build → browser → `npm audit` → live, logs in `.qa/`                        |
+| Suite           | Command                                                           | What it covers                                                                                                                                                                               |
+| --------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Types           | `npm run typecheck`                                               | App TypeScript (`npx tsc -p cloudflare/tsconfig.json` and `cloudflare/web/tsconfig.json` for the Workers)                                                                                    |
+| Lint / format   | `npm run lint`, `npm run format:check`                            | ESLint (Next config), Prettier                                                                                                                                                               |
+| Unit            | `npm test`                                                        | Vitest, `tests/**/*.test.ts` (~76 files): calculators, market clients, cache, Turnstile, auth helpers, RPC protocol, Cloudflare scripts                                                      |
+| Browser         | `npm run test:e2e`                                                | Playwright, `e2e/*.spec.ts` (~71 specs): journeys, permissions, accessibility (axe), visual captures                                                                                         |
+| Database        | `npm run test:integration`                                        | Disposable Postgres databases: migrations, constraints, backup/restore, cascades                                                                                                             |
+| Cloudflare data | `node scripts/qa-cloudflare-database.mjs` (after the setup below) | Real DO/D1 path under local workerd: transactions, rollback, denied access, archive parity, budgets                                                                                          |
+| Live upstream   | `npm run test:live`                                               | Real AODP regions — uses real budget; run sparingly                                                                                                                                          |
+| Docs            | `node scripts/docs-check.mjs`                                     | Markdown links/anchors, skill frontmatter                                                                                                                                                    |
+| Everything      | `npm run qa:phase`                                                | DB check → types → lint → unit → data audit → integration → build → browser → `npm audit` → live, logs in `.qa/`. `QA_SKIP=live-regions,browser` skips named checks; CI skips `live-regions` |
 
 ## Running the Cloudflare data tests locally
 

@@ -6,7 +6,7 @@ Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOut
 
 `.github/workflows/cloudflare-preview.yml` ("Cloudflare deployment") runs on every push to `main` that touches more than docs/Markdown, on manual dispatch, and on published releases tagged `v*` (other tags skip both quality and deploy).
 
-1. **Quality** — reuses `quality.yml`: format, docs check, local Postgres/Redis, Playwright sandbox check, source secret scan, `npm run qa:phase`, bundle secret scan.
+1. **Quality** — reuses `quality.yml`: format, docs check, local Postgres/Redis, Playwright sandbox check, source secret scan, `npm run qa:phase` (skipping the Node browser run, which the deploy job replaces with the Cloudflare-mode run, and the live AODP check), bundle secret scan.
 2. **Deploy** (environment `cloudflare-production`, one at a time):
    1. Generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`.
    2. Cloudflare build, Cloudflare-mode Playwright run, secret scans.
@@ -23,11 +23,14 @@ node scripts/qa-cloudflare-auth.mjs
 
 Every PR runs `quality.yml`; PRs and pushes that touch docs or Markdown also run `documentation.yml` (format, docs check, secret scan). A push to `main` deploys unless **every** changed file is under `docs/` or is `*.md`.
 
+The live AODP check (`npm run test:live`) is not part of CI because it spends real upstream budget; run the **Live data check** workflow manually (Actions → Live data check → Run workflow) when you need it.
+
 ### Rolling back
 
 - **Web Worker:** `npm run cloudflare -- rollback --name albionoutpost-web` (or pick a version in the Cloudflare dashboard → Workers → Deployments). Safe at any time.
 - **Data Worker:** only roll back to a version built for the **same private schema version**. After a schema bump the DO has already migrated; roll forward with a fix instead.
 - **D1 catalog:** D1 Time Travel can restore to any point in the last 7 days (30 on paid plans).
+- **Private data:** see [Backups and recovery](#backups-and-recovery).
 
 ### Data pushes (manual)
 
@@ -91,11 +94,30 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
 
+## Backups and recovery
+
+- **Private data** (`accounts-v1-eu`: users, sessions, builds, Comps, Teams, scenarios, timers, watchlists) uses Cloudflare's built-in **point-in-time recovery**: any moment in the last 30 days can be restored. `scripts/cloudflare-recovery.mjs` deploys a short-lived private helper Worker, runs one action and deletes it again:
+
+  ```bash
+  node scripts/cloudflare-recovery.mjs bookmark                          # check recovery works (read-only)
+  node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z  # dry run
+  node scripts/cloudflare-recovery.mjs restore --at 2026-11-02T18:00:00Z --apply
+  ```
+
+  A restore rewinds **everything** in the private store to that moment; it prints an undo command (`restore --bookmark <b> --apply`) that returns to the state just before the restore. Results are saved to `.qa/recovery/`. Get the owner's OK before any `--apply`.
+
+- **Catalog** (D1): Time Travel, 7 days on Free (`npm run cloudflare -- d1 time-travel restore albionoutpost-staging --timestamp <ISO>`). The catalog can also be rebuilt from the repo with the data-push scripts.
+- **Library and static content** are in the repository.
+- Not covered: deleting a whole Durable Object namespace or the account. There is no off-Cloudflare copy.
+
+## Alerts
+
+Cloudflare Notifications email the owner (account email) on: Worker errors (real-time issues in the web and data Workers), HTTP DDoS attacks, Universal SSL certificate events and abuse reports. Manage them in the dashboard under Notifications. There is no free uptime probe — Health Checks need a paid plan, and GitHub runners are challenged by Bot Fight Mode.
+
 ## Not set up yet
 
-- Backups of the private Durable Object (users, builds, Teams) and a tested restore.
-- Uptime/error alerting to the owner.
-- Deploy token rotation reminder (expires 2027-01-26).
+- Off-Cloudflare backup copy.
+- Uptime probe (see Alerts).
 - GitHub org MFA requirement; branch protection (needs a paid plan on private repos).
 
 These are tracked in [ROADMAP.md](ROADMAP.md#owner-actions).
