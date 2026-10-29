@@ -60,7 +60,7 @@
     {
       "id": "REL-012",
       "requirement": "OPS-007",
-      "acceptance": "Main sourcea2d70d3 passed actual hosted workflow40740329022 and deployed both Workers. Future product commits need their own observed result. Managed-challenge CI HTTP remains explicitly BLOCKED; independent post-deployment smoke/auth-start passes, without genuine personal OAuth certification."
+      "acceptance": "Current code needs its own observed hosted result: source598ac9f and1838eee fail before browser assertions on Ubuntu24 sandbox compatibility,149e7c0/c47f585 preflights reject unsafe runner assumptions, and final sandbox-preserving d3f7e9e run40894242338 is in progress. Historical c88249d hosted success and independent current public smoke/auth startup remain separate. Genuine personal OAuth is not certified."
     },
     {
       "id": "REL-013",

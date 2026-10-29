@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-29T03:10:55.680845+00:00",
+  "reviewed_at": "2026-10-29T14:32:18.417129+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -1006,9 +1006,9 @@
       "category": "operations",
       "title": "Hosted repository CI",
       "implementation": "COMPLETE",
-      "verification": "VERIFIED",
+      "verification": "PARTIALLY_TESTED",
       "verified_scope": "Main redesign sourcec88249d passed actual hosted workflow40807315490: complete Node quality job,20 native SQLite checks,118 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40807315267 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent owned-network public evidence is separate. Historical failures and superseded runs remain retained.",
-      "remaining": "Prior recovery source1048475 hosted run40810791542 failed117/118 native web cases on pre-hydration composition Save. The current correction passes Node SSR/immediate-save regression; its rebuilt native application and new publication evidence are tracked separately. No current source-specific hosted success is inferred. Genuine personal OAuth, capacity and hosted restore remain unverified.",
+      "remaining": "Current hosted browser compatibility is being reverified by d3f7e9e run40894242338. Ubuntu24 failed before browser assertions (No usable sandbox); installed-helper and writable-Chrome preflights correctly rejected unsafe assumptions. The workflow retains pinned Chromium/sandbox:true on still-supported Ubuntu22 without OS policy/permission overrides; migrate before April17,2027 retirement. Exact complete local one-worker396unit/126browser and prior full native126 pass; manual public data9e31be03/web e3657bcb smoke/icons/regional feeds/auth startup pass separately. Genuine personal OAuth, capacity and hosted restore remain unverified.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",
