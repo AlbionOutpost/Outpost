@@ -99,7 +99,10 @@ export default async function NewComposition({
         </section>
       ) : (
         <CompositionEditor
+          key={`${session.user.id}:${parsed.success ? JSON.stringify(parsed.data) : "blank"}:${initial?.region || "europe"}`}
           {...await editorOptions(session.user.id)}
+          ownerId={session.user.id}
+          recoveryKey={`new:${parsed.success ? JSON.stringify(parsed.data) : "blank"}:${initial?.region || "europe"}`}
           initial={initial}
           initialNotice={notice}
         />

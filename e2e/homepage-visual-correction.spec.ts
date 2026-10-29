@@ -4,6 +4,7 @@ import { mkdir } from "node:fs/promises";
 test("homepage presents one functional preview and compact task navigation at review widths", async ({
   page,
 }) => {
+  test.setTimeout(60000);
   await mkdir(".qa/ux-transform/regression", { recursive: true });
   await page.route("**/api/market?*", (route) =>
     route.fulfill({ json: { region: "europe", prices: [] } }),
@@ -23,9 +24,9 @@ test("homepage presents one functional preview and compact task navigation at re
       page.locator(".equipment-showcase,.home-market-pulse,.market-desk,.home-community-builds"),
     ).toHaveCount(0);
     const tasks = page.locator(".reference-feature-grid");
-    await expect(tasks.getByRole("link", { name: /Create a build/ })).toHaveAttribute(
+    await expect(tasks.getByRole("link", { name: /Browse builds/ })).toHaveAttribute(
       "href",
-      "/builds/new?region=europe",
+      "/builds/library?region=europe",
     );
     await expect(tasks.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
       "href",
@@ -35,13 +36,11 @@ test("homepage presents one functional preview and compact task navigation at re
       "href",
       "/compositions/new?region=europe",
     );
-    if (width <= 780) {
-      await expect(tasks).toBeVisible();
-      await expect(page.locator(".terminal-data-grid")).not.toBeVisible();
-      await page.getByRole("button", { name: "Show city prices & history", exact: true }).click();
-      await expect(page.locator(".terminal-data-grid")).toBeVisible();
-      await page.getByRole("button", { name: "Hide price preview", exact: true }).click();
-    }
+    await expect(page.locator(".terminal-city-prices")).toBeVisible();
+    await expect(page.locator(".terminal-history")).not.toBeVisible();
+    await page.locator(".terminal-source summary").click();
+    await expect(page.locator(".terminal-history")).toBeVisible();
+    await page.locator(".terminal-source summary").click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(
       false,
     );

@@ -12,7 +12,8 @@ export default async function Groups({
   const text = (key: string) => (typeof params[key] === "string" ? (params[key] as string) : "");
   const q = text("q").trim().slice(0, 80),
     region = text("region"),
-    visibility = text("visibility");
+    visibility = text("visibility"),
+    mine = text("mine") === "1";
   const page = Math.min(100, Math.max(1, Number.parseInt(text("page"), 10) || 1));
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -20,6 +21,7 @@ export default async function Groups({
     where: {
       AND: [
         { OR: [{ visibility: "PUBLIC" }, ...(userId ? [{ members: { some: { userId } } }] : [])] },
+        ...(mine ? [{ members: { some: { userId: userId || "" } } }] : []),
         ...(q
           ? [
               {
@@ -49,9 +51,9 @@ export default async function Groups({
     },
   });
   const url = (next: number) =>
-    `/groups?${new URLSearchParams({ q, region, visibility, page: String(next) })}`;
+    `/groups?${new URLSearchParams({ q, region, visibility, mine: mine ? "1" : "0", page: String(next) })}`;
   return (
-    <div className="guild-discovery-page">
+    <div className="guild-discovery-page support-team-directory">
       <header className="section-heading guild-discovery-heading">
         <div>
           <h1 className="page-title display-title">Teams</h1>
@@ -63,11 +65,20 @@ export default async function Groups({
           Create workspace
         </Link>
       </header>
+      <nav className="team-collection-tabs" aria-label="Team collections">
+        <Link href="/groups" aria-current={!mine ? "page" : undefined}>
+          Discover teams
+        </Link>
+        <Link href="/groups?mine=1" aria-current={mine ? "page" : undefined}>
+          My teams
+        </Link>
+      </nav>
       <form
         action="/groups"
         className="guild-discovery-filters"
         aria-label="Team discovery filters"
       >
+        <input type="hidden" name="mine" value={mine ? "1" : "0"} />
         <label>
           Search teams
           <input
@@ -102,7 +113,9 @@ export default async function Groups({
         </button>
       </form>
       <p className="guild-discovery-context">
-        Public teams and your memberships. Private workspaces stay visible only to their members.
+        {mine
+          ? "Your current memberships. Private workspaces remain member-only."
+          : "Public teams and your memberships. Private workspaces stay visible only to their members."}
       </p>
       <div className="guild-discovery-list">
         {rows.slice(0, 25).map((g) => (
@@ -144,7 +157,12 @@ export default async function Groups({
       {!rows.length && (
         <section className="guild-discovery-empty">
           <span className="eyebrow">TEAM DISCOVERY</span>
-          <h2>No matching teams</h2>
+          <h2>{mine ? "No teams in this view" : "No matching teams"}</h2>
+          {mine && !userId && (
+            <Link className="button primary" href="/signin?callbackUrl=%2Fgroups%3Fmine%3D1">
+              Sign in to see your teams
+            </Link>
+          )}
           <p>
             Try another name or region. Private teams appear after you join through an invitation or
             an approved request.

@@ -12,13 +12,13 @@ export default async function Page() {
     notFound();
   }
   return (
-    <>
+    <div className="support-admin-page">
       <h1 className="page-title display-title">Community reports</h1>
       <p className="intro">
         Every review rechecks your current database role and records an audit entry. Reported
         content is untrusted user text.
       </p>
       <ModerationQueue />
-    </>
+    </div>
   );
 }

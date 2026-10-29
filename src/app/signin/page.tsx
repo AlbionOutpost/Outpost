@@ -15,9 +15,18 @@ export default async function Signin({
   const params = await searchParams,
     callbackUrl = safeSignInPageReturn(params.callbackUrl, process.env.NEXTAUTH_URL);
   if (await getServerSession(authOptions)) redirect(callbackUrl);
+  const destination = callbackUrl.startsWith("/invitations/")
+    ? "your team invitation"
+    : callbackUrl.startsWith("/compositions")
+      ? "your composition"
+      : callbackUrl.startsWith("/builds")
+        ? "your loadout"
+        : callbackUrl.startsWith("/groups")
+          ? "your team workspace"
+          : "your dashboard";
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
   return (
-    <div className="signin-page">
+    <div className="signin-page support-signin">
       <div className="signin-introduction">
         <div className="signin-brand-symbol" aria-hidden="true">
           <ShieldCheck size={40} />
@@ -59,6 +68,7 @@ export default async function Signin({
         </div>
         <h2 id="signin-title">Continue with Discord</h2>
         <p>Use your Discord account to save your plans and join your team.</p>
+        <p className="signin-return-context">After sign-in, continue to {destination}.</p>
         <SignInError error={params.error} />
         {configured ? (
           <LoginButton callbackUrl={callbackUrl} />

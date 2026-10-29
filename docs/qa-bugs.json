@@ -1251,6 +1251,228 @@
       "historical_files": "e2e/account.spec.ts",
       "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
       "evidence": ["e2e/account.spec.ts", "docs/design-review/site-refinement/README.md"]
+    },
+    {
+      "id": "QA-087",
+      "title": "Market first actions can arrive before React handlers",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Pause real client chunks and try the first Quality/Compare action on server-rendered Market.",
+      "expected": "The requested action completes visibly without losing item, region, permission or draft state.",
+      "current": "The query fieldset stays disabled until hydration; comparison remains explicit and source identities are preserved.",
+      "historical_cause": "Confirmed in the Phase A implementation/browser review; original failed and interrupted runs are retained.",
+      "historical_files": "e2e/home-market-pulse.spec.ts",
+      "verification": "Final source production QA and screenshot/runtime results are recorded in the dated review; no real OAuth or whole-product acceptance inferred.",
+      "evidence": ["e2e/home-market-pulse.spec.ts", "docs/design-review/codex-phase-a/README.md"]
+    },
+    {
+      "id": "QA-088",
+      "title": "Direct alternative-slot fragments select hidden content without scrolling",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Load a fresh library detail URL ending #build-alternatives-Helmet; the disclosure opens and selects but target remains below the viewport.",
+      "expected": "The requested action completes visibly without losing item, region, permission or draft state.",
+      "current": "Reveals native ancestor details and schedules scrolling after slot commit; history, initial load and repeated current-anchor activation have viewport assertions.",
+      "historical_cause": "Confirmed in the Phase A implementation/browser review; original failed and interrupted runs are retained.",
+      "historical_files": "e2e/build-detail-navigation.spec.ts",
+      "verification": "Final source production QA and screenshot/runtime results are recorded in the dated review; no real OAuth or whole-product acceptance inferred.",
+      "evidence": [
+        "e2e/build-detail-navigation.spec.ts",
+        "docs/design-review/codex-phase-a/README.md"
+      ]
+    },
+    {
+      "id": "QA-089",
+      "title": "Phone inventory selection leaves its inspector below the fold",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Select Helmet on a narrow build detail viewport; the inventory selection changes while its inspector remains below the screen.",
+      "expected": "The requested action completes visibly without losing item, region, permission or draft state.",
+      "current": "Mobile activation focuses and scrolls the contextual heading; an explicit return action restores inventory access. Desktop selection stays in its adjacent workspace.",
+      "historical_cause": "Confirmed in the Phase A implementation/browser review; original failed and interrupted runs are retained.",
+      "historical_files": "e2e/build-detail-workspace.spec.ts",
+      "verification": "Final source production QA and screenshot/runtime results are recorded in the dated review; no real OAuth or whole-product acceptance inferred.",
+      "evidence": [
+        "e2e/build-detail-workspace.spec.ts",
+        "docs/design-review/codex-phase-a/README.md"
+      ]
+    },
+    {
+      "id": "QA-090",
+      "title": "Unentered trade prices displayed a misleading zero result",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Clear purchase or sale price in manual flipping.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Missing prices remain unknown and exports are disabled until required values are entered.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/qa-regressions.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/qa-regressions.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-091",
+      "title": "Collapsed saved calculator runs left the save form visible",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Collapse Saved runs in a production calculator.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Collapsed state now actually hides the form while private save/load remains available.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/economy-workspaces.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/economy-workspaces.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-092",
+      "title": "Narrow Market columns overlaid query controls and results",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open Market at320/390px after applying the research rail layout.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Mobile direct-child grid placement now matches desktop specificity and restores separate controls/results.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/design-review.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/design-review.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-093",
+      "title": "Empty equipment captions failed visible-label matching",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Run axe on an empty Bag/Mount or Food/Potion board button.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Literal spacing and accessible labels include the visible slot and Empty caption.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/build-detail-workspace.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/build-detail-workspace.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-094",
+      "title": "Mobile calculator stepper covered its result heading",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Move a390px production calculator to Results.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "The stepper offset follows the actual mobile header and preserves result access.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/economy-workspaces.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/economy-workspaces.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-095",
+      "title": "Composition navigation discarded unsaved private party edits",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Edit an owned composition then navigate away and use Back/Forward.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Bounded private memory recovers the working draft, keeps its original revision, and clears on logout.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/composition-recovery.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/composition-recovery.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-096",
+      "title": "Optional homepage history was hidden on narrow screens",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open homepage history at768px or below.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "The new disclosure reveals chart and controls; source gap/identity checks remain.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/home-market-terminal.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/home-market-terminal.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-097",
+      "title": "Homepage market action failed orange contrast",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Run contrast checks on the homepage Explore market link.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "The contextual text action uses the readable semantic accent on its actual panel.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/homepage-polish.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/homepage-polish.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-098",
+      "title": "Composition phone filters placed actions before their search",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open the matching-comp collection at390px.",
+      "expected": "The task is readable, accessible and preserves valid state and permissions.",
+      "current": "Explicit rows place the search first and the collection/action controls together below it.",
+      "historical_cause": "Observed during the five-reference rebuild; initial failure artifacts are retained.",
+      "historical_files": "e2e/premium-visual.spec.ts",
+      "verification": "Focused checks and final phase results are recorded in the dated review; owner and whole-product release acceptance remain separate.",
+      "evidence": [
+        "e2e/premium-visual.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-099",
+      "title": "Readonly five-player loadouts spill beyond legacy fixed-width cards",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Open a populated five-player saved composition at1440px and compare gear edges with card bounds.",
+      "expected": "Every gear cell remains inside its card and phone loadouts appear promptly.",
+      "current": "Readonly boards use adaptive minimum-width columns; preparation is a compact factual strip. A browser regression checks every gear bound plus phone first-loadout position.",
+      "historical_cause": "Final production visual review revealed the legacy1000px grid constrained the new ten-slot matrices.",
+      "historical_files": "src/app/editor-workspaces.css",
+      "verification": "Focused real browser editing/undo/PNG journey passed after adding readonly geometry assertions; full final gate follows.",
+      "evidence": [
+        "e2e/composition-visual.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
+    },
+    {
+      "id": "QA-100",
+      "title": "Discovery search can lose its first change before client hydration",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "On the local Cloudflare runtime, load a changed favorites sort then type into the new server-rendered search before its handler hydrates.",
+      "expected": "The first enabled search accepts the query and updates results with region and sort intact.",
+      "current": "Discovery input is disabled until client readiness; a real delayed-chunk regression verifies the first enabled query and results.",
+      "historical_cause": "The first complete Cloudflare suite passed139/140 and exposed a DOM input accepting a change without its React handler.",
+      "historical_files": "src/components/build-discovery-search.tsx",
+      "verification": "Final Node and Cloudflare checks are recorded independently in the dated review; the original failure is retained.",
+      "evidence": [
+        "e2e/build-library-compact.spec.ts",
+        "e2e/builds-system.spec.ts",
+        "docs/design-review/product-rebuild-2026-10-29/README.md"
+      ]
     }
   ]
 }

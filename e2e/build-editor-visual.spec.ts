@@ -203,7 +203,7 @@ test("populated build editor preserves gear, choices and revisions across respon
       page.getByRole("button", { name: /^Inspect Main hand: Claymore\b/ }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Inspect Off hand: Empty", exact: true }),
+      page.getByRole("button", { name: "Inspect Off hand Empty", exact: true }),
     ).toBeVisible();
     await expect(page.getByLabel("Main hand alternative", { exact: true })).toHaveValue(
       "T6_MAIN_AXE@1",
@@ -280,6 +280,16 @@ test("populated build editor preserves gear, choices and revisions across respon
       "T4_MAIN_AXE@1",
       "T5_MAIN_AXE",
     ]);
+    await page.getByRole("button", { name: "Preview build", exact: true }).click();
+    const preview = page.getByRole("dialog", { name: "Build preview", exact: true });
+    await expect(preview).toBeVisible();
+    await preview.getByRole("link", { name: "Check loadout cost", exact: true }).first().click();
+    const costs = preview.getByRole("region", { name: "Preview loadout cost", exact: true });
+    await expect(costs).toBeInViewport();
+    await expect(
+      costs.getByRole("button", { name: "Check loadout prices", exact: true }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
   } finally {
     await db.user.deleteMany({ where: { id } });
   }

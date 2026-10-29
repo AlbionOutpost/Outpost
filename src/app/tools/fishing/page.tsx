@@ -1,3 +1,4 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { FishingCalculator } from "@/components/fishing-calculator";
 import { libraryFishing } from "@/lib/grind-library";
 import Link from "@/components/link";
@@ -6,11 +7,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
   const { mode } = await searchParams;
   return (
     <div className="fishing-page">
-      <h1 className="page-title display-title">Fishing calculator</h1>
-      <p className="intro">
-        Sell your catch whole, chop it for ingredients, or turn it into fishing fame. Find the
-        trade-off that suits your next run.
-      </p>
+      <WorkspaceHeading
+        title="Fishing calculator"
+        description="Compare selling whole fish, chopping for ingredients, and buying fishing fame."
+      />
       <p className="fishing-guide-link">
         <Link className="text-link" href="/guides/fishing-leveling-guide">
           Read the fishing guide →

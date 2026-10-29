@@ -33,7 +33,7 @@ export function OpportunityScanner() {
     <section className="panel section">
       <h2>Observed cross-city opportunities</h2>
       <p>
-        Compare up to25 explicit item IDs in a single batched request. Estimates are opportunities
+        Compare up to 25 explicit item IDs in a single batched request. Estimates are opportunities
         to investigate, not guaranteed profit.
       </p>
       <label>
@@ -44,9 +44,11 @@ export function OpportunityScanner() {
         <label>
           Scanner purchase market
           <select value={from} onChange={(e) => setFrom(e.target.value)}>
-            {cities.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
+            {cities
+              .filter((city) => city !== "Black Market")
+              .map((c) => (
+                <option key={c}>{c}</option>
+              ))}
           </select>
         </label>
         <label>

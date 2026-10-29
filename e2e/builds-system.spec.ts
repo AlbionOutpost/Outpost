@@ -126,11 +126,11 @@ test("mobile library filters use a keyboard drawer and retain real paginated res
   await expect(trigger).toBeFocused();
   await expect(drawer).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await trigger.click();
+  // Search remains in the working toolbar rather than inside the modal filters.
   await page
     .getByRole("searchbox", { name: "Search", exact: true })
     .fill("no-outpost-build-948321");
-  await page.getByRole("button", { name: "Find builds", exact: true }).click();
+  await expect(page).toHaveURL(/q=no-outpost-build-948321/);
   await expect(page.locator(".library-build-card")).toHaveCount(0);
   await expect(page.locator("main")).toContainText(/No loadouts/);
 });
@@ -200,8 +200,8 @@ test("My Builds management duplicates independently, handles errors and confirms
     await page.goto(`/builds/${copyId}?region=asia`);
     await expect(page.locator(".detail-information-panel")).toContainText("Build server");
     const marketLink = page
-      .locator("#build-gear-Main-hand")
-      .getByRole("link", { name: "Compare prices →", exact: true });
+      .locator(".detail-selected-item")
+      .getByRole("link", { name: "Compare prices", exact: true });
     expect(
       new URL((await marketLink.getAttribute("href"))!, page.url()).searchParams.get("region"),
     ).toBe("asia");

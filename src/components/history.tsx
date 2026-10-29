@@ -1,4 +1,5 @@
 "use client";
+import "./economy-workspaces.css";
 import { useEffect, useRef, useState } from "react";
 import { useAtlasRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -88,7 +89,7 @@ export function History({
     )
     .join(" ");
   return (
-    <section className="panel history-panel">
+    <section className={`panel history-panel${kind === "gold" ? " gold-research-workspace" : ""}`}>
       <h2>{kind === "gold" ? "Gold price observations" : "Historical sell-order averages"}</h2>
       <p>
         {kind === "gold"
@@ -117,6 +118,24 @@ export function History({
       )}
       {visible.length > 0 ? (
         <>
+          {kind === "gold" && (
+            <dl className="gold-observation-summary">
+              <div>
+                <dt>Latest observation</dt>
+                <dd>
+                  {visible[visible.length - 1].price.toLocaleString()} <small>silver / gold</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Observed at</dt>
+                <dd>{visible[visible.length - 1].timestamp.replace("T", " ")} UTC</dd>
+              </div>
+              <div>
+                <dt>Returned observations</dt>
+                <dd>{visible.length}</dd>
+              </div>
+            </dl>
+          )}
           <div className="reference-history-toolbar">
             <span className="history-series-key">
               {kind === "gold" ? "Gold price" : "Daily sell-order average"} · silver
@@ -225,15 +244,30 @@ export function History({
           </details>
         </>
       ) : (
-        <p className="empty">
-          {loaded && key === current
-            ? "No historical observations available."
-            : "Load source observations to view the chart."}
-        </p>
+        <div className="empty history-empty" role="status">
+          <h3>
+            {busy
+              ? "Loading price history…"
+              : error && errorKey === current
+                ? "History is unavailable"
+                : loaded && key === current
+                  ? "No observations for this selection"
+                  : "Explore the recorded price history"}
+          </h3>
+          <p>
+            {busy
+              ? "Requesting observations for your selected server."
+              : error && errorKey === current
+                ? "Your selection is kept. Use the load button to retry."
+                : loaded && key === current
+                  ? "Try another server or return later. A blank history does not mean the price is zero."
+                  : "Load historical observations to inspect prices and their timestamps. Nothing is fetched until you request it."}
+          </p>
+        </div>
       )}
       <small className="muted">
-        Albion Online Data Project · Five-minute application cache · Gaps in coverage are not filled
-        with invented values.
+        Albion Online Data Project · Five-minute application cache · Observation coverage varies by
+        server.
       </small>
     </section>
   );

@@ -1,20 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useId, useState, type ReactNode } from "react";
 import Link from "@/components/link";
-import Image from "next/image";
-import {
-  ChartNoAxesCombined,
-  ArrowUpRight,
-  Shield,
-  Users,
-  Coins,
-  History,
-  Calculator,
-  Star,
-  ArrowRight,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ChartNoAxesCombined, ArrowUpRight, Shield, Users, Coins } from "lucide-react";
 import { z } from "zod";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -57,16 +46,15 @@ const date = (n: number) =>
 export function HomeMarketTerminal({
   hero,
   children,
-}: { hero?: ReactNode; children?: ReactNode } = {}) {
+  afterPreview,
+}: { hero?: ReactNode; children?: ReactNode; afterPreview?: ReactNode } = {}) {
   const region = useAtlasRegion();
   const [item, setItem] = useState("T4_BAG");
-  const [expanded, setExpanded] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
   const [revision, setRevision] = useState(0);
   const gradient = useId().replaceAll(":", "");
   const [city, setCity] = useState("Lymhurst");
   const [days, setDays] = useState(30);
-  const [previewCity, setPreviewCity] = useState("");
-  const [previewTier, setPreviewTier] = useState("");
   const [history, setHistory] = useState<{
     key: string;
     points: Point[];
@@ -108,6 +96,7 @@ export function HomeMarketTerminal({
     };
   }, [region, item, revision]);
   useEffect(() => {
+    if (!sourceOpen) return;
     const controller = new AbortController();
     let timedOut = false;
     const timeout = setTimeout(() => {
@@ -151,7 +140,7 @@ export function HomeMarketTerminal({
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [region, item, city, identity, revision]);
+  }, [region, item, city, identity, revision, sourceOpen]);
   const active = history?.key === identity ? history : null;
   const points = active?.points.filter((p) => p.timestamp >= active.asOf - days * 86400000) ?? [];
   const rows =
@@ -175,196 +164,277 @@ export function HomeMarketTerminal({
     .join(" ");
   const selected = points[hover ?? points.length - 1];
   const terminal = (
-    <section
-      className={`home-terminal${expanded ? " is-expanded" : ""}`}
-      aria-label="Observed market overview"
-    >
-      <div className="terminal-toolbar">
-        <span>
-          <ChartNoAxesCombined size={18} aria-hidden="true" /> Check the market
-        </span>
-        <span>
-          {regions[region].label} <span className="terminal-dot" /> AODP
-        </span>
-      </div>
-      <div className="terminal-search">
-        <CatalogItemPicker
-          onSelect={(selected) => {
-            setItem(selected.id);
-            setHover(null);
-          }}
-        />
-      </div>
-      <div className="terminal-item">
-        <ItemIcon id={item} size={66} />
-        <div>
-          <h2>{equipmentName(item)}</h2>
+    <section className="home-terminal" aria-label="Observed market overview">
+      <div className="home-market-query">
+        <div className="terminal-toolbar">
           <span>
-            <b>Normal quality</b>
+            <ChartNoAxesCombined size={18} aria-hidden="true" /> Check the market
+          </span>
+          <span>
+            {regions[region].label} <span className="terminal-dot" /> AODP
           </span>
         </div>
-        <Link href={`/tools/market?region=${region}&item=${item}`} aria-label="Explore market">
-          Explore market <ArrowUpRight size={17} aria-hidden="true" />
-        </Link>
-      </div>
-      <button
-        className="terminal-mobile-toggle button secondary"
-        aria-expanded={expanded}
-        aria-controls="home-market-data"
-        onClick={() => setExpanded(!expanded)}
-      >
-        {expanded ? "Hide price preview" : "Show city prices & history"}
-      </button>
-      <div className="terminal-data-grid" id="home-market-data">
-        <div className="terminal-history">
-          <div className="terminal-chart-heading">
-            <div>
-              <strong>Price history</strong>
-              <span>Daily sell-order averages · silver</span>
+        <div className="terminal-search">
+          <CatalogItemPicker
+            onSelect={(selected) => {
+              setItem(selected.id);
+              setHover(null);
+            }}
+          />
+        </div>
+        <div className="home-market-shortcuts" role="group" aria-label="Quick item selection">
+          {[
+            { id: "T4_MAIN_AXE", name: "Battleaxe" },
+            { id: "T4_BAG", name: "Bag" },
+            { id: "T4_CAPE", name: "Cape" },
+          ].map((entry) => (
+            <button
+              key={entry.id}
+              type="button"
+              aria-pressed={item === entry.id}
+              onClick={() => {
+                setItem(entry.id);
+                setHover(null);
+              }}
+            >
+              {entry.name}
+            </button>
+          ))}
+        </div>
+        <div className="terminal-item">
+          <ItemIcon id={item} size={66} />
+          <div>
+            <h2>{equipmentName(item)}</h2>
+            <span>
+              <b>Normal quality</b>
+            </span>
+          </div>
+          <Link href={`/tools/market?region=${region}&item=${item}`} aria-label="Explore market">
+            Explore market <ArrowUpRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
+        <details
+          className="terminal-source"
+          onToggle={(event) => setSourceOpen(event.currentTarget.open)}
+        >
+          <summary>Price history & source dates</summary>{" "}
+          <div className="terminal-history">
+            <div className="terminal-chart-heading">
+              <div>
+                <strong>Price history</strong>
+                <span>Daily sell-order averages · silver</span>
+              </div>
+              <div className="terminal-period" role="group" aria-label="History range">
+                {[7, 30].map((n) => (
+                  <button
+                    key={n}
+                    aria-pressed={days === n}
+                    onClick={() => {
+                      setDays(n);
+                      setHover(null);
+                    }}
+                  >
+                    {n}d
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="terminal-period" role="group" aria-label="History range">
-              {[7, 30].map((n) => (
-                <button
-                  key={n}
-                  aria-pressed={days === n}
-                  onClick={() => {
-                    setDays(n);
+            <div className="terminal-chart-area">
+              {points.length > 0 ? (
+                <>
+                  <svg
+                    viewBox="0 0 460 226"
+                    role="img"
+                    aria-label={`${city}: ${points.length} observed daily sell-order averages, ${silver(min)} to ${silver(max)} silver. Full values below.`}
+                    onMouseLeave={() => setHover(null)}
+                  >
+                    <defs>
+                      <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--accent-ink)" stopOpacity=".22" />
+                        <stop offset="100%" stopColor="var(--accent-ink)" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    {[0, 1, 2, 3].map((i) => {
+                      const value = lower + ((upper - lower) * i) / 3;
+                      const py = 190 - (i * 160) / 3;
+                      return (
+                        <g key={i}>
+                          <line x1="48" x2="438" y1={py} y2={py} className="chart-gridline" />
+                          <text x="40" y={py + 4} textAnchor="end">
+                            {value.toLocaleString("en-GB", {
+                              notation: "compact",
+                              maximumFractionDigits: 2,
+                            })}
+                          </text>
+                        </g>
+                      );
+                    })}
+                    {points.length > 1 &&
+                      points.every(
+                        (p, i) => !i || p.timestamp - points[i - 1].timestamp <= 36 * 3600000,
+                      ) && (
+                        <path
+                          d={`${path} L${x(points.at(-1)!)},190 L48,190 Z`}
+                          fill={`url(#${gradient})`}
+                        />
+                      )}
+                    <path
+                      d={path}
+                      fill="none"
+                      stroke="var(--accent-ink)"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                    {points.map((p, i) => (
+                      <circle
+                        key={p.timestamp}
+                        cx={x(p)}
+                        cy={y(p)}
+                        r={hover === i ? 4 : 9}
+                        style={{
+                          fillOpacity: hover === i ? 1 : 0,
+                          strokeOpacity: hover === i ? 1 : 0,
+                          pointerEvents: "all",
+                        }}
+                        className="chart-observation"
+                        onMouseEnter={() => setHover(i)}
+                      >
+                        <title>
+                          {date(p.timestamp)} UTC: {silver(p.price)} silver
+                        </title>
+                      </circle>
+                    ))}
+                    <text x="48" y="216">
+                      {date(start)}
+                    </text>
+                    <text x="438" y="216" textAnchor="end">
+                      {date(end)}
+                    </text>
+                  </svg>
+                  <div className="terminal-chart-value">
+                    <strong className="numeric">{silver(selected?.price ?? 0)}</strong>
+                    <span>{selected ? date(selected.timestamp) : ""} UTC · observed average</span>
+                  </div>
+                </>
+              ) : (
+                <div className="terminal-chart-empty" role="status">
+                  <ChartNoAxesCombined size={34} />
+                  <strong>
+                    {!active
+                      ? "Loading market history…"
+                      : active.error
+                        ? "History is temporarily unavailable"
+                        : "No observations in this range"}
+                  </strong>
+                  <span>
+                    {!active
+                      ? "Requesting source observations"
+                      : "Open the market explorer to try another item or city."}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="terminal-chart-controls">
+              <label>
+                History city{" "}
+                <select
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
                     setHover(null);
                   }}
                 >
-                  {n}d
-                </button>
-              ))}
+                  {[
+                    "Lymhurst",
+                    "Bridgewatch",
+                    "Caerleon",
+                    "Fort Sterling",
+                    "Martlock",
+                    "Thetford",
+                  ].map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+              <span>Source times · UTC</span>
             </div>
           </div>
-          <div className="terminal-chart-area">
-            {points.length > 0 ? (
-              <>
-                <svg
-                  viewBox="0 0 460 226"
-                  role="img"
-                  aria-label={`${city}: ${points.length} observed daily sell-order averages, ${silver(min)} to ${silver(max)} silver. Full values below.`}
-                  onMouseLeave={() => setHover(null)}
-                >
-                  <defs>
-                    <linearGradient id={gradient} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--accent-ink)" stopOpacity=".22" />
-                      <stop offset="100%" stopColor="var(--accent-ink)" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  {[0, 1, 2, 3].map((i) => {
-                    const value = lower + ((upper - lower) * i) / 3;
-                    const py = 190 - (i * 160) / 3;
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              setHistory(null);
+              setMarket(null);
+              setRevision((n) => n + 1);
+            }}
+          >
+            Refresh observations
+          </button>
+          <p>
+            Albion Online Data Project · daily sell-order averages, not confirmed trades. Missing
+            dates stay unfilled. Quote ages are shown separately.
+          </p>
+          {!!rows.length && (
+            <ul className="terminal-quote-times">
+              {rows.map((row) => (
+                <li key={row.city}>
+                  {row.city}:{" "}
+                  {[
+                    [row.sell_price_min, row.sell_price_min_date, "sell"],
+                    [row.buy_price_max, row.buy_price_max_date, "buy"],
+                  ].map(([value, stamp, side]) => {
+                    const observation = observationLabel(Number(value), String(stamp));
                     return (
-                      <g key={i}>
-                        <line x1="48" x2="438" y1={py} y2={py} className="chart-gridline" />
-                        <text x="40" y={py + 4} textAnchor="end">
-                          {value.toLocaleString("en-GB", {
-                            notation: "compact",
-                            maximumFractionDigits: 2,
-                          })}
-                        </text>
-                      </g>
+                      <span key={side}>
+                        {side}:{" "}
+                        {observation.dateTime ? (
+                          <time dateTime={observation.dateTime}>
+                            {observation.dateTime.replace("T", " ").replace(".000Z", " UTC")}
+                          </time>
+                        ) : (
+                          observation.label
+                        )}{" "}
+                      </span>
                     );
                   })}
-                  {points.length > 1 &&
-                    points.every(
-                      (p, i) => !i || p.timestamp - points[i - 1].timestamp <= 36 * 3600000,
-                    ) && (
-                      <path
-                        d={`${path} L${x(points.at(-1)!)},190 L48,190 Z`}
-                        fill={`url(#${gradient})`}
-                      />
-                    )}
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke="var(--accent-ink)"
-                    strokeWidth="2.5"
-                    strokeLinejoin="round"
-                  />
-                  {points.map((p, i) => (
-                    <circle
-                      key={p.timestamp}
-                      cx={x(p)}
-                      cy={y(p)}
-                      r={hover === i ? 4 : 9}
-                      style={{
-                        fillOpacity: hover === i ? 1 : 0,
-                        strokeOpacity: hover === i ? 1 : 0,
-                        pointerEvents: "all",
-                      }}
-                      className="chart-observation"
-                      onMouseEnter={() => setHover(i)}
-                    >
-                      <title>
-                        {date(p.timestamp)} UTC: {silver(p.price)} silver
-                      </title>
-                    </circle>
+                </li>
+              ))}
+            </ul>
+          )}
+          {!!points.length && (
+            <div
+              className="table-scroll"
+              role="region"
+              aria-label="Market overview source observations"
+              tabIndex={0}
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>Observed date (UTC)</th>
+                    <th>Average silver</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {points.map((p) => (
+                    <tr key={p.timestamp}>
+                      <td>{date(p.timestamp)}</td>
+                      <td>{p.price.toLocaleString("en-GB", { maximumFractionDigits: 20 })}</td>
+                    </tr>
                   ))}
-                  <text x="48" y="216">
-                    {date(start)}
-                  </text>
-                  <text x="438" y="216" textAnchor="end">
-                    {date(end)}
-                  </text>
-                </svg>
-                <div className="terminal-chart-value">
-                  <strong className="numeric">{silver(selected?.price ?? 0)}</strong>
-                  <span>{selected ? date(selected.timestamp) : ""} UTC · observed average</span>
-                </div>
-              </>
-            ) : (
-              <div className="terminal-chart-empty" role="status">
-                <ChartNoAxesCombined size={34} />
-                <strong>
-                  {!active
-                    ? "Loading market history…"
-                    : active.error
-                      ? "History is temporarily unavailable"
-                      : "No observations in this range"}
-                </strong>
-                <span>
-                  {!active
-                    ? "Requesting source observations"
-                    : "Open the market explorer to try another item or city."}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="terminal-chart-controls">
-            <label>
-              History city{" "}
-              <select
-                value={city}
-                onChange={(e) => {
-                  setCity(e.target.value);
-                  setHover(null);
-                }}
-              >
-                {[
-                  "Lymhurst",
-                  "Bridgewatch",
-                  "Caerleon",
-                  "Fort Sterling",
-                  "Martlock",
-                  "Thetford",
-                ].map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </label>
-            <span>Source times · UTC</span>
-          </div>
-        </div>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </details>
+      </div>
+      <div className="home-market-observations">
+        <h2>Market snapshot</h2>
+        <p>{regions[region].label} · Normal quality · Player observations</p>
         <div className="terminal-city-prices">
-          <div className="terminal-city-label">
-            <span>City</span>
-            <span>Sell listing</span>
-            <span>Buy order</span>
-          </div>
           {rows.map((row) => (
-            <div key={row.city}>
+            <div className="home-city-quote" key={row.city}>
+              <ItemIcon id={item} size={44} />
               <span className="terminal-city-name">
                 <span className={`city-mark city-${row.city.toLowerCase().replaceAll(" ", "-")}`} />
                 {row.city}
@@ -376,7 +446,10 @@ export function HomeMarketTerminal({
                 const observed = observationLabel(Number(value), String(stamp));
                 return (
                   <span key={i} className="numeric" title={observed.dateTime ?? observed.label}>
-                    {Number(value) > 0 ? silver(Number(value)) : "—"}
+                    <span className="home-quote-side">
+                      {i === 0 ? "Sell listing" : "Buy order"}
+                    </span>
+                    <strong>{Number(value) > 0 ? silver(Number(value)) : "—"}</strong>
                     <small>{observed.label}</small>
                   </span>
                 );
@@ -384,320 +457,58 @@ export function HomeMarketTerminal({
             </div>
           ))}
           {!rows.length && (
-            <p className="muted">
-              {market?.key !== `${region}:${item}`
-                ? "Loading city quotes…"
-                : market.error
-                  ? "City prices could not be loaded. Refresh observations to retry."
-                  : "No city quotes were returned for this item and quality. Try another item."}
-            </p>
-          )}
-        </div>
-      </div>
-      <details className="terminal-source">
-        <summary>Source & {points.length} history observations</summary>
-        <button
-          type="button"
-          className="button secondary"
-          onClick={() => {
-            setHistory(null);
-            setMarket(null);
-            setRevision((n) => n + 1);
-          }}
-        >
-          Refresh observations
-        </button>
-        <p>
-          Albion Online Data Project · daily sell-order averages, not confirmed trades. Missing
-          dates stay unfilled. Quote ages are shown separately.
-        </p>
-        {!!rows.length && (
-          <ul className="terminal-quote-times">
-            {rows.map((row) => (
-              <li key={row.city}>
-                {row.city}:{" "}
-                {[
-                  [row.sell_price_min, row.sell_price_min_date, "sell"],
-                  [row.buy_price_max, row.buy_price_max_date, "buy"],
-                ].map(([value, stamp, side]) => {
-                  const observation = observationLabel(Number(value), String(stamp));
-                  return (
-                    <span key={side}>
-                      {side}:{" "}
-                      {observation.dateTime ? (
-                        <time dateTime={observation.dateTime}>
-                          {observation.dateTime.replace("T", " ").replace(".000Z", " UTC")}
-                        </time>
-                      ) : (
-                        observation.label
-                      )}{" "}
-                    </span>
-                  );
-                })}
-              </li>
-            ))}
-          </ul>
-        )}
-        {!!points.length && (
-          <div
-            className="table-scroll"
-            role="region"
-            aria-label="Market overview source observations"
-            tabIndex={0}
-          >
-            <table>
-              <thead>
-                <tr>
-                  <th>Observed date (UTC)</th>
-                  <th>Average silver</th>
-                </tr>
-              </thead>
-              <tbody>
-                {points.map((p) => (
-                  <tr key={p.timestamp}>
-                    <td>{date(p.timestamp)}</td>
-                    <td>{p.price.toLocaleString("en-GB", { maximumFractionDigits: 20 })}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </details>
-    </section>
-  );
-  if (!hero) return terminal;
-  const previewRows =
-    market?.key === `${region}:${item}`
-      ? market.rows
-          .filter(
-            (row) => row.city !== "Black Market" && (!previewCity || row.city === previewCity),
-          )
-          .slice(0, 5)
-      : [];
-  return (
-    <div className="home-reference-composition">
-      <section className="reference-hero" aria-labelledby="home-title">
-        <div className="home-hero-atmosphere" data-asset-status="generated">
-          <Image
-            src="/albion/illustrations/market-v1.webp"
-            alt=""
-            fill
-            sizes="(max-width:780px) 600px, 1280px"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-        {hero}
-        <section className="hero-market-workspace" aria-label="Market Explorer preview">
-          <nav className="hero-market-rail" aria-label="Market preview tools">
-            <Link className="selected" href={`/tools/market?region=${region}`}>
-              <Coins size={15} />
-              Market
-            </Link>
-            <a href="#home-market-insights">
-              <History size={15} />
-              Price history
-            </a>
-            <Link href={`/tools/flipping?region=${region}`}>
-              <Calculator size={15} />
-              Profit calculator
-            </Link>
-            <Link href={`/tools/market?region=${region}`}>
-              <SlidersHorizontal size={15} />
-              Compare
-            </Link>
-            <Link href={`/tools/market?region=${region}#market-saved-research`}>
-              <Star size={15} />
-              Watchlist
-            </Link>
-          </nav>
-          <div className="hero-market-main">
-            <div className="hero-market-heading">
-              <h2>Market Explorer</h2>
-              <span>Observed prices</span>
-              <Link
-                href={`/tools/market?region=${region}&item=${item}`}
-                aria-label="Open market workspace"
-              >
-                <ArrowUpRight size={15} />
-              </Link>
-            </div>
-            <CatalogItemPicker
-              label="Search preview items"
-              tier={previewTier}
-              onSelect={(selection) => {
-                setItem(selection.id);
-                setHover(null);
-              }}
-            />
-            <div className="hero-market-filters">
-              <label>
-                City
-                <select
-                  aria-label="Preview city"
-                  value={previewCity}
-                  onChange={(event) => setPreviewCity(event.target.value)}
-                >
-                  <option value="">All cities</option>
-                  {[
-                    "Bridgewatch",
-                    "Martlock",
-                    "Lymhurst",
-                    "Thetford",
-                    "Fort Sterling",
-                    "Caerleon",
-                    "Brecilien",
-                  ].map((name) => (
-                    <option key={name}>{name}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Browse tier
-                <select
-                  aria-label="Preview catalog tier"
-                  value={previewTier}
-                  onChange={(event) => setPreviewTier(event.target.value)}
-                >
-                  <option value="">All</option>
-                  {[4, 5, 6, 7, 8].map((tier) => (
-                    <option key={tier} value={tier}>
-                      {tier}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="hero-quality">
-                <span>Quality</span>
-                <strong>Normal</strong>
-              </div>
-              <button
-                type="button"
-                className="button primary"
-                onClick={() => setRevision((n) => n + 1)}
-              >
-                Refresh
-              </button>
-            </div>
-            <div className="hero-market-table-wrap">
-              <table className="hero-market-table">
-                <caption className="sr-only">
-                  {equipmentName(item)} · {regions[region].label} · Normal quality · AODP source
-                  observations in silver
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Item</th>
-                    <th scope="col">City</th>
-                    <th scope="col" className="numeric">
-                      Sell order
-                    </th>
-                    <th scope="col" className="numeric">
-                      Buy order
-                    </th>
-                    <th scope="col">Sell age</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewRows.map((row) => (
-                    <tr key={row.city}>
-                      <td>
-                        <ItemIcon id={item} size={28} />
-                        <span>{equipmentName(item)}</span>
-                      </td>
-                      <td>{row.city}</td>
-                      <td className="numeric">
-                        {row.sell_price_min > 0 ? silver(row.sell_price_min) : "—"}
-                      </td>
-                      <td className="numeric">
-                        {row.buy_price_max > 0 ? silver(row.buy_price_max) : "—"}
-                      </td>
-                      <td>
-                        <span
-                          className="preview-quote-age"
-                          title={
-                            observationLabel(row.sell_price_min, row.sell_price_min_date)
-                              .dateTime ?? "No source date"
-                          }
-                        >
-                          {observationLabel(row.sell_price_min, row.sell_price_min_date).label}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {!previewRows.length && (
-                <div className="hero-market-empty" role="status">
-                  {market?.key !== `${region}:${item}`
-                    ? "Loading source observations…"
-                    : market.error
-                      ? "Price observations are unavailable. Refresh to retry."
-                      : "No observations for this selection. Try another city or item."}
+            <div className="home-price-recovery">
+              <p className="muted">
+                {market?.key !== `${region}:${item}`
+                  ? "Loading city quotes…"
+                  : market.error
+                    ? "City prices could not be loaded. Refresh observations to retry."
+                    : "No city quotes were returned for this item and quality. Try another item."}
+              </p>
+              {market?.key === `${region}:${item}` && (
+                <div className="actions">
+                  {market.error && (
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => setRevision((n) => n + 1)}
+                    >
+                      Retry price preview
+                    </button>
+                  )}
+                  <Link
+                    className="text-link"
+                    href={`/tools/market?region=${region}&item=${item}&quality=1`}
+                  >
+                    Open full market <ArrowUpRight size={14} />
+                  </Link>
                 </div>
               )}
             </div>
-            <div className="hero-market-footnote">
-              <span>{regions[region].label} · Source dates, not executable offers</span>
-              <a href="#home-market-insights">
-                Inspect observations <ArrowRight size={12} />
-              </a>
-            </div>
-          </div>
-        </section>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+  if (!hero) return terminal;
+  return (
+    <div className="home-reference-composition">
+      <section className="reference-hero" aria-labelledby="home-title">
+        {hero}
+        <div className="home-hero-atmosphere" aria-hidden="true">
+          <Image
+            src="/albion/illustrations/city-overlook-v2.webp"
+            alt=""
+            fill
+            unoptimized
+            preload
+            sizes="100vw"
+          />
+        </div>
       </section>
       {children}
-      <section
-        className="home-market-insights"
-        id="home-market-insights"
-        aria-labelledby="market-entry-title"
-      >
-        <div className="reference-section-heading">
-          <div>
-            <span className="eyebrow">MARKET INSIGHTS</span>
-            <h2 id="market-entry-title">Research. Compare. Plan.</h2>
-            <p>Search any item, compare city observations and follow its price history.</p>
-          </div>
-          <Link className="button secondary" href={`/tools/market?region=${region}&item=${item}`}>
-            Go to Market Explorer <ArrowRight size={15} />
-          </Link>
-        </div>
-        {terminal}
-        <div className="home-research-benefits">
-          <span>
-            <Coins size={20} />
-            <span>
-              <strong>Dated market observations</strong>
-              <small>See when each price was reported</small>
-            </span>
-          </span>
-          <span>
-            <Users size={20} />
-            <span>
-              <strong>Separate regional markets</strong>
-              <small>Europe, Americas and Asia</small>
-            </span>
-          </span>
-          <span>
-            <History size={20} />
-            <span>
-              <strong>Price history</strong>
-              <small>Trace source-reported averages</small>
-            </span>
-          </span>
-          <span>
-            <Calculator size={20} />
-            <span>
-              <strong>Transparent calculations</strong>
-              <small>Inspect fees, returns and assumptions</small>
-            </span>
-          </span>
-        </div>
-      </section>
-      <div className="home-illustration-credit">
-        <Link href="/legal#scene-artwork">Illustration credits</Link>
-      </div>
+      {terminal}
+      {afterPreview}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 const sections = [
   ["build-overview", "Overview"],
@@ -35,12 +35,49 @@ function currentSection() {
 
 const serverSection = () => "build-overview";
 
+function revealCurrentSection() {
+  let id: string;
+  try {
+    id = decodeURIComponent(window.location.hash.slice(1));
+  } catch {
+    return;
+  }
+  const target = document.getElementById(id);
+  if (!target) return;
+  let node: HTMLElement | null = target;
+  while (node) {
+    if (node instanceof HTMLDetailsElement) node.open = true;
+    node = node.parentElement;
+  }
+  // A slot hash also updates React selection; its panel may still be hidden until commit.
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ block: "start", behavior: "instant" });
+    }),
+  );
+}
+
 export function BuildDetailNavigation() {
   const current = useSyncExternalStore(subscribe, currentSection, serverSection);
+  useEffect(() => {
+    const frame = requestAnimationFrame(revealCurrentSection);
+    window.addEventListener("hashchange", revealCurrentSection);
+    window.addEventListener("popstate", revealCurrentSection);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("hashchange", revealCurrentSection);
+      window.removeEventListener("popstate", revealCurrentSection);
+    };
+  }, []);
   return (
     <nav className="detail-section-navigation" aria-label="Build sections">
       {sections.map(([id, name]) => (
-        <a key={id} href={`#${id}`} aria-current={current === id ? "location" : undefined}>
+        <a
+          key={id}
+          href={`#${id}`}
+          onClick={() => requestAnimationFrame(revealCurrentSection)}
+          aria-current={current === id ? "location" : undefined}
+        >
           {name}
         </a>
       ))}

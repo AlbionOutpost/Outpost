@@ -1,0 +1,231 @@
+/* Owner correction: warm dark metal, copper and readable task-specific surfaces. */
+.app.outpost {
+  --radius-control: 7px;
+  --radius-panel: 8px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --focus: #82b9ff;
+  --font-heading: var(--font-ui);
+  --premium-shadow: 0 6px 18px #00000024, inset 0 1px 0 #ffffff04;
+  font: 400 14px/1.55 var(--font-ui);
+}
+.app.outpost:not(.light),
+.app.outpost.home-route:not(.light) {
+  --bg: #101215;
+  --sidebar: #0c0e11;
+  --chrome: #0c0e11;
+  --panel: #191d22;
+  --surface: #191d22;
+  --elevated: #24292f;
+  --surface-2: #24292f;
+  --surface-3: #2c3239;
+  --border: #353b43;
+  --premium-border: #353b43;
+  --text: #f1eee7;
+  --secondary: #c5c3be;
+  --muted: #aaa9a5;
+  --text-muted: #aaa9a5;
+  --accent: #ee945a;
+  --accent-hover: #ffb482;
+  --accent-active: #d47843;
+  --accent-ink: #ffb482;
+  --accent-wash: #ee945a14;
+  --action: #ee945a;
+  --action-hover: #ffb482;
+  --success: #38c88c;
+  --positive: #38c88c;
+  --error: #ef6969;
+  --negative: #ef6969;
+  --warning: #e6b35b;
+  background: var(--bg);
+  color: var(--text);
+}
+.app.outpost.light,
+.app.outpost.home-route.light {
+  --bg: #edf2f5;
+  --sidebar: #f8fafc;
+  --chrome: #f8fafc;
+  --panel: #fff;
+  --surface: #fff;
+  --elevated: #e7eef4;
+  --surface-2: #e7eef4;
+  --surface-3: #dae5ee;
+  --border: #b8c8d5;
+  --text: #142635;
+  --secondary: #425a70;
+  --muted: #52697c;
+  --text-muted: #52697c;
+  --accent: #ae420f;
+  --action: #ae420f;
+  --accent-ink: #a83c0c;
+  --accent-hover: #8f340a;
+  --action-hover: #8f340a;
+  --accent-wash: #ae420f0b;
+  --focus: #185ba8;
+  --success: #137746;
+  --positive: #137746;
+  --error: #bd3030;
+  --warning: #825b0b;
+}
+.app.outpost .main > .site-header {
+  background: var(--chrome);
+  border-color: var(--border);
+  min-height: 60px;
+}
+.app.outpost :is(.page-frame, .workspace-frame, .product-frame) {
+  max-width: 1664px;
+  width: 100%;
+  margin-inline: auto;
+}
+.app.outpost :is(.button, button.button) {
+  min-height: 42px;
+  border-radius: var(--radius-control);
+  font: 600 14px/1.35 var(--font-ui);
+}
+.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-radius: var(--radius-control);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--border);
+}
+.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select) {
+  min-height: 42px;
+}
+.app.outpost :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.app.outpost :is(.page-title, .workspace-identity h1) {
+  font-family: var(--font-ui);
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.app.outpost
+  :is(
+    .panel,
+    .market-board,
+    .market-query-panel,
+    .market-item-panel,
+    .reference-market-history,
+    .detail-inventory-panel,
+    .detail-summary-panel,
+    .library-build-card
+  ) {
+  border-radius: var(--radius-panel);
+  box-shadow: var(--premium-shadow);
+}
+.app.outpost
+  :is(.market-board, .market-item-panel, .detail-summary-panel, .detail-inventory-panel) {
+  background: var(--panel);
+}
+.app.outpost .detail-panel-heading h2 {
+  font-size: 18px;
+}
+.app.outpost .detail-workspace-grid {
+  max-width: none;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+}
+.app.outpost .detail-inventory-panel {
+  padding: 24px;
+}
+.app.outpost .detail-summary-panel {
+  padding: 24px;
+}
+.app.outpost .detail-spell-choice {
+  border-radius: 8px;
+  background: var(--bg);
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice img {
+  width: 46px;
+  height: 46px;
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice > span {
+  font-size: 13px;
+}
+.app.outpost .detail-context-actions .button {
+  font-size: 14px;
+}
+.app.outpost .detail-hero {
+  padding-bottom: 24px;
+}
+.app.outpost .detail-hero-content {
+  align-items: center;
+}
+.app.outpost .detail-hero-copy {
+  max-width: 840px;
+}
+.app.outpost .detail-hero-description {
+  font-size: 14px;
+}
+.app.outpost ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+@media (max-width: 700px) {
+  .app.outpost :is(.page-title, .workspace-identity h1) {
+    font-size: 27px;
+  }
+  .app.outpost .detail-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .detail-inventory-panel,
+  .app.outpost .detail-summary-panel {
+    padding: 16px;
+  }
+  .app.outpost .detail-hero-content {
+    display: block;
+  }
+}
+
+/* Dark metal controls have a quieter edge than the equipment and primary actions. */
+.app.outpost:not(.light) .button.primary {
+  color: #21150e;
+  background: linear-gradient(#f5a36d, var(--action));
+  border: 1px solid #f7b68675;
+  box-shadow:
+    inset 0 1px 0 #ffe9ce38,
+    0 2px 3px #00000030;
+}
+.app.outpost:not(.light) .button.secondary {
+  background: #20252b;
+  border-color: #41474e;
+  color: var(--text);
+}
+.app.outpost:not(.light) .button.primary:hover {
+  background: var(--action-hover);
+}
+.app.outpost:not(.light) .detail-inventory-panel {
+  background: radial-gradient(ellipse at 50% 36%, #b4864220, transparent 68%), var(--panel);
+}
+.app.outpost:not(.light) .anatomical-inventory .inventory-slot-art {
+  background: #101214;
+  border-color: #4b4a49;
+  box-shadow:
+    inset 0 1px 2px #00000070,
+    0 1px 0 #ffffff06;
+}
+.app.outpost:not(.light) .anatomical-inventory > .inventory-body-silhouette {
+  color: #d9bb8a;
+  opacity: 0.1;
+}
+.app.outpost .market-table tbody tr:hover {
+  background: var(--elevated);
+}
+
+.app.outpost:not(.light) .detail-hero {
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 35%,
+      color-mix(in srgb, var(--bg) 95%, transparent) 54%,
+      color-mix(in srgb, var(--bg) 52%, transparent)
+    ),
+    url("/albion/illustrations/build-v1.webp") right 24% / 58% auto no-repeat;
+}
+.app.outpost.light .detail-inventory-panel {
+  background: var(--panel);
+}

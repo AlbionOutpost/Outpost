@@ -28,6 +28,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await page.getByLabel("Actual total watering focus", { exact: true }).fill("500");
     await page.getByLabel("Seed unit price · silver", { exact: true }).fill("2000");
     await page.getByLabel("Produce unit price · silver", { exact: true }).fill("100");
+    await page.getByText("Seed returns & fees", { exact: true }).click();
     await page.getByLabel("Seed purchase fee (%)", { exact: true }).fill("1");
     await page.getByLabel("Produce sales tax + setup (%)", { exact: true }).fill("10");
     await page.getByLabel("Other costs per harvest · silver", { exact: true }).fill("100");
@@ -46,6 +47,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await page.getByRole("button", { name: "Load market observations", exact: true }).click();
     await expect(page.getByRole("status").first()).toContainText("Manual prices kept");
     await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");
+    await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("Harvest fixture");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
@@ -56,7 +58,9 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     expect(
       (
         await anonymous.request.delete(`/api/scenarios/${saved.id}`, {
-          headers: { origin: "http://localhost:3000" },
+          headers: {
+            origin: new URL(test.info().project.use.baseURL || "http://localhost:3000").origin,
+          },
         })
       ).status(),
     ).toBe(401);
@@ -81,6 +85,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
       true,
     );
     await page.reload();
+    await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore Harvest fixture", exact: true }).click();
     await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");

@@ -161,8 +161,10 @@
 }
 .detail-workspace-grid {
   display: grid;
-  grid-template-columns: minmax(210px, 0.86fr) minmax(340px, 1.65fr) minmax(220px, 0.96fr);
-  grid-template-areas: "information inventory summary";
+  grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+  grid-template-areas: "inventory summary";
+  max-width: 1060px;
+  margin-inline: auto;
   gap: 16px;
   align-items: start;
 }
@@ -652,7 +654,7 @@
 }
 .detail-alternative-groups {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 .detail-alternative-groups > section {
@@ -696,6 +698,7 @@
   margin: 0;
 }
 .detail-alternative-spells {
+  grid-column: 2;
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -758,7 +761,7 @@
 @media (max-width: 1100px) {
   .detail-workspace-grid {
     grid-template-columns: minmax(0, 1.45fr) minmax(220px, 1fr);
-    grid-template-areas: "inventory summary" "information information";
+    grid-template-areas: "inventory summary";
   }
   .detail-information-panel .detail-slot-list {
     display: grid;
@@ -784,9 +787,6 @@
   }
   .detail-hero-content {
     align-items: flex-start;
-  }
-  .detail-alternative-groups {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 700px) {
@@ -829,7 +829,7 @@
   }
   .detail-workspace-grid {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "inventory" "summary" "information";
+    grid-template-areas: "inventory" "summary";
     gap: 12px;
   }
   .app.outpost
@@ -926,36 +926,6 @@
   font-family: var(--font-ui);
   font-variant-numeric: normal;
 }
-@media (min-width: 1320px) {
-  .app.outpost .detail-inventory-panel {
-    display: grid;
-    grid-template-columns: minmax(264px, 1fr) minmax(210px, 0.95fr);
-    gap: 0 18px;
-    align-items: start;
-  }
-  .detail-inventory-panel > .detail-panel-heading {
-    grid-column: 1/-1;
-  }
-  .detail-inventory-panel > .inventory-equipment-board {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .detail-inventory-panel > .detail-inventory-hint {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .detail-inventory-panel > .detail-selected-abilities {
-    grid-column: 2;
-    grid-row: 2 / span 2;
-    padding: 0 0 0 16px;
-    border-top: 0;
-    border-left: 1px solid var(--border);
-  }
-  .detail-selected-abilities .detail-spell-choice {
-    flex-basis: calc(50% - 4px);
-    max-width: none;
-  }
-}
 @media (max-width: 700px) {
   .detail-header-actions {
     flex-wrap: nowrap;
@@ -1010,4 +980,217 @@
   position: relative;
   width: var(--inventory-size);
   align-self: start;
+}
+
+/* Detail has one inventory and one contextual inspector. Deeper choices are explicit disclosures. */
+.app.outpost .detail-secondary-sections {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+.app.outpost .detail-disclosure {
+  padding: 0;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+}
+.app.outpost .detail-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.detail-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.detail-disclosure > summary::after {
+  content: "+";
+  font: 400 20px/1 var(--font-ui);
+  color: var(--muted);
+}
+.detail-disclosure[open] > summary::after {
+  content: "−";
+}
+.detail-disclosure > summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-disclosure > summary > small {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.detail-disclosure > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.detail-disclosure[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .detail-disclosure-content {
+  padding: 16px;
+}
+.detail-summary-panel .detail-selected-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 4px 14px;
+  margin: 0 0 20px;
+}
+.detail-selected-item > img {
+  grid-row: 1 / span 3;
+  margin: 0;
+  float: none;
+}
+.app.outpost .detail-selected-item h3 {
+  font-size: 19px;
+  margin: 0;
+}
+.detail-selected-item .detail-muted {
+  margin: 0;
+}
+.detail-selected-item > .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  font-size: 13px;
+}
+.detail-selected-abilities .detail-ability-heading > img {
+  display: none;
+}
+.detail-selected-abilities .detail-ability-heading .loadout-slot-label {
+  display: none;
+}
+.detail-selected-abilities .detail-spell-choice {
+  max-width: 120px;
+  min-width: 64px;
+  flex-basis: 64px;
+  padding-block: 12px;
+}
+.detail-selected-swaps {
+  align-items: center;
+  padding-top: 12px;
+}
+.detail-context-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.detail-context-actions .button {
+  font-size: 13px;
+}
+.app.outpost .detail-summary-panel {
+  position: sticky;
+  top: 64px;
+}
+.app.outpost .detail-ability-guidance {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+.app.outpost .detail-statistics-panel .detail-information-panel {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin-top: 16px;
+}
+.detail-information-panel .detail-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+.app.outpost .detail-recommendations .library-trait-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app.outpost .detail-recommendations .library-build-traits {
+  border: 0;
+  padding: 0;
+  background: none;
+}
+.detail-disclosure-content .detail-notes-grid {
+  margin: 0;
+}
+.app.outpost .detail-disclosure-content .detail-notes-panel {
+  border: 0;
+  background: none;
+  padding: 0;
+}
+.app.outpost .detail-secondary-notes {
+  margin: 16px 0;
+}
+.detail-disclosure-content > .detail-muted:first-child {
+  margin-top: 0;
+}
+.detail-disclosure-content > .detail-muted:last-child {
+  margin-bottom: 0;
+}
+@media (max-width: 700px) {
+  .app.outpost .detail-summary-panel {
+    position: static;
+  }
+  .detail-workspace-grid {
+    max-width: none;
+  }
+  .detail-panel-heading {
+    margin-bottom: 12px;
+  }
+  .detail-inventory-hint {
+    margin: 12px 0 0;
+  }
+  .detail-summary-panel .detail-selected-item {
+    min-height: 0;
+  }
+  .app.outpost .detail-recommendations .library-trait-grid {
+    grid-template-columns: 1fr;
+  }
+  .detail-information-panel .detail-facts {
+    grid-template-columns: 1fr;
+  }
+  .detail-disclosure > summary {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+  .detail-disclosure > summary > small {
+    font-size: 12px;
+  }
+  .detail-disclosure > summary > span {
+    font-size: 13px;
+  }
+  .detail-summary-panel .detail-spell-choice {
+    min-width: 58px;
+    flex-basis: 58px;
+  }
+}
+
+.detail-summary-panel h2[tabindex] {
+  scroll-margin-top: 72px;
+}
+.detail-inventory-return {
+  display: none;
+}
+@media (max-width: 700px) {
+  .detail-inventory-return {
+    display: block;
+    width: 100%;
+    font-size: 13px;
+  }
+}
+
+.detail-alternative-groups > section > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
 }

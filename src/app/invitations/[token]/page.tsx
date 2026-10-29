@@ -24,11 +24,11 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
     invitation.expiresAt < new Date()
   )
     return (
-      <div className="team-invitation-page">
+      <div className="team-invitation-page support-invitation">
         <section className="panel">
           <h1 className="page-title display-title">Invitation unavailable.</h1>
           <p>
-            The link expired, was revoked, or has already been used. Ask a group officer for a new
+            The link expired, was revoked, or has already been used. Ask a team officer for a new
             link.
           </p>
         </section>
@@ -36,13 +36,16 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
     );
   const session = await getServerSession(authOptions);
   return (
-    <div className="team-invitation-page">
+    <div className="team-invitation-page support-invitation">
       <section className="panel">
-        <div className="eyebrow">YOU’RE INVITED</div>
+        <p className="invitation-context">A place on the team</p>
         <h1 className="page-title display-title">Join {invitation.group.name}.</h1>
         <p>
-          This single-use link expires {invitation.expiresAt.toISOString()}. Membership starts with
-          the Member role.
+          This single-use invitation expires{" "}
+          <time dateTime={invitation.expiresAt.toISOString()}>
+            {invitation.expiresAt.toISOString().slice(0, 16).replace("T", " ")} UTC
+          </time>
+          . You’ll join with the Member role.
         </p>
         {session ? (
           <AcceptInvite token={token} />

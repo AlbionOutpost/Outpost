@@ -1,4 +1,5 @@
 "use client";
+import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useRef, useState } from "react";
 import { ShoppingBag, RefreshCw, Download, Trash2, Check, ArrowRight, Undo2 } from "lucide-react";
 import Link from "@/components/link";
@@ -393,6 +394,18 @@ export function ShoppingWorkspace() {
               <aside className="panel shopping-summary">
                 <ShoppingBag size={26} />
                 <h2>Purchase summary</h2>
+                {result.missing > 0 && (
+                  <CalculationReadiness
+                    title={`${result.missing} purchase lines need prices`}
+                    missing={result.rows
+                      .filter((row) => row.buy > 0 && row.cost === null)
+                      .slice(0, 5)
+                      .map((row) => `${row.name} · ${row.city}`)}
+                  >
+                    Refresh city prices or enter a unit price. The complete total stays unavailable
+                    until every needed purchase is priced.
+                  </CalculationReadiness>
+                )}
                 <span>Item purchase estimate</span>
                 <strong className="shopping-total">
                   {result.total === null ? "Incomplete" : money(result.total)}

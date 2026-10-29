@@ -78,12 +78,16 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
       await page.getByLabel("Crafts / upgrades", { exact: true }).fill(batches);
       await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
       const title = `QA ${kind} manual scenario`;
+      if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
+        await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
       await page.getByLabel("Scenario title", { exact: true }).fill(title);
       await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
       await expect(
         page.getByText("Scenario saved to your account.", { exact: true }),
       ).toBeVisible();
       await page.reload();
+      if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
+        await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
       await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
       await page.getByRole("button", { name: `Restore ${title}`, exact: true }).click();
       await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
@@ -120,6 +124,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         await page.getByLabel("Apply returns to Steel Bar", { exact: true }).check();
         await page.getByLabel("Apply returns to Pine Planks", { exact: true }).check();
         await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
+        if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
+          await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
         await page
           .getByLabel("Scenario title", { exact: true })
           .fill("QA retained resource returns");
@@ -128,6 +134,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
           page.getByText("Scenario saved to your account.", { exact: true }),
         ).toBeVisible();
         await page.reload();
+        if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
+          await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
         await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
         await page
           .getByRole("button", { name: "Restore QA retained resource returns", exact: true })

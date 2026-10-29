@@ -68,7 +68,36 @@ test("populated five and twenty player fixtures remain editable and export a wid
       });
       for (const width of [1440, 390, 320]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
+        if (count === 5) {
+          await page.goto(`/compositions/${comp.id}`);
+          await expect(page.locator(".party-loadout-card")).toHaveCount(5);
+          const contained = await page.locator(".party-loadout-card").evaluateAll((cards) =>
+            cards.every((card) => {
+              const box = card.getBoundingClientRect();
+              return [...card.querySelectorAll(".party-gear-cell")].every((cell) => {
+                const gear = cell.getBoundingClientRect();
+                return gear.left >= box.left && gear.right <= box.right;
+              });
+            }),
+          );
+          expect(contained).toBe(true);
+          if (width <= 390) {
+            expect(
+              await page
+                .locator(".party-loadout-card")
+                .first()
+                .evaluate((el) => el.getBoundingClientRect().top),
+            ).toBeLessThan(900);
+          }
+        }
         await page.goto(`/compositions/${comp.id}/edit`);
+        if (count === 5 && width === 1440) {
+          await page.getByRole("button", { name: "7 players", exact: true }).click();
+          await expect(page.locator(".party-loadout-card")).toHaveCount(7);
+          await page.getByRole("button", { name: "Undo roster change", exact: true }).click();
+          await expect(page.locator(".party-loadout-card")).toHaveCount(5);
+          await expect(page.locator(".party-loadout-card").first()).toContainText("QA player 1");
+        }
         if (count === 5 && width <= 390) {
           const card = page.locator(".party-loadout-card").first();
           await expect(card).toBeVisible();
@@ -89,7 +118,22 @@ test("populated five and twenty player fixtures remain editable and export a wid
           await page.locator(".party-board").scrollIntoViewIfNeeded();
           await expect(
             page.locator(".party-loadout-card").first().locator(".party-gear-cell:visible"),
-          ).toHaveCount(9);
+          ).toHaveCount(10);
+          const bag = page.locator(".party-loadout-card").first().locator('[data-slot="Bag"]');
+          const helmet = page
+            .locator(".party-loadout-card")
+            .first()
+            .locator('[data-slot="Helmet"]');
+          const mount = page.locator(".party-loadout-card").first().locator('[data-slot="Mount"]');
+          const [bagBox, helmetBox, mountBox] = await Promise.all([
+            bag.boundingBox(),
+            helmet.boundingBox(),
+            mount.boundingBox(),
+          ]);
+          expect(bagBox!.x).toBeLessThan(helmetBox!.x);
+          expect(Math.abs(bagBox!.y - helmetBox!.y)).toBeLessThan(2);
+          expect(mountBox!.y).toBeGreaterThan(helmetBox!.y);
+
           await page
             .waitForFunction(
               () =>

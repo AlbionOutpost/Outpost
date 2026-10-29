@@ -1,25 +1,50 @@
 "use client";
 import Link from "@/components/link";
-import { useState } from "react";
-import { Search, ArrowUpRight, X } from "lucide-react";
+import { useState, useSyncExternalStore } from "react";
+import { Search, ArrowUpRight, X, Pin } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
-import { ItemIcon } from "./item-icon";
+import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useAtlasRegion } from "./region-context";
-const toolArtwork: Record<string, string[]> = {
-  fish: ["T7_FISH_FRESHWATER_FOREST_RARE"],
-  market: ["T4_BAG"],
-  craft: ["T4_MAIN_AXE"],
-  refine: ["T4_METALBAR"],
-  enchant: ["T4_RUNE"],
-  transport: ["T4_MOUNT_HORSE"],
-  equipment: ["T4_ARMOR_LEATHER_SET1"],
-  composition: ["T4_MAIN_AXE", "T4_OFF_SHIELD"],
-  catalog: ["T4_HEAD_CLOTH_SET1"],
-  builds: ["T4_2H_BOW"],
-};
+function subscribeToolShortcuts(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("outpost:tool-shortcuts", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("outpost:tool-shortcuts", callback);
+  };
+}
+function readToolShortcuts() {
+  try {
+    return localStorage.getItem(TOOL_SHORTCUT_KEY) || "[]";
+  } catch {
+    return "[]";
+  }
+}
 export function ToolDirectory() {
   const region = useAtlasRegion();
+  const rawPins = useSyncExternalStore(subscribeToolShortcuts, readToolShortcuts, () => "[]");
+  const pins = parseToolShortcuts(
+    rawPins,
+    tools.map((tool) => tool.href),
+  );
+  const [pinMessage, setPinMessage] = useState("");
+  function togglePin(href: string) {
+    if (!pins.includes(href) && pins.length >= 6) {
+      setPinMessage("Six tools are pinned. Unpin one to make room.");
+      return;
+    }
+    const next = pins.includes(href) ? pins.filter((path) => path !== href) : [...pins, href];
+    try {
+      localStorage.setItem(TOOL_SHORTCUT_KEY, JSON.stringify(next));
+      window.dispatchEvent(new Event("outpost:tool-shortcuts"));
+      setPinMessage(
+        pins.includes(href) ? "Tool unpinned from this device." : "Tool pinned on this device.",
+      );
+    } catch {
+      setPinMessage("This browser could not save the shortcut. Your tools remain available below.");
+    }
+  }
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All tools");
   const matches = tools.filter(
@@ -28,26 +53,40 @@ export function ToolDirectory() {
       `${t.title} ${t.description} ${t.state}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
   return (
-    <div className="directory-page">
+    <div className="directory-page support-tools-directory">
       <header className="product-page-heading">
         <div>
           <h1 className="page-title display-title">Tools & calculators</h1>
           <p>Check prices, calculate profit and plan your gear.</p>
         </div>
       </header>
-      <div className="directory-start">
-        <div className="directory-start-art">
-          <ItemIcon id="T4_MAIN_AXE" size={68} />
-          <ItemIcon id="T4_BAG" size={56} />
-        </div>
-        <div>
-          <h2>Check the market before you buy</h2>
-          <p>Compare city prices, then account for fees and transport.</p>
-        </div>
-        <Link className="button primary" href={`/tools/market?region=${region}`}>
-          Explore markets <ArrowUpRight size={16} />
-        </Link>
-      </div>
+      {!!pins.length && !query && category === "All tools" && (
+        <section className="tool-shortcuts" aria-label="Tool shortcuts on this device">
+          <div className="support-section-heading">
+            <h2>{pins.length ? "Your shortcuts" : "Start with a task"}</h2>
+            <small>
+              {pins.length ? "Pinned on this device" : "Pin up to six tools for next time"}
+            </small>
+          </div>
+          <div>
+            {(pins.length
+              ? tools.filter((tool) => pins.includes(tool.href))
+              : tools.filter((tool) =>
+                  ["/tools/market", "/tools/crafting", "/builds/new"].includes(tool.href),
+                )
+            ).map((tool) => (
+              <Link key={tool.href} href={`${tool.href}?region=${region}`}>
+                <ToolIcon name={tool.icon} size={22} />
+                <strong>{tool.title}</strong>
+                <ArrowUpRight size={15} />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+      <p className="tool-pin-feedback" role="status">
+        {pinMessage}
+      </p>
       <div className="directory-toolbar">
         <label className="directory-search">
           <Search size={18} />
@@ -73,6 +112,9 @@ export function ToolDirectory() {
           </button>
         ))}
       </nav>
+      {!pins.length && !query && (
+        <p className="tool-pin-help">Pin up to six shortcuts on this device for your next visit.</p>
+      )}
       <div className="directory-groups">
         {toolGroups.map((group) => {
           const rows = matches.filter((t) => t.group === group);
@@ -87,28 +129,28 @@ export function ToolDirectory() {
               </div>
               <div className="directory-entries">
                 {rows.map((t) => (
-                  <Link
-                    className="directory-entry"
-                    href={`${t.href}?region=${region}`}
-                    key={t.href}
-                  >
-                    <span
-                      className={`tool-symbol${toolArtwork[t.icon] ? " tool-game-art" : ""}`}
-                      aria-hidden="true"
+                  <article className="directory-entry" key={t.href}>
+                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
+                      <span className="tool-symbol" aria-hidden="true">
+                        <ToolIcon name={t.icon} size={24} />
+                      </span>
+                      <div>
+                        <h3>{t.title}</h3>
+                        <p>{t.description}</p>
+                        <span className="tool-availability">{t.state}</span>
+                      </div>
+                      <ArrowUpRight className="directory-arrow" size={17} />
+                    </Link>
+                    <button
+                      type="button"
+                      className="directory-pin"
+                      aria-pressed={pins.includes(t.href)}
+                      aria-label={`${pins.includes(t.href) ? "Unpin" : "Pin"} ${t.title} on this device`}
+                      onClick={() => togglePin(t.href)}
                     >
-                      {toolArtwork[t.icon] ? (
-                        <ItemIcon id={toolArtwork[t.icon][0]} size={56} />
-                      ) : (
-                        <ToolIcon name={t.icon} size={28} />
-                      )}
-                    </span>
-                    <div>
-                      <h3>{t.title}</h3>
-                      <p>{t.description}</p>
-                      <span className="tool-availability">{t.state}</span>
-                    </div>
-                    <ArrowUpRight className="directory-arrow" size={17} />
-                  </Link>
+                      <Pin size={16} />
+                    </button>
+                  </article>
                 ))}
               </div>
             </section>

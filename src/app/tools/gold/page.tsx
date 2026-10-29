@@ -1,9 +1,13 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { History } from "@/components/history";
+export const metadata = { title: "Gold price history" };
 export default function Page() {
   return (
     <>
-      <h1 className="page-title display-title">Gold price history</h1>
-      <p className="intro">Public regional price observations. Select the Albion region above.</p>
+      <WorkspaceHeading
+        title="Gold price history"
+        description="Inspect regional gold observations and their timestamps. Choose your server in the navigation."
+      />
       <History kind="gold" />
     </>
   );

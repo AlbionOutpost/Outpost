@@ -1,22 +1,29 @@
 "use client";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 export function BuildDiscoverySearch({
   value,
   formId,
   label = "Search",
   placeholder = "Weapon, title or author",
+  compact = false,
 }: {
   value: string;
   formId: string;
   label?: string;
   placeholder?: string;
+  compact?: boolean;
 }) {
   const [state, setState] = useState({ source: value, draft: value, submitted: value }),
     [pending, startTransition] = useTransition(),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     router = useRouter(),
     params = useSearchParams();
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   if (state.source !== value) {
     const settled = state.draft === state.submitted;
     setState({
@@ -52,7 +59,7 @@ export function BuildDiscoverySearch({
   }
   return (
     <label className="ecosystem-search-label">
-      {label}
+      <span className={compact ? "sr-only" : undefined}>{label}</span>
       <input
         form={formId}
         type="search"
@@ -60,7 +67,8 @@ export function BuildDiscoverySearch({
         value={state.draft}
         placeholder={placeholder}
         maxLength={100}
-        aria-busy={pending}
+        disabled={!hydrated}
+        aria-busy={!hydrated || pending}
         aria-label={label}
         onChange={(e) => schedule(e.target.value)}
         onKeyDown={(e) => {

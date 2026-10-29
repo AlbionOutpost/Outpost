@@ -53,7 +53,9 @@ export default async function Builds({
     page: requestedPage,
   });
   return (
-    <div className={`builds-ecosystem build-discovery-page view-${view}`}>
+    <div
+      className={`builds-ecosystem build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
+    >
       <BuildDiscoveryHeader
         active={mine ? "mine" : "browse"}
         source="community"
@@ -131,15 +133,6 @@ export default async function Builds({
         </aside>
         <section className="build-discovery-results ecosystem-results" aria-label="Matching builds">
           <div className="ecosystem-result-toolbar">
-            <div className="ecosystem-source-switch">
-              <Link href="/builds/library">
-                Library{" "}
-                <span className="numeric">{buildDiscovery.total.toLocaleString("en-GB")}</span>
-              </Link>
-              <Link href={mine ? "/builds?mine=1" : "/builds"} aria-current="page">
-                {mine ? "My builds" : "Community"}
-              </Link>
-            </div>
             <label className="ecosystem-sort-label">
               Sort
               <select

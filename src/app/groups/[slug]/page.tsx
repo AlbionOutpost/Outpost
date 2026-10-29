@@ -1,3 +1,4 @@
+import Link from "@/components/link";
 import { GroupProfileEditor } from "@/components/group-profile-editor";
 import { canManageMembers } from "@/lib/groups/permissions";
 import { getServerSession } from "next-auth";
@@ -20,7 +21,10 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
     throw e;
   }
   return (
-    <div className="guild-workspace-page">
+    <div className="guild-workspace-page support-team-workspace">
+      <Link className="team-back-link" href="/groups">
+        ← Teams
+      </Link>
       <section className="guild-identity-banner">
         <span className="guild-monogram" aria-hidden="true">
           {data.group.name

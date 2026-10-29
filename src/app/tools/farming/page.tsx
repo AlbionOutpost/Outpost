@@ -1,12 +1,13 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { FarmingCalculator } from "@/components/farming-calculator";
 export const metadata = { title: "Farming calculator" };
 export default function Page() {
   return (
     <div className="farming-page">
-      <h1 className="page-title display-title">Farming calculator</h1>
-      <p className="intro">
-        Plan crops and herbs, compare watering, and see what your harvest could earn.
-      </p>
+      <WorkspaceHeading
+        title="Farming calculator"
+        description="Plan crops and herbs, compare watering, and separate cash profit from the value of retained seeds."
+      />
       <FarmingCalculator />
     </div>
   );

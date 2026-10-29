@@ -23,7 +23,7 @@
     "optimizedSha256": "ff763c2e144dc45331a4ffb1157ffaf5b890d849df1070f17f3a2a9c2904db7e",
     "optimizedBytes": 128976,
     "prompt": "docs/design-review/homepage/prompts/market-v1.txt",
-    "runtimeUse": "Restored on 2026-10-27 as a bounded homepage Market feature vignette and muted hero background to match the supplied composition; original generated classification and disclosure retained. Other three scenes remain archived."
+    "runtimeUse": "Homepage Market destination vignette only; isometric homepage hero rejected by owner on 2026-10-29 and replaced by original cinematic city-overlook-v2."
   },
   {
     "name": "build",
@@ -36,7 +36,7 @@
     "optimizedSha256": "318639a9fce3784fe15e07da2ece53f2afe864d4d3d1fb198898f5785cdea924",
     "optimizedBytes": 108052,
     "prompt": "docs/design-review/homepage/prompts/build-v1.txt",
-    "runtimeUse": "Archived; replaced by genuine item-renderer equipment composition on 2026-10-27."
+    "runtimeUse": "Restored locally on2026-10-29 as a restrained Builds discovery/detail masthead. Decorative original illustration only; real loadouts still use genuine renderer icons. Existing authorization and generated classification retained."
   },
   {
     "name": "composition",
@@ -50,5 +50,18 @@
     "optimizedBytes": 98964,
     "prompt": "docs/design-review/homepage/prompts/composition-v1.txt",
     "runtimeUse": "Archived; replaced by genuine item-renderer equipment composition on 2026-10-27."
+  },
+  {
+    "name": "city-overlook-v2",
+    "origin": "Built-in image_gen",
+    "classification": "Original generated fantasy illustration, not genuine gameplay or official artwork",
+    "authorization": "Owner requested the supplied cinematic city/adventurer reference on 2026-10-29; prior express generation authorization remains.",
+    "original": "assets/source/homepage-cinematic-v2/city-overlook.png",
+    "optimized": "public/albion/illustrations/city-overlook-v2.webp",
+    "originalSha256": "bd8ba2d56fcda2763b183d44f7a28e06532d8cfa71cd510bfe461d3ff0fd1624",
+    "optimizedSha256": "d561ce9bf7d744316a553d060be7368fd28caabc99ade8a5d77c7ddbbc9cb2ff",
+    "optimizedBytes": 181248,
+    "prompt": "docs/design-review/home-cinematic/prompts/city-overlook-v2.txt",
+    "runtimeUse": "Homepage hero only; live HTML and real records render all interface, equipment and price information."
   }
 ]

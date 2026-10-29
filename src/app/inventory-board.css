@@ -3,13 +3,13 @@
   --inventory-size: 72px;
   --inventory-armor-size: 78px;
   --inventory-head-size: 68px;
-  --inventory-supply-size: 56px;
+  --inventory-supply-size: 64px;
   --inventory-mount-size: 60px;
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 12px;
+  gap: 22px 12px;
   align-items: start;
   width: min(100%, 300px);
   max-width: 300px;
@@ -148,12 +148,12 @@
   }
 }
 .app.outpost .anatomical-inventory .inventory-slot-spells {
-  bottom: -8px;
+  bottom: -12px;
   gap: 0;
 }
 .app.outpost .anatomical-inventory .inventory-slot-spells img {
-  width: 19px;
-  height: 19px;
+  width: 27px;
+  height: 27px;
 }
 .app.outpost .anatomical-inventory .inventory-slot-swap {
   right: -7px;
@@ -179,10 +179,10 @@
     --inventory-size: 64px;
     --inventory-armor-size: 70px;
     --inventory-head-size: 62px;
-    --inventory-supply-size: 50px;
+    --inventory-supply-size: 56px;
     --inventory-mount-size: 54px;
     column-gap: 8px;
-    row-gap: 14px;
+    row-gap: 20px;
   }
   .app.outpost .anatomical-inventory > .inventory-body-silhouette {
     width: 154px;
@@ -190,8 +190,8 @@
     top: 27px;
   }
   .app.outpost .anatomical-inventory .inventory-slot-spells img {
-    width: 17px;
-    height: 17px;
+    width: 23px;
+    height: 23px;
   }
   .app.outpost .anatomical-inventory .inventory-equipment-slot.is-empty .inventory-slot-art > svg {
     width: 30px;
@@ -201,5 +201,23 @@
 @media (prefers-reduced-motion: reduce) {
   .anatomical-inventory .inventory-equipment-slot {
     transition: none;
+  }
+}
+
+.app.outpost .anatomical-inventory .inventory-slot-spells img + img {
+  margin-left: -6px;
+}
+.app.outpost .anatomical-inventory .inventory-slot-spells img {
+  filter: drop-shadow(0 1px 1px #000b);
+}
+.app.outpost .anatomical-inventory .inventory-slot-art > .slot-game-art {
+  width: 90%;
+  height: 90%;
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+@media (max-width: 380px) {
+  .app.outpost .anatomical-inventory .inventory-slot-spells img + img {
+    margin-left: -5px;
   }
 }

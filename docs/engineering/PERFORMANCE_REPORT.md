@@ -1,5 +1,37 @@
 # Performance evidence and limits
 
+## Latest cinematic homepage correction — 29 October2026
+
+One initial simulated-mobile Lighthouse sample on the fresh nonroot final-source Node production container, using sandboxed Chromium/CDP on loopback. No build, capture or browser suite ran during measurement. Performance81, Accessibility100, LCP4958ms, CLS0. The Performance90/LCP2.5s targets remain unmet. This single unmatched sample is not a controlled speed comparison with earlier checkpoints; no improvement, field INP, Worker CPU, throughput, capacity or full conformance claim. Only the homepage is remeasured; other route results below are historical. Raw audit and summary: `.qa/home-cinematic-2026-10-29/lighthouse-home.json`, `.qa/home-cinematic-2026-10-29/lighthouse-summary.json`. [Rendered implementation review](../design-review/home-cinematic/README.md).
+
+## Current owner warmth correction — 29 October2026
+
+Fresh final-source non-root production container; one sequential initial-route Lighthouse mobile sample per page through sandboxed Chromium/CDP on loopback. No build, capture or browser suite ran during these measurements. The warmer visual treatment has not established a performance improvement. Earlier results below are historical and are not a controlled baseline.
+
+| Route    | Performance | Accessibility | LCP ms | CLS    |
+| -------- | ----------- | ------------- | ------ | ------ |
+| home     | 82          | 100           | 4657   | 0.0000 |
+| crafting | 84          | 100           | 4369   | 0.0000 |
+| market   | 85          | 100           | 4211   | 0.0000 |
+| library  | 78          | 100           | 5264   | 0.0000 |
+| detail   | 80          | 100           | 4965   | 0.0000 |
+
+All five LCP/Performance90 targets remain unmet. The samples are numerically slower than the preceding checkpoint; single unmatched samples do not isolate cause or establish a reliable regression size. CLS is0 in these samples and accessibility100 is only an automated result. No field INP, Worker CPU, throughput, capacity, physical-device or full-conformance claim. Raw files: `.qa/outpost-warmth-2026-10-29/lighthouse-summary.json`. Loading performance remains unfinished acceptance work, separate from the visual correction.
+
+## Current five-reference rebuild — 29 October2026
+
+Fresh final-source non-root production container, sandboxed Chromium/CDP127.0.0.1 and Lighthouse mobile defaults. One initial-route sample per page, sequentially, with no other browser suite/capture/build running. No before/after speedup, field INP, production throughput, Worker CPU or full accessibility conformance claim. The container is healthy, runs as uid1000 and contains no `.env`; it is removed after verification.
+
+| Route    | Performance | Accessibility | LCP ms | CLS    |
+| -------- | ----------- | ------------- | ------ | ------ |
+| Home     | 85          | 100           | 4142   | 0.0000 |
+| Crafting | 89          | 100           | 3611   | 0.0000 |
+| Market   | 89          | 100           | 3619   | 0.0000 |
+| Library  | 84          | 100           | 4101   | 0.0632 |
+| Detail   | 84          | 100           | 4307   | 0.0000 |
+
+All sampled LCP and Performance90 targets remain unmet; measured CLS stays under0.1. These lab limits remain release work, separate from the functional/visual implementation. Raw audits and summary: `.qa/product-rebuild-2026-10-29/lighthouse-summary.json`. The earlier candidate samples are retained under `.qa/product-rebuild-2026-10-29/lab-before-search-guard/` in that evidence folder; earlier checkpoints below are historical.
+
 Latest search-palette checkpoint: [fresh container samples and limits](../design-review/search-palette/README.md#final-verification). One initial-route mobile lab sample per home/Market/crafting route scores85/95/95, accessibility100, LCP4.314/2.857/2.858s and CLS0. This does not measure open-dialog physical-device performance or establish a loading improvement. All LCP targets remain missed.
 
 Latest shared-motion checkpoint: [measurements and limitations](../design-review/motion-system/README.md#final-gate-and-measurement-limits). Three small desktop synthetic-pointer samples per version retain median16.7ms/p95about16.7–16.8ms, with no >50ms intervals; this is not field INP/device or loading assurance. One container/mobile sample each for home/Market/crafting scores86/95/95, accessibility100, LCP4.119/2.855/2.858s and CLS0. All LCP targets remain missed; no speedup claimed.

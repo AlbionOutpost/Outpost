@@ -1,7 +1,7 @@
 "use client";
 import { GroupEventEditor } from "./group-event-editor";
 import { TeamLootWorkspace } from "./team-loot-workspace";
-import { useState, type ReactNode } from "react";
+import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { EditorDialog } from "./editor-dialog";
 import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "./item-icon";
@@ -10,6 +10,15 @@ import { useRouter } from "next/navigation";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { canEditShared, canManageMembers } from "@/lib/groups/permissions";
+function subscribeTeamHash(callback: () => void) {
+  window.addEventListener("hashchange", callback);
+  window.addEventListener("popstate", callback);
+  return () => {
+    window.removeEventListener("hashchange", callback);
+    window.removeEventListener("popstate", callback);
+  };
+}
+const teamHash = () => window.location.hash;
 export function GroupDashboard({
   groupId,
   role,
@@ -28,7 +37,10 @@ export function GroupDashboard({
   const [error, setError] = useState("");
   const [inviteLink, setInviteLink] = useState("");
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState("Overview");
+  const hash = useSyncExternalStore(subscribeTeamHash, teamHash, () => "");
+  const [eventFilter, setEventFilter] = useState("upcoming");
+  const [memberQuery, setMemberQuery] = useState("");
+  const [memberPage, setMemberPage] = useState(1);
   const [eventOpen, setEventOpen] = useState(false);
   const tabs = [
     "Overview",
@@ -40,10 +52,31 @@ export function GroupDashboard({
     "Announcements",
     "Settings",
   ];
+  const tab =
+    tabs.find((name) => `#team-${name.toLowerCase().replaceAll(" ", "-")}` === hash) || "Overview";
+  function setTab(name: string) {
+    const target = `#team-${name.toLowerCase().replaceAll(" ", "-")}`;
+    if (window.location.hash === target) return;
+    window.history.pushState(null, "", target);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  }
   const [openedAt] = useState(() => Date.now());
   const upcoming = data.events.filter(
     (e) => !e.cancelled && new Date(e.startsAt).getTime() > openedAt,
   );
+  const schedule = data.events.filter(
+    (event) =>
+      eventFilter === "all" ||
+      (eventFilter === "upcoming"
+        ? !event.cancelled && Date.parse(event.startsAt) > openedAt
+        : event.cancelled || Date.parse(event.startsAt) <= openedAt),
+  );
+  const roster = data.members.filter((member) =>
+    `${member.name} ${member.role}`.toLowerCase().includes(memberQuery.trim().toLowerCase()),
+  );
+  const memberPages = Math.max(1, Math.ceil(roster.length / 25));
+  const activeMemberPage = Math.min(memberPage, memberPages);
+  const rosterRows = roster.slice((activeMemberPage - 1) * 25, activeMemberPage * 25);
   const editor = canEditShared(role),
     manager = canManageMembers(role);
   async function run(action: Record<string, unknown>) {
@@ -63,6 +96,7 @@ export function GroupDashboard({
         router.push("/groups");
         router.refresh();
       } else {
+        if (action.action === "cancel-event") setEventFilter("all");
         if (action.action === "event") {
           setEventOpen(false);
           setTab("Events");
@@ -271,8 +305,33 @@ export function GroupDashboard({
               <p className="muted">
                 Showing up to30 upcoming activities and20 recent past or cancelled events.
               </p>
-              {data.events.map((e) => (
-                <article className="group-announcement section" key={e.id}>
+              <div className="support-toolbar team-schedule-controls">
+                <label>
+                  Show events
+                  <select
+                    aria-label="Team event status"
+                    value={eventFilter}
+                    onChange={(event) => setEventFilter(event.target.value)}
+                  >
+                    <option value="upcoming">Upcoming</option>
+                    <option value="past">Past & cancelled</option>
+                    <option value="all">All loaded events</option>
+                  </select>
+                </label>
+                <span>{schedule.length} events in this view</span>
+              </div>
+              {schedule.map((e) => (
+                <details className="team-event-card" key={e.id} open={e.id === schedule[0]?.id}>
+                  <summary>
+                    <strong>
+                      {e.title}
+                      {e.cancelled ? " · Cancelled" : ""}
+                    </strong>
+                    <span>
+                      {e.startsAt.slice(0, 16).replace("T", " ")} UTC · {e.expectedParticipants}{" "}
+                      expected
+                    </span>
+                  </summary>
                   <h3>
                     {e.title}
                     {e.cancelled ? " · Cancelled" : ""}
@@ -356,11 +415,11 @@ export function GroupDashboard({
                       Cancel event
                     </button>
                   )}
-                </article>
+                </details>
               ))}
-              {!data.events.length && (
+              {!schedule.length && (
                 <p className="empty">
-                  No events scheduled. Plan the next gathering with your team.
+                  No events in this view. Choose another event status or plan the next gathering.
                 </p>
               )}
             </section>
@@ -377,7 +436,21 @@ export function GroupDashboard({
                   pagination remains unavailable.
                 </p>
               )}
-              {data.members.map((m) => (
+              <label className="team-roster-search">
+                Find a member
+                <input
+                  type="search"
+                  value={memberQuery}
+                  maxLength={80}
+                  onChange={(event) => {
+                    setMemberQuery(event.target.value);
+                    setMemberPage(1);
+                  }}
+                  placeholder="Name or role"
+                />
+              </label>
+              {!roster.length && <p>No loaded members match that search.</p>}
+              {rosterRows.map((m) => (
                 <div className="group-member" key={m.userId}>
                   <span>
                     <b>{m.name}</b>
@@ -424,6 +497,27 @@ export function GroupDashboard({
                   )}
                 </div>
               ))}
+              {memberPages > 1 && (
+                <nav className="team-roster-pages" aria-label="Member pages">
+                  <button
+                    className="button secondary"
+                    disabled={activeMemberPage === 1}
+                    onClick={() => setMemberPage(activeMemberPage - 1)}
+                  >
+                    Previous members
+                  </button>
+                  <span>
+                    {activeMemberPage} / {memberPages}
+                  </span>
+                  <button
+                    className="button secondary"
+                    disabled={activeMemberPage === memberPages}
+                    onClick={() => setMemberPage(activeMemberPage + 1)}
+                  >
+                    Next members
+                  </button>
+                </nav>
+              )}
             </section>
           </>
         )}

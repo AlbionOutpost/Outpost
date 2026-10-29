@@ -1,13 +1,15 @@
 "use client";
+import { useAtlasRegion } from "./region-context";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 export function GroupCreate() {
   const router = useRouter();
+  const region = useAtlasRegion();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   return (
     <form
-      className="panel settings-form"
+      className="panel settings-form support-team-create-form"
       onSubmit={async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.currentTarget));
@@ -51,7 +53,7 @@ export function GroupCreate() {
       </label>
       <label>
         Team region
-        <select name="region" aria-label="Team region">
+        <select name="region" aria-label="Team region" defaultValue={region}>
           <option value="europe">Europe</option>
           <option value="americas">Americas</option>
           <option value="asia">Asia</option>
@@ -64,6 +66,10 @@ export function GroupCreate() {
           <option value="PUBLIC">Public</option>
         </select>
       </label>
+      <p className="team-create-note">
+        Private teams keep their workspace member-only. A public team exposes its profile; shared
+        plans still require membership. You become the owner.
+      </p>
       {error && (
         <p role="alert" className="error">
           {error}

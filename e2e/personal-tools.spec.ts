@@ -136,6 +136,7 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
       ).toEqual([]);
     }
     await page.goto("/timers");
+    await page.getByText("More timer actions", { exact: true }).click();
     page.once("dialog", (d) => d.accept());
     await page.getByRole("button", { name: "Delete timer", exact: true }).click();
     await expect(

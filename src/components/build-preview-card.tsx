@@ -1,5 +1,6 @@
 import Link from "@/components/build-region-link";
 import { useId } from "react";
+import { ItemIcon } from "./item-icon";
 import { FavoriteBuildButton } from "./favorite-build-button";
 import { BuildCardOwnerActions } from "./build-card-owner-actions";
 import { EquipmentStrip } from "./equipment-strip";
@@ -18,16 +19,7 @@ export type PreviewBuild = {
   author: { name: string | null };
   equipment: { slot: string; itemId: string; quality: number; abilitySelections?: unknown }[];
 };
-const previewSlots = [
-  "Main hand",
-  "Off hand",
-  "Helmet",
-  "Chest",
-  "Boots",
-  "Cape",
-  "Food",
-  "Potion",
-];
+const previewSlots = ["Helmet", "Chest", "Boots", "Cape", "Food"];
 export function BuildPreviewCard({
   build: b,
   authenticated,
@@ -66,6 +58,7 @@ export function BuildPreviewCard({
           </span>
         </div>
         <div className="library-build-identity">
+          {main && <ItemIcon id={main.itemId} quality={main.quality} size={64} />}
           <div>
             <Link
               href={`/builds/${b.id}`}

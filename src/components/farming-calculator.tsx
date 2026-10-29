@@ -1,4 +1,5 @@
 "use client";
+import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useRef, useState } from "react";
 import { Sprout } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -307,35 +308,42 @@ export function FarmingCalculator() {
             <p role="status">{message}</p>
           </section>
           <section className="panel">
-            <h2>Seed returns & fees</h2>
-            <p>
-              Seed-return assumptions are editable. Confirm the values for your crop and setup. They
-              are historical assumptions, not current-patch certification. 200% means two expected
-              seeds per plant.
+            <p className="economy-assumption-readout">
+              Applied seed returns: {draft.seedYieldBase}% unwatered · {draft.seedYieldWatered}%
+              watered. Purchase fee {draft.buyFee}% · sale fees {draft.sellFee}% · other costs{" "}
+              {draft.operatingCost.toLocaleString()} silver.
             </p>
-            <div className="input-grid">
-              {(
-                [
-                  ["seedYieldBase", "Unwatered seed yield (%)", 300],
-                  ["seedYieldWatered", "Watered seed yield (%)", 300],
-                  ["buyFee", "Seed purchase fee (%)", 100],
-                  ["sellFee", "Produce sales tax + setup (%)", 100],
-                  ["operatingCost", "Other costs per harvest · silver", 1e12],
-                ] as const
-              ).map(([key, label, max]) => (
-                <label key={key}>
-                  {label}
-                  <input
-                    type="number"
-                    min={0}
-                    max={max}
-                    step="any"
-                    value={draft[key]}
-                    onChange={(e) => update(key, Number(e.target.value))}
-                  />
-                </label>
-              ))}
-            </div>
+            <details className="economy-assumptions">
+              <summary>Seed returns & fees</summary>
+              <p>
+                Seed-return assumptions are editable. Confirm the values for your crop and setup.
+                They are historical assumptions, not current-patch certification. 200% means two
+                expected seeds per plant.
+              </p>
+              <div className="input-grid">
+                {(
+                  [
+                    ["seedYieldBase", "Unwatered seed yield (%)", 300],
+                    ["seedYieldWatered", "Watered seed yield (%)", 300],
+                    ["buyFee", "Seed purchase fee (%)", 100],
+                    ["sellFee", "Produce sales tax + setup (%)", 100],
+                    ["operatingCost", "Other costs per harvest · silver", 1e12],
+                  ] as const
+                ).map(([key, label, max]) => (
+                  <label key={key}>
+                    {label}
+                    <input
+                      type="number"
+                      min={0}
+                      max={max}
+                      step="any"
+                      value={draft[key]}
+                      onChange={(e) => update(key, Number(e.target.value))}
+                    />
+                  </label>
+                ))}
+              </div>
+            </details>
           </section>
         </div>
         <aside className="panel farming-results" aria-labelledby="farming-results-title">
@@ -346,6 +354,24 @@ export function FarmingCalculator() {
               ? "Enter harvest yield and both prices to calculate profit."
               : `${[draft.seedPrice, draft.productPrice].some((p) => p.manual) ? "Includes manual prices" : "Observed-price estimate"}${result.stale ? " · Stale observations" : ""}`}
           </p>
+          {!result?.complete && (
+            <CalculationReadiness
+              title="Complete your harvest estimate"
+              missing={[
+                ...(draft.harvestPerPlant === null ? ["Harvest per plant"] : []),
+                ...(draft.seedPrice.value === null ? ["Seed unit price"] : []),
+                ...(draft.productPrice.value === null ? ["Produce unit price"] : []),
+                ...(draft.harvestPerPlant !== null &&
+                draft.seedPrice.value !== null &&
+                draft.productPrice.value !== null
+                  ? ["Valid crop, quantity and matching market prices"]
+                  : []),
+              ]}
+            >
+              Prices must match the selected crop and cities. Load observations or enter manual
+              prices.
+            </CalculationReadiness>
+          )}
           <small>Economic profit · silver</small>
           <output className="farming-main-result" data-result="farm-profit">
             {money(result?.profit)}
@@ -354,26 +380,28 @@ export function FarmingCalculator() {
             Includes the value of retained seeds. It is not all cash available after selling
             produce.
           </p>
-          <dl>
-            {(
-              [
-                ["Upfront cash", result?.upfront],
-                ["Produce to harvest", result?.harvest],
-                ["Expected seeds returned", result?.expectedSeeds],
-                ["Produce sale value", result?.revenue],
-                ["Produce sale fees", result?.fees],
-                ["Retained seed credit", result?.seedCredit],
-                ["Cash profit before seed credit", result?.cashProfit],
-                ["Extra seed value from watering", result?.focusBenefit],
-                ["Incremental silver / focus", result?.incrementalPerFocus],
-              ] as const
-            ).map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{money(value)}</dd>
-              </div>
-            ))}
-          </dl>
+          {result?.complete && (
+            <dl>
+              {(
+                [
+                  ["Upfront cash", result?.upfront],
+                  ["Produce to harvest", result?.harvest],
+                  ["Expected seeds returned", result?.expectedSeeds],
+                  ["Produce sale value", result?.revenue],
+                  ["Produce sale fees", result?.fees],
+                  ["Retained seed credit", result?.seedCredit],
+                  ["Cash profit before seed credit", result?.cashProfit],
+                  ["Extra seed value from watering", result?.focusBenefit],
+                  ["Incremental silver / focus", result?.incrementalPerFocus],
+                ] as const
+              ).map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{money(value)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           <details>
             <summary>How this is calculated</summary>
             <p>
@@ -397,21 +425,24 @@ export function FarmingCalculator() {
           </details>
         </aside>
       </div>
-      <ScenarioControls
-        schema={farmingSchema}
-        configuration={config}
-        onLoad={(value) => {
-          controller.current?.abort();
-          setBusy(false);
-          setDraft(value);
-          if (value.region !== region) {
-            document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-            const url = new URL(window.location.href);
-            url.searchParams.set("region", value.region);
-            router.replace(url.pathname + url.search + url.hash, { scroll: false });
-          }
-        }}
-      />
+      <details className="panel economy-saved-scenarios">
+        <summary>Saved harvest scenarios & sharing</summary>
+        <ScenarioControls
+          schema={farmingSchema}
+          configuration={config}
+          onLoad={(value) => {
+            controller.current?.abort();
+            setBusy(false);
+            setDraft(value);
+            if (value.region !== region) {
+              document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+              const url = new URL(window.location.href);
+              url.searchParams.set("region", value.region);
+              router.replace(url.pathname + url.search + url.hash, { scroll: false });
+            }
+          }}
+        />
+      </details>
     </>
   );
 }

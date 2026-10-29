@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { ItemCatalog } from "@/components/item-catalog";
+export const metadata = { title: "Item browser" };
 export default async function Page() {
   const [metadata, total, slots] = await Promise.all([
     db.itemMetadata.findMany({
@@ -22,7 +23,7 @@ export default async function Page() {
           <h1 className="page-title display-title">Item browser</h1>
           <p className="intro">
             Find gear by name, tier and enchantment. Compare prices and inspect the available item
-            data. Current-patch verification is pending.
+            data.
           </p>
         </div>
       </header>

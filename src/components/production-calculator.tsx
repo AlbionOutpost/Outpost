@@ -1,4 +1,6 @@
 "use client";
+import { ProductionSensitivity } from "./production-sensitivity";
+import { CalculationReadiness } from "./calculation-readiness";
 import "@/app/production-workspace.css";
 import { EditorDialog } from "./editor-dialog";
 import { ProductionProfile } from "./production-profile";
@@ -28,15 +30,26 @@ import {
 export function ProductionCalculator({
   kind,
   category,
+  initialRecipeId,
 }: {
   kind: ProductionInput["kind"];
   category?: "cooking" | "alchemy";
+  initialRecipeId?: string;
 }) {
   const region = useAtlasRegion();
   const router = useRouter();
   const [draft, setDraft] = useState(() => ({
     ...initialProduction(kind, region),
     ...(category ? { recipeId: recipes.find((r) => r.category === category)!.id } : {}),
+    ...(initialRecipeId &&
+    recipes.some(
+      (recipe) =>
+        recipe.id === initialRecipeId &&
+        recipe.kind === kind &&
+        (!category || recipe.category === category),
+    )
+      ? { recipeId: initialRecipeId }
+      : {}),
   }));
   const availableRecipes = recipes.filter(
     (r) => r.kind === kind && (!category || r.category === category),
@@ -44,6 +57,24 @@ export function ProductionCalculator({
   const [error, setError] = useState("");
   const [recipeSearch, setRecipeSearch] = useState("");
   const [recipePickerOpen, setRecipePickerOpen] = useState(false);
+  const modeNavigation = useRef<HTMLElement>(null);
+  useEffect(() => {
+    function revealCurrentMode() {
+      const navigation = modeNavigation.current;
+      const active = navigation?.querySelector<HTMLElement>('[aria-current="page"]');
+      if (!navigation || !active || navigation.scrollWidth <= navigation.clientWidth) return;
+      const rail = navigation.getBoundingClientRect();
+      const tab = active.getBoundingClientRect();
+      if (tab.right > rail.right) navigation.scrollLeft += tab.right - rail.right + 12;
+      else if (tab.left < rail.left) navigation.scrollLeft -= rail.left - tab.left + 12;
+    }
+    const frame = requestAnimationFrame(revealCurrentMode);
+    window.addEventListener("resize", revealCurrentMode);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", revealCurrentMode);
+    };
+  }, [category, kind]);
   const [step, setStep] = useState(1);
   const [showScenarios, setShowScenarios] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
@@ -141,7 +172,12 @@ export function ProductionCalculator({
       ? p
       : null;
   };
-  const hasPrices = Object.values(draft.prices).some((p) => p.value !== null);
+  const missingPrices =
+    result?.missing.map((id) =>
+      id === recipe.output
+        ? `${recipe.name} sale price`
+        : `${recipe.ingredients.find((i) => i.id === id)?.name || id} unit price`,
+    ) || [];
   const attempted = attemptedKey === requestKey;
   function goToStep(next: number) {
     setStep(next);
@@ -278,7 +314,7 @@ export function ProductionCalculator({
   );
   return (
     <div className="production-journey premium-production" data-step={step}>
-      <nav className="production-mode-nav" aria-label="Production calculators">
+      <nav ref={modeNavigation} className="production-mode-nav" aria-label="Production calculators">
         {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
           <Link
             key={mode}
@@ -324,6 +360,12 @@ export function ProductionCalculator({
         )}
 
         <div className="calculator-inputs">
+          <h2 className="production-configuration-title">
+            <span className="workspace-step" aria-hidden="true">
+              1
+            </span>
+            Configuration
+          </h2>
           <section className="panel" id="production-setup" tabIndex={-1}>
             <h2 className="production-inputs-heading">
               <span className="workspace-step" aria-hidden="true">
@@ -398,14 +440,22 @@ export function ProductionCalculator({
               <div>
                 <h3>{recipe.name}</h3>
                 <p>
-                  {kind === "crafting"
-                    ? "Crafting recipe"
-                    : kind === "refining"
-                      ? "Refining recipe"
-                      : "Enchantment upgrade"}{" "}
+                  {category === "cooking"
+                    ? "Cooking recipe"
+                    : category === "alchemy"
+                      ? "Alchemy recipe"
+                      : kind === "crafting"
+                        ? "Crafting recipe"
+                        : kind === "refining"
+                          ? "Refining recipe"
+                          : "Enchantment upgrade"}{" "}
                   · {recipe.outputCount} output per craft
                 </p>
-                <small>Check the recipe and your station settings in game.</small>
+                <small className={recipe.historical ? "recipe-historical-status" : undefined}>
+                  {recipe.historical
+                    ? "Historical recipe · Confirm ingredients and station settings in game."
+                    : "Check the recipe and your station settings in game."}
+                </small>
               </div>
             </div>
             <button
@@ -730,7 +780,7 @@ export function ProductionCalculator({
           <div className="section-heading">
             <h2>
               <span className="workspace-step" aria-hidden="true">
-                4
+                2
               </span>
               Material costs
             </h2>
@@ -795,6 +845,10 @@ export function ProductionCalculator({
                           <span className="material-item-heading">
                             <ItemIcon id={i.id} size={36} />
                             <strong>{i.name}</strong>
+                            <small className="material-row-total">
+                              Total: {money(result?.rows.find((row) => row.id === i.id)?.gross)}{" "}
+                              silver
+                            </small>
                           </span>
                         </th>
                         <td className="numeric" title={`${i.quantity} per craft`}>
@@ -890,7 +944,7 @@ export function ProductionCalculator({
             <div>
               <h2>
                 <span className="workspace-step" aria-hidden="true">
-                  5
+                  3
                 </span>
                 Results summary
               </h2>
@@ -911,18 +965,16 @@ export function ProductionCalculator({
                   ? "Loading observed prices…"
                   : error
                     ? "Prices could not be loaded"
-                    : attempted || hasPrices
+                    : attempted
                       ? "Finish pricing your run"
-                      : "What will this run earn?"}
+                      : "Price this run to see your profit"}
               </h3>
               <p>
                 {busy
                   ? "Checking material and output prices for your selected markets."
                   : error
                     ? "Your recipe and manual prices are kept. Retry loading observations or enter prices yourself."
-                    : attempted || hasPrices
-                      ? "Add the missing unit prices below. Profit appears when every required price is configured."
-                      : "Choose your recipe and quantity, then load market observations or add unit prices. We’ll calculate the cost and profit here."}
+                    : `${recipe.name} is selected. Add the required material and output prices, or load observations for your selected cities.`}
               </p>
               <button className="button secondary" type="button" onClick={() => goToStep(2)}>
                 Add material prices <ArrowRight size={16} aria-hidden="true" />
@@ -939,18 +991,13 @@ export function ProductionCalculator({
               {validation}
             </p>
           )}
-          {result && !result.complete && (attempted || hasPrices) && (
-            <p role="status">
-              Missing or mismatched observations:{" "}
-              {result.missing
-                .map((id) =>
-                  id === recipe.output
-                    ? recipe.name
-                    : recipe.ingredients.find((i) => i.id === id)?.name || id,
-                )
-                .join(", ")}
-              . No complete profit estimate is available.
-            </p>
+          {result && !result.complete && (
+            <CalculationReadiness
+              title={`${missingPrices.length} required prices remaining`}
+              missing={missingPrices}
+            >
+              Profit stays unavailable until every required price matches this run.
+            </CalculationReadiness>
           )}
           {result?.complete && (
             <>
@@ -1051,7 +1098,7 @@ export function ProductionCalculator({
           >
             {" "}
             {result?.complete && (
-              <details className="reference-accounting" open>
+              <details className="reference-accounting">
                 <summary>Detailed accounting · entire run</summary>
                 <dl>
                   {[
@@ -1085,43 +1132,46 @@ export function ProductionCalculator({
         )}
         {result?.complete && (
           <aside className="panel production-assumption-summary">
-            <h2>Your assumptions</h2>
-            <dl>
-              <div>
-                <dt>Crafts / upgrades</dt>
-                <dd>{draft.batches.toLocaleString()}</dd>
-              </div>
-              <div>
-                <dt>Material market</dt>
-                <dd>{draft.materialCity}</dd>
-              </div>
-              <div>
-                <dt>Sale market</dt>
-                <dd>{draft.outputCity}</dd>
-              </div>
-              <div>
-                <dt>Station fee / craft</dt>
-                <dd>{money(draft.stationFee)} silver</dd>
-              </div>
-              <div>
-                <dt>Sales tax</dt>
-                <dd>{draft.tax}%</dd>
-              </div>
-              <div>
-                <dt>Setup fee</dt>
-                <dd>{draft.setupFee}%</dd>
-              </div>
-            </dl>
-            <p className="muted">
-              These inputs define your estimate. Confirm fees and return assumptions at your station
-              before crafting.
-            </p>
-            <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-              Recipe source & limitations
-            </a>
+            <details className="production-assumptions-details">
+              <summary>Your assumptions</summary>
+              <dl>
+                <div>
+                  <dt>Crafts / upgrades</dt>
+                  <dd>{draft.batches.toLocaleString()}</dd>
+                </div>
+                <div>
+                  <dt>Material market</dt>
+                  <dd>{draft.materialCity}</dd>
+                </div>
+                <div>
+                  <dt>Sale market</dt>
+                  <dd>{draft.outputCity}</dd>
+                </div>
+                <div>
+                  <dt>Station fee / craft</dt>
+                  <dd>{money(draft.stationFee)} silver</dd>
+                </div>
+                <div>
+                  <dt>Sales tax</dt>
+                  <dd>{draft.tax}%</dd>
+                </div>
+                <div>
+                  <dt>Setup fee</dt>
+                  <dd>{draft.setupFee}%</dd>
+                </div>
+              </dl>
+              <p className="muted">
+                These inputs define your estimate. Confirm fees and return assumptions at your
+                station before crafting.
+              </p>
+              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                Recipe source & limitations
+              </a>
+            </details>
           </aside>
         )}
       </div>
+      <ProductionSensitivity configuration={configuration} />
       <ProductionPlan
         current={configuration}
         onEdit={(run) => {

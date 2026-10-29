@@ -1,22 +1,33 @@
 "use client";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { SlidersHorizontal, ChevronDown, X } from "lucide-react";
+function subscribeMobileViewport(callback: () => void) {
+  const media = window.matchMedia("(max-width: 900px)");
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+const mobileViewport = () => window.matchMedia("(max-width: 900px)").matches;
+
 export function MobileFilterPanel({
   children,
   label = "Filter builds",
   drawer = false,
+  collapsibleDesktop = false,
 }: {
   children: ReactNode;
   label?: string;
   drawer?: boolean;
+  collapsibleDesktop?: boolean;
 }) {
   const [open, setOpen] = useState(false),
     id = useId(),
     trigger = useRef<HTMLButtonElement>(null),
     panel = useRef<HTMLDivElement>(null),
     close = useRef<HTMLButtonElement>(null);
+  const mobile = useSyncExternalStore(subscribeMobileViewport, mobileViewport, () => false);
+  const modalOpen = drawer && open && (!collapsibleDesktop || mobile);
   useEffect(() => {
-    if (!drawer || !open) return;
+    if (!modalOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     close.current?.focus();
@@ -30,10 +41,10 @@ export function MobileFilterPanel({
       window.removeEventListener("resize", onResize);
       if (triggerElement?.isConnected) triggerElement.focus();
     };
-  }, [drawer, open]);
+  }, [modalOpen]);
   return (
     <div
-      className={`responsive-filter-panel${drawer ? " filter-drawer" : ""}${open ? " expanded" : ""}`}
+      className={`responsive-filter-panel${drawer ? " filter-drawer" : ""}${collapsibleDesktop ? " collapsible-desktop" : ""}${open ? " expanded" : ""}`}
     >
       <button
         ref={trigger}
@@ -41,14 +52,14 @@ export function MobileFilterPanel({
         className="mobile-filter-trigger"
         aria-expanded={open}
         aria-controls={id}
-        aria-haspopup={drawer ? "dialog" : undefined}
+        aria-haspopup={drawer && (!collapsibleDesktop || mobile) ? "dialog" : undefined}
         onClick={() => setOpen(!open)}
       >
         <SlidersHorizontal size={17} />
         <span>{label}</span>
         <ChevronDown size={16} />
       </button>
-      {drawer && open && (
+      {modalOpen && (
         <button
           className="filter-drawer-backdrop"
           type="button"
@@ -61,9 +72,9 @@ export function MobileFilterPanel({
         ref={panel}
         id={id}
         className="mobile-filter-content"
-        role={drawer && open ? "dialog" : undefined}
-        aria-modal={drawer && open ? true : undefined}
-        aria-label={drawer && open ? label : undefined}
+        role={modalOpen ? "dialog" : undefined}
+        aria-modal={modalOpen ? true : undefined}
+        aria-label={modalOpen ? label : undefined}
         onSubmitCapture={() => {
           if (drawer) setOpen(false);
         }}
@@ -75,8 +86,9 @@ export function MobileFilterPanel({
           if (e.key === "Escape") {
             e.preventDefault();
             setOpen(false);
+            trigger.current?.focus();
           }
-          if (e.key === "Tab") {
+          if (modalOpen && e.key === "Tab") {
             const controls = [
                 ...panel.current!.querySelectorAll<HTMLElement>(
                   'a[href],button:not([disabled]),input:not([type="hidden"]):not([disabled]),select:not([disabled])',

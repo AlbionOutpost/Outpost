@@ -55,7 +55,9 @@ test("dashboard equipment previews remain private across warmed user sessions", 
       },
     });
     await page.goto("/dashboard");
-    const preview = page.locator(".player-loadout-link").filter({ hasText: build.title });
+    const preview = page
+      .locator(".dashboard-continue,.dashboard-work-list > a")
+      .filter({ hasText: build.title });
     await expect(preview).toBeVisible();
     await expect(preview.locator("[data-albion-icon]")).toHaveAttribute("src", /T4_MAIN_AXE/);
     const otherPage = await outsider.newPage();
@@ -64,7 +66,7 @@ test("dashboard equipment previews remain private across warmed user sessions", 
       otherPage.getByRole("heading", { name: "Welcome, Dashboard reviewer 1." }),
     ).toBeVisible();
     await expect(otherPage.getByText(build.title, { exact: true })).toHaveCount(0);
-    await expect(otherPage.locator(".player-loadout-link")).toHaveCount(0);
+    await expect(otherPage.locator(".dashboard-continue,.dashboard-work-list > a")).toHaveCount(0);
     expect(
       (await outsider.request.get(`http://localhost:3000/api/builds/${build.id}`)).status(),
     ).toBe(404);

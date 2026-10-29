@@ -1,4 +1,5 @@
 "use client";
+import "./economy-workspaces.css";
 import { useEffect, useState } from "react";
 import { useAtlasRegion } from "./region-context";
 import Link from "@/components/link";
@@ -20,6 +21,7 @@ export function ItemCatalog({
   categories?: string[];
 }) {
   const [page, setPage] = useState(1);
+  const [view, setView] = useState<"list" | "grid">("list");
   const [search, setSearch] = useState("");
   const [tier, setTier] = useState("");
   const [enchantment, setEnchantment] = useState("");
@@ -145,10 +147,48 @@ export function ItemCatalog({
           </select>
         </label>
       </div>
-      <p className="muted">
-        {busy ? "Loading selection…" : `${result.total.toLocaleString()} items`} · Source coverage
-        is incomplete; current-patch verification is pending.
-      </p>
+      <div className="item-catalog-result-bar">
+        <div className="item-catalog-view" role="group" aria-label="Item display">
+          <button
+            type="button"
+            className="button secondary"
+            aria-pressed={view === "list"}
+            onClick={() => setView("list")}
+          >
+            List
+          </button>
+          <button
+            type="button"
+            className="button secondary"
+            aria-pressed={view === "grid"}
+            onClick={() => setView("grid")}
+          >
+            Grid
+          </button>
+        </div>
+        <p role="status">
+          {error
+            ? "Selection could not be loaded"
+            : busy
+              ? "Loading selection…"
+              : `${result.total.toLocaleString()} matching items`}
+        </p>
+        {(search || tier || enchantment || category) && (
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              setSearch("");
+              setTier("");
+              setEnchantment("");
+              setCategory("");
+              setPage(1);
+            }}
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
       {error && (
         <p role="alert">
           {error}{" "}
@@ -157,47 +197,72 @@ export function ItemCatalog({
           </button>
         </p>
       )}
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Category</th>
-              <th>Identifier</th>
-              <th>Market</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(!busy ? result.items : []).map((i) => (
-              <tr key={i.id}>
-                <td>
-                  <div className="catalog-item-identity">
-                    <ItemIcon id={i.id} />
-                    <div>
-                      <Link className="text-link" href={`/items/${i.id}?region=${region}`}>
-                        {i.name}
-                      </Link>
-                      <small>
-                        {i.slot} · {i.id}
-                      </small>
-                    </div>
-                  </div>
-                </td>
-                <td>{i.slot}</td>
-                <td>{i.id}</td>
-                <td>
-                  <Link
-                    className="text-link"
-                    href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
-                  >
-                    Compare prices →
-                  </Link>
-                </td>
+      {view === "grid" ? (
+        <div className="item-catalog-grid">
+          {(!busy ? result.items : []).map((item) => (
+            <article key={item.id}>
+              <ItemIcon id={item.id} size={64} />
+              <div>
+                <h2>
+                  <Link href={`/items/${item.id}?region=${region}`}>{item.name}</Link>
+                </h2>
+                <p>
+                  {item.slot} · T{item.tier}.{item.enchantment}
+                </p>
+                <code>{item.id}</code>
+              </div>
+              <Link
+                className="text-link"
+                href={`/tools/market?region=${region}&item=${encodeURIComponent(item.id)}`}
+              >
+                Compare prices →
+              </Link>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Identifier</th>
+                <th>Market</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {(!busy ? result.items : []).map((i) => (
+                <tr key={i.id}>
+                  <td>
+                    <div className="catalog-item-identity">
+                      <ItemIcon id={i.id} />
+                      <div>
+                        <Link className="text-link" href={`/items/${i.id}?region=${region}`}>
+                          {i.name}
+                        </Link>
+                        <small>
+                          {i.slot} · {i.id}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{i.slot}</td>
+                  <td>{i.id}</td>
+                  <td>
+                    <Link
+                      className="text-link"
+                      href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
+                    >
+                      Compare prices →
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <div className="actions">
         <button
           className="button secondary"
@@ -218,14 +283,21 @@ export function ItemCatalog({
         </button>
       </div>
       {!busy && !result.items.length && (
-        <p className="empty">
-          No matches in the curated index. The market explorer also accepts exact IDs outside this
-          subset.
-        </p>
+        <div className="empty">
+          <h2>No items match these filters</h2>
+          <p>Try a shorter name, an exact item ID, or clear your filters to browse again.</p>
+        </div>
       )}
+      <details className="item-data-coverage">
+        <summary>Item data & patch coverage</summary>
+        <p className="muted">
+          The item index does not cover every game item. Current-patch verification is pending;
+          confirm item values and unlocks in game.
+        </p>
+      </details>
       {!!shortcuts.length && (
         <details>
-          <summary>Original market shortcuts ({shortcuts.length})</summary>
+          <summary>Quick market picks ({shortcuts.length})</summary>
           <p className="muted">Quick picks for your next loadout.</p>
           {shortcuts.map((i) => (
             <p key={i.id}>

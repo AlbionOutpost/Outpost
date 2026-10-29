@@ -20,11 +20,13 @@ export function InventoryEquipmentBoard({
   selectedSlot,
   onSelectSlot,
   label = "Equipment inventory",
+  anchorPrefix,
 }: {
   equipment: readonly InventoryEquipmentItem[];
   selectedSlot: string;
   onSelectSlot: (slot: string) => void;
   label?: string;
+  anchorPrefix?: string;
 }) {
   const prefix = useId();
   return (
@@ -60,6 +62,7 @@ export function InventoryEquipmentBoard({
         const tooltip = `${prefix}-${slot.replaceAll(" ", "-")}`;
         return (
           <div
+            id={anchorPrefix ? `${anchorPrefix}-${slot.replaceAll(" ", "-")}` : undefined}
             className="inventory-equipment-cell"
             key={slot}
             data-area={area}
@@ -71,7 +74,7 @@ export function InventoryEquipmentBoard({
               data-area={area}
               className={`inventory-equipment-slot${item ? " is-equipped" : " is-empty"}${selectedSlot === slot ? " is-selected" : ""}`}
               aria-pressed={selectedSlot === slot}
-              aria-label={`Inspect ${slot}: ${name}`}
+              aria-label={item ? `Inspect ${slot}: ${name}` : `Inspect ${slot} Empty`}
               aria-describedby={tooltip}
               onClick={() => onSelectSlot(slot)}
             >
@@ -92,7 +95,7 @@ export function InventoryEquipmentBoard({
                           key={`${spell.id}-${i}`}
                           id={spell.id!}
                           name={spell.name}
-                          size={20}
+                          size={27}
                         />
                       ))}
                   </span>
@@ -103,6 +106,12 @@ export function InventoryEquipmentBoard({
                   </span>
                 )}
               </span>
+              {!item && (
+                <>
+                  {" "}
+                  <span className="inventory-empty-caption">Empty</span>
+                </>
+              )}
             </button>
             <span id={tooltip} role="tooltip" className="inventory-slot-tooltip">
               <strong>

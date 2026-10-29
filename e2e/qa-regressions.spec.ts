@@ -102,9 +102,12 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await page.goto("/tools/flipping");
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
-  await expect(page.locator(".result strong")).toContainText("0.5");
+  const result = page.locator(".manual-trade-workspace .result");
+  await expect(result.locator(":scope > strong")).toContainText("0.5");
   await page.getByLabel("Purchase price per item").fill("");
-  await expect(page.locator("p[role=alert]")).toBeVisible();
+  await expect(result.locator(".calculation-readiness")).toContainText("Purchase price per item");
+  await expect(result.locator(":scope > strong")).toHaveText("— silver");
+  await expect(page.getByRole("button", { name: "Export scenario", exact: true })).toBeDisabled();
   expect(errors).toEqual([]);
 });
 

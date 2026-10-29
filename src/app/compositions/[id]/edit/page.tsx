@@ -22,6 +22,9 @@ export default async function EditComposition({ params }: { params: Promise<{ id
     <div className="composition-editor-page">
       <h1 className="page-title display-title">Edit comp</h1>
       <CompositionEditor
+        key={`${session.user.id}:${id}`}
+        ownerId={session.user.id}
+        recoveryKey={`composition:${id}`}
         id={id}
         version={row.version}
         initial={compositionInput.parse(row)}

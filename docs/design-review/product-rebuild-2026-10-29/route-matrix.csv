@@ -1,0 +1,46 @@
+route,implemented_surface,desktop_and_phone_evidence,remaining_limits
+/admin/reports,Community reports,.qa/product-rebuild-2026-10-29/final/screenshots/moderation/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds/[id]/edit,Edit build,.qa/product-rebuild-2026-10-29/final/screenshots/build-editor/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds/[id],Battleaxe field kit · design preview,.qa/product-rebuild-2026-10-29/final/screenshots/saved-build-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds/library/[slug],Battleaxe Mist Build,.qa/product-rebuild-2026-10-29/final/screenshots/library-build-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds/library,Build Library,.qa/product-rebuild-2026-10-29/final/screenshots/build-library/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds/new,Create a build,.qa/product-rebuild-2026-10-29/final/screenshots/new-build/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/builds,Albion Online Builds,.qa/product-rebuild-2026-10-29/final/screenshots/community-builds/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions/[id]/edit,Edit comp,.qa/product-rebuild-2026-10-29/final/screenshots/comp-editor/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions/[id],Five-player party · design preview,.qa/product-rebuild-2026-10-29/final/screenshots/saved-comp-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions/library/[slug],Dreamteam,.qa/product-rebuild-2026-10-29/final/screenshots/group-build-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions/library,Group Builds,.qa/product-rebuild-2026-10-29/final/screenshots/group-build-library/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions/new,Create a comp,.qa/product-rebuild-2026-10-29/final/screenshots/new-comp/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/compositions,Comps,.qa/product-rebuild-2026-10-29/final/screenshots/available-comps/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/dashboard,"Welcome, Design preview · owner.",.qa/product-rebuild-2026-10-29/final/screenshots/dashboard/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/favorites,Your favorite builds,.qa/product-rebuild-2026-10-29/final/screenshots/favorites/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/groups/[slug],Outpost crew · design preview,.qa/product-rebuild-2026-10-29/final/screenshots/team-workspace/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/groups/new,Create a team workspace,.qa/product-rebuild-2026-10-29/final/screenshots/new-team/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/groups,Teams,.qa/product-rebuild-2026-10-29/final/screenshots/teams/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/guides/[slug],Fishing Leveling Guide,.qa/product-rebuild-2026-10-29/final/screenshots/guide-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/guides,Guides & resources,.qa/product-rebuild-2026-10-29/final/screenshots/guides/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/invitations/[token],Join Outpost crew · design preview.,.qa/product-rebuild-2026-10-29/final/screenshots/team-invitation/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/items/[id],Adept's Battleaxe,.qa/product-rebuild-2026-10-29/final/screenshots/item-detail/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/items,Item browser,.qa/product-rebuild-2026-10-29/final/screenshots/items/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/legal,"Project, privacy & sources",.qa/product-rebuild-2026-10-29/final/screenshots/legal/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/market-data,Better decisions start with better observations.,.qa/product-rebuild-2026-10-29/final/screenshots/market-data/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/,Better tools.For a richer Albion.,.qa/product-rebuild-2026-10-29/final/screenshots/home/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/players/[id],Design preview · owner,.qa/product-rebuild-2026-10-29/final/screenshots/player-profile/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/settings,Account settings,.qa/product-rebuild-2026-10-29/final/screenshots/settings/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/shopping-list,"Your next run, ready to buy.",.qa/product-rebuild-2026-10-29/final/screenshots/shopping-list/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/signin,Make yourselfat home in Outpost.,.qa/product-rebuild-2026-10-29/final/screenshots/signin/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/timers,Personal timers,.qa/product-rebuild-2026-10-29/final/screenshots/timers/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/alchemy,Alchemy calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-alchemy/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/cooking,Cooking calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-cooking/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/crafting,Crafting calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-crafting/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/death-feed,Global death feed,.qa/product-rebuild-2026-10-29/final/screenshots/tools-death-feed/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/enchanting,Enchanting calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-enchanting/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/farming,Farming calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-farming/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/fishing,Fishing calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-fishing/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/flipping,Market flipping,.qa/product-rebuild-2026-10-29/final/screenshots/tools-flipping/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/gold,Gold price history,.qa/product-rebuild-2026-10-29/final/screenshots/tools-gold/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/kill-feed,Global kill feed,.qa/product-rebuild-2026-10-29/final/screenshots/tools-kill-feed/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/market,Market Explorer,.qa/product-rebuild-2026-10-29/final/screenshots/tools-market/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools,Tools & calculators,.qa/product-rebuild-2026-10-29/final/screenshots/tools/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/refining,Refining calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-refining/,Local QA fixtures where private; domain/source and owner release acceptance remain separate
+/tools/transporting,Transport calculator,.qa/product-rebuild-2026-10-29/final/screenshots/tools-transporting/,Local QA fixtures where private; domain/source and owner release acceptance remain separate

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "owner_release_approval": "Public Cloudflare availability explicitly authorized on28 October2026; formal acceptance of every product/security/legal gate is not recorded.",
+  "owner_release_approval": "Public availability was authorized on28 October2026. The latest29 October instruction explicitly withholds deployment without fresh approval; this product rebuild has no deployment approval. Formal product/security/legal acceptance remains unrecorded.",
   "gates": [
     {
       "id": "REL-001",

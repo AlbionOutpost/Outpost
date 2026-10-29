@@ -256,6 +256,19 @@ export function BuildEquipmentStudio({
           </div>
           <span>{value.length}/10</span>
         </header>
+        <button
+          type="button"
+          className="editor-selection-jump"
+          onClick={() => {
+            const panel = document.getElementById("editor-selected-slot");
+            panel?.focus({ preventScroll: true });
+            panel?.scrollIntoView({ block: "start", behavior: "instant" });
+          }}
+        >
+          <span>Editing {slot}</span>
+          <strong>{current ? equipmentName(current.itemId) : "Choose equipment"}</strong>
+          <ArrowRight size={16} />
+        </button>
         <InventoryEquipmentBoard
           equipment={inventory}
           selectedSlot={slot}
@@ -286,7 +299,7 @@ export function BuildEquipmentStudio({
                   ? "Alternative equipment"
                   : "Equipment configuration"}
             </span>
-            <h2>{slot}</h2>
+            <h2>Editing {slot}</h2>
           </div>
           <span>Selected slot</span>
         </header>

@@ -1,5 +1,5 @@
 import { GuideDirectory } from "@/components/guide-directory";
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
 export const metadata = { title: "Guides" };
@@ -12,7 +12,7 @@ export default async function Guides({
   const query = typeof params.q === "string" ? params.q.slice(0, 100) : "";
   const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
   return (
-    <div className="guide-discovery-page">
+    <div className="guide-discovery-page support-guides">
       <header className="workspace-identity">
         <div>
           <h1 className="page-title display-title">Guides & resources</h1>
@@ -21,16 +21,11 @@ export default async function Guides({
           </p>
         </div>
       </header>
-      <nav className="discovery-tabs" aria-label="Builds and guides">
-        <Link href="/builds/library">Build library</Link>
-        <Link href="/guides" aria-current="page">
-          Guides
-        </Link>
+      <nav className="guide-topic-links" aria-label="Guide shortcuts">
+        <Link href="/guides/albion-journal-guide">Track your journal</Link>
+        <Link href="/guides?category=Economy">Learn the economy</Link>
+        <Link href="/builds/library">Find a loadout</Link>
       </nav>
-      <p className="library-provenance">
-        Practical guides for your next adventure. Check the update date and current game balance
-        before making a big investment.
-      </p>
       <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
       <div className="library-section-heading outpost-guide-heading">
         <div>

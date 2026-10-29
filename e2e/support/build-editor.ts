@@ -8,6 +8,6 @@ export async function selectEditorSlot(
   await page.getByRole("tab", { name: section, exact: true }).click();
   await page
     .getByRole("group", { name: "Editor equipment inventory", exact: true })
-    .getByRole("button", { name: `Inspect ${slot}:`, exact: false })
+    .getByRole("button", { name: new RegExp(`^Inspect ${slot}(?::| )`) })
     .click();
 }

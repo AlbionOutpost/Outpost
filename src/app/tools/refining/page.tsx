@@ -1,13 +1,21 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ProductionCalculator } from "@/components/production-calculator";
-export default function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ recipe?: string }>;
+}) {
+  const { recipe } = await searchParams;
   return (
     <div className="production-calculator-page">
       <WorkspaceHeading
         title="Refining calculator"
         description="Make every resource count. Compare material costs, station settings and the value of your refined output."
       />
-      <ProductionCalculator kind="refining" />
+      <ProductionCalculator
+        initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}
+        kind="refining"
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { CalculationReadiness } from "./calculation-readiness";
 import { useState, useEffect, useRef } from "react";
 import { useAtlasRegion } from "./region-context";
 import {
@@ -170,10 +171,6 @@ export function TransportCalculator() {
                   ["quantity", "Cargo quantity"],
                   ["weight", "Weight per item (kg)"],
                   ["capacity", "Available cargo capacity (kg)"],
-                  ["costPerTrip", "Cost per trip"],
-                  ["risk", "Total manual risk allowance"],
-                  ["tax", "Transport sales tax (%)"],
-                  ["fee", "Transport listing fee (%)"],
                 ] as const
               ).map(([key, label]) => (
                 <label key={key}>
@@ -182,7 +179,6 @@ export function TransportCalculator() {
                     type="number"
                     min={key === "quantity" || key === "capacity" ? 1 : 0}
                     step="any"
-                    disabled={key === "fee" && draft.saleMode === "instant"}
                     value={Number.isNaN(draft[key]) ? "" : draft[key]}
                     onChange={(e) =>
                       update(key, e.target.value === "" ? NaN : Number(e.target.value))
@@ -191,13 +187,52 @@ export function TransportCalculator() {
                 </label>
               ))}
             </div>
-            <p className="muted">
-              Listing fees apply only to sell listings, not instant sales. Black Market listings
-              need a manual target price. Capacity, item weight, fees and risk are manual
-              assumptions. Trips = ceiling(total weight / available capacity), minimum one. This
-              model does not simulate mount skills, route safety, liquidity, volume limits or order
-              execution.
+            <p className="economy-assumption-readout">
+              Applied:{" "}
+              {Number.isFinite(draft.costPerTrip) ? draft.costPerTrip.toLocaleString() : "Check"}{" "}
+              silver/trip · {Number.isFinite(draft.risk) ? draft.risk.toLocaleString() : "Check"}{" "}
+              risk allowance · {Number.isFinite(draft.tax) ? draft.tax : "Check"}% tax ·{" "}
+              {draft.saleMode === "listing"
+                ? Number.isFinite(draft.fee)
+                  ? draft.fee
+                  : "Check"
+                : 0}
+              % listing fee.
             </p>
+            <details className="economy-assumptions">
+              <summary>Trip costs, risk & fees</summary>
+              <div className="input-grid">
+                {(
+                  [
+                    ["costPerTrip", "Cost per trip"],
+                    ["risk", "Total manual risk allowance"],
+                    ["tax", "Transport sales tax (%)"],
+                    ["fee", "Transport listing fee (%)"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <label key={key}>
+                    {label}
+                    <input
+                      type="number"
+                      min={0}
+                      step="any"
+                      disabled={key === "fee" && draft.saleMode === "instant"}
+                      value={Number.isNaN(draft[key]) ? "" : draft[key]}
+                      onChange={(e) =>
+                        update(key, e.target.value === "" ? NaN : Number(e.target.value))
+                      }
+                    />
+                  </label>
+                ))}
+              </div>
+              <p className="muted">
+                Listing fees apply only to sell listings, not instant sales. Black Market listings
+                need a manual target price. Capacity, item weight, fees and risk are manual
+                assumptions. Trips = ceiling(total weight / available capacity), minimum one. This
+                model does not simulate mount skills, route safety, liquidity, volume limits or
+                order execution.
+              </p>
+            </details>
           </section>
           <section className="panel section" id="transport-prices">
             <h2>Purchase & sale observations</h2>
@@ -259,9 +294,20 @@ export function TransportCalculator() {
               <Truck size={28} aria-hidden="true" />
               <h3>Price your cargo</h3>
               <p>
-                Choose an item and route, then load observations or enter purchase and sale prices.
-                Your profit will appear here.
+                Your cargo and route are selected. Add prices for this exact item, quality and
+                market pair.
               </p>
+              <CalculationReadiness
+                title="Complete the cargo estimate"
+                missing={[
+                  ...(!transportPriceMatches(config, "buy")
+                    ? [`Purchase price in ${draft.fromCity}`]
+                    : []),
+                  ...(!transportPriceMatches(config, "sell")
+                    ? [`Sale price in ${draft.toCity}`]
+                    : []),
+                ]}
+              />
               <a className="button secondary" href="#transport-prices">
                 Enter cargo prices <ArrowRight size={15} />
               </a>
@@ -309,8 +355,8 @@ export function TransportCalculator() {
           )}
         </section>
       </div>
-      <section className="panel section">
-        <h2>Saved transport plans</h2>
+      <details className="panel section economy-saved-scenarios">
+        <summary>Saved transport plans</summary>
         <label>
           Transport plan title
           <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} />
@@ -394,7 +440,7 @@ export function TransportCalculator() {
           </div>
         ))}
         <p role="status">{message}</p>
-      </section>
+      </details>
     </>
   );
 }

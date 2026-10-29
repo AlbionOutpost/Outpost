@@ -1,4 +1,5 @@
 "use client";
+import { buildInventoryLayout } from "@/lib/build-inventory-layout";
 import { useState } from "react";
 import Link from "@/components/build-region-link";
 import { useAtlasRegion } from "./region-context";
@@ -9,17 +10,7 @@ import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
 import { CompositionPngExport, type CompositionImageInput } from "./composition-png-export";
 
-const order = [
-  "Main hand",
-  "Off hand",
-  "Helmet",
-  "Chest",
-  "Boots",
-  "Cape",
-  "Food",
-  "Potion",
-  "Mount",
-];
+const order: readonly string[] = buildInventoryLayout.map(({ slot }) => slot);
 export function LibraryGroupWorkspace({
   composition,
   builds,
