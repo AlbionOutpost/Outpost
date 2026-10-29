@@ -996,7 +996,7 @@
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
       "verified_scope": "Main redesign sourcec88249d passed actual hosted workflow40807315490: complete Node quality job,20 native SQLite checks,118 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40807315267 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent owned-network public evidence is separate. Historical failures and superseded runs remain retained.",
-      "remaining": "Later source-copy recovery changes need their own hosted result; local/native tests and public deployment are recorded separately. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery remain unverified.",
+      "remaining": "Patch1048475 has passed the complete local Node/native web gates and actual public deployment/read-back; its source-specific hosted run40810791542 remains active. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery remain unverified.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

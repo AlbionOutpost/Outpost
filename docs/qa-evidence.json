@@ -4426,7 +4426,7 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-29T03:11:14.422627+00:00",
+    "checkedAt": "2026-10-29T03:14:29.426086+00:00",
     "phase": "2026-10-29T03:10:26.584Z",
     "scope": "Complete supported Builds ecosystem:339 Node units/118 production browser cases/15 disposable PostgreSQL checks/nine regional reads pass all ten gates; rebuilt Cloudflare application118/118 passes. Existing20 actual named native database service cases remain valid for unchanged database source. The original public source-copy reload loss is reproduced, corrected and tested: source/region-scoped device recovery, legacy plain-new isolation, readiness, complete gear/ability restoration, immediate history, corrupt-record retention and explicit replacement. Initial115/118 Node failures are preserved with stale shared-key assumptions and navigation synchronization causes; final assertions require correct values, URLs and stored records. Existing35 seven-width production states and expanded editor captures cover unchanged visual styles; public patched-editor screenshots/read-back are separate. Fixtures are not personal OAuth, current-patch, physical-device, owner acceptance or production restoration proof.",
     "files": [
@@ -4472,15 +4472,15 @@
       },
       {
         "path": "docs/deployment/CLOUDFLARE_PORT_PROGRESS.md",
-        "sha256": "6d1313268fdec107dedd45049e8c3ff6f61317264d9cf9d55a8240c4cf2e53e7"
+        "sha256": "248d1d45802b006aeb85f8a1f1d613ed8d53996abc3224cb9d95e93fef3d7cf9"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-smoke.json",
-        "sha256": "68c308756aa07d867512343c01cca97c91d6f262f8c091c53e158a471d7b248e"
+        "sha256": "7b6bdc6329a8e993c645065748fcd3b23bec557bb178f8180eae129f84262b1a"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-auth-start.json",
-        "sha256": "289c2f92d74ca9a4df178a237aa2c653ef0eebeb9afa03e323cc9f688199e01c"
+        "sha256": "d98c0afe75da24eaeae05f5d36f87007c2c2ef43d30d067991f0451b931e2fd8"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-768.png",
@@ -4488,7 +4488,7 @@
       },
       {
         "path": ".qa/cloudflare-launch/deployment-check.json",
-        "sha256": "36d5b9f7664f21480593d301a2478cdb4b4035cb81704842201101073abf6d27"
+        "sha256": "14bcb4d34194dc19a4637063416457bb334f01276a5ad56be09f32974fda6ae7"
       },
       {
         "path": ".qa/cloudflare-launch/github-firewall-events.json",
@@ -4548,7 +4548,7 @@
       },
       {
         "path": ".qa/cloudflare-release/free-bundles.json",
-        "sha256": "c75e7c62ce752e46fb26dc10f9ef0481cdd017f0ef46a12c65b67ac635543e30"
+        "sha256": "7f39f9a28d24943d7f7c40f1b9222433b7fcacbfbf6c7928b4790e9477f01d7c"
       },
       {
         "path": ".qa/compact-loadout/final.json",
@@ -4844,7 +4844,7 @@
       },
       {
         "path": "docs/design-review/builds-system/README.md",
-        "sha256": "5a65bed84dfd0f185f803ce096dce9f44f97cc5d1521532ba2064c19b0060970"
+        "sha256": "d01153081c835fe90607b8a5e29f4f01e8f32a176a897cb55fec402ecb5bf871"
       },
       {
         "path": "docs/design-review/builds-system/library.md",
@@ -5000,7 +5000,7 @@
       },
       {
         "path": "docs/design-review/builds-system/DELIVERABLES.md",
-        "sha256": "fd1cc002b68f6b902faa8db5dbb494afbaf229232a480fb3084d0e0434b40a13"
+        "sha256": "ff74f57dea0c6cc2f6b2b276b4b7b7853a198014fda5d54a8571b234f4c28015"
       },
       {
         "path": "docs/design-review/builds-system/editor.md",
@@ -5165,9 +5165,45 @@
       {
         "path": ".qa/builds-redesign/public-c882-after-ci-check.log",
         "sha256": "9be2a3d94cd47dc939c63f954a04a83e3c7f633612039d81745c437844a47a3a"
+      },
+      {
+        "path": ".qa/builds-redesign/public/source-reload-after.json",
+        "sha256": "237f235e60cea12d8e0ac6f3627e4817ba61a49aa338645e56d719f7194083a9"
+      },
+      {
+        "path": ".qa/builds-redesign/public/source-reload-invalid-setup.json",
+        "sha256": "008127fd18e9b93e90549e69bae82b938c92c9017a8c2c5233cb78c1685d0bef"
+      },
+      {
+        "path": ".qa/builds-redesign/public/guest-scope-live-browser.log",
+        "sha256": "93611b7f6bffee2a92e4643c2a13ef0198c4500d840785483f7f2a849f9302a3"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-public-deployment-check.log",
+        "sha256": "51e950ad7cd8e66cb93e668395a560b1a11cac0a86c45add7e3b124f31a257cd"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-production-free-check.log",
+        "sha256": "ea62542d6af3775e09e3e552be2a07c815737973705db641cd7adb30a881be36"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-deploy-web.log",
+        "sha256": "cb8937ccc07d2263ec9426f5f3772dd6f3ef0959f2614c19f29fb4b55169edcb"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-production-bundle-scan.log",
+        "sha256": "2b110d3e895daeae3e6258cf2712c7dadc489d04bad75b063f4832ccadc9176c"
+      },
+      {
+        "path": "docs/design-review/builds-system/live-editor-390.png",
+        "sha256": "71fb88e885fc174acc8adb48c3212a55246fad51d55222cc1c6737bf07728fe5"
+      },
+      {
+        "path": "docs/design-review/builds-system/live-editor-1440.png",
+        "sha256": "23f00931c65424684904cfe62d9d9cc865de1b106e6a026945c1f2d3ca965e6d"
       }
     ],
-    "latestImplementationNote": "Main redesign c88249d completed actual GitHub quality/native/browser/Free/deployment run40807315490. CI public HTTP was explicitly BLOCKED by managed challenge; independent strict owned-network public checks pass. New guest patch has final local and native browser verification; its publication/read-back is pending. No new DB/auth library, schema migration, paid service, fabricated metrics or account device storage. Existing LCP samples remain3.3\u20133.7s/CLS0; no Worker CPU/field or conformance claim."
+    "latestImplementationNote": "Redesign c88249d completed actual GitHub quality/native/browser/Free/deployment run40807315490; runner HTTP explicitly BLOCKED by managed challenge, independent strict public checks pass. Recovery patch1048475 is pushed and public on web854a3483; actual anonymous source-copy reload/history, separate plain-new/region drafts, inspected public390/1440 screenshots and strict HTTPS/API/WAF/market/auth-start pass. Its docs40810791417 passed, automatic deployment40810791542 is still active; no completed source-specific CI claim. Production Free dry-runs pass data1015870/web1921967bytes; unchanged data/no migration/paid activation. Original public failure and invalid plain-new adHoc test setup remain retained. Account device storage, fabricated ratings and new DB/auth libraries are absent; real OAuth/current-patch/owner/field/conformance/production recovery remain open."
   },
   "source_scan": {
     "filesScanned": 4232,
@@ -5186,7 +5222,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 66,
+    "filesScanned": 135,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -5223,7 +5259,7 @@
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "efb8d963ffcc92cc40672071d9f4161b9501011b79a89e57d4f3ad6ef503c2aa",
+      "sha256": "e398f72a1c7c321cabeb048c6e7a8627210171b1fcc6692b9380eab32b5a6535",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -5293,7 +5329,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "5c6600dd4d4b3e45e525adb6485197c75ca4c7205a984a7d5bead3f9b58b3b2c",
+      "sha256": "d9fd33ebac4894cb34f7919a29264443cc8e34ce1cbb09ec9758cb66580bf646",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
