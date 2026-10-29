@@ -54,9 +54,7 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
         />
       ) : (
         <>
-          <p>
-            This group is public. Shared resources are available only after membership approval.
-          </p>
+          <p>This team is public. Shared resources are available only after membership approval.</p>
           <GroupRequest groupId={group.id} />
         </>
       )}

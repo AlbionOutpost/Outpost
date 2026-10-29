@@ -17,11 +17,15 @@ export default async function Page() {
   ]);
   return (
     <>
-      <h1 className="page-title display-title">Item database</h1>
-      <p className="intro">
-        Find gear by name, tier and enchantment. Compare prices and inspect the available item data.
-        Current-patch verification is pending.
-      </p>
+      <header className="workspace-identity">
+        <div>
+          <h1 className="page-title display-title">Item browser</h1>
+          <p className="intro">
+            Find gear by name, tier and enchantment. Compare prices and inspect the available item
+            data. Current-patch verification is pending.
+          </p>
+        </div>
+      </header>
       <ItemCatalog metadata={metadata} total={total} categories={slots.map((i) => i.slot).sort()} />
     </>
   );

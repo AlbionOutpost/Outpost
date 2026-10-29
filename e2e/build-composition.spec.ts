@@ -255,6 +255,18 @@ test("library Add to comp preserves sign-in return, explicit role and an unattac
     const callback = new URL(guest.url()).searchParams.get("callbackUrl")!;
     expect(callback).toBe("/compositions/new?fromLibrary=battleaxe-mist-build&region=asia");
     userId = await fixtureUser(context, "Library comp planner");
+    const serverResponse = await context.request.get(callback + "&role=Support");
+    expect(serverResponse.status()).toBe(200);
+    const serverHtml = await serverResponse.text();
+    // Actual rendered server HTML must prevent a native submit before client
+    // handlers attach. The original immediate browser Save below stays intact.
+    expect(serverHtml).toMatch(
+      /<form\b(?=[^>]*class="[^"]*party-editor)(?=[^>]*method="post")[^>]*>/,
+    );
+    expect(serverHtml).toMatch(
+      /<fieldset\b(?=[^>]*class="[^"]*composition-ready-guard)(?=[^>]*\bdisabled)[^>]*>/,
+    );
+    expect(await db.composition.count({ where: { authorId: userId } })).toBe(0);
     await page.goto(`/signin?callbackUrl=${encodeURIComponent(callback + "&role=Support")}`);
     await expect(page).toHaveURL(/\/compositions\/new\?/);
     await expect(page.getByLabel("Comp title", { exact: true })).toHaveValue(

@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { ItemIcon } from "@/components/item-icon";
-export const metadata = { title: "Group composition library" };
+export const metadata = { title: "Group Builds" };
 export default async function Page({
   searchParams,
 }: {
@@ -17,18 +17,18 @@ export default async function Page({
     page: Number.parseInt(params.page || "1") || 1,
   });
   const builds = await findLibraryBuilds([
-    ...new Set(rows.flatMap((comp) => comp.members.slice(0, 12))),
+    ...new Set(rows.flatMap((comp) => comp.members.slice(0, 3))),
   ]);
   const memberBuilds = new Map(builds.map((build) => [build.id, build]));
   const href = (n: number) =>
     `/compositions/library?${new URLSearchParams({ q, category, page: String(n) })}`;
   return (
-    <div className="library-page">
+    <div className="library-page group-build-library">
       <div className="section-heading">
         <div>
-          <h1 className="page-title display-title">A plan for every party.</h1>
+          <h1 className="page-title display-title">Group Builds</h1>
           <p className="intro">
-            {total} group compositions. Find a role, build a party and get ready together.
+            {total} group builds. Find complete loadouts for your party and make a plan together.
           </p>
         </div>
         <Link href="/compositions/new" className="button primary">
@@ -37,7 +37,7 @@ export default async function Page({
       </div>
       <nav className="discovery-tabs" aria-label="Composition collections">
         <Link href="/compositions/library" aria-current="page">
-          Composition library
+          Group Builds
         </Link>
         <Link href="/compositions">Player comps</Link>
         <Link href="/builds/library">Build library</Link>
@@ -78,23 +78,39 @@ export default async function Page({
       </div>
       <div className="library-comp-grid">
         {rows.map((comp) => (
-          <article className="library-comp-card" key={comp.slug}>
+          <article className="library-comp-card group-build-preview" key={comp.slug}>
             <Link href={`/compositions/library/${encodeURIComponent(comp.slug)}`}>
               <span>
                 {activityName(comp.category)} · {comp.members.length} slots
               </span>
               <h2>{comp.title}</h2>
-              <div className="library-comp-weapons">
-                {comp.members.slice(0, 12).map((id, i) => {
+              <div className="group-build-loadout-previews">
+                {comp.members.slice(0, 3).map((id, i) => {
                   const build = memberBuilds.get(id);
-                  const main = build?.equipment.find((e) => e.slot === "Main hand");
                   return (
-                    <span key={i} title={build?.title || "Unresolved loadout"}>
-                      {main ? <ItemIcon id={main.itemId} size={44} /> : <span>?</span>}
-                    </span>
+                    <div
+                      className="group-build-member-preview"
+                      key={i}
+                      title={build?.title || "Loadout unavailable"}
+                    >
+                      <span>{i + 1}</span>
+                      {build ? (
+                        ["Main hand", "Helmet", "Chest", "Boots", "Cape", "Food", "Potion"].flatMap(
+                          (slot) => {
+                            const item = build.equipment.find((row) => row.slot === slot);
+                            return item ? [<ItemIcon key={slot} id={item.itemId} size={32} />] : [];
+                          },
+                        )
+                      ) : (
+                        <span>?</span>
+                      )}
+                    </div>
                   );
                 })}
               </div>
+              {comp.members.length > 3 && (
+                <small>+ {comp.members.length - 3} more member loadouts</small>
+              )}
               <small>By {comp.author}</small>
             </Link>
           </article>

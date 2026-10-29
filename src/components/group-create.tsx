@@ -31,7 +31,7 @@ export function GroupCreate() {
       }}
     >
       <label>
-        Guild / group name
+        Team name
         <input name="name" required minLength={3} maxLength={80} />
       </label>
       <label>
@@ -42,7 +42,7 @@ export function GroupCreate() {
           minLength={3}
           maxLength={60}
           pattern="[a-z0-9]+(-[a-z0-9]+)*"
-          placeholder="your-guild"
+          placeholder="your-team"
         />
       </label>
       <label>
@@ -50,8 +50,8 @@ export function GroupCreate() {
         <textarea name="description" maxLength={4000} />
       </label>
       <label>
-        Guild region
-        <select name="region" aria-label="Guild region">
+        Team region
+        <select name="region" aria-label="Team region">
           <option value="europe">Europe</option>
           <option value="americas">Americas</option>
           <option value="asia">Asia</option>

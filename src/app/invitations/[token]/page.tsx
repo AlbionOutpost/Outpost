@@ -24,30 +24,37 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
     invitation.expiresAt < new Date()
   )
     return (
-      <section className="panel">
-        <h1 className="page-title display-title">Invitation unavailable.</h1>
-        <p>
-          The link expired, was revoked, or has already been used. Ask a group officer for a new
-          link.
-        </p>
-      </section>
+      <div className="team-invitation-page">
+        <section className="panel">
+          <h1 className="page-title display-title">Invitation unavailable.</h1>
+          <p>
+            The link expired, was revoked, or has already been used. Ask a group officer for a new
+            link.
+          </p>
+        </section>
+      </div>
     );
   const session = await getServerSession(authOptions);
   return (
-    <section className="panel">
-      <div className="eyebrow">YOU’RE INVITED</div>
-      <h1 className="page-title display-title">Join {invitation.group.name}.</h1>
-      <p>
-        This single-use link expires {invitation.expiresAt.toISOString()}. Membership starts with
-        the Member role.
-      </p>
-      {session ? (
-        <AcceptInvite token={token} />
-      ) : (
-        <Link className="button primary" href="/signin">
-          Sign in, then reopen this invitation
-        </Link>
-      )}
-    </section>
+    <div className="team-invitation-page">
+      <section className="panel">
+        <div className="eyebrow">YOU’RE INVITED</div>
+        <h1 className="page-title display-title">Join {invitation.group.name}.</h1>
+        <p>
+          This single-use link expires {invitation.expiresAt.toISOString()}. Membership starts with
+          the Member role.
+        </p>
+        {session ? (
+          <AcceptInvite token={token} />
+        ) : (
+          <Link
+            className="button primary"
+            href={`/signin?${new URLSearchParams({ callbackUrl: `/invitations/${token}` })}`}
+          >
+            Sign in to join this team
+          </Link>
+        )}
+      </section>
+    </div>
   );
 }

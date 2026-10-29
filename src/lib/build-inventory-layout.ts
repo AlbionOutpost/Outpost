@@ -1,4 +1,5 @@
-/** Zero-based coordinates shared by the inventory board and local image exports. */
+/** Anatomical positions: armour on the central body line, hands and supplies at its sides.
+ * Zero-based coordinates are shared by the interactive board and local image exports. */
 export const inventoryLayout = [
   { slot: "Bag", area: "bag", row: 0, column: 0 },
   { slot: "Helmet", area: "head", row: 0, column: 1 },

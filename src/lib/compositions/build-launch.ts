@@ -11,16 +11,24 @@ export const buildCompositionLaunch = z
       .string()
       .regex(/^[a-z0-9][a-z0-9-]{0,199}$/)
       .optional(),
+    fromComposition: z
+      .string()
+      .regex(/^[a-z0-9][a-z0-9-]{0,199}$/)
+      .optional(),
     region: regionSchema.optional(),
     role: z.enum(roles).optional(),
   })
   .strict()
-  .refine((value) => !(value.fromBuild && value.fromLibrary), "Choose one build source.");
+  .refine(
+    (value) =>
+      [value.fromBuild, value.fromLibrary, value.fromComposition].filter(Boolean).length <= 1,
+    "Choose one build source.",
+  );
 export type BuildCompositionLaunch = z.infer<typeof buildCompositionLaunch>;
 export function compositionLaunchPath(input: BuildCompositionLaunch) {
   const valid = buildCompositionLaunch.parse(input),
     query = new URLSearchParams();
-  for (const key of ["fromBuild", "fromLibrary", "region", "role"] as const)
+  for (const key of ["fromBuild", "fromLibrary", "fromComposition", "region", "role"] as const)
     if (valid[key]) query.set(key, valid[key]!);
   return `/compositions/new${query.size ? `?${query}` : ""}`;
 }

@@ -1,7 +1,24 @@
 "use client";
 import { useState } from "react";
-import type { CompositionInput } from "@/lib/compositions/validation";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+export type CompositionImageInput = {
+  title: string;
+  contentType: string;
+  region: string;
+  visibility: string;
+  slots: readonly {
+    role: string;
+    customRole: string;
+    playerName: string;
+    equipment: readonly {
+      slot: string;
+      itemId: string;
+      quality: number;
+      abilities?: Record<string, string>;
+      alternatives?: readonly string[];
+    }[];
+  }[];
+};
 const slots = [
   "Main hand",
   "Off hand",
@@ -13,11 +30,23 @@ const slots = [
   "Potion",
   "Mount",
 ];
-export function CompositionPngExport({ composition }: { composition: CompositionInput }) {
+export function CompositionPngExport({
+  composition,
+  view = "equipment",
+  showAlternatives = false,
+  includeMounts = true,
+  allowCopy = false,
+}: {
+  composition: CompositionImageInput;
+  view?: "equipment" | "abilities";
+  showAlternatives?: boolean;
+  includeMounts?: boolean;
+  allowCopy?: boolean;
+}) {
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const [size, setSize] = useState("full");
-  async function download() {
+  async function download(action: "download" | "copy" = "download") {
     if (!composition.slots.length) {
       setMessage("Add a player before exporting.");
       return;
@@ -33,11 +62,12 @@ export function CompositionPngExport({ composition }: { composition: Composition
       await document.fonts.ready;
       const uiFont = getComputedStyle(document.body).fontFamily;
       const wide = size === "1080",
-        smallParty = composition.slots.length <= 7;
+        smallParty = composition.slots.length <= 7,
+        visibleSlots = includeMounts ? slots : slots.filter((slot) => slot !== "Mount");
       const canvas = document.createElement("canvas"),
         cols = wide && !smallParty ? 5 : smallParty ? Math.min(3, composition.slots.length) : 2,
         cardWidth = wide ? (smallParty ? 500 : 400) : 680,
-        rowHeight = wide && smallParty ? 360 : wide ? 240 : 176;
+        rowHeight = (wide && smallParty ? 360 : wide ? 240 : 176) + (showAlternatives ? 24 : 0);
       canvas.width = cols * cardWidth + 64;
       canvas.height = 164 + Math.ceil(composition.slots.length / cols) * rowHeight + 48;
       const ctx = canvas.getContext("2d");
@@ -63,15 +93,18 @@ export function CompositionPngExport({ composition }: { composition: Composition
         116,
       );
       // Same-origin bounded renderer avoids cross-origin canvas taint; no new image proxy or external upload.
-      const ids = [
-        ...new Set(
-          composition.slots.flatMap((s) =>
-            s.equipment
-              .filter((e) => slots.includes(e.slot))
-              .map((e) => `${e.itemId}:${e.quality}`),
-          ),
-        ),
-      ];
+      const ids =
+        view === "abilities"
+          ? []
+          : [
+              ...new Set(
+                composition.slots.flatMap((s) =>
+                  s.equipment
+                    .filter((e) => visibleSlots.includes(e.slot))
+                    .map((e) => `${e.itemId}:${e.quality}`),
+                ),
+              ),
+            ];
       let missing = 0;
       // Bound concurrent requests to protect the existing image service.
       for (let offset = 0; offset < ids.length; offset += 4)
@@ -114,7 +147,7 @@ export function CompositionPngExport({ composition }: { composition: Composition
         ctx.fillStyle = "#A9A4A9";
         ctx.font = `14px ${uiFont}`;
         ctx.fillText(text(member.playerName || "Unassigned player", 460), x + 14, y + 52);
-        slots.forEach((slot, j) => {
+        visibleSlots.forEach((slot, j) => {
           const grid = wide && smallParty;
           const box = grid ? 66 : wide ? 54 : 60;
           const left = grid
@@ -127,7 +160,14 @@ export function CompositionPngExport({ composition }: { composition: Composition
           ctx.fillRect(left, top, box, box);
           ctx.strokeStyle = "#393033";
           ctx.strokeRect(left, top, box, box);
-          if (image) ctx.drawImage(image, left + 2, top + 2, box - 4, box - 4);
+          if (view === "abilities" && item) {
+            ctx.fillStyle = "#F2EEE9";
+            ctx.font = `11px ${uiFont}`;
+            const names = Object.values(item.abilities || {});
+            (names.length ? names : ["No recorded", "abilities"])
+              .slice(0, 4)
+              .forEach((name, k) => ctx.fillText(text(name, box - 6), left + 3, top + 14 + k * 13));
+          } else if (image) ctx.drawImage(image, left + 2, top + 2, box - 4, box - 4);
           else if (item) {
             ctx.fillStyle = "#F2EEE9";
             ctx.font = `10px ${uiFont}`;
@@ -138,6 +178,21 @@ export function CompositionPngExport({ composition }: { composition: Composition
           ctx.font = `${wide && !smallParty ? 9 : 10}px ${uiFont}`;
           ctx.fillText(slot, left, top + box + 14);
         });
+        if (showAlternatives) {
+          const alternatives = member.equipment
+            .filter((e) => visibleSlots.includes(e.slot))
+            .flatMap((e) => (e.alternatives || []).map((id) => equipmentName(id)));
+          ctx.fillStyle = "#A9A4A9";
+          ctx.font = `12px ${uiFont}`;
+          ctx.fillText(
+            text(
+              alternatives.length ? `Swaps: ${alternatives.join(" · ")}` : "No recorded swaps",
+              cardWidth - 40,
+            ),
+            x + 14,
+            y + rowHeight - 28,
+          );
+        }
       });
       ctx.fillStyle = "#A9A4A9";
       ctx.font = `12px ${uiFont}`;
@@ -170,6 +225,15 @@ export function CompositionPngExport({ composition }: { composition: Composition
           "image/png",
         ),
       );
+      if (action === "copy") {
+        if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined")
+          throw new Error("Image copying is unavailable. Use Export PNG to download it.");
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        setMessage(
+          missing ? "Image copied. Unavailable artwork is labeled." : "Group build image copied.",
+        );
+        return;
+      }
       const url = URL.createObjectURL(blob),
         a = document.createElement("a");
       a.href = url;
@@ -204,9 +268,19 @@ export function CompositionPngExport({ composition }: { composition: Composition
           </option>
         </select>
       </label>
-      <button type="button" className="button secondary" disabled={busy} onClick={download}>
+      <button type="button" className="button secondary" disabled={busy} onClick={() => download()}>
         {busy ? "Preparing image…" : "Export PNG"}
       </button>
+      {allowCopy && (
+        <button
+          type="button"
+          className="button secondary"
+          disabled={busy}
+          onClick={() => download("copy")}
+        >
+          Copy as image
+        </button>
+      )}
       {message && <span role="status">{message}</span>}
     </span>
   );

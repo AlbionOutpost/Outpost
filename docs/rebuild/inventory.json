@@ -103,15 +103,15 @@
     }
   },
   "counts": {
-    "pages": 43,
-    "apiRoutes": 35,
-    "httpOperations": 46,
-    "components": 94,
-    "libraryModules": 91,
-    "models": 29,
+    "pages": 45,
+    "apiRoutes": 37,
+    "httpOperations": 49,
+    "components": 99,
+    "libraryModules": 97,
+    "models": 30,
     "enums": 3,
-    "migrations": 18,
-    "files": 686
+    "migrations": 19,
+    "files": 717
   },
   "pages": [
     {
@@ -288,7 +288,7 @@
         "next/navigation",
         "@/lib/grind-library",
         "@/lib/grind-library-types",
-        "@/components/library-build-card"
+        "@/components/library-group-workspace"
       ],
       "exports": ["Page", "default"]
     },
@@ -321,7 +321,9 @@
         "@/lib/compositions/build-loadout",
         "@/lib/albion/region-config",
         "@/lib/http-error",
-        "@/lib/db"
+        "@/lib/db",
+        "@/lib/grind-library",
+        "@/lib/compositions/library-group"
       ],
       "exports": ["NewComposition", "default", "dynamic"]
     },
@@ -335,7 +337,6 @@
         "@/lib/auth",
         "@/lib/db",
         "zod",
-        "@/lib/prisma-runtime",
         "@/lib/compositions/validation",
         "@/components/mobile-filter-panel",
         "@/components/item-icon",
@@ -541,7 +542,8 @@
         "@/lib/db",
         "@/components/settings-forms",
         "@/components/login-button",
-        "@/components/link"
+        "@/components/link",
+        "@/components/workspace-heading"
       ],
       "exports": ["Settings", "default"]
     },
@@ -559,12 +561,14 @@
       "imports": [
         "next-auth",
         "next/navigation",
+        "lucide-react",
         "@/lib/auth",
         "@/components/login-button",
+        "@/components/sign-in-error",
         "@/lib/sign-in-return",
         "@/components/link"
       ],
-      "exports": ["Signin", "default"]
+      "exports": ["Signin", "default", "metadata"]
     },
     {
       "route": "/timers",
@@ -575,6 +579,7 @@
         "next/navigation",
         "@/lib/auth",
         "@/lib/db",
+        "@/components/workspace-heading",
         "@/components/timer-manager"
       ],
       "exports": ["Page", "default"]
@@ -598,6 +603,13 @@
       "source": "src/app/tools/crafting/page.tsx",
       "client": false,
       "imports": ["@/components/workspace-heading", "@/components/production-calculator"],
+      "exports": ["Page", "default", "metadata"]
+    },
+    {
+      "route": "/tools/death-feed",
+      "source": "src/app/tools/death-feed/page.tsx",
+      "client": false,
+      "imports": ["@/components/combat-feed"],
       "exports": ["Page", "default", "metadata"]
     },
     {
@@ -634,6 +646,13 @@
       "client": false,
       "imports": ["@/components/history"],
       "exports": ["Page", "default"]
+    },
+    {
+      "route": "/tools/kill-feed",
+      "source": "src/app/tools/kill-feed/page.tsx",
+      "client": false,
+      "imports": ["@/components/combat-feed"],
+      "exports": ["Page", "default", "metadata"]
     },
     {
       "route": "/tools/market",
@@ -785,6 +804,20 @@
       ]
     },
     {
+      "route": "/api/combat-events",
+      "source": "src/app/api/combat-events/route.ts",
+      "methods": ["GET"],
+      "privateResponseWrapper": false,
+      "boundaryReferences": ["rateLimit"],
+      "imports": [
+        "next/server",
+        "zod",
+        "@/lib/albion/region-config",
+        "@/lib/albion/combat-events",
+        "@/lib/redis"
+      ]
+    },
+    {
       "route": "/api/community/[kind]/[id]",
       "source": "src/app/api/community/[kind]/[id]/route.ts",
       "methods": ["GET", "POST"],
@@ -889,6 +922,21 @@
         "@/lib/db",
         "@/lib/api-errors",
         "@/lib/groups/calendar"
+      ]
+    },
+    {
+      "route": "/api/groups/[id]/loot",
+      "source": "src/app/api/groups/[id]/loot/route.ts",
+      "methods": ["GET", "POST"],
+      "privateResponseWrapper": true,
+      "boundaryReferences": ["mutationUser", "getServerSession", "boundedJson"],
+      "imports": [
+        "next/server",
+        "next-auth",
+        "@/lib/auth",
+        "@/lib/api-errors",
+        "@/lib/http",
+        "@/lib/groups/loot-service"
       ]
     },
     {
@@ -1366,6 +1414,21 @@
       "exports": ["CatalogItemPicker", "CatalogOption"]
     },
     {
+      "source": "src/components/combat-feed.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "lucide-react",
+        "@/components/link",
+        "./region-context",
+        "@/lib/albion/region-config",
+        "@/lib/albion/combat-events",
+        "./item-icon",
+        "@/lib/albion/equipment-catalog"
+      ],
+      "exports": ["CombatFeed"]
+    },
+    {
       "source": "src/components/community-panel.tsx",
       "client": true,
       "imports": ["react", "@/components/link", "./turnstile-challenge"],
@@ -1393,8 +1456,8 @@
     {
       "source": "src/components/composition-png-export.tsx",
       "client": true,
-      "imports": ["react", "@/lib/compositions/validation", "@/lib/albion/equipment-catalog"],
-      "exports": ["CompositionPngExport"]
+      "imports": ["react", "@/lib/albion/equipment-catalog"],
+      "exports": ["CompositionImageInput", "CompositionPngExport"]
     },
     {
       "source": "src/components/composition-view.tsx",
@@ -1562,6 +1625,7 @@
       "client": true,
       "imports": [
         "./group-event-editor",
+        "./team-loot-workspace",
         "react",
         "./editor-dialog",
         "./equipment-strip",
@@ -1691,12 +1755,18 @@
       "client": true,
       "imports": [
         "react",
-        "lucide-react",
+        "./inventory-slot-glyph",
         "./item-icon",
         "./spell-icon",
         "@/lib/build-inventory-layout"
       ],
       "exports": ["InventoryEquipmentBoard", "InventoryEquipmentItem"]
+    },
+    {
+      "source": "src/components/inventory-slot-glyph.tsx",
+      "client": false,
+      "imports": ["lucide-react"],
+      "exports": ["InventorySlotGlyph"]
     },
     {
       "source": "src/components/item-catalog.tsx",
@@ -1760,6 +1830,22 @@
       "exports": ["LibraryBuildTraits", "LibraryBuildVideos", "safeYouTubeLink"]
     },
     {
+      "source": "src/components/library-group-workspace.tsx",
+      "client": true,
+      "imports": [
+        "react",
+        "@/components/build-region-link",
+        "./region-context",
+        "@/lib/grind-library-types",
+        "@/lib/grind-library-types",
+        "@/lib/albion/equipment-catalog",
+        "./item-icon",
+        "./spell-icon",
+        "./composition-png-export"
+      ],
+      "exports": ["LibraryGroupWorkspace"]
+    },
+    {
       "source": "src/components/library-save-button.tsx",
       "client": true,
       "imports": [],
@@ -1793,7 +1879,8 @@
       "imports": [
         "./discord-mark",
         "next-auth/react",
-        "@/lib/sign-in-return",
+        "react",
+        "@/lib/discord-sign-in",
         "@/lib/account-build-drafts"
       ],
       "exports": ["LoginButton", "LogoutButton"]
@@ -2046,10 +2133,22 @@
       "exports": ["ShoppingWorkspace"]
     },
     {
+      "source": "src/components/sign-in-error.tsx",
+      "client": false,
+      "imports": ["@/lib/sign-in-error"],
+      "exports": ["SignInError"]
+    },
+    {
       "source": "src/components/spell-icon.tsx",
       "client": true,
       "imports": ["next/image", "react"],
       "exports": ["SpellIcon"]
+    },
+    {
+      "source": "src/components/team-loot-workspace.tsx",
+      "client": true,
+      "imports": ["react", "@/lib/groups/loot", "@/lib/account-build-drafts"],
+      "exports": ["TeamLootWorkspace"]
     },
     {
       "source": "src/components/timer-manager.tsx",
@@ -2165,6 +2264,18 @@
       "client": false,
       "imports": ["zod", "./region-config", "./decimal"],
       "exports": ["returnedMaterialCost", "trade", "tradeScenarioSchema", "tradeSchema"]
+    },
+    {
+      "source": "src/lib/albion/combat-events.ts",
+      "client": false,
+      "imports": ["zod", "./region-config", "../redis", "../inflight-cache"],
+      "exports": [
+        "CombatEvent",
+        "CombatFeed",
+        "combatHosts",
+        "getCombatEvents",
+        "normalizeCombatEvents"
+      ]
     },
     {
       "source": "src/lib/albion/data-client.ts",
@@ -2656,6 +2767,18 @@
       ]
     },
     {
+      "source": "src/lib/compositions/library-group.ts",
+      "client": false,
+      "imports": [
+        "./validation",
+        "./build-loadout",
+        "../grind-library-types",
+        "../grind-library-types",
+        "../albion/region-config"
+      ],
+      "exports": ["copyLibraryGroup"]
+    },
+    {
       "source": "src/lib/compositions/repository.ts",
       "client": false,
       "imports": ["../db"],
@@ -2719,6 +2842,12 @@
       "client": false,
       "imports": [],
       "exports": ["databaseService", "db"]
+    },
+    {
+      "source": "src/lib/discord-sign-in.ts",
+      "client": false,
+      "imports": ["./sign-in-return", "./sign-in-error"],
+      "exports": ["startDiscordSignIn"]
     },
     {
       "source": "src/lib/env.ts",
@@ -2808,6 +2937,18 @@
         "../compositions/validation"
       ],
       "exports": ["GroupDashboardData", "groupDashboard"]
+    },
+    {
+      "source": "src/lib/groups/loot-service.ts",
+      "client": false,
+      "imports": ["../db", "../prisma-runtime", "../http-error", "./permissions", "./loot", "zod"],
+      "exports": ["teamLoot"]
+    },
+    {
+      "source": "src/lib/groups/loot.ts",
+      "client": false,
+      "imports": ["zod"],
+      "exports": ["LootConfiguration", "allocateLoot", "lootConfiguration", "lootSave"]
     },
     {
       "source": "src/lib/groups/permissions.ts",
@@ -2926,10 +3067,16 @@
       "exports": ["retrySerialization"]
     },
     {
+      "source": "src/lib/sign-in-error.ts",
+      "client": false,
+      "imports": [],
+      "exports": ["signInErrorMessage"]
+    },
+    {
       "source": "src/lib/sign-in-return.ts",
       "client": false,
       "imports": ["./compositions/build-launch"],
-      "exports": ["safeSignInReturn"]
+      "exports": ["safeSignInPageReturn", "safeSignInReturn"]
     },
     {
       "source": "src/lib/timers/engine.ts",
@@ -2952,12 +3099,12 @@
   ],
   "database": {
     "schema": "prisma/schema.prisma",
-    "sha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969",
+    "sha256": "874acc8518ead9bcfe5f0fa904aefd6adb6284671da9f0948a2a5a157dbb7a3c",
     "definitions": [
       {
         "kind": "model",
         "name": "User",
-        "definition": "model User {\n marketWatchItems MarketWatchItem[]\n timers Timer[]\n  id String @id @default(cuid())\n  name String?\n  email String? @unique\n  emailVerified DateTime?\n  image String?\n  role String @default(\"USER\")\n  region String @default(\"europe\")\n  characterName String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  compositions Composition[]\n  ownedGroups Group[]\n  memberships GroupMember[]\n  builds Build[]\n  accounts Account[]\n  sessions Session[]\n  groupRequests GroupMembershipRequest[]\n  groupRsvps EventRSVP[]\n\n  authoredAnnouncements GroupAnnouncement[]\n  authoredGroupEvents GroupEvent[]\n  authoredGroupBuilds GroupBuild[]\n  issuedGroupInvites GroupInvitation[]\n\n  savedScenarios SavedScenario[]\n\n  buildFavorites BuildFavorite[]\n  compositionFavorites CompositionFavorite[]\n  buildVotes BuildVote[]\n  comments ContentComment[]\n  reports ContentReport[] @relation(\"ReportAuthor\")\n  reviewedReports ContentReport[] @relation(\"ReportReviewer\")\n  moderationLogs ModerationLog[]\n\n}",
+        "definition": "model User {\n marketWatchItems MarketWatchItem[]\n timers Timer[]\n  id String @id @default(cuid())\n  name String?\n  email String? @unique\n  emailVerified DateTime?\n  image String?\n  role String @default(\"USER\")\n  region String @default(\"europe\")\n  characterName String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  compositions Composition[]\n  ownedGroups Group[]\n  memberships GroupMember[]\n  builds Build[]\n  accounts Account[]\n  sessions Session[]\n  groupRequests GroupMembershipRequest[]\n  groupRsvps EventRSVP[]\n\n  authoredAnnouncements GroupAnnouncement[]\n  authoredGroupEvents GroupEvent[]\n  authoredGroupBuilds GroupBuild[]\n  authoredLootSplits GroupLootSplit[]\n  issuedGroupInvites GroupInvitation[]\n\n  savedScenarios SavedScenario[]\n\n  buildFavorites BuildFavorite[]\n  compositionFavorites CompositionFavorite[]\n  buildVotes BuildVote[]\n  comments ContentComment[]\n  reports ContentReport[] @relation(\"ReportAuthor\")\n  reviewedReports ContentReport[] @relation(\"ReportReviewer\")\n  moderationLogs ModerationLog[]\n\n}",
         "entries": [
           "marketWatchItems MarketWatchItem[]",
           "timers Timer[]",
@@ -2982,6 +3129,7 @@
           "authoredAnnouncements GroupAnnouncement[]",
           "authoredGroupEvents GroupEvent[]",
           "authoredGroupBuilds GroupBuild[]",
+          "authoredLootSplits GroupLootSplit[]",
           "issuedGroupInvites GroupInvitation[]",
           "savedScenarios SavedScenario[]",
           "buildFavorites BuildFavorite[]",
@@ -3125,7 +3273,7 @@
       {
         "kind": "model",
         "name": "Group",
-        "definition": "model Group {\n id String @id @default(cuid())\n name String\n slug String @unique\n description String @db.Text\n region String\n visibility String @default(\"PRIVATE\")\n ownerId String\n owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n members GroupMember[]\n compositions Composition[]\n @@index([visibility,updatedAt])\n @@index([ownerId])\n  invitations GroupInvitation[]\n  requests GroupMembershipRequest[]\n  announcements GroupAnnouncement[]\n  events GroupEvent[]\n  builds GroupBuild[]\n\n}",
+        "definition": "model Group {\n id String @id @default(cuid())\n name String\n slug String @unique\n description String @db.Text\n region String\n visibility String @default(\"PRIVATE\")\n ownerId String\n owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n members GroupMember[]\n compositions Composition[]\n @@index([visibility,updatedAt])\n @@index([ownerId])\n  invitations GroupInvitation[]\n  requests GroupMembershipRequest[]\n  announcements GroupAnnouncement[]\n  events GroupEvent[]\n  builds GroupBuild[]\n  lootSplits GroupLootSplit[]\n\n}",
         "entries": [
           "id String @id @default(cuid())",
           "name String",
@@ -3145,7 +3293,8 @@
           "requests GroupMembershipRequest[]",
           "announcements GroupAnnouncement[]",
           "events GroupEvent[]",
-          "builds GroupBuild[]"
+          "builds GroupBuild[]",
+          "lootSplits GroupLootSplit[]"
         ]
       },
       {
@@ -3330,6 +3479,24 @@
           "createdAt DateTime @default(now())",
           "updatedAt DateTime @updatedAt",
           "@@index([authorId,updatedAt])"
+        ]
+      },
+      {
+        "kind": "model",
+        "name": "GroupLootSplit",
+        "definition": "model GroupLootSplit {\n id String @id @default(cuid())\n groupId String\n group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)\n title String\n configuration Json\n version Int @default(1)\n createdById String?\n createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)\n createdAt DateTime @default(now())\n updatedAt DateTime @updatedAt\n @@index([groupId,updatedAt])\n}",
+        "entries": [
+          "id String @id @default(cuid())",
+          "groupId String",
+          "group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)",
+          "title String",
+          "configuration Json",
+          "version Int @default(1)",
+          "createdById String?",
+          "createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)",
+          "createdAt DateTime @default(now())",
+          "updatedAt DateTime @updatedAt",
+          "@@index([groupId,updatedAt])"
         ]
       },
       {
@@ -3615,6 +3782,11 @@
         "name": "20261027040000_equipment_sets",
         "source": "prisma/migrations/20261027040000_equipment_sets/migration.sql",
         "sha256": "05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835"
+      },
+      {
+        "name": "20261029120000_team_loot_splits",
+        "source": "prisma/migrations/20261029120000_team_loot_splits/migration.sql",
+        "sha256": "18e7a6a0d636f7692c640f0e33fc26ef52c3a4ce04f7570fee2553af7829aa31"
       }
     ]
   },
@@ -3702,12 +3874,12 @@
     {
       "path": "cloudflare/d1/manifest.json",
       "bytes": 738,
-      "sha256": "e33ce519a5c726c0f74c68780251dc42853342fff23b86ea6aefe5933e091cab"
+      "sha256": "b48d25be7556510c2ec39d90bbd58bfe759d6086925dc2c4c6f3bd983917fe9d"
     },
     {
       "path": "cloudflare/d1/migrations/0001_schema_candidate.sql",
-      "bytes": 19974,
-      "sha256": "d2ea0bc38e519bb042d0a9cee840143351845295671a17bc459a0c30e6a3447a"
+      "bytes": 20734,
+      "sha256": "e314e16a129838fc213f45201c0a2c64c1cf18e04a5be94fb46f7a72947f5498"
     },
     {
       "path": "cloudflare/d1/migrations/0002_owned_library.sql",
@@ -3720,9 +3892,14 @@
       "sha256": "ca08db33c83125abefc7ef60b766ae93ddd4e057a2e971f7811a2348c60b3e1f"
     },
     {
+      "path": "cloudflare/d1/migrations/0004_team_loot_splits.sql",
+      "bytes": 1390,
+      "sha256": "5dbe085df2a3f1482edb5d6d7dea7301ea1337f9d854f9ea4592a8299ae6e8d4"
+    },
+    {
       "path": "cloudflare/d1/schema.prisma",
-      "bytes": 12157,
-      "sha256": "dc5eea8d98c16402de9b9eea9a5474be3bb32530ec1d24c90ed74efdca4f7e68"
+      "bytes": 12632,
+      "sha256": "6409393fff805b9811b58cc0d6ac4fbeb44517c036fdd0890b59592ad804200d"
     },
     {
       "path": "cloudflare/database/archive.ts",
@@ -3771,8 +3948,8 @@
     },
     {
       "path": "cloudflare/database/protocol.ts",
-      "bytes": 5324,
-      "sha256": "d69e0cd87e239f061a1f96926ca381e810c3bc267d709449088a3f91ae1c49e3"
+      "bytes": 5344,
+      "sha256": "875ae1d67a9b9dfbe512f761d80c3f8dc21788a6559d89aeb2d4244430d5c887"
     },
     {
       "path": "cloudflare/database/public-assets.ts",
@@ -3786,8 +3963,8 @@
     },
     {
       "path": "cloudflare/database/services.ts",
-      "bytes": 1491,
-      "sha256": "da3323ec8906514363e3d0305ce08c78a2cdc8cd8275d1d35492a101274faa8c"
+      "bytes": 1565,
+      "sha256": "303ab5464c4865f64dc5a0ddde407799025758e6c68f6ff3e7d9afa8962c57c0"
     },
     {
       "path": "cloudflare/database/sqlite-bridge.mjs",
@@ -3801,8 +3978,8 @@
     },
     {
       "path": "cloudflare/database/worker.ts",
-      "bytes": 6788,
-      "sha256": "728028e51459dd5c43caa36415e5882a03d34a2b4a468383d06acf3efe425e19"
+      "bytes": 7070,
+      "sha256": "19d002c2645bf3fe39e2a5c52661733afa775ffe1fc6c994a84b3bd0477def28"
     },
     {
       "path": "cloudflare/database/wrangler.jsonc",
@@ -3921,13 +4098,13 @@
     },
     {
       "path": "e2e/account.spec.ts",
-      "bytes": 2094,
-      "sha256": "1ad082f6459b6f9cb87b88d938cbf9178f5baf96e37667e81e0b76c1c53f9877"
+      "bytes": 6814,
+      "sha256": "4e13549fca36dba2a20b98c2c43e2e17fb63c418a9c8f88718366ac2f6dd4618"
     },
     {
       "path": "e2e/build-composition.spec.ts",
-      "bytes": 11741,
-      "sha256": "dab466c80bf33af87d2605b5a7d09a701c019688fee93da02a1c6f4d4f5cada9"
+      "bytes": 12407,
+      "sha256": "6794e6a5c0c61a265319c182122e35e43b5e843e7747e1f173d3c89051fed3b8"
     },
     {
       "path": "e2e/build-detail-navigation.spec.ts",
@@ -3975,6 +4152,11 @@
       "sha256": "1d57532a0dfde235a2a18f8fec9e536187541d7bdc2031d281dfb7bc5f097075"
     },
     {
+      "path": "e2e/combat-feed.spec.ts",
+      "bytes": 3672,
+      "sha256": "62e6cc67a27ab527a62dc681005045007184aae3cd296c00c79ae0c0759f8078"
+    },
+    {
       "path": "e2e/community.spec.ts",
       "bytes": 11295,
       "sha256": "5eb9bee753177a6d26b5a4d1b052590478574a5479bd7586129fc99e7fa3155b"
@@ -3986,8 +4168,8 @@
     },
     {
       "path": "e2e/compositions.spec.ts",
-      "bytes": 10812,
-      "sha256": "2b82cd2887e7215da0602d6558e5902efe14f3d2aee74c7b029ddb89bdb111fe"
+      "bytes": 10811,
+      "sha256": "3ca7b5bbca8c68b3f0e2f4aecc6a17f646e7109a7daf3269090d38998dad73b8"
     },
     {
       "path": "e2e/dashboard-loadouts.spec.ts",
@@ -4025,14 +4207,19 @@
       "sha256": "7bdbb6d7c5be03b4de52dc88b22462c007efbc1b13f21d559600b46f69d15f69"
     },
     {
+      "path": "e2e/group-builds.spec.ts",
+      "bytes": 4023,
+      "sha256": "1831c5e399ad4ed2433816ae50acf2987c80e31f93b3b5347f719e6240cf49b7"
+    },
+    {
       "path": "e2e/group-editing.spec.ts",
       "bytes": 4860,
       "sha256": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418"
     },
     {
       "path": "e2e/groups.spec.ts",
-      "bytes": 10201,
-      "sha256": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832"
+      "bytes": 11494,
+      "sha256": "41689be46f6c01e4963e64b168a270e2a5504507e6ca789789853e77a715a0b3"
     },
     {
       "path": "e2e/guest-build.spec.ts",
@@ -4041,8 +4228,8 @@
     },
     {
       "path": "e2e/guild-visual.spec.ts",
-      "bytes": 7739,
-      "sha256": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647"
+      "bytes": 7716,
+      "sha256": "75d65c54cb081728d86b3863c27f748bc05702463dc00e3d6353b02e62253a8d"
     },
     {
       "path": "e2e/history.spec.ts",
@@ -4121,53 +4308,53 @@
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-1440-linux.png",
-      "bytes": 34813,
-      "sha256": "db31fc7f75c0e48cba6712147efe8e2695537612051ce1a7b4f8f1771a256045"
+      "bytes": 39571,
+      "sha256": "4b22f7e1ac36f88bcd89ea4a646eb283a1c23a100698acdfeddbc43e0e0af80a"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-320-linux.png",
-      "bytes": 32389,
-      "sha256": "41996b2a35b29f7d1ec6f4082662e93dafa902860b7af75f2c8a5adb742ff595"
+      "bytes": 36683,
+      "sha256": "573ef8ad91fe7caf7def30d696e116b5e1e1e1aba9a28371c849c2c75c161fa7"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-390-linux.png",
-      "bytes": 33063,
-      "sha256": "d45eb92464e9ee379bf4ad759f7e4eb2b6250262eb492378e2b055c402488b0f"
+      "bytes": 37309,
+      "sha256": "f3c05f363ccc989f08d159f21df1c45ce49dadb0238c3fb8dcab042789ba0b41"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/compositions-768-linux.png",
-      "bytes": 34042,
-      "sha256": "4210a71fbddb99a3465e3a3075774e5e4017d45243975bba2cc22fb2d56d4870"
+      "bytes": 38557,
+      "sha256": "640e97aa2a2e320c197f84883253fff52144c701857cc6ab504f6664b575c7c1"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-1440-linux.png",
-      "bytes": 65469,
-      "sha256": "5b59e6472368818a55774049b0a39cb6db21d9be3827a927f6f0f0cd4179211e"
+      "bytes": 70819,
+      "sha256": "256409f8a40b980d76dc4d77261a2babdcaf901c570ca48ee38ac973e3f844c0"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-320-linux.png",
-      "bytes": 68455,
-      "sha256": "b91a0ac08756b2907b8524a65cc729e74c652a65bd6aa9b3e7e56e30fda98e9c"
+      "bytes": 72910,
+      "sha256": "d90a23654073e2f9e2855bb62edcfb926816c84e4cbb91aef1cde6817bf2c119"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-390-linux.png",
-      "bytes": 73134,
-      "sha256": "00f192b98e21f0618aedc5a8b61ee1935451208ffb366f3aa12ec7a6530762a3"
+      "bytes": 76984,
+      "sha256": "6f9b63578967ed75895d1191d95d1c9ee407d89839a5c66318bffb155c90e8e7"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/equipment-768-linux.png",
-      "bytes": 87453,
-      "sha256": "3fa660fb8601f5eb55eac4f07ffd1ef206f94a712d9e2778dbde6611fd8c0aed"
+      "bytes": 90145,
+      "sha256": "4e4db9938b9dd6407accbc383c7c6bc631b534f4cb898a7aaacb730dbb70936e"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/navigation-320-linux.png",
-      "bytes": 37355,
-      "sha256": "e2802b95f7e49991ea205e77669be6964c4dee621325d4bdac2734d1cf9c1c58"
+      "bytes": 36202,
+      "sha256": "7e62615d34e124d16775f3d31ff6933f92e376413c67e9abcf5176e56eeaf1ed"
     },
     {
       "path": "e2e/premium-visual.spec.ts-snapshots/navigation-390-linux.png",
-      "bytes": 37468,
-      "sha256": "8e603da26761b3075ba4b607b7a96a5df054b92bca28b92cddd3089da6805516"
+      "bytes": 37909,
+      "sha256": "76b6921794f3b95c276c8ea587af09b1de7f4285b1e5d3b34e43c6f2990e0feb"
     },
     {
       "path": "e2e/product-controls.spec.ts",
@@ -4216,8 +4403,8 @@
     },
     {
       "path": "e2e/qa-regressions.spec.ts",
-      "bytes": 6158,
-      "sha256": "2e965c30d237b61f6e7cf3627f74a9ea7f41c0154816e1aa8645a147369f9d3a"
+      "bytes": 6124,
+      "sha256": "22db836383941ebd8507f230e45ecc9d5a951f9a36c8dc6a340280c00d92b121"
     },
     {
       "path": "e2e/qa-security.spec.ts",
@@ -4255,6 +4442,11 @@
       "sha256": "b8dbfb42fc624df4696a9ad4797582feca3fe49595e4916f4ad7cd87de3b751d"
     },
     {
+      "path": "e2e/signin-navigation.spec.ts",
+      "bytes": 5406,
+      "sha256": "792460de2506c17060f719596fa294fabc4ea96e6a1fffd6dd1f062623a52f3e"
+    },
+    {
       "path": "e2e/source-equipment.spec.ts",
       "bytes": 2395,
       "sha256": "b28c8f6b72996b452635b3ec3a4dac355927aa018a7c3da51c0c56563f9ccea4"
@@ -4290,9 +4482,14 @@
       "sha256": "c77a4b5969f8ac3f178269ecc47659e0701d54be59540718710f28a3f4203f32"
     },
     {
+      "path": "e2e/team-loot.spec.ts",
+      "bytes": 7229,
+      "sha256": "5b149eed12ff7a0fb2ec33edbebc7408e8d7bcefc466ec48a2b505350d13d94c"
+    },
+    {
       "path": "e2e/tool-directory.spec.ts",
       "bytes": 1466,
-      "sha256": "e711cddded1a5abc3f8afa780bc07904f4dd0036b749e6893ebccd2743a92197"
+      "sha256": "1c15972514e727c4848dc2266dab48614e619d2fc4fda6a5ca6d91cb84a7df83"
     },
     {
       "path": "e2e/trade-scenarios.spec.ts",
@@ -4346,8 +4543,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "bytes": 551,
-      "sha256": "acb676d346ccd52d253c0a660f4391682af13b3845ca0ffc8cfc97fe4967c873"
+      "bytes": 593,
+      "sha256": "6a6ca25ef4edc46ce4686941ac522c31ff8d3c9fa1f537622896c8799d8a5504"
     },
     {
       "path": "prisma/migrations/20261025194321_foundation/migration.sql",
@@ -4440,14 +4637,19 @@
       "sha256": "05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835"
     },
     {
+      "path": "prisma/migrations/20261029120000_team_loot_splits/migration.sql",
+      "bytes": 1022,
+      "sha256": "18e7a6a0d636f7692c640f0e33fc26ef52c3a4ce04f7570fee2553af7829aa31"
+    },
+    {
       "path": "prisma/migrations/migration_lock.toml",
       "bytes": 128,
       "sha256": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900"
     },
     {
       "path": "prisma/schema.prisma",
-      "bytes": 12203,
-      "sha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969"
+      "bytes": 12678,
+      "sha256": "874acc8518ead9bcfe5f0fa904aefd6adb6284671da9f0948a2a5a157dbb7a3c"
     },
     {
       "path": "prisma/seed.ts",
@@ -4991,8 +5193,8 @@
     },
     {
       "path": "scripts/qa-d1-schema.py",
-      "bytes": 3850,
-      "sha256": "252a728f1b62d268414c41c99f176dca873fecbb6e6d95077e0f114d4ddc81d1"
+      "bytes": 8147,
+      "sha256": "15ef67a94e820ba7b9da29eceb7f38dee4195e1dadbbadf52136e389e020c048"
     },
     {
       "path": "scripts/qa-database.mjs",
@@ -5126,8 +5328,8 @@
     },
     {
       "path": "src/app/api/account/export/route.ts",
-      "bytes": 1863,
-      "sha256": "b983eff724f3e17b0b8616551dc9cd4e3ff523b4040256dd5c41462f0d4c480c"
+      "bytes": 2616,
+      "sha256": "02d336ebc6ff0ec7893426dc9bf74e20b9df9a332015c745fc36ab7ecd6ec2c5"
     },
     {
       "path": "src/app/api/admin/reports/route.ts",
@@ -5163,6 +5365,11 @@
       "path": "src/app/api/builds/route.ts",
       "bytes": 810,
       "sha256": "5dc3acdef908419a6175ff11cc55dd37ae207363614c993ef52730c537ab6fe0"
+    },
+    {
+      "path": "src/app/api/combat-events/route.ts",
+      "bytes": 1311,
+      "sha256": "39e7ab53c32ca29242aeb29e2999eb0b0724d89ac649d244089c39ec9a0297bb"
     },
     {
       "path": "src/app/api/community/[kind]/[id]/route.ts",
@@ -5203,6 +5410,11 @@
       "path": "src/app/api/groups/[id]/events/[eventId]/calendar/route.ts",
       "bytes": 1130,
       "sha256": "c5346309f604fd64a572658b8af37a13eb8417a3fadd3459f6d28e41e0b54727"
+    },
+    {
+      "path": "src/app/api/groups/[id]/loot/route.ts",
+      "bytes": 981,
+      "sha256": "03b269058458c260ffd521e27a54c1ca3aae53c602e20790af598a2c11cd4dd0"
     },
     {
       "path": "src/app/api/groups/[id]/route.ts",
@@ -5300,6 +5512,11 @@
       "sha256": "883255c5075c22713925dcf752f02058130121b261507245b72b4ef300dd5c79"
     },
     {
+      "path": "src/app/apple-icon.png",
+      "bytes": 3797,
+      "sha256": "fcc355e7ff7ddb0ebb49c9faa510e7eab824d323f77a0e4286398510b192dd1d"
+    },
+    {
       "path": "src/app/brand-interactions.css",
       "bytes": 15187,
       "sha256": "651aff8ea5c82466a4756e490f541167b402450282ead2bd1e56890ae21dcf1d"
@@ -5366,33 +5583,33 @@
     },
     {
       "path": "src/app/compositions/[id]/page.tsx",
-      "bytes": 2266,
-      "sha256": "0ffccd6fffa37a191f98dc3071501898f0874f58af599914618caae10e061072"
+      "bytes": 2265,
+      "sha256": "681958242c462dcf338a695923938c6e19e302796a1928ba388419c48be1a6aa"
     },
     {
       "path": "src/app/compositions/library/[slug]/page.tsx",
-      "bytes": 2179,
-      "sha256": "137f3b3e1da310fbbfaf7c11c75b73e2c7aa72e5a81b2f13211bb85baa0333cb"
+      "bytes": 1848,
+      "sha256": "7751d81274cfded808320df0326a2282f6b33f51c767c4bae33045770a5a2a25"
     },
     {
       "path": "src/app/compositions/library/page.tsx",
-      "bytes": 4609,
-      "sha256": "78e5a43990c7832ec2ce9867ed9e5dbe154cea49e551bae24abeb6e4fc653f67"
+      "bytes": 5278,
+      "sha256": "7eda90d88d19e3629680f3ce1db0fbeeabbc5939ff5825b1d4625b7fac4ed530"
     },
     {
       "path": "src/app/compositions/new/page.tsx",
-      "bytes": 3326,
-      "sha256": "73e4da23aa427dec83e794078a86497727d32f7f864053bc0f9db8c4c550a90b"
+      "bytes": 4234,
+      "sha256": "c549d8cafea5b3f0c6ac8438efd1c31b218dc51c9e47fa9374ddf3d521aa89e4"
     },
     {
       "path": "src/app/compositions/page.tsx",
-      "bytes": 6497,
-      "sha256": "824d86293aedc2c56b4c8ebd55684d1a8c78ca54f01811648b2e2c5c4dff3107"
+      "bytes": 6508,
+      "sha256": "ed8ae7af99cb58bed7c27c14a4bc4a1cc2df9cb30cc5c0ef3dc8cd7ff1e2fa9b"
     },
     {
       "path": "src/app/dashboard/page.tsx",
-      "bytes": 6019,
-      "sha256": "20d8cd53da6c70596d60af4c188d3ef407d226d0cad592d4600f5f8762f3927a"
+      "bytes": 6017,
+      "sha256": "039cac4e53e44a280fdcf534d089f783d57a5cb5d4e2e2b209980796264f6d4d"
     },
     {
       "path": "src/app/equipment-workspace.css",
@@ -5408,6 +5625,11 @@
       "path": "src/app/farming-workspace.css",
       "bytes": 2944,
       "sha256": "7248b2c95426b71fceb206015367db3a39d03d4bc4e4d1374385cfb3c05266d5"
+    },
+    {
+      "path": "src/app/favicon.ico",
+      "bytes": 2391,
+      "sha256": "a242034842d1e857c47ad60f5d1a1316881af4087df0523278c11c42f240250c"
     },
     {
       "path": "src/app/favorites/page.tsx",
@@ -5436,18 +5658,18 @@
     },
     {
       "path": "src/app/groups/[slug]/page.tsx",
-      "bytes": 2291,
-      "sha256": "f615f295033c0a8a571892a100ad3a8612d0748b116fba9945885428f1faeb72"
+      "bytes": 2266,
+      "sha256": "3f64e0846b3127213198bbfde2d3573de2bff94c72d84df8d00e2177f4713876"
     },
     {
       "path": "src/app/groups/new/page.tsx",
-      "bytes": 431,
-      "sha256": "45e7edf6ceceaf23ad354506edb1011405090949a6b879bb794e670a1f5e933a"
+      "bytes": 430,
+      "sha256": "8d43fde4ef28d4263e3accd67f41ca9fcd3aa2b147e47d578b305a93038657c8"
     },
     {
       "path": "src/app/groups/page.tsx",
-      "bytes": 6368,
-      "sha256": "08816c71b2462a51f4e1f4e8986bb88708c6c5da1391609864dba1f46c392cc9"
+      "bytes": 6348,
+      "sha256": "f739c701231e16cf29959185071cb4d2aa0756ca4e5ed11c11169a5f97ea9c3f"
     },
     {
       "path": "src/app/guides/[slug]/page.tsx",
@@ -5456,8 +5678,8 @@
     },
     {
       "path": "src/app/guides/page.tsx",
-      "bytes": 6270,
-      "sha256": "22123a5e50de0c14645404d808b96192d9e6a50c39697cf1578bb2ae9bc95724"
+      "bytes": 6375,
+      "sha256": "170f9f5353cf41d6912093bfb4ce17a50543d4286ee9e98bd2531a6ab6af3812"
     },
     {
       "path": "src/app/home-fidelity.css",
@@ -5475,9 +5697,19 @@
       "sha256": "3bbcdba4a3acc24063ef0a1b32428730a8a0f3a7d0c68c0732d3d0e12b9d5a27"
     },
     {
+      "path": "src/app/icon.svg",
+      "bytes": 399,
+      "sha256": "7d7edaac517caaca17c06fb1f9c93fb41d6d1b5592f5a8ed77c36cb7e9df857e"
+    },
+    {
+      "path": "src/app/inventory-board.css",
+      "bytes": 5684,
+      "sha256": "2b283f005e34b0583e5d870edb7fcba8ba7cf0fb74b8264e88c076dba4056aef"
+    },
+    {
       "path": "src/app/invitations/[token]/page.tsx",
-      "bytes": 1742,
-      "sha256": "73063d841dacc36ea4b7517798e4ac3656aa97651bae4ff4d76a1c5049bf9af1"
+      "bytes": 1989,
+      "sha256": "dc86c6f36d10404b5c508ee6749069537d76591deed4fd771d15970c34e8ffa9"
     },
     {
       "path": "src/app/items/[id]/page.tsx",
@@ -5486,8 +5718,8 @@
     },
     {
       "path": "src/app/items/page.tsx",
-      "bytes": 956,
-      "sha256": "c9f1f9582a30f992703a438db6a9e09f22e5f89cfc4ec42dd256f453115b213c"
+      "bytes": 1066,
+      "sha256": "244b67384f9fe373e3edf4a6e180eb0eac0e71ff7811b2585ae836e5f984065b"
     },
     {
       "path": "src/app/journal-workspace.css",
@@ -5496,8 +5728,8 @@
     },
     {
       "path": "src/app/layout.tsx",
-      "bytes": 2624,
-      "sha256": "5a1a417fa4d6c35576975355687e7dd44f1ef205b3c646f57f96030f583b46a5"
+      "bytes": 2723,
+      "sha256": "5bf58baf50d5edf858c0466f285bce3a023640cdab0f35a1f752fbf7b8222a39"
     },
     {
       "path": "src/app/legal/page.tsx",
@@ -5601,8 +5833,8 @@
     },
     {
       "path": "src/app/settings/page.tsx",
-      "bytes": 2739,
-      "sha256": "2a82f809deebded9a66f58c03493480583c12104ff8eb5510d31987758b76461"
+      "bytes": 2902,
+      "sha256": "63cdb10f32ab332e9b79dc79ba51a791cc9384081f84310716326c2b709f9458"
     },
     {
       "path": "src/app/shopping-list/page.tsx",
@@ -5611,8 +5843,13 @@
     },
     {
       "path": "src/app/signin/page.tsx",
-      "bytes": 1409,
-      "sha256": "ea95585248a20f81a4196736c7fa93be3a21f904e2f335be0bec368879dbd11a"
+      "bytes": 3416,
+      "sha256": "923a3d807ec7a5327b937124893bf3aceef49fe6c48760ca0e0bb38bcb36aa0f"
+    },
+    {
+      "path": "src/app/site-refinement.css",
+      "bytes": 21338,
+      "sha256": "a817d34a2125d186bb607371ab08a7f409c50d529a8bbe9d7fbf847091343139"
     },
     {
       "path": "src/app/task-ui.css",
@@ -5620,9 +5857,14 @@
       "sha256": "c866f11ca7b6d8e7876c9ec19b6a5764443190c3f519bcfbb6872456b7b58a80"
     },
     {
+      "path": "src/app/teams-compositions.css",
+      "bytes": 5419,
+      "sha256": "05e55e11e935e55756e6e2365d8dce8f25fc6716fb05bc7359da3817bc37d1c3"
+    },
+    {
       "path": "src/app/timers/page.tsx",
-      "bytes": 869,
-      "sha256": "001a2cab635a0ee5cd679bae1ace66f5f73743f064c24be67c2be5765fcfd933"
+      "bytes": 908,
+      "sha256": "4e0b63d4c2261b909afb84dc2b5cf8bc3fcc295bec2bf76e5ee867e82d38778a"
     },
     {
       "path": "src/app/tools/alchemy/page.tsx",
@@ -5638,6 +5880,11 @@
       "path": "src/app/tools/crafting/page.tsx",
       "bytes": 568,
       "sha256": "5945a20fc64ca6fdfcec6d12834cf1aae03dd69a1534131c3bfd122837a02cfc"
+    },
+    {
+      "path": "src/app/tools/death-feed/page.tsx",
+      "bytes": 185,
+      "sha256": "87e1f6cae0639ca257f649d3221c127d61b126846e95c2d16263254236827855"
     },
     {
       "path": "src/app/tools/enchanting/page.tsx",
@@ -5665,9 +5912,14 @@
       "sha256": "52830ea986fca24d3b459191040830f4959318323d3d44e147f1f23a80a6328d"
     },
     {
+      "path": "src/app/tools/kill-feed/page.tsx",
+      "bytes": 183,
+      "sha256": "367502192c83c16df1e5854e66e3614fdb0a455c58ff6fe377242a71d87dfaa0"
+    },
+    {
       "path": "src/app/tools/market/page.tsx",
-      "bytes": 1907,
-      "sha256": "1b9ffe125e88b9d4156c69a257f38e4b5a507ca3a90e5c4789d9c07b41593132"
+      "bytes": 2023,
+      "sha256": "01c9ae307b12f047656263c1fc2126f68f90274f09915d5fcfa7aa60e96404d8"
     },
     {
       "path": "src/app/tools/page.tsx",
@@ -5805,19 +6057,24 @@
       "sha256": "73c90ba11edcbd10b54aea9d9190c03a91a96013a1c77b5cf3fd2bd6457a8559"
     },
     {
+      "path": "src/components/combat-feed.tsx",
+      "bytes": 12673,
+      "sha256": "4706559eb4d36068d4d360229f966fec4d7d35ab8544895b55deda876e0f99f0"
+    },
+    {
       "path": "src/components/community-panel.tsx",
       "bytes": 11655,
       "sha256": "3f5d79654b9147a0196fd3e11bf92c167db3a6111435ed08665cec4a56d80293"
     },
     {
       "path": "src/components/composition-editor.tsx",
-      "bytes": 34046,
-      "sha256": "9da634e2963ad9389aed56fa000d32771441959f70c4d6df99920d752c38a611"
+      "bytes": 35624,
+      "sha256": "ed7b22e98b8d5abe3496edba75d20c97f543e40676aa8d7101b87d0ba50b6eab"
     },
     {
       "path": "src/components/composition-png-export.tsx",
-      "bytes": 8420,
-      "sha256": "586f9294af4e5cc792d502afee8de449e2ce55396a465004737a5ebfa292c769"
+      "bytes": 10874,
+      "sha256": "0334e1f8521f69e3306325d4b4a397bc5e3b03063d6a642ecccacbf87f239837"
     },
     {
       "path": "src/components/composition-view.tsx",
@@ -5881,8 +6138,8 @@
     },
     {
       "path": "src/components/global-search.tsx",
-      "bytes": 11080,
-      "sha256": "eeed8d065a851f72c95faa03eceae02a02f8747af8b22ed3bdfee7246a6f59f0"
+      "bytes": 11078,
+      "sha256": "da57afe5cc7b476c6d76c1085af251997883169c2c112c09061378eea91c92e4"
     },
     {
       "path": "src/components/grind-guide-directory.tsx",
@@ -5891,18 +6148,18 @@
     },
     {
       "path": "src/components/group-create.tsx",
-      "bytes": 2286,
-      "sha256": "d02b3756efe68ba68f621c3c6b57dad7c0e19ae544f2222c3afca846278f2945"
+      "bytes": 2274,
+      "sha256": "be0786f0dd14a5d3d8020ad16d0bbbbaee07e08bd0a4f7a973745ac5b5f4d7ef"
     },
     {
       "path": "src/components/group-dashboard.tsx",
-      "bytes": 30549,
-      "sha256": "f0156ec146b22b7cab639ed9ef6930308e6893f24b6c54d0deab02485e6e15ca"
+      "bytes": 31016,
+      "sha256": "b66c90159067a15870f0d97aa859bb145efe2357d39edfde8b2d2c2449e088fc"
     },
     {
       "path": "src/components/group-event-editor.tsx",
-      "bytes": 3702,
-      "sha256": "a1ebcc91e06cd9e6585b81b8ea9282615210b07a694d5e005be501c8d0018c97"
+      "bytes": 3701,
+      "sha256": "b43b9e8eafe3ed638164f5cd0dc5c124e31129b80e483bc0aacf9f1616a80c9f"
     },
     {
       "path": "src/components/group-profile-editor.tsx",
@@ -5951,8 +6208,13 @@
     },
     {
       "path": "src/components/inventory-equipment-board.tsx",
-      "bytes": 3838,
-      "sha256": "b9d15121e7cb32ec2ab723ec33e3c704efddea982982b5f8b7a8ad1019c47e09"
+      "bytes": 4837,
+      "sha256": "989f378c3cc3c16433018daab8f126a2ed5579b8d112d03165200ba354b26480"
+    },
+    {
+      "path": "src/components/inventory-slot-glyph.tsx",
+      "bytes": 1915,
+      "sha256": "45a3669579e749a96f0d6189545596fead1381859ee8638c6c84ed7f1d24dd72"
     },
     {
       "path": "src/components/item-catalog.tsx",
@@ -5985,6 +6247,11 @@
       "sha256": "eaf52caf36cd4f80329f9c37e0520b423ca7c328057fa9c1d747a3ff0937fa7e"
     },
     {
+      "path": "src/components/library-group-workspace.tsx",
+      "bytes": 9676,
+      "sha256": "b229e37960a83d0bc27a06737816c6607ae7391f6bb9b75197afbd2dffec7374"
+    },
+    {
       "path": "src/components/library-save-button.tsx",
       "bytes": 78,
       "sha256": "0334fa60dac761f1988df675692a9549e993ff51a4f8d4b180a699ce3255a87a"
@@ -6001,8 +6268,8 @@
     },
     {
       "path": "src/components/login-button.tsx",
-      "bytes": 896,
-      "sha256": "98aa271879d47d599ba584a3d01e5bf08bbfea683dfbcd331e4c9873f8452f2c"
+      "bytes": 1736,
+      "sha256": "09a32c3cc1bdb306fbf3efa6029780f586aa6149c535b93f01a1a54ad39fa92d"
     },
     {
       "path": "src/components/market-batch-quotes.tsx",
@@ -6026,8 +6293,8 @@
     },
     {
       "path": "src/components/market.tsx",
-      "bytes": 27173,
-      "sha256": "c0fe1cd39521aa56a31f24f54e81306da3a01ed13db0939d90806935b75f0e19"
+      "bytes": 27755,
+      "sha256": "98af9f7395dcec43555d765cc4a91699ce0b756b507dab7e8cf890e6b514f486"
     },
     {
       "path": "src/components/mobile-filter-panel.tsx",
@@ -6096,8 +6363,8 @@
     },
     {
       "path": "src/components/shell.tsx",
-      "bytes": 16856,
-      "sha256": "9b4acd8facec0c0afbb88c28d42fcbd151c53eef1430a93afe285c91de2d673f"
+      "bytes": 16909,
+      "sha256": "78829b799985a77b504ba411abf2ffca92df8a54613567c0ce4a9ada71a4ddf7"
     },
     {
       "path": "src/components/shopping-account-lists.tsx",
@@ -6115,9 +6382,19 @@
       "sha256": "51a8738336445ceac2751b159132abc7b3309ae5e9c155efeaf5164a625d0ed2"
     },
     {
+      "path": "src/components/sign-in-error.tsx",
+      "bytes": 270,
+      "sha256": "ef7645360953277b40006e3200e6607f9264bf84ff7942bb56797792ffd9f82c"
+    },
+    {
       "path": "src/components/spell-icon.tsx",
       "bytes": 787,
       "sha256": "91725d6f86da39782ee3d8b53a3f0bf51d3cf65c061f5b6ee75462865e56deb4"
+    },
+    {
+      "path": "src/components/team-loot-workspace.tsx",
+      "bytes": 16313,
+      "sha256": "d5cc46f8766c96fd8a42bb04e0cf7aa66565b8f9a69f463ac968eec04aa981c8"
     },
     {
       "path": "src/components/timer-manager.tsx",
@@ -6131,8 +6408,8 @@
     },
     {
       "path": "src/components/tool-icon.tsx",
-      "bytes": 1874,
-      "sha256": "0f1e7e61e726c84b8e402ef252d2c62a91d22d5ef33b8e270e44a94f74adc4c6"
+      "bytes": 1990,
+      "sha256": "0211be011e2892b37fb44ff511f1f775ea943c7277b95d94be64ab15356e06b9"
     },
     {
       "path": "src/components/trade-calculator.tsx",
@@ -6161,8 +6438,8 @@
     },
     {
       "path": "src/components/workspace-heading.tsx",
-      "bytes": 925,
-      "sha256": "a69d42914d07a30a8d49a76be59b098be193e90386bffbc99432defa0e8b0f8b"
+      "bytes": 627,
+      "sha256": "cefa3c409570fa339600b35238435163eec26296deca0830ce9e602a2007f1c4"
     },
     {
       "path": "src/components/workspace-navigation.tsx",
@@ -6208,6 +6485,11 @@
       "path": "src/lib/albion/calculations.ts",
       "bytes": 2973,
       "sha256": "4dea63886fbec40080f2f5721c7d1f3ce87f503b4466b7a547c9706030a37efa"
+    },
+    {
+      "path": "src/lib/albion/combat-events.ts",
+      "bytes": 6105,
+      "sha256": "d8f28f37e207ece3e3de7d5c15b93c3dbcbfd5c210800f2f27bd5df2ff7fc14f"
     },
     {
       "path": "src/lib/albion/data-client.ts",
@@ -6421,8 +6703,8 @@
     },
     {
       "path": "src/lib/build-inventory-layout.ts",
-      "bytes": 804,
-      "sha256": "93a24d99abc657135eb432e4954925863db18bfb8e38e155c4e41b5819f940c0"
+      "bytes": 901,
+      "sha256": "1298a125228273b113b4dc78aee86edc1eba311cc9be46935015f8c1acdb6083"
     },
     {
       "path": "src/lib/build-region.ts",
@@ -6501,8 +6783,8 @@
     },
     {
       "path": "src/lib/compositions/build-launch.ts",
-      "bytes": 960,
-      "sha256": "cf64093f646bc01e660f74973fda7b163dcea52b5a028df4ea9b1aefde0ecd3b"
+      "bytes": 1147,
+      "sha256": "0dfc7ca2be2b1481a31b0c0b9ae5f487d2cb22535ae9fff895b6fc2765045659"
     },
     {
       "path": "src/lib/compositions/build-loadout-source.ts",
@@ -6513,6 +6795,11 @@
       "path": "src/lib/compositions/build-loadout.ts",
       "bytes": 6566,
       "sha256": "8520ebd7a427c238f15432e565c556282d8c3aee3d6b40dcc95a20cc7005cc0f"
+    },
+    {
+      "path": "src/lib/compositions/library-group.ts",
+      "bytes": 2552,
+      "sha256": "ab2d644b0f13ce625f1d19f22e75a1e9f5e1b6aa97f8f81a5fc8c9a3d71c97e4"
     },
     {
       "path": "src/lib/compositions/repository.ts",
@@ -6543,6 +6830,11 @@
       "path": "src/lib/db.ts",
       "bytes": 61,
       "sha256": "a13ec42296672a3e8e3a8b17b5f428df5e4386ac96217a7f72e46cb134b92857"
+    },
+    {
+      "path": "src/lib/discord-sign-in.ts",
+      "bytes": 3730,
+      "sha256": "dca306915ad1bf8aaf6c780f07e2b78600bedbb5d915e508ed3082a5df6ee3b0"
     },
     {
       "path": "src/lib/env.ts",
@@ -6578,6 +6870,16 @@
       "path": "src/lib/groups/dashboard.ts",
       "bytes": 6405,
       "sha256": "9384c24b6a03d8cfe52a99626ab2d5a4393a25880d2d86b8191075a873b57910"
+    },
+    {
+      "path": "src/lib/groups/loot-service.ts",
+      "bytes": 2902,
+      "sha256": "9053f4cf76cdcac76d227dad556c9b023d88e078bad9d953bcb6a74681cebfc4"
+    },
+    {
+      "path": "src/lib/groups/loot.ts",
+      "bytes": 2805,
+      "sha256": "908ee51f9effe827eb235a7e0fbb255351e324274f9b7cb35f3e085e4d779649"
     },
     {
       "path": "src/lib/groups/permissions.ts",
@@ -6660,9 +6962,14 @@
       "sha256": "f711ef61db4fa68daeb8246f531b4d7e2885eb5eb413471932c7733eaeb41359"
     },
     {
+      "path": "src/lib/sign-in-error.ts",
+      "bytes": 1178,
+      "sha256": "93b7e6ee8175c62b93da4a5a10812c94cf936f1ac6d32cdbef7a9b529c4a57f3"
+    },
+    {
       "path": "src/lib/sign-in-return.ts",
-      "bytes": 1130,
-      "sha256": "6f27e2e577f1b098180e686fb5f3ea167b9adf54436931bb42ae20d73e9b0751"
+      "bytes": 2120,
+      "sha256": "f5190a76216e2454fcfa6334f79fdc4cda6c574c5b66785e6a2a956ebef49ad1"
     },
     {
       "path": "src/lib/timers/engine.ts",
@@ -6671,8 +6978,8 @@
     },
     {
       "path": "src/lib/tool-directory.ts",
-      "bytes": 4581,
-      "sha256": "3e43b01b7d66a90a28e7bde04a13f7e1498639c9ce3ea1077480ad5c0f3d2ad6"
+      "bytes": 5175,
+      "sha256": "76977c05be5f9f51dfc978f6524b821f62882f9ef65e29eb17dae8aa4c6f0cb6"
     },
     {
       "path": "src/lib/turnstile.ts",
@@ -6820,6 +7127,11 @@
       "sha256": "30ea1fbb05e0fdbc94afa80775b2f00602b3b988aa47fa28fed2c17465756707"
     },
     {
+      "path": "tests/combat-events.test.ts",
+      "bytes": 3606,
+      "sha256": "9edea326818138f60343df07da5b24cb8122edf02d55b1889ca4ffd4f62756d9"
+    },
+    {
       "path": "tests/community.test.ts",
       "bytes": 892,
       "sha256": "95e42a7cefc1ea8f844d8df22a42c3dd117072954890ffc38a002588792e4207"
@@ -6843,6 +7155,11 @@
       "path": "tests/discord-management.test.ts",
       "bytes": 2614,
       "sha256": "4ad465302cb7aa565bcbb840d776be04d7e118aa0d976f3158a0fa3566c6892b"
+    },
+    {
+      "path": "tests/discord-sign-in.test.ts",
+      "bytes": 8339,
+      "sha256": "cea2380f218ae4276e4619e7a2710b227fcda0cfb60e86db659cf1ba3d67b19f"
     },
     {
       "path": "tests/env.test.ts",
@@ -6893,6 +7210,11 @@
       "path": "tests/item-snapshot.test.ts",
       "bytes": 2661,
       "sha256": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12"
+    },
+    {
+      "path": "tests/library-group-copy.test.ts",
+      "bytes": 2575,
+      "sha256": "67760cbc64d947211866d36a929d0cfb9f56962c20d8414a05cabdb41904b54e"
     },
     {
       "path": "tests/loadout-quotes.test.ts",
@@ -7018,6 +7340,11 @@
       "path": "tests/source-workbench.test.ts",
       "bytes": 1844,
       "sha256": "1d238c535177eeb1fd3f9a7d34452c29e6f0b738b4626ee85e8dd744a5d6d559"
+    },
+    {
+      "path": "tests/team-loot.test.ts",
+      "bytes": 3323,
+      "sha256": "b07c133410a01074fae09712ea7658305b4e439ea37d709a7cf7d5b0f7057739"
     },
     {
       "path": "tests/timers.test.ts",

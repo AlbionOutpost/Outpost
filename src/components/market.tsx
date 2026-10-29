@@ -1,5 +1,5 @@
 "use client";
-import { Search, MapPin, ChartNoAxesCombined, ArrowRight } from "lucide-react";
+import { Search, MapPin, ArrowRight } from "lucide-react";
 import { History } from "./history";
 import Link from "@/components/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
@@ -264,7 +264,9 @@ export function Market() {
         <div className="market-results-heading">
           <h2>{hasResult ? "Market results" : "Your market research"}</h2>
           <span>
-            {hasResult ? `${visible.length} city observations` : "Choose an item to compare cities"}
+            {hasResult
+              ? `${visible.length} city observations`
+              : "Select an item, then compare prices"}
           </span>
         </div>
         {hasResult && summary.available > 0 && (
@@ -476,8 +478,9 @@ export function Market() {
           </div>
         )}
         <small className="muted market-source-note">
-          Source: Albion Online Data Project · Observations older than one hour or unexpectedly in
-          the future are marked stale. Observations do not guarantee executable trades or liquidity.
+          Albion Online Data Project · Individual source times are shown with each order. Prices
+          older than one hour are marked stale; an observation does not guarantee an available
+          trade.
         </small>
         {hasResult && (
           <MarketQualityAvailability
@@ -600,34 +603,49 @@ export function Market() {
           </div>
         ) : (
           <div className="market-getting-started">
-            <ChartNoAxesCombined size={32} aria-hidden="true" />
-            <h2>From a price check to a trade</h2>
-            <ul>
+            <div className="market-selected-item">
+              <ItemIcon id={item} quality={Number(quality)} size={80} />
+              <div>
+                <h2>{selectedName || equipmentName(item)}</h2>
+                <p>
+                  {
+                    ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][
+                      Number(quality) - 1
+                    ]
+                  }{" "}
+                  quality · {region}
+                </p>
+              </div>
+            </div>
+            <dl className="market-selection-facts">
+              <div>
+                <dt>Markets</dt>
+                <dd>
+                  {city ||
+                    (extraCities.length ? `${extraCities.length} selected cities` : "All cities")}
+                </dd>
+              </div>
+              <div>
+                <dt>Prices</dt>
+                <dd>Awaiting comparison</dd>
+              </div>
+            </dl>
+            <p>
+              Use <strong>Compare prices</strong> to check the lowest sell orders and highest buy
+              orders for this selection.
+            </p>
+            <ul className="market-quick-help">
               <li>
-                <Search aria-hidden="true" />
-                <div>
-                  <strong>Find your item</strong>
-                  <p>
-                    Search gear, resources or consumables. Use item filters for tier and
-                    enchantment.
-                  </p>
-                </div>
+                <MapPin size={16} aria-hidden="true" />
+                <span>Compare individual city orders</span>
               </li>
               <li>
-                <MapPin aria-hidden="true" />
-                <div>
-                  <strong>Compare the right markets</strong>
-                  <p>Choose quality, then filter the returned prices by city.</p>
-                </div>
+                <Search size={16} aria-hidden="true" />
+                <span>Inspect each observation’s source time</span>
               </li>
               <li>
-                <ArrowRight aria-hidden="true" />
-                <div>
-                  <strong>Check before you commit</strong>
-                  <p>
-                    Inspect source times and price history. Plan fees and transport before trading.
-                  </p>
-                </div>
+                <ArrowRight size={16} aria-hidden="true" />
+                <span>Take your selection into a trade plan</span>
               </li>
             </ul>
           </div>

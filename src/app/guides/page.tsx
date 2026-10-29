@@ -13,8 +13,14 @@ export default async function Guides({
   const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
   return (
     <div className="guide-discovery-page">
-      <h1 className="page-title display-title">A little knowledge goes a long way.</h1>
-      <p className="intro">Find your footing, plan your next run, or learn a new way to earn.</p>
+      <header className="workspace-identity">
+        <div>
+          <h1 className="page-title display-title">Guides & resources</h1>
+          <p className="intro">
+            Find your footing, plan your next run, or learn a new way to earn.
+          </p>
+        </div>
+      </header>
       <nav className="discovery-tabs" aria-label="Builds and guides">
         <Link href="/builds/library">Build library</Link>
         <Link href="/guides" aria-current="page">
@@ -122,7 +128,7 @@ export default async function Guides({
                   attendance changes.
                 </p>
                 <p>
-                  Guild workspaces bring shared comps, announcements, events and RSVP rosters
+                  Team workspaces bring shared comps, announcements, events and RSVP rosters
                   together. Private resources require current membership. Saving a plan does not
                   publish it to Discord or send an external notification.
                 </p>

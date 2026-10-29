@@ -39,8 +39,30 @@ export const GET = apiHandler("account.export", async () => {
           createdAt: true,
         },
       },
-      compositions: { include: { versions: true } },
+      compositions: {
+        where: {
+          OR: [
+            { visibility: { in: ["PUBLIC", "PRIVATE"] } },
+            { visibility: "GROUP", group: { members: { some: { userId: session.user.id } } } },
+          ],
+        },
+        include: { versions: true },
+      },
       memberships: { select: { groupId: true, role: true, joinedAt: true } },
+      // Shared ledgers may have been edited by other team members. Export only
+      // the actor's attribution metadata while their current membership permits
+      // viewing it; do not leak a revoked team's latest financial notes.
+      authoredLootSplits: {
+        where: { group: { members: { some: { userId: session.user.id } } } },
+        select: {
+          id: true,
+          groupId: true,
+          title: true,
+          version: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
       builds: { include: { equipment: true, versions: true } },
       accounts: { select: { provider: true, providerAccountId: true } },
     },

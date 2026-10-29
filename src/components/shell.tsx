@@ -2,19 +2,7 @@
 import Link from "@/components/link";
 import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  Menu,
-  X,
-  Sun,
-  Moon,
-  ChevronDown,
-  ArrowUpRight,
-  Swords,
-  Users,
-  BookOpen,
-  Castle,
-  Grid2X2,
-} from "lucide-react";
+import { Menu, X, Sun, Moon, ChevronDown, ArrowUpRight, Grid2X2 } from "lucide-react";
 import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
@@ -38,6 +26,8 @@ const toolLinks = [
   ["/tools/farming", "Farming"],
   ["/tools/transporting", "Transport planner"],
   ["/tools/gold", "Gold history"],
+  ["/tools/kill-feed", "Global kill feed"],
+  ["/tools/death-feed", "Global death feed"],
   ["/items", "Item reference"],
 ];
 const sections = [
@@ -45,7 +35,7 @@ const sections = [
   ["/builds", "Builds"],
   ["/compositions", "Comps"],
   ["/guides", "Guides"],
-  ["/groups", "Guilds"],
+  ["/groups", "Teams"],
 ];
 const accountLinks = [
   ["/dashboard", "My dashboard"],
@@ -81,8 +71,9 @@ export function Shell({
     router = useRouter();
   const region = regionSchema.catch("europe").parse(search.get("region") || savedRegion);
   const active = (href: string) => path === href || (href !== "/" && path.startsWith(`${href}/`));
-  const href = (url: string) => `${url === "/builds" ? "/builds/library" : url}?region=${region}`;
-  const productShell = !["/signin", "/legal"].includes(path);
+  const href = (url: string) =>
+    `${url === "/builds" ? "/builds/library" : url === "/compositions" ? "/compositions/library" : url}?region=${region}`;
+  const productShell = true;
   const workspace = !["/", "/signin", "/legal"].includes(path) && !path.startsWith("/guides");
   useEffect(() => {
     if (!open) return;
@@ -176,7 +167,9 @@ export function Shell({
                                     ? "Cargo & city margins"
                                     : url === "/tools/gold"
                                       ? "Regional observations"
-                                      : "Gear & item details"}
+                                      : url === "/tools/kill-feed" || url === "/tools/death-feed"
+                                        ? "Published fights & equipment"
+                                        : "Gear & item details"}
                     </small>
                   </span>
                   <ArrowUpRight size={15} />
@@ -195,19 +188,12 @@ export function Shell({
           onClick={navigate}
           aria-current={active(url) ? "page" : undefined}
         >
-          {url === "/builds" ? (
-            <Swords size={17} />
-          ) : url === "/compositions" ? (
-            <Users size={17} />
-          ) : url === "/guides" ? (
-            <BookOpen size={17} />
-          ) : (
-            <Castle size={17} />
-          )}{" "}
           {label}
         </Link>
       ))}
-      <details className="nav-dropdown more-dropdown">
+      <details
+        className={`nav-dropdown more-dropdown${accountLinks.some(([url]) => url !== "/signin" && active(url)) ? " is-active" : ""}`}
+      >
         <summary>
           More <ChevronDown size={13} />
         </summary>

@@ -1,18 +1,30 @@
 import Link from "@/components/link";
 import { notFound } from "next/navigation";
-import { findLibraryBuilds, findLibraryComposition } from "@/lib/grind-library";
+import { findLibraryBuilds, findLibraryComposition, librarySpellNames } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
-import { LibraryBuildCard } from "@/components/library-build-card";
+import { LibraryGroupWorkspace } from "@/components/library-group-workspace";
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const composition = await findLibraryComposition(slug);
   if (!composition) notFound();
   const builds = await findLibraryBuilds([...new Set(composition.members)]);
-  const memberBuilds = new Map(builds.map((build) => [build.id, build]));
+  const allNames = await librarySpellNames();
+  const spellNames = Object.fromEntries(
+    [
+      ...new Set(
+        builds.flatMap((build) =>
+          build.equipment.flatMap((row) => [
+            ...row.skills,
+            ...Object.values(row.alternativeSkills || {}).flat(),
+          ]),
+        ),
+      ),
+    ].map((id) => [id, allNames[id] || id]),
+  );
   return (
-    <div className="library-page">
+    <div className="library-page group-build-detail">
       <Link className="library-back-link" href="/compositions/library">
-        ← Composition library
+        ← Group Builds
       </Link>
       <h1 className="page-title display-title">{composition.title}</h1>
       <p className="intro">
@@ -28,27 +40,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <p className="preserve">{composition.description}</p>
         </section>
       )}
-      <div className="library-comp-members">
-        {composition.members.map((id, index) => {
-          const build = memberBuilds.get(id);
-          return (
-            <section key={index}>
-              <div className="library-member-label">
-                Slot {index + 1}
-                {composition.optional.includes(id) && <span>Optional</span>}
-              </div>
-              {build ? (
-                <LibraryBuildCard build={build} />
-              ) : (
-                <div className="panel">
-                  <h2>Loadout unavailable</h2>
-                  <p>This member’s loadout is unavailable. Choose another build for this slot.</p>
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
+      <LibraryGroupWorkspace composition={composition} builds={builds} spellNames={spellNames} />
     </div>
   );
 }

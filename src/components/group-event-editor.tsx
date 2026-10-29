@@ -33,7 +33,7 @@ export function GroupEventEditor({
       <button type="button" className="button secondary" onClick={() => setOpen(true)}>
         Edit event
       </button>
-      <EditorDialog open={open} title="Edit guild event" onClose={() => setOpen(false)}>
+      <EditorDialog open={open} title="Edit team event" onClose={() => setOpen(false)}>
         <form
           onSubmit={async (e) => {
             e.preventDefault();

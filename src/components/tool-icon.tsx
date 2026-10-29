@@ -1,5 +1,8 @@
 /** Original Outpost task glyphs. Decorative icons always accompany a text label. */
 const paths = {
+  combat: [
+    "m4 2 14 14m2-14L6 16M2 2l2 7 5-5-7-2Zm20 0-2 7-5-5 7-2ZM3 15l6 6m6-6 6 6M5 19l-3 3m17-3 3 3",
+  ],
   fish: ["M3 12c4-8 11-8 16 0-5 8-12 8-16 0Z", "m19 12 3-4v8l-3-4M8 10h.01M12 6l2-3 3 5"],
   market: ["M3 20h18M5 17v-5h3v5m3 0V8h3v9m3 0V4h3v13", "m4 8 5-4 4 2 7-4"],
   trade: ["M3 7h17m-4-4 4 4-4 4M21 17H4m4-4-4 4 4 4"],

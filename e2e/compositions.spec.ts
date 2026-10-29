@@ -105,7 +105,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     await page.getByRole("link", { name: "Edit comp", exact: true }).click();
     await page.getByText("Sharing, region & description", { exact: true }).click();
     await page.getByLabel("Comp visibility").selectOption("GROUP");
-    await page.getByLabel("Shared group").selectOption(groupId);
+    await page.getByLabel("Shared team").selectOption(groupId);
     await page.getByRole("button", { name: "Save comp revision" }).click();
     await expect(page.getByRole("heading", { name: "Twenty player ZvZ roster" })).toBeVisible();
     stored = await (await context.request.get(`/api/compositions/${id}`)).json();

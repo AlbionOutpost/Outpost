@@ -11,6 +11,8 @@ import { compositionFromLoadout } from "@/lib/compositions/build-loadout";
 import { regionSchema } from "@/lib/albion/region-config";
 import { HttpError } from "@/lib/http-error";
 import { db } from "@/lib/db";
+import { findLibraryComposition, findLibraryBuilds, librarySpellNames } from "@/lib/grind-library";
+import { copyLibraryGroup } from "@/lib/compositions/library-group";
 export const dynamic = "force-dynamic";
 export default async function NewComposition({
   searchParams,
@@ -40,22 +42,42 @@ export default async function NewComposition({
             ?.region,
       );
     try {
-      const source = await resolveCompositionSource(parsed.data, session.user.id);
-      if (source) {
-        const copied = compositionFromLoadout(source, region, parsed.data.role);
-        initial = copied.initial;
-        notice = copied.notice;
-      } else
-        initial = {
-          title: "",
-          description: "",
-          region,
-          contentType: "ZvZ",
-          visibility: "PRIVATE",
-          groupId: null,
-          notes: "",
-          slots: [],
-        };
+      if (parsed.data.fromComposition) {
+        const composition = await findLibraryComposition(parsed.data.fromComposition);
+        if (!composition) throw new HttpError(404, "Group build not found");
+        try {
+          const copied = copyLibraryGroup(
+            composition,
+            await findLibraryBuilds([...new Set(composition.members)]),
+            await librarySpellNames(),
+            region,
+          );
+          initial = copied.initial;
+          notice = copied.notice;
+        } catch (e) {
+          throw new HttpError(
+            422,
+            e instanceof Error ? e.message : "This group build cannot be copied safely.",
+          );
+        }
+      } else {
+        const source = await resolveCompositionSource(parsed.data, session.user.id);
+        if (source) {
+          const copied = compositionFromLoadout(source, region, parsed.data.role);
+          initial = copied.initial;
+          notice = copied.notice;
+        } else
+          initial = {
+            title: "",
+            description: "",
+            region,
+            contentType: "ZvZ",
+            visibility: "PRIVATE",
+            groupId: null,
+            notes: "",
+            slots: [],
+          };
+      }
     } catch (e) {
       if (e instanceof HttpError && [400, 404, 422].includes(e.status)) error = e.message;
       else throw e;

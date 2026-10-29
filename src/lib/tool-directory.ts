@@ -1,5 +1,23 @@
-export const toolGroups = ["Economy", "Builds & comps", "Guild & community"] as const;
+export const toolGroups = ["Economy", "Builds & comps", "Teams & community"] as const;
 export const tools = [
+  {
+    href: "/tools/kill-feed",
+    title: "Global kill feed",
+    short: "Kill feed",
+    group: "Teams & community",
+    icon: "combat",
+    description: "Inspect published PvP kills, the players involved and their recorded equipment.",
+    state: "Game Info · all three regions",
+  },
+  {
+    href: "/tools/death-feed",
+    title: "Global death feed",
+    short: "Death feed",
+    group: "Teams & community",
+    icon: "combat",
+    description: "Review the victim’s loadout and the opposing player in recent published fights.",
+    state: "Game Info · publication may be delayed",
+  },
   {
     href: "/tools/market",
     title: "Market explorer",
@@ -137,9 +155,9 @@ export const tools = [
   },
   {
     href: "/groups",
-    title: "Guild workspace",
-    short: "Guilds & events",
-    group: "Guild & community",
+    title: "Team workspace",
+    short: "Teams & events",
+    group: "Teams & community",
     icon: "guild",
     description: "Coordinate events, announcements and shared plans.",
     state: "Membership protected",
@@ -148,7 +166,7 @@ export const tools = [
     href: "/builds",
     title: "Community builds",
     short: "Community builds",
-    group: "Guild & community",
+    group: "Teams & community",
     icon: "builds",
     description: "Find published loadouts by weapon and activity.",
     state: "Published records",
@@ -157,7 +175,7 @@ export const tools = [
     href: "/timers",
     title: "Personal timers",
     short: "Personal timers",
-    group: "Guild & community",
+    group: "Teams & community",
     icon: "timer",
     description: "Keep your own activity reminders in one place.",
     state: "Sign-in required",

@@ -156,7 +156,5 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Quantity", { exact: true }).fill("10");
   await expect(page.locator(".result strong")).toContainText("500");
   await page.goBack();
-  await expect(
-    page.getByRole("heading", { name: "Find, compare, and track Albion markets." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Market Explorer" })).toBeVisible();
 });

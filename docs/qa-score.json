@@ -1,19 +1,19 @@
 {
   "schema_version": 2,
-  "evidence_checked_at": "2026-10-29T03:10:26.584Z",
-  "inputs_sha256": "7bb5106480c7686a4e75fffe51eb542ae863152c66908adb93300b94b1114d98",
+  "evidence_checked_at": "2026-10-29T13:58:19.357Z",
+  "inputs_sha256": "8151ec1dd1d8dd03a97311581755a977346fbc3db44edfe98bdc91a68cb6c635",
   "coverage_indices": {
-    "implementation": 62.85,
-    "verification": 62.92,
-    "joint": 47.87
+    "implementation": 63.2,
+    "verification": 62.95,
+    "joint": 48.23
   },
   "categories": {
     "core": {
       "weight": 25,
-      "scopes": 21,
-      "implementation": 69.04761904761905,
-      "verification": 97.61904761904762,
-      "joint": 67.85714285714286
+      "scopes": 22,
+      "implementation": 70.45454545454545,
+      "verification": 97.72727272727273,
+      "joint": 69.31818181818181
     },
     "data": {
       "weight": 20,
@@ -59,12 +59,12 @@
     }
   },
   "implementation_counts": {
-    "COMPLETE": 20,
+    "COMPLETE": 21,
     "PARTIAL": 36,
     "MISSING": 4
   },
   "verification_counts": {
-    "VERIFIED": 33,
+    "VERIFIED": 34,
     "PARTIALLY_TESTED": 14,
     "BLOCKED": 9,
     "NOT_TESTED": 3,

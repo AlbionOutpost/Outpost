@@ -6,7 +6,7 @@ export default async function NewGroup() {
   if (!(await getServerSession(authOptions))) redirect("/signin");
   return (
     <>
-      <h1 className="page-title display-title">Create a guild workspace</h1>
+      <h1 className="page-title display-title">Create a team workspace</h1>
       <GroupCreate />
     </>
   );

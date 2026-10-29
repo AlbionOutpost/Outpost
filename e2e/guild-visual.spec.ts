@@ -169,16 +169,14 @@ test("guild activity and discovery remain readable with history, filters and pri
     if (iteration !== "00-baseline") {
       await expect(page.locator(".guild-discovery-card")).toHaveCount(3);
       await expect(page.locator("main")).not.toContainText("Hidden outsider guild");
-      await page
-        .getByLabel("Guild region", { exact: true })
-        .selectOption("asia", { timeout: 8000 });
-      await page.getByRole("button", { name: "Find guilds", exact: true }).click({ timeout: 8000 });
+      await page.getByLabel("Team region", { exact: true }).selectOption("asia", { timeout: 8000 });
+      await page.getByRole("button", { name: "Find teams", exact: true }).click({ timeout: 8000 });
       await expect(page.locator(".guild-discovery-card")).toHaveCount(1);
       await expect(page.locator(".guild-discovery-card")).toContainText("Private");
-      await page.getByLabel("Search guilds", { exact: true }).fill("no-matching-qa-guild-948");
-      await page.getByRole("button", { name: "Find guilds", exact: true }).click({ timeout: 8000 });
+      await page.getByLabel("Search teams", { exact: true }).fill("no-matching-qa-guild-948");
+      await page.getByRole("button", { name: "Find teams", exact: true }).click({ timeout: 8000 });
       await expect(
-        page.getByRole("heading", { name: "No matching guilds", exact: true }),
+        page.getByRole("heading", { name: "No matching teams", exact: true }),
       ).toBeVisible();
       await page.screenshot({ path: `${folder}/empty-320.png`, fullPage: true });
     }

@@ -1,5 +1,7 @@
 # Outpost visual direction
 
+Current owner direction: [anatomical inventory, coherent site surfaces and Teams](docs/design-review/site-refinement/README.md). Use one navy/copper header across every route, distinct inventory anatomy/peripheral slots, purposeful controls and real connected data. Earlier route-specific header and uniform-slot rules are superseded.
+
 Active owner implementation: [premium workspaces and connected planning](docs/design-review/premium-workspaces/README.md). The five supplied UI-system/crafting/build-comp/market/homepage images are the current target. Use one coherent theme, real data and useful private workflows. Remove migration-history and competitor copy from the public UI while retaining truthful prices, assumptions, credits and internal provenance. Implementation and acceptance are in progress.
 
 Current owner-requested recovery: [equipment-led editor, recovered builds/guides/media, journal, cooking/alchemy and fishing](docs/design-review/grind-recovery/README.md). Guide discovery uses actual editorial imagery, reading titles grow naturally, and mobile contents collapse. Fishing separates catch browsing, price/fee assumptions and results; the journal prioritizes objectives and device progress.

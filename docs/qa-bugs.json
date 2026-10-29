@@ -1183,6 +1183,74 @@
         "e2e/guest-build.spec.ts",
         "tests/guest-build-storage.test.ts"
       ]
+    },
+    {
+      "id": "QA-082",
+      "title": "Discord sign-in startup fails silently",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Intercept the OAuth startup endpoint with503; the old SDK navigated back without recovery feedback.",
+      "expected": "The supported journey remains usable and private boundaries remain current.",
+      "current": "Validated bounded startup transport retains the page, explains failures and supports retry; server state/CSRF/PKCE remain unchanged.",
+      "historical_cause": "See the implementation review and retained original failures.",
+      "historical_files": "e2e/signin-navigation.spec.ts",
+      "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
+      "evidence": ["e2e/signin-navigation.spec.ts", "docs/design-review/site-refinement/README.md"]
+    },
+    {
+      "id": "QA-083",
+      "title": "Shared navigation changes geometry and overflows narrow screens",
+      "severity": "P2",
+      "status": "FIXED",
+      "reproduction": "Compare home/sign-in/legal/tool headers and open320px inventory.",
+      "expected": "The supported journey remains usable and private boundaries remain current.",
+      "current": "Header labels and geometry are shared; narrow controls remain reachable through the mobile menu; browser icons are provided.",
+      "historical_cause": "See the implementation review and retained original failures.",
+      "historical_files": "e2e/signin-navigation.spec.ts",
+      "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
+      "evidence": ["e2e/signin-navigation.spec.ts", "docs/design-review/site-refinement/README.md"]
+    },
+    {
+      "id": "QA-084",
+      "title": "Tablet market table collapses into a hidden navigation column",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "At1024px load three city observations and click a city row.",
+      "expected": "The supported journey remains usable and private boundaries remain current.",
+      "current": "Rail and results breakpoints now collapse together; normal pointer selection remains possible without forced clicks.",
+      "historical_cause": "See the implementation review and retained original failures.",
+      "historical_files": "e2e/reference-workspaces.spec.ts",
+      "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
+      "evidence": [
+        "e2e/reference-workspaces.spec.ts",
+        "docs/design-review/site-refinement/README.md"
+      ]
+    },
+    {
+      "id": "QA-085",
+      "title": "Composition Save can submit a native GET before hydration",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Prior native hosted CI40810791542 clicked Save after a source copy and lost its query through/compositions/new?.",
+      "expected": "The supported journey remains usable and private boundaries remain current.",
+      "current": "SSR controls stay disabled until existing hydration readiness; POST prevents a native GET query leak. Real server HTML guard checks and unchanged immediate browser Save assertions exercise the correction.",
+      "historical_cause": "See the implementation review and retained original failures.",
+      "historical_files": "e2e/build-composition.spec.ts",
+      "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
+      "evidence": ["e2e/build-composition.spec.ts", "docs/design-review/site-refinement/README.md"]
+    },
+    {
+      "id": "QA-086",
+      "title": "Revoked team authors can export later shared compositions",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "Author a GROUP composition, revoke membership, then export the account.",
+      "expected": "The supported journey remains usable and private boundaries remain current.",
+      "current": "GROUP exports and authored loot metadata require current membership; ordinary private/public authored records remain exportable. Shared loot configuration is excluded.",
+      "historical_cause": "See the implementation review and retained original failures.",
+      "historical_files": "e2e/account.spec.ts",
+      "verification": "Final Node22 phase passes396 units and126 production browser cases with all ten gates. Cloudflare application verification and publication are tracked separately. Original first phase118/126 and prior hosted117/118 failures remain retained.",
+      "evidence": ["e2e/account.spec.ts", "docs/design-review/site-refinement/README.md"]
     }
   ]
 }

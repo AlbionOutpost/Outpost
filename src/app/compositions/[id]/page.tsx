@@ -29,7 +29,7 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
     <>
       <div className="eyebrow">
         {row.contentType} ·{" "}
-        {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Guild only" }[row.visibility]} · REVISION{" "}
+        {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Team only" }[row.visibility]} · REVISION{" "}
         {row.version}
       </div>
       <h1 className="page-title display-title">{row.title}</h1>

@@ -1,5 +1,6 @@
 "use client";
 import { GroupEventEditor } from "./group-event-editor";
+import { TeamLootWorkspace } from "./team-loot-workspace";
 import { useState, type ReactNode } from "react";
 import { EditorDialog } from "./editor-dialog";
 import { EquipmentStrip } from "./equipment-strip";
@@ -29,7 +30,16 @@ export function GroupDashboard({
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState("Overview");
   const [eventOpen, setEventOpen] = useState(false);
-  const tabs = ["Overview", "Events", "Members", "Comps", "Builds", "Announcements", "Settings"];
+  const tabs = [
+    "Overview",
+    "Events",
+    "Members",
+    "Comps",
+    "Builds",
+    "Loot splits",
+    "Announcements",
+    "Settings",
+  ];
   const [openedAt] = useState(() => Date.now());
   const upcoming = data.events.filter(
     (e) => !e.cancelled && new Date(e.startsAt).getTime() > openedAt,
@@ -89,12 +99,12 @@ export function GroupDashboard({
           </button>
         )}
       </div>
-      <nav className="guild-tabs" role="tablist" aria-label="Guild workspace">
+      <nav className="guild-tabs" role="tablist" aria-label="Team workspace">
         {tabs.map((name, i) => (
           <button
             type="button"
             role="tab"
-            id={`guild-tab-${name}`}
+            id={`guild-tab-${name.replaceAll(" ", "-")}`}
             aria-controls="guild-tab-panel"
             aria-selected={tab === name}
             tabIndex={tab === name ? 0 : -1}
@@ -106,7 +116,7 @@ export function GroupDashboard({
                 const next =
                   tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
                 setTab(next);
-                document.getElementById(`guild-tab-${next}`)?.focus();
+                document.getElementById(`guild-tab-${next.replaceAll(" ", "-")}`)?.focus();
               }
             }}
           >
@@ -114,7 +124,20 @@ export function GroupDashboard({
           </button>
         ))}
       </nav>
-      <div id="guild-tab-panel" role="tabpanel" aria-labelledby={`guild-tab-${tab}`}>
+      <div
+        id="guild-tab-panel"
+        role="tabpanel"
+        aria-labelledby={`guild-tab-${tab.replaceAll(" ", "-")}`}
+      >
+        <div hidden={tab !== "Loot splits"}>
+          <TeamLootWorkspace
+            groupId={groupId}
+            userId={userId}
+            members={data.members}
+            editable={editor}
+            active={tab === "Loot splits"}
+          />
+        </div>
         {tab === "Overview" && (
           <div className="guild-activity-grid">
             <section className="guild-next-event">
@@ -155,7 +178,7 @@ export function GroupDashboard({
             </section>
             <section className="guild-recent-announcements">
               <div className="section-heading">
-                <h2>Guild announcements</h2>
+                <h2>Team announcements</h2>
                 <button className="button secondary" onClick={() => setTab("Announcements")}>
                   View all
                 </button>
@@ -208,7 +231,7 @@ export function GroupDashboard({
                 </button>
               ))}
               {!data.builds.length && <p>No shared builds yet.</p>}
-              <div className="guild-overview-shortcuts" aria-label="Guild quick actions">
+              <div className="guild-overview-shortcuts" aria-label="Team quick actions">
                 {editor && (
                   <button className="button secondary" onClick={() => setEventOpen(true)}>
                     Create event
@@ -337,7 +360,7 @@ export function GroupDashboard({
               ))}
               {!data.events.length && (
                 <p className="empty">
-                  No events scheduled. Plan the next gathering with your guild.
+                  No events scheduled. Plan the next gathering with your team.
                 </p>
               )}
             </section>
@@ -549,7 +572,7 @@ export function GroupDashboard({
         )}
         {tab === "Settings" && (
           <div className="guild-settings">
-            <h2>Guild settings</h2>
+            <h2>Team settings</h2>
             {profile}
             <section>
               {" "}
@@ -670,7 +693,7 @@ export function GroupDashboard({
           </div>
         )}
       </div>
-      <EditorDialog open={eventOpen} title="Create guild event" onClose={() => setEventOpen(false)}>
+      <EditorDialog open={eventOpen} title="Create team event" onClose={() => setEventOpen(false)}>
         {editor && (
           <form
             className="settings-form"

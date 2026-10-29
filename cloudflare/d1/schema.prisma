@@ -32,6 +32,7 @@ model User {
   authoredAnnouncements GroupAnnouncement[]
   authoredGroupEvents GroupEvent[]
   authoredGroupBuilds GroupBuild[]
+  authoredLootSplits GroupLootSplit[]
   issuedGroupInvites GroupInvitation[]
 
   savedScenarios SavedScenario[]
@@ -167,6 +168,7 @@ model Group {
   announcements GroupAnnouncement[]
   events GroupEvent[]
   builds GroupBuild[]
+  lootSplits GroupLootSplit[]
 
 }
 model GroupMember {
@@ -306,6 +308,20 @@ model SavedScenario {
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  @@index([authorId,updatedAt])
+}
+
+model GroupLootSplit {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ configuration Json
+ version Int @default(1)
+ createdById String?
+ createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([groupId,updatedAt])
 }
 
 model CatalogRelease {

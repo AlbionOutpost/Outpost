@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { Prisma } from "@/lib/prisma-runtime";
 import { memberSlot } from "@/lib/compositions/validation";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { ItemIcon } from "@/components/item-icon";
@@ -19,44 +18,40 @@ export default async function Compositions({
   const userId = session?.user?.id;
   const page = z.coerce.number().int().min(1).max(1000).catch(1).parse(p.page);
   const q = (p.q || "").slice(0, 100);
-  const rows = await db.$transaction(
-    (tx) =>
-      tx.composition.findMany({
-        where: {
-          hiddenAt: null,
-          AND: [
-            {
-              OR: [
-                { visibility: "PUBLIC" },
-                ...(userId
-                  ? [
-                      { authorId: userId, visibility: "PRIVATE" as const },
-                      { visibility: "GROUP" as const, group: { members: { some: { userId } } } },
-                    ]
-                  : []),
-              ],
-            },
-            ...(p.mine === "1" ? [{ authorId: userId || "__anonymous__" }] : []),
-            ...(q ? [{ title: { contains: q, mode: "insensitive" as const } }] : []),
+  const rows = await db.composition.findMany({
+    where: {
+      hiddenAt: null,
+      AND: [
+        {
+          OR: [
+            { visibility: "PUBLIC" },
+            ...(userId
+              ? [
+                  { authorId: userId, visibility: "PRIVATE" as const },
+                  { visibility: "GROUP" as const, group: { members: { some: { userId } } } },
+                ]
+              : []),
           ],
         },
-        orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
-        take: 25,
-        skip: (page - 1) * 24,
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          visibility: true,
-          contentType: true,
-          version: true,
-          updatedAt: true,
-          slots: true,
-          author: { select: { name: true } },
-        },
-      }),
-    { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
-  );
+        ...(p.mine === "1" ? [{ authorId: userId || "__anonymous__" }] : []),
+        ...(q ? [{ title: { contains: q, mode: "insensitive" as const } }] : []),
+      ],
+    },
+    orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
+    take: 25,
+    skip: (page - 1) * 24,
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      visibility: true,
+      contentType: true,
+      version: true,
+      updatedAt: true,
+      slots: true,
+      author: { select: { name: true } },
+    },
+  });
   return (
     <div className="composition-directory">
       <div className="section-heading composition-directory-heading">
@@ -66,9 +61,16 @@ export default async function Compositions({
         </Link>
       </div>
       <p className="intro">
-        Plan roles, assign players and share gear for your next party. Your private and guild comps
+        Plan roles, assign players and share gear for your next party. Your private and team comps
         stay protected.
       </p>
+      <nav className="discovery-tabs" aria-label="Composition collections">
+        <Link href="/compositions" aria-current="page">
+          Player comps
+        </Link>
+        <Link href="/compositions/library">Group Builds</Link>
+        <Link href="/compositions?mine=1">My comps</Link>
+      </nav>
       <form className="panel composition-filters">
         <label>
           Search comp titles
@@ -106,7 +108,7 @@ export default async function Compositions({
                 <h2>{r.title}</h2>
                 <span className="loadout-activity">
                   {r.contentType} ·{" "}
-                  {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Guild only" }[r.visibility]}
+                  {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Team only" }[r.visibility]}
                 </span>
               </div>
               <span className="composition-roster-preview" aria-label="Recorded roster preview">

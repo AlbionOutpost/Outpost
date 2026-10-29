@@ -1,10 +1,10 @@
 {
   "status": "STAGING_ONLY_NOT_APPLICATION_COMPATIBLE",
-  "sourceSchemaSha256": "6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969",
-  "schemaSha256": "dc5eea8d98c16402de9b9eea9a5474be3bb32530ec1d24c90ed74efdca4f7e68",
-  "sqlSha256": "d2ea0bc38e519bb042d0a9cee840143351845295671a17bc459a0c30e6a3447a",
-  "tables": 29,
-  "indexes": 40,
+  "sourceSchemaSha256": "874acc8518ead9bcfe5f0fa904aefd6adb6284671da9f0948a2a5a157dbb7a3c",
+  "schemaSha256": "6409393fff805b9811b58cc0d6ac4fbeb44517c036fdd0890b59592ad804200d",
+  "sqlSha256": "e314e16a129838fc213f45201c0a2c64c1cf18e04a5be94fb46f7a72947f5498",
+  "tables": 30,
+  "indexes": 41,
   "differences": [
     "PostgreSQL scalar arrays become JSON arrays",
     "JSONB becomes validated JSON text",

@@ -3,7 +3,7 @@ export default defineConfig({
   testDir: "e2e",
   // The suite shares local services and public request budgets across browsers.
   workers: process.env.CI ? 1 : 2,
-  use: { baseURL: "http://localhost:3000" },
+  use: { baseURL: "http://localhost:3000", launchOptions: { chromiumSandbox: true } },
   webServer: {
     command:
       process.env.E2E_CLOUDFLARE === "1"

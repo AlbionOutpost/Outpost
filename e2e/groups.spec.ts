@@ -11,6 +11,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
   test.setTimeout(90000);
   const ids = Array.from({ length: 5 }, () => `atlas-test-${randomUUID()}`);
   const clients = [context];
+  const anonymous = await browser.newContext({ baseURL: "http://localhost:3000" });
   for (let i = 1; i < 5; i++)
     clients.push(await browser.newContext({ baseURL: "http://localhost:3000" }));
   let groupId = "";
@@ -42,7 +43,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     }
     const slug = `guild-${randomUUID().slice(0, 8)}`;
     await page.goto("/groups/new");
-    await page.getByLabel("Guild / group name").fill("Verified guild workflows");
+    await page.getByLabel("Team name").fill("Verified guild workflows");
     await page.getByLabel("Workspace address").fill(slug);
     await page.getByLabel("Workspace visibility").selectOption("PUBLIC");
     await page.getByRole("button", { name: "Create workspace", exact: true }).click();
@@ -61,8 +62,37 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     const invite = await db.groupInvitation.findFirstOrThrow({ where: { groupId } });
     expect(invite.tokenHash).not.toBe(token);
     expect(invite.tokenHash).toHaveLength(64);
+    const invitationPath = new URL(inviteUrl).pathname;
+    const anonymousPage = await anonymous.newPage();
+    await anonymousPage.goto(inviteUrl);
+    const signInLink = anonymousPage.getByRole("link", {
+      name: "Sign in to join this team",
+      exact: true,
+    });
+    await expect(signInLink).toHaveAttribute(
+      "href",
+      `/signin?${new URLSearchParams({ callbackUrl: invitationPath })}`,
+    );
+    await signInLink.click();
+    await expect(anonymousPage).toHaveURL(
+      (url) => url.pathname === "/signin" && url.searchParams.get("callbackUrl") === invitationPath,
+    );
+    expect(
+      (
+        await anonymous.request.post(`/api/invitations/${token}`, {
+          headers: { origin: "http://localhost:3000" },
+        })
+      ).status(),
+    ).toBe(401);
+    expect(
+      (await db.groupInvitation.findUniqueOrThrow({ where: { id: invite.id } })).acceptedAt,
+    ).toBeNull();
     const officerPage = await clients[2].newPage();
-    await officerPage.goto(inviteUrl);
+    await officerPage.goto(
+      `/signin?error=OAuthCallback&callbackUrl=${encodeURIComponent("http://localhost:3000" + invitationPath)}`,
+    );
+    await expect(officerPage).toHaveURL((url) => url.pathname === invitationPath);
+    expect(await db.groupMember.count({ where: { groupId, userId: ids[2] } })).toBe(0);
     await officerPage.getByRole("button", { name: "Accept invitation" }).click();
     await expect(
       officerPage.getByRole("heading", { name: "Verified guild workflows", exact: true }),
@@ -212,6 +242,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
       await adminPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
   } finally {
+    await anonymous.close();
     if (groupId) await db.group.deleteMany({ where: { id: groupId } });
     for (const client of clients.slice(1)) await client.close();
     await db.user.deleteMany({ where: { id: { in: ids } } });

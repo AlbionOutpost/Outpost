@@ -10,6 +10,7 @@ import { moderateReport } from "../../src/lib/community/moderation";
 import { saveWatchItem } from "../../src/lib/market-watch-service";
 import { HttpError } from "../../src/lib/http-error";
 import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/discovery-service";
+import { teamLoot } from "../../src/lib/groups/loot-service";
 
 const services = {
   reviseBuild,
@@ -24,6 +25,7 @@ const services = {
   saveWatchItem,
   listAccountBuilds,
   listAccountFavorites,
+  teamLoot,
 };
 export async function executeService(name: string, args: unknown[]) {
   if (

@@ -37,11 +37,15 @@ export default async function Page({
         <p>Player observations, with source timestamps. Check freshness before every trade.</p>
       </nav>
       <div className="market-explorer-page">
-        <span className="eyebrow">MARKET EXPLORER</span>
-        <h1 className="page-title display-title">Find, compare, and track Albion markets.</h1>
-        <p className="intro">
-          Find an item, compare city prices and check when they were observed.
-        </p>
+        <header className="workspace-identity">
+          <span className="workspace-emblem" aria-hidden="true">
+            <ChartNoAxesCombined />
+          </span>
+          <div>
+            <h1 className="page-title display-title">Market Explorer</h1>
+            <p className="intro">Find your item. Compare city orders. Choose your next trade.</p>
+          </div>
+        </header>
         <Market key={`${p.item || "T4_BAG"}:${p.quality || "1"}`} />
       </div>
     </div>

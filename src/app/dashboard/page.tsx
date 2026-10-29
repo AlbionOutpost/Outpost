@@ -71,7 +71,7 @@ export default async function Dashboard() {
         </Link>
         <Link href="/groups?mine=1">
           <Flag size={20} />
-          <span>Your guilds</span>
+          <span>Your teams</span>
           <strong>{u.memberships.length}</strong>
         </Link>
         <Link href="/timers">
@@ -165,7 +165,7 @@ export default async function Dashboard() {
         </section>
       </div>
       <p className="muted">
-        Showing up to eight recent entries per section. Guild-only comps require current membership.
+        Showing up to eight recent entries per section. Team-only comps require current membership.
       </p>
     </div>
   );

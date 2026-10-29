@@ -248,6 +248,20 @@ CREATE TABLE "SavedScenario" (
 );
 
 -- CreateTable
+CREATE TABLE "GroupLootSplit" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "configuration" TEXT NOT NULL CHECK (json_valid("configuration")),
+    "version" INTEGER NOT NULL DEFAULT 1,
+    "createdById" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "GroupLootSplit_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupLootSplit_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "CatalogRelease" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "version" TEXT NOT NULL,
@@ -470,6 +484,9 @@ CREATE INDEX "GroupBuild_groupId_createdAt_idx" ON "GroupBuild"("groupId", "crea
 
 -- CreateIndex
 CREATE INDEX "SavedScenario_authorId_updatedAt_idx" ON "SavedScenario"("authorId", "updatedAt");
+
+-- CreateIndex
+CREATE INDEX "GroupLootSplit_groupId_updatedAt_idx" ON "GroupLootSplit"("groupId", "updatedAt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CatalogRelease_version_key" ON "CatalogRelease"("version");

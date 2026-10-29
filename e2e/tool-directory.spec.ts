@@ -3,7 +3,7 @@ test("tool discovery filters tasks, retains region and exposes honest starter sc
   page,
 }) => {
   await page.goto("/tools?region=asia");
-  await expect(page.locator(".directory-entry")).toHaveCount(18);
+  await expect(page.locator(".directory-entry")).toHaveCount(20);
   await page.getByRole("button", { name: "Economy", exact: true }).click();
   await expect(page.locator(".directory-entry")).toHaveCount(12);
   await expect(page.locator(".directory-entry").filter({ hasText: "Crafting" })).toContainText(
@@ -12,7 +12,7 @@ test("tool discovery filters tasks, retains region and exposes honest starter sc
   await page.getByRole("searchbox", { name: "Find a tool" }).fill("not-a-supported-tool");
   await expect(page.getByRole("heading", { name: /No tools match/ })).toBeVisible();
   await page.getByRole("button", { name: "Reset search", exact: true }).click();
-  await expect(page.locator(".directory-entry")).toHaveCount(18);
+  await expect(page.locator(".directory-entry")).toHaveCount(20);
   await page.getByRole("searchbox", { name: "Find a tool" }).fill("city quotes");
   await expect(page.locator(".directory-entry")).toHaveCount(1);
   await page.locator(".directory-entry").click();

@@ -13,6 +13,7 @@ import {
 import { HttpError } from "../../src/lib/http-error";
 import schema from "../d1/migrations/0001_schema_candidate.sql";
 import invariants from "../d1/migrations/0003_domain_invariants.sql";
+import teamLootSchema from "../d1/migrations/0004_team_loot_splits.sql";
 export { AbuseBudget } from "./budget";
 import { archiveList, archiveFind } from "./archive";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
@@ -60,7 +61,11 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
         if (version === 1) {
           this.ctx.storage.sql.exec(invariants);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=2 WHERE version=1");
-        } else if (version !== 2) throw new Error("Unsupported database schema version");
+        }
+        if (version === 1 || version === 2) {
+          this.ctx.storage.sql.exec(teamLootSchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=3 WHERE version IN (1,2)");
+        } else if (version !== 3) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);

@@ -1175,7 +1175,7 @@ The chapter index, consolidated handbook, exact schema and machine inventory tog
 
 ## 16. Exact database reference
 
-Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
+Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `874acc8518ead9bcfe5f0fa904aefd6adb6284671da9f0948a2a5a157dbb7a3c`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
 
 ### User
 
@@ -1205,6 +1205,7 @@ model User {
   authoredAnnouncements GroupAnnouncement[]
   authoredGroupEvents GroupEvent[]
   authoredGroupBuilds GroupBuild[]
+  authoredLootSplits GroupLootSplit[]
   issuedGroupInvites GroupInvitation[]
 
   savedScenarios SavedScenario[]
@@ -1388,6 +1389,7 @@ model Group {
   announcements GroupAnnouncement[]
   events GroupEvent[]
   builds GroupBuild[]
+  lootSplits GroupLootSplit[]
 
 }
 ```
@@ -1575,6 +1577,24 @@ model SavedScenario {
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  @@index([authorId,updatedAt])
+}
+```
+
+### GroupLootSplit
+
+```prisma
+model GroupLootSplit {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ configuration Json
+ version Int @default(1)
+ createdById String?
+ createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([groupId,updatedAt])
 }
 ```
 
@@ -1770,7 +1790,7 @@ model MarketWatchItem {
 }
 ```
 
-### Ordered migrations (18)
+### Ordered migrations (19)
 
 | Migration                                      | SQL                                                                                                                                                                | SHA256                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
@@ -1792,6 +1812,7 @@ model MarketWatchItem {
 | `20261025225359_timer_null_state`              | [prisma/migrations/20261025225359_timer_null_state/migration.sql](../../prisma/migrations/20261025225359_timer_null_state/migration.sql)                           | `96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd` |
 | `20261026110000_market_watch_items`            | [prisma/migrations/20261026110000_market_watch_items/migration.sql](../../prisma/migrations/20261026110000_market_watch_items/migration.sql)                       | `f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9` |
 | `20261027040000_equipment_sets`                | [prisma/migrations/20261027040000_equipment_sets/migration.sql](../../prisma/migrations/20261027040000_equipment_sets/migration.sql)                               | `05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835` |
+| `20261029120000_team_loot_splits`              | [prisma/migrations/20261029120000_team_loot_splits/migration.sql](../../prisma/migrations/20261029120000_team_loot_splits/migration.sql)                           | `18e7a6a0d636f7692c640f0e33fc26ef52c3a4ce04f7570fee2553af7829aa31` |
 
 ---
 
@@ -1799,7 +1820,7 @@ model MarketWatchItem {
 
 Generated from the current source, without private environment values or database contents. Regenerate with `node scripts/rebuild-inventory.mjs`; verify with `--check`. [Full JSON](inventory.json) includes exports, imports, schema definitions, locked runtime versions and file hashes. Auth-boundary mentions are textual navigation aids; [security contracts](SECURITY_AND_AUTH.md) and actual handlers govern permissions.
 
-### Page routes (43)
+### Page routes (45)
 
 | Route                          | Source                                                                                             | Direct client component |
 | ------------------------------ | -------------------------------------------------------------------------------------------------- | ----------------------- |
@@ -1837,17 +1858,19 @@ Generated from the current source, without private environment values or databas
 | `/tools/alchemy`               | [src/app/tools/alchemy/page.tsx](../../src/app/tools/alchemy/page.tsx)                             | No (server component)   |
 | `/tools/cooking`               | [src/app/tools/cooking/page.tsx](../../src/app/tools/cooking/page.tsx)                             | No (server component)   |
 | `/tools/crafting`              | [src/app/tools/crafting/page.tsx](../../src/app/tools/crafting/page.tsx)                           | No (server component)   |
+| `/tools/death-feed`            | [src/app/tools/death-feed/page.tsx](../../src/app/tools/death-feed/page.tsx)                       | No (server component)   |
 | `/tools/enchanting`            | [src/app/tools/enchanting/page.tsx](../../src/app/tools/enchanting/page.tsx)                       | No (server component)   |
 | `/tools/farming`               | [src/app/tools/farming/page.tsx](../../src/app/tools/farming/page.tsx)                             | No (server component)   |
 | `/tools/fishing`               | [src/app/tools/fishing/page.tsx](../../src/app/tools/fishing/page.tsx)                             | No (server component)   |
 | `/tools/flipping`              | [src/app/tools/flipping/page.tsx](../../src/app/tools/flipping/page.tsx)                           | No (server component)   |
 | `/tools/gold`                  | [src/app/tools/gold/page.tsx](../../src/app/tools/gold/page.tsx)                                   | No (server component)   |
+| `/tools/kill-feed`             | [src/app/tools/kill-feed/page.tsx](../../src/app/tools/kill-feed/page.tsx)                         | No (server component)   |
 | `/tools/market`                | [src/app/tools/market/page.tsx](../../src/app/tools/market/page.tsx)                               | No (server component)   |
 | `/tools`                       | [src/app/tools/page.tsx](../../src/app/tools/page.tsx)                                             | No (server component)   |
 | `/tools/refining`              | [src/app/tools/refining/page.tsx](../../src/app/tools/refining/page.tsx)                           | No (server component)   |
 | `/tools/transporting`          | [src/app/tools/transporting/page.tsx](../../src/app/tools/transporting/page.tsx)                   | No (server component)   |
 
-### HTTP routes (35)
+### HTTP routes (37)
 
 | Route                                        | Exported methods | Source                                                                                                                         |
 | -------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -1859,6 +1882,7 @@ Generated from the current source, without private environment values or databas
 | `/api/builds/[id]/restore`                   | POST             | [src/app/api/builds/[id]/restore/route.ts](../../src/app/api/builds/[id]/restore/route.ts)                                     |
 | `/api/builds/[id]`                           | DELETE, GET, PUT | [src/app/api/builds/[id]/route.ts](../../src/app/api/builds/[id]/route.ts)                                                     |
 | `/api/builds`                                | POST             | [src/app/api/builds/route.ts](../../src/app/api/builds/route.ts)                                                               |
+| `/api/combat-events`                         | GET              | [src/app/api/combat-events/route.ts](../../src/app/api/combat-events/route.ts)                                                 |
 | `/api/community/[kind]/[id]`                 | GET, POST        | [src/app/api/community/[kind]/[id]/route.ts](../../src/app/api/community/[kind]/[id]/route.ts)                                 |
 | `/api/compositions/[id]/duplicate`           | POST             | [src/app/api/compositions/[id]/duplicate/route.ts](../../src/app/api/compositions/[id]/duplicate/route.ts)                     |
 | `/api/compositions/[id]`                     | DELETE, GET, PUT | [src/app/api/compositions/[id]/route.ts](../../src/app/api/compositions/[id]/route.ts)                                         |
@@ -1867,6 +1891,7 @@ Generated from the current source, without private environment values or databas
 | `/api/economy/prices`                        | GET              | [src/app/api/economy/prices/route.ts](../../src/app/api/economy/prices/route.ts)                                               |
 | `/api/groups/[id]/actions`                   | POST             | [src/app/api/groups/[id]/actions/route.ts](../../src/app/api/groups/[id]/actions/route.ts)                                     |
 | `/api/groups/[id]/events/[eventId]/calendar` | GET              | [src/app/api/groups/[id]/events/[eventId]/calendar/route.ts](../../src/app/api/groups/[id]/events/[eventId]/calendar/route.ts) |
+| `/api/groups/[id]/loot`                      | GET, POST        | [src/app/api/groups/[id]/loot/route.ts](../../src/app/api/groups/[id]/loot/route.ts)                                           |
 | `/api/groups/[id]`                           | GET              | [src/app/api/groups/[id]/route.ts](../../src/app/api/groups/[id]/route.ts)                                                     |
 | `/api/groups`                                | POST             | [src/app/api/groups/route.ts](../../src/app/api/groups/route.ts)                                                               |
 | `/api/health`                                | GET              | [src/app/api/health/route.ts](../../src/app/api/health/route.ts)                                                               |
@@ -1887,7 +1912,7 @@ Generated from the current source, without private environment values or databas
 | `/api/timers`                                | GET, POST        | [src/app/api/timers/route.ts](../../src/app/api/timers/route.ts)                                                               |
 | `/api/transport/prices`                      | GET              | [src/app/api/transport/prices/route.ts](../../src/app/api/transport/prices/route.ts)                                           |
 
-### Components (94)
+### Components (99)
 
 | Source                                                                                                 | Boundary                 | Exports                                                                               |
 | ------------------------------------------------------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------------------------- |
@@ -1912,9 +1937,10 @@ Generated from the current source, without private environment values or databas
 | [src/components/build-region-link.tsx](../../src/components/build-region-link.tsx)                     | Client                   | `BuildRegionInput`, `BuildRegionLink`, `default`                                      |
 | [src/components/build-share-controls.tsx](../../src/components/build-share-controls.tsx)               | Client                   | `BuildShareControls`                                                                  |
 | [src/components/catalog-item-picker.tsx](../../src/components/catalog-item-picker.tsx)                 | Client                   | `CatalogItemPicker`, `CatalogOption`                                                  |
+| [src/components/combat-feed.tsx](../../src/components/combat-feed.tsx)                                 | Client                   | `CombatFeed`                                                                          |
 | [src/components/community-panel.tsx](../../src/components/community-panel.tsx)                         | Client                   | `CommunityPanel`                                                                      |
 | [src/components/composition-editor.tsx](../../src/components/composition-editor.tsx)                   | Client                   | `CompositionEditor`                                                                   |
-| [src/components/composition-png-export.tsx](../../src/components/composition-png-export.tsx)           | Client                   | `CompositionPngExport`                                                                |
+| [src/components/composition-png-export.tsx](../../src/components/composition-png-export.tsx)           | Client                   | `CompositionImageInput`, `CompositionPngExport`                                       |
 | [src/components/composition-view.tsx](../../src/components/composition-view.tsx)                       | Client                   | `CompositionView`                                                                     |
 | [src/components/discord-mark.tsx](../../src/components/discord-mark.tsx)                               | Server-compatible module | `DiscordMark`                                                                         |
 | [src/components/editor-dialog.tsx](../../src/components/editor-dialog.tsx)                             | Client                   | `EditorDialog`                                                                        |
@@ -1942,12 +1968,14 @@ Generated from the current source, without private environment values or databas
 | [src/components/home-market-terminal.tsx](../../src/components/home-market-terminal.tsx)               | Client                   | `HomeCompPreview`, `HomeEconomyPreview`, `HomeMarketTerminal`                         |
 | [src/components/home-player-preview.tsx](../../src/components/home-player-preview.tsx)                 | Client                   | `HomeEquipmentPreview`, `HomeMarketSearch`                                            |
 | [src/components/inventory-equipment-board.tsx](../../src/components/inventory-equipment-board.tsx)     | Client                   | `InventoryEquipmentBoard`, `InventoryEquipmentItem`                                   |
+| [src/components/inventory-slot-glyph.tsx](../../src/components/inventory-slot-glyph.tsx)               | Server-compatible module | `InventorySlotGlyph`                                                                  |
 | [src/components/item-catalog.tsx](../../src/components/item-catalog.tsx)                               | Client                   | `ItemCatalog`                                                                         |
 | [src/components/item-icon.tsx](../../src/components/item-icon.tsx)                                     | Client                   | `ItemIcon`                                                                            |
 | [src/components/item-market-link.tsx](../../src/components/item-market-link.tsx)                       | Client                   | `ItemMarketLink`                                                                      |
 | [src/components/journal-checklist.tsx](../../src/components/journal-checklist.tsx)                     | Client                   | `JournalChecklist`                                                                    |
 | [src/components/library-build-card.tsx](../../src/components/library-build-card.tsx)                   | Server-compatible module | `LibraryBuildCard`                                                                    |
 | [src/components/library-build-metadata.tsx](../../src/components/library-build-metadata.tsx)           | Server-compatible module | `LibraryBuildTraits`, `LibraryBuildVideos`, `safeYouTubeLink`                         |
+| [src/components/library-group-workspace.tsx](../../src/components/library-group-workspace.tsx)         | Client                   | `LibraryGroupWorkspace`                                                               |
 | [src/components/library-save-button.tsx](../../src/components/library-save-button.tsx)                 | Client                   | `LibrarySaveButton`                                                                   |
 | [src/components/link.tsx](../../src/components/link.tsx)                                               | Client                   | `Link`, `default`                                                                     |
 | [src/components/loadout-price-check.tsx](../../src/components/loadout-price-check.tsx)                 | Client                   | `LoadoutPriceCheck`                                                                   |
@@ -1974,7 +2002,9 @@ Generated from the current source, without private environment values or databas
 | [src/components/shopping-account-lists.tsx](../../src/components/shopping-account-lists.tsx)           | Client                   | `ShoppingAccountLists`                                                                |
 | [src/components/shopping-storage.ts](../../src/components/shopping-storage.ts)                         | Client                   | `readShopping`, `writeShopping`                                                       |
 | [src/components/shopping-workspace.tsx](../../src/components/shopping-workspace.tsx)                   | Client                   | `ShoppingWorkspace`                                                                   |
+| [src/components/sign-in-error.tsx](../../src/components/sign-in-error.tsx)                             | Server-compatible module | `SignInError`                                                                         |
 | [src/components/spell-icon.tsx](../../src/components/spell-icon.tsx)                                   | Client                   | `SpellIcon`                                                                           |
+| [src/components/team-loot-workspace.tsx](../../src/components/team-loot-workspace.tsx)                 | Client                   | `TeamLootWorkspace`                                                                   |
 | [src/components/timer-manager.tsx](../../src/components/timer-manager.tsx)                             | Client                   | `TimerManager`                                                                        |
 | [src/components/tool-directory.tsx](../../src/components/tool-directory.tsx)                           | Client                   | `ToolDirectory`                                                                       |
 | [src/components/tool-icon.tsx](../../src/components/tool-icon.tsx)                                     | Server-compatible module | `ToolIcon`                                                                            |
@@ -1986,7 +2016,7 @@ Generated from the current source, without private environment values or databas
 | [src/components/workspace-heading.tsx](../../src/components/workspace-heading.tsx)                     | Server-compatible module | `WorkspaceHeading`                                                                    |
 | [src/components/workspace-navigation.tsx](../../src/components/workspace-navigation.tsx)               | Client                   | `WorkspaceNavigation`                                                                 |
 
-### Domain and infrastructure modules (91)
+### Domain and infrastructure modules (97)
 
 | Source                                                                                             | Exports                                                                                                                                                                                                                                                                                                                  |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1994,6 +2024,7 @@ Generated from the current source, without private environment values or databas
 | [src/lib/albion/assets.ts](../../src/lib/albion/assets.ts)                                         | `AlbionScene`, `SceneKey`, `albionArtSources`, `albionScenes`                                                                                                                                                                                                                                                            |
 | [src/lib/albion/backoff.ts](../../src/lib/albion/backoff.ts)                                       | `retryDelay`                                                                                                                                                                                                                                                                                                             |
 | [src/lib/albion/calculations.ts](../../src/lib/albion/calculations.ts)                             | `returnedMaterialCost`, `trade`, `tradeScenarioSchema`, `tradeSchema`                                                                                                                                                                                                                                                    |
+| [src/lib/albion/combat-events.ts](../../src/lib/albion/combat-events.ts)                           | `CombatEvent`, `CombatFeed`, `combatHosts`, `getCombatEvents`, `normalizeCombatEvents`                                                                                                                                                                                                                                   |
 | [src/lib/albion/data-client.ts](../../src/lib/albion/data-client.ts)                               | `requestData`                                                                                                                                                                                                                                                                                                            |
 | [src/lib/albion/decimal.ts](../../src/lib/albion/decimal.ts)                                       | `decimalRatio`                                                                                                                                                                                                                                                                                                           |
 | [src/lib/albion/equipment-abilities.ts](../../src/lib/albion/equipment-abilities.ts)               | `abilitiesFor`, `archivedSpellOptions`                                                                                                                                                                                                                                                                                   |
@@ -2048,12 +2079,14 @@ Generated from the current source, without private environment values or databas
 | [src/lib/compositions/build-launch.ts](../../src/lib/compositions/build-launch.ts)                 | `BuildCompositionLaunch`, `buildCompositionLaunch`, `compositionLaunchPath`                                                                                                                                                                                                                                              |
 | [src/lib/compositions/build-loadout-source.ts](../../src/lib/compositions/build-loadout-source.ts) | `resolveBuildLoadout`, `resolveCompositionSource`                                                                                                                                                                                                                                                                        |
 | [src/lib/compositions/build-loadout.ts](../../src/lib/compositions/build-loadout.ts)               | `CopiedBuildLoadout`, `SourceBuildLoadout`, `compositionFromLoadout`, `copyBuildLoadout`, `copyLibraryLoadout`                                                                                                                                                                                                           |
+| [src/lib/compositions/library-group.ts](../../src/lib/compositions/library-group.ts)               | `copyLibraryGroup`                                                                                                                                                                                                                                                                                                       |
 | [src/lib/compositions/repository.ts](../../src/lib/compositions/repository.ts)                     | `editorOptions`                                                                                                                                                                                                                                                                                                          |
 | [src/lib/compositions/roles.ts](../../src/lib/compositions/roles.ts)                               | `roles`                                                                                                                                                                                                                                                                                                                  |
 | [src/lib/compositions/service.ts](../../src/lib/compositions/service.ts)                           | `canEdit`, `deleteComposition`, `duplicateComposition`, `groupRole`, `requireRead`, `saveComposition`                                                                                                                                                                                                                    |
 | [src/lib/compositions/validation.ts](../../src/lib/compositions/validation.ts)                     | `CompositionInput`, `EquipmentChoice`, `MemberSlot`, `compositionInput`, `equipmentChoice`, `memberSlot`, `roles`                                                                                                                                                                                                        |
 | [src/lib/database-driver.ts](../../src/lib/database-driver.ts)                                     | `databaseService`, `db`                                                                                                                                                                                                                                                                                                  |
 | [src/lib/db.ts](../../src/lib/db.ts)                                                               | `databaseService`, `db`                                                                                                                                                                                                                                                                                                  |
+| [src/lib/discord-sign-in.ts](../../src/lib/discord-sign-in.ts)                                     | `startDiscordSignIn`                                                                                                                                                                                                                                                                                                     |
 | [src/lib/env.ts](../../src/lib/env.ts)                                                             | `environmentSchema`, `validateEnvironment`                                                                                                                                                                                                                                                                               |
 | [src/lib/grind-build-draft.ts](../../src/lib/grind-build-draft.ts)                                 | `createLibraryBuildDraft`                                                                                                                                                                                                                                                                                                |
 | [src/lib/grind-library-query.ts](../../src/lib/grind-library-query.ts)                             | `LibraryPage`, `LibraryQuery`, `paginateLibrary`                                                                                                                                                                                                                                                                         |
@@ -2061,6 +2094,8 @@ Generated from the current source, without private environment values or databas
 | [src/lib/grind-library.ts](../../src/lib/grind-library.ts)                                         | `featuredLibraryBuilds`, `findLibraryBuild`, `findLibraryBuilds`, `findLibraryComposition`, `findLibraryGuide`, `libraryBuildDraft`, `libraryBuilds`, `libraryCompositions`, `libraryFishing`, `libraryGuides`, `libraryJournal`, `librarySpellNames`, `libraryTraits`, `queryLibraryBuilds`, `queryLibraryCompositions` |
 | [src/lib/groups/calendar.ts](../../src/lib/groups/calendar.ts)                                     | `calendarText`, `eventCalendar`                                                                                                                                                                                                                                                                                          |
 | [src/lib/groups/dashboard.ts](../../src/lib/groups/dashboard.ts)                                   | `GroupDashboardData`, `groupDashboard`                                                                                                                                                                                                                                                                                   |
+| [src/lib/groups/loot-service.ts](../../src/lib/groups/loot-service.ts)                             | `teamLoot`                                                                                                                                                                                                                                                                                                               |
+| [src/lib/groups/loot.ts](../../src/lib/groups/loot.ts)                                             | `LootConfiguration`, `allocateLoot`, `lootConfiguration`, `lootSave`                                                                                                                                                                                                                                                     |
 | [src/lib/groups/permissions.ts](../../src/lib/groups/permissions.ts)                               | `GroupRole`, `canEditShared`, `canManageMembers`, `groupRoles`                                                                                                                                                                                                                                                           |
 | [src/lib/groups/service.ts](../../src/lib/groups/service.ts)                                       | `acceptInvitation`, `inviteHash`, `mutateGroup`                                                                                                                                                                                                                                                                          |
 | [src/lib/groups/validation.ts](../../src/lib/groups/validation.ts)                                 | `groupAction`                                                                                                                                                                                                                                                                                                            |
@@ -2077,7 +2112,8 @@ Generated from the current source, without private environment values or databas
 | [src/lib/redis.ts](../../src/lib/redis.ts)                                                         | `rateLimit`, `redis`                                                                                                                                                                                                                                                                                                     |
 | [src/lib/scenario-link.ts](../../src/lib/scenario-link.ts)                                         | `ScenarioHashKey`, `scenarioHashLimit`, `scenarioLink`                                                                                                                                                                                                                                                                   |
 | [src/lib/serialization-retry.ts](../../src/lib/serialization-retry.ts)                             | `retrySerialization`                                                                                                                                                                                                                                                                                                     |
-| [src/lib/sign-in-return.ts](../../src/lib/sign-in-return.ts)                                       | `safeSignInReturn`                                                                                                                                                                                                                                                                                                       |
+| [src/lib/sign-in-error.ts](../../src/lib/sign-in-error.ts)                                         | `signInErrorMessage`                                                                                                                                                                                                                                                                                                     |
+| [src/lib/sign-in-return.ts](../../src/lib/sign-in-return.ts)                                       | `safeSignInPageReturn`, `safeSignInReturn`                                                                                                                                                                                                                                                                               |
 | [src/lib/timers/engine.ts](../../src/lib/timers/engine.ts)                                         | `TimerState`, `remainingTime`, `timerAction`, `timerInput`, `timerTransition`                                                                                                                                                                                                                                            |
 | [src/lib/tool-directory.ts](../../src/lib/tool-directory.ts)                                       | `toolGroups`, `tools`                                                                                                                                                                                                                                                                                                    |
 | [src/lib/turnstile.ts](../../src/lib/turnstile.ts)                                                 | `turnstileConfiguration`, `verifyTurnstile`                                                                                                                                                                                                                                                                              |

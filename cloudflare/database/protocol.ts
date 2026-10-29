@@ -21,6 +21,7 @@ export const models = new Set([
   "groupEvent",
   "eventRSVP",
   "groupBuild",
+  "groupLootSplit",
   "contentComment",
   "commentRevision",
   "contentReport",

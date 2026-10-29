@@ -1,6 +1,6 @@
 # Exact database reference
 
-Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `6818b11d6f4d65084a7ee1e8f3a5f1570f84b15c6b2af1c63f1dda01d6fdc969`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
+Generated from [prisma/schema.prisma](../../prisma/schema.prisma); SHA256 `874acc8518ead9bcfe5f0fa904aefd6adb6284671da9f0948a2a5a157dbb7a3c`. These are schema definitions, not a dump of anyone’s data. Execute the committed SQL migrations in order as well: migrations contain checks and compatibility details that Prisma declarations alone may not express. Do not use a schema push to replace migration history.
 
 ## User
 
@@ -30,6 +30,7 @@ model User {
   authoredAnnouncements GroupAnnouncement[]
   authoredGroupEvents GroupEvent[]
   authoredGroupBuilds GroupBuild[]
+  authoredLootSplits GroupLootSplit[]
   issuedGroupInvites GroupInvitation[]
 
   savedScenarios SavedScenario[]
@@ -213,6 +214,7 @@ model Group {
   announcements GroupAnnouncement[]
   events GroupEvent[]
   builds GroupBuild[]
+  lootSplits GroupLootSplit[]
 
 }
 ```
@@ -400,6 +402,24 @@ model SavedScenario {
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  @@index([authorId,updatedAt])
+}
+```
+
+## GroupLootSplit
+
+```prisma
+model GroupLootSplit {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ configuration Json
+ version Int @default(1)
+ createdById String?
+ createdBy User? @relation(fields:[createdById],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([groupId,updatedAt])
 }
 ```
 
@@ -595,7 +615,7 @@ model MarketWatchItem {
 }
 ```
 
-## Ordered migrations (18)
+## Ordered migrations (19)
 
 | Migration                                      | SQL                                                                                                                                                                | SHA256                                                             |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
@@ -617,3 +637,4 @@ model MarketWatchItem {
 | `20261025225359_timer_null_state`              | [prisma/migrations/20261025225359_timer_null_state/migration.sql](../../prisma/migrations/20261025225359_timer_null_state/migration.sql)                           | `96df630603342a1e32149671d9efef21652ad03820e66809a5c29ea593273dcd` |
 | `20261026110000_market_watch_items`            | [prisma/migrations/20261026110000_market_watch_items/migration.sql](../../prisma/migrations/20261026110000_market_watch_items/migration.sql)                       | `f20d5b689723f63a8ed01c0c8bc7cdd1cbd3c281cf95592031925dfa3a8d2ca9` |
 | `20261027040000_equipment_sets`                | [prisma/migrations/20261027040000_equipment_sets/migration.sql](../../prisma/migrations/20261027040000_equipment_sets/migration.sql)                               | `05e66cebc8892144cd2cd8d5ca7429d89c93532c2263d50fdf85b7c209e9f835` |
+| `20261029120000_team_loot_splits`              | [prisma/migrations/20261029120000_team_loot_splits/migration.sql](../../prisma/migrations/20261029120000_team_loot_splits/migration.sql)                           | `18e7a6a0d636f7692c640f0e33fc26ef52c3a4ce04f7570fee2553af7829aa31` |

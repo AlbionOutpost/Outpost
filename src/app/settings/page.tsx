@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 export default async function Settings({
   searchParams,
 }: {
@@ -17,7 +18,11 @@ export default async function Settings({
   const query = await searchParams;
   return (
     <>
-      <h1 className="page-title display-title">Account settings</h1>
+      <WorkspaceHeading
+        title="Account settings"
+        description="Manage your profile, preferred server and account data."
+        icon="account"
+      />
       <div className="account-settings-workspace">
         <nav className="account-settings-navigation" aria-label="Settings sections">
           <a href="#profile-preferences">Profile & preferences</a>
@@ -33,7 +38,7 @@ export default async function Settings({
             {query.error && (
               <p role="alert" className="error">
                 {query.error === "ownership"
-                  ? "Transfer group ownership or delete owned groups before deleting this account."
+                  ? "Transfer team ownership or delete owned teams before deleting this account."
                   : query.error === "rate"
                     ? "Too many requests. Please try again later."
                     : "Check the entered values and try again."}

@@ -102,7 +102,7 @@
       "title": "Party compositions and shared loadouts",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Comps retain roles, substitutes, mandatory slots, copy-from-build, equipment/ability/consumable choices and independent named spare sets. A five-player role template and missing-role/weapon counts support first use. Existing access/revision/export behavior is preserved. A separate682-record owner archive library preserves public group-build member order, duplicate positions, original authors and optional slots without assigning old content to current accounts.",
+      "verified_scope": "Comps retain roles, substitutes, mandatory slots, copy-from-build, equipment/ability/consumable choices and independent named spare sets. A five-player role template and missing-role/weapon counts support first use. Existing access/revision/export behavior is preserved. A separate682-record owner archive library preserves public group-build member order, duplicate positions, original authors and optional slots without assigning old content to current accounts. The682-record public Group Builds library is directly discoverable from Comps. Actual gear/recorded abilities/alternatives, all party positions, configured optional roles, local image exports and validated independent account copies remain. SSR composition controls stay disabled until hydration to prevent native GET draft loss; server HTML and unchanged immediate Save assertions cover it.",
       "remaining": "Current-patch role/build meta, character unlocks and full combat statistics are not certified.",
       "evidence": [
         "src/lib/compositions/service.ts",
@@ -110,7 +110,10 @@
         "e2e/reference-ui.spec.ts",
         "docs/engineering/PRODUCT_MILESTONE_2026-10-27.md",
         "src/app/compositions/library/page.tsx",
-        "src/app/compositions/library/[slug]/page.tsx"
+        "src/app/compositions/library/[slug]/page.tsx",
+        "src/components/library-group-workspace.tsx",
+        "e2e/group-builds.spec.ts",
+        "e2e/build-composition.spec.ts"
       ]
     },
     {
@@ -130,16 +133,21 @@
     {
       "id": "CORE-006",
       "category": "core",
-      "title": "Guild collaboration",
+      "title": "Teams, collaboration and loot splits",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "Create/discover, invitations/expiry/revocation, requests, fixed roles, safe ownership transfer, announcements/events/RSVP/calendar and shared resources.",
+      "verified_scope": "Create/discover, invitations/expiry/revocation, requests, fixed roles, safe ownership transfer, announcements/events/RSVP/calendar and shared resources. Website labels now use Teams. Versioned private loot ledgers use exact whole-silver weighted allocation, explicit deterministic rounding, current-member reads, officer writes, stale-version protection and safe failed-save recovery. Current-membership-filtered account export includes attribution metadata only; account deletion retains shared ledgers with attribution cleared.",
       "remaining": "Configurable permissions, safe uploads, full archive/roster pagination and production operations remain.",
       "evidence": [
         "src/lib/groups/service.ts",
         "e2e/groups.spec.ts",
         "e2e/group-editing.spec.ts",
-        "e2e/guild-visual.spec.ts"
+        "e2e/guild-visual.spec.ts",
+        "src/lib/groups/loot.ts",
+        "src/lib/groups/loot-service.ts",
+        "src/components/team-loot-workspace.tsx",
+        "e2e/team-loot.spec.ts",
+        "docs/engineering/TEAM_LOOT.md"
       ]
     },
     {
@@ -374,7 +382,7 @@
       "title": "Account settings, export and deletion",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Profile/region updates, sanitized export/cascade, retry preserving failed drafts and confirmation.",
+      "verified_scope": "Profile/region updates, sanitized export/cascade, retry preserving failed drafts and confirmation. Current GROUP membership is now rechecked by account export; revoked team authors cannot export newer shared compositions or loot metadata. Private authored compositions remain exportable.",
       "remaining": "Fixtures exercise application sessions, not remote provider onboarding.",
       "evidence": [
         "src/app/settings/actions.ts",
@@ -636,7 +644,7 @@
       "title": "Current reference design acceptance",
       "implementation": "PARTIAL",
       "verification": "PARTIALLY_TESTED",
-      "verified_scope": "The current navy/copper Builds ecosystem includes the populated public library, factual weapon/activity/tag filters, debounced URL search, grid/list cards, mobile drawer, owner account discovery, paginated account/device favorites and saved device filters. Inventory detail, readable abilities, alternatives, cost observations, PNG/clipboard sharing and focused full editing use existing records. Thirty-five production source/guest/account-fixture states at320/375/390/768/1024/1440/1920 and expanded390/1440 picker/alternative states are inspected. Final editor tabs account for the relative global header; full-height drawers and left-aligned rows are verified. Prior accepted homepage/search/navigation behavior remains. Owner visual acceptance, physical devices/screen readers, licensed scene differences and broader product gaps remain open.",
+      "verified_scope": "The current navy/copper Builds ecosystem includes the populated public library, factual weapon/activity/tag filters, debounced URL search, grid/list cards, mobile drawer, owner account discovery, paginated account/device favorites and saved device filters. Inventory detail, readable abilities, alternatives, cost observations, PNG/clipboard sharing and focused full editing use existing records. Thirty-five production source/guest/account-fixture states at320/375/390/768/1024/1440/1920 and expanded390/1440 picker/alternative states are inspected. Final editor tabs account for the relative global header; full-height drawers and left-aligned rows are verified. Prior accepted homepage/search/navigation behavior remains. Owner visual acceptance, physical devices/screen readers, licensed scene differences and broader product gaps remain open. The new anatomical silhouette and ten distinct peripheral/core slot frames replace uniform empty boxes. Shared route-independent header geometry, Teams labels, SVG/ICO/Apple icons, contextual sign-in/market/task headings and smooth shared controls/surfaces extend across the site. Integrated production review covers112 public/private-fixture viewport states; source-reviewed anatomy covers28 seven-width states. The initial tablet-market and320px header defects are corrected with preserved regressions.",
       "remaining": "Global owner visual acceptance, broader page-specific refinement and asset-dependent/current-patch differences remain open. Automated overflow/axe checks do not establish subjective visual completion.",
       "evidence": [
         "docs/design-review/README.md",
@@ -672,7 +680,11 @@
         "src/app/builds-detail.css",
         "docs/design-review/builds-system/DELIVERABLES.md",
         "src/app/builds-editor.css",
-        "src/components/build-device-collections.tsx"
+        "src/components/build-device-collections.tsx",
+        "docs/design-review/site-refinement/README.md",
+        "src/app/site-refinement.css",
+        "src/app/inventory-board.css",
+        "e2e/signin-navigation.spec.ts"
       ]
     },
     {
@@ -996,7 +1008,7 @@
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
       "verified_scope": "Main redesign sourcec88249d passed actual hosted workflow40807315490: complete Node quality job,20 native SQLite checks,118 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40807315267 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent owned-network public evidence is separate. Historical failures and superseded runs remain retained.",
-      "remaining": "Patch1048475 has passed the complete local Node/native web gates and actual public deployment/read-back; its source-specific hosted run40810791542 remains active. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery remain unverified.",
+      "remaining": "Prior recovery source1048475 hosted run40810791542 failed117/118 native web cases on pre-hydration composition Save. The current correction passes Node SSR/immediate-save regression; its rebuilt native application and new publication evidence are tracked separately. No current source-specific hosted success is inferred. Genuine personal OAuth, capacity and hosted restore remain unverified.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",
@@ -1018,6 +1030,23 @@
       "verified_scope": "Additive migration recovery runbook exists.",
       "remaining": "Owned staging image/schema rollback and recovery evidence required.",
       "evidence": ["docs/deployment/MIGRATIONS.md", "docs/DEPLOYMENT.md"]
+    },
+    {
+      "id": "CORE-022",
+      "category": "core",
+      "title": "Regional global combat feeds",
+      "implementation": "COMPLETE",
+      "verification": "VERIFIED",
+      "verified_scope": "Global kill/death perspectives fetch actual regional Game Info events with fixed hosts, validated bounded responses,20-item pages, shared short caches, internal request budgets, page filters, sorting, recorded gear, explicit source times and optional visible-tab minute refresh. Three real regional probes return20 events each; mocked outage/retry, source identity, malformed inputs, cache and responsive/axe regressions pass.",
+      "remaining": "Game Info publication can lag and has no guaranteed completeness. Page filtering is not a whole-history search. Unknown equipment/quality stay unknown; real traffic capacity and current source SLA are not certified.",
+      "evidence": [
+        "src/lib/albion/combat-events.ts",
+        "src/components/combat-feed.tsx",
+        "src/app/api/combat-events/route.ts",
+        "e2e/combat-feed.spec.ts",
+        "tests/combat-events.test.ts",
+        "docs/design-review/site-refinement/README.md"
+      ]
     }
   ]
 }

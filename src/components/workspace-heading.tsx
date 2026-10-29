@@ -1,27 +1,22 @@
-import { BarChart3, ShieldCheck, ClipboardList } from "lucide-react";
-export function WorkspaceHeading({ title, description }: { title: string; description: string }) {
+import { Calculator, Settings, Clock3 } from "lucide-react";
+export function WorkspaceHeading({
+  title,
+  description,
+  icon = "calculator",
+}: {
+  title: string;
+  description: string;
+  icon?: "calculator" | "account" | "timer";
+}) {
+  const Icon = icon === "account" ? Settings : icon === "timer" ? Clock3 : Calculator;
   return (
-    <header className="premium-workspace-heading">
+    <header className="workspace-identity">
+      <span className="workspace-emblem" aria-hidden="true">
+        <Icon />
+      </span>
       <div>
         <h1 className="page-title display-title">{title}</h1>
         <p className="intro">{description}</p>
-      </div>
-      <div className="workspace-capabilities">
-        <span>
-          <BarChart3 size={20} />
-          <strong>Regional prices</strong>
-          <small>Compare your markets</small>
-        </span>
-        <span>
-          <ShieldCheck size={20} />
-          <strong>Visible assumptions</strong>
-          <small>Understand every cost</small>
-        </span>
-        <span>
-          <ClipboardList size={20} />
-          <strong>Plan your next run</strong>
-          <small>Keep purchases together</small>
-        </span>
       </div>
     </header>
   );

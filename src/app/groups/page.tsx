@@ -54,9 +54,9 @@ export default async function Groups({
     <div className="guild-discovery-page">
       <header className="section-heading guild-discovery-heading">
         <div>
-          <h1 className="page-title display-title">Guilds</h1>
+          <h1 className="page-title display-title">Teams</h1>
           <p className="intro">
-            Find a guild workspace or return to your own guild’s events, builds and comps.
+            Find a team workspace or return to your own team’s events, builds and comps.
           </p>
         </div>
         <Link href="/groups/new" className="button primary">
@@ -66,21 +66,21 @@ export default async function Groups({
       <form
         action="/groups"
         className="guild-discovery-filters"
-        aria-label="Guild discovery filters"
+        aria-label="Team discovery filters"
       >
         <label>
-          Search guilds
+          Search teams
           <input
             name="q"
             defaultValue={q}
             maxLength={80}
             type="search"
-            placeholder="Guild name or description"
+            placeholder="Team name or description"
           />
         </label>
         <label>
-          Guild region
-          <select aria-label="Guild region" name="region" defaultValue={region}>
+          Team region
+          <select aria-label="Team region" name="region" defaultValue={region}>
             <option value="">All regions</option>
             {Object.entries(regions).map(([value, r]) => (
               <option key={value} value={value}>
@@ -90,19 +90,19 @@ export default async function Groups({
           </select>
         </label>
         <label>
-          Guild visibility
-          <select aria-label="Guild visibility" name="visibility" defaultValue={visibility}>
-            <option value="">All guilds</option>
+          Team visibility
+          <select aria-label="Team visibility" name="visibility" defaultValue={visibility}>
+            <option value="">All teams</option>
             <option value="PUBLIC">Public</option>
             <option value="PRIVATE">Private</option>
           </select>
         </label>
         <button className="button secondary" type="submit">
-          Find guilds
+          Find teams
         </button>
       </form>
       <p className="guild-discovery-context">
-        Public guilds and your memberships. Private workspaces stay visible only to their members.
+        Public teams and your memberships. Private workspaces stay visible only to their members.
       </p>
       <div className="guild-discovery-list">
         {rows.slice(0, 25).map((g) => (
@@ -128,14 +128,14 @@ export default async function Groups({
                 {g.visibility === "PUBLIC" ? "Public" : "Private"}
               </span>
             </div>
-            <p>{g.description || "No guild description has been added."}</p>
+            <p>{g.description || "No team description has been added."}</p>
             <footer>
               <span>
                 {g._count.members.toLocaleString()} {g._count.members === 1 ? "member" : "members"}
-                {g.members.length ? " · Your guild" : ""}
+                {g.members.length ? " · Your team" : ""}
               </span>
               <Link className="text-link" href={`/groups/${g.slug}`}>
-                {g.members.length ? "Open workspace" : "View guild"} →
+                {g.members.length ? "Open workspace" : "View team"} →
               </Link>
             </footer>
           </article>
@@ -143,11 +143,11 @@ export default async function Groups({
       </div>
       {!rows.length && (
         <section className="guild-discovery-empty">
-          <span className="eyebrow">GUILD DISCOVERY</span>
-          <h2>No matching guilds</h2>
+          <span className="eyebrow">TEAM DISCOVERY</span>
+          <h2>No matching teams</h2>
           <p>
-            Try another name or region. Private guilds appear after you join through an invitation
-            or an approved request.
+            Try another name or region. Private teams appear after you join through an invitation or
+            an approved request.
           </p>
           <div className="button-row">
             <Link className="button secondary" href="/groups">
@@ -160,7 +160,7 @@ export default async function Groups({
         </section>
       )}
       {(page > 1 || rows.length > 25) && (
-        <nav className="guild-discovery-pagination" aria-label="Guild result pages">
+        <nav className="guild-discovery-pagination" aria-label="Team result pages">
           {page > 1 && (
             <Link className="button secondary" href={url(page - 1)}>
               Previous

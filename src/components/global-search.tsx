@@ -14,7 +14,7 @@ const destinations = [
   { title: "Calculate profit", note: "Costs & returns", url: "/tools/flipping", icon: "trade" },
 ] as const;
 const categoryName = (category: string) =>
-  category === "Compositions" ? "Comps" : category === "Groups" ? "Guilds" : category;
+  category === "Compositions" ? "Comps" : category === "Groups" ? "Teams" : category;
 function ResultIcon({ row }: { row: SearchRow }) {
   if (row.category === "Items") {
     const id = decodeURIComponent(row.url.split("/").at(-1) || "");
@@ -303,7 +303,7 @@ export function GlobalSearch() {
               </kbd>{" "}
               Open
             </span>
-            <span>Items · Builds · Comps · Guilds</span>
+            <span>Items · Builds · Comps · Teams</span>
           </div>
         </div>
       </dialog>
