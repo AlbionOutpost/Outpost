@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 35
     env:
       NEXT_TELEMETRY_DISABLED: "1"
-      CHROME_DEVEL_SANDBOX: /opt/google/chrome/chrome-sandbox
+      OUTPOST_BROWSER_CHANNEL: chrome
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,7 +41,7 @@ jobs:
           npm run db:deploy
           npm run data:sync
       - run: npx playwright install --with-deps chromium
-      - name: Verify sandboxed Chromium with the installed runner helper
+      - name: Verify the installed browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
       - name: Source credential patterns
         run: node scripts/qa-source-secrets.mjs
