@@ -32,6 +32,9 @@ test("recovered builds keep author, spells and swaps, and become independent val
   await page.getByRole("button", { name: "Save on this device", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Guest draft saved" })).toBeVisible();
   await page.goto("/builds/new");
+  await expect(page.getByLabel("Build title", { exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue("");
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=europe");
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
     "Battleaxe Mist Build (copy)",
   );

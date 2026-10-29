@@ -15,6 +15,11 @@ import Link from "@/components/link";
 import { useRouter } from "next/navigation";
 import { buildInput, slots, contentTypes, type BuildInput } from "@/lib/builds/validation";
 import { accountBuildDrafts, accountLogoutEvent } from "@/lib/account-build-drafts";
+import {
+  guestBuildStorageKey,
+  readGuestBuildDraft,
+  writeGuestBuildDraft,
+} from "@/lib/guest-build-storage";
 function buildValidationMessage(issue?: { path: PropertyKey[]; message: string }) {
   if (!issue) return "Review your equipment and build settings before saving.";
   if (issue.message === "Equipment slots must be unique")
@@ -82,6 +87,9 @@ export function BuildEditor({
   const [baseVersion, setBaseVersion] = useState(version);
   const [recoveryMessage, setRecoveryMessage] = useState("");
   const [recoveryReady, setRecoveryReady] = useState(false);
+  const [guestRecoveryReady, setGuestRecoveryReady] = useState(false);
+  const guestDeviceKey = guestBuildStorageKey(recoveryKey, !!initial);
+  const protectedGuestRecord = useRef(false);
   const recoveryLease = useRef<number | undefined>(undefined);
   const accountNavigationDraft = useRef<{
     ownerId: string;
@@ -98,7 +106,6 @@ export function BuildEditor({
   const [section, setSection] = useState<"equipment" | "abilities" | "alternatives" | "notes">(
     "equipment",
   );
-  const restored = useRef(false);
   const guestNavigationDraft = useRef<BuildInput | null>(null);
   useEffect(() => {
     if (guest || !ownerId || !recoveryKey) return;
@@ -161,12 +168,9 @@ export function BuildEditor({
   useEffect(() => {
     if (!dirty) return;
     function flushGuestDraft() {
-      if (!guest) return false;
-      const parsed = buildInput.safeParse(draft);
-      if (!parsed.success) return false;
+      if (!guest || !guestRecoveryReady || protectedGuestRecord.current) return false;
       try {
-        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
-        return true;
+        return writeGuestBuildDraft(localStorage, guestDeviceKey, draft).status === "saved";
       } catch {
         return false;
       }
@@ -211,59 +215,75 @@ export function BuildEditor({
       window.removeEventListener(accountLogoutEvent, beforeLogout);
       document.removeEventListener("click", followLink, true);
     };
-  }, [dirty, guest, draft]);
+  }, [dirty, guest, draft, guestRecoveryReady, guestDeviceKey]);
   useEffect(() => {
-    if (!guest || initial || restored.current) return;
+    if (!guest) return;
     const frame = requestAnimationFrame(() => {
-      restored.current = true;
       try {
-        const saved = localStorage.getItem("outpost-guest-build-v1");
-        if (!saved) return;
-        if (saved.length > 65536) throw new Error();
-        const parsed = buildInput.parse(JSON.parse(saved));
-        setDraft(parsed);
-        setShareMessage("Guest draft restored from this device.");
+        const saved = readGuestBuildDraft(localStorage, guestDeviceKey);
+        if (saved.status === "ready") {
+          setDraft(saved.draft);
+          setSavedDraft(JSON.stringify(saved.draft));
+          setShareMessage("Guest draft restored from this device.");
+        } else if (saved.status === "invalid") {
+          protectedGuestRecord.current = true;
+          setError(
+            "The saved device draft could not be restored and has been kept. Export your current build or use Save on this device to replace it deliberately.",
+          );
+        } else if (saved.status === "unavailable") {
+          protectedGuestRecord.current = true;
+          setError(
+            "Device storage is unavailable. Export JSON to keep your build; automatic save is paused.",
+          );
+        }
       } catch {
+        protectedGuestRecord.current = true;
         setError(
-          "The saved guest draft could not be restored. You can start a new build or import JSON.",
+          "Device storage is unavailable. Export JSON to keep your build; automatic save is paused.",
         );
+      } finally {
+        setGuestRecoveryReady(true);
       }
     });
     return () => cancelAnimationFrame(frame);
-  }, [guest, initial]);
-  useEffect(() => {
+  }, [guest, guestDeviceKey]);
+  useLayoutEffect(() => {
     // Keep only committed input, and never flush the initial empty state over a
     // saved guest draft while the asynchronous restoration frame is pending.
-    if (!guest || (!restored.current && !initial)) return;
+    if (!guest || !guestRecoveryReady) return;
     guestNavigationDraft.current = draft;
-  }, [draft, guest, initial]);
+  }, [draft, guest, guestRecoveryReady]);
   useEffect(() => {
     if (!guest) return;
     return () => {
-      const parsed = buildInput.safeParse(guestNavigationDraft.current);
-      if (!parsed.success) return;
+      if (!guestNavigationDraft.current || protectedGuestRecord.current) return;
       try {
-        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
+        writeGuestBuildDraft(localStorage, guestDeviceKey, guestNavigationDraft.current);
       } catch {
         // Explicit links/unload retain their existing storage-failure prompt.
       }
     };
-  }, [guest]);
+  }, [guest, guestDeviceKey]);
   useEffect(() => {
-    if (!guest || (!restored.current && !initial)) return;
+    if (!guest || !guestRecoveryReady || protectedGuestRecord.current) return;
     const parsed = buildInput.safeParse(draft);
     if (!parsed.success) return;
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
-        setSavedDraft(JSON.stringify(parsed.data));
-        setShareMessage("Draft saved on this device.");
+        const saved = writeGuestBuildDraft(localStorage, guestDeviceKey, parsed.data);
+        if (saved.status === "saved") {
+          setSavedDraft(saved.json);
+          setShareMessage("Draft saved on this device.");
+        } else
+          setShareMessage(
+            "Automatic save is unavailable. Keep device drafts under64KB or export JSON for a backup.",
+          );
       } catch {
         setShareMessage("Automatic save is unavailable. Export your build to keep a backup.");
       }
     }, 700);
     return () => clearTimeout(timer);
-  }, [draft, guest, initial]);
+  }, [draft, guest, guestRecoveryReady, guestDeviceKey]);
   const router = useRouter();
   const update = <K extends keyof BuildInput>(key: K, value: BuildInput[K]) =>
     setDraft({ ...draft, [key]: value });
@@ -317,8 +337,17 @@ export function BuildEditor({
     setError("");
     try {
       if (guest) {
-        localStorage.setItem("outpost-guest-build-v1", JSON.stringify(parsed.data));
-        setSavedDraft(JSON.stringify(parsed.data));
+        const saved = writeGuestBuildDraft(localStorage, guestDeviceKey, parsed.data);
+        if (saved.status !== "saved") {
+          setError(
+            saved.status === "oversized"
+              ? "Device drafts must stay under64KB. Export JSON to keep this larger build."
+              : "Your browser could not save this draft. Export JSON to keep a backup.",
+          );
+          return;
+        }
+        protectedGuestRecord.current = false;
+        setSavedDraft(saved.json);
         setShareMessage(
           "Guest draft saved on this device. No account or public build was created.",
         );
@@ -355,11 +384,11 @@ export function BuildEditor({
     <form
       onSubmit={save}
       className="build-editor focused-build-editor"
-      aria-busy={!guest && !!ownerId && !!recoveryKey && !recoveryReady}
+      aria-busy={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
     >
       <fieldset
         className="editor-ready-guard"
-        disabled={!guest && !!ownerId && !!recoveryKey && !recoveryReady}
+        disabled={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
       >
         <div className="editor-backline">
           <Link href="/builds">

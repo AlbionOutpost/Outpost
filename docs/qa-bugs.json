@@ -1165,6 +1165,24 @@
         "docs/design-review/builds-system/DELIVERABLES.md",
         "scripts/qa-cloudflare-database.mjs"
       ]
+    },
+    {
+      "id": "QA-081",
+      "title": "Guest source-copy reload discards edits and overwrites the saved draft",
+      "severity": "P1",
+      "status": "FIXED",
+      "reproduction": "An anonymous visitor copies Battleaxe Mist Build, edits its title, waits for device autosave, then reloads the same from=source URL.",
+      "expected": "The validated edited source-copy draft restores; plain-new and other source/region drafts remain independent.",
+      "current": "Guest source copies restore validated draft state before controls become editable, using source/region-scoped device records. Plain-new retains its legacy key; protected invalid records require explicit successful Save to replace.",
+      "historical_cause": "Source initial data bypassed guest restoration while still autosaving into the shared plain-new key.",
+      "historical_files": "src/components/build-editor.tsx; src/lib/guest-build-storage.ts; e2e/guest-build.spec.ts",
+      "verification": "Actual original anonymous public reset/overwrite retained. Final Node22 phase passes339 units/118 production browser cases/15 disposable PostgreSQL checks/nine regional reads and all ten gates; complete rebuilt Cloudflare web118/118 passes. Source-copy title/equipment/abilities reload, immediate navigation, source/region/context isolation, corrupt preservation and explicit replacement pass. Initial new Node115/118 failures remain: two stale shared-key assumptions and a history-navigation synchronization omission were corrected with destination/source URL plus record assertions; original gear/spell/strategy assertions remain. Publication/read-back is recorded separately.",
+      "evidence": [
+        "docs/design-review/builds-system/DELIVERABLES.md",
+        "docs/design-review/builds-system/editor.md",
+        "e2e/guest-build.spec.ts",
+        "tests/guest-build-storage.test.ts"
+      ]
     }
   ]
 }

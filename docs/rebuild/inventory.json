@@ -107,11 +107,11 @@
     "apiRoutes": 35,
     "httpOperations": 46,
     "components": 94,
-    "libraryModules": 90,
+    "libraryModules": 91,
     "models": 29,
     "enums": 3,
     "migrations": 18,
-    "files": 684
+    "files": 686
   },
   "pages": [
     {
@@ -1292,7 +1292,8 @@
         "@/components/link",
         "next/navigation",
         "@/lib/builds/validation",
-        "@/lib/account-build-drafts"
+        "@/lib/account-build-drafts",
+        "@/lib/guest-build-storage"
       ],
       "exports": ["BuildEditor"]
     },
@@ -2834,6 +2835,18 @@
       "exports": ["groupAction"]
     },
     {
+      "source": "src/lib/guest-build-storage.ts",
+      "client": false,
+      "imports": ["./builds/validation"],
+      "exports": [
+        "guestBuildDraftLimit",
+        "guestBuildStorageKey",
+        "legacyGuestBuildKey",
+        "readGuestBuildDraft",
+        "writeGuestBuildDraft"
+      ]
+    },
+    {
       "source": "src/lib/http-error.ts",
       "client": false,
       "imports": [],
@@ -3933,8 +3946,8 @@
     },
     {
       "path": "e2e/build-editor-recovery.spec.ts",
-      "bytes": 9077,
-      "sha256": "fa4f8665acef3254b5ec6921366c6d01290f466167057a7caf8222f955b368c5"
+      "bytes": 9242,
+      "sha256": "3cde3854c440ef00536bdfcad88aadcdf9b23525b3e76c1c3679f82a7cfe7363"
     },
     {
       "path": "e2e/build-editor-visual.spec.ts",
@@ -4003,13 +4016,13 @@
     },
     {
       "path": "e2e/grind-build-fidelity.spec.ts",
-      "bytes": 5473,
-      "sha256": "f78aa539e2beb298c3345ae297e98faea8178fa781035a7267ede3c216a7f870"
+      "bytes": 5705,
+      "sha256": "de4c3db4ea22e3b50f5030aea3b45c0c9b7823fb30abae752fa77e7fb9861f6d"
     },
     {
       "path": "e2e/grind-library.spec.ts",
-      "bytes": 7731,
-      "sha256": "2ba6eca1772c9844723b256aa964a067dcb51178c24d7930f1e171cb781cdd39"
+      "bytes": 7965,
+      "sha256": "7bdbb6d7c5be03b4de52dc88b22462c007efbc1b13f21d559600b46f69d15f69"
     },
     {
       "path": "e2e/group-editing.spec.ts",
@@ -4023,8 +4036,8 @@
     },
     {
       "path": "e2e/guest-build.spec.ts",
-      "bytes": 7107,
-      "sha256": "be4d2125f5236d4e460ce768d13b8e6d25c8bd4de3bcadd5387b20cb9d91170a"
+      "bytes": 11469,
+      "sha256": "41251a93e68326deb658014141dad8ac6a09a532a676c261243bf4de1195e455"
     },
     {
       "path": "e2e/guild-visual.spec.ts",
@@ -5758,8 +5771,8 @@
     },
     {
       "path": "src/components/build-editor.tsx",
-      "bytes": 33113,
-      "sha256": "37d097b3986bc0ac77766b872e51c3d3a0268fd0387e55d52af215feba788150"
+      "bytes": 34546,
+      "sha256": "830c8b352d3ee1bcfc6a9e99c807527767d92bf6fb4da5434055b58037ab7134"
     },
     {
       "path": "src/components/build-equipment-studio.tsx",
@@ -6582,6 +6595,11 @@
       "sha256": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4"
     },
     {
+      "path": "src/lib/guest-build-storage.ts",
+      "bytes": 1749,
+      "sha256": "234af42ad6daff526f8d4b6d50ebb8334e6e48ecd2c7c9a49d207e29df417fc6"
+    },
+    {
       "path": "src/lib/http-error.ts",
       "bytes": 198,
       "sha256": "27b98b257307e18b2298bd2d6372dd35cfaad778c3b3b578ca241c1f975a9b0b"
@@ -6860,6 +6878,11 @@
       "path": "tests/grind-library.test.ts",
       "bytes": 4783,
       "sha256": "2b45c406d796bc87d7c2315c73f318929c1c4bc58160dde64397d24ef19c72cd"
+    },
+    {
+      "path": "tests/guest-build-storage.test.ts",
+      "bytes": 3981,
+      "sha256": "1dc2ba231c815f77ee0b28d4153db02baa77ac9a9deea9ea8f9379fa654b0277"
     },
     {
       "path": "tests/icon-cache.test.ts",

@@ -1,5 +1,6 @@
 import { selectEditorSlot } from "./support/build-editor";
 import { test, expect } from "@playwright/test";
+import { guestBuildStorageKey } from "../src/lib/guest-build-storage";
 test("guest can edit, preview, save, restore and export a build without gaining account write access", async ({
   page,
   context,
@@ -144,4 +145,86 @@ test("guest can edit, preview, save, restore and export a build without gaining 
       true,
     );
   }
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=europe");
+  await expect(page.getByLabel("Build title", { exact: true })).toBeEnabled();
+  await page.getByLabel("Build title", { exact: true }).fill("Source-specific guest draft");
+  await selectEditorSlot(page, "Helmet");
+  await page.getByRole("button", { name: /^Choose Helmet equipment:/ }).click();
+  await page.getByRole("button", { name: /^Equip Scholar Cowl\b/ }).click();
+  await page.getByLabel("Helmet Active", { exact: true }).selectOption("Energy Shield");
+  await page.getByRole("button", { name: "Save on this device", exact: true }).click();
+  const sourceKey = guestBuildStorageKey("new:battleaxe-mist-build:europe", true);
+  await page.reload();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Source-specific guest draft",
+  );
+  await selectEditorSlot(page, "Helmet", "Abilities");
+  await expect(page.getByLabel("Helmet Active", { exact: true })).toHaveValue("Energy Shield");
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).title, sourceKey),
+  ).toBe("Source-specific guest draft");
+  await page.locator(".editor-backline").getByRole("link", { name: "Builds", exact: true }).click();
+  await expect(page).toHaveURL(/\/builds$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/builds\/new\?from=battleaxe-mist-build&region=europe$/);
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Source-specific guest draft",
+  );
+  await page.getByLabel("Build title", { exact: true }).fill("Source immediate history recovery");
+  await page.goForward();
+  await expect(page).toHaveURL(/\/builds$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/builds\/new\?from=battleaxe-mist-build&region=europe$/);
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Source immediate history recovery",
+  );
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).title, sourceKey),
+  ).toBe("Source immediate history recovery");
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=asia");
+  await expect(page.getByLabel("Build title", { exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Build title", { exact: true })).not.toHaveValue(
+    "Source immediate history recovery",
+  );
+  await page.getByLabel("Build title", { exact: true }).fill("Independent Asia source draft");
+  await page.getByRole("button", { name: "Save on this device", exact: true }).click();
+  await page.reload();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Independent Asia source draft",
+  );
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=europe");
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "Source immediate history recovery",
+  );
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
+  ).toBe("Guest immediate history recovery");
+  const corrupt = '{"incomplete":true}';
+  const sourceIsolated = await context.browser()!.newContext();
+  try {
+    const other = await sourceIsolated.newPage();
+    await other.goto("/builds/new?from=battleaxe-mist-build&region=europe");
+    await expect(other.getByLabel("Build title", { exact: true })).toBeEnabled();
+    await expect(other.getByLabel("Build title", { exact: true })).not.toHaveValue(
+      "Source immediate history recovery",
+    );
+  } finally {
+    await sourceIsolated.close();
+  }
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, value), {
+    key: sourceKey,
+    value: corrupt,
+  });
+  await page.reload();
+  await expect(page.locator(".focused-build-editor").getByRole("alert")).toContainText(
+    "has been kept",
+  );
+  await page.clock.install();
+  await page.clock.fastForward(1500);
+  expect(await page.evaluate((key) => localStorage.getItem(key), sourceKey)).toBe(corrupt);
+  await page.getByLabel("Build title", { exact: true }).fill("Deliberately replaced source draft");
+  await page.getByRole("button", { name: "Save on this device", exact: true }).click();
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).title, sourceKey),
+  ).toBe("Deliberately replaced source draft");
 });

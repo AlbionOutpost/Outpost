@@ -132,6 +132,11 @@ test("editor keeps a failed draft for retry and exports a stale revision without
     expect(draft.title).toBe("Unsaved conflicting draft");
     expect(draft.equipment[0].itemId).toBe("T4_MAIN_AXE");
     expect(await page.evaluate(() => localStorage.getItem("outpost-guest-build-v1"))).toBeNull();
+    expect(
+      await page.evaluate(() =>
+        Object.keys(localStorage).filter((key) => key.startsWith("outpost-guest-build-v1")),
+      ),
+    ).toEqual([]);
     expect(await page.evaluate(() => Object.keys(sessionStorage))).toEqual([]);
 
     // Keep this document alive by cancelling the hard redirect. Logout still

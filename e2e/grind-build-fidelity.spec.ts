@@ -39,6 +39,9 @@ test("archived traits, alternate spells and creator links survive an independent
   await page.getByRole("button", { name: "Save on this device", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Guest draft saved" })).toBeVisible();
   await page.goto("/builds/new");
+  await expect(page.getByLabel("Build title", { exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue("");
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=asia");
   await selectEditorSlot(page, "Helmet", "Abilities");
   await expect(page.getByLabel("Helmet Active", { exact: true })).toHaveValue("Purge");
   await page.getByText("Import & export", { exact: true }).click();

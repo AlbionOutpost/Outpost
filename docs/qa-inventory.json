@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "reviewed_at": "2026-10-29T00:46:15.473263+00:00",
+  "reviewed_at": "2026-10-29T03:10:55.680845+00:00",
   "scoring": {
     "weights": {
       "core": 25,
@@ -54,7 +54,7 @@
       "title": "Build equipment editor and persistence",
       "implementation": "PARTIAL",
       "verification": "VERIFIED",
-      "verified_scope": "7,510 pinned-source equipment variants across ten slots, historical ability choices, quality, per-item alternatives, three starting templates, up to five named spare sets and existing persistence/revisions. Builds now use a shared genuine spatial inventory board, selected-slot inspector and focused Equipment/Abilities/Alternatives/Notes editor. Alternative Equip filters incompatible abilities, handles two-handed/off-hand removal and Undo restores complete canonical equipment including raw notes. Save retry retains inputs; real409 conflicts retain exportable drafts. Owner/build/revision-scoped bounded document-memory recovery survives account SPA history without private browser storage, gates first edits until ready and clears on save/logout. Guest history unmounts flush only validated drafts. Source-library copies preserve supported equipment/skills/spares as independent drafts. Viewer quality assumptions, unknown abilities, missing/stale observations and source dates remain explicit. Current-patch mechanics and full metadata coverage remain separate.",
+      "verified_scope": "7,510 pinned-source equipment variants across ten slots, historical ability choices, quality, per-item alternatives, three starting templates, up to five named spare sets and existing persistence/revisions. Builds now use a shared genuine spatial inventory board, selected-slot inspector and focused Equipment/Abilities/Alternatives/Notes editor. Alternative Equip filters incompatible abilities, handles two-handed/off-hand removal and Undo restores complete canonical equipment including raw notes. Save retry retains inputs; real409 conflicts retain exportable drafts. Owner/build/revision-scoped bounded document-memory recovery survives account SPA history without private browser storage, gates first edits until ready and clears on save/logout. Guest history unmounts flush only validated drafts. Source-copy guest drafts restore before editing and use independent source/region keys; plain-new retains its legacy record. The same64KiB UTF8 bound applies to reads/writes; invalid saved records require explicit replacement. The initial public reset/overwrite failure and corrected runtime tests are retained. Source-library copies preserve supported equipment/skills/spares as independent drafts. Viewer quality assumptions, unknown abilities, missing/stale observations and source dates remain explicit. Current-patch mechanics and full metadata coverage remain separate.",
       "remaining": "Current-patch unlocks, full statistics and complete item coverage remain unverified. Narrow overview disclosure now passes regression; owner visual acceptance stays open.",
       "evidence": [
         "src/lib/builds/validation.ts",
@@ -81,7 +81,9 @@
         "docs/design-review/builds-system/DELIVERABLES.md",
         "src/lib/account-build-drafts.ts",
         "e2e/build-editor-recovery.spec.ts",
-        "e2e/build-composition.spec.ts"
+        "e2e/build-composition.spec.ts",
+        "src/lib/guest-build-storage.ts",
+        "tests/guest-build-storage.test.ts"
       ]
     },
     {
@@ -993,8 +995,8 @@
       "title": "Hosted repository CI",
       "implementation": "COMPLETE",
       "verification": "VERIFIED",
-      "verified_scope": "Main sourcea2d70d3 passed actual hosted workflow40740329022: complete Node quality job,19 native SQLite checks,102 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40740328218 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent post-deployment strict public smoke/auth-start passes. Historical failures and superseded runs remain retained.",
-      "remaining": "Future product commits need their own observed hosted result. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery are separate unverified gates.",
+      "verified_scope": "Main redesign sourcec88249d passed actual hosted workflow40807315490: complete Node quality job,20 native SQLite checks,118 Cloudflare browser cases, both Free bundle checks and both Worker deployments. Documentation workflow40807315267 passed. CI public HTTP is explicitly BLOCKED by managed challenge; independent owned-network public evidence is separate. Historical failures and superseded runs remain retained.",
+      "remaining": "Later source-copy recovery changes need their own hosted result; local/native tests and public deployment are recorded separately. Managed challenges remain BLOCKED rather than public-app PASS. Genuine personal OAuth, load capacity and hosted recovery remain unverified.",
       "evidence": [
         ".github/workflows/quality.yml",
         ".github/dependabot.yml",

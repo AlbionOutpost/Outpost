@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase_checked_at": "2026-10-29T02:17:21.364Z",
+  "phase_checked_at": "2026-10-29T03:10:26.584Z",
   "scope": "Recorded local Node22 execution; fixtures are not real OAuth, legal/design acceptance or hosted CI.",
   "checks": [
     {
@@ -11,12 +11,12 @@
     {
       "name": "typecheck",
       "status": "PASS",
-      "seconds": 2.22
+      "seconds": 1.92
     },
     {
       "name": "lint",
       "status": "PASS",
-      "seconds": 5.99
+      "seconds": 5.84
     },
     {
       "name": "unit",
@@ -26,7 +26,7 @@
     {
       "name": "game-data-structure",
       "status": "PASS",
-      "seconds": 0.29
+      "seconds": 0.28
     },
     {
       "name": "database-integration",
@@ -36,33 +36,33 @@
     {
       "name": "build",
       "status": "PASS",
-      "seconds": 5.27
+      "seconds": 4.75
     },
     {
       "name": "browser",
       "status": "PASS",
-      "seconds": 124.95
+      "seconds": 125.28
     },
     {
       "name": "dependencies",
       "status": "PASS",
-      "seconds": 0.38
+      "seconds": 0.41
     },
     {
       "name": "live-regions",
       "status": "PASS",
-      "seconds": 0.32
+      "seconds": 0.33
     }
   ],
   "counts": {
-    "unit_passed": 335,
+    "unit_passed": 339,
     "browser_passed": 118,
     "database_passed": 15,
     "database_total": 15,
     "live_region_endpoints": 9
   },
   "game_data": {
-    "checkedAt": "2026-10-29T02:31:52.452Z",
+    "checkedAt": "2026-10-29T03:09:44.879Z",
     "scope": "Repository workbench data, including source-listed metadata; not a live database audit or complete game denominator.",
     "verificationStages": {
       "authoredEquipment": 7510,
@@ -4426,9 +4426,9 @@
     "scope": "Registry maintenance notice only; lint execution and vulnerability advisories are separate."
   },
   "visual_review": {
-    "checkedAt": "2026-10-29T02:30:21.009431+00:00",
-    "phase": "2026-10-29T02:17:21.364Z",
-    "scope": "Complete supported Builds ecosystem:335 Node units/118 Node production browser cases/15 disposable PostgreSQL checks/nine regional reads pass all ten gates. The rebuilt native Cloudflare application also passes118/118 browser cases;20 native database cases now exercise actual named discovery/favorites services, actor and membership guards, exact Date/related projections and SQLite JSON preservation. Thirty-five inspected production states cover source library/detail, guest source editing, My Builds and Favorites at320/375/390/768/1024/1440/1920; four expanded production editor states confirm mobile tabs, full-height picker, label alignment, no sampled axe/page errors or overflow. Original failed discovery/detail/editor/Cloudflare runs remain recorded, including the107/118 web failure corrected through approved private services without weakening the transaction guard. Fixtures are not personal OAuth, current-patch/physical-device/owner acceptance or production restoration evidence.",
+    "checkedAt": "2026-10-29T03:11:14.422627+00:00",
+    "phase": "2026-10-29T03:10:26.584Z",
+    "scope": "Complete supported Builds ecosystem:339 Node units/118 production browser cases/15 disposable PostgreSQL checks/nine regional reads pass all ten gates; rebuilt Cloudflare application118/118 passes. Existing20 actual named native database service cases remain valid for unchanged database source. The original public source-copy reload loss is reproduced, corrected and tested: source/region-scoped device recovery, legacy plain-new isolation, readiness, complete gear/ability restoration, immediate history, corrupt-record retention and explicit replacement. Initial115/118 Node failures are preserved with stale shared-key assumptions and navigation synchronization causes; final assertions require correct values, URLs and stored records. Existing35 seven-width production states and expanded editor captures cover unchanged visual styles; public patched-editor screenshots/read-back are separate. Fixtures are not personal OAuth, current-patch, physical-device, owner acceptance or production restoration proof.",
     "files": [
       {
         "path": ".qa/cloudflare-hosted-visual/manifest.json",
@@ -4476,11 +4476,11 @@
       },
       {
         "path": ".qa/cloudflare-launch/hosted-smoke.json",
-        "sha256": "c5cf8a22391ba228033a4b1137c97a196727739e9f2513c0c05e493d42f0964c"
+        "sha256": "68c308756aa07d867512343c01cca97c91d6f262f8c091c53e158a471d7b248e"
       },
       {
         "path": ".qa/cloudflare-launch/hosted-auth-start.json",
-        "sha256": "b9396cf96c4a6b1743992489505d44d15af720500bf85291caa88fd91e06366a"
+        "sha256": "289c2f92d74ca9a4df178a237aa2c653ef0eebeb9afa03e323cc9f688199e01c"
       },
       {
         "path": ".qa/cloudflare-hosted-visual/builds-new-768.png",
@@ -4488,7 +4488,7 @@
       },
       {
         "path": ".qa/cloudflare-launch/deployment-check.json",
-        "sha256": "4cb6560c473cd3c536efa7ac1e107d05aa2892545abfd76c817fc1d544915443"
+        "sha256": "36d5b9f7664f21480593d301a2478cdb4b4035cb81704842201101073abf6d27"
       },
       {
         "path": ".qa/cloudflare-launch/github-firewall-events.json",
@@ -4844,7 +4844,7 @@
       },
       {
         "path": "docs/design-review/builds-system/README.md",
-        "sha256": "6a3e718f58decb1ce63326c49446125866933031f53a23072b52f3ff8cde396c"
+        "sha256": "5a65bed84dfd0f185f803ce096dce9f44f97cc5d1521532ba2064c19b0060970"
       },
       {
         "path": "docs/design-review/builds-system/library.md",
@@ -5000,11 +5000,11 @@
       },
       {
         "path": "docs/design-review/builds-system/DELIVERABLES.md",
-        "sha256": "50b7fb47d46ba74c9a587934703bb5264c420f26c15f5f37c04577f68cc34fbb"
+        "sha256": "fd1cc002b68f6b902faa8db5dbb494afbaf229232a480fb3084d0e0434b40a13"
       },
       {
         "path": "docs/design-review/builds-system/editor.md",
-        "sha256": "a84c0b6fe08090a77c9fdfa74a37b6b6be1678c5397cd6de0c6373759c99dbb5"
+        "sha256": "010e58a68dadc27b6a216db5e6832f20924bd7b3fa73410201f616d87d6c9983"
       },
       {
         "path": "docs/design-review/builds-system/composition-bridge.md",
@@ -5113,12 +5113,64 @@
       {
         "path": "scripts/qa-reports.py",
         "sha256": "4d02cd745dc437023ebe88cfbcf6fd408f72fb0f512f95a2e98bd6cf6e8677ee"
+      },
+      {
+        "path": "src/lib/guest-build-storage.ts",
+        "sha256": "234af42ad6daff526f8d4b6d50ebb8334e6e48ecd2c7c9a49d207e29df417fc6"
+      },
+      {
+        "path": "src/components/build-editor.tsx",
+        "sha256": "830c8b352d3ee1bcfc6a9e99c807527767d92bf6fb4da5434055b58037ab7134"
+      },
+      {
+        "path": "tests/guest-build-storage.test.ts",
+        "sha256": "1dc2ba231c815f77ee0b28d4153db02baa77ac9a9deea9ea8f9379fa654b0277"
+      },
+      {
+        "path": "e2e/guest-build.spec.ts",
+        "sha256": "41251a93e68326deb658014141dad8ac6a09a532a676c261243bf4de1195e455"
+      },
+      {
+        "path": "e2e/build-editor-recovery.spec.ts",
+        "sha256": "3cde3854c440ef00536bdfcad88aadcdf9b23525b3e76c1c3679f82a7cfe7363"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-first/phase-summary.json",
+        "sha256": "a1aed27cb9850c8fcc46c4081ebffd9a99dbcf6abcb534e7fced1f12ab76e68e"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-first/phase-browser.log",
+        "sha256": "e3d622b8df47fda11edc8089a5169bc75ab9202589ec92d4f2c96db787c1e0b3"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-final-phase.log",
+        "sha256": "241326aafaf84fc42a41f00db0d32372d740b6f5cddd684006cdc1be7bfa3761"
+      },
+      {
+        "path": ".qa/builds-redesign/guest-scope-cloudflare-browser.log",
+        "sha256": "7ef349ed01e3b6f5ab5f7b4b11c053162070b36e37a7078722ed75a9ecb321c9"
+      },
+      {
+        "path": ".qa/builds-redesign/public/source-reload-before.json",
+        "sha256": "8b13e39573aad08702a10adc0e318296bfc39f2feb8ecad28a457233f8ced898"
+      },
+      {
+        "path": ".qa/builds-redesign/public/interaction.json",
+        "sha256": "7df878cfb1f8ab65bd15fbe3bcaeb3ab21d3a07f5e9ee4112d7fc4ce8789b8a6"
+      },
+      {
+        "path": ".qa/builds-redesign/github-c88249d.log",
+        "sha256": "46792d17519c5477aa5853fc394c2a592628b652c144522e8d8136a77b0fb79f"
+      },
+      {
+        "path": ".qa/builds-redesign/public-c882-after-ci-check.log",
+        "sha256": "9be2a3d94cd47dc939c63f954a04a83e3c7f633612039d81745c437844a47a3a"
       }
     ],
-    "latestImplementationNote": "Source work is verified locally and on native workerd; new GitHub/public publication is pending. Production challenge build and Free dry-runs are separate from fixture-key browser testing. No new database/auth library, schema migration, paid service, inferred combat/IP or fabricated popularity/verification was added. Single-sample mobile LCP remains3.3\u20133.7s with CLS0; no field, controlled improvement, Worker CPU/quota or conformance claim. Formal full-product/legal/data/OAuth/owner gates remain open despite prior explicit authorization for public availability."
+    "latestImplementationNote": "Main redesign c88249d completed actual GitHub quality/native/browser/Free/deployment run40807315490. CI public HTTP was explicitly BLOCKED by managed challenge; independent strict owned-network public checks pass. New guest patch has final local and native browser verification; its publication/read-back is pending. No new DB/auth library, schema migration, paid service, fabricated metrics or account device storage. Existing LCP samples remain3.3\u20133.7s/CLS0; no Worker CPU/field or conformance claim."
   },
   "source_scan": {
-    "filesScanned": 4230,
+    "filesScanned": 4232,
     "configuredKeys": [
       "NEXTAUTH_SECRET@environment",
       "DISCORD_CLIENT_SECRET@environment",
@@ -5134,7 +5186,7 @@
     "scope": "Candidate source/config text only; ignored environments/generated files excluded. No Git history scan or complete secret-audit certification."
   },
   "bundle_scan": {
-    "filesScanned": 135,
+    "filesScanned": 66,
     "configuredSecretKeys": [
       "NEXTAUTH_SECRET",
       "DISCORD_CLIENT_SECRET",
@@ -5151,7 +5203,7 @@
   "local_artifacts": [
     {
       "path": ".qa/phase-summary.json",
-      "sha256": "9c07efc8a6ced85c6ce0df9a6dc94a420a15f5a7d7fb041bdb6f4bf3d1ce8c3a",
+      "sha256": "074e93947b1cafe6ac29389349f19ea1433cdb9857e78c270087669d38409142",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -5161,22 +5213,22 @@
     },
     {
       "path": ".qa/game-data-coverage.json",
-      "sha256": "67dc776832813c40d0d1fae4f7cd6a74596a40614981ee44661e89283060030a",
+      "sha256": "faa8693032b9272f45389ba05dd92204a156e736ae133de977c5dd6d2eba558e",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/repository-source-scan.json",
-      "sha256": "a69087551ac370e0adf68776ded4594ffa123deb6d6916e32dd332396b2bd236",
+      "sha256": "f4aea8889d8fb7017075b90695ae07baebf9840741ed486da19354d6a3d3c5c0",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/secret-scan.json",
-      "sha256": "e398f72a1c7c321cabeb048c6e7a8627210171b1fcc6692b9380eab32b5a6535",
+      "sha256": "efb8d963ffcc92cc40672071d9f4161b9501011b79a89e57d4f3ad6ef503c2aa",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-database-connectivity.log",
-      "sha256": "32ce3df2b7b6c2ebb323be571f2b3b85ab84b7067c0d16ed7a70564c2c20b3a5",
+      "sha256": "b9c8c51625930142b8921bb36a6c10db23c337f4f5f15ed6cfd96993d6e7dc28",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -5191,7 +5243,7 @@
     },
     {
       "path": ".qa/phase-unit.log",
-      "sha256": "94200a3f995a343a9c469afff138e39cc8cd572381e312fd5953f2eef6556046",
+      "sha256": "2f38bc21e893801df9b0f20ce265329544ab927db717480f37cbe3de7b56e149",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -5206,12 +5258,12 @@
     },
     {
       "path": ".qa/phase-build.log",
-      "sha256": "84930e2458872dd77df20f3aa1e7917ba31fb83442a3ac01b4d36a02870329fe",
+      "sha256": "85b92b04ea2a0ffc2cb4083ff5e7f4c29a37cc9bd3c28e62f1a35d3668557feb",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
       "path": ".qa/phase-browser.log",
-      "sha256": "8d5c6f898dfbdccbe6d3a9af4be91c4bbbe927b0cf0c4f366fe1ae5ce09a76a3",
+      "sha256": "60a4837b51c111e6080409faf905b23bdb220e6dd6e7dfe455222dee8754dc12",
       "availability": "local ignored artifact; portable summary retained here"
     },
     {
@@ -5241,7 +5293,7 @@
     },
     {
       "path": ".qa/documentation-reconciliation/visual-review.json",
-      "sha256": "cbe6c9da09828ceb53298540eefc9ff08b49d5acf552d2c9800336ce8defc467",
+      "sha256": "5c6600dd4d4b3e45e525adb6485197c75ca4c7205a984a7d5bead3f9b58b3b2c",
       "availability": "local ignored artifact; portable summary retained here"
     }
   ],
@@ -5257,7 +5309,7 @@
     "e2e/build-detail-navigation.spec.ts": "b99fb87e8213ab253fa2e7003b8d82d5743f9f3fed08d9c3b490327dffee31af",
     "e2e/build-detail-workspace.spec.ts": "cc6d3294037968dc0f0c2c890d3f0fa1ff871ac284505e1e375553ff9bc1d331",
     "e2e/build-discovery-visual.spec.ts": "6ceeea7743e89b66be182be3b528131c99474e11f57328fed75f8dc2ca0df1a6",
-    "e2e/build-editor-recovery.spec.ts": "fa4f8665acef3254b5ec6921366c6d01290f466167057a7caf8222f955b368c5",
+    "e2e/build-editor-recovery.spec.ts": "3cde3854c440ef00536bdfcad88aadcdf9b23525b3e76c1c3679f82a7cfe7363",
     "e2e/build-editor-visual.spec.ts": "06b911b9cfa546f81167eaa855268f4d8533f7485321ca03b8c3ea404d8c5914",
     "e2e/build-sharing.spec.ts": "f2fa1d89fd4b2851743eeeb563a03a698991cf9dd90986c2551a76c7fdaf25be",
     "e2e/builds-system.spec.ts": "e41bc5a8ae4cbdeed0832ab7b95e049cb3dc55bee7a37094c5a7593be3abe307",
@@ -5271,11 +5323,11 @@
     "e2e/equipment-sets.spec.ts": "b35d78f11ecc487e195be4abcec58d4b358f0af430e6245d3477a96453404413",
     "e2e/farming.spec.ts": "94bafedceffa3f5661ea4816d017af476a49e3456eac53742411d2a264676c37",
     "e2e/fishing-journal.spec.ts": "153518a7c5dd9316d6fdb8924e929b6a84c419f812bd7600663afc3c29370140",
-    "e2e/grind-build-fidelity.spec.ts": "f78aa539e2beb298c3345ae297e98faea8178fa781035a7267ede3c216a7f870",
-    "e2e/grind-library.spec.ts": "2ba6eca1772c9844723b256aa964a067dcb51178c24d7930f1e171cb781cdd39",
+    "e2e/grind-build-fidelity.spec.ts": "de4c3db4ea22e3b50f5030aea3b45c0c9b7823fb30abae752fa77e7fb9861f6d",
+    "e2e/grind-library.spec.ts": "7bdbb6d7c5be03b4de52dc88b22462c007efbc1b13f21d559600b46f69d15f69",
     "e2e/group-editing.spec.ts": "fe5204099d7a5a0056cd9223ced662a4abbc97af5209d4bad1bb7242f9e4d418",
     "e2e/groups.spec.ts": "fec53f03e2f13f7ec4118915fee885c8ff208de64188d89ff0f2f2d408565832",
-    "e2e/guest-build.spec.ts": "be4d2125f5236d4e460ce768d13b8e6d25c8bd4de3bcadd5387b20cb9d91170a",
+    "e2e/guest-build.spec.ts": "41251a93e68326deb658014141dad8ac6a09a532a676c261243bf4de1195e455",
     "e2e/guild-visual.spec.ts": "1a26840a373744b4dd6c603f535447cfa92e201a64819fcd8aa06b125c57b647",
     "e2e/history.spec.ts": "34baafe2bf51108edcdaf8b1a5ed2d7422a8ed8511a4ddebfb9656d79d4a5709",
     "e2e/home-market-pulse.spec.ts": "82f241d27022410cc91ed68115365c2df247729a7eb4a1d28fb9cf29e44d6713",
@@ -5545,7 +5597,7 @@
     "src/components/build-device-collections.tsx": "4797ff426d37520de02d5165ba2deae1f1f944225421a320e28705d48b3145d2",
     "src/components/build-discovery-header.tsx": "c3d81f9eb2e1d3ab7217f623bfa92aaff6838296a799c39bc8c80715033115ab",
     "src/components/build-discovery-search.tsx": "6eb2963a569cea4695543ceec406526b4534d25c881654d4946e0d84b2b6d6f3",
-    "src/components/build-editor.tsx": "37d097b3986bc0ac77766b872e51c3d3a0268fd0387e55d52af215feba788150",
+    "src/components/build-editor.tsx": "830c8b352d3ee1bcfc6a9e99c807527767d92bf6fb4da5434055b58037ab7134",
     "src/components/build-equipment-studio.tsx": "56da0e531fc72f1399cd77d07af5ae9abe7eecbb9e2e887adff5653935722da4",
     "src/components/build-loadout-view.tsx": "474982b36020a3a6b17f203db74547faf4a33ad215affd37f7040d604d3f3d87",
     "src/components/build-preview-card.tsx": "813745aa50d91b272b3b5fc600502cc4975ed216e2bb4b40e00e9af64938fea2",
@@ -5710,6 +5762,7 @@
     "src/lib/groups/permissions.ts": "1f1eeb2ff199bb78396c41888f137c5a80adfbe15ce02f2c434bb372aa7542c4",
     "src/lib/groups/service.ts": "1c4804a4c99410118bb2be25ce5962e093b8505eb3c35b1e968eb087e9b605d7",
     "src/lib/groups/validation.ts": "986d0003077be0e6bff503a3ca4c1561941890cc4d9da05a3bee7186314cc1f4",
+    "src/lib/guest-build-storage.ts": "234af42ad6daff526f8d4b6d50ebb8334e6e48ecd2c7c9a49d207e29df417fc6",
     "src/lib/http-error.ts": "27b98b257307e18b2298bd2d6372dd35cfaad778c3b3b578ca241c1f975a9b0b",
     "src/lib/http.ts": "5d3eb14af183ea674be8cc90e14f2e1b7e3642c4f1263464544c165d25fbdad2",
     "src/lib/inflight-cache.ts": "4507f1a51e583bc9a88d2eb619cbd1983ef5e59ecde082648e9f07fa3ecd988a",
@@ -5766,6 +5819,7 @@
     "tests/github-setup.test.ts": "b003dfeed10e1d804ad988bd1073de4146fd1799879466b938bdc29d44bdfb03",
     "tests/grind-build-fidelity.test.ts": "4df13ded07d820e6229677d45254b7a7c8c38b1f2bb7c909e877084ef0968768",
     "tests/grind-library.test.ts": "2b45c406d796bc87d7c2315c73f318929c1c4bc58160dde64397d24ef19c72cd",
+    "tests/guest-build-storage.test.ts": "1dc2ba231c815f77ee0b28d4153db02baa77ac9a9deea9ea8f9379fa654b0277",
     "tests/icon-cache.test.ts": "a6a671b3ff34d1525234e2822726974aff3dae41fda742c8cc7c8d449a54cae7",
     "tests/item-snapshot.test.ts": "ce01f8d8b8b6784ba80055fa936db5f2b68896b5d5158a3f18010c3efa67dc12",
     "tests/loadout-quotes.test.ts": "3128203d5e6a5d6ed795f6408df7942089750d66c2b0c994b82c7bc711b4abd9",
