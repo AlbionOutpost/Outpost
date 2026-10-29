@@ -1,74 +1,69 @@
-# Outpost API contracts
+# HTTP API
 
-The [rebuild HTTP specification](rebuild/HTTP_API.md) documents actual query/body shapes, errors and all exported operations; [generated route inventory](rebuild/INVENTORY.md) is checked against source.
+All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`PATCH`/`DELETE` on private data) go through `mutationUser`: same-origin `Origin`, a session, and the `content:<userId>` budget (30/min). Bodies must be `application/json` (64 KiB default, 1 MiB for comps). Errors are `{ error }` with non-disclosing messages; private responses are `Cache-Control: private, no-store`.
 
-Source schemas and access predicates are authoritative. Responses are JSON unless noted; private data uses no-store behavior. Mutations authenticate, enforce the configured same-origin boundary, apply budgets and parse bounded JSON. These source/test controls are scoped evidence, not comprehensive security certification.
+**Auth:** pub = public · sess = requires session · owner/member = checked against current DB rows.
 
-## Market, metadata and accounting inputs
+## Market and economy
 
-| Endpoint                    | Implemented contract                                                                                                                                                                                                                                                                                                                                                                                          |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /api/market`           | Region americas/europe/asia, validated uppercase item ID and quality1–5; actual buy/sell observation values and independent source dates. Zero means missing, fetchedAt is not observation freshness.                                                                                                                                                                                                         |
-| `GET /api/market/qualities` | Region, exact item ID and optional allowlisted city. Explicit user-requested five-quality alternatives retain source city/date and missing sides. No automatic quality substitution; Black Market asks are not purchase options. The handler requests30-second public caching; the hosted gateway overrides this with private,no-store. Exact shared source caches provide reuse; same public request budget. |
-| `GET /api/history`          | Selected item/city/quality daily aggregates or regional gold observations; source dates preserved. Aggregates are not a confirmed-trades feed.                                                                                                                                                                                                                                                                |
-| `GET /api/items`            | Bounded metadata search/filter results. Imported/local name merging occurs in the shared search helper; no full-catalog claim.                                                                                                                                                                                                                                                                                |
-| `GET /api/item-icon`        | Validated fixed-host artwork proxy with timeout/byte/budget/cache limits and neutral fallback; no arbitrary remote URLs.                                                                                                                                                                                                                                                                                      |
-| `GET /api/economy/prices`   | Supported starter recipe/variant/quality/region/material-city/output-city observations; missing remains null and source identity is retained.                                                                                                                                                                                                                                                                 |
-| `GET /api/transport/prices` | Supported cargo item/order-direction observations; no verified mount/weight dataset.                                                                                                                                                                                                                                                                                                                          |
-| `GET /api/opportunities`    | Bounded direct/Black Market observation scan; no executable-liquidity guarantee.                                                                                                                                                                                                                                                                                                                              |
+| Route                                                           | Auth | Purpose                                                | Limit                |
+| --------------------------------------------------------------- | ---- | ------------------------------------------------------ | -------------------- |
+| `GET /api/market`                                               | pub  | One item, one quality, all cities in a region          | 120/min              |
+| `GET /api/market/batch`                                         | pub  | 1–12 items, one quality                                | 120/min              |
+| `GET /api/market/qualities`                                     | pub  | All 5 qualities (optional city)                        | cached 30 s          |
+| `GET /api/history`                                              | pub  | Gold (168 points) or 30-day daily item history         | 60/min               |
+| `GET /api/economy/prices`                                       | pub  | All ingredient + output quotes for a production recipe | 60/min               |
+| `GET /api/transport/prices`                                     | pub  | Buy/sell pair for one route direction                  | 60/min               |
+| `GET /api/opportunities`                                        | pub  | Flip/transport scanner, ≤25 items                      | 30/min               |
+| `GET /api/combat-events`                                        | pub  | Kill/death feed (offset 0–200, step 20)                | 120/min, cached 15 s |
+| `GET /api/items`                                                | pub  | Catalog search, 30 per page                            | —                    |
+| `GET /api/item-icon`                                            | pub  | Renderer proxy with validated fallback                 | 240/min/process      |
+| `GET /api/search`                                               | pub  | Global search, permission-filtered                     | 120/min              |
+| `GET, POST /api/market-watch` · `DELETE /api/market-watch/[id]` | sess | Private watchlist                                      | content budget       |
 
-Relevant schemas/clients: [market](../src/lib/albion/market-client.ts), [production](../src/lib/albion/production.ts), [transport](../src/lib/albion/transport.ts) and [metadata](../src/lib/catalog/validation.ts). Invalid input, budget exhaustion and upstream outage are distinct errors; sources are not replaced with invented prices. [Source/formula provenance](../DATA_SOURCES.md).
+## Builds
 
-## Builds and compositions
+| Route                             | Auth               | Purpose                                                 |
+| --------------------------------- | ------------------ | ------------------------------------------------------- |
+| `POST /api/builds`                | sess               | Create (revision 1)                                     |
+| `GET /api/builds/[id]`            | visibility         | Read                                                    |
+| `PUT /api/builds/[id]`            | owner              | New revision (expected-version conflict check)          |
+| `DELETE /api/builds/[id]`         | owner              | Delete                                                  |
+| `POST /api/builds/[id]/duplicate` | sess + read access | Independent copy                                        |
+| `POST /api/builds/[id]/restore`   | owner              | Restore an earlier revision as a new one                |
+| `GET /api/builds/[id]/cost`       | pub (visibility)   | Replacement cost for a region/city, ≤1000 sets (60/min) |
 
-| Endpoint                                | Access and behavior                                                                                                                                                                                                                                   |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /api/builds`                      | Session/origin required; persists author from session and validated gear, then returns201.                                                                                                                                                            |
-| `GET/PUT/DELETE /api/builds/[id]`       | Public/unlisted or private-author read; author mutation with expected version for update. Hidden-content checks apply.                                                                                                                                |
-| `POST /api/builds/[id]/duplicate`       | Copy readable content into an independent private record.                                                                                                                                                                                             |
-| `POST /api/builds/[id]/restore`         | Owner historical restoration with expected version; new snapshot and current visibility retained.                                                                                                                                                     |
-| `GET /api/builds/[id]/cost`             | Read permission, selected region/city/sets and one exact multi-quality batch. Missing costs do not become a full total; unsafe whole-silver aggregates return knownCost/total null and unsupportedRange=true while raw observations remain available. |
-| `POST /api/compositions`                | Authenticated validated roster persistence.                                                                                                                                                                                                           |
-| `GET/PUT/DELETE /api/compositions/[id]` | Author/current group access as appropriate; expected version, editor-role checks and visibility/destination restrictions.                                                                                                                             |
-| `POST /api/compositions/[id]/duplicate` | Independent private draft with new roster identities.                                                                                                                                                                                                 |
-| `GET /api/compositions/loadout`         | Permission-checked build snapshot copied into a roster.                                                                                                                                                                                               |
+## Comps
 
-Build gear includes legacy prose plus structured `abilitySelections` and `alternativeItemIds`. Known starter selections/alternatives are validated against supported equipment; arbitrary legacy IDs/notes do not imply valid current-game metadata. Main hand and unique slots are required; full catalog/unlocks remain incomplete. [Build schema](../src/lib/builds/validation.ts), [build service](../src/lib/builds/service.ts), [composition schema](../src/lib/compositions/validation.ts), [composition service](../src/lib/compositions/service.ts).
+| Route                                   | Auth                         | Purpose                       |
+| --------------------------------------- | ---------------------------- | ----------------------------- |
+| `POST /api/compositions`                | sess                         | Create                        |
+| `GET /api/compositions/[id]`            | visibility / Team membership | Read                          |
+| `PUT, DELETE /api/compositions/[id]`    | owner / Team officer+        | Update (revisioned) or delete |
+| `POST /api/compositions/[id]/duplicate` | sess + read access           | Copy                          |
+| `GET /api/compositions/loadout`         | visibility                   | Resolve a member's loadout    |
 
-Build JSON uses the default64KiB boundary; composition roster operations explicitly allow bounded larger bodies. [Boundary implementation](../src/lib/http.ts). Concurrent stale revisions do not silently overwrite. Local composition JSON/PNG downloads are browser operations, not remote export/upload endpoints.
+## Teams
 
-## Guild and community operations
+| Route                                            | Auth                    | Purpose                                                                                                                              |
+| ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `POST /api/groups`                               | sess                    | Create a Team (caller becomes OWNER)                                                                                                 |
+| `GET /api/groups/[id]`                           | public Team or member   | Read                                                                                                                                 |
+| `POST /api/groups/[id]/actions`                  | role-checked per action | All Team mutations via `mutateGroup` (members, roles, invitations, announcements, events/RSVP, shared resources, ownership transfer) |
+| `GET, POST /api/groups/[id]/loot`                | member                  | Loot ledger and splits                                                                                                               |
+| `GET /api/groups/[id]/events/[eventId]/calendar` | member                  | ICS export                                                                                                                           |
+| `POST /api/invitations/[token]`                  | sess                    | Accept an invitation (hashed, expiring, revocable)                                                                                   |
 
-| Endpoint                                         | Access and behavior                                                                                                                                                                                                             |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /api/groups`                               | Creates guild and owner membership transactionally.                                                                                                                                                                             |
-| `GET /api/groups/[id]`                           | Current member resources; permitted public outsiders receive metadata without private dashboard content.                                                                                                                        |
-| `POST /api/groups/[id]/actions`                  | Validated action union: invitation/revoke, request/review, role/remove/leave/transfer/delete, announcements/events/RSVP, shared builds and profile/event edits. Current PostgreSQL roles and optimistic versions are rechecked. |
-| `POST /api/invitations/[token]`                  | Accept unexpired unused unrevoked hashed invitation; authenticated membership creation.                                                                                                                                         |
-| `GET /api/groups/[id]/events/[eventId]/calendar` | Member-only private calendar attachment; escaped/folded UTC snapshot with stable UID/revision, not a subscription.                                                                                                              |
-| `GET/POST /api/community/[kind]/[id]`            | Readable build/composition stats/comments and authenticated favorites, build votes, comments/revisions/deletion or reports. History additionally requires author/moderator permission.                                          |
-| `GET/POST /api/admin/reports`                    | Current ADMIN/MODERATOR role, paged review and expected versions, audit and hide/restore/resolve/dismiss. No public staff-role assignment.                                                                                      |
+## Community, account and personal
 
-[Guild action schema](../src/lib/groups/validation.ts), [role predicates](../src/lib/groups/permissions.ts), [community schema](../src/lib/community/validation.ts), [service/access](../src/lib/community/service.ts). Fixed-role collaboration exists; configurable roles/uploads and comprehensive abuse/appeals operations do not.
+| Route                                                      | Auth                  | Purpose                                                                 |
+| ---------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
+| `GET, POST /api/community/[kind]/[id]`                     | read pub · write sess | Favorites, votes, comments, reports (Turnstile on writes in production) |
+| `GET, POST /api/admin/reports`                             | ADMIN/MODERATOR       | Moderation queue, hide/restore                                          |
+| `GET, POST /api/scenarios` · `DELETE /api/scenarios/[id]`  | sess (owner)          | Saved calculator scenarios                                              |
+| `GET, POST /api/timers` · `PATCH, DELETE /api/timers/[id]` | sess (owner)          | Personal timers                                                         |
+| `GET /api/account/export`                                  | sess                  | Account data export (5/h)                                               |
+| `GET, POST /api/auth/[...nextauth]`                        | —                     | NextAuth (Discord), 240/min                                             |
+| `GET /api/health`                                          | pub                   | Health check                                                            |
 
-## Personal account and scenarios
-
-| Endpoint                        | Access and behavior                                                                                                                                                                                           |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /api/scenarios?kind=...`   | Current user's newest50 records, with validated optional kind filtering before pagination.                                                                                                                    |
-| `POST /api/scenarios`           | Private validated production, transporting or flipping assumptions.                                                                                                                                           |
-| `DELETE /api/scenarios/[id]`    | Owner deletion; outsiders receive unavailable/not-owned response.                                                                                                                                             |
-| `GET/POST /api/timers`          | Owner-scoped bounded listing/create of manual timers.                                                                                                                                                         |
-| `PATCH/DELETE /api/timers/[id]` | Owner transitions/rename/delete with optimistic revision checks.                                                                                                                                              |
-| `GET /api/search`               | Bounded permission-filtered items/builds/compositions/groups/tools; immediate membership/hidden-content filtering.                                                                                            |
-| `GET /api/account/export`       | Session and export budget required; selected profile/provider IDs, builds/compositions/revisions, scenarios, timers, favorites/votes/comments/reports and membership metadata. OAuth/session tokens excluded. |
-| `/api/auth/[...nextauth]`       | NextAuth provider/session/signout handlers; actual Discord exchange remains unverified.                                                                                                                       |
-| `GET /api/health`               | Database/cache checks and separate provider-configuration state; no secrets/connection URLs or complete readiness certification.                                                                              |
-
-Profile save/account deletion are authenticated Server Actions in [settings actions](../src/app/settings/actions.ts), with deletion confirmation and group-ownership protection. Static scenario-share fragments hold validated assumptions and do not publish private saved records. Legacy export/calendar identifiers are retained for compatibility. The private watchlist is implemented locally through `GET/POST /api/market-watch` and `DELETE /api/market-watch/[id]`, with migration17, per-user100-item cap, region/item/quality uniqueness, serializable duplicate/cap checks, reload persistence and owner-only deletion. Controlled staging rollout and recovery remain separate.
-
-## Combat feeds and team loot
-
-`GET /api/combat-events?region=europe&offset=0` returns a public projection of published Game Info events. Region is one of the existing three servers; offset is a multiple of20 from0 to200. Fixed upstream hosts, a1MB source-body bound,20-event page validation and short public caches prevent arbitrary proxying/unbounded reads. Identities, timestamps, fame and ten equipment slots are preserved; quality0/unreported equipment remains unknown. Internal request budgets are conservative application policy, not a published upstream quota. A source failure is503 with retry guidance, never fabricated events.
-
-`GET /api/groups/[id]/loot` requires a current session and current team membership; nonmembers receive404. It returns at most50 recent team ledgers with private/no-store responses. `POST` uses the existing origin/session/rate boundary, validates the bounded configuration, requires current officer/admin/owner membership and current participant membership in a Serializable named private service. Creation assigns the creator server-side. Updates require matching team/record/version and return409 on conflict without losing the browser draft. Whole-silver pools/expenses/weights use exact integer arithmetic; no game transfers or fee assumptions occur.
+Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h).

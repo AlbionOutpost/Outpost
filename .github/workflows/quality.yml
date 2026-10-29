@@ -1,8 +1,6 @@
 name: Quality gates
 on:
   pull_request:
-  push:
-    branches: [master]
   workflow_dispatch:
   workflow_call:
 permissions:
@@ -29,8 +27,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run format:check
-      - name: Verify rebuild documentation and source inventory
-        run: node scripts/rebuild-inventory.mjs --check
+      - name: Documentation links and skills
+        run: node scripts/docs-check.mjs
       - name: Configure isolated local services
         run: |
           cp .env.example .env

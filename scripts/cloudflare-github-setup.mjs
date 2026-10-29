@@ -89,7 +89,6 @@ const branchPath = `repos/${repository}/environments/${environment}/deployment-b
 const branchPolicies = JSON.parse(gh(["api", branchPath])).branch_policies;
 for (const [name, type] of [
   ["main", "branch"],
-  ["codex/cloudflare-free-launch", "branch"],
   ["v*", "tag"],
 ])
   if (!branchPolicies.some((row) => row.name === name && row.type === type))
@@ -115,7 +114,7 @@ const report = {
   credentialStoredInGitHubEnvironment: true,
   permission: "Account Workers Scripts Write only",
   expiresOn,
-  permittedRefs: ["main", "codex/cloudflare-free-launch", "v*"],
+  permittedRefs: ["main", "v*"],
   adminTokenUploaded: false,
   runtimeOAuthSecretsUploadedToGitHub: false,
   workflowConnected: false,

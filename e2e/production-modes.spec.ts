@@ -10,7 +10,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
     context,
   }) => {
     // Screenshots land in .qa/<area>-correction/current for review.
-  const iteration = "current";
+    const iteration = "current";
     const folder = `.qa/calculator-correction/${iteration}`;
     await mkdir(folder, { recursive: true });
     const id = `atlas-test-${randomUUID()}`,

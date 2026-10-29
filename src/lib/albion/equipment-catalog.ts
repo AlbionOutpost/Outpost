@@ -1,7 +1,7 @@
 import sourceEquipment from "./source-equipment.json" with { type: "json" };
 import { items } from "./item-database";
 const factualNames = new Map(items.map((item) => [item.id, item.name]));
-// Original factual catalog. Sources in DATA_SOURCES.md. No copied descriptions or combat statistics.
+// Original factual catalog. Sources in docs/DATA.md. No copied descriptions or combat statistics.
 export const equipmentSlots = [
   "Main hand",
   "Off hand",

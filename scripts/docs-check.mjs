@@ -7,10 +7,14 @@ import { dirname, join, relative, resolve } from "node:path";
 
 const root = resolve(dirname(new URL(import.meta.url).pathname), "..");
 const vendored = ["impeccable", "vercel-react-best-practices"].map((n) => `.claude/skills/${n}/`);
-const files = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "*.md"], {
-  cwd: root,
-  encoding: "utf8",
-})
+const files = execFileSync(
+  "git",
+  ["ls-files", "--cached", "--others", "--exclude-standard", "*.md"],
+  {
+    cwd: root,
+    encoding: "utf8",
+  },
+)
   .split("\n")
   .filter((f) => f && existsSync(join(root, f)) && !vendored.some((v) => f.startsWith(v)));
 
@@ -78,4 +82,6 @@ if (errors.length) {
   console.error(`\n${errors.length} documentation problem(s).`);
   process.exit(1);
 }
-console.log(`docs-check: ${files.length} Markdown files OK (${relative(process.cwd(), root) || "."})`);
+console.log(
+  `docs-check: ${files.length} Markdown files OK (${relative(process.cwd(), root) || "."})`,
+);
