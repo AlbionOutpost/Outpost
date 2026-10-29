@@ -9,6 +9,21 @@ updates:
       compatible-development-updates:
         dependency-type: development
         update-types: [minor, patch]
+      # Prisma CLI, client and the D1 adapter must always move together.
+      prisma:
+        patterns: ["prisma", "@prisma/*"]
+    ignore:
+      # Types must match the Node runtime (22.x, see .nvmrc / engines).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # ESLint 10 is blocked until eslint-config-next supports it.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      # Prisma 7 needs a planned migration (generator, driver adapters, D1 client).
+      - dependency-name: "prisma"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@prisma/*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
