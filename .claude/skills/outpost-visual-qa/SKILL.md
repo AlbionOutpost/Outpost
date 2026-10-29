@@ -20,7 +20,7 @@ node .claude/skills/outpost-visual-qa/scripts/capture.mjs --widths 1440,390,320 
 # options: --base <url>  --full  --light  --reduced-motion  --widths 1920,1440,768,390,375,320
 ```
 
-Screens land in `.qa/screens/`; the script also reports horizontal overflow and console errors. Then **open every image with the Read tool and actually look at it**. A browser tool (built-in browser or Chrome) is fine for interactive checks when available; label which you used.
+Screens land in `.qa/screens/`; the script also reports horizontal overflow and console errors. Then **open every image and actually look at it**. An interactive browser is fine for hover, focus and flow checks; note which one was used.
 
 Standard widths: **1440×900** and **390×844** always; **320** for overflow; add 1920, 768 and 375 for layout changes.
 

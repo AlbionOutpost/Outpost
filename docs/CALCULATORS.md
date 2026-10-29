@@ -1,6 +1,6 @@
 # Calculators
 
-Every calculator is a pure function in `src/lib/albion` with a Zod schema, used by the UI and re-run on the server when a scenario is saved. Units are **silver**; percentages are entered 0–100. Totals are capped at 1e12 silver, quantities at 1e6, batches at 1e5. Missing or mismatched prices make the result incomplete (null totals) — see [DATA.md](DATA.md#truth-rules).
+Every calculator is a pure function in `src/lib/albion` with a Zod schema, used by the UI; saved scenarios are schema-checked on the server, and production, plan, transport and farming results are re-run there. Units are **silver**; percentages are entered 0–100. Totals are capped at 1e12 silver, quantities at 1e6, batches at 1e5. Missing or mismatched prices make the result incomplete (null totals) — see [DATA.md](DATA.md#truth-rules).
 
 **Price sides.** Instant buy uses `sell_price_min`; instant sale uses `buy_price_max`; listing uses the destination `sell_price_min`. A Black Market price is never a purchase source.
 
@@ -92,7 +92,7 @@ focusBenefit       = watered·(wateredYield − baseYield)/100·seedPrice
 
 ## Saved scenarios
 
-`/api/scenarios` kinds: crafting, refining, enchanting, transporting, flipping, production-plan, farming, shopping-list. The server re-runs the matching engine to validate bounds. Fishing can't be saved yet.
+`/api/scenarios` kinds: crafting, refining, enchanting, transporting, flipping, production-plan, farming, shopping-list. The server validates every kind against its schema and re-runs the engine for crafting/refining/enchanting, production-plan, transporting and farming (flipping and shopping lists are schema-checked only). Fishing can't be saved yet.
 
 ## Verifying a change
 
@@ -104,7 +104,7 @@ Write the expected value **by hand** (or with exact rationals) before running th
 | Crafting: output 3,000, materials 2,000, eligible return 20%, station 100, tax 10% | upfront 2,100 · return credit 400 · cost 1,700 · fee 300 · cash profit 600 · economic profit 1,000 |
 | Same with 40% return and 100 focus                                                 | profit 1,400 · profit/focus 14 · incremental focus value 4                                         |
 | Buy 10 @100 + 50 transport, no fees                                                | break-even 105 · minimum profitable whole sale 106                                                 |
-| Return profile, specialist city, no daily                                          | 58/158 = 36.709% · with focus 117/217 = 53.917%                                                    |
+| Return profile, refining specialist city, no daily                                 | 58/158 = 36.709% · with focus 117/217 = 53.917%                                                    |
 
 Tests: `tests/calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
 

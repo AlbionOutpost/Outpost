@@ -14,13 +14,13 @@ Outpost aims to be the best Albion Online site there is. Every change should lea
 4. **Albion vocabulary.** Comps, builds, loadout, swaps, IP, spec, focus, RRR, buy/sell order, Teams.
 5. **Free-tier aware.** Each page view costs Worker, Durable Object and D1 requests; the web bundle must stay under 3 MiB gzip. Measure before and after anything heavy.
 6. **Secrets stay secret.** Never print, commit or copy `.env*` values. Use the wrapper scripts, which redact.
-7. **Next.js 16 is newer than you think.** APIs and conventions differ from older versions. Check `node_modules/next/dist/docs/` for the installed version before using an API you are unsure of, and heed deprecation notices.
+7. **Next.js 16 has breaking changes.** APIs and conventions differ from older versions. Check `node_modules/next/dist/docs/` for the installed version before using an API you are unsure of, and heed deprecation notices.
 
 ## How to work
 
-- **Work autonomously.** Build, test, fix and push to a branch without asking. Make sensible technical and design decisions within this doc and DESIGN.md.
-- **Check in first on big calls:** a new design direction or a change that contradicts DESIGN.md, deleting user data or content, merging to `main` (merging **deploys to production**), changes to auth/permissions semantics, anything that costs money or touches DNS/registrar/Discord settings.
-- **Branch → PR → merge.** Work on a short-lived branch, open a PR, keep `main` deployable. Commits are authored as the repo owner; write clear imperative messages and don't add co-author or tool trailers.
+- **Own the change end to end.** Build, test, fix and push to a branch; make sensible technical and design decisions within this doc and DESIGN.md.
+- **Get the owner's OK first on big calls:** a new design direction or a change that contradicts DESIGN.md, deleting user data or content, merging to `main` (merging **deploys to production**), changes to auth/permissions semantics, anything that costs money or touches DNS/registrar/Discord settings.
+- **Branch → PR → merge.** Work on a short-lived branch, open a PR, keep `main` deployable. Commits are authored as the repo owner; write clear imperative messages with no co-author trailers.
 - **Leave it better.** When you touch a page, also fix the small things in reach: a 10px label, a hard-coded colour that should be a token, a missing empty state.
 - **Update the docs in the same PR** when behaviour changes (see the table at the end).
 
@@ -77,17 +77,17 @@ Domain services follow one pattern: `export const x = (args) => databaseService(
 
 Project skills live in `.claude/skills` and load automatically when relevant:
 
-| Skill                         | Use for                                                                                                                            |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `outpost-frontend`            | Any page, component, layout, style or copy change                                                                                  |
-| `outpost-visual-qa`           | Rendered screenshots, reference comparison, responsive checks                                                                      |
-| `outpost-albion-data`         | Item IDs, recipes, abilities, icons, data imports and provenance                                                                   |
-| `outpost-calculators`         | Economy formulas, returns, focus, fees, scenarios                                                                                  |
-| `outpost-security`            | Auth, sessions, permissions, APIs, private data, secrets                                                                           |
-| `outpost-performance`         | Load time, bundle size, rendering, caching, free-tier budgets                                                                      |
-| `outpost-deploy`              | CI, Cloudflare deploys, migrations, data pushes, rollbacks                                                                         |
-| `impeccable`                  | Design critique, polish, hierarchy, typography, motion (vendored; set `IMPECCABLE_NO_TELEMETRY=1`, `IMPECCABLE_NO_UPDATE_CHECK=1`) |
-| `vercel-react-best-practices` | React/Next performance patterns (vendored)                                                                                         |
+| Skill                         | Use for                                                                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `outpost-frontend`            | Any page, component, layout, style or copy change                                                                                                       |
+| `outpost-visual-qa`           | Rendered screenshots, reference comparison, responsive checks                                                                                           |
+| `outpost-albion-data`         | Item IDs, recipes, abilities, icons, data imports and provenance                                                                                        |
+| `outpost-calculators`         | Economy formulas, returns, focus, fees, scenarios                                                                                                       |
+| `outpost-security`            | Auth, sessions, permissions, APIs, private data, secrets                                                                                                |
+| `outpost-performance`         | Load time, bundle size, rendering, caching, free-tier budgets                                                                                           |
+| `outpost-deploy`              | CI, Cloudflare deploys, migrations, data pushes, rollbacks                                                                                              |
+| `impeccable`                  | Design critique, polish, hierarchy, typography, motion (vendored; its `scripts/impeccable` helper downloads a binary on first run — inspect before use) |
+| `vercel-react-best-practices` | React/Next performance patterns (vendored)                                                                                                              |
 
 ## Which doc to update
 

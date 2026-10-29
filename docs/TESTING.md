@@ -2,17 +2,32 @@
 
 Run what proves your change; let CI run the rest.
 
-| Suite           | Command                                   | What it covers                                                                                                                          |
-| --------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Types           | `npm run typecheck`                       | App TypeScript (`npx tsc -p cloudflare/tsconfig.json` and `cloudflare/web/tsconfig.json` for the Workers)                               |
-| Lint / format   | `npm run lint`, `npm run format:check`    | ESLint (Next config), Prettier                                                                                                          |
-| Unit            | `npm test`                                | Vitest, `tests/**/*.test.ts` (~76 files): calculators, market clients, cache, Turnstile, auth helpers, RPC protocol, Cloudflare scripts |
-| Browser         | `npm run test:e2e`                        | Playwright, `e2e/*.spec.ts` (~73 specs): journeys, permissions, accessibility (axe), visual captures                                    |
-| Database        | `npm run test:integration`                | Disposable Postgres databases: migrations, constraints, backup/restore, cascades                                                        |
-| Cloudflare data | `node scripts/qa-cloudflare-database.mjs` | Real DO/D1 path under local workerd: transactions, rollback, denied access, archive parity, budgets                                     |
-| Live upstream   | `npm run test:live`                       | Real AODP regions — uses real budget; run sparingly                                                                                     |
-| Docs            | `node scripts/docs-check.mjs`             | Markdown links/anchors, skill frontmatter                                                                                               |
-| Everything      | `npm run qa:phase`                        | DB check → types → lint → unit → data audit → integration → build → browser → `npm audit` → live, logs in `.qa/`                        |
+| Suite           | Command                                                           | What it covers                                                                                                                          |
+| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Types           | `npm run typecheck`                                               | App TypeScript (`npx tsc -p cloudflare/tsconfig.json` and `cloudflare/web/tsconfig.json` for the Workers)                               |
+| Lint / format   | `npm run lint`, `npm run format:check`                            | ESLint (Next config), Prettier                                                                                                          |
+| Unit            | `npm test`                                                        | Vitest, `tests/**/*.test.ts` (~76 files): calculators, market clients, cache, Turnstile, auth helpers, RPC protocol, Cloudflare scripts |
+| Browser         | `npm run test:e2e`                                                | Playwright, `e2e/*.spec.ts` (~71 specs): journeys, permissions, accessibility (axe), visual captures                                    |
+| Database        | `npm run test:integration`                                        | Disposable Postgres databases: migrations, constraints, backup/restore, cascades                                                        |
+| Cloudflare data | `node scripts/qa-cloudflare-database.mjs` (after the setup below) | Real DO/D1 path under local workerd: transactions, rollback, denied access, archive parity, budgets                                     |
+| Live upstream   | `npm run test:live`                                               | Real AODP regions — uses real budget; run sparingly                                                                                     |
+| Docs            | `node scripts/docs-check.mjs`                                     | Markdown links/anchors, skill frontmatter                                                                                               |
+| Everything      | `npm run qa:phase`                                                | DB check → types → lint → unit → data audit → integration → build → browser → `npm audit` → live, logs in `.qa/`                        |
+
+## Running the Cloudflare data tests locally
+
+```bash
+node scripts/cloudflare-database-generate.mjs        # wasm Prisma client (git-ignored)
+node scripts/cloudflare-stage-catalog.mjs --write-local
+node scripts/cloudflare-stage-library.mjs --write-local
+npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc \
+  --file .qa/cloudflare-catalog/local-import.sql --persist-to .qa/cloudflare-database-test/state
+npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc \
+  --file .qa/cloudflare-library/local-import.sql --persist-to .qa/cloudflare-database-test/state
+node scripts/qa-cloudflare-database.mjs
+```
+
+The catalog step needs local Postgres with `npm run data:sync` done. CI runs the same sequence in the deploy workflow.
 
 ## Playwright modes
 
@@ -29,7 +44,7 @@ Sessions in browser tests are fixture database sessions, not real Discord logins
 - **Calculators:** independent expected values written by hand ([CALCULATORS.md](CALCULATORS.md#verifying-a-change)).
 - **Permissions:** for every allowed path add a denied one — anonymous, unrelated user, wrong role, revoked member — and assert nothing changed in the database.
 - **Caches:** warm as user A, request as B and anonymous; check headers and payload.
-- **UI:** visual specs write captures to `.qa/<area>-correction/current/`; review them, don't just count passes. Cover populated, empty, loading, error and stale states.
+- **UI:** visual specs write captures under `.qa/` (e.g. `.qa/<area>-correction/current/`, `.qa/design-review/`); review them, don't just count passes. Cover populated, empty, loading, error and stale states.
 - Keep tests fast and focused; don't add checks whose only purpose is a report.
 
 ## Not covered yet

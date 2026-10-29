@@ -5,7 +5,7 @@ description: Design and build Outpost pages, components, layouts, styles, copy a
 
 # Outpost frontend
 
-You are shipping UI for what should be the best Albion Online site ever made. Work like a senior product designer who also writes the code: clear point of view, exact craft, no generic AI look. Polish is part of the feature, not a follow-up.
+You are shipping UI for what should be the best Albion Online site ever made. Work like a senior product designer who also writes the code: clear point of view, exact craft, nothing that looks like a generic template. Polish is part of the feature, not a follow-up.
 
 ## Before you touch anything
 

@@ -4,7 +4,7 @@ Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOut
 
 ## Deploying
 
-`.github/workflows/cloudflare-preview.yml` ("Cloudflare deployment") runs on every push to `main` that touches more than docs/Markdown, on manual dispatch, and on published releases.
+`.github/workflows/cloudflare-preview.yml` ("Cloudflare deployment") runs on every push to `main` that touches more than docs/Markdown, on manual dispatch, and on published releases tagged `v*` (other tags skip both quality and deploy).
 
 1. **Quality** — reuses `quality.yml`: format, docs check, local Postgres/Redis, Playwright sandbox check, source secret scan, `npm run qa:phase`, bundle secret scan.
 2. **Deploy** (environment `cloudflare-production`, one at a time):
@@ -21,13 +21,13 @@ node scripts/qa-cloudflare-hosted.mjs
 node scripts/qa-cloudflare-auth.mjs
 ```
 
-PRs run `quality.yml`; docs-only changes run `documentation.yml` (format, docs check, secret scan) and never deploy.
+Every PR runs `quality.yml`; PRs and pushes that touch docs or Markdown also run `documentation.yml` (format, docs check, secret scan). A push to `main` deploys unless **every** changed file is under `docs/` or is `*.md`.
 
 ### Rolling back
 
 - **Web Worker:** `npm run cloudflare -- rollback --name albionoutpost-web` (or pick a version in the Cloudflare dashboard → Workers → Deployments). Safe at any time.
 - **Data Worker:** only roll back to a version built for the **same private schema version**. After a schema bump the DO has already migrated; roll forward with a fix instead.
-- **D1 catalog:** D1 Time Travel can restore to a point in the last 30 days.
+- **D1 catalog:** D1 Time Travel can restore to any point in the last 7 days (30 on paid plans).
 
 ### Data pushes (manual)
 
@@ -38,7 +38,7 @@ PRs run `quality.yml`; docs-only changes run `documentation.yml` (format, docs c
 | Validate/install D1 invariants   | `node scripts/cloudflare-stage-invariants.mjs [--apply]` |
 | Create/verify the D1 database    | `npm run cloudflare:d1:provision -- --apply`             |
 
-These read your local Postgres catalog, so run `npm run data:sync` first.
+The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`.
 
 ## Runtime configuration
 

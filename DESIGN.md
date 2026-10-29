@@ -164,7 +164,7 @@ Three families, three jobs. All are self-hosted via `next/font/local` (`src/app/
 
 ### Named Rules
 
-- **12px floor.** No text below 12px. (The codebase still has ~50 uses of 9–11px; remove them when touching a page.)
+- **12px floor.** No text below 12px. (The codebase still has ~190 uses of 9–11px; remove them when touching a page.)
 - **Five sizes per page, not fifty.** Use the scale; do not invent one-off sizes.
 - **Headings name the task.** No slogans or marketing taglines inside the app.
 
@@ -172,7 +172,7 @@ Three families, three jobs. All are self-hosted via `next/font/local` (`src/app/
 
 - **Max content width** 1536px (frames up to 1664px), gutters 24px desktop / 16px phone.
 - **Spacing** on the 4/8 scale in the frontmatter. Use the tokens (`--space-*`); do not hand-pick 5/7/14/18px gaps.
-- **Breakpoints**: 1280 (wide), 980 (tablet / editor split), 700 (phone layout), 390 (reference phone). Design and verify at 1440, 1920, 768, 390, 375 and 320.
+- **Breakpoints (target)**: 1280 (wide), 980 (tablet / editor split), 700 (phone layout), 390 (reference phone). The current CSS mostly uses 1100, 780 and 600 plus ~45 ad-hoc values; converge on the targets when touching a page. Design and verify at 1440, 1920, 768, 390, 375 and 320.
 - **One page archetype per task** — never flatten every page into the same stacked panels:
 
 | Archetype                       | Routes                                                                                                                      | Shape                                                                                                                                   |

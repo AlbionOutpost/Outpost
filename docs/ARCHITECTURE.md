@@ -21,7 +21,7 @@ flowchart LR
 
 - Redirects `www.` → apex (308).
 - Issues/validates an HMAC-signed `outpost-route` cookie (HttpOnly, SameSite=Lax, Secure, 30 min) and forwards the request to `SESSIONS.getByName(id)`.
-- **`OutpostSession` Durable Object** runs the whole OpenNext app for that browser session. Rendering inside a DO (instead of directly in the Worker) is what fixed the Free-tier CPU-limit failures (Error 1102). Each session has a budget of 240 requests/min (429 + `Retry-After` beyond that) and expires after 30 min idle.
+- **`OutpostSession` Durable Object** runs the whole OpenNext app for that browser session. Rendering inside a DO (instead of directly in the Worker) is what fixed the Free-tier CPU-limit failures (Error 1102). Each session has a budget of 240 requests/min (429 + `Retry-After` beyond that). The route cookie is valid for 30 minutes from issue and is not refreshed, so session objects rotate every 30 minutes regardless of activity (Discord login sessions are separate and last 14 days).
 - Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `SESSIONS` (DO). Var `OUTPOST_RUNTIME=cloudflare`; release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
 - OpenNext caches are `dummy` (no ISR store); images are unoptimized; link prefetch is off by default (`src/components/link.tsx`) to protect CPU and request budgets.
 
@@ -56,7 +56,7 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 | `grind-library.ts`      | `library-web.ts`                          | Library JSON from `ASSETS`, archive from D1                              |
 | `inflight-cache.ts`     | `inflight-web.ts`                         | Per-request de-duplication                                               |
 
-**Domain services** (`src/lib/*/service.ts`) are written once: `databaseService("name", args) ?? localName(args)`. On Node `databaseService` returns `undefined` and the local implementation runs against Postgres; on Cloudflare the data DO runs the same TypeScript inside its transaction with `db` bound through AsyncLocalStorage (`cloudflare/database/context.ts`). Registered services: `reviseBuild`, `duplicateBuild`, `saveComposition`, `duplicateComposition`, `deleteComposition`, `mutateGroup`, `acceptInvitation`, `communityMutation`, `moderateReport`, `saveWatchItem`, `listAccountBuilds`, `listAccountFavorites`, `teamLoot` (`cloudflare/database/services.ts`).
+**Domain services** (mostly `src/lib/*/service.ts`; also `builds/discovery-service.ts` and `market-watch-service.ts`) are written once: `databaseService("name", args) ?? localName(args)`. On Node `databaseService` returns `undefined` and the local implementation runs against Postgres; on Cloudflare the data DO runs the same TypeScript inside its transaction with `db` bound through AsyncLocalStorage (`cloudflare/database/context.ts`). Registered services: `reviseBuild`, `duplicateBuild`, `saveComposition`, `duplicateComposition`, `deleteComposition`, `mutateGroup`, `acceptInvitation`, `communityMutation`, `moderateReport`, `saveWatchItem`, `listAccountBuilds`, `listAccountFavorites`, `teamLoot` (`cloudflare/database/services.ts`).
 
 ## Schemas and migrations
 
@@ -68,7 +68,7 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 
 - `docker compose up -d` → Postgres 17 and Redis 7 on loopback (user/db `atlas`).
 - `src/lib/db.ts` → plain `PrismaClient`; `redis.ts` → ioredis. Without `REDIS_URL`, rate limits allow in dev and **deny in production mode**.
-- `src/lib/env.ts` validates env at startup: `DATABASE_URL`, `REDIS_URL` (unless Cloudflare), `NEXTAUTH_URL` (https outside localhost), `NEXTAUTH_SECRET` ≥32 chars, Discord ID/secret both-or-neither, `OUTPOST_OWNER_DISCORD_ID` 17–20 digits.
+- `src/lib/env.ts` validates env at startup: `DATABASE_URL` and `REDIS_URL` (both skipped on Cloudflare), `NEXTAUTH_URL` (https required when `NODE_ENV=production`, except localhost), `NEXTAUTH_SECRET` ≥32 chars, Discord ID/secret both-or-neither, `OUTPOST_OWNER_DISCORD_ID` 17–20 digits.
 - `E2E_CLOUDFLARE=1` runs the app under local workerd via `scripts/cloudflare-local-server.mjs` with test-only bindings.
 - The `Dockerfile` is a legacy standalone Node image; it is not used in production.
 
@@ -77,7 +77,7 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 - **`src/app`** — 45 pages and 37 API routes, no route groups. Areas: home; tools (market, gold, flipping, transporting, crafting, refining, enchanting, cooking, alchemy, farming, fishing, kill/death feed); items; market-data; builds (+ library); compositions (+ library); groups, invitations; players; guides; favorites; shopping-list; timers; dashboard; settings; admin/reports; legal; signin. Full route list in [API.md](API.md).
 - **`src/components`** — 106 flat files. Big ones worth splitting when touched: `production-calculator` (1.2k lines), `composition-editor` (1k), `build-editor`, `group-dashboard`, `equipment-workbench`, `market`.
 - **`src/lib`** — `albion/` (AODP clients, region config, calculators, recipes, game JSON, icons), domain folders (`builds`, `compositions`, `groups`, `community`, `catalog`, `timers`), infrastructure (`auth`, `owner-admin`, `http`, `api-errors`, `turnstile`, `env`, `db`, `redis`, `logging`).
-- **Styles** — ~40 global stylesheets imported in `layout.tsx`, layered from past design passes; `product-system.css` (tokens) and `motion-system.css` win the cascade. Consolidation is on the [roadmap](ROADMAP.md).
+- **Styles** — 31 global stylesheets imported in `layout.tsx` (39 CSS files in `src/app`), layered from past design passes and resolved by import order. `product-system.css` owns the live colour/radius tokens and `motion-system.css` owns motion. Consolidation is on the [roadmap](ROADMAP.md).
 
 ## Security model
 
@@ -87,7 +87,7 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 
 **Authorization** is checked inside the transaction against current rows: ownership for builds/scenarios/timers; visibility (public/unlisted/private/group) for reads and lists; Team roles `OWNER/ADMIN/OFFICER/MEMBER` — `canEditShared` = owner/admin/officer, `canManageMembers` = owner/admin; moderation requires a current `ADMIN`/`MODERATOR` user role. Private Teams return 404 to outsiders.
 
-**Abuse controls.** Per-route rate limits (e.g. market 120/min, history/economy/transport/build-cost 60/min, opportunities 30/min, export 5/h, delete 3/h), Turnstile on comments/edits/reports in production (fails closed when partly configured), WAF rule blocking sensitive paths, Bot Fight Mode.
+**Abuse controls.** Rate limits per route — public routes share one **site-wide** counter per route group (e.g. all `/api/market*` routes share 120/min), signed-in budgets are per user (e.g. market 120/min, history/economy/transport/build-cost 60/min, opportunities 30/min, export 5/h, delete 3/h), Turnstile on comments/edits/reports in production (fails closed when partly configured), WAF rule blocking sensitive paths, Bot Fight Mode.
 
 **Headers.** Per-request CSP nonce with `strict-dynamic`; `img-src` self/data/blob/`render.albiononline.com`; Turnstile allowed in script/frame/connect; `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. HSTS on https, `nosniff`, `X-Frame-Options: DENY`, restrictive Permissions-Policy, `Cache-Control: private, no-store` on dynamic responses, `no-referrer` on invitation pages.
 

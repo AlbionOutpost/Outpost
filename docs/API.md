@@ -4,13 +4,15 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 
 **Auth:** pub = public · sess = requires session · owner/member = checked against current DB rows.
 
+**Limits** on public routes are site-wide counters shared by everyone (the three `/api/market*` routes share one 120/min bucket); per-user budgets apply to signed-in mutations.
+
 ## Market and economy
 
 | Route                                                           | Auth | Purpose                                                | Limit                |
 | --------------------------------------------------------------- | ---- | ------------------------------------------------------ | -------------------- |
 | `GET /api/market`                                               | pub  | One item, one quality, all cities in a region          | 120/min              |
 | `GET /api/market/batch`                                         | pub  | 1–12 items, one quality                                | 120/min              |
-| `GET /api/market/qualities`                                     | pub  | All 5 qualities (optional city)                        | cached 30 s          |
+| `GET /api/market/qualities`                                     | pub  | All 5 qualities (optional city)                        | 120/min, cached 30 s |
 | `GET /api/history`                                              | pub  | Gold (168 points) or 30-day daily item history         | 60/min               |
 | `GET /api/economy/prices`                                       | pub  | All ingredient + output quotes for a production recipe | 60/min               |
 | `GET /api/transport/prices`                                     | pub  | Buy/sell pair for one route direction                  | 60/min               |
@@ -45,14 +47,14 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 
 ## Teams
 
-| Route                                            | Auth                    | Purpose                                                                                                                              |
-| ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `POST /api/groups`                               | sess                    | Create a Team (caller becomes OWNER)                                                                                                 |
-| `GET /api/groups/[id]`                           | public Team or member   | Read                                                                                                                                 |
-| `POST /api/groups/[id]/actions`                  | role-checked per action | All Team mutations via `mutateGroup` (members, roles, invitations, announcements, events/RSVP, shared resources, ownership transfer) |
-| `GET, POST /api/groups/[id]/loot`                | member                  | Loot ledger and splits                                                                                                               |
-| `GET /api/groups/[id]/events/[eventId]/calendar` | member                  | ICS export                                                                                                                           |
-| `POST /api/invitations/[token]`                  | sess                    | Accept an invitation (hashed, expiring, revocable)                                                                                   |
+| Route                                            | Auth                         | Purpose                                                                                                                              |
+| ------------------------------------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `POST /api/groups`                               | sess                         | Create a Team (caller becomes OWNER)                                                                                                 |
+| `GET /api/groups/[id]`                           | public Team or member        | Read                                                                                                                                 |
+| `POST /api/groups/[id]/actions`                  | role-checked per action      | All Team mutations via `mutateGroup` (members, roles, invitations, announcements, events/RSVP, shared resources, ownership transfer) |
+| `GET, POST /api/groups/[id]/loot`                | read member · write officer+ | Loot ledger and splits                                                                                                               |
+| `GET /api/groups/[id]/events/[eventId]/calendar` | member                       | ICS export                                                                                                                           |
+| `POST /api/invitations/[token]`                  | sess                         | Accept an invitation (hashed, expiring, revocable)                                                                                   |
 
 ## Community, account and personal
 

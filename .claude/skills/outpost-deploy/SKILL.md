@@ -11,8 +11,8 @@ Read [docs/OPERATIONS.md](../../../docs/OPERATIONS.md) (pipeline, config, rollba
 
 ## Shipping a change
 
-1. Branch, commit, push, open a PR. Commits are authored as the repo owner with plain imperative messages — no co-author or tool trailers.
-2. Wait for `Quality gates` (and `Documentation checks` for docs) to pass. If CI fails, read the failing step's log (`gh run view <id> --log-failed`), reproduce locally, fix on the branch.
+1. Branch, commit, push, open a PR. Commits are authored as the repo owner with plain imperative messages — no co-author trailers.
+2. Wait for `Quality gates` (and `Documentation checks` when docs change) to pass. Note that any non-docs file in the diff (scripts, workflows, skills' scripts) makes the merge a production deploy. If CI fails, read the failing step's log (`gh run view <id> --log-failed`), reproduce locally, fix on the branch.
 3. **Ask the owner before merging** — merging is a production deploy.
 4. After merge, watch the `Cloudflare deployment` run to the end. The live-site probe from GitHub is challenged by Bot Fight Mode (reported as BLOCKED); smoke-test from an unchallenged machine: `node scripts/qa-cloudflare-hosted.mjs` and `node scripts/qa-cloudflare-auth.mjs`.
 5. Update [ROADMAP.md](../../../docs/ROADMAP.md) if the change closes or opens an item.
@@ -24,7 +24,7 @@ All four must land together:
 1. Prisma migration in `prisma/migrations` (additive; never edit an applied migration).
 2. `npm run cloudflare:d1:schema` and `node scripts/cloudflare-domain-constraints.mjs`; commit the regenerated `cloudflare/d1/*`.
 3. A new numbered SQL file in `cloudflare/d1/migrations` plus a matching upgrade step (and new version number) in the `OutpostDatabase` constructor in `cloudflare/database/worker.ts`, so the private store migrates itself on first start.
-4. Tests: `npm run test:integration` (disposable Postgres), `python3 scripts/qa-d1-schema.py`, `node scripts/qa-cloudflare-database.mjs`.
+4. Tests: `npm run test:integration` (disposable Postgres), `node scripts/cloudflare-database-generate.mjs`, `python3 scripts/qa-d1-schema.py`, then the local Cloudflare data tests ([TESTING.md](../../../docs/TESTING.md#running-the-cloudflare-data-tests-locally)).
 
 The private DO migrates one way. After a schema bump you cannot roll the data Worker back to an older build — roll forward with a fix.
 

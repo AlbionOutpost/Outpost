@@ -21,12 +21,12 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 ## Measure
 
 1. Fix the conditions: route, production build (never compare dev with prod), viewport/device profile, network/CPU throttle, cold vs warm cache, fixture vs live data, sample count (≥3 for any claimed improvement; report median and range).
-2. Tools: Lighthouse via Playwright/Chromium (preinstalled), Chrome DevTools traces if a browser tool is available, `performance` API timings as labelled proxies, `node scripts/cloudflare-free-check.mjs` for bundle size, `.open-next` output for chunk sizes.
+2. Tools: Lighthouse (`npx lighthouse` — not a project dependency) against a production build, Chrome DevTools performance traces, `performance` API timings as labelled proxies, `node scripts/cloudflare-free-check.mjs` for bundle size, `.open-next` output for chunk sizes.
 3. Find the real bottleneck: critical-path CSS and fonts, the LCP element and how it loads, JS transfer and hydration, client/server component boundaries, re-renders, request waterfalls and duplicate fetches, DB/RPC round trips per page, cache hit rate, chart and list cost.
 
 ## Usual wins here
 
-- **Cut global CSS** — most of the ~40 stylesheets load on every route; move page styles to the route, delete dead passes (coordinate with `outpost-frontend`).
+- **Cut global CSS** — 31 stylesheets load on every route; move page styles to the route, delete dead passes (coordinate with `outpost-frontend`).
 - Preload only the fonts used above the fold; keep `display: swap`; size the hero image correctly with explicit dimensions.
 - Keep data fetching on the server and parallel; avoid per-item client fetches; batch market requests (`/api/market/batch`).
 - Lazy-load heavy, below-the-fold or interaction-only code (charts, PNG export, editors' secondary panels).
