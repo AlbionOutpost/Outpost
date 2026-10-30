@@ -10,16 +10,30 @@
   --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
 }
 
-/* Hero */
+/* Hero: the painting runs under the site header, which floats transparent over it on the
+   landing page only. */
+.app.outpost.home-route .main > .site-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #0b0d12d9 0%, #0b0d1266 70%, #0b0d1200 100%);
+  border-bottom: 0;
+}
+.app.outpost.home-route .main {
+  position: relative;
+}
+.app.outpost .home-landing {
+  padding: 0 32px;
+}
 .app.outpost .landing-hero {
   position: relative;
   display: flex;
   align-items: flex-end;
-  min-height: 520px;
-  margin: 0 -12px 36px;
-  padding: 48px 44px 40px;
+  min-height: 600px;
+  margin: 0 -32px 36px;
+  padding: 120px 44px 40px;
   background: #0b0d12;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   overflow: hidden;
   isolation: isolate;
 }
@@ -359,10 +373,13 @@
   }
 }
 @media (max-width: 700px) {
+  .app.outpost .home-landing {
+    padding: 0 16px;
+  }
   .app.outpost .landing-hero {
     min-height: 0;
-    margin: 0 -12px 28px;
-    padding: 180px 16px 28px;
+    margin: 0 -16px 28px;
+    padding: 220px 16px 28px;
     align-items: end;
   }
   .app.outpost .landing-hero-art img {
