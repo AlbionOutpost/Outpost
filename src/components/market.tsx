@@ -84,6 +84,18 @@ export function Market() {
     city || (extraCities.length ? `${extraCities.length} cities selected` : "All cities");
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    await load();
+  }
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  // Research-first: a valid selection loads its prices as soon as it changes, so arriving
+  // with ?item= or picking from the catalog shows city prices without a second click.
+  useEffect(() => {
+    if (!hydrated || !validSelection) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    return () => window.clearTimeout(timer);
+  }, [current, hydrated, validSelection]);
+  async function load() {
     const url = new URL(window.location.href);
     const selection = {
       region,
@@ -182,7 +194,7 @@ export function Market() {
               </select>
             </label>
             <button className="button primary" disabled={!hydrated || loading || !validSelection}>
-              {loading ? "Fetching observations…" : "Compare prices"}
+              {loading ? "Fetching observations…" : "Refresh prices"}
             </button>
           </form>
           <div className="market-selection-row">
@@ -503,7 +515,7 @@ export function Market() {
                 {loading
                   ? "Loading source observations…"
                   : error?.key === current
-                    ? "No observations loaded. Compare prices to retry."
+                    ? "No observations loaded. Refresh prices to retry."
                     : result?.key === current
                       ? "No city matches these filters. Reset filters to see the scanned markets."
                       : "Choose an item and compare markets to begin."}
@@ -521,16 +533,16 @@ export function Market() {
                   : hasError
                     ? "Your selection is safe"
                     : validSelection
-                      ? "Ready to request city prices"
+                      ? "Loading city prices"
                       : "Choose a valid item"}
               </h3>
               <p>
                 {loading
                   ? "Fetching player observations from Albion Online Data Project. Each order keeps its own source time."
                   : hasError
-                    ? "Use Compare prices to retry. No failed or previous observation is shown as a current quote."
+                    ? "Refresh prices to retry, or change the selection. No failed or previous observation is shown as a current quote."
                     : validSelection
-                      ? "Choose Compare prices to request sell listings and buy offers for this selection."
+                      ? "Sell listings and buy offers load for every selection as soon as you make it."
                       : "Search for an item above, choose a quick pick, or enter its item identifier."}
               </p>
             </div>
@@ -673,7 +685,7 @@ export function Market() {
           </button>
         </div>
         {(researchOpen ?? hasResult) ? (
-          <History item={item} quality={Number(quality)} />
+          <History item={item} quality={Number(quality)} autoLoad />
         ) : (
           <p className="muted">
             Compare current prices or open history to research daily observations. Gaps remain gaps;

@@ -16,7 +16,7 @@ test("market failure never substitutes prices", async ({ page }) => {
     }),
   );
   await page.goto("/tools/market");
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator("p[role=alert]")).toContainText("unavailable");
   await expect(page.locator("tbody tr")).toHaveCount(0);
 });
@@ -41,7 +41,7 @@ test("regional market request and region invalidation", async ({ page }) => {
     }),
   );
   await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator("tbody")).toContainText("STALE");
   await chooseRegion(page, "asia");
   await expect(page.locator("main")).toContainText("Region changed");

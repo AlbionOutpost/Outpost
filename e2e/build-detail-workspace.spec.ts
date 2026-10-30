@@ -19,7 +19,7 @@ test("build details use a complete spatial inventory with synchronized equipment
   await expect(
     page
       .locator(".detail-selected-item")
-      .getByRole("link", { name: "Compare prices", exact: true }),
+      .getByRole("link", { name: "Refresh prices", exact: true }),
   ).toHaveAttribute("href", /region=asia&item=T8_HEAD_LEATHER_SET2&quality=1/);
   await page.locator("#build-alternatives > summary").click();
   const helmetTab = page.getByRole("tab", { name: /^Helmet/ });

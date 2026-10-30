@@ -48,10 +48,7 @@ test("market source fixtures retain table, chart and filtering at review widths"
       height: width === 1440 ? 900 : width === 1920 ? 1080 : width === 768 ? 1024 : 844,
     });
     await page.goto("/tools/market?region=europe");
-    await expect(page.getByRole("button", { name: "Compare prices", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Compare prices", exact: true }).click();
     await expect(page.locator(".market-board tbody tr")).toHaveCount(8);
-    await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
     await expect(page.locator(".price-chart")).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     await page.evaluate(() => {

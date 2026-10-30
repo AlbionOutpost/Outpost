@@ -172,8 +172,8 @@ export function MarketQualityAvailability({
             </table>
           </div>
           <p role="status">
-            Selected: {qualities[Number(quality) - 1]}. Choose Compare prices to load this quality’s
-            markets.
+            Selected: {qualities[Number(quality) - 1]}. Its markets load as soon as the quality is
+            selected.
           </p>
         </>
       )}

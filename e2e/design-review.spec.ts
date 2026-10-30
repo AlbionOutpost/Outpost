@@ -118,7 +118,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
               : /inter/i,
           );
           if (route === "/tools/market") {
-            await page.getByRole("button", { name: "Compare prices", exact: true }).click();
+            await page.getByRole("button", { name: "Refresh prices", exact: true }).click();
             await expect(
               page.getByRole("button", { name: "Caerleon market details", exact: true }),
             ).toBeVisible();

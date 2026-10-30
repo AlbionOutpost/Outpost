@@ -201,7 +201,7 @@ test("My Builds management duplicates independently, handles errors and confirms
     await expect(page.locator(".detail-information-panel")).toContainText("Build server");
     const marketLink = page
       .locator(".detail-selected-item")
-      .getByRole("link", { name: "Compare prices", exact: true });
+      .getByRole("link", { name: "Refresh prices", exact: true });
     expect(
       new URL((await marketLink.getAttribute("href"))!, page.url()).searchParams.get("region"),
     ).toBe("asia");

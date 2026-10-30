@@ -17,7 +17,7 @@ test("preference cookie and market request agree without a region URL", async ({
   });
   await page.goto("/tools/market");
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect.poll(() => requested).toBe("asia");
 });
 test("changing quality or item invalidates previously loaded prices", async ({ page }) => {
@@ -41,7 +41,7 @@ test("changing quality or item invalidates previously loaded prices", async ({ p
     }),
   );
   await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator("tbody tr")).toHaveCount(1);
   await page
     .locator("select")
@@ -81,7 +81,7 @@ test("market sort and city filtering retain correct buy and sell columns", async
     }),
   );
   await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await page.getByLabel("Sort market prices").selectOption("buy");
   await expect(page.locator("tbody tr").first()).toContainText("Lymhurst");
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
@@ -150,7 +150,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page
     .locator('.item-reference-browser tbody a[href="/tools/market?region=europe&item=T4_BAG"]')
     .click();
-  await page.getByRole("button", { name: "Compare prices" }).click();
+  await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator("tbody tr")).toHaveCount(2);
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page.getByRole("link", { name: /^Profit calculator Fees/ }).click();

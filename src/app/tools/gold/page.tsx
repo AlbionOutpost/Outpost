@@ -10,7 +10,7 @@ export default function Page() {
         title="Gold price history"
         description="Inspect regional gold observations and their timestamps. Choose your server in the navigation."
       />
-      <History kind="gold" />
+      <History kind="gold" autoLoad />
     </>
   );
 }
