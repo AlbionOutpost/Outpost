@@ -194,13 +194,13 @@ test("design review covers application pages, equipment, guilds and reduced moti
       }
     }
     await page.goto("/");
+    await page.getByRole("link", { name: "Try it with a T4 Bag", exact: true }).click();
     await page.getByRole("combobox", { name: "Search market items" }).fill("T6_MAIN_AXE@1");
     await page
       .getByRole("listbox", { name: "Matching market items" })
       .getByRole("option")
       .first()
       .click();
-    await page.getByRole("link", { name: "Explore market", exact: true }).click();
     await page.getByText("Advanced item identifier", { exact: true }).click();
     await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T6_MAIN_AXE@1");
     await expect(page).toHaveURL(/region=europe/);

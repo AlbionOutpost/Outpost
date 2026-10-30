@@ -434,22 +434,6 @@
   background: linear-gradient(135deg, var(--elevated), var(--panel) 78%);
   min-height: 150px;
 }
-.app.outpost .support-home .reference-feature-grid > article:first-child {
-  background:
-    linear-gradient(90deg, var(--panel) 26%, color-mix(in srgb, var(--panel) 82%, transparent)),
-    url("/albion/illustrations/market-v1.webp") right 56% / cover;
-}
-.app.outpost .support-home .reference-feature-grid > article:first-child h3 {
-  color: var(--accent-ink);
-}
-.app.outpost .support-home .home-feature-equipment img {
-  width: 38px;
-  height: 38px;
-}
-.app.outpost .support-home .home-market-query,
-.app.outpost .support-home .home-market-observations {
-  box-shadow: var(--premium-shadow);
-}
 @media (max-width: 700px) {
   .app.outpost .support-home .home-hero-atmosphere {
     inset: 0 -30% 0 0;
@@ -466,9 +450,6 @@
   .app.outpost .support-home .reference-hero-copy > p {
     max-width: 32ch;
   }
-}
-.app.outpost .support-home .home-next-actions {
-  margin-bottom: 20px;
 }
 .app.outpost .support-home .reference-feature-grid {
   display: grid;
@@ -504,93 +485,6 @@
   gap: 6px;
   align-items: center;
   font-size: 14px;
-}
-.app.outpost .support-home .home-terminal {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 20px;
-  border: 0;
-  background: transparent;
-  border-radius: 0;
-  margin: 20px 0 24px;
-  align-items: start;
-}
-.app.outpost .support-home .home-market-query,
-.app.outpost .support-home .home-market-observations {
-  padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  min-width: 0;
-}
-.app.outpost .support-home .terminal-toolbar {
-  padding: 0 0 12px;
-  min-height: 0;
-  border: 0;
-  gap: 12px;
-}
-.app.outpost .support-home .terminal-toolbar > span:first-child {
-  font-size: 18px;
-}
-.app.outpost .support-home .terminal-search {
-  padding: 0;
-}
-.app.outpost .support-home .terminal-item {
-  padding: 12px 0;
-  gap: 10px;
-}
-.app.outpost .support-home .terminal-item > img {
-  width: 42px;
-  height: 42px;
-}
-.app.outpost .support-home .terminal-item h2 {
-  font: 650 16px/1.3 var(--font-ui);
-  margin: 0 0 4px;
-}
-.app.outpost .support-home .terminal-item > a {
-  font-size: 14px;
-  min-height: 36px;
-  white-space: nowrap;
-}
-.app.outpost .support-home .terminal-source {
-  padding: 10px 0 0;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
-}
-.app.outpost .support-home .terminal-source > summary {
-  font-size: 14px;
-}
-.app.outpost .support-home .terminal-source > p {
-  font-size: 13px;
-  line-height: 1.6;
-}
-.app.outpost .support-home .home-market-observations > h2 {
-  font: 650 18px/1.3 var(--font-ui);
-  margin: 0 0 5px;
-}
-.app.outpost .support-home .home-market-observations > p {
-  color: var(--muted);
-  font-size: 12px;
-  margin: 0 0 12px;
-}
-.app.outpost .support-home .terminal-city-prices {
-  border: 0;
-  padding: 0;
-}
-.app.outpost .support-home .terminal-city-prices > div {
-  min-height: 36px;
-  padding-block: 6px;
-  font-size: 13px;
-}
-.app.outpost .support-home .terminal-city-prices > p {
-  font-size: 14px;
-  line-height: 1.6;
-  min-height: 70px;
-  display: flex;
-  align-items: center;
-}
-.app.outpost .support-home .terminal-city-prices small {
-  font-size: 12px;
 }
 .app.outpost .support-home .home-build-grid {
   display: grid;
@@ -897,17 +791,6 @@
     padding: 16px 16px 16px 56px;
   }
   .app.outpost .support-home .reference-feature-grid p {
-    margin-bottom: 8px;
-  }
-  .app.outpost .support-home .home-terminal {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-block: 20px;
-  }
-  .app.outpost .support-home .terminal-city-prices {
-    display: block;
-  }
-  .app.outpost .support-home .home-market-observations > p {
     margin-bottom: 8px;
   }
   .app.outpost .support-home .home-build-grid {
@@ -1869,17 +1752,6 @@
 .app.outpost .support-home .reference-hero {
   min-height: 330px;
 }
-.app.outpost .support-home .home-feature-equipment {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  margin: 10px 0;
-}
-.app.outpost .support-home .home-feature-equipment img {
-  display: block;
-  width: 38px;
-  height: 38px;
-}
 .app.outpost .support-home .home-library-picks .library-card-caption {
   display: none;
 }
@@ -1931,30 +1803,6 @@
   .app.outpost .support-home .reference-hero-copy > .home-data-note {
     display: none;
   }
-  .app.outpost .support-home .home-feature-equipment {
-    display: none;
-  }
-}
-.app.outpost .support-home .home-price-recovery {
-  padding: 16px 0;
-  color: var(--muted);
-}
-.app.outpost .support-home .home-price-recovery > p {
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 12px;
-}
-.app.outpost .support-home .home-price-recovery .text-link {
-  font-size: 14px;
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-}
-.app.outpost:not(.light) .support-home .terminal-period button[aria-pressed="true"] {
-  color: var(--bg);
-}
-.app.outpost.light .support-home .terminal-period button[aria-pressed="true"] {
-  color: #fff;
 }
 .app.outpost .support-section-heading > .button {
   flex: none;
@@ -1995,14 +1843,7 @@
     min-height: 42px;
   }
 }
-.app.outpost .support-home .terminal-source {
-  display: block;
-}
 
 .app.outpost .support-player-profile .profile-identity {
   justify-content: flex-start;
-}
-.app.outpost .support-home .terminal-item > a {
-  color: var(--accent-ink);
-  background: transparent;
 }

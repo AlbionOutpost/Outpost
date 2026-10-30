@@ -504,143 +504,6 @@
   font-size: 12px;
   padding: 8px 14px;
 }
-.app.outpost .home-fidelity .home-terminal {
-  display: grid;
-  grid-template-columns: 238px minmax(0, 1fr);
-  border: 1px solid #544132;
-  border-radius: 6px;
-  background: var(--panel);
-  box-shadow: none;
-}
-.app.outpost .home-fidelity .terminal-toolbar {
-  grid-column: 1/-1;
-  padding: 10px 16px;
-}
-.app.outpost .home-fidelity .terminal-toolbar > span:first-child {
-  font-size: 13px;
-}
-.app.outpost .home-fidelity .terminal-search {
-  grid-column: 1;
-  grid-row: 2;
-  padding: 14px 12px 0;
-}
-.app.outpost .home-fidelity .terminal-search .catalog-picker > label {
-  font-size: 11px;
-  margin-bottom: 6px;
-}
-.app.outpost .home-fidelity .terminal-search .catalog-search-field input {
-  padding: 8px 4px;
-  font-size: 12px;
-  min-width: 0;
-}
-.app.outpost .home-fidelity .terminal-search .catalog-search-field > svg {
-  width: 15px;
-}
-.app.outpost .home-fidelity .terminal-item {
-  grid-column: 1;
-  grid-row: 3;
-  padding: 12px;
-  align-self: start;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.app.outpost .home-fidelity .terminal-item h2 {
-  font: 650 16px/1.4 var(--font-ui);
-}
-.app.outpost .home-fidelity .terminal-item > a {
-  flex-basis: 100%;
-  font-size: 12px;
-}
-.app.outpost .home-fidelity .terminal-data-grid {
-  grid-column: 2;
-  grid-row: 2 / span 2;
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  padding: 12px 16px 8px 0;
-  gap: 16px;
-  min-width: 0;
-}
-.app.outpost .home-fidelity .terminal-history {
-  padding: 0 12px;
-  border-inline: 1px solid var(--border);
-}
-.app.outpost .home-fidelity .terminal-chart-heading {
-  padding: 0 0 4px;
-}
-.app.outpost .home-fidelity .terminal-chart-heading strong {
-  font-size: 12px;
-}
-.app.outpost .home-fidelity .terminal-chart-heading span {
-  font-size: 11px;
-}
-.app.outpost .home-fidelity .terminal-period button {
-  min-height: 30px;
-  padding: 5px 8px;
-  font-size: 11px;
-}
-.app.outpost.home-route:not(.light) .terminal-period button[aria-pressed="true"] {
-  color: #fff;
-}
-.app.outpost .home-fidelity .terminal-chart-area {
-  min-height: 170px;
-  height: 170px;
-}
-.app.outpost .home-fidelity .terminal-chart-area svg {
-  height: 170px;
-}
-.app.outpost .home-fidelity .terminal-chart-area:has(.terminal-chart-empty) {
-  height: auto;
-}
-.app.outpost .home-fidelity .terminal-chart-empty {
-  min-height: 170px;
-  padding: 12px;
-}
-.app.outpost .home-fidelity .terminal-chart-empty svg {
-  width: 28px;
-  height: 28px;
-}
-.app.outpost .home-fidelity .terminal-chart-value {
-  right: 8px;
-  top: 4px;
-  padding: 2px 4px;
-}
-.app.outpost .home-fidelity .terminal-chart-value strong {
-  font-size: 16px;
-}
-.app.outpost .home-fidelity .terminal-chart-value span {
-  font-size: 9px;
-}
-.app.outpost .home-fidelity .terminal-chart-controls {
-  padding: 4px 0 0;
-}
-.app.outpost .home-fidelity .terminal-chart-controls select {
-  height: 30px;
-  min-height: 30px;
-  padding: 4px;
-  font-size: 11px;
-}
-.app.outpost .home-fidelity .terminal-chart-controls label {
-  font-size: 11px;
-}
-.app.outpost .home-fidelity .terminal-city-prices {
-  margin: 0;
-  border: 0;
-}
-.app.outpost .home-fidelity .terminal-city-prices > div {
-  min-height: 40px;
-  padding: 8px 0;
-  font-size: 12px;
-}
-.app.outpost .home-fidelity .terminal-city-prices .terminal-city-label {
-  font-size: 11px;
-  min-height: 28px;
-  padding-top: 0;
-}
-.app.outpost .home-fidelity .terminal-source {
-  grid-column: 1/-1;
-  padding: 6px 16px;
-  border-top: 1px solid var(--border);
-}
 .home-research-benefits {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -727,12 +590,6 @@
   .home-party-preview {
     right: -32px;
   }
-  .app.outpost .home-fidelity .home-terminal {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
-  .app.outpost .home-fidelity .terminal-data-grid {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  }
   .home-research-benefits {
     gap: 12px;
   }
@@ -781,19 +638,6 @@
   .home-party-preview {
     right: 24px;
     top: 55px;
-  }
-  .app.outpost .home-fidelity .home-terminal {
-    display: block;
-  }
-  .app.outpost .home-fidelity .terminal-data-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    padding: 12px;
-  }
-  .app.outpost .home-fidelity .terminal-search {
-    padding: 12px;
-  }
-  .app.outpost .home-fidelity .terminal-item {
-    padding: 12px;
   }
   .home-research-benefits {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -906,35 +750,6 @@
   }
   .app.outpost .home-fidelity .home-market-insights > .reference-section-heading > .button {
     margin-top: 12px;
-  }
-  .app.outpost .home-fidelity .terminal-data-grid {
-    display: none;
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .home-fidelity .home-terminal.is-expanded .terminal-data-grid {
-    display: grid;
-  }
-  .app.outpost .home-fidelity .terminal-history {
-    display: block;
-    border: 0;
-    padding: 0;
-  }
-  .app.outpost .home-fidelity .terminal-chart-area,
-  .app.outpost .home-fidelity .terminal-chart-area svg {
-    height: 220px;
-  }
-  .app.outpost .home-fidelity .terminal-chart-empty svg {
-    width: 28px;
-    height: 28px;
-  }
-  .app.outpost .home-fidelity .terminal-item > a {
-    color: white;
-  }
-  .app.outpost .home-fidelity .terminal-source {
-    display: none;
-  }
-  .app.outpost .home-fidelity .home-terminal.is-expanded .terminal-source {
-    display: block;
   }
   .home-research-benefits {
     display: none;
@@ -1071,48 +886,12 @@
 .app.outpost .home-fidelity .home-market-insights {
   padding-top: 20px;
 }
-.app.outpost .home-fidelity .terminal-search .catalog-search-field input {
-  padding-left: 30px;
-}
-.app.outpost .home-fidelity .terminal-toolbar {
-  padding-block: 6px;
-}
-.app.outpost .home-fidelity .terminal-chart-area,
-.app.outpost .home-fidelity .terminal-chart-area svg {
-  min-height: 150px;
-  height: 150px;
-}
-.app.outpost .home-fidelity .terminal-chart-area:has(.terminal-chart-empty) {
-  height: auto;
-}
-.app.outpost .home-fidelity .terminal-chart-empty {
-  min-height: 150px;
-}
-.app.outpost .home-fidelity .terminal-city-prices > div {
-  min-height: 36px;
-  padding-block: 5px;
-}
-.app.outpost .home-fidelity .terminal-source {
-  padding-block: 4px;
-}
-.app.outpost .home-fidelity .terminal-source summary {
-  padding-block: 2px;
-}
 @media (max-width: 780px) {
   .app.outpost .home-fidelity .reference-hero {
     padding-block: 24px;
   }
   .app.outpost .home-fidelity .reference-feature {
     min-height: 224px;
-  }
-  .app.outpost .home-fidelity .terminal-chart-area,
-  .app.outpost .home-fidelity .terminal-chart-area svg {
-    min-height: 210px;
-    height: 210px;
-  }
-  .app.outpost .home-fidelity .terminal-chart-empty svg {
-    min-height: 0;
-    height: 28px;
   }
 }
 .app.outpost .home-fidelity .reference-hero {

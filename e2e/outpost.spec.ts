@@ -15,13 +15,13 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(logo).toHaveAttribute("src", /outpost-logo/);
   await logo.evaluate((node: HTMLImageElement) => node.decode());
   expect(await logo.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
-  await expect(page.getByRole("link", { name: "Explore market", exact: true })).toHaveAttribute(
-    "href",
-    "/tools/market?region=asia&item=T4_BAG",
-  );
+  await expect(
+    page.getByRole("link", { name: "Try it with a T4 Bag", exact: true }),
+  ).toHaveAttribute("href", "/tools/market?item=T4_BAG&region=asia");
   await expect(page.locator(".reference-feature-grid > article")).toHaveCount(3);
+  await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
-  const browse = page.getByRole("link", { name: "Browse Builds", exact: true });
+  const browse = page.getByRole("link", { name: "Browse Builds", exact: true }).first();
   await expect(browse).toHaveAttribute("href", "/builds/library?region=asia");
   await browse.click();
   await expect(page).toHaveURL(/\/builds\/library\?region=asia$/);
