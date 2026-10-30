@@ -185,6 +185,10 @@
   font: 800 clamp(32px, 3.2vw, 44px) / 1.05 var(--font-display);
   letter-spacing: -0.01em;
 }
+.app.outpost .landing-section-heading h2 em {
+  font-style: normal;
+  color: var(--accent);
+}
 .app.outpost .landing-section-heading p {
   margin: 8px 0 0;
   color: var(--muted);
@@ -209,40 +213,81 @@
   gap: 20px;
 }
 .app.outpost .landing-card {
+  position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 14px;
   min-width: 0;
   padding: 18px 18px 16px;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
   border-radius: 14px;
-  background: var(--panel);
-  box-shadow: inset 0 1px 0 #ffffff08;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--panel)), var(--panel) 40%),
+    var(--panel);
+  box-shadow:
+    inset 0 0 0 1px #ffffff08,
+    0 12px 32px #0005;
   transition: border-color var(--motion-fast) var(--ease-out);
 }
+/* Corner marks in copper, like a fitted frame */
+.app.outpost .landing-card::before,
+.app.outpost .landing-card::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  pointer-events: none;
+}
+.app.outpost .landing-card::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: 14px;
+}
+.app.outpost .landing-card::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: 14px;
+}
 .app.outpost .landing-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
 }
 .app.outpost .landing-card-head {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: start;
 }
 .app.outpost .landing-card-emblem {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   color: var(--accent-ink);
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--border));
   border-radius: var(--radius-md);
-  background: var(--accent-wash);
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 70%
+    ),
+    var(--elevated);
+  box-shadow: inset 0 1px 0 #ffffff14;
+}
+.app.outpost .landing-card-emblem svg {
+  width: 24px;
+  height: 24px;
 }
 .app.outpost .landing-card-head h3,
 .app.outpost .landing-group-copy h2 {
   margin: 0 0 4px;
-  font: 700 18px/1.25 var(--font-ui);
+  font: 800 22px/1.15 var(--font-display);
+  letter-spacing: 0.01em;
 }
 .app.outpost .landing-card-head p,
 .app.outpost .landing-group-copy p {
@@ -252,15 +297,25 @@
   line-height: 1.45;
 }
 .app.outpost .landing-card-tag {
-  padding: 3px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
   border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--border));
   border-radius: 999px;
   color: var(--accent-ink);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+.app.outpost .landing-card-tag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success);
 }
 .app.outpost .landing-card-body {
   min-width: 0;
@@ -273,21 +328,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 9px 16px;
-  border: 1px solid var(--accent);
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, #000);
   border-radius: var(--radius-md);
-  color: var(--accent-ink);
-  font-size: 14px;
-  font-weight: 700;
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  color: var(--bg);
+  font: 800 16px/1.2 var(--font-display);
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 1px 0 #ffffff40,
+    0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent);
   transition:
-    background-color var(--motion-fast) var(--ease-out),
-    color var(--motion-fast) var(--ease-out);
+    filter var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+.app.outpost .landing-card-action svg {
+  width: 18px;
+  height: 18px;
 }
 .app.outpost .landing-card-action:hover {
-  background: var(--accent);
-  color: var(--bg);
+  filter: brightness(1.08);
+}
+.app.outpost .landing-card-action:active {
+  transform: translateY(1px);
 }
 .app.outpost .landing-preview-status {
   margin: 10px 0 0;
@@ -398,32 +463,153 @@
   background: var(--accent);
   color: var(--bg);
 }
+.app.outpost .preview-tabs.is-wide {
+  display: flex;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.app.outpost .preview-tabs.is-wide button {
+  flex: 1 1 0;
+  min-height: 30px;
+  padding-inline: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.app.outpost .preview-select.is-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+.app.outpost .preview-select.is-inline select {
+  min-height: 26px;
+  padding: 0 24px 0 8px;
+  font-size: 12px;
+  background-position:
+    calc(100% - 12px) 10px,
+    calc(100% - 7px) 10px;
+}
+.app.outpost .preview-stepper {
+  display: inline-grid;
+  flex: none;
+  grid-template-columns: 30px 30px 30px auto;
+  height: 36px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+}
+.app.outpost .preview-stepper button {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+.app.outpost .preview-stepper button:disabled {
+  opacity: 0.35;
+}
+.app.outpost .preview-stepper output {
+  text-align: center;
+  font: 700 14px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .preview-stepper small {
+  padding: 0 10px 0 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+/* City identities as the game colours them; data colour, not decoration */
+.app.outpost .city-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--city, var(--muted));
+  box-shadow: 0 0 0 1px #0006;
+  vertical-align: 0;
+}
+.app.outpost .city-dot[data-city="Bridgewatch"] {
+  --city: #e0a53c;
+}
+.app.outpost .city-dot[data-city="Martlock"] {
+  --city: #4f8fe0;
+}
+.app.outpost .city-dot[data-city="Thetford"] {
+  --city: #a569e0;
+}
+.app.outpost .city-dot[data-city="Lymhurst"] {
+  --city: #58b764;
+}
+.app.outpost .city-dot[data-city="Fort Sterling"] {
+  --city: #e8eef5;
+}
+.app.outpost .city-dot[data-city="Caerleon"] {
+  --city: #d9534f;
+}
+.app.outpost .city-dot[data-city="Brecilien"] {
+  --city: #4fb8c9;
+}
+.app.outpost.light .city-dot[data-city="Fort Sterling"] {
+  --city: #9aa7b5;
+}
+.app.outpost .market-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0 6px;
+}
+.app.outpost .market-preview-head .build-preview-label {
+  margin: 0;
+}
+.app.outpost .market-preview-caption strong,
+.app.outpost .market-preview-range strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.app.outpost .market-preview-plot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px;
+}
+.app.outpost .market-preview-y {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.app.outpost .market-preview-axis {
+  padding-left: 44px;
+}
 
 /* Market card */
-.app.outpost .market-preview-item,
-.app.outpost .crafting-preview-recipe {
+.app.outpost .market-preview-item {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  margin-bottom: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
 }
-.app.outpost .market-preview-item strong,
-.app.outpost .crafting-preview-recipe strong {
+.app.outpost .market-preview-item strong {
   display: block;
   font-size: 15px;
   line-height: 1.3;
 }
-.app.outpost .market-preview-item span,
-.app.outpost .crafting-preview-recipe span {
+.app.outpost .market-preview-item span {
   display: block;
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .market-preview-item img,
-.app.outpost .crafting-preview-recipe img {
-  width: 44px;
-  height: 44px;
+.app.outpost .market-preview-item img {
+  width: 48px;
+  height: 48px;
 }
 .app.outpost .market-preview-table {
   width: 100%;
@@ -469,6 +655,7 @@
 }
 .app.outpost .market-preview-trend figcaption {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 8px;
@@ -478,6 +665,9 @@
 .app.outpost .market-preview-range,
 .app.outpost .market-preview-axis {
   font-variant-numeric: tabular-nums;
+}
+.app.outpost .market-preview-range {
+  white-space: nowrap;
 }
 .app.outpost .market-preview-axis {
   display: flex;
@@ -597,6 +787,32 @@
 }
 
 /* Crafting card */
+.app.outpost .crafting-preview-recipe {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.app.outpost .crafting-preview-recipe img {
+  width: 48px;
+  height: 48px;
+}
+.app.outpost .crafting-preview-pick {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 12px;
+}
+.app.outpost .crafting-preview-section {
+  padding: 10px 12px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+}
+.app.outpost .crafting-preview-section + .crafting-preview-section {
+  margin-top: 10px;
+}
 .app.outpost .crafting-preview-slot {
   display: block;
   width: 28px;
@@ -614,7 +830,7 @@
   grid-template-columns: 28px minmax(0, 1fr) auto auto;
   gap: 10px;
   align-items: center;
-  padding: 7px 0;
+  padding: 6px 0;
   border-top: 1px solid var(--border);
   font-size: 13px;
 }
@@ -631,55 +847,58 @@
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .crafting-preview-materials .is-number {
+.app.outpost .crafting-preview-unit {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .crafting-preview-materials .is-number:last-child {
   font-weight: 600;
 }
+.app.outpost .crafting-preview-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
 .app.outpost .crafting-preview-result {
-  margin: 12px 0 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  overflow: hidden;
+  margin: 4px 0 0;
 }
 .app.outpost .crafting-preview-result > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  padding: 7px 12px;
-  border-bottom: 1px solid var(--border);
+  padding: 5px 0;
+  border-top: 1px solid var(--border);
   font-size: 13px;
 }
-.app.outpost .crafting-preview-result > div:last-child {
-  border-bottom: 0;
+.app.outpost .crafting-preview-result > div:first-child {
+  border-top: 0;
 }
 .app.outpost .crafting-preview-result dt {
   color: var(--muted);
 }
 .app.outpost .crafting-preview-result dd {
   margin: 0;
-  font: 700 14px/1.3 var(--font-ui);
+  font: 600 13px/1.3 var(--font-ui);
   font-variant-numeric: tabular-nums;
   text-align: right;
   overflow-wrap: normal;
 }
-.app.outpost .crafting-preview-result dd small {
-  margin-left: 6px;
-  color: var(--muted);
-  font: 400 11px/1 var(--font-ui);
+.app.outpost .crafting-preview-result .is-total dt,
+.app.outpost .crafting-preview-result .is-total dd {
+  color: var(--text);
+  font-weight: 700;
 }
-.app.outpost .crafting-preview-result dd small.is-stale {
-  color: var(--warning, #e6b35b);
+.app.outpost .crafting-preview-result .is-strong dd {
+  font-size: 15px;
+  font-weight: 800;
 }
-.app.outpost .crafting-preview-result .is-gain {
-  background: color-mix(in srgb, var(--success) 10%, transparent);
-}
+.app.outpost .crafting-preview-result .is-gain dt,
 .app.outpost .crafting-preview-result .is-gain dd {
   color: var(--success);
 }
-.app.outpost .crafting-preview-result .is-loss {
-  background: color-mix(in srgb, var(--error) 10%, transparent);
-}
+.app.outpost .crafting-preview-result .is-loss dt,
 .app.outpost .crafting-preview-result .is-loss dd {
   color: var(--error);
 }
@@ -692,6 +911,19 @@
 .app.outpost .crafting-preview-assumptions span {
   color: var(--text);
   font-weight: 600;
+}
+
+/* Build card */
+.app.outpost .build-card-title a {
+  color: var(--text);
+}
+.app.outpost .build-card-title a:hover strong {
+  color: var(--accent-ink);
+}
+.app.outpost .build-showcase-foot {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 /* Group Compositions band */
@@ -816,8 +1048,7 @@
   grid-column: 2;
   grid-row: 2;
   align-self: end;
-  background: #15131acc;
-  backdrop-filter: blur(6px);
+  justify-self: start;
 }
 
 /* Why choose Outpost */
@@ -1120,8 +1351,7 @@
   .app.outpost .landing-group-action {
     grid-column: 1;
     grid-row: auto;
-    background: transparent;
-    backdrop-filter: none;
+    justify-self: stretch;
   }
   .app.outpost .landing-why-grid {
     grid-template-columns: 1fr;
@@ -1155,7 +1385,8 @@
   .app.outpost .crafting-preview-materials li {
     grid-template-columns: 28px minmax(0, 1fr) auto;
   }
-  .app.outpost .crafting-preview-materials time {
+  .app.outpost .market-preview-axis span:nth-child(2),
+  .app.outpost .market-preview-axis span:nth-child(4) {
     display: none;
   }
   .app.outpost .build-card-body .loadout-board.is-card {

@@ -24,6 +24,10 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — landing page tool cards (30 Oct)
+
+- The three product cards are rebuilt as framed tool windows: Market Explorer with five city quotes, city dots and an axis-labelled trend; Build Library with one public build per activity tab (Solo Mists, Small scale, ZvZ, PvE) and its abilities on their keys; Crafting Calculator with craft/refine tabs, a batch stepper, a materials list and a cost & profit panel. `/api/economy/preview` takes `batches` and refining recipes and returns `profitPerItem`.
+
 ## Shipped — landing page v4 (30 Oct)
 
 - Rebuilt to the owner's concept: full-bleed painted hero with the capability strip inside it, three product cards with working controls (trend city + range, recipe + city) and outlined actions, the Group Compositions band reading a real library comp by weapon type (`src/lib/compositions/weapon-roles.ts`, labelled "roles by weapon type"), "Why choose Outpost?", the ad-free offer and a painted closing band.

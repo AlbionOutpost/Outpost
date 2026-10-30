@@ -59,10 +59,15 @@ test("landing page: independent header, bounded hero, live previews and a struct
       json: {
         region: "europe",
         source: "Albion Online Data Project",
-        recipe: { id: "battleaxe-t6", name: "T6 Battleaxe", output: "T6_MAIN_AXE" },
+        recipe: {
+          id: "battleaxe-t6",
+          name: "T6 Battleaxe",
+          output: "T6_MAIN_AXE",
+          kind: "crafting",
+        },
         assumptions: {
           city: "Bridgewatch",
-          batches: 1,
+          batches: Number(new URL(route.request().url()).searchParams.get("batches") ?? 1),
           returnRate: 0,
           useFocus: false,
           stationFee: 0,
@@ -95,6 +100,7 @@ test("landing page: independent header, bounded hero, live previews and a struct
         revenue: null,
         fees: null,
         profit: null,
+        profitPerItem: null,
         margin: null,
       },
     }),
@@ -133,11 +139,19 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(cards).toHaveCount(3);
   await cards.first().scrollIntoViewIfNeeded();
   const market = cards.nth(0);
+  await expect(market.locator(".market-preview-item")).toContainText("Tier 6 · Refined material");
+  await expect(market.locator("tbody tr")).toHaveCount(5);
   await expect(market.locator("tbody tr").nth(0)).toContainText(/Bridgewatch\s*3,670\s*2,165/);
+  await expect(market.locator("tbody tr").nth(0).locator(".city-dot")).toHaveAttribute(
+    "data-city",
+    "Bridgewatch",
+  );
   await expect(market.locator("tbody tr").nth(0).locator("time")).toHaveText("9 min ago");
   await expect(market.locator("tbody tr").nth(1)).toContainText("Unavailable");
   await expect(market.locator("tbody tr").nth(2).locator("time")).toHaveClass(/is-stale/);
   await expect(market.locator(".market-preview-trend svg")).toBeVisible();
+  await expect(market.locator(".market-preview-y span")).toHaveCount(3);
+  await expect(market.locator(".market-preview-axis span").first()).toHaveText("10/01");
   await expect(market.locator(".market-preview-range")).toHaveText("3,400 – 3,900");
   await market.getByRole("tab", { name: "7d" }).click();
   await expect(market.locator(".market-preview-trend figcaption")).toContainText("7-day average");
@@ -152,8 +166,13 @@ test("landing page: independent header, bounded hero, live previews and a struct
     "/tools/market?item=T6_METALBAR&quality=1&region=europe",
   );
 
-  // The featured build on the game's loadout board with its abilities on their keys.
+  // One public build per activity on the game's loadout board, abilities on their keys.
   const build = cards.nth(1);
+  const activities = build.getByRole("tablist", { name: "Activity" }).getByRole("tab");
+  await expect(activities).toHaveCount(4);
+  await expect(activities.nth(0)).toHaveAttribute("aria-selected", "true");
+  await expect(build.locator(".build-card-title")).toContainText("Battleaxe Mist Build");
+  await expect(build.locator(".build-card-title")).toContainText("▲ 209");
   const board = build.locator(".loadout-board");
   await expect(board.getByRole("listitem")).toHaveCount(10);
   await expect(board.locator('[data-slot="Main hand"] .loadout-board-cell img')).toBeVisible();
@@ -163,21 +182,48 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(keys).toHaveCount(6);
   await expect(keys.nth(0)).toContainText("Q");
   await expect(keys.nth(0).locator("img")).toBeVisible();
+  await activities.nth(2).click();
+  await expect(build.locator(".build-card-title")).toContainText("Great Hammer");
+  await expect(build.locator(".build-card-title a")).toHaveAttribute(
+    "href",
+    "/builds/library/great-hammer-zvz-build?region=europe",
+  );
+  await expect(build.locator(".build-showcase-foot")).toContainText("recorded pieces");
   await expect(build.getByRole("link", { name: /Browse Builds/ })).toHaveAttribute(
     "href",
     "/builds/library?region=europe",
   );
 
+  // Crafting: recipe, city and batch size re-price through the same service as the calculator.
   const crafting = cards.nth(2);
+  await expect(crafting.getByRole("tablist", { name: "Scenario" }).getByRole("tab")).toHaveCount(2);
   await expect(crafting.getByRole("list", { name: "Materials" }).getByRole("listitem")).toHaveCount(
     2,
   );
-  await expect(crafting.locator(".crafting-preview-result")).toContainText("—");
+  await expect(crafting.locator(".crafting-preview-materials li").first()).toContainText(
+    /Bloodoak Planks\s*× 8\s*2,894\s*23,152/,
+  );
+  await expect(crafting.locator(".crafting-preview-result-head")).toContainText(
+    "Cost & profit (1 item)",
+  );
+  await expect(crafting.locator(".crafting-preview-result .is-total")).toContainText(
+    /Total cost\s*—/,
+  );
   await expect(crafting.locator(".landing-preview-status")).toContainText(
     "No Bridgewatch price for Runite Steel Bar",
   );
+  const batches = crafting.getByRole("group", { name: "Batch size" });
+  await expect(batches.getByRole("button", { name: "Fewer batches" })).toBeDisabled();
+  await batches.getByRole("button", { name: "More batches" }).click();
+  await expect(batches.locator("output")).toHaveText("2");
+  await expect(crafting.locator(".crafting-preview-assumptions")).toBeVisible();
   await crafting.getByLabel("City").selectOption("Martlock");
-  await expect(crafting.locator(".crafting-preview-recipe")).toContainText("sold in Martlock");
+  await expect(crafting.locator(".crafting-preview-result")).toContainText(
+    "Market price (Martlock)",
+  );
+  await crafting.getByLabel("Recipe").selectOption("broadsword-t6");
+  await crafting.getByRole("tab", { name: "Refine material" }).click();
+  await expect(crafting.getByLabel("Recipe")).toHaveValue("metalbar-t6");
   await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
     "href",
     "/tools/crafting?recipe=battleaxe-t6&region=europe",

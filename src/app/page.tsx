@@ -1,6 +1,6 @@
 import "./homepage.css";
 import { AdSlot } from "@/components/ad-slot";
-import { BuildCard } from "@/components/landing/build-card";
+import { BuildShowcase, type ShowcaseBuild } from "@/components/landing/build-showcase";
 import { CraftingPreview } from "@/components/landing/crafting-preview";
 import { GroupRoles } from "@/components/landing/group-roles";
 import { MarketPreview } from "@/components/landing/market-preview";
@@ -8,7 +8,6 @@ import { PreviewShell } from "@/components/landing/preview-shell";
 import { ToolIcon } from "@/components/tool-icon";
 import {
   featuredLibraryBuilds,
-  findLibraryBuild,
   findLibraryBuilds,
   findLibraryComposition,
   libraryCounts,
@@ -37,7 +36,8 @@ import {
 const showcase = {
   market: {
     id: "T6_METALBAR",
-    cities: ["Bridgewatch", "Caerleon", "Martlock"],
+    kind: "Refined material",
+    cities: ["Bridgewatch", "Caerleon", "Martlock", "Thetford", "Lymhurst"],
     trendCities: ["Bridgewatch", "Caerleon", "Martlock", "Lymhurst", "Thetford", "Fort Sterling"],
   },
   crafting: {
@@ -50,9 +50,23 @@ const showcase = {
       { id: "bag-t6", output: "T6_BAG" },
       { id: "cape-t6", output: "T6_CAPE" },
     ],
+    refining: [
+      { id: "metalbar-t6", output: "T6_METALBAR" },
+      { id: "planks-t6", output: "T6_PLANKS" },
+      { id: "leather-t6", output: "T6_LEATHER" },
+      { id: "cloth-t6", output: "T6_CLOTH" },
+      { id: "metalbar-t5", output: "T5_METALBAR" },
+      { id: "planks-t5", output: "T5_PLANKS" },
+    ],
     cities: ["Bridgewatch", "Martlock", "Lymhurst", "Fort Sterling", "Thetford", "Caerleon"],
   },
-  build: "battleaxe-mist-build",
+  // One public build per activity tab; the first is the featured one.
+  builds: [
+    { slug: "battleaxe-mist-build", label: "Solo Mists" },
+    { slug: "carving-sword-smallscale-build", label: "Small scale" },
+    { slug: "great-hammer-zvz-build", label: "ZvZ" },
+    { slug: "bloodmoon-staff-group-dungeon-solo-build", label: "PvE" },
+  ],
   composition: "statics-group-builds",
 } as const;
 
@@ -68,23 +82,49 @@ export default async function Home({
   const suffix = `?region=${region}`;
   // Two round trips to the library on Cloudflare: everything independent first, then the
   // composition's members, so the page streams without showing the shell fallback.
-  const [library, spellNames, featured, composition] = await Promise.all([
+  const [library, spellNames, picked, composition] = await Promise.all([
     libraryCounts(),
     librarySpellNames(),
-    findLibraryBuild(showcase.build),
+    findLibraryBuilds(showcase.builds.map((b) => b.slug)),
     findLibraryComposition(showcase.composition),
   ]);
   const [fallback, members] = await Promise.all([
-    featured ? Promise.resolve([]) : featuredLibraryBuilds(),
+    picked.length ? Promise.resolve([]) : featuredLibraryBuilds(),
     composition ? findLibraryBuilds(composition.members) : Promise.resolve([]),
   ]);
-  const build = featured ?? fallback[0];
+  const builds: ShowcaseBuild[] = showcase.builds.flatMap(({ slug, label }) => {
+    const b = picked.find((row) => row.slug === slug);
+    return b
+      ? [
+          {
+            slug: b.slug,
+            title: b.title,
+            category: b.category,
+            weaponName: b.weaponName,
+            author: b.author,
+            equipment: b.equipment,
+            tags: b.tags,
+            upvotes: b.upvotes,
+            label,
+          },
+        ]
+      : [];
+  });
+  if (!builds.length && fallback[0]) {
+    const b = fallback[0];
+    builds.push({ ...b, label: activityName(b.category) });
+  }
+  // Only the ability names these builds use travel to the client.
+  const usedSpells = new Set(builds.flatMap((b) => b.equipment.flatMap((e) => e.skills)));
+  const spellLabels = Object.fromEntries(
+    [...usedSpells].flatMap((id) => (spellNames[id] ? [[id, spellNames[id]]] : [])),
+  );
   const n = (value: number) => value.toLocaleString("en-US");
   const gameData = gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1);
-  const recipes = showcase.crafting.recipes.map((r) => ({
-    ...r,
-    name: itemName(r.output).replace(/ \(T\d\.\d\)$/, ""),
-  }));
+  const named = (list: readonly { id: string; output: string }[]) =>
+    list.map((r) => ({ ...r, name: itemName(r.output).replace(/ \(T\d\.\d\)$/, "") }));
+  const recipes = named(showcase.crafting.recipes);
+  const refining = named(showcase.crafting.refining);
   return (
     <div className="home-landing">
       <section className="landing-hero" aria-labelledby="home-title">
@@ -150,7 +190,9 @@ export default async function Home({
 
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="landing-section-heading">
-          <h2 id="home-tools-title">Powerful tools for every Albion player.</h2>
+          <h2 id="home-tools-title">
+            Powerful <em>tools</em> for every Albion player.
+          </h2>
           <p>
             From market research to build planning and group compositions — everything you need in
             one place.
@@ -169,7 +211,12 @@ export default async function Home({
             action="Open Market Explorer"
           >
             <MarketPreview
-              item={{ id: showcase.market.id, name: itemName(showcase.market.id), tier: "Tier 6" }}
+              item={{
+                id: showcase.market.id,
+                name: itemName(showcase.market.id),
+                tier: "Tier 6",
+                kind: showcase.market.kind,
+              }}
               cities={showcase.market.cities}
               trendCities={showcase.market.trendCities}
               suffix={suffix}
@@ -183,7 +230,7 @@ export default async function Home({
             href={`/builds/library${suffix}`}
             action="Browse Builds"
           >
-            <BuildCard build={build} spellNames={spellNames} />
+            <BuildShowcase builds={builds} spellNames={spellLabels} suffix={suffix} />
           </PreviewShell>
           <PreviewShell
             id="home-crafting"
@@ -194,9 +241,9 @@ export default async function Home({
             action="Open Crafting Calculator"
           >
             <CraftingPreview
-              recipes={recipes}
+              crafting={recipes}
+              refining={refining}
               cities={showcase.crafting.cities}
-              initialRecipe={showcase.crafting.recipes[0].id}
               initialCity={showcase.crafting.cities[0]}
             />
           </PreviewShell>

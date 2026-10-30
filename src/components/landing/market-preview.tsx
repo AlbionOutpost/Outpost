@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { z } from "zod";
 import { ItemIcon } from "@/components/item-icon";
 import Link from "@/components/link";
@@ -42,7 +42,7 @@ export function MarketPreview({
   trendCities,
   suffix,
 }: {
-  item: { id: string; name: string; tier: string };
+  item: { id: string; name: string; tier: string; kind: string };
   cities: readonly string[];
   trendCities: readonly string[];
   suffix: string;
@@ -153,16 +153,18 @@ export function MarketPreview({
           <Search size={15} aria-hidden="true" />
           <span>Search for an item…</span>
         </Link>
-        <label className="preview-select">
-          <span className="sr-only">Trend city</span>
-          <select value={trendCity} onChange={(e) => setTrendCity(e.target.value)}>
-            {trendCities.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
-          </select>
-        </label>
+      </div>
+      <div className="market-preview-item">
+        <ItemIcon id={item.id} size={48} />
+        <div>
+          <strong>{item.name}</strong>
+          <span>
+            {item.tier} · {item.kind} · {regions[region].label}
+          </span>
+        </div>
+      </div>
+      <div className="market-preview-head">
+        <span className="build-preview-label">City prices</span>
         <div className="preview-tabs" role="tablist" aria-label="Trend range">
           {ranges.map((days) => (
             <button
@@ -178,15 +180,6 @@ export function MarketPreview({
           ))}
         </div>
       </div>
-      <div className="market-preview-item">
-        <ItemIcon id={item.id} size={44} />
-        <div>
-          <strong>{item.name}</strong>
-          <span>
-            {item.tier} · Normal quality · {regions[region].label}
-          </span>
-        </div>
-      </div>
       <table className="market-preview-table">
         <thead>
           <tr>
@@ -197,7 +190,7 @@ export function MarketPreview({
             <th scope="col" className="is-number">
               Buy
             </th>
-            <th scope="col">Seen</th>
+            <th scope="col">Last seen</th>
           </tr>
         </thead>
         <tbody>
@@ -209,7 +202,10 @@ export function MarketPreview({
             const age = sell ? sourceAge(sell.sell_price_min_date, now) : null;
             return (
               <tr key={city}>
-                <th scope="row">{city}</th>
+                <th scope="row">
+                  <span className="city-dot" data-city={city} aria-hidden="true" />
+                  {city}
+                </th>
                 <td className="is-number">
                   {sell ? silver(sell.sell_price_min) : <span className="is-missing">—</span>}
                 </td>
@@ -238,12 +234,33 @@ export function MarketPreview({
       {prices.status === "error" && (
         <PreviewStatus>{prices.message} No prices have been substituted.</PreviewStatus>
       )}
-      <Trend city={trendCity} state={trend} range={range} />
+      <Trend city={trendCity} state={trend} range={range}>
+        <label className="preview-select is-inline">
+          <span className="sr-only">Trend city</span>
+          <select value={trendCity} onChange={(e) => setTrendCity(e.target.value)}>
+            {trendCities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </label>
+      </Trend>
     </div>
   );
 }
 
-function Trend({ city, state, range }: { city: string; state: Load<Point[]>; range: number }) {
+function Trend({
+  city,
+  state,
+  range,
+  children,
+}: {
+  city: string;
+  state: Load<Point[]>;
+  range: number;
+  children?: ReactNode;
+}) {
   const all = state.status === "ready" ? state.data : [];
   const since = (state.status === "ready" ? state.fetchedAt : 0) - range * 86400000;
   const points = all.filter((p) => Date.parse(p.timestamp + "Z") >= since);
@@ -270,9 +287,8 @@ function Trend({ city, state, range }: { city: string; state: Load<Point[]>; ran
   return (
     <figure className="market-preview-trend">
       <figcaption>
-        <span>
-          {range}-day average · {city}
-          {last ? ` · ${silver(Math.round(last.avg_price))}` : ""}
+        <span className="market-preview-caption">
+          <strong>{range}-day average</strong> {children}
         </span>
         {points.length > 1 && (
           <span className="market-preview-range">
@@ -281,28 +297,35 @@ function Trend({ city, state, range }: { city: string; state: Load<Point[]>; ran
         )}
       </figcaption>
       {points.length > 1 ? (
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          preserveAspectRatio="none"
-          role="img"
-          aria-label={`Average daily price in ${city} over the last ${points.length} recorded days, from ${silver(Math.round(low))} to ${silver(Math.round(high))} silver`}
-        >
-          <defs>
-            <linearGradient id="market-preview-fill" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="var(--accent)" stopOpacity="0.35" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d={area} fill="url(#market-preview-fill)" />
-          <path
-            d={path}
-            fill="none"
-            stroke="var(--accent-ink)"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
+        <div className="market-preview-plot">
+          <div className="market-preview-y" aria-hidden="true">
+            <span>{silver(Math.round(high))}</span>
+            <span>{silver(Math.round((high + low) / 2))}</span>
+            <span>{silver(Math.round(low))}</span>
+          </div>
+          <svg
+            viewBox={`0 0 ${width} ${height}`}
+            preserveAspectRatio="none"
+            role="img"
+            aria-label={`Average daily price in ${city} over the last ${points.length} recorded days, from ${silver(Math.round(low))} to ${silver(Math.round(high))} silver`}
+          >
+            <defs>
+              <linearGradient id="market-preview-fill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stopColor="var(--accent)" stopOpacity="0.35" />
+                <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d={area} fill="url(#market-preview-fill)" />
+            <path
+              d={path}
+              fill="none"
+              stroke="var(--accent-ink)"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+        </div>
       ) : (
         <p className="market-preview-empty">
           {state.status === "loading" || state.status === "idle"
@@ -314,9 +337,9 @@ function Trend({ city, state, range }: { city: string; state: Load<Point[]>; ran
       )}
       {first && last && points.length > 1 && (
         <div className="market-preview-axis" aria-hidden="true">
-          <span>{day(first)}</span>
-          <span>{points.length} daily averages</span>
-          <span>{day(last)}</span>
+          {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+            <span key={t}>{day(points[Math.round(t * (points.length - 1))])}</span>
+          ))}
         </div>
       )}
     </figure>
