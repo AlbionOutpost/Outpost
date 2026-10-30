@@ -23,15 +23,16 @@
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: calc(var(--gap) * -1);
+  top: 8px;
   z-index: -1;
   width: auto;
-  height: calc(var(--cell) * 3 + var(--gap) * 4);
+  height: calc(var(--cell) * 3 + var(--gap) * 2);
   transform: translateX(-50%);
   opacity: 0.3;
   pointer-events: none;
 }
 .app.outpost .loadout-board.is-mini .loadout-board-figure {
+  top: 0;
   opacity: 0.25;
 }
 .app.outpost .loadout-board-column {
@@ -75,10 +76,10 @@
   color: var(--muted);
 }
 .app.outpost .loadout-board-mark {
-  width: 62%;
-  height: 62%;
+  width: 50%;
+  height: 50%;
   object-fit: contain;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 .app.outpost .loadout-board-abilities > span {
   display: grid;
