@@ -65,14 +65,14 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Cloudflare zone
 
-| Area          | State                                                                                          |
-| ------------- | ---------------------------------------------------------------------------------------------- |
-| DNS / domains | Zone active; apex and `www` are Workers custom domains; `www` redirects to apex                |
-| TLS           | Full (strict), min TLS 1.2, TLS 1.3, always HTTPS (`npm run cloudflare:security`)              |
-| WAF / bots    | Managed Free rules, custom rule blocking `/.env*` and repo/internal paths, Bot Fight Mode      |
-| Mail          | No mail: null MX, `v=spf1 -all`, DMARC reject (`npm run cloudflare:mail`)                      |
-| DNSSEC        | Signed at Cloudflare; **DS record not yet published at the registrar** (Namecheap) — see below |
-| Access        | None; the site is public                                                                       |
+| Area          | State                                                                                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DNS / domains | Zone active; apex and `www` are Workers custom domains; `www` redirects to apex                                                                                                 |
+| TLS           | Full (strict), min TLS 1.2, TLS 1.3, always HTTPS (`npm run cloudflare:security`)                                                                                               |
+| WAF / bots    | Managed Free rules, custom rule blocking `/.env*` and repo/internal paths, Bot Fight Mode; rate-limit rule: 60 `/api/` requests per 10 s per IP and colo, then blocked for 10 s |
+| Mail          | No mail: null MX, `v=spf1 -all`, DMARC reject (`npm run cloudflare:mail`)                                                                                                       |
+| DNSSEC        | Signed at Cloudflare; **DS record not yet published at the registrar** (Namecheap) — see below                                                                                  |
+| Access        | None; the site is public                                                                                                                                                        |
 
 **Publish DNSSEC:** in Namecheap → Domain → Advanced DNS → DNSSEC, add the DS that `npm run cloudflare:dnssec` prints (currently key tag 2371, algorithm 13, digest type 2). Re-read it before submitting; then run `npm run cloudflare:dnssec` again to confirm. To roll back, remove the DS at the registrar first and keep signing on until its TTL expires.
 
@@ -86,13 +86,14 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 | Budget             | Limit / setting                                                                          |
 | ------------------ | ---------------------------------------------------------------------------------------- |
-| Worker bundle      | 3 MiB gzip each (web ≈1.98 MB, data ≈1.02 MB)                                            |
-| Session DO         | 240 requests/min per browser session                                                     |
+| Worker bundle      | 3 MiB gzip each (web ≈2.31 MiB after the game data, data ≈1.02 MB)                       |
+| Daily requests     | 100 k Worker and 100 k Durable Object requests per day; static assets are free           |
+| Session DO         | 240 requests/min per browser session, in memory (no storage writes)                      |
 | AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                      |
 | Game Info upstream | 12/min per region                                                                        |
 | D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design |
 
-Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
+Measure with the account GraphQL analytics (`workersInvocationsAdaptive`, `durableObjectsInvocationsAdaptiveGroups`, zone `httpRequestsAdaptiveGroups` by path and user agent). Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
 
 ## Backups and recovery
 
