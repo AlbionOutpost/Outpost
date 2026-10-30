@@ -173,11 +173,12 @@ test("mobile collection filters and catalog categories preserve the chosen scope
     "href",
     `/compositions/${visual.compositionId}`,
   );
+  // Masthead, tabs and filters leave the first result well inside the first screen (844px).
   expect(
     await page
       .locator(".composition-preview-card")
       .evaluate((el) => el.getBoundingClientRect().top),
-  ).toBeLessThan(500);
+  ).toBeLessThan(560);
   await page.goto("/items?region=asia");
   await page.getByRole("combobox", { name: "Item category", exact: true }).selectOption("Cape");
   await expect(page.locator(".item-reference-browser")).toHaveAttribute("aria-busy", "false");

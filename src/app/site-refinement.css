@@ -1028,7 +1028,15 @@
   .app.outpost .workspace-identity-actions {
     flex: 0 0 100%;
     width: 100%;
-    margin-left: 0;
+    margin: 2px 0 0;
+  }
+  .app.outpost .workspace-identity-actions > .button {
+    min-height: 40px;
+    padding-block: 8px;
+  }
+  .app.outpost .workspace-identity[data-scene] {
+    padding: 16px;
+    gap: 12px;
   }
   .app.outpost .workspace-identity-actions > .button {
     width: 100%;
