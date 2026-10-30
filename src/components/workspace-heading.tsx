@@ -11,6 +11,7 @@ export function WorkspaceHeading({
   glyph,
   scene,
   children,
+  actions,
 }: {
   title: string;
   description: string;
@@ -20,6 +21,8 @@ export function WorkspaceHeading({
   scene?: Scene;
   /** Optional actions or tabs rendered under the title. */
   children?: React.ReactNode;
+  /** Primary action rendered at the right edge of the masthead. */
+  actions?: React.ReactNode;
 }) {
   const Icon = icon === "account" ? Settings : icon === "timer" ? Clock3 : Calculator;
   return (
@@ -32,6 +35,7 @@ export function WorkspaceHeading({
         <p className="intro">{description}</p>
         {children}
       </div>
+      {actions && <div className="workspace-identity-actions">{actions}</div>}
     </header>
   );
 }

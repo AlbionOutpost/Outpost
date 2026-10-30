@@ -1,3 +1,4 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/link";
 import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
@@ -24,17 +25,17 @@ export default async function Page({
     `/compositions/library?${new URLSearchParams({ q, category, page: String(n) })}`;
   return (
     <div className="library-page group-build-library">
-      <div className="section-heading">
-        <div>
-          <h1 className="page-title display-title">Group Builds</h1>
-          <p className="intro">
-            {total} group builds. Find complete loadouts for your party and make a plan together.
-          </p>
-        </div>
-        <Link href="/compositions/new" className="button primary">
-          Create a comp
-        </Link>
-      </div>
+      <WorkspaceHeading
+        glyph="composition"
+        scene="comps"
+        title="Group Builds"
+        description={`${total} group builds. Find complete loadouts for your party and make a plan together.`}
+        actions={
+          <Link href="/compositions/new" className="button primary">
+            Create a comp
+          </Link>
+        }
+      />
       <nav className="discovery-tabs" aria-label="Composition collections">
         <Link href="/compositions/library" aria-current="page">
           Group Builds

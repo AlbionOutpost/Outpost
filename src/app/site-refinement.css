@@ -1012,6 +1012,26 @@
 }
 .app.outpost .workspace-identity-copy {
   min-width: 0;
+  flex: 1;
+}
+.app.outpost .workspace-identity-actions {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-self: center;
+  margin-left: auto;
+}
+@media (max-width: 700px) {
+  .app.outpost .workspace-identity:has(.workspace-identity-actions) {
+    flex-wrap: wrap;
+  }
+  .app.outpost .workspace-identity-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+  .app.outpost .workspace-identity-actions > .button {
+    width: 100%;
+  }
 }
 .app.outpost.light .workspace-identity[data-scene] {
   background-image:
