@@ -138,12 +138,21 @@
   width: 34px;
   height: 34px;
 }
+/* Selection: one solid accent edge with a soft glow, like a highlighted well in the game */
 .app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected .inventory-slot-art {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-color: var(--accent-ink);
-  background: var(--accent-wash);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 9%, transparent);
+  outline: none;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--elevated));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.app.outpost .anatomical-inventory .inventory-equipment-slot:focus-visible {
+  outline: none;
+}
+.app.outpost .anatomical-inventory .inventory-equipment-slot:focus-visible .inventory-slot-art {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected .inventory-slot-caption {
   color: var(--accent-ink);
