@@ -38,17 +38,6 @@ export function History({
           (point) => sourceTimestamp(point.timestamp) >= latest - rangeDays * 86400000,
         )
       : returned;
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    await load();
-  }
-  const loadRef = useRef(load);
-  loadRef.current = load;
-  useEffect(() => {
-    if (!autoLoad) return;
-    const timer = window.setTimeout(() => void loadRef.current(), 150);
-    return () => window.clearTimeout(timer);
-  }, [autoLoad, current]);
   async function load() {
     request.current?.abort();
     const active = new AbortController();
@@ -91,6 +80,19 @@ export function History({
       if (request.current === active) setPendingKey(null);
     }
   }
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    await load();
+  }
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  useEffect(() => {
+    if (!autoLoad) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    return () => window.clearTimeout(timer);
+  }, [autoLoad, current]);
   const min = visible.length ? Math.min(...visible.map((p) => p.price)) : 0,
     max = visible.length ? Math.max(...visible.map((p) => p.price)) : 0;
   const start = visible.length ? sourceTimestamp(visible[0].timestamp) : 0,

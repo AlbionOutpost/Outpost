@@ -82,19 +82,6 @@ export function Market() {
   const validSelection = /^[A-Z0-9_@]{3,100}$/.test(item.trim().toUpperCase());
   const marketLabel =
     city || (extraCities.length ? `${extraCities.length} cities selected` : "All cities");
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    await load();
-  }
-  const loadRef = useRef(load);
-  loadRef.current = load;
-  // Research-first: a valid selection loads its prices as soon as it changes, so arriving
-  // with ?item= or picking from the catalog shows city prices without a second click.
-  useEffect(() => {
-    if (!hydrated || !validSelection) return;
-    const timer = window.setTimeout(() => void loadRef.current(), 150);
-    return () => window.clearTimeout(timer);
-  }, [current, hydrated, validSelection]);
   async function load() {
     const url = new URL(window.location.href);
     const selection = {
@@ -135,6 +122,21 @@ export function Market() {
       if (controller.current === active) setPendingKey(null);
     }
   }
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    await load();
+  }
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  // Research-first: a valid selection loads its prices as soon as it changes, so arriving
+  // with ?item= or picking from the catalog shows city prices without a second click.
+  useEffect(() => {
+    if (!hydrated || !validSelection) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    return () => window.clearTimeout(timer);
+  }, [current, hydrated, validSelection]);
   const format = (n: number) => (n ? n.toLocaleString() : "Not observed");
   const dateLabel = (value: string) => {
     const stamp = sourceTimestamp(value);
