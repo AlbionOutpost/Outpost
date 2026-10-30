@@ -1,404 +1,429 @@
-/* Landing page: hero → three benefits → real product demo → featured builds → provenance →
-   final call to action. Uses the shared tokens; only the scenic hero carries its own dark
-   backing so the painted scene stays legible in both themes. */
-.app.outpost .support-home.home-cinematic {
+/* Landing page, composed to the owner's site sheet (docs/design/references/latest-06-site-sheet.png):
+   full-bleed painted hero with the benefits inside it → tool art tiles → build art tiles →
+   "Built for Albion players" art band. Only paintings from public/albion/illustrations are used. */
+.app.outpost .home-landing {
   max-width: 1560px;
+  --scene-market: url("/albion/illustrations/market-v1.webp");
+  --scene-build: url("/albion/illustrations/build-v1.webp");
+  --scene-composition: url("/albion/illustrations/composition-v1.webp");
+  --scene-hero: url("/albion/illustrations/hero-v1.webp");
+  --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
 }
-.app.outpost .home-cinematic .reference-hero {
+
+/* Hero */
+.app.outpost .landing-hero {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 360px;
-  padding: 28px 44px 36px;
-  margin: 0 -12px 20px;
-  border: 0;
-  border-radius: 0;
+  align-items: flex-end;
+  min-height: 520px;
+  margin: 0 -12px 36px;
+  padding: 48px 44px 40px;
   background: #0b0d12;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
   isolation: isolate;
 }
-.app.outpost .home-cinematic .reference-hero-copy {
-  max-width: 540px;
-  z-index: 1;
+.app.outpost .landing-hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 }
-.app.outpost .home-cinematic .reference-hero-copy h1 {
-  font: 800 clamp(64px, 5.4vw, 86px) / 0.96 var(--font-display);
+.app.outpost .landing-hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% 45%;
+}
+.app.outpost .landing-hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #0b0d12f2 0%, #0b0d12b8 32%, #0b0d1240 58%, #0b0d1200 80%),
+    linear-gradient(0deg, #0b0d12 0%, #0b0d12cc 22%, #0b0d1200 55%);
+}
+.app.outpost .landing-hero-copy {
+  max-width: 640px;
+}
+.app.outpost .landing-eyebrow {
+  margin: 0 0 12px;
+  color: #ff964d;
+  font: 700 12px/1.3 var(--font-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.app.outpost .landing-hero h1 {
+  margin: 0 0 18px;
+  font: 800 clamp(56px, 5.6vw, 84px) / 0.96 var(--font-display);
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  margin-bottom: 20px;
-  text-shadow: none;
   color: #f5f1e9;
 }
-.app.outpost .home-cinematic .reference-hero-copy h1 em {
+.app.outpost .landing-hero h1 em {
+  font-style: normal;
   color: #ff964d;
 }
-.app.outpost .home-cinematic .reference-hero-copy > p {
-  max-width: 48ch;
+.app.outpost .landing-lede {
+  max-width: 50ch;
+  margin: 0 0 22px;
   font-size: 16px;
   line-height: 1.6;
   color: #d8d2cb;
-  margin-bottom: 22px;
 }
-.app.outpost .home-cinematic .reference-hero-copy .actions {
-  gap: 12px;
+.app.outpost .landing-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: 12px;
 }
-.app.outpost .home-cinematic .reference-hero .button {
+.app.outpost .landing-hero .button,
+.app.outpost .landing-band .button {
   min-height: 44px;
   padding: 11px 18px;
   font-size: 14px;
 }
-.app.outpost .home-cinematic .reference-hero .button.secondary {
+.app.outpost .landing-hero .button.secondary,
+.app.outpost .landing-band .button.secondary {
   background: #14171dcc;
   border-color: #5a5358;
   color: #f2eee9;
 }
-.app.outpost .home-cinematic .home-hero-atmosphere {
-  inset: 0;
-  opacity: 1;
-  z-index: -1;
+.app.outpost .landing-benefits {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 28px;
+  margin: 34px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid #ffffff22;
 }
-.app.outpost .home-cinematic .home-hero-atmosphere picture,
-.app.outpost .home-cinematic .home-hero-atmosphere img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.app.outpost .landing-benefits li {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
 }
-.app.outpost .home-cinematic .home-hero-atmosphere img {
-  object-fit: cover;
-  object-position: 65% 48%;
-  filter: none;
+.app.outpost .landing-benefits svg {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  color: #ff964d;
+  background: #ff964d1a;
+  border: 1px solid #ff964d55;
+  border-radius: var(--radius-sm);
 }
-.app.outpost .home-cinematic .home-hero-atmosphere::after {
-  background:
-    linear-gradient(90deg, #0b0d12e6 0%, #0b0d128c 30%, #0b0d1210 56%, transparent 78%),
-    linear-gradient(0deg, #0b0d12 0%, transparent 25%);
+.app.outpost .landing-benefits strong {
+  display: block;
+  color: #f5f1e9;
+  font-size: 14px;
+}
+.app.outpost .landing-benefits span {
+  display: block;
+  margin-top: 2px;
+  color: #c9c2ba;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-/* Three benefits */
-.app.outpost .home-cinematic .home-benefits {
-  position: relative;
-  margin: 0 0 32px;
+/* Section headings: title, one line, link on the right */
+.app.outpost .landing-section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 4px 20px;
+  margin: 0 0 16px;
 }
-.app.outpost .home-cinematic .reference-feature-grid {
-  gap: 14px;
+.app.outpost .landing-section-heading h2 {
+  grid-column: 1;
+  margin: 0;
+  font: 800 28px/1.1 var(--font-display);
+  letter-spacing: -0.01em;
 }
-.app.outpost .home-cinematic .reference-feature-grid > article {
-  overflow: hidden;
-  min-height: 150px;
-  padding: 20px 20px 16px 68px;
+.app.outpost .landing-section-heading p {
+  grid-column: 1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.app.outpost .landing-section-heading .text-link {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Tool tiles: a painted scene with the title on a dark base */
+.app.outpost .landing-tools,
+.app.outpost .landing-builds {
+  margin: 0 0 40px;
+}
+.app.outpost .landing-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.app.outpost .landing-tool-tile {
+  display: grid;
+  grid-template-rows: 150px auto;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
 }
-.app.outpost .home-cinematic .reference-feature-grid > article::before {
-  content: none;
+.app.outpost .landing-tool-tile:hover,
+.app.outpost .landing-tool-tile:focus-visible {
+  border-color: var(--accent);
 }
-.app.outpost .home-cinematic .reference-feature-grid > article > svg {
+.app.outpost .landing-tile-art {
+  display: block;
+  background-image: var(--scene);
+  background-size: cover;
+  background-position: var(--scene-at, center);
+  transition: transform 0.4s ease;
+}
+.app.outpost .landing-tool-tile:hover .landing-tile-art {
+  transform: scale(1.03);
+}
+.app.outpost .landing-tool-tile[data-scene="market"] {
+  --scene: var(--scene-market);
+}
+.app.outpost .landing-tool-tile[data-scene="build"] {
+  --scene: var(--scene-build);
+}
+.app.outpost .landing-tool-tile[data-scene="composition"] {
+  --scene: var(--scene-composition);
+}
+.app.outpost .landing-tool-tile[data-scene="hero"] {
+  --scene: var(--scene-hero);
+}
+.app.outpost .landing-tool-tile[data-scene="city"] {
+  --scene: var(--scene-city);
+}
+.app.outpost .landing-tile-body {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 16px 16px 16px 60px;
+}
+.app.outpost .landing-tile-icon {
+  position: absolute;
+  top: -18px;
   left: 16px;
-  top: 22px;
-  width: 40px;
-  height: 44px;
-  padding: 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--accent-ink);
   background: var(--elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--accent-ink);
+  box-shadow: 0 2px 6px #0006;
 }
-.app.outpost .home-cinematic .reference-feature-grid h3 {
-  color: var(--text);
-  font-size: 17px;
-  margin-bottom: 8px;
+.app.outpost .landing-tile-body strong {
+  font-size: 16px;
 }
-.app.outpost .home-cinematic .reference-feature-grid p {
-  font-size: 14px;
-  line-height: 1.55;
-  margin-bottom: 10px;
+.app.outpost .landing-tile-body > span:last-child {
   color: var(--muted);
-}
-.app.outpost .home-cinematic .reference-feature-grid .text-link {
   font-size: 13px;
-  text-decoration: none;
-  min-height: 26px;
-}
-.app.outpost .home-cinematic .reference-feature-grid .text-link:hover {
-  text-decoration: underline;
+  line-height: 1.45;
 }
 
-/* Section headings shared by demo, picks and trust blocks */
-.app.outpost .home-cinematic .support-section-heading {
-  margin-bottom: 14px;
-}
-.app.outpost .home-cinematic .support-section-heading > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 14px;
-}
-.app.outpost .home-cinematic .support-section-heading h2 {
-  font-size: 20px;
-}
-.app.outpost .home-cinematic .support-section-heading p {
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-/* Real product demo */
-.app.outpost .home-cinematic .home-demo {
-  margin: 0 0 36px;
-}
-.app.outpost .home-cinematic .home-demo-figure {
-  margin: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--panel);
-  overflow: hidden;
-}
-.app.outpost .home-cinematic .home-demo-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-bottom: 1px solid var(--border);
-}
-.app.outpost .home-cinematic .home-demo-figure figcaption {
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
-.app.outpost .home-cinematic .home-demo-secondary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 14px;
-}
-
-/* Featured builds */
-.app.outpost .home-cinematic .home-library-picks {
-  margin: 0 0 36px;
-}
-.app.outpost .home-cinematic .home-build-grid {
-  gap: 12px;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-card {
-  padding: 12px;
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  border-color: var(--border);
-}
-.app.outpost .home-cinematic .home-build-grid .ecosystem-card-main {
-  padding: 0;
-  gap: 6px;
-  height: auto;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-identity {
-  grid-template-columns: 60px minmax(0, 1fr);
-  gap: 10px;
-  padding-right: 30px;
-}
-.app.outpost .home-cinematic .home-build-grid .library-primary-weapon,
-.app.outpost .home-cinematic .home-build-grid .library-primary-weapon img {
-  width: 60px;
-  height: 60px;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-copy h2 {
-  font-size: 14px;
-  line-height: 1.3;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-copy small,
-.app.outpost .home-cinematic .home-build-grid .library-build-classification {
-  font-size: 12px;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-classification > span:first-child,
-.app.outpost .home-cinematic .home-build-grid .library-build-equipment,
-.app.outpost .home-cinematic .home-build-grid .library-card-description {
-  display: none;
-}
-.app.outpost .home-cinematic .home-build-grid .library-build-preview {
-  margin-top: 8px;
-  padding-top: 8px;
-  justify-content: end;
-}
-.app.outpost .home-cinematic .home-build-grid .ecosystem-card-spells img {
-  width: 26px;
-  height: 26px;
-}
-.app.outpost .home-cinematic .home-build-grid .library-save-button {
-  top: 7px;
-  right: 7px;
-}
-
-/* Provenance */
-.app.outpost .home-cinematic .home-trust {
-  margin: 0 0 36px;
-  padding: 24px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--panel);
-}
-.app.outpost .home-cinematic .home-trust > h2 {
-  margin: 0 0 16px;
-  font-size: 20px;
-}
-.app.outpost .home-cinematic .home-trust-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Build tiles: weapon over the build scene, title, chips, author */
+.app.outpost .landing-build-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
-.app.outpost .home-cinematic .home-trust-grid li {
+.app.outpost .landing-build-tile {
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
-  column-gap: 12px;
-  align-items: start;
+  grid-template-columns: 120px minmax(0, 1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
 }
-.app.outpost .home-cinematic .home-trust-grid li > svg {
+.app.outpost .landing-build-tile:hover,
+.app.outpost .landing-build-tile:focus-visible {
+  border-color: var(--accent);
+}
+.app.outpost .landing-build-art {
+  display: grid;
+  place-items: center;
+  min-height: 130px;
+  background:
+    radial-gradient(circle at 50% 55%, #c85a3b40, transparent 62%),
+    linear-gradient(180deg, #1c1a1e80, #1c1a1ecc),
+    var(--scene-build) center / cover;
+}
+.app.outpost .landing-build-art img {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 6px 10px #000a);
+}
+.app.outpost .landing-build-body {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px 14px 12px;
+  min-width: 0;
+}
+.app.outpost .landing-build-body strong {
+  font-size: 15px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.app.outpost .landing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.app.outpost .landing-chip {
+  padding: 2px 8px;
   color: var(--accent-ink);
-  margin-top: 2px;
+  background: var(--accent-wash);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.app.outpost .home-cinematic .home-trust-grid h3 {
-  grid-column: 2;
-  margin: 0 0 6px;
-  font-size: 15px;
-}
-.app.outpost .home-cinematic .home-trust-grid p {
-  grid-column: 2;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.55;
+.app.outpost .landing-chip.is-muted {
   color: var(--muted);
+  background: var(--bg);
+  border-color: var(--border);
+  font-weight: 500;
 }
-.app.outpost .home-cinematic .home-trust-links {
+.app.outpost .landing-build-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  margin: 20px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-}
-
-/* Final call to action */
-.app.outpost .home-cinematic .home-final-cta {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  gap: 16px 24px;
-  margin: 0 0 12px;
-  padding: 28px;
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
-  border-radius: var(--radius-lg);
-  background: linear-gradient(
-    120deg,
-    color-mix(in srgb, var(--accent) 14%, var(--panel)),
-    var(--panel)
-  );
-}
-.app.outpost .home-cinematic .home-final-cta h2 {
-  margin: 0 0 6px;
-  font: 800 28px/1.1 var(--font-display);
-}
-.app.outpost .home-cinematic .home-final-cta p {
-  margin: 0;
+  gap: 8px;
+  margin-top: auto;
   color: var(--muted);
-  font-size: 15px;
+  font-size: 12px;
 }
-.app.outpost .home-cinematic .home-final-cta .actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.app.outpost .home-cinematic .home-final-cta .button {
-  min-height: 44px;
-  padding: 11px 18px;
+.app.outpost .landing-build-meta > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@media (max-width: 1250px) {
-  .app.outpost .home-cinematic .home-build-grid {
+/* Art band */
+.app.outpost .landing-band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 300px;
+  margin: 0 0 16px;
+  padding: 40px 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(90deg, #0b0d12f2 0%, #0b0d12c8 40%, #0b0d1260 70%, #0b0d1220 100%),
+    var(--scene-hero) center 55% / cover no-repeat;
+  color: #f5f1e9;
+  overflow: hidden;
+}
+.app.outpost .landing-band-copy {
+  max-width: 560px;
+}
+.app.outpost .landing-band h2 {
+  margin: 0 0 10px;
+  font: 800 32px/1.1 var(--font-display);
+}
+.app.outpost .landing-band p {
+  margin: 0 0 20px;
+  color: #d8d2cb;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Light theme keeps the painted surfaces dark for contrast; everything else follows tokens */
+.app.outpost.light .landing-hero,
+.app.outpost.light .landing-band {
+  color: #f5f1e9;
+}
+
+@media (max-width: 1100px) {
+  .app.outpost .landing-tool-grid,
+  .app.outpost .landing-build-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (min-width: 701px) and (max-width: 1000px) {
-  .app.outpost .home-cinematic .reference-feature-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .app.outpost .home-cinematic .reference-feature-grid > article {
-    padding-left: 60px;
-  }
-  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
-    left: 12px;
-    width: 36px;
-    height: 40px;
-  }
-  .app.outpost .home-cinematic .home-trust-grid {
-    grid-template-columns: 1fr;
-  }
-}
 @media (max-width: 700px) {
-  .app.outpost .home-cinematic .reference-hero {
-    min-height: 480px;
-    margin: 0 -12px 16px;
-    padding: 26px 16px 160px;
-    align-items: start;
-  }
-  .app.outpost .home-cinematic .reference-hero-copy h1 {
-    font-size: clamp(54px, 12vw, 76px);
-    max-width: none;
-    margin-bottom: 16px;
-  }
-  .app.outpost .home-cinematic .reference-hero-copy > p {
-    font-size: 14px;
-    max-width: 38ch;
-    line-height: 1.5;
-    margin-bottom: 18px;
-  }
-  .app.outpost .home-cinematic .reference-hero .button {
-    font-size: 13px;
-    padding: 10px 12px;
-    min-height: 42px;
-  }
-  .app.outpost .home-cinematic .reference-hero-copy .actions {
-    gap: 8px;
-  }
-  .app.outpost .home-cinematic .home-hero-atmosphere img {
-    object-position: 67% center;
-  }
-  .app.outpost .home-cinematic .home-hero-atmosphere::after {
-    background:
-      linear-gradient(180deg, #0b0d12e6, #0b0d12c2 40%, #0b0d1212 75%, #0b0d12),
-      linear-gradient(90deg, #0b0d1280, transparent 80%);
-  }
-  .app.outpost .home-cinematic .reference-feature-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .app.outpost .home-cinematic .reference-feature-grid > article {
+  .app.outpost .landing-hero {
     min-height: 0;
-    padding: 16px 16px 14px 60px;
+    margin: 0 -12px 28px;
+    padding: 180px 16px 28px;
+    align-items: end;
   }
-  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
-    left: 12px;
-    top: 18px;
-    width: 36px;
-    height: 40px;
+  .app.outpost .landing-hero-art img {
+    object-position: 60% 20%;
   }
-  .app.outpost .home-cinematic .home-demo-secondary,
-  .app.outpost .home-cinematic .home-trust-grid,
-  .app.outpost .home-cinematic .home-build-grid {
+  .app.outpost .landing-hero-art::after {
+    background: linear-gradient(0deg, #0b0d12 0%, #0b0d12f0 38%, #0b0d1280 62%, #0b0d1200 100%);
+  }
+  .app.outpost .landing-hero h1 {
+    font-size: clamp(48px, 13vw, 72px);
+  }
+  .app.outpost .landing-lede {
+    font-size: 14px;
+  }
+  .app.outpost .landing-benefits {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 26px;
+    padding-top: 20px;
+  }
+  .app.outpost .landing-section-heading {
     grid-template-columns: 1fr;
   }
-  .app.outpost .home-cinematic .home-trust {
-    padding: 18px;
+  .app.outpost .landing-section-heading .text-link {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    margin-top: 4px;
   }
-  .app.outpost .home-cinematic .home-final-cta {
-    padding: 20px;
+  .app.outpost .landing-section-heading h2 {
+    font-size: 24px;
   }
-  .app.outpost .home-cinematic .home-final-cta .actions,
-  .app.outpost .home-cinematic .home-final-cta .button {
-    width: 100%;
+  .app.outpost .landing-tool-grid,
+  .app.outpost .landing-build-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .app.outpost .landing-tool-tile {
+    grid-template-rows: 120px auto;
+  }
+  .app.outpost .landing-build-tile {
+    grid-template-columns: 100px minmax(0, 1fr);
+  }
+  .app.outpost .landing-build-art {
+    min-height: 110px;
+  }
+  .app.outpost .landing-build-art img {
+    width: 72px;
+    height: 72px;
+  }
+  .app.outpost .landing-band {
+    min-height: 0;
+    padding: 28px 18px;
+    background:
+      linear-gradient(0deg, #0b0d12f8 0%, #0b0d12e0 60%, #0b0d1280 100%),
+      var(--scene-hero) center 40% / cover no-repeat;
+  }
+  .app.outpost .landing-band h2 {
+    font-size: 26px;
+  }
+  .app.outpost .landing-actions .button {
+    flex: 1 1 auto;
   }
 }
