@@ -162,7 +162,7 @@ export function OpportunityScanner() {
       </div>
       <div className="input-grid flip-scanner-route">
         <label>
-          Purchase market
+          Scanner purchase market
           <select value={from} onChange={(e) => setFrom(e.target.value)}>
             {cities
               .filter((city) => city !== "Black Market")
@@ -172,7 +172,7 @@ export function OpportunityScanner() {
           </select>
         </label>
         <label>
-          Destination market
+          Scanner destination market
           <select value={to} onChange={(e) => setTo(e.target.value)}>
             {cities.map((c) => (
               <option key={c}>{c}</option>
@@ -180,14 +180,14 @@ export function OpportunityScanner() {
           </select>
         </label>
         <label>
-          Sale execution
+          Scanner sale execution
           <select value={mode} onChange={(e) => setMode(e.target.value)}>
             <option value="instant">Sell to buy orders</option>
             <option value="listing">Sell listing estimate</option>
           </select>
         </label>
         <label>
-          Quality
+          Scanner quality
           <select value={quality} onChange={(e) => setQuality(e.target.value)}>
             {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((name, i) => (
               <option key={name} value={i + 1}>
@@ -197,7 +197,7 @@ export function OpportunityScanner() {
           </select>
         </label>
         <label>
-          Sales tax (%)
+          Scanner sales tax (%)
           <input
             type="number"
             min={0}
@@ -208,7 +208,7 @@ export function OpportunityScanner() {
           />
         </label>
         <label>
-          Listing fee (%)
+          Scanner listing fee (%)
           <input
             type="number"
             min={0}
