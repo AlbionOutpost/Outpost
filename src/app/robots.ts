@@ -3,7 +3,8 @@ import type { MetadataRoute } from "next";
 // editor links (one per archived build). Keep crawlers on the public, indexable pages.
 export default function robots(): MetadataRoute.Robots {
   return {
-    sitemap: `${new URL(process.env.NEXTAUTH_URL || "https://albionoutpost.com").origin}/sitemap.xml`,
+    // Generated at build time by scripts/build-sitemap.ts into public/sitemap.xml.
+    sitemap: `${new URL(process.env.OUTPOST_PUBLIC_URL || "https://albionoutpost.com").origin}/sitemap.xml`,
     rules: [
       {
         userAgent: "*",

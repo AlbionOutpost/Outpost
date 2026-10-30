@@ -6,7 +6,7 @@
     "cloudflare": "node scripts/cloudflare.mjs",
     "cloudflare:status": "node scripts/cloudflare.mjs status",
     "dev": "next dev",
-    "build": "prisma generate && next build && node scripts/prepare-standalone.mjs",
+    "build": "prisma generate && node --import tsx scripts/build-sitemap.ts && next build && node scripts/prepare-standalone.mjs",
     "start": "node scripts/start.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

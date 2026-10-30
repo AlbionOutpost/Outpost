@@ -14,6 +14,11 @@ if (production && !sitekey)
   ).NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 if (production && !/^0x[A-Za-z0-9_-]+$/.test(sitekey ?? ""))
   throw new Error("Production challenge site key missing");
+const sitemap = spawnSync(process.execPath, ["--import", "tsx", "scripts/build-sitemap.ts"], {
+  stdio: "inherit",
+  env: process.env,
+});
+if (sitemap.status !== 0) throw new Error("Sitemap generation failed");
 const child = spawn(
   process.execPath,
   [
