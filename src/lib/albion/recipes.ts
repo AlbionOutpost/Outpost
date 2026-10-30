@@ -1,29 +1,58 @@
 import { equipmentFamilies, equipmentId, equipmentName } from "./equipment-catalog";
 import expandedRecipes from "./expanded-recipes.json" with { type: "json" };
 import archivedRecipes from "./archived-production-recipes.json" with { type: "json" };
+import upgradeData from "./game/upgrades.json" with { type: "json" };
+export type RecipeIngredient = {
+  id: string;
+  name: string;
+  quantity: number;
+  quality: "normal" | "selected";
+  /** false for artifacts, tokens and other inputs the game never returns. */
+  returnable?: boolean;
+};
 export type Recipe = {
   id: string;
   name: string;
   kind: "crafting" | "refining" | "enchanting";
   output: string;
   outputCount: number;
-  ingredients: { id: string; name: string; quantity: number; quality: "normal" | "selected" }[];
+  ingredients: RecipeIngredient[];
   source: string;
   baseFocus?: number;
   category?: "cooking" | "alchemy";
   historical?: boolean;
+  tier?: number;
+  enchantment?: number;
+  craftingCategory?: string;
+  silver?: number;
+  /** 1 for the primary recipe, 2+ for alternatives (artifact vs token, faction paths). */
+  alternative?: number;
 };
+/** Small bundled set used as defaults and for saved scenarios created before the full game data. */
 export const recipes: Recipe[] = [...expandedRecipes, ...archivedRecipes] as Recipe[];
+const registry = new Map<string, Recipe>();
+let resolver: ((id: string) => Recipe | undefined) | null = null;
+/** Client: cache recipes fetched from /api/recipes so the calculator can run them. */
+export function registerRecipes(list: Recipe[]) {
+  for (const recipe of list) registry.set(recipe.id, recipe);
+}
+/** Server: resolve any id from the full game data (see game/server-recipes.ts). */
+export function setRecipeResolver(fn: (id: string) => Recipe | undefined) {
+  resolver = fn;
+}
+export function findRecipe(id: string): Recipe | undefined {
+  return registry.get(id) ?? resolver?.(id) ?? recipes.find((r) => r.id === id);
+}
+const upgrades = upgradeData.upgrades as unknown as Record<string, [string, number]>;
+const upgradeNames = upgradeData.names as Record<string, string>;
+/** Upgrade cost to raise `T{tier}_{code}` from `level − 1` to `level`. */
+export function upgradeCost(code: string, tier: number, level: number) {
+  const row = upgrades[`T${tier}_${code}:${level}`];
+  return row ? { id: row[0], name: upgradeNames[row[0]] ?? row[0], quantity: row[1] } : null;
+}
+/** Artifact Foundry families: rune → soul → relic. Food and potions are enchanted by crafting instead. */
 export const enchantable = equipmentFamilies.filter((f) =>
-  [
-    "MAIN_AXE",
-    "OFF_SHIELD",
-    "HEAD_CLOTH_SET1",
-    "ARMOR_LEATHER_SET1",
-    "SHOES_LEATHER_SET1",
-    "CAPE",
-    "BAG",
-  ].includes(f.code),
+  f.tiers.some((tier) => upgradeCost(f.code, tier, 1)?.id.endsWith("_RUNE")),
 );
 export function recipeFor(input: {
   kind: string;
@@ -34,27 +63,26 @@ export function recipeFor(input: {
   toEnchant: number;
 }): Recipe {
   if (input.kind !== "enchanting") {
-    const recipe = recipes.find((r) => r.id === input.recipeId && r.kind === input.kind);
-    if (!recipe) throw new Error("Select a supported recipe");
+    const recipe = findRecipe(input.recipeId);
+    if (!recipe || recipe.kind !== input.kind) throw new Error("Select a supported recipe");
     return recipe;
   }
   const family = enchantable.find((f) => f.code === input.enchantFamily);
   if (!family || !family.tiers.includes(input.tier) || input.fromEnchant >= input.toEnchant)
     throw new Error("Select a valid enchantment path");
-  const count =
-    family.slot === "Main hand" ? 288 : ["Chest", "Bag"].includes(family.slot) ? 192 : 96;
   const base = equipmentId(family, input.tier, input.fromEnchant);
-  const ingredients: Recipe["ingredients"] = [
-    { id: base, name: equipmentName(base), quantity: 1, quality: "selected" },
+  const ingredients: RecipeIngredient[] = [
+    { id: base, name: equipmentName(base), quantity: 1, quality: "selected", returnable: false },
   ];
-  for (let step = input.fromEnchant; step < input.toEnchant; step++) {
-    const material = ["RUNE", "SOUL", "RELIC"][step];
-    if (!material) throw new Error("Artifact Foundry upgrades support .0 through .3 only");
+  for (let level = input.fromEnchant + 1; level <= input.toEnchant; level++) {
+    const cost = upgradeCost(family.code, input.tier, level);
+    if (!cost) throw new Error(`No upgrade from .${level - 1} to .${level} for this item`);
     ingredients.push({
-      id: `T${input.tier}_${material}`,
-      name: `T${input.tier} ${material.toLowerCase()}`,
-      quantity: count,
+      id: cost.id,
+      name: cost.name,
+      quantity: cost.quantity,
       quality: "normal",
+      returnable: false,
     });
   }
   return {
@@ -64,6 +92,8 @@ export function recipeFor(input: {
     output: equipmentId(family, input.tier, input.toEnchant),
     outputCount: 1,
     ingredients,
-    source: "https://wiki.albiononline.com/wiki/Expert%27s_Rune",
+    tier: input.tier,
+    enchantment: input.toEnchant,
+    source: "Game item data (upgrade requirements), albiononlinegrind.com archive 27 Oct 2026",
   };
 }

@@ -1,0 +1,93 @@
+{
+  "source": "Owner-supplied albiononlinegrind.com public archive",
+  "captured": "2026-10-27",
+  "importer": "scripts/import-grind-game-data.py",
+  "inputs": {
+    "Scrape/albiononlinegrind.com/report/data/crafting-weight-values.json": "fe06f0fa5e693daafea7b66837cfb8fc5c47a54fce2239057c5b002ad8d5b8ac",
+    "Scrape/albiononlinegrind.com/report/data/game-item-definitions.json": "66e5518b13414e641d7422a7698e8c2d1dbcd407cc63ab961ff773ecbd274d5b",
+    "Scrape/albiononlinegrind.com/report/data/item-names.json": "3f2df82c67766a7c44e0a14580766454b5442db1030c710fa1c3203ed93ccc47",
+    "Scrape/albiononlinegrind.com/report/data/mastery-categories.json": "e665cfab6b6d80d1065f513536271e5092f4c33625f2a9c7b86f40d81a46bb0c",
+    "Scrape/albiononlinegrind.com/report/data/mount-data-full.json": "c9e86bda1609e95a2b59cbd9322924794b60b64b33dc389d436a325481824591",
+    "Scrape/albiononlinegrind.com/report/data/static-tables/1051-55fa92024cd46285.json": "5c9a987550c19d340e10f35bb374a05496e77665934a59f52b2871a210715464",
+    "Scrape/albiononlinegrind.com/report/data/static-tables/2540.9ab92d0df3cf44c1.json": "f770dcf223eb46549b0fed422ada2e98479ec0f46b856f1cded832c9340d3138",
+    "Scrape/albiononlinegrind.com/report/data/static-tables/avalon-mapper-5f8d828552ec8891.json": "4243719d4ea160edf1ca3870f0ae7590c6df24fa551a6f5491055e80a308bde5",
+    "Scrape/albiononlinegrind.com/report/data/static-tables/laborers-profit-calculator-41ce28ca550bd156.json": "83d9636155b65668926b363f02517cb0048b0f4685e71b917fb0c74283675930",
+    "Scrape/albiononlinegrind.com/report/data/transport-item-definitions.json": "df73306bfa76c4773b42c5458b5abea7643a92d1b0ba00d408448b5222532007",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__animals-favorite-food.html": "fddf64d2266840fc7933f1fd72e310658376493c0ea391b2e2381be878f7ce33",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__biomes.html": "4a3869178ad70ec4dd234b2de097c259b1247e539a4e1453210a90ca595dd324",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__buildings-favorite-food.html": "5b826890ba7be8e0ff2e27355652ea8d7a31ca66f32e630f0c80b6caae1ab231",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__island-farming-bonuses.html": "ad2d3e5b2a4714aefd81f7d6cdcef719a9b7ca20bc4a6b94be998ec8cf08d1c4",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__island-upgrade-cost.html": "9f3765baaddcbb8a89c16712bae0cab922ee088ceb8e003d9c5090be74db6450",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__item-crafting-fame.html": "43b91b37215e340aa3b12695d29ede68f252cdbcec6049abb3c3ffd97d7c4f4c",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__laborers-return-rate-vs-happiness.html": "7efcd1dca3b247e09ea2a29b6d5ef7a30d2c01b75e9166f8fa72c8b0871e9ba3",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__local-production-bonuses.html": "f4858094c12310af7d6a0d2f3d436b89ff75205471009bb4094aea0d708ea3f9",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__player-bank-prices.html": "d9e0e6ce4ce78c83fcb4bf577b20508c5ddfc357178dd2c7410fe76ebede3078",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__riding-mount-speed.html": "a8a0d97f4ffaf6cb09afbbf2d80a35c09ae10fadb7bb5f6bb961c329736d7fa3",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__royal-sigil-drop-rate.html": "10cd212b36372f9bf09bf91ba2643b62a1ad4fc0447d6b3cdf1a9ab8645e674d",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__transport-mount-capacity.html": "74148cd58eadf7a9a9dfc1fe5537458f36453b2d801504bc5ad5372e5c69e446",
+    "Scrape/albiononlinegrind.com/report/evidence/pages/table__weapon-attunement-traits.html": "0e0d2ac78c9252094708a852fb70f8afa11b849938f9e768b0089f33537ce8cc"
+  },
+  "outputs": {
+    "src/lib/albion/game/avalon-locations.json": {
+      "sha256": "b044e3dbb5d74d79b4e09029382ee18b889503d7d3f006f00a33a953c1a44aea",
+      "bytes": 56431,
+      "rows": 857,
+      "content": "857 Royal/Outlands/Roads location names and 322 Roads zones with tier and resource/dungeon icons"
+    },
+    "src/lib/albion/game/items.json": {
+      "sha256": "9d2d81e78f308fae55a1b7ef0acd1f3c45954ac1ff44fb72be22e9274320b397",
+      "bytes": 694698,
+      "rows": 10318,
+      "content": "id \u2192 [English name, weight kg per unit or null, base item value or null] for every recipe, upgrade, transport and laborer-loot item"
+    },
+    "src/lib/albion/game/laborers.json": {
+      "sha256": "012054af343d472cd0074d5aa07decf53587b0bbcdd43ea19333c82aa57d61e0",
+      "bytes": 13815,
+      "rows": 10,
+      "content": "Laborer loot amount per journal tier, weighted loot tables and house/journal return factors"
+    },
+    "src/lib/albion/game/mastery.json": {
+      "sha256": "372fe3a3b1aedafe81265140d476944f8373a3e9c6b4b32aa47db3c11291ec31",
+      "bytes": 190742,
+      "rows": 342,
+      "content": "Destiny-board crafting groups, 48 categories with their specs, focus-efficiency bonuses per spec level (item patterns and tier ranges), and crafting fame per resource unit by tier/enchantment"
+    },
+    "src/lib/albion/game/mounts.json": {
+      "sha256": "d22e8b4fdcb62bf6547c0903aa086b55234a095d4045b7e31828b3a6d20ed924",
+      "bytes": 19925,
+      "rows": 109,
+      "content": "Mount carry weight per quality (1\u20135), item weight, riding speed % and category"
+    },
+    "src/lib/albion/game/production-bonuses.json": {
+      "sha256": "94cc9433e1b42a6b260116afe3187e8aae6523cd892ca17c4f405b68651ff600",
+      "bytes": 1615,
+      "rows": 51,
+      "content": "Royal-city local production specialties (crafting +15, refining +40, butchering +10 efficiency, farming +10% yield) keyed by crafting category; base city 18, focus 59"
+    },
+    "src/lib/albion/game/recipes.json": {
+      "sha256": "8642fab99f41a1720b0ce01e4a999f132643af976636532fba4a6477b585065c",
+      "bytes": 3478623,
+      "rows": 11314,
+      "content": "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), enchanted variants .1\u2013.4, focus, silver, output count and non-returnable flags"
+    },
+    "src/lib/albion/game/reference-tables.json": {
+      "sha256": "c040629ba1b9806dd60f236a54f91dcab90cb66b102b4e7a50beb39fe69f416e",
+      "bytes": 13015,
+      "rows": 13,
+      "content": "Thirteen reference tables as displayed on the archived table pages"
+    },
+    "src/lib/albion/game/upgrades.json": {
+      "sha256": "a292757980107e8331f4068176faa1871ef6f0a4c7866db74cbfc0cc1c49edb7",
+      "bytes": 188380,
+      "rows": 4491,
+      "content": "Artifact Foundry upgrades: '<base item>:<target level>' \u2192 [rune/soul/relic id, count] for the previous level"
+    }
+  },
+  "verification": {
+    "imported": true,
+    "transcriptionCrossChecked": true,
+    "inGameManuallyVerified": false,
+    "currentPatchVerified": false
+  },
+  "rightsBoundary": "Owner identifies the archived site as theirs. Factual game fields only; captured code is never executed or shipped."
+}

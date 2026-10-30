@@ -705,13 +705,23 @@
   max-width: 70ch;
   color: var(--muted);
 }
-.item-supported-recipe > ul {
+.item-supported-recipe ul {
   list-style: none;
   padding: 0;
   margin: 16px 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+.item-recipe-option + .item-recipe-option {
+  margin-top: 20px;
+}
+.item-recipe-option h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.item-supported-recipe li small {
+  color: var(--muted);
 }
 .item-supported-recipe li {
   display: flex;

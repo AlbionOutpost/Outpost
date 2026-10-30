@@ -2,7 +2,7 @@ import { ItemMarketLink } from "@/components/item-market-link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ItemIcon } from "@/components/item-icon";
-import { recipes } from "@/lib/albion/recipes";
+import { gameRecipesForOutput, itemWeight } from "@/lib/albion/game/server-recipes";
 import { catalogItem } from "@/lib/catalog/validation";
 import Link from "@/components/build-region-link";
 import "@/components/economy-workspaces.css";
@@ -11,7 +11,9 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
   const item = await db.itemMetadata.findUnique({ where: { id }, include: { release: true } });
   if (!item || !item.active) notFound();
   const metadata = catalogItem.parse(item);
-  const recipe = recipes.find((recipe) => recipe.output === id);
+  const itemRecipes = gameRecipesForOutput(id);
+  const recipe = itemRecipes[0];
+  const weight = itemWeight(id);
   return (
     <div className="item-reference-page">
       <Link className="text-link item-back-link" href="/items">
@@ -28,6 +30,12 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
             <p>
               Base item power (IP):{" "}
               <strong className="numeric">{item.itemPower ?? "Not verified"}</strong>
+            </p>
+            <p>
+              Weight:{" "}
+              <strong className="numeric">
+                {weight === null ? "Unavailable" : `${weight} kg`}
+              </strong>
             </p>
             <code>{id}</code>
           </div>
@@ -67,28 +75,39 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
         </section>
         {recipe && (
           <section className="item-supported-recipe" aria-labelledby="item-recipe-heading">
-            <h2 id="item-recipe-heading">Supported recipe</h2>
+            <h2 id="item-recipe-heading">
+              {itemRecipes.length > 1 ? `Recipes (${itemRecipes.length} options)` : "Recipe"}
+            </h2>
             <p>
-              {recipe.outputCount} output per craft.{" "}
-              {recipe.historical
-                ? "Historical recipe; confirm the ingredients in game."
-                : "Confirm the recipe and station assumptions in game."}
+              {recipe.outputCount} output per craft
+              {recipe.baseFocus ? ` · ${recipe.baseFocus.toLocaleString("en-US")} base focus` : ""}
+              {recipe.silver ? ` · ${recipe.silver.toLocaleString("en-US")} silver` : ""}. From game
+              item data captured 27 Oct 2026; confirm in game after a patch.
             </p>
-            <ul>
-              {recipe.ingredients.map((ingredient) => (
-                <li key={ingredient.id}>
-                  <ItemIcon id={ingredient.id} size={36} />
-                  <span>{ingredient.name}</span>
-                  <strong>× {ingredient.quantity}</strong>
-                </li>
-              ))}
-            </ul>
-            <Link
-              className="button secondary"
-              href={`/tools/${recipe.category || recipe.kind}?recipe=${encodeURIComponent(recipe.id)}`}
-            >
-              Calculate this recipe
-            </Link>
+            {itemRecipes.map((option) => (
+              <div key={option.id} className="item-recipe-option">
+                {itemRecipes.length > 1 && <h3>Option {option.alternative}</h3>}
+                <ul>
+                  {option.ingredients.map((ingredient) => (
+                    <li key={ingredient.id}>
+                      <ItemIcon id={ingredient.id} size={36} />
+                      <span>
+                        {ingredient.name}
+                        {ingredient.returnable === false && <small> · not returned</small>}
+                      </span>
+                      <strong>× {ingredient.quantity}</strong>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  className="button secondary"
+                  href={`/tools/${option.category || option.kind}?recipe=${encodeURIComponent(option.id)}`}
+                >
+                  Calculate{" "}
+                  {itemRecipes.length > 1 ? `option ${option.alternative}` : "this recipe"}
+                </Link>
+              </div>
+            ))}
           </section>
         )}
       </section>

@@ -4,29 +4,39 @@ import {
   mechanicsProfile,
   productionCities,
   sourcedReturnRates,
-  refiningEfficiency,
   returnProfileSource,
-  refiningSpecSource,
   type MechanicsProfile,
 } from "@/lib/albion/production-profile";
-import { estimatedFocusCost } from "@/lib/albion/production";
+import {
+  focusSpecsFor,
+  focusEfficiency,
+  focusPerCraft,
+  masteryCategories,
+} from "@/lib/albion/focus";
+const specNames = new Map(
+  masteryCategories.flatMap((c) => c.specs.map((s) => [s.id, `${s.name}`] as const)),
+);
 export function ProductionProfile({
   kind,
   output,
+  recipeId,
   baseFocus,
   batches,
   saved,
   onApply,
+  onFocus,
 }: {
   kind: "crafting" | "refining";
   output: string;
+  recipeId?: string;
   baseFocus?: number;
   batches: number;
   saved: MechanicsProfile | null;
   onApply: (profile: MechanicsProfile, rates: ReturnType<typeof sourcedReturnRates>) => void;
+  onFocus?: (totalFocus: number) => void;
 }) {
   const initialProfile: MechanicsProfile = {
-    version: "wiki-84429",
+    version: "grind-20261027",
     city: "Lymhurst",
     dailyBonus: 0,
     refiningLevels: [0, 0, 0, 0, 0],
@@ -34,19 +44,18 @@ export function ProductionProfile({
   const savedKey = JSON.stringify(saved);
   const [record, setRecord] = useState({ key: savedKey, value: saved || initialProfile });
   const profile = record.key === savedKey ? record.value : saved || initialProfile;
-  const [manualEfficiency, setManualEfficiency] = useState(0);
+  const [levels, setLevels] = useState<Record<string, number>>({});
   const [message, setMessage] = useState("");
-  const effective = profile;
+  const specs = focusSpecsFor(output);
   let rates: ReturnType<typeof sourcedReturnRates> | null = null;
-  let focus: number | null = null;
   let efficiency = 0;
+  let perCraft: number | null = null;
   try {
-    rates = sourcedReturnRates(kind, output, effective.city, effective.dailyBonus);
-    efficiency =
-      kind === "refining"
-        ? refiningEfficiency(Number(output[1]), effective.refiningLevels)
-        : manualEfficiency;
-    if (baseFocus) focus = estimatedFocusCost(baseFocus, efficiency, batches);
+    rates = sourcedReturnRates(kind, output, profile.city, profile.dailyBonus, recipeId);
+  } catch {}
+  try {
+    efficiency = focusEfficiency(output, levels);
+    if (baseFocus) perCraft = focusPerCraft(baseFocus, efficiency);
   } catch {}
   function change(next: MechanicsProfile) {
     setRecord({ key: savedKey, value: next });
@@ -54,11 +63,13 @@ export function ProductionProfile({
   }
   return (
     <details className="production-model-notes">
-      <summary>City & specialization profile</summary>
+      <summary>City bonus & specialization</summary>
       <p>
-        Source-backed planning profile. Wiki revision 84429 is not current-patch certification.
-        Confirm station bonuses and daily events in game. Applying replaces return assumptions, not
-        your prices or fees.
+        Royal-city return rates from the local production bonus table: 18 base efficiency, +
+        {kind === "refining" ? "40 refining" : "15 crafting"} in the specialty city
+        {rates?.specialtyCity ? ` (${rates.specialtyCity} for this item)` : ""}, + the daily bonus,
+        +59 with focus. Hideouts, islands and events are not modelled. Applying replaces return
+        assumptions, not your prices or fees.
       </p>
       <div className="input-grid">
         <label>
@@ -71,7 +82,10 @@ export function ProductionProfile({
             }
           >
             {productionCities.map((city) => (
-              <option key={city}>{city}</option>
+              <option key={city}>
+                {city}
+                {rates?.specialtyCity === city ? " · specialty" : ""}
+              </option>
             ))}
           </select>
         </label>
@@ -92,87 +106,83 @@ export function ProductionProfile({
           </select>
         </label>
       </div>
-      {kind === "refining" ? (
-        <fieldset>
-          <legend>Refining specialization levels</legend>
-          <div className="input-grid">
-            {profile.refiningLevels.map((level, index) => (
-              <label key={index}>
-                T{index + 4} specialization
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step={1}
-                  value={level}
-                  onChange={(e) =>
-                    change({
-                      ...profile,
-                      refiningLevels: profile.refiningLevels.map((old, i) =>
-                        i === index ? Number(e.target.value) : old,
-                      ),
-                    })
-                  }
-                />
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      ) : (
-        <label>
-          Total crafting focus cost efficiency
-          <input
-            type="number"
-            min={0}
-            max={100000}
-            step={1}
-            value={manualEfficiency}
-            onChange={(e) => setManualEfficiency(Number(e.target.value))}
-          />
-        </label>
-      )}
       <p>
         {rates
-          ? `Profile preview: ${rates.bonus}% production bonus; ${rates.returnRate.toFixed(2)}% returns without focus, ${rates.focusReturnRate.toFixed(2)}% with focus.`
-          : "This recipe is not covered by the profile."}
-      </p>
-      {focus !== null && (
-        <p className="numeric">
-          Estimated total focus: {focus.toLocaleString(undefined, { maximumFractionDigits: 3 })} ·
-          efficiency {efficiency.toLocaleString()}
-        </p>
-      )}
-      <p>
-        Focus is an estimate, before unverified station rounding. Enter the actual total in the
-        focus controls. Specialization reduces focus cost; it does not increase the return rate.
+          ? `${rates.bonus} production efficiency → ${rates.returnRate.toFixed(2)}% returns without focus, ${rates.focusReturnRate.toFixed(2)}% with focus.`
+          : "No city bonus data for this item."}
       </p>
       <button
         type="button"
         className="button secondary"
         onClick={() => {
           try {
-            const selected = sourcedReturnRates(kind, output, profile.city, profile.dailyBonus);
-            onApply(mechanicsProfile.parse(profile), selected);
-            setMessage(
-              "Production return assumptions applied. Review focus cost before enabling focus.",
+            const selected = sourcedReturnRates(
+              kind,
+              output,
+              profile.city,
+              profile.dailyBonus,
+              recipeId,
             );
+            onApply(mechanicsProfile.parse({ ...profile, version: "grind-20261027" }), selected);
+            setMessage("Return rates applied to every returnable material.");
           } catch {
-            setMessage("Check the city, recipe and specialization levels.");
+            setMessage("Check the city and daily bonus.");
           }
         }}
       >
-        Apply production profile
+        Apply city return rates
       </button>
       <p role="status">{message}</p>
-      <p>
-        <a className="text-link" href={returnProfileSource} target="_blank" rel="noreferrer">
-          Return-rate source
-        </a>{" "}
-        ·{" "}
-        <a className="text-link" href={refiningSpecSource} target="_blank" rel="noreferrer">
-          Specialization source
-        </a>
-      </p>
+      {baseFocus ? (
+        <fieldset className="production-spec-levels">
+          <legend>Specialization levels (focus cost)</legend>
+          {specs.length ? (
+            <div className="input-grid">
+              {specs.map((spec) => (
+                <label key={spec.specId}>
+                  {specNames.get(spec.specId) ?? spec.specId}
+                  <small> · {spec.perLevel} per level</small>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={levels[spec.specId] ?? 0}
+                    onChange={(e) =>
+                      setLevels((l) => ({ ...l, [spec.specId]: Number(e.target.value) }))
+                    }
+                  />
+                </label>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">No specialization reduces this recipe&apos;s focus cost.</p>
+          )}
+          <p className="numeric">
+            Efficiency {efficiency.toLocaleString()} ·{" "}
+            {perCraft === null
+              ? "check the levels (0–100)"
+              : `${perCraft.toLocaleString(undefined, { maximumFractionDigits: 1 })} focus per craft (base ${baseFocus.toLocaleString()}) · ${(perCraft * batches).toLocaleString(undefined, { maximumFractionDigits: 0 })} for ${batches} craft${batches === 1 ? "" : "s"}`}
+          </p>
+          {onFocus && perCraft !== null && (
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => {
+                onFocus(Math.round(perCraft * batches));
+                setMessage("Focus total applied. Confirm it against your station.");
+              }}
+            >
+              Use this focus total
+            </button>
+          )}
+          <p className="muted">
+            focus = base ÷ 2^(efficiency ÷ 10,000). The station rounds the result; enter its figure
+            if it differs.
+          </p>
+        </fieldset>
+      ) : null}
+      <p className="muted">Source: {returnProfileSource}.</p>
     </details>
   );
 }
