@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/market-data"), changeFrequency: "monthly", priority: 0.5 },
     { url: url("/legal"), changeFrequency: "yearly", priority: 0.2 },
     ...tools
-      .filter((tool) => tool.href !== "/tools/market")
+      .filter((tool) => tool.href.startsWith("/tools/") && tool.href !== "/tools/market")
       .map((tool) => ({ url: url(tool.href), changeFrequency: "weekly" as const, priority: 0.8 })),
   ];
   const guides = (await libraryGuides()).map((guide) => ({
