@@ -139,6 +139,7 @@ jobs:
             echo "Baselines unchanged."
           else
             git commit -m "Refresh visual baselines on the CI runner"
+            git pull --rebase origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           fi
       - name: Remove ephemeral CI services
