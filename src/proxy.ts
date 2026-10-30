@@ -7,7 +7,7 @@ export function proxy(request: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${dev ? " 'unsafe-eval'" : ""}`,
     "frame-src https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://render.albiononline.com",
+    "img-src 'self' data: blob: https://render.albiononline.com https://cdn.discordapp.com",
     "font-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
