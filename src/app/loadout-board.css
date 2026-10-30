@@ -24,7 +24,7 @@
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: calc(var(--cell) * 0.12);
   z-index: -1;
   width: auto;
   height: calc(var(--cell) * 3 + var(--gap) * 2);
@@ -78,10 +78,12 @@
   background: transparent;
   color: var(--muted);
 }
-.app.outpost .loadout-board-mark {
-  width: 42%;
-  height: 42%;
+/* Marks sit smaller than item renders; the selector outranks the render rule above */
+.app.outpost .loadout-board-cell img.loadout-board-mark {
+  width: 60%;
+  height: 60%;
   object-fit: contain;
+  filter: none;
   opacity: 0.55;
 }
 .app.outpost .loadout-board-abilities > span {
