@@ -2,7 +2,7 @@
    their active abilities beneath. Sizes: hero (landing hero), card (windows), mini (party). */
 .app.outpost .loadout-board {
   --cell: 72px;
-  --gap: 10px;
+  --gap: 14px;
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, var(--cell));
@@ -13,21 +13,21 @@
 }
 .app.outpost .loadout-board.is-card {
   --cell: 60px;
-  --gap: 8px;
+  --gap: 12px;
 }
 .app.outpost .loadout-board.is-mini {
   --cell: 40px;
-  --gap: 5px;
+  --gap: 8px;
   padding: 0;
 }
 /* The figure is centred on the middle column: head in the head slot, feet in the boots */
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: calc(var(--cell) * 0.12);
+  top: calc(var(--cell) * 0.05);
   z-index: -1;
   width: auto;
-  height: calc(var(--cell) * 3 + var(--gap) * 2);
+  height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.9);
   max-width: none;
   transform: translateX(-50%);
   opacity: 0.3;
@@ -80,8 +80,8 @@
 }
 /* Marks sit smaller than item renders; the selector outranks the render rule above */
 .app.outpost .loadout-board-cell img.loadout-board-mark {
-  width: 60%;
-  height: 60%;
+  width: 58%;
+  height: 58%;
   object-fit: contain;
   filter: none;
   opacity: 0.55;

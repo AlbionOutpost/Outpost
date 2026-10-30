@@ -521,8 +521,8 @@
   justify-content: space-between;
 }
 .app.outpost .build-card-body .loadout-board.is-card {
-  --cell: 62px;
-  --gap: 7px;
+  --cell: 60px;
+  --gap: 12px;
   justify-content: start;
 }
 .app.outpost .build-card-abilities {
@@ -1083,7 +1083,7 @@
   }
   .app.outpost .build-card-body .loadout-board.is-card {
     --cell: 48px;
-    --gap: 5px;
+    --gap: 10px;
     justify-content: center;
   }
   .app.outpost .build-card-abilities ul {
