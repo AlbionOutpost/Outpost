@@ -13,16 +13,59 @@ jobs:
     if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     uses: ./.github/workflows/quality.yml
     with:
-      # The deploy job runs the full browser suite against the Cloudflare build,
+      # The verify job runs the full browser suite against the Cloudflare build,
       # so the Node browser run is skipped here.
       skip: live-regions,browser
-  deploy:
+  verify:
+    # Exercises the exact Cloudflare build under local workerd, in parallel shards, before
+    # anything is deployed. The deploy job rebuilds the same deterministic bundle.
     needs: quality
     # The downloaded pinned Chromium requires working sandboxed user namespaces.
     # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
     # Reassess this supported runner before the published Ubuntu22 retirement.
     runs-on: ubuntu-22.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_SEND_ERROR_REPORTS: "false"
+      CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
+      XDG_CONFIG_HOME: ${{ github.workspace }}/.qa/wrangler-config
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Configure disposable local fixture services
+        run: node scripts/ci-local-services.mjs
+      - name: Generate and verify the SQLite runtime
+        run: node scripts/qa-cloudflare-runtime.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the pinned browser sandbox
+        run: node scripts/qa-browser-sandbox.mjs
+      - name: Build Cloudflare and exercise it with isolated fixture sessions (shard ${{ matrix.shard }} of 3)
+        run: |
+          node scripts/cloudflare-build.mjs
+          npx tsc --project cloudflare/web/tsconfig.json
+          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test --shard=${{ matrix.shard }}/3
+      - name: Prepare sanitized failure evidence
+        if: always()
+        run: node scripts/qa-ci-evidence.mjs
+      - name: Remove ephemeral CI services
+        if: always()
+        run: docker compose down --volumes
+  deploy:
+    needs: verify
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
     environment: cloudflare-production
     concurrency:
       group: cloudflare-production
@@ -43,32 +86,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Configure disposable local fixture services
-        run: |
-          cp .env.example .env
-          node --input-type=module <<'JS'
-          import { readFileSync, writeFileSync } from 'node:fs';
-          import { randomBytes } from 'node:crypto';
-          writeFileSync('.env', readFileSync('.env', 'utf8')
-            .replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`)
-            // Fixture-only Discord pair so the provider registers; tests never reach Discord.
-            .replace(/^DISCORD_CLIENT_ID=.*$/m, 'DISCORD_CLIENT_ID=100000000000000000')
-            .replace(/^DISCORD_CLIENT_SECRET=.*$/m, `DISCORD_CLIENT_SECRET=${randomBytes(24).toString('hex')}`));
-          JS
-          docker compose up -d --wait
-          npm run db:deploy
-          npm run data:sync
+        run: node scripts/ci-local-services.mjs
       - name: Generate and verify the SQLite runtime
         run: node scripts/qa-cloudflare-runtime.mjs
-      - run: npx playwright install --with-deps chromium
-      - name: Verify the pinned browser sandbox
-        run: node scripts/qa-browser-sandbox.mjs
-      - name: Build and exercise Cloudflare with isolated fixture sessions
-        run: |
-          node scripts/cloudflare-build.mjs
-          npx tsc --project cloudflare/web/tsconfig.json
-          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test
-          node scripts/qa-source-secrets.mjs
-          node scripts/qa-secret-scan.mjs
       - name: Prepare the production challenge and reviewed bindings
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
@@ -76,6 +96,8 @@ jobs:
         run: |
           node scripts/cloudflare-build.mjs
           node scripts/cloudflare-release-config.mjs
+          node scripts/qa-source-secrets.mjs
+          node scripts/qa-secret-scan.mjs
       - name: Verify Free bundle limits and deploy binding-only backend and website
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
