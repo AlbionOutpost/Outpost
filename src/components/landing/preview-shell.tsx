@@ -40,10 +40,14 @@ export function PreviewShell({
           <h3 id={id}>{title}</h3>
           <p>{description}</p>
         </div>
-        <span className="landing-card-tag">{tag}</span>
+        <span className="landing-card-tag">
+          <span className="landing-card-tag-dot" aria-hidden="true" />
+          {tag}
+        </span>
       </div>
       <div className="landing-card-body">{children}</div>
       <Link href={href} className="landing-card-action">
+        <ToolIcon name={glyph} size={18} />
         {action} <ArrowRight size={16} />
       </Link>
     </article>

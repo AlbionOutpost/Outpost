@@ -8,14 +8,20 @@ import { getPrices } from "@/lib/albion/market-client";
 import { initialProduction, production, type ProductionInput } from "@/lib/albion/production";
 
 /** Recipes the landing page may demonstrate; the full calculator takes any recipe. */
-const previewRecipes = new Set([
-  "battleaxe-t4",
-  "battleaxe-t5",
-  "battleaxe-t6",
-  "broadsword-t6",
-  "bow-t6",
-  "bag-t6",
-  "cape-t6",
+const previewRecipes = new Map<string, "crafting" | "refining">([
+  ["battleaxe-t4", "crafting"],
+  ["battleaxe-t5", "crafting"],
+  ["battleaxe-t6", "crafting"],
+  ["broadsword-t6", "crafting"],
+  ["bow-t6", "crafting"],
+  ["bag-t6", "crafting"],
+  ["cape-t6", "crafting"],
+  ["metalbar-t6", "refining"],
+  ["planks-t6", "refining"],
+  ["leather-t6", "refining"],
+  ["cloth-t6", "refining"],
+  ["metalbar-t5", "refining"],
+  ["planks-t5", "refining"],
 ]);
 
 /**
@@ -30,12 +36,13 @@ export const GET = apiHandler("economy.preview", async (req: NextRequest) => {
       region: regionSchema,
       recipeId: z.string().max(60),
       city: z.enum(cities).default("Bridgewatch"),
+      batches: z.coerce.number().int().min(1).max(50).default(1),
     })
     .parse(Object.fromEntries(req.nextUrl.searchParams));
-  if (!previewRecipes.has(v.recipeId) || v.city === "Black Market")
-    throw new HttpError(400, "Unsupported preview scenario");
+  const kind = previewRecipes.get(v.recipeId);
+  if (!kind || v.city === "Black Market") throw new HttpError(400, "Unsupported preview scenario");
   const recipe = findRecipe(v.recipeId);
-  if (!recipe || recipe.kind !== "crafting") throw new HttpError(400, "Unsupported recipe");
+  if (!recipe || recipe.kind !== kind) throw new HttpError(400, "Unsupported recipe");
   const ids = [...recipe.ingredients.map((i) => i.id), recipe.output];
   const rows = await getPrices(v.region, [...new Set(ids)], 1);
   const prices: ProductionInput["prices"] = Object.fromEntries(
@@ -55,8 +62,9 @@ export const GET = apiHandler("economy.preview", async (req: NextRequest) => {
     }),
   );
   const assumptions = {
-    ...initialProduction("crafting", v.region),
+    ...initialProduction(kind, v.region),
     recipeId: recipe.id,
+    batches: v.batches,
     materialCity: v.city,
     outputCity: v.city,
     prices,
@@ -68,7 +76,7 @@ export const GET = apiHandler("economy.preview", async (req: NextRequest) => {
   return NextResponse.json({
     region: v.region,
     source: "Albion Online Data Project",
-    recipe: { id: recipe.id, name: recipe.name, output: recipe.output },
+    recipe: { id: recipe.id, name: recipe.name, output: recipe.output, kind },
     assumptions: {
       city: v.city,
       batches: assumptions.batches,
@@ -98,6 +106,7 @@ export const GET = apiHandler("economy.preview", async (req: NextRequest) => {
     revenue: result.revenue,
     fees: result.fees,
     profit: result.profit,
+    profitPerItem: result.profitPerItem,
     margin: result.margin,
   });
 });
