@@ -46,7 +46,10 @@ print(json.dumps(out))
   ],
   { input: payload, encoding: "utf8", maxBuffer: 20 * 1024 * 1024 },
 );
-if (converted.status !== 0) throw Error("Public catalog SQL preparation failed.");
+if (converted.status !== 0)
+  throw Error(
+    `Public catalog SQL preparation failed. ${(converted.stderr || String(converted.error ?? "")).trim().slice(-2000)}`,
+  );
 const statements = JSON.parse(converted.stdout);
 if (statements.some((sql) => Buffer.byteLength(sql) > 95000))
   throw Error("Catalog statement exceeds the bounded SQL budget.");
