@@ -1,53 +1,51 @@
 import type { ReactNode } from "react";
 import Link from "@/components/link";
+import { ToolIcon } from "@/components/tool-icon";
 import { ArrowRight } from "lucide-react";
 
+type Glyph = Parameters<typeof ToolIcon>[0]["name"];
+
 /**
- * Frame shared by the landing-page product windows: a short title row, the live software
- * inside, and a footer bar that carries the source note and the one action.
+ * Frame shared by the landing-page product cards: emblem, title, one line and a "live data"
+ * tag on top; the real software in the middle; one full-width action at the bottom.
  */
 export function PreviewShell({
   id,
-  eyebrow,
+  glyph,
   title,
+  description,
   href,
   action,
-  note,
-  tone = "default",
+  tag = "Live data",
   className = "",
   children,
 }: {
   id: string;
-  eyebrow: string;
+  glyph: Glyph;
   title: string;
+  description: string;
   href: string;
   action: string;
-  note?: ReactNode;
-  tone?: "default" | "lead";
+  tag?: string;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <article
-      className={`landing-preview${tone === "lead" ? " is-lead" : ""}${className ? ` ${className}` : ""}`}
-      aria-labelledby={id}
-    >
-      <div className="landing-preview-heading">
-        <p className="landing-kicker">{eyebrow}</p>
-        <h3 id={id}>{title}</h3>
-      </div>
-      <div className="landing-preview-window">
-        <div className="landing-preview-body">{children}</div>
-        <div className="landing-preview-footer">
-          {note ? <span className="landing-preview-note">{note}</span> : <span />}
-          <Link
-            href={href}
-            className={`button ${tone === "lead" ? "primary" : "secondary"} landing-preview-action`}
-          >
-            {action} <ArrowRight size={16} />
-          </Link>
+    <article className={`landing-card${className ? ` ${className}` : ""}`} aria-labelledby={id}>
+      <div className="landing-card-head">
+        <span className="landing-card-emblem" aria-hidden="true">
+          <ToolIcon name={glyph} size={22} />
+        </span>
+        <div>
+          <h3 id={id}>{title}</h3>
+          <p>{description}</p>
         </div>
+        <span className="landing-card-tag">{tag}</span>
       </div>
+      <div className="landing-card-body">{children}</div>
+      <Link href={href} className="landing-card-action">
+        {action} <ArrowRight size={16} />
+      </Link>
     </article>
   );
 }

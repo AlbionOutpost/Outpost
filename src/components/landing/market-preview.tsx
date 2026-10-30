@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { z } from "zod";
 import { ItemIcon } from "@/components/item-icon";
+import Link from "@/components/link";
 import { useAtlasRegion } from "@/components/region-context";
 import { marketPrice, type MarketPrice } from "@/lib/albion/market-quotes";
 import { regions } from "@/lib/albion/region-config";
 import { sourceAge } from "@/lib/albion/source-age";
+import { Search } from "lucide-react";
 import { PreviewStatus } from "./preview-shell";
 
 const quotes = z.object({ prices: z.array(marketPrice).max(10000) });
@@ -26,37 +28,45 @@ type Load<T> =
 type Keyed<T> = { key: string; value: Exclude<Load<T>, { status: "idle" | "loading" }> };
 
 const silver = (n: number) => n.toLocaleString("en-US");
+const ranges = [7, 30] as const;
 
 /**
- * Real quotes for one item in three cities plus its recorded 30-day trend in one of them,
- * loaded from the same endpoints as the Market Explorer once the card scrolls into view.
- * Every quote keeps its own source time; a city without an observation stays "Unavailable".
+ * Real quotes for one item in three cities plus its recorded daily trend, loaded from the
+ * same endpoints as the Market Explorer once the card scrolls into view. The city and range
+ * controls work; the search field is a door into the full explorer. Every quote keeps its
+ * own source time; a city without an observation stays "Unavailable".
  */
 export function MarketPreview({
   item,
   cities,
-  trendCity,
+  trendCities,
+  suffix,
 }: {
   item: { id: string; name: string; tier: string };
   cities: readonly string[];
-  trendCity: string;
+  trendCities: readonly string[];
+  suffix: string;
 }) {
   const region = useAtlasRegion();
   const root = useRef<HTMLDivElement>(null);
+  const id = useId();
   const [seen, setSeen] = useState(false);
+  const [trendCity, setTrendCity] = useState(trendCities[0]);
+  const [range, setRange] = useState<(typeof ranges)[number]>(30);
   const [priceResult, setPriceResult] = useState<Keyed<MarketPrice[]> | null>(null);
   const [trendResult, setTrendResult] = useState<Keyed<Point[]> | null>(null);
   const quality = 1;
-  const key = `${region}:${item.id}:${quality}:${trendCity}`;
-  // Loading is derived from the key so the effect never sets state synchronously.
+  const priceKey = `${region}:${item.id}:${quality}`;
+  const trendKey = `${priceKey}:${trendCity}`;
+  // Loading is derived from the keys so the effects never set state synchronously.
   const prices: Load<MarketPrice[]> = !seen
     ? { status: "idle" }
-    : priceResult?.key === key
+    : priceResult?.key === priceKey
       ? priceResult.value
       : { status: "loading" };
   const trend: Load<Point[]> = !seen
     ? { status: "idle" }
-    : trendResult?.key === key
+    : trendResult?.key === trendKey
       ? trendResult.value
       : { status: "loading" };
 
@@ -79,48 +89,95 @@ export function MarketPreview({
     if (!seen) return;
     const controller = new AbortController();
     const params = { region, item: item.id, quality: String(quality) };
-    const setPrices = (value: Keyed<MarketPrice[]>["value"]) => setPriceResult({ key, value });
-    const setTrend = (value: Keyed<Point[]>["value"]) => setTrendResult({ key, value });
     fetch(`/api/market?${new URLSearchParams(params)}`, { signal: controller.signal })
       .then(async (r) => {
         const body = await r.json();
         if (!r.ok) throw new Error(body.error || "Market data is unavailable.");
         const parsed = quotes.parse(body);
-        setPrices({
-          status: "ready",
-          data: parsed.prices.filter((p) => p.item_id === item.id && p.quality === quality),
-          fetchedAt: Date.now(),
+        setPriceResult({
+          key: priceKey,
+          value: {
+            status: "ready",
+            data: parsed.prices.filter((p) => p.item_id === item.id && p.quality === quality),
+            fetchedAt: Date.now(),
+          },
         });
       })
       .catch((e) => {
         if (controller.signal.aborted) return;
-        setPrices({ status: "error", message: e instanceof Error ? e.message : "Unavailable" });
+        setPriceResult({
+          key: priceKey,
+          value: { status: "error", message: e instanceof Error ? e.message : "Unavailable" },
+        });
       });
-    fetch(`/api/history?${new URLSearchParams({ kind: "history", ...params, city: trendCity })}`, {
+    return () => controller.abort();
+  }, [seen, priceKey, region, item.id]);
+
+  useEffect(() => {
+    if (!seen) return;
+    const controller = new AbortController();
+    const params = { kind: "history", region, item: item.id, quality: String(quality) };
+    fetch(`/api/history?${new URLSearchParams({ ...params, city: trendCity })}`, {
       signal: controller.signal,
     })
       .then(async (r) => {
         const body = await r.json();
         if (!r.ok) throw new Error(body.error || "History is unavailable.");
         const rows = history.parse(body).data[0]?.data ?? [];
-        setTrend({
-          status: "ready",
-          data: rows
-            .filter((p) => p.avg_price > 0)
-            .sort((a, b) => a.timestamp.localeCompare(b.timestamp)),
-          fetchedAt: Date.now(),
+        setTrendResult({
+          key: trendKey,
+          value: {
+            status: "ready",
+            data: rows
+              .filter((p) => p.avg_price > 0)
+              .sort((a, b) => a.timestamp.localeCompare(b.timestamp)),
+            fetchedAt: Date.now(),
+          },
         });
       })
       .catch((e) => {
         if (controller.signal.aborted) return;
-        setTrend({ status: "error", message: e instanceof Error ? e.message : "Unavailable" });
+        setTrendResult({
+          key: trendKey,
+          value: { status: "error", message: e instanceof Error ? e.message : "Unavailable" },
+        });
       });
     return () => controller.abort();
-  }, [seen, key, region, item.id, trendCity]);
+  }, [seen, trendKey, region, item.id, trendCity]);
 
   const now = prices.status === "ready" ? prices.fetchedAt : 0;
   return (
     <div ref={root} className="market-preview">
+      <div className="preview-controls">
+        <Link href={`/tools/market${suffix}`} className="preview-search">
+          <Search size={15} aria-hidden="true" />
+          <span>Search for an item…</span>
+        </Link>
+        <label className="preview-select">
+          <span className="sr-only">Trend city</span>
+          <select value={trendCity} onChange={(e) => setTrendCity(e.target.value)}>
+            {trendCities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="preview-tabs" role="tablist" aria-label="Trend range">
+          {ranges.map((days) => (
+            <button
+              key={days}
+              type="button"
+              role="tab"
+              id={`${id}-${days}`}
+              aria-selected={range === days}
+              onClick={() => setRange(days)}
+            >
+              {days}d
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="market-preview-item">
         <ItemIcon id={item.id} size={44} />
         <div>
@@ -135,10 +192,10 @@ export function MarketPreview({
           <tr>
             <th scope="col">City</th>
             <th scope="col" className="is-number">
-              Sell order
+              Sell
             </th>
             <th scope="col" className="is-number">
-              Buy order
+              Buy
             </th>
             <th scope="col">Seen</th>
           </tr>
@@ -151,7 +208,7 @@ export function MarketPreview({
             const buy = row?.buy_price_max ? row : null;
             const age = sell ? sourceAge(sell.sell_price_min_date, now) : null;
             return (
-              <tr key={city} className={prices.status === "loading" ? "is-loading" : undefined}>
+              <tr key={city}>
                 <th scope="row">{city}</th>
                 <td className="is-number">
                   {sell ? silver(sell.sell_price_min) : <span className="is-missing">—</span>}
@@ -181,13 +238,15 @@ export function MarketPreview({
       {prices.status === "error" && (
         <PreviewStatus>{prices.message} No prices have been substituted.</PreviewStatus>
       )}
-      <Trend city={trendCity} state={trend} />
+      <Trend city={trendCity} state={trend} range={range} />
     </div>
   );
 }
 
-function Trend({ city, state }: { city: string; state: Load<Point[]> }) {
-  const points = state.status === "ready" ? state.data : [];
+function Trend({ city, state, range }: { city: string; state: Load<Point[]>; range: number }) {
+  const all = state.status === "ready" ? state.data : [];
+  const since = (state.status === "ready" ? state.fetchedAt : 0) - range * 86400000;
+  const points = all.filter((p) => Date.parse(p.timestamp + "Z") >= since);
   const width = 320,
     height = 72;
   let path = "",
@@ -212,7 +271,7 @@ function Trend({ city, state }: { city: string; state: Load<Point[]> }) {
     <figure className="market-preview-trend">
       <figcaption>
         <span>
-          30-day average · {city}
+          {range}-day average · {city}
           {last ? ` · ${silver(Math.round(last.avg_price))}` : ""}
         </span>
         {points.length > 1 && (
@@ -250,7 +309,7 @@ function Trend({ city, state }: { city: string; state: Load<Point[]> }) {
             ? "Loading recorded history…"
             : state.status === "error"
               ? "History unavailable. Nothing has been substituted."
-              : `No daily history recorded for ${city} in the last 30 days.`}
+              : `No daily history recorded for ${city} in the last ${range} days.`}
         </p>
       )}
       {first && last && points.length > 1 && (
