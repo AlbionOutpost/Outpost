@@ -13,8 +13,8 @@ export default function NotFound() {
           Page not found.
         </h1>
         <p>
-          The link may have expired, the content may have moved, or you may not have access. For
-          a private Team resource, ask an officer for a new invitation.
+          The link may have expired, the content may have moved, or you may not have access. For a
+          private Team resource, ask an officer for a new invitation.
         </p>
         <div className="actions">
           <Link className="button primary" href="/">
