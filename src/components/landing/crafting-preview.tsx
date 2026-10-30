@@ -54,17 +54,23 @@ const silver = (n: number) => Math.round(n).toLocaleString("en-US");
  * The assumptions are shown next to the result; a missing price leaves the result missing.
  */
 export function CraftingPreview({
-  recipeId,
-  outputName,
-  city,
+  recipes,
+  cities,
+  initialRecipe,
+  initialCity,
 }: {
-  recipeId: string;
-  outputName: string;
-  city: string;
+  recipes: readonly { id: string; name: string; output: string }[];
+  cities: readonly string[];
+  initialRecipe: string;
+  initialCity: string;
 }) {
   const region = useAtlasRegion();
   const root = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
+  const [recipeId, setRecipeId] = useState(initialRecipe);
+  const [city, setCity] = useState(initialCity);
+  const chosen = recipes.find((r) => r.id === recipeId) ?? recipes[0];
+  const outputName = chosen.name;
   const [result, setResult] = useState<{ key: string; value: State } | null>(null);
   const key = `${region}:${recipeId}:${city}`;
   const state: State = !seen
@@ -113,8 +119,30 @@ export function CraftingPreview({
   const profit = data?.profit ?? null;
   return (
     <div ref={root} className="crafting-preview">
+      <div className="preview-controls">
+        <label className="preview-select is-grow">
+          <span className="sr-only">Recipe</span>
+          <select value={recipeId} onChange={(e) => setRecipeId(e.target.value)}>
+            {recipes.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="preview-select">
+          <span className="sr-only">City</span>
+          <select value={city} onChange={(e) => setCity(e.target.value)}>
+            {cities.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <div className="crafting-preview-recipe">
-        {output ? <ItemIcon id={output} size={44} /> : <span className="crafting-preview-slot" />}
+        <ItemIcon id={data?.recipe.output ?? chosen.output} size={44} />
         <div>
           <strong>{data?.recipe.name ?? outputName}</strong>
           <span>
@@ -163,7 +191,11 @@ export function CraftingPreview({
           <dd>{data?.upfront != null ? silver(data.upfront) : "—"}</dd>
         </div>
         <div>
-          <dt>Sells for</dt>
+          <dt>Fees ({data ? `${data.assumptions.tax + data.assumptions.setupFee}%` : "—"})</dt>
+          <dd>{data?.fees != null ? silver(data.fees) : "—"}</dd>
+        </div>
+        <div>
+          <dt>Market price</dt>
           <dd>
             {data?.output.unit != null ? silver(data.output.unit) : "—"}
             {data?.output.observedAt && (
@@ -174,8 +206,12 @@ export function CraftingPreview({
           </dd>
         </div>
         <div className={profit == null ? "" : profit >= 0 ? "is-gain" : "is-loss"}>
-          <dt>Profit after fees</dt>
+          <dt>Profit</dt>
           <dd>{profit != null ? `${profit < 0 ? "−" : "+"}${silver(Math.abs(profit))}` : "—"}</dd>
+        </div>
+        <div className={profit == null ? "" : profit >= 0 ? "is-gain" : "is-loss"}>
+          <dt>Margin</dt>
+          <dd>{data?.margin != null ? `${data.margin.toFixed(1)}%` : "—"}</dd>
         </div>
       </dl>
       {data && (

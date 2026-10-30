@@ -1,9 +1,8 @@
-/* Landing page: an independent header, a bounded hero with the featured build on the
-   loadout board, four capabilities with real item renders, product windows running on live
-   data (market, crafting, a group build as a party), the ad-free offer, the trust grid on
-   the owner's paintings, and the closing call to action. Tokens only; no new colours. */
+/* Landing page: the header on its own bar, then a full-bleed painted hero with the four
+   capabilities inside it, three product cards running on live data, the Group Compositions
+   band, "Why choose Outpost", the ad-free offer and a painted closing band. Paintings are
+   the owner's authorised illustrations; everything in the cards is real software. */
 
-/* Header: its own surface and divider on the landing page, never over the hero */
 .app.outpost.home-route .main > .site-header {
   position: relative;
   background: var(--sidebar);
@@ -13,23 +12,33 @@
   padding: 0;
 }
 .app.outpost .home-landing {
-  --landing-width: 1200px;
-  --section-gap: 72px;
+  --landing-width: 1240px;
+  --section-gap: 64px;
+  --role-tank: var(--warning, #e6b35b);
+  --role-healer: var(--success);
+  --role-dps: var(--error);
+  --role-support: #7fb2ff;
   --scene-market: url("/albion/illustrations/market-v1.webp");
-  --scene-build: url("/albion/illustrations/build-v1.webp");
-  --scene-composition: url("/albion/illustrations/composition-v1.webp");
-  --scene-hero: url("/albion/illustrations/hero-v1.webp");
-  --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
+  --scene-composition: url("/albion/illustrations/build-v1.webp");
+  width: 100%;
+  overflow-x: clip;
+}
+.app.outpost .landing-wrap {
   max-width: var(--landing-width);
   margin: 0 auto;
   padding: 0 32px;
 }
-.app.outpost .landing-kicker {
-  margin: 0 0 8px;
+.app.outpost .landing-eyebrow {
+  margin: 0 0 14px;
   color: var(--accent-ink);
   font: 700 12px/1.3 var(--font-ui);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+.app.outpost .landing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 .app.outpost .landing-chip {
   padding: 2px 9px;
@@ -41,39 +50,10 @@
   font-weight: 600;
   white-space: nowrap;
 }
-
-/* Hero: copy left, the featured build on the game's loadout board right */
-.app.outpost .landing-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 48px;
-  padding: 52px 0 44px;
-}
-.app.outpost .landing-eyebrow {
-  margin: 0 0 14px;
-  color: var(--accent-ink);
-  font: 700 12px/1.3 var(--font-ui);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.app.outpost .landing-hero h1 {
-  margin: 0 0 18px;
-  font: 800 clamp(52px, 5.4vw, 80px) / 0.96 var(--font-display);
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-.app.outpost .landing-hero h1 em {
-  font-style: normal;
-  color: var(--accent);
-}
-.app.outpost .landing-lede {
-  max-width: 46ch;
-  margin: 0 0 26px;
-  font-size: 17px;
-  line-height: 1.6;
+.app.outpost .landing-chip.is-muted {
   color: var(--muted);
+  background: var(--elevated);
+  border-color: var(--border);
 }
 .app.outpost .landing-actions {
   display: flex;
@@ -86,223 +66,129 @@
   font-size: 15px;
   border-radius: var(--radius-md);
 }
-.app.outpost .landing-hero-build {
+
+/* Hero: the painting runs edge to edge under the copy and the capability strip */
+.app.outpost .landing-hero {
   position: relative;
-  display: grid;
-  gap: 12px;
-  padding: 18px 20px 16px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--panel) 88%, transparent), var(--panel) 70%),
-    var(--scene-city) 70% 35% / cover no-repeat;
-  box-shadow: var(--shadow);
+  display: flex;
+  align-items: flex-end;
+  min-height: 560px;
+  background: #0b0d12;
+  color: #f4f2ee;
   overflow: hidden;
   isolation: isolate;
 }
-.app.outpost .landing-hero-build::before {
-  content: "";
+.app.outpost .landing-hero-art {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(
-    ellipse at 50% 45%,
-    color-mix(in srgb, var(--accent) 16%, transparent),
-    transparent 60%
-  );
 }
-.app.outpost .landing-hero-build-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.app.outpost .landing-hero-build-head strong {
-  display: block;
-  font-size: 16px;
-  line-height: 1.3;
-}
-.app.outpost .landing-hero-build-head small {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .landing-hero-build-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--elevated);
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.app.outpost .landing-hero-build-open:hover {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-.app.outpost .landing-hero-build .loadout-board {
-  padding: 4px 0;
-}
-.app.outpost .landing-hero-build-foot {
-  display: flex;
-  justify-content: flex-start;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-.app.outpost .gold-ticker {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) 120px;
-  align-items: center;
-  gap: 4px 14px;
+.app.outpost .landing-hero-art img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 40%;
 }
-.app.outpost .gold-ticker-head {
-  display: contents;
+.app.outpost .landing-hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #0b0d12f5 0%, #0b0d12c4 30%, #0b0d1240 55%, #0b0d1200 78%),
+    linear-gradient(0deg, #0b0d12 0%, #0b0d12d9 18%, #0b0d1200 48%);
 }
-.app.outpost .gold-ticker-head time {
-  grid-column: 2;
-  grid-row: 2;
-  font-size: 12px;
-  color: var(--muted);
+.app.outpost .landing-hero-inner {
+  width: 100%;
+  padding-top: 56px;
+  padding-bottom: 28px;
 }
-.app.outpost .gold-ticker-head time.is-stale {
-  color: var(--warning, #e6b35b);
+.app.outpost .landing-hero-copy {
+  max-width: 600px;
 }
-.app.outpost .gold-ticker-label {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  align-self: center;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+.app.outpost .landing-hero h1 {
+  margin: 0 0 16px;
+  font: 800 clamp(56px, 6vw, 92px) / 0.94 var(--font-display);
+  letter-spacing: -0.02em;
   text-transform: uppercase;
+  color: #f4f2ee;
 }
-.app.outpost .gold-ticker-body {
-  display: contents;
+.app.outpost .landing-hero h1 em {
+  font-style: normal;
+  color: var(--accent);
 }
-.app.outpost .gold-ticker-body > div {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+.app.outpost .landing-lede {
+  max-width: 50ch;
+  margin: 0 0 24px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: #ddd8d0;
 }
-.app.outpost .gold-ticker-body strong {
-  font: 700 18px/1.1 var(--font-display);
-  font-variant-numeric: tabular-nums;
+.app.outpost .landing-hero .button.secondary {
+  background: #14171dcc;
+  border-color: #6a6368;
+  color: #f4f2ee;
 }
-.app.outpost .gold-ticker-body span {
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
+.app.outpost .landing-hero .button.secondary:hover {
+  background: #1f232b;
+  border-color: #9a9298;
 }
-.app.outpost .gold-ticker svg {
-  grid-column: 3;
-  grid-row: 1 / span 2;
-  width: 100%;
-  height: 34px;
-}
-
-/* Capabilities: real renders, a short line each */
 .app.outpost .landing-benefits {
   list-style: none;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0 0 var(--section-gap);
-  padding: 0;
+  gap: 16px 24px;
+  margin: 40px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid #ffffff26;
 }
 .app.outpost .landing-benefits li {
-  position: relative;
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
-  grid-template-rows: auto auto auto;
-  column-gap: 8px;
-  align-content: start;
-  padding: 16px 18px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--panel);
-  overflow: hidden;
-}
-.app.outpost .landing-benefit-art {
-  grid-column: 1 / -1;
-  display: flex;
+  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 12px;
   align-items: center;
-  height: 64px;
-  margin: 0 0 10px;
 }
-.app.outpost .landing-benefit-art img {
-  width: 48px;
-  height: 48px;
-  margin-right: -10px;
-  filter: drop-shadow(0 6px 8px #000a);
-}
-.app.outpost .landing-benefit-art img:nth-child(1) {
-  transform: rotate(-10deg) translateY(4px);
-}
-.app.outpost .landing-benefit-art img:nth-child(2) {
-  position: relative;
-  z-index: 1;
-  width: 56px;
-  height: 56px;
-}
-.app.outpost .landing-benefit-art img:nth-child(3) {
-  transform: rotate(10deg) translateY(4px);
-}
-.app.outpost .landing-benefit-art.is-mark svg {
-  width: 52px;
-  height: 52px;
-  padding: 10px;
+.app.outpost .landing-benefits svg {
+  grid-row: 1 / span 2;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
   color: var(--accent-ink);
-  background: var(--accent-wash);
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
-  border-radius: 50%;
-}
-.app.outpost .landing-benefits li > svg {
-  grid-column: 1;
-  grid-row: 2;
-  margin-top: 2px;
-  color: var(--accent-ink);
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, #ffffff33);
+  border-radius: var(--radius-md);
+  background: #0b0d1299;
 }
 .app.outpost .landing-benefits strong {
-  grid-column: 2;
-  grid-row: 2;
-  font-size: 15px;
+  font-size: 14px;
+  color: #f4f2ee;
 }
-.app.outpost .landing-benefits li > span:last-child {
-  grid-column: 2;
-  grid-row: 3;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
+.app.outpost .landing-benefits span {
+  color: #c9c3bb;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
-/* Section headings */
+/* Section heading */
 .app.outpost .landing-section-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 0 24px;
-  margin: 0 0 24px;
+  margin: 0 0 22px;
 }
 .app.outpost .landing-section-heading > * {
   grid-column: 1;
 }
-.app.outpost .landing-section-heading h2 {
+.app.outpost .landing-section-heading h2,
+.app.outpost .landing-why h2 {
   margin: 0;
-  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
+  font: 800 clamp(32px, 3.2vw, 44px) / 1.05 var(--font-display);
   letter-spacing: -0.01em;
+}
+.app.outpost .landing-section-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 16px;
 }
 .app.outpost .landing-section-heading .text-link {
   grid-column: 2;
@@ -312,70 +198,96 @@
   white-space: nowrap;
 }
 
-/* Product windows */
-.app.outpost .landing-showcase {
-  margin: 0 0 40px;
+/* Product cards */
+.app.outpost .landing-tools {
+  padding-top: 48px;
+  margin-bottom: 24px;
 }
-.app.outpost .landing-showcase-grid {
+.app.outpost .landing-card-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
-.app.outpost .landing-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-.app.outpost .landing-preview.is-wide {
-  grid-column: 1 / -1;
-}
-.app.outpost .landing-preview-heading {
+.app.outpost .landing-card {
   display: grid;
-  gap: 0;
-}
-.app.outpost .landing-preview-heading h3 {
-  margin: 0;
-  font: 700 18px/1.25 var(--font-ui);
-}
-.app.outpost .landing-preview-window {
-  flex: 1;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
   min-width: 0;
+  padding: 18px 18px 16px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   background: var(--panel);
   box-shadow: inset 0 1px 0 #ffffff08;
-  overflow: hidden;
   transition: border-color var(--motion-fast) var(--ease-out);
 }
-.app.outpost .landing-preview:hover .landing-preview-window {
+.app.outpost .landing-card:hover {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }
-.app.outpost .landing-preview-body {
-  padding: 16px;
-}
-.app.outpost .landing-preview-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.app.outpost .landing-card-head {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 12px;
-  padding: 10px 12px 10px 16px;
-  border-top: 1px solid var(--border);
-  background: color-mix(in srgb, var(--elevated) 70%, var(--panel));
+  align-items: start;
 }
-.app.outpost .landing-preview-note {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-.app.outpost .landing-preview-action {
-  min-height: 38px;
-  padding: 7px 14px;
+.app.outpost .landing-card-emblem {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--accent-ink);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
   border-radius: var(--radius-md);
-  font-size: 14px;
+  background: var(--accent-wash);
+}
+.app.outpost .landing-card-head h3,
+.app.outpost .landing-group-copy h2 {
+  margin: 0 0 4px;
+  font: 700 18px/1.25 var(--font-ui);
+}
+.app.outpost .landing-card-head p,
+.app.outpost .landing-group-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app.outpost .landing-card-tag {
+  padding: 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--border));
+  border-radius: 999px;
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
+}
+.app.outpost .landing-card-body {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--elevated);
+}
+.app.outpost .landing-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+}
+.app.outpost .landing-card-action:hover {
+  background: var(--accent);
+  color: var(--bg);
 }
 .app.outpost .landing-preview-status {
   margin: 10px 0 0;
@@ -388,30 +300,113 @@
   font-size: 13px;
   font-weight: 600;
 }
-.app.outpost .landing-preview-window .is-number {
+.app.outpost .landing-card-body .is-number {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-.app.outpost .landing-preview-window .is-missing {
+.app.outpost .landing-card-body .is-missing {
   color: var(--muted);
 }
-.app.outpost .landing-preview-window time {
+.app.outpost .landing-card-body time {
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
 }
-.app.outpost .landing-preview-window time.is-stale {
+.app.outpost .landing-card-body time.is-stale {
   color: var(--warning, #e6b35b);
 }
 
-/* Market window */
+/* Working controls inside the cards */
+.app.outpost .preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.app.outpost .preview-controls .preview-search {
+  flex-basis: 100%;
+}
+.app.outpost .preview-controls .preview-select:not(.is-grow) {
+  flex: 1 1 38%;
+}
+.app.outpost .preview-controls .preview-select.is-grow {
+  flex: 1 1 50%;
+}
+.app.outpost .preview-search,
+.app.outpost .preview-select select,
+.app.outpost .preview-tabs {
+  min-height: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--text);
+  font: 500 13px/1.3 var(--font-ui);
+}
+.app.outpost .preview-search {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 10px;
+  color: var(--muted);
+}
+.app.outpost .preview-search:hover {
+  border-color: var(--muted);
+  color: var(--text);
+}
+.app.outpost .preview-search span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .preview-select {
+  display: block;
+  min-width: 0;
+}
+.app.outpost .preview-select.is-grow {
+  flex: 1 1 auto;
+}
+.app.outpost .preview-select select {
+  width: 100%;
+  padding: 0 28px 0 10px;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 14px,
+    calc(100% - 9px) 14px;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+.app.outpost .preview-tabs {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+}
+.app.outpost .preview-tabs button {
+  min-width: 38px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .preview-tabs button[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Market card */
 .app.outpost .market-preview-item,
 .app.outpost .crafting-preview-recipe {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .app.outpost .market-preview-item strong,
 .app.outpost .crafting-preview-recipe strong {
@@ -433,11 +428,22 @@
 .app.outpost .market-preview-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 13px;
+}
+.app.outpost .market-preview-table th:first-child {
+  width: 30%;
+}
+.app.outpost .market-preview-table th:last-child {
+  width: 27%;
+}
+.app.outpost .market-preview-table td:last-child {
+  white-space: normal;
+  font-size: 12px;
 }
 .app.outpost .market-preview-table th,
 .app.outpost .market-preview-table td {
-  padding: 8px 6px;
+  padding: 7px 6px;
   border-top: 1px solid var(--border);
   text-align: left;
 }
@@ -457,8 +463,8 @@
   font-weight: 600;
 }
 .app.outpost .market-preview-trend {
-  margin: 14px 0 0;
-  padding-top: 12px;
+  margin: 12px 0 0;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
 }
 .app.outpost .market-preview-trend figcaption {
@@ -484,12 +490,12 @@
 .app.outpost .market-preview-trend svg {
   display: block;
   width: 100%;
-  height: 76px;
+  height: 72px;
 }
 .app.outpost .market-preview-empty {
   display: grid;
   place-items: center;
-  height: 76px;
+  height: 72px;
   margin: 0;
   color: var(--muted);
   font-size: 13px;
@@ -497,13 +503,104 @@
   border-radius: var(--radius-md);
 }
 
-/* Crafting window */
+/* Build card */
+.app.outpost .build-card-title {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.app.outpost .build-card-title strong {
+  font-size: 15px;
+  line-height: 1.3;
+}
+.app.outpost .build-card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+.app.outpost .build-card-body .loadout-board.is-card {
+  --cell: 58px;
+  --gap: 6px;
+  justify-content: start;
+}
+.app.outpost .build-card-abilities {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+.app.outpost .build-preview-label {
+  display: block;
+  margin: 2px 0 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.app.outpost .build-card-abilities ul {
+  list-style: none;
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .build-card-abilities li {
+  display: grid;
+  grid-template-columns: 18px 34px;
+  align-items: center;
+  gap: 6px;
+}
+.app.outpost .build-card-abilities kbd {
+  color: var(--muted);
+  font: 700 11px/1 var(--font-mono);
+  text-align: center;
+}
+.app.outpost .build-card-abilities li > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--panel);
+  overflow: hidden;
+}
+.app.outpost .build-card-abilities li > span img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.app.outpost .build-card-abilities li.is-empty .build-card-empty {
+  border-style: dashed;
+}
+.app.outpost .build-card-passives {
+  display: flex !important;
+  gap: 5px;
+}
+.app.outpost .build-card-passives li {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--panel);
+  overflow: hidden;
+}
+.app.outpost .build-card-passives img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* Crafting card */
 .app.outpost .crafting-preview-slot {
   display: block;
-  width: 44px;
-  height: 44px;
+  width: 28px;
+  height: 28px;
   border: 1px dashed var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 .app.outpost .crafting-preview-materials {
   list-style: none;
@@ -515,11 +612,10 @@
   grid-template-columns: 28px minmax(0, 1fr) auto auto;
   gap: 10px;
   align-items: center;
-  padding: 8px 0;
+  padding: 7px 0;
   border-top: 1px solid var(--border);
   font-size: 13px;
 }
-.app.outpost .crafting-preview-materials li .crafting-preview-slot,
 .app.outpost .crafting-preview-materials img {
   width: 28px;
   height: 28px;
@@ -537,54 +633,56 @@
   font-weight: 600;
 }
 .app.outpost .crafting-preview-result {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
   margin: 12px 0 0;
-}
-.app.outpost .crafting-preview-result > div {
-  display: grid;
-  gap: 0;
-  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--elevated);
+  background: var(--panel);
+  overflow: hidden;
+}
+.app.outpost .crafting-preview-result > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.app.outpost .crafting-preview-result > div:last-child {
+  border-bottom: 0;
 }
 .app.outpost .crafting-preview-result dt {
-  margin-bottom: 4px;
   color: var(--muted);
-  font-size: 12px;
 }
 .app.outpost .crafting-preview-result dd {
   margin: 0;
-  font: 700 17px/1.2 var(--font-display);
+  font: 700 14px/1.3 var(--font-ui);
   font-variant-numeric: tabular-nums;
-  text-align: left;
+  text-align: right;
   overflow-wrap: normal;
 }
 .app.outpost .crafting-preview-result dd small {
-  display: block;
-  margin-top: 3px;
+  margin-left: 6px;
   color: var(--muted);
-  font: 400 12px/1.3 var(--font-ui);
+  font: 400 11px/1 var(--font-ui);
 }
 .app.outpost .crafting-preview-result dd small.is-stale {
   color: var(--warning, #e6b35b);
 }
 .app.outpost .crafting-preview-result .is-gain {
-  border-color: color-mix(in srgb, var(--success) 50%, var(--border));
+  background: color-mix(in srgb, var(--success) 10%, transparent);
 }
 .app.outpost .crafting-preview-result .is-gain dd {
   color: var(--success);
 }
 .app.outpost .crafting-preview-result .is-loss {
-  border-color: color-mix(in srgb, var(--error) 50%, var(--border));
+  background: color-mix(in srgb, var(--error) 10%, transparent);
 }
 .app.outpost .crafting-preview-result .is-loss dd {
   color: var(--error);
 }
 .app.outpost .crafting-preview-assumptions {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
@@ -594,126 +692,179 @@
   font-weight: 600;
 }
 
-/* Group window: the party on mini boards */
-.app.outpost .group-party-title {
-  margin-bottom: 14px;
+/* Group Compositions band */
+.app.outpost .landing-group {
+  margin-bottom: var(--section-gap);
 }
-.app.outpost .group-party-title strong {
-  display: block;
-  font-size: 15px;
-  line-height: 1.3;
-}
-.app.outpost .group-party-title span {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .group-party-boards {
-  list-style: none;
+.app.outpost .landing-group-card {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  gap: 18px 24px;
+  padding: 18px 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, var(--panel) 0%, var(--panel) 52%, #201c1e99 72%, #201c1e1a 100%),
+    var(--scene-composition) right 35% / 58% auto no-repeat,
+    var(--panel);
+  overflow: hidden;
+}
+.app.outpost .landing-group-copy {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 12px;
-  margin: 0;
-  padding: 0;
+  align-items: start;
+  max-width: 720px;
 }
-.app.outpost .group-party-member {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 12px 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--elevated);
-  color: var(--text);
-  text-align: center;
-  transition: border-color var(--motion-fast) var(--ease-out);
+.app.outpost .landing-group-body {
+  min-width: 0;
 }
-.app.outpost a.group-party-member:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
-}
-.app.outpost .group-party-member strong {
-  font-size: 13px;
-  line-height: 1.3;
-}
-.app.outpost .group-party-member.is-missing {
-  color: var(--muted);
-}
-.app.outpost .group-party-optional {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-.app.outpost .build-preview-label {
-  display: block;
-  margin-bottom: 8px;
+.app.outpost .landing-group-source {
+  margin: 0 0 10px;
   color: var(--muted);
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
-.app.outpost .group-party-optional ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-}
-.app.outpost .group-party-optional li > * {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 10px 4px 4px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--elevated);
+.app.outpost .landing-group-source strong {
   color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
 }
-.app.outpost .group-party-optional li a:hover {
-  border-color: var(--accent);
+.app.outpost .group-roles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
 }
-.app.outpost .group-party-optional img {
-  width: 24px;
-  height: 24px;
+.app.outpost .group-role {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 4px 10px;
+  align-items: center;
+  align-content: start;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #15131acc;
+  backdrop-filter: blur(6px);
+}
+.app.outpost .group-role-icon {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--role);
   border-radius: 50%;
+  color: var(--role);
+  background: color-mix(in srgb, var(--role) 14%, transparent);
 }
-.app.outpost .group-party-list {
-  display: none;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.app.outpost .group-role[data-role="Tank"] {
+  --role: var(--role-tank);
 }
-.app.outpost .group-party-list li {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  padding: 7px 0;
-  border-top: 1px solid var(--border);
+.app.outpost .group-role[data-role="Healer"] {
+  --role: var(--role-healer);
+}
+.app.outpost .group-role[data-role="DPS"] {
+  --role: var(--role-dps);
+}
+.app.outpost .group-role[data-role="Support"] {
+  --role: var(--role-support);
+}
+.app.outpost .group-role-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
 }
-.app.outpost .group-party-list img {
-  width: 32px;
-  height: 32px;
-}
-.app.outpost .group-party-list small {
+.app.outpost .group-role-name small {
+  margin-left: 6px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 500;
 }
-.app.outpost .group-party-list li.is-optional small {
+.app.outpost .group-role-members {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .group-role-members a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+}
+.app.outpost .group-role-members a:hover {
+  border-color: var(--role);
+}
+.app.outpost .group-role-members img {
+  width: 36px;
+  height: 36px;
+}
+.app.outpost .group-role-members li.is-optional a {
+  border-style: dashed;
+  opacity: 0.85;
+}
+.app.outpost .landing-group-action {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: end;
+  background: #15131acc;
+  backdrop-filter: blur(6px);
+}
+
+/* Why choose Outpost */
+.app.outpost .landing-why {
+  margin-bottom: 40px;
+}
+.app.outpost .landing-why h2 {
+  margin-bottom: 20px;
+}
+.app.outpost .landing-why-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px 28px;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .landing-why-grid li {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  align-content: start;
+}
+.app.outpost .landing-why-grid svg {
+  grid-row: 1 / span 2;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  color: var(--accent-ink);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: var(--radius-md);
+  background: var(--accent-wash);
+}
+.app.outpost .landing-why-grid strong {
+  font-size: 14px;
+}
+.app.outpost .landing-why-grid span {
+  margin-top: 3px;
   color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 /* Advertising + the ad-free offer */
 .app.outpost .ad-slot {
   display: grid;
   gap: 10px;
-  margin: 0 0 var(--section-gap);
+  margin: 0 0 40px;
 }
 .app.outpost .ad-slot-unit {
   display: block;
@@ -727,7 +878,7 @@
   justify-content: center;
   gap: 8px;
   margin: 0;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--panel);
@@ -744,131 +895,112 @@
   text-underline-offset: 3px;
 }
 
-/* Trust: each card on one of the owner's paintings, faded under the panel colour */
-.app.outpost .landing-trust {
-  margin: 0 0 var(--section-gap);
-}
-.app.outpost .landing-trust-grid {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin: 0;
-  padding: 0;
-}
-.app.outpost .landing-trust-grid li {
+/* Closing band on the market painting */
+.app.outpost .landing-cta {
   position: relative;
-  display: grid;
-  align-content: end;
-  gap: 8px;
-  min-height: 250px;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background:
-    linear-gradient(180deg, #0b0d1233 0%, #0b0d12b3 45%, #0b0d12f2 100%),
-    var(--scene) center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  min-height: 380px;
+  background: #0b0d12;
   color: #f4f2ee;
   overflow: hidden;
+  isolation: isolate;
 }
-.app.outpost .landing-trust-grid li[data-scene="market"] {
-  --scene: var(--scene-market);
+.app.outpost .landing-cta-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 }
-.app.outpost .landing-trust-grid li[data-scene="hero"] {
-  --scene: var(--scene-hero);
+.app.outpost .landing-cta-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 50%;
 }
-.app.outpost .landing-trust-grid li[data-scene="build"] {
-  --scene: var(--scene-build);
+.app.outpost .landing-cta-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #0b0d12f5 0%, #0b0d12cc 40%, #0b0d1266 70%, #0b0d1226 100%);
 }
-.app.outpost .landing-trust-grid li[data-scene="composition"] {
-  --scene: var(--scene-composition);
-}
-.app.outpost .landing-trust-grid svg {
-  width: 34px;
-  height: 34px;
-  padding: 7px;
-  color: var(--accent-ink);
-  background: #121419cc;
-  border: 1px solid #ffffff22;
-  border-radius: var(--radius-md);
-}
-.app.outpost .landing-trust-grid strong {
-  font-size: 16px;
-}
-.app.outpost .landing-trust-grid span {
-  color: #d8d4cd;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* Closing call to action */
-.app.outpost .landing-cta {
-  margin: 0 0 40px;
-  padding: 52px 32px;
-  text-align: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
-  border-radius: 16px;
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      color-mix(in srgb, var(--accent) 22%, transparent),
-      transparent 60%
-    ),
-    var(--panel);
+.app.outpost .landing-cta-inner {
+  width: 100%;
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 .app.outpost .landing-cta h2 {
   margin: 0 0 12px;
-  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
+  font: 800 clamp(36px, 4vw, 56px) / 1 var(--font-display);
   letter-spacing: -0.01em;
 }
-.app.outpost .landing-cta > p {
+.app.outpost .landing-cta-inner > p:not(.landing-eyebrow) {
   max-width: 52ch;
-  margin: 0 auto 22px;
-  color: var(--muted);
+  margin: 0 0 22px;
+  color: #ddd8d0;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.55;
 }
-.app.outpost .landing-cta .landing-actions {
-  justify-content: center;
+.app.outpost .landing-cta-inner small {
+  display: block;
+  margin-top: 14px;
+  color: #c9c3bb;
+  font-size: 12px;
+}
+.app.outpost .landing-cta .button.secondary {
+  background: #14171dcc;
+  border-color: #6a6368;
+  color: #f4f2ee;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app.outpost .landing-preview-window,
-  .app.outpost .group-party-member {
+  .app.outpost .landing-card,
+  .app.outpost .landing-card-action {
     transition: none;
   }
 }
 
 @media (max-width: 1100px) {
-  .app.outpost .home-landing {
-    --section-gap: 56px;
-  }
-  .app.outpost .landing-hero {
-    gap: 32px;
-  }
-  .app.outpost .landing-benefits,
-  .app.outpost .landing-trust-grid {
+  .app.outpost .landing-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .app.outpost .landing-showcase-grid {
-    grid-template-columns: 1fr;
+  .app.outpost .group-roles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .landing-why-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .landing-group-card {
+    background:
+      linear-gradient(90deg, var(--panel) 0%, var(--panel) 60%, #201c1ecc 100%),
+      var(--scene-composition) right center / 60% auto no-repeat,
+      var(--panel);
   }
 }
 
-/* Phones: short hero with the action first, the board as a card beneath, one window per
-   section, the party as a list, tables that fit without sideways scroll. */
+/* Phones: the painting stays as a short banner behind the copy, the capability strip
+   becomes a 2×2 grid, one card per row with the party as compact role rows. */
 @media (max-width: 700px) {
   .app.outpost .home-landing {
     --section-gap: 44px;
+  }
+  .app.outpost .landing-wrap {
     padding: 0 16px;
   }
   .app.outpost .landing-hero {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 28px 0 32px;
+    min-height: 0;
+  }
+  .app.outpost .landing-hero-art img {
+    object-position: 60% 25%;
+  }
+  .app.outpost .landing-hero-art::after {
+    background: linear-gradient(0deg, #0b0d12 0%, #0b0d12f2 42%, #0b0d1299 64%, #0b0d1200 100%);
+  }
+  .app.outpost .landing-hero-inner {
+    padding-top: 200px;
+    padding-bottom: 24px;
   }
   .app.outpost .landing-hero h1 {
-    font-size: clamp(44px, 13vw, 60px);
+    font-size: clamp(46px, 13vw, 62px);
   }
   .app.outpost .landing-lede {
     margin-bottom: 20px;
@@ -877,58 +1009,29 @@
   .app.outpost .landing-actions .button {
     flex: 1 1 auto;
   }
-  .app.outpost .landing-hero-build {
-    padding: 14px 14px 12px;
-    border-radius: 12px;
-  }
-  .app.outpost .landing-hero-build .loadout-board {
-    --cell: 56px;
-    --gap: 8px;
-  }
-  .app.outpost .gold-ticker {
-    grid-template-columns: auto minmax(0, 1fr) 90px;
-  }
   .app.outpost .landing-benefits {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 12px;
+    margin-top: 28px;
+    padding-top: 18px;
   }
   .app.outpost .landing-benefits li {
-    grid-template-columns: 64px 18px minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    column-gap: 8px;
-    padding: 12px 14px;
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 10px;
   }
-  .app.outpost .landing-benefit-art {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    height: auto;
-    margin: 0;
-  }
-  .app.outpost .landing-benefit-art img {
+  .app.outpost .landing-benefits svg {
     width: 34px;
     height: 34px;
-    margin-right: -14px;
-  }
-  .app.outpost .landing-benefit-art img:nth-child(2) {
-    width: 40px;
-    height: 40px;
-  }
-  .app.outpost .landing-benefit-art.is-mark svg {
-    width: 44px;
-    height: 44px;
-  }
-  .app.outpost .landing-benefits li > svg {
-    grid-column: 2;
-    grid-row: 1;
+    padding: 7px;
   }
   .app.outpost .landing-benefits strong {
-    grid-column: 3;
-    grid-row: 1;
+    font-size: 13px;
   }
-  .app.outpost .landing-benefits li > span:last-child {
-    grid-column: 3;
-    grid-row: 2;
-    margin-top: 1px;
+  .app.outpost .landing-benefits span {
+    font-size: 11px;
+  }
+  .app.outpost .landing-tools {
+    padding-top: 36px;
   }
   .app.outpost .landing-section-heading {
     grid-template-columns: 1fr;
@@ -940,43 +1043,31 @@
     justify-self: start;
     margin-top: 10px;
   }
-  .app.outpost .landing-showcase-grid {
-    gap: 24px;
+  .app.outpost .landing-section-heading p {
+    font-size: 14px;
   }
-  .app.outpost .landing-preview-body {
+  .app.outpost .landing-card-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .app.outpost .landing-card {
     padding: 14px;
   }
-  .app.outpost .landing-preview-footer {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 10px 14px 12px;
+  .app.outpost .landing-card-head {
+    grid-template-columns: 40px minmax(0, 1fr);
   }
-  .app.outpost .landing-preview-note {
-    text-align: center;
+  .app.outpost .landing-card-tag {
+    grid-column: 2;
+    justify-self: start;
   }
-  .app.outpost .crafting-preview-result {
-    grid-template-columns: 1fr;
-    gap: 8px;
+  .app.outpost .landing-card-body {
+    padding: 12px;
   }
-  .app.outpost .crafting-preview-result > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
+  .app.outpost .preview-controls {
+    flex-wrap: wrap;
   }
-  .app.outpost .crafting-preview-result dt {
-    margin: 0;
-  }
-  .app.outpost .crafting-preview-result dd small {
-    display: inline;
-    margin-left: 6px;
-  }
-  .app.outpost .group-party-boards,
-  .app.outpost .group-party-optional {
-    display: none;
-  }
-  .app.outpost .group-party-list {
-    display: block;
+  .app.outpost .preview-search {
+    flex-basis: 100%;
   }
   .app.outpost .market-preview-table th:nth-child(3),
   .app.outpost .market-preview-table td:nth-child(3) {
@@ -985,34 +1076,75 @@
   .app.outpost .market-preview-table td:last-child {
     white-space: normal;
   }
-  .app.outpost .landing-trust-grid {
+  .app.outpost .build-card-body {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
-  .app.outpost .landing-trust-grid li {
-    min-height: 0;
-    grid-template-columns: 34px minmax(0, 1fr);
-    column-gap: 12px;
-    padding: 16px;
-    background:
-      linear-gradient(90deg, #0b0d12e6 0%, #0b0d12f2 60%, #0b0d12f8 100%),
-      var(--scene) center / cover no-repeat;
+  .app.outpost .build-card-body .loadout-board.is-card {
+    --cell: 48px;
+    --gap: 5px;
+    justify-content: center;
   }
-  .app.outpost .landing-trust-grid svg {
-    grid-row: 1 / span 2;
+  .app.outpost .build-card-abilities ul {
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 6px 14px;
+  }
+  .app.outpost .build-card-abilities li {
+    grid-template-columns: 14px 34px;
+  }
+  .app.outpost .build-card-passives {
+    display: flex !important;
+  }
+  .app.outpost .landing-group-card {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    background: var(--panel);
+  }
+  .app.outpost .landing-group-copy {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+  .app.outpost .landing-group-copy .landing-card-tag {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .app.outpost .group-roles {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .app.outpost .group-role {
+    background: var(--elevated);
+    backdrop-filter: none;
+  }
+  .app.outpost .landing-group-action {
+    grid-column: 1;
+    grid-row: auto;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  .app.outpost .landing-why-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   .app.outpost .landing-cta {
-    padding: 36px 20px;
-    border-radius: 12px;
+    min-height: 0;
+  }
+  .app.outpost .landing-cta-art img {
+    object-position: 55% 40%;
+  }
+  .app.outpost .landing-cta-art::after {
+    background: linear-gradient(0deg, #0b0d12 0%, #0b0d12f2 55%, #0b0d1280 100%);
+  }
+  .app.outpost .landing-cta-inner {
+    padding-top: 120px;
+    padding-bottom: 32px;
   }
 }
 @media (max-width: 360px) {
   .app.outpost .landing-hero h1 {
     font-size: 42px;
   }
-  .app.outpost .landing-hero-build .loadout-board {
-    --cell: 48px;
-    --gap: 6px;
+  .app.outpost .landing-benefits {
+    grid-template-columns: 1fr;
   }
   .app.outpost .market-preview-trend figcaption {
     flex-direction: column;
@@ -1024,10 +1156,7 @@
   .app.outpost .crafting-preview-materials time {
     display: none;
   }
-  .app.outpost .gold-ticker {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .app.outpost .gold-ticker svg {
-    display: none;
+  .app.outpost .build-card-body .loadout-board.is-card {
+    --cell: 42px;
   }
 }

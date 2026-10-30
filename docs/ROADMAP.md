@@ -24,6 +24,10 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — landing page v4 (30 Oct)
+
+- Rebuilt to the owner's concept: full-bleed painted hero with the capability strip inside it, three product cards with working controls (trend city + range, recipe + city) and outlined actions, the Group Compositions band reading a real library comp by weapon type (`src/lib/compositions/weapon-roles.ts`, labelled "roles by weapon type"), "Why choose Outpost?", the ad-free offer and a painted closing band.
+
 ## Shipped — landing page v3 (30 Oct)
 
 - `LoadoutBoard` (`src/components/loadout-board.tsx`, original slot glyphs in `loadout-glyphs.tsx`): the game's inventory arrangement with a silhouette, official renders and recorded abilities under each piece; sizes hero/card/mini. The hero shows the featured library build on it; Group Builds show a real composition as a party of mini boards.

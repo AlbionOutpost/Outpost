@@ -122,44 +122,53 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(actions.nth(0)).toHaveText(/Explore Tools/);
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
   await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
-  await expect(hero.locator(".gold-ticker strong")).toHaveText("9,900");
 
-  // The featured build sits on the game's loadout board: ten slots, recorded abilities under
-  // their pieces, nothing recorded for bag and mount.
-  const board = hero.locator(".landing-hero-build .loadout-board");
-  await expect(board.getByRole("listitem")).toHaveCount(10);
-  await expect(board.locator('[data-slot="Main hand"] .loadout-board-cell img')).toBeVisible();
-  await expect(board.locator('[data-slot="Main hand"] .loadout-board-abilities img')).toHaveCount(
-    3,
-  );
-  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
-  await expect(board.locator('[data-slot="Mount"]')).toHaveClass(/is-empty/);
-  await expect(hero.getByRole("link", { name: /Open build/ })).toHaveAttribute(
-    "href",
-    /\/builds\/library\/[a-z0-9-]+\?region=europe/,
-  );
-
-  const benefits = page.getByRole("list", { name: "What Outpost does" }).getByRole("listitem");
+  await expect(hero.locator(".landing-hero-art img")).toBeVisible();
+  const benefits = hero.getByRole("list", { name: "What Outpost does" }).getByRole("listitem");
   await expect(benefits).toHaveCount(4);
-  await expect(benefits.nth(0).locator(".landing-benefit-art img")).toHaveCount(3);
 
-  // Three product windows, loaded from the real endpoints once scrolled into view, each
-  // with its action inside the window footer.
-  const previews = page.locator(".landing-preview");
-  await expect(previews).toHaveCount(3);
-  await previews.first().scrollIntoViewIfNeeded();
-  const market = previews.nth(0);
+  // Three product cards, loaded from the real endpoints once scrolled into view, each with
+  // working controls and one action.
+  const cards = page.locator(".landing-card");
+  await expect(cards).toHaveCount(3);
+  await cards.first().scrollIntoViewIfNeeded();
+  const market = cards.nth(0);
   await expect(market.locator("tbody tr").nth(0)).toContainText(/Bridgewatch\s*3,670\s*2,165/);
   await expect(market.locator("tbody tr").nth(0).locator("time")).toHaveText("9 min ago");
   await expect(market.locator("tbody tr").nth(1)).toContainText("Unavailable");
   await expect(market.locator("tbody tr").nth(2).locator("time")).toHaveClass(/is-stale/);
   await expect(market.locator(".market-preview-trend svg")).toBeVisible();
   await expect(market.locator(".market-preview-range")).toHaveText("3,400 – 3,900");
-  await expect(
-    market.locator(".landing-preview-footer").getByRole("link", { name: /Explore Market/ }),
-  ).toHaveAttribute("href", "/tools/market?item=T6_METALBAR&quality=1&region=europe");
+  await market.getByRole("tab", { name: "7d" }).click();
+  await expect(market.locator(".market-preview-trend figcaption")).toContainText("7-day average");
+  await market.getByLabel("Trend city").selectOption("Caerleon");
+  await expect(market.locator(".market-preview-trend figcaption")).toContainText("Caerleon");
+  await expect(market.getByRole("link", { name: "Search for an item…" })).toHaveAttribute(
+    "href",
+    "/tools/market?region=europe",
+  );
+  await expect(market.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
+    "href",
+    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
+  );
 
-  const crafting = previews.nth(1);
+  // The featured build on the game's loadout board with its abilities on their keys.
+  const build = cards.nth(1);
+  const board = build.locator(".loadout-board");
+  await expect(board.getByRole("listitem")).toHaveCount(10);
+  await expect(board.locator('[data-slot="Main hand"] .loadout-board-cell img')).toBeVisible();
+  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
+  await expect(board.locator('[data-slot="Mount"]')).toHaveClass(/is-empty/);
+  const keys = build.getByRole("list", { name: "Abilities by key" }).getByRole("listitem");
+  await expect(keys).toHaveCount(6);
+  await expect(keys.nth(0)).toContainText("Q");
+  await expect(keys.nth(0).locator("img")).toBeVisible();
+  await expect(build.getByRole("link", { name: /Browse Builds/ })).toHaveAttribute(
+    "href",
+    "/builds/library?region=europe",
+  );
+
+  const crafting = cards.nth(2);
   await expect(crafting.getByRole("list", { name: "Materials" }).getByRole("listitem")).toHaveCount(
     2,
   );
@@ -167,18 +176,21 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(crafting.locator(".landing-preview-status")).toContainText(
     "No Bridgewatch price for Runite Steel Bar",
   );
-  await expect(crafting.getByRole("link", { name: /Open Calculator/ })).toHaveAttribute(
+  await crafting.getByLabel("City").selectOption("Martlock");
+  await expect(crafting.locator(".crafting-preview-recipe")).toContainText("sold in Martlock");
+  await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
     "href",
     "/tools/crafting?recipe=battleaxe-t6&region=europe",
   );
 
-  // The group build is a party of mini boards, optional swaps beneath.
-  const group = previews.nth(2);
-  const party = group.getByRole("list", { name: "Required members" }).getByRole("listitem");
-  await expect(party.first()).toBeVisible();
-  await expect(party.first().locator(".loadout-board")).toBeVisible();
-  await expect(group.getByRole("list", { name: "Optional members" })).toBeVisible();
-  await expect(group.getByRole("link", { name: /Open Group Build/ })).toHaveAttribute(
+  // Group Compositions: a real library comp read by weapon type, members as real renders.
+  const roles = page.locator(".group-role");
+  await expect(roles).toHaveCount(4);
+  await expect(roles.nth(0)).toContainText("Tank");
+  await expect(
+    roles.nth(0).getByRole("list", { name: "Tank members" }).getByRole("link").first(),
+  ).toHaveAttribute("href", /\/builds\/library\/[a-z0-9-]+\?region=europe/);
+  await expect(page.getByRole("link", { name: /Explore Compositions/ })).toHaveAttribute(
     "href",
     /\/compositions\/library\/[a-z0-9-]+\?region=europe/,
   );
@@ -189,9 +201,9 @@ test("landing page: independent header, bounded hero, live previews and a struct
     "href",
     "/premium?region=europe",
   );
-  await expect(page.locator(".landing-trust-grid li")).toHaveCount(4);
+  await expect(page.locator(".landing-why-grid li")).toHaveCount(4);
   await expect(page.locator(".landing-cta h2")).toHaveText(
-    "Make better decisions in Albion Online.",
+    "Make better decisionsin Albion Online.",
   );
   await expect(page.getByRole("link", { name: "Create account" })).toHaveAttribute(
     "href",
@@ -220,13 +232,10 @@ test("landing page: independent header, bounded hero, live previews and a struct
       true,
     );
   }
-  // Phones keep the sell column and hide the buy column, and list the party instead of
-  // showing a strip of boards.
+  // Phones keep the sell column and hide the buy column rather than scrolling sideways.
   await page.setViewportSize({ width: 390, height: 900 });
   await expect(market.locator("thead th").nth(2)).toBeHidden();
   await expect(market.locator("thead th").nth(1)).toBeVisible();
-  await expect(group.getByRole("list", { name: "Required members" })).toBeHidden();
-  await expect(group.getByRole("list", { name: "Members" })).toBeVisible();
 });
 
 test("premium page explains the ad-free tier without selling anything yet", async ({ page }) => {
