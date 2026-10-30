@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { rateLimit } from "@/lib/redis";
-import { apiHandler, HttpError } from "@/lib/api-errors";
+import { apiHandler } from "@/lib/api-errors";
 import { tools } from "@/lib/tool-directory";
 import { queryLibraryBuilds, queryLibraryCompositions, libraryGuides } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
@@ -19,8 +18,6 @@ const best = <T>(rows: readonly T[], score: (row: T) => number, take: number) =>
     .map((r) => r.row);
 export const GET = apiHandler("search.global", async (req: NextRequest) => {
   const q = z.string().trim().min(2).max(100).parse(req.nextUrl.searchParams.get("q"));
-  if (!(await rateLimit("global-search", 600, 60)))
-    throw new HttpError(429, "Search is busy; retry in a moment");
   const { words, compact } = terms(q);
   if (!words.length) return NextResponse.json({ results: [] });
   const enchant = /(?:@|\.)([1-4])\b/.exec(q)?.[1];

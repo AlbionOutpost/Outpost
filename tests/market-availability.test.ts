@@ -60,15 +60,11 @@ it("requests all five exact qualities in one call and returns only public observ
   expect(data.qualities).toHaveLength(5);
   expect(mocks.prices).toHaveBeenCalledExactlyOnceWith("asia", ["T4_BAG"], [1, 2, 3, 4, 5]);
 });
-it("rejects invalid identities before source access and distinguishes rate limits from source failures", async () => {
+it("rejects invalid identities before source access and reports source failures", async () => {
   const { GET } = await import("../src/app/api/market/qualities/route");
   const url = "http://localhost/api/market/qualities?region=europe&item=T4_BAG";
   expect((await GET(new NextRequest(url + "&city=Unknown"))).status).toBe(400);
   expect(mocks.prices).not.toHaveBeenCalled();
-  mocks.budget.mockResolvedValue(false);
-  expect((await GET(new NextRequest(url))).status).toBe(429);
-  expect(mocks.prices).not.toHaveBeenCalled();
-  mocks.budget.mockResolvedValue(true);
   mocks.prices.mockRejectedValue(new Error("offline"));
   expect((await GET(new NextRequest(url))).status).toBe(503);
 });

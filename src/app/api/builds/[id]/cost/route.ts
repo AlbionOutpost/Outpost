@@ -8,7 +8,6 @@ import { canReadBuild } from "@/lib/builds/validation";
 import { getPrices } from "@/lib/albion/market-client";
 import { cities, regionSchema } from "@/lib/albion/region-config";
 import { isStale } from "@/lib/albion/freshness";
-import { rateLimit } from "@/lib/redis";
 import { sumObservedCosts } from "@/lib/albion/observed-costs";
 export const GET = apiHandler(
   "build.cost",
@@ -33,8 +32,6 @@ export const GET = apiHandler(
       .parse(Object.fromEntries(req.nextUrl.searchParams));
     if (q.city === "Black Market")
       throw new HttpError(400, "The Black Market buys from players; choose a purchase market.");
-    if (!(await rateLimit("build-cost-public", 60, 60)))
-      throw new HttpError(429, "Price request budget exhausted. Retry later.");
     const prices = build.equipment.length
       ? await getPrices(
           q.region,

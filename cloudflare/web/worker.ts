@@ -37,37 +37,31 @@ async function identity(request: Request, secret: string) {
   };
 }
 
-/** A browser-session coordination actor, with persistent expiry and an atomic request budget.
- * Each signed browser session has its own object, never one global renderer. Private HTML,
- * roles, OAuth credentials and application records are not cached in actor storage. NextAuth
- * and the database services still authorize each request against current records.
+/** A browser-session render actor with an in-memory request budget.
+ * Each signed browser session has its own object, never one global renderer. Nothing is written
+ * to actor storage: the 30-minute lifetime is enforced by the signed route cookie, and the
+ * per-minute budget lives in memory (an evicted object simply starts a fresh window). That keeps
+ * every page view free of Durable Object storage writes. NextAuth and the database services still
+ * authorize each request against current records.
  * This deliberately uses the Free SQLite DO CPU allowance for the framework's heavy rendering.
  */
 export class OutpostSession extends DurableObject<OutpostWebEnv> {
+  private window = 0;
+  private count = 0;
   async fetch(request: Request) {
-    const allowed = await this.ctx.storage.transaction(async () => {
-      const now = Date.now();
-      const state = await this.ctx.storage.get<{ window: number; count: number; expires: number }>(
-        "session",
-      );
-      if (state && state.expires <= now) return false;
-      if (state && now - state.window < 60_000 && state.count >= 240) return false;
-      const next = {
-        window: state && now - state.window < 60_000 ? state.window : now,
-        count: state && now - state.window < 60_000 ? state.count + 1 : 1,
-        expires: state?.expires ?? now + lifetime * 1000,
-      };
-      await this.ctx.storage.put("session", next);
-      if (!state) await this.ctx.storage.setAlarm(next.expires);
-      return true;
-    });
-    if (!allowed)
+    const now = Date.now();
+    if (now - this.window >= 60_000) {
+      this.window = now;
+      this.count = 0;
+    }
+    if (++this.count > 240)
       return new Response("Request budget exhausted. Retry shortly.", {
         status: 429,
         headers: { "Retry-After": "60", "Cache-Control": "private, no-store" },
       });
     return app.fetch(request, this.env, this.ctx);
   }
+  // Objects created before this change may still hold a scheduled cleanup.
   async alarm() {
     await this.ctx.storage.deleteAll();
   }

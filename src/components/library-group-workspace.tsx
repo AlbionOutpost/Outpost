@@ -75,6 +75,7 @@ export function LibraryGroupWorkspace({
           </button>
           <Link
             className="button primary"
+            rel="nofollow"
             href={`/compositions/new?${new URLSearchParams({ fromComposition: composition.slug, region })}`}
           >
             Clone group build

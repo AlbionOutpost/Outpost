@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { getPrices } from "@/lib/albion/market-client";
-import { rateLimit } from "@/lib/redis";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { journalId, laborerLoot, laborerTypes } from "@/lib/albion/laborers";
 import { itemName } from "@/lib/albion/game/server-recipes";
@@ -22,8 +21,6 @@ export const GET = apiHandler("laborers.prices", async (req: NextRequest) => {
     throw new HttpError(400, "The Black Market does not trade journals or resources");
   const loot = laborerLoot(v.type, v.journalTier);
   if (!loot) throw new HttpError(400, "Unsupported journal tier");
-  if (!(await rateLimit("laborer-prices", 60, 60)))
-    throw new HttpError(429, "Price request budget exhausted");
   const full = journalId(v.type, v.journalTier, true);
   const empty = journalId(v.type, v.journalTier, false);
   const rows = await getPrices(v.region, [full, empty, ...loot.items.map((i) => i.id)], 1);

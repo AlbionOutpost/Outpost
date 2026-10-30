@@ -14,6 +14,8 @@ import { db } from "@/lib/db";
 import { findLibraryComposition, findLibraryBuilds, librarySpellNames } from "@/lib/grind-library";
 import { copyLibraryGroup } from "@/lib/compositions/library-group";
 export const dynamic = "force-dynamic";
+// Editors are not search results; keep crawlers from spending the request budget here.
+export const metadata = { robots: { index: false, follow: false } };
 export default async function NewComposition({
   searchParams,
 }: {

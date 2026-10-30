@@ -83,7 +83,11 @@ it("batches production inputs by quality and selects explicit region and markets
   mocks.prices.mockResolvedValue([]);
   const missing = await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`));
   expect((await missing.json()).prices.T4_METALBAR.value).toBeNull();
-  mocks.limit.mockResolvedValue(false);
-  const limited = await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`));
-  expect(limited.status).toBe(429);
+  // Upstream protection lives in the data client (per-region source budget), so a busy
+  // site never blocks a visitor whose request is served from cache.
+  mocks.prices.mockRejectedValue(
+    new Error("Data source request budget exhausted. Please retry later."),
+  );
+  const exhausted = await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`));
+  expect(exhausted.status).toBe(503);
 });
