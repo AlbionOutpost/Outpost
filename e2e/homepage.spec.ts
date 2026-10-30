@@ -1,44 +1,206 @@
 import { test, expect } from "@playwright/test";
 
-test("landing page leads with the painted hero, tool and build tiles and the players band", async ({
+const quote = (city: string, sell: number, buy: number, date: string) => ({
+  item_id: "T6_METALBAR",
+  city,
+  quality: 1,
+  sell_price_min: sell,
+  sell_price_min_date: date,
+  buy_price_max: buy,
+  buy_price_max_date: date,
+});
+
+test("landing page: independent header, bounded hero, live previews and a structured footer", async ({
   page,
 }) => {
-  let marketCalls = 0;
   await page.route("**/api/market?*", (route) => {
-    marketCalls++;
-    return route.fulfill({ json: { region: "europe", prices: [] } });
+    return route.fulfill({
+      json: {
+        region: "europe",
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        prices: [
+          quote("Bridgewatch", 3670, 2165, new Date(Date.now() - 9 * 60000).toISOString()),
+          quote("Martlock", 4190, 0, new Date(Date.now() - 3 * 3600000).toISOString()),
+        ],
+      },
+    });
   });
+  await page.route("**/api/history?*", (route) => {
+    const kind = new URL(route.request().url()).searchParams.get("kind");
+    return route.fulfill({
+      json: {
+        region: "europe",
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        data:
+          kind === "gold"
+            ? [
+                { price: 9900, timestamp: "2026-10-30T09:00:00" },
+                { price: 9850, timestamp: "2026-10-30T08:00:00" },
+              ]
+            : [
+                {
+                  location: "Bridgewatch",
+                  item_id: "T6_METALBAR",
+                  quality: 1,
+                  data: [
+                    { item_count: 10, avg_price: 3500, timestamp: "2026-10-01T00:00:00" },
+                    { item_count: 12, avg_price: 3900, timestamp: "2026-10-15T00:00:00" },
+                    { item_count: 8, avg_price: 3400, timestamp: "2026-10-29T00:00:00" },
+                  ],
+                },
+              ],
+      },
+    });
+  });
+  await page.route("**/api/economy/preview?*", (route) =>
+    route.fulfill({
+      json: {
+        region: "europe",
+        source: "Albion Online Data Project",
+        recipe: { id: "battleaxe-t6", name: "T6 Battleaxe", output: "T6_MAIN_AXE" },
+        assumptions: {
+          city: "Bridgewatch",
+          batches: 1,
+          returnRate: 0,
+          useFocus: false,
+          stationFee: 0,
+          tax: 4,
+          setupFee: 2.5,
+        },
+        rows: [
+          {
+            id: "T6_PLANKS",
+            name: "Bloodoak Planks",
+            quantity: 8,
+            unit: 2894,
+            gross: 23152,
+            observedAt: new Date().toISOString(),
+          },
+          {
+            id: "T6_METALBAR",
+            name: "Runite Steel Bar",
+            quantity: 16,
+            unit: null,
+            gross: null,
+            observedAt: null,
+          },
+        ],
+        output: { quantity: 1, unit: 32325, observedAt: new Date().toISOString() },
+        complete: false,
+        missing: ["T6_METALBAR"],
+        stale: false,
+        upfront: null,
+        revenue: null,
+        fees: null,
+        profit: null,
+        margin: null,
+      },
+    }),
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
   await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
-  // The page is static: no market request is made on arrival.
-  expect(marketCalls).toBe(0);
+
+  // The header keeps its own surface above the hero instead of floating over it.
+  const hero = page.locator(".landing-hero");
+  await expect(hero).toBeVisible();
+  const layout = await page.evaluate(() => {
+    const h = document.querySelector(".site-header")!.getBoundingClientRect();
+    const s = document.querySelector(".landing-hero")!.getBoundingClientRect();
+    return {
+      headerBottom: h.bottom,
+      heroTop: s.top,
+      position: getComputedStyle(document.querySelector(".site-header")!).position,
+    };
+  });
+  expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
+  expect(layout.position).toBe("relative");
+
+  const actions = hero.locator(".landing-actions a");
+  await expect(actions.nth(0)).toHaveText(/Explore Tools/);
+  await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
+  await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
+  await expect(hero.locator(".landing-hero-art img")).toBeVisible();
+  await expect(hero.locator(".gold-ticker strong")).toHaveText("9,900");
+
   const benefits = page.getByRole("list", { name: "What Outpost does" }).getByRole("listitem");
-  await expect(benefits).toHaveCount(3);
-  await expect(benefits.nth(0)).toContainText("Market data");
-  const tiles = page.locator(".landing-tool-tile");
-  await expect(tiles).toHaveCount(6);
-  await expect(tiles.first()).toHaveAttribute("href", "/tools/market?region=europe");
-  await expect(tiles.first()).toContainText("Market Explorer");
-  const builds = page.locator(".landing-build-tile");
-  await expect(builds).toHaveCount(6);
-  await expect(builds.first()).toHaveAttribute(
+  await expect(benefits).toHaveCount(4);
+
+  // Three product windows, loaded from the real endpoints once scrolled into view.
+  const previews = page.locator(".landing-preview");
+  await expect(previews).toHaveCount(3);
+  await previews.first().scrollIntoViewIfNeeded();
+  const market = previews.nth(0);
+  await expect(market.locator("tbody tr").nth(0)).toContainText(/Bridgewatch\s*3,670\s*2,165/);
+  await expect(market.locator("tbody tr").nth(0).locator("time")).toHaveText("9 min ago");
+  await expect(market.locator("tbody tr").nth(1)).toContainText("Unavailable");
+  await expect(market.locator("tbody tr").nth(2).locator("time")).toHaveClass(/is-stale/);
+  await expect(market.locator(".market-preview-trend svg")).toBeVisible();
+  await expect(market.locator(".market-preview-range")).toHaveText("3,400 – 3,900");
+  await expect(market.getByRole("link", { name: /Explore Market/ })).toHaveAttribute(
+    "href",
+    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
+  );
+
+  const build = previews.nth(1);
+  await expect(build.locator(".build-preview-title strong")).not.toBeEmpty();
+  await expect(build.getByRole("list", { name: "Equipment" }).getByRole("listitem")).toHaveCount(9);
+  await expect(build.locator(".build-preview-slot img").first()).toBeVisible();
+  await expect(build.getByRole("link", { name: /Open Build/ })).toHaveAttribute(
     "href",
     /\/builds\/library\/[a-z0-9-]+\?region=europe/,
   );
-  await expect(builds.first().locator(".landing-chip").first()).not.toBeEmpty();
-  const band = page.getByRole("region", { name: "Built for Albion players" });
-  await expect(band).toContainText("Albion Online Data Project");
-  await expect(band).toContainText(/captured \d{1,2} \w{3} \d{4}/);
-  await expect(band.getByRole("link", { name: /Explore Market/ })).toHaveAttribute(
-    "href",
-    "/tools/market?region=europe",
+
+  const crafting = previews.nth(2);
+  await expect(crafting.getByRole("list", { name: "Materials" }).getByRole("listitem")).toHaveCount(
+    2,
   );
+  await expect(crafting.locator(".crafting-preview-result")).toContainText("—");
+  await expect(crafting.locator(".landing-preview-status")).toContainText(
+    "No Bridgewatch observation for Runite Steel Bar",
+  );
+  await expect(crafting.getByRole("link", { name: /Open Calculator/ })).toHaveAttribute(
+    "href",
+    "/tools/crafting?recipe=battleaxe-t6&region=europe",
+  );
+
+  const group = page.locator(".group-preview");
+  await expect(
+    group.getByRole("list", { name: "Members" }).getByRole("listitem").first(),
+  ).toBeVisible();
+  await expect(group.locator(".group-preview-flag").first()).toHaveText("Required");
+  await expect(page.getByRole("link", { name: /Open Compositions/ })).toHaveAttribute(
+    "href",
+    "/compositions/library?region=europe",
+  );
+  await expect(page.locator(".landing-trust-grid li")).toHaveCount(4);
+  await expect(page.locator(".landing-cta h2")).toHaveText(
+    "Make better decisions in Albion Online.",
+  );
+  await expect(page.getByRole("link", { name: "Create account" })).toHaveAttribute(
+    "href",
+    "/signin?region=europe",
+  );
+  const footer = page.locator("footer.site-footer");
+  await expect(footer.getByRole("navigation", { name: "Explore" })).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Crafting calculator" })).toHaveAttribute(
+    "href",
+    "/tools/crafting?region=europe",
+  );
+  await expect(footer).toContainText("Albion Online Data Project");
+
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
   }
+  // Phones keep the sell column and hide the buy column rather than scrolling sideways.
+  await page.setViewportSize({ width: 390, height: 900 });
+  await expect(market.locator("thead th").nth(2)).toBeHidden();
+  await expect(market.locator("thead th").nth(1)).toBeVisible();
 });
 
 test("robots points crawlers at a sitemap of public pages and keeps editors out", async ({

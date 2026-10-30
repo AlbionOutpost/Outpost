@@ -35,8 +35,11 @@ test("equipment selection opens the real item, and the redesigned search and men
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  const item = page.locator(".landing-tool-tile").first();
-  await expect(item).toHaveAttribute("href", "/tools/market?region=europe");
+  const item = page.locator(".landing-preview.is-lead .landing-preview-action");
+  await expect(item).toHaveAttribute(
+    "href",
+    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
+  );
   await page.keyboard.press("Control+k");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
@@ -44,5 +47,5 @@ test("equipment selection opens the real item, and the redesigned search and men
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
   await item.click();
-  await expect(page).toHaveURL(/tools\/market.*item=T4_BAG/);
+  await expect(page).toHaveURL(/tools\/market.*item=T6_METALBAR/);
 });

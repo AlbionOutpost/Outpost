@@ -24,6 +24,12 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — landing page reconstruction (30 Oct)
+
+- The landing page is rebuilt as a product site: independent header, bounded hero with the owner's market-square painting and a live gold ticker, three product windows that run on the real endpoints (`/api/market`, `/api/history`, new `/api/economy/preview`), a Group Builds spotlight from a real library composition, a trust grid and a closing call to action. The six illustration tiles and six build tiles are gone; the tool catalog stays on `/tools`.
+- The footer is structured (brand + provenance, Explore / Tools / Your workspace columns, legal line) on every page.
+- Phone layouts (390/320) hide the buy column and optional members instead of stacking the desktop composition; no horizontal overflow at 320–1920.
+
 ## Shipped — game data (30 Oct)
 
 - 11,314 recipes from the archived game data, with enchanted and artifact versions; enchanting for every foundry family; full city bonus table; spec-based focus; item weights and mounts in transport; laborers, specialization, reference tables and the Roads of Avalon mapper.

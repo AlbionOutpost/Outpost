@@ -200,7 +200,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
       }
     }
     await page.goto("/");
-    await page.locator(".landing-tool-tile").first().click();
+    await page.locator(".landing-preview.is-lead .landing-preview-action").click();
     await page.getByRole("combobox", { name: "Search market items" }).fill("T6_MAIN_AXE@1");
     await page
       .getByRole("listbox", { name: "Matching market items" })
