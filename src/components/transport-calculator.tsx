@@ -93,6 +93,20 @@ export function TransportCalculator() {
       if (controller.current === active) setPendingKey(null);
     }
   }
+  // Observations for the cargo, route and quality load on their own until you type a price;
+  // manual prices are never replaced without the button.
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  const manualPrices =
+    (draft.buy.manual && draft.buy.value !== null) ||
+    (draft.sell.manual && draft.sell.value !== null);
+  useEffect(() => {
+    if (manualPrices || !/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(draft.itemId)) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [requestKey, manualPrices, draft.itemId]);
   return (
     <>
       <div className="transport-route-strip" aria-label="Transport route">
@@ -314,10 +328,11 @@ export function TransportCalculator() {
           <section className="panel section" id="transport-prices">
             <h2>Purchase & sale observations</h2>
             <button className="button secondary" disabled={busy} onClick={load}>
-              Load transport market prices
+              {busy ? "Fetching observations…" : "Refresh transport market prices"}
             </button>
             <p className="muted">
-              Loading replaces both price overrides with source observations. Region: {region}.
+              Observations load for each cargo, route and quality until you type a price. Refreshing
+              replaces both prices with source observations. Region: {region}.
             </p>
             <div className="input-grid">
               {(["buy", "sell"] as const).map((key) => (
