@@ -7,6 +7,7 @@ outline is smoothed and the result is saved as a 256px RGBA mark in public/albio
 """
 import sys
 from pathlib import Path
+import cv2
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -39,16 +40,36 @@ for (k, sl), name in zip(items, order):
     comp = comp | np.isin(hl, [i + 1 for i, s in enumerate(hs) if s < 60])
     ys, xs = np.where(comp)
     sl = (slice(ys.min(), ys.max() + 1), slice(xs.min(), xs.max() + 1))
-    comp = ndimage.gaussian_filter(comp.astype(float), sigma=1.0)
     sub = comp[sl]
     h, w = sub.shape
     pad = int(max(h, w) * 0.08)
     size = max(h, w) + 2 * pad
-    canvas = np.zeros((size, size))
+    canvas = np.zeros((size, size), dtype=np.uint8)
     y0, x0 = (size - h) // 2, (size - w) // 2
     canvas[y0 : y0 + h, x0 : x0 + w] = sub
-    alpha = Image.fromarray((np.clip(canvas, 0, 1) * 255).astype(np.uint8)).resize((256, 256), Image.LANCZOS)
-    rgba = Image.new("RGBA", (256, 256), (184, 184, 186, 0))
+    # Vector outline: trace the shape and its openings, smooth the polylines, write an SVG so
+    # the mark stays crisp at any size. The PNG is a 512px raster of the same smoothed mask.
+    contours, hierarchy = cv2.findContours(canvas * 255, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+    scale = 256 / size
+    paths = []
+    for contour in contours:
+        pts = contour[:, 0, :].astype(float)
+        if len(pts) < 12:
+            continue
+        for _ in range(2):
+            pts = 0.25 * np.roll(pts, 1, axis=0) + 0.5 * pts + 0.25 * np.roll(pts, -1, axis=0)
+        pts = pts[::3] * scale
+        paths.append("M" + " L".join(f"{x:.1f} {y:.1f}" for x, y in pts) + "Z")
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="#b8b8ba" fill-rule="evenodd">'
+        f'<path d="{" ".join(paths)}"/></svg>\n'
+    )
+    (out / f"{name}.svg").write_text(svg)
+    big = ndimage.zoom(canvas.astype(float), 4, order=3)
+    big = (ndimage.gaussian_filter(big, sigma=3) > 0.5).astype(float)
+    big = ndimage.gaussian_filter(big, sigma=1.5)
+    alpha = Image.fromarray((np.clip(big, 0, 1) * 255).astype(np.uint8)).resize((512, 512), Image.LANCZOS)
+    rgba = Image.new("RGBA", (512, 512), (184, 184, 186, 0))
     rgba.putalpha(alpha)
     rgba.save(out / f"{name}.png", optimize=True)
-    print(name, sub.shape)
+    print(name, sub.shape, len(paths), "paths")

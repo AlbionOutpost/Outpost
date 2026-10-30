@@ -6,11 +6,11 @@ import type { BoardSlot } from "@/components/loadout-glyphs";
 /** The owner's slot marks (public/albion/slots): bag, cape, potion, food and mount, plus the
  * figure behind the board. Head, chest, boots and the hands stay as empty wells, as in the game. */
 const slotMarks: Partial<Record<BoardSlot, string>> = {
-  Bag: "/albion/slots/bag.png",
-  Cape: "/albion/slots/cape.png",
-  Potion: "/albion/slots/potion.png",
-  Food: "/albion/slots/food.png",
-  Mount: "/albion/slots/mount.png",
+  Bag: "/albion/slots/bag.svg",
+  Cape: "/albion/slots/cape.svg",
+  Potion: "/albion/slots/potion.svg",
+  Food: "/albion/slots/food.svg",
+  Mount: "/albion/slots/mount.svg",
 };
 
 export type BoardPiece = { slot: string; itemId: string; skills?: string[] };
@@ -51,7 +51,7 @@ export function LoadoutBoard({
             // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
             <img
               className="loadout-board-figure"
-              src="/albion/slots/figure.png"
+              src="/albion/slots/figure.svg"
               alt=""
               aria-hidden="true"
             />
