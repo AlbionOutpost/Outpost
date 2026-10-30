@@ -137,31 +137,13 @@
   width: 34px;
   height: 34px;
 }
-/* Selection: the well's own border is replaced by one accent edge drawn over the item's
-   outline, with a glow inside the image, so there is exactly one line */
-.app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected .inventory-slot-art {
-  outline: none;
-  border-color: transparent;
-}
-.app.outpost
-  .anatomical-inventory
-  .inventory-equipment-slot.is-selected
-  .inventory-slot-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border: 2px solid var(--accent);
-  border-radius: inherit;
-  box-shadow: inset 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
-  pointer-events: none;
-}
+/* Selection: the well's own border becomes one solid accent edge; a faint inner glow, no
+   second line. Placed after the empty and hover rules so it wins at equal specificity. */
 .app.outpost .anatomical-inventory .inventory-equipment-slot:focus-visible {
   outline: none;
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot:focus-visible .inventory-slot-art {
-  outline: 2px solid var(--accent-ink);
-  outline-offset: 3px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected .inventory-slot-caption {
   color: var(--accent-ink);
@@ -239,4 +221,18 @@
   .app.outpost .anatomical-inventory .inventory-slot-spells img + img {
     margin-left: -5px;
   }
+}
+
+.app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected .inventory-slot-art,
+.app.outpost .anatomical-inventory .inventory-equipment-slot.is-selected:hover .inventory-slot-art {
+  outline: none;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--elevated));
+  box-shadow: inset 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.app.outpost
+  .anatomical-inventory
+  .inventory-equipment-slot.is-selected
+  .inventory-slot-art::after {
+  content: none;
 }
