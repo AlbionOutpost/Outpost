@@ -1,7 +1,17 @@
 import "@/app/loadout-board.css";
 import { ItemIcon } from "@/components/item-icon";
 import { SpellIcon } from "@/components/spell-icon";
-import { slotGlyphs, LoadoutSilhouette, type BoardSlot } from "@/components/loadout-glyphs";
+import type { BoardSlot } from "@/components/loadout-glyphs";
+
+/** The owner's slot marks (public/albion/slots): bag, cape, potion, food and mount, plus the
+ * figure behind the board. Head, chest, boots and the hands stay as empty wells, as in the game. */
+const slotMarks: Partial<Record<BoardSlot, string>> = {
+  Bag: "/albion/slots/bag.png",
+  Cape: "/albion/slots/cape.png",
+  Potion: "/albion/slots/potion.png",
+  Food: "/albion/slots/food.png",
+  Mount: "/albion/slots/mount.png",
+};
 
 export type BoardPiece = { slot: string; itemId: string; skills?: string[] };
 
@@ -35,12 +45,18 @@ export function LoadoutBoard({
   const spell = size === "hero" ? 22 : 18;
   return (
     <div className={`loadout-board is-${size}`} role="list" aria-label={label}>
-      <LoadoutSilhouette className="loadout-board-figure" />
+      {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark, no optimisation needed */}
+      <img
+        className="loadout-board-figure"
+        src="/albion/slots/figure.png"
+        alt=""
+        aria-hidden="true"
+      />
       {columns.map((column, c) => (
         <div key={c} className="loadout-board-column">
           {column.map((slot) => {
             const piece = bySlot.get(slot);
-            const Glyph = slotGlyphs[slot];
+            const mark = slotMarks[slot];
             const active = abilities
               ? (piece?.skills ?? []).filter((id) => !id.startsWith("PASSIVE")).slice(0, 3)
               : [];
@@ -55,7 +71,12 @@ export function LoadoutBoard({
                   className="loadout-board-cell"
                   title={piece ? `${slot}: ${piece.itemId}` : `${slot}: not recorded`}
                 >
-                  {piece ? <ItemIcon id={piece.itemId} size={icon} /> : <Glyph />}
+                  {piece ? (
+                    <ItemIcon id={piece.itemId} size={icon} />
+                  ) : mark ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
+                    <img className="loadout-board-mark" src={mark} alt="" aria-hidden="true" />
+                  ) : null}
                 </span>
                 {abilities && (
                   <span

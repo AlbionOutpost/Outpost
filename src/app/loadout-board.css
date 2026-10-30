@@ -23,17 +23,16 @@
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: calc(var(--gap) * -1);
   z-index: -1;
-  width: calc(var(--cell) * 1.55);
-  height: calc(var(--cell) * 4 + var(--gap) * 2 + 24px);
+  width: auto;
+  height: calc(var(--cell) * 3 + var(--gap) * 4);
   transform: translateX(-50%);
-  color: var(--text);
-  opacity: 0.1;
+  opacity: 0.3;
+  pointer-events: none;
 }
 .app.outpost .loadout-board.is-mini .loadout-board-figure {
-  height: calc(var(--cell) * 3 + var(--gap) * 2 + 8px);
-  opacity: 0.12;
+  opacity: 0.25;
 }
 .app.outpost .loadout-board-column {
   display: grid;
@@ -75,10 +74,11 @@
   background: transparent;
   color: var(--muted);
 }
-.app.outpost .loadout-board-slot.is-empty svg {
-  width: 44%;
-  height: 44%;
-  opacity: 0.7;
+.app.outpost .loadout-board-mark {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  opacity: 0.5;
 }
 .app.outpost .loadout-board-abilities > span {
   display: grid;
