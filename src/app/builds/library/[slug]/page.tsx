@@ -56,9 +56,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     updatedAt: build.updatedAt,
   };
   const copyAvailable = await libraryBuildDraft(build);
+  // Related picks skip the current build and obvious scratch copies ("(Copy)", "test", "zzz").
+  const scratch = /\bcopy\b|\(copy\)|\btest\b|zzz|asdf/i;
   const related = build.weaponName
     ? (await queryLibraryBuilds({ weapon: build.weaponName, page: 1 })).rows
-        .filter((candidate) => candidate.id !== build.id)
+        .filter(
+          (candidate) =>
+            candidate.id !== build.id &&
+            !scratch.test(candidate.title) &&
+            !scratch.test(candidate.author),
+        )
         .slice(0, 3)
     : [];
   return (
@@ -107,7 +114,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           ) : undefined
         }
       />
-      <details className="detail-disclosure detail-secondary-notes" id="build-notes">
+      <details className="detail-disclosure detail-secondary-notes" id="build-notes" open>
         <summary>
           <span>Strategy & creator recordings</span>
           <small>From the author</small>
@@ -127,7 +134,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
       </details>
       <div id="build-cost">
-        <LoadoutPriceCheck equipment={equipment} />
+        <LoadoutPriceCheck equipment={equipment} autoLoad />
       </div>
       <details className="detail-disclosure detail-secondary-notes" id="build-discussion">
         <summary>

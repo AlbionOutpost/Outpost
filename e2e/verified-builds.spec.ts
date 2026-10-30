@@ -56,7 +56,7 @@ test("verified equipment and ability choices persist, copy into comps and restor
     await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Blood Bandit");
     await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Deep Cuts");
     await expect(
-      page.locator(".detail-selected-item").getByRole("link", { name: "Refresh prices" }),
+      page.locator(".detail-selected-item").getByRole("link", { name: "Compare prices" }),
     ).toHaveAttribute("href", "/tools/market?region=europe&item=T6_MAIN_AXE&quality=3");
     const equipment = await db.buildEquipment.findFirstOrThrow({
       where: { buildId, slot: "Main hand" },

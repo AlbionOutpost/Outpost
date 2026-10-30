@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtlasRegion } from "./region-context";
 import { cities, type Region } from "@/lib/albion/region-config";
 import { useBatchQuotes, BatchQuote, quoteKey } from "./market-batch-quotes";
@@ -11,9 +11,12 @@ import Link from "@/components/link";
 export function LoadoutPriceCheck({
   equipment,
   region: sourceRegion,
+  autoLoad = false,
 }: {
   equipment: { slot: string; itemId: string; quality: number }[];
   region?: Region;
+  /** Check prices once the section scrolls into view instead of waiting for the button. */
+  autoLoad?: boolean;
 }) {
   const selectedRegion = useAtlasRegion();
   const region = sourceRegion ?? selectedRegion;
@@ -21,8 +24,30 @@ export function LoadoutPriceCheck({
   const { quotes, busy, refresh } = useBatchQuotes(region);
   const selected = equipment.filter((e) => e.itemId);
   const estimate = summarizeLoadoutQuotes(selected, quotes, city);
+  const root = useRef<HTMLElement | null>(null);
+  const refreshRef = useRef(refresh);
+  useEffect(() => {
+    refreshRef.current = refresh;
+  });
+  const selectionKey = selected.map(quoteKey).join("|");
+  useEffect(() => {
+    if (!autoLoad || !root.current || !selectionKey) return;
+    const target = root.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        void refreshRef.current(selected);
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+    // `selected` is derived from selectionKey; the key is the stable dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoLoad, region, selectionKey]);
   return (
-    <section className="loadout-price-check">
+    <section className="loadout-price-check" ref={root}>
       <div className="library-section-heading">
         <div>
           <h2>What will this loadout cost?</h2>
@@ -84,7 +109,9 @@ export function LoadoutPriceCheck({
         <span>
           {estimate.checked
             ? `${estimate.priced}/${selected.length} items priced in ${city} · ${estimate.recent} recent${estimate.stale ? ` · ${estimate.stale} need a freshness check` : ""}${estimate.knownCost === null ? " · Total outside supported range" : estimate.missing ? " · Estimate incomplete" : estimate.stale ? " · Historical / unverified cost estimate" : " · Estimated listing cost"}${estimate.failed ? " · Refresh incomplete; last scans retained" : ""}`
-            : "Choose a purchase city, then check community scans. A price check is not a purchase guarantee."}
+            : busy
+              ? `Checking community scans for ${city}…`
+              : "Choose a purchase city, then check community scans. A price check is not a purchase guarantee."}
         </span>
       </div>
       <details>

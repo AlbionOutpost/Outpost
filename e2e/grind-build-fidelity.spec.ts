@@ -27,7 +27,7 @@ test("archived traits, alternate spells and creator links survive an independent
     "https://www.youtube.com/watch?v=vtDHrCPH6c4",
   );
   await expect(
-    page.getByRole("link", { name: "Refresh prices", exact: true }).first(),
+    page.getByRole("link", { name: "Compare prices", exact: true }).first(),
   ).toHaveAttribute("href", /region=asia/);
   await page.getByRole("link", { name: "Make this build yours", exact: true }).click();
   await page.getByRole("tab", { name: "Notes", exact: true }).click();
