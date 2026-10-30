@@ -15,11 +15,11 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(logo).toHaveAttribute("src", /outpost-logo/);
   await logo.evaluate((node: HTMLImageElement) => node.decode());
   expect(await logo.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
-  await expect(page.locator(".landing-tool-tile").first()).toHaveAttribute(
+  await expect(page.locator(".landing-preview.is-lead .landing-preview-action")).toHaveAttribute(
     "href",
-    "/tools/market?region=asia",
+    "/tools/market?item=T6_METALBAR&quality=1&region=asia",
   );
-  await expect(page.locator(".landing-benefits > li")).toHaveCount(3);
+  await expect(page.locator(".landing-benefits > li")).toHaveCount(4);
   await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
   const browse = page.getByRole("link", { name: "Browse Builds", exact: true }).first();

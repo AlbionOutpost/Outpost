@@ -1,446 +1,906 @@
-/* Landing page, composed to the owner's site sheet (docs/design/references/latest-06-site-sheet.png):
-   full-bleed painted hero with the benefits inside it → tool art tiles → build art tiles →
-   "Built for Albion players" art band. Only paintings from public/albion/illustrations are used. */
-.app.outpost .home-landing {
-  max-width: 1560px;
-  --scene-market: url("/albion/illustrations/market-v1.webp");
-  --scene-build: url("/albion/illustrations/build-v1.webp");
-  --scene-composition: url("/albion/illustrations/composition-v1.webp");
-  --scene-hero: url("/albion/illustrations/hero-v1.webp");
-  --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
-}
+/* Landing page: an independent header, a bounded two-part hero, four capabilities, three
+   product windows running on live data, the group-build spotlight, the trust section and the
+   closing call to action. Everything uses the shared tokens; the one painting is the owner's
+   permitted market-square illustration, framed rather than used as a page background. */
 
-/* Hero: the painting runs under the site header, which floats transparent over it on the
-   landing page only. */
+/* Header: its own surface and divider on the landing page, never over the hero */
 .app.outpost.home-route .main > .site-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(180deg, #0b0d12d9 0%, #0b0d1266 70%, #0b0d1200 100%);
-  border-bottom: 0;
-}
-.app.outpost.home-route .main {
   position: relative;
+  background: var(--sidebar);
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost.home-route .main main {
+  padding: 0;
 }
 .app.outpost .home-landing {
+  --landing-width: 1200px;
+  --section-gap: 80px;
+  max-width: var(--landing-width);
+  margin: 0 auto;
   padding: 0 32px;
 }
+.app.outpost .landing-kicker {
+  margin: 0 0 8px;
+  color: var(--accent-ink);
+  font: 700 12px/1.3 var(--font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Hero */
 .app.outpost .landing-hero {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  min-height: 600px;
-  margin: 0 -32px 36px;
-  padding: 120px 44px 40px;
-  background: #0b0d12;
-  overflow: hidden;
-  isolation: isolate;
-}
-.app.outpost .landing-hero-art {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
-.app.outpost .landing-hero-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 68% 45%;
-}
-.app.outpost .landing-hero-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, #0b0d12f2 0%, #0b0d12b8 32%, #0b0d1240 58%, #0b0d1200 80%),
-    linear-gradient(0deg, #0b0d12 0%, #0b0d12cc 22%, #0b0d1200 55%);
-}
-.app.outpost .landing-hero-copy {
-  max-width: 640px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  padding: 56px 0 48px;
 }
 .app.outpost .landing-eyebrow {
-  margin: 0 0 12px;
-  color: #ff964d;
+  margin: 0 0 14px;
+  color: var(--accent-ink);
   font: 700 12px/1.3 var(--font-ui);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .app.outpost .landing-hero h1 {
   margin: 0 0 18px;
-  font: 800 clamp(56px, 5.6vw, 84px) / 0.96 var(--font-display);
+  font: 800 clamp(52px, 5.4vw, 80px) / 0.96 var(--font-display);
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  color: #f5f1e9;
+  color: var(--text);
 }
 .app.outpost .landing-hero h1 em {
   font-style: normal;
-  color: #ff964d;
+  color: var(--accent);
 }
 .app.outpost .landing-lede {
-  max-width: 50ch;
-  margin: 0 0 22px;
-  font-size: 16px;
+  max-width: 52ch;
+  margin: 0 0 26px;
+  font-size: 17px;
   line-height: 1.6;
-  color: #d8d2cb;
+  color: var(--muted);
 }
 .app.outpost .landing-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-.app.outpost .landing-hero .button,
-.app.outpost .landing-band .button {
-  min-height: 44px;
-  padding: 11px 18px;
-  font-size: 14px;
+.app.outpost .landing-actions .button {
+  min-height: 46px;
+  padding: 11px 20px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
 }
-.app.outpost .landing-hero .button.secondary,
-.app.outpost .landing-band .button.secondary {
-  background: #14171dcc;
-  border-color: #5a5358;
-  color: #f2eee9;
+.app.outpost .landing-hero-visual {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  max-height: 520px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--panel);
+  box-shadow: var(--shadow);
 }
+.app.outpost .landing-hero-art,
+.app.outpost .landing-hero-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.app.outpost .landing-hero-art img {
+  object-fit: cover;
+  object-position: 72% 42%;
+}
+.app.outpost .landing-hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, #0b0d12e6 0%, #0b0d1266 38%, #0b0d1200 65%),
+    linear-gradient(90deg, #0b0d1259 0%, #0b0d1200 45%);
+}
+.app.outpost .gold-ticker {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: min(320px, calc(100% - 40px));
+  padding: 12px 14px;
+  border: 1px solid #ffffff22;
+  border-radius: var(--radius-lg);
+  background: #121419e6;
+  color: #f4f2ee;
+  backdrop-filter: blur(8px);
+}
+.app.outpost .gold-ticker-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #c5c3be;
+}
+.app.outpost .gold-ticker-label {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.app.outpost .gold-ticker-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  align-items: center;
+  gap: 12px;
+}
+.app.outpost .gold-ticker-body strong {
+  display: block;
+  font: 700 24px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .gold-ticker-body span {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #c5c3be;
+}
+.app.outpost .gold-ticker svg {
+  width: 100%;
+  height: 40px;
+}
+
+/* Capabilities: one band that ties the hero to the previews */
 .app.outpost .landing-benefits {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 28px;
-  margin: 34px 0 0;
-  padding: 24px 0 0;
-  border-top: 1px solid #ffffff22;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px 28px;
+  margin: 0 0 var(--section-gap);
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 .app.outpost .landing-benefits li {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: 36px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
 }
-.app.outpost .landing-benefits svg {
-  width: 38px;
-  height: 38px;
+.app.outpost .landing-benefits svg,
+.app.outpost .landing-trust-grid svg {
+  width: 36px;
+  height: 36px;
   padding: 8px;
-  color: #ff964d;
-  background: #ff964d1a;
-  border: 1px solid #ff964d55;
-  border-radius: var(--radius-sm);
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: var(--radius-md);
 }
 .app.outpost .landing-benefits strong {
   display: block;
-  color: #f5f1e9;
-  font-size: 14px;
+  font-size: 15px;
 }
 .app.outpost .landing-benefits span {
   display: block;
-  margin-top: 2px;
-  color: #c9c2ba;
+  margin-top: 3px;
+  color: var(--muted);
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
-/* Section headings: title, one line, link on the right */
+/* Section headings */
 .app.outpost .landing-section-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  gap: 4px 20px;
-  margin: 0 0 16px;
+  gap: 0 24px;
+  margin: 0 0 28px;
+}
+.app.outpost .landing-section-heading > * {
+  grid-column: 1;
 }
 .app.outpost .landing-section-heading h2 {
-  grid-column: 1;
   margin: 0;
-  font: 800 28px/1.1 var(--font-display);
+  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
   letter-spacing: -0.01em;
 }
-.app.outpost .landing-section-heading p {
-  grid-column: 1;
-  margin: 0;
+.app.outpost .landing-section-heading p:not(.landing-kicker) {
+  max-width: 62ch;
+  margin: 10px 0 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.55;
 }
 .app.outpost .landing-section-heading .text-link {
   grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
+  grid-row: 1 / span 3;
+  align-self: end;
   font-size: 14px;
   white-space: nowrap;
 }
 
-/* Tool tiles: a painted scene with the title on a dark base */
-.app.outpost .landing-tools,
-.app.outpost .landing-builds {
-  margin: 0 0 40px;
+/* Product windows */
+.app.outpost .landing-showcase {
+  margin: 0 0 var(--section-gap);
 }
-.app.outpost .landing-tool-grid {
+.app.outpost .landing-showcase-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
 }
-.app.outpost .landing-tool-tile {
-  display: grid;
-  grid-template-rows: 150px auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  color: var(--text);
-  text-decoration: none;
-  overflow: hidden;
-  transition: border-color 0.15s ease;
-}
-.app.outpost .landing-tool-tile:hover,
-.app.outpost .landing-tool-tile:focus-visible {
-  border-color: var(--accent);
-}
-.app.outpost .landing-tile-art {
-  display: block;
-  background-image: var(--scene);
-  background-size: cover;
-  background-position: var(--scene-at, center);
-  transition: transform 0.4s ease;
-}
-.app.outpost .landing-tool-tile:hover .landing-tile-art {
-  transform: scale(1.03);
-}
-.app.outpost .landing-tool-tile[data-scene="market"] {
-  --scene: var(--scene-market);
-}
-.app.outpost .landing-tool-tile[data-scene="build"] {
-  --scene: var(--scene-build);
-}
-.app.outpost .landing-tool-tile[data-scene="composition"] {
-  --scene: var(--scene-composition);
-}
-.app.outpost .landing-tool-tile[data-scene="hero"] {
-  --scene: var(--scene-hero);
-}
-.app.outpost .landing-tool-tile[data-scene="city"] {
-  --scene: var(--scene-city);
-}
-.app.outpost .landing-tile-body {
-  position: relative;
-  display: grid;
-  gap: 4px;
-  padding: 16px 16px 16px 60px;
-}
-.app.outpost .landing-tile-icon {
-  position: absolute;
-  top: -18px;
-  left: 16px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  color: var(--accent-ink);
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 2px 6px #0006;
-}
-.app.outpost .landing-tile-body strong {
-  font-size: 16px;
-}
-.app.outpost .landing-tile-body > span:last-child {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-/* Build tiles: weapon over the build scene, title, chips, author */
-.app.outpost .landing-build-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.app.outpost .landing-build-tile {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  color: var(--text);
-  text-decoration: none;
-  overflow: hidden;
-  transition: border-color 0.15s ease;
-}
-.app.outpost .landing-build-tile:hover,
-.app.outpost .landing-build-tile:focus-visible {
-  border-color: var(--accent);
-}
-.app.outpost .landing-build-art {
-  display: grid;
-  place-items: center;
-  min-height: 130px;
-  background:
-    radial-gradient(circle at 50% 55%, #c85a3b40, transparent 62%),
-    linear-gradient(180deg, #1c1a1e80, #1c1a1ecc),
-    var(--scene-build) center / cover;
-}
-.app.outpost .landing-build-art img {
-  width: 88px;
-  height: 88px;
-  filter: drop-shadow(0 6px 10px #000a);
-}
-.app.outpost .landing-build-body {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding: 14px 14px 12px;
+.app.outpost .landing-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   min-width: 0;
 }
-.app.outpost .landing-build-body strong {
-  font-size: 15px;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.app.outpost .landing-preview-heading {
+  display: grid;
+  gap: 0;
 }
-.app.outpost .landing-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.app.outpost .landing-preview-heading h3 {
+  margin: 0 0 6px;
+  font: 700 18px/1.25 var(--font-ui);
 }
-.app.outpost .landing-chip {
-  padding: 2px 8px;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
-  border-radius: 999px;
+.app.outpost .landing-preview-heading p:not(.landing-kicker) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.app.outpost .landing-preview-window {
+  flex: 1;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: inset 0 1px 0 #ffffff08;
+  transition: border-color var(--motion-fast) var(--ease-out);
+}
+.app.outpost .landing-preview:hover .landing-preview-window {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+.app.outpost .landing-preview-action {
+  align-self: flex-start;
+  min-height: 42px;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+}
+.app.outpost .landing-preview-status {
+  margin: 10px 0 0;
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 600;
+  line-height: 1.5;
+}
+.app.outpost .landing-preview-window .is-number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .landing-preview-window .is-missing {
+  color: var(--muted);
+}
+.app.outpost .landing-preview-window time {
+  color: var(--muted);
+  font-size: 12px;
   white-space: nowrap;
 }
-.app.outpost .landing-chip.is-muted {
-  color: var(--muted);
-  background: var(--bg);
-  border-color: var(--border);
-  font-weight: 500;
+.app.outpost .landing-preview-window time.is-stale {
+  color: var(--warning, #e6b35b);
 }
-.app.outpost .landing-build-meta {
+.app.outpost .landing-preview-window .is-loading {
+  opacity: 0.6;
+}
+
+/* Market window */
+.app.outpost .market-preview-item,
+.app.outpost .crafting-preview-recipe,
+.app.outpost .build-preview-title,
+.app.outpost .group-preview-title {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.app.outpost .build-preview-title,
+.app.outpost .group-preview-title {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+}
+.app.outpost .market-preview-item strong,
+.app.outpost .crafting-preview-recipe strong,
+.app.outpost .build-preview-title strong,
+.app.outpost .group-preview-title strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.3;
+}
+.app.outpost .market-preview-item span,
+.app.outpost .crafting-preview-recipe span,
+.app.outpost .build-preview-title span,
+.app.outpost .group-preview-title span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .market-preview-item img,
+.app.outpost .crafting-preview-recipe img {
+  width: 44px;
+  height: 44px;
+}
+.app.outpost .market-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.app.outpost .market-preview-table th,
+.app.outpost .market-preview-table td {
+  padding: 8px 6px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+.app.outpost .market-preview-table thead th {
+  padding-top: 0;
+  border-top: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.app.outpost .market-preview-table tbody th {
+  font-weight: 600;
+}
+.app.outpost .market-preview-table td.is-number {
+  font-weight: 600;
+}
+.app.outpost .market-preview-trend {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .market-preview-trend figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .market-preview-range {
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .market-preview-trend svg {
+  display: block;
+  width: 100%;
+  height: 76px;
+}
+.app.outpost .market-preview-empty {
+  display: grid;
+  place-items: center;
+  height: 76px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+
+.app.outpost .market-preview-axis {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-top: auto;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .landing-preview-source {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.app.outpost .landing-preview-verdict {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.app.outpost .group-preview-more {
+  display: none;
+  margin: 8px 0 0;
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .landing-build-meta > span {
+
+/* Build window */
+.app.outpost .build-preview-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 260px;
+}
+.app.outpost .build-preview-slot {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--elevated);
+}
+.app.outpost .build-preview-slot img {
+  width: 82%;
+  height: 82%;
+  filter: drop-shadow(0 4px 6px #0008);
+}
+.app.outpost .build-preview-slot.is-empty {
+  border-style: dashed;
+  background: transparent;
+}
+.app.outpost .build-preview-slot-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .build-preview-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.app.outpost .build-preview-abilities {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .build-preview-abilities ul,
+.app.outpost .group-preview-roles ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .build-preview-abilities li {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--elevated);
+  overflow: hidden;
+}
+.app.outpost .build-preview-abilities img {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+}
+
+/* Crafting window */
+.app.outpost .crafting-preview-slot {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.app.outpost .crafting-preview-materials {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .crafting-preview-materials li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.app.outpost .crafting-preview-materials li .crafting-preview-slot {
+  width: 28px;
+  height: 28px;
+}
+.app.outpost .crafting-preview-materials img {
+  width: 28px;
+  height: 28px;
+}
+.app.outpost .crafting-preview-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* Art band */
-.app.outpost .landing-band {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 300px;
-  margin: 0 0 16px;
-  padding: 40px 44px;
+.app.outpost .crafting-preview-name small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .crafting-preview-materials .is-number {
+  font-weight: 600;
+}
+.app.outpost .crafting-preview-result {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0 0;
+}
+.app.outpost .crafting-preview-result > div {
+  display: grid;
+  gap: 0;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background:
-    linear-gradient(90deg, #0b0d12f2 0%, #0b0d12c8 40%, #0b0d1260 70%, #0b0d1220 100%),
-    var(--scene-hero) center 55% / cover no-repeat;
-  color: #f5f1e9;
-  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--elevated);
 }
-.app.outpost .landing-band-copy {
-  max-width: 560px;
+.app.outpost .crafting-preview-result dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
 }
-.app.outpost .landing-band h2 {
-  margin: 0 0 10px;
-  font: 800 32px/1.1 var(--font-display);
+.app.outpost .crafting-preview-result dd {
+  margin: 0;
+  font: 700 17px/1.2 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  overflow-wrap: normal;
 }
-.app.outpost .landing-band p {
-  margin: 0 0 20px;
-  color: #d8d2cb;
-  font-size: 15px;
+.app.outpost .crafting-preview-result dd small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font: 400 12px/1.3 var(--font-ui);
+}
+.app.outpost .crafting-preview-result dd small.is-stale {
+  color: var(--warning, #e6b35b);
+}
+.app.outpost .crafting-preview-result .is-gain {
+  border-color: color-mix(in srgb, var(--success) 50%, var(--border));
+}
+.app.outpost .crafting-preview-result .is-gain dd {
+  color: var(--success);
+}
+.app.outpost .crafting-preview-result .is-loss {
+  border-color: color-mix(in srgb, var(--error) 50%, var(--border));
+}
+.app.outpost .crafting-preview-result .is-loss dd {
+  color: var(--error);
+}
+.app.outpost .crafting-preview-assumptions {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.app.outpost .crafting-preview-assumptions span {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Group spotlight */
+.app.outpost .landing-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: 48px;
+  margin: 0 0 var(--section-gap);
+}
+.app.outpost .landing-group-copy h2,
+.app.outpost .landing-cta h2 {
+  margin: 0 0 14px;
+  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.app.outpost .landing-group-copy > p:not(.landing-kicker),
+.app.outpost .landing-cta > p {
+  max-width: 52ch;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 16px;
   line-height: 1.6;
 }
+.app.outpost .group-preview-members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .group-preview-members li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .group-preview-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+}
+.app.outpost .group-preview-icon img {
+  width: 32px;
+  height: 32px;
+}
+.app.outpost .group-preview-build {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  color: var(--text);
+}
+.app.outpost .group-preview-build strong {
+  font-size: 14px;
+  line-height: 1.3;
+}
+.app.outpost .group-preview-build span {
+  color: var(--muted);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost a.group-preview-build:hover strong {
+  color: var(--accent-ink);
+}
+.app.outpost .group-preview-flag {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.app.outpost .group-preview-members li:not(.is-optional) .group-preview-flag {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+.app.outpost .group-preview-roles {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.app.outpost .group-preview-roles li {
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--elevated);
+  font-size: 12px;
+  font-weight: 600;
+}
 
-/* Light theme keeps the painted surfaces dark for contrast; everything else follows tokens */
-.app.outpost.light .landing-hero,
-.app.outpost.light .landing-band {
-  color: #f5f1e9;
+/* Trust */
+.app.outpost .landing-trust {
+  margin: 0 0 var(--section-gap);
+}
+.app.outpost .landing-trust-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .landing-trust-grid li {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+.app.outpost .landing-trust-grid strong {
+  font-size: 15px;
+}
+.app.outpost .landing-trust-grid span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Closing call to action */
+.app.outpost .landing-cta {
+  margin: 0 0 40px;
+  padding: 56px 32px;
+  text-align: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 60%
+    ),
+    var(--panel);
+}
+.app.outpost .landing-cta > p {
+  margin-inline: auto;
+}
+.app.outpost .landing-cta .landing-actions {
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost .landing-preview-window {
+    transition: none;
+  }
 }
 
 @media (max-width: 1100px) {
-  .app.outpost .landing-tool-grid,
-  .app.outpost .landing-build-grid {
+  .app.outpost .home-landing {
+    --section-gap: 64px;
+  }
+  .app.outpost .landing-hero {
+    gap: 32px;
+  }
+  .app.outpost .landing-benefits,
+  .app.outpost .landing-trust-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .app.outpost .landing-showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .landing-preview.is-lead {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .landing-group {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }
+
+/* Phones: a short hero with the action first, the painting as a framed card beneath it,
+   one window per section and tables that fit the width without a horizontal scroll. */
 @media (max-width: 700px) {
   .app.outpost .home-landing {
+    --section-gap: 48px;
     padding: 0 16px;
   }
   .app.outpost .landing-hero {
-    min-height: 0;
-    margin: 0 -16px 28px;
-    padding: 220px 16px 28px;
-    align-items: end;
-  }
-  .app.outpost .landing-hero-art img {
-    object-position: 60% 20%;
-  }
-  .app.outpost .landing-hero-art::after {
-    background: linear-gradient(0deg, #0b0d12 0%, #0b0d12f0 38%, #0b0d1280 62%, #0b0d1200 100%);
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 0 32px;
   }
   .app.outpost .landing-hero h1 {
-    font-size: clamp(48px, 13vw, 72px);
+    font-size: clamp(44px, 13vw, 60px);
   }
   .app.outpost .landing-lede {
-    font-size: 14px;
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+  .app.outpost .landing-actions .button {
+    flex: 1 1 auto;
+  }
+  .app.outpost .landing-hero-visual {
+    aspect-ratio: 16 / 11;
+    border-radius: 12px;
+  }
+  .app.outpost .landing-hero-art img {
+    object-position: 62% 45%;
+  }
+  .app.outpost .gold-ticker {
+    left: 12px;
+    bottom: 12px;
+    width: calc(100% - 24px);
+    padding: 10px 12px;
+  }
+  .app.outpost .gold-ticker-body {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+  .app.outpost .gold-ticker-body strong {
+    font-size: 20px;
   }
   .app.outpost .landing-benefits {
     grid-template-columns: 1fr;
-    gap: 14px;
-    margin-top: 26px;
-    padding-top: 20px;
+    gap: 16px;
+    padding: 20px 0;
+  }
+  .app.outpost .landing-benefits span {
+    font-size: 13px;
   }
   .app.outpost .landing-section-heading {
     grid-template-columns: 1fr;
+    margin-bottom: 20px;
   }
   .app.outpost .landing-section-heading .text-link {
     grid-column: 1;
     grid-row: auto;
     justify-self: start;
-    margin-top: 4px;
+    margin-top: 10px;
   }
-  .app.outpost .landing-section-heading h2 {
-    font-size: 24px;
-  }
-  .app.outpost .landing-tool-grid,
-  .app.outpost .landing-build-grid {
+  .app.outpost .landing-showcase-grid {
     grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .app.outpost .landing-preview-window {
+    padding: 14px;
+  }
+  .app.outpost .landing-preview-action {
+    align-self: stretch;
+  }
+  .app.outpost .build-preview-board {
+    max-width: 240px;
+  }
+  .app.outpost .crafting-preview-result {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .app.outpost .crafting-preview-result > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     gap: 12px;
   }
-  .app.outpost .landing-tool-tile {
-    grid-template-rows: 120px auto;
+  .app.outpost .crafting-preview-result dt {
+    margin: 0;
   }
-  .app.outpost .landing-build-tile {
-    grid-template-columns: 100px minmax(0, 1fr);
+  .app.outpost .crafting-preview-result dd small {
+    display: inline;
+    margin-left: 6px;
   }
-  .app.outpost .landing-build-art {
-    min-height: 110px;
+  .app.outpost .landing-trust-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
-  .app.outpost .landing-build-art img {
-    width: 72px;
-    height: 72px;
+  .app.outpost .landing-trust-grid li {
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 16px 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
   }
-  .app.outpost .landing-band {
-    min-height: 0;
-    padding: 28px 18px;
-    background:
-      linear-gradient(0deg, #0b0d12f8 0%, #0b0d12e0 60%, #0b0d1280 100%),
-      var(--scene-hero) center 40% / cover no-repeat;
+  .app.outpost .landing-trust-grid li:last-child {
+    border-bottom: 1px solid var(--border);
   }
-  .app.outpost .landing-band h2 {
-    font-size: 26px;
+  .app.outpost .group-preview-members li.is-optional {
+    display: none;
   }
-  .app.outpost .landing-actions .button {
-    flex: 1 1 auto;
+  .app.outpost .group-preview-more {
+    display: block;
+  }
+  .app.outpost .market-preview-table th:nth-child(3),
+  .app.outpost .market-preview-table td:nth-child(3) {
+    display: none;
+  }
+  .app.outpost .market-preview-table td:last-child {
+    white-space: normal;
+  }
+  .app.outpost .landing-trust-grid svg {
+    grid-row: 1 / span 2;
+  }
+  .app.outpost .landing-cta {
+    padding: 36px 20px;
+    border-radius: 12px;
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .landing-hero h1 {
+    font-size: 42px;
+  }
+  .app.outpost .market-preview-trend figcaption {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .app.outpost .crafting-preview-materials li {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+  }
+  .app.outpost .crafting-preview-materials time {
+    display: none;
+  }
+  .app.outpost .group-preview-flag {
+    display: none;
+  }
+  .app.outpost .gold-ticker-body {
+    grid-template-columns: 1fr;
+  }
+  .app.outpost .gold-ticker svg {
+    display: none;
   }
 }

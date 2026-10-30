@@ -37,6 +37,38 @@ const sections = [
   ["/guides", "Guides"],
   ["/groups", "Teams"],
 ];
+const footerColumns: [string, [string, string][]][] = [
+  [
+    "Explore",
+    [
+      ["/tools/market", "Market prices"],
+      ["/builds/library", "Build library"],
+      ["/compositions/library", "Group builds"],
+      ["/items", "Item database"],
+      ["/guides", "Player guides"],
+    ],
+  ],
+  [
+    "Tools",
+    [
+      ["/tools/crafting", "Crafting calculator"],
+      ["/tools/refining", "Refining calculator"],
+      ["/tools/flipping", "Flipping calculator"],
+      ["/tools/transporting", "Transport routes"],
+      ["/tools", "Every tool"],
+    ],
+  ],
+  [
+    "Your workspace",
+    [
+      ["/builds/new", "New build"],
+      ["/compositions/new", "New composition"],
+      ["/groups", "Team pages"],
+      ["/dashboard", "Dashboard"],
+      ["/signin", "Sign in to Outpost"],
+    ],
+  ],
+];
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
@@ -434,14 +466,34 @@ export function Shell({
               {children}
             </main>
           </div>
-          <footer>
-            <Link href={href("/")} className="footer-wordmark">
-              <Wordmark />
-            </Link>
-            <span>Independent Albion Online tools. Make your next move count.</span>
-            <Link href="/legal">
-              Privacy & terms <ArrowUpRight size={13} />
-            </Link>
+          <footer className="site-footer">
+            <div className="site-footer-brand">
+              <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
+                <Wordmark />
+              </Link>
+              <p>Independent Albion Online tools. Make your next move count.</p>
+              <p className="site-footer-source">
+                Prices are player observations from the Albion Online Data Project. Outpost is not
+                affiliated with Sandbox Interactive.
+              </p>
+            </div>
+            {footerColumns.map(([title, links]) => (
+              <nav key={title} className="site-footer-column" aria-label={title}>
+                <h2>{title}</h2>
+                {links
+                  .filter(([url]) => !authenticated || url !== "/signin")
+                  .map(([url, label]) => (
+                    <Link key={url} href={href(url)}>
+                      {label}
+                    </Link>
+                  ))}
+              </nav>
+            ))}
+            <div className="site-footer-legal">
+              <Link href="/legal">
+                Privacy & terms <ArrowUpRight size={13} />
+              </Link>
+            </div>
           </footer>
         </div>
       </div>
