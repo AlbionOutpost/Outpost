@@ -32,13 +32,8 @@ test("changing quality allows a new history request while the old request is pen
   try {
     await page.goto("/tools/market?region=europe");
     await page.getByRole("button", { name: "Research price history", exact: true }).click();
-    await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
     await expect.poll(() => firstRequested).toBe(true);
     await page.getByLabel("Quality", { exact: true }).selectOption("2");
-    await expect(
-      page.getByRole("button", { name: "Load historical observations", exact: true }),
-    ).toBeEnabled();
-    await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
     await expect(page.locator(".price-chart")).toHaveAttribute(
       "aria-label",
       /minimum 20000, maximum 20000/,
@@ -61,7 +56,6 @@ test("gold chart exposes its actual observation values", async ({ page }) => {
     }),
   );
   await page.goto("/tools/gold");
-  await page.getByRole("button", { name: "Load historical observations" }).click();
   await expect(page.getByRole("img", { name: /^gold observed price chart/ })).toHaveAttribute(
     "aria-label",
     /minimum 9000, maximum 9100/,
@@ -108,7 +102,6 @@ test("history dates filter returned observations without inventing missing days"
   );
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Research price history", exact: true }).click();
-  await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
   await expect(page.locator(".price-chart circle")).toHaveCount(3);
   await page.getByRole("button", { name: "7 days", exact: true }).click();
   await expect(page.locator(".price-chart circle")).toHaveCount(2);

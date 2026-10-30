@@ -1,3 +1,4 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { GuideDirectory } from "@/components/guide-directory";
 import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
@@ -13,14 +14,12 @@ export default async function Guides({
   const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
   return (
     <div className="guide-discovery-page support-guides">
-      <header className="workspace-identity">
-        <div>
-          <h1 className="page-title display-title">Guides & resources</h1>
-          <p className="intro">
-            Find your footing, plan your next run, or learn a new way to earn.
-          </p>
-        </div>
-      </header>
+      <WorkspaceHeading
+        glyph="reference"
+        scene="guides"
+        title="Guides & resources"
+        description="Find your footing, plan your next run, or learn a new way to earn."
+      />
       <nav className="guide-topic-links" aria-label="Guide shortcuts">
         <Link href="/guides/albion-journal-guide">Track your journal</Link>
         <Link href="/guides?category=Economy">Learn the economy</Link>

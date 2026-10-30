@@ -67,6 +67,18 @@ export function gameRecipe(id: string): Recipe | undefined {
 export function gameRecipesForOutput(output: string): Recipe[] {
   return (byOutput.get(output) ?? []).map(toRecipe);
 }
+let byIngredient: Map<string, GameRecipe[]> | null = null;
+/** Primary recipes that consume an item, nearest tier first. Built once on first use. */
+export function gameRecipesUsing(ingredient: string, limit = 12) {
+  if (!byIngredient) {
+    byIngredient = new Map();
+    for (const r of raw)
+      for (const i of new Set(r.ingredients.map((i) => i.id)))
+        byIngredient.set(i, [...(byIngredient.get(i) ?? []), r]);
+  }
+  const all = (byIngredient.get(ingredient) ?? []).filter((r) => alternativeIndex(r.id) === 1);
+  return { total: all.length, recipes: all.slice(0, limit).map(toRecipe) };
+}
 export type RecipeSearch = {
   q?: string;
   kind: "crafting" | "refining";

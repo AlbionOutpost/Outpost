@@ -10,6 +10,8 @@ export default async function Page({
   return (
     <div className="production-calculator-page crafting-reference-page">
       <WorkspaceHeading
+        glyph="craft"
+        scene="economy"
         title="Crafting calculator"
         description="Plan. Calculate. Craft with confidence. Price your materials and see what your run could earn."
       />

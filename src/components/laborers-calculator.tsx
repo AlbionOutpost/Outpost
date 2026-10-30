@@ -133,6 +133,16 @@ export function LaborersCalculator() {
       if (request.current === active) setBusy(false);
     }
   }
+  // Prices for the laborer, journal tier, cities and sale mode load on their own; manual
+  // prices are always kept.
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [region, draft.type, draft.journalTier, draft.journalCity, draft.lootCity, draft.saleMode]);
   const priceInput = (id: string, label: string, city: string) => {
     const p = draft.prices[id];
     const usable = p && p.value !== null && (p.manual || (p.region === region && p.city === city));
@@ -335,7 +345,7 @@ export function LaborersCalculator() {
           <div className="tool-section-heading">
             <h2>Prices</h2>
             <button className="button secondary" type="button" disabled={busy} onClick={load}>
-              {busy ? "Loading…" : "Load market prices"}
+              {busy ? "Loading…" : "Refresh market prices"}
             </button>
           </div>
           <p role="status" className="muted">

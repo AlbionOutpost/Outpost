@@ -9,16 +9,38 @@ import {
   transportPriceMatches,
   type TransportInput,
 } from "@/lib/albion/transport";
-import { cities } from "@/lib/albion/region-config";
+import { cities, type Region } from "@/lib/albion/region-config";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ArrowRight, Truck } from "lucide-react";
 import { transportPriceQuery, mergeTransportObservations } from "@/lib/albion/transport-prices";
 import { mounts, mountCapacity } from "@/lib/albion/mounts";
-export function TransportCalculator() {
+export type TransportPreselection = {
+  item?: string;
+  from?: string;
+  to?: string;
+  quality?: string;
+};
+/** Links from the flip scanner and item pages preselect cargo, route and quality. */
+function preselected(region: Region, initial: TransportPreselection) {
+  const base = initialTransport(region);
+  const item = (initial.item || "").toUpperCase(),
+    quality = Number(initial.quality || 0);
+  const city = (name?: string) => cities.find((c) => c === name);
+  return {
+    ...base,
+    ...(/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(item) ? { itemId: item } : {}),
+    ...(city(initial.from) && initial.from !== "Black Market"
+      ? { fromCity: city(initial.from)! }
+      : {}),
+    ...(city(initial.to) ? { toCity: city(initial.to)! } : {}),
+    ...(quality >= 1 && quality <= 5 ? { quality } : {}),
+  };
+}
+export function TransportCalculator({ initial = {} }: { initial?: TransportPreselection }) {
   const region = useAtlasRegion(),
-    [draft, setDraft] = useState(() => initialTransport(region)),
+    [draft, setDraft] = useState(() => preselected(region, initial)),
     [message, setMessage] = useState(""),
     [pendingKey, setPendingKey] = useState<string | null>(null),
     [title, setTitle] = useState(""),
@@ -93,6 +115,20 @@ export function TransportCalculator() {
       if (controller.current === active) setPendingKey(null);
     }
   }
+  // Observations for the cargo, route and quality load on their own until you type a price;
+  // manual prices are never replaced without the button.
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  const manualPrices =
+    (draft.buy.manual && draft.buy.value !== null) ||
+    (draft.sell.manual && draft.sell.value !== null);
+  useEffect(() => {
+    if (manualPrices || !/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(draft.itemId)) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [requestKey, manualPrices, draft.itemId]);
   return (
     <>
       <div className="transport-route-strip" aria-label="Transport route">
@@ -314,10 +350,11 @@ export function TransportCalculator() {
           <section className="panel section" id="transport-prices">
             <h2>Purchase & sale observations</h2>
             <button className="button secondary" disabled={busy} onClick={load}>
-              Load transport market prices
+              {busy ? "Fetching observations…" : "Refresh transport market prices"}
             </button>
             <p className="muted">
-              Loading replaces both price overrides with source observations. Region: {region}.
+              Observations load for each cargo, route and quality until you type a price. Refreshing
+              replaces both prices with source observations. Region: {region}.
             </p>
             <div className="input-grid">
               {(["buy", "sell"] as const).map((key) => (

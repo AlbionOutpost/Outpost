@@ -32,8 +32,55 @@ export function BuildCost({ id }: { id: string }) {
   const requestKey = `${id}:${region}:${city}:${sets}`;
   const busy = pendingKey === requestKey;
   useEffect(() => () => controller.current?.abort(), [requestKey]);
+  async function load() {
+    controller.current?.abort();
+    const active = new AbortController();
+    controller.current = active;
+    const key = requestKey;
+    setPendingKey(key);
+    setError(null);
+    setResult(null);
+    try {
+      const response = await fetch(
+        `/api/builds/${id}/cost?${new URLSearchParams({ region, city, sets: String(sets) })}`,
+        { signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]) },
+      );
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error);
+      if (body.region !== region || body.city !== city || body.sets !== sets)
+        throw new Error("Price selection changed. Estimate again for this market.");
+      if (!active.signal.aborted) setResult(body);
+    } catch (e) {
+      if (!active.signal.aborted)
+        setError({
+          key,
+          message: e instanceof Error ? e.message : "Could not estimate cost",
+        });
+    } finally {
+      if (controller.current === active) setPendingKey(null);
+    }
+  }
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  // The first estimate runs when the section scrolls into view; later changes use the button.
+  const root = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!root.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        void loadRef.current();
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(root.current);
+    return () => observer.disconnect();
+  }, [id, region]);
   return (
-    <section className="panel section">
+    <section className="panel section" ref={root}>
       <h2>Loadout replacement cost</h2>
       <p>
         Lowest observed sell orders, using each item&apos;s selected quality. One of each equipped
@@ -41,34 +88,9 @@ export function BuildCost({ id }: { id: string }) {
       </p>
       <form
         className="market-form"
-        onSubmit={async (e) => {
+        onSubmit={(e) => {
           e.preventDefault();
-          controller.current?.abort();
-          const active = new AbortController();
-          controller.current = active;
-          const key = requestKey;
-          setPendingKey(key);
-          setError(null);
-          setResult(null);
-          try {
-            const response = await fetch(
-              `/api/builds/${id}/cost?${new URLSearchParams({ region, city, sets: String(sets) })}`,
-              { signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]) },
-            );
-            const body = await response.json();
-            if (!response.ok) throw new Error(body.error);
-            if (body.region !== region || body.city !== city || body.sets !== sets)
-              throw new Error("Price selection changed. Estimate again for this market.");
-            if (!active.signal.aborted) setResult(body);
-          } catch (e) {
-            if (!active.signal.aborted)
-              setError({
-                key,
-                message: e instanceof Error ? e.message : "Could not estimate cost",
-              });
-          } finally {
-            if (controller.current === active) setPendingKey(null);
-          }
+          void load();
         }}
       >
         <label>

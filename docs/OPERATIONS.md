@@ -6,13 +6,13 @@ Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOut
 
 `.github/workflows/cloudflare-preview.yml` ("Cloudflare deployment") runs on every push to `main` that touches more than docs/Markdown, on manual dispatch, and on published releases tagged `v*` (other tags skip both quality and deploy).
 
-1. **Quality** — reuses `quality.yml`: format, docs check, local Postgres/Redis, Playwright sandbox check, source secret scan, `npm run qa:phase` (skipping the Node browser run, which the deploy job replaces with the Cloudflare-mode run, and the live AODP check), bundle secret scan.
-2. **Deploy** (environment `cloudflare-production`, one at a time):
-   1. Generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`.
-   2. Cloudflare build, Cloudflare-mode Playwright run, secret scans.
-   3. Production build with the Turnstile site key, `cloudflare-release-config.mjs` writes the real configs.
-   4. `cloudflare-free-check.mjs` (each bundle ≤3 MiB gzip, no paid features), then `wrangler deploy` **data Worker first, then web Worker**.
-   5. `cloudflare-deployment-check.mjs` probes the live site.
+1. **Quality** — reuses `quality.yml` (`checks` job only): format, docs check, local Postgres/Redis (`scripts/ci-local-services.mjs`), SQLite runtime check, source secret scan, `npm run qa:phase` (skipping the Node browser run, which the verify job replaces with the Cloudflare-mode run, and the live AODP check), bundle secret scan.
+2. **Verify** — three parallel shards, each: generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`, Cloudflare build, then `playwright test --shard=N/3` in Cloudflare mode.
+3. **Deploy** (environment `cloudflare-production`, one at a time, after every shard passed):
+   1. Regenerate the SQLite runtime.
+   2. Production build with the Turnstile site key, `cloudflare-release-config.mjs` writes the real configs, secret scans.
+   3. `cloudflare-free-check.mjs` (each bundle ≤3 MiB gzip, no paid features), then `wrangler deploy` **data Worker first, then web Worker**.
+   4. `cloudflare-deployment-check.mjs` probes the live site.
 
 What CI does **not** do: upload runtime secrets, push catalog/library data to D1, or prove the live site works — GitHub runners are challenged by Bot Fight Mode, so the probe reports `BLOCKED` as a warning. After a deploy, smoke-test from your own machine:
 

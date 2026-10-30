@@ -1,8 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("market controls wait for client handlers before the first explicit comparison", async ({
-  page,
-}) => {
+test("market controls wait for client handlers before the first comparison", async ({ page }) => {
   let release: () => void = () => {},
     calls = 0;
   const ready = new Promise<void>((resolve) => {
@@ -18,21 +16,24 @@ test("market controls wait for client handlers before the first explicit compari
   });
   try {
     await page.goto("/tools/market?region=europe", { waitUntil: "commit" });
-    const compare = page.getByRole("button", { name: "Compare prices", exact: true });
+    const compare = page.getByRole("button", { name: "Refresh prices", exact: true });
     await expect(compare).toBeVisible();
     await expect(compare).toBeDisabled();
     expect(calls).toBe(0);
     release();
+    // Hydration loads the arrival selection once; nothing is requested before handlers exist.
+    await expect(page.locator(".task-state")).toContainText("No price observations");
     await expect(compare).toBeEnabled();
+    expect(calls).toBe(1);
     await compare.click();
     await expect(page.locator(".task-state")).toContainText("No price observations");
-    expect(calls).toBe(1);
+    await expect.poll(() => calls).toBe(2);
   } finally {
     release();
   }
 });
 
-test("market first use separates configuration, loading, source failure and a genuine missing response", async ({
+test("market first use separates loading, source failure and a genuine missing response", async ({
   page,
 }) => {
   let calls = 0;
@@ -49,29 +50,33 @@ test("market first use separates configuration, loading, source failure and a ge
   });
   await page.goto("/tools/market?region=europe&city=Caerleon");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");
-  await expect(page.locator(".market-first-use")).toContainText("Ready to request city prices");
-  await expect(page.locator(".market-selection")).toHaveCount(1);
-  await expect(page.locator(".market-selection")).toContainText("Bag");
-  await expect(page.locator(".market-quote-summary")).toHaveCount(0);
-  expect(calls).toBe(0);
-  await page.getByLabel("Quality", { exact: true }).selectOption("2");
-  await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
-  await page.getByRole("button", { name: "Compare prices", exact: true }).click();
+  // The selection loads on arrival; no second click is needed to see prices.
+  await expect(page.locator(".market-first-use")).toContainText("Checking the markets…");
   await expect(
     page.getByRole("button", { name: "Fetching observations…", exact: true }),
   ).toBeDisabled();
+  await expect(page.locator(".market-selection")).toHaveCount(1);
+  await expect(page.locator(".market-selection")).toContainText("Bag");
+  await expect(page.locator(".market-quote-summary")).toHaveCount(0);
+  expect(calls).toBe(1);
   release();
   await expect(page.locator("main").getByRole("alert")).toContainText("Source did not respond");
   await expect(page.locator(".market-first-use")).toContainText("Your selection is safe");
-  await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");
-  await page.getByRole("button", { name: "Compare prices", exact: true }).click();
+  // Changing the selection retries automatically; the failed response never shows as a quote.
+  await page.getByLabel("Quality", { exact: true }).selectOption("2");
   await expect(page.locator(".task-state")).toContainText(
     "No price observations for this selection",
   );
   await expect(page.locator(".task-state")).toContainText("No last observation is known");
   await expect(page.locator(".market-item-panel")).toHaveCount(0);
   await expect(page.locator(".market-selection")).toContainText("Good");
+  await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
+  expect(calls).toBe(2);
+  // Refresh prices re-requests the same selection on demand.
+  await page.getByRole("button", { name: "Refresh prices", exact: true }).click();
+  await expect(page.locator(".task-state")).toContainText("No price observations");
+  expect(calls).toBe(3);
 });
 
 test("quality coverage is requested explicitly and never substitutes a different quality silently", async ({
@@ -105,7 +110,6 @@ test("quality coverage is requested explicitly and never substitutes a different
     });
   });
   await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Compare prices", exact: true }).click();
   await expect(page.locator(".task-state")).toContainText("No price observations");
   expect(coverageCalls).toBe(0);
   await page.getByRole("button", { name: "Check other qualities", exact: true }).click();
@@ -123,8 +127,6 @@ test("quality coverage is requested explicitly and never substitutes a different
   await page.getByRole("button", { name: "Use Good", exact: true }).click();
   await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
   await expect(page.getByLabel("Quality", { exact: true })).toBeFocused();
-  expect(priceCalls).toBe(1);
-  await page.getByRole("button", { name: "Compare prices", exact: true }).click();
   await expect(page.locator(".task-state")).toContainText("No price observations");
-  expect(priceCalls).toBe(2);
+  await expect.poll(() => priceCalls).toBe(2);
 });

@@ -9,10 +9,13 @@ export function History({
   kind = "history",
   item = "T4_BAG",
   quality = 1,
+  autoLoad = false,
 }: {
   kind?: "history" | "gold";
   item?: string;
   quality?: number;
+  /** Load the current selection as soon as it changes instead of waiting for the button. */
+  autoLoad?: boolean;
 }) {
   const region = useAtlasRegion();
   const [city, setCity] = useState("Lymhurst");
@@ -35,8 +38,7 @@ export function History({
           (point) => sourceTimestamp(point.timestamp) >= latest - rangeDays * 86400000,
         )
       : returned;
-  async function load(e: React.FormEvent) {
-    e.preventDefault();
+  async function load() {
     request.current?.abort();
     const active = new AbortController();
     request.current = active;
@@ -78,6 +80,19 @@ export function History({
       if (request.current === active) setPendingKey(null);
     }
   }
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    await load();
+  }
+  const loadRef = useRef(load);
+  useEffect(() => {
+    loadRef.current = load;
+  });
+  useEffect(() => {
+    if (!autoLoad) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    return () => window.clearTimeout(timer);
+  }, [autoLoad, current]);
   const min = visible.length ? Math.min(...visible.map((p) => p.price)) : 0,
     max = visible.length ? Math.max(...visible.map((p) => p.price)) : 0;
   const start = visible.length ? sourceTimestamp(visible[0].timestamp) : 0,
@@ -96,7 +111,7 @@ export function History({
           ? "Up to 168 recent gold observations. Coverage varies by region."
           : `Daily sell-order averages for ${item.toUpperCase()}, quality ${quality}, over the previous 30 days. These are not confirmed transaction prices.`}
       </p>
-      <form onSubmit={load} className="market-form">
+      <form onSubmit={submit} className="market-form">
         {kind === "history" && (
           <label>
             History city
@@ -108,7 +123,11 @@ export function History({
           </label>
         )}
         <button className="button secondary" disabled={busy}>
-          {busy ? "Fetching history…" : "Load historical observations"}
+          {busy
+            ? "Fetching history…"
+            : autoLoad
+              ? "Refresh history"
+              : "Load historical observations"}
         </button>
       </form>
       {error && errorKey === current && (
@@ -258,10 +277,14 @@ export function History({
             {busy
               ? "Requesting observations for your selected server."
               : error && errorKey === current
-                ? "Your selection is kept. Use the load button to retry."
+                ? autoLoad
+                  ? "Your selection is kept. Refresh history or change the selection to retry."
+                  : "Your selection is kept. Use the load button to retry."
                 : loaded && key === current
                   ? "Try another server or return later. A blank history does not mean the price is zero."
-                  : "Load historical observations to inspect prices and their timestamps. Nothing is fetched until you request it."}
+                  : autoLoad
+                    ? "History for the selected city loads as soon as it is chosen."
+                    : "Load historical observations to inspect prices and their timestamps. Nothing is fetched until you request it."}
           </p>
         </div>
       )}

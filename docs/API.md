@@ -4,28 +4,28 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 
 **Auth:** pub = public · sess = requires session · owner/member = checked against current DB rows.
 
-**Limits** on public routes are site-wide counters shared by everyone (the three `/api/market*` routes share one 120/min bucket); per-user budgets apply to signed-in mutations.
+**Limits.** Public read routes have no application counter ("edge rule"): a Cloudflare rate-limiting rule allows 60 `/api/` requests per 10 s per IP, the session render object allows 240 requests/min, and upstream calls are budgeted per region in `data-client.ts` (AODP 50/min, 250/5 min) and `combat-events.ts` (Game Info 12/min). Sign-in is limited per client address (40/min) with a site-wide backstop; per-user budgets apply to signed-in mutations (30/min), exports (5/h) and settings (20/min). A determined single address can still exhaust a region's AODP budget on the Free plan; that degrades to "unavailable" prices, never to wrong ones.
 
 ## Market and economy
 
-| Route                                                           | Auth | Purpose                                                | Limit                |
-| --------------------------------------------------------------- | ---- | ------------------------------------------------------ | -------------------- |
-| `GET /api/market`                                               | pub  | One item, one quality, all cities in a region          | 120/min              |
-| `GET /api/market/batch`                                         | pub  | 1–12 items, one quality                                | 120/min              |
-| `GET /api/market/qualities`                                     | pub  | All 5 qualities (optional city)                        | 120/min, cached 30 s |
-| `GET /api/history`                                              | pub  | Gold (168 points) or 30-day daily item history         | 60/min               |
-| `GET /api/economy/prices`                                       | pub  | All ingredient + output quotes for a production recipe | 60/min               |
-| `GET /api/transport/prices`                                     | pub  | Buy/sell pair for one route direction                  | 60/min               |
-| `GET /api/laborers/prices`                                      | pub  | Full/empty journal and loot quotes for one laborer run | 60/min               |
-| `GET /api/recipes`                                              | pub  | Recipe search (kind, category, tier, enchantment, q)   | —                    |
-| `GET /api/recipes/[id]`                                         | pub  | One game recipe plus its alternatives                  | —                    |
-| `GET /api/items/game`                                           | pub  | Name, weight and item value for ≤50 IDs (static data)  | —                    |
-| `GET /api/opportunities`                                        | pub  | Flip/transport scanner, ≤25 items                      | 30/min               |
-| `GET /api/combat-events`                                        | pub  | Kill/death feed (offset 0–200, step 20)                | 120/min, cached 15 s |
-| `GET /api/items`                                                | pub  | Catalog search, 30 per page                            | —                    |
-| `GET /api/item-icon`                                            | pub  | Renderer proxy with validated fallback                 | 240/min/process      |
-| `GET /api/search`                                               | pub  | Global search, permission-filtered                     | 120/min              |
-| `GET, POST /api/market-watch` · `DELETE /api/market-watch/[id]` | sess | Private watchlist                                      | content budget       |
+| Route                                                           | Auth | Purpose                                                | Limit                  |
+| --------------------------------------------------------------- | ---- | ------------------------------------------------------ | ---------------------- |
+| `GET /api/market`                                               | pub  | One item, one quality, all cities in a region          | edge rule              |
+| `GET /api/market/batch`                                         | pub  | 1–12 items, one quality                                | edge rule              |
+| `GET /api/market/qualities`                                     | pub  | All 5 qualities (optional city)                        | edge rule, cached 30 s |
+| `GET /api/history`                                              | pub  | Gold (168 points) or 30-day daily item history         | edge rule              |
+| `GET /api/economy/prices`                                       | pub  | All ingredient + output quotes for a production recipe | edge rule              |
+| `GET /api/transport/prices`                                     | pub  | Buy/sell pair for one route direction                  | edge rule              |
+| `GET /api/laborers/prices`                                      | pub  | Full/empty journal and loot quotes for one laborer run | edge rule              |
+| `GET /api/recipes`                                              | pub  | Recipe search (kind, category, tier, enchantment, q)   | —                      |
+| `GET /api/recipes/[id]`                                         | pub  | One game recipe plus its alternatives                  | —                      |
+| `GET /api/items/game`                                           | pub  | Name, weight and item value for ≤50 IDs (static data)  | —                      |
+| `GET /api/opportunities`                                        | pub  | Flip/transport scanner, ≤25 items                      | edge rule              |
+| `GET /api/combat-events`                                        | pub  | Kill/death feed (offset 0–200, step 20)                | edge rule, cached 15 s |
+| `GET /api/items`                                                | pub  | Catalog search, 30 per page                            | —                      |
+| `GET /api/item-icon`                                            | pub  | Renderer proxy with validated fallback                 | 240/min/process        |
+| `GET /api/search`                                               | pub  | Global search, permission-filtered                     | edge rule              |
+| `GET, POST /api/market-watch` · `DELETE /api/market-watch/[id]` | sess | Private watchlist                                      | content budget         |
 
 ## Builds
 

@@ -13,10 +13,9 @@ export async function resolveBuildLoadout(id: string, userId: string) {
   try {
     return copyBuildLoadout(build);
   } catch (error) {
-    throw new HttpError(
-      422,
-      error instanceof Error ? error.message : "This loadout cannot be copied safely.",
-    );
+    // Internal messages stay in the server; the client only learns that the copy is unsupported.
+    void error;
+    throw new HttpError(422, "This loadout cannot be copied safely.");
   }
 }
 export async function resolveCompositionSource(input: BuildCompositionLaunch, userId: string) {

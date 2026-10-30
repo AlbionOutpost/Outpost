@@ -31,7 +31,7 @@ if (process.argv.includes("--apply")) {
     mode: 0o600,
     flag: "wx",
   });
-  const file = readFileSync("public/brand/outpost-discord-avatar.png");
+  const file = readFileSync("docs/assets/outpost-discord-avatar.png");
   if (file.length > 8 * 1024 * 1024 || file.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a")
     throw Error("Expected a bounded PNG avatar.");
   const image = `data:image/png;base64,${file.toString("base64")}`;

@@ -94,11 +94,11 @@ test("fish accounting preserves manual zero and refresh overrides while excludin
   await page.getByLabel("Fish quantity", { exact: true }).fill("10");
   await page.getByLabel("Total sale fees (%)", { exact: true }).fill("10");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
-  await page.getByRole("button", { name: "Load fish observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("100");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toHaveText("350 silver");
   await page.getByLabel("Raw fish purchase price", { exact: true }).fill("0");
-  await page.getByRole("button", { name: "Load fish observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("0");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toHaveText("1,350 silver");
   await page.getByLabel("Fishing market city", { exact: true }).selectOption("Lymhurst");
@@ -107,7 +107,7 @@ test("fish accounting preserves manual zero and refresh overrides while excludin
   await page.getByLabel("Fishing market city", { exact: true }).selectOption("Fort Sterling");
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("0");
   stale = true;
-  await page.getByRole("button", { name: "Load fish observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Chopped fish sale price", { exact: true })).toHaveValue("");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
   await page.getByRole("combobox", { name: "Albion region", exact: true }).click();

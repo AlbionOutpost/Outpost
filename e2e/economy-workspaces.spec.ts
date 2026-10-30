@@ -93,23 +93,20 @@ test("item filters recover from no results and item back links retain server", a
   );
 });
 
-test("gold history has distinct initial, loading, empty and error recovery", async ({ page }) => {
-  await page.goto("/tools/gold?region=europe");
-  await expect(
-    page.getByRole("heading", { name: "Explore the recorded price history" }),
-  ).toBeVisible();
+test("gold history has distinct loading, empty and error recovery", async ({ page }) => {
   await page.route("**/api/history?*", async (route) => {
-    await new Promise((r) => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 400));
     await route.fulfill({ json: { data: [] } });
   });
-  await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
+  await page.goto("/tools/gold?region=europe");
+  await expect(page.getByRole("heading", { name: "Loading price history…" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "No observations for this selection" }),
   ).toBeVisible();
   await page.route("**/api/history?*", (route) =>
     route.fulfill({ status: 503, json: { error: "History source unavailable" } }),
   );
-  await page.getByRole("button", { name: "Load historical observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh history", exact: true }).click();
   await expect(page.locator(".gold-research-workspace").getByRole("alert")).toContainText(
     "History source unavailable",
   );

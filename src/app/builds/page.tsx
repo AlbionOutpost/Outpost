@@ -13,6 +13,8 @@ import { authOptions } from "@/lib/auth";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { z } from "zod";
 import { LayoutGrid, List } from "lucide-react";
+import { featuredLibraryBuilds } from "@/lib/grind-library";
+import { LibraryBuildCard } from "@/components/library-build-card";
 export const dynamic = "force-dynamic";
 export default async function Builds({
   searchParams,
@@ -52,6 +54,8 @@ export default async function Builds({
     sort,
     page: requestedPage,
   });
+  // A quiet community should still hand visitors something to play: the curated library.
+  const libraryPicks = !builds.length && !mine ? (await featuredLibraryBuilds()).slice(0, 3) : [];
   return (
     <div
       className={`builds-ecosystem build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
@@ -222,9 +226,16 @@ export default async function Builds({
                   ? !session?.user?.id
                     ? "Sign in to see your account builds. Device favorites are available without signing in."
                     : "Your saved builds appear here. Adjust the filters or create your first private loadout."
-                  : "Try another weapon or activity. Public builds appear when their authors publish them."}
+                  : total === 0 && !q && !codes.length && !content
+                    ? "No one has published a community build yet. Start from the Build Library and publish your own version."
+                    : "Try another weapon or activity. Public builds appear when their authors publish them."}
               </p>
               <div className="button-row">
+                {!mine && (
+                  <Link href="/builds/library" className="button primary">
+                    Browse the Build Library
+                  </Link>
+                )}
                 <Link href={mine ? "/builds?mine=1" : "/builds"} className="button secondary">
                   Clear filters
                 </Link>
@@ -237,25 +248,42 @@ export default async function Builds({
               </div>
             </section>
           )}
-          <nav className="library-pagination" aria-label="Community build pages">
-            {page > 1 ? (
-              <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                Previous page
-              </Link>
-            ) : (
-              <span />
-            )}
-            <span>
-              Page {page} / {pages}
-            </span>
-            {page < pages ? (
-              <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                Next page
-              </Link>
-            ) : (
-              <span />
-            )}
-          </nav>
+          {libraryPicks.length > 0 && (
+            <section className="build-library-picks" aria-labelledby="build-library-picks-heading">
+              <div className="build-results-heading">
+                <h2 id="build-library-picks-heading">From the Build Library</h2>
+                <Link className="text-link" href="/builds/library">
+                  All library builds →
+                </Link>
+              </div>
+              <div className="build-discovery-grid account-build-grid">
+                {libraryPicks.map((build) => (
+                  <LibraryBuildCard key={build.id} build={build} />
+                ))}
+              </div>
+            </section>
+          )}
+          {pages > 1 && (
+            <nav className="library-pagination" aria-label="Community build pages">
+              {page > 1 ? (
+                <Link className="button secondary" href={href({ page: String(page - 1) })}>
+                  Previous page
+                </Link>
+              ) : (
+                <span />
+              )}
+              <span>
+                Page {page} / {pages}
+              </span>
+              {page < pages ? (
+                <Link className="button secondary" href={href({ page: String(page + 1) })}>
+                  Next page
+                </Link>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )}
         </section>
       </div>
     </div>

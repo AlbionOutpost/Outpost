@@ -118,16 +118,21 @@ test("design review covers application pages, equipment, guilds and reduced moti
               : /inter/i,
           );
           if (route === "/tools/market") {
-            await page.getByRole("button", { name: "Compare prices", exact: true }).click();
+            // Prices load on arrival; wait for the settled table before reading its styles.
             await expect(
               page.getByRole("button", { name: "Caerleon market details", exact: true }),
             ).toBeVisible();
-            expect(
-              await page
-                .locator("td.numeric")
-                .first()
-                .evaluate((el) => getComputedStyle(el).fontFamily),
-            ).toMatch(/geistMono/i);
+            await expect(
+              page.getByRole("button", { name: "Refresh prices", exact: true }),
+            ).toBeEnabled();
+            await expect
+              .poll(() =>
+                page
+                  .locator("td.numeric")
+                  .first()
+                  .evaluate((el) => getComputedStyle(el).fontFamily),
+              )
+              .toMatch(/geistMono/i);
           }
           if (route === "/builds/new") {
             await page
@@ -194,13 +199,13 @@ test("design review covers application pages, equipment, guilds and reduced moti
       }
     }
     await page.goto("/");
+    await page.getByRole("link", { name: "Try it with a T4 Bag", exact: true }).click();
     await page.getByRole("combobox", { name: "Search market items" }).fill("T6_MAIN_AXE@1");
     await page
       .getByRole("listbox", { name: "Matching market items" })
       .getByRole("option")
       .first()
       .click();
-    await page.getByRole("link", { name: "Explore market", exact: true }).click();
     await page.getByText("Advanced item identifier", { exact: true }).click();
     await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T6_MAIN_AXE@1");
     await expect(page).toHaveURL(/region=europe/);

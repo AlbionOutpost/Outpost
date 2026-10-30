@@ -1,3 +1,5 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { libraryCompositions } from "@/lib/grind-library";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -54,13 +56,17 @@ export default async function Compositions({
   });
   return (
     <div className="composition-directory composition-collection-page">
-      <div className="section-heading composition-directory-heading">
-        <h1 className="page-title display-title">Comps</h1>
-        <Link className="button primary" href="/compositions/new">
-          Create comp
-        </Link>
-      </div>
-      <p className="intro">Plan roles, assign players and share your party’s gear.</p>
+      <WorkspaceHeading
+        glyph="composition"
+        scene="comps"
+        title="Comps"
+        description="Plan roles, assign players and share your party’s gear."
+        actions={
+          <Link className="button primary" href="/compositions/new">
+            Create comp
+          </Link>
+        }
+      />
       <nav className="discovery-tabs" aria-label="Composition collections">
         <Link href="/compositions" aria-current={p.mine !== "1" ? "page" : undefined}>
           Player comps
@@ -145,8 +151,21 @@ export default async function Compositions({
         })}
       </section>
       {!rows.length && (
-        <section className="panel empty">
-          No accessible comps found. Create your own roster or ask a group officer to share one.
+        <section className="build-discovery-empty ecosystem-empty">
+          <h2>{p.mine === "1" ? "No comps of your own yet" : "No shared player comps yet"}</h2>
+          <p>
+            {p.mine === "1"
+              ? "Comps you create or that a team shares with you appear here."
+              : `Start from one of the ${(await libraryCompositions()).length.toLocaleString()} Group Builds in the library, or build your own roster and share it with your team.`}
+          </p>
+          <div className="button-row">
+            <Link href="/compositions/library" className="button primary">
+              Browse Group Builds
+            </Link>
+            <Link href="/compositions/new" className="text-link">
+              Create a comp →
+            </Link>
+          </div>
         </section>
       )}
       <div className="actions section">

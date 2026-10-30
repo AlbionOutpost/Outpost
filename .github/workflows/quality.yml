@@ -2,6 +2,11 @@ name: Quality gates
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      refresh_baselines:
+        description: Regenerate the reviewed visual baselines on this branch and commit them
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       skip:
@@ -14,12 +19,11 @@ concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  quality:
-    # The downloaded pinned Chromium requires working sandboxed user namespaces.
-    # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
-    # Reassess this supported runner before the published Ubuntu22 retirement.
+  # Static checks, units, migrations and the production build run once; the browser suite
+  # runs in parallel shards so a pull request answers in the time of the slowest shard.
+  checks:
     runs-on: ubuntu-22.04
-    timeout-minutes: 35
+    timeout-minutes: 25
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -35,39 +39,109 @@ jobs:
       - name: Documentation links and skills
         run: node scripts/docs-check.mjs
       - name: Configure isolated local services
-        run: |
-          cp .env.example .env
-          node --input-type=module <<'JS'
-          import { readFileSync, writeFileSync } from 'node:fs';
-          import { randomBytes } from 'node:crypto';
-          writeFileSync('.env', readFileSync('.env', 'utf8')
-            .replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`)
-            // Fixture-only Discord pair so the provider registers; tests never reach Discord.
-            .replace(/^DISCORD_CLIENT_ID=.*$/m, 'DISCORD_CLIENT_ID=100000000000000000')
-            .replace(/^DISCORD_CLIENT_SECRET=.*$/m, `DISCORD_CLIENT_SECRET=${randomBytes(24).toString('hex')}`));
-          JS
-          docker compose up -d --wait
-          npm run db:deploy
-          npm run data:sync
+        run: node scripts/ci-local-services.mjs
       # Same check the deploy runs, so a broken Cloudflare runtime fails the PR, not production.
       - name: Cloudflare SQLite runtime
         run: node scripts/qa-cloudflare-runtime.mjs
-      - run: npx playwright install --with-deps chromium
-      - name: Verify the pinned browser sandbox
-        run: node scripts/qa-browser-sandbox.mjs
       - name: Source credential patterns
         run: node scripts/qa-source-secrets.mjs
-      - name: Types, lint, units, migrations, build, browsers, advisories and regional smoke
+      - name: Types, lint, units, migrations, build, advisories and regional smoke
         run: npm run qa:phase
         env:
           # The live AODP check spends real upstream budget and depends on a third party;
           # it runs from the manual "Live data check" workflow instead.
-          QA_SKIP: ${{ inputs.skip || 'live-regions' }}
+          QA_SKIP: ${{ inputs.skip || 'live-regions' }},browser
       - name: Browser bundle configured-secret scan
         run: node scripts/qa-secret-scan.mjs
       - name: Prepare sanitized failure evidence
         if: always()
         run: node scripts/qa-ci-evidence.mjs
+      - name: Remove ephemeral CI services
+        if: always()
+        run: docker compose down --volumes
+  browser:
+    if: ${{ !contains(inputs.skip || '', 'browser') }}
+    # The downloaded pinned Chromium requires working sandboxed user namespaces.
+    # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
+    # Reassess this supported runner before the published Ubuntu22 retirement.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Configure isolated local services
+        run: node scripts/ci-local-services.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the pinned browser sandbox
+        run: node scripts/qa-browser-sandbox.mjs
+      - name: Build the standalone server
+        run: npm run build
+      - name: Browser suite (shard ${{ matrix.shard }} of 3)
+        run: npx playwright test --shard=${{ matrix.shard }}/3 --reporter=line,github
+        env:
+          E2E_PRODUCTION: "1"
+      - name: Prepare sanitized failure evidence
+        if: always()
+        run: node scripts/qa-ci-evidence.mjs
+      - name: Remove ephemeral CI services
+        if: always()
+        run: docker compose down --volumes
+  baselines:
+    # Regenerates the reviewed screenshot baselines on the same runner image that checks them,
+    # so font rasterization never produces a false failure. Dispatch the workflow on a branch
+    # with "refresh_baselines" after a deliberate visual change, then review the images in
+    # the pull request.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.refresh_baselines && github.ref != 'refs/heads/main' }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Configure isolated local services
+        run: node scripts/ci-local-services.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the pinned browser sandbox
+        run: node scripts/qa-browser-sandbox.mjs
+      - name: Build the standalone server
+        run: npm run build
+      - name: Regenerate the reviewed baselines
+        run: npx playwright test e2e/premium-visual.spec.ts --update-snapshots=all --reporter=line
+        env:
+          E2E_PRODUCTION: "1"
+      - name: Commit refreshed baselines
+        run: |
+          git config user.name "oNxZero"
+          git config user.email "68500381+oNxZero@users.noreply.github.com"
+          git add e2e/premium-visual.spec.ts-snapshots
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged."
+          else
+            git commit -m "Refresh visual baselines on the CI runner"
+            git pull --rebase --autostash origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
+          fi
       - name: Remove ephemeral CI services
         if: always()
         run: docker compose down --volumes

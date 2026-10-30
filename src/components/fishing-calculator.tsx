@@ -1,6 +1,6 @@
 "use client";
 import { CalculationReadiness } from "./calculation-readiness";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Fish, RefreshCw, Search } from "lucide-react";
 import { fishConversion, fishFame, type FishReference } from "@/lib/albion/fishing";
 import { cities } from "@/lib/albion/region-config";
@@ -37,6 +37,20 @@ export function FishingCalculator({
   const [saleBasis, setSaleBasis] = useState<"bid" | "ask">("bid");
   const [manual, setManual] = useState<Record<string, string>>({});
   const { quotes, busy, refresh } = useBatchQuotes(region);
+  // One batch covers every fish and chops across cities, so it loads once per server.
+  const refreshAll = () =>
+    refresh([
+      ...fish.map((f) => ({ itemId: f.id, quality: 1 })),
+      { itemId: "T1_FISHCHOPS", quality: 1 },
+    ]);
+  const refreshRef = useRef(refreshAll);
+  useEffect(() => {
+    refreshRef.current = refreshAll;
+  });
+  useEffect(() => {
+    const timer = window.setTimeout(() => void refreshRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [region]);
   const selected = fish.find((f) => f.id === selectedId) || fish[0];
   const prefix = `${region}:${city}:${selected.id}:`;
   const fieldKey = (key: string) => prefix + key;
@@ -231,15 +245,10 @@ export function FishingCalculator({
             type="button"
             className="button secondary"
             disabled={busy}
-            onClick={() =>
-              refresh([
-                ...fish.map((f) => ({ itemId: f.id, quality: 1 })),
-                { itemId: "T1_FISHCHOPS", quality: 1 },
-              ])
-            }
+            onClick={() => void refreshAll()}
           >
             <RefreshCw size={14} />
-            {busy ? "Checking markets…" : "Load fish observations"}
+            {busy ? "Checking markets…" : "Refresh fish observations"}
           </button>
         </div>
         {selectedQuote?.error && (

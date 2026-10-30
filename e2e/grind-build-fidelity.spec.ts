@@ -21,7 +21,8 @@ test("archived traits, alternate spells and creator links survive an independent
   await expect(traits.getByRole("heading", { name: "Cooldown Rate", exact: true })).toBeVisible();
   await expect(traits.getByRole("heading", { name: "Ability Damage", exact: true })).toBeVisible();
   await expect(traits.getByRole("heading", { name: "Defense vs. All", exact: true })).toBeVisible();
-  await page.locator("#build-notes > summary").click();
+  // Author notes open by default; the disclosure still toggles.
+  await expect(page.locator("#build-notes")).toHaveAttribute("open", "");
   await expect(page.getByRole("link", { name: /Recorded build video 1/ })).toHaveAttribute(
     "href",
     "https://www.youtube.com/watch?v=vtDHrCPH6c4",

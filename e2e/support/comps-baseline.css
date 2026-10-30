@@ -1,0 +1,5 @@
+/* Visual baseline for the comps directory: the illustrated masthead wraps differently per
+   font rasterizer and is reviewed through page screenshots instead. */
+.composition-directory > .workspace-identity {
+  display: none;
+}

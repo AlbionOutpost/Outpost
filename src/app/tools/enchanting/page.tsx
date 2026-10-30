@@ -9,6 +9,8 @@ export default async function Page({
   return (
     <div className="production-calculator-page">
       <WorkspaceHeading
+        glyph="enchant"
+        scene="economy"
         title="Enchanting calculator"
         description="Compare upgrade paths, ingredient costs and the value of your finished equipment."
       />

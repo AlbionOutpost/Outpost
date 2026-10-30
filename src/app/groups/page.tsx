@@ -1,3 +1,4 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -54,17 +55,17 @@ export default async function Groups({
     `/groups?${new URLSearchParams({ q, region, visibility, mine: mine ? "1" : "0", page: String(next) })}`;
   return (
     <div className="guild-discovery-page support-team-directory">
-      <header className="section-heading guild-discovery-heading">
-        <div>
-          <h1 className="page-title display-title">Teams</h1>
-          <p className="intro">
-            Find a team workspace or return to your own team’s events, builds and comps.
-          </p>
-        </div>
-        <Link href="/groups/new" className="button primary">
-          Create workspace
-        </Link>
-      </header>
+      <WorkspaceHeading
+        glyph="guild"
+        scene="comps"
+        title="Teams"
+        description="Find a team workspace or return to your own team’s events, builds and comps."
+        actions={
+          <Link href="/groups/new" className="button primary">
+            Create workspace
+          </Link>
+        }
+      />
       <nav className="team-collection-tabs" aria-label="Team collections">
         <Link href="/groups" aria-current={!mine ? "page" : undefined}>
           Discover teams

@@ -1,35 +1,27 @@
-@import "./home-market-terminal.css";
-
-/* Homepage composition follows the owner's cinematic reference. These local
-   surfaces do not retheme data workspaces or change their contracts. */
+/* Landing page: hero → three benefits → real product demo → featured builds → provenance →
+   final call to action. Uses the shared tokens; only the scenic hero carries its own dark
+   backing so the painted scene stays legible in both themes. */
 .app.outpost .support-home.home-cinematic {
-  --panel: #0e1a24;
-  --elevated: #152430;
-  --border: #2c3d49;
-  --text: #f2f3f4;
-  --muted: #b4c0cc;
-  --accent-ink: #ffa263;
   max-width: 1560px;
-  color: var(--text);
 }
 .app.outpost .home-cinematic .reference-hero {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  min-height: 344px;
-  padding: 24px 44px 32px;
-  margin: 0 -12px;
+  min-height: 360px;
+  padding: 28px 44px 36px;
+  margin: 0 -12px 20px;
   border: 0;
   border-radius: 0;
-  background: #08131c;
+  background: #0b0d12;
   isolation: isolate;
 }
 .app.outpost .home-cinematic .reference-hero-copy {
-  max-width: 510px;
+  max-width: 540px;
   z-index: 1;
 }
 .app.outpost .home-cinematic .reference-hero-copy h1 {
-  font: 800 clamp(64px, 5.4vw, 86px)/0.96 var(--font-display);
+  font: 800 clamp(64px, 5.4vw, 86px) / 0.96 var(--font-display);
   letter-spacing: -0.02em;
   text-transform: uppercase;
   margin-bottom: 20px;
@@ -40,10 +32,10 @@
   color: #ff964d;
 }
 .app.outpost .home-cinematic .reference-hero-copy > p {
-  max-width: 45ch;
-  font-size: 15px;
+  max-width: 48ch;
+  font-size: 16px;
   line-height: 1.6;
-  color: #c4cfda;
+  color: #d8d2cb;
   margin-bottom: 22px;
 }
 .app.outpost .home-cinematic .reference-hero-copy .actions {
@@ -56,24 +48,22 @@
   padding: 11px 18px;
   font-size: 14px;
 }
-.app.outpost .home-cinematic .button.primary {
-  background: linear-gradient(#ffab69, #ff873b);
-  color: #211409;
-  border-color: #f7a15f;
-  box-shadow: 0 3px 8px #0004;
-}
-.app.outpost .home-cinematic .button.primary:hover {
-  background: #ffb078;
-}
 .app.outpost .home-cinematic .reference-hero .button.secondary {
-  background: #10202ddd;
-  border-color: #52606c;
-  color: #f0f2f3;
+  background: #14171dcc;
+  border-color: #5a5358;
+  color: #f2eee9;
 }
 .app.outpost .home-cinematic .home-hero-atmosphere {
   inset: 0;
   opacity: 1;
   z-index: -1;
+}
+.app.outpost .home-cinematic .home-hero-atmosphere picture,
+.app.outpost .home-cinematic .home-hero-atmosphere img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 .app.outpost .home-cinematic .home-hero-atmosphere img {
   object-fit: cover;
@@ -82,23 +72,25 @@
 }
 .app.outpost .home-cinematic .home-hero-atmosphere::after {
   background:
-    linear-gradient(90deg, #07131ee6 0%, #07131e8c 29%, #07131e10 55%, transparent 78%),
-    linear-gradient(0deg, #08131c 0%, transparent 25%);
+    linear-gradient(90deg, #0b0d12e6 0%, #0b0d128c 30%, #0b0d1210 56%, transparent 78%),
+    linear-gradient(0deg, #0b0d12 0%, transparent 25%);
 }
-.app.outpost .home-cinematic .home-next-actions {
+
+/* Three benefits */
+.app.outpost .home-cinematic .home-benefits {
   position: relative;
-  margin: -16px 0 16px;
+  margin: 0 0 32px;
 }
 .app.outpost .home-cinematic .reference-feature-grid {
   gap: 14px;
 }
 .app.outpost .home-cinematic .reference-feature-grid > article {
   overflow: hidden;
-  min-height: 142px;
-  padding: 18px 122px 14px 64px;
+  min-height: 150px;
+  padding: 20px 20px 16px 68px;
   border: 1px solid var(--border);
-  border-radius: 7px;
-  background: linear-gradient(120deg, #14232e, #0a151f);
+  border-radius: var(--radius-md);
+  background: var(--panel);
 }
 .app.outpost .home-cinematic .reference-feature-grid > article::before {
   content: none;
@@ -109,250 +101,90 @@
   width: 40px;
   height: 44px;
   padding: 8px;
-  background: #0c1721;
-  border: 1px solid #3b4b57;
-  border-radius: 7px;
-  color: #ff9b57;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent-ink);
 }
 .app.outpost .home-cinematic .reference-feature-grid h3 {
   color: var(--text);
-  font-size: 16px;
+  font-size: 17px;
   margin-bottom: 8px;
 }
 .app.outpost .home-cinematic .reference-feature-grid p {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
   margin-bottom: 10px;
-  position: relative;
-  z-index: 1;
+  color: var(--muted);
 }
 .app.outpost .home-cinematic .reference-feature-grid .text-link {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   min-height: 26px;
 }
 .app.outpost .home-cinematic .reference-feature-grid .text-link:hover {
   text-decoration: underline;
 }
-.app.outpost .home-cinematic .destination-market-preview {
-  position: absolute;
-  inset: 28px 10px 18px auto;
-  width: 108px;
+
+/* Section headings shared by demo, picks and trust blocks */
+.app.outpost .home-cinematic .support-section-heading {
+  margin-bottom: 14px;
+}
+.app.outpost .home-cinematic .support-section-heading > div {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  transform: rotate(-8deg);
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
 }
-.app.outpost .home-cinematic .destination-market-preview > span:first-child {
-  align-self: flex-start;
+.app.outpost .home-cinematic .support-section-heading h2 {
+  font-size: 20px;
 }
-.app.outpost .home-cinematic .destination-market-preview > span:nth-child(2) {
-  align-self: flex-end;
-}
-.app.outpost .home-cinematic .destination-market-preview > svg {
-  position: absolute;
-  right: 1px;
-  top: 10px;
-  color: #ff9b57;
-}
-.app.outpost .home-cinematic .home-feature-equipment {
-  position: absolute;
-  top: 20px;
-  right: 12px;
+.app.outpost .home-cinematic .support-section-heading p {
   margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Real product demo */
+.app.outpost .home-cinematic .home-demo {
+  margin: 0 0 36px;
+}
+.app.outpost .home-cinematic .home-demo-figure {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  overflow: hidden;
+}
+.app.outpost .home-cinematic .home-demo-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid var(--border);
+}
+.app.outpost .home-cinematic .home-demo-figure figcaption {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.app.outpost .home-cinematic .home-demo-secondary {
   display: grid;
-  grid-template-columns: repeat(3, 33px);
-  gap: 4px;
-  transform: rotate(-9deg);
-}
-.app.outpost .home-cinematic .home-feature-equipment img {
-  width: 33px;
-  height: 33px;
-  border: 1px solid #3a4751;
-  border-radius: 4px;
-  background: #0b141c;
-}
-.app.outpost .home-cinematic .destination-party-preview {
-  position: absolute;
-  right: 12px;
-  bottom: 30px;
-  display: flex;
-  gap: 4px;
-}
-.app.outpost .home-cinematic .destination-party-preview > span {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 34px;
-  border: 1px solid #6e7883;
-  border-radius: 50%;
-  color: #8bc1f5;
-  background: #0a1720;
-}
-.app.outpost .home-cinematic .destination-party-preview > span:nth-child(2) {
-  color: #ff9b57;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
   margin-top: 14px;
 }
-.app.outpost .home-cinematic .destination-party-preview > span:nth-child(3) {
-  color: #72c6a7;
-}
-.app.outpost .home-cinematic .home-terminal {
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 14px;
-  align-items: stretch;
-  margin: 16px 0 22px;
-}
-.app.outpost .home-cinematic .home-market-query,
-.app.outpost .home-cinematic .home-market-observations {
-  padding: 18px;
-  border-radius: 7px;
-  background: linear-gradient(120deg, #12212d, #0c1822);
-}
-.app.outpost .home-cinematic .terminal-toolbar > span:first-child,
-.app.outpost .home-cinematic .home-market-observations > h2 {
-  font-size: 15px;
-  letter-spacing: 0.02em;
-  font-weight: 650;
-}
-.app.outpost .home-cinematic .terminal-toolbar > span:nth-child(2) {
-  font-size: 12px;
-}
-.app.outpost .home-cinematic .terminal-search .catalog-picker > label {
-  margin: 0 0 6px;
-  font-size: 12px;
-}
-.app.outpost .home-cinematic .terminal-search .catalog-picker {
-  margin: 0;
-}
-.app.outpost .home-cinematic .home-market-observations > p {
-  margin-bottom: 10px;
-}
-.app.outpost .home-cinematic .home-market-shortcuts {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-.app.outpost .home-cinematic .home-market-shortcuts button {
-  min-height: 28px;
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #172733;
-  color: #c4cfd8;
-  font-size: 12px;
-  cursor: pointer;
-}
-.app.outpost .home-cinematic .home-market-shortcuts button[aria-pressed="true"],
-.app.outpost .home-cinematic .home-market-shortcuts button:hover {
-  color: #ffc39a;
-  border-color: #b3754c;
-  background: #33281f;
-}
-.app.outpost .home-cinematic .terminal-item {
-  padding: 8px 0;
-  min-height: 0;
-}
-.app.outpost .home-cinematic .terminal-item h2 {
-  margin: 0 0 2px;
-}
-.app.outpost .home-cinematic .terminal-item > div > span {
-  line-height: 1.4;
-}
-.app.outpost .home-cinematic .terminal-item > img {
-  width: 34px;
-  height: 34px;
-}
-.app.outpost .home-cinematic .terminal-item h2 {
-  font-size: 14px;
-}
-.app.outpost .home-cinematic .terminal-source {
-  padding-top: 7px;
-}
-.app.outpost .home-cinematic .terminal-source > summary {
-  font-size: 12px;
-  min-height: 24px;
-}
-.app.outpost .home-cinematic .terminal-city-prices {
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  padding: 0;
-}
-.app.outpost .home-cinematic .terminal-city-prices .home-city-quote {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 5px;
-  align-content: start;
-  border: 1px solid #2c3d49;
-  border-radius: 5px;
-  background: #0a151e;
-  padding: 10px;
-  min-width: 0;
-}
-.app.outpost .home-cinematic .home-city-quote > img {
-  width: 30px;
-  height: 34px;
-}
-.app.outpost .home-cinematic .home-city-quote .terminal-city-name {
-  display: flex;
-  font-size: 12px;
-  white-space: normal;
-  min-height: 18px;
-  gap: 5px;
-}
-.app.outpost .home-cinematic .home-city-quote > .numeric {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: baseline;
-  gap: 2px;
-  text-align: left;
-  font-size: 12px;
-}
-.app.outpost .home-cinematic .home-quote-side {
-  font: 400 10px/1.4 var(--font-ui);
-  color: var(--muted);
-  grid-column: 1 / -1;
-}
-.app.outpost .home-cinematic .home-city-quote strong {
-  line-height: 1.3;
-  font-weight: 550;
-  font-size: 15px;
-}
-.app.outpost .home-cinematic .home-city-quote small {
-  font: 400 10px/1.4 var(--font-ui);
-  color: #c5b393;
-}
-.app.outpost .home-cinematic .home-price-recovery {
-  grid-column: 1 / -1;
-}
-.app.outpost .home-cinematic .home-library-picks .support-section-heading {
-  margin-bottom: 12px;
-}
-.app.outpost .home-cinematic .home-library-picks .support-section-heading > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 14px;
-}
-.app.outpost .home-cinematic .home-library-picks .support-section-heading h2 {
-  font-size: 16px;
-}
-.app.outpost .home-cinematic .home-library-picks .support-section-heading p {
-  margin: 0;
-  font-size: 12px;
+
+/* Featured builds */
+.app.outpost .home-cinematic .home-library-picks {
+  margin: 0 0 36px;
 }
 .app.outpost .home-cinematic .home-build-grid {
   gap: 12px;
 }
 .app.outpost .home-cinematic .home-build-grid .library-build-card {
   padding: 12px;
-  border-radius: 7px;
-  background: linear-gradient(125deg, #15232d, #0a151e);
+  border-radius: var(--radius-md);
+  background: var(--panel);
   border-color: var(--border);
 }
 .app.outpost .home-cinematic .home-build-grid .ecosystem-card-main {
@@ -376,7 +208,7 @@
 }
 .app.outpost .home-cinematic .home-build-grid .library-build-copy small,
 .app.outpost .home-cinematic .home-build-grid .library-build-classification {
-  font-size: 11px;
+  font-size: 12px;
 }
 .app.outpost .home-cinematic .home-build-grid .library-build-classification > span:first-child,
 .app.outpost .home-cinematic .home-build-grid .library-build-equipment,
@@ -396,65 +228,96 @@
   top: 7px;
   right: 7px;
 }
-/* Keep the theme control honest. The scenic hero has its own legible dark
-   backing; the functional sections follow the existing light palette. */
-.app.outpost.light .support-home.home-cinematic {
-  --panel: #fff;
-  --elevated: #f4f2ee;
-  --border: #b4bec4;
-  --text: #202b35;
-  --muted: #495966;
-  --accent-ink: #953d18;
-}
-.app.outpost.light .home-cinematic .reference-feature-grid > article,
-.app.outpost.light .home-cinematic .home-market-query,
-.app.outpost.light .home-cinematic .home-market-observations,
-.app.outpost.light .home-cinematic .home-city-quote,
-.app.outpost.light .home-cinematic .home-build-grid .library-build-card {
+
+/* Provenance */
+.app.outpost .home-cinematic .home-trust {
+  margin: 0 0 36px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   background: var(--panel);
 }
-.app.outpost.light .home-cinematic .home-market-shortcuts button {
-  background: #eee9e1;
-  color: #633716;
+.app.outpost .home-cinematic .home-trust > h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
 }
-.app.outpost.light .home-cinematic .home-city-quote small {
-  color: #6a502d;
+.app.outpost .home-cinematic .home-trust-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
+.app.outpost .home-cinematic .home-trust-grid li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: start;
+}
+.app.outpost .home-cinematic .home-trust-grid li > svg {
+  color: var(--accent-ink);
+  margin-top: 2px;
+}
+.app.outpost .home-cinematic .home-trust-grid h3 {
+  grid-column: 2;
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+.app.outpost .home-cinematic .home-trust-grid p {
+  grid-column: 2;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.app.outpost .home-cinematic .home-trust-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+/* Final call to action */
+.app.outpost .home-cinematic .home-final-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px 24px;
+  margin: 0 0 12px;
+  padding: 28px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--accent) 14%, var(--panel)),
+    var(--panel)
+  );
+}
+.app.outpost .home-cinematic .home-final-cta h2 {
+  margin: 0 0 6px;
+  font: 800 28px/1.1 var(--font-display);
+}
+.app.outpost .home-cinematic .home-final-cta p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+.app.outpost .home-cinematic .home-final-cta .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app.outpost .home-cinematic .home-final-cta .button {
+  min-height: 44px;
+  padding: 11px 18px;
+}
+
 @media (max-width: 1250px) {
-  .app.outpost .home-cinematic .reference-feature-grid > article {
-    padding: 18px 110px 16px 56px;
-  }
-  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
-    left: 12px;
-    width: 34px;
-    height: 38px;
-    padding: 7px;
-  }
-  .app.outpost .home-cinematic .home-feature-equipment {
-    grid-template-columns: repeat(2, 34px);
-  }
-  .app.outpost .home-cinematic .home-feature-equipment img {
-    width: 34px;
-    height: 34px;
-  }
-  .app.outpost .home-cinematic .destination-market-preview {
-    width: 88px;
-  }
-  .app.outpost .home-cinematic .destination-market-preview img {
-    width: 44px;
-    height: 44px;
-  }
-  .app.outpost .home-cinematic .destination-party-preview {
-    gap: 3px;
-    right: 8px;
-  }
-  .app.outpost .home-cinematic .destination-party-preview > span {
-    width: 27px;
-    height: 32px;
-  }
-  .app.outpost .home-cinematic .home-terminal {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  }
   .app.outpost .home-cinematic .home-build-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -463,50 +326,22 @@
   .app.outpost .home-cinematic .reference-feature-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .app.outpost .home-cinematic .reference-hero-copy {
-    margin-left: 0;
-  }
-}
-@media (min-width: 1100px) {
-  .app.outpost .home-cinematic .home-market-query {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-content: start;
-    gap: 0 12px;
-  }
-  .app.outpost .home-cinematic .terminal-toolbar,
-  .app.outpost .home-cinematic .terminal-item,
-  .app.outpost .home-cinematic .terminal-source {
-    grid-column: 1 / -1;
-  }
-  .app.outpost .home-cinematic .home-market-shortcuts {
-    max-width: 124px;
-    margin-top: 18px;
-    align-content: center;
-  }
-}
-@media (max-width: 1000px) {
   .app.outpost .home-cinematic .reference-feature-grid > article {
-    padding: 18px 18px 100px 56px;
+    padding-left: 60px;
   }
-  .app.outpost .home-cinematic .home-feature-equipment {
-    top: auto;
-    bottom: 12px;
-    grid-template-columns: repeat(3, 34px);
+  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
+    left: 12px;
+    width: 36px;
+    height: 40px;
   }
-  .app.outpost .home-cinematic .destination-market-preview {
-    top: auto;
-    bottom: 14px;
-    height: 68px;
-  }
-  .app.outpost .home-cinematic .home-terminal {
-    grid-template-columns: minmax(0, 1fr);
+  .app.outpost .home-cinematic .home-trust-grid {
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 700px) {
   .app.outpost .home-cinematic .reference-hero {
     min-height: 480px;
-    margin: 0 -12px;
+    margin: 0 -12px 16px;
     padding: 26px 16px 160px;
     align-items: start;
   }
@@ -522,7 +357,7 @@
     margin-bottom: 18px;
   }
   .app.outpost .home-cinematic .reference-hero .button {
-    font-size: 12px;
+    font-size: 13px;
     padding: 10px 12px;
     min-height: 42px;
   }
@@ -534,106 +369,36 @@
   }
   .app.outpost .home-cinematic .home-hero-atmosphere::after {
     background:
-      linear-gradient(180deg, #06131ee6, #06131ec2 40%, #06131e12 75%, #08131c),
-      linear-gradient(90deg, #07131e80, transparent 80%);
-  }
-  .app.outpost .home-cinematic .home-next-actions {
-    margin-top: -12px;
+      linear-gradient(180deg, #0b0d12e6, #0b0d12c2 40%, #0b0d1212 75%, #0b0d12),
+      linear-gradient(90deg, #0b0d1280, transparent 80%);
   }
   .app.outpost .home-cinematic .reference-feature-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
   .app.outpost .home-cinematic .reference-feature-grid > article {
-    min-height: 134px;
-    padding: 16px 118px 14px 56px;
+    min-height: 0;
+    padding: 16px 16px 14px 60px;
   }
-  .app.outpost .home-cinematic .reference-feature-grid h3 {
-    font-size: 15px;
+  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
+    left: 12px;
+    top: 18px;
+    width: 36px;
+    height: 40px;
   }
-  .app.outpost .home-cinematic .reference-feature-grid p {
-    font-size: 12px;
-  }
-  .app.outpost .home-cinematic .home-feature-equipment {
-    display: grid;
-    top: 26px;
-    bottom: auto;
-    right: 10px;
-    grid-template-columns: repeat(2, 34px);
-  }
-  .app.outpost .home-cinematic .destination-market-preview {
-    top: 30px;
-    bottom: 20px;
-  }
-  .app.outpost .home-cinematic .home-market-query,
-  .app.outpost .home-cinematic .home-market-observations {
-    padding: 14px;
-  }
-  .app.outpost .home-cinematic .terminal-city-prices {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .app.outpost .home-cinematic .home-city-quote {
-    position: relative;
-  }
-  .app.outpost .home-cinematic .home-city-quote > img {
-    position: absolute;
-    right: 6px;
-    top: 8px;
-    width: 30px;
-    height: 30px;
-  }
-  .app.outpost .home-cinematic .home-city-quote .terminal-city-name {
-    padding-right: 28px;
-    min-height: 34px;
-    align-items: start;
-  }
-  .app.outpost .home-cinematic .terminal-toolbar > span:first-child {
-    font-size: 14px;
-  }
-  .app.outpost .home-cinematic .terminal-toolbar > span:nth-child(2) {
-    font-size: 10px;
-  }
-  .app.outpost .home-cinematic .home-library-picks .support-section-heading {
-    align-items: start;
-  }
-  .app.outpost .home-cinematic .home-library-picks .support-section-heading > .text-link {
-    font-size: 12px;
-    white-space: nowrap;
-  }
+  .app.outpost .home-cinematic .home-demo-secondary,
+  .app.outpost .home-cinematic .home-trust-grid,
   .app.outpost .home-cinematic .home-build-grid {
     grid-template-columns: 1fr;
   }
-}
-@media (max-width: 360px) {
-  .app.outpost .home-cinematic .reference-feature-grid > article {
-    padding-right: 88px;
-    padding-left: 48px;
+  .app.outpost .home-cinematic .home-trust {
+    padding: 18px;
   }
-  .app.outpost .home-cinematic .reference-feature-grid > article > svg {
-    left: 8px;
-    width: 30px;
+  .app.outpost .home-cinematic .home-final-cta {
+    padding: 20px;
   }
-  .app.outpost .home-cinematic .home-feature-equipment {
-    grid-template-columns: repeat(2, 29px);
-    right: 6px;
-  }
-  .app.outpost .home-cinematic .home-feature-equipment img {
-    width: 29px;
-    height: 29px;
-  }
-  .app.outpost .home-cinematic .destination-party-preview {
-    flex-direction: column;
-    bottom: 10px;
-  }
-  .app.outpost .home-cinematic .destination-party-preview > span:nth-child(2) {
-    margin-top: 0;
-  }
-  .app.outpost .home-cinematic .destination-market-preview {
-    width: 65px;
-    right: 5px;
-  }
-  .app.outpost .home-cinematic .destination-market-preview img {
-    width: 34px;
-    height: 34px;
+  .app.outpost .home-cinematic .home-final-cta .actions,
+  .app.outpost .home-cinematic .home-final-cta .button {
+    width: 100%;
   }
 }

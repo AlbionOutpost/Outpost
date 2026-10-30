@@ -92,3 +92,40 @@ test("catalog release persists, filters, paginates and exposes honest provenance
     await db.catalogRelease.delete({ where: { id: release.id } });
   }
 });
+
+test("item detail loads city prices on arrival and links the item's variants", async ({ page }) => {
+  await page.route("**/api/market?*", (route) =>
+    route.fulfill({
+      json: {
+        region: "europe",
+        prices: [
+          {
+            item_id: "T4_MAIN_AXE",
+            city: "Lymhurst",
+            quality: 1,
+            sell_price_min: 2699,
+            sell_price_min_date: "2020-01-01T12:00:00",
+            sell_price_max: 0,
+            sell_price_max_date: "0001-01-01T00:00:00",
+            buy_price_min: 0,
+            buy_price_min_date: "0001-01-01T00:00:00",
+            buy_price_max: 0,
+            buy_price_max_date: "0001-01-01T00:00:00",
+          },
+        ],
+      },
+    }),
+  );
+  await page.goto("/items/T4_MAIN_AXE?region=europe");
+  const prices = page.getByRole("region", { name: "City price observations" });
+  await expect(prices).toContainText("Lymhurst");
+  await expect(prices).toContainText("2,699");
+  await expect(prices).toContainText("stale");
+  await expect(page.locator(".item-price-summary")).toContainText("Lowest sell order");
+  await expect(page.locator(".item-price-summary")).toContainText("Unavailable");
+  const variants = page.getByRole("region", { name: "Item variants" });
+  await expect(variants.locator(".item-variant-link.is-current")).toHaveCount(1);
+  await variants.getByRole("link", { name: /^800/ }).first().click();
+  await expect(page).toHaveURL(/\/items\/T4_MAIN_AXE@1/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Battleaxe");
+});

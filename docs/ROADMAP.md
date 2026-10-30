@@ -2,17 +2,27 @@
 
 The goal: the best Albion Online site ever made. Getting there means three things, in this order: **ship reliably** (green CI, real deploys, backups), **look world-class** (one coherent design system, fast on phones), and **go deeper than anyone** on the data and tools players actually use every day.
 
-Status as of 29 Oct 2026. Update this file when something ships, breaks or gets planned.
+Status as of 30 Oct 2026. Update this file when something ships, breaks or gets planned.
 
 ## Now — foundations
 
 | #   | Item                                                                                                                                                                                                                                                                                                                                                                         | Why                                                   |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 1   | **Fix CI on `main`.** The last deploy runs failed in the quality step (PR #6 merge `695bad4`, and `d3f7e9e`), so the latest rebuild is not live.                                                                                                                                                                                                                             | Nothing else ships until this is green                |
+| 1   | ~~Fix CI on `main`.~~ Done 30 Oct: the SQLite staging scripts no longer depend on `quote()` typing, the deploy token was replaced, and both workflows annotate the failing command.                                                                                                                                                                                          | Green and deploying                                   |
 | 2   | **Design system reset.** Replace the 31 layered global stylesheets (~600 KB on every route) with one token file, one component layer (button, input, card, item well, table, tabs, chip, dialog) and per-archetype route styles. Move to the navy + ember palette and illustrated mastheads chosen on 30 Oct (DESIGN.md), enforce the 12px text floor and the spacing scale. | Biggest single lever on polish, consistency and speed |
 | 3   | **Mobile speed.** Lab mobile LCP is 3.6–5.3 s on home, library, detail, market and crafting (target ≤2.5 s). Cut global CSS, check font and hero image loading, re-measure with a repeatable protocol.                                                                                                                                                                       | Phones are first-class users                          |
 | 4   | **Verify recovery.** After the next deploy, run `node scripts/cloudflare-recovery.mjs bookmark` once to confirm point-in-time recovery works on the Free plan. Email alerts for Worker errors, DDoS, SSL and abuse reports are on.                                                                                                                                           | Backups only count once a restore path is proven      |
 | 5   | **Legal page.** Operator name/contact and a privacy policy; then real Terms/Privacy URLs in the Discord portal.                                                                                                                                                                                                                                                              | Required for an account-holding site                  |
+
+## Shipped — launch pass (30 Oct)
+
+- Research-first market: the Market Explorer, price history and every calculator (crafting family, transport, farming, fishing, laborers) load observations for the current selection; manual prices are kept and the button only refreshes.
+- Item pages: city prices on arrival, every tier and enchantment, consuming recipes, public builds for weapons; enchanted item routes (`T4_MAIN_AXE@1`) decode correctly.
+- Market flipping leads with an item-picker route scanner (up to 25 items, margin and freshness per row, haul links); transport preselects cargo and route from links.
+- Build pages: an empty community list hands visitors the Build Library; loadout prices load when the section is in view; author strategy opens by default; scratch copies are kept out of related builds.
+- Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
+- Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
+- Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` lists hubs, tools, guides and the archived library (11.5k URLs, cached a day) and is referenced from `robots.txt`.
 
 ## Shipped — game data (30 Oct)
 
@@ -56,11 +66,9 @@ Status as of 29 Oct 2026. Update this file when something ships, breaks or gets 
 
 | ID           | Sev | Area         | Issue                                                                                                                                                                                                                             |
 | ------------ | --- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CI-MAIN      | P0  | CI           | Deploy workflow failing on `main` (see Now #1)                                                                                                                                                                                    |
 | PERF-002     | P1  | Performance  | Mobile LCP 3.6–5.3 s across key routes                                                                                                                                                                                            |
-| DES-ART      | P1  | Design       | Illustrated mastheads and destination-card art needed for Market, Builds, Comps, Tools, Guides and Teams (owner to supply)                                                                                                        |
+| DES-ART      | P2  | Design       | Mastheads ship on every hub with the five existing scenes; dedicated scenes for Teams, Guides and the Roads mapper would replace the shared ones (owner to supply)                                                                |
 | DES-CSS      | P1  | Design       | 31 global stylesheets, 7 redefine the palette; `home-fidelity.css` is dead; ~332 hex literals, 52 font sizes                                                                                                                      |
-| COPY-01      | P2  | Copy         | Homepage card titled "Composition Planner" — should be Comps                                                                                                                                                                      |
 | AUD-11       | P2  | A11y         | Unlabelled `<aside>` landmarks in fishing, team loot, guide directory, shopping and farming                                                                                                                                       |
 | QA-015       | P3  | Architecture | Direct `db.` reads in 14 page modules (e.g. builds/[id], builds/[id]/edit, compositions, compositions/new, dashboard, groups, groups/[slug], invitations/[token], players/[id], market-data, timers, items, items/[id], settings) |
 | QA-014       | P2  | Tooling      | ESLint 9 deprecated; v10 blocked by Next plugin peers                                                                                                                                                                             |

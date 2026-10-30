@@ -25,7 +25,7 @@
     "grind-builds.json": "155d3fce8602a3d89c732809874a4967d9f654fc862f5f4e04684bfca233e86c",
     "grind-compositions.json": "a21e94441162fd487d04d75af62334528ea345d97762ddfea099153d25674de3",
     "grind-fishing.json": "7f497cfabef815b54f00296f87369b47c8f575c482a1c920651189fff25d0198",
-    "grind-guide-media.json": "5ee45e08b302846e370ce6c22fd82b804536fdaba0530a44c37dcb83e86edc6f",
+    "grind-guide-media.json": "681fcda4790a02348125b3214adeda851a1d84bccafdcde234fe0025b6f56914",
     "grind-guides.json": "44011c08b1c669d2be50ddfcac0473682dab03dcd8936dfd112a86ced5e3f9bf",
     "grind-journal.json": "d2f792f6cc86f52f4bfec3c60a62d723f284a2ab44df0bd4f852a1c412a21c46",
     "grind-spell-names.json": "5f71e9cc3cf6bbac841ad76530b92b1af6508ddb0bbc0db569ab5716b13791c5",
@@ -49,5 +49,6 @@
       "original": "infernal-scythe-zvz-build",
       "slug": "infernal-scythe-zvz-build-40274828-c2aa-4e11-ba41-ca37978cac96"
     }
-  ]
+  ],
+  "mediaNote": "Guide media is resized to \u22641280px wide at quality 82 for page weight; the untouched originals and their hashes stay in the Scrape archive."
 }

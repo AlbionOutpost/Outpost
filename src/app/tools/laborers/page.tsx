@@ -5,6 +5,8 @@ export default function Page() {
   return (
     <>
       <WorkspaceHeading
+        glyph="labor"
+        scene="economy"
         title="Laborers calculator"
         description="Expected loot from full journals by laborer, journal tier and house tier, priced at your market."
       />

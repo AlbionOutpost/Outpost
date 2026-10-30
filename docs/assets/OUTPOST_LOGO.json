@@ -1,13 +1,15 @@
 {
   "asset": "Outpost banner logo",
   "source": "User-supplied image attachment, explicitly requested for site branding on 2026-10-26",
-  "path": "public/brand/outpost-logo.png",
-  "format": "PNG RGBA",
-  "width": 2172,
-  "height": 724,
-  "bytes": 1115199,
-  "sha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48",
-  "modifications": "None to stored original. Next Image serves resized display variants; CSS excludes transparent outer padding from the display frame and uses a charcoal backplate in light mode.",
+  "path": "public/brand/outpost-logo.webp",
+  "format": "WebP (lossy q90) resized from the PNG RGBA source",
+  "width": 640,
+  "height": 213,
+  "bytes": 35826,
+  "sha256": "23f6c1f7b4069ea0c687777b672ad8c690003f18046e3912576bda3dc9e211e6",
+  "modifications": "Resized to 640\u00d7213 WebP for delivery (the Cloudflare build serves images unoptimized, and the 1.1 MB original was the page's largest paint). The untouched original is kept in docs/assets. CSS excludes transparent outer padding from the display frame and uses a charcoal backplate in light mode.",
   "delivery": "Shared Wordmark component in header, mobile navigation drawer and footer",
-  "permission": "User instruction to use this supplied logo. No independent third-party license determination or game-scene permission implied."
+  "permission": "User instruction to use this supplied logo. No independent third-party license determination or game-scene permission implied.",
+  "sourcePath": "docs/assets/outpost-logo-source.png",
+  "sourceSha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48"
 }
