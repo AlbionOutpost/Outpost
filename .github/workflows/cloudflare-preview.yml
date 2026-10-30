@@ -80,10 +80,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          node scripts/cloudflare-free-check.mjs
-          npx wrangler deploy --config .qa/cloudflare-release/data.jsonc
-          npx wrangler deploy --config .qa/cloudflare-release/web.jsonc
+        run: node scripts/cloudflare-deploy.mjs
       - name: Check public HTTPS and report edge challenges separately
         env:
           OUTPOST_CI_REPORT_EDGE_CHALLENGE: "1"
