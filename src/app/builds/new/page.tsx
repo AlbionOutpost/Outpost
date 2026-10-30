@@ -4,6 +4,8 @@ import { BuildEditor } from "@/components/build-editor";
 import { findLibraryBuild, libraryBuildDraft } from "@/lib/grind-library";
 import Link from "@/components/link";
 import { regionSchema } from "@/lib/albion/region-config";
+// Editors are not search results; keep crawlers from spending the request budget here.
+export const metadata = { robots: { index: false, follow: false } };
 export default async function NewBuild({
   searchParams,
 }: {

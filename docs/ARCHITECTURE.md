@@ -21,7 +21,7 @@ flowchart LR
 
 - Redirects `www.` → apex (308).
 - Issues/validates an HMAC-signed `outpost-route` cookie (HttpOnly, SameSite=Lax, Secure, 30 min) and forwards the request to `SESSIONS.getByName(id)`.
-- **`OutpostSession` Durable Object** runs the whole OpenNext app for that browser session. Rendering inside a DO (instead of directly in the Worker) is what fixed the Free-tier CPU-limit failures (Error 1102). Each session has a budget of 240 requests/min (429 + `Retry-After` beyond that). The route cookie is valid for 30 minutes from issue and is not refreshed, so session objects rotate every 30 minutes regardless of activity (Discord login sessions are separate and last 14 days).
+- **`OutpostSession` Durable Object** runs the whole OpenNext app for that browser session. Rendering inside a DO (instead of directly in the Worker) is what fixed the Free-tier CPU-limit failures (Error 1102). Each session has an in-memory budget of 240 requests/min (429 + `Retry-After` beyond that); the object writes nothing to storage, so page views cost no Durable Object storage writes. The route cookie is valid for 30 minutes from issue and is not refreshed, so session objects rotate every 30 minutes regardless of activity (Discord login sessions are separate and last 14 days).
 - Bindings: `ASSETS`, `OUTPOST_DATA` (service → data Worker), `SESSIONS` (DO). Var `OUTPOST_RUNTIME=cloudflare`; release vars and secrets are listed in [OPERATIONS.md](OPERATIONS.md#runtime-configuration).
 - OpenNext caches are `dummy` (no ISR store); images are unoptimized; link prefetch is off by default (`src/components/link.tsx`) to protect CPU and request budgets.
 
@@ -43,6 +43,14 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 2. Everything else → web Worker → the browser's `OutpostSession` DO → Next (`src/proxy.ts` sets CSP and headers) → page or API route.
 3. Database calls become RPC to the data Worker: private models → `accounts-v1-eu`, catalog models → D1.
 4. Market/combat data is fetched from AODP / Game Info on demand and cached in the Workers Cache API (≤1 h).
+
+### Free-tier budget
+
+Free allows 100,000 Worker requests and 100,000 Durable Object requests per day (plus 5 M D1 rows read, 100 k rows written). Every dynamic request costs one web Worker invocation and one `OutpostSession` request; static assets cost nothing. To stay inside that:
+
+- Rate limits are per user (content writes, exports, settings) or per upstream region (AODP 50/min, Game Info 12/min) — never one site-wide budget for cached reads, which would block every visitor under load. Per-visitor flooding is handled by the session budget and the zone rate-limiting rule.
+- `robots.ts` keeps crawlers out of editors, account pages and the API; "use as template" links are `nofollow` and editors are `noindex`. On 29–30 Oct one crawler alone made 81 % of all Worker requests on `/builds/new` and `/compositions/new`.
+- Link prefetch stays off (`src/components/link.tsx`).
 
 ## Runtime swap
 

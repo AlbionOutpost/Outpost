@@ -7,6 +7,7 @@ export function ArchiveBuildCopyLink({ slug }: { slug: string }) {
   return (
     <Link
       className="button primary"
+      rel="nofollow"
       href={`/builds/new?${new URLSearchParams({ from: slug, region })}`}
     >
       Make this build yours

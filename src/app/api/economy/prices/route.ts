@@ -5,7 +5,6 @@ import { recipeFor } from "@/lib/albion/recipes";
 import "@/lib/albion/game/server-recipes";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
-import { rateLimit } from "@/lib/redis";
 import { productionOutputQuality } from "@/lib/albion/production";
 export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   const v = z
@@ -28,8 +27,6 @@ export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   } catch {
     throw new HttpError(400, "Unsupported recipe");
   }
-  if (!(await rateLimit("economy-prices", 60, 60)))
-    throw new HttpError(429, "Price request budget exhausted");
   const requests = [
     ...recipe.ingredients.map((i) => ({
       id: i.id,

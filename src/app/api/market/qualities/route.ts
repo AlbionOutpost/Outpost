@@ -5,17 +5,11 @@ import {
   summariseQualityAvailability,
 } from "@/lib/albion/market-availability";
 import { getPrices } from "@/lib/albion/market-client";
-import { rateLimit } from "@/lib/redis";
 
 export async function GET(req: NextRequest) {
   const parsed = qualityAvailabilityQuery.safeParse(Object.fromEntries(req.nextUrl.searchParams));
   if (!parsed.success)
     return NextResponse.json({ error: "Choose a valid server, item and city." }, { status: 400 });
-  if (!(await rateLimit("market-public", 120, 60)))
-    return NextResponse.json(
-      { error: "Request budget exhausted. Retry shortly." },
-      { status: 429, headers: { "Retry-After": "60" } },
-    );
   try {
     const { region, item, city } = parsed.data;
     const rows = await getPrices(region, [item], [1, 2, 3, 4, 5]);
