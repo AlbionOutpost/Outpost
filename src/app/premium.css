@@ -1,0 +1,69 @@
+/* Premium: the ad-free tier explained; no pricing until billing exists */
+.app.outpost .premium-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.app.outpost .premium-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.app.outpost .premium-grid article {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+.app.outpost .premium-grid svg {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  margin-bottom: 12px;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: var(--radius-md);
+}
+.app.outpost .premium-grid h2 {
+  margin: 0 0 6px;
+  font: 700 17px/1.3 var(--font-ui);
+}
+.app.outpost .premium-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.app.outpost .premium-status {
+  padding: 28px 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 60%
+    ),
+    var(--panel);
+}
+.app.outpost .premium-status h2 {
+  margin: 0 0 8px;
+  font: 800 28px/1.1 var(--font-display);
+}
+.app.outpost .premium-status p {
+  max-width: 60ch;
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.app.outpost .premium-status .landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+@media (max-width: 700px) {
+  .app.outpost .premium-grid {
+    grid-template-columns: 1fr;
+  }
+}

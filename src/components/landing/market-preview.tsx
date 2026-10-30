@@ -182,10 +182,6 @@ export function MarketPreview({
         <PreviewStatus>{prices.message} No prices have been substituted.</PreviewStatus>
       )}
       <Trend city={trendCity} state={trend} />
-      <p className="landing-preview-source">
-        Source: Albion Online Data Project, {regions[region].label} server · the same quotes the
-        Market Explorer shows.
-      </p>
     </div>
   );
 }

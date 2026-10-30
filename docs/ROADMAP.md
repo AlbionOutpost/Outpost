@@ -24,6 +24,13 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — landing page v3 (30 Oct)
+
+- `LoadoutBoard` (`src/components/loadout-board.tsx`, original slot glyphs in `loadout-glyphs.tsx`): the game's inventory arrangement with a silhouette, official renders and recorded abilities under each piece; sizes hero/card/mini. The hero shows the featured library build on it; Group Builds show a real composition as a party of mini boards.
+- Capability cards carry official item renders; trust cards sit on the owner's paintings; product-window actions live in the window footer; copy trimmed throughout.
+- Region picker: original globe marks and the game's server names (Albion Europe / West / East).
+- Advertising: `AdSlot` renders an AdSense unit only when `NEXT_PUBLIC_ADSENSE_CLIENT` is set (CSP origins follow the same switch); the "Go ad-free with Premium" offer links to `/premium`, which states that nothing is sold yet. Plan storage and admin grants are the next step.
+
 ## Shipped — landing page reconstruction (30 Oct)
 
 - The landing page is rebuilt as a product site: independent header, bounded hero with the owner's market-square painting and a live gold ticker, three product windows that run on the real endpoints (`/api/market`, `/api/history`, new `/api/economy/preview`), a Group Builds spotlight from a real library composition, a trust grid and a closing call to action. The six illustration tiles and six build tiles are gone; the tool catalog stays on `/tools`.

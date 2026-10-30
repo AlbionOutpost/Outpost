@@ -122,13 +122,29 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(actions.nth(0)).toHaveText(/Explore Tools/);
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
   await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
-  await expect(hero.locator(".landing-hero-art img")).toBeVisible();
   await expect(hero.locator(".gold-ticker strong")).toHaveText("9,900");
+
+  // The featured build sits on the game's loadout board: ten slots, recorded abilities under
+  // their pieces, nothing recorded for bag and mount.
+  const board = hero.locator(".landing-hero-build .loadout-board");
+  await expect(board.getByRole("listitem")).toHaveCount(10);
+  await expect(board.locator('[data-slot="Main hand"] .loadout-board-cell img')).toBeVisible();
+  await expect(board.locator('[data-slot="Main hand"] .loadout-board-abilities img')).toHaveCount(
+    3,
+  );
+  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
+  await expect(board.locator('[data-slot="Mount"]')).toHaveClass(/is-empty/);
+  await expect(hero.getByRole("link", { name: /Open build/ })).toHaveAttribute(
+    "href",
+    /\/builds\/library\/[a-z0-9-]+\?region=europe/,
+  );
 
   const benefits = page.getByRole("list", { name: "What Outpost does" }).getByRole("listitem");
   await expect(benefits).toHaveCount(4);
+  await expect(benefits.nth(0).locator(".landing-benefit-art img")).toHaveCount(3);
 
-  // Three product windows, loaded from the real endpoints once scrolled into view.
+  // Three product windows, loaded from the real endpoints once scrolled into view, each
+  // with its action inside the window footer.
   const previews = page.locator(".landing-preview");
   await expect(previews).toHaveCount(3);
   await previews.first().scrollIntoViewIfNeeded();
@@ -139,41 +155,39 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(market.locator("tbody tr").nth(2).locator("time")).toHaveClass(/is-stale/);
   await expect(market.locator(".market-preview-trend svg")).toBeVisible();
   await expect(market.locator(".market-preview-range")).toHaveText("3,400 – 3,900");
-  await expect(market.getByRole("link", { name: /Explore Market/ })).toHaveAttribute(
-    "href",
-    "/tools/market?item=T6_METALBAR&quality=1&region=europe",
-  );
+  await expect(
+    market.locator(".landing-preview-footer").getByRole("link", { name: /Explore Market/ }),
+  ).toHaveAttribute("href", "/tools/market?item=T6_METALBAR&quality=1&region=europe");
 
-  const build = previews.nth(1);
-  await expect(build.locator(".build-preview-title strong")).not.toBeEmpty();
-  await expect(build.getByRole("list", { name: "Equipment" }).getByRole("listitem")).toHaveCount(9);
-  await expect(build.locator(".build-preview-slot img").first()).toBeVisible();
-  await expect(build.getByRole("link", { name: /Open Build/ })).toHaveAttribute(
-    "href",
-    /\/builds\/library\/[a-z0-9-]+\?region=europe/,
-  );
-
-  const crafting = previews.nth(2);
+  const crafting = previews.nth(1);
   await expect(crafting.getByRole("list", { name: "Materials" }).getByRole("listitem")).toHaveCount(
     2,
   );
   await expect(crafting.locator(".crafting-preview-result")).toContainText("—");
   await expect(crafting.locator(".landing-preview-status")).toContainText(
-    "No Bridgewatch observation for Runite Steel Bar",
+    "No Bridgewatch price for Runite Steel Bar",
   );
   await expect(crafting.getByRole("link", { name: /Open Calculator/ })).toHaveAttribute(
     "href",
     "/tools/crafting?recipe=battleaxe-t6&region=europe",
   );
 
-  const group = page.locator(".group-preview");
-  await expect(
-    group.getByRole("list", { name: "Members" }).getByRole("listitem").first(),
-  ).toBeVisible();
-  await expect(group.locator(".group-preview-flag").first()).toHaveText("Required");
-  await expect(page.getByRole("link", { name: /Open Compositions/ })).toHaveAttribute(
+  // The group build is a party of mini boards, optional swaps beneath.
+  const group = previews.nth(2);
+  const party = group.getByRole("list", { name: "Required members" }).getByRole("listitem");
+  await expect(party.first()).toBeVisible();
+  await expect(party.first().locator(".loadout-board")).toBeVisible();
+  await expect(group.getByRole("list", { name: "Optional members" })).toBeVisible();
+  await expect(group.getByRole("link", { name: /Open Group Build/ })).toHaveAttribute(
     "href",
-    "/compositions/library?region=europe",
+    /\/compositions\/library\/[a-z0-9-]+\?region=europe/,
+  );
+
+  // Advertising stays off until configured; the ad-free offer is always there.
+  await expect(page.locator(".adsbygoogle")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Go ad-free with Premium" })).toHaveAttribute(
+    "href",
+    "/premium?region=europe",
   );
   await expect(page.locator(".landing-trust-grid li")).toHaveCount(4);
   await expect(page.locator(".landing-cta h2")).toHaveText(
@@ -191,16 +205,39 @@ test("landing page: independent header, bounded hero, live previews and a struct
   );
   await expect(footer).toContainText("Albion Online Data Project");
 
+  // Region picker: every server named, the current one marked.
+  await page.getByRole("combobox", { name: "Albion region" }).click();
+  const options = page.getByRole("listbox", { name: "Game servers" }).getByRole("option");
+  await expect(options).toHaveCount(3);
+  await expect(options.nth(0)).toContainText("Albion Europe");
+  await expect(options.nth(0)).toHaveAttribute("aria-selected", "true");
+  await expect(options.nth(1)).toContainText("Albion West");
+  await page.keyboard.press("Escape");
+
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
   }
-  // Phones keep the sell column and hide the buy column rather than scrolling sideways.
+  // Phones keep the sell column and hide the buy column, and list the party instead of
+  // showing a strip of boards.
   await page.setViewportSize({ width: 390, height: 900 });
   await expect(market.locator("thead th").nth(2)).toBeHidden();
   await expect(market.locator("thead th").nth(1)).toBeVisible();
+  await expect(group.getByRole("list", { name: "Required members" })).toBeHidden();
+  await expect(group.getByRole("list", { name: "Members" })).toBeVisible();
+});
+
+test("premium page explains the ad-free tier without selling anything yet", async ({ page }) => {
+  await page.goto("/premium?region=europe");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Outpost without ads");
+  await expect(page.getByRole("heading", { name: "Not for sale yet" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Sign in with Discord/ })).toHaveAttribute(
+    "href",
+    "/signin?region=europe",
+  );
+  await expect(page.locator("body")).not.toContainText(/\$|€|per month/);
 });
 
 test("robots points crawlers at a sitemap of public pages and keeps editors out", async ({

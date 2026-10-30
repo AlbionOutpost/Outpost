@@ -1,0 +1,100 @@
+/* Loadout board: the game's inventory arrangement with the recorded pieces as renders and
+   their active abilities beneath. Sizes: hero (landing hero), card (windows), mini (party). */
+.app.outpost .loadout-board {
+  --cell: 72px;
+  --gap: 10px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell));
+  justify-content: center;
+  gap: var(--gap);
+  padding: 8px 0;
+  isolation: isolate;
+}
+.app.outpost .loadout-board.is-card {
+  --cell: 60px;
+  --gap: 8px;
+}
+.app.outpost .loadout-board.is-mini {
+  --cell: 40px;
+  --gap: 5px;
+  padding: 0;
+}
+.app.outpost .loadout-board-figure {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: -1;
+  width: calc(var(--cell) * 1.55);
+  height: calc(var(--cell) * 4 + var(--gap) * 2 + 24px);
+  transform: translateX(-50%);
+  color: var(--text);
+  opacity: 0.1;
+}
+.app.outpost .loadout-board.is-mini .loadout-board-figure {
+  height: calc(var(--cell) * 3 + var(--gap) * 2 + 8px);
+  opacity: 0.12;
+}
+.app.outpost .loadout-board-column {
+  display: grid;
+  align-content: start;
+  gap: var(--gap);
+}
+.app.outpost .loadout-board-slot {
+  display: grid;
+  grid-template-rows: var(--cell) auto;
+  justify-items: center;
+  gap: 4px;
+}
+/* Rows stay aligned across columns: every slot reserves the ability strip */
+.app.outpost .loadout-board-abilities {
+  display: flex;
+  gap: 3px;
+  height: calc(var(--cell) / 3 - 2px);
+}
+.app.outpost .loadout-board.is-mini .loadout-board-slot {
+  grid-template-rows: var(--cell);
+}
+.app.outpost .loadout-board-cell {
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: var(--cell);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--elevated) 85%, transparent);
+  box-shadow: inset 0 1px 0 #ffffff08;
+}
+.app.outpost .loadout-board-cell img {
+  width: 88%;
+  height: 88%;
+  filter: drop-shadow(0 4px 6px #0008);
+}
+.app.outpost .loadout-board-slot.is-empty .loadout-board-cell {
+  border-style: dashed;
+  background: transparent;
+  color: var(--muted);
+}
+.app.outpost .loadout-board-slot.is-empty svg {
+  width: 44%;
+  height: 44%;
+  opacity: 0.7;
+}
+.app.outpost .loadout-board-abilities > span {
+  display: grid;
+  place-items: center;
+  width: calc(var(--cell) / 3 - 2px);
+  height: calc(var(--cell) / 3 - 2px);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--elevated);
+  overflow: hidden;
+}
+.app.outpost .loadout-board-abilities img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.app.outpost .loadout-board.is-hero .loadout-board-abilities > span {
+  border-radius: 6px;
+}

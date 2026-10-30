@@ -180,22 +180,21 @@ export function CraftingPreview({
       </dl>
       {data && (
         <p className="crafting-preview-assumptions">
-          <span>Assumptions:</span> {data.assumptions.useFocus ? "focus" : "no focus"},{" "}
-          {data.assumptions.returnRate}% returns, {data.assumptions.tax}% tax,{" "}
-          {data.assumptions.setupFee}% setup fee, {data.assumptions.stationFee} silver station fee —
-          all editable in the calculator.
+          <span>Assumes</span> {data.assumptions.useFocus ? "focus" : "no focus"} ·{" "}
+          {data.assumptions.returnRate}% returns · {data.assumptions.tax}% tax ·{" "}
+          {data.assumptions.setupFee}% setup fee
         </p>
       )}
       {data && !data.complete && (
         <PreviewStatus>
-          No {data.assumptions.city} observation for{" "}
+          No {data.assumptions.city} price for{" "}
           {data.missing
             .map(
               (id) =>
                 data.rows.find((r) => r.id === id)?.name ?? (id === output ? data.recipe.name : id),
             )
             .join(", ")}
-          ; the result stays missing rather than estimated.
+          , so the result stays missing.
         </PreviewStatus>
       )}
       {data?.complete && profit != null && (
@@ -203,18 +202,10 @@ export function CraftingPreview({
           {profit < 0
             ? "Buying beats crafting at these prices."
             : "Crafting beats buying at these prices."}
+          {data.stale ? " Some quotes are over an hour old." : ""}
         </p>
       )}
-      {data?.complete && data.stale && (
-        <PreviewStatus>
-          Some quotes are older than an hour; the calculator refreshes them before you commit.
-        </PreviewStatus>
-      )}
       {state.status === "error" && <PreviewStatus>{state.message}</PreviewStatus>}
-      <p className="landing-preview-source">
-        Source: Albion Online Data Project · run through the same production service as the
-        calculator.
-      </p>
     </div>
   );
 }

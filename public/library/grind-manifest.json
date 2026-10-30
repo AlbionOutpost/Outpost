@@ -22,14 +22,8 @@
     "evidence/pages/guides__market-flipping-guide.html": "c0acdaff9b2f28f516ae19545f8baa3c27cb038b3a2c1a77a629b9dcc93972f7"
   },
   "outputSha256": {
-    "grind-builds.json": "155d3fce8602a3d89c732809874a4967d9f654fc862f5f4e04684bfca233e86c",
-    "grind-compositions.json": "a21e94441162fd487d04d75af62334528ea345d97762ddfea099153d25674de3",
-    "grind-fishing.json": "7f497cfabef815b54f00296f87369b47c8f575c482a1c920651189fff25d0198",
-    "grind-guide-media.json": "681fcda4790a02348125b3214adeda851a1d84bccafdcde234fe0025b6f56914",
-    "grind-guides.json": "44011c08b1c669d2be50ddfcac0473682dab03dcd8936dfd112a86ced5e3f9bf",
-    "grind-journal.json": "d2f792f6cc86f52f4bfec3c60a62d723f284a2ab44df0bd4f852a1c412a21c46",
-    "grind-spell-names.json": "5f71e9cc3cf6bbac841ad76530b92b1af6508ddb0bbc0db569ab5716b13791c5",
-    "grind-traits.json": "9b292ac3c4df4c84e8724a107a15d68dabcc11b4c26f3202f5e116039b386177"
+    "grind-builds.json": "bad9dcd5a87d8d27a23422ad97f4ced5e6626ed488b4ab3d7bb85767e83c98d8",
+    "grind-compositions.json": "a6118517e3a987b8adb564b24541735617772bf408c6e28f6476c91bcfb0d3fd"
   },
   "currentPatchVerified": false,
   "guideWidgetsRestored": false,
@@ -50,5 +44,10 @@
       "slug": "infernal-scythe-zvz-build-40274828-c2aa-4e11-ba41-ca37978cac96"
     }
   ],
-  "mediaNote": "Guide media is resized to \u22641280px wide at quality 82 for page weight; the untouched originals and their hashes stay in the Scrape archive."
+  "mediaNote": "Guide media is resized to ≤1280px wide at quality 82 for page weight; the untouched originals and their hashes stay in the Scrape archive.",
+  "upvotes": {
+    "importedAt": "2026-10-30",
+    "source": "Owner archive public-builds.csv / public-group-builds.csv upvote_count",
+    "records": 11452
+  }
 }
