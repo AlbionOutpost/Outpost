@@ -14,7 +14,7 @@ on:
         type: string
         default: live-regions
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -106,6 +106,8 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.refresh_baselines && github.ref != 'refs/heads/main' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 30
+    permissions:
+      contents: write
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
