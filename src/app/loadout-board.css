@@ -2,7 +2,7 @@
    their active abilities beneath. Sizes: hero (landing hero), card (windows), mini (party). */
 .app.outpost .loadout-board {
   --cell: 72px;
-  --gap: 10px;
+  --gap: 14px;
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, var(--cell));
@@ -13,29 +13,33 @@
 }
 .app.outpost .loadout-board.is-card {
   --cell: 60px;
-  --gap: 8px;
+  --gap: 12px;
 }
 .app.outpost .loadout-board.is-mini {
   --cell: 40px;
-  --gap: 5px;
+  --gap: 8px;
   padding: 0;
 }
+/* The figure is centred on the middle column: head in the head slot, feet in the boots */
+/* The figure is centred in the 3×3 block, head in the head slot, feet in the boots */
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.075);
   z-index: -1;
-  width: calc(var(--cell) * 1.55);
-  height: calc(var(--cell) * 4 + var(--gap) * 2 + 24px);
+  width: auto;
+  height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.92);
+  max-width: none;
   transform: translateX(-50%);
-  color: var(--text);
-  opacity: 0.1;
+  opacity: 0.3;
+  pointer-events: none;
 }
 .app.outpost .loadout-board.is-mini .loadout-board-figure {
-  height: calc(var(--cell) * 3 + var(--gap) * 2 + 8px);
-  opacity: 0.12;
+  top: 0;
+  opacity: 0.25;
 }
 .app.outpost .loadout-board-column {
+  position: relative;
   display: grid;
   align-content: start;
   gap: var(--gap);
@@ -75,10 +79,13 @@
   background: transparent;
   color: var(--muted);
 }
-.app.outpost .loadout-board-slot.is-empty svg {
-  width: 44%;
-  height: 44%;
-  opacity: 0.7;
+/* Marks sit smaller than item renders; the selector outranks the render rule above */
+.app.outpost .loadout-board-cell img.loadout-board-mark {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  filter: none;
+  opacity: 0.55;
 }
 .app.outpost .loadout-board-abilities > span {
   display: grid;

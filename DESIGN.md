@@ -234,7 +234,7 @@ One header on every route: logo · Market · Builds · Comps · Tools ▾ · Gui
 
 ### Equipment board (signature component)
 
-The anatomical 10-slot inventory (`inventory-equipment-board.tsx`) mirrors the [in-game layout](docs/design/references/in-game-inventory.png): head/chest/shoes in the centre column, main/off hand either side, bag, cape, potion, food and mount around it. Empty slots may show faint catalog art marked "Empty" and never count as equipped.
+The anatomical 10-slot inventory (`inventory-equipment-board.tsx`) mirrors the [in-game layout](docs/design/references/in-game-inventory.png): equal wells (72px, 14px gaps), head/chest/boots in the centre column over the owner's figure mark, main/off hand either side, bag, cape, potion, food and mount around it. Empty supply slots show the owner's slot marks (`public/albion/slots/*.svg`, neutral grey at 70% of the well); head, chest, boots and the hands stay as empty dashed wells. Slot names are kept for assistive tech, not shown.
 
 The read-only counterpart is `LoadoutBoard` (`src/components/loadout-board.tsx`): the same arrangement with a faint silhouette behind, official renders for recorded pieces, the recorded active abilities on a strip under each piece, and original line glyphs (`loadout-glyphs.tsx`: bag, helmet, cape, main hand, chest, off hand, potion, boots, food, mount) for slots nothing was recorded for. Sizes `hero` (landing), `card` (windows) and `mini` (party strips, no abilities). Use it wherever a build is shown but not edited.
 

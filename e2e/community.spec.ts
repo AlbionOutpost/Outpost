@@ -72,7 +72,9 @@ test("community favorites, votes, comments and moderation enforce independent-ac
     const comment = await db.contentComment.findFirstOrThrow({
       where: { buildId, authorId: users[1] },
     });
-    expect(await page.locator("main img:not([data-albion-icon])").count()).toBe(0);
+    expect(
+      await page.locator("main img:not([data-albion-icon]):not([data-slot-mark])").count(),
+    ).toBe(0);
     expect(
       (
         await post(2, {
