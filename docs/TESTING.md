@@ -53,4 +53,4 @@ Real Discord OAuth lifecycle, physical devices and screen readers, Firefox/WebKi
 
 ## Visual baselines
 
-`e2e/premium-visual.spec.ts` compares the build editor, the comps directory and the navigation drawer against committed screenshots. Font rasterization differs between machines, so after a deliberate visual change regenerate the baselines on the CI runner instead of locally: run the manual **Visual baselines** workflow (`.github/workflows/visual-baselines.yml`) on your branch; it commits the refreshed images to that branch for review in the pull request.
+`e2e/premium-visual.spec.ts` compares the build editor, the comps directory and the navigation drawer against committed screenshots. Font rasterization differs between machines, so after a deliberate visual change regenerate the baselines on the CI runner instead of locally: dispatch the **Quality gates** workflow on your branch with `refresh_baselines` enabled; its `baselines` job commits the refreshed images to that branch for review in the pull request.
