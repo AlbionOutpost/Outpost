@@ -118,16 +118,21 @@ test("design review covers application pages, equipment, guilds and reduced moti
               : /inter/i,
           );
           if (route === "/tools/market") {
-            await page.getByRole("button", { name: "Refresh prices", exact: true }).click();
+            // Prices load on arrival; wait for the settled table before reading its styles.
             await expect(
               page.getByRole("button", { name: "Caerleon market details", exact: true }),
             ).toBeVisible();
-            expect(
-              await page
-                .locator("td.numeric")
-                .first()
-                .evaluate((el) => getComputedStyle(el).fontFamily),
-            ).toMatch(/geistMono/i);
+            await expect(
+              page.getByRole("button", { name: "Refresh prices", exact: true }),
+            ).toBeEnabled();
+            await expect
+              .poll(() =>
+                page
+                  .locator("td.numeric")
+                  .first()
+                  .evaluate((el) => getComputedStyle(el).fontFamily),
+              )
+              .toMatch(/geistMono/i);
           }
           if (route === "/builds/new") {
             await page
