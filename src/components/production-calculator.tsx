@@ -163,9 +163,8 @@ export function ProductionCalculator({
     );
   const recipe = recipeFor(configuration);
   const enchantFamily = enchantable.find((f) => f.code === draft.enchantFamily);
-  const browseRecipes =
-    searchResults?.recipes ??
-    recipes.filter((r) => r.kind === kind && (!category || r.category === category));
+  // Only show game-data results so the list never flips between two naming schemes mid-search.
+  const browseRecipes = searchResults?.recipes ?? [];
   let result: ReturnType<typeof production> | null = null;
   let validation = "";
   try {
@@ -326,6 +325,7 @@ export function ProductionCalculator({
                 {r.id === draft.recipeId && <CircleCheck size={15} aria-hidden="true" />}
               </button>
             ))}
+            {!searchResults && !searchError && <p role="status">Loading recipes…</p>}
             {searchResults && !searchResults.recipes.length && (
               <p role="status">No recipe matches. Try another item name.</p>
             )}
