@@ -1,7 +1,7 @@
 import { mechanicsProfile } from "./production-profile";
 import { z } from "zod";
 import { regionSchema, cities } from "./region-config";
-import { recipeFor, recipes } from "./recipes";
+import { recipeFor, findRecipe } from "./recipes";
 import { isStale } from "./freshness";
 export const observation = z.object({
   value: z.number().nonnegative().max(1e12).nullable(),
@@ -31,7 +31,7 @@ export const productionSchema = z
     tax: z.number().min(0).max(100),
     setupFee: z.number().min(0).max(100),
     enchantFamily: z.string().max(60),
-    tier: z.number().int().min(4).max(8),
+    tier: z.number().int().min(1).max(8),
     fromEnchant: z.number().int().min(0).max(2),
     toEnchant: z.number().int().min(1).max(3),
   })
@@ -56,7 +56,8 @@ export function productionOutputQuality(
   const consumable =
     v.kind === "crafting" &&
     v.recipeId &&
-    recipes.find((r) => r.id === v.recipeId && r.kind === v.kind)?.category;
+    findRecipe(v.recipeId)?.kind === v.kind &&
+    findRecipe(v.recipeId)?.category;
   return v.kind === "refining" || consumable ? 1 : v.quality;
 }
 /** Historical focus-efficiency model; fractional estimate, not station rounding or current spec coefficients. */
@@ -109,11 +110,13 @@ export function production(input: ProductionInput) {
     const unit = price(i.id, i.quality === "selected" ? v.quality : 1, v.materialCity),
       quantity = i.quantity * v.batches;
     const gross = unit === null ? null : unit * quantity;
-    const returned = gross !== null && v.returns[i.id] ? gross * rate : 0;
+    // Artifacts, tokens and enchanting inputs are never returned, whatever the saved flags say.
+    const eligible = !!v.returns[i.id] && i.returnable !== false;
+    const returned = gross !== null && eligible ? gross * rate : 0;
     if (gross !== null) {
       grossMaterials += gross;
       returnCredit += returned;
-      if (v.returns[i.id]) baseReturnCredit += (gross * v.returnRate) / 100;
+      if (eligible) baseReturnCredit += (gross * v.returnRate) / 100;
     }
     return { ...i, quantity, unit, gross, returnCredit: returned };
   });

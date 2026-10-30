@@ -48,7 +48,7 @@ rows=[];size=len(prefix)
 for collection in source:
  for record in collection['rows']:
   values=db.execute('SELECT '+','.join(['quote(?)']*len(names)),[record[n] for n in names]).fetchone()
-  row='('+','.join(values)+')'
+  row='('+','.join(map(str,values))+')'
   if len(row.encode())>80000:raise ValueError('Archive entry exceeds statement budget')
   if rows and (size+len(row.encode())>85000 or len(rows)>=40):out.append(prefix+','.join(rows)+';');rows=[];size=len(prefix)
   rows.append(row);size+=len(row.encode())+1
@@ -56,7 +56,7 @@ if rows:out.append(prefix+','.join(rows)+';')
 manifests=[]
 for collection in source:
  values=db.execute('SELECT quote(?),quote(?),quote(?),quote(?)',[collection['kind'],collection['checksum'],len(collection['rows']),json.dumps(collection['categories'],separators=(',',':'))]).fetchone()
- manifests.append('INSERT OR REPLACE INTO OwnedLibraryManifest(kind,checksum,total,categories) VALUES ('+','.join(values)+');')
+ manifests.append('INSERT OR REPLACE INTO OwnedLibraryManifest(kind,checksum,total,categories) VALUES ('+','.join(map(str,values))+');')
 print(json.dumps({'statements':out,'manifests':manifests}))
 `,
   ],

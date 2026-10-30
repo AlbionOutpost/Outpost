@@ -10,14 +10,20 @@ import { useRouter } from "next/navigation";
 import Link from "@/components/link";
 import { useAtlasRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
-import { recipes, recipeFor, enchantable } from "@/lib/albion/recipes";
+import {
+  recipes,
+  recipeFor,
+  enchantable,
+  findRecipe,
+  registerRecipes,
+  type Recipe,
+} from "@/lib/albion/recipes";
 import {
   initialProduction,
   production,
   productionSchema,
   returnRateFromBonus,
   productionOutputQuality,
-  estimatedFocusCost,
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
@@ -41,21 +47,64 @@ export function ProductionCalculator({
   const [draft, setDraft] = useState(() => ({
     ...initialProduction(kind, region),
     ...(category ? { recipeId: recipes.find((r) => r.category === category)!.id } : {}),
-    ...(initialRecipeId &&
-    recipes.some(
-      (recipe) =>
-        recipe.id === initialRecipeId &&
-        recipe.kind === kind &&
-        (!category || recipe.category === category),
-    )
-      ? { recipeId: initialRecipeId }
-      : {}),
+    ...(initialRecipeId && kind !== "enchanting" ? { recipeId: initialRecipeId } : {}),
   }));
-  const availableRecipes = recipes.filter(
-    (r) => r.kind === kind && (!category || r.category === category),
-  );
   const [error, setError] = useState("");
   const [recipeSearch, setRecipeSearch] = useState("");
+  const [searchTier, setSearchTier] = useState(4);
+  const [searchResults, setSearchResults] = useState<{ total: number; recipes: Recipe[] } | null>(
+    null,
+  );
+  const [searchError, setSearchError] = useState("");
+  const [, setRecipeVersion] = useState(0);
+  const recipeKnown = kind === "enchanting" || !!findRecipe(draft.recipeId);
+  const [recipeMissing, setRecipeMissing] = useState(false);
+  // Saved scenarios and links can name any recipe in the game data; fetch it on demand.
+  useEffect(() => {
+    if (recipeKnown) return;
+    const controller = new AbortController();
+    fetch(`/api/recipes/${encodeURIComponent(draft.recipeId)}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("missing");
+        const body = (await response.json()) as { recipe: Recipe; alternatives: Recipe[] };
+        registerRecipes([body.recipe, ...body.alternatives]);
+        setRecipeVersion((v) => v + 1);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setRecipeMissing(true);
+      });
+    return () => controller.abort();
+  }, [recipeKnown, draft.recipeId]);
+  useEffect(() => {
+    if (kind === "enchanting") return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      const query = new URLSearchParams({
+        kind,
+        category: category ?? "equipment",
+        limit: "60",
+        ...(recipeSearch.trim().length >= 2
+          ? { q: recipeSearch.trim() }
+          : { tier: String(searchTier) }),
+      });
+      fetch(`/api/recipes?${query}`, { signal: controller.signal })
+        .then(async (response) => {
+          if (!response.ok) throw new Error("Recipe search is unavailable");
+          const body = (await response.json()) as { total: number; recipes: Recipe[] };
+          registerRecipes(body.recipes);
+          setSearchResults(body);
+          setSearchError("");
+        })
+        .catch((e) => {
+          if (!controller.signal.aborted)
+            setSearchError(e instanceof Error ? e.message : "Recipe search is unavailable");
+        });
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [kind, category, recipeSearch, searchTier]);
   const [recipePickerOpen, setRecipePickerOpen] = useState(false);
   const modeNavigation = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -82,7 +131,6 @@ export function ProductionCalculator({
   const request = useRef<AbortController | null>(null);
   const [overwrite, setOverwrite] = useState(false);
   const [bonus, setBonus] = useState(0);
-  const [efficiency, setEfficiency] = useState(0);
   const configuration = { ...draft, region };
   const outputQuality = productionOutputQuality(configuration);
   const requestKey = productionPriceQuery(configuration);
@@ -93,7 +141,31 @@ export function ProductionCalculator({
     },
     [requestKey],
   );
+  if (!recipeKnown)
+    return (
+      <div className="production-journey premium-production">
+        <section className="panel" role="status">
+          {recipeMissing ? (
+            <>
+              <h2>Recipe not found</h2>
+              <p className="muted">
+                This link or saved scenario names a recipe that is not in the game data.
+              </p>
+              <Link className="button secondary" href={`/tools/${category || kind}`}>
+                Start with the default recipe
+              </Link>
+            </>
+          ) : (
+            <p>Loading recipe…</p>
+          )}
+        </section>
+      </div>
+    );
   const recipe = recipeFor(configuration);
+  const enchantFamily = enchantable.find((f) => f.code === draft.enchantFamily);
+  const browseRecipes =
+    searchResults?.recipes ??
+    recipes.filter((r) => r.kind === kind && (!category || r.category === category));
   let result: ReturnType<typeof production> | null = null;
   let validation = "";
   try {
@@ -197,7 +269,11 @@ export function ProductionCalculator({
     <aside className="production-recipe-browser" aria-label="Recipe browser">
       <div className="recipe-browser-title">
         <h2>{kind === "enchanting" ? "Equipment" : "Recipe library"}</h2>
-        <span>{kind === "enchanting" ? enchantable.length : availableRecipes.length}</span>
+        <span>
+          {kind === "enchanting"
+            ? enchantable.length
+            : (searchResults?.total ?? browseRecipes.length).toLocaleString()}
+        </span>
       </div>
       <label className="recipe-browser-search">
         {kind === "enchanting" ? "Find equipment" : "Find a recipe"}
@@ -212,18 +288,15 @@ export function ProductionCalculator({
       {kind !== "enchanting" && (
         <>
           <div className="recipe-tier-options" role="group" aria-label="Recipe tier">
-            {[4, 5, 6, 7, 8].map((tier) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((tier) => (
               <button
                 type="button"
                 key={tier}
                 aria-label={`Browse T${tier} recipes`}
-                aria-pressed={Number(recipe.output.match(/^T(\d)_/)?.[1]) === tier}
+                aria-pressed={!recipeSearch && searchTier === tier}
                 onClick={() => {
-                  const same = availableRecipes.find(
-                    (r) =>
-                      r.kind === kind && r.output === recipe.output.replace(/^T\d_/, `T${tier}_`),
-                  );
-                  if (same) update("recipeId", same.id);
+                  setRecipeSearch("");
+                  setSearchTier(tier);
                 }}
               >
                 T{tier}
@@ -231,58 +304,39 @@ export function ProductionCalculator({
             ))}
           </div>
           <div className="recipe-browser-list">
-            {availableRecipes
-              .filter(
-                (r) =>
-                  r.kind === kind &&
-                  (recipeSearch
-                    ? r.name.toLowerCase().includes(recipeSearch.toLowerCase())
-                    : r.output.slice(0, 2) === recipe.output.slice(0, 2)),
-              )
-              .map((r) => (
-                <button
-                  type="button"
-                  key={r.id}
-                  aria-pressed={r.id === draft.recipeId}
-                  onClick={() => {
-                    update("recipeId", r.id);
-                    setRecipePickerOpen(false);
-                  }}
-                >
-                  <ItemIcon id={r.output} size={38} />
-                  <span>
-                    <strong>{r.name.replace(/^T\d /, "")}</strong>
-                    <small>
-                      {r.name.match(/^T\d/)?.[0]} · {r.ingredients.length} materials
-                    </small>
-                  </span>
-                  {r.id === draft.recipeId && <CircleCheck size={15} aria-hidden="true" />}
-                </button>
-              ))}
-            {recipeSearch &&
-              !availableRecipes.some(
-                (r) => r.kind === kind && r.name.toLowerCase().includes(recipeSearch.toLowerCase()),
-              ) && <p role="status">No supported recipe matches. Try another item name.</p>}
-          </div>
-          <details className="recipe-exact-selection">
-            <summary>All supported recipes</summary>
-            <label>
-              Recipe
-              <select
-                aria-label="Production recipe"
-                value={draft.recipeId}
-                onChange={(e) => update("recipeId", e.target.value)}
+            {browseRecipes.map((r) => (
+              <button
+                type="button"
+                key={r.id}
+                aria-pressed={r.id === draft.recipeId}
+                onClick={() => {
+                  update("recipeId", r.id);
+                  setRecipePickerOpen(false);
+                }}
               >
-                {availableRecipes
-                  .filter((r) => r.kind === kind)
-                  .map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          </details>
+                <ItemIcon id={r.output} size={38} />
+                <span>
+                  <strong>{r.name.replace(/ · T\d\.\d.*$/, "").replace(/^T\d /, "")}</strong>
+                  <small>
+                    T{r.tier ?? r.output.match(/^T(\d)/)?.[1]}.{r.enchantment ?? 0}
+                    {r.alternative && r.alternative > 1 ? ` · option ${r.alternative}` : ""} ·{" "}
+                    {r.ingredients.length} materials
+                  </small>
+                </span>
+                {r.id === draft.recipeId && <CircleCheck size={15} aria-hidden="true" />}
+              </button>
+            ))}
+            {searchResults && !searchResults.recipes.length && (
+              <p role="status">No recipe matches. Try another item name.</p>
+            )}
+            {searchError && <p role="alert">{searchError}</p>}
+            {searchResults && searchResults.total > searchResults.recipes.length && (
+              <p className="muted">
+                Showing {searchResults.recipes.length} of {searchResults.total.toLocaleString()}.
+                Search to narrow the list.
+              </p>
+            )}
+          </div>
         </>
       )}
       {kind === "enchanting" && (
@@ -308,7 +362,8 @@ export function ProductionCalculator({
         </div>
       )}
       <p className="recipe-browser-footnote">
-        Source-backed subset. Only supported recipes are selectable.
+        Every crafting, refining, cooking and alchemy recipe in the game data (captured 27 Oct
+        2026), including enchanted and artifact versions.
       </p>
     </aside>
   );
@@ -396,7 +451,7 @@ export function ProductionCalculator({
                     value={draft.tier}
                     onChange={(e) => update("tier", Number(e.target.value))}
                   >
-                    {[4, 5, 6, 7, 8].map((t) => (
+                    {(enchantFamily?.tiers ?? [4, 5, 6, 7, 8]).map((t) => (
                       <option key={t}>{t}</option>
                     ))}
                   </select>
@@ -606,45 +661,6 @@ export function ProductionCalculator({
                       </>
                     )}
                   </div>
-                  {draft.useFocus && recipe.baseFocus !== undefined && (
-                    <details>
-                      <summary>Estimate focus from total efficiency</summary>
-                      <p className="muted">
-                        July source base cost: {recipe.baseFocus} focus per craft. Enter your total
-                        focus cost efficiency from the Destiny Board, including specialization. This
-                        historical model does not verify current coefficients or station rounding;
-                        confirm the total at your station before entering it above.
-                      </p>
-                      <label>
-                        Total focus cost efficiency
-                        <input
-                          type="number"
-                          min={0}
-                          max={100000}
-                          value={efficiency}
-                          onChange={(e) => setEfficiency(Number(e.target.value))}
-                        />
-                      </label>
-                      <p>
-                        Estimated total focus:{" "}
-                        {efficiency >= 0 &&
-                        efficiency <= 100000 &&
-                        Number.isInteger(draft.batches) &&
-                        draft.batches > 0 &&
-                        draft.batches <= 100000
-                          ? money(estimatedFocusCost(recipe.baseFocus, efficiency, draft.batches))
-                          : "Invalid inputs"}
-                      </p>
-                      <a
-                        className="text-link"
-                        href="https://forum.albiononline.com/index.php/Thread/167434-Explaining-Crafting-Tax-and-more/"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Historical focus formula and limitations
-                      </a>
-                    </details>
-                  )}
                   <details>
                     <summary>Convert a station production bonus to return rate</summary>
                     <label>
@@ -668,17 +684,19 @@ export function ProductionCalculator({
                 </details>
               )}
               <p className="production-coverage">
-                {kind === "crafting"
-                  ? "45 equipment recipes, T4–T8. Confirm quantities and station settings in game."
-                  : kind === "refining"
-                    ? "25 refining recipes, T4–T8. Confirm quantities and station settings in game."
-                    : "Rune enchanting for the original supported equipment families."}{" "}
-                Enter your own station and market assumptions.
+                {kind === "enchanting"
+                  ? `Rune, soul and relic upgrades for ${enchantable.length} item families, .0 to .3.`
+                  : "Recipes from game item data captured 27 Oct 2026, with every alternative."}{" "}
+                Confirm quantities after a patch and enter your own station and market assumptions.
               </p>
               {kind !== "enchanting" && (
                 <ProductionProfile
                   kind={kind}
                   output={recipe.output}
+                  recipeId={recipe.id}
+                  onFocus={(total) =>
+                    setDraft((d) => ({ ...d, useFocus: true, focusUsed: Math.max(1, total) }))
+                  }
                   baseFocus={recipe.baseFocus}
                   batches={draft.batches}
                   saved={draft.mechanicsProfile}
@@ -688,7 +706,9 @@ export function ProductionCalculator({
                       mechanicsProfile: profile,
                       returnRate: rates.returnRate,
                       focusReturnRate: rates.focusReturnRate,
-                      returns: Object.fromEntries(recipe.ingredients.map((i) => [i.id, true])),
+                      returns: Object.fromEntries(
+                        recipe.ingredients.map((i) => [i.id, i.returnable !== false]),
+                      ),
                     }))
                   }
                 />
@@ -697,17 +717,21 @@ export function ProductionCalculator({
                 <summary>Model notes & recipe source</summary>{" "}
                 <p className="muted">
                   Tax/fees and output quality are assumptions, not verified current game defaults or
-                  random-quality probabilities. Crafting/refining currently cover a small factual
-                  recipe subset.
+                  random-quality probabilities.
                 </p>
-                {/albiononlinegrind|albionutil/i.test(recipe.source) ? (
-                  <Link className="text-link" href="/guides">
-                    Recipe & planning guides →
-                  </Link>
-                ) : (
+                {recipe.source.startsWith("https://") &&
+                !/albiononlinegrind|albionutil/i.test(recipe.source) ? (
                   <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
                     Recipe reference
                   </a>
+                ) : (
+                  <p className="muted">
+                    Recipe source:{" "}
+                    {recipe.source.startsWith("https://") ? "archived game data" : recipe.source}.{" "}
+                    <Link className="text-link" href="/guides">
+                      Recipe & planning guides →
+                    </Link>
+                  </p>
                 )}
               </details>
             </details>
@@ -886,12 +910,13 @@ export function ProductionCalculator({
                               <input
                                 type="checkbox"
                                 aria-label={`Apply returns to ${i.name}`}
-                                checked={!!draft.returns[i.id]}
+                                disabled={i.returnable === false}
+                                checked={!!draft.returns[i.id] && i.returnable !== false}
                                 onChange={(e) =>
                                   update("returns", { ...draft.returns, [i.id]: e.target.checked })
                                 }
                               />
-                              Apply returns
+                              {i.returnable === false ? "Never returned" : "Apply returns"}
                             </label>
                           )}
                         </td>

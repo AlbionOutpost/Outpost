@@ -151,6 +151,22 @@
   flex: 1;
   min-width: 0;
 }
+.command-result-text {
+  display: grid;
+  gap: 2px;
+}
+.command-result-text > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.command-result-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .app.outpost .command-shortcuts a:hover {
     transform: scale(1.02);

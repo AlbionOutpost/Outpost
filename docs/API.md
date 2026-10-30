@@ -16,6 +16,10 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 | `GET /api/history`                                              | pub  | Gold (168 points) or 30-day daily item history         | 60/min               |
 | `GET /api/economy/prices`                                       | pub  | All ingredient + output quotes for a production recipe | 60/min               |
 | `GET /api/transport/prices`                                     | pub  | Buy/sell pair for one route direction                  | 60/min               |
+| `GET /api/laborers/prices`                                      | pub  | Full/empty journal and loot quotes for one laborer run | 60/min               |
+| `GET /api/recipes`                                              | pub  | Recipe search (kind, category, tier, enchantment, q)   | —                    |
+| `GET /api/recipes/[id]`                                         | pub  | One game recipe plus its alternatives                  | —                    |
+| `GET /api/items/game`                                           | pub  | Name, weight and item value for ≤50 IDs (static data)  | —                    |
 | `GET /api/opportunities`                                        | pub  | Flip/transport scanner, ≤25 items                      | 30/min               |
 | `GET /api/combat-events`                                        | pub  | Kill/death feed (offset 0–200, step 20)                | 120/min, cached 15 s |
 | `GET /api/items`                                                | pub  | Catalog search, 30 per page                            | —                    |

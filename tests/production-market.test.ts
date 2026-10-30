@@ -1,6 +1,7 @@
 import { it, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
 const mocks = vi.hoisted(() => ({ prices: vi.fn(), limit: vi.fn() }));
+vi.mock("server-only", () => ({}));
 vi.mock("../src/lib/redis", () => ({ rateLimit: mocks.limit }));
 vi.mock("../src/lib/albion/market-client", () => ({ getPrices: mocks.prices }));
 it("queries refined materials only at Normal quality even for a legacy quality parameter", async () => {

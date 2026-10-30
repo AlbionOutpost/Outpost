@@ -38,7 +38,7 @@ for table,names in columns.items():
  for record in data[table]:
   values=[json.dumps(record[n],separators=(',',':')) if n in ['abilities','recipe'] and record[n] is not None else record[n] for n in names]
   quoted=db.execute('SELECT '+','.join(['quote(?)']*len(values)),values).fetchone()
-  rows.append('('+','.join(quoted)+')')
+  rows.append('('+','.join(map(str,quoted))+')')
  for start in range(0,len(rows),50):
   out.append('INSERT INTO "'+table+'" ('+','.join('"'+n+'"' for n in names)+') VALUES '+','.join(rows[start:start+50])+';')
 print(json.dumps(out))
@@ -46,7 +46,10 @@ print(json.dumps(out))
   ],
   { input: payload, encoding: "utf8", maxBuffer: 20 * 1024 * 1024 },
 );
-if (converted.status !== 0) throw Error("Public catalog SQL preparation failed.");
+if (converted.status !== 0)
+  throw Error(
+    `Public catalog SQL preparation failed. ${(converted.stderr || String(converted.error ?? "")).trim().slice(-2000)}`,
+  );
 const statements = JSON.parse(converted.stdout);
 if (statements.some((sql) => Buffer.byteLength(sql) > 95000))
   throw Error("Catalog statement exceeds the bounded SQL budget.");

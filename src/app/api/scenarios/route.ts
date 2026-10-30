@@ -7,6 +7,7 @@ import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
 import { transportSchema, transport } from "@/lib/albion/transport";
 import { tradeScenarioSchema } from "@/lib/albion/calculations";
+import "@/lib/albion/game/server-recipes";
 import { productionSchema, production } from "@/lib/albion/production";
 import { productionPlanSchema, productionPlan } from "@/lib/albion/production-plan";
 import { savedShoppingSchema } from "@/lib/albion/shopping";

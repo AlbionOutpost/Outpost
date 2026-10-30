@@ -14,6 +14,10 @@ Status as of 29 Oct 2026. Update this file when something ships, breaks or gets 
 | 4   | **Verify recovery.** After the next deploy, run `node scripts/cloudflare-recovery.mjs bookmark` once to confirm point-in-time recovery works on the Free plan. Email alerts for Worker errors, DDoS, SSL and abuse reports are on.                                                                                                                                           | Backups only count once a restore path is proven      |
 | 5   | **Legal page.** Operator name/contact and a privacy policy; then real Terms/Privacy URLs in the Discord portal.                                                                                                                                                                                                                                                              | Required for an account-holding site                  |
 
+## Shipped — game data (30 Oct)
+
+- 11,314 recipes from the archived game data, with enchanted and artifact versions; enchanting for every foundry family; full city bonus table; spec-based focus; item weights and mounts in transport; laborers, specialization, reference tables and the Roads of Avalon mapper.
+
 ## Next — best-in-class core
 
 **Market**
@@ -24,10 +28,9 @@ Status as of 29 Oct 2026. Update this file when something ships, breaks or gets 
 
 **Crafting and refining**
 
-- Enchanted (.1–.4) equipment and refining recipes, artifact/royal/Avalonian recipes, hearts and transmutation; enchanting for all families up to .4.
-- Crafting specialization and mastery → focus cost and item power, station focus rounding.
+- Hearts and transmutation; cheapest-path refining (buy vs refine the previous tier, faction tokens).
+- Station focus rounding and item power from specs; nutrition-based station fees.
 - Tax and setup presets (premium / non-premium) instead of zero defaults.
-- Item weights and mount capacity for transport.
 
 **Game data**
 
@@ -45,7 +48,7 @@ Status as of 29 Oct 2026. Update this file when something ships, breaks or gets 
 - Albion player, guild and battle lookup (Game Info).
 - Notifications and shared Team timers; dashboard customisation.
 - Configurable Team roles, safe uploads (banners), roster/archive paging, moderation appeals.
-- Islands, Avalon road mapper, mastery/destiny board, laborers and journals, animals and breeding, farming with island/premium/spec coefficients and byproducts.
+- Islands, animals and breeding, farming with island/premium/spec coefficients and byproducts; save laborer runs and share Avalon maps with a Team.
 - Guide authoring with revisions and moderation.
 - Real-user performance metrics; save fishing scenarios; sync journal progress to the account.
 

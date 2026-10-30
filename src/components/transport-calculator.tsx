@@ -15,6 +15,7 @@ import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ArrowRight, Truck } from "lucide-react";
 import { transportPriceQuery, mergeTransportObservations } from "@/lib/albion/transport-prices";
+import { mounts, mountCapacity } from "@/lib/albion/mounts";
 export function TransportCalculator() {
   const region = useAtlasRegion(),
     [draft, setDraft] = useState(() => initialTransport(region)),
@@ -22,6 +23,33 @@ export function TransportCalculator() {
     [pendingKey, setPendingKey] = useState<string | null>(null),
     [title, setTitle] = useState(""),
     [saved, setSaved] = useState<{ id: string; title: string; configuration: unknown }[]>([]);
+  const [gameWeight, setGameWeight] = useState<{ id: string; weight: number | null } | null>(null);
+  const [mount, setMount] = useState({ id: "", quality: 1 });
+  const autoWeight = useRef<number | null>(null);
+  // Fill the per-item weight from game data whenever the cargo changes.
+  useEffect(() => {
+    if (!/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(draft.itemId)) return;
+    const active = new AbortController();
+    fetch(`/api/items/game?ids=${encodeURIComponent(draft.itemId)}`, { signal: active.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("unavailable"))))
+      .then((b: { items: Record<string, { weight: number | null }> }) => {
+        const weight = b.items[draft.itemId]?.weight ?? null;
+        setGameWeight({ id: draft.itemId, weight });
+        // Only replace a weight we filled ourselves (or the empty default), never one you typed.
+        const previous = autoWeight.current;
+        if (weight !== null)
+          setDraft((d) =>
+            d.itemId === draft.itemId && (d.weight === 0 || d.weight === previous)
+              ? { ...d, weight }
+              : d,
+          );
+        autoWeight.current = weight;
+      })
+      .catch(() => {
+        if (!active.signal.aborted) setGameWeight({ id: draft.itemId, weight: null });
+      });
+    return () => active.abort();
+  }, [draft.itemId]);
   const config = { ...draft, region };
   const requestKey = transportPriceQuery(config),
     busy = pendingKey === requestKey;
@@ -108,7 +136,13 @@ export function TransportCalculator() {
               <ItemIcon id={draft.itemId} quality={draft.quality} size={56} />
               <div>
                 <strong>{equipmentName(draft.itemId)}</strong>
-                <small>Selected cargo · weight is entered below</small>
+                <small>
+                  {gameWeight?.id === draft.itemId
+                    ? gameWeight.weight === null
+                      ? "Weight unavailable in game data · enter it below"
+                      : `${gameWeight.weight} kg per item from game data`
+                    : "Looking up item weight…"}
+                </small>
               </div>
             </div>
             <label>
@@ -187,6 +221,48 @@ export function TransportCalculator() {
                 </label>
               ))}
             </div>
+            <div className="input-grid">
+              <label>
+                Mount (sets capacity)
+                <select
+                  aria-label="Mount"
+                  value={mount.id}
+                  onChange={(e) => {
+                    const next = { ...mount, id: e.target.value };
+                    setMount(next);
+                    const kg = mountCapacity(next.id, next.quality);
+                    if (kg) update("capacity", kg);
+                  }}
+                >
+                  <option value="">Manual capacity</option>
+                  {mounts.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} · {Math.round(m.capacity["1"] ?? 0).toLocaleString()} kg
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Mount quality
+                <select
+                  aria-label="Mount quality"
+                  value={mount.quality}
+                  disabled={!mount.id}
+                  onChange={(e) => {
+                    const next = { ...mount, quality: Number(e.target.value) };
+                    setMount(next);
+                    const kg = mountCapacity(next.id, next.quality);
+                    if (kg) update("capacity", kg);
+                  }}
+                >
+                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
+                    <option key={q} value={i + 1}>
+                      {q}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <p className="economy-assumption-readout">
               Applied:{" "}
               {Number.isFinite(draft.costPerTrip) ? draft.costPerTrip.toLocaleString() : "Check"}{" "}
@@ -227,10 +303,11 @@ export function TransportCalculator() {
               </div>
               <p className="muted">
                 Listing fees apply only to sell listings, not instant sales. Black Market listings
-                need a manual target price. Capacity, item weight, fees and risk are manual
-                assumptions. Trips = ceiling(total weight / available capacity), minimum one. This
-                model does not simulate mount skills, route safety, liquidity, volume limits or
-                order execution.
+                need a manual target price. Item weight and mount carry weight come from game data
+                (captured 27 Oct 2026) and stay editable; the mount figure is its carry bonus at
+                that quality, without your character&apos;s own load, bags or food. Trips =
+                ceiling(total weight / capacity), minimum one. Route safety, liquidity and order
+                execution are not simulated.
               </p>
             </details>
           </section>
