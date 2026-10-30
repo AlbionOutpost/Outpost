@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fame: a laurel crown around a star, flat two-tone like the kill skull -->
+  <g fill="#c9a24a">
+    <path d="M14 18c-5 6-6 15-2 23 4 7 11 12 19 13l1-4c-7-1-12-5-15-11-3-6-3-14 1-19z"/>
+    <path d="M50 18c5 6 6 15 2 23-4 7-11 12-19 13l-1-4c7-1 12-5 15-11 3-6 3-14-1-19z"/>
+  </g>
+  <g fill="#e6c36a">
+    <ellipse cx="11" cy="26" rx="3.2" ry="6" transform="rotate(-25 11 26)"/>
+    <ellipse cx="10" cy="36" rx="3.2" ry="6" transform="rotate(-55 10 36)"/>
+    <ellipse cx="15" cy="45" rx="3.2" ry="6" transform="rotate(-75 15 45)"/>
+    <ellipse cx="53" cy="26" rx="3.2" ry="6" transform="rotate(25 53 26)"/>
+    <ellipse cx="54" cy="36" rx="3.2" ry="6" transform="rotate(55 54 36)"/>
+    <ellipse cx="49" cy="45" rx="3.2" ry="6" transform="rotate(75 49 45)"/>
+  </g>
+  <path fill="#f2d78a" d="M32 12l5.3 10.8 11.9 1.7-8.6 8.4 2 11.8L32 39.1l-10.6 5.6 2-11.8-8.6-8.4 11.9-1.7z"/>
+  <path fill="#c9a24a" d="M32 12v27.1l-10.6 5.6 2-11.8-8.6-8.4 11.9-1.7z" opacity=".55"/>
+</svg>
