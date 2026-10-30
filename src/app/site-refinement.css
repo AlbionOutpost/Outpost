@@ -1052,4 +1052,21 @@
       center,
       center 30%;
   }
+  /* 800px-wide variants (30–60 KB) for phones; the desktop scenes are 100–180 KB. */
+  .app.outpost .workspace-identity[data-scene="market"] {
+    --scene: url("/albion/illustrations/market-v1-phone.webp");
+  }
+  .app.outpost .workspace-identity[data-scene="economy"] {
+    --scene: url("/albion/illustrations/hero-v1-phone.webp");
+  }
+  .app.outpost .workspace-identity[data-scene="builds"] {
+    --scene: url("/albion/illustrations/build-v1-phone.webp");
+  }
+  .app.outpost .workspace-identity[data-scene="comps"] {
+    --scene: url("/albion/illustrations/composition-v1-phone.webp");
+  }
+  .app.outpost .workspace-identity[data-scene="guides"],
+  .app.outpost .workspace-identity[data-scene="roads"] {
+    --scene: url("/albion/illustrations/city-overlook-v2-phone.webp");
+  }
 }

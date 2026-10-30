@@ -65,14 +65,21 @@ export default async function Home({
           </div>
         </div>
         <div className="home-hero-atmosphere" aria-hidden="true">
-          <Image
-            src="/albion/illustrations/city-overlook-v2.webp"
-            alt=""
-            fill
-            unoptimized
-            preload
-            sizes="100vw"
-          />
+          {/* The hero is the largest paint; phones get the 800px (33 KB) version. */}
+          <picture>
+            <source
+              media="(max-width: 700px)"
+              srcSet="/albion/illustrations/city-overlook-v2-phone.webp"
+            />
+            <img
+              src="/albion/illustrations/city-overlook-v2.webp"
+              alt=""
+              width={1800}
+              height={772}
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
         </div>
       </section>
 
