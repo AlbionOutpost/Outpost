@@ -263,7 +263,7 @@ export function Shell({
           >
             <div className="drawer-heading">
               <Link href={href("/")} onClick={navigate} aria-label="Outpost home">
-                <Wordmark />
+                <Wordmark priority />
               </Link>
               <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
                 <X size={20} />

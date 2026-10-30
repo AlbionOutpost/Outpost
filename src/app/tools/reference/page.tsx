@@ -9,6 +9,8 @@ export default function Page() {
   return (
     <>
       <WorkspaceHeading
+        glyph="reference"
+        scene="economy"
         title="Reference tables"
         description="City bonuses, laborer happiness, crafting fame, mounts, islands, banks and attunement traits."
       />

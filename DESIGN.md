@@ -1,29 +1,28 @@
 ---
 name: Outpost
-description: The Albion Online companion — markets, builds, comps and crafting in one deep-navy, ember-lit, gear-first workspace.
+description: The Albion Online companion — markets, builds, comps and crafting in one warm-charcoal, ember-lit, gear-first workspace.
 colors:
-  night: "#08111b"
-  night-chrome: "#060d15"
-  panel: "#0d1823"
-  panel-raised: "#132232"
-  panel-high: "#182a3d"
-  edge: "#1d2f42"
-  edge-strong: "#24384d"
-  parchment: "#f1eee7"
-  mist: "#b4bfcb"
-  dusk: "#8592a0"
-  ember: "#ff8644"
-  ember-bright: "#ffa36d"
-  ember-deep: "#e8702c"
-  ember-wash: "#ff86441f"
-  gain: "#3fcf8e"
-  loss: "#f06a6a"
-  caution: "#f0b955"
-  focus-blue: "#82b9ff"
+  night: "#101014"
+  night-chrome: "#141317"
+  panel: "#201c1e"
+  panel-sunk: "#19171b"
+  panel-raised: "#2a2427"
+  edge: "#393033"
+  edge-strong: "#4a4044"
+  parchment: "#f2eee9"
+  mist: "#c9c3c3"
+  dusk: "#a9a4a9"
+  ember: "#c85a3b"
+  ember-bright: "#df7050"
+  ember-deep: "#a9472b"
+  ember-wash: "#c85a3b12"
+  gain: "#48ba87"
+  loss: "#db5b56"
+  caution: "#e0a94a"
 typography:
   display:
     fontFamily: "Barlow Condensed, Arial Narrow, Arial, sans-serif"
-    fontSize: "clamp(64px, 5.4vw, 86px)"
+    fontSize: "clamp(56px, 5.4vw, 84px)"
     fontWeight: 800
     lineHeight: 0.96
     letterSpacing: "0em"
@@ -53,7 +52,7 @@ typography:
     fontWeight: 500
     lineHeight: 1.3
 rounded:
-  control: "7px"
+  control: "6px"
   panel: "8px"
   large: "12px"
 spacing:
@@ -68,7 +67,7 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.ember}"
-    textColor: "{colors.night}"
+    textColor: "{colors.parchment}"
     rounded: "{rounded.control}"
     height: "40px"
     padding: "0 16px"
@@ -81,7 +80,7 @@ components:
     height: "40px"
     padding: "0 16px"
   input:
-    backgroundColor: "{colors.night-chrome}"
+    backgroundColor: "{colors.panel-sunk}"
     textColor: "{colors.parchment}"
     rounded: "{rounded.control}"
     height: "40px"
@@ -102,50 +101,51 @@ components:
 
 ## Overview
 
-Outpost should feel like a royal city at night: deep blue dusk, ember-orange firelight, painted scenery behind every page, real gear on the table, and every number exactly where a player expects it. It is a **tool first** — players arrive with a job (check a price, find a build, plan a party, cost a craft) and the interface should make that job fast and certain. **Atmosphere is everywhere but never in the way**: each page opens with an illustrated masthead, destination cards carry their own art, and the working panels below stay calm, dense and legible.
+Outpost should feel like a royal city at dusk: warm charcoal stone, ember-orange firelight, painted scenery behind every page, real gear on the table, and every number exactly where a player expects it. It is a **tool first** — players arrive with a job (check a price, find a build, plan a party, cost a craft) and the interface should make that job fast and certain. **Atmosphere is everywhere but never in the way**: each page opens with an illustrated masthead, destination cards carry their own art, and the working panels below stay calm, dense and legible.
 
 The bar is **best-in-class, award-calibre craft**: one coherent visual language across every route, precise typography, deliberate hierarchy, real game art, honest data states and motion that explains rather than decorates. A page is not done until it looks intentional at 1440px and at 390px.
 
 **Current-direction references** (owner-supplied targets — match their composition and polish, never their placeholder numbers, fake stats or vocabulary):
 
-| Reference                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Use it for                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Current (30 Oct):** [Landing page](docs/design/references/v3-landing.png) (product-style homepage: headline + live product window, feature cards, "everything in one place", call-to-action band), [Home](docs/design/references/v3-home.png), [Market](docs/design/references/v3-market.png), [Builds library](docs/design/references/v3-builds.png), [Build detail](docs/design/references/v3-build-detail.png), [Crafting](docs/design/references/v3-crafting.png) | **The look to hit**: navy panels, ember accents, illustrated mastheads and cards, icon badges, charts. Their names, prices, views, likes, trends and slogans are placeholders — use real data |
-| 29 Oct: [Home](docs/design/references/latest-01-home.png), [Market](docs/design/references/latest-02-market.png), [Build library](docs/design/references/latest-03-build-library.png), [Build detail](docs/design/references/latest-04-build-detail.png), [Crafting](docs/design/references/latest-05-crafting.png)                                                                                                                                                     | Same direction, earlier round; use where the 30 Oct set has no page                                                                                                                           |
-| [Full-site page sheet](docs/design/references/site-pages.png)                                                                                                                                                                                                                                                                                                                                                                                                           | Overall composition of all 19 page types, desktop and mobile                                                                                                                                  |
-| [UI system / component guide](docs/design/references/ui-system.png)                                                                                                                                                                                                                                                                                                                                                                                                     | Buttons, inputs, tabs, cards, tables, states, item-art rules                                                                                                                                  |
-| [Builds library + detail](docs/design/references/builds-library-detail.png)                                                                                                                                                                                                                                                                                                                                                                                             | Library grid, weapon rail, detail layout                                                                                                                                                      |
-| [In-game inventory](docs/design/references/in-game-inventory.png)                                                                                                                                                                                                                                                                                                                                                                                                       | Anatomy of the equipment board (slot positions)                                                                                                                                               |
-| Earlier (27 Oct): [Homepage](docs/design/references/homepage.png), [Market](docs/design/references/market.png), [Crafting](docs/design/references/crafting.png), [Build + Comp](docs/design/references/build-composition.png)                                                                                                                                                                                                                                           | Secondary layout targets; Build + Comp is still the main Comp reference                                                                                                                       |
+| Reference                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Use it for                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Current (30 Oct, evening):** [Full site sheet](docs/design/references/latest-06-site-sheet.png) — landing, tools, market, build creator, builds, guides, database, guilds, community and 404 in one charcoal + ember system                                                                                                                                                                                                                                         | **The look to hit**: warm charcoal panels, ember accents, a painted scene behind every page title, real item icons, compact cards. Its like counts, view counts, 24h % changes, member counts and ratings are placeholders — never show numbers we do not measure |
+| 30 Oct (afternoon): [Landing page](docs/design/references/v3-landing.png) (product-style homepage: headline + live product window, feature cards, "everything in one place", call-to-action band), [Home](docs/design/references/v3-home.png), [Market](docs/design/references/v3-market.png), [Builds library](docs/design/references/v3-builds.png), [Build detail](docs/design/references/v3-build-detail.png), [Crafting](docs/design/references/v3-crafting.png) | Composition and polish of the product-style landing, mastheads, icon badges and charts. Palette superseded by the evening sheet. Names, prices, views, likes, trends and slogans are placeholders — use real data                                                 |
+| 29 Oct: [Home](docs/design/references/latest-01-home.png), [Market](docs/design/references/latest-02-market.png), [Build library](docs/design/references/latest-03-build-library.png), [Build detail](docs/design/references/latest-04-build-detail.png), [Crafting](docs/design/references/latest-05-crafting.png)                                                                                                                                                   | Same direction, earlier round; use where the 30 Oct set has no page                                                                                                                                                                                               |
+| [Full-site page sheet](docs/design/references/site-pages.png)                                                                                                                                                                                                                                                                                                                                                                                                         | Overall composition of all 19 page types, desktop and mobile                                                                                                                                                                                                      |
+| [UI system / component guide](docs/design/references/ui-system.png)                                                                                                                                                                                                                                                                                                                                                                                                   | Buttons, inputs, tabs, cards, tables, states, item-art rules                                                                                                                                                                                                      |
+| [Builds library + detail](docs/design/references/builds-library-detail.png)                                                                                                                                                                                                                                                                                                                                                                                           | Library grid, weapon rail, detail layout                                                                                                                                                                                                                          |
+| [In-game inventory](docs/design/references/in-game-inventory.png)                                                                                                                                                                                                                                                                                                                                                                                                     | Anatomy of the equipment board (slot positions)                                                                                                                                                                                                                   |
+| Earlier (27 Oct): [Homepage](docs/design/references/homepage.png), [Market](docs/design/references/market.png), [Crafting](docs/design/references/crafting.png), [Build + Comp](docs/design/references/build-composition.png)                                                                                                                                                                                                                                         | Secondary layout targets; Build + Comp is still the main Comp reference                                                                                                                                                                                           |
 
-Current state for comparison: [homepage](docs/design/baseline/home-1440.png), [builds library](docs/design/baseline/builds-library-1440.png). Palette history: warm charcoal (`#101215`/`#191d22`, copper `#ee945a`) was used 29–30 Oct; on 30 Oct the owner chose navy with rich illustration. The earlier "lifeless" rejection was of flat navy panels **without** art — navy only works together with the mastheads, card art and glow described here.
+Current state for comparison: [homepage](docs/design/baseline/home-1440.png), [builds library](docs/design/baseline/builds-library-1440.png). Palette history: warm charcoal + copper (29 Oct) → deep navy + ember explored in mockups on 30 Oct → the owner's evening sheet settled on **warm charcoal + ember**, which is what ships. Flat panels without illustration were rejected as "lifeless" in every palette — the mastheads, card art and gear glow are part of the system, not decoration.
 
 ## Colors
 
-Deep night-blue surfaces lit by a single ember-orange accent. Warmth comes from the illustrations, the ember accent and the glow behind gear; depth comes from stepping surfaces (`night` → `panel` → `panel-raised`).
+Warm charcoal surfaces lit by a single ember accent. Warmth comes from the slightly red-shifted greys, the illustrations and the glow behind gear; depth comes from stepping surfaces (`night` → `panel` → `panel-raised`). The CSS custom properties live on `.app` in `src/app/globals.css` (`--bg`, `--panel`, `--elevated`, `--border`, `--muted`, `--text`, `--accent`, `--accent-hover`, `--accent-wash`, `--success`, `--error`).
 
 ### Primary
 
-- **Ember** (`#ff8644`): primary actions, active nav/tab, selected state, the second line of the hero headline, key links, icon-badge rings. Hover brightens to `ember-bright`; press deepens to `ember-deep`. `ember-wash` tints selected rows, icon badges and activity chips.
+- **Ember** (`#c85a3b`, `--accent`): primary actions, active nav/tab, selected state, the second line of the hero headline, key links, icon-badge rings. Hover brightens to `ember-bright` (`--accent-hover`); press deepens to `ember-deep`. `ember-wash` (`--accent-wash`) tints selected rows, icon badges and activity chips. Primary buttons use parchment text on ember (≥4.5:1).
 
 ### Neutral
 
-- **Night** (`#08111b`): page background. **Night chrome** (`#060d15`): header, footer, sunk wells and inputs.
-- **Panel / raised / high** (`#0d1823` / `#132232` / `#182a3d`): sections, cards, popovers, hover rows.
-- **Edge / edge strong** (`#1d2f42` / `#24384d`): 1px borders and dividers; strong for inputs and interactive outlines.
-- **Parchment** (`#f1eee7`): primary text. **Mist** (`#b4bfcb`): secondary. **Dusk** (`#8592a0`): muted captions, timestamps (≥4.5:1 on `panel`).
+- **Night** (`#101014`, `--bg`): page background. **Night chrome** (`#141317`, `--sidebar`): header, footer, drawers.
+- **Panel** (`#201c1e`, `--panel`): sections and cards. **Panel sunk** (`#19171b`, `--elevated`): inputs, wells, table headers and the inside of a panel. **Panel raised** (`#2a2427`): popovers, menus and hover rows.
+- **Edge / edge strong** (`#393033` / `#4a4044`, `--border`): 1px borders and dividers; strong for inputs and interactive outlines.
+- **Parchment** (`#f2eee9`, `--text`): primary text. **Mist** (`#c9c3c3`): secondary. **Dusk** (`#a9a4a9`, `--muted`): muted captions and timestamps (≥4.5:1 on `panel`).
 
 ### Semantic
 
-- **Gain** `#3fcf8e` (profit, rising), **Loss** `#f06a6a` (negative, falling, destructive), **Caution** `#f0b955` (stale data, warnings), **Focus blue** `#82b9ff` (focus rings only).
+- **Gain** `#48ba87` (`--success`: profit, rising), **Loss** `#db5b56` (`--error`: negative, falling, destructive), **Caution** `#e0a94a` (stale data, warnings). Focus rings use ember.
 - Albion quality and tier colours are game facts; use them only on item badges, never as decoration.
 
 ### Named Rules
 
-- **One accent.** Ember is the only brand hue. Blue is the ground, never a second accent.
-- **Navy needs light.** Never ship a navy page without its masthead art, glow or imagery — that is the "lifeless" look that was rejected.
+- **One accent.** Ember is the only brand hue; it never doubles as a semantic colour. Selected controls use `ember-wash` + an ember edge, gains and losses use green and red with a sign or label.
+- **Charcoal needs light.** Never ship a page without its masthead art, glow or imagery — flat panels alone were rejected as "lifeless".
 - **Profit is never colour-only.** Pair gain/loss colour with a sign or label.
-- **Light theme** keeps the same roles with cool paper neutrals and a deeper ember (`#c4511a`).
+- **Light theme** (`.light`) keeps the same roles with warm paper neutrals and a deeper ember (`#9c3f29`); test it separately.
 
 ## Typography
 

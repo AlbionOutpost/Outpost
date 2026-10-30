@@ -9,6 +9,8 @@ export default async function Page({
   return (
     <div className="production-calculator-page">
       <WorkspaceHeading
+        glyph="refine"
+        scene="economy"
         title="Refining calculator"
         description="Make every resource count. Compare material costs, station settings and the value of your refined output."
       />

@@ -8,6 +8,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
   return (
     <div className="fishing-page">
       <WorkspaceHeading
+        glyph="fish"
+        scene="economy"
         title="Fishing calculator"
         description="Compare selling whole fish, chopping for ingredients, and buying fishing fame."
       />

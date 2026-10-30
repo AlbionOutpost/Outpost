@@ -5,6 +5,8 @@ export default function Page() {
   return (
     <div className="farming-page">
       <WorkspaceHeading
+        glyph="farm"
+        scene="economy"
         title="Farming calculator"
         description="Plan crops and herbs, compare watering, and separate cash profit from the value of retained seeds."
       />

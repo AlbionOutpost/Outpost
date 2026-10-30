@@ -1,6 +1,7 @@
 import Link from "@/components/link";
 import { ChartNoAxesCombined, History, Calculator, Star, BookOpen, ArrowRight } from "lucide-react";
 import { Market } from "@/components/market";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 export default async function Page({
   searchParams,
 }: {
@@ -37,15 +38,12 @@ export default async function Page({
         <p>Player observations, with source timestamps. Check freshness before every trade.</p>
       </nav>
       <div className="market-explorer-page">
-        <header className="workspace-identity">
-          <span className="workspace-emblem" aria-hidden="true">
-            <ChartNoAxesCombined />
-          </span>
-          <div>
-            <h1 className="page-title display-title">Market Explorer</h1>
-            <p className="intro">Find your item. Compare city orders. Choose your next trade.</p>
-          </div>
-        </header>
+        <WorkspaceHeading
+          glyph="market"
+          scene="market"
+          title="Market Explorer"
+          description="Find your item. Compare city orders. Choose your next trade."
+        />
         <Market key={`${p.item || "T4_BAG"}:${p.quality || "1"}`} />
       </div>
     </div>

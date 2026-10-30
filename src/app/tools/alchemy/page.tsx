@@ -10,6 +10,8 @@ export default async function Page({
   return (
     <div className="production-calculator-page">
       <WorkspaceHeading
+        glyph="craft"
+        scene="economy"
         title="Alchemy calculator"
         description="Make every ingredient count. Price your potions, plan your purchases and review your batch profit."
       />

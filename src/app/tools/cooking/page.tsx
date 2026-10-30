@@ -10,6 +10,8 @@ export default async function Page({
   return (
     <div className="production-calculator-page">
       <WorkspaceHeading
+        glyph="craft"
+        scene="economy"
         title="Cooking calculator"
         description="A better plan for every meal. Price ingredients, set your batch and compare the silver left after costs."
       />
