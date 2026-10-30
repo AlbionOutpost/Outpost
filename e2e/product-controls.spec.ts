@@ -71,10 +71,12 @@ test("recipe drawer searches real variants, returns focus and keeps accounting i
   const drawer = page.getByRole("dialog", { name: "Choose recipe", exact: true });
   await expect(drawer).toBeVisible();
   await drawer.getByLabel("Search crafting recipes").fill("Broadsword");
-  await drawer.getByRole("button", { name: /Broadsword.*T4/ }).click();
+  await drawer.getByRole("button", { name: /^Adept's Broadsword T4\.0 · / }).click();
   await expect(drawer).toHaveCount(0);
   await expect(change).toBeFocused();
-  await expect(page.getByRole("heading", { name: "T4 Broadsword", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Adept's Broadsword · T4.0", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "2 Price materials", exact: true }).click();
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
   await page.getByLabel("Worked Leather unit price", { exact: true }).fill("200");

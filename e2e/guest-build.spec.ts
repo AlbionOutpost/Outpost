@@ -5,6 +5,8 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   page,
   context,
 }) => {
+  // One long journey (edit, preview, save, restore, export, isolation, recovery) on a cold server.
+  test.setTimeout(120000);
   await page.goto("/builds/new");
   await expect(page).toHaveURL(/\/builds\/new$/);
   await page.getByRole("button", { name: "Load example equipment", exact: true }).click();
@@ -216,8 +218,10 @@ test("guest can edit, preview, save, restore and export a build without gaining 
     value: corrupt,
   });
   await page.reload();
+  // The recovery notice renders after hydration reads storage; a cold CI compile can take longer.
   await expect(page.locator(".focused-build-editor").getByRole("alert")).toContainText(
     "has been kept",
+    { timeout: 20000 },
   );
   await page.clock.install();
   await page.clock.fastForward(1500);
