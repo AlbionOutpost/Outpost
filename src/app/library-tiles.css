@@ -147,3 +147,44 @@
     display: none;
   }
 }
+
+/* Group Builds cards: the party scene behind the header, activity as an orange chip. */
+.app.outpost .group-build-library .library-comp-card.group-build-preview {
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease;
+}
+.app.outpost .group-build-library .library-comp-card.group-build-preview:hover {
+  border-color: var(--accent);
+}
+.app.outpost .group-build-library .library-comp-card.group-build-preview > a {
+  display: grid;
+  gap: 10px;
+  padding: 0 16px 16px;
+  color: var(--text);
+  text-decoration: none;
+  background:
+    linear-gradient(180deg, #0b0d1233 0%, #14121599 60px, #1c1a1ef5 118px, var(--panel) 150px),
+    url("/albion/illustrations/composition-v1-phone.webp") center 30% / cover no-repeat;
+}
+.app.outpost .group-build-library .library-comp-card.group-build-preview > a > span:first-child {
+  justify-self: start;
+  margin-top: 72px;
+  padding: 2px 8px;
+  color: #ffb482;
+  background: #c85a3b2e;
+  border: 1px solid #c85a3b80;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.app.outpost .group-build-library .library-comp-card.group-build-preview h2 {
+  margin: 0;
+  font: 600 17px/1.3 var(--font-ui);
+  color: #f5f1e9;
+}
+.app.outpost .group-build-library .library-comp-card.group-build-preview small {
+  color: var(--muted);
+  font-size: 12px;
+}
