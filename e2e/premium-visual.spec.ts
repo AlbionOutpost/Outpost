@@ -108,7 +108,12 @@ for (const width of [320, 390, 768, 1440]) {
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator(".composition-directory")).toHaveScreenshot(
       `compositions-${width}.png`,
-      options,
+      {
+        ...options,
+        // The illustrated masthead's line wrapping depends on font hinting; the masthead is
+        // reviewed by the page screenshots instead, so the baseline covers the directory only.
+        style: ".composition-directory > .workspace-identity { display: none; }",
+      },
     );
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       width,
