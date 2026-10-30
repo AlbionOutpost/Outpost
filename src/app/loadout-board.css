@@ -21,13 +21,14 @@
   padding: 0;
 }
 /* The figure is centred on the middle column: head in the head slot, feet in the boots */
+/* The figure is centred in the 3×3 block, head in the head slot, feet in the boots */
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: calc(var(--cell) * 0.05);
+  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.075);
   z-index: -1;
   width: auto;
-  height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.9);
+  height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.92);
   max-width: none;
   transform: translateX(-50%);
   opacity: 0.3;
@@ -80,8 +81,8 @@
 }
 /* Marks sit smaller than item renders; the selector outranks the render rule above */
 .app.outpost .loadout-board-cell img.loadout-board-mark {
-  width: 58%;
-  height: 58%;
+  width: 70%;
+  height: 70%;
   object-fit: contain;
   filter: none;
   opacity: 0.55;
