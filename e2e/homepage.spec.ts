@@ -104,12 +104,19 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
 
   // The header keeps its own surface above the hero instead of floating over it.
-  const header = page.locator(".site-header");
   const hero = page.locator(".landing-hero");
-  const headerBox = (await header.boundingBox())!;
-  const heroBox = (await hero.boundingBox())!;
-  expect(headerBox.y + headerBox.height).toBeLessThanOrEqual(heroBox.y + 1);
-  expect(await header.evaluate((n) => getComputedStyle(n).position)).toBe("relative");
+  await expect(hero).toBeVisible();
+  const layout = await page.evaluate(() => {
+    const h = document.querySelector(".site-header")!.getBoundingClientRect();
+    const s = document.querySelector(".landing-hero")!.getBoundingClientRect();
+    return {
+      headerBottom: h.bottom,
+      heroTop: s.top,
+      position: getComputedStyle(document.querySelector(".site-header")!).position,
+    };
+  });
+  expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
+  expect(layout.position).toBe("relative");
 
   const actions = hero.locator(".landing-actions a");
   await expect(actions.nth(0)).toHaveText(/Explore Tools/);
