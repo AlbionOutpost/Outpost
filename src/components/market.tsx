@@ -105,7 +105,9 @@ export function Market() {
     const key = current;
     setPendingKey(current);
     setError(null);
-    setResult(null);
+    // A refresh of the same selection keeps the current table on screen until the new
+    // observations arrive; a different selection shows no rows (they are keyed by selection).
+    setResult((previous) => (previous?.key === key ? previous : null));
     try {
       const response = await fetch(
         `/api/market?${new URLSearchParams({ region, item: item.trim().toUpperCase(), quality })}`,

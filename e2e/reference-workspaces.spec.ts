@@ -28,7 +28,6 @@ test("market city comparison selects details, removes city chips and invalidates
     }),
   );
   await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Refresh prices", exact: true }).click();
   await expect(page.locator(".market-board tbody tr")).toHaveCount(3);
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.getByRole("button", { name: "Lymhurst market details", exact: true }).click();
