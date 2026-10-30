@@ -65,12 +65,21 @@ const featured = [
   "great-hammer-zvz-build",
   "light-crossbow-solo-dungeon-build",
 ];
+/** The curated picks, filled from the newest library builds when a pick is missing. */
 export const featuredLibraryBuilds = async () => {
   const rows = await findLibraryBuilds(featured);
-  return featured.flatMap((slug) => {
+  const picks = featured.flatMap((slug) => {
     const row = rows.find((build) => build.slug === slug);
     return row ? [row] : [];
   });
+  if (picks.length >= 6) return picks.slice(0, 6);
+  const fill = (await queryLibraryBuilds({ page: 1 })).rows.filter(
+    (build) =>
+      !picks.some((pick) => pick.id === build.id) &&
+      !build.title.toLowerCase().includes("copy") &&
+      build.description.length > 120,
+  );
+  return [...picks, ...fill].slice(0, 6);
 };
 export const libraryBuildDraft = async (build: LibraryBuild) =>
   createLibraryBuildDraft(build, await librarySpellNames());
