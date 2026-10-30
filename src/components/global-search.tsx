@@ -6,7 +6,7 @@ import { ItemIcon } from "./item-icon";
 import { ToolIcon } from "./tool-icon";
 import { useAtlasRegion } from "./region-context";
 
-type SearchRow = { category: string; title: string; url: string };
+type SearchRow = { category: string; title: string; url: string; subtitle?: string; icon?: string };
 const destinations = [
   { title: "Check a price", note: "Compare cities", url: "/tools/market", icon: "market" },
   { title: "Create a build", note: "Gear & abilities", url: "/builds/new", icon: "equipment" },
@@ -16,6 +16,7 @@ const destinations = [
 const categoryName = (category: string) =>
   category === "Compositions" ? "Comps" : category === "Groups" ? "Teams" : category;
 function ResultIcon({ row }: { row: SearchRow }) {
+  if (row.icon) return <ItemIcon id={row.icon} size={42} />;
   if (row.category === "Items") {
     const id = decodeURIComponent(row.url.split("/").at(-1) || "");
     return <ItemIcon id={id} size={42} />;
@@ -195,7 +196,7 @@ export function GlobalSearch() {
               maxLength={100}
               autoComplete="off"
               spellCheck={false}
-              aria-label="Search items, builds, comps, guilds and tools"
+              aria-label="Search items, builds, comps, guides, Teams and tools"
               placeholder="Items, builds, comps…"
               aria-describedby="global-search-status"
               onChange={(e) => {
@@ -272,7 +273,10 @@ export function GlobalSearch() {
                           <span className="command-result-icon">
                             <ResultIcon row={row} />
                           </span>
-                          <span>{row.title}</span>
+                          <span className="command-result-text">
+                            <span>{row.title}</span>
+                            {row.subtitle && <small>{row.subtitle}</small>}
+                          </span>
                           <ArrowUpRight size={16} />
                         </Link>
                       ))}
@@ -303,7 +307,7 @@ export function GlobalSearch() {
               </kbd>{" "}
               Open
             </span>
-            <span>Items · Builds · Comps · Teams</span>
+            <span>Items · Tools · Builds · Comps · Guides · Teams</span>
           </div>
         </div>
       </dialog>
