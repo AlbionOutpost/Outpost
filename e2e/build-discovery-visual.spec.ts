@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
 test("equipment discovery preserves filters, private boundaries and saved favorites", async ({
@@ -9,9 +9,8 @@ test("equipment discovery preserves filters, private boundaries and saved favori
   browser,
 }) => {
   test.setTimeout(60000);
-  const { iteration } = JSON.parse(
-    await readFile("docs/design-review/builds/current-iteration.json", "utf8"),
-  );
+  // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration: string = "current";
   const folder = `.qa/build-discovery-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

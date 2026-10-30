@@ -9,15 +9,15 @@ dist
 prisma/migrations
 
 .qa
-.agents
 .codex
 .aws
 
 # Checksum-pinned generated catalog; the preparer owns its serialization.
 data/catalog
 
-# Reviewed third-party skills retain their pinned upstream bytes.
-skill-system/vendor
+# Vendored third-party skills retain their pinned upstream bytes.
+.claude/skills/impeccable
+.claude/skills/vercel-react-best-practices
 
 # Downloaded reference-site evidence retains upstream bytes.
 Scrape
@@ -27,5 +27,3 @@ public/library
 src/lib/albion/archived-item-spells.json
 src/lib/albion/archived-production-recipes.json
 
-# Immutable historical documentation snapshots retain original bytes.
-docs/history/2026-10-26-before-reconciliation

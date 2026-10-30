@@ -1,7 +1,7 @@
 name: Cloudflare deployment
 on:
   push:
-    branches: [main, codex/cloudflare-free-launch]
+    branches: [main]
     paths-ignore: ["docs/**", "**/*.md", ".github/workflows/documentation.yml"]
   workflow_dispatch:
   release:
@@ -10,8 +10,12 @@ permissions:
   contents: read
 jobs:
   quality:
-    if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/codex/cloudflare-free-launch' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     uses: ./.github/workflows/quality.yml
+    with:
+      # The deploy job runs the full browser suite against the Cloudflare build,
+      # so the Node browser run is skipped here.
+      skip: live-regions,browser
   deploy:
     needs: quality
     # The downloaded pinned Chromium requires working sandboxed user namespaces.
@@ -44,7 +48,11 @@ jobs:
           node --input-type=module <<'JS'
           import { readFileSync, writeFileSync } from 'node:fs';
           import { randomBytes } from 'node:crypto';
-          writeFileSync('.env', readFileSync('.env', 'utf8').replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`));
+          writeFileSync('.env', readFileSync('.env', 'utf8')
+            .replace(/^NEXTAUTH_SECRET=.*$/m, `NEXTAUTH_SECRET=${randomBytes(48).toString('hex')}`)
+            // Fixture-only Discord pair so the provider registers; tests never reach Discord.
+            .replace(/^DISCORD_CLIENT_ID=.*$/m, 'DISCORD_CLIENT_ID=100000000000000000')
+            .replace(/^DISCORD_CLIENT_SECRET=.*$/m, `DISCORD_CLIENT_SECRET=${randomBytes(24).toString('hex')}`));
           JS
           docker compose up -d --wait
           npm run db:deploy

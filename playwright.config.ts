@@ -5,7 +5,13 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 2,
   use: {
     baseURL: "http://localhost:3000",
-    launchOptions: { chromiumSandbox: true },
+    launchOptions: {
+      chromiumSandbox: true,
+      // Optional: reuse an already-installed Chromium instead of Playwright's download.
+      ...(process.env.PLAYWRIGHT_CHROMIUM_PATH
+        ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+        : {}),
+    },
   },
   webServer: {
     command:

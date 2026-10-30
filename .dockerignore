@@ -13,7 +13,6 @@ dist
 
 .qa
 *.tsbuildinfo
-.agents
 .codex
 .aws
 *.pem
@@ -23,5 +22,5 @@ dist
 *.dump
 backups
 assets/source
-skill-system/vendor
+.claude
 Scrape

@@ -1,9 +1,15 @@
-# Contributing to Outpost
+# Contributing
 
-Use the Node version in `.nvmrc`, `npm ci`, local loopback PostgreSQL/Redis and the committed Prisma migrations. Setup is in README.md. Keep private configuration in ignored `.env` files; example database credentials are loopback development values, not shared-environment secrets.
+Thanks for helping make Outpost better.
 
-Make a focused branch and reviewable changes. Read AGENTS.md and relevant installed Next documentation. Use TypeScript, existing domain engines and shared tokens/components; do not duplicate formulas in UI. Preserve authentication, current role checks, optimistic revisions and migrations. Do not reset shared databases or rewrite shared Git history.
+1. Read [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) (setup, rules, definition of done), and [DESIGN.md](DESIGN.md) for anything visual.
+2. Branch from `main`, keep the change focused, and open a pull request describing what changed, how you tested it, and anything left open.
+3. CI must pass. Merging to `main` deploys to production.
 
-For every major phase run `npm run qa:phase`, inspect responsive screenshots and review inventory and regenerate current reports following [the documentation workflow](docs/QA_WORKFLOW.md); update the dated progress log. Isolated browser fixtures are not real OAuth or market observations. Keep explicit failures and blockers. Before a pull request describe the behavior, validation and remaining limits; do not commit .qa dumps/logs, credentials or temporary output.
+**Bug reports:** route, device/viewport, steps, expected vs actual, and a screenshot if visual. Leave out personal data and tokens.
 
-Bug reports should give steps, route, viewport and expected/actual behavior with sanitized evidence. Feature suggestions should identify the player workflow and required verified data source. Never copy competitor code, paid data or unlicensed artwork. Report security issues privately using SECURITY.md; do not publish sensitive reproduction details. No license has been selected for original code yet.
+**Feature ideas:** describe the player job it helps with and where the data would come from.
+
+Never commit credentials, `.env*` files, database dumps or `.qa/` output. Don't copy code, data or artwork from other sites or paid sources. Security issues go through [SECURITY.md](SECURITY.md).
+
+No open-source licence has been chosen yet; all rights are reserved by the owner.

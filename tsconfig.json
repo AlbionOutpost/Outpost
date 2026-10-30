@@ -29,5 +29,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "cloudflare/**", "dist/**", ".qa/**", "skill-system/**"]
+  "exclude": ["node_modules", "cloudflare/**", "dist/**", ".qa/**", ".claude/**"]
 }

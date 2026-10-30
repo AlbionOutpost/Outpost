@@ -1,9 +1,9 @@
 # Security policy
 
-Outpost 0.1.x is under active development and has no production-supported release. Current release verdict is NO-GO; see RELEASE_READINESS.md. No security SLA or complete audit certification is offered.
+Please report vulnerabilities privately — never in a public issue, comment or Discord channel. Contact the repository owner ([oNxZero](https://github.com/oNxZero)) directly on GitHub and ask for a private channel, without including exploit details in that first message.
 
-A private reporting contact and GitHub private vulnerability reporting have not yet been configured. Do not post credentials, personal data or exploitable details in a public issue. Use an established private channel to the repository owner; if none exists, request a private reporting channel without disclosing sensitive details. No email address is invented here.
+Include the affected route or component, impact, safe reproduction steps and a suggested fix if you have one. Only test against a local copy or infrastructure you own — do not scan albionoutpost.com, Albion Online, Discord, the Albion Online Data Project or any third party.
 
-Include affected version/route, impact, safe local reproduction and proposed mitigation where available. Only test local environments or infrastructure you own and are authorized to test; do not scan Albion, Discord or unrelated systems. Never commit secrets, fixture sessions or database dumps. If a credential was exposed, rotate/revoke it; removing a file does not repair published history. History remediation requires owner coordination.
+If a credential is exposed, revoke and rotate it immediately; deleting the file does not remove it from history.
 
-Operator action remains required to configure a monitored private reporting channel before public release.
+How the app protects accounts and data is described in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#security-model).

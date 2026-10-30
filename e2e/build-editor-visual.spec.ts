@@ -11,9 +11,8 @@ test("populated build editor preserves gear, choices and revisions across respon
   context,
 }) => {
   test.setTimeout(90000);
-  const { iteration } = JSON.parse(
-    await readFile("docs/design-review/build-editor/current-iteration.json", "utf8"),
-  );
+  // Screenshots land in .qa/<area>-correction/current for review.
+  const iteration: string = "current";
   const folder = `.qa/build-editor-correction/${iteration}`;
   await mkdir(folder, { recursive: true });
   const id = `atlas-test-${randomUUID()}`,

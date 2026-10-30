@@ -15,10 +15,9 @@ export default defineConfig([
     "playwright-report/**",
     "dist/**",
     "next-env.d.ts",
-    ".agents/**",
     ".codex/**",
     ".aws/**",
-    "skill-system/vendor/**",
+    ".claude/**",
     // Downloaded reference-site evidence is not application source.
     "Scrape/**",
   ]),

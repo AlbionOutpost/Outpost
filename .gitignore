@@ -38,3 +38,6 @@ backups/
 # Generated Python validation caches
 __pycache__/
 *.pyc
+
+# Local albiononlinegrind capture used by scripts/import-grind-*; never commit it.
+Scrape/
