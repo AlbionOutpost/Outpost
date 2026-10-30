@@ -19,6 +19,7 @@ const entries: Entry[] = [
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
   { path: "/groups", changeFrequency: "weekly", priority: 0.5 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/premium", changeFrequency: "monthly", priority: 0.3 },
   { path: "/legal", changeFrequency: "yearly", priority: 0.2 },
   ...tools
     .filter((tool) => tool.href.startsWith("/tools/") && tool.href !== "/tools/market")

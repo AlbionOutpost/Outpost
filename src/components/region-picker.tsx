@@ -1,13 +1,60 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
-import { Check, ChevronDown, Globe2 } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import type { Region } from "@/lib/albion/region-config";
 
-const choices: { value: Region; label: string }[] = [
-  { value: "europe", label: "Europe" },
-  { value: "americas", label: "Americas" },
-  { value: "asia", label: "Asia" },
+/** Server names as the game lists them; the market data mirrors the same split. */
+const choices: { value: Region; label: string; server: string }[] = [
+  { value: "europe", label: "Europe", server: "Albion Europe" },
+  { value: "americas", label: "Americas", server: "Albion West" },
+  { value: "asia", label: "Asia", server: "Albion East" },
 ];
+
+/** Original globe marks: the band of the globe where the server's players are is lit. */
+function RegionMark({ region, size = 18 }: { region: Region; size?: number }) {
+  const band =
+    region === "americas"
+      ? "M8.7 3.09A9.5 9.5 0 0 0 8.7 20.91Z"
+      : region === "europe"
+        ? "M8.7 3.09A9.5 9.5 0 0 1 15.3 3.09V20.91A9.5 9.5 0 0 1 8.7 20.91Z"
+        : "M15.3 3.09A9.5 9.5 0 0 1 15.3 20.91Z";
+  return (
+    <svg
+      className="region-mark"
+      data-region={region}
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9.5"
+        fill="var(--region-sea)"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <path d={band} fill="currentColor" opacity="0.85" />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="3.3"
+        ry="9.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="0.7"
+        opacity="0.5"
+      />
+      <path
+        d="M2.5 12h19M4.2 7.5h15.6M4.2 16.5h15.6"
+        stroke="currentColor"
+        strokeWidth="0.7"
+        opacity="0.5"
+      />
+    </svg>
+  );
+}
 
 export function RegionPicker({
   value,
@@ -92,7 +139,7 @@ export function RegionPicker({
           }
         }}
       >
-        <Globe2 size={16} aria-hidden="true" />
+        <RegionMark region={value} />
         <span>{choices[selected].label}</span>
         <ChevronDown size={13} aria-hidden="true" />
       </button>
@@ -104,18 +151,23 @@ export function RegionPicker({
                 key={choice.value}
                 id={`${id}-${index}`}
                 role="option"
+                aria-label={choice.label}
                 aria-selected={choice.value === value}
                 data-active={active === index}
                 onPointerMove={() => setActive(index)}
                 onPointerDown={(event) => event.preventDefault()}
                 onClick={() => choose(index)}
               >
-                <span>{choice.label}</span>
+                <RegionMark region={choice.value} size={22} />
+                <span className="region-option-text">
+                  <span>{choice.label}</span>
+                  <small>{choice.server}</small>
+                </span>
                 {choice.value === value && <Check size={16} aria-hidden="true" />}
               </div>
             ))}
           </div>
-          <p className="region-picker-note">Separate markets per region</p>
+          <p className="region-picker-note">Each server has its own market and prices.</p>
         </div>
       )}
     </div>

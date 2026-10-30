@@ -45,11 +45,11 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Runtime configuration
 
-| Kind          | Values                                                                                                                                                                        | Where set                                                                                   |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`                                   | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
-| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`, `OUTPOST_RENDER_SESSION_SECRET`                                                                               | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
-| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
+| Kind          | Values                                                                                                                                                                                                                                   | Where set                                                                                   |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
+| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`, `OUTPOST_RENDER_SESSION_SECRET`                                                                                                                                          | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
+| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`                                                            | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
 
 ### Local credential files (git-ignored, mode 0600, never print or commit)
 

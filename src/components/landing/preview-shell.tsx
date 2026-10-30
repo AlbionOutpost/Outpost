@@ -3,42 +3,51 @@ import Link from "@/components/link";
 import { ArrowRight } from "lucide-react";
 
 /**
- * Frame shared by the landing-page product previews: a titled window with the live software
- * inside and one action below. Each preview owns its internal composition.
+ * Frame shared by the landing-page product windows: a short title row, the live software
+ * inside, and a footer bar that carries the source note and the one action.
  */
 export function PreviewShell({
   id,
   eyebrow,
   title,
-  description,
   href,
   action,
+  note,
   tone = "default",
+  className = "",
   children,
 }: {
   id: string;
   eyebrow: string;
   title: string;
-  description: string;
   href: string;
   action: string;
+  note?: ReactNode;
   tone?: "default" | "lead";
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <article className={`landing-preview${tone === "lead" ? " is-lead" : ""}`} aria-labelledby={id}>
+    <article
+      className={`landing-preview${tone === "lead" ? " is-lead" : ""}${className ? ` ${className}` : ""}`}
+      aria-labelledby={id}
+    >
       <div className="landing-preview-heading">
         <p className="landing-kicker">{eyebrow}</p>
         <h3 id={id}>{title}</h3>
-        <p>{description}</p>
       </div>
-      <div className="landing-preview-window">{children}</div>
-      <Link
-        href={href}
-        className={`button ${tone === "lead" ? "primary" : "secondary"} landing-preview-action`}
-      >
-        {action} <ArrowRight size={16} />
-      </Link>
+      <div className="landing-preview-window">
+        <div className="landing-preview-body">{children}</div>
+        <div className="landing-preview-footer">
+          {note ? <span className="landing-preview-note">{note}</span> : <span />}
+          <Link
+            href={href}
+            className={`button ${tone === "lead" ? "primary" : "secondary"} landing-preview-action`}
+          >
+            {action} <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
     </article>
   );
 }

@@ -1,10 +1,12 @@
 import "./homepage.css";
-import { BuildPreview } from "@/components/landing/build-preview";
+import { AdSlot } from "@/components/ad-slot";
 import { CraftingPreview } from "@/components/landing/crafting-preview";
 import { GoldTicker } from "@/components/landing/gold-ticker";
-import { GroupPreview } from "@/components/landing/group-preview";
+import { GroupParty } from "@/components/landing/group-party";
 import { MarketPreview } from "@/components/landing/market-preview";
 import { PreviewShell } from "@/components/landing/preview-shell";
+import { ItemIcon } from "@/components/item-icon";
+import { LoadoutBoard } from "@/components/loadout-board";
 import {
   featuredLibraryBuilds,
   findLibraryBuild,
@@ -13,7 +15,9 @@ import {
   libraryCounts,
   librarySpellNames,
 } from "@/lib/grind-library";
+import { activityName } from "@/lib/grind-library-types";
 import { gameDataSource, itemName } from "@/lib/albion/game/recipes";
+import { regions, regionSchema } from "@/lib/albion/region-config";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
@@ -27,10 +31,10 @@ import {
   Swords,
   Users,
 } from "lucide-react";
-import { regionSchema } from "@/lib/albion/region-config";
 
-// One editorial thread runs through the previews: the bar you buy, the axe you craft from it
-// and the build that carries it. All three come from live observations or the public library.
+// One editorial thread runs through the page: the bar you buy, the axe you craft from it,
+// the build that carries it and the party it fights in. Everything comes from live
+// observations or the public library; nothing is staged.
 const showcase = {
   market: {
     id: "T6_METALBAR",
@@ -40,6 +44,13 @@ const showcase = {
   crafting: { recipeId: "battleaxe-t6", output: "T6_MAIN_AXE", city: "Bridgewatch" },
   build: "battleaxe-mist-build",
   composition: "statics-group-builds",
+} as const;
+
+/** Official renders used as the capability visuals; all are real, current items. */
+const capabilityArt = {
+  market: ["T6_METALBAR", "T6_PLANKS", "T6_LEATHER"],
+  builds: ["T8_MAIN_AXE", "T8_ARMOR_LEATHER_FEY", "T8_SHOES_PLATE_SET1"],
+  groups: ["T8_2H_HOLYSTAFF", "T8_2H_HAMMER", "T8_2H_BOW"],
 } as const;
 
 export default async function Home({
@@ -67,6 +78,7 @@ export default async function Home({
   const build = featured ?? fallback[0];
   const n = (value: number) => value.toLocaleString("en-US");
   const gameData = gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1);
+  const buildHref = `/builds/library/${encodeURIComponent(build.slug)}${suffix}`;
   return (
     <div className="home-landing">
       <section className="landing-hero" aria-labelledby="home-title">
@@ -78,8 +90,8 @@ export default async function Home({
             <em>advantage.</em>
           </h1>
           <p className="landing-lede">
-            Market prices, crafting math and {n(library.builds)} player builds in one place, built
-            on real observations with their source times. Make your next move count.
+            Live prices, crafting math and {n(library.builds)} player builds, built on real
+            observations. Make your next move count.
           </p>
           <div className="landing-actions">
             <Link href={`/tools${suffix}`} className="button primary">
@@ -90,52 +102,64 @@ export default async function Home({
             </Link>
           </div>
         </div>
-        <div className="landing-hero-visual">
-          <picture className="landing-hero-art">
-            <source media="(max-width: 700px)" srcSet="/albion/illustrations/hero-v1-phone.webp" />
-            <img
-              src="/albion/illustrations/hero-v1.webp"
-              alt="A market square at dusk, with stalls, banners and travellers around a statue"
-              width={1600}
-              height={900}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
-          <GoldTicker />
+        <div className="landing-hero-build">
+          <div className="landing-hero-build-head">
+            <div>
+              <strong>{build.title}</strong>
+              <small>
+                {activityName(build.category)} · {build.weaponName} · by {build.author}
+                {build.upvotes ? ` · ▲ ${n(build.upvotes)}` : ""}
+              </small>
+            </div>
+            <Link href={buildHref} className="landing-hero-build-open">
+              Open build <ArrowRight size={15} />
+            </Link>
+          </div>
+          <LoadoutBoard pieces={build.equipment} spellNames={spellNames} size="hero" />
+          <div className="landing-hero-build-foot">
+            <GoldTicker />
+          </div>
         </div>
       </section>
 
       <ul className="landing-benefits" aria-label="What Outpost does">
         <li>
-          <ChartNoAxesCombined size={20} aria-hidden="true" />
-          <div>
-            <strong>Real market data</strong>
-            <span>Sell and buy orders for every city, each with the time it was seen.</span>
-          </div>
+          <span className="landing-benefit-art" aria-hidden="true">
+            {capabilityArt.market.map((id) => (
+              <ItemIcon key={id} id={id} size={44} />
+            ))}
+          </span>
+          <ChartNoAxesCombined size={18} aria-hidden="true" />
+          <strong>Real market data</strong>
+          <span>Every city, every order, with the time it was seen.</span>
         </li>
         <li>
-          <Swords size={20} aria-hidden="true" />
-          <div>
-            <strong>Build planning</strong>
-            <span>Loadouts, abilities and swaps for every weapon, with the silver to gear up.</span>
-          </div>
+          <span className="landing-benefit-art" aria-hidden="true">
+            {capabilityArt.builds.map((id) => (
+              <ItemIcon key={id} id={id} size={44} />
+            ))}
+          </span>
+          <Swords size={18} aria-hidden="true" />
+          <strong>Build planning</strong>
+          <span>Loadouts, abilities and swaps, priced to gear up.</span>
         </li>
         <li>
-          <Users size={20} aria-hidden="true" />
-          <div>
-            <strong>Group coordination</strong>
-            <span>
-              Comps, Teams and loot splits, with every member&apos;s loadout in one place.
-            </span>
-          </div>
+          <span className="landing-benefit-art" aria-hidden="true">
+            {capabilityArt.groups.map((id) => (
+              <ItemIcon key={id} id={id} size={44} />
+            ))}
+          </span>
+          <Users size={18} aria-hidden="true" />
+          <strong>Group coordination</strong>
+          <span>Comps, Teams and loot splits in one place.</span>
         </li>
         <li>
-          <ShieldCheck size={20} aria-hidden="true" />
-          <div>
-            <strong>Independent and free</strong>
-            <span>No account needed to browse. Nothing is estimated or made up.</span>
-          </div>
+          <span className="landing-benefit-art is-mark" aria-hidden="true">
+            <ShieldCheck size={40} />
+          </span>
+          <ShieldCheck size={18} aria-hidden="true" />
+          <strong>Independent and free</strong>
+          <span>No account to browse. Nothing estimated or made up.</span>
         </li>
       </ul>
 
@@ -143,10 +167,6 @@ export default async function Home({
         <div className="landing-section-heading">
           <p className="landing-kicker">The tools</p>
           <h2 id="home-showcase-title">Powerful tools for every Albion player.</h2>
-          <p>
-            Live software, not illustrations: each window below runs on the same data as the tool it
-            opens.
-          </p>
           <Link className="text-link" href={`/tools${suffix}`}>
             All {tools.length} tools <ArrowRight size={15} />
           </Link>
@@ -157,9 +177,9 @@ export default async function Home({
             tone="lead"
             eyebrow="Market Explorer"
             title="Compare cities before you travel"
-            description="Current orders in three cities and the recorded 30-day trend for one of them."
             href={`/tools/market?item=${showcase.market.id}&quality=1&region=${region}`}
             action="Explore Market"
+            note={`Albion Online Data Project · ${regions[region].label}`}
           >
             <MarketPreview
               item={{ id: showcase.market.id, name: itemName(showcase.market.id), tier: "Tier 6" }}
@@ -168,22 +188,12 @@ export default async function Home({
             />
           </PreviewShell>
           <PreviewShell
-            id="home-build"
-            eyebrow="Build Library"
-            title="Copy a loadout, then make it yours"
-            description="Every build keeps its equipment, recorded abilities and swaps, ready to price and edit."
-            href={`/builds/library/${encodeURIComponent(build.slug)}${suffix}`}
-            action="Open Build"
-          >
-            <BuildPreview build={build} spellNames={spellNames} />
-          </PreviewShell>
-          <PreviewShell
             id="home-crafting"
             eyebrow="Crafting Calculator"
             title="Know the margin before you craft"
-            description="Materials, fees and returns against current orders, with every assumption in view."
             href={`/tools/crafting?recipe=${showcase.crafting.recipeId}&region=${region}`}
             action="Open Calculator"
+            note="Same formulas as the calculator"
           >
             <CraftingPreview
               recipeId={showcase.crafting.recipeId}
@@ -191,33 +201,23 @@ export default async function Home({
               city={showcase.crafting.city}
             />
           </PreviewShell>
+          {composition && (
+            <PreviewShell
+              id="home-group"
+              className="is-wide"
+              eyebrow="Group Builds"
+              title="Plan the whole party, not just your own kit"
+              href={`/compositions/library/${encodeURIComponent(composition.slug)}${suffix}`}
+              action="Open Group Build"
+              note={`${n(library.compositions)} public group builds · copy one and assign roles`}
+            >
+              <GroupParty composition={composition} members={members} suffix={suffix} />
+            </PreviewShell>
+          )}
         </div>
       </section>
 
-      <section className="landing-group" aria-labelledby="home-group-title">
-        <div className="landing-group-copy">
-          <p className="landing-kicker">Group Builds</p>
-          <h2 id="home-group-title">Plan the whole party, not just your own kit.</h2>
-          <p>
-            {n(library.compositions)} public group builds list every member&apos;s loadout and which
-            slots are optional. Copy one into your own composition, assign roles and players, and
-            share it with your Team.
-          </p>
-          <div className="landing-actions">
-            <Link href={`/compositions/library${suffix}`} className="button primary">
-              Open Compositions <ArrowRight size={17} />
-            </Link>
-            <Link href={`/groups${suffix}`} className="button secondary">
-              <Users size={17} /> Teams
-            </Link>
-          </div>
-        </div>
-        {composition && (
-          <div className="landing-preview-window landing-group-window">
-            <GroupPreview composition={composition} members={members} suffix={suffix} />
-          </div>
-        )}
-      </section>
+      <AdSlot slot="0000000000" suffix={suffix} />
 
       <section className="landing-trust" aria-labelledby="home-trust-title">
         <div className="landing-section-heading">
@@ -225,37 +225,31 @@ export default async function Home({
           <h2 id="home-trust-title">Numbers you can act on.</h2>
         </div>
         <ul className="landing-trust-grid">
-          <li>
+          <li data-scene="market">
             <Database size={20} aria-hidden="true" />
             <strong>Observed, not estimated</strong>
             <span>
-              Prices are player observations from the Albion Online Data Project. Every quote keeps
-              its city, quality and source time, and a missing price stays missing.
+              Player observations from the Albion Online Data Project, each with its city, quality
+              and source time.
             </span>
           </li>
-          <li>
+          <li data-scene="hero">
             <Compass size={20} aria-hidden="true" />
             <strong>Current game data</strong>
-            <span>
-              Items, recipes, stats and abilities come from {gameData}, with the official item
-              renders.
-            </span>
+            <span>Items, recipes and abilities from {gameData}, with official renders.</span>
           </li>
-          <li>
+          <li data-scene="build">
             <Swords size={20} aria-hidden="true" />
             <strong>A living library</strong>
             <span>
               {n(library.builds)} builds, {n(library.compositions)} group builds and{" "}
-              {n(library.guides)} guides by players, each with its author and date.
+              {n(library.guides)} guides by players, each with author and date.
             </span>
           </li>
-          <li>
+          <li data-scene="composition">
             <ShieldCheck size={20} aria-hidden="true" />
             <strong>Yours stays yours</strong>
-            <span>
-              Private builds, comps and Team pages are checked on the server for every request. Sign
-              in with Discord; nothing else is asked of you.
-            </span>
+            <span>Private builds, comps and Teams are checked on the server, every request.</span>
           </li>
         </ul>
       </section>

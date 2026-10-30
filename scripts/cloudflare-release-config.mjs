@@ -29,6 +29,10 @@ web.vars = {
   OUTPOST_OWNER_DISCORD_ID: "303585687460904970",
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: sitekey,
   TURNSTILE_HOSTNAMES: "albionoutpost.com,www.albionoutpost.com",
+  // Optional: the AdSense publisher id turns advertising units and their CSP origins on.
+  ...(/^ca-pub-\d{6,20}$/.test(values.NEXT_PUBLIC_ADSENSE_CLIENT ?? "")
+    ? { NEXT_PUBLIC_ADSENSE_CLIENT: values.NEXT_PUBLIC_ADSENSE_CLIENT }
+    : {}),
 };
 // Domain attachment is managed separately. Routine releases preserve the existing owned domains.
 const directory = ".qa/cloudflare-release";

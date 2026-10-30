@@ -20,6 +20,8 @@ export type LibraryBuild = {
   recommendedTraits: string[];
   videos: { kind: "video" | "channel"; id: string; url: string }[];
   unresolvedVideoReferences: number;
+  /** Public upvotes recorded in the owner's archive export; absent when not imported. */
+  upvotes?: number;
 };
 export type AwakeningTrait = {
   id: string;
@@ -37,6 +39,8 @@ export type LibraryComposition = {
   updatedAt: string;
   members: string[];
   optional: string[];
+  /** Public upvotes recorded in the owner's archive export; absent when not imported. */
+  upvotes?: number;
 };
 export type GuideNode =
   | string
