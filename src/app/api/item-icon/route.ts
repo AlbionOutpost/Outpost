@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     .object({
       id: z
         .string()
-        .regex(/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/)
+        .regex(/^(?:T[1-8]_[A-Z0-9_]+|(?!T\d)[A-Z][A-Z0-9_]{2,99})(?:@[1-4])?$/)
         .max(100),
       quality: z.coerce.number().int().min(1).max(5).default(1),
     })

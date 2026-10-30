@@ -33,6 +33,9 @@ it("constructs render URLs only for valid item IDs and bounded parameters", () =
   for (const id of ["https://evil.test", "../../secret", "T9_BAG", "T4_BAG?x=1"])
     expect(() => itemIconUrl(id)).toThrow();
   expect(() => itemIconUrl("T4_BAG", 6)).toThrow();
+  // Untiered game items (tokens, treasures) have renders too.
+  expect(itemIconUrl("QUESTITEM_TOKEN_AVALON")).toContain("QUESTITEM_TOKEN_AVALON.png");
+  expect(itemIconUrl("TREASURE_AVALON_RARITY1")).toContain("TREASURE_AVALON_RARITY1.png");
 });
 
 it("rejects malformed recipes before any catalog transaction can begin", () => {
