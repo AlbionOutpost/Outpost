@@ -13,6 +13,10 @@ on:
         description: Comma-separated qa:phase checks to skip
         type: string
         default: live-regions
+      refresh_baselines:
+        description: Unused when called from another workflow
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
