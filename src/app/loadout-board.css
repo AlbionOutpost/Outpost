@@ -70,9 +70,9 @@
   box-shadow: inset 0 1px 0 #ffffff08;
 }
 .app.outpost .loadout-board-cell img {
-  width: 88%;
-  height: 88%;
-  filter: drop-shadow(0 4px 6px #0008);
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius-md) - 2px);
 }
 .app.outpost .loadout-board-slot.is-empty .loadout-board-cell {
   border-style: dashed;
