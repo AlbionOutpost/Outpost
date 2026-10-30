@@ -26,6 +26,22 @@ export function TransportCalculator() {
   const [gameWeight, setGameWeight] = useState<{ id: string; weight: number | null } | null>(null);
   const [mount, setMount] = useState({ id: "", quality: 1 });
   const autoWeight = useRef<number | null>(null);
+  // Links from the flip scanner and item pages preselect cargo, route and quality.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const item = (params.get("item") || "").toUpperCase(),
+      from = params.get("from") || "",
+      to = params.get("to") || "",
+      quality = Number(params.get("quality") || 0);
+    const city = (name: string) => cities.find((c) => c === name);
+    setDraft((d) => ({
+      ...d,
+      ...(/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(item) ? { itemId: item } : {}),
+      ...(city(from) && from !== "Black Market" ? { fromCity: city(from)! } : {}),
+      ...(city(to) ? { toCity: city(to)! } : {}),
+      ...(quality >= 1 && quality <= 5 ? { quality } : {}),
+    }));
+  }, []);
   // Fill the per-item weight from game data whenever the cargo changes.
   useEffect(() => {
     if (!/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(draft.itemId)) return;

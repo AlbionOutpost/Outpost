@@ -1100,3 +1100,146 @@
   font: 400 12px/1.6 var(--font-ui);
   color: var(--muted);
 }
+
+/* Market flipping: the scanner leads, the manual trade check follows. */
+.flip-scanner .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.flip-scanner .section-heading h2 {
+  margin: 0 0 4px;
+}
+.flip-scanner .section-heading p {
+  margin: 0;
+  max-width: 64ch;
+  font-size: 14px;
+}
+.flip-scanner-items {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+}
+.flip-scanner-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flip-scanner-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+}
+.flip-scanner-chips li img {
+  border-radius: 6px;
+}
+.flip-scanner-chips li button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.flip-scanner-chips li button:hover,
+.flip-scanner-chips li button:focus-visible {
+  background: var(--elevated);
+  color: var(--text);
+}
+.flip-scanner-manual summary {
+  cursor: pointer;
+  color: var(--accent-ink);
+  font-size: 14px;
+}
+.flip-scanner-manual textarea {
+  min-height: 72px;
+}
+.flip-scanner-route {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.flip-scanner-summary {
+  margin: 16px 0 8px;
+  font-size: 14px;
+}
+.flip-scanner-table th,
+.flip-scanner-table td {
+  vertical-align: top;
+}
+.flip-scanner-table td:nth-child(6),
+.flip-scanner-table td:nth-child(7) {
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+.flip-scanner-table td small {
+  display: block;
+  color: var(--muted);
+  font: 400 12px/1.4 var(--font-ui);
+  white-space: nowrap;
+}
+.flip-scanner-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+.flip-scanner-item > span {
+  display: grid;
+}
+.flip-scanner-item small {
+  color: var(--muted);
+  font: 400 11px/1.4 var(--font-mono);
+}
+.flip-scanner-table tr[data-outcome="positive"] .flip-scanner-profit {
+  color: var(--success);
+  font-weight: 600;
+}
+.flip-scanner-table tr[data-outcome="negative"] .flip-scanner-profit {
+  color: var(--error);
+}
+.flip-scanner-table tr[data-outcome="incomplete"] td {
+  color: var(--muted);
+}
+.flip-scanner-method {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.flip-manual-trade {
+  margin-top: 28px;
+}
+.flip-manual-trade > h2 {
+  margin: 0 0 4px;
+}
+.flip-manual-trade > p {
+  margin: 0 0 14px;
+  font-size: 14px;
+}
+@media (max-width: 1100px) {
+  .flip-scanner-route {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .flip-scanner-route {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .flip-scanner .section-heading .button {
+    width: 100%;
+  }
+}
