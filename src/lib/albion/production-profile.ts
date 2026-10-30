@@ -18,8 +18,7 @@ export const mechanicsProfile = z.object({
   refiningLevels: z.array(z.number().int().min(0).max(100)).length(5),
 });
 export type MechanicsProfile = z.infer<typeof mechanicsProfile>;
-export const returnProfileSource =
-  "Local production bonuses table, albiononlinegrind.com archive 27 Oct 2026";
+export const returnProfileSource = "Royal-city local production bonus table, captured 27 Oct 2026";
 export const refiningSpecSource = "https://wiki.albiononline.com/wiki/Specializations#Refining";
 const bonuses = bonusData as {
   crafting: Record<string, string>;

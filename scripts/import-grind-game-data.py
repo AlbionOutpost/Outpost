@@ -435,6 +435,13 @@ REFERENCE = [
     ("transport-mount-capacity", "Transport mount capacity"),
     ("weapon-attunement-traits", "Weapon attunement traits"),
 ]
+HEADINGS = {
+    "island-upgrade-cost": ["First personal island", "Personal island", "Guild island"],
+    "player-bank-prices": ["Player bank (towns, guild islands and hideouts)", "Guild vault"],
+}
+# Obvious transcription errors in the source page, corrected and listed in the ledger.
+CORRECTIONS = {("island-upgrade-cost", 0, 1, 4): ("520,00", "520,000")}
+corrections_applied = []
 reference = []
 for slug, title in REFERENCE:
     page = soup(f"table__{slug}.html")
@@ -447,7 +454,15 @@ for slug, title in REFERENCE:
             continue  # the cargo table is generated from item weights instead
         if slug == "transport-mount-capacity":
             rows = [r[:3] for r in rows]
-        blocks.append({"heading": heading.get_text(" ", strip=True) if heading else None, "header": rows[0], "rows": rows[1:]})
+        if slug == "biomes":
+            rows = [r[:5] for r in rows]  # drop the external "Learn more" link column
+        index = len(blocks)
+        for (cslug, cindex, crow, ccol), (old, new) in CORRECTIONS.items():
+            if cslug == slug and cindex == index and rows[crow + 1][ccol] == old:
+                rows[crow + 1][ccol] = new
+                corrections_applied.append(f"{slug} table {cindex + 1} row {crow + 1}: {old} → {new}")
+        label = HEADINGS.get(slug, [None] * 9)[index] or (heading.get_text(" ", strip=True) if heading else None)
+        blocks.append({"heading": label, "header": rows[0], "rows": rows[1:]})
     reference.append({"slug": slug, "title": title, "tables": blocks})
 write("reference-tables.json", reference, len(reference), "Thirteen reference tables as displayed on the archived table pages")
 
@@ -484,6 +499,7 @@ LEDGER.write_text(
                 "inGameManuallyVerified": False,
                 "currentPatchVerified": False,
             },
+            "corrections": corrections_applied,
             "rightsBoundary": "Owner identifies the archived site as theirs. Factual game fields only; captured code is never executed or shipped.",
         },
         indent=2,

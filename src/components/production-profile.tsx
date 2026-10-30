@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "@/components/link";
+import { readMasteryLevels, writeMasteryLevels } from "@/lib/mastery-storage";
 import {
   mechanicsProfile,
   productionCities,
@@ -44,7 +46,15 @@ export function ProductionProfile({
   const savedKey = JSON.stringify(saved);
   const [record, setRecord] = useState({ key: savedKey, value: saved || initialProfile });
   const profile = record.key === savedKey ? record.value : saved || initialProfile;
-  const [levels, setLevels] = useState<Record<string, number>>({});
+  const [levels, setLevelsState] = useState<Record<string, number>>({});
+  // Share levels with the Specialization & focus page on this device.
+  useEffect(() => queueMicrotask(() => setLevelsState(readMasteryLevels())), []);
+  const setLevels = (update: (l: Record<string, number>) => Record<string, number>) =>
+    setLevelsState((current) => {
+      const next = update(current);
+      writeMasteryLevels(next);
+      return next;
+    });
   const [message, setMessage] = useState("");
   const specs = focusSpecsFor(output);
   let rates: ReturnType<typeof sourcedReturnRates> | null = null;
@@ -136,6 +146,13 @@ export function ProductionProfile({
       {baseFocus ? (
         <fieldset className="production-spec-levels">
           <legend>Specialization levels (focus cost)</legend>
+          <p className="muted">
+            Shared with{" "}
+            <Link className="text-link" href="/tools/mastery">
+              Specialization &amp; focus
+            </Link>{" "}
+            on this device.
+          </p>
           {specs.length ? (
             <div className="input-grid">
               {specs.map((spec) => (

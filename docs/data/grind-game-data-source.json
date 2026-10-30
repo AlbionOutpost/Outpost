@@ -71,8 +71,8 @@
       "content": "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), enchanted variants .1\u2013.4, focus, silver, output count and non-returnable flags"
     },
     "src/lib/albion/game/reference-tables.json": {
-      "sha256": "c040629ba1b9806dd60f236a54f91dcab90cb66b102b4e7a50beb39fe69f416e",
-      "bytes": 13015,
+      "sha256": "9d9c409c26db94a922cfd5a7d4cd1fdd316dd666333b91d1cb0c3c6dcd2692d1",
+      "bytes": 13049,
       "rows": 13,
       "content": "Thirteen reference tables as displayed on the archived table pages"
     },
@@ -89,5 +89,8 @@
     "inGameManuallyVerified": false,
     "currentPatchVerified": false
   },
+  "corrections": [
+    "island-upgrade-cost table 1 row 2: 520,00 \u2192 520,000"
+  ],
   "rightsBoundary": "Owner identifies the archived site as theirs. Factual game fields only; captured code is never executed or shipped."
 }

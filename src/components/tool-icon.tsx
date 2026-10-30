@@ -25,6 +25,13 @@ const paths = {
   guild: ["M5 3h14v11l-7 8-7-8V3ZM12 3v19M5 9h14", "m8 13 4-4 4 4-4 4-4-4Z"],
   builds: ["M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"],
   timer: ["M5 3h14M5 21h14M7 3v5l5 4-5 4v5m10-18v5l-5 4 5 4v5", "M10 6h4m-4 12h4"],
+  labor: ["M3 11 12 3l9 8v10H3V11Z", "M9 21v-6h6v6"],
+  reference: ["M3 4h18v16H3zM3 9h18M3 14h18M9 4v16"],
+  map: [
+    "M4 6a2 2 0 1 0 4 0 2 2 0 1 0-4 0Zm12 12a2 2 0 1 0 4 0 2 2 0 1 0-4 0ZM15 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z",
+    "M8 6h7m1.6 1.3L17.6 16M7.4 7.4l9.2 9.2",
+  ],
+  mastery: ["m12 2 3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"],
 };
 export function ToolIcon({ name, size = 22 }: { name: keyof typeof paths; size?: number }) {
   return (

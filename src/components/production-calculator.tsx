@@ -717,17 +717,21 @@ export function ProductionCalculator({
                 <summary>Model notes & recipe source</summary>{" "}
                 <p className="muted">
                   Tax/fees and output quality are assumptions, not verified current game defaults or
-                  random-quality probabilities. Crafting/refining currently cover a small factual
-                  recipe subset.
+                  random-quality probabilities.
                 </p>
-                {/albiononlinegrind|albionutil/i.test(recipe.source) ? (
-                  <Link className="text-link" href="/guides">
-                    Recipe & planning guides →
-                  </Link>
-                ) : (
+                {recipe.source.startsWith("https://") &&
+                !/albiononlinegrind|albionutil/i.test(recipe.source) ? (
                   <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
                     Recipe reference
                   </a>
+                ) : (
+                  <p className="muted">
+                    Recipe source:{" "}
+                    {recipe.source.startsWith("https://") ? "archived game data" : recipe.source}.{" "}
+                    <Link className="text-link" href="/guides">
+                      Recipe & planning guides →
+                    </Link>
+                  </p>
                 )}
               </details>
             </details>

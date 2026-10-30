@@ -94,6 +94,6 @@ export function recipeFor(input: {
     ingredients,
     tier: input.tier,
     enchantment: input.toEnchant,
-    source: "Game item data (upgrade requirements), albiononlinegrind.com archive 27 Oct 2026",
+    source: "Game item data (upgrade requirements), captured 27 Oct 2026",
   };
 }

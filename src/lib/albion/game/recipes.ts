@@ -17,7 +17,7 @@ type GameRecipe = {
 type ItemRow = [name: string, weight: number | null, value: number | null];
 const items = itemsData as unknown as Record<string, ItemRow>;
 const raw = gameRecipesData as unknown as GameRecipe[];
-export const gameDataSource = "Game item data, albiononlinegrind.com archive captured 27 Oct 2026";
+export const gameDataSource = "Game item data, captured 27 Oct 2026";
 const byId = new Map(raw.map((r) => [r.id, r]));
 const byOutput = new Map<string, GameRecipe[]>();
 for (const r of raw) byOutput.set(r.output, [...(byOutput.get(r.output) ?? []), r]);
@@ -39,7 +39,7 @@ function toRecipe(r: GameRecipe): Recipe {
   const alternative = alternativeIndex(r.id);
   return {
     id: r.id,
-    name: `${itemName(r.output)} · T${r.tier}${enchant}${alternative > 1 ? ` (alt ${alternative})` : ""}`,
+    name: `${itemName(r.output).replace(/ \(T\d\.\d\)$/, "")} · T${r.tier}${enchant}${alternative > 1 ? ` (alt ${alternative})` : ""}`,
     kind: r.kind,
     output: r.output,
     outputCount: r.outputCount,
