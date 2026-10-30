@@ -35,27 +35,14 @@ export function InventoryEquipmentBoard({
       role="group"
       aria-label={label}
     >
-      <svg
+      {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark */}
+      <img
         className="inventory-body-silhouette"
-        viewBox="0 0 180 330"
+        src="/albion/slots/figure.svg"
+        alt=""
         aria-hidden="true"
-        focusable="false"
         data-inventory-silhouette="true"
-      >
-        <g fill="currentColor">
-          <ellipse cx="90" cy="28" rx="17" ry="22" />
-          <path d="M81 47h18l3 14 22 9 13 25 20 48-9 5-26-39-7-14 1 53-8 25H72l-8-25 1-53-7 14-26 39-9-5 20-48 13-25 22-9z" />
-          <path d="M72 168h36l9 25-8 55-4 50H91l-1-89-1 89H75l-4-50-8-55z" />
-          <path d="M75 293h15l-2 20H63v-8zM91 293h14l12 12v8H93zM23 140l10 3-2 19-6 7-6-4zM147 143l10-3 4 25-6 4-6-7z" />
-        </g>
-        <path
-          className="inventory-body-seam"
-          d="M90 65v92M71 150h38M90 177v24M65 82l-10 21M115 82l10 21"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-      </svg>
+      />
       {buildInventoryLayout.map(({ slot, area, row, column }) => {
         const item = equipment.find((row) => row.slot === slot && row.itemId);
         const name = item?.name || item?.itemId || "Empty";

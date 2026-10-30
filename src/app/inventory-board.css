@@ -1,15 +1,18 @@
-/* Original body diagram and functional empty-slot glyphs. Real gear remains renderer artwork. */
+/* The game's inventory: equal wells, the owner's figure behind the middle column and the
+   supplied marks in the empty supply slots. Real gear remains renderer artwork. */
 .app.outpost .inventory-equipment-board.anatomical-inventory {
   --inventory-size: 72px;
-  --inventory-armor-size: 78px;
-  --inventory-head-size: 68px;
-  --inventory-supply-size: 64px;
-  --inventory-mount-size: 60px;
+  --inventory-gap: 14px;
+  --inventory-armor-size: var(--inventory-size);
+  --inventory-head-size: var(--inventory-size);
+  --inventory-supply-size: var(--inventory-size);
+  --inventory-mount-size: var(--inventory-size);
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px 12px;
+  grid-template-columns: repeat(3, var(--inventory-size));
+  justify-content: center;
+  gap: var(--inventory-gap);
   align-items: start;
   width: min(100%, 300px);
   max-width: 300px;
@@ -20,20 +23,22 @@
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  top: 30px;
+  top: calc(6px + (var(--inventory-size) * 3 + var(--inventory-gap) * 2) * 0.075);
   left: 50%;
   transform: translateX(-50%);
-  width: 170px;
-  height: 314px;
-  color: #93a6b9;
-  opacity: 0.16;
+  width: auto;
+  height: calc((var(--inventory-size) * 3 + var(--inventory-gap) * 2) * 0.92);
+  max-width: none;
+  opacity: 0.3;
 }
 .app.outpost .anatomical-inventory.has-equipment > .inventory-body-silhouette {
-  opacity: 0.11;
+  opacity: 0.26;
 }
-.inventory-body-seam {
-  color: var(--bg);
-  opacity: 0.75;
+.app.outpost .anatomical-inventory .inventory-slot-mark {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  opacity: 0.55;
 }
 .app.outpost .anatomical-inventory > .inventory-equipment-cell {
   position: relative;
@@ -55,9 +60,16 @@
   border-radius: 5px;
   box-shadow: none;
 }
-.app.outpost .anatomical-inventory .inventory-slot-caption {
-  margin: 0 0 5px;
-  color: var(--muted);
+.app.outpost .anatomical-inventory .inventory-slot-caption,
+.app.outpost .anatomical-inventory .inventory-empty-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
   font: 400 12px/1.45 var(--font-ui);
 }
 .app.outpost .anatomical-inventory .inventory-slot-art {
@@ -67,16 +79,22 @@
   width: min(var(--inventory-size), 100%);
   height: auto;
   aspect-ratio: 1;
-  border: 1px solid #52677a6b;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--panel) 35%, transparent);
-  box-shadow: inset 0 0 0 2px #09111b30;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--elevated) 85%, transparent);
+  box-shadow: inset 0 1px 0 #ffffff08;
 }
 .app.outpost .anatomical-inventory .inventory-slot-art > img {
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   object-fit: contain;
   border-radius: 4px;
+  filter: drop-shadow(0 4px 6px #0008);
+}
+.app.outpost .anatomical-inventory .inventory-slot-art > img.inventory-slot-mark {
+  width: 70%;
+  height: 70%;
+  filter: none;
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot[data-area="head"] .inventory-slot-art,
 .app.outpost
@@ -109,11 +127,11 @@
   width: min(var(--inventory-mount-size), 100%);
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot.is-empty .inventory-slot-art {
-  border-style: solid;
-  border-color: #536b803b;
-  color: #8599ad;
-  background: color-mix(in srgb, var(--panel) 20%, transparent);
-  box-shadow: inset 0 0 0 2px #09111b18;
+  border-style: dashed;
+  border-color: var(--border);
+  color: var(--muted);
+  background: transparent;
+  box-shadow: none;
 }
 .app.outpost .anatomical-inventory .inventory-equipment-slot.is-empty .inventory-slot-art > svg {
   opacity: 0.8;
@@ -167,8 +185,7 @@
   font: 400 12px/1.5 var(--font-ui);
 }
 .app.outpost.light .anatomical-inventory > .inventory-body-silhouette {
-  color: #52667a;
-  opacity: 0.17;
+  opacity: 0.35;
 }
 .app.outpost.light .anatomical-inventory .inventory-equipment-slot.is-empty .inventory-slot-art {
   color: #53677c;
@@ -176,18 +193,8 @@
 }
 @media (max-width: 380px) {
   .app.outpost .inventory-equipment-board.anatomical-inventory {
-    --inventory-size: 64px;
-    --inventory-armor-size: 70px;
-    --inventory-head-size: 62px;
-    --inventory-supply-size: 56px;
-    --inventory-mount-size: 54px;
-    column-gap: 8px;
-    row-gap: 20px;
-  }
-  .app.outpost .anatomical-inventory > .inventory-body-silhouette {
-    width: 154px;
-    height: 294px;
-    top: 27px;
+    --inventory-size: 60px;
+    --inventory-gap: 12px;
   }
   .app.outpost .anatomical-inventory .inventory-slot-spells img {
     width: 23px;
@@ -209,12 +216,6 @@
 }
 .app.outpost .anatomical-inventory .inventory-slot-spells img {
   filter: drop-shadow(0 1px 1px #000b);
-}
-.app.outpost .anatomical-inventory .inventory-slot-art > .slot-game-art {
-  width: 90%;
-  height: 90%;
-  opacity: 0.3;
-  filter: grayscale(1);
 }
 @media (max-width: 380px) {
   .app.outpost .anatomical-inventory .inventory-slot-spells img + img {
