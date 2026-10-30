@@ -858,7 +858,7 @@
 .app.outpost .workspace-identity {
   justify-content: flex-start;
 }
-.app.outpost .workspace-identity > div {
+.app.outpost .workspace-identity > div:not(.workspace-identity-actions) {
   flex: 1;
   min-width: 0;
   text-align: left;
@@ -1026,6 +1026,7 @@
     flex-wrap: wrap;
   }
   .app.outpost .workspace-identity-actions {
+    flex: 0 0 100%;
     width: 100%;
     margin-left: 0;
   }

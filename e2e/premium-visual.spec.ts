@@ -95,9 +95,9 @@ for (const width of [320, 390, 768, 1440]) {
       // retain real equipment art; semantic tests separately assert IDs and dimensions.
       mask: [page.locator("[data-albion-icon]")],
       maskColor: "#292629",
-      // CI's Ubuntu font rasterization and the baseline machine differ by well under 2% of
+      // CI's Ubuntu font rasterization and the baseline machine differ by under 1% of
       // the pixels; a broken layout moves far more than that.
-      maxDiffPixelRatio: 0.02,
+      maxDiffPixelRatio: 0.01,
     };
     await page.goto(`/builds/${visual.buildId}/edit`);
     await expect(page.getByLabel("Build title")).toHaveValue("Battleaxe expedition · QA fixture");
@@ -112,7 +112,7 @@ for (const width of [320, 390, 768, 1440]) {
         ...options,
         // The illustrated masthead's line wrapping depends on font hinting; the masthead is
         // reviewed by the page screenshots instead, so the baseline covers the directory only.
-        style: ".composition-directory > .workspace-identity { display: none; }",
+        stylePath: "e2e/support/comps-baseline.css",
       },
     );
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
@@ -128,7 +128,7 @@ for (const width of [320, 390, 768, 1440]) {
       await expect(drawer).toHaveScreenshot(`navigation-${width}.png`, {
         animations: "disabled",
         // CI's Ubuntu font rasterization differs from local Linux by up to ~80px here.
-        maxDiffPixelRatio: 0.02,
+        maxDiffPixelRatio: 0.01,
       });
       expect(
         (
