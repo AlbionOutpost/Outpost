@@ -38,7 +38,7 @@ for table,names in columns.items():
  for record in data[table]:
   values=[json.dumps(record[n],separators=(',',':')) if n in ['abilities','recipe'] and record[n] is not None else record[n] for n in names]
   quoted=db.execute('SELECT '+','.join(['quote(?)']*len(values)),values).fetchone()
-  rows.append('('+','.join(quoted)+')')
+  rows.append('('+','.join(map(str,quoted))+')')
  for start in range(0,len(rows),50):
   out.append('INSERT INTO "'+table+'" ('+','.join('"'+n+'"' for n in names)+') VALUES '+','.join(rows[start:start+50])+';')
 print(json.dumps(out))
