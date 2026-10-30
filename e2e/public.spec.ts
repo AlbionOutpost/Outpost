@@ -18,7 +18,7 @@ test("market failure never substitutes prices", async ({ page }) => {
   await page.goto("/tools/market");
   await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator("p[role=alert]")).toContainText("unavailable");
-  await expect(page.locator("tbody tr")).toHaveCount(0);
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
 });
 test("regional market request and region invalidation", async ({ page }) => {
   await page.route("**/api/market?**", (route) =>
@@ -42,10 +42,10 @@ test("regional market request and region invalidation", async ({ page }) => {
   );
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator("tbody")).toContainText("STALE");
+  await expect(page.locator(".market-board tbody")).toContainText("STALE");
   await chooseRegion(page, "asia");
   await expect(page.locator("main")).toContainText("Region changed");
-  await expect(page.locator("tbody tr")).toHaveCount(0);
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
 });
 test("private account data requires authentication", async ({ request, page }) => {
   expect((await request.get("/api/account/export")).status()).toBe(401);
