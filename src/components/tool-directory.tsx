@@ -1,4 +1,5 @@
 "use client";
+import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
 import { Search, ArrowUpRight, X, Pin } from "lucide-react";
@@ -6,6 +7,34 @@ import { tools, toolGroups } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useAtlasRegion } from "./region-context";
+import { WorkspaceHeading } from "./workspace-heading";
+// Each tool crops one of the five paintings so the directory reads as places, not a list.
+const scenes: Record<string, { scene: string; at: string }> = {
+  "/tools/market": { scene: "market", at: "30% 40%" },
+  "/shopping-list": { scene: "city", at: "88% 60%" },
+  "/tools/flipping": { scene: "hero", at: "70% 60%" },
+  "/tools/crafting": { scene: "hero", at: "25% 50%" },
+  "/tools/cooking": { scene: "market", at: "75% 70%" },
+  "/tools/alchemy": { scene: "composition", at: "60% 40%" },
+  "/tools/fishing": { scene: "city", at: "20% 72%" },
+  "/tools/refining": { scene: "build", at: "30% 35%" },
+  "/tools/enchanting": { scene: "hero", at: "88% 30%" },
+  "/tools/farming": { scene: "city", at: "55% 85%" },
+  "/tools/transporting": { scene: "market", at: "10% 75%" },
+  "/tools/laborers": { scene: "composition", at: "15% 65%" },
+  "/tools/mastery": { scene: "build", at: "75% 55%" },
+  "/tools/reference": { scene: "city", at: "40% 40%" },
+  "/tools/avalon-mapper": { scene: "city", at: "50% 12%" },
+  "/tools/gold": { scene: "market", at: "55% 25%" },
+  "/builds/new": { scene: "build", at: "50% 40%" },
+  "/builds": { scene: "hero", at: "50% 75%" },
+  "/items": { scene: "market", at: "90% 50%" },
+  "/compositions/new": { scene: "composition", at: "50% 40%" },
+  "/groups": { scene: "city", at: "80% 55%" },
+  "/timers": { scene: "hero", at: "10% 30%" },
+  "/tools/kill-feed": { scene: "build", at: "15% 70%" },
+  "/tools/death-feed": { scene: "composition", at: "85% 30%" },
+};
 function subscribeToolShortcuts(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener("outpost:tool-shortcuts", callback);
@@ -54,12 +83,12 @@ export function ToolDirectory() {
   );
   return (
     <div className="directory-page support-tools-directory">
-      <header className="product-page-heading">
-        <div>
-          <h1 className="page-title display-title">Tools & calculators</h1>
-          <p>Check prices, calculate profit and plan your gear.</p>
-        </div>
-      </header>
+      <WorkspaceHeading
+        glyph="craft"
+        scene="economy"
+        title="Tools"
+        description="Everything you need to make better decisions in Albion Online: prices, profit, gear and your team."
+      />
       {!!pins.length && !query && category === "All tools" && (
         <section className="tool-shortcuts" aria-label="Tool shortcuts on this device">
           <div className="support-section-heading">
@@ -129,10 +158,16 @@ export function ToolDirectory() {
               </div>
               <div className="directory-entries">
                 {rows.map((t) => (
-                  <article className="directory-entry" key={t.href}>
+                  <article
+                    className="directory-entry"
+                    key={t.href}
+                    data-scene={scenes[t.href]?.scene ?? "hero"}
+                    style={{ "--scene-at": scenes[t.href]?.at ?? "center" } as React.CSSProperties}
+                  >
                     <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
+                      <span className="directory-entry-art" aria-hidden="true" />
                       <span className="tool-symbol" aria-hidden="true">
-                        <ToolIcon name={t.icon} size={24} />
+                        <ToolIcon name={t.icon} size={20} />
                       </span>
                       <div>
                         <h3>{t.title}</h3>
