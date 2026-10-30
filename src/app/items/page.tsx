@@ -1,6 +1,7 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { db } from "@/lib/db";
 import { ItemCatalog } from "@/components/item-catalog";
-export const metadata = { title: "Item browser" };
+export const metadata = { title: "Item database" };
 export default async function Page() {
   const [metadata, total, slots] = await Promise.all([
     db.itemMetadata.findMany({
@@ -18,15 +19,12 @@ export default async function Page() {
   ]);
   return (
     <>
-      <header className="workspace-identity">
-        <div>
-          <h1 className="page-title display-title">Item browser</h1>
-          <p className="intro">
-            Find gear by name, tier and enchantment. Compare prices and inspect the available item
-            data.
-          </p>
-        </div>
-      </header>
+      <WorkspaceHeading
+        glyph="catalog"
+        scene="market"
+        title="Item database"
+        description="Every item's stats, abilities, recipes, tiers and current prices. Find gear by name, tier and enchantment."
+      />
       <ItemCatalog metadata={metadata} total={total} categories={slots.map((i) => i.slot).sort()} />
     </>
   );

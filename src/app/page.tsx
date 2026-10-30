@@ -1,23 +1,57 @@
 import "./homepage.css";
-import Image from "next/image";
-import { LibraryBuildCard } from "@/components/library-build-card";
+import { ItemIcon } from "@/components/item-icon";
+import { ToolIcon } from "@/components/tool-icon";
 import { featuredLibraryBuilds, libraryCounts } from "@/lib/grind-library";
+import { activityName } from "@/lib/grind-library-types";
 import { gameDataSource } from "@/lib/albion/game/recipes";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
-import {
-  ArrowRight,
-  BookOpen,
-  ChartNoAxesCombined,
-  Calculator,
-  Database,
-  Search,
-  ShieldCheck,
-  Swords,
-  Users,
-} from "lucide-react";
+import { ArrowRight, BookOpen, ChartNoAxesCombined, Search, Swords, Users } from "lucide-react";
 import { regionSchema } from "@/lib/albion/region-config";
+
+// Scenes are the owner-authorised paintings in public/albion/illustrations; each tile crops a
+// different part of one so the six tools read as six places, not one repeated image.
+const toolTiles = [
+  {
+    href: "/tools/market",
+    title: "Market Explorer",
+    scene: "market",
+    at: "30% 40%",
+    icon: "market",
+  },
+  {
+    href: "/builds/library",
+    title: "Build Library",
+    scene: "build",
+    at: "50% 30%",
+    icon: "equipment",
+  },
+  {
+    href: "/tools/crafting",
+    title: "Crafting Calculator",
+    scene: "hero",
+    at: "70% 60%",
+    icon: "craft",
+  },
+  {
+    href: "/compositions/library",
+    title: "Group Builds",
+    scene: "composition",
+    at: "50% 40%",
+    icon: "composition",
+  },
+  { href: "/items", title: "Item Database", scene: "city", at: "12% 38%", icon: "catalog" },
+  { href: "/groups", title: "Teams", scene: "city", at: "88% 55%", icon: "guild" },
+] as const;
+const toolCopy: Record<string, string> = {
+  "/tools/market": "Sell and buy orders for every city, with the time each one was seen.",
+  "/builds/library": "Equipment, abilities and swaps for every weapon, ready to copy.",
+  "/tools/crafting": "Cost a run with your specs, focus, fees and observed prices.",
+  "/compositions/library": "Party plans with every member's loadout and the optional roles.",
+  "/items": "Every item's stats, abilities, recipes, tiers and current prices.",
+  "/groups": "A workspace for your team: events, shared builds, comps and loot splits.",
+};
 
 export default async function Home({
   searchParams,
@@ -29,29 +63,39 @@ export default async function Home({
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = `?region=${region}`;
-  const builds = (await featuredLibraryBuilds()).slice(0, 4);
+  const builds = (await featuredLibraryBuilds()).slice(0, 6);
   const library = await libraryCounts();
-  const counts = {
-    builds: library.builds,
-    comps: library.compositions,
-    guides: library.guides,
-    tools: tools.length,
-  };
   const n = (value: number) => value.toLocaleString("en-US");
+  const gameData = gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1);
   return (
-    <div className="reference-home support-home home-cinematic home-launch">
-      <section className="reference-hero" aria-labelledby="home-title">
-        <div className="reference-hero-copy">
+    <div className="home-landing">
+      <section className="landing-hero" aria-labelledby="home-title">
+        <picture className="landing-hero-art" aria-hidden="true">
+          <source
+            media="(max-width: 700px)"
+            srcSet="/albion/illustrations/city-overlook-v2-phone.webp"
+          />
+          <img
+            src="/albion/illustrations/city-overlook-v2.webp"
+            alt=""
+            width={1800}
+            height={772}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
+        <div className="landing-hero-copy">
+          <p className="landing-eyebrow">Independent Albion Online tools</p>
           <h1 id="home-title">
             Your Albion
             <br />
             <em>advantage.</em>
           </h1>
-          <p>
-            Market prices, {n(counts.builds)} builds and {counts.tools} calculators for Albion
-            Online, built on real player observations. Make your next move count.
+          <p className="landing-lede">
+            Market prices, {n(library.builds)} builds and {tools.length} calculators, built on real
+            player observations. Make your next move count.
           </p>
-          <div className="actions">
+          <div className="landing-actions">
             <Link href={`/tools/market${suffix}`} className="button primary">
               <Search size={18} /> Explore Market <ArrowRight size={17} />
             </Link>
@@ -59,201 +103,120 @@ export default async function Home({
               <BookOpen size={18} /> Browse Builds
             </Link>
           </div>
-        </div>
-        <div className="home-hero-atmosphere" aria-hidden="true">
-          {/* The hero is the largest paint; phones get the 800px (33 KB) version. */}
-          <picture>
-            <source
-              media="(max-width: 700px)"
-              srcSet="/albion/illustrations/city-overlook-v2-phone.webp"
-            />
-            <img
-              src="/albion/illustrations/city-overlook-v2.webp"
-              alt=""
-              width={1800}
-              height={772}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
-        </div>
-      </section>
-
-      <section className="home-benefits" aria-labelledby="home-benefits-title">
-        <h2 id="home-benefits-title" className="sr-only">
-          What Outpost does
-        </h2>
-        <div className="reference-feature-grid">
-          <article className="home-destination home-destination-market">
-            <ChartNoAxesCombined size={25} aria-hidden="true" />
-            <h3>Know the price before you travel</h3>
-            <p>
-              Sell and buy orders for every city, with the time each one was seen, plus 30-day
-              history and quality coverage for any item.
-            </p>
-            <Link className="text-link" href={`/tools/market${suffix}`}>
-              Open Market Explorer <ArrowRight size={15} />
-            </Link>
-          </article>
-          <article className="home-destination home-destination-builds">
-            <Swords size={25} aria-hidden="true" />
-            <h3>Find a loadout that works</h3>
-            <p>
-              {n(counts.builds)} library builds and {n(counts.comps)} group comps with equipment,
-              abilities, swaps and the silver it takes to gear up.
-            </p>
-            <Link className="text-link" href={`/builds/library${suffix}`}>
-              Browse builds <ArrowRight size={15} />
-            </Link>
-          </article>
-          <article className="home-destination home-destination-comps">
-            <Calculator size={25} aria-hidden="true" />
-            <h3>Craft, refine and haul for profit</h3>
-            <p>
-              {counts.tools} calculators for crafting, refining, transport, flipping, farming and
-              laborers, with your specs, focus and fees applied.
-            </p>
-            <Link className="text-link" href={`/tools${suffix}`}>
-              See all tools <ArrowRight size={15} />
-            </Link>
-          </article>
+          <ul className="landing-benefits" aria-label="What Outpost does">
+            <li>
+              <ChartNoAxesCombined size={22} aria-hidden="true" />
+              <div>
+                <strong>Market data</strong>
+                <span>Live and historical prices across every city</span>
+              </div>
+            </li>
+            <li>
+              <Swords size={22} aria-hidden="true" />
+              <div>
+                <strong>Build planning</strong>
+                <span>Loadouts, abilities and swaps for any content</span>
+              </div>
+            </li>
+            <li>
+              <Users size={22} aria-hidden="true" />
+              <div>
+                <strong>Group coordination</strong>
+                <span>Comps, Teams and loot splits in one place</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section className="home-demo" aria-labelledby="home-demo-title">
-        <div className="support-section-heading">
-          <div>
-            <h2 id="home-demo-title">The Market Explorer, as it runs today</h2>
-            <p>
-              Every quote keeps its city, quality and source time. Stale observations are marked,
-              missing ones stay missing.
-            </p>
-          </div>
-          <Link className="text-link" href={`/tools/market?item=T4_BAG&region=${region}`}>
-            Try it with a T4 Bag <ArrowRight size={15} />
+      <section className="landing-tools" aria-labelledby="home-tools-title">
+        <div className="landing-section-heading">
+          <h2 id="home-tools-title">Tools</h2>
+          <p>Everything you need to make better decisions in Albion Online.</p>
+          <Link className="text-link" href={`/tools${suffix}`}>
+            All {tools.length} tools <ArrowRight size={15} />
           </Link>
         </div>
-        <figure className="home-demo-figure">
-          <Image
-            src="/home/market-explorer.webp"
-            alt="Market Explorer showing sell and buy orders for a Tier 4 Bag across eight cities, each with its own source time"
-            width={1600}
-            height={958}
-            unoptimized
-            loading="lazy"
-          />
-          <figcaption>
-            Screenshot of albionoutpost.com on 30 Oct 2026 · Europe server · Albion Online Data
-            Project observations
-          </figcaption>
-        </figure>
-        <div className="home-demo-secondary">
-          <figure className="home-demo-figure">
-            <Image
-              src="/home/build-detail.webp"
-              alt="Build detail page for a Battleaxe mist build showing the equipped slots and selected abilities"
-              width={1600}
-              height={958}
-              unoptimized
-              loading="lazy"
-            />
-            <figcaption>
-              Build pages: slots, abilities, alternatives and loadout cost.{" "}
-              <Link className="text-link" href={`/builds/library/battleaxe-mist-build${suffix}`}>
-                Open this build
-              </Link>
-            </figcaption>
-          </figure>
-          <figure className="home-demo-figure">
-            <Image
-              src="/home/crafting-calculator.webp"
-              alt="Crafting calculator with recipe configuration, priced materials and a results summary"
-              width={1600}
-              height={958}
-              unoptimized
-              loading="lazy"
-            />
-            <figcaption>
-              Calculators: configure, price, understand the result.{" "}
-              <Link className="text-link" href={`/tools/crafting${suffix}`}>
-                Open the crafting calculator
-              </Link>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section className="home-library-picks" aria-labelledby="home-builds-title">
-        <div className="support-section-heading">
-          <div>
-            <h2 id="home-builds-title">Featured builds</h2>
-            <p>Find your next playstyle.</p>
-          </div>
-          <Link className="text-link" href={`/builds/library${suffix}`}>
-            Browse all builds <ArrowRight size={15} />
-          </Link>
-        </div>
-        <div className="home-build-grid">
-          {builds.map((build) => (
-            <LibraryBuildCard key={build.id} build={build} />
+        <div className="landing-tool-grid">
+          {toolTiles.map((tile) => (
+            <Link
+              key={tile.href}
+              href={`${tile.href}${suffix}`}
+              className="landing-tool-tile"
+              data-scene={tile.scene}
+              style={{ "--scene-at": tile.at } as React.CSSProperties}
+            >
+              <span className="landing-tile-art" aria-hidden="true" />
+              <span className="landing-tile-body">
+                <span className="landing-tile-icon">
+                  <ToolIcon name={tile.icon} size={20} />
+                </span>
+                <strong>{tile.title}</strong>
+                <span>{toolCopy[tile.href]}</span>
+              </span>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="home-trust" aria-labelledby="home-trust-title">
-        <h2 id="home-trust-title">Where the numbers come from</h2>
-        <ul className="home-trust-grid">
-          <li>
-            <Database size={20} aria-hidden="true" />
-            <h3>Player-observed prices</h3>
-            <p>
-              Market quotes come from the Albion Online Data Project, collected by players who run
-              its client. Every quote shows its own source time; nothing is estimated or filled in.
-            </p>
-          </li>
-          <li>
-            <ShieldCheck size={20} aria-hidden="true" />
-            <h3>Game data, dated</h3>
-            <p>
-              Recipes, item weights, mount capacity and laborer tables use{" "}
-              {gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1)}. We say so on every
-              page that uses them, and re-check after each patch.
-            </p>
-          </li>
-          <li>
-            <Users size={20} aria-hidden="true" />
-            <h3>Free, with optional sign-in</h3>
-            <p>
-              Every tool works without an account. Discord sign-in only adds saved scenarios,
-              favourites and Teams; we ask for your identity and email, nothing else.
-            </p>
-          </li>
-        </ul>
-        <p className="home-trust-links">
-          <Link className="text-link" href={`/market-data${suffix}`}>
-            How market coverage works
+      <section className="landing-builds" aria-labelledby="home-builds-title">
+        <div className="landing-section-heading">
+          <h2 id="home-builds-title">Builds</h2>
+          <p>
+            {n(library.builds)} loadouts from the library, with abilities, swaps and the silver to
+            gear up.
+          </p>
+          <Link className="text-link" href={`/builds/library${suffix}`}>
+            Browse all builds <ArrowRight size={15} />
           </Link>
-          <Link className="text-link" href={`/guides${suffix}`}>
-            {counts.guides} guides
-          </Link>
-          <Link className="text-link" href={`/legal${suffix}`}>
-            Privacy &amp; terms
-          </Link>
-        </p>
+        </div>
+        <div className="landing-build-grid">
+          {builds.map((build) => {
+            const main = build.equipment.find((item) => item.slot === "Main hand");
+            return (
+              <Link
+                key={build.id}
+                href={`/builds/library/${encodeURIComponent(build.slug)}${suffix}`}
+                className="landing-build-tile"
+              >
+                <span className="landing-build-art" aria-hidden="true">
+                  {main ? <ItemIcon id={main.itemId} size={88} /> : null}
+                </span>
+                <span className="landing-build-body">
+                  <strong>{build.title}</strong>
+                  <span className="landing-chips">
+                    <span className="landing-chip">{activityName(build.category)}</span>
+                    {build.weaponName && (
+                      <span className="landing-chip is-muted">{build.weaponName}</span>
+                    )}
+                  </span>
+                  <span className="landing-build-meta">
+                    <span>By {build.author}</span>
+                    <time dateTime={build.updatedAt}>{build.updatedAt.slice(0, 10)}</time>
+                  </span>
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
-      <section className="home-final-cta" aria-labelledby="home-cta-title">
-        <div>
-          <h2 id="home-cta-title">Make your next move count.</h2>
-          <p>Start with a price check or a build. Save your plans whenever you are ready.</p>
-        </div>
-        <div className="actions">
-          <Link href={`/tools/market${suffix}`} className="button primary">
-            Explore Market <ArrowRight size={17} />
-          </Link>
-          <Link href={`/builds/library${suffix}`} className="button secondary">
-            Browse Builds
-          </Link>
+      <section className="landing-band" aria-labelledby="home-band-title">
+        <div className="landing-band-copy">
+          <h2 id="home-band-title">Built for Albion players</h2>
+          <p>
+            Independent and free. Prices are player observations from the Albion Online Data Project
+            with their own source times; recipes and stats use {gameData}. Nothing is estimated or
+            made up.
+          </p>
+          <div className="landing-actions">
+            <Link href={`/tools/market${suffix}`} className="button primary">
+              Explore Market <ArrowRight size={17} />
+            </Link>
+            <Link href={`/guides${suffix}`} className="button secondary">
+              Read the guides
+            </Link>
+          </div>
         </div>
       </section>
     </div>

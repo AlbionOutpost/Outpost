@@ -201,7 +201,7 @@ test("community favorites, votes, comments and moderation enforce independent-ac
       privatePage.getByRole("heading", { name: "Private favorite guild", exact: true }),
     ).toHaveCount(0);
     await expect(
-      privatePage.getByRole("heading", { name: "This page is unavailable", exact: true }),
+      privatePage.getByRole("heading", { name: "Page not found.", exact: true }),
     ).toBeVisible();
     const composition = await db.composition.create({
       data: {

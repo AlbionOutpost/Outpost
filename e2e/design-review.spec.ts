@@ -167,7 +167,8 @@ test("design review covers application pages, equipment, guilds and reduced moti
           const content = await page.locator("main").boundingBox();
           // Redesigned chrome is 88px on desktop and 76px on mobile/tablet.
           expect(top!.height).toBeLessThanOrEqual(width > 1100 ? 96 : 80);
-          expect(content!.y).toBeGreaterThanOrEqual(top!.y + top!.height);
+          // The landing page runs its painted hero under a floating header by design.
+          if (route !== "/") expect(content!.y).toBeGreaterThanOrEqual(top!.y + top!.height);
           const overflow = await page.evaluate(
             () => document.documentElement.scrollWidth > innerWidth,
           );
@@ -199,7 +200,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
       }
     }
     await page.goto("/");
-    await page.getByRole("link", { name: "Try it with a T4 Bag", exact: true }).click();
+    await page.locator(".landing-tool-tile").first().click();
     await page.getByRole("combobox", { name: "Search market items" }).fill("T6_MAIN_AXE@1");
     await page
       .getByRole("listbox", { name: "Matching market items" })

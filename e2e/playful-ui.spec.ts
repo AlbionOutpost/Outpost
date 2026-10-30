@@ -35,9 +35,8 @@ test("equipment selection opens the real item, and the redesigned search and men
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  const demo = page.getByRole("region", { name: "The Market Explorer, as it runs today" });
-  const item = demo.getByRole("link", { name: "Try it with a T4 Bag", exact: true });
-  await expect(item).toHaveAttribute("href", "/tools/market?item=T4_BAG&region=europe");
+  const item = page.locator(".landing-tool-tile").first();
+  await expect(item).toHaveAttribute("href", "/tools/market?region=europe");
   await page.keyboard.press("Control+k");
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
