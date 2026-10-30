@@ -1,0 +1,53 @@
+name: Visual baselines
+# Regenerates the reviewed screenshot baselines on the same runner image that checks them,
+# so font rasterization never produces a false failure. Dispatch it on a branch after a
+# deliberate visual change, review the committed images in the pull request, then merge.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: visual-baselines-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  baselines:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Configure isolated local services
+        run: node scripts/ci-local-services.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the pinned browser sandbox
+        run: node scripts/qa-browser-sandbox.mjs
+      - name: Build the standalone server
+        run: npm run build
+      - name: Regenerate the reviewed baselines
+        run: npx playwright test e2e/premium-visual.spec.ts --update-snapshots=all --reporter=line
+        env:
+          E2E_PRODUCTION: "1"
+      - name: Commit refreshed baselines
+        run: |
+          git config user.name "oNxZero"
+          git config user.email "68500381+oNxZero@users.noreply.github.com"
+          git add e2e/premium-visual.spec.ts-snapshots
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged."
+          else
+            git commit -m "Refresh visual baselines on the CI runner"
+            git pull --rebase --autostash origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+      - name: Remove ephemeral CI services
+        if: always()
+        run: docker compose down --volumes
