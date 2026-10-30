@@ -151,6 +151,7 @@ export function RegionPicker({
                 key={choice.value}
                 id={`${id}-${index}`}
                 role="option"
+                aria-label={choice.label}
                 aria-selected={choice.value === value}
                 data-active={active === index}
                 onPointerMove={() => setActive(index)}
