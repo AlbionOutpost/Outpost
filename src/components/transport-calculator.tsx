@@ -9,16 +9,38 @@ import {
   transportPriceMatches,
   type TransportInput,
 } from "@/lib/albion/transport";
-import { cities } from "@/lib/albion/region-config";
+import { cities, type Region } from "@/lib/albion/region-config";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ArrowRight, Truck } from "lucide-react";
 import { transportPriceQuery, mergeTransportObservations } from "@/lib/albion/transport-prices";
 import { mounts, mountCapacity } from "@/lib/albion/mounts";
-export function TransportCalculator() {
+export type TransportPreselection = {
+  item?: string;
+  from?: string;
+  to?: string;
+  quality?: string;
+};
+/** Links from the flip scanner and item pages preselect cargo, route and quality. */
+function preselected(region: Region, initial: TransportPreselection) {
+  const base = initialTransport(region);
+  const item = (initial.item || "").toUpperCase(),
+    quality = Number(initial.quality || 0);
+  const city = (name?: string) => cities.find((c) => c === name);
+  return {
+    ...base,
+    ...(/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(item) ? { itemId: item } : {}),
+    ...(city(initial.from) && initial.from !== "Black Market"
+      ? { fromCity: city(initial.from)! }
+      : {}),
+    ...(city(initial.to) ? { toCity: city(initial.to)! } : {}),
+    ...(quality >= 1 && quality <= 5 ? { quality } : {}),
+  };
+}
+export function TransportCalculator({ initial = {} }: { initial?: TransportPreselection }) {
   const region = useAtlasRegion(),
-    [draft, setDraft] = useState(() => initialTransport(region)),
+    [draft, setDraft] = useState(() => preselected(region, initial)),
     [message, setMessage] = useState(""),
     [pendingKey, setPendingKey] = useState<string | null>(null),
     [title, setTitle] = useState(""),
@@ -26,22 +48,6 @@ export function TransportCalculator() {
   const [gameWeight, setGameWeight] = useState<{ id: string; weight: number | null } | null>(null);
   const [mount, setMount] = useState({ id: "", quality: 1 });
   const autoWeight = useRef<number | null>(null);
-  // Links from the flip scanner and item pages preselect cargo, route and quality.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const item = (params.get("item") || "").toUpperCase(),
-      from = params.get("from") || "",
-      to = params.get("to") || "",
-      quality = Number(params.get("quality") || 0);
-    const city = (name: string) => cities.find((c) => c === name);
-    setDraft((d) => ({
-      ...d,
-      ...(/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(item) ? { itemId: item } : {}),
-      ...(city(from) && from !== "Black Market" ? { fromCity: city(from)! } : {}),
-      ...(city(to) ? { toCity: city(to)! } : {}),
-      ...(quality >= 1 && quality <= 5 ? { quality } : {}),
-    }));
-  }, []);
   // Fill the per-item weight from game data whenever the cargo changes.
   useEffect(() => {
     if (!/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(draft.itemId)) return;
