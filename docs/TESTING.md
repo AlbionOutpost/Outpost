@@ -50,3 +50,7 @@ Sessions in browser tests are fixture database sessions, not real Discord logins
 ## Not covered yet
 
 Real Discord OAuth lifecycle, physical devices and screen readers, Firefox/WebKit, load tests, real-user performance metrics. The live-site probe in CI is blocked by Bot Fight Mode — smoke-test the deployed site manually ([OPERATIONS.md](OPERATIONS.md#deploying)).
+
+## Visual baselines
+
+`e2e/premium-visual.spec.ts` compares the build editor, the comps directory and the navigation drawer against committed screenshots. Font rasterization differs between machines, so after a deliberate visual change regenerate the baselines on the CI runner instead of locally: run the manual **Visual baselines** workflow (`.github/workflows/visual-baselines.yml`) on your branch; it commits the refreshed images to that branch for review in the pull request.
