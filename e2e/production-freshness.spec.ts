@@ -33,12 +33,12 @@ test("a market refresh preserves a newer manual edit and warns about undated obs
   await page.getByText("Station settings, focus & sources", { exact: true }).click();
   await page.getByText("Markets & transaction fees", { exact: true }).click();
   await page.getByLabel("Replace manual overrides", { exact: true }).selectOption("yes");
-  await page.getByRole("button", { name: "Load market observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
   await expect.poll(() => requested).toBe(true);
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("175");
   release!();
   await expect(
-    page.getByRole("button", { name: "Load market observations", exact: true }),
+    page.getByRole("button", { name: "Refresh market observations", exact: true }),
   ).toBeEnabled();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("175");
   // 16 × 175 + 8 × 50 = 3,200 cost, 3,000 revenue, no supplied fees/returns.
@@ -74,7 +74,7 @@ test("a zero source-price sentinel cannot produce a complete profit estimate", a
   await page.goto("/tools/crafting?region=europe");
   await page.getByText("Station settings, focus & sources", { exact: true }).click();
   await page.getByText("Markets & transaction fees", { exact: true }).click();
-  await page.getByRole("button", { name: "Load market observations", exact: true }).click();
+  await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("100");
   await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);

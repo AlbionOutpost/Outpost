@@ -126,7 +126,7 @@
   margin: 0 0 6px;
   font-size: 17px;
 }
-.production-result-item span {
+.production-result-item span:not(.workspace-step) {
   color: var(--muted);
   font-size: 12px;
 }

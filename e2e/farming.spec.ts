@@ -44,7 +44,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
         },
       }),
     );
-    await page.getByRole("button", { name: "Load market observations", exact: true }).click();
+    await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
     await expect(page.getByRole("status").first()).toContainText("Manual prices kept");
     await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");
     await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();

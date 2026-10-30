@@ -141,6 +141,43 @@ export function ProductionCalculator({
     },
     [requestKey],
   );
+  // Research-first: observations for the current recipe, markets and quality load on their own.
+  // Manual prices survive unless "Replace manual overrides" is on, so a saved run keeps its edits.
+  const loadRef = useRef<() => Promise<void>>(async () => {});
+  useEffect(() => {
+    if (!recipeKnown) return;
+    const timer = window.setTimeout(() => void loadRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [recipeKnown, requestKey]);
+  async function load() {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
+    const requested = configuration;
+    setPendingKey(requestKey);
+    setAttemptedKey(requestKey);
+    setError("");
+    try {
+      const response = await fetch(`/api/economy/prices?${requestKey}`, {
+        signal: controller.signal,
+      });
+      const body = await response.json();
+      if (controller.signal.aborted) return;
+      if (!response.ok) throw new Error(body.error);
+      const observedPrices = productionSchema.shape.prices.parse(body.prices);
+      setDraft((d) =>
+        mergeProductionObservations({ ...d, region }, requested, observedPrices, overwrite),
+      );
+    } catch (e) {
+      if (controller.signal.aborted) return;
+      setError(e instanceof Error ? e.message : "Market observations unavailable");
+    } finally {
+      if (request.current === controller) setPendingKey(null);
+    }
+  }
+  useEffect(() => {
+    loadRef.current = load;
+  });
   if (!recipeKnown)
     return (
       <div className="production-journey premium-production">
@@ -203,32 +240,6 @@ export function ProductionCalculator({
         },
       },
     }));
-  }
-  async function load() {
-    request.current?.abort();
-    const controller = new AbortController();
-    request.current = controller;
-    const requested = configuration;
-    setPendingKey(requestKey);
-    setAttemptedKey(requestKey);
-    setError("");
-    try {
-      const response = await fetch(`/api/economy/prices?${requestKey}`, {
-        signal: controller.signal,
-      });
-      const body = await response.json();
-      if (controller.signal.aborted) return;
-      if (!response.ok) throw new Error(body.error);
-      const observedPrices = productionSchema.shape.prices.parse(body.prices);
-      setDraft((d) =>
-        mergeProductionObservations({ ...d, region }, requested, observedPrices, overwrite),
-      );
-    } catch (e) {
-      if (controller.signal.aborted) return;
-      setError(e instanceof Error ? e.message : "Market observations unavailable");
-    } finally {
-      if (request.current === controller) setPendingKey(null);
-    }
   }
   const money = (v: number | null | undefined) =>
     v === null || v === undefined
@@ -809,12 +820,12 @@ export function ProductionCalculator({
               Material costs
             </h2>
             <button className="button secondary" disabled={busy} onClick={load}>
-              {busy ? "Fetching observations…" : "Load market observations"}
+              {busy ? "Fetching observations…" : "Refresh market observations"}
             </button>
           </div>
           <p className="production-price-help">
-            Load observed prices for {draft.materialCity}, or enter your own prices below. Output
-            sells in {draft.outputCity}.
+            Observed prices for {draft.materialCity} load with each change; edit any price by hand.
+            Output sells in {draft.outputCity}.
           </p>
           {attempted && !busy && !error && !result?.complete && (
             <p className="task-state" role="status">
@@ -951,7 +962,7 @@ export function ProductionCalculator({
                   : current(recipe.output, outputQuality, draft.outputCity)?.observedAt ||
                     (attempted
                       ? "No output quote returned. Enter your sale price."
-                      : "Enter your expected sale price, or load observations.")}
+                      : "Observations are loading; you can enter your expected sale price instead.")}
               </small>
             </section>
           </div>
@@ -999,7 +1010,9 @@ export function ProductionCalculator({
                   ? "Checking material and output prices for your selected markets."
                   : error
                     ? "Your recipe and manual prices are kept. Retry loading observations or enter prices yourself."
-                    : `${recipe.name} is selected. Add the required material and output prices, or load observations for your selected cities.`}
+                    : attempted
+                      ? `${recipe.name} is selected. Some prices were not observed in your selected cities; enter the missing material or output prices to finish.`
+                      : `${recipe.name} is selected. Observations for your selected cities are loading; enter any missing prices to finish.`}
               </p>
               <button className="button secondary" type="button" onClick={() => goToStep(2)}>
                 Add material prices <ArrowRight size={16} aria-hidden="true" />
