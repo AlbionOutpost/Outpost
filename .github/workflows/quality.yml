@@ -49,6 +49,9 @@ jobs:
           docker compose up -d --wait
           npm run db:deploy
           npm run data:sync
+      # Same check the deploy runs, so a broken Cloudflare runtime fails the PR, not production.
+      - name: Cloudflare SQLite runtime
+        run: node scripts/qa-cloudflare-runtime.mjs
       - run: npx playwright install --with-deps chromium
       - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs

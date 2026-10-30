@@ -58,16 +58,7 @@ jobs:
           npm run db:deploy
           npm run data:sync
       - name: Generate and verify the SQLite runtime
-        run: |
-          node scripts/cloudflare-database-generate.mjs
-          node scripts/cloudflare-domain-constraints.mjs --check
-          npx tsc --project cloudflare/tsconfig.json
-          python3 scripts/qa-d1-schema.py
-          node scripts/cloudflare-stage-catalog.mjs --write-local
-          node scripts/cloudflare-stage-library.mjs --write-local
-          npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc --file "$GITHUB_WORKSPACE/.qa/cloudflare-catalog/local-import.sql" --persist-to "$GITHUB_WORKSPACE/.qa/cloudflare-database-test/state"
-          npx wrangler d1 execute CATALOG --local --config cloudflare/database/wrangler.jsonc --file "$GITHUB_WORKSPACE/.qa/cloudflare-library/local-import.sql" --persist-to "$GITHUB_WORKSPACE/.qa/cloudflare-database-test/state"
-          node scripts/qa-cloudflare-database.mjs
+        run: node scripts/qa-cloudflare-runtime.mjs
       - run: npx playwright install --with-deps chromium
       - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
