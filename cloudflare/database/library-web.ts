@@ -51,6 +51,12 @@ export const queryLibraryCompositions = async (input: LibraryQuery) =>
   (await databaseBinding()
     .archiveList("compositions", input)
     .catch(() => publicLibraryPage("compositions", input))) as LibraryPage<LibraryComposition>;
+/** Totals for the landing page: the archive manifest answers each count with one row. */
+export const libraryCounts = async () => ({
+  builds: (await queryLibraryBuilds({ page: 1 })).total,
+  compositions: (await queryLibraryCompositions({ page: 1 })).total,
+  guides: (await libraryGuides()).length,
+});
 const featured = [
   "battleaxe-mist-build",
   "bloodmoon-staff-group-dungeon-solo-build",

@@ -37,6 +37,12 @@ export const findLibraryComposition = (slug: string) =>
   libraryCompositions().find((c) => c.slug === slug);
 export const findLibraryBuilds = (ids: string[]) =>
   libraryBuilds().filter((build) => ids.includes(build.id) || ids.includes(build.slug));
+/** Totals for the landing page; one number per collection. */
+export const libraryCounts = async () => ({
+  builds: libraryBuilds().length,
+  compositions: libraryCompositions().length,
+  guides: libraryGuides().length,
+});
 export const queryLibraryBuilds = (query: LibraryQuery) =>
   paginateLibrary(libraryBuilds(), query, 24);
 export const queryLibraryCompositions = (query: LibraryQuery) =>

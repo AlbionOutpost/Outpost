@@ -1,5 +1,5 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { libraryCompositions } from "@/lib/grind-library";
+import { libraryCounts } from "@/lib/grind-library";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -156,7 +156,7 @@ export default async function Compositions({
           <p>
             {p.mine === "1"
               ? "Comps you create or that a team shares with you appear here."
-              : `Start from one of the ${(await libraryCompositions()).length.toLocaleString()} Group Builds in the library, or build your own roster and share it with your team.`}
+              : `Start from one of the ${(await libraryCounts()).compositions.toLocaleString()} Group Builds in the library, or build your own roster and share it with your team.`}
           </p>
           <div className="button-row">
             <Link href="/compositions/library" className="button primary">

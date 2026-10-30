@@ -1,12 +1,7 @@
 import "./homepage.css";
 import Image from "next/image";
 import { LibraryBuildCard } from "@/components/library-build-card";
-import {
-  featuredLibraryBuilds,
-  libraryBuilds,
-  libraryCompositions,
-  libraryGuides,
-} from "@/lib/grind-library";
+import { featuredLibraryBuilds, libraryCounts } from "@/lib/grind-library";
 import { gameDataSource } from "@/lib/albion/game/recipes";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
@@ -35,10 +30,11 @@ export default async function Home({
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = `?region=${region}`;
   const builds = (await featuredLibraryBuilds()).slice(0, 4);
+  const library = await libraryCounts();
   const counts = {
-    builds: (await libraryBuilds()).length,
-    comps: (await libraryCompositions()).length,
-    guides: (await libraryGuides()).length,
+    builds: library.builds,
+    comps: library.compositions,
+    guides: library.guides,
     tools: tools.length,
   };
   const n = (value: number) => value.toLocaleString("en-US");

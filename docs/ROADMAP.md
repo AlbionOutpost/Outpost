@@ -22,7 +22,7 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Build pages: an empty community list hands visitors the Build Library; loadout prices load when the section is in view; author strategy opens by default; scratch copies are kept out of related builds.
 - Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
-- Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` lists hubs, tools, guides and the archived library (11.5k URLs, cached a day) and is referenced from `robots.txt`.
+- Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
 ## Shipped — game data (30 Oct)
 
