@@ -26,7 +26,19 @@ What the launch pass changed, how it was verified, what is still open and what o
 
 ## Measurements
 
-_Filled in at the end of the pass._
+Production build, Chromium on an emulated phone (390 px, 4× CPU slowdown, 1.6 Mbps / 150 ms), cold cache, 30 Oct 2026. LCP is the browser's own `largest-contentful-paint` entry.
+
+| Route                  | LCP before | LCP after | Transfer after | Notes                                                                                        |
+| ---------------------- | ---------- | --------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `/`                    | 5.0 s      | 2.3 s     | 764 KB         | Hero served as a 33 KB phone variant via `<picture>`; no market request on arrival           |
+| `/tools/market?item=…` | 3.8 s      | 3.3 s     | 649 KB         | Phone masthead scene; prices load on arrival                                                 |
+| `/tools/crafting`      | 4.9 s      | 2.7 s     | 746 KB         | Phone masthead scene                                                                         |
+| `/items/T4_MAIN_AXE`   | 3.7 s      | 3.7 s     | 649 KB         | No masthead; fonts (82 KB) and item icons from the official renderer dominate                |
+| `/builds/library`      | 8.9 s      | 9.2 s     | 1.6 MB         | 24 cards × up to 9 renderer icons; lazy-loaded but Chrome prefetches far ahead on slow links |
+
+JavaScript stays at 204–285 KB per route; the Cloudflare web bundle is checked at ≤3 MiB gzip by CI. Remaining work (ROADMAP PERF-002): fewer icons per library card on phones, self-hosted icon sprites for the most common items, and font subsetting.
+
+CI: a pull request now answers in ~6 minutes (checks 3 min, three browser shards 5–6 min in parallel) instead of ~15; the deploy workflow verifies the Cloudflare build in three shards before deploying.
 
 ## Still open
 
