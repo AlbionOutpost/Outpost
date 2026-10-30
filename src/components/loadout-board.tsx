@@ -32,12 +32,16 @@ export function LoadoutBoard({
   spellNames = {},
   size = "card",
   abilities = true,
+  choices = false,
   label = "Equipment",
 }: {
   pieces: BoardPiece[];
   spellNames?: Record<string, string>;
   size?: "hero" | "card" | "mini";
   abilities?: boolean;
+  /** Show only what the player chose, as the game does: Q and W plus the passive on the
+   * weapon (E is fixed per weapon), the active plus the passive on armor. */
+  choices?: boolean;
   label?: string;
 }) {
   const bySlot = new Map(pieces.map((p) => [p.slot, p]));
@@ -60,9 +64,14 @@ export function LoadoutBoard({
           {column.map((slot) => {
             const piece = bySlot.get(slot);
             const mark = slotMarks[slot];
-            const active = abilities
-              ? (piece?.skills ?? []).filter((id) => !id.startsWith("PASSIVE")).slice(0, 3)
-              : [];
+            const skills = piece?.skills ?? [];
+            const actives = skills.filter((id) => !id.startsWith("PASSIVE"));
+            const passive = skills.find((id) => id.startsWith("PASSIVE"));
+            const active = !abilities
+              ? []
+              : choices
+                ? [...actives.slice(0, slot === "Main hand" ? 2 : 1), ...(passive ? [passive] : [])]
+                : actives.slice(0, 3);
             return (
               <div
                 key={slot}
