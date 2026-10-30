@@ -1048,8 +1048,7 @@
   grid-column: 2;
   grid-row: 2;
   align-self: end;
-  background: #15131acc;
-  backdrop-filter: blur(6px);
+  justify-self: start;
 }
 
 /* Why choose Outpost */
@@ -1352,8 +1351,7 @@
   .app.outpost .landing-group-action {
     grid-column: 1;
     grid-row: auto;
-    background: transparent;
-    backdrop-filter: none;
+    justify-self: stretch;
   }
   .app.outpost .landing-why-grid {
     grid-template-columns: 1fr;
