@@ -55,7 +55,7 @@ jobs:
         run: |
           node scripts/cloudflare-build.mjs
           npx tsc --project cloudflare/web/tsconfig.json
-          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test --shard=${{ matrix.shard }}/3
+          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test --shard=${{ matrix.shard }}/3 --reporter=line,github
       - name: Prepare sanitized failure evidence
         if: always()
         run: node scripts/qa-ci-evidence.mjs

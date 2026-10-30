@@ -84,7 +84,7 @@ jobs:
       - name: Build the standalone server
         run: npm run build
       - name: Browser suite (shard ${{ matrix.shard }} of 3)
-        run: npx playwright test --shard=${{ matrix.shard }}/3
+        run: npx playwright test --shard=${{ matrix.shard }}/3 --reporter=line,github
         env:
           E2E_PRODUCTION: "1"
       - name: Prepare sanitized failure evidence
