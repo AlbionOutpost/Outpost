@@ -103,6 +103,15 @@ export function FarmingCalculator() {
       if (controller.current === request) setBusy(false);
     }
   }
+  // Observations for the crop and markets load on their own; manual prices are always kept.
+  const refreshRef = useRef(refresh);
+  useEffect(() => {
+    refreshRef.current = refresh;
+  });
+  useEffect(() => {
+    const timer = window.setTimeout(() => void refreshRef.current(), 400);
+    return () => window.clearTimeout(timer);
+  }, [region, draft.cropId, draft.materialCity, draft.outputCity]);
   function priceField(key: "seedPrice" | "productPrice", label: string, city: string) {
     const p = config[key];
     const matches =
@@ -272,7 +281,7 @@ export function FarmingCalculator() {
             <div className="farming-section-heading">
               <h2>Markets & prices</h2>
               <button className="button secondary" disabled={busy} onClick={refresh}>
-                {busy ? "Loading observations…" : "Load market observations"}
+                {busy ? "Loading observations…" : "Refresh market observations"}
               </button>
             </div>
             <p>
