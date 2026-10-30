@@ -1070,3 +1070,32 @@
     --scene: url("/albion/illustrations/city-overlook-v2-phone.webp");
   }
 }
+
+/* Other scenic surfaces also take the 800px variants on phones. */
+@media (max-width: 700px) {
+  .app.outpost .builds-ecosystem .builds-ecosystem-header {
+    background-image:
+      linear-gradient(
+        90deg,
+        var(--bg) 36%,
+        color-mix(in srgb, var(--bg) 84%, transparent) 64%,
+        color-mix(in srgb, var(--bg) 32%, transparent)
+      ),
+      url("/albion/illustrations/build-v1-phone.webp");
+  }
+  .app.outpost:not(.light) .detail-hero {
+    background-image:
+      linear-gradient(
+        90deg,
+        var(--bg) 35%,
+        color-mix(in srgb, var(--bg) 95%, transparent) 54%,
+        color-mix(in srgb, var(--bg) 52%, transparent)
+      ),
+      url("/albion/illustrations/build-v1-phone.webp");
+  }
+  .app.outpost .premium-workspace-heading {
+    background-image:
+      linear-gradient(90deg, var(--panel) 45%, color-mix(in srgb, var(--panel) 88%, transparent)),
+      url("/albion/illustrations/hero-v1-phone.webp");
+  }
+}
