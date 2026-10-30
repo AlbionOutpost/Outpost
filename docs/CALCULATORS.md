@@ -42,19 +42,34 @@ incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 ```
 
 - Output quality is fixed at 1 for refining, cooking and alchemy.
-- Enchanting rejects focus and return flags.
+- Enchanting rejects focus and return flags. Upgrades come from `game/upgrades.json`: each step from `.n−1` to `.n` costs the listed rune/soul/relic count (96 helmet/boots/cape/off-hand, 192 chest/bag, 288 one-handed, 384 two-handed).
+- Ingredients flagged `returnable: false` (artifacts, tokens, enchanting inputs) never earn return credit, whatever the saved flags say.
+- Recipes resolve by ID: bundled legacy IDs (`battleaxe-t4`) or game IDs (`T4_MAIN_AXE`, `T4_MAIN_AXE@2`, `T8_2H_BOW_HELL~2` for the second alternative). The client fetches game recipes from `/api/recipes`; server routes import `game/server-recipes.ts`.
 - `estimatedFocusCost(base, efficiency, batches) = base·2^(−efficiency/10000)·batches` (no per-operation rounding yet).
+- **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are saved on the device (`/tools/mastery`).
 - `returnRateFromBonus(b) = 1 − 1/(1 + b/100)`.
 
 **Return profile** (`production-profile.ts` → `sourcedReturnRates`):
 
 ```
-bonus           = 18 + (city specialty ? refining 40 | crafting 15 : 0) + daily (0/10/20)
+bonus           = 18 + (city specialty ? refining 40 | crafting 15 | butchering 10 : 0) + daily (0/10/20)
 returnRate      = 100·b/(100 + b)
 focusReturnRate = 100·(b + 59)/(159 + b)
 ```
 
-Refining cities: metal bar Thetford, planks Fort Sterling, cloth Lymhurst, leather Martlock, stone Bridgewatch. Crafting: axe/shield Martlock; sword/bow/shoes Lymhurst; cowl/jacket Thetford; bag/cape none. `refiningEfficiency(tier, levels) = 30·Σlevels + 250·levels[tier−4]`.
+Specialty cities come from `game/production-bonuses.json`, keyed by the recipe's crafting category:
+
+| City          | Refining | Crafting                                                    |
+| ------------- | -------- | ----------------------------------------------------------- |
+| Fort Sterling | Wood     | Hammer, spear, holy staff, plate helmet, cloth armor        |
+| Lymhurst      | Fiber    | Sword, bow, arcane staff, leather helmet, leather shoes     |
+| Bridgewatch   | Stone    | Crossbow, dagger, cursed staff, plate armor, cloth shoes    |
+| Martlock      | Hide     | Axe, quarterstaff, frost staff, plate shoes, off-hands      |
+| Thetford      | Ore      | Mace, nature staff, fire staff, leather armor, cloth helmet |
+| Caerleon      | —        | Gathering gear, tools, food, war gloves, shapeshifter staff |
+| Brecilien     | —        | Cape, bag, potion                                           |
+
+`refiningEfficiency(tier, levels) = 30·Σlevels + 250·levels[tier−4]` (kept for saved profiles; the same numbers come out of `focus.ts`).
 
 **Plan** (`production-plan.ts`): ≤30 runs in one region; materials aggregate by city/item/quality; any incomplete run nulls the total. **Sensitivity** (`production-sensitivity.ts`): output price at 80–120%.
 
@@ -66,7 +81,25 @@ transportCost = trips·costPerTrip + risk
 → trade(), with setup fee only in listing mode
 ```
 
-`transportPriceMatches()` enforces item/quality/region/city/execution identity. Weight and capacity are manual until item weights and mounts are in the data.
+`transportPriceMatches()` enforces item/quality/region/city/execution identity. The UI fills weight per item from `/api/items/game` (only replacing an empty or previously auto-filled value) and offers mount presets from `mounts.ts` (carry weight bonus per quality, without the character's own load).
+
+## Laborers — `laborers.ts` → `laborers()`
+
+```
+factor        = returnFactor[houseTier][journalTier − houseTier]   (null → not allowed)
+unitsPerJrnl  = lootAmount[type][journalTier] · factor
+valuePerUnit  = Σ share_i · price_i            share_i = weight_i / Σ weight (unpriced → 0)
+lootNet       = valuePerUnit · units · journals · (1 − (tax + listing setup)/100)
+emptyNet      = sellEmpty ? emptyPrice · journals · same rate : 0
+cost          = fullPrice · journals · (1 + buyOrder setup/100)
+profit        = lootNet + emptyNet − cost        complete only when coverage = 100 %
+```
+
+Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**.
+
+## Roads of Avalon — `avalon-map.ts`
+
+Portals live in the browser (`outpost:avalon-map-v1`); one link per zone pair; `findRoute` is breadth-first over links that are still open.
 
 ## Farming — `farming.ts` → `farming()`
 
@@ -106,8 +139,8 @@ Write the expected value **by hand** (or with exact rationals) before running th
 | Buy 10 @100 + 50 transport, no fees                                                | break-even 105 · minimum profitable whole sale 106                                                 |
 | Return profile, refining specialist city, no daily                                 | 58/158 = 36.709% · with focus 117/217 = 53.917%                                                    |
 
-Tests: `tests/calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
+Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
 
 ## Known gaps
 
-No enchanted (.1–.4), artifact, royal/Avalonian, heart or transmutation recipes; enchanting stops at .3 for 7 families; no crafting specialization/mastery-derived focus or IP; no station focus rounding; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no item weights or mount capacity; no laborers, animals or islands. See [ROADMAP.md](ROADMAP.md).
+No heart or transmutation recipes and no cheapest-path refining planner yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).

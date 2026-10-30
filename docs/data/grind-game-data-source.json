@@ -89,8 +89,6 @@
     "inGameManuallyVerified": false,
     "currentPatchVerified": false
   },
-  "corrections": [
-    "island-upgrade-cost table 1 row 2: 520,00 \u2192 520,000"
-  ],
+  "corrections": ["island-upgrade-cost table 1 row 2: 520,00 \u2192 520,000"],
   "rightsBoundary": "Owner identifies the archived site as theirs. Factual game fields only; captured code is never executed or shipped."
 }
