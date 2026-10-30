@@ -42,3 +42,16 @@ test("landing page leads with benefits, a real product demo, provenance and a fi
     );
   }
 });
+
+test("robots points crawlers at a sitemap of public pages and keeps editors out", async ({
+  request,
+}) => {
+  const robots = await (await request.get("/robots.txt")).text();
+  expect(robots).toContain("Disallow: /builds/new");
+  expect(robots).toMatch(/Sitemap: https?:\/\/[^/]+\/sitemap\.xml/);
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).toContain("/builds/library/battleaxe-mist-build</loc>");
+  expect(sitemap).toContain("/tools/crafting</loc>");
+  expect(sitemap).not.toContain("/builds/new</loc>");
+  expect(sitemap).not.toContain("/api/");
+});
