@@ -81,10 +81,12 @@ test("item filters recover from no results and item back links retain server", a
     "href",
     "/items?region=asia",
   );
-  await expect(page.getByRole("heading", { name: "Supported recipe", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Recipe", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Calculate this recipe", exact: true }).click();
   await expect(page).toHaveURL(/\/tools\/crafting\?.*recipe=/);
-  await expect(page.locator(".reference-recipe-identity")).toContainText("T4 Battleaxe");
+  await expect(page.locator(".reference-recipe-identity")).toContainText(
+    "Adept's Battleaxe · T4.0",
+  );
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   await expect(page.getByRole("combobox", { name: "Albion region", exact: true })).toContainText(
     "Asia",

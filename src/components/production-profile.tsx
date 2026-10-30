@@ -57,6 +57,23 @@ export function ProductionProfile({
     });
   const [message, setMessage] = useState("");
   const specs = focusSpecsFor(output);
+  // Refining keeps its five tier specs in the saved profile so scenarios restore them.
+  const refiningSpecIds =
+    kind === "refining"
+      ? (masteryCategories
+          .find((c) => c.id === specs[0]?.categoryId)
+          ?.specs.toSorted((a, b) => a.sortOrder - b.sortOrder)
+          .map((s) => s.id) ?? [])
+      : [];
+  const effectiveLevels =
+    kind === "refining"
+      ? {
+          ...levels,
+          ...Object.fromEntries(
+            refiningSpecIds.map((id, i) => [id, profile.refiningLevels[i] ?? 0]),
+          ),
+        }
+      : levels;
   let rates: ReturnType<typeof sourcedReturnRates> | null = null;
   let efficiency = 0;
   let perCraft: number | null = null;
@@ -64,7 +81,7 @@ export function ProductionProfile({
     rates = sourcedReturnRates(kind, output, profile.city, profile.dailyBonus, recipeId);
   } catch {}
   try {
-    efficiency = focusEfficiency(output, levels);
+    efficiency = focusEfficiency(output, effectiveLevels);
     if (baseFocus) perCraft = focusPerCraft(baseFocus, efficiency);
   } catch {}
   function change(next: MechanicsProfile) {
@@ -73,7 +90,7 @@ export function ProductionProfile({
   }
   return (
     <details className="production-model-notes">
-      <summary>City bonus & specialization</summary>
+      <summary>City & specialization profile</summary>
       <p>
         Royal-city return rates from the local production bonus table: 18 base efficiency, +
         {kind === "refining" ? "40 refining" : "15 crafting"} in the specialty city
@@ -92,7 +109,7 @@ export function ProductionProfile({
             }
           >
             {productionCities.map((city) => (
-              <option key={city}>
+              <option key={city} value={city}>
                 {city}
                 {rates?.specialtyCity === city ? " · specialty" : ""}
               </option>
@@ -134,13 +151,13 @@ export function ProductionProfile({
               recipeId,
             );
             onApply(mechanicsProfile.parse({ ...profile, version: "grind-20261027" }), selected);
-            setMessage("Return rates applied to every returnable material.");
+            setMessage("Production return assumptions applied to every returnable material.");
           } catch {
             setMessage("Check the city and daily bonus.");
           }
         }}
       >
-        Apply city return rates
+        Apply production profile
       </button>
       <p role="status">{message}</p>
       {baseFocus ? (
@@ -153,7 +170,33 @@ export function ProductionProfile({
             </Link>{" "}
             on this device.
           </p>
-          {specs.length ? (
+          {kind === "refining" && refiningSpecIds.length === 5 ? (
+            <div className="input-grid">
+              {refiningSpecIds.map((id, index) => (
+                <label key={id}>
+                  T{index + 4} specialization
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={profile.refiningLevels[index]}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      change({
+                        ...profile,
+                        refiningLevels: profile.refiningLevels.map((old, i) =>
+                          i === index ? value : old,
+                        ),
+                      });
+                      if (Number.isInteger(value) && value >= 0 && value <= 100)
+                        setLevels((l) => ({ ...l, [id]: value }));
+                    }}
+                  />
+                </label>
+              ))}
+            </div>
+          ) : specs.length ? (
             <div className="input-grid">
               {specs.map((spec) => (
                 <label key={spec.specId}>
@@ -179,7 +222,7 @@ export function ProductionProfile({
             Efficiency {efficiency.toLocaleString()} ·{" "}
             {perCraft === null
               ? "check the levels (0–100)"
-              : `${perCraft.toLocaleString(undefined, { maximumFractionDigits: 1 })} focus per craft (base ${baseFocus.toLocaleString()}) · ${(perCraft * batches).toLocaleString(undefined, { maximumFractionDigits: 0 })} for ${batches} craft${batches === 1 ? "" : "s"}`}
+              : `${perCraft.toLocaleString(undefined, { maximumFractionDigits: 1 })} focus per craft (base ${baseFocus.toLocaleString()}) · Estimated total focus: ${(perCraft * batches).toLocaleString(undefined, { maximumFractionDigits: 3 })} for ${batches} craft${batches === 1 ? "" : "s"}`}
           </p>
           {onFocus && perCraft !== null && (
             <button

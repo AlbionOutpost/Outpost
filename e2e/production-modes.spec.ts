@@ -59,7 +59,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
               ]
             : [
                 ["Battleaxe · T4.0 unit price", "2000"],
-                ["T4 rune unit price", "3"],
+                ["Adept's Rune unit price", "3"],
                 ["Output unit sale price", "4000"],
                 ["Crafts / upgrades", "2"],
                 ["Station / upgrade fee per craft", "50"],

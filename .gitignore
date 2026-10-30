@@ -41,3 +41,4 @@ __pycache__/
 
 # Local albiononlinegrind capture used by scripts/import-grind-*; never commit it.
 /Scrape
+dump.rdb
