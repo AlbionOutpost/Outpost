@@ -42,13 +42,13 @@ test("changing quality or item invalidates previously loaded prices", async ({ p
   );
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator("tbody tr")).toHaveCount(1);
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
   await page
     .locator("select")
     .filter({ has: page.locator('option[value="5"]') })
     .first()
     .selectOption("2");
-  await expect(page.locator("tbody tr")).toHaveCount(0);
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
 });
 
 test("market sort and city filtering retain correct buy and sell columns", async ({ page }) => {
@@ -83,11 +83,11 @@ test("market sort and city filtering retain correct buy and sell columns", async
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Refresh prices" }).click();
   await page.getByLabel("Sort market prices").selectOption("buy");
-  await expect(page.locator("tbody tr").first()).toContainText("Lymhurst");
+  await expect(page.locator(".market-board tbody tr").first()).toContainText("Lymhurst");
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
-  await expect(page.locator("tbody tr")).toHaveCount(1);
-  await expect(page.locator("tbody tr td.numeric > span").nth(0)).toHaveText("100");
-  await expect(page.locator("tbody tr td.numeric > span").nth(1)).toHaveText("50");
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
+  await expect(page.locator(".market-board tbody tr td.numeric > span").nth(0)).toHaveText("100");
+  await expect(page.locator(".market-board tbody tr td.numeric > span").nth(1)).toHaveText("50");
   await expect(page.locator("tbody tr td.numeric .market-inline-time").first()).toContainText(
     "10-25 00:00",
   );
@@ -151,7 +151,7 @@ test("visitor journey from named item search to a verified trade result", async 
     .locator('.item-reference-browser tbody a[href="/tools/market?region=europe&item=T4_BAG"]')
     .click();
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator("tbody tr")).toHaveCount(2);
+  await expect(page.locator(".market-board tbody tr")).toHaveCount(2);
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page.getByRole("link", { name: /^Profit calculator Fees/ }).click();
   await page.getByLabel("Purchase price per item").fill("100");
