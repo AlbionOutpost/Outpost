@@ -38,6 +38,7 @@ export function InventoryEquipmentBoard({
       {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark */}
       <img
         className="inventory-body-silhouette"
+        data-slot-mark="figure"
         src="/albion/slots/figure.svg"
         alt=""
         aria-hidden="true"

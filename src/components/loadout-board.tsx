@@ -51,6 +51,7 @@ export function LoadoutBoard({
             // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
             <img
               className="loadout-board-figure"
+              data-slot-mark="figure"
               src="/albion/slots/figure.svg"
               alt=""
               aria-hidden="true"
@@ -77,7 +78,13 @@ export function LoadoutBoard({
                     <ItemIcon id={piece.itemId} size={icon} />
                   ) : mark ? (
                     // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
-                    <img className="loadout-board-mark" src={mark} alt="" aria-hidden="true" />
+                    <img
+                      className="loadout-board-mark"
+                      data-slot-mark={slot}
+                      src={mark}
+                      alt=""
+                      aria-hidden="true"
+                    />
                   ) : null}
                 </span>
                 {abilities && (

@@ -12,5 +12,13 @@ export function InventorySlotGlyph({ slot }: { slot: string }) {
   const mark = marks[slot];
   if (!mark) return null;
   // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
-  return <img className="inventory-slot-mark" src={mark} alt="" aria-hidden="true" />;
+  return (
+    <img
+      className="inventory-slot-mark"
+      data-slot-mark={slot}
+      src={mark}
+      alt=""
+      aria-hidden="true"
+    />
+  );
 }
