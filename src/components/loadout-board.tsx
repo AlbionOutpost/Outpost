@@ -45,15 +45,17 @@ export function LoadoutBoard({
   const spell = size === "hero" ? 22 : 18;
   return (
     <div className={`loadout-board is-${size}`} role="list" aria-label={label}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark, no optimisation needed */}
-      <img
-        className="loadout-board-figure"
-        src="/albion/slots/figure.png"
-        alt=""
-        aria-hidden="true"
-      />
       {columns.map((column, c) => (
         <div key={c} className="loadout-board-column">
+          {c === 1 && (
+            // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
+            <img
+              className="loadout-board-figure"
+              src="/albion/slots/figure.png"
+              alt=""
+              aria-hidden="true"
+            />
+          )}
           {column.map((slot) => {
             const piece = bySlot.get(slot);
             const mark = slotMarks[slot];

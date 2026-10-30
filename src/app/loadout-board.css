@@ -20,13 +20,15 @@
   --gap: 5px;
   padding: 0;
 }
+/* The figure is centred on the middle column: head in the head slot, feet in the boots */
 .app.outpost .loadout-board-figure {
   position: absolute;
   left: 50%;
-  top: 8px;
+  top: 0;
   z-index: -1;
   width: auto;
   height: calc(var(--cell) * 3 + var(--gap) * 2);
+  max-width: none;
   transform: translateX(-50%);
   opacity: 0.3;
   pointer-events: none;
@@ -36,6 +38,7 @@
   opacity: 0.25;
 }
 .app.outpost .loadout-board-column {
+  position: relative;
   display: grid;
   align-content: start;
   gap: var(--gap);
@@ -76,8 +79,8 @@
   color: var(--muted);
 }
 .app.outpost .loadout-board-mark {
-  width: 50%;
-  height: 50%;
+  width: 42%;
+  height: 42%;
   object-fit: contain;
   opacity: 0.55;
 }
