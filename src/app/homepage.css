@@ -286,9 +286,6 @@
 .app.outpost .landing-preview-window time.is-stale {
   color: var(--warning, #e6b35b);
 }
-.app.outpost .landing-preview-window .is-loading {
-  opacity: 0.6;
-}
 
 /* Market window */
 .app.outpost .market-preview-item,
