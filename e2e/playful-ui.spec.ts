@@ -36,6 +36,8 @@ test("equipment selection opens the real item, and the redesigned search and men
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
   const item = page.locator(".landing-preview.is-lead .landing-preview-action");
+  // The shell streams behind a Suspense fallback; wait for the real page before auditing it.
+  await expect(item).toBeVisible();
   await expect(item).toHaveAttribute(
     "href",
     "/tools/market?item=T6_METALBAR&quality=1&region=europe",

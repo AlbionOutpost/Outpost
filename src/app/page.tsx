@@ -52,14 +52,19 @@ export default async function Home({
     .catch("europe")
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = `?region=${region}`;
-  const [library, spellNames, featured] = await Promise.all([
+  // Two round trips to the library on Cloudflare: everything independent first, then the
+  // composition's members, so the page streams without showing the shell fallback.
+  const [library, spellNames, featured, composition] = await Promise.all([
     libraryCounts(),
     librarySpellNames(),
     findLibraryBuild(showcase.build),
+    findLibraryComposition(showcase.composition),
   ]);
-  const build = featured ?? (await featuredLibraryBuilds())[0];
-  const composition = await findLibraryComposition(showcase.composition);
-  const members = composition ? await findLibraryBuilds(composition.members) : [];
+  const [fallback, members] = await Promise.all([
+    featured ? Promise.resolve([]) : featuredLibraryBuilds(),
+    composition ? findLibraryBuilds(composition.members) : Promise.resolve([]),
+  ]);
+  const build = featured ?? fallback[0];
   const n = (value: number) => value.toLocaleString("en-US");
   const gameData = gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1);
   return (

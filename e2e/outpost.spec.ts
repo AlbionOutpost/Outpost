@@ -15,6 +15,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(logo).toHaveAttribute("src", /outpost-logo/);
   await logo.evaluate((node: HTMLImageElement) => node.decode());
   expect(await logo.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator(".landing-preview.is-lead .landing-preview-action")).toBeVisible();
   await expect(page.locator(".landing-preview.is-lead .landing-preview-action")).toHaveAttribute(
     "href",
     "/tools/market?item=T6_METALBAR&quality=1&region=asia",
