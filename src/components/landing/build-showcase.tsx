@@ -1,5 +1,6 @@
 "use client";
 import { useId, useState } from "react";
+import { ItemIcon } from "@/components/item-icon";
 import Link from "@/components/link";
 import { LoadoutBoard } from "@/components/loadout-board";
 import { SpellIcon } from "@/components/spell-icon";
@@ -46,9 +47,9 @@ export function BuildShowcase({
     taken.set(slot, n + 1);
     return { key, id: active[n] };
   });
-  const passives = build.equipment
-    .flatMap((e) => e.skills.filter((s) => s.startsWith("PASSIVE")))
-    .slice(0, 4);
+  const swaps = build.equipment
+    .flatMap((e) => e.alternatives.map((itemId) => ({ slot: e.slot, itemId })))
+    .slice(0, 6);
   return (
     <div className="build-showcase">
       <div className="preview-tabs is-wide" role="tablist" aria-label="Activity">
@@ -95,20 +96,20 @@ export function BuildShowcase({
               </li>
             ))}
           </ul>
-          {passives.length > 0 && (
-            <>
-              <span className="build-preview-label">Passive</span>
-              <ul className="build-card-passives" aria-label="Passives">
-                {passives.map((spell, i) => (
-                  <li key={`${spell}-${i}`} title={spellNames[spell] ?? spell}>
-                    <SpellIcon id={spell} name={spellNames[spell] ?? spell} size={24} />
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
         </div>
       </div>
+      {swaps.length > 0 && (
+        <div className="build-card-swaps">
+          <span className="build-preview-label">Swaps</span>
+          <ul aria-label="Alternative pieces">
+            {swaps.map((swap) => (
+              <li key={`${swap.slot}-${swap.itemId}`} title={`${swap.slot}: ${swap.itemId}`}>
+                <ItemIcon id={swap.itemId} size={34} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <p className="build-showcase-foot">
         By {build.author} · {build.equipment.length} recorded pieces · mount not recorded
       </p>
