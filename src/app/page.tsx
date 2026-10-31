@@ -15,7 +15,7 @@ import {
   libraryGuides,
   librarySpellNames,
 } from "@/lib/grind-library";
-import type { GuideNode } from "@/lib/grind-library-types";
+import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
 import { regionSchema, regions } from "@/lib/albion/region-config";
 import { brandCopy } from "@/lib/brand-copy";
@@ -39,16 +39,6 @@ const showcase = {
   ],
   planCity: "Martlock",
 } as const;
-
-/** Words in a guide's own text, for its reading time at 230 words a minute. */
-function words(nodes: GuideNode[]): number {
-  let n = 0;
-  for (const node of nodes) {
-    if (typeof node === "string") n += node.split(/\s+/).filter(Boolean).length;
-    else n += words(node.children ?? []);
-  }
-  return n;
-}
 
 export default async function Home({
   searchParams,
@@ -90,7 +80,7 @@ export default async function Home({
       updatedAt: g.updatedAt,
       summary: brandCopy(g.summary),
       cover: g.cover,
-      minutes: Math.max(1, Math.round(words(g.content) / 230)),
+      minutes: readingMinutes(g.content),
     }));
   const n = (value: number) => value.toLocaleString("en-US");
   const stats = [

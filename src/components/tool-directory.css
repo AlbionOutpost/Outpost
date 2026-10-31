@@ -1,166 +1,270 @@
-/* Tools overview as art tiles, composed to the site sheet's "Tools" page: a cropped painting,
-   the tool emblem over its edge, name, one line and the data state. Pins sit on the art. */
-.app.outpost .support-tools-directory {
-  --scene-market: url("/albion/illustrations/market-v1.webp");
-  --scene-build: url("/albion/illustrations/build-v1.webp");
-  --scene-composition: url("/albion/illustrations/composition-v1.webp");
-  --scene-hero: url("/albion/illustrations/hero-v1.webp");
-  --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
+/* Tools directory: shortcuts, a search bar with category tabs, then each group of tools as
+   raised windows with the painted scene blurred behind, the tool's emblem, its name, one line
+   and the state of its data. Pins stay on the card. */
+.app.outpost .support-tools-directory .tool-shortcuts {
+  margin: 0 0 28px;
+}
+.app.outpost .support-tools-directory .tool-shortcuts > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.app.outpost .support-tools-directory .tool-shortcuts > div > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px 0 12px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.app.outpost .support-tools-directory .tool-shortcuts > div > a svg:first-child {
+  color: var(--accent-ink);
+}
+.app.outpost .support-tools-directory .tool-shortcuts > div > a:hover {
+  box-shadow: var(--shadow-raised-hover);
+}
+.app.outpost .tool-pin-feedback {
+  min-height: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .tool-pin-feedback:not(:empty) {
+  margin: 0 0 12px;
+}
+.app.outpost .directory-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+}
+.app.outpost .directory-toolbar > span {
+  flex: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .directory-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .directory-search > svg {
+  position: absolute;
+  left: 14px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.app.outpost .directory-search input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 44px;
+  border: 1px solid var(--well-border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+  color: var(--text);
+  font-size: 14px;
+}
+.app.outpost .directory-search input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.app.outpost .directory-search button {
+  position: absolute;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--well);
+  color: var(--muted);
+}
+.app.outpost .product-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.app.outpost .product-tabs::-webkit-scrollbar {
+  display: none;
+}
+.app.outpost .product-tabs button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font: 600 13px/1 var(--font-ui);
+  white-space: nowrap;
+}
+.app.outpost .product-tabs button:hover {
+  color: var(--text);
+  border-color: #ffffff30;
+}
+.app.outpost .product-tabs button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 22%, var(--well));
+  color: #fff;
+}
+.app.outpost.light .product-tabs button[aria-pressed="true"] {
+  color: var(--accent-ink);
+}
+.app.outpost .tool-pin-help {
+  margin: -12px 0 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .directory-groups {
+  display: grid;
+  gap: 40px;
+}
+.app.outpost .directory-group-heading {
+  margin-bottom: 16px;
 }
 .app.outpost .support-tools-directory .directory-entries {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 .app.outpost .support-tools-directory .directory-entry {
   position: relative;
   display: block;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  overflow: hidden;
-  transition: border-color 0.15s ease;
 }
-.app.outpost .support-tools-directory .directory-entry:hover,
 .app.outpost .support-tools-directory .directory-entry:focus-within {
-  border-color: var(--accent);
-  transform: none;
+  box-shadow: var(--shadow-raised-hover);
 }
 .app.outpost .support-tools-directory .directory-entry-link {
   display: grid;
-  grid-template-rows: 118px auto;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: stretch;
-  gap: 0;
-  min-height: 0;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  min-height: 132px;
+  padding: 16px 16px 14px;
   color: var(--text);
   text-decoration: none;
-  padding: 0;
 }
-.app.outpost .support-tools-directory .directory-entry-art {
-  grid-column: 1 / -1;
-  display: block;
-  background-image: var(--scene);
-  background-size: cover;
-  background-position: var(--scene-at, center);
-  transition: transform 0.4s ease;
-}
-.app.outpost .support-tools-directory .directory-entry:hover .directory-entry-art {
-  transform: scale(1.03);
-}
-.app.outpost .support-tools-directory .directory-entry[data-scene="market"] {
-  --scene: var(--scene-market);
-}
-.app.outpost .support-tools-directory .directory-entry[data-scene="build"] {
-  --scene: var(--scene-build);
-}
-.app.outpost .support-tools-directory .directory-entry[data-scene="composition"] {
-  --scene: var(--scene-composition);
-}
-.app.outpost .support-tools-directory .directory-entry[data-scene="hero"] {
-  --scene: var(--scene-hero);
-}
-.app.outpost .support-tools-directory .directory-entry[data-scene="city"] {
-  --scene: var(--scene-city);
-}
-.app.outpost .support-tools-directory .directory-entry .tool-symbol {
-  position: absolute;
-  top: 100px;
-  left: 14px;
-  z-index: 1;
+.app.outpost .support-tools-directory .tool-symbol {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   margin: 0;
   color: var(--accent-ink);
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 2px 6px #0006;
-}
-.app.outpost .support-tools-directory .directory-entry-link > div {
-  grid-column: 1;
-  min-width: 0;
-  padding: 26px 12px 14px 14px;
+  background: var(--well);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--well-border));
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 #ffffff10;
 }
 .app.outpost .support-tools-directory .directory-entry h3 {
   margin: 0 0 4px;
-  font: 600 16px/1.3 var(--font-ui);
+  font: 800 19px/1.15 var(--font-display);
+  letter-spacing: 0.01em;
 }
 .app.outpost .support-tools-directory .directory-entry p {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.45;
 }
 .app.outpost .support-tools-directory .tool-availability {
-  display: inline-block;
-  padding: 2px 8px;
-  color: var(--muted);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid var(--well-border);
   border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
   font-size: 12px;
+  font-weight: 600;
 }
 .app.outpost .support-tools-directory .directory-arrow {
-  grid-column: 2;
-  align-self: end;
-  margin: 0 14px 16px 0;
-  color: var(--muted);
+  margin-top: 36px;
+  color: var(--accent-ink);
+  transition: transform 160ms var(--ease-out);
+}
+.app.outpost .support-tools-directory .directory-entry:hover .directory-arrow {
+  transform: translate(2px, -2px);
 }
 .app.outpost .support-tools-directory .directory-pin {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
+  top: 12px;
+  right: 12px;
   display: grid;
   place-items: center;
   width: 32px;
   height: 32px;
-  color: #f2eee9;
-  background: #0b0d12b3;
-  border: 1px solid #ffffff33;
-  border-radius: var(--radius-sm);
-  backdrop-filter: blur(4px);
-}
-.app.outpost .support-tools-directory .directory-pin[aria-pressed="true"] {
-  color: #211409;
-  background: var(--accent);
-  border-color: var(--accent);
-}
-.app.outpost .support-tools-directory .directory-group {
-  margin-top: 28px;
-}
-.app.outpost .support-tools-directory .directory-group-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0 0 14px;
-}
-.app.outpost .support-tools-directory .directory-group-heading h2 {
-  margin: 0;
-  font: 800 24px/1.1 var(--font-display);
-}
-.app.outpost .support-tools-directory .directory-group-heading span {
+  border: 1px solid var(--well-border);
+  border-radius: 50%;
+  background: var(--well);
   color: var(--muted);
-  font-size: 13px;
+}
+.app.outpost .support-tools-directory .directory-pin:hover,
+.app.outpost .support-tools-directory .directory-pin[aria-pressed="true"] {
+  color: var(--accent-ink);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
+}
+.app.outpost .support-tools-directory .directory-pin[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+.app.outpost .directory-footnote {
+  margin: 32px 0 0;
+  max-width: 80ch;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.app.outpost .support-tools-directory .product-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 40px 20px;
+  text-align: center;
 }
 @media (max-width: 1100px) {
   .app.outpost .support-tools-directory .directory-entries {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .app.outpost .support-tools-directory .directory-entries {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
   }
   .app.outpost .support-tools-directory .directory-entry-link {
-    grid-template-rows: 104px auto;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    min-height: 0;
+    padding: 14px;
   }
-  .app.outpost .support-tools-directory .directory-entry .tool-symbol {
-    top: 86px;
+  .app.outpost .support-tools-directory .tool-symbol {
+    width: 48px;
+    height: 48px;
+  }
+  .app.outpost .support-tools-directory .directory-entry h3 {
+    font-size: 17px;
+  }
+  .app.outpost .support-tools-directory .directory-arrow {
+    margin-top: 0;
+  }
+  .app.outpost .support-tools-directory .directory-pin {
+    top: auto;
+    bottom: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost .support-tools-directory .directory-arrow {
+    transition: none;
   }
 }

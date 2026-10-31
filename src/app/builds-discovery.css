@@ -1123,13 +1123,6 @@
   background: var(--surface-raised);
   box-shadow: var(--shadow-raised-hover);
 }
-.app.outpost .library-card-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 0;
-}
 .app.outpost .library-build-card .ecosystem-title-link {
   min-width: 0;
   flex: 1;
@@ -1272,27 +1265,6 @@
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-}
-.app.outpost .library-card-caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 -14px;
-  padding: 10px 14px;
-  border-top: 1px solid var(--well-border);
-  background: #0f111680;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .library-card-caption > span:last-child {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent-ink);
-  font-weight: 700;
-}
-.app.outpost .library-build-card:hover .library-card-caption > span:last-child {
-  color: var(--accent);
 }
 .app.outpost .ecosystem-library-page.view-list .library-build-card > .ecosystem-card-main {
   grid-template-columns: minmax(0, 1fr) auto;

@@ -434,14 +434,6 @@
 .app.outpost .group-build-library .library-comp-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.app.outpost .group-build-library .group-build-preview {
-  padding: 20px;
-  border-radius: 10px;
-}
-.app.outpost .group-build-library .group-build-preview h2 {
-  margin-block: 8px 12px;
-  font-size: 20px;
-}
 .app.outpost .group-build-detail .group-build-detail-tools {
   position: relative;
   margin-top: 16px;
@@ -763,7 +755,4 @@
 }
 .app.outpost .composition-detail-workspace .party-readiness {
   margin-block: 16px;
-}
-.app.outpost .group-build-library .library-comp-card small {
-  display: block;
 }

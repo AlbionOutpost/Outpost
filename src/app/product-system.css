@@ -241,7 +241,6 @@
   --scene-build: url("/albion/illustrations/build-v1.webp");
   --scene-composition: url("/albion/illustrations/composition-v1.webp");
   --scene-city: url("/albion/illustrations/city-overlook-v2.webp");
-  --content-gutter: max(32px, calc((100vw - 1440px) / 2 + 32px));
   --shadow-raised:
     inset 0 1px 0 color-mix(in srgb, var(--accent) 45%, #ffffff2e), inset 1px 0 0 #ffffff10,
     inset -1px 0 0 #00000040, inset 0 -1px 0 #000000a0, 0 0 0 1px #000000b0, 0 3px 0 #0a0b0e,
@@ -307,7 +306,8 @@
   --scene: var(--scene-city);
   width: 100vw;
   margin: -32px 0 24px calc(50% - 50vw);
-  padding: 56px var(--content-gutter) 56px;
+  /* The copy lines up with the page's own content edge, whatever its max-width */
+  padding: 56px calc(50vw - 50%) 56px;
   min-height: 300px;
   align-items: flex-end;
   color: #f4f2ee;
@@ -422,7 +422,7 @@
 @media (max-width: 780px) {
   .app.outpost .workspace-identity[data-scene] {
     margin: -24px 0 16px calc(50% - 50vw);
-    padding: 40px 16px 40px;
+    padding: 40px calc(50vw - 50%) 40px;
     min-height: 240px;
   }
 }
@@ -880,5 +880,269 @@
   .app.outpost .heart-chip-burst i {
     transition: none;
     animation: none;
+  }
+}
+
+/* Comp roster: one row per slot, the role's colour on the edge */
+.app.outpost .landing-roster {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 8px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .landing-roster-who strong {
+  display: block;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.outpost .landing-roster li {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost.light .landing-roster li {
+  border-color: var(--border);
+  background: var(--panel);
+  box-shadow: none;
+}
+.app.outpost .landing-roster li {
+  display: grid;
+  grid-template-columns: 12px 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 0 6px;
+  border-left: 3px solid var(--role, #ffffff12);
+}
+.app.outpost .landing-roster li[data-role="Tank"] {
+  --role: var(--role-tank);
+}
+.app.outpost .landing-roster li[data-role="Healer"] {
+  --role: var(--role-healer);
+}
+.app.outpost .landing-roster li[data-role="DPS"] {
+  --role: var(--role-dps);
+}
+.app.outpost .landing-roster li[data-role="Support"] {
+  --role: var(--role-support);
+}
+.app.outpost .landing-roster-n {
+  color: var(--muted);
+  font: 700 12px/1 var(--font-mono, var(--font-ui));
+  text-align: center;
+}
+.app.outpost .landing-roster-weapon,
+.app.outpost .landing-roster-weapon img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+}
+.app.outpost .landing-roster-who {
+  display: grid;
+  min-width: 0;
+  color: var(--text);
+  line-height: 1.2;
+}
+.app.outpost .landing-roster-who:hover strong {
+  color: var(--accent-ink);
+}
+.app.outpost .landing-roster-who > span {
+  color: var(--role, var(--muted));
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.app.outpost .landing-roster-armor {
+  display: flex;
+  gap: 4px;
+}
+.app.outpost .landing-roster-armor img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  filter: drop-shadow(0 1px 2px #000a);
+}
+
+/* Window chrome shared by library cards: the title bar and the caption line in */
+.app.outpost .library-card-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+.app.outpost .library-card-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 -14px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--well-border);
+  background: #0f111680;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .library-card-caption > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+.app.outpost .raised:hover .library-card-caption > span:last-child {
+  color: var(--accent);
+}
+.app.outpost.light .library-card-caption {
+  background: #00000006;
+}
+
+/* Chips: activity tags and quiet labels on window bars */
+.app.outpost .landing-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+.app.outpost .landing-chip {
+  padding: 2px 9px;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.app.outpost .landing-chip.is-muted {
+  color: var(--muted);
+  background: var(--elevated);
+  border-color: var(--border);
+}
+
+/* Guide cover cards: the artwork fills the card, copy sits on a scrim at the foot */
+.app.outpost .guide-card a {
+  position: relative;
+  display: grid;
+  align-content: end;
+  height: 381px;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #f4f2ee;
+  isolation: isolate;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 45%, #ffffff2e),
+    0 0 0 1px #000000b0,
+    0 3px 0 #0a0b0e,
+    0 18px 36px -10px #000d;
+  transition: transform 180ms var(--ease-out);
+}
+.app.outpost .guide-card img {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms var(--ease-out);
+}
+.app.outpost .guide-card a:hover {
+  transform: translateY(-3px);
+}
+.app.outpost .guide-card a:hover img {
+  transform: scale(1.04);
+}
+.app.outpost .guide-card-time {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border: 1px solid #ffffff22;
+  border-radius: 999px;
+  background: #0b0d12cc;
+  backdrop-filter: blur(6px);
+  font-size: 12px;
+  font-weight: 700;
+}
+.app.outpost .guide-card-copy {
+  display: grid;
+  gap: 6px;
+  padding: 90px 18px 18px;
+  background: linear-gradient(0deg, #0b0d12 0%, #0b0d12e6 40%, #0b0d1200 100%);
+}
+.app.outpost .guide-card-copy small {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.app.outpost .guide-card-copy h3 {
+  margin: 0;
+  font: 800 20px/1.15 var(--font-display);
+}
+.app.outpost .guide-card-copy > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #ddd8d0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app.outpost .guide-card-copy em {
+  color: #bdb6ad;
+  font-size: 12px;
+  font-style: normal;
+}
+.app.outpost .guide-card-stand {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(60% 50% at 50% 40%, #d9742f33, transparent 70%),
+    var(--scene-city) center / cover no-repeat;
+}
+.app.outpost .guide-card-stand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #0b0d1299;
+}
+.app.outpost .guide-card-stand img {
+  position: relative;
+  z-index: 1;
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 10px 24px #000c);
+}
+.app.outpost .grind-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+@media (max-width: 1100px) {
+  .app.outpost .grind-guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .app.outpost .grind-guide-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .app.outpost .guide-card a {
+    height: 300px;
   }
 }

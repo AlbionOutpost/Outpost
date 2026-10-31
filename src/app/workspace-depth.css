@@ -551,31 +551,6 @@
 .app.outpost .market-results-heading {
   margin-bottom: 12px;
 }
-.app.outpost .guild-discovery-list {
-  gap: 12px;
-}
-.app.outpost .guild-discovery-card {
-  border-radius: 8px;
-  background: var(--panel);
-  padding: 20px 24px;
-  box-shadow: none;
-}
-.app.outpost .guild-discovery-card > p {
-  max-width: 75ch;
-  font-size: 14px;
-  line-height: 1.7;
-}
-.app.outpost .guild-discovery-card footer {
-  border: 0;
-  padding-top: 16px;
-  margin: 0;
-  background: transparent;
-}
-.app.outpost .guild-discovery-context {
-  margin-block: 16px 24px;
-  font-size: 12px;
-  color: var(--muted);
-}
 .cargo-capacity-summary strong {
   margin: 0;
   letter-spacing: 0;

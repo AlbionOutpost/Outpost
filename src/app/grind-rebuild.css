@@ -630,10 +630,7 @@
   align-items: end;
   flex-wrap: wrap;
   gap: 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
   padding: 16px;
-  border-radius: 8px;
   margin: 24px 0;
 }
 .library-filter-bar label {
@@ -684,28 +681,6 @@
   padding: 20px 0;
   margin-top: 28px;
 }
-.library-comp-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
-  min-width: 0;
-}
-.library-comp-card > a {
-  display: block;
-  padding: 20px;
-}
-.library-comp-card > a > span {
-  font-size: 11px;
-  color: var(--accent);
-}
-.library-comp-card h2 {
-  font-size: 18px;
-  margin: 8px 0 16px;
-  overflow-wrap: anywhere;
-}
-.library-comp-card small {
-  color: var(--muted);
-}
 .library-comp-weapons {
   display: flex;
   flex-wrap: wrap;
@@ -732,22 +707,6 @@
   color: var(--accent);
   font-size: 11px;
 }
-.grind-guide-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.grind-guide-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.grind-guide-card > a {
-  display: grid;
-  grid-template-columns: 136px minmax(0, 1fr);
-  height: 100%;
-}
 .grind-guide-art {
   display: flex;
   flex-direction: column;
@@ -762,44 +721,6 @@
   font-size: 10px;
   color: var(--muted);
   text-align: center;
-}
-.grind-guide-copy {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-.grind-guide-copy h2 {
-  font-size: 18px;
-  line-height: 1.35;
-  letter-spacing: -0.025em;
-  margin: 0 0 8px;
-}
-.grind-guide-copy p {
-  font-size: 12px;
-  line-height: 1.65;
-  color: var(--muted);
-  margin: 0 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.grind-guide-copy > div {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--accent);
-  font-size: 11px;
-}
-.grind-guide-copy > div > span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--muted);
-}
-.grind-guide-card:hover {
-  border-color: var(--accent);
 }
 .outpost-guide-heading {
   margin-top: 48px;
@@ -1211,9 +1132,6 @@
   margin-top: 16px;
 }
 @media (max-width: 1100px) {
-  .grind-guide-card > a {
-    grid-template-columns: 100px minmax(0, 1fr);
-  }
   .grind-guide-art img {
     width: 80px;
     height: 80px;
@@ -1262,12 +1180,6 @@
   .guide-mobile-toc nav a {
     color: var(--muted);
     line-height: 1.5;
-  }
-  .grind-guide-grid {
-    grid-template-columns: 1fr;
-  }
-  .grind-guide-card > a {
-    grid-template-columns: 120px minmax(0, 1fr);
   }
   .guide-reading-layout {
     grid-template-columns: 1fr;
@@ -1431,9 +1343,6 @@
     flex: 1 1 100%;
     min-width: 0;
   }
-  .grind-guide-card > a {
-    grid-template-columns: 80px minmax(0, 1fr);
-  }
   .grind-guide-art {
     padding: 12px 8px;
   }
@@ -1443,12 +1352,6 @@
   }
   .grind-guide-art span {
     font-size: 9px;
-  }
-  .grind-guide-copy {
-    padding: 16px 12px;
-  }
-  .grind-guide-copy h2 {
-    font-size: 16px;
   }
   .guide-reading-header {
     gap: 12px;

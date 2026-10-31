@@ -1,4 +1,6 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { MastheadTabs } from "@/components/masthead-tabs";
+import { BookOpen, Coins, Swords } from "lucide-react";
 import { GuideDirectory } from "@/components/guide-directory";
 import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
@@ -19,18 +21,30 @@ export default async function Guides({
         scene="guides"
         title="Guides & resources"
         description="Find your footing, plan your next run, or learn a new way to earn."
-      />
-      <nav className="guide-topic-links" aria-label="Guide shortcuts">
-        <Link href="/guides/albion-journal-guide">Track your journal</Link>
-        <Link href="/guides?category=Economy">Learn the economy</Link>
-        <Link href="/builds/library">Find a loadout</Link>
-      </nav>
+      >
+        <MastheadTabs
+          label="Guide shortcuts"
+          tabs={[
+            {
+              href: "/guides/albion-journal-guide",
+              label: "Track your journal",
+              icon: <BookOpen size={16} />,
+            },
+            {
+              href: "/guides?category=Economy",
+              label: "Learn the economy",
+              icon: <Coins size={16} />,
+            },
+            { href: "/builds/library", label: "Find a loadout", icon: <Swords size={16} /> },
+          ]}
+        />
+      </WorkspaceHeading>
       <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
-      <div className="library-section-heading outpost-guide-heading">
-        <div>
-          <h2>Getting comfortable with Outpost</h2>
-          <p>Short notes for the tools you use here.</p>
-        </div>
+      <div className="section-heading outpost-guide-heading">
+        <h2>
+          Getting comfortable <em>with Outpost</em>
+        </h2>
+        <p>Short notes for the tools you use here.</p>
       </div>
       <GuideDirectory
         guides={[

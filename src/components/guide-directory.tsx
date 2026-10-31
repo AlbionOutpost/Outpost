@@ -46,7 +46,7 @@ export function GuideDirectory({
       </aside>
       <div className="guide-directory-grid">
         {matches.map((g) => (
-          <article className="guide-discovery-card" key={g.id} id={g.id}>
+          <article className="raised guide-discovery-card" key={g.id} id={g.id}>
             <div className="guide-card-kicker">
               <BookOpen size={18} aria-hidden="true" />
               <span>{g.category}</span>

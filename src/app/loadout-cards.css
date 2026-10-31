@@ -473,34 +473,6 @@
 #build-discussion {
   scroll-margin-top: 90px;
 }
-/* Tool destinations are compact navigational entries, distinct from build cards. */
-.app.outpost .directory-entries .directory-entry {
-  min-height: 112px;
-  padding: 16px;
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
-  background: var(--card-surface);
-  box-shadow: none;
-  gap: 16px;
-}
-.app.outpost .directory-entries .directory-entry:hover {
-  transform: none;
-  background: var(--card-surface-hover);
-  border-color: var(--muted);
-}
-.app.outpost .directory-entry .tool-symbol {
-  width: 48px;
-  height: 48px;
-  background: transparent;
-  border: 0;
-}
-.app.outpost .directory-entry .tool-symbol [data-albion-icon] {
-  width: 48px;
-  height: 48px;
-}
-.app.outpost .directory-entry h3 {
-  font-size: 16px;
-}
 @media (max-width: 1099px) {
   .app.outpost .build-discovery-toolbar .build-filter-form {
     grid-template-columns: repeat(3, minmax(0, 1fr));

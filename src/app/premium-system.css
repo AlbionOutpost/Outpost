@@ -161,9 +161,7 @@
 }
 .app.outpost .library-filter-bar {
   padding: 16px;
-  background: var(--panel);
-  box-shadow: var(--premium-shadow);
-  margin: 16px 0 24px;
+  margin: 0 0 24px;
 }
 /* Equipment is the primary workspace; metadata stays compact and save actions stay reachable. */
 .app.outpost .build-editor-page {

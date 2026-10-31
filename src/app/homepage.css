@@ -37,26 +37,6 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.app.outpost .landing-chips {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-}
-.app.outpost .landing-chip {
-  padding: 2px 9px;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.app.outpost .landing-chip.is-muted {
-  color: var(--muted);
-  background: var(--elevated);
-  border-color: var(--border);
-}
 .app.outpost .landing-actions {
   display: flex;
   flex-wrap: wrap;
@@ -181,7 +161,6 @@
 
 /* Inset panels inside the surfaces */
 .app.outpost .landing-features li,
-.app.outpost .landing-roster li,
 .app.outpost .tool-search,
 .app.outpost .tool-item,
 .app.outpost .tool-table,
@@ -337,8 +316,7 @@ a.landing-window-title:hover {
   width: 40px;
   height: 40px;
 }
-.app.outpost .landing-features strong,
-.app.outpost .landing-roster-who strong {
+.app.outpost .landing-features strong {
   display: block;
   overflow: hidden;
   font-size: 14px;
@@ -353,74 +331,6 @@ a.landing-window-title:hover {
   font-size: 12px;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-/* Comp roster: one row per slot, the role's colour on the edge */
-.app.outpost .landing-roster {
-  display: grid;
-  grid-template-rows: repeat(5, 1fr);
-  gap: 8px;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.app.outpost .landing-roster li {
-  display: grid;
-  grid-template-columns: 12px 44px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  padding: 0 8px 0 6px;
-  border-left: 3px solid var(--role, #ffffff12);
-}
-.app.outpost .landing-roster li[data-role="Tank"] {
-  --role: var(--role-tank);
-}
-.app.outpost .landing-roster li[data-role="Healer"] {
-  --role: var(--role-healer);
-}
-.app.outpost .landing-roster li[data-role="DPS"] {
-  --role: var(--role-dps);
-}
-.app.outpost .landing-roster li[data-role="Support"] {
-  --role: var(--role-support);
-}
-.app.outpost .landing-roster-n {
-  color: var(--muted);
-  font: 700 12px/1 var(--font-mono, var(--font-ui));
-  text-align: center;
-}
-.app.outpost .landing-roster-weapon,
-.app.outpost .landing-roster-weapon img {
-  display: block;
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
-}
-.app.outpost .landing-roster-who {
-  display: grid;
-  min-width: 0;
-  color: var(--text);
-  line-height: 1.2;
-}
-.app.outpost .landing-roster-who:hover strong {
-  color: var(--accent-ink);
-}
-.app.outpost .landing-roster-who > span {
-  color: var(--role, var(--muted));
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.app.outpost .landing-roster-armor {
-  display: flex;
-  gap: 4px;
-}
-.app.outpost .landing-roster-armor img {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  filter: drop-shadow(0 1px 2px #000a);
 }
 /* Section headings: title, one line, a pill link on the right */
 .app.outpost .landing-tools,
@@ -1000,83 +910,6 @@ a.landing-window-title:hover {
 .app.outpost .guide-card {
   scroll-snap-align: start;
 }
-.app.outpost .guide-card a {
-  position: relative;
-  display: grid;
-  align-content: end;
-  height: 381px;
-  border-radius: 12px;
-  overflow: hidden;
-  color: #f4f2ee;
-  isolation: isolate;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--accent) 45%, #ffffff2e),
-    0 0 0 1px #000000b0,
-    0 3px 0 #0a0b0e,
-    0 18px 36px -10px #000d;
-  transition: transform 180ms var(--ease-out);
-}
-.app.outpost .guide-card img {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 400ms var(--ease-out);
-}
-.app.outpost .guide-card a:hover {
-  transform: translateY(-3px);
-}
-.app.outpost .guide-card a:hover img {
-  transform: scale(1.04);
-}
-.app.outpost .guide-card-time {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 9px;
-  border: 1px solid #ffffff22;
-  border-radius: 999px;
-  background: #0b0d12cc;
-  backdrop-filter: blur(6px);
-  font-size: 12px;
-  font-weight: 700;
-}
-.app.outpost .guide-card-copy {
-  display: grid;
-  gap: 6px;
-  padding: 90px 18px 18px;
-  background: linear-gradient(0deg, #0b0d12 0%, #0b0d12e6 40%, #0b0d1200 100%);
-}
-.app.outpost .guide-card-copy small {
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.app.outpost .guide-card-copy h3 {
-  margin: 0;
-  font: 800 20px/1.15 var(--font-display);
-}
-.app.outpost .guide-card-copy > span {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  color: #ddd8d0;
-  font-size: 13px;
-  line-height: 1.45;
-}
-.app.outpost .guide-card-copy em {
-  color: #bdb6ad;
-  font-size: 12px;
-  font-style: normal;
-}
 .app.outpost .guides-arrow {
   position: absolute;
   top: 50%;
@@ -1540,7 +1373,6 @@ a.landing-window-title:hover {
 .app.outpost.light
   :is(
     .landing-features li,
-    .landing-roster li,
     .tool-search,
     .tool-item,
     .tool-table,

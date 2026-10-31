@@ -1,4 +1,6 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { MastheadTabs } from "@/components/masthead-tabs";
+import { Compass, Shield } from "lucide-react";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -65,18 +67,28 @@ export default async function Groups({
             Create workspace
           </Link>
         }
-      />
-      <nav className="team-collection-tabs" aria-label="Team collections">
-        <Link href="/groups" aria-current={!mine ? "page" : undefined}>
-          Discover teams
-        </Link>
-        <Link href="/groups?mine=1" aria-current={mine ? "page" : undefined}>
-          My teams
-        </Link>
-      </nav>
+      >
+        <MastheadTabs
+          label="Team collections"
+          tabs={[
+            {
+              href: "/groups",
+              label: "Discover teams",
+              icon: <Compass size={16} />,
+              current: !mine,
+            },
+            {
+              href: "/groups?mine=1",
+              label: "My teams",
+              icon: <Shield size={16} />,
+              current: mine,
+            },
+          ]}
+        />
+      </WorkspaceHeading>
       <form
         action="/groups"
-        className="guild-discovery-filters"
+        className="raised guild-discovery-filters"
         aria-label="Team discovery filters"
       >
         <input type="hidden" name="mine" value={mine ? "1" : "0"} />
@@ -120,7 +132,11 @@ export default async function Groups({
       </p>
       <div className="guild-discovery-list">
         {rows.slice(0, 25).map((g) => (
-          <article className="guild-discovery-card" key={g.id}>
+          <article
+            className="raised has-scene guild-discovery-card"
+            data-scene="composition"
+            key={g.id}
+          >
             <div className="guild-discovery-card-heading">
               <span className="guild-directory-mark" aria-hidden="true">
                 {g.name
@@ -156,7 +172,7 @@ export default async function Groups({
         ))}
       </div>
       {!rows.length && (
-        <section className="guild-discovery-empty">
+        <section className="raised guild-discovery-empty">
           <span className="eyebrow">TEAM DISCOVERY</span>
           <h2>{mine ? "No teams in this view" : "No matching teams"}</h2>
           {mine && !userId && (

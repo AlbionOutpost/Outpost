@@ -12,13 +12,13 @@ import { WorkspaceHeading } from "./workspace-heading";
 const scenes: Record<string, { scene: string; at: string }> = {
   "/tools/market": { scene: "market", at: "30% 40%" },
   "/shopping-list": { scene: "city", at: "88% 60%" },
-  "/tools/flipping": { scene: "hero", at: "70% 60%" },
-  "/tools/crafting": { scene: "hero", at: "25% 50%" },
+  "/tools/flipping": { scene: "economy", at: "70% 60%" },
+  "/tools/crafting": { scene: "economy", at: "25% 50%" },
   "/tools/cooking": { scene: "market", at: "75% 70%" },
   "/tools/alchemy": { scene: "composition", at: "60% 40%" },
   "/tools/fishing": { scene: "city", at: "20% 72%" },
   "/tools/refining": { scene: "build", at: "30% 35%" },
-  "/tools/enchanting": { scene: "hero", at: "88% 30%" },
+  "/tools/enchanting": { scene: "economy", at: "88% 30%" },
   "/tools/farming": { scene: "city", at: "55% 85%" },
   "/tools/transporting": { scene: "market", at: "10% 75%" },
   "/tools/laborers": { scene: "composition", at: "15% 65%" },
@@ -27,11 +27,11 @@ const scenes: Record<string, { scene: string; at: string }> = {
   "/tools/avalon-mapper": { scene: "city", at: "50% 12%" },
   "/tools/gold": { scene: "market", at: "55% 25%" },
   "/builds/new": { scene: "build", at: "50% 40%" },
-  "/builds": { scene: "hero", at: "50% 75%" },
+  "/builds": { scene: "economy", at: "50% 75%" },
   "/items": { scene: "market", at: "90% 50%" },
   "/compositions/new": { scene: "composition", at: "50% 40%" },
   "/groups": { scene: "city", at: "80% 55%" },
-  "/timers": { scene: "hero", at: "10% 30%" },
+  "/timers": { scene: "economy", at: "10% 30%" },
   "/tools/kill-feed": { scene: "build", at: "15% 70%" },
   "/tools/death-feed": { scene: "composition", at: "85% 30%" },
 };
@@ -91,11 +91,9 @@ export function ToolDirectory() {
       />
       {!!pins.length && !query && category === "All tools" && (
         <section className="tool-shortcuts" aria-label="Tool shortcuts on this device">
-          <div className="support-section-heading">
+          <div className="section-heading support-section-heading">
             <h2>{pins.length ? "Your shortcuts" : "Start with a task"}</h2>
-            <small>
-              {pins.length ? "Pinned on this device" : "Pin up to six tools for next time"}
-            </small>
+            <p>{pins.length ? "Pinned on this device" : "Pin up to six tools for next time"}</p>
           </div>
           <div>
             {(pins.length
@@ -152,22 +150,22 @@ export function ToolDirectory() {
               className={`directory-group ${group === "Economy" ? "directory-economy" : ""}`}
               key={group}
             >
-              <div className="directory-group-heading">
+              <div className="section-heading directory-group-heading">
                 <h2>{group}</h2>
-                <span>{rows.length}</span>
+                <p>
+                  {rows.length} {rows.length === 1 ? "tool" : "tools"}
+                </p>
               </div>
               <div className="directory-entries">
                 {rows.map((t) => (
                   <article
-                    className="directory-entry"
+                    className="raised has-scene directory-entry"
                     key={t.href}
-                    data-scene={scenes[t.href]?.scene ?? "hero"}
-                    style={{ "--scene-at": scenes[t.href]?.at ?? "center" } as React.CSSProperties}
+                    data-scene={scenes[t.href]?.scene ?? "economy"}
                   >
                     <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
-                      <span className="directory-entry-art" aria-hidden="true" />
                       <span className="tool-symbol" aria-hidden="true">
-                        <ToolIcon name={t.icon} size={20} />
+                        <ToolIcon name={t.icon} size={24} />
                       </span>
                       <div>
                         <h3>{t.title}</h3>

@@ -1191,7 +1191,7 @@ kbd {
     border: 0;
     background: #0009;
   }
-  header {
+  header.site-header {
     height: 60px;
     padding: 0 16px;
     gap: 8px;
@@ -1290,13 +1290,13 @@ kbd {
   main {
     padding: 24px 16px;
   }
-  header {
+  header.site-header {
     padding: 0 12px;
   }
   .header-actions {
     gap: 4px;
   }
-  header button {
+  header.site-header button {
     min-width: 32px;
   }
   .search-field {
@@ -3320,8 +3320,6 @@ button.party-loadout-card:hover {
   align-items: start;
 }
 .guide-discovery-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
   padding: 24px;
 }
 .guide-discovery-card h2 {
@@ -4265,86 +4263,6 @@ button.party-loadout-card:hover {
   margin-bottom: 0;
   max-width: 720px;
 }
-.guild-discovery-filters {
-  display: grid;
-  grid-template-columns: minmax(240px, 2fr) repeat(2, minmax(160px, 1fr)) auto;
-  align-items: end;
-  gap: 14px;
-  margin-top: 22px;
-  padding-block: 18px;
-  border-block: 1px solid var(--border);
-}
-.guild-discovery-context {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 12px 0 20px;
-}
-.guild-discovery-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.guild-discovery-card {
-  padding: 20px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  min-width: 0;
-}
-.guild-discovery-card-heading {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.guild-discovery-card-heading > div {
-  min-width: 0;
-  flex: 1;
-}
-.guild-directory-mark {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 48px;
-  border: 1px solid var(--border);
-  color: var(--metal);
-  font: 800 20px var(--font-display);
-  flex-shrink: 0;
-}
-.guild-discovery-card h2 {
-  font: 600 19px/1.4 var(--font-ui);
-  margin: 4px 0 0;
-  overflow-wrap: anywhere;
-}
-.guild-discovery-card h2 a:hover {
-  color: var(--accent-hover);
-}
-.guild-visibility {
-  color: var(--muted);
-  font-size: 13px;
-}
-.guild-discovery-card > p {
-  color: var(--muted);
-  line-height: 1.65;
-  overflow-wrap: anywhere;
-}
-.guild-discovery-card footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-  font-size: 13px;
-}
-.guild-discovery-empty {
-  max-width: 640px;
-  padding: 28px 0;
-}
-.guild-discovery-empty h2 {
-  font: 600 22px var(--font-ui);
-}
-.guild-discovery-empty p {
-  color: var(--muted);
-}
 .guild-discovery-pagination {
   display: flex;
   align-items: center;
@@ -4416,32 +4334,12 @@ button.party-loadout-card:hover {
   padding-top: 18px;
   margin-top: 20px;
 }
-@media (max-width: 900px) {
-  .guild-discovery-filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .guild-discovery-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+
 @media (max-width: 700px) {
   .guild-discovery-heading {
     align-items: start;
     flex-direction: column;
     gap: 12px;
-  }
-  .guild-discovery-filters > label:first-child {
-    grid-column: 1/-1;
-  }
-  .guild-discovery-filters > button {
-    grid-column: 1/-1;
-  }
-  .guild-discovery-card {
-    padding: 16px;
-  }
-  .guild-discovery-card-heading {
-    gap: 10px;
-    flex-wrap: wrap;
   }
   .guild-workspace-page .guild-activity-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -4458,14 +4356,6 @@ button.party-loadout-card:hover {
   padding: 0;
   border: 0;
   background: none;
-}
-.guild-discovery-card footer {
-  margin: 0;
-  max-width: none;
-  padding: 14px 0 0;
-}
-.guild-discovery-card > p {
-  margin: 14px 0 18px;
 }
 
 /* Guild review03: direct, sourced loadout previews within the activity sidebar. */

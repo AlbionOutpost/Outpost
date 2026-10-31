@@ -1,8 +1,6 @@
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
-import Image from "next/image";
-import { ArrowUpRight, BookOpen } from "lucide-react";
-import { ItemIcon } from "./item-icon";
+import { GuideCoverCard, readingMinutes } from "./guide-cover-card";
 import type { LibraryGuide } from "@/lib/grind-library-types";
 
 export const guideArtwork: Record<string, string> = {
@@ -32,7 +30,7 @@ export function GrindGuideDirectory({
   );
   return (
     <section className="grind-guide-library support-guide-library">
-      <form action="/guides" className="library-filter-bar">
+      <form action="/guides" className="raised library-filter-bar">
         <BuildRegionInput />
         <label>
           Search the library
@@ -55,41 +53,29 @@ export function GrindGuideDirectory({
         </label>
         <button className="button secondary">Find guides</button>
       </form>
-      <div className="library-section-heading">
-        <h2>The Outpost field guide</h2>
-        <span>{matches.length} guides to explore</span>
+      <div className="section-heading library-section-heading">
+        <h2>
+          The Outpost <em>field guide</em>
+        </h2>
+        <p>{matches.length} guides to explore</p>
       </div>
       <div className="grind-guide-grid guide-editorial-list">
         {matches.map((guide) => (
-          <article key={guide.slug} className="grind-guide-card">
-            <Link href={`/guides/${guide.slug}`}>
-              <div className="guide-story-art">
-                {guide.cover ? (
-                  <Image
-                    unoptimized
-                    src={guide.cover.src}
-                    width={guide.cover.width}
-                    height={guide.cover.height}
-                    alt=""
-                  />
-                ) : (
-                  <ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={72} />
-                )}
-              </div>
-              <div className="grind-guide-copy">
-                <small className="guide-story-category">{guide.category}</small>
-                <h2>{guide.title}</h2>
-                <p>{brandCopy(guide.summary)}</p>
-                <div>
-                  <span>
-                    <BookOpen size={13} /> By {guide.author}
-                  </span>
-                  <span>{guide.updatedAt ? `Updated ${guide.updatedAt}` : "Date unavailable"}</span>
-                </div>
-              </div>
-              <ArrowUpRight className="guide-story-arrow" size={18} />
-            </Link>
-          </article>
+          <GuideCoverCard
+            key={guide.slug}
+            className="grind-guide-card"
+            guide={{
+              slug: guide.slug,
+              title: guide.title,
+              category: guide.category,
+              author: guide.author,
+              updatedAt: guide.updatedAt,
+              summary: brandCopy(guide.summary),
+              minutes: readingMinutes(guide.content),
+              cover: guide.cover,
+              itemId: guideArtwork[guide.slug],
+            }}
+          />
         ))}
       </div>
       {!matches.length && (

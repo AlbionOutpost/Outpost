@@ -30,26 +30,9 @@
 .app.outpost :is(input, textarea) {
   caret-color: var(--accent-ink);
 }
-.app.outpost
-  :is(
-    .panel,
-    .directory-entry,
-    .library-comp-card,
-    .grind-guide-card,
-    .tool-workspace,
-    .market-query-panel,
-    .market-board,
-    .market-item-panel,
-    .reference-market-history
-  ) {
-  border-radius: var(--radius-panel);
-}
 .app.outpost :is(.panel, .market-query-panel, .market-board, .market-item-panel) {
   background: var(--panel);
   box-shadow: 0 8px 24px #00000012;
-}
-.app.outpost :is(.panel, .directory-entry, .library-comp-card, .grind-guide-card) {
-  overflow-wrap: anywhere;
 }
 .app.outpost .panel > :first-child {
   margin-top: 0;
@@ -157,32 +140,9 @@
     padding: 28px 16px 20px;
   }
 }
-.app.outpost .directory-entry {
-  box-shadow: none;
-  transition:
-    border-color 150ms,
-    background-color 150ms;
-}
-.app.outpost .directory-entry:hover {
-  background: var(--elevated);
-}
-.app.outpost .directory-group {
-  padding-bottom: 16px;
-}
 .app.outpost .directory-start {
   border-radius: 12px;
   padding: 20px 24px;
-}
-.app.outpost
-  :is(
-    .guide-feature-story,
-    .grind-guide-card,
-    .item-detail-panel,
-    .item-catalog-panel,
-    .account-section,
-    .timer-group
-  ) {
-  border-radius: 12px;
 }
 /* Sign-in is a single deliberate destination, including failure and guest paths. */
 .app.outpost #main-content[data-page="signin"] {
@@ -804,11 +764,6 @@
     order: 3;
     width: 100%;
     text-align: center;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .app.outpost .directory-entry {
-    transition: none;
   }
 }
 
