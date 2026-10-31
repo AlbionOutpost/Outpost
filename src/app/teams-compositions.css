@@ -283,8 +283,7 @@
   align-content: start;
   gap: 12px;
   min-width: 0;
-  padding: 14px 16px 16px;
-  border-left: 3px solid var(--role, var(--well-border));
+  padding: 20px 18px 18px;
 }
 .app.outpost .group-loadout-card[data-role="Tank"] {
   --role: var(--role-tank);
