@@ -29,12 +29,13 @@ export const landingActivities = [
  */
 export function summariseActivities(rows: LibraryBuild[]): Activity[] {
   return landingActivities.map((category) => {
+    // filter() already copies, so sorting in place leaves the library untouched
     const builds = rows
-      .filter((b) => b.category === category)
-      .toSorted((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
+      .filter((b: LibraryBuild) => b.category === category)
+      .sort((a: LibraryBuild, b: LibraryBuild) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
     const weapons = [
-      ...new Set(
-        builds.flatMap((b) => {
+      ...new Set<string>(
+        builds.flatMap((b: LibraryBuild) => {
           const id = b.equipment.find((e) => e.slot === "Main hand")?.itemId;
           return id ? [id] : [];
         }),
