@@ -306,17 +306,19 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/kill-feed?region=europe",
   );
 
-  // Activities: listed counts and the five most liked builds, each opening its build.
+  // Activities: listed counts, the weapons of the best-liked builds and the most liked build.
   const activities = page.locator(".activity-card");
   await expect(activities).toHaveCount(8);
-  await expect(activities.first().locator(".activity-head")).toHaveAttribute(
+  await expect(activities.first().locator(".activity-copy")).toHaveAttribute(
     "href",
     "/builds/library?category=ZVZ&region=europe",
   );
-  await expect(activities.first().locator(".activity-head")).toContainText(/ZvZ\s*[\d,]+ builds/);
-  const picks = activities.first().locator(".activity-builds a");
-  await expect(picks).toHaveCount(5);
-  await expect(picks.first()).toHaveAttribute("href", /^\/builds\/library\/[^?]+\?region=europe$/);
+  await expect(activities.first().locator(".activity-copy")).toContainText(/ZvZ\s*[\d,]+ builds/);
+  await expect(activities.first().locator(".activity-weapons img")).toHaveCount(3);
+  await expect(activities.first().locator("a.activity-top")).toHaveAttribute(
+    "href",
+    /^\/builds\/library\/[^?]+\?region=europe$/,
+  );
 
   // Advertising stays off until configured; the plans say what is free and what supports.
   await expect(page.locator(".adsbygoogle")).toHaveCount(0);

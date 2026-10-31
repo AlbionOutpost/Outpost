@@ -1223,7 +1223,7 @@
   color: var(--muted);
 }
 .app.outpost.light .detail-hero.masthead .detail-hero-tags > span {
-  background: #ffffffcc;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
   border-color: #00000018;
   color: var(--text);
 }
@@ -1259,7 +1259,7 @@
   background: color-mix(in srgb, var(--canvas-mid) 90%, transparent);
 }
 .app.outpost.light .detail-section-navigation > a[aria-current="location"] {
-  background: color-mix(in srgb, var(--accent) 10%, #fff);
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
   color: var(--accent-ink);
 }
 .app.outpost .detail-disclosure.raised,

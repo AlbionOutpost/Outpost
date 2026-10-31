@@ -54,25 +54,22 @@
   min-height: 720px;
   color: #f4f2ee;
 }
-.app.outpost .landing-hero-art {
-  position: absolute;
-  inset: 0 0 -220px;
-  z-index: 0;
-  mask-image: linear-gradient(180deg, #000 0%, #000 52%, #0008 72%, transparent 100%);
+/* The hero sits on the site backdrop; a shade behind the copy keeps it readable. It is always
+   over the painting, so it keeps the night accent in both themes. */
+.app.outpost.light .landing-hero {
+  --accent: #ee945a;
+  --accent-ink: #ffb482;
 }
-.app.outpost .landing-hero-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 70% 35%;
-}
-.app.outpost .landing-hero-art::after {
+.app.outpost .landing-hero::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background:
-    linear-gradient(90deg, #17110ef0 0%, #17110ebf 28%, #17110e40 55%, #17110e00 78%),
-    linear-gradient(0deg, #17110e99 0%, #17110e33 30%, #17110e00 55%);
+    linear-gradient(90deg, #0c0d10e0 0%, #0c0d10a8 30%, #0c0d1030 58%, transparent 80%),
+    linear-gradient(0deg, #0c0d1066 0%, transparent 45%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+  pointer-events: none;
 }
 .app.outpost .landing-hero-inner {
   position: relative;
@@ -440,12 +437,6 @@ a.landing-window-title:hover {
   border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: inset 0 1px 3px #0009;
-}
-.app.outpost.light .landing-card .tool-card,
-.app.outpost.light .landing-card .tool-card:hover {
-  border-color: var(--border);
-  background: var(--panel);
-  box-shadow: none;
 }
 .app.outpost .tool-card {
   display: grid;
@@ -1377,80 +1368,118 @@ a.landing-window-title:hover {
 }
 .app.outpost .activity-card {
   display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 12px;
+  grid-template-rows: auto auto 1fr;
+  gap: 14px;
   height: 100%;
-  padding: 18px 16px 16px;
+  padding: 20px 20px 18px;
+  color: var(--text);
 }
-.app.outpost .activity-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 2px 4px;
+/* The name link covers the whole card; the most liked line sits above it */
+.app.outpost .activity-copy {
   color: var(--text);
   text-decoration: none;
 }
-.app.outpost .activity-head strong {
+.app.outpost .activity-copy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.app.outpost .activity-copy:focus-visible {
+  outline: none;
+}
+.app.outpost .activity-copy:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+/* Three weapons fanned like a hand of cards */
+.app.outpost .activity-weapons {
+  display: flex;
+  height: 64px;
+  padding-left: 4px;
+}
+.app.outpost .activity-weapons img {
+  width: 60px;
+  height: 60px;
+  margin-left: -14px;
+  border-radius: 10px;
+  background: var(--well);
+  box-shadow:
+    0 0 0 1px var(--well-border),
+    0 6px 14px -4px #000c;
+  rotate: calc((var(--n, 1) - 1) * 6deg);
+  translate: 0 calc(var(--lift, 0) * 1px);
+  transition:
+    rotate 420ms var(--ease-spring),
+    translate 420ms var(--ease-spring);
+}
+.app.outpost .activity-weapons img:first-child {
+  --n: 0;
+  margin-left: 0;
+}
+.app.outpost .activity-weapons img:nth-child(2) {
+  --n: 1;
+  --lift: -4;
+  z-index: 1;
+}
+.app.outpost .activity-weapons img:nth-child(3) {
+  --n: 2;
+  z-index: 2;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .app.outpost .activity-card:hover .activity-weapons img {
+    rotate: calc((var(--n, 1) - 1) * 11deg);
+    translate: calc((var(--n, 1) - 1) * 6px) calc(var(--lift, 0) * 2px - 3px);
+  }
+}
+.app.outpost .activity-copy strong {
   display: block;
   font: 800 22px/1.1 var(--font-display);
   letter-spacing: 0.01em;
 }
-.app.outpost .activity-head small {
+.app.outpost .activity-copy small {
   display: block;
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--accent-ink);
   font: 700 13px/1.3 var(--font-ui);
   font-variant-numeric: tabular-nums;
 }
-.app.outpost .activity-head svg {
-  flex: none;
-  color: var(--muted);
-  transition: color 200ms var(--ease-out);
-}
-.app.outpost .activity-head:hover svg {
-  color: var(--accent-ink);
-}
-.app.outpost .activity-builds {
+.app.outpost .activity-top {
+  position: relative;
+  z-index: 2;
   display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.app.outpost .activity-builds a {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 4px 10px 4px 5px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-self: end;
+  gap: 2px 10px;
+  margin: 0 -8px;
+  padding: 10px 8px 4px;
+  border-top: 1px solid var(--well-border);
+  border-radius: 0 0 8px 8px;
   color: var(--text);
   text-decoration: none;
-  transition:
-    border-color 200ms var(--ease-out),
-    background 200ms var(--ease-out);
+  transition: background 200ms var(--ease-out);
 }
-.app.outpost .activity-builds a:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--well));
+a.activity-top:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
-.app.outpost .activity-builds img {
-  width: 36px;
-  height: 36px;
-  border-radius: 7px;
+.app.outpost .activity-top > span {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.app.outpost .activity-build-title {
+.app.outpost .activity-top em {
   overflow: hidden;
   font-size: 13px;
+  font-style: normal;
   font-weight: 600;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.app.outpost .activity-builds b {
+.app.outpost .activity-top b {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1458,57 +1487,35 @@ a.landing-window-title:hover {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
-.app.outpost .activity-builds b svg {
+.app.outpost .activity-top b svg {
   color: var(--victim);
   fill: currentColor;
 }
 .app.outpost .activity-empty {
-  margin: 0;
+  margin: 0 -8px;
   color: var(--muted);
   font-size: 13px;
-}
-.app.outpost.light .activity-builds a {
-  border-color: var(--border);
-  background: var(--panel);
 }
 
 /* Plans: a painted band closing the page with what is free and what the Supporter plan adds */
 .app.outpost .landing-plans {
-  position: relative;
   margin-top: 96px;
-  padding: 120px 0 96px;
-  color: #f4f2ee;
-  isolation: isolate;
-  overflow: hidden;
+  padding: 0 0 96px;
 }
-.app.outpost .landing-plans-art {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 70%, transparent 100%);
-}
-.app.outpost .landing-plans-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 70% 50%;
-}
-.app.outpost .landing-plans-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, #0b0d12f2 0%, #0b0d12c4 45%, #0b0d1270 75%, #0b0d1240 100%),
-    linear-gradient(0deg, #0b0d12c0 0%, transparent 40%);
+/* Centred: the heading over the two plans, the pair in the middle of the page */
+.app.outpost .landing-plans .section-heading {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
 }
 .app.outpost .landing-plans .section-heading p {
   max-width: 62ch;
-  color: #ddd8d0;
 }
 .app.outpost .plan-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 420px));
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 440px));
+  justify-content: center;
+  gap: 26px;
 }
 .app.outpost .plan-card {
   display: grid;
@@ -1588,89 +1595,13 @@ a.landing-window-title:hover {
   font-weight: 700;
 }
 
-/* Light theme keeps the surfaces readable; the paintings stay */
-.app.outpost.light .home-landing {
-  --page-top: #efe9e1;
-  --surface: #ffffff;
-}
-.app.outpost.light
-  :is(
-    .landing-features li,
-    .tool-search,
-    .tool-item,
-    .tool-table,
-    .tool-chart,
-    .tool-pair,
-    .tool-tabs,
-    .tool-queue li,
-    .tool-summary,
-    .tool-cities,
-    .kill-people li,
-    .kill-toggle,
-    .tool-profit,
-    .kill-loot li,
-    .guides-arrow
-  ) {
-  border-color: var(--border);
-  background: var(--panel);
-  box-shadow: none;
-  color: var(--text);
-}
-.app.outpost.light .landing-window-title,
-.app.outpost.light .kill-mid > strong,
-.app.outpost.light .tool-plot-tip,
-.app.outpost.light .tool-plot-tip {
-  color: var(--text);
-  text-shadow: none;
-}
-.app.outpost.light .landing-window .loadout-board-cell,
-.app.outpost.light .landing-window .loadout-board-slot.is-empty .loadout-board-cell,
-.app.outpost.light .kill-boards .loadout-board-slot.is-empty .loadout-board-cell {
-  border-color: var(--border);
-  background: var(--elevated);
-}
-.app.outpost.light .kill-loot li b {
-  text-shadow: none;
-  color: #000;
-}
-.app.outpost.light .landing-card-action {
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  background: #ffffffd9;
-  box-shadow: 0 1px 2px #16203214;
-}
-.app.outpost.light .landing-card-action:hover {
-  background: var(--accent);
-  color: #fff;
-}
-.app.outpost.light .tool-plot-tip {
-  border-color: var(--border);
-  background: var(--panel);
-  box-shadow: 0 6px 16px -6px #16203240;
-}
-.app.outpost.light .tool-stepper {
-  border-color: var(--border);
-  background: var(--panel);
-}
-/* The plans band keeps its painting under a daylight wash */
-.app.outpost.light .landing-plans {
-  color: var(--text);
-}
-.app.outpost.light .landing-plans-art::after {
-  background:
-    linear-gradient(90deg, #f3eee8f5 0%, #f3eee8d6 45%, #f3eee880 75%, #f3eee840 100%),
-    linear-gradient(0deg, #f3eee8c0 0%, transparent 40%);
-}
-.app.outpost.light .landing-plans .section-heading p {
-  color: var(--muted);
-}
-
 /* ---------- Motion ----------
    The hero settles in on arrival (painting eases back, copy rises out of a mask line by line),
    the windows deal in after it, and every section below rises into place as it scrolls into
    view. Only transforms and clip paths move, so text never fades through low contrast and a
    browser without scroll timelines simply shows everything in place. */
 @media (prefers-reduced-motion: no-preference) {
-  .app.outpost .landing-hero-art img {
+  .app.outpost.home-route .site-backdrop {
     animation: landing-settle 2600ms var(--ease-out-expo) both;
   }
   .app.outpost .landing-hero-copy > *,
@@ -1722,7 +1653,7 @@ a.landing-window-title:hover {
   }
   @keyframes landing-settle {
     from {
-      scale: 1.12;
+      scale: 1.08;
     }
     to {
       scale: 1;
@@ -1748,19 +1679,6 @@ a.landing-window-title:hover {
       translate: 0 0;
       scale: 1;
       rotate: 0deg;
-    }
-  }
-  @supports (animation-timeline: scroll()) {
-    /* The painting drifts slower than the page */
-    .app.outpost .landing-hero-art {
-      animation: landing-drift linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 900px;
-    }
-    @keyframes landing-drift {
-      to {
-        translate: 0 140px;
-      }
     }
   }
   /* Sections rise into place once, when they first come into view (LandingReveal marks them),
@@ -1843,11 +1761,16 @@ a.landing-window-title:hover {
   .app.outpost .landing-hero {
     min-height: 0;
   }
-  .app.outpost .landing-hero-art img {
-    object-position: 60% 25%;
-  }
-  .app.outpost .landing-hero-art::after {
-    background: linear-gradient(0deg, #17110e 0%, #17110ef2 42%, #17110e99 64%, #17110e00 100%);
+  .app.outpost .landing-hero::before {
+    background: linear-gradient(
+      0deg,
+      transparent 0%,
+      #0c0d10b8 18%,
+      #0c0d10b0 55%,
+      #0c0d1040 80%,
+      transparent 100%
+    );
+    mask-image: none;
   }
   .app.outpost .landing-hero-inner {
     padding-top: 200px;
@@ -1948,21 +1871,33 @@ a.landing-window-title:hover {
     aspect-ratio: 1;
   }
   .app.outpost .activity-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 26px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 22px;
   }
-  .app.outpost .activity-head strong {
-    font-size: 19px;
+  .app.outpost .activity-card {
+    gap: 10px;
+    padding: 16px 14px 14px;
+  }
+  .app.outpost .activity-weapons {
+    height: 48px;
+  }
+  .app.outpost .activity-weapons img {
+    width: 44px;
+    height: 44px;
+    margin-left: -12px;
+  }
+  .app.outpost .activity-copy strong {
+    font-size: 18px;
+  }
+  .app.outpost .activity-top {
+    display: none;
   }
   .app.outpost .landing-activities {
     margin-top: 64px;
   }
   .app.outpost .landing-plans {
     margin-top: 64px;
-    padding: 72px 0 56px;
-  }
-  .app.outpost .landing-plans-art::after {
-    background: linear-gradient(0deg, #0b0d12f0 0%, #0b0d12d0 60%, #0b0d1280 100%);
+    padding: 0 0 56px;
   }
   .app.outpost .plan-grid {
     grid-template-columns: minmax(0, 1fr);

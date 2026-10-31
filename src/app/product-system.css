@@ -41,32 +41,42 @@
   background: var(--bg);
   color: var(--text);
 }
+/* Light mode is Albion's inventory: parchment panels in leather-brown frames, ink text and a
+   rust accent, never white. */
 .app.outpost.light,
 .app.outpost.home-route.light {
-  --bg: #edf2f5;
-  --sidebar: #f8fafc;
-  --chrome: #f8fafc;
-  --panel: #fff;
-  --surface: #fff;
-  --elevated: #e7eef4;
-  --surface-2: #e7eef4;
-  --surface-3: #dae5ee;
-  --border: #b8c8d5;
-  --text: #142635;
-  --secondary: #425a70;
-  --muted: #52697c;
-  --text-muted: #52697c;
-  --accent: #ae420f;
-  --action: #ae420f;
-  --accent-ink: #a83c0c;
-  --accent-hover: #8f340a;
-  --action-hover: #8f340a;
-  --accent-wash: #ae420f0b;
-  --focus: #185ba8;
-  --success: #137746;
-  --positive: #137746;
-  --error: #bd3030;
-  --warning: #825b0b;
+  --bg: #d8c6a1;
+  --sidebar: #e4d3af;
+  --chrome: #e4d3af;
+  --panel: #ebdcba;
+  --surface: #ebdcba;
+  --elevated: #dfcca6;
+  --surface-2: #dfcca6;
+  --surface-3: #d2bc93;
+  --border: #a3845a;
+  --premium-border: #a3845a;
+  --card-surface: #ebdcba;
+  --card-surface-hover: #e4d2ad;
+  --card-border: #a3845a;
+  --line-soft: color-mix(in srgb, #a3845a 60%, transparent);
+  --text: #2c1f12;
+  --secondary: #4d3823;
+  --muted: #674f35;
+  --text-muted: #674f35;
+  --accent: #9a4519;
+  --action: #9a4519;
+  --accent-ink: #8a3c13;
+  --accent-hover: #7a330e;
+  --action-hover: #7a330e;
+  --accent-wash: #9a451914;
+  --focus: #2c5a93;
+  --success: #2e6a2a;
+  --positive: #2e6a2a;
+  --error: #a3301f;
+  --negative: #a3301f;
+  --warning: #7a5410;
+  background: var(--bg);
+  color: var(--text);
 }
 .app.outpost .main > .site-header {
   background: var(--chrome);
@@ -263,78 +273,85 @@
   }
 }
 .app.outpost.light {
-  --canvas-top: #efe6dc;
-  --canvas-mid: #f3f2ee;
-  --canvas-end: #f3f2ee;
-  --surface-raised: #ffffff;
-  --surface-scrim: #f7f4ef;
-  --scene-dim: 72%;
-  --well: #f1eee9;
-  --well-border: #00000012;
-  --edge-light: #ffffff;
-  --raised-edge: #1620321a;
-  --raised-edge-top: #16203214;
-  --raised-edge-hover: color-mix(in srgb, var(--accent) 45%, #16203218);
-  --shadow-raised: 0 1px 2px #1620320f, 0 10px 24px -8px #16203229;
-  --shadow-raised-hover: 0 2px 4px #16203214, 0 16px 32px -10px #16203238;
+  --canvas-top: #d8c6a1;
+  --canvas-mid: #d8c6a1;
+  --canvas-end: #d8c6a1;
+  --surface-raised: #ebdcba;
+  --surface-scrim: #e4d3af;
+  --well: #dccaa3;
+  --well-border: #5a3e2633;
+  --edge-light: #f6ecd6;
+  --raised-edge: #6b4a2a55;
+  --raised-edge-top: #6b4a2a40;
+  --raised-edge-hover: color-mix(in srgb, var(--accent) 55%, #6b4a2a40);
+  --shadow-raised: 0 1px 2px #3a25121f, 0 10px 24px -8px #3a251240;
+  --shadow-raised-hover: 0 2px 4px #3a251226, 0 16px 32px -10px #3a25124d;
 }
-/* The canvas: one continuous surface under every page, landing included. A warm light from the
-   top (where the masthead or hero sits) eases out over the first screen and a half while the
-   base settles to night across the whole page height; faint embers keep deep sections alive and
-   a fine grain dithers the long dark ramps so they never band. Stops are eased, never linear. */
+/* The backdrop: one painting fixed behind every page, so sections scroll over a single
+   continuous scene and nothing ever meets at a seam. A scrim that scrolls with the page keeps
+   the painting clear behind the first screen and settles it into the canvas below; a fine
+   grain dithers the long ramps so they never band. Both themes use the same painting; light
+   mode only swaps the scrim colour. Stops are eased, never linear. */
 .app.outpost {
+  --backdrop: url("/albion/illustrations/backdrop-v1.webp");
   --canvas-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  --canvas-glow: #d9742f;
   --canvas-grain-opacity: 0.035;
+  /* How much of the scrim covers the painting: behind the first screen, then everywhere below */
+  --backdrop-veil: 30%;
+  --backdrop-deep: 84%;
   background-color: var(--canvas-end);
+}
+@media (max-width: 700px) {
+  .app.outpost {
+    --backdrop: url("/albion/illustrations/backdrop-v1-phone.webp");
+  }
+}
+.app.outpost.light {
+  --canvas-grain-opacity: 0.05;
+  --backdrop-veil: 18%;
+  --backdrop-deep: 88%;
 }
 .app.outpost .main {
   position: relative;
   isolation: isolate;
   overflow-x: clip;
   background-color: var(--canvas-end);
-  background-image:
-    radial-gradient(
-      1200px 560px at 50% 260px,
-      color-mix(in srgb, var(--canvas-glow) 12%, transparent) 0%,
-      color-mix(in srgb, var(--canvas-glow) 5%, transparent) 40%,
-      transparent 72%
-    ),
-    radial-gradient(
-      1100px 900px at 8% 42%,
-      color-mix(in srgb, var(--canvas-glow) 7%, transparent) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      1200px 1000px at 92% 74%,
-      color-mix(in srgb, var(--canvas-glow) 6%, transparent) 0%,
-      transparent 70%
-    ),
-    linear-gradient(
-      180deg,
-      var(--canvas-top) 0px,
-      color-mix(in oklab, var(--canvas-top) 97%, transparent) 140px,
-      color-mix(in oklab, var(--canvas-top) 90%, transparent) 300px,
-      color-mix(in oklab, var(--canvas-top) 78%, transparent) 480px,
-      color-mix(in oklab, var(--canvas-top) 62%, transparent) 680px,
-      color-mix(in oklab, var(--canvas-top) 44%, transparent) 880px,
-      color-mix(in oklab, var(--canvas-top) 27%, transparent) 1080px,
-      color-mix(in oklab, var(--canvas-top) 13%, transparent) 1280px,
-      color-mix(in oklab, var(--canvas-top) 4%, transparent) 1480px,
-      transparent 1680px
-    ),
-    linear-gradient(
-      180deg,
-      var(--canvas-mid) 0%,
-      color-mix(in oklab, var(--canvas-mid) 92%, var(--canvas-end)) 18%,
-      color-mix(in oklab, var(--canvas-mid) 72%, var(--canvas-end)) 38%,
-      color-mix(in oklab, var(--canvas-mid) 45%, var(--canvas-end)) 58%,
-      color-mix(in oklab, var(--canvas-mid) 20%, var(--canvas-end)) 78%,
-      var(--canvas-end) 100%
-    );
 }
-/* Grain above the gradients, below everything else */
+.app.outpost .site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--canvas-end) var(--backdrop-veil), transparent) 0%,
+      color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-veil) + 18%), transparent) 100%
+    ),
+    var(--backdrop) 62% 40% / cover no-repeat,
+    var(--canvas-end);
+  pointer-events: none;
+}
+/* The scrolling scrim: clear for the first screen, eased into the canvas below it */
 .app.outpost .main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 380px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.12), transparent) 560px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.32), transparent) 760px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.58), transparent) 980px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.8), transparent) 1220px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.94), transparent) 1460px,
+    color-mix(in oklab, var(--canvas-end) var(--backdrop-deep), transparent) 1700px
+  );
+  pointer-events: none;
+}
+/* Grain above the scrim, below everything else */
+.app.outpost .main::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -343,10 +360,6 @@
   opacity: var(--canvas-grain-opacity);
   mix-blend-mode: overlay;
   pointer-events: none;
-}
-.app.outpost.light {
-  --canvas-glow: #e08a4a;
-  --canvas-grain-opacity: 0.05;
 }
 /* The landing spans the window; its sections keep their own measure */
 .app.outpost.home-route :is(.page-frame, .product-frame) {
@@ -375,37 +388,21 @@
 .app.outpost :is(.workspace-identity, .masthead)[data-scene] > * {
   position: relative;
 }
+/* The masthead sits on the site backdrop itself; a shade behind the copy keeps the title
+   readable over the brightest part of the painting and fades out before the panels. */
 .app.outpost :is(.workspace-identity, .masthead)[data-scene]::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(90deg, #17110ef2 0%, #17110ec4 30%, #17110e55 58%, #17110e14 80%),
-    linear-gradient(0deg, var(--canvas-top) 0%, #17110ea0 28%, #17110e10 60%, #17110e00 100%),
-    var(--scene) center 38% / cover no-repeat;
-  mask-image: linear-gradient(180deg, #000 0%, #000 55%, #0008 78%, transparent 100%);
+  background: linear-gradient(90deg, #0c0d10b8 0%, #0c0d1080 34%, #0c0d1020 62%, transparent 82%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
 }
-.app.outpost :is(.workspace-identity, .masthead)[data-scene="market"] {
-  --scene: var(--scene-market);
-}
-.app.outpost :is(.workspace-identity, .masthead)[data-scene="economy"] {
-  --scene: var(--scene-economy);
-}
-.app.outpost :is(.workspace-identity, .masthead)[data-scene="builds"] {
-  --scene: var(--scene-build);
-}
-.app.outpost :is(.workspace-identity, .masthead)[data-scene="comps"] {
-  --scene: var(--scene-composition);
+.app.outpost.light :is(.workspace-identity, .masthead)[data-scene]::before {
+  background: linear-gradient(90deg, #d8c6a1e8 0%, #d8c6a1b8 34%, #d8c6a148 62%, transparent 82%);
 }
 .app.outpost.light :is(.workspace-identity, .masthead)[data-scene] {
   color: var(--text);
-}
-.app.outpost.light :is(.workspace-identity, .masthead)[data-scene]::before {
-  background:
-    linear-gradient(90deg, #efe6dcf5 0%, #efe6dcd0 32%, #efe6dc70 60%, #efe6dc20 82%),
-    linear-gradient(0deg, var(--canvas-top) 0%, #efe6dcb0 30%, #efe6dc10 60%, #efe6dc00 100%),
-    var(--scene) center 38% / cover no-repeat;
 }
 .app.outpost .workspace-emblem {
   display: grid;
@@ -430,7 +427,7 @@
   height: 56px;
 }
 .app.outpost.light .workspace-emblem {
-  background: #ffffffcc;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
 }
 .app.outpost .workspace-identity-copy {
   flex: 1;
@@ -540,7 +537,7 @@
 /* Framed cards. The card itself paints nothing: its painting, dimming, scrim and pointer light
    are one layer (::before) cut to the frame's shape (corners clipped by --cut), so no square
    corner shows past the frame; the frame is the other layer (::after). The painting is a band
-   of fixed height at the top that fades into the scrim, so a growing card never stretches it.
+   covers the whole card under an even scrim, so every card keeps its own scene top to bottom.
    The layer overhangs by 16px and is clipped back, keeping the blur's soft fringe out of view
    (no mask: masked, filtered layers drop out under a transformed parent in Chromium). */
 .app.outpost .raised.has-scene {
@@ -574,16 +571,54 @@
       0 0 / 100% 100% no-repeat,
     linear-gradient(
         180deg,
-        color-mix(in srgb, var(--surface-scrim) 50%, transparent) 0,
-        color-mix(in srgb, var(--surface-scrim) 80%, transparent) 220px,
-        var(--surface-scrim) 520px
+        color-mix(in srgb, var(--surface-scrim) 34%, transparent) 0%,
+        color-mix(in srgb, var(--surface-scrim) 52%, transparent) 45%,
+        color-mix(in srgb, var(--surface-scrim) 70%, transparent) 100%
       )
-      0 0 / 100% 560px no-repeat,
-    linear-gradient(color-mix(in srgb, var(--surface-scrim) var(--scene-dim, 45%), transparent)) 0
-      0 / 100% 560px no-repeat,
-    var(--scene, var(--scene-city)) center 16px / auto 560px no-repeat,
+      0 0 / 100% 100% no-repeat,
+    var(--scene, var(--scene-city)) center / cover no-repeat,
     linear-gradient(var(--surface-scrim), var(--surface-scrim));
-  filter: saturate(0.85) blur(7px);
+  filter: saturate(0.9) blur(3px);
+}
+/* Framed cards are game panels. In light mode they turn to the dark leather of Albion's
+   inventory slots on the parchment page, so everything inside reads the same in both themes. */
+.app.outpost.light .raised.has-scene {
+  --bg: #1d150f;
+  --sidebar: #1d150f;
+  --panel: #33261b;
+  --elevated: #3d2e21;
+  --border: #5c4632;
+  --text: #f3e7d3;
+  --muted: #c2ad91;
+  --text-muted: #c2ad91;
+  --secondary: #d8c6aa;
+  --accent: #ee945a;
+  --accent-ink: #ffb482;
+  --accent-hover: #ffb482;
+  --accent-wash: #ee945a14;
+  --action: #ee945a;
+  --action-hover: #ffb482;
+  --metal: #d0ad79;
+  --success: #5fc98a;
+  --positive: #5fc98a;
+  --error: #ef7a69;
+  --negative: #ef7a69;
+  --warning: #e6b35b;
+  --surface: #33261b;
+  --surface-2: #3d2e21;
+  --surface-3: #47362a;
+  --card-surface: #33261b;
+  --card-surface-hover: #3b2c20;
+  --card-border: #5c4632;
+  --premium-border: #5c4632;
+  --line-soft: color-mix(in srgb, #5c4632 72%, transparent);
+  --surface-raised: #2e2218;
+  --surface-scrim: #2a1f16;
+  --well: #1e1610cc;
+  --well-border: #f3e7d314;
+  --edge-light: #f3e7d314;
+  color-scheme: dark;
+  color: var(--text);
 }
 /* MMO frame: a bright ember outer line and a fainter inner line following the cut corners,
    studs in the corners and a gem at the top and bottom centre, all glowing; brighter on hover.
@@ -604,6 +639,15 @@
     drop-shadow(0 12px 14px #000000b3);
   pointer-events: none;
   transition: filter 320ms var(--ease-out-expo);
+}
+/* On parchment the frame casts a short warm shadow instead of a night-time one */
+.app.outpost.light .raised.has-scene::after {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent))
+    drop-shadow(0 6px 6px #3a251226);
+}
+.app.outpost.light .raised.has-scene:hover::after {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 80%, transparent))
+    drop-shadow(0 8px 8px #3a251233);
 }
 .app.outpost .raised.raised.has-scene:hover {
   border-color: transparent;
@@ -777,13 +821,13 @@
   translate: 2px 0;
 }
 .app.outpost.light .pill-link {
-  background: #ffffffd9;
+  background: var(--panel);
   color: var(--text);
   border-color: color-mix(in srgb, var(--accent) 40%, #00000014);
-  box-shadow: 0 6px 16px -8px #16203240;
+  box-shadow: 0 6px 16px -8px #3a251240;
 }
 .app.outpost.light .pill-link:hover {
-  background: #fff;
+  background: var(--elevated);
 }
 .app.outpost.light .pill-link svg {
   color: #fff;
@@ -870,18 +914,18 @@
   color: #fff;
 }
 .app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
-  border-color: #00000018;
-  background: #ffffffcc;
+  border-color: #5a3e2633;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
   color: var(--text);
 }
 .app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover {
-  background: #fff;
-  border-color: #00000030;
+  background: var(--panel);
+  border-color: #5a3e2655;
 }
 .app.outpost.light
   :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)
   > a[aria-current="page"] {
-  background: color-mix(in srgb, var(--accent) 14%, #fff);
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
   color: var(--accent-ink);
 }
 @media (max-width: 700px) {
@@ -1221,6 +1265,20 @@
     transform 420ms var(--ease-out-expo),
     box-shadow 420ms var(--ease-out-expo);
 }
+/* Shadows short enough to stay inside the slider's padding, so its edge never shows */
+.app.outpost .guide-card a {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 45%, #ffffff2e),
+    0 0 0 1px #000000b0,
+    0 3px 0 #0a0b0e,
+    0 10px 14px -8px #000c;
+}
+.app.outpost.light .guide-card a {
+  box-shadow:
+    inset 0 1px 0 #ffffff2e,
+    0 0 0 1px #3a25124d,
+    0 8px 12px -8px #3a251266;
+}
 .app.outpost .guide-card img {
   position: absolute;
   inset: 0;
@@ -1237,7 +1295,7 @@
       inset 0 1px 0 color-mix(in srgb, var(--accent) 60%, #ffffff3a),
       0 0 0 1px color-mix(in srgb, var(--accent) 45%, #000000b0),
       0 3px 0 #0a0b0e,
-      0 26px 48px -12px #000e;
+      0 12px 16px -8px #000e;
   }
   .app.outpost .guide-card a:hover img {
     transform: scale(1.08);
@@ -1395,7 +1453,7 @@
   color: #fff;
 }
 .app.outpost.light .guild-tabs > button[aria-selected="true"] {
-  background: color-mix(in srgb, var(--accent) 10%, #fff);
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
   color: var(--accent-ink);
 }
 /* A Team feature waiting on the Supporter plan */
