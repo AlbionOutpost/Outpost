@@ -26,7 +26,7 @@
   position: absolute;
   left: 50%;
   /* Chest of the figure sits behind the chest slot (middle row) */
-  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.108);
+  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.145);
   z-index: -1;
   width: auto;
   height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.92);
@@ -36,7 +36,7 @@
   pointer-events: none;
 }
 .app.outpost .loadout-board.is-mini .loadout-board-figure {
-  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.068);
+  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.105);
   opacity: 0.25;
 }
 .app.outpost .loadout-board-column {
