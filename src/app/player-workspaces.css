@@ -329,19 +329,6 @@
   margin-top: 16px;
 }
 
-/* Guilds: activity and actual shared loadouts carry the page, not a decorative banner. */
-.guild-workspace-page .guild-identity-banner {
-  padding: 20px;
-  min-height: 0;
-  gap: 18px;
-}
-.guild-workspace-page .guild-identity-banner .intro {
-  margin-bottom: 0;
-  font-size: 14px;
-}
-.guild-workspace-page .guild-tabs {
-  margin-block: 12px 20px;
-}
 .guild-workspace-page .guild-next-event,
 .guild-workspace-page .guild-recent-announcements,
 .guild-workspace-page .guild-quick-comps,
@@ -481,26 +468,6 @@
   .party-board[data-party-size] .party-board-title p {
     font-size: 12px;
     margin: 0;
-  }
-  .guild-workspace-page .guild-identity-banner {
-    padding: 14px;
-    gap: 12px;
-  }
-  .guild-workspace-page .guild-identity-banner .page-title {
-    font-size: 28px;
-    margin-block: 4px 8px;
-  }
-  .guild-workspace-page .guild-identity-banner .intro {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .guild-workspace-page .guild-monogram {
-    width: 42px;
-    height: 48px;
-    flex-shrink: 0;
-  }
-  .guild-workspace-page .guild-tabs {
-    margin-block: 8px 16px;
   }
   .player-hub-shortcuts {
     gap: 8px;

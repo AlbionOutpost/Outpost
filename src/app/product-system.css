@@ -1158,3 +1158,41 @@
 .app.outpost.light .masthead-note {
   color: var(--muted);
 }
+.app.outpost .workspace-emblem .guild-monogram {
+  color: var(--metal);
+  font: 800 22px var(--font-display);
+}
+/* Button tab rows (team workspace) share the pill look */
+.app.outpost .guild-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.app.outpost .guild-tabs::-webkit-scrollbar {
+  display: none;
+}
+.app.outpost .guild-tabs > button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font: 600 13px/1 var(--font-ui);
+  white-space: nowrap;
+}
+.app.outpost .guild-tabs > button:hover {
+  color: var(--text);
+  border-color: #ffffff30;
+}
+.app.outpost .guild-tabs > button[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 22%, var(--well));
+  color: #fff;
+}
+.app.outpost.light .guild-tabs > button[aria-selected="true"] {
+  color: var(--accent-ink);
+}

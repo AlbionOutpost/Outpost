@@ -1,3 +1,4 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "@/components/link";
@@ -62,15 +63,17 @@ export default async function Dashboard() {
     .slice(0, 8);
   return (
     <div className="player-dashboard support-dashboard">
-      <header className="support-page-heading">
-        <div>
-          <h1 className="page-title">Welcome, {u.name || "Adventurer"}.</h1>
-          <p>Pick up your plans, check your timers, and get your team ready.</p>
-        </div>
-        <Link className="button secondary" href="/settings">
-          Settings & data
-        </Link>
-      </header>
+      <WorkspaceHeading
+        icon="account"
+        scene="guides"
+        title={`Welcome, ${u.name || "Adventurer"}.`}
+        description="Pick up your plans, check your timers, and get your team ready."
+        actions={
+          <Link className="button secondary" href="/settings">
+            Settings & data
+          </Link>
+        }
+      />
       <div className="dashboard-workspace">
         <section className="dashboard-recent" aria-labelledby="recent-work-title">
           <div className="support-section-heading">

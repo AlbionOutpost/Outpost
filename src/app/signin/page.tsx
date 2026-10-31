@@ -61,7 +61,7 @@ export default async function Signin({
           </li>
         </ul>
       </div>
-      <section className="signin-panel" aria-labelledby="signin-title">
+      <section className="raised signin-panel" aria-labelledby="signin-title">
         <div className="signin-panel-top">
           <ShieldCheck size={23} aria-hidden="true" />
           <span>OUTPOST ACCOUNT</span>

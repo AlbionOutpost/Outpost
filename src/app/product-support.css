@@ -1,29 +1,4 @@
-/* Task-specific supporting workspaces; colors and typography inherit the shared product system. */
-.app.outpost .support-page-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin: 8px 0 24px;
-  padding: 0 0 20px;
-  border-bottom: 1px solid var(--border);
-  position: static;
-  height: auto;
-  background: transparent;
-}
-.app.outpost .support-page-heading h1 {
-  margin: 0 0 8px;
-  font: 700 32px/1.2 var(--font-ui);
-  letter-spacing: -0.025em;
-}
-.app.outpost .support-page-heading p,
-.app.outpost .support-page-footnote {
-  margin: 0;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.6;
-}
-.app.outpost .support-empty {
+/* Task-specific supporting workspaces.app.outpost .support-empty {
   padding: 28px 20px;
   border: 1px dashed var(--border);
   border-radius: 10px;
@@ -610,15 +585,6 @@
   }
 }
 @media (max-width: 780px) {
-  .app.outpost .support-page-heading {
-    align-items: flex-start;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .app.outpost .support-page-heading h1 {
-    font-size: 28px;
-  }
   .app.outpost .dashboard-workspace {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -999,51 +965,6 @@
   align-self: center;
   color: var(--muted);
 }
-.app.outpost .team-back-link {
-  display: inline-flex;
-  font-size: 14px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-.app.outpost .support-team-workspace .guild-identity-banner {
-  padding: 24px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  min-height: 0;
-  gap: 20px;
-}
-.app.outpost .support-team-workspace .guild-monogram {
-  width: 64px;
-  height: 64px;
-  border-radius: 10px;
-  border-color: var(--border);
-  font: 650 24px var(--font-ui);
-  color: var(--text);
-}
-.app.outpost .support-team-workspace .guild-identity-banner h1 {
-  font-size: 32px;
-  margin: 6px 0 8px;
-}
-.app.outpost .support-team-workspace .guild-identity-banner .intro {
-  font-size: 14px;
-  line-height: 1.6;
-}
-.app.outpost .support-team-workspace .guild-tabs {
-  position: sticky;
-  top: 64px;
-  z-index: 6;
-  background: var(--bg);
-  overflow-x: auto;
-  gap: 20px;
-  flex-wrap: nowrap;
-  scrollbar-width: thin;
-}
-.app.outpost .support-team-workspace .guild-tabs > button {
-  font-size: 14px;
-  white-space: nowrap;
-  min-height: 44px;
-}
 .app.outpost .support-team-workspace .guild-activity-grid {
   gap: 20px;
 }
@@ -1320,23 +1241,6 @@
   }
   .app.outpost .profile-identity h1 {
     font-size: 28px;
-  }
-  .app.outpost .support-team-workspace .guild-identity-banner {
-    padding: 20px;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  .app.outpost .support-team-workspace .guild-identity-banner h1 {
-    font-size: 28px;
-  }
-  .app.outpost .support-team-workspace .guild-monogram {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-  .app.outpost .support-team-workspace .guild-tabs {
-    top: 56px;
-    gap: 18px;
   }
   .app.outpost .support-team-workspace .guild-activity-grid > section {
     padding: 16px;
