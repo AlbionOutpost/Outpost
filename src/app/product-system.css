@@ -1272,3 +1272,10 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Every inline text link is a 24px target */
+.app.outpost a.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+}
