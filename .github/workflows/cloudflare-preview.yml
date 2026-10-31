@@ -93,6 +93,9 @@ jobs:
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
           CLOUDFLARE_CATALOG_DATABASE_ID: ${{ vars.CLOUDFLARE_CATALOG_DATABASE_ID }}
+          NEXT_PUBLIC_ADSENSE_CLIENT: ${{ vars.NEXT_PUBLIC_ADSENSE_CLIENT }}
+          NEXT_PUBLIC_ADSENSE_SLOT_HUB: ${{ vars.NEXT_PUBLIC_ADSENSE_SLOT_HUB }}
+          NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE: ${{ vars.NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE }}
         run: |
           node scripts/cloudflare-build.mjs
           node scripts/cloudflare-release-config.mjs

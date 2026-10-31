@@ -1,3 +1,4 @@
+import { AdsenseLoader } from "@/components/adsense-loader";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { getServerSession } from "next-auth";
@@ -61,6 +62,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const initialLight = jar.get("atlas-theme")?.value === "light";
   return (
     <html lang="en">
+      <head>
+        <AdsenseLoader />
+      </head>
       <body
         className={`${inter.variable} ${barlowCondensed.variable} ${barlowDisplay.variable} ${geistMono.variable}`}
       >

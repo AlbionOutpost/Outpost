@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createHmac } from "node:crypto";
 import { verifyWebhook } from "@/lib/billing/stripe";
 import { planForStatus } from "@/lib/billing/plan";
@@ -59,5 +59,22 @@ describe("plan mapping", () => {
     for (const a of ["profile", "event", "invite", "share-build", "delete"])
       expect(teamManagementActions.has(a)).toBe(true);
     for (const a of ["request", "rsvp", "leave"]) expect(teamManagementActions.has(a)).toBe(false);
+  });
+});
+
+describe("advertising configuration", () => {
+  const original = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  afterEach(() => {
+    if (original === undefined) delete process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+    else process.env.NEXT_PUBLIC_ADSENSE_CLIENT = original;
+  });
+  it("serves the seller line only for a valid publisher id", async () => {
+    const { GET } = await import("@/app/ads.txt/route");
+    process.env.NEXT_PUBLIC_ADSENSE_CLIENT = "ca-pub-3003146014371070";
+    expect(await GET().text()).toBe("google.com, pub-3003146014371070, DIRECT, f08c47fec0942fa0\n");
+    process.env.NEXT_PUBLIC_ADSENSE_CLIENT = "pub-abc";
+    expect(await GET().text()).toMatch(/^# No advertising/);
+    delete process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+    expect(await GET().text()).toMatch(/^# No advertising/);
   });
 });

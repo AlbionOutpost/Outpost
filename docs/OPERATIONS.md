@@ -76,7 +76,9 @@ Until all three are set the Supporter page says nothing is for sale and no gate 
 
 ## Advertising (AdSense)
 
-Two placements and never more than one unit on a page: `hub` after a hub's main list (Build Library, Group Builds, Guides, landing) and `article` after a guide or library build. Never inside calculators, editors, Team workspaces, account pages or dialogs; never sticky or interstitial; height is reserved so nothing jumps. Supporters see none (checked on the server). Set the client id and the two unit ids in the vars above; CSP opens the AdSense origins only when the client id is valid.
+Two placements and never more than one unit on a page: `hub` after a hub's main list (Build Library, Group Builds, Guides, landing) and `article` after a guide or library build. Never inside calculators, editors, Team workspaces, account pages or dialogs; never sticky or interstitial; height is reserved so nothing jumps. Supporters see none (checked on the server). Set the client id and the two unit ids as repository variables (`NEXT_PUBLIC_ADSENSE_CLIENT`, `NEXT_PUBLIC_ADSENSE_SLOT_HUB`, `NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE`); the deploy workflow passes them into the Worker vars. A valid client id puts the AdSense loader in the `<head>` of every page (this is what Google's site verification looks for), serves `/ads.txt` with the matching `pub-…` line and opens the AdSense origins in the CSP; without it the site has no ad code at all. Unit ids only switch the two placements on.
+
+Switch-on order: set the client id variable → deploy → confirm the site in AdSense (it looks for the loader on the apex) → create the `hub` and `article` display units → set their ids → deploy again.
 
 ## Cloudflare zone
 

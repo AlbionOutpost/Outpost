@@ -67,14 +67,15 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 
 ## Community, account and personal
 
-| Route                                                      | Auth                  | Purpose                                                                 |
-| ---------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `GET, POST /api/community/[kind]/[id]`                     | read pub · write sess | Favorites, votes, comments, reports (Turnstile on writes in production) |
-| `GET, POST /api/admin/reports`                             | ADMIN/MODERATOR       | Moderation queue, hide/restore                                          |
-| `GET, POST /api/scenarios` · `DELETE /api/scenarios/[id]`  | sess (owner)          | Saved calculator scenarios                                              |
-| `GET, POST /api/timers` · `PATCH, DELETE /api/timers/[id]` | sess (owner)          | Personal timers                                                         |
-| `GET /api/account/export`                                  | sess                  | Account data export (5/h)                                               |
-| `GET, POST /api/auth/[...nextauth]`                        | —                     | NextAuth (Discord), 240/min                                             |
-| `GET /api/health`                                          | pub                   | Health check                                                            |
+| Route                                                      | Auth                  | Purpose                                                                     |
+| ---------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------- |
+| `GET, POST /api/community/[kind]/[id]`                     | read pub · write sess | Favorites, votes, comments, reports (Turnstile on writes in production)     |
+| `GET, POST /api/admin/reports`                             | ADMIN/MODERATOR       | Moderation queue, hide/restore                                              |
+| `GET, POST /api/scenarios` · `DELETE /api/scenarios/[id]`  | sess (owner)          | Saved calculator scenarios                                                  |
+| `GET, POST /api/timers` · `PATCH, DELETE /api/timers/[id]` | sess (owner)          | Personal timers                                                             |
+| `GET /api/account/export`                                  | sess                  | Account data export (5/h)                                                   |
+| `GET, POST /api/auth/[...nextauth]`                        | —                     | NextAuth (Discord), 240/min                                                 |
+| `GET /api/health`                                          | pub                   | Health check                                                                |
+| `GET /ads.txt`                                             | pub                   | Authorised-seller line for the configured AdSense publisher, else a comment |
 
 Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h).
