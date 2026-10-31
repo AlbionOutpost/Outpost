@@ -588,16 +588,6 @@
 .grind-guide-article .intro {
   max-width: 70ch;
 }
-.library-page .discovery-tabs,
-.production-calculator-page .discovery-tabs {
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  max-width: 100%;
-}
-.library-page .discovery-tabs a,
-.production-calculator-page .discovery-tabs a {
-  color: var(--text);
-}
 .library-provenance {
   color: var(--muted);
   font-size: 12px;

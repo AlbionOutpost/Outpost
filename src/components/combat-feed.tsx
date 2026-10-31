@@ -1,4 +1,6 @@
 "use client";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -121,33 +123,31 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const loading = pending === key || (!feed && error?.key !== key);
   return (
     <div className="combat-feed-page support-combat-feed">
-      <header className="workspace-identity">
-        <span className="workspace-emblem" aria-hidden="true">
-          {mode === "kills" ? <Swords /> : <Skull />}
-        </span>
-        <div>
-          <h1>{mode === "kills" ? "Global kill feed" : "Global death feed"}</h1>
-          <p>
-            Recent published PvP events on {regions[region].label}. Inspect the players and the
-            equipment recorded in each fight.
-          </p>
-        </div>
-      </header>
-      <nav className="workspace-tabs" aria-label="Combat feed">
-        <Link
-          href={`/tools/kill-feed?region=${region}`}
-          aria-current={mode === "kills" ? "page" : undefined}
-        >
-          <Swords size={16} /> Kill feed
-        </Link>
-        <Link
-          href={`/tools/death-feed?region=${region}`}
-          aria-current={mode === "deaths" ? "page" : undefined}
-        >
-          <Skull size={16} /> Death feed
-        </Link>
-      </nav>
-      <div className="combat-toolbar">
+      <WorkspaceHeading
+        glyph="combat"
+        scene="builds"
+        title={mode === "kills" ? "Global kill feed" : "Global death feed"}
+        description={`Recent published PvP events on ${regions[region].label}. Inspect the players and the equipment recorded in each fight.`}
+      >
+        <MastheadTabs
+          label="Combat feed"
+          tabs={[
+            {
+              href: "/tools/kill-feed",
+              label: "Kill feed",
+              icon: <Swords size={16} />,
+              current: mode === "kills",
+            },
+            {
+              href: "/tools/death-feed",
+              label: "Death feed",
+              icon: <Skull size={16} />,
+              current: mode === "deaths",
+            },
+          ]}
+        />
+      </WorkspaceHeading>
+      <div className="raised combat-toolbar">
         <label className="combat-search">
           <Search size={17} aria-hidden="true" />
           <span className="sr-only">Filter this feed page by player or guild</span>
@@ -249,7 +249,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           </button>
         </div>
       ) : (
-        <div className="combat-event-list" aria-label="Published combat events">
+        <div className="raised combat-event-list" aria-label="Published combat events">
           {events.map((event) => {
             const highlighted = mode === "kills" ? event.killer : event.victim;
             const other = mode === "kills" ? event.victim : event.killer;

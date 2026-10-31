@@ -3297,22 +3297,6 @@ button.party-loadout-card:hover {
   font-size: 12px;
   margin-top: 8px;
 }
-.discovery-tabs {
-  display: flex;
-  gap: 28px;
-  border-bottom: 1px solid var(--border);
-  margin: 28px 0;
-}
-.discovery-tabs a {
-  padding: 12px 0;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  font-size: 15px;
-}
-.discovery-tabs a[aria-current="page"] {
-  color: var(--text);
-  border-color: var(--accent);
-}
 .guide-directory-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4446,10 +4430,6 @@ button.party-loadout-card:hover {
   margin-block: 0 18px;
   font-size: 15px;
 }
-.build-discovery-page .discovery-tabs,
-.guide-discovery-page .discovery-tabs {
-  margin-block: 18px;
-}
 .build-discovery-page .build-discovery-workspace {
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 22px;
@@ -4668,9 +4648,6 @@ button.party-loadout-card:hover {
   }
   .build-discovery-page .build-discovery-querybar {
     margin-bottom: 14px;
-  }
-  .build-discovery-page .discovery-tabs {
-    margin-block: 12px;
   }
 }
 

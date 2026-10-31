@@ -646,12 +646,18 @@
 }
 
 /* Masthead tabs: the page's sections and sibling tools as pills under the title */
-.app.outpost .masthead-tabs {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-.app.outpost .masthead-tabs > a {
+.app.outpost :is(.production-mode-nav, .discovery-tabs) {
+  margin: 0 0 20px;
+}
+.app.outpost .production-mode-nav .production-plan-jump {
+  margin-left: auto;
+}
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -670,43 +676,45 @@
     background 160ms var(--ease-out),
     color 160ms var(--ease-out);
 }
-.app.outpost .masthead-tabs > a svg {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a svg {
   width: 16px;
   height: 16px;
   color: var(--accent-ink);
 }
-.app.outpost .masthead-tabs > a:hover {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover {
   border-color: #ffffff40;
   background: #1a1d25d9;
   color: #fff;
 }
-.app.outpost .masthead-tabs > a[aria-current="page"] {
+.app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a[aria-current="page"] {
   border-color: color-mix(in srgb, var(--accent) 70%, #ffffff1f);
   background: color-mix(in srgb, var(--accent) 22%, #0f1116c0);
   color: #fff;
 }
-.app.outpost.light .masthead-tabs > a {
+.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
   border-color: #00000018;
   background: #ffffffcc;
   color: var(--text);
 }
-.app.outpost.light .masthead-tabs > a:hover {
+.app.outpost.light :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a:hover {
   background: #fff;
   border-color: #00000030;
 }
-.app.outpost.light .masthead-tabs > a[aria-current="page"] {
+.app.outpost.light
+  :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)
+  > a[aria-current="page"] {
   background: color-mix(in srgb, var(--accent) 14%, #fff);
   color: var(--accent-ink);
 }
 @media (max-width: 700px) {
-  .app.outpost .masthead-tabs {
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) {
     flex-wrap: nowrap;
     overflow-x: auto;
     margin-inline: -16px;
     padding-inline: 16px;
     scrollbar-width: none;
   }
-  .app.outpost .masthead-tabs::-webkit-scrollbar {
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)::-webkit-scrollbar {
     display: none;
   }
 }

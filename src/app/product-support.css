@@ -546,15 +546,13 @@
 .app.outpost .support-combat-feed .combat-event-list {
   display: grid;
   gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
   overflow: hidden;
 }
 .app.outpost .support-combat-feed .combat-event {
   border: 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--well-border);
   border-radius: 0;
-  background: var(--panel);
+  background: transparent;
 }
 .app.outpost .support-combat-feed .combat-event:last-child {
   border-bottom: 0;

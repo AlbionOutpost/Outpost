@@ -2,16 +2,19 @@
 export function Silver({
   value,
   plain = "—",
+  digits = 0,
 }: {
   value: number | null | undefined;
   plain?: string;
+  /** Fraction digits to keep (calculators show up to two). */
+  digits?: number;
 }) {
-  if (value == null) return <>{plain}</>;
+  if (value == null || !Number.isFinite(value)) return <>{plain}</>;
   return (
     <span className="silver">
       {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
       <img src="/albion/icons/silver.webp" alt="" width={16} height={16} />
-      {Math.round(value).toLocaleString("en-US")}
+      {value.toLocaleString("en-US", { maximumFractionDigits: digits })}
     </span>
   );
 }

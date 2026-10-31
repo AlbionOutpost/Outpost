@@ -441,9 +441,6 @@
   flex-wrap: wrap;
   gap: 14px;
   padding: 16px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 12px;
 }
 .app.outpost .combat-toolbar > label {
   font-size: 12px;

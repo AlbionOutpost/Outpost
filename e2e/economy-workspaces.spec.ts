@@ -77,10 +77,7 @@ test("item filters recover from no results and item back links retain server", a
   await page.getByRole("button", { name: "List", exact: true }).click();
   await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(30);
   await page.goto("/items/T4_MAIN_AXE?region=asia");
-  await expect(page.getByRole("link", { name: "← Item database", exact: true })).toHaveAttribute(
-    "href",
-    "/items?region=asia",
-  );
+  await expect(page.locator(".masthead-back")).toHaveAttribute("href", "/items?region=asia");
   await expect(page.getByRole("heading", { name: "Recipe", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Calculate this recipe", exact: true }).click();
   await expect(page).toHaveURL(/\/tools\/crafting\?.*recipe=/);

@@ -1,5 +1,7 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
+import BackLink from "@/components/build-region-link";
+import { ArrowLeft } from "lucide-react";
 import { ItemMarketLink } from "@/components/item-market-link";
 import { ItemPricePanel } from "@/components/item-price-panel";
 import { BuildPreviewCard } from "@/components/build-preview-card";
@@ -138,6 +140,9 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           <code>{id}</code> · Item values and unlocks may change with game updates. Confirm your
           setup in game.
         </p>
+        <BackLink className="pill-link is-small masthead-back" href="/items">
+          Item database <ArrowLeft size={14} />
+        </BackLink>
       </WorkspaceHeading>
       <section className="panel item-metadata-detail">
         <ItemPricePanel id={id} />
