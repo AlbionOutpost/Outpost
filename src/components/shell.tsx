@@ -378,17 +378,18 @@ export function Shell({
               />
               <button
                 type="button"
-                className="theme-toggle theme-single"
+                className="theme-toggle theme-switch"
                 aria-label="Toggle theme"
                 aria-pressed={light}
                 title={light ? "Switch to dark mode" : "Switch to light mode"}
                 onClick={toggleTheme}
               >
-                {light ? (
-                  <Sun size={18} aria-hidden="true" />
-                ) : (
-                  <Moon size={18} aria-hidden="true" />
-                )}
+                <span className={`theme-switch-option${light ? " is-on" : ""}`} aria-hidden="true">
+                  <Sun size={16} />
+                </span>
+                <span className={`theme-switch-option${light ? "" : " is-on"}`} aria-hidden="true">
+                  <Moon size={16} />
+                </span>
               </button>
               {!authenticated ? (
                 <Link

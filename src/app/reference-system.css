@@ -204,7 +204,6 @@
   gap: 12px;
 }
 .app.outpost .site-header .search-trigger {
-  width: 220px;
   min-height: 36px;
   height: 36px;
   background: var(--panel);
@@ -858,7 +857,6 @@
     gap: 16px;
   }
   .app.outpost .site-header .search-trigger {
-    width: 160px;
   }
   .reference-market-layout {
     grid-template-columns: 156px minmax(0, 1fr);
@@ -920,7 +918,6 @@
     min-width: 112px;
   }
   .app.outpost .site-header .search-trigger {
-    width: 36px;
   }
   .app.outpost .site-header .search-shortcut {
     display: none;

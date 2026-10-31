@@ -11,6 +11,7 @@ import { saveWatchItem } from "../../src/lib/market-watch-service";
 import { HttpError } from "../../src/lib/http-error";
 import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/discovery-service";
 import { teamLoot } from "../../src/lib/groups/loot-service";
+import { countPlayers } from "../../src/lib/site-stats";
 
 const services = {
   reviseBuild,
@@ -26,6 +27,7 @@ const services = {
   listAccountBuilds,
   listAccountFavorites,
   teamLoot,
+  countPlayers,
 };
 export async function executeService(name: string, args: unknown[]) {
   if (

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { mockTopKills } from "./support/top-kills";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
@@ -37,6 +38,7 @@ test("audit page layouts, accessibility and local browser timings", async ({ pag
       },
     },
   });
+  await mockTopKills(page);
   const rows: unknown[] = [];
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -95,7 +97,10 @@ test("audit page layouts, accessibility and local browser timings", async ({ pag
         const screenshot = [375, 768, 1440, 1920].includes(width)
           ? `.qa/screenshots/${route.replaceAll("/", "_") || "home"}-${width}.png`
           : null;
-        if (screenshot) await page.screenshot({ path: screenshot, fullPage: true });
+        // The caret stays as rendered: hiding it edits the DOM, which React reports as a
+        // hydration mismatch when the shot lands before hydration on a slow dev server.
+        if (screenshot)
+          await page.screenshot({ path: screenshot, fullPage: true, caret: "initial" });
         rows.push({
           width,
           route: route.replace(build.id, "[fixture]"),

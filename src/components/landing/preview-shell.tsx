@@ -1,49 +1,52 @@
 import type { ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
 import Link from "@/components/link";
 import { ToolIcon } from "@/components/tool-icon";
-import { ArrowRight } from "lucide-react";
 
 type Glyph = Parameters<typeof ToolIcon>[0]["name"];
 
 /**
- * Frame shared by the landing-page product cards: emblem, title, one line and a "live data"
- * tag on top; the real software in the middle; one full-width action at the bottom.
+ * Frame shared by the landing-page tool cards: the painted emblem, title and one line on
+ * top; the real software in the middle; one outlined action at the bottom.
  */
 export function PreviewShell({
   id,
+  emblem,
   glyph,
   title,
   description,
   href,
   action,
-  tag = "Live data",
-  className = "",
+  scene,
   children,
 }: {
   id: string;
+  /** File name under /albion/icons, the owner's painted emblem for this tool. */
+  emblem: string;
+  /** Line glyph for the action button. */
   glyph: Glyph;
   title: string;
   description: string;
   href: string;
   action: string;
-  tag?: string;
-  className?: string;
+  scene: "market" | "build" | "city";
   children: ReactNode;
 }) {
   return (
-    <article className={`landing-card${className ? ` ${className}` : ""}`} aria-labelledby={id}>
+    <article className="landing-card" data-scene={scene} aria-labelledby={id}>
       <div className="landing-card-head">
-        <span className="landing-card-emblem" aria-hidden="true">
-          <ToolIcon name={glyph} size={22} />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+        <img
+          className="landing-card-emblem"
+          src={`/albion/icons/${emblem}.webp`}
+          alt=""
+          width={56}
+          height={56}
+        />
         <div>
           <h3 id={id}>{title}</h3>
           <p>{description}</p>
         </div>
-        <span className="landing-card-tag">
-          <span className="landing-card-tag-dot" aria-hidden="true" />
-          {tag}
-        </span>
       </div>
       <div className="landing-card-body">{children}</div>
       <Link href={href} className="landing-card-action">

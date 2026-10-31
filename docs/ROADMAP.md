@@ -2,7 +2,7 @@
 
 The goal: the best Albion Online site ever made. Getting there means three things, in this order: **ship reliably** (green CI, real deploys, backups), **look world-class** (one coherent design system, fast on phones), and **go deeper than anyone** on the data and tools players actually use every day.
 
-Status as of 30 Oct 2026. Update this file when something ships, breaks or gets planned.
+Status as of 31 Oct 2026. Update this file when something ships, breaks or gets planned.
 
 ## Now — foundations
 
@@ -23,6 +23,11 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
+
+## Shipped — landing page v5 and header (31 Oct)
+
+- The home page is rebuilt to the owner's final mockup: a hero that dissolves into the page with a measured-numbers row (`countPlayers` service + library counts), three teaser windows on its edge (a public build on the board with chosen abilities and a device-saving ♥, what a Team does, a comp as a roster by weapon type), three live tool cards in one chrome (Market Explorer with a six-city table and dated chart, Crafting Calculator picking the best of five T6 recipes through `/api/landing/craft`, Crafting Planner with queue/shopping tabs), a guides slider with reading time, and three killboards from Game Info's kill-fame ranking (`/api/combat-events/top`, inventories, participants, estimated gear value). Cards share a raised surface with the scene blurred behind. `/api/economy/preview` and the earlier preview components are gone.
+- Site-wide header: 72px bar, ember underline on the current section, wide search field with a `Ctrl K` cap, region pill, two-state sun/moon switch.
 
 ## Shipped — landing page tool cards (30 Oct)
 
@@ -101,19 +106,20 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 
 Only the owner can do these.
 
-| #     | Action                                                                                                                                          |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| OA-1  | Publish the DNSSEC DS at Namecheap ([OPERATIONS.md](OPERATIONS.md#cloudflare-zone))                                                             |
-| OA-2  | Real Discord login test on production: sign in, reload, admin role appears, sign out, sign in again; check cookies are Secure/HttpOnly/SameSite |
-| OA-3  | Complete a real Turnstile challenge on comment, edit and report                                                                                 |
-| OA-4  | Provide operator name, address and contact email for the legal page; then set Discord Terms/Privacy URLs                                        |
-| OA-5  | Choose a code licence (none today)                                                                                                              |
-| OA-6  | Decide the current-patch data source and its rights (ao-bin-dumps has no declared licence)                                                      |
-| OA-7  | Run `node scripts/cloudflare-recovery.mjs bookmark` once after the next deploy to confirm recovery works                                        |
-| OA-8  | Enable required MFA on the GitHub org; decide on branch protection (paid plan for private repos)                                                |
-| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26** (a reminder is scheduled for 5 Jan 2027)                                           |
-| OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                             |
-| OA-11 | Delete leftover merged branches on GitHub                                                                                                       |
+| #     | Action                                                                                                                                                                                                                                                 |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| OA-1  | Publish the DNSSEC DS at Namecheap ([OPERATIONS.md](OPERATIONS.md#cloudflare-zone))                                                                                                                                                                    |
+| OA-2  | Real Discord login test on production: sign in, reload, admin role appears, sign out, sign in again; check cookies are Secure/HttpOnly/SameSite                                                                                                        |
+| OA-3  | Complete a real Turnstile challenge on comment, edit and report                                                                                                                                                                                        |
+| OA-4  | Provide operator name, address and contact email for the legal page; then set Discord Terms/Privacy URLs                                                                                                                                               |
+| OA-5  | Choose a code licence (none today)                                                                                                                                                                                                                     |
+| OA-6  | Decide the current-patch data source and its rights (ao-bin-dumps has no declared licence)                                                                                                                                                             |
+| OA-7  | Run `node scripts/cloudflare-recovery.mjs bookmark` once after the next deploy to confirm recovery works                                                                                                                                               |
+| OA-8  | Enable required MFA on the GitHub org; decide on branch protection (paid plan for private repos)                                                                                                                                                       |
+| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26** (a reminder is scheduled for 5 Jan 2027)                                                                                                                                                  |
+| OA-11 | Refresh the lint and OpenNext toolchain: `npm audit` reports moderate advisories in `minimatch`/`glob` reached only through `eslint`, `eslint-config-next` and `@opennextjs/cloudflare` (dev dependencies); the CI gate now covers the production tree |
+| OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                                                                                                                                    |
+| OA-11 | Delete leftover merged branches on GitHub                                                                                                                                                                                                              |
 
 ## Tech debt
 

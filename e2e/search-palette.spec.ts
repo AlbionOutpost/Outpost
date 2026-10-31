@@ -23,7 +23,10 @@ test("search has one field, contained results scrolling, clear focus and an acce
   ]) {
     await page.setViewportSize({ width, height });
     await page.goto("/");
-    const trigger = page.getByRole("button", { name: "Search items, builds… Ctrl K", exact: true });
+    const trigger = page.getByRole("button", {
+      name: /^Search items, builds, guides/,
+      exact: true,
+    });
     await trigger.click();
     const dialog = page.getByRole("dialog", { name: "Global search", exact: true });
     const field = dialog.getByRole("searchbox");

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { mockTopKills } from "./support/top-kills";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
@@ -42,6 +43,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
     },
   });
   // Controlled observations are browser-test fixtures only; no example prices ship in the UI.
+  await mockTopKills(page);
   await page.route("**/api/market?*", (route) =>
     route.fulfill({
       json: {
@@ -184,6 +186,7 @@ test("design review covers application pages, equipment, guilds and reduced moti
           await page.screenshot({
             path: `.qa/design-review/${theme === "light" ? "light-" : ""}${name}-${width}.png`,
             fullPage: true,
+            caret: "initial",
           });
           rows.push({
             route: name,

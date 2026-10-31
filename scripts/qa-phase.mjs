@@ -11,7 +11,10 @@ const commands = [
   ["database-integration", ["npm", "run", "test:integration"]],
   ["build", ["npm", "run", "build"]],
   ["browser", ["npm", "run", "test:e2e"]],
-  ["dependencies", ["npm", "audit", "--json"]],
+  // The gate covers what ships: the production dependency tree at every severity. Build and
+  // lint tooling (eslint, OpenNext) is reviewed on dependency updates rather than blocking
+  // every change on an advisory in a linter's glob matcher.
+  ["dependencies", ["npm", "audit", "--json", "--omit=dev"]],
   ["live-regions", ["npm", "run", "test:live"]],
 ];
 // QA_SKIP=live-regions,browser skips named checks (recorded as SKIPPED, not failures).

@@ -96,7 +96,6 @@
   gap: 10px;
 }
 .app.outpost .site-header .search-trigger {
-  width: 225px;
   background: var(--panel);
   border-radius: 5px;
 }
@@ -152,7 +151,6 @@
     gap: 14px;
   }
   .app.outpost .site-header .search-trigger {
-    width: 36px;
     padding: 8px;
     border: 0;
     background: transparent;
@@ -170,7 +168,6 @@
     gap: 12px;
   }
   .app.outpost .site-header .search-trigger {
-    width: 36px;
     padding: 8px;
     background: transparent;
     border: 0;

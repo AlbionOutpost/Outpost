@@ -48,7 +48,6 @@
   gap: 2px;
 }
 .app.outpost .site-header .search-trigger {
-  width: 248px;
   height: 38px;
   min-height: 38px;
   padding: 0 12px;
@@ -263,12 +262,10 @@
     gap: 16px;
   }
   .app.outpost .site-header .search-trigger {
-    width: 210px;
   }
 }
 @media (max-width: 1099px) {
   .app.outpost .site-header .search-trigger {
-    width: 36px;
     height: 36px;
     min-height: 36px;
     padding: 0;

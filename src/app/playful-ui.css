@@ -711,7 +711,6 @@ a:hover .task-glyph {
   .app.outpost .site-header .search-trigger {
     min-width: 38px;
     padding-inline: 9px;
-    width: 38px;
   }
   .app.outpost .search-shortcut {
     display: none;

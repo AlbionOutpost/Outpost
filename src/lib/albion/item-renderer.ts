@@ -1,6 +1,6 @@
 export function itemIconUrl(id: string, quality = 1, size = 96) {
   if (
-    !/^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(id) ||
+    !/^(?:T[1-8]_[A-Z0-9_]+|(?!T\d)[A-Z][A-Z0-9_]{2,99})(?:@[1-4])?$/.test(id) ||
     id.length > 100 ||
     !Number.isInteger(quality) ||
     quality < 1 ||
