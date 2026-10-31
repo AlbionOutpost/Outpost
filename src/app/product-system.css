@@ -223,9 +223,11 @@
    --------------------------------------------------------------------------------------------- */
 /* Registered so the card light can fade in and out instead of switching */
 @property --glow {
-  syntax: "<percentage>";
+  /* A plain number (percent of accent), so no minifier can rewrite the initial value into
+     something the browser rejects; every use also carries a fallback. */
+  syntax: "<number>";
   inherits: true;
-  initial-value: 0%;
+  initial-value: 0;
 }
 .app.outpost {
   /* Motion: expo-out for things that arrive or grow, a soft spring for things that travel */
@@ -565,7 +567,7 @@
   background:
     radial-gradient(
         520px circle at calc(var(--mx, 50%) + 16px) calc(var(--my, -10%) + 16px),
-        color-mix(in srgb, var(--accent) calc(var(--glow) * 1.6), transparent),
+        color-mix(in srgb, var(--accent) calc(var(--glow, 0) * 1.6%), transparent),
         transparent 62%
       )
       0 0 / 100% 100% no-repeat,
@@ -689,7 +691,7 @@
   background:
     radial-gradient(
       480px circle at var(--mx, 50%) var(--my, -10%),
-      color-mix(in srgb, var(--accent) var(--glow), transparent),
+      color-mix(in srgb, var(--accent) calc(var(--glow, 0) * 1%), transparent),
       transparent 62%
     ),
     var(--surface-raised);
@@ -708,7 +710,7 @@
     transform: scale(1.012);
     border-color: var(--raised-edge-hover);
     box-shadow: var(--shadow-raised-hover);
-    --glow: 9%;
+    --glow: 9;
   }
   .app.outpost .kill-card:hover {
     transform: none;
@@ -730,7 +732,7 @@
 }
 .app.outpost.light
   :is(a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card, .activity-card):hover {
-  --glow: 7%;
+  --glow: 7;
 }
 .app.outpost .well {
   border: 1px solid var(--well-border);
