@@ -1259,6 +1259,7 @@
   background: color-mix(in srgb, var(--canvas-mid) 90%, transparent);
 }
 .app.outpost.light .detail-section-navigation > a[aria-current="location"] {
+  background: color-mix(in srgb, var(--accent) 10%, #fff);
   color: var(--accent-ink);
 }
 .app.outpost .detail-disclosure.raised,

@@ -120,6 +120,7 @@
   color: #fff;
 }
 .app.outpost.light .product-tabs button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 10%, #fff);
   color: var(--accent-ink);
 }
 .app.outpost .tool-pin-help {

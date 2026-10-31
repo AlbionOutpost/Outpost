@@ -1194,5 +1194,81 @@
   color: #fff;
 }
 .app.outpost.light .guild-tabs > button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--accent) 10%, #fff);
   color: var(--accent-ink);
+}
+/* A Team feature waiting on the Supporter plan */
+.app.outpost .supporter-gate {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 20px;
+  padding: 18px 20px;
+}
+.app.outpost .supporter-gate-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--well-border));
+  border-radius: 12px;
+  background: var(--well);
+  color: var(--accent-ink);
+}
+.app.outpost .supporter-gate h2 {
+  margin: 0 0 4px;
+  font: 800 18px var(--font-display);
+}
+.app.outpost .supporter-gate p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+@media (max-width: 700px) {
+  .app.outpost .supporter-gate {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .app.outpost .supporter-gate > .button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Advertising: one unit after the main content, height reserved so nothing jumps */
+.app.outpost .ad-slot {
+  display: grid;
+  gap: 10px;
+  margin: 32px 0;
+}
+.app.outpost .ad-slot.is-article {
+  margin: 40px 0 0;
+}
+.app.outpost .ad-slot-unit {
+  display: block;
+  min-height: 120px;
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .ad-slot-offer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .ad-slot-offer svg {
+  color: var(--accent-ink);
+}
+.app.outpost .ad-slot-offer a {
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
