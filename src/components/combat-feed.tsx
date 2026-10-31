@@ -12,7 +12,6 @@ import {
   Skull,
   Swords,
 } from "lucide-react";
-import Link from "@/components/link";
 import { useAtlasRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
