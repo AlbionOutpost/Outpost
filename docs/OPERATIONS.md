@@ -45,11 +45,11 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Runtime configuration
 
-| Kind          | Values                                                                                                                                                                                                                                   | Where set                                                                                   |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
-| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`, `OUTPOST_RENDER_SESSION_SECRET`                                                                                                                                          | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
-| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`                                                            | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
+| Kind          | Values                                                                                                                                                                                                                                                                                                                                  | Where set                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Vars (web)    | `OUTPOST_RUNTIME`, `NEXTAUTH_URL`, `DISCORD_CLIENT_ID`, `OUTPOST_OWNER_DISCORD_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAMES`, optional `NEXT_PUBLIC_ADSENSE_CLIENT` (AdSense `ca-pub-…`; unset = no ad units, strict CSP) with `NEXT_PUBLIC_ADSENSE_SLOT_HUB` / `NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE` (the two ad unit ids) | `wrangler.jsonc` + `cloudflare-release-config.mjs`                                          |
+| Secrets (web) | `NEXTAUTH_SECRET`, `DISCORD_CLIENT_SECRET`, `TURNSTILE_SECRET`, `OUTPOST_RENDER_SESSION_SECRET`; Supporter billing: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_SUPPORTER` (all three or none)                                                                                                                          | `node scripts/cloudflare-runtime-upload.mjs --apply` (from `.env.cloudflare-runtime`)       |
+| GitHub        | secret `CLOUDFLARE_API_TOKEN` (Workers deploy only, **expires 2027-01-26**); vars `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_CATALOG_DATABASE_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`                                                                                                                                                           | Repo settings → environment `cloudflare-production` (`scripts/cloudflare-github-setup.mjs`) |
 
 ### Local credential files (git-ignored, mode 0600, never print or commit)
 
@@ -62,6 +62,21 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 | `.env.discord`            | Discord bot token for profile management                              |
 
 `npm run cloudflare -- <wrangler args>` wraps wrangler with the management token, redacts output and refuses `login`/`logout`. `npm run cloudflare:status` checks the token and zone.
+
+## Supporter billing (Stripe)
+
+The Supporter plan is a monthly subscription sold through Stripe Checkout; Outpost never sees a card. To switch it on:
+
+1. In the Stripe dashboard create a product "Outpost Supporter" with one recurring monthly price; note the `price_…` id.
+2. Add a webhook endpoint `https://albionoutpost.com/api/billing/webhook` with the events `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.subscription.paused`, `customer.subscription.resumed`; note the signing secret `whsec_…`.
+3. Enable the customer portal (Settings → Billing → Customer portal) so Supporters can change cards, download invoices and cancel.
+4. Upload `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` and `STRIPE_PRICE_SUPPORTER` as web secrets (step above) and deploy. The env validator refuses a partial set.
+
+Until all three are set the Supporter page says nothing is for sale and no gate is enforced. Once set: creating a Team workspace and managing one (profile, events, announcements, invites, roles, shared builds, loot splits) need the team **owner** on the plan; members keep reading, RSVPs and leaving. The plan on the account is written only by the webhook (signature verified, subscription re-read from Stripe on every event); `past_due` keeps the benefits until Stripe gives up. Test with Stripe's test keys and `stripe listen --forward-to localhost:3000/api/billing/webhook`.
+
+## Advertising (AdSense)
+
+Two placements and never more than one unit on a page: `hub` after a hub's main list (Build Library, Group Builds, Guides, landing) and `article` after a guide or library build. Never inside calculators, editors, Team workspaces, account pages or dialogs; never sticky or interstitial; height is reserved so nothing jumps. Supporters see none (checked on the server). Set the client id and the two unit ids in the vars above; CSP opens the AdSense origins only when the client id is valid.
 
 ## Cloudflare zone
 

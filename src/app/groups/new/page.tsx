@@ -2,14 +2,23 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { GroupCreate } from "@/components/group-create";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { SupporterGate } from "@/components/supporter-gate";
+import { canCreateTeam } from "@/lib/billing/gate";
 export default async function NewGroup() {
-  if (!(await getServerSession(authOptions))) redirect("/signin");
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/signin");
+  const allowed = await canCreateTeam(session.user.id);
   return (
     <div className="support-team-create">
-      <h1 className="page-title display-title">Create a team workspace</h1>
-      <p className="intro">Set up a home for your events, shared loadouts and party plans.</p>
+      <WorkspaceHeading
+        glyph="guild"
+        scene="comps"
+        title="Create a team workspace"
+        description="Set up a home for your events, shared loadouts and party plans."
+      />
       <div className="team-create-layout">
-        <GroupCreate />
+        {allowed ? <GroupCreate /> : <SupporterGate kind="create" />}
         <aside>
           <h2>A workspace for your people</h2>
           <ol>

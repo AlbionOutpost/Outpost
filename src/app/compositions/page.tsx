@@ -1,4 +1,6 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { MastheadTabs } from "@/components/masthead-tabs";
+import { Layers, Users, UserRound } from "lucide-react";
 import { libraryCounts } from "@/lib/grind-library";
 import Link from "@/components/link";
 import { getServerSession } from "next-auth";
@@ -66,16 +68,26 @@ export default async function Compositions({
             Create comp
           </Link>
         }
-      />
-      <nav className="discovery-tabs" aria-label="Composition collections">
-        <Link href="/compositions" aria-current={p.mine !== "1" ? "page" : undefined}>
-          Player comps
-        </Link>
-        <Link href="/compositions/library">Group Builds</Link>
-        <Link href="/compositions?mine=1" aria-current={p.mine === "1" ? "page" : undefined}>
-          My comps
-        </Link>
-      </nav>
+      >
+        <MastheadTabs
+          label="Composition collections"
+          tabs={[
+            { href: "/compositions/library", label: "Group Builds", icon: <Layers size={16} /> },
+            {
+              href: "/compositions",
+              label: "Player comps",
+              icon: <Users size={16} />,
+              current: p.mine !== "1",
+            },
+            {
+              href: "/compositions?mine=1",
+              label: "My comps",
+              icon: <UserRound size={16} />,
+              current: p.mine === "1",
+            },
+          ]}
+        />
+      </WorkspaceHeading>
       <form className="panel composition-filters">
         <label>
           Search comp titles

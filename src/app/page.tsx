@@ -264,7 +264,7 @@ export default async function Home({
       </section>
 
       <div className="landing-wrap">
-        <AdSlot slot="0000000000" suffix={suffix} />
+        <AdSlot placement="hub" suffix={suffix} offer />
       </div>
 
       <section className="landing-cta" aria-labelledby="home-cta-title">
@@ -295,7 +295,7 @@ export default async function Home({
               Explore without an account
             </Link>
           </div>
-          <small>Free to use. No paywalls for core features.</small>
+          <small>Free to use. Supporters go ad-free and run their own Team.</small>
         </div>
       </section>
     </div>

@@ -16,6 +16,12 @@ model User {
   role String @default("USER")
   region String @default("europe")
   characterName String?
+  /// Supporter plan: FREE or SUPPORTER. Written only by the Stripe webhook; checked on the server.
+  plan String @default("FREE")
+  planStatus String?
+  planRenewsAt DateTime?
+  stripeCustomerId String? @unique
+  stripeSubscriptionId String? @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   compositions Composition[]

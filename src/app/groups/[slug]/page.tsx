@@ -1,5 +1,7 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ArrowLeft } from "lucide-react";
+import { SupporterGate } from "@/components/supporter-gate";
+import { teamManagementOpen } from "@/lib/billing/gate";
 import Link from "@/components/link";
 import { GroupProfileEditor } from "@/components/group-profile-editor";
 import { canManageMembers } from "@/lib/groups/permissions";
@@ -47,6 +49,9 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
           All teams <ArrowLeft size={14} />
         </Link>
       </WorkspaceHeading>
+      {data.membership && data.dashboard && !(await teamManagementOpen(group.id)) && (
+        <SupporterGate kind="manage" owner={data.group.ownerId === data.membership.userId} />
+      )}
       {data.membership && data.dashboard ? (
         <GroupDashboard
           groupId={group.id}

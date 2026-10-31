@@ -308,9 +308,9 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   // Advertising stays off until configured; the ad-free offer is always there.
   await expect(page.locator(".adsbygoogle")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Go ad-free with Premium" })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Support Outpost and go ad-free" })).toHaveAttribute(
     "href",
-    "/premium?region=europe",
+    "/supporter?region=europe",
   );
   await expect(page.locator(".landing-why-grid li")).toHaveCount(4);
   await expect(page.locator(".landing-cta h2")).toHaveText(
@@ -363,9 +363,12 @@ test("landing page keeps every state honest when the sources are down", async ({
   await expect(page.locator("body")).not.toContainText(/NaN|undefined/);
 });
 
-test("premium page explains the ad-free tier without selling anything yet", async ({ page }) => {
+test("supporter page explains the plan without selling anything while billing is off", async ({
+  page,
+}) => {
   await page.goto("/premium?region=europe");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Outpost without ads");
+  await expect(page).toHaveURL(/\/supporter\?region=europe/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Support Outpost");
   await expect(page.getByRole("heading", { name: "Not for sale yet" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Sign in with Discord/ })).toHaveAttribute(
     "href",

@@ -6,17 +6,9 @@ export const tools = [
     short: "Kill feed",
     group: "Teams & community",
     icon: "combat",
-    description: "Inspect published PvP kills, the players involved and their recorded equipment.",
+    description:
+      "Published PvP fights as kills or deaths: the players involved and their recorded equipment.",
     state: "Game Info · all three regions",
-  },
-  {
-    href: "/tools/death-feed",
-    title: "Global death feed",
-    short: "Death feed",
-    group: "Teams & community",
-    icon: "combat",
-    description: "Review the victim’s loadout and the opposing player in recent published fights.",
-    state: "Game Info · publication may be delayed",
   },
   {
     href: "/tools/market",

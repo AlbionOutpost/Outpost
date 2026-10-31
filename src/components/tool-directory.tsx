@@ -33,7 +33,6 @@ const scenes: Record<string, { scene: string; at: string }> = {
   "/groups": { scene: "city", at: "80% 55%" },
   "/timers": { scene: "economy", at: "10% 30%" },
   "/tools/kill-feed": { scene: "build", at: "15% 70%" },
-  "/tools/death-feed": { scene: "composition", at: "85% 30%" },
 };
 function subscribeToolShortcuts(callback: () => void) {
   window.addEventListener("storage", callback);

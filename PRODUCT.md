@@ -18,6 +18,10 @@ Outpost (albionoutpost.com) is the Albion Online companion: live market research
 
 Success means a player trusts Outpost enough to make an in-game decision from it without double-checking elsewhere, and comes back because it is the fastest and most pleasant way to do that job. The ambition is to be the best Albion site ever made: the one players recommend and other sites are measured against.
 
+## Supporter plan
+
+Outpost stays free: prices, builds, calculators, guides, comps and joining a Team never sit behind a plan. The **Supporter** plan (monthly, through Stripe) removes advertising and unlocks running a Team workspace — creating one and managing its events, announcements, invites, roles, shared builds and loot splits. Members take part for free. Advertising, when configured, is one unit after a page's main content (hubs and articles), never inside a tool or a workspace, and never shown to Supporters. The routes keep their technical names (`/supporter`, the old `/premium` redirects).
+
 ## Positioning
 
 - **One connected workspace.** Market prices feed calculators, calculators feed shopping lists, builds feed Comps, Comps feed Team events. Competitors are single-purpose tools; Outpost connects the jobs.

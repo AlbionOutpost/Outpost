@@ -11,6 +11,11 @@ CREATE TABLE "User" (
     "role" TEXT NOT NULL DEFAULT 'USER',
     "region" TEXT NOT NULL DEFAULT 'europe',
     "characterName" TEXT,
+    "plan" TEXT NOT NULL DEFAULT 'FREE',
+    "planStatus" TEXT,
+    "planRenewsAt" DATETIME,
+    "stripeCustomerId" TEXT,
+    "stripeSubscriptionId" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -409,6 +414,12 @@ CREATE TABLE "MarketWatchItem" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_stripeCustomerId_key" ON "User"("stripeCustomerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_stripeSubscriptionId_key" ON "User"("stripeSubscriptionId");
 
 -- CreateIndex
 CREATE INDEX "Account_userId_idx" ON "Account"("userId");

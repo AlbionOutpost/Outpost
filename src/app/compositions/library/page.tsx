@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/link";
 import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
@@ -124,6 +125,7 @@ export default async function Page({
         })}
       </div>
       {!rows.length && <p className="empty">No composition matches those filters.</p>}
+      <AdSlot placement="hub" />
       <nav className="library-pagination" aria-label="Composition library pages">
         {page > 1 ? (
           <Link className="button secondary" href={href(page - 1)}>

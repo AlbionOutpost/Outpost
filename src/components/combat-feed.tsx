@@ -31,6 +31,7 @@ function Gear({ player }: { player: CombatEvent["killer"] }) {
         {player.equipment.map((item) => (
           <span
             key={item.slot}
+            role="img"
             title={
               item.itemId
                 ? `${item.slot}: ${equipmentName(item.itemId)} · ${item.quality ? ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][item.quality - 1] : "Quality not reported"}`
@@ -138,7 +139,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
               current: mode === "kills",
             },
             {
-              href: "/tools/death-feed",
+              href: "/tools/kill-feed?view=deaths",
               label: "Death feed",
               icon: <Skull size={16} />,
               current: mode === "deaths",

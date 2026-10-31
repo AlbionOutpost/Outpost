@@ -14,6 +14,7 @@ import { HttpError } from "../../src/lib/http-error";
 import schema from "../d1/migrations/0001_schema_candidate.sql";
 import invariants from "../d1/migrations/0003_domain_invariants.sql";
 import teamLootSchema from "../d1/migrations/0004_team_loot_splits.sql";
+import supporterSchema from "../d1/migrations/0005_supporter_plan.sql";
 export { AbuseBudget } from "./budget";
 import { archiveList, archiveFind } from "./archive";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
@@ -65,7 +66,25 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
         if (version === 1 || version === 2) {
           this.ctx.storage.sql.exec(teamLootSchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=3 WHERE version IN (1,2)");
-        } else if (version !== 3) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 3) {
+          // SQLite ALTER TABLE ADD COLUMN is not idempotent: skip columns that already exist.
+          const columns = new Set(
+            this.ctx.storage.sql
+              .exec<{ name: string }>("SELECT name FROM pragma_table_info('User')")
+              .toArray()
+              .map((c) => c.name),
+          );
+          for (const statement of supporterSchema.split(";"))
+            if (
+              statement.trim() &&
+              !(statement.includes("ADD COLUMN") && columns.has(statement.split('"')[3]))
+            )
+              this.ctx.storage.sql.exec(statement);
+          this.ctx.storage.sql.exec(
+            "UPDATE _outpost_schema SET version=4 WHERE version IN (1,2,3)",
+          );
+        } else if (version !== 4) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);

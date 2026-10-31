@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { BookOpen, Coins, Swords } from "lucide-react";
@@ -40,6 +41,7 @@ export default async function Guides({
         />
       </WorkspaceHeading>
       <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
+      <AdSlot placement="hub" />
       <div className="section-heading outpost-guide-heading">
         <h2>
           Getting comfortable <em>with Outpost</em>

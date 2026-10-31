@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ad-slot";
 import Link from "@/components/build-region-link";
 import { notFound } from "next/navigation";
 import {
@@ -151,6 +152,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </Link>
         </div>
       </details>
+      <AdSlot placement="article" />
       {!!related.length && (
         <section className="detail-related-builds" aria-label="Related builds">
           <div className="ecosystem-section-heading">

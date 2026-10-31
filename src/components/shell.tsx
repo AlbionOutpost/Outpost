@@ -13,22 +13,15 @@ import { RegionContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
 
-const toolLinks = [
+// The header's tools menu follows the tool directory, so the two never drift apart.
+const headerTools = ["Economy", "Builds & comps", "Teams & community"].flatMap((group) =>
+  tools.filter((t) => t.group === group && t.href.startsWith("/tools")),
+);
+const toolLinks: [string, string][] = [
   ["/tools", "All tools"],
-  ["/tools/market", "Market explorer"],
-  ["/tools/flipping", "Profit calculator"],
-  ["/tools/crafting", "Crafting"],
-  ["/tools/cooking", "Cooking"],
-  ["/tools/alchemy", "Alchemy"],
-  ["/tools/fishing", "Fishing"],
-  ["/tools/refining", "Refining"],
-  ["/tools/enchanting", "Enchanting"],
-  ["/tools/farming", "Farming"],
-  ["/tools/transporting", "Transport planner"],
-  ["/tools/gold", "Gold history"],
-  ["/tools/kill-feed", "Global kill feed"],
-  ["/tools/death-feed", "Global death feed"],
-  ["/items", "Item reference"],
+  ...headerTools.map((t): [string, string] => [t.href, t.title]),
+  ["/shopping-list", "Crafting planner"],
+  ["/items", "Item database"],
 ];
 const sections = [
   ["/tools/market", "Market"],
@@ -46,6 +39,7 @@ const footerColumns: [string, [string, string][]][] = [
       ["/compositions/library", "Group builds"],
       ["/items", "Item database"],
       ["/guides", "Player guides"],
+      ["/market-data", "About market data"],
     ],
   ],
   [
@@ -55,6 +49,7 @@ const footerColumns: [string, [string, string][]][] = [
       ["/tools/refining", "Refining calculator"],
       ["/tools/flipping", "Flipping calculator"],
       ["/tools/transporting", "Transport routes"],
+      ["/tools/reference", "Reference tables"],
       ["/tools", "Every tool"],
     ],
   ],
@@ -183,25 +178,11 @@ export function Shell({
                   <span>
                     <strong>{label}</strong>
                     <small>
-                      {url === "/tools/market"
-                        ? "City prices & history"
-                        : url === "/tools/flipping"
-                          ? "Fees & break-even"
-                          : url === "/tools/crafting"
-                            ? "Materials & returns"
-                            : url === "/tools/refining"
-                              ? "Raw to refined"
-                              : url === "/tools/enchanting"
-                                ? "Rune, soul & relic costs"
-                                : url === "/tools/farming"
-                                  ? "Crops, seeds & watering"
-                                  : url === "/tools/transporting"
-                                    ? "Cargo & city margins"
-                                    : url === "/tools/gold"
-                                      ? "Regional observations"
-                                      : url === "/tools/kill-feed" || url === "/tools/death-feed"
-                                        ? "Published fights & equipment"
-                                        : "Gear & item details"}
+                      {url === "/items"
+                        ? "Stats, recipes, tiers and prices"
+                        : url === "/shopping-list"
+                          ? "Queue a session, buy what you need"
+                          : (tools.find((tool) => tool.href === url)?.description ?? "")}
                     </small>
                   </span>
                   <ArrowUpRight size={15} />

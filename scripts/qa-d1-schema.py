@@ -24,8 +24,8 @@ def denied(sql, parameters=()):
 
 def counts():
     assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 30
-    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 41
-check("30 application tables and 41 explicit indexes including team loot", counts)
+    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 43
+check("30 application tables and 43 explicit indexes including team loot and the Supporter plan", counts)
 
 def legacy_v2_upgrade():
     # A separate disposable in-memory database only. Remove its fresh, empty
@@ -34,6 +34,10 @@ def legacy_v2_upgrade():
     try:
         legacy.executescript((root / "cloudflare/d1/migrations/0001_schema_candidate.sql").read_text())
         legacy.execute('DROP TABLE "GroupLootSplit"')
+        legacy.execute('DROP INDEX "User_stripeCustomerId_key"')
+        legacy.execute('DROP INDEX "User_stripeSubscriptionId_key"')
+        for column in ["plan", "planStatus", "planRenewsAt", "stripeCustomerId", "stripeSubscriptionId"]:
+            legacy.execute(f'ALTER TABLE "User" DROP COLUMN "{column}"')
         legacy.executescript((root / "cloudflare/d1/migrations/0003_domain_invariants.sql").read_text())
         assert legacy.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 29
         assert legacy.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 40
@@ -51,10 +55,15 @@ def legacy_v2_upgrade():
         assert legacy.execute('SELECT count(*) FROM "GroupLootSplit"').fetchone()[0] == 0
         for table, rows in before.items():
             assert legacy.execute(f'SELECT * FROM "{table}" ORDER BY id').fetchall() == rows
+        legacy.executescript((root / "cloudflare/d1/migrations/0005_supporter_plan.sql").read_text())
+        legacy.execute('UPDATE _outpost_schema SET version=4 WHERE version IN (1,2,3)')
+        assert legacy.execute('SELECT version FROM _outpost_schema').fetchone()[0] == 4
+        assert legacy.execute('SELECT plan, stripeCustomerId FROM "User" WHERE id=?', ("legacy-owner",)).fetchone() == ("FREE", None)
+        assert legacy.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 43
         assert not legacy.execute('PRAGMA foreign_key_check').fetchall()
     finally:
         legacy.close()
-check("old29-table SQLite v2 upgrades to v3 without changing existing user/team/build/gear", legacy_v2_upgrade)
+check("old29-table SQLite v2 upgrades to v3 and v4 without changing existing user/team/build/gear", legacy_v2_upgrade)
 
 db.execute('INSERT INTO "User"(id,updatedAt) VALUES(?,?)', ("qa-d1-owner", "2026-10-28T00:00:00Z"))
 build = 'INSERT INTO "Build"(id,authorId,title,description,contentType,region,strategy,patchNotes,updatedAt) VALUES(?,?,?,?,?,?,?,?,?)'

@@ -14,6 +14,9 @@ export const environmentSchema = z
       .regex(/^\d{17,20}$/)
       .or(z.literal(""))
       .optional(),
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
+    STRIPE_PRICE_SUPPORTER: z.string().optional(),
     NODE_ENV: z.string().optional(),
   })
   .superRefine((e, ctx) => {
@@ -27,6 +30,14 @@ export const environmentSchema = z
         code: "custom",
         path: ["DISCORD_CLIENT_ID"],
         message: "Discord credentials must be configured together",
+      });
+    const stripe = [e.STRIPE_SECRET_KEY, e.STRIPE_WEBHOOK_SECRET, e.STRIPE_PRICE_SUPPORTER];
+    if (stripe.some(Boolean) && !stripe.every(Boolean))
+      ctx.addIssue({
+        code: "custom",
+        path: ["STRIPE_SECRET_KEY"],
+        message:
+          "Stripe secret key, webhook secret and Supporter price must be configured together",
       });
     const target = new URL(e.NEXTAUTH_URL);
     if (
