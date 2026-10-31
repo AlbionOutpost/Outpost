@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { normalizeTopKills } from "../src/lib/albion/combat-events";
 
-const quote = (city: string, sell: number, buy: number, date: string) => ({
-  item_id: "T6_METALBAR",
+const minutesAgo = (m: number) => new Date(Date.now() - m * 60000).toISOString();
+const quote = (item: string, city: string, sell: number, buy: number, date: string) => ({
+  item_id: item,
   city,
   quality: 1,
   sell_price_min: sell,
@@ -9,99 +12,125 @@ const quote = (city: string, sell: number, buy: number, date: string) => ({
   buy_price_max: buy,
   buy_price_max_date: date,
 });
+// The source's kill-fame page captured on 30 Oct 2026; ages are relative to its fetch time.
+const topKills = normalizeTopKills(
+  JSON.parse(readFileSync("tests/fixtures/combat-top-kills.json", "utf8")),
+);
 
-test("landing page: independent header, bounded hero, live previews and a structured footer", async ({
+test("landing page: hero numbers, teaser windows, live tool cards, guides, top kills and the footer", async ({
   page,
 }) => {
-  await page.route("**/api/market?*", (route) => {
-    return route.fulfill({
+  await page.route("**/api/market?*", (route) =>
+    route.fulfill({
       json: {
         region: "europe",
         fetchedAt: new Date().toISOString(),
         source: "Albion Online Data Project",
         prices: [
-          quote("Bridgewatch", 3670, 2165, new Date(Date.now() - 9 * 60000).toISOString()),
-          quote("Martlock", 4190, 0, new Date(Date.now() - 3 * 3600000).toISOString()),
+          quote("T6_METALBAR", "Martlock", 4190, 3900, minutesAgo(180)),
+          quote("T6_METALBAR", "Bridgewatch", 3670, 2165, minutesAgo(9)),
+          quote("T6_METALBAR", "Caerleon", 3900, 0, minutesAgo(30)),
+        ],
+      },
+    }),
+  );
+  await page.route("**/api/history?*", (route) =>
+    route.fulfill({
+      json: {
+        region: "europe",
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        data: [
+          {
+            location: "Bridgewatch",
+            item_id: "T6_METALBAR",
+            quality: 1,
+            data: [
+              { item_count: 10, avg_price: 3500, timestamp: "2026-10-01T00:00:00" },
+              { item_count: 12, avg_price: 3900, timestamp: "2026-10-15T00:00:00" },
+              { item_count: 8, avg_price: 3400, timestamp: "2026-10-29T00:00:00" },
+            ],
+          },
+        ],
+      },
+    }),
+  );
+  await page.route("**/api/landing/craft?*", (route) => {
+    const batches = Number(new URL(route.request().url()).searchParams.get("batches") ?? 1);
+    return route.fulfill({
+      json: {
+        region: "europe",
+        source: "Albion Online Data Project",
+        batches,
+        candidates: 5,
+        assumptions: { tax: 4, setupFee: 2.5, returnRate: 0, useFocus: false },
+        best: {
+          recipe: { id: "cape-t6", name: "T6 Cape", output: "T6_CAPE", kind: "crafting" },
+          city: "Thetford",
+          rows: [
+            {
+              id: "T6_CLOTH",
+              name: "Lavish Cloth",
+              quantity: 4 * batches,
+              unit: 3594,
+              gross: 14376 * batches,
+            },
+            {
+              id: "T6_LEATHER",
+              name: "Hardened Leather",
+              quantity: 4 * batches,
+              unit: 5499,
+              gross: 21996 * batches,
+            },
+          ],
+          outputQuantity: batches,
+          complete: true,
+          missing: [],
+          stale: false,
+          upfront: 36372 * batches,
+          fees: 1754 * batches,
+          revenue: 26984 * batches,
+          profit: -11142 * batches,
+          margin: -41.3,
+        },
+        byCity: [
+          { city: "Thetford", profit: -11142 * batches, margin: -41.3 },
+          { city: "Lymhurst", profit: -13826 * batches, margin: -50.1 },
         ],
       },
     });
   });
-  await page.route("**/api/history?*", (route) => {
-    const kind = new URL(route.request().url()).searchParams.get("kind");
+  await page.route("**/api/market/batch?*", (route) => {
+    const u = new URL(route.request().url());
+    const items = (u.searchParams.get("items") ?? "").split(",");
     return route.fulfill({
       json: {
         region: "europe",
         fetchedAt: new Date().toISOString(),
         source: "Albion Online Data Project",
-        data:
-          kind === "gold"
-            ? [
-                { price: 9900, timestamp: "2026-10-30T09:00:00" },
-                { price: 9850, timestamp: "2026-10-30T08:00:00" },
-              ]
+        prices: items.flatMap((id) =>
+          id === "T6_POTION_HEAL"
+            ? []
             : [
-                {
-                  location: "Bridgewatch",
-                  item_id: "T6_METALBAR",
-                  quality: 1,
-                  data: [
-                    { item_count: 10, avg_price: 3500, timestamp: "2026-10-01T00:00:00" },
-                    { item_count: 12, avg_price: 3900, timestamp: "2026-10-15T00:00:00" },
-                    { item_count: 8, avg_price: 3400, timestamp: "2026-10-29T00:00:00" },
-                  ],
-                },
+                quote(id, "Martlock", 1000, 900, minutesAgo(5)),
+                quote(id, "Thetford", 1200, 900, minutesAgo(5)),
               ],
+        ),
       },
     });
   });
-  await page.route("**/api/economy/preview?*", (route) =>
+  await page.route("**/api/combat-events/top?*", (route) =>
     route.fulfill({
       json: {
         region: "europe",
-        source: "Albion Online Data Project",
-        recipe: {
-          id: "battleaxe-t6",
-          name: "T6 Battleaxe",
-          output: "T6_MAIN_AXE",
-          kind: "crafting",
-        },
-        assumptions: {
-          city: "Bridgewatch",
-          batches: Number(new URL(route.request().url()).searchParams.get("batches") ?? 1),
-          returnRate: 0,
-          useFocus: false,
-          stationFee: 0,
-          tax: 4,
-          setupFee: 2.5,
-        },
-        rows: [
-          {
-            id: "T6_PLANKS",
-            name: "Bloodoak Planks",
-            quantity: 8,
-            unit: 2894,
-            gross: 23152,
-            observedAt: new Date().toISOString(),
-          },
-          {
-            id: "T6_METALBAR",
-            name: "Runite Steel Bar",
-            quantity: 16,
-            unit: null,
-            gross: null,
-            observedAt: null,
-          },
-        ],
-        output: { quantity: 1, unit: 32325, observedAt: new Date().toISOString() },
-        complete: false,
-        missing: ["T6_METALBAR"],
-        stale: false,
-        upfront: null,
-        revenue: null,
-        fees: null,
-        profit: null,
-        profitPerItem: null,
-        margin: null,
+        source: "Albion Online Game Info",
+        fetchedAt: "2026-10-30T21:45:00Z",
+        events: topKills.map((e, i) => ({
+          ...e,
+          inventory: i === 2 ? [] : e.inventory,
+          crew: i === 1 ? e.crew.slice(0, 4) : e.crew,
+          gearValue: i === 2 ? null : { total: 232_520_000, priced: 7, missing: 1 },
+        })),
       },
     }),
   );
@@ -109,136 +138,172 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await page.goto("/?region=europe");
   await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
 
-  // The header keeps its own surface above the hero instead of floating over it.
-  const hero = page.locator(".landing-hero");
-  await expect(hero).toBeVisible();
+  // The hero keeps the header on its own bar and shows only measured numbers.
   const layout = await page.evaluate(() => {
     const h = document.querySelector(".site-header")!.getBoundingClientRect();
     const s = document.querySelector(".landing-hero")!.getBoundingClientRect();
-    return {
-      headerBottom: h.bottom,
-      heroTop: s.top,
-      position: getComputedStyle(document.querySelector(".site-header")!).position,
-    };
+    return { headerBottom: h.bottom, heroTop: s.top };
   });
   expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
-  expect(layout.position).toBe("relative");
-
-  const actions = hero.locator(".landing-actions a");
-  await expect(actions.nth(0)).toHaveText(/Explore Tools/);
+  const actions = page.locator(".landing-hero .landing-actions a");
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
   await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
+  const stats = page.getByRole("term");
+  await expect(stats).toContainText([
+    "Players signed up",
+    "Public builds",
+    "Group comps",
+    "Calculators",
+  ]);
+  await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
 
-  await expect(hero.locator(".landing-hero-art img")).toBeVisible();
-  const benefits = hero.getByRole("list", { name: "What Outpost does" }).getByRole("listitem");
-  await expect(benefits).toHaveCount(4);
+  // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
+  // does, and a comp read as a roster by weapon type.
+  const windows = page.locator(".landing-window");
+  await expect(windows).toHaveCount(3);
+  const board = windows.nth(0).locator(".loadout-board");
+  await expect(board.getByRole("listitem")).toHaveCount(10);
+  await expect(board.locator('[data-slot="Main hand"] .loadout-board-abilities img')).toHaveCount(
+    3,
+  );
+  await expect(board.locator('[data-slot="Helmet"] .loadout-board-abilities img')).toHaveCount(2);
+  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
+  const heart = windows.nth(0).locator(".heart-chip");
+  await expect(heart).toHaveAttribute("aria-pressed", "false");
+  await heart.click();
+  await expect(heart).toHaveAttribute("aria-pressed", "true");
+  await expect(heart).toHaveAccessibleName(/Remove .* from this device/);
+  await expect(heart).toContainText(/\d/);
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("outpost:build-bookmarks:v1:europe") ?? "{}"),
+    ),
+  ).toMatchObject({ builds: [{ slug: "hallowfall-healer-zvz-build" }] });
+  await expect(
+    windows.nth(1).getByRole("list", { name: "What a Team workspace does" }).getByRole("listitem"),
+  ).toHaveCount(5);
+  const roster = windows
+    .nth(2)
+    .getByRole("list", { name: "Members by weapon type" })
+    .getByRole("listitem");
+  await expect(roster).toHaveCount(5);
+  await expect(roster.nth(0)).toHaveAttribute("data-role", /Tank|Healer|DPS|Support/);
+  await expect(roster.nth(0).getByRole("link")).toHaveAttribute(
+    "href",
+    /\/builds\/library\/[a-z0-9-]+\?region=europe/,
+  );
+  await expect(windows.nth(2).locator(".landing-window-foot")).toHaveAttribute(
+    "href",
+    /\/compositions\/library\/hellgate-5v5-front-to-back/,
+  );
 
-  // Three product cards, loaded from the real endpoints once scrolled into view, each with
-  // working controls and one action.
+  // Tool cards, loaded from the mocked endpoints once in view.
   const cards = page.locator(".landing-card");
   await expect(cards).toHaveCount(3);
   await cards.first().scrollIntoViewIfNeeded();
   const market = cards.nth(0);
-  await expect(market.locator(".market-preview-item")).toContainText("Tier 6 · Refined material");
-  await expect(market.locator("tbody tr")).toHaveCount(5);
-  await expect(market.locator("tbody tr").nth(0)).toContainText(/Bridgewatch\s*3,670\s*2,165/);
+  await expect(market.locator(".tool-item")).toContainText("Refined material · Tier 6");
+  await expect(market.locator("tbody tr")).toHaveCount(3);
+  await expect(market.locator("tbody tr").nth(0)).toContainText(
+    /Bridgewatch\s*2,165\s*3,670\s*\+69\.5%/,
+  );
   await expect(market.locator("tbody tr").nth(0).locator(".city-dot")).toHaveAttribute(
     "data-city",
     "Bridgewatch",
   );
-  await expect(market.locator("tbody tr").nth(0).locator("time")).toHaveText("9 min ago");
-  await expect(market.locator("tbody tr").nth(1)).toContainText("Unavailable");
-  await expect(market.locator("tbody tr").nth(2).locator("time")).toHaveClass(/is-stale/);
-  await expect(market.locator(".market-preview-trend svg")).toBeVisible();
-  await expect(market.locator(".market-preview-y span")).toHaveCount(3);
-  await expect(market.locator(".market-preview-axis span").first()).toHaveText("10/01");
-  await expect(market.locator(".market-preview-range")).toHaveText("3,400 – 3,900");
-  await market.getByRole("tab", { name: "7d" }).click();
-  await expect(market.locator(".market-preview-trend figcaption")).toContainText("7-day average");
-  await market.getByLabel("Trend city").selectOption("Caerleon");
-  await expect(market.locator(".market-preview-trend figcaption")).toContainText("Caerleon");
-  await expect(market.getByRole("link", { name: "Search for an item…" })).toHaveAttribute(
-    "href",
-    "/tools/market?region=europe",
-  );
+  await expect(market.locator("tbody tr").nth(1)).toContainText(/Caerleon\s*—\s*3,900\s*—/);
+  await expect(market.locator("tbody tr").nth(2).locator("td").nth(1)).toHaveClass(/is-stale/);
+  await expect(market.locator(".tool-plot svg")).toBeVisible();
+  await expect(market.locator(".tool-plot-y i")).toHaveCount(3);
+  await expect(market.locator(".tool-plot-x i").first()).toHaveText("1 Oct");
+  await expect(market.locator(".tool-plot-tip")).toContainText("3,400");
+  await market.getByRole("tab", { name: "7D" }).click();
+  await expect(market.getByRole("tab", { name: "7D" })).toHaveAttribute("aria-selected", "true");
   await expect(market.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
     "href",
     "/tools/market?item=T6_METALBAR&quality=1&region=europe",
   );
 
-  // One public build per activity on the game's loadout board, abilities on their keys.
-  const build = cards.nth(1);
-  const activities = build.getByRole("tablist", { name: "Activity" }).getByRole("tab");
-  await expect(activities).toHaveCount(4);
-  await expect(activities.nth(0)).toHaveAttribute("aria-selected", "true");
-  await expect(build.locator(".build-card-title")).toContainText("Battleaxe Mist Build");
-  await expect(build.locator(".build-card-title")).toContainText("▲ 209");
-  const board = build.locator(".loadout-board");
-  await expect(board.getByRole("listitem")).toHaveCount(10);
-  await expect(board.locator('[data-slot="Main hand"] .loadout-board-cell img')).toBeVisible();
-  await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
-  await expect(board.locator('[data-slot="Mount"]')).toHaveClass(/is-empty/);
-  const keys = build.getByRole("list", { name: "Abilities by key" }).getByRole("listitem");
-  await expect(keys).toHaveCount(6);
-  await expect(keys.nth(0)).toContainText("Q");
-  await expect(keys.nth(0).locator("img")).toBeVisible();
-  await activities.nth(2).click();
-  await expect(build.locator(".build-card-title")).toContainText("Great Hammer");
-  await expect(build.locator(".build-card-title a")).toHaveAttribute(
-    "href",
-    "/builds/library/great-hammer-zvz-build?region=europe",
+  const crafting = cards.nth(1);
+  await expect(crafting.locator(".tool-item")).toContainText("Cape");
+  await expect(crafting.locator(".tool-item")).toContainText("Best of 5 recipes · Thetford");
+  await expect(crafting.locator(".tool-table tbody tr")).toHaveCount(2);
+  await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(
+    /Lavish Cloth\s*4\s*3,594\s*14,376/,
   );
-  await expect(build.locator(".build-showcase-foot")).toContainText("recorded pieces");
-  await expect(build.getByRole("link", { name: /Browse Builds/ })).toHaveAttribute(
-    "href",
-    "/builds/library?region=europe",
-  );
-
-  // Crafting: recipe, city and batch size re-price through the same service as the calculator.
-  const crafting = cards.nth(2);
-  await expect(crafting.getByRole("tablist", { name: "Scenario" }).getByRole("tab")).toHaveCount(2);
-  await expect(crafting.getByRole("list", { name: "Materials" }).getByRole("listitem")).toHaveCount(
-    2,
-  );
-  await expect(crafting.locator(".crafting-preview-materials li").first()).toContainText(
-    /Bloodoak Planks\s*× 8\s*2,894\s*23,152/,
-  );
-  await expect(crafting.locator(".crafting-preview-result-head")).toContainText(
-    "Cost & profit (1 item)",
-  );
-  await expect(crafting.locator(".crafting-preview-result .is-total")).toContainText(
-    /Total cost\s*—/,
-  );
-  await expect(crafting.locator(".landing-preview-status")).toContainText(
-    "No Bridgewatch price for Runite Steel Bar",
-  );
-  const batches = crafting.getByRole("group", { name: "Batch size" });
-  await expect(batches.getByRole("button", { name: "Fewer batches" })).toBeDisabled();
-  await batches.getByRole("button", { name: "More batches" }).click();
-  await expect(batches.locator("output")).toHaveText("2");
-  await expect(crafting.locator(".crafting-preview-assumptions")).toBeVisible();
-  await crafting.getByLabel("City").selectOption("Martlock");
-  await expect(crafting.locator(".crafting-preview-result")).toContainText(
-    "Market price (Martlock)",
-  );
-  await crafting.getByLabel("Recipe").selectOption("broadsword-t6");
-  await crafting.getByRole("tab", { name: "Refine material" }).click();
-  await expect(crafting.getByLabel("Recipe")).toHaveValue("metalbar-t6");
+  await expect(crafting.locator(".tool-pair")).toContainText(/38,126[\s\S]*26,984/);
+  await expect(crafting.locator(".tool-profit")).toHaveClass(/is-loss/);
+  await expect(crafting.locator(".tool-profit")).toContainText(/−\s*11,142[\s\S]*-41\.3%/);
+  await expect(crafting.locator(".tool-cities li em")).toHaveCount(0);
+  await crafting.getByRole("button", { name: "More batches" }).click();
+  await expect(crafting.locator(".tool-stepper output")).toHaveText("2");
+  await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(/28,752/);
   await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
     "href",
-    "/tools/crafting?recipe=battleaxe-t6&region=europe",
+    "/tools/crafting?region=europe",
   );
 
-  // Group Compositions: a real library comp read by weapon type, members as real renders.
-  const roles = page.locator(".group-role");
-  await expect(roles).toHaveCount(4);
-  await expect(roles.nth(0)).toContainText("Tank");
+  const planner = cards.nth(2);
   await expect(
-    roles.nth(0).getByRole("list", { name: "Tank members" }).getByRole("link").first(),
-  ).toHaveAttribute("href", /\/builds\/library\/[a-z0-9-]+\?region=europe/);
-  await expect(page.getByRole("link", { name: /Explore Compositions/ })).toHaveAttribute(
+    planner.getByRole("list", { name: "Planned items" }).getByRole("listitem"),
+  ).toHaveCount(3);
+  await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*0 \/ 33/);
+  await expect(planner.locator(".tool-summary")).toContainText(/Still to buy\s*13,000\+/);
+  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no Martlock listing");
+  await planner
+    .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
+    .getByRole("button", { name: "Own one more" })
+    .click();
+  await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*1 \/ 33/);
+  await expect(planner.locator(".tool-summary")).toContainText(/12,000\+/);
+  await planner.getByRole("tab", { name: "Shopping list" }).click();
+  await expect(planner.locator(".tool-queue li").first()).toContainText(/Buy 9/);
+  await expect(planner.locator(".tool-cities li").first()).toContainText(/Martlock[\s\S]*12,000\+/);
+  await expect(planner.locator(".tool-cities li em")).toHaveCount(0);
+  await expect(planner.getByRole("link", { name: /Open Crafting Planner/ })).toHaveAttribute(
     "href",
-    /\/compositions\/library\/[a-z0-9-]+\?region=europe/,
+    "/shopping-list?region=europe",
+  );
+
+  // Guides slide three at a time with their reading time.
+  const guides = page.locator(".guide-card");
+  await expect(guides).toHaveCount(8);
+  await expect(guides.first().locator(".guide-card-time")).toHaveText(/\d+ min read/);
+  await expect(guides.first().getByRole("link")).toHaveAttribute(
+    "href",
+    /\/guides\/[a-z0-9-]+\?region=europe/,
+  );
+  await expect(page.getByRole("button", { name: "Previous guides" })).toBeHidden();
+  await page.getByRole("button", { name: "Next guides" }).click();
+  await expect(page.getByRole("button", { name: "Previous guides" })).toBeVisible();
+
+  // Top kills: the heading says how old the ranking is, each card a killboard.
+  await expect(page.locator("#home-kills-title")).toHaveText("Top kills this week");
+  const kills = page.locator(".kill-card");
+  await expect(kills).toHaveCount(3);
+  await expect(kills.nth(0).locator(".kill-trophy")).toHaveAttribute("alt", "#1");
+  await expect(kills.nth(0).locator(".kill-side").nth(0)).toContainText("Hatazan1");
+  await expect(kills.nth(0).locator(".kill-side.is-victim")).toContainText("KilluaXcore");
+  await expect(kills.nth(0).locator(".kill-mid strong").nth(0)).toHaveText("21.9m");
+  await expect(kills.nth(0).locator(".kill-mid strong.is-silver")).toHaveText("232.52m+");
+  await expect(kills.nth(0).locator(".kill-mid strong.is-silver")).toHaveAttribute(
+    "title",
+    /Estimated/,
+  );
+  await expect(kills.nth(0).locator(".kill-killed")).toHaveAttribute("title", /Killed .* UTC/);
+  await expect(kills.nth(0).locator(".loadout-board")).toHaveCount(2);
+  await expect(kills.nth(0).locator(".kill-loot li")).toHaveCount(18);
+  await expect(kills.nth(2).locator(".kill-loot-empty")).toHaveText("Nothing carried");
+  await expect(kills.nth(2).locator(".kill-mid strong.is-silver")).toHaveText("—");
+  const toggle = kills.nth(1).getByRole("button", { name: "Show 4 participants" });
+  await toggle.click();
+  await expect(
+    kills.nth(1).getByRole("list", { name: "Participants" }).getByRole("listitem"),
+  ).toHaveCount(4);
+  await expect(kills.nth(1).locator(".kill-people li").first()).toContainText(/healing/);
+  await expect(page.getByRole("link", { name: /Open the kill feed/ })).toHaveAttribute(
+    "href",
+    "/tools/kill-feed?region=europe",
   );
 
   // Advertising stays off until configured; the ad-free offer is always there.
@@ -251,25 +316,15 @@ test("landing page: independent header, bounded hero, live previews and a struct
   await expect(page.locator(".landing-cta h2")).toHaveText(
     "Make better decisionsin Albion Online.",
   );
-  await expect(page.getByRole("link", { name: "Create account" })).toHaveAttribute(
-    "href",
-    "/signin?region=europe",
-  );
   const footer = page.locator("footer.site-footer");
   await expect(footer.getByRole("navigation", { name: "Explore" })).toBeVisible();
-  await expect(footer.getByRole("link", { name: "Crafting calculator" })).toHaveAttribute(
-    "href",
-    "/tools/crafting?region=europe",
-  );
   await expect(footer).toContainText("Albion Online Data Project");
 
   // Region picker: every server named, the current one marked.
   await page.getByRole("combobox", { name: "Albion region" }).click();
   const options = page.getByRole("listbox", { name: "Game servers" }).getByRole("option");
   await expect(options).toHaveCount(3);
-  await expect(options.nth(0)).toContainText("Albion Europe");
   await expect(options.nth(0)).toHaveAttribute("aria-selected", "true");
-  await expect(options.nth(1)).toContainText("Albion West");
   await page.keyboard.press("Escape");
 
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
@@ -278,10 +333,34 @@ test("landing page: independent header, bounded hero, live previews and a struct
       true,
     );
   }
-  // Phones keep the sell column and hide the buy column rather than scrolling sideways.
-  await page.setViewportSize({ width: 390, height: 900 });
-  await expect(market.locator("thead th").nth(2)).toBeHidden();
-  await expect(market.locator("thead th").nth(1)).toBeVisible();
+});
+
+test("landing page keeps every state honest when the sources are down", async ({ page }) => {
+  for (const path of [
+    "**/api/market?*",
+    "**/api/history?*",
+    "**/api/landing/craft?*",
+    "**/api/market/batch?*",
+  ])
+    await page.route(path, (route) =>
+      route.fulfill({ status: 503, json: { error: "Source unavailable" } }),
+    );
+  await page.route("**/api/combat-events/top?*", (route) =>
+    route.fulfill({
+      status: 503,
+      json: { error: "Albion’s kill ranking is unavailable right now." },
+    }),
+  );
+  await page.goto("/?region=europe");
+  const cards = page.locator(".landing-card");
+  await cards.first().scrollIntoViewIfNeeded();
+  await expect(cards.nth(0).locator("tbody")).toContainText("Source unavailable");
+  await expect(cards.nth(1).locator(".tool-item")).toContainText("Unavailable");
+  await expect(cards.nth(1).locator(".tool-profit")).toContainText("—");
+  await expect(cards.nth(2).locator(".tool-summary")).toContainText(/Still to buy\s*—/);
+  await expect(page.locator(".landing-kills")).toContainText("kill ranking is unavailable");
+  await expect(page.locator(".kill-card")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(/NaN|undefined/);
 });
 
 test("premium page explains the ad-free tier without selling anything yet", async ({ page }) => {

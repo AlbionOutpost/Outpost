@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { mockTopKills } from "./support/top-kills";
 import AxeBuilder from "@axe-core/playwright";
 import { writeFile, mkdir } from "node:fs/promises";
 test("light theme accessibility and anonymous sign in", async ({ page, context }) => {
+  await mockTopKills(page);
   test.setTimeout(process.env.CI ? 180000 : 30000);
   const providers = await (await page.request.get("/api/auth/providers")).json();
   const rows = [];
@@ -23,6 +25,7 @@ test("light theme accessibility and anonymous sign in", async ({ page, context }
       await page.screenshot({
         path: `.qa/screenshots/light-${path.replaceAll("/", "_")}-${width}.png`,
         fullPage: true,
+        caret: "initial",
       });
       rows.push({
         width,

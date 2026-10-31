@@ -24,7 +24,7 @@ test("search has one field, contained results scrolling, clear focus and an acce
     await page.setViewportSize({ width, height });
     await page.goto("/");
     const trigger = page.getByRole("button", {
-      name: "Search items, builds and guides (Ctrl K)",
+      name: /^Search items, builds, guides/,
       exact: true,
     });
     await trigger.click();

@@ -1,75 +1,54 @@
 import "./homepage.css";
 import { AdSlot } from "@/components/ad-slot";
-import { BuildShowcase, type ShowcaseBuild } from "@/components/landing/build-showcase";
-import { CraftingPreview } from "@/components/landing/crafting-preview";
-import { GroupRoles } from "@/components/landing/group-roles";
-import { HeroStrip } from "@/components/landing/hero-strip";
-import { MarketPreview } from "@/components/landing/market-preview";
+import { CraftCard } from "@/components/landing/craft-card";
+import { GuidesCarousel } from "@/components/landing/guides-carousel";
+import { MarketCard } from "@/components/landing/market-card";
+import { PlannerCard } from "@/components/landing/planner-card";
 import { PreviewShell } from "@/components/landing/preview-shell";
-import { ToolIcon } from "@/components/tool-icon";
+import { TopKills } from "@/components/landing/top-kills";
+import { LandingWindows } from "@/components/landing/windows";
 import {
   featuredLibraryBuilds,
   findLibraryBuilds,
   findLibraryComposition,
-  findLibraryGuide,
   libraryCounts,
+  libraryGuides,
   librarySpellNames,
 } from "@/lib/grind-library";
-import { activityName } from "@/lib/grind-library-types";
-import { gameDataSource, itemName } from "@/lib/albion/game/recipes";
-import { regionSchema } from "@/lib/albion/region-config";
+import type { GuideNode } from "@/lib/grind-library-types";
+import { itemName } from "@/lib/albion/game/recipes";
+import { regionSchema, regions } from "@/lib/albion/region-config";
+import { brandCopy } from "@/lib/brand-copy";
+import { playerCount } from "@/lib/site-stats";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
 import { ArrowRight, BookOpen, Database, Layers, ShieldCheck, Users } from "lucide-react";
 
-// One editorial thread runs through the page: the bar you buy, the axe you craft from it,
-// the build that carries it and the party it fights in. Everything comes from live
-// observations or the public library; nothing is staged.
+// What the page shows is chosen here and read from the public library or live observations;
+// nothing is staged. The build fills eight of the board's ten wells (no public build records a
+// bag or mount), the comp is a five-member party, the planner plan is an example priced live.
 const showcase = {
-  market: {
-    id: "T6_METALBAR",
-    kind: "Refined material",
-    cities: ["Bridgewatch", "Caerleon", "Martlock", "Thetford", "Lymhurst"],
-    trendCities: ["Bridgewatch", "Caerleon", "Martlock", "Lymhurst", "Thetford", "Fort Sterling"],
-  },
-  crafting: {
-    recipes: [
-      { id: "battleaxe-t6", output: "T6_MAIN_AXE" },
-      { id: "battleaxe-t5", output: "T5_MAIN_AXE" },
-      { id: "battleaxe-t4", output: "T4_MAIN_AXE" },
-      { id: "broadsword-t6", output: "T6_MAIN_SWORD" },
-      { id: "bow-t6", output: "T6_2H_BOW" },
-      { id: "bag-t6", output: "T6_BAG" },
-      { id: "cape-t6", output: "T6_CAPE" },
-    ],
-    refining: [
-      { id: "metalbar-t6", output: "T6_METALBAR" },
-      { id: "planks-t6", output: "T6_PLANKS" },
-      { id: "leather-t6", output: "T6_LEATHER" },
-      { id: "cloth-t6", output: "T6_CLOTH" },
-      { id: "metalbar-t5", output: "T5_METALBAR" },
-      { id: "planks-t5", output: "T5_PLANKS" },
-    ],
-    cities: ["Bridgewatch", "Martlock", "Lymhurst", "Fort Sterling", "Thetford", "Caerleon"],
-  },
-  // One public build per activity tab; the first is the featured one.
-  builds: [
-    { slug: "battleaxe-mist-build", label: "Solo Mists" },
-    { slug: "carving-sword-smallscale-build", label: "Small scale" },
-    { slug: "great-hammer-zvz-build", label: "ZvZ" },
-    { slug: "bloodmoon-staff-group-dungeon-solo-build", label: "PvE" },
+  build: "hallowfall-healer-zvz-build",
+  comp: "hellgate-5v5-front-to-back",
+  market: { id: "T6_METALBAR", kind: "Refined material · Tier 6" },
+  plan: [
+    { itemId: "T4_CAPE", slot: "Cape", qty: 10 },
+    { itemId: "T6_MAIN_SWORD", slot: "Main hand", qty: 3 },
+    { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
-  composition: "statics-group-builds",
-  // The windows under the hero: five quoted items, the featured build, a five-member group
-  // build and a guide from the library.
-  strip: {
-    items: ["T6_MAIN_AXE", "T6_METALBAR", "T6_MOUNT_OX", "T6_POTION_HEAL", "T4_SKILLBOOK_STANDARD"],
-    cities: ["Thetford", "Bridgewatch", "Martlock", "Lymhurst", "Fort Sterling", "Caerleon"],
-    party: "hellgate-5v5-front-to-back",
-    guide: "market-flipping-guide",
-  },
+  planCity: "Martlock",
 } as const;
+
+/** Words in a guide's own text, for its reading time at 230 words a minute. */
+function words(nodes: GuideNode[]): number {
+  let n = 0;
+  for (const node of nodes) {
+    if (typeof node === "string") n += node.split(/\s+/).filter(Boolean).length;
+    else n += words(node.children ?? []);
+  }
+  return n;
+}
 
 export default async function Home({
   searchParams,
@@ -82,61 +61,44 @@ export default async function Home({
     .parse(params.region || (await cookies()).get("atlas-region")?.value);
   const suffix = `?region=${region}`;
   // Two round trips to the library on Cloudflare: everything independent first, then the
-  // composition's members, so the page streams without showing the shell fallback.
-  const [library, spellNames, picked, composition, party, guide] = await Promise.all([
+  // comp's members, so the page streams without showing the shell fallback.
+  const [library, spellNames, picked, comp, guides, players] = await Promise.all([
     libraryCounts(),
     librarySpellNames(),
-    findLibraryBuilds(showcase.builds.map((b) => b.slug)),
-    findLibraryComposition(showcase.composition),
-    findLibraryComposition(showcase.strip.party),
-    findLibraryGuide(showcase.strip.guide),
+    findLibraryBuilds([showcase.build]),
+    findLibraryComposition(showcase.comp),
+    libraryGuides(),
+    playerCount(),
   ]);
-  const [fallback, members, crew] = await Promise.all([
+  const [fallback, members] = await Promise.all([
     picked.length ? Promise.resolve([]) : featuredLibraryBuilds(),
-    composition ? findLibraryBuilds(composition.members) : Promise.resolve([]),
-    party ? findLibraryBuilds(party.members) : Promise.resolve([]),
+    comp ? findLibraryBuilds(comp.members) : Promise.resolve([]),
   ]);
-  const builds: ShowcaseBuild[] = showcase.builds.flatMap(({ slug, label }) => {
-    const b = picked.find((row) => row.slug === slug);
-    return b
-      ? [
-          {
-            slug: b.slug,
-            title: b.title,
-            category: b.category,
-            weaponName: b.weaponName,
-            author: b.author,
-            equipment: b.equipment,
-            tags: b.tags,
-            upvotes: b.upvotes,
-            label,
-          },
-        ]
-      : [];
-  });
-  if (!builds.length && fallback[0]) {
-    const b = fallback[0];
-    builds.push({ ...b, label: activityName(b.category) });
-  }
-  // Only the ability names these builds use travel to the client.
-  const usedSpells = new Set(
-    [...builds, ...crew].flatMap((b) => b.equipment.flatMap((e) => e.skills)),
-  );
+  const build = picked[0] ?? fallback[0] ?? null;
+  // Only the ability names the shown build uses travel to the client.
+  const used = new Set(build?.equipment.flatMap((e) => e.skills) ?? []);
   const spellLabels = Object.fromEntries(
-    [...usedSpells].flatMap((id) => (spellNames[id] ? [[id, spellNames[id]]] : [])),
+    [...used].flatMap((id) => (spellNames[id] ? [[id, spellNames[id]]] : [])),
   );
+  const latestGuides = guides
+    .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .map((g) => ({
+      slug: g.slug,
+      title: g.title,
+      category: g.category,
+      author: g.author,
+      updatedAt: g.updatedAt,
+      summary: brandCopy(g.summary),
+      cover: g.cover,
+      minutes: Math.max(1, Math.round(words(g.content) / 230)),
+    }));
   const n = (value: number) => value.toLocaleString("en-US");
-  const gameData = gameDataSource.charAt(0).toLowerCase() + gameDataSource.slice(1);
-  // Strip rows are narrow: the tier word becomes "T6", the rest of the name stays.
-  const shortName = (id: string) =>
-    `${id.slice(0, 2)} ${itemName(id).replace(
-      /^(Beginner's|Novice's|Journeyman's|Adept's|Expert's|Master's|Grandmaster's|Elder's|Minor|Major) /,
-      "",
-    )}`;
-  const named = (list: readonly { id: string; output: string }[]) =>
-    list.map((r) => ({ ...r, name: itemName(r.output).replace(/ \(T\d\.\d\)$/, "") }));
-  const recipes = named(showcase.crafting.recipes);
-  const refining = named(showcase.crafting.refining);
+  const stats = [
+    ...(players != null ? [{ value: players, label: "Players signed up" }] : []),
+    { value: library.builds, label: "Public builds" },
+    { value: library.compositions, label: "Group comps" },
+    { value: tools.length, label: "Calculators" },
+  ];
   return (
     <div className="home-landing">
       <section className="landing-hero" aria-labelledby="home-title">
@@ -174,20 +136,24 @@ export default async function Home({
                 <BookOpen size={17} /> Browse Builds
               </Link>
             </div>
+            <dl className="landing-stats" aria-label="Outpost in numbers">
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <dt>{s.label}</dt>
+                  <dd>{n(s.value)}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
+
       <div className="landing-wrap">
-        <HeroStrip
-          market={{
-            items: showcase.strip.items.map((id) => ({ id, name: shortName(id) })),
-            cities: showcase.strip.cities,
-          }}
-          build={picked.find((b) => b.slug === showcase.builds[0].slug) ?? fallback[0] ?? null}
+        <LandingWindows
+          build={build}
           spellNames={spellLabels}
-          party={party ?? null}
-          members={crew}
-          guide={guide ?? null}
+          comp={comp ?? null}
+          members={members}
           suffix={suffix}
         />
       </div>
@@ -208,84 +174,66 @@ export default async function Home({
         <div className="landing-card-grid">
           <PreviewShell
             id="home-market"
+            emblem="tool-market"
             glyph="market"
+            scene="market"
             title="Market Explorer"
-            description="Compare prices across all cities, track trends and find the best opportunities."
+            description="Compare prices across cities and find the best buy and sell spots."
             href={`/tools/market?item=${showcase.market.id}&quality=1&region=${region}`}
             action="Open Market Explorer"
           >
-            <MarketPreview
+            <MarketCard
               item={{
                 id: showcase.market.id,
                 name: itemName(showcase.market.id),
-                tier: "Tier 6",
                 kind: showcase.market.kind,
               }}
-              cities={showcase.market.cities}
-              trendCities={showcase.market.trendCities}
-              suffix={suffix}
             />
-          </PreviewShell>
-          <PreviewShell
-            id="home-build"
-            glyph="equipment"
-            title="Build Library"
-            description="Discover and share builds with full equipment, abilities and alternatives."
-            href={`/builds/library${suffix}`}
-            action="Browse Builds"
-          >
-            <BuildShowcase builds={builds} spellNames={spellLabels} suffix={suffix} />
           </PreviewShell>
           <PreviewShell
             id="home-crafting"
+            emblem="tool-craft"
             glyph="craft"
+            scene="build"
             title="Crafting Calculator"
-            description="Calculate costs, fees and profit for any item against current orders."
-            href={`/tools/crafting?recipe=${showcase.crafting.recipes[0].id}&region=${region}`}
+            description="True crafting cost, profit and margin before you craft."
+            href={`/tools/crafting${suffix}`}
             action="Open Crafting Calculator"
           >
-            <CraftingPreview
-              crafting={recipes}
-              refining={refining}
-              cities={showcase.crafting.cities}
-              initialCity={showcase.crafting.cities[0]}
-            />
+            <CraftCard />
+          </PreviewShell>
+          <PreviewShell
+            id="home-planner"
+            emblem="tool-planner"
+            glyph="catalog"
+            scene="city"
+            title="Crafting Planner"
+            description="Plan a session, tick off what you own, see what to buy."
+            href={`/shopping-list${suffix}`}
+            action="Open Crafting Planner"
+          >
+            <PlannerCard plan={[...showcase.plan]} city={showcase.planCity} />
           </PreviewShell>
         </div>
       </section>
 
-      {composition && (
-        <section className="landing-wrap landing-group" aria-labelledby="home-group-title">
-          <div className="landing-group-card">
-            <div className="landing-group-copy">
-              <span className="landing-card-emblem" aria-hidden="true">
-                <ToolIcon name="composition" size={22} />
-              </span>
-              <div>
-                <h2 id="home-group-title">Group Compositions</h2>
-                <p>
-                  Plan and organise group compositions for any content, from ganking to ZvZ.{" "}
-                  {n(library.compositions)} public group builds to copy.
-                </p>
-              </div>
-              <span className="landing-card-tag">Roles by weapon type</span>
-            </div>
-            <div className="landing-group-body">
-              <p className="landing-group-source">
-                <strong>{composition.title}</strong> · {activityName(composition.category)} ·{" "}
-                {composition.members.length} members · by {composition.author}
-              </p>
-              <GroupRoles composition={composition} members={members} suffix={suffix} />
-            </div>
-            <Link
-              href={`/compositions/library/${encodeURIComponent(composition.slug)}${suffix}`}
-              className="landing-card-action landing-group-action"
-            >
-              Explore Compositions <ArrowRight size={16} />
-            </Link>
-          </div>
-        </section>
-      )}
+      <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
+        <div className="landing-section-heading">
+          <h2 id="home-guides-title">
+            Learn from <em>players</em>.
+          </h2>
+          <p>
+            {library.guides} guides on progression, gathering, PvE and the market, each with its
+            author and the date it was last updated.
+          </p>
+          <Link className="text-link" href={`/guides${suffix}`}>
+            All guides <ArrowRight size={15} />
+          </Link>
+        </div>
+        <GuidesCarousel guides={latestGuides} suffix={suffix} />
+      </section>
+
+      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
 
       <section className="landing-wrap landing-why" aria-labelledby="home-why-title">
         <h2 id="home-why-title">Why choose Outpost?</h2>
@@ -310,8 +258,8 @@ export default async function Home({
             <ShieldCheck size={22} aria-hidden="true" />
             <strong>Transparent and reliable</strong>
             <span>
-              Clear sources and source times; a missing price stays missing. Recipes and stats from{" "}
-              {gameData}.
+              Clear sources and source times; a missing price stays missing, an estimate is
+              labelled.
             </span>
           </li>
           <li>

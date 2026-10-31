@@ -22,6 +22,10 @@ const person = z.object({
   AverageItemPower: z.number().nonnegative().max(100000).optional(),
   Equipment: z.record(z.string().max(40), equipment.nullable()).optional(),
 });
+const participant = person.extend({
+  DamageDone: z.number().nonnegative().optional(),
+  SupportHealingDone: z.number().nonnegative().optional(),
+});
 const sourceEvent = z.object({
   EventId: safeCount.positive(),
   TimeStamp: z
@@ -33,6 +37,11 @@ const sourceEvent = z.object({
   TotalVictimKillFame: safeCount,
   numberOfParticipants: safeCount.optional(),
   BattleId: safeCount.nullable().optional(),
+});
+// Only the ranking reads inventories and participants; the feed strips both.
+const rankedEvent = sourceEvent.extend({
+  Victim: person.extend({ Inventory: z.array(equipment.nullable()).max(200).optional() }),
+  Participants: z.array(participant).max(100).optional(),
 });
 const slots = [
   ["MainHand", "Main hand"],
@@ -80,6 +89,36 @@ export function normalizeCombatEvents(raw: unknown) {
     }));
 }
 export type CombatEvent = ReturnType<typeof normalizeCombatEvents>[number];
+
+/**
+ * The game's highest-fame kills, with what the victim carried and who took part. The source
+ * ranks by kill fame over its own window; the landing page says how old the kills are rather
+ * than promising "today".
+ */
+export function normalizeTopKills(raw: unknown) {
+  const events = z.array(rankedEvent).max(10).parse(raw);
+  return normalizeCombatEvents(events).map((event, i) => {
+    const source = events[i];
+    return {
+      ...event,
+      inventory: (source.Victim.Inventory ?? []).flatMap((item) =>
+        item ? [{ itemId: item.Type, count: item.Count ?? 1 }] : [],
+      ),
+      crew: (source.Participants ?? []).map((p) => ({
+        name: p.Name,
+        guild: p.GuildName || "",
+        damage: Math.round(p.DamageDone ?? 0),
+        healing: Math.round(p.SupportHealingDone ?? 0),
+        itemPower: p.AverageItemPower ?? null,
+        equipment: slots.flatMap(([key, slot]) => {
+          const item = p.Equipment?.[key];
+          return item ? [{ slot, itemId: item.Type }] : [];
+        }),
+      })),
+    };
+  });
+}
+export type TopKill = ReturnType<typeof normalizeTopKills>[number];
 export type CombatFeed = {
   region: Region;
   events: CombatEvent[];
@@ -121,43 +160,14 @@ export async function getCombatEvents(region: Region, offset: number): Promise<C
     }
     if (!(await rateLimit(`combat-upstream:${region}`, 12, 60)))
       throw new Error("Combat source request budget reached");
-    const response = await fetch(
-      `${combatHosts[region]}/api/gameinfo/events?limit=20&offset=${offset}`,
-      {
-        headers: { Accept: "application/json" },
-        signal: AbortSignal.timeout(10000),
-        redirect: "manual",
-        cache: "no-store",
-      },
-    );
-    if (!response.ok) {
-      await response.body?.cancel().catch(() => {});
-      throw new Error("Combat source unavailable");
-    }
-    const reader = response.body?.getReader();
-    if (!reader) throw new Error("Empty combat response");
-    const chunks: Uint8Array[] = [];
-    let bytes = 0;
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      bytes += value.byteLength;
-      if (bytes > 1000000) {
-        await reader.cancel();
-        throw new Error("Combat response exceeds limit");
-      }
-      chunks.push(value);
-    }
-    const buffer = new Uint8Array(bytes);
-    let position = 0;
-    for (const chunk of chunks) {
-      buffer.set(chunk, position);
-      position += chunk.byteLength;
-    }
     const data = z
       .array(sourceEvent)
       .max(20)
-      .parse(JSON.parse(new TextDecoder().decode(buffer)));
+      .parse(
+        await readCombatJson(
+          `${combatHosts[region]}/api/gameinfo/events?limit=20&offset=${offset}`,
+        ),
+      );
     const events = normalizeCombatEvents(data);
     const feed = {
       region,
@@ -186,5 +196,98 @@ export async function getCombatEvents(region: Region, offset: number): Promise<C
     return await load;
   } finally {
     pending.delete(key);
+  }
+}
+
+/** One bounded read of a game-info endpoint: ten seconds, one megabyte, no redirects. */
+async function readCombatJson(url: string): Promise<unknown> {
+  const response = await fetch(url, {
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(10000),
+    redirect: "manual",
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    await response.body?.cancel().catch(() => {});
+    throw new Error("Combat source unavailable");
+  }
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("Empty combat response");
+  const chunks: Uint8Array[] = [];
+  let bytes = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    if (bytes > 1000000) {
+      await reader.cancel();
+      throw new Error("Combat response exceeds limit");
+    }
+    chunks.push(value);
+  }
+  const buffer = new Uint8Array(bytes);
+  let position = 0;
+  for (const chunk of chunks) {
+    buffer.set(chunk, position);
+    position += chunk.byteLength;
+  }
+  return JSON.parse(new TextDecoder().decode(buffer));
+}
+
+const topLocal = new Map<Region, { expires: number; feed: TopKillsFeed }>();
+export type TopKillsFeed = { region: Region; events: TopKill[]; fetchedAt: string; source: string };
+/** The source's kill-fame ranking, three entries, cached for five minutes per region. */
+export async function getTopKills(region: Region): Promise<TopKillsFeed> {
+  regionSchema.parse(region);
+  const hit = topLocal.get(region);
+  if (hit && hit.expires > Date.now()) return hit.feed;
+  const pending = inflightCache("combat-top");
+  const ongoing = pending.get(region);
+  if (ongoing) return ongoing as Promise<TopKillsFeed>;
+  const load = (async () => {
+    const cache = redis();
+    const cacheKey = `atlas:combat-top:v1:${region}`;
+    if (cache) {
+      try {
+        const saved = await cache.get(cacheKey);
+        if (saved && saved.length < 400000) {
+          const parsed = JSON.parse(saved) as { fetchedAt: string; data: unknown };
+          if (
+            Number.isFinite(Date.parse(parsed.fetchedAt)) &&
+            Date.now() - Date.parse(parsed.fetchedAt) < 300000
+          )
+            return {
+              region,
+              source: "Albion Online Game Info",
+              fetchedAt: parsed.fetchedAt,
+              events: normalizeTopKills(parsed.data),
+            };
+        }
+      } catch {}
+    }
+    if (!(await rateLimit(`combat-upstream:${region}`, 12, 60)))
+      throw new Error("Combat source request budget reached");
+    const data = await readCombatJson(
+      `${combatHosts[region]}/api/gameinfo/events/killfame?range=day&limit=3&offset=0`,
+    );
+    const feed: TopKillsFeed = {
+      region,
+      events: normalizeTopKills(data),
+      fetchedAt: new Date().toISOString(),
+      source: "Albion Online Game Info",
+    };
+    topLocal.set(region, { expires: Date.now() + 300000, feed });
+    if (cache) {
+      try {
+        await cache.set(cacheKey, JSON.stringify({ fetchedAt: feed.fetchedAt, data }), "EX", 300);
+      } catch {}
+    }
+    return feed;
+  })();
+  pending.set(region, load);
+  try {
+    return await load;
+  } finally {
+    pending.delete(region);
   }
 }

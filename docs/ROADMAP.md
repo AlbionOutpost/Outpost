@@ -2,7 +2,7 @@
 
 The goal: the best Albion Online site ever made. Getting there means three things, in this order: **ship reliably** (green CI, real deploys, backups), **look world-class** (one coherent design system, fast on phones), and **go deeper than anyone** on the data and tools players actually use every day.
 
-Status as of 30 Oct 2026. Update this file when something ships, breaks or gets planned.
+Status as of 31 Oct 2026. Update this file when something ships, breaks or gets planned.
 
 ## Now — foundations
 
@@ -23,6 +23,11 @@ Status as of 30 Oct 2026. Update this file when something ships, breaks or gets 
 - Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
+
+## Shipped — landing page v5 and header (31 Oct)
+
+- The home page is rebuilt to the owner's final mockup: a hero that dissolves into the page with a measured-numbers row (`countPlayers` service + library counts), three teaser windows on its edge (a public build on the board with chosen abilities and a device-saving ♥, what a Team does, a comp as a roster by weapon type), three live tool cards in one chrome (Market Explorer with a six-city table and dated chart, Crafting Calculator picking the best of five T6 recipes through `/api/landing/craft`, Crafting Planner with queue/shopping tabs), a guides slider with reading time, and three killboards from Game Info's kill-fame ranking (`/api/combat-events/top`, inventories, participants, estimated gear value). Cards share a raised surface with the scene blurred behind. `/api/economy/preview` and the earlier preview components are gone.
+- Site-wide header: 72px bar, ember underline on the current section, wide search field with a `Ctrl K` cap, region pill, two-state sun/moon switch.
 
 ## Shipped — landing page tool cards (30 Oct)
 

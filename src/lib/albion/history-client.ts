@@ -56,38 +56,3 @@ export async function getHistory(
     (row) => row.item_id === item && row.location === city && row.quality === quality,
   );
 }
-
-/**
- * Seven daily averages per item in one city, for several items in one request (the landing
- * market strip). Rows come back keyed by item; items the source has nothing for are absent.
- */
-export async function getWeekHistory(
-  region: Region,
-  items: string[],
-  city: (typeof cities)[number],
-) {
-  if (!items.length || items.length > 8 || items.some((i) => !/^[A-Z0-9_@]{3,100}$/.test(i)))
-    throw new Error("Invalid history batch");
-  z.enum(cities).parse(city);
-  const start = new Date(Date.now() - 8 * 86400000).toISOString().slice(0, 10);
-  const end = new Date().toISOString().slice(0, 10);
-  const query = new URLSearchParams({
-    locations: city,
-    qualities: "1",
-    date: start,
-    end_date: end,
-    "time-scale": "24",
-  });
-  const unique = [...new Set(items)].sort();
-  const data = await requestData(
-    region,
-    `/api/v2/stats/history/${unique.join(",")}.json?${query}`,
-    history,
-    300,
-  );
-  return new Map(
-    data
-      .filter((row) => unique.includes(row.item_id) && row.location === city && row.quality === 1)
-      .map((row) => [row.item_id, row.data.slice(-7)]),
-  );
-}

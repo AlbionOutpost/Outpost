@@ -118,7 +118,7 @@ export function GlobalSearch() {
       <button
         type="button"
         onClick={open}
-        aria-label="Search items, builds and guides (Ctrl K)"
+        aria-label="Search items, builds, guides… Ctrl K"
         className="button secondary search-trigger"
         disabled={!ready}
       >

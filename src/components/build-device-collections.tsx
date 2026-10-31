@@ -42,6 +42,11 @@ function write(key: string, value: unknown) {
   localStorage.setItem(key, JSON.stringify(value));
   window.dispatchEvent(new Event(event));
 }
+/** The device bookmark store, for controls elsewhere that save a build on this device. */
+export function useDeviceBookmarks() {
+  const { bookmarks, key, error } = useCollection("bookmarks");
+  return { bookmarks, key, error, write };
+}
 function useCollection(kind: "bookmarks" | "filters") {
   const region = useAtlasRegion(),
     key = buildDeviceKey(kind, region),
