@@ -14,8 +14,8 @@ concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  # Static checks, units, migrations and the production build run once; the browser suite
-  # runs in parallel shards so a pull request answers in the time of the slowest shard.
+  # Static checks, units, migrations and the production build in one job; the core browser
+  # flows in another. Sized for a private repository's included Actions minutes.
   checks:
     runs-on: ubuntu-22.04
     timeout-minutes: 25
@@ -56,15 +56,13 @@ jobs:
         run: docker compose down --volumes
   browser:
     if: ${{ !contains(inputs.skip || '', 'browser') }}
+    # One job running the core flows (landing, sign-in, permissions, builds, comps, Teams,
+    # market, production); the full suite runs weekly and on demand ("Full browser suite").
     # The downloaded pinned Chromium requires working sandboxed user namespaces.
     # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
     # Reassess this supported runner before the published Ubuntu22 retirement.
     runs-on: ubuntu-22.04
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3]
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -83,8 +81,8 @@ jobs:
         run: node scripts/qa-browser-sandbox.mjs
       - name: Build the standalone server
         run: npm run build
-      - name: Browser suite (shard ${{ matrix.shard }} of 3)
-        run: npx playwright test --shard=${{ matrix.shard }}/3 --reporter=line,github
+      - name: Core browser flows
+        run: npm run test:e2e:core -- --reporter=line,github
         env:
           E2E_PRODUCTION: "1"
       - name: Prepare sanitized failure evidence

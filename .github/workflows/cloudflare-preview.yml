@@ -9,26 +9,16 @@ on:
 permissions:
   contents: read
 jobs:
-  quality:
-    if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
-    uses: ./.github/workflows/quality.yml
-    with:
-      # The verify job runs the full browser suite against the Cloudflare build,
-      # so the Node browser run is skipped here.
-      skip: live-regions,browser
   verify:
-    # Exercises the exact Cloudflare build under local workerd, in parallel shards, before
-    # anything is deployed. The deploy job rebuilds the same deterministic bundle.
-    needs: quality
+    # Exercises the exact Cloudflare build under local workerd with the core flows before
+    # anything is deployed (the pull request already ran the static checks and the core flows
+    # on the Node build). The deploy job rebuilds the same deterministic bundle.
+    if: github.repository == 'AlbionOutpost/Outpost' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     # The downloaded pinned Chromium requires working sandboxed user namespaces.
     # Keep OS policy intact; Ubuntu24 blocks it and its installed Chrome is writable.
     # Reassess this supported runner before the published Ubuntu22 retirement.
     runs-on: ubuntu-22.04
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3]
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       WRANGLER_SEND_METRICS: "false"
@@ -51,11 +41,12 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
-      - name: Build Cloudflare and exercise it with isolated fixture sessions (shard ${{ matrix.shard }} of 3)
+      - name: Build Cloudflare and exercise the core flows with isolated fixture sessions
         run: |
           node scripts/cloudflare-build.mjs
+          npx tsc --project cloudflare/tsconfig.json
           npx tsc --project cloudflare/web/tsconfig.json
-          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test --shard=${{ matrix.shard }}/3 --reporter=line,github
+          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npm run test:e2e:core -- --reporter=line,github
       - name: Prepare sanitized failure evidence
         if: always()
         run: node scripts/qa-ci-evidence.mjs

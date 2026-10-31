@@ -1,0 +1,54 @@
+name: Full browser suite
+# Every spec, including the slow audits and the visual baselines, against the Cloudflare
+# build: weekly and on demand. Pull requests and deploys run the core flows only.
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: full-suite
+  cancel-in-progress: true
+jobs:
+  browser:
+    if: github.repository == 'AlbionOutpost/Outpost'
+    # The downloaded pinned Chromium requires working sandboxed user namespaces.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_SEND_ERROR_REPORTS: "false"
+      CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
+      XDG_CONFIG_HOME: ${{ github.workspace }}/.qa/wrangler-config
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Configure disposable local fixture services
+        run: node scripts/ci-local-services.mjs
+      - name: Generate and verify the SQLite runtime
+        run: node scripts/qa-cloudflare-runtime.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the pinned browser sandbox
+        run: node scripts/qa-browser-sandbox.mjs
+      - name: Build Cloudflare and run every spec (shard ${{ matrix.shard }} of 2)
+        run: |
+          node scripts/cloudflare-build.mjs
+          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test --shard=${{ matrix.shard }}/2 --reporter=line,github
+      - name: Prepare sanitized failure evidence
+        if: always()
+        run: node scripts/qa-ci-evidence.mjs
+      - name: Remove ephemeral CI services
+        if: always()
+        run: docker compose down --volumes
