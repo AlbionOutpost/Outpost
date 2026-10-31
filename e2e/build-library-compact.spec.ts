@@ -66,10 +66,12 @@ test("phone library offers scannable previews, persistent search and independent
     "aria-pressed",
     "true",
   );
-  await page.getByRole("searchbox", { name: "Search", exact: true }).fill("Battleaxe Mist Build");
-  await expect(page).toHaveURL(/q=Battleaxe/);
+  await page
+    .getByRole("searchbox", { name: "Search", exact: true })
+    .fill("Carving Sword Small Scale");
+  await expect(page).toHaveURL(/q=Carving/);
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
-  await expect(cards.first()).toContainText("Battleaxe");
+  await expect(cards.first()).toContainText("Carving Sword");
   await page.evaluate(() => scrollTo(0, 600));
   await expect(page.getByRole("searchbox", { name: "Search", exact: true })).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

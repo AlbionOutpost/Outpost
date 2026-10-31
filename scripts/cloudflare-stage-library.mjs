@@ -17,6 +17,12 @@ const source = ["builds", "compositions"].map((kind) => {
     kind,
     checksum,
     categories: [...new Set(data.map((row) => row.category))].filter(Boolean).sort(),
+    // The manifest total is what the library lists (src/lib/library-scope.ts); every row is
+    // still stored because comps reference unlisted builds.
+    total:
+      kind === "builds"
+        ? data.filter((row) => (row.updatedAt ?? "") >= "2026" && (row.upvotes ?? 0) >= 1).length
+        : data.length,
     rows: data.map((row, ordinal) => ({
       kind,
       id: row.id ?? row.slug,
@@ -55,7 +61,7 @@ for collection in source:
 if rows:out.append(prefix+','.join(rows)+';')
 manifests=[]
 for collection in source:
- values=db.execute('SELECT quote(?),quote(?),quote(?),quote(?)',[collection['kind'],collection['checksum'],len(collection['rows']),json.dumps(collection['categories'],separators=(',',':'))]).fetchone()
+ values=db.execute('SELECT quote(?),quote(?),quote(?),quote(?)',[collection['kind'],collection['checksum'],collection['total'],json.dumps(collection['categories'],separators=(',',':'))]).fetchone()
  manifests.append('INSERT OR REPLACE INTO OwnedLibraryManifest(kind,checksum,total,categories) VALUES ('+','.join(map(str,values))+');')
 print(json.dumps({'statements':out,'manifests':manifests}))
 `,

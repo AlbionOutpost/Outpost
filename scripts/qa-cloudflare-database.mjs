@@ -559,7 +559,10 @@ try {
     },
   );
   await check("D1 archive search/order/pagination matches the owned source", async () => {
-    const builds = JSON.parse(readFileSync("public/library/grind-builds.json", "utf8"));
+    const stored = JSON.parse(readFileSync("public/library/grind-builds.json", "utf8"));
+    // Listing covers 2026 builds liked at least once (src/lib/library-scope.ts); finds see all
+    const builds = stored.filter((b) => (b.updatedAt ?? "") >= "2026" && (b.upvotes ?? 0) >= 1);
+    const byLikes = (a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0);
     const expected = builds
       .filter(
         (b) =>
@@ -575,7 +578,7 @@ try {
       sort: "title",
       page: 1,
     });
-    assert.equal(page.total, 10770);
+    assert.equal(page.total, builds.length);
     assert.equal(page.matched, expected.length);
     assert.deepEqual(page.rows, expected.slice(0, 24));
     const last = await call("archiveList", "builds", {
@@ -601,15 +604,20 @@ try {
     });
     assert.equal(faceted.matched, facetedExpected.length);
     assert.deepEqual(faceted.rows, facetedExpected.slice(0, 24));
-    const exactExpected = builds.filter((b) => b.weaponName === "Battleaxe");
+    // Default order: most liked first, archive order breaking ties
+    const exactExpected = builds
+      .map((b, i) => [b, stored.indexOf(b), i])
+      .filter(([b]) => b.weaponName === "Battleaxe")
+      .sort((a, b) => byLikes(a[0], b[0]) || a[1] - b[1])
+      .map(([b]) => b);
     const exactWeapon = await call("archiveList", "builds", { weapon: "Battleaxe", page: 1 });
     assert.equal(exactWeapon.matched, exactExpected.length);
     assert.deepEqual(exactWeapon.rows, exactExpected.slice(0, 24));
-    const source = builds.find((b) => b.slug === "battleaxe-mist-build");
+    const source = stored.find((b) => b.slug === "battleaxe-mist-build");
     const found = await call("archiveFind", "builds", [source.id, source.slug]);
     assert.equal(found.length, 1);
     assert.deepEqual(found[0], source);
-    const ids = builds.slice(0, 100).map((b) => b.id);
+    const ids = stored.slice(0, 100).map((b) => b.id);
     assert.equal((await call("archiveFind", "builds", ids)).length, 100);
     const comps = await call("archiveList", "compositions", { page: 1 });
     assert.equal(comps.total, 682);

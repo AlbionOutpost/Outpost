@@ -1256,15 +1256,19 @@
   background: var(--well);
 }
 .app.outpost .library-card-description {
-  grid-column: 1 / -1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  margin: 0;
+  -webkit-line-clamp: 4;
+  margin: 10px 0 0;
   overflow: hidden;
-  color: var(--muted);
-  font-size: 13px;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-size: 12.5px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.app.outpost .library-card-description.is-empty {
+  color: var(--muted);
+  font-style: italic;
 }
 .app.outpost .ecosystem-library-page.view-list .library-build-card > .ecosystem-card-main {
   grid-template-columns: minmax(0, 1fr) auto;

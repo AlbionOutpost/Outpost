@@ -29,11 +29,12 @@ function readable(id: string) {
  * the progress, what's still to buy and the cheapest city to buy it update. The plan itself
  * is an example; the prices are observations.
  */
-export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) {
+export function PlannerCard({ plan }: { plan: PlanLine[] }) {
   const region = useAtlasRegion();
   const [tab, setTab] = useState<"queue" | "buy">("queue");
   const [have, setHave] = useState<Record<string, number>>({});
-  const { quotes, refresh } = useBatchQuotes(region);
+  const { quotes, busy, refresh } = useBatchQuotes(region);
+  const [settled, setSettled] = useState(false);
   const ref = useRef(refresh);
   useEffect(() => {
     ref.current = refresh;
@@ -41,27 +42,41 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
   const selected = plan.map((p) => ({ slot: p.slot, itemId: p.itemId, quality: 1 }));
   const key = selected.map((s) => s.itemId).join(",");
   useEffect(() => {
-    void ref.current(selected);
+    void ref.current(selected).finally(() => setSettled(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-quote when the plan changes
   }, [region, key]);
-  const summary = summarizeLoadoutQuotes(selected, quotes, city);
-  const unit = (i: number) => summary.rows[i]?.observation?.sell_price_min ?? null;
-  const lines = plan.map((p, i) => ({ ...p, i, need: Math.max(0, p.qty - (have[p.itemId] ?? 0)) }));
+  // Each royal city's quotes for the plan; a line is priced at its cheapest city.
+  const perCity = royal.map((c) => ({
+    city: c,
+    rows: summarizeLoadoutQuotes(selected, quotes, c).rows,
+  }));
+  const cheapest = (i: number) =>
+    perCity
+      .map((c) => ({ city: c.city, price: c.rows[i]?.observation?.sell_price_min ?? null }))
+      .filter((c): c is { city: string; price: number } => c.price != null && c.price > 0)
+      .sort((a, b) => a.price - b.price)[0] ?? null;
+  const loading = busy || !settled;
+  const lines = plan.map((p, i) => ({
+    ...p,
+    i,
+    best: cheapest(i),
+    need: Math.max(0, p.qty - (have[p.itemId] ?? 0)),
+  }));
   const owned = Object.values(have).reduce((a, v) => a + v, 0);
   const total = plan.reduce((a, p) => a + p.qty, 0);
   const toBuy = lines.reduce((a, l) => a + l.need, 0);
-  const cost = lines.reduce((a, l) => a + (unit(l.i) ?? 0) * l.need, 0);
-  const unpriced = lines.filter((l) => l.need && unit(l.i) == null).length;
-  const byCity = royal
-    .map((c) => {
-      const s = summarizeLoadoutQuotes(selected, quotes, c);
-      const units = lines.map((l) => s.rows[l.i]?.observation?.sell_price_min ?? null);
-      return {
-        city: c,
-        total: lines.reduce((a, l, j) => a + (units[j] ?? 0) * l.need, 0),
-        missing: lines.filter((l, j) => l.need && units[j] == null).length,
-      };
-    })
+  const cost = lines.reduce((a, l) => a + (l.best?.price ?? 0) * l.need, 0);
+  const unpriced = lines.filter((l) => l.need && !l.best).length;
+  const byCity = perCity
+    .map((c) => ({
+      city: c.city,
+      total: lines.reduce(
+        (a, l) => a + (c.rows[l.i]?.observation?.sell_price_min ?? 0) * l.need,
+        0,
+      ),
+      missing: lines.filter((l) => l.need && c.rows[l.i]?.observation?.sell_price_min == null)
+        .length,
+    }))
     .filter((c) => c.total > 0)
     .toSorted((a, b) => a.missing - b.missing || a.total - b.total)
     .slice(0, 3);
@@ -95,14 +110,16 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
               <ItemIcon id={l.itemId} size={44} />
               <span className="tool-queue-name">
                 <strong>{readable(l.itemId)}</strong>
-                <small title={unit(l.i) == null ? `No ${city} sell order right now` : undefined}>
+                <small>
                   {l.slot} ·{" "}
-                  {unit(l.i) != null ? (
+                  {l.best ? (
                     <>
-                      <Silver value={unit(l.i)} /> ea
+                      <Silver value={l.best.price} /> ea · {l.best.city}
                     </>
+                  ) : loading ? (
+                    "checking prices…"
                   ) : (
-                    "no listing"
+                    "no sell order"
                   )}
                 </small>
               </span>
@@ -119,7 +136,7 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
                 <span className="tool-queue-buy">
                   <small>Buy {l.need}</small>
                   <b>
-                    <Silver value={unit(l.i) != null ? unit(l.i)! * l.need : null} />
+                    <Silver value={l.best ? l.best.price * l.need : null} />
                   </b>
                 </span>
               )}
@@ -159,8 +176,18 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
         <span>
           <small>Still to buy</small>
           <b>
-            <Silver value={cost || null} />
-            {unpriced ? "+" : ""}
+            {loading ? (
+              <span className="tool-pending">…</span>
+            ) : toBuy === 0 ? (
+              "Done"
+            ) : cost ? (
+              <>
+                <Silver value={cost} />
+                {unpriced ? <span title={`${unpriced} item without a sell order`}>+</span> : null}
+              </>
+            ) : (
+              <span className="tool-pending">No prices</span>
+            )}
           </b>
         </span>
         <span>
@@ -187,7 +214,15 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
               </span>
             </li>
           ))}
-          {!byCity.length && <li className="tool-muted">Loading quotes…</li>}
+          {!byCity.length && (
+            <li className="tool-muted">
+              {loading
+                ? "Checking the royal cities…"
+                : toBuy === 0
+                  ? "Nothing left to buy."
+                  : "No city sells these right now."}
+            </li>
+          )}
         </ol>
       </div>
     </div>

@@ -20,25 +20,6 @@
   --gap: 8px;
   padding: 0;
 }
-/* The figure is centred on the middle column: head in the head slot, feet in the boots */
-/* The figure is centred in the 3×3 block, head in the head slot, feet in the boots */
-.app.outpost .loadout-board-figure {
-  position: absolute;
-  left: 50%;
-  /* Chest of the figure sits behind the chest slot (middle row) */
-  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.145);
-  z-index: -1;
-  width: auto;
-  height: calc((var(--cell) * 3 + var(--gap) * 2) * 0.92);
-  max-width: none;
-  transform: translateX(-50%);
-  opacity: 0.3;
-  pointer-events: none;
-}
-.app.outpost .loadout-board.is-mini .loadout-board-figure {
-  top: calc((var(--cell) * 3 + var(--gap) * 2) * 0.105);
-  opacity: 0.25;
-}
 .app.outpost .loadout-board-column {
   position: relative;
   display: grid;

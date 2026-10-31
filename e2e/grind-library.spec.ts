@@ -4,12 +4,13 @@ import AxeBuilder from "@axe-core/playwright";
 test("recovered builds keep author, spells and swaps, and become independent validated guest drafts", async ({
   page,
 }) => {
+  // A 2025 build: not listed in the library any more, but its page stays reachable (comps
+  // link to it), with everything it recorded.
   await page.goto("/builds/library?q=Battleaxe+Mist+Build");
-  await page
-    .getByRole("link")
-    .filter({ has: page.getByRole("heading", { name: "Battleaxe Mist Build", exact: true }) })
-    .first()
-    .click();
+  await expect(
+    page.getByRole("heading", { name: "Battleaxe Mist Build", exact: true }),
+  ).toHaveCount(0);
+  await page.goto("/builds/library/battleaxe-mist-build");
   await expect(page.locator("h1")).toHaveText("Battleaxe Mist Build");
   await expect(page.locator(".detail-author-line")).toContainText("Arreat Regaro");
   await expect(page.getByLabel("Main hand recorded abilities")).toContainText("Blood Bandit");

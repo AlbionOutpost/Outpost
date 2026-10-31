@@ -28,6 +28,7 @@ type Pick = {
     margin: number | null;
   };
   byCity: { city: string; profit: number; margin: number }[];
+  unpriced?: string[];
 };
 
 /**
@@ -62,7 +63,7 @@ export function CraftCard() {
           </strong>
           <small>
             {p
-              ? `${p.city} · best of ${data!.value!.candidates} recipes`
+              ? `${p.city} · best of ${data!.value!.candidates}`
               : data?.error
                 ? "No complete price set right now"
                 : "Pricing every candidate in every city"}
@@ -169,7 +170,18 @@ export function CraftCard() {
               </span>
             </li>
           ))}
-          {!data?.value?.byCity.length && (
+          {(data?.value?.unpriced ?? [])
+            .slice(0, Math.max(0, 4 - (data?.value?.byCity.length ?? 0)))
+            .map((city) => (
+              <li key={city} className="is-unpriced">
+                <span>
+                  <span className="city-dot" data-city={city} />
+                  {city}
+                </span>
+                <span className="tool-cities-value">Missing prices</span>
+              </li>
+            ))}
+          {!data?.value?.byCity.length && !data?.value?.unpriced?.length && (
             <li className="tool-muted">
               {p && !p.complete
                 ? `No city has every price for this recipe; missing ${p.missing.length}.`

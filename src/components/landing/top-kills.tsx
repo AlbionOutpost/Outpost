@@ -21,6 +21,11 @@ const fame = (n: number) =>
 const pieces = (p: Player) =>
   p.equipment.flatMap((e) => (e.itemId ? [{ slot: e.slot, itemId: e.itemId }] : []));
 const trophies = ["gold", "silver", "bronze"] as const;
+/** The game reports some kills without the gear worn (hidden or not captured); the board
+ * shows the three highest-fame kills where both sides' gear was recorded. */
+const geared = (p: Player) => p.equipment.some((e) => e.itemId);
+const shown = (events: Kill[]) =>
+  events.filter((e) => geared(e.killer) && geared(e.victim)).slice(0, 3);
 
 function Side({ p, victim }: { p: Player; victim?: boolean }) {
   return (
@@ -50,7 +55,7 @@ function Side({ p, victim }: { p: Player; victim?: boolean }) {
  */
 export function TopKills({ suffix, serverName }: { suffix: string; serverName: string }) {
   const region = useAtlasRegion();
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<Set<number>>(() => new Set());
   const data = useLoad(region, async (signal) => {
     const r = await fetch(`/api/combat-events/top?region=${region}`, { signal });
     const body = await r.json();
@@ -61,8 +66,11 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
   // "today" only when every featured kill really is from the past day; the source's ranking
   // window lags at times.
   const fresh =
-    !!feed?.events.length &&
-    feed.events.every((e) => Date.parse(feed.fetchedAt) - Date.parse(e.occurredAt) < 86_400_000);
+    !!feed &&
+    shown(feed.events).length > 0 &&
+    shown(feed.events).every(
+      (e) => Date.parse(feed.fetchedAt) - Date.parse(e.occurredAt) < 86_400_000,
+    );
   return (
     <section className="landing-wrap landing-kills" aria-labelledby="home-kills-title">
       <div className="section-heading landing-section-heading">
@@ -70,7 +78,7 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
           Top kills <em>{fresh ? "today" : "this week"}</em>
         </h2>
         <p>
-          The three highest-fame kills on {serverName}{" "}
+          The three highest-fame kills with recorded gear on {serverName}{" "}
           {fresh ? "in the past 24 hours" : "in the game’s current ranking"}.
         </p>
         <Link className="pill-link" href={`/tools/kill-feed${suffix}`}>
@@ -80,6 +88,10 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
       {!data?.value ? (
         <p className="landing-preview-status" role="status">
           {data?.error ?? "Loading the kill ranking…"}
+        </p>
+      ) : !shown(data.value.feed.events).length ? (
+        <p className="landing-preview-status" role="status">
+          No ranked kill has both loadouts recorded right now.
         </p>
       ) : (
         <Kills feed={data.value.feed} at={data.value.at} open={open} setOpen={setOpen} />
@@ -96,17 +108,17 @@ function Kills({
 }: {
   feed: Feed;
   at: number;
-  open: number | null;
-  setOpen: (id: number | null) => void;
+  open: Set<number>;
+  setOpen: (ids: Set<number>) => void;
 }) {
   return (
     <div className="kill-grid">
-      {feed.events.slice(0, 3).map((ev, rank) => {
+      {shown(feed.events).map((ev, rank) => {
         const age = sourceAge(ev.occurredAt, at);
-        const isOpen = open === ev.id;
+        const isOpen = open.has(ev.id);
         const gear = ev.gearValue;
         return (
-          <article key={ev.id} className="raised has-scene kill-card">
+          <article key={ev.id} className="raised has-scene kill-card" data-scene="composition">
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img
               className="kill-trophy"
@@ -176,7 +188,12 @@ function Kills({
               aria-expanded={isOpen}
               aria-controls={`kill-people-${ev.id}`}
               disabled={!ev.crew.length}
-              onClick={() => setOpen(isOpen ? null : ev.id)}
+              onClick={() => {
+                const next = new Set(open);
+                if (isOpen) next.delete(ev.id);
+                else next.add(ev.id);
+                setOpen(next);
+              }}
             >
               {ev.crew.length
                 ? `${isOpen ? "Hide" : "Show"} ${ev.crew.length} participant${ev.crew.length === 1 ? "" : "s"}`
@@ -208,11 +225,18 @@ function Kills({
                             {p.healing ? `${p.healing.toLocaleString("en-US")} healing` : ""}
                           </small>
                         </span>
-                        <span className="kill-kit">
-                          {p.equipment.slice(0, 6).map((e) => (
-                            <ItemIcon key={e.slot} id={e.itemId} size={28} />
-                          ))}
-                        </span>
+                        {p.equipment.some((e) => e.itemId) ? (
+                          <span className="kill-kit">
+                            {p.equipment
+                              .filter((e) => e.itemId)
+                              .slice(0, 6)
+                              .map((e) => (
+                                <ItemIcon key={e.slot} id={e.itemId} size={28} />
+                              ))}
+                          </span>
+                        ) : (
+                          <span className="kill-kit-empty">No gear recorded</span>
+                        )}
                       </li>
                     ))}
                 </ol>

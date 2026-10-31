@@ -630,7 +630,7 @@
   color: var(--muted);
   min-width: 140px;
 }
-.library-filter-bar label:first-child {
+.library-filter-bar label:first-of-type {
   flex: 1 1 240px;
 }
 .library-pagination {

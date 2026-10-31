@@ -33,6 +33,11 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
   headers.set("Content-Security-Policy", policy);
+  // The shell renders on the server with the region the URL asks for (it no longer reads the
+  // query string itself, which forced the whole page to wait for JavaScript).
+  headers.delete("x-outpost-region");
+  const asked = request.nextUrl.searchParams.get("region");
+  if (asked && /^(europe|americas|asia)$/.test(asked)) headers.set("x-outpost-region", asked);
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("Content-Security-Policy", policy);
   response.headers.set("Cache-Control", "private, no-store");

@@ -12,5 +12,5 @@
   "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "OutpostSession" }] },
   "migrations": [{ "tag": "v1-sessions", "new_sqlite_classes": ["OutpostSession"] }],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
 }

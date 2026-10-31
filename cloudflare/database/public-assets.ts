@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cache } from "react";
+import { byLikes, listedBuild } from "../../src/lib/library-scope";
 import { paginateLibrary, type LibraryQuery } from "../../src/lib/grind-library-query";
 import type { DatabaseQuery } from "./protocol";
 type Row = Record<string, unknown> & { id?: string; slug?: string; shard?: string };
@@ -41,8 +42,12 @@ export async function publicLibraryPage(kind: string, input: LibraryQuery) {
     title: string;
     author: string;
     category: string;
+    updatedAt?: string;
+    upvotes?: number;
   })[];
-  const result = paginateLibrary(rows, input, kind === "builds" ? 24 : 18);
+  // Same scope and ranking as the archive (src/lib/library-scope.ts); finds still see all rows.
+  const listed = (kind === "builds" ? rows.filter(listedBuild) : [...rows]).sort(byLikes);
+  const result = paginateLibrary(listed, input, kind === "builds" ? 24 : 18);
   return { ...result, rows: await details(result.rows) };
 }
 function match(row: Row, where: Record<string, unknown> = {}): boolean {

@@ -49,6 +49,8 @@ function setup() {
       category: "PVE",
       weaponName: "Battleaxe",
       tags: ["solo"],
+      updatedAt: "2026-04-01T00:00:00Z",
+      upvotes: 1,
       shard: "builds-0.json",
     },
     {
@@ -59,6 +61,21 @@ function setup() {
       category: "PVP",
       weaponName: "Bow",
       tags: [],
+      updatedAt: "2026-05-01T00:00:00Z",
+      upvotes: 4,
+      shard: "builds-0.json",
+    },
+    // Stored for comps but not listed: older and never liked
+    {
+      id: "three",
+      slug: "third",
+      title: "Old solo",
+      author: "Player",
+      category: "PVE",
+      weaponName: "Battleaxe",
+      tags: ["solo"],
+      updatedAt: "2025-01-01T00:00:00Z",
+      upvotes: 0,
       shard: "builds-0.json",
     },
   ];
@@ -109,12 +126,19 @@ describe("public snapshot reads during D1 unavailability", () => {
   it("loads bounded page details and exact requested public references", async () => {
     setup();
     const page = await publicLibraryPage("builds", { q: "solo", page: 9999 });
+    // Listed builds only (2026, liked at least once); the unlisted one is still findable
     expect(page.total).toBe(2);
     expect(page.matched).toBe(1);
     expect(page.page).toBe(1);
     expect(page.rows.map((r) => r.id)).toEqual(["one"]);
     expect((await publicLibraryFind("builds", ["second"]))[0].id).toBe("two");
+    expect((await publicLibraryFind("builds", ["third"]))[0].id).toBe("three");
     expect(await publicLibraryFind("builds", ["unknown"])).toEqual([]);
+    // Most liked first
+    expect((await publicLibraryPage("builds", { page: 1 })).rows.map((r) => r.id)).toEqual([
+      "two",
+      "one",
+    ]);
   });
   it("falls back for a public catalog transaction while keeping private failures closed", async () => {
     setup();

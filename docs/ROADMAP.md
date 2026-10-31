@@ -24,6 +24,15 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — framed cards, library scope and sign-in diagnostics (31 Oct)
+
+- MMO-style card frame (ember double line, cut corners, gems) on every card that leads somewhere; hairline-edged raised surfaces; paintings blurred more and fitted per card; no figure behind loadout boards.
+- New theme-specific logos; the shell renders on the server (no bare "Loading Outpost…" on refresh).
+- Library lists 2026 builds liked at least once (1,382), ranked by likes; like counts carried into D1; activity cards show each activity's five most liked builds; Group Build members on the game board; guides four per row.
+- Landing: reveals finish once in view (no half-clipped headings), crafting card names unpriced cities, planner prices each line at its cheapest city, top kills open several at once and skip kills without recorded gear, guide arrows no longer drop on hover.
+- Render deadline (30 s) and `waitUntil` bound (10 s) after the 31 Oct duration-allowance outage; Workers Paid enabled by the owner.
+- Sign-in errors are logged (sanitized) to diagnose the Discord callback failure; web logs sampled at 100%.
+
 ## Shipped — canvas, motion and landing polish (31 Oct)
 
 - One smooth canvas under every page (eased warm light from the top, night base over the full height, grain against banding); the landing spans the window at any width.
@@ -96,7 +105,7 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 
 **Builds and Comps**
 
-- Swap-set replacement costing, patch/freshness labels on the 10,770 archived builds and 682 comps, better template curation.
+- Swap-set replacement costing, patch/freshness labels on the archived builds and 682 comps, better template curation.
 - Party-position export for Comps.
 
 ## Later — breadth

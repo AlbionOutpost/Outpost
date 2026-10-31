@@ -1420,24 +1420,14 @@ kbd {
 }
 .outpost-wordmark {
   display: block;
-  position: relative;
   width: 148px;
-  aspect-ratio: 1530 / 620;
-  overflow: hidden;
+  aspect-ratio: 913 / 331;
   flex-shrink: 0;
 }
 .outpost-wordmark .outpost-logo {
-  /* Fit the supplied artwork's transparent margins without altering the original PNG. */
-  position: absolute;
-  width: 141.96%;
-  max-width: none;
+  display: block;
+  width: 100%;
   height: auto;
-  left: -22.22%;
-  top: -9.68%;
-}
-.light .outpost-wordmark {
-  background: #141318;
-  border-radius: 2px;
 }
 .site-header {
   position: relative;

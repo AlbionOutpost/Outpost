@@ -1,7 +1,8 @@
 "use client";
 import { useEffect } from "react";
 
-const cards = "a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card";
+const cards =
+  "a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card, .activity-card";
 
 /**
  * Feeds the pointer position to the card under it (`--mx`, `--my` in the card's own

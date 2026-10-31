@@ -119,7 +119,7 @@ export default async function Library({
                 <BuildWeaponRail
                   selected={family}
                   families={buildDiscovery.families}
-                  weapons={buildDiscovery.weapons}
+                  weapons={buildDiscovery.weapons.filter((w) => w.count > 0)}
                   total={buildDiscovery.families.reduce((sum, f) => sum + f.count, 0)}
                   query={query}
                 />
@@ -131,11 +131,13 @@ export default async function Library({
                     aria-label="Library weapon"
                   >
                     <option value="">All weapons</option>
-                    {buildDiscovery.weapons.map((w) => (
-                      <option value={w.name} key={`${w.code}:${w.name}`}>
-                        {w.name}
-                      </option>
-                    ))}
+                    {buildDiscovery.weapons
+                      .filter((w) => w.count > 0)
+                      .map((w) => (
+                        <option value={w.name} key={`${w.code}:${w.name}`}>
+                          {w.name}
+                        </option>
+                      ))}
                   </select>
                 </label>
                 <fieldset>

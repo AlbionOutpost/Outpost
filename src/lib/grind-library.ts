@@ -12,6 +12,7 @@ import type { JournalEntry } from "./journal-progress";
 import type { FishReference } from "./albion/fishing";
 import { paginateLibrary, type LibraryQuery } from "./grind-library-query";
 import { summariseActivities } from "./library-activities";
+import { byLikes, listedBuild } from "./library-scope";
 
 // Immutable PUBLIC snapshots only; no user/account state enters these process-local indexes.
 let builds: LibraryBuild[] | undefined;
@@ -24,6 +25,12 @@ let traits: AwakeningTrait[] | undefined;
 const read = <T>(name: string): T =>
   JSON.parse(readFileSync(join(process.cwd(), "public/library", `grind-${name}.json`), "utf8"));
 export const libraryBuilds = () => (builds ||= read<LibraryBuild[]>("builds"));
+let listed: LibraryBuild[] | undefined;
+/** The builds the library lists, most liked first (see library-scope). */
+export const listedLibraryBuilds = () =>
+  (listed ||= libraryBuilds().filter(listedBuild).sort(byLikes));
+let rankedCompositions: LibraryComposition[] | undefined;
+const compositionsByLikes = () => (rankedCompositions ||= [...libraryCompositions()].sort(byLikes));
 export const libraryCompositions = () =>
   (compositions ||= read<LibraryComposition[]>("compositions"));
 export const libraryGuides = () => (guides ||= read<LibraryGuide[]>("guides"));
@@ -40,16 +47,16 @@ export const findLibraryBuilds = (ids: string[]) =>
   libraryBuilds().filter((build) => ids.includes(build.id) || ids.includes(build.slug));
 /** Totals for the landing page; one number per collection. */
 export const libraryCounts = async () => ({
-  builds: libraryBuilds().length,
+  builds: listedLibraryBuilds().length,
   compositions: libraryCompositions().length,
   guides: libraryGuides().length,
 });
 /** The landing page's builds-by-activity summary. */
-export const libraryActivities = async () => summariseActivities(libraryBuilds());
+export const libraryActivities = async () => summariseActivities(listedLibraryBuilds());
 export const queryLibraryBuilds = (query: LibraryQuery) =>
-  paginateLibrary(libraryBuilds(), query, 24);
+  paginateLibrary(listedLibraryBuilds(), query, 24);
 export const queryLibraryCompositions = (query: LibraryQuery) =>
-  paginateLibrary(libraryCompositions(), query, 18);
+  paginateLibrary(compositionsByLikes(), query, 18);
 
 const featured = [
   "battleaxe-mist-build",
@@ -67,7 +74,7 @@ export function featuredLibraryBuilds() {
   });
   return [
     ...selected,
-    ...rows.filter(
+    ...listedLibraryBuilds().filter(
       (b) =>
         !selected.includes(b) &&
         !b.title.toLowerCase().includes("copy") &&

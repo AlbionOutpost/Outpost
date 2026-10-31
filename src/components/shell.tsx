@@ -1,6 +1,6 @@
 "use client";
 import Link from "@/components/link";
-import { useState, useRef, useEffect } from "react";
+import { Suspense, useState, useRef, useEffect } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import { flushSync } from "react-dom";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -76,6 +76,15 @@ const accountLinks = [
   ["/signin", "Sign in"],
 ];
 
+/* Follows ?region= in the URL after client navigations. It sits in its own Suspense boundary:
+ * reading the query string in the shell itself made the whole page render on the client,
+ * so a refresh showed a bare "Loading" line until JavaScript arrived. */
+function UrlRegion({ onChange }: { onChange: (region: string | null) => void }) {
+  const region = useSearchParams().get("region");
+  useEffect(() => onChange(region), [region, onChange]);
+  return null;
+}
+
 export function Shell({
   children,
   initialLight = false,
@@ -96,10 +105,10 @@ export function Shell({
     trigger = useRef<HTMLButtonElement>(null),
     close = useRef<HTMLButtonElement>(null),
     header = useRef<HTMLElement>(null);
+  const [urlRegion, setUrlRegion] = useState<string | null>(null);
   const path = usePathname(),
-    search = useSearchParams(),
     router = useRouter();
-  const region = regionSchema.catch("europe").parse(search.get("region") || savedRegion);
+  const region = regionSchema.catch("europe").parse(urlRegion || savedRegion);
   const active = (href: string) => path === href || (href !== "/" && path.startsWith(`${href}/`));
   const href = (url: string) =>
     `${url === "/builds" ? "/builds/library" : url === "/compositions" ? "/compositions/library" : url}?region=${region}`;
@@ -263,6 +272,9 @@ export function Shell({
           Skip to content
         </a>
         <PointerGlow />
+        <Suspense fallback={null}>
+          <UrlRegion onChange={setUrlRegion} />
+        </Suspense>
         {open && (
           <button
             className="drawer-backdrop"
@@ -303,7 +315,7 @@ export function Shell({
           >
             <div className="drawer-heading">
               <Link href={href("/")} onClick={navigate} aria-label="Outpost home">
-                <Wordmark priority />
+                <Wordmark priority light={light} />
               </Link>
               <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
                 <X size={20} />
@@ -369,7 +381,7 @@ export function Shell({
             }}
           >
             <Link className="top-brand" href={href("/")} aria-label="Outpost home">
-              <Wordmark />
+              <Wordmark light={light} />
             </Link>
             {primaryNavigation}
             <div className="header-actions">
@@ -377,7 +389,7 @@ export function Shell({
               <RegionPicker
                 value={region}
                 onChange={(next) => {
-                  const p = new URLSearchParams(search.toString());
+                  const p = new URLSearchParams(window.location.search);
                   p.set("region", next);
                   setSavedRegion(next);
                   document.cookie = `atlas-region=${next}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
@@ -486,7 +498,7 @@ export function Shell({
           <footer className="site-footer">
             <div className="site-footer-brand">
               <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                <Wordmark />
+                <Wordmark light={light} />
               </Link>
               <p>Independent Albion Online tools. Make your next move count.</p>
               <p className="site-footer-source">

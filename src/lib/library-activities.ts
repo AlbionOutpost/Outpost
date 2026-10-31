@@ -1,12 +1,13 @@
 import type { LibraryBuild } from "./grind-library-types";
 import { activityName } from "./grind-library-types";
 
+export type ActivityBuild = { title: string; slug: string; upvotes: number; itemId: string | null };
 export type Activity = {
   category: string;
   name: string;
   builds: number;
-  weapons: string[];
-  top: { title: string; slug: string; upvotes: number } | null;
+  /** The five most liked builds, most liked first (only builds someone liked). */
+  top: ActivityBuild[];
 };
 
 /** The activities players ask for most, in the order the landing grid shows them. */
@@ -22,8 +23,8 @@ export const landingActivities = [
 ] as const;
 
 /**
- * Per activity: how many public builds it has, the main-hand weapons of its best-liked builds
- * and the single most liked build. A pure summary of the recorded library; on Cloudflare it is
+ * Per activity: how many public builds it has and its five most liked builds with their
+ * main-hand weapon. A pure summary of the recorded library; on Cloudflare it is
  * written at build time (`scripts/build-library-activities.ts`) because the full build list
  * is not loaded per request there.
  */
@@ -33,21 +34,19 @@ export function summariseActivities(rows: LibraryBuild[]): Activity[] {
     const builds = rows
       .filter((b: LibraryBuild) => b.category === category)
       .sort((a: LibraryBuild, b: LibraryBuild) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
-    const weapons = [
-      ...new Set<string>(
-        builds.flatMap((b: LibraryBuild) => {
-          const id = b.equipment.find((e) => e.slot === "Main hand")?.itemId;
-          return id ? [id] : [];
-        }),
-      ),
-    ].slice(0, 3);
-    const top = builds[0];
     return {
       category,
       name: activityName(category),
       builds: builds.length,
-      weapons,
-      top: top?.upvotes ? { title: top.title, slug: top.slug, upvotes: top.upvotes } : null,
+      top: builds
+        .filter((b: LibraryBuild) => (b.upvotes ?? 0) > 0)
+        .slice(0, 5)
+        .map((b: LibraryBuild) => ({
+          title: b.title,
+          slug: b.slug,
+          upvotes: b.upvotes ?? 0,
+          itemId: b.equipment.find((e) => e.slot === "Main hand")?.itemId || null,
+        })),
     };
   });
 }
