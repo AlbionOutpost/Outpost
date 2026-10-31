@@ -19,6 +19,12 @@ const sitemap = spawnSync(process.execPath, ["--import", "tsx", "scripts/build-s
   env: process.env,
 });
 if (sitemap.status !== 0) throw new Error("Sitemap generation failed");
+const activities = spawnSync(
+  process.execPath,
+  ["--import", "tsx", "scripts/build-library-activities.ts"],
+  { stdio: "inherit", env: process.env },
+);
+if (activities.status !== 0) throw new Error("Activity summary generation failed");
 const child = spawn(
   process.execPath,
   [

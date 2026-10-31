@@ -43,3 +43,4 @@ __pycache__/
 /Scrape
 dump.rdb
 public/sitemap.xml
+public/library/grind-activities.json
