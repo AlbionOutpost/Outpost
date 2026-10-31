@@ -78,8 +78,8 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
           Top kills <em>{fresh ? "today" : "this week"}</em>
         </h2>
         <p>
-          The three highest-fame kills with recorded gear on {serverName}{" "}
-          {fresh ? "in the past 24 hours" : "in the game’s current ranking"}.
+          The three juiciest kills on {serverName}{" "}
+          {fresh ? "in the last 24 hours" : "from the game’s current ranking"}, gear and all.
         </p>
         <Link className="pill-link" href={`/tools/kill-feed${suffix}`}>
           Open the kill feed <ArrowRight size={15} />
