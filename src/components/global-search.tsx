@@ -118,13 +118,13 @@ export function GlobalSearch() {
       <button
         type="button"
         onClick={open}
-        aria-label="Search items, builds… Ctrl K"
+        aria-label="Search items, builds and guides (Ctrl K)"
         className="button secondary search-trigger"
         disabled={!ready}
       >
         <Search size={18} />
         <span className="search-shortcut">
-          <span>Search items, builds…</span>
+          <span>Search items, builds, guides…</span>
           <kbd>Ctrl K</kbd>
         </span>
       </button>

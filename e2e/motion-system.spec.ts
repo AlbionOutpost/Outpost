@@ -54,7 +54,7 @@ test("live reduced-motion preference cancels growth and retains keyboard region 
   await page.goto("/tools");
   await page.evaluate(() => document.fonts.ready);
   await expect(
-    page.getByRole("button", { name: "Search items, builds… Ctrl K", exact: true }),
+    page.getByRole("button", { name: "Search items, builds and guides (Ctrl K)", exact: true }),
   ).toBeEnabled();
   const card = page.locator(".directory-entry").first();
   await card.hover({ position: { x: 16, y: 16 } });

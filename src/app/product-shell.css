@@ -174,3 +174,221 @@
     transition: none;
   }
 }
+
+/* Site header, every route: active section in ember with an underline, a wide search field,
+   the region pill, a two-state theme switch and the sign-in button. */
+.app.outpost .site-header {
+  height: 72px;
+  gap: 32px;
+  border-bottom: 1px solid #ffffff10;
+  background: #0f1116;
+}
+.app.outpost .site-header .desktop-navigation {
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+}
+.app.outpost .site-header .desktop-navigation > a,
+.app.outpost .site-header .desktop-navigation > .nav-dropdown > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  color: #d8d2c9;
+  font: 600 15px/1 var(--font-ui);
+}
+.app.outpost .site-header .desktop-navigation > a:hover,
+.app.outpost .site-header .desktop-navigation > .nav-dropdown > summary:hover {
+  color: #fff;
+}
+.app.outpost .site-header .desktop-navigation > a[aria-current="page"] {
+  color: var(--accent-ink);
+}
+.app.outpost .site-header .desktop-navigation > a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.app.outpost .site-header .header-actions {
+  margin-left: auto;
+  gap: 14px;
+}
+.app.outpost .site-header .search-trigger {
+  justify-content: start;
+  gap: 12px;
+  width: clamp(260px, 30vw, 500px);
+  height: 44px;
+  min-height: 44px;
+  padding: 0 10px 0 14px;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #15181f;
+  color: #a8a199;
+}
+.app.outpost .site-header .search-trigger:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, #ffffff1c);
+}
+.app.outpost .site-header .search-shortcut {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.app.outpost .site-header .search-shortcut kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  border: 1px solid #ffffff22;
+  border-radius: 5px;
+  background: #0f1116;
+  color: #d8d2c9;
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .site-header .region-picker > button,
+.app.outpost .site-header [aria-label="Albion region"] {
+  height: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+}
+.app.outpost .site-header .theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 44px;
+  padding: 4px;
+  border: 1px solid #ffffff1c;
+  border-radius: 999px;
+  background: #15181f;
+  cursor: pointer;
+}
+.app.outpost .site-header .theme-switch-option {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #8f8a83;
+  transition:
+    background 160ms var(--ease-out),
+    color 160ms var(--ease-out);
+}
+.app.outpost .site-header .theme-switch-option.is-on {
+  background: var(--accent);
+  color: #1a100b;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.app.outpost .site-header .home-auth-action,
+.app.outpost .site-header .discord-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #15181f;
+  color: #f4f2ee;
+  font: 700 15px/1 var(--font-ui);
+}
+.app.outpost .site-header .discord-login:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, #ffffff1c);
+}
+.app.outpost.light .site-header {
+  border-bottom-color: #0000001a;
+  background: var(--panel);
+}
+.app.outpost.light .site-header :is(.search-trigger, .theme-switch, .discord-login) {
+  border-color: var(--border);
+  background: var(--elevated);
+  color: var(--text);
+}
+.app.outpost.light .site-header .desktop-navigation > a,
+.app.outpost.light .site-header .desktop-navigation > .nav-dropdown > summary {
+  color: var(--text);
+}
+@media (max-width: 1350px) {
+  .app.outpost .site-header {
+    gap: 22px;
+  }
+  .app.outpost .site-header .desktop-navigation {
+    gap: 18px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 220px;
+  }
+  .app.outpost .site-header .search-shortcut kbd {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header {
+    height: 64px;
+    gap: 14px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .app.outpost .site-header .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .site-header .theme-switch {
+    display: none;
+  }
+}
+.app.outpost .site-header .search-trigger {
+  flex: 0 0 auto;
+  max-width: none;
+}
+.app.outpost .site-header .search-shortcut > span {
+  overflow: visible;
+  max-width: none;
+  text-overflow: clip;
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header .desktop-navigation {
+    display: none;
+  }
+}
+.app.outpost .site-header .search-trigger {
+  width: clamp(240px, 24vw, 480px);
+}
+@media (max-width: 1350px) {
+  .app.outpost .site-header .search-trigger {
+    width: 220px;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header .search-trigger {
+    width: 44px;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost header.site-header .theme-switch {
+    display: none;
+  }
+}
+/* Phones: the switch collapses to the current mode's icon, still one tap to change */
+@media (max-width: 600px) {
+  .app.outpost header.site-header .theme-switch {
+    display: inline-flex;
+    padding: 4px;
+  }
+  .app.outpost header.site-header .theme-switch-option:not(.is-on) {
+    display: none;
+  }
+}

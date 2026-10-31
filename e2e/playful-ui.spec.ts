@@ -5,7 +5,9 @@ test("search palette clears on dismissal, supports keyboard navigation and keeps
   page,
 }) => {
   await page.goto("/?region=asia");
-  await page.getByRole("button", { name: "Search items, builds… Ctrl K", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Search items, builds and guides (Ctrl K)", exact: true })
+    .click();
   const dialog = page.getByRole("dialog", { name: "Global search", exact: true });
   const input = dialog.getByRole("searchbox");
   await expect(input).toBeFocused();
