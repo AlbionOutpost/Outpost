@@ -13,6 +13,9 @@ export const authOptions: NextAuthOptions = {
           Discord({
             clientId: process.env.DISCORD_CLIENT_ID,
             clientSecret: process.env.DISCORD_CLIENT_SECRET,
+            // Discord returns iss=https://discord.com on the callback (RFC 9207); the OAuth
+            // client rejects it unless the provider names the same issuer.
+            issuer: "https://discord.com",
             authorization: { params: { scope: "identify email" } },
             checks: ["pkce", "state"],
           }),
