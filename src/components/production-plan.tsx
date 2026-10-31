@@ -84,7 +84,7 @@ export function ProductionPlan({
     );
     setBusy(false);
     setMessage(
-      `${observed.size} price requests refreshed${failed ? `; ${failed} unavailable — previous inputs kept` : ""}. Manual prices kept. Missing observations remain incomplete.`,
+      `${observed.size} price requests refreshed${failed ? `; ${failed} unavailable, kept your previous inputs` : ""}. Manual prices kept. Missing observations remain incomplete.`,
     );
   }
   function add() {
@@ -153,7 +153,7 @@ export function ProductionPlan({
             <span>
               {result.complete
                 ? "All required prices supplied"
-                : "Missing prices — totals incomplete"}
+                : "Some prices missing, totals are incomplete"}
               {result.stale ? " · Includes stale observations" : ""}
             </span>
           </div>

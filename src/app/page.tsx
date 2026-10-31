@@ -111,8 +111,9 @@ export default async function Home({
               <em>advantage.</em>
             </h1>
             <p className="landing-lede">
-              Market prices, {n(library.builds)} builds and {tools.length} calculators, built on
-              real player observations. Plan, prepare and play smarter.
+              Live market prices, {n(library.builds)} builds and {tools.length} calculators, all
+              from real player data. Know what to craft, what to wear and where to sell before you
+              leave town.
             </p>
             <div className="landing-actions">
               <Link href={`/tools${suffix}`} className="button primary">
@@ -147,11 +148,11 @@ export default async function Home({
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-tools-title">
-            Powerful <em>tools</em> for every Albion player.
+            The <em>tools</em> you actually use.
           </h2>
           <p>
-            From market research to build planning and group compositions — everything you need in
-            one place.
+            Check prices, work out if a craft is worth it and plan your shopping run. No more
+            alt-tabbing between five sites.
           </p>
           <Link className="pill-link" href={`/tools${suffix}`}>
             View all tools <ArrowRight size={15} />
@@ -164,7 +165,7 @@ export default async function Home({
             glyph="market"
             scene="market"
             title="Market Explorer"
-            description="Compare prices across cities and find the best buy and sell spots."
+            description="Prices in every city, so you know where to buy and where to dump."
             href={`/tools/market?item=${showcase.market.id}&quality=1&region=${region}`}
             action="Open Market Explorer"
           >
@@ -182,7 +183,7 @@ export default async function Home({
             glyph="craft"
             scene="build"
             title="Crafting Calculator"
-            description="True crafting cost, profit and margin before you craft."
+            description="See if a craft makes silver before you burn the mats."
             href={`/tools/crafting${suffix}`}
             action="Open Crafting Calculator"
           >
@@ -194,7 +195,7 @@ export default async function Home({
             glyph="catalog"
             scene="city"
             title="Crafting Planner"
-            description="Plan a session, tick off what you own, see what to buy."
+            description="List what you want to craft, tick off what you have, buy the rest."
             href={`/shopping-list${suffix}`}
             action="Open Crafting Planner"
           >
@@ -208,10 +209,7 @@ export default async function Home({
           <h2 id="home-activities-title">
             A build for <em>every</em> activity.
           </h2>
-          <p>
-            Pick what you are about to do and start from the five builds players like most for it,
-            ranked by likes.
-          </p>
+          <p>Pick your content and grab the builds other players liked most for it.</p>
           <Link className="pill-link" href={`/builds/library${suffix}`}>
             Build library <ArrowRight size={15} />
           </Link>
@@ -227,8 +225,8 @@ export default async function Home({
             Learn from <em>players</em>.
           </h2>
           <p>
-            {library.guides} guides on progression, gathering, PvE and the market, each with its
-            author and the date it was last updated.
+            {library.guides} guides from players who know their stuff: progression, gathering, PvE
+            and making silver.
           </p>
           <Link className="pill-link" href={`/guides${suffix}`}>
             All guides <ArrowRight size={15} />
@@ -248,8 +246,8 @@ export default async function Home({
               Free for everyone. <em>Supporters</em> keep it running.
             </h2>
             <p>
-              Every tool, build and guide is open without an account. A monthly Supporter plan
-              removes the ads and gives your guild its own Team workspace.
+              Every tool, build and guide works without an account. Supporters get no ads and a Team
+              space for their guild, and it pays for the servers.
             </p>
           </div>
           <div className="plan-grid">

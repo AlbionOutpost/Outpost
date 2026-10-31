@@ -80,7 +80,7 @@ export function LandingWindows({
         scene="build"
         emblem="strip-builds"
         title="Build planner"
-        line="Create and analyze builds with full gear, skills and substitutions."
+        line="Put together a full set with spells and swaps, then share it."
         href={`/builds/library${suffix}`}
         bar={
           build ? (
@@ -132,7 +132,7 @@ export function LandingWindows({
         scene="market"
         emblem="strip-content"
         title="Content manager"
-        line="Run your guild’s content, comps and loot in one place. A Supporter feature."
+        line="Mass-ups, comps and loot splits for your guild. Supporter feature."
         href={`/groups${suffix}`}
         bar={
           <>
@@ -161,7 +161,7 @@ export function LandingWindows({
         scene="composition"
         emblem="strip-comps"
         title="Comp planner"
-        line="Plan comps, share loadouts and coordinate your content."
+        line="Build the comp, hand out the sets and get everyone on the same page."
         href={
           comp
             ? `/compositions/library/${encodeURIComponent(comp.slug)}${suffix}`
