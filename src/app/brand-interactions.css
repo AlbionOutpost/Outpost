@@ -42,18 +42,6 @@
 }
 .app.outpost .top-brand .outpost-wordmark {
   width: 148px;
-  aspect-ratio: 1530/620;
-}
-.app.outpost .top-brand .outpost-wordmark .outpost-logo {
-  width: 141.96%;
-  height: auto;
-  max-width: none;
-  left: -22.22%;
-  top: -9.68%;
-}
-.app.outpost .light .outpost-wordmark,
-.app.outpost.light .outpost-wordmark {
-  background: none;
 }
 .app.outpost.product-route .site-header {
   height: 80px;
@@ -542,10 +530,7 @@
 .app.outpost.light {
   --metal: #80582e;
 }
-.app.outpost.light .outpost-wordmark {
-  background: #211b17;
-  border-radius: 8px;
-}
+
 @media (max-width: 600px) {
   .feature-emblem {
     grid-row: 1;
@@ -579,4 +564,11 @@
   background: #f3e2cb;
   color: #302116;
   border-color: #e6bc9a;
+}
+/* The wordmark image always fills its box; the box alone sets the size at each breakpoint */
+.app.outpost .outpost-wordmark .outpost-logo,
+.app.outpost .top-brand .outpost-wordmark .outpost-logo {
+  width: 100%;
+  min-width: 0;
+  height: auto;
 }

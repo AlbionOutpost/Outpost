@@ -1,6 +1,5 @@
 "use client";
 import { weaponRole } from "@/lib/compositions/weapon-roles";
-import { buildInventoryLayout } from "@/lib/build-inventory-layout";
 import { useState } from "react";
 import Link from "@/components/build-region-link";
 import { useAtlasRegion } from "./region-context";
@@ -8,10 +7,10 @@ import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types
 import { activityName } from "@/lib/grind-library-types";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
+import { LoadoutBoard } from "./loadout-board";
 import { SpellIcon } from "./spell-icon";
 import { CompositionPngExport, type CompositionImageInput } from "./composition-png-export";
 
-const order: readonly string[] = buildInventoryLayout.map(({ slot }) => slot);
 export function LibraryGroupWorkspace({
   composition,
   builds,
@@ -143,23 +142,15 @@ export function LibraryGroupWorkspace({
                     </Link>
                   </h2>
                   {equipment ? (
-                    <div
-                      className="group-loadout-equipment"
-                      aria-label={`Slot ${index + 1} equipment`}
-                    >
-                      {order
-                        .filter((slot) => mounts || slot !== "Mount")
-                        .map((slot) => {
-                          const row = build.equipment.find((row) => row.slot === slot);
-                          return row ? (
-                            <span key={slot} title={`${slot}: ${equipmentName(row.itemId)}`}>
-                              <ItemIcon id={row.itemId} size={46} />
-                              <span className="sr-only">
-                                {slot}: {equipmentName(row.itemId)}
-                              </span>
-                            </span>
-                          ) : null;
-                        })}
+                    // The member's kit on the game's board, read top to bottom like the
+                    // inventory, rather than as one long row
+                    <div className="group-loadout-board">
+                      <LoadoutBoard
+                        pieces={build.equipment.filter((row) => mounts || row.slot !== "Mount")}
+                        size="mini"
+                        abilities={false}
+                        label={`Slot ${index + 1} equipment`}
+                      />
                     </div>
                   ) : (
                     <div

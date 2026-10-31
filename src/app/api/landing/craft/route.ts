@@ -89,6 +89,10 @@ export const GET = apiHandler("landing.craft", async (req: NextRequest) => {
     .filter((s) => s.recipe.id === best.recipe.id)
     .toSorted((a, b) => b.profit! - a.profit!)
     .map((s) => ({ city: s.city, profit: s.profit!, margin: s.margin! }));
+  // Cities where the same recipe cannot be priced completely: named, never estimated
+  const unpriced = all
+    .filter((s) => s.recipe.id === best.recipe.id && s.missing.length)
+    .map((s) => s.city);
   return NextResponse.json(
     {
       region: v.region,
@@ -98,6 +102,7 @@ export const GET = apiHandler("landing.craft", async (req: NextRequest) => {
       assumptions: { tax: 4, setupFee: 2.5, returnRate: 0, useFocus: false },
       best,
       byCity,
+      unpriced,
     },
     { headers: { "Cache-Control": "public, max-age=120" } },
   );

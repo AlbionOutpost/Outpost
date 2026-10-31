@@ -34,12 +34,13 @@ The live AODP check (`npm run test:live`) is not part of CI because it spends re
 
 ### Data pushes (manual)
 
-| Task                             | Command                                                  |
-| -------------------------------- | -------------------------------------------------------- |
-| Push item catalog to D1          | `node scripts/cloudflare-stage-catalog.mjs --apply`      |
-| Push archived builds/comps to D1 | `node scripts/cloudflare-stage-library.mjs --apply`      |
-| Validate/install D1 invariants   | `node scripts/cloudflare-stage-invariants.mjs [--apply]` |
-| Create/verify the D1 database    | `npm run cloudflare:d1:provision -- --apply`             |
+| Task                                           | Command                                                                                         |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Push item catalog to D1                        | `node scripts/cloudflare-stage-catalog.mjs --apply`                                             |
+| Push archived builds/comps to D1               | `node scripts/cloudflare-stage-library.mjs --apply`                                             |
+| Carry like counts and the listed total into D1 | `node scripts/cloudflare-library-upvotes.mjs --apply` (idempotent; run after importing upvotes) |
+| Validate/install D1 invariants                 | `node scripts/cloudflare-stage-invariants.mjs [--apply]`                                        |
+| Create/verify the D1 database                  | `npm run cloudflare:d1:provision -- --apply`                                                    |
 
 The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`.
 

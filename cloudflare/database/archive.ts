@@ -2,6 +2,7 @@ import type { LibraryBuild, LibraryComposition } from "../../src/lib/grind-libra
 import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
 import { HttpError } from "../../src/lib/http-error";
 import { familyWeapons } from "../../src/lib/build-discovery";
+import { LISTED_SINCE } from "../../src/lib/library-scope";
 
 const kindCheck = (kind: string) => {
   if (!["builds", "compositions"].includes(kind))
@@ -23,6 +24,14 @@ export async function archiveList(
   if (!manifest) throw new Error("Reviewed archive is not staged");
   let where = "kind = ? AND (? = '' OR category = ?) AND (? = '' OR instr(searchText, ?) > 0)";
   const values = [kind, category, category, q, q];
+  // Listed builds only (src/lib/library-scope.ts): updated in 2026 and liked at least once.
+  // Unlisted builds stay stored for the comps that reference them; the manifest total is the
+  // listed count.
+  if (kind === "builds") {
+    where +=
+      " AND json_extract(payload, '$.updatedAt') >= ? AND coalesce(json_extract(payload, '$.upvotes'), 0) >= 1";
+    values.push(LISTED_SINCE);
+  }
   const weapon = typeof input.weapon === "string" ? input.weapon.slice(0, 100) : "";
   const family = typeof input.family === "string" ? input.family.slice(0, 100) : "";
   const tag = typeof input.tag === "string" ? input.tag.slice(0, 100).toLowerCase() : "";
@@ -64,7 +73,7 @@ export async function archiveList(
       ? "titleOrdinal"
       : input.sort === "newest" && kind === "builds"
         ? "julianday(json_extract(payload, '$.updatedAt')) DESC, ordinal"
-        : "ordinal";
+        : "coalesce(json_extract(payload, '$.upvotes'), 0) DESC, ordinal";
   const result = await binding
     .prepare(`SELECT payload FROM OwnedLibrary WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`)
     .bind(...values, size, (page - 1) * size)

@@ -7,6 +7,7 @@ import { PlannerCard } from "@/components/landing/planner-card";
 import { PreviewShell } from "@/components/landing/preview-shell";
 import { TopKills } from "@/components/landing/top-kills";
 import { ActivityGrid } from "@/components/landing/activity-grid";
+import { LandingReveal } from "@/components/landing/landing-reveal";
 import { LandingWindows } from "@/components/landing/windows";
 import {
   featuredLibraryBuilds,
@@ -41,7 +42,6 @@ const showcase = {
     { itemId: "T6_MAIN_SWORD", slot: "Main hand", qty: 3 },
     { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
-  planCity: "Martlock",
 } as const;
 
 export default async function Home({
@@ -100,6 +100,7 @@ export default async function Home({
   ];
   return (
     <div className="home-landing">
+      <LandingReveal />
       <section className="landing-hero" aria-labelledby="home-title">
         <picture className="landing-hero-art" aria-hidden="true">
           <source
@@ -157,6 +158,22 @@ export default async function Home({
         />
       </div>
 
+      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
+        <div className="section-heading landing-section-heading">
+          <h2 id="home-activities-title">
+            A build for <em>every</em> activity.
+          </h2>
+          <p>
+            Pick what you are about to do and start from the five builds players like most for it,
+            ranked by likes.
+          </p>
+          <Link className="pill-link" href={`/builds/library${suffix}`}>
+            Build library <ArrowRight size={15} />
+          </Link>
+        </div>
+        <ActivityGrid activities={activities} suffix={suffix} />
+      </section>
+
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-tools-title">
@@ -211,10 +228,12 @@ export default async function Home({
             href={`/shopping-list${suffix}`}
             action="Open Crafting Planner"
           >
-            <PlannerCard plan={[...showcase.plan]} city={showcase.planCity} />
+            <PlannerCard plan={[...showcase.plan]} />
           </PreviewShell>
         </div>
       </section>
+
+      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
 
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
         <div className="section-heading landing-section-heading">
@@ -230,24 +249,6 @@ export default async function Home({
           </Link>
         </div>
         <GuidesCarousel guides={latestGuides} suffix={suffix} />
-      </section>
-
-      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
-
-      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
-        <div className="section-heading landing-section-heading">
-          <h2 id="home-activities-title">
-            A build for <em>every</em> activity.
-          </h2>
-          <p>
-            Pick what you are about to do: the weapons its best-liked builds use, how many builds
-            players have shared for it and the one they like most.
-          </p>
-          <Link className="pill-link" href={`/builds/library${suffix}`}>
-            Build library <ArrowRight size={15} />
-          </Link>
-        </div>
-        <ActivityGrid activities={activities} suffix={suffix} />
       </section>
 
       <div className="landing-wrap">
@@ -277,7 +278,7 @@ export default async function Home({
             </p>
           </div>
           <div className="plan-grid">
-            <article className="raised plan-card">
+            <article className="raised has-scene plan-card" data-scene="city">
               <header>
                 <span className="plan-name">Free</span>
                 <strong className="plan-price">No account needed</strong>
@@ -308,7 +309,7 @@ export default async function Home({
                 </Link>
               </div>
             </article>
-            <article className="raised plan-card is-supporter">
+            <article className="raised has-scene plan-card is-supporter" data-scene="market">
               <header>
                 <span className="plan-name">
                   Supporter{!billing ? <span className="landing-chip">Opening soon</span> : null}

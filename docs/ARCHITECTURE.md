@@ -40,7 +40,7 @@ No public URL — reachable only through the `OUTPOST_DATA` service binding. RPC
 ### Request flow
 
 1. Browser → zone (WAF, Bot Fight Mode). Asset hits are served from `ASSETS`.
-2. Everything else → web Worker → the browser's `OutpostSession` DO → Next (`src/proxy.ts` sets CSP and headers) → page or API route.
+2. Everything else → web Worker → the browser's `OutpostSession` DO → Next (`src/proxy.ts` sets CSP and headers, and passes a valid `?region=` to the layout as `x-outpost-region` so the shell renders on the server with it) → page or API route.
 3. Database calls become RPC to the data Worker: private models → `accounts-v1-eu`, catalog models → D1.
 4. Market/combat data is fetched from AODP / Game Info on demand and cached in the Workers Cache API (≤1 h).
 

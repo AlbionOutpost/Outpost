@@ -434,9 +434,6 @@
 .app.outpost .group-build-library .library-comp-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.app.outpost .group-build-detail .library-comp-members {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
 .app.outpost .personal-favorites-collection > section[aria-label="Account favorites"] {
   padding: 20px;
   margin-top: 20px;
@@ -455,8 +452,7 @@
     grid-template-columns: minmax(0, 1fr) 250px;
   }
   .app.outpost .composition-collection-page .composition-results,
-  .app.outpost .group-build-library .library-comp-grid,
-  .app.outpost .group-build-detail .library-comp-members {
+  .app.outpost .group-build-library .library-comp-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

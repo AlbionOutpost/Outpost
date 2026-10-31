@@ -226,7 +226,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   const crafting = cards.nth(1);
   await expect(crafting.locator(".tool-item")).toContainText("Cape");
-  await expect(crafting.locator(".tool-item")).toContainText("Thetford · best of 5 recipes");
+  await expect(crafting.locator(".tool-item")).toContainText("Thetford · best of 5");
   await expect(crafting.locator(".tool-table tbody tr")).toHaveCount(2);
   await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(
     /Lavish Cloth\s*4\s*3,594\s*14,376/,
@@ -249,7 +249,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   ).toHaveCount(3);
   await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*0 \/ 33/);
   await expect(planner.locator(".tool-summary")).toContainText(/Still to buy\s*13,000\+/);
-  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no listing");
+  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no sell order");
   await planner
     .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
     .getByRole("button", { name: "Own one more" })
@@ -306,15 +306,17 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/kill-feed?region=europe",
   );
 
-  // Activities: real counts from the library, each linking to its filtered list.
+  // Activities: listed counts and the five most liked builds, each opening its build.
   const activities = page.locator(".activity-card");
   await expect(activities).toHaveCount(8);
-  await expect(activities.first()).toHaveAttribute(
+  await expect(activities.first().locator(".activity-head")).toHaveAttribute(
     "href",
     "/builds/library?category=ZVZ&region=europe",
   );
-  await expect(activities.first().locator(".activity-copy")).toContainText(/ZvZ\s*[\d,]+ builds/);
-  await expect(activities.first().locator(".activity-weapons img")).toHaveCount(3);
+  await expect(activities.first().locator(".activity-head")).toContainText(/ZvZ\s*[\d,]+ builds/);
+  const picks = activities.first().locator(".activity-builds a");
+  await expect(picks).toHaveCount(5);
+  await expect(picks.first()).toHaveAttribute("href", /^\/builds\/library\/[^?]+\?region=europe$/);
 
   // Advertising stays off until configured; the plans say what is free and what supports.
   await expect(page.locator(".adsbygoogle")).toHaveCount(0);
@@ -369,7 +371,7 @@ test("landing page keeps every state honest when the sources are down", async ({
   await expect(cards.nth(0).locator("tbody")).toContainText("Source unavailable");
   await expect(cards.nth(1).locator(".tool-item")).toContainText("Unavailable");
   await expect(cards.nth(1).locator(".tool-profit")).toContainText("—");
-  await expect(cards.nth(2).locator(".tool-summary")).toContainText(/Still to buy\s*—/);
+  await expect(cards.nth(2).locator(".tool-summary")).toContainText(/Still to buy\s*No prices/);
   await expect(page.locator(".landing-kills")).toContainText("kill ranking is unavailable");
   await expect(page.locator(".kill-card")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText(/NaN|undefined/);

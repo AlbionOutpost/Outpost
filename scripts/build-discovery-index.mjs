@@ -27,11 +27,17 @@ const weapons = new Map(),
   activities = new Map(),
   tags = new Map(),
   families = new Map();
+// Counts describe what the library lists (src/lib/library-scope.ts: 2026, liked at least
+// once); the weapon table still covers every stored build so comps resolve their families.
+const listed = (b) => (b.updatedAt ?? "") >= "2026" && (b.upvotes ?? 0) >= 1;
+let total = 0;
 for (const b of rows) {
   const main = b.equipment.find((e) => e.slot === "Main hand"),
     code = /^T[1-8]_(.+?)(?:@[1-4])?$/.exec(main?.itemId || "")?.[1] || "",
-    family = facts.codes[code] in labels ? facts.codes[code] : "other";
-  families.set(family, (families.get(family) || 0) + 1);
+    family = facts.codes[code] in labels ? facts.codes[code] : "other",
+    counted = listed(b) ? 1 : 0;
+  total += counted;
+  families.set(family, (families.get(family) || 0) + counted);
   if (main && b.weaponName) {
     const prev = weapons.get(b.weaponName);
     weapons.set(b.weaponName, {
@@ -39,9 +45,10 @@ for (const b of rows) {
       code,
       family,
       itemId: main.itemId,
-      count: (prev?.count || 0) + 1,
+      count: (prev?.count || 0) + counted,
     });
   }
+  if (!counted) continue;
   if (b.category) activities.set(b.category, (activities.get(b.category) || 0) + 1);
   for (const tag of new Set(b.tags.map((x) => x.toLowerCase()))) {
     const prior = tags.get(tag);
@@ -54,7 +61,7 @@ for (const b of rows) {
 }
 const out = {
   sourceSha256: createHash("sha256").update(raw).digest("hex"),
-  total: rows.length,
+  total,
   families: [...families]
     .map(([id, count]) => ({ id, name: labels[id], count }))
     .sort((a, b) => a.name.localeCompare(b.name)),

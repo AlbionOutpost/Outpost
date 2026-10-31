@@ -1104,24 +1104,12 @@
 
 /* Library build windows: bar, weapon + author + abilities beside the loadout board, a
    caption line in. Three across; the list view stretches them to one per row. */
+/* Framed like every card that leads somewhere (product-system.css); only the layout here */
 .app.outpost .library-build-card.raised {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 10px;
-  padding: 12px 14px 0;
-  border: 0;
-  border-radius: 12px;
-  background: var(--surface-raised);
-  box-shadow: var(--shadow-raised);
-  overflow: hidden;
-  transition:
-    transform 180ms var(--ease-out),
-    box-shadow 180ms var(--ease-out);
-}
-.app.outpost .library-build-card.raised:hover {
-  transform: translateY(-3px);
-  background: var(--surface-raised);
-  box-shadow: var(--shadow-raised-hover);
+  padding: 18px 18px 0;
 }
 .app.outpost .library-build-card .ecosystem-title-link {
   min-width: 0;
@@ -1256,15 +1244,19 @@
   background: var(--well);
 }
 .app.outpost .library-card-description {
-  grid-column: 1 / -1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  margin: 0;
+  -webkit-line-clamp: 4;
+  margin: 10px 0 0;
   overflow: hidden;
-  color: var(--muted);
-  font-size: 13px;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-size: 12.5px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.app.outpost .library-card-description.is-empty {
+  color: var(--muted);
+  font-style: italic;
 }
 .app.outpost .ecosystem-library-page.view-list .library-build-card > .ecosystem-card-main {
   grid-template-columns: minmax(0, 1fr) auto;

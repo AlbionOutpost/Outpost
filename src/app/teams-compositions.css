@@ -261,16 +261,29 @@
 }
 .app.outpost .group-build-detail .library-comp-members {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+}
+.app.outpost .group-loadout-board {
+  display: grid;
+  place-items: center;
+  padding: 6px 0 2px;
+}
+.app.outpost .group-loadout-board .loadout-board.is-mini {
+  --cell: 44px;
+  --gap: 5px;
+}
+.app.outpost .group-loadout-board .loadout-board-cell,
+.app.outpost .group-loadout-board .loadout-board-slot.is-empty .loadout-board-cell {
+  border-color: var(--well-border);
+  background: var(--well);
 }
 .app.outpost .group-loadout-card.raised {
   display: grid;
   align-content: start;
   gap: 12px;
   min-width: 0;
-  padding: 14px 16px 16px;
-  border-left: 3px solid var(--role, var(--well-border));
+  padding: 20px 18px 18px;
 }
 .app.outpost .group-loadout-card[data-role="Tank"] {
   --role: var(--role-tank);
@@ -312,24 +325,6 @@
   margin: 0;
   color: var(--muted);
   font-size: 13px;
-}
-.app.outpost .group-loadout-equipment {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-}
-.app.outpost .group-loadout-equipment > span {
-  display: inline-grid;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid var(--well-border);
-  border-radius: 8px;
-  background: var(--well);
-}
-.app.outpost .group-loadout-equipment img {
-  width: 44px;
-  height: 44px;
 }
 .app.outpost .group-loadout-abilities {
   display: flex;

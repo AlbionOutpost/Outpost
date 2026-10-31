@@ -51,16 +51,6 @@ export function LoadoutBoard({
     <div className={`loadout-board is-${size}`} role="list" aria-label={label}>
       {columns.map((column, c) => (
         <div key={c} className="loadout-board-column">
-          {c === 1 && (
-            // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
-            <img
-              className="loadout-board-figure"
-              data-slot-mark="figure"
-              src="/albion/slots/figure.svg"
-              alt=""
-              aria-hidden="true"
-            />
-          )}
           {column.map((slot) => {
             const piece = bySlot.get(slot);
             const mark = slotMarks[slot];

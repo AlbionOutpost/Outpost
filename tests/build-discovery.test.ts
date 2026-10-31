@@ -18,10 +18,12 @@ const raw = readFileSync("public/library/grind-builds.json"),
 describe("source-backed build discovery", () => {
   it("binds real counts and17families to the owned source rather than invented popularity", () => {
     expect(buildDiscovery.sourceSha256).toBe(createHash("sha256").update(raw).digest("hex"));
-    expect(buildDiscovery.total).toBe(10770);
+    // Counts describe the listed builds: updated in 2026 and liked at least once
+    const listed = rows.filter((b) => b.updatedAt >= "2026" && (b.upvotes ?? 0) >= 1);
+    expect(buildDiscovery.total).toBe(listed.length);
     expect(buildDiscovery.families).toHaveLength(17);
     expect(buildDiscovery.weapons).toHaveLength(142);
-    expect(buildDiscovery.families.reduce((n, f) => n + f.count, 0)).toBe(rows.length);
+    expect(buildDiscovery.families.reduce((n, f) => n + f.count, 0)).toBe(listed.length);
     expect(weaponFamily("Battleaxe")).toBe("axe");
     expect(weaponFamily("Unknown weapon")).toBe("other");
   });

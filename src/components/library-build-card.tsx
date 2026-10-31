@@ -36,10 +36,11 @@ async function LibraryBuildCardContent({
     return row ? [row] : [];
   });
   const href = `/builds/library/${encodeURIComponent(slug)}`;
+  const about = brandCopy(build.description || "").trim();
   return (
     <article
       className="raised has-scene library-build-card ecosystem-build-card"
-      data-scene="build"
+      data-scene={sceneFor(build.id)}
       data-activity={build.category}
     >
       <div className="library-card-bar">
@@ -103,6 +104,10 @@ async function LibraryBuildCardContent({
                 <span className="ecosystem-no-spells">No recorded abilities</span>
               )}
             </div>
+            {/* The author's notes fill the space beside the board */}
+            <p className={`library-card-description${about ? "" : " is-empty"}`}>
+              {about || "No notes from the author."}
+            </p>
           </div>
           <div
             className="library-build-equipment"
@@ -126,9 +131,6 @@ async function LibraryBuildCardContent({
             label={`${build.title} loadout`}
           />
         </div>
-        {brandCopy(build.description || "").trim().length >= 24 && (
-          <p className="library-card-description">{brandCopy(build.description)}</p>
-        )}
       </div>
       <Link href={href} className="library-card-caption" aria-hidden="true" tabIndex={-1}>
         <span>
@@ -144,4 +146,12 @@ async function LibraryBuildCardContent({
       </Link>
     </article>
   );
+}
+
+/* Each card gets one of the paintings, chosen from the build id so it stays put across visits */
+const scenes = ["build", "composition", "city", "economy", "market"] as const;
+function sceneFor(id: string) {
+  let hash = 0;
+  for (const char of id) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return scenes[hash % scenes.length];
 }

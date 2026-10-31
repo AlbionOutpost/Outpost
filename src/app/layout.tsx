@@ -1,12 +1,11 @@
 import { AdsenseLoader } from "@/components/adsense-loader";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regionSchema } from "@/lib/albion/region-config";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Shell } from "@/components/shell";
 import { inter, barlowCondensed, barlowDisplay, geistMono } from "./fonts";
 import "./globals.css";
@@ -58,7 +57,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
     : null;
   const initialRegion = regionSchema
     .catch("europe")
-    .parse(jar.get("atlas-region")?.value || user?.region);
+    .parse(
+      (await headers()).get("x-outpost-region") || jar.get("atlas-region")?.value || user?.region,
+    );
   const initialLight = jar.get("atlas-theme")?.value === "light";
   return (
     <html lang="en">
@@ -68,17 +69,17 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <body
         className={`${inter.variable} ${barlowCondensed.variable} ${barlowDisplay.variable} ${geistMono.variable}`}
       >
-        <Suspense fallback={<p>Loading Outpost…</p>}>
-          <Shell
-            key={`${initialRegion}:${initialLight}`}
-            authenticated={!!session?.user?.id}
-            account={user ? { name: user.name, image: user.image } : null}
-            initialLight={initialLight}
-            initialRegion={initialRegion}
-          >
-            {children}
-          </Shell>
-        </Suspense>
+        {/* No boundary around the shell: the header renders with the first byte and pages
+            stream into it behind their own loading state */}
+        <Shell
+          key={`${initialRegion}:${initialLight}`}
+          authenticated={!!session?.user?.id}
+          account={user ? { name: user.name, image: user.image } : null}
+          initialLight={initialLight}
+          initialRegion={initialRegion}
+        >
+          {children}
+        </Shell>
       </body>
     </html>
   );

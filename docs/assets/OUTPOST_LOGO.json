@@ -1,15 +1,30 @@
 {
-  "asset": "Outpost banner logo",
-  "source": "User-supplied image attachment, explicitly requested for site branding on 2026-10-26",
-  "path": "public/brand/outpost-logo.webp",
-  "format": "WebP (lossy q90) resized from the PNG RGBA source",
-  "width": 640,
-  "height": 213,
-  "bytes": 35826,
-  "sha256": "23f6c1f7b4069ea0c687777b672ad8c690003f18046e3912576bda3dc9e211e6",
-  "modifications": "Resized to 640\u00d7213 WebP for delivery (the Cloudflare build serves images unoptimized, and the 1.1 MB original was the page's largest paint). The untouched original is kept in docs/assets. CSS excludes transparent outer padding from the display frame and uses a charcoal backplate in light mode.",
-  "delivery": "Shared Wordmark component in header, mobile navigation drawer and footer",
-  "permission": "User instruction to use this supplied logo. No independent third-party license determination or game-scene permission implied.",
-  "sourcePath": "docs/assets/outpost-logo-source.png",
-  "sourceSha256": "aee426b6a036e5ce922c91842344672f26da9d0e2445383017c8a319645e1a48"
+  "asset": "Outpost banner logo, one per theme",
+  "source": "User-supplied image attachment (both variants on one transparent sheet), requested for site branding on 2026-10-31; replaces the 2026-10-26 logo",
+  "variants": [
+    {
+      "theme": "dark",
+      "path": "public/brand/outpost-logo-dark.webp",
+      "lettering": "cream",
+      "width": 913,
+      "height": 331,
+      "bytes": 66438,
+      "sha256": "4bc134748077f2816c02681b2f685383f0ee2ad208482dc8a3dd4488fcc910d8"
+    },
+    {
+      "theme": "light",
+      "path": "public/brand/outpost-logo-light.webp",
+      "lettering": "near-black",
+      "width": 913,
+      "height": 331,
+      "bytes": 45608,
+      "sha256": "9c16c1cb40e56b33c16d6c5013794c4c7e152a9d5e0f2ef78d835eba565ac0b8"
+    }
+  ],
+  "format": "WebP (lossy q92) cropped from the PNG RGBA source at native resolution",
+  "modifications": "Each variant cropped to its opaque bounds and placed on a matching 913×331 transparent canvas; no recolouring or resizing. The untouched sheet is kept in docs/assets.",
+  "delivery": "Shared Wordmark component in the header, mobile navigation drawer and footer; the image follows the active theme",
+  "permission": "User instruction to use this supplied logo. No independent third-party license determination implied.",
+  "sourcePath": "docs/assets/outpost-logo-themes-source.png",
+  "sourceSha256": "b6204a9c4be1785edd40639b16e0fa04d8ba64ca625c792195273b83b7f6dcd0"
 }
