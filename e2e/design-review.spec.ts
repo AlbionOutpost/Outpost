@@ -115,7 +115,10 @@ test("design review covers application pages, equipment, guilds and reduced moti
               .first()
               .evaluate((el) => getComputedStyle(el).fontFamily),
           ).toMatch(
-            route === "/" || (await page.locator("main h1.display-title:not(.page-title)").count())
+            // Mastheads set their title in the display face; plain workspace titles stay in Inter.
+            route === "/" ||
+              (await page.locator("main h1.display-title:not(.page-title)").count()) ||
+              (await page.locator("main :is(.workspace-identity, .masthead) h1").count())
               ? /barlow/i
               : /inter/i,
           );
