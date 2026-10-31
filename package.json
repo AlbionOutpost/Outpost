@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:core": "playwright test e2e/homepage.spec.ts e2e/outpost.spec.ts e2e/public.spec.ts e2e/qa-security.spec.ts e2e/signin-navigation.spec.ts e2e/account.spec.ts e2e/builds-system.spec.ts e2e/grind-library.spec.ts e2e/group-builds.spec.ts e2e/compositions.spec.ts e2e/groups.spec.ts e2e/team-loot.spec.ts e2e/product-controls.spec.ts e2e/combat-feed.spec.ts e2e/market-research.spec.ts e2e/production.spec.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "lint": "eslint .",
