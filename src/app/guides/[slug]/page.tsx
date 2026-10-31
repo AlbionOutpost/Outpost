@@ -7,6 +7,9 @@ import { GuideArticleContent } from "@/components/guide-article-content";
 import { guideArtwork } from "@/components/grind-guide-directory";
 import { GuideReadingTools } from "@/components/guide-reading-tools";
 import { ItemIcon } from "@/components/item-icon";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { readingMinutes } from "@/components/guide-cover-card";
+import { ArrowLeft } from "lucide-react";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const guide = await findLibraryGuide((await params).slug);
   return { title: guide?.title || "Guide not found", description: guide?.summary };
@@ -17,13 +20,18 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (guide.slug === "albion-journal-guide")
     return (
       <div className="journal-guide-page support-guide-article">
-        <Link href="/guides" className="library-back-link">
-          ← All guides
-        </Link>
-        <h1 id="guide-title" className="page-title display-title">
-          {guide.title}
-        </h1>
-        <p className="intro">Pick an objective for your next run. Keep track as you explore.</p>
+        <WorkspaceHeading
+          glyph="reference"
+          scene="guides"
+          cover={guide.cover?.src}
+          titleId="guide-title"
+          title={guide.title}
+          description="Pick an objective for your next run. Keep track as you explore."
+        >
+          <Link className="pill-link is-small masthead-back" href="/guides">
+            All guides <ArrowLeft size={14} />
+          </Link>
+        </WorkspaceHeading>
         <details className="journal-source-details">
           <summary>About your journal progress</summary>
           <p>
@@ -36,21 +44,18 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     );
   return (
     <div className="grind-guide-article support-guide-article">
-      <Link href="/guides" className="library-back-link">
-        ← All guides
-      </Link>
-      <header className="guide-reading-header">
-        <div>
-          <h1 id="guide-title" className="page-title display-title">
-            {guide.title}
-          </h1>
-          <p>
-            {guide.category} · By {guide.author} ·{" "}
-            {guide.updatedAt ? `Updated ${guide.updatedAt}` : "Original date unavailable"}
-          </p>
-        </div>
-        <ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={112} />
-      </header>
+      <WorkspaceHeading
+        scene="guides"
+        cover={guide.cover?.src}
+        titleId="guide-title"
+        emblem={<ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={56} />}
+        title={guide.title}
+        description={`${guide.category} · By ${guide.author} · ${guide.updatedAt ? `Updated ${guide.updatedAt}` : "Original date unavailable"} · ${readingMinutes(guide.content)} min read`}
+      >
+        <Link className="pill-link is-small masthead-back" href="/guides">
+          All guides <ArrowLeft size={14} />
+        </Link>
+      </WorkspaceHeading>
       <GuideReadingTools />
       <details className="guide-mobile-toc">
         <summary>In this guide</summary>
@@ -63,7 +68,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </nav>
       </details>
       <div className="guide-reading-layout">
-        <aside className="guide-reading-nav">
+        <aside className="raised guide-reading-nav">
           <h2>In this guide</h2>
           <nav aria-label="Guide contents">
             {guide.toc.map((item, i) => (
@@ -83,7 +88,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </div>
         </aside>
         <div className="guide-reading-body">
-          <div className="library-provenance">
+          <div className="raised library-provenance">
             Game balance changes. Check current requirements, yields and costs in game.
             {guide.slug === "fishing-leveling-guide" &&
               " The rebuilt fame calculator is below the article."}

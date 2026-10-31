@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { ItemIcon } from "@/components/item-icon";
+import { CompRoster } from "@/components/comp-roster";
 import Link from "@/components/link";
 import { LoadoutBoard } from "@/components/loadout-board";
-import { weaponRole } from "@/lib/compositions/weapon-roles";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
 import { HeartChip } from "./heart-chip";
@@ -27,7 +26,7 @@ function Window({
   children: ReactNode;
 }) {
   return (
-    <article className="landing-window" data-scene={scene}>
+    <article className="raised has-scene landing-window" data-scene={scene}>
       <div className="landing-window-bar">{bar}</div>
       <div className="landing-window-body">{children}</div>
       <Link href={href} className="landing-window-foot">
@@ -188,34 +187,7 @@ export function LandingWindows({
         }
       >
         {comp && crew.length ? (
-          <ol className="landing-roster" aria-label="Members by weapon type">
-            {crew.slice(0, 5).map((b, i) => {
-              const weapon = b.equipment.find((e) => e.slot === "Main hand");
-              const role = weaponRole(b.weaponName);
-              return (
-                <li key={b.id} data-role={role}>
-                  <span className="landing-roster-n">{i + 1}</span>
-                  <span className="landing-roster-weapon">
-                    {weapon ? <ItemIcon id={weapon.itemId} size={44} /> : null}
-                  </span>
-                  <Link
-                    href={`/builds/library/${encodeURIComponent(b.slug)}${suffix}`}
-                    className="landing-roster-who"
-                    title={b.title}
-                  >
-                    <strong>{b.weaponName}</strong>
-                    <span>{role}</span>
-                  </Link>
-                  <span className="landing-roster-armor" role="group" aria-label="Armor">
-                    {["Helmet", "Chest", "Boots"].flatMap((slot) => {
-                      const it = b.equipment.find((e) => e.slot === slot);
-                      return it ? [<ItemIcon key={slot} id={it.itemId} size={32} />] : [];
-                    })}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
+          <CompRoster members={crew} suffix={suffix} />
         ) : (
           <p className="landing-window-empty">No public group build to show.</p>
         )}

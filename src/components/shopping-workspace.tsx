@@ -1,4 +1,5 @@
 "use client";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useRef, useState } from "react";
 import { ShoppingBag, RefreshCw, Download, Trash2, Check, ArrowRight, Undo2 } from "lucide-react";
@@ -132,20 +133,21 @@ export function ShoppingWorkspace() {
   }
   return (
     <div className="shopping-workspace">
-      <header className="shopping-heading">
-        <div>
-          <h1 className="page-title display-title">Your next run, ready to buy.</h1>
-          <p className="intro">
-            Combine loadouts and crafting materials. Count what you own, then buy what you need.
-          </p>
-          <span className="shopping-save-note">
-            Saved on this device · {region.charAt(0).toUpperCase() + region.slice(1)}
-          </span>
-        </div>
-        <Link className="button secondary" href={`/builds/library?region=${region}`}>
-          Find a loadout <ArrowRight size={16} />
-        </Link>
-      </header>
+      <WorkspaceHeading
+        glyph="catalog"
+        scene="market"
+        title="Crafting Planner"
+        description="Combine loadouts and crafting materials. Count what you own, then buy what you need."
+        actions={
+          <Link className="button secondary" href={`/builds/library?region=${region}`}>
+            Find a loadout <ArrowRight size={16} />
+          </Link>
+        }
+      >
+        <p className="masthead-note shopping-save-note">
+          Saved on this device · {region.charAt(0).toUpperCase() + region.slice(1)}
+        </p>
+      </WorkspaceHeading>
       {blocked ? (
         <div className="panel" role="alert">
           <h2>Your saved list needs attention</h2>
@@ -165,7 +167,7 @@ export function ShoppingWorkspace() {
         </div>
       ) : (
         <>
-          <div className="shopping-toolbar">
+          <div className="raised shopping-toolbar">
             <div>
               <strong>{list.entries.length} purchase lines</strong>
               <span>

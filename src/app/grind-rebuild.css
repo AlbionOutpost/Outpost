@@ -588,16 +588,6 @@
 .grind-guide-article .intro {
   max-width: 70ch;
 }
-.library-page .discovery-tabs,
-.production-calculator-page .discovery-tabs {
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  max-width: 100%;
-}
-.library-page .discovery-tabs a,
-.production-calculator-page .discovery-tabs a {
-  color: var(--text);
-}
 .library-provenance {
   color: var(--muted);
   font-size: 12px;
@@ -625,87 +615,12 @@
 .library-featured {
   margin: 28px 0 32px;
 }
-.library-build-grid,
-.library-comp-grid,
-.library-comp-members {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.library-build-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--panel);
-  min-width: 0;
-}
-.library-build-card > a {
-  display: block;
-  padding: 16px;
-  text-decoration: none;
-  height: 100%;
-}
-.library-build-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 65%, var(--border));
-}
-.library-build-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.library-build-identity > img {
-  flex: 0 0 72px;
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-}
-.library-build-identity > div {
-  min-width: 0;
-}
-.library-build-identity h2 {
-  font-size: 15px;
-  line-height: 1.35;
-  margin: 5px 0;
-  overflow-wrap: anywhere;
-}
-.library-build-identity span {
-  color: var(--accent);
-  font-size: 11px;
-}
-.library-build-identity small {
-  color: var(--muted);
-  font-size: 11px;
-}
-.library-build-equipment {
-  display: flex;
-  gap: 2px;
-  flex-wrap: wrap;
-  padding-top: 12px;
-  margin: 12px 0;
-  border-top: 1px solid var(--border);
-}
-.library-build-equipment > span {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-}
-.library-card-caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 10px;
-}
 .library-filter-bar {
   display: flex;
   align-items: end;
   flex-wrap: wrap;
   gap: 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
   padding: 16px;
-  border-radius: 8px;
   margin: 24px 0;
 }
 .library-filter-bar label {
@@ -727,25 +642,6 @@
   font-size: 12px;
   color: var(--muted);
 }
-.library-back-link {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-.library-author-notes {
-  max-width: 78ch;
-  margin: 32px 0;
-}
-.library-author-notes h2 {
-  font-size: 20px;
-}
-.library-author-notes p {
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
 .library-detail-footer {
   display: flex;
   justify-content: space-between;
@@ -755,28 +651,6 @@
   border-top: 1px solid var(--border);
   padding: 20px 0;
   margin-top: 28px;
-}
-.library-comp-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
-  min-width: 0;
-}
-.library-comp-card > a {
-  display: block;
-  padding: 20px;
-}
-.library-comp-card > a > span {
-  font-size: 11px;
-  color: var(--accent);
-}
-.library-comp-card h2 {
-  font-size: 18px;
-  margin: 8px 0 16px;
-  overflow-wrap: anywhere;
-}
-.library-comp-card small {
-  color: var(--muted);
 }
 .library-comp-weapons {
   display: flex;
@@ -791,34 +665,6 @@
   height: 44px;
   background: var(--bg);
   border-radius: 4px;
-}
-.library-member-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 10px 0;
-}
-.library-member-label > span {
-  color: var(--accent);
-  font-size: 11px;
-}
-.grind-guide-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.grind-guide-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.grind-guide-card > a {
-  display: grid;
-  grid-template-columns: 136px minmax(0, 1fr);
-  height: 100%;
 }
 .grind-guide-art {
   display: flex;
@@ -835,73 +681,10 @@
   color: var(--muted);
   text-align: center;
 }
-.grind-guide-copy {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-.grind-guide-copy h2 {
-  font-size: 18px;
-  line-height: 1.35;
-  letter-spacing: -0.025em;
-  margin: 0 0 8px;
-}
-.grind-guide-copy p {
-  font-size: 12px;
-  line-height: 1.65;
-  color: var(--muted);
-  margin: 0 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.grind-guide-copy > div {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--accent);
-  font-size: 11px;
-}
-.grind-guide-copy > div > span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--muted);
-}
-.grind-guide-card:hover {
-  border-color: var(--accent);
-}
 .outpost-guide-heading {
   margin-top: 48px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
-}
-.guide-reading-header {
-  height: auto;
-  min-height: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  max-width: 1050px;
-  margin-bottom: 24px;
-}
-.guide-reading-header h1 {
-  margin: 0 0 12px;
-  max-width: 24ch;
-}
-.guide-reading-header p {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.7;
-}
-.guide-reading-header > div {
-  min-width: 0;
 }
 .guide-mobile-toc {
   display: none;
@@ -993,9 +776,6 @@
   max-height: calc(100dvh - 130px);
   overflow: auto;
   padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
 }
 .guide-reading-nav h2 {
   font-size: 14px;
@@ -1026,10 +806,9 @@
 }
 .guide-reading-body > .library-provenance {
   margin-top: 0;
-  padding: 16px 20px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  padding: 14px 18px;
+  color: var(--muted);
+  font-size: 13px;
 }
 .guide-prose {
   font-size: 15px;
@@ -1283,14 +1062,6 @@
   margin-top: 16px;
 }
 @media (max-width: 1100px) {
-  .library-build-grid,
-  .library-comp-grid,
-  .library-comp-members {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .grind-guide-card > a {
-    grid-template-columns: 100px minmax(0, 1fr);
-  }
   .grind-guide-art img {
     width: 80px;
     height: 80px;
@@ -1340,22 +1111,12 @@
     color: var(--muted);
     line-height: 1.5;
   }
-  .grind-guide-grid {
-    grid-template-columns: 1fr;
-  }
-  .grind-guide-card > a {
-    grid-template-columns: 120px minmax(0, 1fr);
-  }
   .guide-reading-layout {
     grid-template-columns: 1fr;
   }
   .guide-reading-nav {
     position: static;
     max-height: 240px;
-  }
-  .guide-reading-header > img {
-    width: 80px;
-    height: 80px;
   }
   .app.outpost .build-detail-page .build-loadout-view,
   .app.outpost .build-loadout-view {
@@ -1497,11 +1258,6 @@
   .guide-feature-story h2 {
     font-size: 23px;
   }
-  .library-build-grid,
-  .library-comp-grid,
-  .library-comp-members {
-    grid-template-columns: 1fr;
-  }
   .library-section-heading {
     flex-wrap: wrap;
     gap: 8px;
@@ -1513,9 +1269,6 @@
     flex: 1 1 100%;
     min-width: 0;
   }
-  .grind-guide-card > a {
-    grid-template-columns: 80px minmax(0, 1fr);
-  }
   .grind-guide-art {
     padding: 12px 8px;
   }
@@ -1525,22 +1278,6 @@
   }
   .grind-guide-art span {
     font-size: 9px;
-  }
-  .grind-guide-copy {
-    padding: 16px 12px;
-  }
-  .grind-guide-copy h2 {
-    font-size: 16px;
-  }
-  .guide-reading-header {
-    gap: 12px;
-  }
-  .guide-reading-header > img {
-    width: 60px;
-    height: 60px;
-  }
-  .guide-reading-header h1 {
-    font-size: 30px;
   }
   .guide-reading-body > footer {
     flex-direction: column;

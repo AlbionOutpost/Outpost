@@ -1,4 +1,5 @@
 "use client";
+import { weaponRole } from "@/lib/compositions/weapon-roles";
 import { buildInventoryLayout } from "@/lib/build-inventory-layout";
 import { useState } from "react";
 import Link from "@/components/build-region-link";
@@ -68,7 +69,7 @@ export function LibraryGroupWorkspace({
   }
   return (
     <>
-      <section className="group-build-detail-tools" aria-label="Group build controls">
+      <section className="raised group-build-detail-tools" aria-label="Group build controls">
         <div className="button-row">
           <button type="button" className="button secondary" onClick={copyLink}>
             Copy link
@@ -112,15 +113,27 @@ export function LibraryGroupWorkspace({
         />
         {message && <p role="status">{message}</p>}
       </section>
-      <h2>Builds in this group ({composition.members.length})</h2>
+      <div className="section-heading">
+        <h2>Builds in this group ({composition.members.length})</h2>
+      </div>
       <div className="library-comp-members">
         {composition.members.map((id, index) => {
           const build = byId.get(id);
           return (
-            <section key={`${id}-${index}`} className="group-loadout-card">
+            <section
+              key={`${id}-${index}`}
+              className="raised has-scene group-loadout-card"
+              data-scene="composition"
+              data-role={build ? weaponRole(build.weaponName) : undefined}
+            >
               <div className="library-member-label">
-                Slot {index + 1}
-                {composition.optional.includes(id) && <span>Optional</span>}
+                <span className="landing-roster-n">{index + 1}</span>
+                {build && (
+                  <span className="library-member-role">{weaponRole(build.weaponName)}</span>
+                )}
+                {composition.optional.includes(id) && (
+                  <span className="landing-chip is-muted">Optional</span>
+                )}
               </div>
               {build ? (
                 <>
@@ -223,7 +236,7 @@ export function LibraryGroupWorkspace({
         })}
       </div>
       {mounts && (
-        <section className="group-recorded-mounts">
+        <section className="raised group-recorded-mounts">
           <h2>Recorded mount requirements</h2>
           {recordedMounts.length ? (
             <ul>

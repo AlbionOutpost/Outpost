@@ -1,4 +1,5 @@
 "use client";
+import { Silver } from "@/components/silver";
 import { ProductionSensitivity } from "./production-sensitivity";
 import { CalculationReadiness } from "./calculation-readiness";
 import "@/app/production-workspace.css";
@@ -245,6 +246,8 @@ export function ProductionCalculator({
     v === null || v === undefined
       ? "Unavailable"
       : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const coin = (v: number | null | undefined) =>
+    v === null || v === undefined ? "Unavailable" : <Silver value={v} digits={2} />;
   const current = (id: string, quality: number, city = draft.materialCity) => {
     const p = draft.prices[id];
     return p &&
@@ -1050,7 +1053,7 @@ export function ProductionCalculator({
                   }
                 >
                   <span>Profit per output</span>
-                  <strong>{money(result.profitPerItem)}</strong>
+                  <strong>{coin(result.profitPerItem)}</strong>
                   <small>silver / item</small>
                 </div>
                 <div
@@ -1064,14 +1067,14 @@ export function ProductionCalculator({
                 >
                   <span>Total profit</span>
                   <output aria-label="Estimated total profit" data-result="total-profit">
-                    {money(result.profit)}
+                    {coin(result.profit)}
                   </output>
                   <small>silver / run</small>
                 </div>
                 <div>
                   <span>Cost per output</span>
                   <strong>
-                    {money(
+                    {coin(
                       result.cost === null
                         ? null
                         : result.cost / (recipe.outputCount * draft.batches),
@@ -1103,11 +1106,11 @@ export function ProductionCalculator({
             <dl className="production-cash-summary">
               <div>
                 <dt>Upfront silver</dt>
-                <dd>{money(result.upfront)}</dd>
+                <dd>{coin(result.upfront)}</dd>
               </div>
               <div>
                 <dt>Net cash profit</dt>
-                <dd>{money(result.cashProfit)}</dd>
+                <dd>{coin(result.cashProfit)}</dd>
               </div>
               <div>
                 <dt>Retained return value</dt>

@@ -58,7 +58,7 @@ export default async function Library({
         <SavedBuildFilters />
       ) : (
         <div className="ecosystem-discovery-layout library-discovery-workspace">
-          <div className="library-search-toolbar">
+          <div className="raised library-search-toolbar">
             <BuildDiscoverySearch
               value={q}
               formId="library-discovery-query"
@@ -102,7 +102,7 @@ export default async function Library({
               </Link>
             </div>
           </div>
-          <aside className="ecosystem-filter-rail">
+          <aside className="raised ecosystem-filter-rail">
             <MobileFilterPanel
               drawer
               label={active.length ? `Filter builds (${active.length})` : "Filter builds"}

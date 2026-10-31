@@ -15,7 +15,7 @@ import {
   libraryGuides,
   librarySpellNames,
 } from "@/lib/grind-library";
-import type { GuideNode } from "@/lib/grind-library-types";
+import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
 import { regionSchema, regions } from "@/lib/albion/region-config";
 import { brandCopy } from "@/lib/brand-copy";
@@ -39,16 +39,6 @@ const showcase = {
   ],
   planCity: "Martlock",
 } as const;
-
-/** Words in a guide's own text, for its reading time at 230 words a minute. */
-function words(nodes: GuideNode[]): number {
-  let n = 0;
-  for (const node of nodes) {
-    if (typeof node === "string") n += node.split(/\s+/).filter(Boolean).length;
-    else n += words(node.children ?? []);
-  }
-  return n;
-}
 
 export default async function Home({
   searchParams,
@@ -90,7 +80,7 @@ export default async function Home({
       updatedAt: g.updatedAt,
       summary: brandCopy(g.summary),
       cover: g.cover,
-      minutes: Math.max(1, Math.round(words(g.content) / 230)),
+      minutes: readingMinutes(g.content),
     }));
   const n = (value: number) => value.toLocaleString("en-US");
   const stats = [
@@ -159,7 +149,7 @@ export default async function Home({
       </div>
 
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
-        <div className="landing-section-heading">
+        <div className="section-heading landing-section-heading">
           <h2 id="home-tools-title">
             Powerful <em>tools</em> for every Albion player.
           </h2>
@@ -167,7 +157,7 @@ export default async function Home({
             From market research to build planning and group compositions — everything you need in
             one place.
           </p>
-          <Link className="text-link" href={`/tools${suffix}`}>
+          <Link className="pill-link" href={`/tools${suffix}`}>
             View all tools <ArrowRight size={15} />
           </Link>
         </div>
@@ -218,7 +208,7 @@ export default async function Home({
       </section>
 
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
-        <div className="landing-section-heading">
+        <div className="section-heading landing-section-heading">
           <h2 id="home-guides-title">
             Learn from <em>players</em>.
           </h2>
@@ -226,7 +216,7 @@ export default async function Home({
             {library.guides} guides on progression, gathering, PvE and the market, each with its
             author and the date it was last updated.
           </p>
-          <Link className="text-link" href={`/guides${suffix}`}>
+          <Link className="pill-link" href={`/guides${suffix}`}>
             All guides <ArrowRight size={15} />
           </Link>
         </div>

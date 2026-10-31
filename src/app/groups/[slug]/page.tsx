@@ -1,3 +1,5 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { ArrowLeft } from "lucide-react";
 import Link from "@/components/link";
 import { GroupProfileEditor } from "@/components/group-profile-editor";
 import { canManageMembers } from "@/lib/groups/permissions";
@@ -22,26 +24,29 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
   }
   return (
     <div className="guild-workspace-page support-team-workspace">
-      <Link className="team-back-link" href="/groups">
-        ← Teams
-      </Link>
-      <section className="guild-identity-banner">
-        <span className="guild-monogram" aria-hidden="true">
-          {data.group.name
-            .split(/\s+/)
-            .slice(0, 2)
-            .map((s) => s[0])
-            .join("")
-            .toUpperCase()}
-        </span>
-        <div>
-          <div className="eyebrow">
-            {data.group.region} · {data.group.visibility}
-          </div>
-          <h1 className="page-title display-title">{data.group.name}</h1>
-          <p className="intro preserve">{data.group.description}</p>
+      <WorkspaceHeading
+        scene="comps"
+        emblem={
+          <span className="guild-monogram">
+            {data.group.name
+              .split(/\s+/)
+              .slice(0, 2)
+              .map((s) => s[0])
+              .join("")
+              .toUpperCase()}
+          </span>
+        }
+        title={data.group.name}
+        description={data.group.description || "A team workspace on Outpost."}
+      >
+        <div className="landing-chips masthead-chips">
+          <span className="landing-chip is-muted">{data.group.region}</span>
+          <span className="landing-chip is-muted">{data.group.visibility.toLowerCase()}</span>
         </div>
-      </section>
+        <Link className="pill-link is-small masthead-back team-back-link" href="/groups">
+          All teams <ArrowLeft size={14} />
+        </Link>
+      </WorkspaceHeading>
       {data.membership && data.dashboard ? (
         <GroupDashboard
           groupId={group.id}

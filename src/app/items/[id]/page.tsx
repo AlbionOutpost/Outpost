@@ -1,3 +1,7 @@
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { MastheadTabs } from "@/components/masthead-tabs";
+import BackLink from "@/components/build-region-link";
+import { ArrowLeft } from "lucide-react";
 import { ItemMarketLink } from "@/components/item-market-link";
 import { ItemPricePanel } from "@/components/item-price-panel";
 import { BuildPreviewCard } from "@/components/build-preview-card";
@@ -108,42 +112,39 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
     );
   return (
     <div className="item-reference-page">
-      <Link className="text-link item-back-link" href="/items">
-        ← Item database
-      </Link>
-      <h1 className="page-title display-title">{item.name}</h1>
-      <section className="panel item-metadata-detail">
-        <div className="item-reference-summary">
-          <ItemIcon id={id} size={96} />
-          <div>
-            <p className="item-reference-slot">
-              {item.slot} · T{item.tier}.{item.enchantment}
-            </p>
-            <p>
-              Base item power (IP):{" "}
-              <strong className="numeric">{item.itemPower ?? "Not verified"}</strong>
-            </p>
-            <p>
-              Weight:{" "}
-              <strong className="numeric">
-                {weight === null ? "Unavailable" : `${weight} kg`}
-              </strong>
-            </p>
-            <code>{id}</code>
-          </div>
-          <ItemMarketLink id={id} />
-        </div>
-        <p className="item-data-notice">
-          Item values and unlocks may change with game updates. Confirm your setup in game.
+      <WorkspaceHeading
+        scene="market"
+        emblem={<ItemIcon id={id} size={56} />}
+        title={item.name}
+        description={`${item.slot} · T${item.tier}.${item.enchantment} · Base item power ${item.itemPower ?? "not verified"} · Weight ${weight === null ? "unavailable" : `${weight} kg`}`}
+        actions={<ItemMarketLink id={id} />}
+      >
+        <MastheadTabs
+          label="Item sections"
+          tabs={[
+            { href: "#item-prices-heading", label: "Market prices", anchor: true },
+            { href: "#item-abilities-heading", label: "Abilities", anchor: true },
+            ...(recipe ? [{ href: "#item-recipe-heading", label: "Crafting", anchor: true }] : []),
+            ...(variants.length > 1
+              ? [{ href: "#item-variants-heading", label: "Tiers & enchantments", anchor: true }]
+              : []),
+            ...(usedIn.total > 0
+              ? [{ href: "#item-used-in-heading", label: "Used in", anchor: true }]
+              : []),
+            ...(builds && builds.total > 0
+              ? [{ href: "#item-builds-heading", label: "Builds", anchor: true }]
+              : []),
+          ]}
+        />
+        <p className="masthead-note">
+          <code>{id}</code> · Item values and unlocks may change with game updates. Confirm your
+          setup in game.
         </p>
-        <nav className="item-section-nav" aria-label="Item sections">
-          <a href="#item-prices-heading">Market prices</a>
-          <a href="#item-abilities-heading">Abilities</a>
-          {recipe && <a href="#item-recipe-heading">Crafting</a>}
-          {variants.length > 1 && <a href="#item-variants-heading">Tiers &amp; enchantments</a>}
-          {usedIn.total > 0 && <a href="#item-used-in-heading">Used in</a>}
-          {builds && builds.total > 0 && <a href="#item-builds-heading">Builds</a>}
-        </nav>
+        <BackLink className="pill-link is-small masthead-back" href="/items">
+          Item database <ArrowLeft size={14} />
+        </BackLink>
+      </WorkspaceHeading>
+      <section className="panel item-metadata-detail">
         <ItemPricePanel id={id} />
         <section className="item-abilities" aria-labelledby="item-abilities-heading">
           <h2 id="item-abilities-heading">Abilities</h2>

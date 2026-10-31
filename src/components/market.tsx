@@ -1,4 +1,5 @@
 "use client";
+import { Silver } from "@/components/silver";
 import { ArrowRight, Database, SlidersHorizontal } from "lucide-react";
 import "./market-explorer.css";
 import { History } from "./history";
@@ -139,7 +140,7 @@ export function Market() {
     const timer = window.setTimeout(() => void loadRef.current(), 150);
     return () => window.clearTimeout(timer);
   }, [current, hydrated, validSelection]);
-  const format = (n: number) => (n ? n.toLocaleString() : "Not observed");
+  const format = (n: number) => (n ? <Silver value={n} /> : "Not observed");
   const dateLabel = (value: string) => {
     const stamp = sourceTimestamp(value);
     return Number.isFinite(stamp)
@@ -151,7 +152,7 @@ export function Market() {
       className={`market-workspace market-focused market-rebuild${hasResult ? " has-results" : " is-setup"}${selectedQuote ? " has-city-detail" : ""}`}
       aria-busy={loading}
     >
-      <section className="market-query-panel" aria-label="Market search and filters">
+      <section className="raised market-query-panel" aria-label="Market search and filters">
         <fieldset className="market-hydration-guard" disabled={!hydrated}>
           <form
             id="market-compare-query"
@@ -368,7 +369,7 @@ export function Market() {
           )}
         </fieldset>
       </section>
-      <section className="market-board">
+      <section className="raised market-board">
         <div className="market-results-heading">
           <h2>{hasResult ? "Market results" : "Compare city orders"}</h2>
           <span>
@@ -464,9 +465,7 @@ export function Market() {
                         </span>
                       </td>
                       <td>
-                        <span className="city-indicator" aria-hidden="true">
-                          {r.city.slice(0, 2).toUpperCase()}
-                        </span>
+                        <span className="city-dot" data-city={r.city} aria-hidden="true" />
                         <button
                           type="button"
                           className="market-row-select"
@@ -617,7 +616,7 @@ export function Market() {
       </section>
       {selectedQuote && (
         <aside
-          className="market-item-panel market-city-inspector"
+          className="raised market-item-panel market-city-inspector"
           aria-label="Selected city observation"
         >
           <div className="market-inspector-heading">
@@ -676,7 +675,7 @@ export function Market() {
           </div>
         </aside>
       )}
-      <section className="reference-market-history" id="market-history-research">
+      <section className="raised reference-market-history" id="market-history-research">
         <div className="section-heading">
           <h2>Price history</h2>
           <button
@@ -699,7 +698,7 @@ export function Market() {
       </section>
       <section
         id="market-saved-research"
-        className="market-saved-work"
+        className="raised market-saved-work"
         aria-label="Research and watchlist"
       >
         <div className="market-saved-heading">

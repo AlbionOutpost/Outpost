@@ -1,4 +1,5 @@
 "use client";
+import { Silver } from "@/components/silver";
 import Link from "@/components/link";
 import { useEffect, useState } from "react";
 import { useAtlasRegion } from "./region-context";
@@ -105,7 +106,7 @@ export function ItemPricePanel({ id }: { id: string }) {
                 {summary.ask ? (
                   <>
                     <strong className="numeric">
-                      {summary.ask.sell_price_min.toLocaleString()}
+                      <Silver value={summary.ask.sell_price_min} />
                     </strong>
                     <small>
                       {summary.ask.city} · {stamp(summary.ask.sell_price_min_date)} UTC
@@ -126,7 +127,7 @@ export function ItemPricePanel({ id }: { id: string }) {
                 {summary.bid ? (
                   <>
                     <strong className="numeric">
-                      {summary.bid.buy_price_max.toLocaleString()}
+                      <Silver value={summary.bid.buy_price_max} />
                     </strong>
                     <small>
                       {summary.bid.city} · {stamp(summary.bid.buy_price_max_date)} UTC
@@ -163,11 +164,14 @@ export function ItemPricePanel({ id }: { id: string }) {
               <tbody>
                 {observed.map((row) => (
                   <tr key={row.city}>
-                    <th scope="row">{row.city}</th>
+                    <th scope="row">
+                      <span className="city-dot" data-city={row.city} aria-hidden="true" />
+                      {row.city}
+                    </th>
                     <td className="numeric">
                       {row.sell_price_min > 0 ? (
                         <>
-                          {row.sell_price_min.toLocaleString()}
+                          <Silver value={row.sell_price_min} />
                           <small>
                             {stamp(row.sell_price_min_date)}
                             {isStale(row.sell_price_min_date) ? " · stale" : ""}
@@ -180,7 +184,7 @@ export function ItemPricePanel({ id }: { id: string }) {
                     <td className="numeric">
                       {row.buy_price_max > 0 ? (
                         <>
-                          {row.buy_price_max.toLocaleString()}
+                          <Silver value={row.buy_price_max} />
                           <small>
                             {stamp(row.buy_price_max_date)}
                             {isStale(row.buy_price_max_date) ? " · stale" : ""}

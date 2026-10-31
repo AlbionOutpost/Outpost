@@ -15,6 +15,7 @@ export default async function Page() {
   return (
     <>
       <WorkspaceHeading
+        scene="economy"
         title="Personal timers"
         description="Keep your cooldowns and reminders together. Your 100 most recent timers are saved to your account."
         icon="timer"

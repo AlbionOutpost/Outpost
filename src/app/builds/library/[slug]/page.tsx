@@ -114,7 +114,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           ) : undefined
         }
       />
-      <details className="detail-disclosure detail-secondary-notes" id="build-notes" open>
+      <details className="raised detail-disclosure detail-secondary-notes" id="build-notes" open>
         <summary>
           <span>Strategy & creator recordings</span>
           <small>From the author</small>
@@ -136,7 +136,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <div id="build-cost">
         <LoadoutPriceCheck equipment={equipment} autoLoad />
       </div>
-      <details className="detail-disclosure detail-secondary-notes" id="build-discussion">
+      <details className="raised detail-disclosure detail-secondary-notes" id="build-discussion">
         <summary>
           <span>Build discussion</span>
           <small>Community options</small>

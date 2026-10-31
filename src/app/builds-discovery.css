@@ -95,9 +95,6 @@
 .ecosystem-filter-rail {
   min-width: 0;
   padding: 14px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
 }
 .ecosystem-filter-form {
   display: flex;
@@ -338,56 +335,6 @@
   font-size: 12px;
   color: var(--muted);
 }
-.app.outpost .ecosystem-build-card .library-build-identity {
-  display: block;
-  min-height: 42px;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-}
-.app.outpost .ecosystem-build-card .library-build-identity h2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font: 700 14px/1.3 var(--font-ui);
-  letter-spacing: -0.15px;
-  margin: 0 0 5px;
-  text-align: left;
-}
-.app.outpost .ecosystem-build-card .library-build-identity small {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
-  display: block;
-}
-.app.outpost .ecosystem-build-card .library-build-equipment {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  flex-wrap: nowrap;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: 0;
-  min-width: 0;
-  border-radius: 0;
-}
-.app.outpost .ecosystem-build-card .library-build-equipment > span {
-  display: block;
-  min-width: 0;
-  flex: 0 1 40px;
-  aspect-ratio: 1;
-}
-.app.outpost .ecosystem-build-card .library-build-equipment img {
-  width: 100%;
-  height: auto;
-  max-width: 40px;
-  display: block;
-  object-fit: contain;
-  border-radius: 3px;
-}
 .ecosystem-card-spells {
   display: flex;
   align-items: center;
@@ -409,49 +356,6 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 1.4;
-}
-.app.outpost .ecosystem-build-card .library-card-caption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0;
-  padding: 9px 0 0;
-  border-top: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted);
-}
-.library-card-caption > span {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.library-card-caption > span:last-child {
-  flex-shrink: 0;
-  color: var(--accent-ink);
-}
-.library-save-control {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-.app.outpost .library-save-control .build-card-save {
-  display: grid;
-  place-items: center;
-  min-width: 30px;
-  width: 30px;
-  min-height: 30px;
-  height: 30px;
-  padding: 0;
-  border-radius: 4px;
-  background: var(--bg);
-  color: var(--muted);
-  border: 1px solid var(--border);
-}
-.app.outpost .library-save-control .build-card-save[aria-pressed="true"] {
-  color: var(--accent-ink);
-  border-color: var(--accent);
 }
 .device-save-feedback {
   position: absolute;
@@ -477,25 +381,9 @@
   grid-column: 1;
   grid-row: 1;
 }
-.view-list .library-build-identity {
-  grid-column: 1;
-  grid-row: 2/4;
-}
-.view-list .library-build-equipment {
-  grid-column: 2;
-  grid-row: 1/3;
-}
 .view-list .ecosystem-card-spells {
   grid-column: 2;
   grid-row: 3;
-}
-.view-list .library-card-caption {
-  grid-column: 3;
-  grid-row: 1/4;
-  flex-direction: column;
-  align-items: flex-start !important;
-  border: 0 !important;
-  padding: 0 !important;
 }
 .ecosystem-empty {
   display: flex;
@@ -706,13 +594,6 @@
   .app.outpost .view-list .ecosystem-card-main {
     grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.3fr);
   }
-  .view-list .library-card-caption {
-    grid-column: 1/-1;
-    grid-row: 4;
-    flex-direction: row !important;
-    border-top: 1px solid var(--border) !important;
-    padding-top: 8px !important;
-  }
 }
 @media (max-width: 600px) {
   .app.outpost .builds-heading-copy p {
@@ -759,34 +640,11 @@
   .app.outpost .ecosystem-build-card > .ecosystem-card-main {
     padding: 14px;
   }
-  .app.outpost .ecosystem-build-card .library-build-identity h2 {
-    font-size: 16px;
-  }
-  .app.outpost .ecosystem-build-card .library-build-equipment > span {
-    flex-basis: 44px;
-  }
-  .app.outpost .ecosystem-build-card .library-build-equipment img {
-    max-width: 44px;
-  }
-  .app.outpost .ecosystem-build-card .library-build-identity {
-    min-height: 50px;
-  }
-  .library-save-control {
-    top: 10px;
-    right: 10px;
-  }
-  .app.outpost .library-save-control .build-card-save {
-    width: 36px;
-    height: 36px;
-  }
   .ecosystem-card-topline {
     padding-right: 36px;
   }
   .app.outpost .view-list .ecosystem-card-main {
     display: flex;
-  }
-  .view-list .library-card-caption {
-    width: 100%;
   }
   .device-favorites-grid {
     grid-template-columns: 1fr;
@@ -889,14 +747,6 @@
   .app.outpost .builds-ecosystem .account-build-grid {
     grid-template-columns: 1fr;
   }
-}
-.app.outpost .ecosystem-build-card .library-build-equipment > .ecosystem-empty-slot {
-  display: grid;
-  place-items: center;
-  border: 1px dashed var(--border);
-  border-radius: 3px;
-  color: var(--muted);
-  opacity: 0.5;
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
   display: flex;
@@ -1006,9 +856,6 @@
   position: relative;
   z-index: 2;
 }
-.library-save-control {
-  z-index: 3;
-}
 
 /* Phase A: a compact, weapon-led library. Full equipment belongs on build detail. */
 .app.outpost .ecosystem-library-page .library-discovery-workspace {
@@ -1022,9 +869,6 @@
   gap: 12px;
   width: 100%;
   padding: 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
 }
 .app.outpost .library-search-toolbar .ecosystem-search-label {
   display: flex;
@@ -1098,114 +942,12 @@
 .app.outpost .ecosystem-library-page .ecosystem-results-subline {
   margin: 0 0 12px;
 }
-.app.outpost .library-build-card > .ecosystem-card-main {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  background: var(--panel);
-}
-.app.outpost .library-build-card .library-build-identity {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  min-height: 0;
-  padding-right: 26px;
-}
-.app.outpost .library-build-card .library-primary-weapon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 56px;
-  width: 56px;
-  height: 56px;
-  color: var(--muted);
-}
-.app.outpost .library-build-card .library-primary-weapon img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.app.outpost .library-build-copy {
-  flex: 1;
-  min-width: 0;
-}
-.app.outpost .library-build-card .library-build-identity h2 {
-  font-size: 15px;
-  line-height: 1.35;
-  margin: 0 0 6px;
-}
-.app.outpost .library-build-classification {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px 8px;
-  margin: 0 0 5px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-.app.outpost .library-build-classification > span:first-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-.app.outpost .library-build-classification .ecosystem-activity {
-  padding: 2px 5px;
-}
-.app.outpost .library-build-preview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: auto;
-}
-.app.outpost .library-build-card .library-build-equipment {
-  gap: 4px;
-}
-.app.outpost .library-build-card .library-build-equipment > span {
-  flex: 0 0 32px;
-}
-.app.outpost .library-build-card .library-build-equipment img {
-  max-width: 32px;
-}
-.app.outpost .library-build-card .ecosystem-card-spells {
-  gap: 4px;
-  min-height: 24px;
-}
-.app.outpost .library-build-card .ecosystem-card-spells img {
-  width: 23px;
-  height: 23px;
-}
-.app.outpost .library-build-card .ecosystem-no-spells {
-  max-width: 18ch;
-}
-.app.outpost .library-build-card .library-card-caption {
-  padding-top: 8px;
-}
-.app.outpost .library-build-card .library-card-caption > span:last-child {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 .app.outpost .ecosystem-library-page.view-list .ecosystem-card-main {
   display: grid;
   grid-template-columns: minmax(280px, 1.6fr) minmax(200px, 1fr) minmax(145px, 0.7fr);
   align-items: center;
   gap: 16px;
   padding-right: 52px;
-}
-.app.outpost .ecosystem-library-page.view-list .library-build-identity,
-.app.outpost .ecosystem-library-page.view-list .library-card-caption {
-  grid-row: 1;
-  grid-column: auto;
-}
-.app.outpost .ecosystem-library-page.view-list .library-build-preview {
-  margin-top: 0;
-}
-.app.outpost .ecosystem-library-page.view-list .library-card-caption {
-  align-items: flex-end !important;
-  gap: 8px;
 }
 @media (max-width: 1100px) and (min-width: 901px) {
   .app.outpost .ecosystem-library-page .ecosystem-filter-form {
@@ -1285,65 +1027,9 @@
   .app.outpost .ecosystem-library-page .ecosystem-build-grid {
     gap: 8px;
   }
-  .app.outpost .library-build-card > .ecosystem-card-main,
-  .app.outpost .ecosystem-library-page.view-list .ecosystem-card-main {
-    display: flex;
-    padding: 10px;
-    gap: 8px;
-  }
-  .app.outpost .library-build-card .library-build-identity {
-    gap: 10px;
-    padding-right: 28px;
-  }
-  .app.outpost .library-build-card .library-primary-weapon {
-    flex-basis: 48px;
-    width: 48px;
-    height: 48px;
-  }
-  .app.outpost .library-build-card .library-build-identity h2 {
-    font-size: 14px;
-    line-height: 1.3;
-    margin-bottom: 4px;
-  }
-  .app.outpost .library-build-classification {
-    gap: 4px 7px;
-    margin-bottom: 3px;
-  }
-  .app.outpost .library-build-card .library-build-equipment > span {
-    flex-basis: 27px;
-  }
-  .app.outpost .library-build-card .library-build-equipment img {
-    max-width: 27px;
-  }
-  .app.outpost .library-build-card .ecosystem-card-spells img {
-    width: 21px;
-    height: 21px;
-  }
-  .app.outpost .library-build-card .library-build-preview {
-    padding-right: 0;
-    min-height: 28px;
-  }
-  .app.outpost .library-build-card .library-build-preview .ecosystem-card-spells {
-    margin-right: auto;
-  }
-  .app.outpost .library-build-card .library-card-caption {
-    display: none;
-  }
-  .app.outpost .library-build-card .library-save-control {
-    top: 10px;
-    right: 10px;
-  }
-  .app.outpost .library-build-card .library-save-control .build-card-save {
-    width: 30px;
-    height: 30px;
-    min-height: 30px;
-  }
 }
 .app.outpost .ecosystem-library-page .builds-heading-copy {
   min-height: 0;
-}
-.library-mobile-date {
-  display: none;
 }
 @media (min-width: 901px) {
   .app.outpost .ecosystem-library-page .ecosystem-filter-rail {
@@ -1383,13 +1069,6 @@
   .app.outpost .ecosystem-library-page .builds-heading-copy h1 {
     max-width: calc(100% - 144px);
   }
-  .app.outpost .ecosystem-library-page .library-mobile-date {
-    display: inline;
-  }
-}
-.app.outpost .library-build-classification > span:first-child,
-.app.outpost .library-build-card .library-mobile-date {
-  color: var(--muted);
 }
 @media (min-width: 901px) {
   .app.outpost .collapsible-desktop .mobile-filter-trigger {
@@ -1421,4 +1100,212 @@
 .app.outpost .library-search-toolbar input::placeholder {
   color: var(--muted);
   opacity: 1;
+}
+
+/* Library build windows: bar, weapon + author + abilities beside the loadout board, a
+   caption line in. Three across; the list view stretches them to one per row. */
+.app.outpost .library-build-card.raised {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 12px 14px 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+  overflow: hidden;
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
+}
+.app.outpost .library-build-card.raised:hover {
+  transform: translateY(-3px);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised-hover);
+}
+.app.outpost .library-build-card .ecosystem-title-link {
+  min-width: 0;
+  flex: 1;
+}
+/* The window has its own ways in (title, caption); no stretched link over the heart */
+.app.outpost .library-build-card .ecosystem-title-link::after {
+  content: none;
+}
+.app.outpost .library-build-card .ecosystem-title-link:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.app.outpost .library-build-card .ecosystem-title-link h2 {
+  margin: 0;
+  overflow: hidden;
+  font: 800 17px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .library-build-card .ecosystem-title-link:hover h2 {
+  color: var(--accent-ink);
+}
+.app.outpost .library-build-card .landing-chips {
+  flex: none;
+}
+.app.outpost .library-build-card > .ecosystem-card-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 12px;
+  padding: 0;
+  background: none;
+}
+.app.outpost .library-build-card .library-build-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.app.outpost .library-primary-weapon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--well-border);
+  border-radius: 10px;
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .library-primary-weapon img {
+  width: 56px;
+  height: 56px;
+}
+.app.outpost .library-build-copy {
+  min-width: 0;
+}
+.app.outpost .library-build-classification {
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .library-build-copy > small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .library-mobile-date {
+  display: none;
+}
+.app.outpost .library-build-card .ecosystem-card-spells {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.app.outpost .library-build-card .ecosystem-card-spells > span {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--well-border);
+  border-radius: 50%;
+  background: var(--well);
+}
+.app.outpost .library-build-card .ecosystem-card-spells img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+.app.outpost .library-build-card .ecosystem-no-spells {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .library-build-card .library-build-identity {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 0 12px;
+  align-items: start;
+}
+.app.outpost .library-build-equipment {
+  display: none;
+  gap: 4px;
+}
+.app.outpost .library-build-equipment > span {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+}
+.app.outpost .library-build-equipment img {
+  width: 30px;
+  height: 30px;
+}
+.app.outpost .library-build-board {
+  display: grid;
+  place-items: start end;
+}
+.app.outpost .library-build-board .loadout-board.is-mini {
+  --cell: 38px;
+  --gap: 3px;
+}
+.app.outpost .library-build-board .loadout-board-cell,
+.app.outpost .library-build-board .loadout-board-slot.is-empty .loadout-board-cell {
+  border-color: var(--well-border);
+  background: var(--well);
+}
+.app.outpost .library-card-description {
+  grid-column: 1 / -1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.app.outpost .ecosystem-library-page.view-list .library-build-card > .ecosystem-card-main {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.app.outpost .ecosystem-library-page.view-list .library-build-card .library-build-identity {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+@media (max-width: 700px) {
+  .app.outpost .library-build-card.raised {
+    gap: 8px;
+    padding: 10px 12px 0;
+  }
+  .app.outpost .library-build-card > .ecosystem-card-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .library-build-board,
+  .app.outpost .library-build-card .ecosystem-card-spells,
+  .app.outpost .library-card-description {
+    display: none;
+  }
+  .app.outpost .library-build-equipment {
+    display: flex;
+    grid-column: 1 / -1;
+  }
+  .app.outpost .library-build-card .library-build-identity {
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+  }
+  .app.outpost .library-primary-weapon {
+    width: 48px;
+    height: 48px;
+  }
+  .app.outpost .library-primary-weapon img {
+    width: 42px;
+    height: 42px;
+  }
+  .app.outpost .library-card-caption {
+    margin-inline: -12px;
+    padding: 8px 12px;
+  }
+  .app.outpost .library-mobile-date {
+    display: inline;
+  }
 }

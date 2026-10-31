@@ -91,7 +91,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           visibility: build.visibility,
         }}
       />
-      <details className="detail-disclosure detail-secondary-notes" id="build-notes">
+      <details className="raised detail-disclosure detail-secondary-notes" id="build-notes">
         <summary>
           <span>Strategy & version notes</span>
           <small>From the author</small>

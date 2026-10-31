@@ -388,10 +388,6 @@
 .app.outpost .library-comp-members > section {
   min-width: 0;
 }
-.app.outpost .library-member-label {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }
@@ -399,10 +395,6 @@
   min-height: 24px;
 }
 
-.app.outpost .ecosystem-build-card :is(.library-build-equipment > span, .strip-slot) {
-  position: relative;
-  z-index: 2;
-}
 .app.outpost .build-share-control {
   position: relative;
 }

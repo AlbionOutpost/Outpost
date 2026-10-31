@@ -33,7 +33,7 @@ export function PreviewShell({
   children: ReactNode;
 }) {
   return (
-    <article className="landing-card" data-scene={scene} aria-labelledby={id}>
+    <article className="raised has-scene landing-card" data-scene={scene} aria-labelledby={id}>
       <div className="landing-card-head">
         {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
         <img

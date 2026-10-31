@@ -441,51 +441,6 @@
   width: 20px;
   color: var(--accent);
 }
-/* Market: task rail, dominant comparison table, contextual selected-item summary. */
-.reference-market-layout {
-  display: grid;
-  grid-template-columns: 184px minmax(0, 1fr);
-  gap: 24px;
-}
-.reference-market-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-right: 1px solid var(--border);
-  padding-right: 16px;
-}
-.reference-market-rail .eyebrow {
-  margin-block: 4px 12px;
-}
-.reference-market-rail > :is(a, p) {
-  font-size: 13px;
-}
-.reference-market-rail > a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 8px;
-  border-radius: 6px;
-  color: var(--muted);
-}
-.reference-market-rail > a:hover {
-  background: var(--elevated);
-  color: var(--text);
-}
-.reference-market-rail > a[aria-current="page"] {
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  border: 1px solid var(--border);
-}
-.reference-market-rail p {
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 24px 8px;
-}
-.reference-rail-divider {
-  border-top: 1px solid var(--border);
-  margin-block: 12px;
-}
 .market-explorer-page {
   min-width: 0;
 }
@@ -776,9 +731,6 @@
   background: var(--accent);
   color: #15100c;
 }
-.app.outpost .production-mode-nav {
-  margin-bottom: 16px;
-}
 /* Equipment and parties retain separate editing models and real item art. */
 .app.outpost .build-command-bar {
   padding: 20px;
@@ -858,10 +810,6 @@
   }
   .app.outpost .site-header .search-trigger {
   }
-  .reference-market-layout {
-    grid-template-columns: 156px minmax(0, 1fr);
-    gap: 16px;
-  }
   .app.outpost .market-workspace,
   .app.outpost .market-workspace.is-setup {
     grid-template-columns: minmax(0, 1fr) 240px;
@@ -872,12 +820,6 @@
 }
 @media (max-width: 1099px) {
   .app.outpost .desktop-navigation {
-    display: none;
-  }
-  .reference-market-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .reference-market-rail {
     display: none;
   }
   .app.outpost .gear-studio.build-gear-studio {
@@ -1409,16 +1351,6 @@
 .app.outpost .item-reference-page {
   max-width: 1100px;
   margin-inline: auto;
-}
-.app.outpost .item-reference-summary {
-  padding-bottom: 24px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-.app.outpost .item-data-notice {
-  background: var(--accent-wash);
-  border-color: var(--border);
-  color: var(--muted);
 }
 .app.outpost .item-ability-group {
   border-color: var(--border);

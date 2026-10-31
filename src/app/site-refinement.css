@@ -30,26 +30,9 @@
 .app.outpost :is(input, textarea) {
   caret-color: var(--accent-ink);
 }
-.app.outpost
-  :is(
-    .panel,
-    .directory-entry,
-    .library-comp-card,
-    .grind-guide-card,
-    .tool-workspace,
-    .market-query-panel,
-    .market-board,
-    .market-item-panel,
-    .reference-market-history
-  ) {
-  border-radius: var(--radius-panel);
-}
 .app.outpost :is(.panel, .market-query-panel, .market-board, .market-item-panel) {
   background: var(--panel);
   box-shadow: 0 8px 24px #00000012;
-}
-.app.outpost :is(.panel, .directory-entry, .library-comp-card, .grind-guide-card) {
-  overflow-wrap: anywhere;
 }
 .app.outpost .panel > :first-child {
   margin-top: 0;
@@ -64,42 +47,6 @@
 }
 .app.outpost :is(.task-state, .product-empty, .empty-state) .button + :is(.button, .text-link) {
   margin-left: 8px;
-}
-.app.outpost :is(.product-page-heading, .workspace-identity) {
-  margin-bottom: 24px;
-}
-.app.outpost .workspace-identity {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--border);
-}
-.app.outpost .workspace-identity h1 {
-  margin: 0 0 5px;
-  font: 750 clamp(26px, 2.4vw, 34px)/1.15 var(--font-ui);
-  letter-spacing: -0.035em;
-}
-.app.outpost .workspace-identity p {
-  color: var(--muted);
-  margin: 0;
-  max-width: 78ch;
-  line-height: 1.65;
-}
-.app.outpost .workspace-emblem {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 56px;
-  flex: 0 0 auto;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-}
-.app.outpost .workspace-emblem svg {
-  width: 26px;
-  height: 26px;
 }
 .app.outpost .workspace-tabs {
   display: flex;
@@ -193,35 +140,9 @@
     padding: 28px 16px 20px;
   }
 }
-.app.outpost .guide-discovery-page > .workspace-identity {
-  margin-bottom: 16px;
-}
-.app.outpost .directory-entry {
-  box-shadow: none;
-  transition:
-    border-color 150ms,
-    background-color 150ms;
-}
-.app.outpost .directory-entry:hover {
-  background: var(--elevated);
-}
-.app.outpost .directory-group {
-  padding-bottom: 16px;
-}
 .app.outpost .directory-start {
   border-radius: 12px;
   padding: 20px 24px;
-}
-.app.outpost
-  :is(
-    .guide-feature-story,
-    .grind-guide-card,
-    .item-detail-panel,
-    .item-catalog-panel,
-    .account-section,
-    .timer-group
-  ) {
-  border-radius: 12px;
 }
 /* Sign-in is a single deliberate destination, including failure and guest paths. */
 .app.outpost #main-content[data-page="signin"] {
@@ -379,27 +300,6 @@
 .app.outpost .signin-legal a {
   color: var(--muted);
 }
-/* Markets: controls, selected identity, observed orders and research form one workspace. */
-.app.outpost .reference-market-layout {
-  grid-template-columns: 184px minmax(0, 1fr);
-  gap: 24px;
-}
-.app.outpost .reference-market-rail {
-  padding-right: 16px;
-  gap: 5px;
-}
-.app.outpost .reference-market-rail > a {
-  min-height: 40px;
-  font-size: 12px;
-  padding: 10px;
-}
-.app.outpost .reference-market-rail > p {
-  font-size: 12px;
-  line-height: 1.8;
-}
-.app.outpost .market-explorer-page > .workspace-identity {
-  margin-bottom: 20px;
-}
 .app.outpost .market-query-panel {
   padding: 16px;
 }
@@ -541,9 +441,6 @@
   flex-wrap: wrap;
   gap: 14px;
   padding: 16px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 12px;
 }
 .app.outpost .combat-toolbar > label {
   font-size: 12px;
@@ -729,10 +626,6 @@
   border-radius: 6px;
 }
 @media (max-width: 1100px) {
-  .app.outpost .reference-market-layout {
-    grid-template-columns: 156px minmax(0, 1fr);
-    gap: 18px;
-  }
   .app.outpost .market-workspace.is-setup {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -761,49 +654,6 @@
   }
 }
 @media (max-width: 780px) {
-  .app.outpost .reference-market-layout {
-    display: block;
-  }
-  .app.outpost .reference-market-rail {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 0 0 14px;
-    margin-bottom: 18px;
-    gap: 6px;
-  }
-  .app.outpost .reference-market-rail > :is(.eyebrow, p, .reference-rail-divider) {
-    display: none;
-  }
-  .app.outpost .reference-market-rail > a:nth-of-type(n + 5) {
-    display: none;
-  }
-  .app.outpost .reference-market-rail > a {
-    font-size: 11px;
-    padding: 8px;
-    min-height: 36px;
-  }
-  .app.outpost .reference-market-rail svg {
-    width: 15px;
-    height: 15px;
-  }
-  .app.outpost .workspace-identity {
-    gap: 12px;
-    padding-bottom: 16px;
-    margin-bottom: 16px;
-  }
-  .app.outpost .workspace-emblem {
-    width: 42px;
-    height: 46px;
-  }
-  .app.outpost .workspace-identity h1 {
-    font-size: 26px;
-  }
-  .app.outpost .workspace-identity p {
-    font-size: 13px;
-  }
   .app.outpost .signin-page {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -913,20 +763,7 @@
     text-align: center;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .app.outpost .directory-entry {
-    transition: none;
-  }
-}
 
-.app.outpost .workspace-identity {
-  justify-content: flex-start;
-}
-.app.outpost .workspace-identity > div:not(.workspace-identity-actions) {
-  flex: 1;
-  min-width: 0;
-  text-align: left;
-}
 .app.outpost .signin-panel .discord-signin-control > .button {
   width: 100%;
   min-height: 48px;
@@ -943,14 +780,6 @@
   }
 }
 
-.app.outpost .workspace-identity {
-  position: static;
-  padding: 0 0 22px;
-  min-height: 0;
-  height: auto;
-  background: transparent;
-  box-shadow: none;
-}
 .app.outpost
   :is(
     .account-settings-navigation,
@@ -991,9 +820,6 @@
   .app.outpost .account-settings-content > .panel {
     padding: 18px;
   }
-  .app.outpost .workspace-identity {
-    padding-bottom: 16px;
-  }
 }
 /* One header geometry across home, content, account and workspace routes. */
 .app.outpost .main > header.site-header {
@@ -1010,9 +836,6 @@
   }
 }
 @media (max-width: 1100px) {
-  .app.outpost .reference-market-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .app.outpost .market-workspace.is-setup,
   .app.outpost .market-workspace.has-results {
     grid-template-columns: minmax(0, 1fr);
@@ -1025,125 +848,6 @@
   gap: 10px;
 }
 
-/* Illustrated mastheads: a painted scene behind the page title, faded into the page so the
-   title keeps ≥4.5:1 contrast. Working panels below never get background art. */
-.app.outpost .workspace-identity[data-scene] {
-  position: relative;
-  padding: clamp(22px, 3vw, 34px) clamp(18px, 2.4vw, 28px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background-color: var(--panel);
-  background-image:
-    linear-gradient(
-      90deg,
-      var(--panel) 34%,
-      color-mix(in srgb, var(--panel) 88%, transparent) 58%,
-      color-mix(in srgb, var(--panel) 34%, transparent) 100%
-    ),
-    var(--scene);
-  background-size: auto, cover;
-  background-position:
-    center,
-    right 40%;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-.app.outpost .workspace-identity[data-scene="market"] {
-  --scene: url("/albion/illustrations/market-v1.webp");
-}
-.app.outpost .workspace-identity[data-scene="economy"] {
-  --scene: url("/albion/illustrations/hero-v1.webp");
-  background-position:
-    center,
-    right 56%;
-}
-.app.outpost .workspace-identity[data-scene="builds"] {
-  --scene: url("/albion/illustrations/build-v1.webp");
-}
-.app.outpost .workspace-identity[data-scene="comps"] {
-  --scene: url("/albion/illustrations/composition-v1.webp");
-}
-.app.outpost .workspace-identity[data-scene="guides"],
-.app.outpost .workspace-identity[data-scene="roads"] {
-  --scene: url("/albion/illustrations/city-overlook-v2.webp");
-  background-position:
-    center,
-    right 30%;
-}
-.app.outpost .workspace-identity[data-scene] .workspace-emblem {
-  background: color-mix(in srgb, var(--accent-wash) 70%, var(--panel));
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-}
-.app.outpost .workspace-identity-copy {
-  min-width: 0;
-  flex: 1;
-}
-.app.outpost .workspace-identity-actions {
-  position: relative;
-  display: flex;
-  gap: 8px;
-  align-self: center;
-  margin-left: auto;
-}
-@media (max-width: 700px) {
-  .app.outpost .workspace-identity:has(.workspace-identity-actions) {
-    flex-wrap: wrap;
-  }
-  .app.outpost .workspace-identity-actions {
-    flex: 0 0 100%;
-    width: 100%;
-    margin: 2px 0 0;
-  }
-  .app.outpost .workspace-identity-actions > .button {
-    min-height: 40px;
-    padding-block: 8px;
-  }
-  .app.outpost .workspace-identity[data-scene] {
-    padding: 16px;
-    gap: 12px;
-  }
-  .app.outpost .workspace-identity-actions > .button {
-    width: 100%;
-  }
-}
-.app.outpost.light .workspace-identity[data-scene] {
-  background-image:
-    linear-gradient(
-      90deg,
-      var(--panel) 40%,
-      color-mix(in srgb, var(--panel) 90%, transparent) 62%,
-      color-mix(in srgb, var(--panel) 45%, transparent) 100%
-    ),
-    var(--scene);
-}
-@media (max-width: 700px) {
-  .app.outpost .workspace-identity[data-scene] {
-    background-image:
-      linear-gradient(180deg, color-mix(in srgb, var(--panel) 82%, transparent), var(--panel) 72%),
-      var(--scene);
-    background-position:
-      center,
-      center 30%;
-  }
-  /* 800px-wide variants (30–60 KB) for phones; the desktop scenes are 100–180 KB. */
-  .app.outpost .workspace-identity[data-scene="market"] {
-    --scene: url("/albion/illustrations/market-v1-phone.webp");
-  }
-  .app.outpost .workspace-identity[data-scene="economy"] {
-    --scene: url("/albion/illustrations/hero-v1-phone.webp");
-  }
-  .app.outpost .workspace-identity[data-scene="builds"] {
-    --scene: url("/albion/illustrations/build-v1-phone.webp");
-  }
-  .app.outpost .workspace-identity[data-scene="comps"] {
-    --scene: url("/albion/illustrations/composition-v1-phone.webp");
-  }
-  .app.outpost .workspace-identity[data-scene="guides"],
-  .app.outpost .workspace-identity[data-scene="roads"] {
-    --scene: url("/albion/illustrations/city-overlook-v2-phone.webp");
-  }
-}
-
 /* Other scenic surfaces also take the 800px variants on phones. */
 @media (max-width: 700px) {
   .app.outpost .builds-ecosystem .builds-ecosystem-header {
@@ -1153,16 +857,6 @@
         var(--bg) 36%,
         color-mix(in srgb, var(--bg) 84%, transparent) 64%,
         color-mix(in srgb, var(--bg) 32%, transparent)
-      ),
-      url("/albion/illustrations/build-v1-phone.webp");
-  }
-  .app.outpost:not(.light) .detail-hero {
-    background-image:
-      linear-gradient(
-        90deg,
-        var(--bg) 35%,
-        color-mix(in srgb, var(--bg) 95%, transparent) 54%,
-        color-mix(in srgb, var(--bg) 52%, transparent)
       ),
       url("/albion/illustrations/build-v1-phone.webp");
   }

@@ -19,6 +19,7 @@ export default async function Settings({
   return (
     <div className="support-settings">
       <WorkspaceHeading
+        scene="guides"
         title="Account settings"
         description="Manage your profile, preferred server and account data."
         icon="account"

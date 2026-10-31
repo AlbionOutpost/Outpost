@@ -96,11 +96,6 @@
   gap: 8px;
   max-width: 430px;
 }
-.detail-header-actions .library-save-control {
-  position: relative;
-  inset: auto;
-  display: inline-flex;
-}
 .app.outpost .detail-header-actions .library-device-save {
   position: static;
   inset: auto;
@@ -635,10 +630,6 @@
   border-radius: 4px;
   background: var(--bg) !important;
 }
-.app.outpost .detail-recommendations .library-build-traits {
-  margin: 0;
-  height: 100%;
-}
 .app.outpost .detail-recommendations .library-trait-grid {
   grid-template-columns: 1fr;
   gap: 8px;
@@ -738,9 +729,6 @@
   font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
-}
-.detail-notes-grid .library-build-videos {
-  margin: 0;
 }
 .detail-discussion-panel {
   margin: 16px 0;
@@ -899,10 +887,6 @@
     width: 17px;
     height: 17px;
   }
-  .detail-header-actions > .button,
-  .detail-header-actions > .library-save-control {
-    flex: 1;
-  }
   .app.outpost .detail-header-actions .library-device-save {
     width: 100%;
     justify-content: center;
@@ -946,9 +930,6 @@
   }
   .detail-header-actions .library-device-save > span {
     display: none;
-  }
-  .detail-header-actions > .library-save-control {
-    flex: none;
   }
   .app.outpost .detail-header-actions .build-share-control summary {
     font-size: 12px;
@@ -1115,11 +1096,6 @@
 .app.outpost .detail-recommendations .library-trait-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.app.outpost .detail-recommendations .library-build-traits {
-  border: 0;
-  padding: 0;
-  background: none;
-}
 .detail-disclosure-content .detail-notes-grid {
   margin: 0;
 }
@@ -1193,4 +1169,103 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 12px;
+}
+
+/* The build's masthead on the shared band: breadcrumb, tags, weapon + title, author line */
+.app.outpost .detail-hero.masthead {
+  display: block;
+  padding-bottom: 40px;
+  border-bottom: 0;
+  background: none;
+}
+.app.outpost .detail-hero.masthead .detail-breadcrumb {
+  color: #cfc8bf;
+}
+.app.outpost .detail-hero.masthead .detail-breadcrumb a:hover {
+  color: #fff;
+}
+.app.outpost .detail-hero.masthead .detail-hero-tags > span {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #0f1116a6;
+  border-color: #ffffff1f;
+  color: #e9e4dc;
+  font-weight: 600;
+}
+.app.outpost .detail-hero.masthead .detail-hero-tags > .detail-activity-badge {
+  background: color-mix(in srgb, var(--accent) 22%, #0f1116c0);
+  border-color: color-mix(in srgb, var(--accent) 70%, #ffffff1f);
+  color: #fff;
+}
+.app.outpost .detail-hero.masthead .detail-title-row .page-title {
+  font: 800 clamp(32px, 3.4vw, 48px) / 1 var(--font-display);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 14px #0008;
+}
+.app.outpost .detail-hero.masthead .detail-title-row img {
+  width: 56px;
+  height: 56px;
+  filter: drop-shadow(0 6px 14px #000c);
+}
+.app.outpost .detail-hero.masthead .detail-hero-description {
+  color: #ddd8d0;
+}
+.app.outpost .detail-hero.masthead .detail-author-line {
+  color: #cfc8bf;
+}
+.app.outpost .detail-hero.masthead .detail-author-line a:hover {
+  color: #fff;
+}
+.app.outpost.light
+  .detail-hero.masthead
+  :is(.detail-breadcrumb, .detail-hero-description, .detail-author-line) {
+  color: var(--muted);
+}
+.app.outpost.light .detail-hero.masthead .detail-hero-tags > span {
+  background: #ffffffcc;
+  border-color: #00000018;
+  color: var(--text);
+}
+.app.outpost .detail-section-navigation {
+  gap: 6px;
+  padding: 10px 0;
+  background: color-mix(in srgb, var(--canvas-top) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--well-border);
+}
+.app.outpost .detail-section-navigation > a {
+  min-height: 34px;
+  padding: 7px 13px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font-weight: 600;
+}
+.app.outpost .detail-section-navigation > a:hover,
+.app.outpost .detail-section-navigation > a:focus-visible {
+  color: var(--text);
+  border-color: #ffffff30;
+  background: var(--well);
+}
+.app.outpost .detail-section-navigation > a[aria-current="location"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  border-bottom-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 22%, var(--well));
+  color: #fff;
+}
+.app.outpost.light .detail-section-navigation {
+  background: color-mix(in srgb, var(--canvas-mid) 90%, transparent);
+}
+.app.outpost.light .detail-section-navigation > a[aria-current="location"] {
+  background: color-mix(in srgb, var(--accent) 10%, #fff);
+  color: var(--accent-ink);
+}
+.app.outpost .detail-disclosure.raised,
+.app.outpost .detail-build-context.raised,
+.app.outpost .detail-inventory-panel.raised,
+.app.outpost .detail-summary-panel.raised {
+  border: 0;
+  background: var(--surface-raised);
 }

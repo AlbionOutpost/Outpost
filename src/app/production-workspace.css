@@ -249,28 +249,6 @@
 .production-calculator-page > .intro {
   max-width: none;
 }
-.production-mode-nav {
-  display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 18px;
-}
-.production-mode-nav a {
-  padding: 12px 18px;
-  font: 600 14px/1.4 var(--font-ui);
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  transition:
-    color 160ms,
-    border-color 160ms;
-}
-.production-mode-nav a[aria-current="page"] {
-  color: var(--text);
-  border-bottom-color: var(--brand-accent);
-}
-.production-mode-nav a:hover {
-  color: var(--text);
-}
 .production-mobile-summary {
   display: none;
 }
@@ -294,11 +272,6 @@
     grid-row: 1 / 3;
     align-self: center;
     color: var(--accent);
-  }
-  .production-mode-nav a {
-    flex: 1;
-    text-align: center;
-    padding-inline: 8px;
   }
 }
 /* Production rules from workspace.css, preserving source order and conditions. */
@@ -332,9 +305,6 @@
 @media (max-width: 780px) {
   .production-calculator-page > .intro {
     font-size: 13px;
-    margin-bottom: 14px;
-  }
-  .production-mode-nav {
     margin-bottom: 14px;
   }
   .production-workspace .calculator-inputs > .panel {
