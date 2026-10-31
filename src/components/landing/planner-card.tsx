@@ -95,14 +95,14 @@ export function PlannerCard({ plan, city }: { plan: PlanLine[]; city: string }) 
               <ItemIcon id={l.itemId} size={44} />
               <span className="tool-queue-name">
                 <strong>{readable(l.itemId)}</strong>
-                <small>
+                <small title={unit(l.i) == null ? `No ${city} sell order right now` : undefined}>
                   {l.slot} ·{" "}
                   {unit(l.i) != null ? (
                     <>
                       <Silver value={unit(l.i)} /> ea
                     </>
                   ) : (
-                    `no ${city} listing`
+                    "no listing"
                   )}
                 </small>
               </span>

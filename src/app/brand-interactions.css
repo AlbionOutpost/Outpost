@@ -157,55 +157,6 @@
   background: var(--panel);
   color: var(--text);
 }
-.app.outpost .site-header .theme-toggle {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 64px;
-  min-width: 64px;
-  height: 38px;
-  min-height: 38px;
-  padding: 4px;
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--bg);
-  isolation: isolate;
-}
-.app.outpost .theme-toggle::before {
-  content: "";
-  position: absolute;
-  width: 27px;
-  height: 27px;
-  border-radius: 50%;
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  top: 4px;
-  left: 4px;
-  transform: translateX(27px);
-  transition: transform 240ms var(--interaction-ease);
-  z-index: -1;
-}
-.app.outpost .theme-toggle[aria-pressed="true"]::before {
-  transform: translateX(0);
-}
-.app.outpost .theme-choice {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  color: var(--muted);
-}
-.app.outpost .theme-toggle[aria-pressed="true"] .theme-sun,
-.app.outpost .theme-toggle[aria-pressed="false"] .theme-moon {
-  color: var(--accent-ink);
-}
-.app.outpost .theme-choice svg {
-  transition: transform 220ms var(--interaction-ease);
-}
-.app.outpost .theme-toggle:hover .theme-choice svg {
-  transform: rotate(-12deg);
-}
 .app.outpost .discord-login {
   display: inline-flex;
   align-items: center;
@@ -541,27 +492,6 @@
     font-size: 11px;
     max-width: 100px;
   }
-  .app.outpost .site-header .theme-toggle {
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
-    min-height: 36px;
-    padding: 4px;
-  }
-  .app.outpost .theme-toggle::before {
-    width: 26px;
-    height: 26px;
-    top: 4px;
-    left: 4px;
-    transform: none;
-  }
-  .app.outpost .theme-choice {
-    display: none;
-  }
-  .app.outpost .theme-toggle[aria-pressed="false"] .theme-moon,
-  .app.outpost .theme-toggle[aria-pressed="true"] .theme-sun {
-    display: grid;
-  }
   .app.outpost .featured-tool {
     grid-template-columns: 48px minmax(0, 1fr);
     gap: 6px 10px;
@@ -587,9 +517,6 @@
   }
 }
 @media (max-width: 360px) {
-  .app.outpost .site-header .theme-toggle {
-    display: none;
-  }
   .app.outpost .featured-tool {
     grid-template-columns: 40px minmax(0, 1fr);
     gap: 6px 9px;

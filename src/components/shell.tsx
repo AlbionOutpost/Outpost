@@ -1,6 +1,8 @@
 "use client";
 import Link from "@/components/link";
 import { useState, useRef, useEffect } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
+import { flushSync } from "react-dom";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Menu, X, Sun, Moon, ChevronDown, ArrowUpRight, Grid2X2 } from "lucide-react";
 import { DiscordMark } from "./discord-mark";
@@ -9,6 +11,7 @@ import { ToolIcon } from "./tool-icon";
 import { tools } from "@/lib/tool-directory";
 import { GlobalSearch } from "./global-search";
 import { Wordmark } from "./wordmark";
+import { PointerGlow } from "./pointer-glow";
 import { RegionContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
@@ -127,10 +130,33 @@ export function Shell({
     document.addEventListener("pointerdown", dismiss);
     return () => document.removeEventListener("pointerdown", dismiss);
   }, []);
-  const toggleTheme = () => {
+  // The new theme washes over the page as a circle growing from the switch that was pressed;
+  // without view transitions or with reduced motion it simply changes.
+  const toggleTheme = (event?: ReactMouseEvent<HTMLElement>) => {
     const next = !light;
-    setLight(next);
-    document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+    const commit = () => {
+      flushSync(() => setLight(next));
+      document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+    };
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still || typeof document.startViewTransition !== "function") return commit();
+    const box = event?.currentTarget.getBoundingClientRect();
+    const x = box ? box.left + box.width / 2 : innerWidth / 2;
+    const y = box ? box.top + box.height / 2 : 0;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const transition = document.startViewTransition(commit);
+    transition.ready
+      .then(() =>
+        document.documentElement.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          {
+            duration: 720,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            pseudoElement: "::view-transition-new(root)",
+          },
+        ),
+      )
+      .catch(() => {});
   };
   const navigate = () => {
     setOpen(false);
@@ -236,6 +262,7 @@ export function Shell({
         <a className="skip-link" href="#main-content">
           Skip to content
         </a>
+        <PointerGlow />
         {open && (
           <button
             className="drawer-backdrop"
@@ -360,16 +387,24 @@ export function Shell({
               <button
                 type="button"
                 className="theme-toggle theme-switch"
+                data-mode={light ? "light" : "dark"}
                 aria-label="Toggle theme"
                 aria-pressed={light}
                 title={light ? "Switch to dark mode" : "Switch to light mode"}
                 onClick={toggleTheme}
               >
-                <span className={`theme-switch-option${light ? " is-on" : ""}`} aria-hidden="true">
-                  <Sun size={16} />
+                <span className="theme-switch-thumb" aria-hidden="true" />
+                <span
+                  className={`theme-switch-option is-sun${light ? " is-on" : ""}`}
+                  aria-hidden="true"
+                >
+                  <Sun size={17} strokeWidth={2.2} />
                 </span>
-                <span className={`theme-switch-option${light ? "" : " is-on"}`} aria-hidden="true">
-                  <Moon size={16} />
+                <span
+                  className={`theme-switch-option is-moon${light ? "" : " is-on"}`}
+                  aria-hidden="true"
+                >
+                  <Moon size={16} strokeWidth={2.2} />
                 </span>
               </button>
               {!authenticated ? (

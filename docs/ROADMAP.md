@@ -24,6 +24,15 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — canvas, motion and landing polish (31 Oct)
+
+- One smooth canvas under every page (eased warm light from the top, night base over the full height, grain against banding); the landing spans the window at any width.
+- Motion pass: expo/spring tokens, cards grow with an ember light that follows the pointer, guide covers grow with a slow inner zoom, hero settle/rise and dealt windows, scroll-driven section reveals (transforms and clip paths only), circular theme reveal from the switch.
+- Top kills: participants open inside their own card with a height animation and staggered rows; scene art no longer stretches when a card grows.
+- Landing tool cards: tables keep to their well at every width (single grid track, flexible name column, coins dropped in narrow cards), material names wrap, shorter planner/craft copy; windows show every row instead of fading out.
+- "Why choose Outpost?" and the closing band replaced by builds by activity (real counts, weapons and most-liked build) and a Free / Supporter plans band.
+- Header: region globes from Natural Earth outlines; roomy theme switch with a sticky thumb (legacy 64px toggle rules removed); AdSense loader on every page and `/ads.txt`.
+
 ## Shipped — Supporter plan, advertising placements and page map (31 Oct)
 
 - **Supporter** (`/supporter`; `/premium` redirects): a monthly Stripe subscription that removes advertising and unlocks running a Team. Plan columns on `User`, Stripe REST client without the SDK (`src/lib/billing/stripe.ts`), checkout and portal routes, a signature-verified webhook that re-reads the subscription before writing, gates in `src/lib/billing/gate.ts` (create a workspace; manage one — the owner's plan), settings billing section, honest states while billing is off. Switch-on steps in OPERATIONS.

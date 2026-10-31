@@ -2,7 +2,8 @@
 .app.outpost {
   --motion-ease: ease-out;
   --motion-control-time: 160ms;
-  --motion-card-time: 160ms;
+  --motion-card-time: 300ms;
+  --motion-card-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (prefers-reduced-motion: no-preference) {
   :root .app.outpost[data-motion-enabled] :is(button:disabled, .button[aria-disabled="true"]) {
@@ -138,8 +139,9 @@
     ) {
     transform: none;
     transition:
-      transform var(--motion-card-time) var(--motion-ease),
-      border-color 180ms ease-out;
+      transform var(--motion-card-time) var(--motion-card-ease),
+      border-color 180ms ease-out,
+      box-shadow var(--motion-card-time) var(--motion-card-ease);
     transform-origin: center;
     position: relative;
   }
@@ -153,7 +155,7 @@
       .guide-discovery-card,
       .guild-discovery-card
     ):hover {
-    transform: scale(1.018);
+    transform: scale(1.022);
     z-index: 2;
     border-color: var(--muted);
   }

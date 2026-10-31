@@ -168,10 +168,33 @@
 .region-picker-panel [role="option"][aria-selected="true"] .region-option-text small {
   color: color-mix(in srgb, var(--accent-ink) 75%, var(--muted));
 }
+/* Region globes: ember land on a night sea, a faint graticule, light from the upper left */
 .region-mark {
-  --region-sea: color-mix(in srgb, var(--bg) 70%, var(--panel));
+  --region-sea: #111621;
   color: var(--accent-ink);
   flex-shrink: 0;
+  overflow: visible;
+}
+.region-mark-sea {
+  fill: var(--region-sea);
+}
+.region-mark-grid {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.22;
+  stroke-width: 0.4;
+}
+.region-mark-land {
+  fill: currentColor;
+}
+.region-mark-rim {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.6;
+  stroke-width: 0.9;
+}
+.app.outpost.light .region-mark {
+  --region-sea: #e4ddd3;
 }
 .region-picker-trigger .region-mark {
   color: var(--accent-ink);
@@ -346,4 +369,20 @@
   border-color: transparent;
   border-bottom-width: 0;
   box-shadow: none;
+}
+/* A new region turns its globe into view */
+@media (prefers-reduced-motion: no-preference) {
+  .region-picker-trigger .region-mark {
+    animation: region-arrive 620ms var(--ease-spring, ease-out) both;
+  }
+}
+@keyframes region-arrive {
+  from {
+    rotate: -60deg;
+    scale: 0.55;
+  }
+  to {
+    rotate: 0deg;
+    scale: 1;
+  }
 }
