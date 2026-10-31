@@ -102,20 +102,6 @@ export default async function Home({
     <div className="home-landing">
       <LandingReveal />
       <section className="landing-hero" aria-labelledby="home-title">
-        <picture className="landing-hero-art" aria-hidden="true">
-          <source
-            media="(max-width: 700px)"
-            srcSet="/albion/illustrations/city-overlook-v2-phone.webp"
-          />
-          <img
-            src="/albion/illustrations/city-overlook-v2.webp"
-            alt=""
-            width={1800}
-            height={772}
-            fetchPriority="high"
-            decoding="async"
-          />
-        </picture>
         <div className="landing-wrap landing-hero-inner">
           <div className="landing-hero-copy">
             <p className="landing-eyebrow">Independent Albion Online tools</p>
@@ -157,22 +143,6 @@ export default async function Home({
           suffix={suffix}
         />
       </div>
-
-      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
-        <div className="section-heading landing-section-heading">
-          <h2 id="home-activities-title">
-            A build for <em>every</em> activity.
-          </h2>
-          <p>
-            Pick what you are about to do and start from the five builds players like most for it,
-            ranked by likes.
-          </p>
-          <Link className="pill-link" href={`/builds/library${suffix}`}>
-            Build library <ArrowRight size={15} />
-          </Link>
-        </div>
-        <ActivityGrid activities={activities} suffix={suffix} />
-      </section>
 
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="section-heading landing-section-heading">
@@ -233,6 +203,22 @@ export default async function Home({
         </div>
       </section>
 
+      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
+        <div className="section-heading landing-section-heading">
+          <h2 id="home-activities-title">
+            A build for <em>every</em> activity.
+          </h2>
+          <p>
+            Pick what you are about to do and start from the five builds players like most for it,
+            ranked by likes.
+          </p>
+          <Link className="pill-link" href={`/builds/library${suffix}`}>
+            Build library <ArrowRight size={15} />
+          </Link>
+        </div>
+        <ActivityGrid activities={activities} suffix={suffix} />
+      </section>
+
       <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
 
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
@@ -256,17 +242,6 @@ export default async function Home({
       </div>
 
       <section className="landing-plans" aria-labelledby="home-plans-title">
-        <picture className="landing-plans-art" aria-hidden="true">
-          <source media="(max-width: 700px)" srcSet="/albion/illustrations/market-v1-phone.webp" />
-          <img
-            src="/albion/illustrations/market-v1.webp"
-            alt=""
-            width={900}
-            height={507}
-            loading="lazy"
-            decoding="async"
-          />
-        </picture>
         <div className="landing-wrap landing-plans-inner">
           <div className="section-heading landing-section-heading">
             <h2 id="home-plans-title">

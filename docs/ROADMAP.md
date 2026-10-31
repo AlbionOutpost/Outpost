@@ -24,6 +24,14 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — backdrop, inventory light mode and sign-in fix (31 Oct)
+
+- Discord sign-in works again: Discord now sends `iss` on the callback and the provider names its issuer.
+- Like counts written to the production library; the build library lists the 1,382 builds from 2026 with likes and the landing counts match.
+- One castle painting fixed behind every page; hero and mastheads sit on it, so sections never meet at a seam.
+- Light mode uses Albion's inventory colours (parchment and leather); framed cards keep their own paintings in both themes.
+- Activity cards back to fanned weapons with the most liked build, after the tools; plans centred; Rootbound Staff reads as support.
+
 ## Shipped — framed cards, library scope and sign-in diagnostics (31 Oct)
 
 - MMO-style card frame (ember double line, cut corners, gems) on every card that leads somewhere; hairline-edged raised surfaces; paintings blurred more and fitted per card; no figure behind loadout boards.

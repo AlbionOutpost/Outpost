@@ -367,6 +367,7 @@ export function Shell({
           </aside>
         )}
         <div className="main" inert={open ? true : undefined} aria-hidden={open ? true : undefined}>
+          <div className="site-backdrop" aria-hidden="true" />
           <header
             className="site-header"
             ref={header}
