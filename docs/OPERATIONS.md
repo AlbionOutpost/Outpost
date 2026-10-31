@@ -101,14 +101,15 @@ Switch-on order: set the client id variable → deploy → confirm the site in A
 
 ## Free-tier budgets
 
-| Budget             | Limit / setting                                                                          |
-| ------------------ | ---------------------------------------------------------------------------------------- |
-| Worker bundle      | 3 MiB gzip each (web ≈2.31 MiB after the game data, data ≈1.02 MB)                       |
-| Daily requests     | 100 k Worker and 100 k Durable Object requests per day; static assets are free           |
-| Session DO         | 240 requests/min per browser session, in memory (no storage writes)                      |
-| AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                      |
-| Game Info upstream | 12/min per region                                                                        |
-| D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design |
+| Budget             | Limit / setting                                                                                                                                                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Worker bundle      | 3 MiB gzip each (web ≈2.31 MiB after the game data, data ≈1.02 MB)                                                                                                                                                                                           |
+| Daily requests     | 100 k Worker and 100 k Durable Object requests per day; static assets are free                                                                                                                                                                               |
+| DO duration        | 13,000 GB-s per day (≈ 28 h of one session object at 128 MB); over it every page answers Error 1101 until 00:00 UTC. Renders are capped at 30 s and `waitUntil` work at 10 s (`cloudflare/web/worker.ts`); Workers Paid raises the allowance to 400,000 GB-s |
+| Session DO         | 240 requests/min per browser session, in memory (no storage writes)                                                                                                                                                                                          |
+| AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                                                                                                                                                                                          |
+| Game Info upstream | 12/min per region                                                                                                                                                                                                                                            |
+| D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design                                                                                                                                                                     |
 
 Measure with the account GraphQL analytics (`workersInvocationsAdaptive`, `durableObjectsInvocationsAdaptiveGroups`, zone `httpRequestsAdaptiveGroups` by path and user agent). Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
 

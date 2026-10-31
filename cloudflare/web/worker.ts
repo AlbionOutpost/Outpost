@@ -37,6 +37,56 @@ async function identity(request: Request, secret: string) {
   };
 }
 
+/* Every render ends within RENDER_DEADLINE, streamed body included. A request that never
+ * settles (a stalled upstream, a promise nothing resolves) would otherwise hold its session
+ * object open for the platform's 15-minute limit and spend the daily Durable Object duration
+ * allowance; past the deadline the client gets what has been sent, or a 504 if nothing has. */
+const RENDER_DEADLINE = 30_000;
+const BACKGROUND_DEADLINE = 10_000;
+async function withDeadline(work: Promise<Response>): Promise<Response> {
+  let expire: () => void = () => {};
+  const expired = new Promise<"expired">((resolve) => {
+    expire = () => resolve("expired");
+  });
+  const timer = setTimeout(() => expire(), RENDER_DEADLINE);
+  const first = await Promise.race([work, expired]);
+  if (first === "expired") {
+    // The render keeps no reference to us; let it fail quietly when it finally settles.
+    work.then((late) => late.body?.cancel()).catch(() => {});
+    return new Response("Outpost took too long to answer. Please try again.", {
+      status: 504,
+      headers: { "Cache-Control": "private, no-store", "Retry-After": "5" },
+    });
+  }
+  const response = first;
+  if (!response.body) {
+    clearTimeout(timer);
+    return response;
+  }
+  const reader = response.body.getReader();
+  const body = new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      const next = await Promise.race([reader.read(), expired]);
+      if (next === "expired") {
+        reader.cancel("Render deadline").catch(() => {});
+        controller.close();
+        return;
+      }
+      if (next.done) {
+        clearTimeout(timer);
+        controller.close();
+        return;
+      }
+      controller.enqueue(next.value);
+    },
+    cancel(reason) {
+      clearTimeout(timer);
+      return reader.cancel(reason);
+    },
+  });
+  return new Response(body, response);
+}
+
 /** A browser-session render actor with an in-memory request budget.
  * Each signed browser session has its own object, never one global renderer. Nothing is written
  * to actor storage: the 30-minute lifetime is enforced by the signed route cookie, and the
@@ -59,7 +109,27 @@ export class OutpostSession extends DurableObject<OutpostWebEnv> {
         status: 429,
         headers: { "Retry-After": "60", "Cache-Control": "private, no-store" },
       });
-    return app.fetch(request, this.env, this.ctx);
+    return withDeadline(app.fetch(request, this.env, this.boundedContext()));
+  }
+  /* Background work the framework hands to waitUntil (cache writes, after() callbacks) keeps the
+   * invocation billed until it settles; a promise that never settles kept requests open for
+   * the full 15 minutes after their response had been delivered. Each one now gets ten seconds. */
+  private boundedContext() {
+    const ctx = this.ctx;
+    const waitUntil = (promise: Promise<unknown>) =>
+      ctx.waitUntil(
+        Promise.race([
+          Promise.resolve(promise).catch(() => {}),
+          new Promise((resolve) => setTimeout(resolve, BACKGROUND_DEADLINE)),
+        ]),
+      );
+    return new Proxy(ctx, {
+      get(target, property) {
+        if (property === "waitUntil") return waitUntil;
+        const value = Reflect.get(target, property, target);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
   }
   // Objects created before this change may still hold a scheduled cleanup.
   async alarm() {
