@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { regionSchema } from "@/lib/albion/region-config";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
+import { requireTeamCreation } from "@/lib/billing/gate";
 const input = z.object({
   name: z.string().trim().min(3).max(80),
   slug: z
@@ -18,6 +19,7 @@ const input = z.object({
 export const POST = apiHandler("group.create", async (req: NextRequest) => {
   const auth = await mutationUser(req);
   if (auth.error) return auth.error;
+  await requireTeamCreation(auth.userId!);
   const data = input.parse(await boundedJson(req));
   if (await db.group.findUnique({ where: { slug: data.slug }, select: { id: true } }))
     throw new HttpError(409, "That group address is already in use");

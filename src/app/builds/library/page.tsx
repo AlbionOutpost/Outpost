@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
 import Link from "@/components/build-region-link";
 import { queryLibraryBuilds } from "@/lib/grind-library";
@@ -216,6 +217,7 @@ export default async function Library({
                 </Link>
               </div>
             )}
+            <AdSlot placement="hub" />
             <nav className="library-pagination" aria-label="Library pages">
               {page > 1 ? (
                 <Link className="button secondary" href={href({ page: String(page - 1) })}>

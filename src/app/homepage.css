@@ -1266,39 +1266,6 @@ a.landing-window-title:hover {
 }
 
 /* Advertising + the ad-free offer */
-.app.outpost .ad-slot {
-  display: grid;
-  gap: 10px;
-  margin: 0 0 40px;
-}
-.app.outpost .ad-slot-unit {
-  display: block;
-  min-height: 90px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-md);
-}
-.app.outpost .ad-slot-offer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 0;
-  padding: 10px 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  color: var(--muted);
-  font-size: 13px;
-}
-.app.outpost .ad-slot-offer svg {
-  color: var(--accent-ink);
-}
-.app.outpost .ad-slot-offer a {
-  color: var(--accent-ink);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 /* Closing band on the market painting */
 .app.outpost .landing-cta {

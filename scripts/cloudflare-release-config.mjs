@@ -29,9 +29,17 @@ web.vars = {
   OUTPOST_OWNER_DISCORD_ID: "303585687460904970",
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: sitekey,
   TURNSTILE_HOSTNAMES: "albionoutpost.com,www.albionoutpost.com",
-  // Optional: the AdSense publisher id turns advertising units and their CSP origins on.
+  // Optional: the AdSense publisher id turns the loader, ads.txt and the CSP origins on; the
+  // two unit ids turn the placements on.
   ...(/^ca-pub-\d{6,20}$/.test(values.NEXT_PUBLIC_ADSENSE_CLIENT ?? "")
-    ? { NEXT_PUBLIC_ADSENSE_CLIENT: values.NEXT_PUBLIC_ADSENSE_CLIENT }
+    ? {
+        NEXT_PUBLIC_ADSENSE_CLIENT: values.NEXT_PUBLIC_ADSENSE_CLIENT,
+        ...Object.fromEntries(
+          ["NEXT_PUBLIC_ADSENSE_SLOT_HUB", "NEXT_PUBLIC_ADSENSE_SLOT_ARTICLE"]
+            .filter((name) => /^\d{6,20}$/.test(values[name] ?? ""))
+            .map((name) => [name, values[name]]),
+        ),
+      }
     : {}),
 };
 // Domain attachment is managed separately. Routine releases preserve the existing owned domains.

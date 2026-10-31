@@ -12,6 +12,7 @@ import { HttpError } from "../../src/lib/http-error";
 import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/discovery-service";
 import { teamLoot } from "../../src/lib/groups/loot-service";
 import { countPlayers } from "../../src/lib/site-stats";
+import { applySubscription, rememberCustomer } from "../../src/lib/billing/plan";
 
 const services = {
   reviseBuild,
@@ -28,6 +29,8 @@ const services = {
   listAccountFavorites,
   teamLoot,
   countPlayers,
+  applySubscription,
+  rememberCustomer,
 };
 export async function executeService(name: string, args: unknown[]) {
   if (

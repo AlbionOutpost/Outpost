@@ -77,7 +77,7 @@ test("published combat feed retains server boundaries, source delay, equipment a
   await page.getByRole("button", { name: "Retry feed", exact: true }).click();
   await expect(page.locator(".combat-feed-page").getByRole("alert")).toHaveCount(0);
   await page.getByRole("link", { name: "Death feed", exact: true }).click();
-  await expect(page).toHaveURL(/death-feed\?region=europe$/);
+  await expect(page).toHaveURL(/kill-feed\?view=deaths&region=europe$/);
   await expect(page.locator(".combat-identity")).toContainText("Combat fixture victim");
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });

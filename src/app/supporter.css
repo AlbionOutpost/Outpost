@@ -67,3 +67,29 @@
     grid-template-columns: 1fr;
   }
 }
+.app.outpost .premium-grid article.raised {
+  border: 0;
+  background: var(--surface-raised);
+}
+.app.outpost .premium-status.raised {
+  border: 0;
+}
+.app.outpost .premium-footnote {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .supporter-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.app.outpost .supporter-error {
+  margin: 0;
+  color: var(--error);
+  font-size: 13px;
+}

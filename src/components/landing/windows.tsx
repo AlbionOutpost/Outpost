@@ -132,13 +132,13 @@ export function LandingWindows({
         scene="market"
         emblem="strip-content"
         title="Content manager"
-        line="Run your guild’s content, comps and loot in one place."
+        line="Run your guild’s content, comps and loot in one place. A Supporter feature."
         href={`/groups${suffix}`}
         bar={
           <>
             <span className="landing-window-title">Teams</span>
             <span className="landing-chips">
-              <span className="landing-chip is-muted">Free</span>
+              <span className="landing-chip">Supporter</span>
             </span>
           </>
         }

@@ -80,12 +80,12 @@ test("theme and region survive reload, and desktop tool navigation supports Esca
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: /^Market explorer City prices/ })
+    .getByRole("link", { name: /^Market explorer Compare city quotes/ })
     .click();
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   const tools = page.locator(".desktop-navigation summary").filter({ hasText: "Tools" });
   await tools.click();
-  await page.getByRole("link", { name: /^Crafting Materials/ }).focus();
+  await page.getByRole("link", { name: /^Crafting Plan equipment batches/ }).focus();
   await page.keyboard.press("Escape");
   await expect(tools).toBeFocused();
   await expect(

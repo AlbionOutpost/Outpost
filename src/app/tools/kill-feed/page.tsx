@@ -1,5 +1,6 @@
 import { CombatFeed } from "@/components/combat-feed";
 export const metadata = { title: "Global kill feed" };
-export default function Page() {
-  return <CombatFeed mode="kills" />;
+export default async function Page({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
+  const { view } = await searchParams;
+  return <CombatFeed mode={view === "deaths" ? "deaths" : "kills"} />;
 }

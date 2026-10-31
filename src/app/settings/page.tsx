@@ -27,6 +27,7 @@ export default async function Settings({
       <div className="account-settings-workspace">
         <nav className="account-settings-navigation" aria-label="Settings sections">
           <a href="#profile-preferences">Profile & preferences</a>
+          <a href="#account-billing">Supporter plan</a>
           <a href="#account-data">Export your data</a>
           <a href="#account-session">Current session</a>
           <a href="#account-delete">Close account</a>
@@ -54,6 +55,19 @@ export default async function Settings({
                 characterName: user.characterName || "",
               }}
             />
+          </section>
+          <section className="panel settings-data-section" id="account-billing">
+            <div>
+              <h2>Supporter plan</h2>
+              <p>
+                {user.plan === "SUPPORTER"
+                  ? `Active${user.planRenewsAt ? ` · renews ${user.planRenewsAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
+                  : "Free. Supporters see no advertising and can run a Team workspace."}
+              </p>
+            </div>
+            <Link className="button secondary" href="/supporter">
+              {user.plan === "SUPPORTER" ? "Manage subscription" : "See the Supporter plan"}
+            </Link>
           </section>
           <section className="panel settings-data-section" id="account-data">
             <div>
