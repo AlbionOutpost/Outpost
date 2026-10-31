@@ -105,20 +105,6 @@
   letter-spacing: -0.025em;
 }
 .app.outpost
-  :is(
-    .panel,
-    .market-board,
-    .market-query-panel,
-    .market-item-panel,
-    .reference-market-history,
-    .detail-inventory-panel,
-    .detail-summary-panel,
-    .library-build-card
-  ) {
-  border-radius: var(--radius-panel);
-  box-shadow: var(--premium-shadow);
-}
-.app.outpost
   :is(.market-board, .market-item-panel, .detail-summary-panel, .detail-inventory-panel) {
   background: var(--panel);
 }
@@ -320,19 +306,14 @@
 .app.outpost .workspace-identity[data-scene] {
   --scene: var(--scene-city);
   width: 100vw;
-  margin: -32px 0 -56px calc(50% - 50vw);
-  padding: 56px var(--content-gutter) 96px;
+  margin: -32px 0 24px calc(50% - 50vw);
+  padding: 56px var(--content-gutter) 56px;
   min-height: 300px;
   align-items: flex-end;
   color: #f4f2ee;
 }
-/* The painting sits under everything that follows, so the first panels ride into its fade */
-.app.outpost .workspace-identity[data-scene] {
-  z-index: -1;
-}
 .app.outpost .workspace-identity[data-scene] > * {
   position: relative;
-  z-index: 1;
 }
 .app.outpost .workspace-identity[data-scene]::before {
   content: "";
@@ -343,7 +324,7 @@
     linear-gradient(90deg, #17110ef2 0%, #17110ec4 30%, #17110e55 58%, #17110e14 80%),
     linear-gradient(0deg, var(--canvas-top) 0%, #17110ea0 28%, #17110e10 60%, #17110e00 100%),
     var(--scene) center 38% / cover no-repeat;
-  mask-image: linear-gradient(180deg, #000 0%, #000 62%, #0007 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, #0008 78%, transparent 100%);
 }
 .app.outpost .workspace-identity[data-scene="market"] {
   --scene: var(--scene-market);
@@ -395,6 +376,11 @@
   flex: 1;
   min-width: 0;
 }
+.app.outpost .workspace-identity-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
 .app.outpost .workspace-identity h1 {
   margin: 0 0 6px;
   font: 800 clamp(34px, 3.6vw, 52px) / 1 var(--font-display);
@@ -416,8 +402,8 @@
 .app.outpost.light .workspace-identity p {
   color: var(--muted);
 }
-.app.outpost .workspace-identity-copy > :not(h1, p) {
-  margin-top: 16px;
+.app.outpost .workspace-identity-copy > :not(.workspace-identity-head) {
+  margin-top: 18px;
 }
 .app.outpost .workspace-identity-actions {
   position: relative;
@@ -435,8 +421,8 @@
 }
 @media (max-width: 780px) {
   .app.outpost .workspace-identity[data-scene] {
-    margin: -24px 0 -40px calc(50% - 50vw);
-    padding: 40px 16px 72px;
+    margin: -24px 0 16px calc(50% - 50vw);
+    padding: 40px 16px 40px;
     min-height: 240px;
   }
 }
@@ -458,8 +444,8 @@
     width: 42px;
     height: 42px;
   }
-  .app.outpost .workspace-identity-copy {
-    flex-basis: calc(100% - 62px);
+  .app.outpost .workspace-identity-head {
+    gap: 12px;
   }
   .app.outpost .workspace-identity-actions {
     flex: 0 0 100%;
@@ -474,8 +460,6 @@
 
 /* Raised surface: the card that sits on the page, and the wells cut into it */
 .app.outpost .raised {
-  position: relative;
-  isolation: isolate;
   min-width: 0;
   border: 0;
   border-radius: 12px;
@@ -483,6 +467,8 @@
   box-shadow: var(--shadow-raised);
 }
 .app.outpost .raised.has-scene {
+  position: relative;
+  isolation: isolate;
   overflow: hidden;
 }
 .app.outpost .raised.has-scene::before {
@@ -547,7 +533,6 @@
 }
 /* Every working panel is raised; art stays on cards that are links to something */
 .app.outpost .panel {
-  position: relative;
   border: 0;
   border-radius: 12px;
   background: var(--surface-raised);
@@ -667,5 +652,233 @@
   }
   .app.outpost :is(a.raised, .raised.is-link):hover {
     transform: none;
+  }
+}
+
+/* Masthead tabs: the page's sections and sibling tools as pills under the title */
+.app.outpost .masthead-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.app.outpost .masthead-tabs > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #ffffff1f;
+  border-radius: 999px;
+  background: #0f1116a6;
+  color: #e9e4dc;
+  font: 600 13px/1 var(--font-ui);
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 #ffffff10;
+  transition:
+    border-color 160ms var(--ease-out),
+    background 160ms var(--ease-out),
+    color 160ms var(--ease-out);
+}
+.app.outpost .masthead-tabs > a svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-ink);
+}
+.app.outpost .masthead-tabs > a:hover {
+  border-color: #ffffff40;
+  background: #1a1d25d9;
+  color: #fff;
+}
+.app.outpost .masthead-tabs > a[aria-current="page"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, #ffffff1f);
+  background: color-mix(in srgb, var(--accent) 22%, #0f1116c0);
+  color: #fff;
+}
+.app.outpost.light .masthead-tabs > a {
+  border-color: #00000018;
+  background: #ffffffcc;
+  color: var(--text);
+}
+.app.outpost.light .masthead-tabs > a:hover {
+  background: #fff;
+  border-color: #00000030;
+}
+.app.outpost.light .masthead-tabs > a[aria-current="page"] {
+  background: color-mix(in srgb, var(--accent) 14%, #fff);
+  color: var(--accent-ink);
+}
+@media (max-width: 700px) {
+  .app.outpost .masthead-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .app.outpost .masthead-tabs::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* City identities as the game colours them; data colour, not decoration */
+.app.outpost .city-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--city, var(--muted));
+  box-shadow: 0 0 0 1px #0006;
+  vertical-align: 0;
+}
+.app.outpost .city-dot[data-city="Bridgewatch"] {
+  --city: #e0a53c;
+}
+.app.outpost .city-dot[data-city="Martlock"] {
+  --city: #4f8fe0;
+}
+.app.outpost .city-dot[data-city="Thetford"] {
+  --city: #a569e0;
+}
+.app.outpost .city-dot[data-city="Lymhurst"] {
+  --city: #58b764;
+}
+.app.outpost .city-dot[data-city="Fort Sterling"] {
+  --city: #e8eef5;
+}
+.app.outpost .city-dot[data-city="Caerleon"] {
+  --city: #d9534f;
+}
+.app.outpost .city-dot[data-city="Brecilien"] {
+  --city: #4fb8c9;
+}
+.app.outpost .city-dot[data-city="Black Market"] {
+  --city: #8d8a93;
+}
+
+/* Hearts: the library's upvotes; a build's heart saves it on this device */
+.app.outpost .heart-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 0 9px 0 7px;
+  border: 1px solid #ffffff1f;
+  border-radius: 999px;
+  background: #0f1116b3;
+  color: #ddd8d0;
+  font: 700 12px/1 var(--font-ui);
+}
+.app.outpost .heart-chip.is-button {
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+.app.outpost .heart-chip.is-button:hover {
+  border-color: #f4f2ee;
+  color: #f4f2ee;
+}
+.app.outpost .heart-chip.is-button:active {
+  transform: scale(0.94);
+}
+.app.outpost .heart-chip-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: #f4f2ee;
+}
+.app.outpost .heart-chip svg {
+  fill: transparent;
+  transition: fill var(--motion-fast) var(--ease-out);
+}
+.app.outpost .heart-chip.is-on {
+  border-color: #f4f2ee66;
+  box-shadow: 0 0 0 3px #f4f2ee4d;
+  animation: heart-ring 520ms ease-out forwards;
+}
+.app.outpost .heart-chip.is-on svg {
+  fill: currentColor;
+  animation: heart-pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+.app.outpost .heart-chip-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.app.outpost .heart-chip-burst i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #f4f2ee;
+  box-shadow: 0 0 4px #f4f2ee4d;
+  --angle: calc(var(--i) * 45deg);
+  animation: heart-particle 900ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+.app.outpost .heart-chip-burst i:nth-child(odd) {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: var(--accent);
+}
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  55% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes heart-ring {
+  0% {
+    box-shadow: 0 0 0 0 #f4f2ee4d;
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+@keyframes heart-particle {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateY(-6px) scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(-30px) scale(0.4);
+  }
+}
+
+.app.outpost.light .heart-chip {
+  border-color: var(--border);
+  background: var(--panel);
+  box-shadow: none;
+  color: var(--text);
+  text-shadow: none;
+}
+.app.outpost.light .heart-chip-icon {
+  color: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost .heart-chip,
+  .app.outpost .heart-chip-icon,
+  .app.outpost .heart-chip-burst i {
+    transition: none;
+    animation: none;
   }
 }

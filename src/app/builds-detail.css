@@ -96,11 +96,6 @@
   gap: 8px;
   max-width: 430px;
 }
-.detail-header-actions .library-save-control {
-  position: relative;
-  inset: auto;
-  display: inline-flex;
-}
 .app.outpost .detail-header-actions .library-device-save {
   position: static;
   inset: auto;
@@ -635,10 +630,6 @@
   border-radius: 4px;
   background: var(--bg) !important;
 }
-.app.outpost .detail-recommendations .library-build-traits {
-  margin: 0;
-  height: 100%;
-}
 .app.outpost .detail-recommendations .library-trait-grid {
   grid-template-columns: 1fr;
   gap: 8px;
@@ -738,9 +729,6 @@
   font-size: 13px;
   line-height: 1.8;
   color: var(--muted);
-}
-.detail-notes-grid .library-build-videos {
-  margin: 0;
 }
 .detail-discussion-panel {
   margin: 16px 0;
@@ -899,10 +887,6 @@
     width: 17px;
     height: 17px;
   }
-  .detail-header-actions > .button,
-  .detail-header-actions > .library-save-control {
-    flex: 1;
-  }
   .app.outpost .detail-header-actions .library-device-save {
     width: 100%;
     justify-content: center;
@@ -946,9 +930,6 @@
   }
   .detail-header-actions .library-device-save > span {
     display: none;
-  }
-  .detail-header-actions > .library-save-control {
-    flex: none;
   }
   .app.outpost .detail-header-actions .build-share-control summary {
     font-size: 12px;
@@ -1114,11 +1095,6 @@
 }
 .app.outpost .detail-recommendations .library-trait-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.app.outpost .detail-recommendations .library-build-traits {
-  border: 0;
-  padding: 0;
-  background: none;
 }
 .detail-disclosure-content .detail-notes-grid {
   margin: 0;

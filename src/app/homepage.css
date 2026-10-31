@@ -422,113 +422,6 @@ a.landing-window-title:hover {
   border-radius: 6px;
   filter: drop-shadow(0 1px 2px #000a);
 }
-/* Hearts: the library's upvotes; a build's heart saves it on this device */
-.app.outpost .heart-chip {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 28px;
-  padding: 0 9px 0 7px;
-  border: 1px solid #ffffff1f;
-  border-radius: 999px;
-  background: #0f1116b3;
-  color: #ddd8d0;
-  font: 700 12px/1 var(--font-ui);
-}
-.app.outpost .heart-chip.is-button {
-  cursor: pointer;
-  transition:
-    border-color var(--motion-fast) var(--ease-out),
-    color var(--motion-fast) var(--ease-out),
-    transform var(--motion-fast) var(--ease-out);
-}
-.app.outpost .heart-chip.is-button:hover {
-  border-color: #f4f2ee;
-  color: #f4f2ee;
-}
-.app.outpost .heart-chip.is-button:active {
-  transform: scale(0.94);
-}
-.app.outpost .heart-chip-icon {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 14px;
-  height: 14px;
-  color: #f4f2ee;
-}
-.app.outpost .heart-chip svg {
-  fill: transparent;
-  transition: fill var(--motion-fast) var(--ease-out);
-}
-.app.outpost .heart-chip.is-on {
-  border-color: #f4f2ee66;
-  box-shadow: 0 0 0 3px #f4f2ee4d;
-  animation: heart-ring 520ms ease-out forwards;
-}
-.app.outpost .heart-chip.is-on svg {
-  fill: currentColor;
-  animation: heart-pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
-}
-.app.outpost .heart-chip-burst {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.app.outpost .heart-chip-burst i {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 50%;
-  background: #f4f2ee;
-  box-shadow: 0 0 4px #f4f2ee4d;
-  --angle: calc(var(--i) * 45deg);
-  animation: heart-particle 900ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-}
-.app.outpost .heart-chip-burst i:nth-child(odd) {
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
-  background: var(--accent);
-}
-@keyframes heart-pop {
-  0% {
-    transform: scale(0.6);
-  }
-  55% {
-    transform: scale(1.35);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes heart-ring {
-  0% {
-    box-shadow: 0 0 0 0 #f4f2ee4d;
-  }
-  100% {
-    box-shadow: 0 0 0 10px transparent;
-  }
-}
-@keyframes heart-particle {
-  0% {
-    opacity: 1;
-    transform: rotate(var(--angle)) translateY(-6px) scale(1);
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(var(--angle)) translateY(-30px) scale(0.4);
-  }
-}
-
 /* Section headings: title, one line, a pill link on the right */
 .app.outpost .landing-tools,
 .app.outpost .landing-guides,
@@ -1084,39 +977,6 @@ a.landing-window-title:hover {
 }
 .app.outpost .tool-summary > span + span {
   border-left: 1px solid #ffffff12;
-}
-
-/* City identities as the game colours them; data colour, not decoration */
-.app.outpost .city-dot {
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  margin-right: 7px;
-  border-radius: 50%;
-  background: var(--city, var(--muted));
-  box-shadow: 0 0 0 1px #0006;
-  vertical-align: 0;
-}
-.app.outpost .city-dot[data-city="Bridgewatch"] {
-  --city: #e0a53c;
-}
-.app.outpost .city-dot[data-city="Martlock"] {
-  --city: #4f8fe0;
-}
-.app.outpost .city-dot[data-city="Thetford"] {
-  --city: #a569e0;
-}
-.app.outpost .city-dot[data-city="Lymhurst"] {
-  --city: #58b764;
-}
-.app.outpost .city-dot[data-city="Fort Sterling"] {
-  --city: #e8eef5;
-}
-.app.outpost .city-dot[data-city="Caerleon"] {
-  --city: #d9534f;
-}
-.app.outpost .city-dot[data-city="Brecilien"] {
-  --city: #4fb8c9;
 }
 
 /* Guides: a sliding row, three in view, arrows at the edges */
@@ -1694,8 +1554,6 @@ a.landing-window-title:hover {
     .kill-toggle,
     .tool-profit,
     .kill-loot li,
-    .heart-chip,
-    .landing-section-heading .text-link,
     .guides-arrow
   ) {
   border-color: var(--border);
@@ -1706,9 +1564,7 @@ a.landing-window-title:hover {
 .app.outpost.light .landing-window-title,
 .app.outpost.light .kill-mid > strong,
 .app.outpost.light .tool-plot-tip,
-.app.outpost.light .heart-chip,
-.app.outpost.light .heart-chip-icon,
-.app.outpost.light .landing-section-heading .text-link {
+.app.outpost.light .tool-plot-tip {
   color: var(--text);
   text-shadow: none;
 }

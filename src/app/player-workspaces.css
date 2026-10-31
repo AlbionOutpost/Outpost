@@ -206,9 +206,6 @@
     white-space: normal;
     overflow-wrap: anywhere;
   }
-  .market-explorer-page .market-board .city-indicator {
-    display: none;
-  }
   .market-explorer-page .market-board .numeric {
     font-size: 14px;
   }

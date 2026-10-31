@@ -43,25 +43,6 @@
   border-bottom: 1px solid var(--border);
   box-shadow: 0 3px 18px #00000018;
 }
-.app.outpost
-  :is(
-    .panel,
-    .studio-equipment-section,
-    .studio-overview,
-    .library-build-card,
-    .library-comp-card,
-    .grind-guide-card,
-    .guide-feature-story
-  ) {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-panel);
-  background: var(--panel);
-  box-shadow: var(--premium-shadow);
-}
-.app.outpost :is(.library-build-card, .library-comp-card, .grind-guide-card):hover {
-  border-color: var(--accent-ink);
-  background: var(--elevated);
-}
 .app.outpost :is(button, a, summary, input, select, textarea) {
   -webkit-tap-highlight-color: transparent;
 }
@@ -183,17 +164,6 @@
   background: var(--panel);
   box-shadow: var(--premium-shadow);
   margin: 16px 0 24px;
-}
-.app.outpost .library-build-card > a {
-  padding: 18px;
-}
-.app.outpost .library-build-identity h2 {
-  font-size: 16px;
-}
-.app.outpost .library-build-equipment {
-  background: var(--bg);
-  padding: 10px 0 0;
-  border-radius: 6px;
 }
 /* Equipment is the primary workspace; metadata stays compact and save actions stay reachable. */
 .app.outpost .build-editor-page {

@@ -494,9 +494,6 @@
 .app.outpost .support-home .home-library-picks > .support-section-heading {
   margin-bottom: 16px;
 }
-.app.outpost .support-home .home-library-picks .library-build-card {
-  min-width: 0;
-}
 /* Editorial guides keep images small and useful, with durable reading navigation. */
 .app.outpost .support-guides .guide-topic-links {
   display: flex;
@@ -1751,9 +1748,6 @@
 }
 .app.outpost .support-home .reference-hero {
   min-height: 330px;
-}
-.app.outpost .support-home .home-library-picks .library-card-caption {
-  display: none;
 }
 .app.outpost .support-team-workspace .team-event-card {
   padding: 16px 0;

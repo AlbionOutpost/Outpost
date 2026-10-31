@@ -2660,17 +2660,6 @@ textarea {
   font-size: 14px;
   line-height: 1.6;
 }
-.city-indicator {
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  font-size: 10px;
-  font-weight: 700;
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  margin-right: 8px;
-}
 .calculator-inputs {
   display: grid;
   gap: 20px;
@@ -4201,11 +4190,6 @@ button.party-loadout-card:hover {
   }
   .market-col-short {
     display: inline;
-  }
-  .market-explorer-page .city-indicator {
-    width: 22px;
-    height: 24px;
-    margin-right: 5px;
   }
 }
 

@@ -27,12 +27,16 @@ export function WorkspaceHeading({
   const Icon = icon === "account" ? Settings : icon === "timer" ? Clock3 : Calculator;
   return (
     <header className="workspace-identity" data-scene={scene}>
-      <span className="workspace-emblem" aria-hidden="true">
-        {glyph ? <ToolIcon name={glyph} size={26} /> : <Icon />}
-      </span>
       <div className="workspace-identity-copy">
-        <h1 className="page-title display-title">{title}</h1>
-        <p className="intro">{description}</p>
+        <div className="workspace-identity-head">
+          <span className="workspace-emblem" aria-hidden="true">
+            {glyph ? <ToolIcon name={glyph} size={26} /> : <Icon />}
+          </span>
+          <div>
+            <h1 className="page-title display-title">{title}</h1>
+            <p className="intro">{description}</p>
+          </div>
+        </div>
         {children}
       </div>
       {actions && <div className="workspace-identity-actions">{actions}</div>}

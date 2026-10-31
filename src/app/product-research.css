@@ -66,30 +66,6 @@
   font: 400 12px/1.4 var(--font-data);
   color: var(--muted);
 }
-.app.outpost .reference-market-layout {
-  display: block;
-}
-.app.outpost .reference-market-layout > .reference-market-rail {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  padding: 0 0 12px;
-  margin: 0 0 16px;
-  width: 100%;
-  border-right: 0;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-}
-.app.outpost .reference-market-rail > :is(.eyebrow, .reference-rail-divider, p) {
-  display: none;
-}
-.app.outpost .reference-market-rail > :is(a, button) {
-  flex: none;
-  font-size: 13px;
-  min-height: 38px;
-  padding: 8px 12px;
-}
 .app.outpost .market-explorer-page .market-workspace.market-focused.market-rebuild {
   grid-template-columns: 248px minmax(0, 1fr);
   gap: 20px;
@@ -261,23 +237,6 @@
   }
 }
 
-/* Excerpts remain secondary to the recorded equipment. */
-.app.outpost .library-card-description {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted);
-  margin: 8px 0;
-}
-@media (max-width: 600px) {
-  .app.outpost .library-card-description {
-    display: none;
-  }
-}
-
 .detail-build-context {
   display: none;
   min-width: 0;
@@ -372,21 +331,8 @@
   padding: 0;
   width: 100%;
 }
-.app.outpost .build-preview-card .library-build-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.app.outpost .build-preview-card .library-build-identity h2 {
-  font: 650 18px/1.3 var(--font-ui);
-}
 .app.outpost .build-preview-card .equipment-strip {
   justify-content: flex-start;
-}
-@media (max-width: 600px) {
-  .app.outpost .build-preview-card .library-build-identity h2 {
-    font-size: 16px;
-  }
 }
 
 /* A compact scenic masthead and gear-led cards restore the game's visual identity. */
@@ -417,91 +363,6 @@
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
 }
-.app.outpost .library-build-card {
-  padding: 0;
-  background: linear-gradient(145deg, var(--elevated), var(--panel) 62%);
-  border-color: var(--border);
-  overflow: hidden;
-  box-shadow: var(--premium-shadow);
-}
-.app.outpost .library-build-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 62%, var(--border));
-}
-.app.outpost .library-build-card .ecosystem-card-main {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  padding: 16px;
-  background: transparent;
-  gap: 14px;
-}
-.app.outpost .library-build-card .library-build-identity {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-}
-.app.outpost .library-build-card .library-primary-weapon,
-.app.outpost .library-build-card .library-primary-weapon > img {
-  width: 92px;
-  height: 92px;
-}
-.app.outpost .library-build-card .library-primary-weapon {
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
-  border-radius: 6px;
-  background: #111315;
-  box-shadow: 0 3px 12px #00000030;
-}
-.app.outpost .library-build-card .library-build-copy h2 {
-  font: 700 18px/1.25 var(--font-ui);
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-}
-.app.outpost .library-build-card .library-build-classification {
-  flex-wrap: wrap;
-  gap: 4px 8px;
-}
-.app.outpost .library-build-card .library-build-preview {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px 16px;
-  justify-content: space-between;
-  padding: 10px 0 2px;
-  margin: 0;
-  border-top: 1px solid var(--border);
-}
-.app.outpost .library-build-card .library-build-equipment {
-  gap: 4px;
-  flex-shrink: 0;
-}
-.app.outpost .library-build-card .library-build-equipment > span {
-  flex: 0 0 38px;
-}
-.app.outpost .library-build-card .library-build-equipment img {
-  width: 38px;
-  height: 38px;
-  max-width: 38px;
-}
-.app.outpost .library-build-card .ecosystem-card-spells {
-  gap: 5px;
-}
-.app.outpost .library-build-card .ecosystem-card-spells img {
-  width: 30px;
-  height: 30px;
-}
-.app.outpost .library-build-card .library-card-caption {
-  border: 0;
-  padding-top: 4px;
-  margin-top: auto;
-}
-.app.outpost .library-build-card .library-card-caption > span:last-child {
-  padding: 6px 8px;
-  background: var(--accent-wash);
-  border-radius: 4px;
-  color: var(--accent-ink);
-}
 @media (max-width: 600px) {
   .app.outpost .builds-ecosystem .builds-ecosystem-header {
     padding-inline: 12px;
@@ -510,85 +371,6 @@
   .app.outpost .builds-header-bottom {
     margin-inline: -12px;
     padding-inline: 4px;
-  }
-  .app.outpost .library-build-card .ecosystem-card-main {
-    padding: 12px;
-    gap: 10px;
-  }
-  .app.outpost .library-build-card .library-build-identity {
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 10px;
-  }
-  .app.outpost .library-build-card .library-primary-weapon,
-  .app.outpost .library-build-card .library-primary-weapon > img {
-    width: 56px;
-    height: 56px;
-  }
-  .app.outpost .library-build-card .library-build-copy h2 {
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-  .app.outpost .library-build-card .library-build-preview {
-    flex-wrap: nowrap;
-    padding-top: 8px;
-    gap: 8px;
-  }
-  .app.outpost .library-build-card .library-build-equipment > span {
-    flex-basis: 28px;
-  }
-  .app.outpost .library-build-card .library-build-equipment img {
-    width: 28px;
-    height: 28px;
-    max-width: 28px;
-  }
-  .app.outpost .library-build-card .ecosystem-card-spells {
-    gap: 3px;
-  }
-  .app.outpost .library-build-card .ecosystem-card-spells img {
-    width: 24px;
-    height: 24px;
-  }
-  .app.outpost .library-build-card .library-card-caption {
-    display: none;
-  }
-}
-
-.app.outpost .support-home .library-build-card .library-build-equipment > span {
-  flex-basis: 33px;
-}
-.app.outpost .support-home .library-build-card .library-build-equipment img {
-  width: 33px;
-  height: 33px;
-  max-width: 33px;
-}
-@media (min-width: 901px) {
-  .app.outpost .ecosystem-library-page.view-list .library-build-card .ecosystem-card-main {
-    display: grid;
-    grid-template-columns: minmax(240px, 1.1fr) minmax(250px, 1fr) auto;
-    flex-direction: initial;
-    align-items: center;
-    gap: 16px;
-    padding-right: 48px;
-  }
-  .app.outpost .view-list .library-build-card .library-primary-weapon,
-  .app.outpost .view-list .library-build-card .library-primary-weapon img {
-    width: 64px;
-    height: 64px;
-  }
-  .app.outpost .view-list .library-build-card .library-build-identity {
-    grid-template-columns: 64px minmax(0, 1fr);
-  }
-  .app.outpost .view-list .library-build-card .library-build-preview {
-    border: 0;
-    padding: 0;
-  }
-  .app.outpost .view-list .library-build-card .library-card-caption {
-    margin: 0;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  .app.outpost .view-list .library-card-description {
-    display: none;
   }
 }
 

@@ -340,24 +340,6 @@
 .app.outpost .signin-legal a {
   color: var(--muted);
 }
-/* Markets: controls, selected identity, observed orders and research form one workspace. */
-.app.outpost .reference-market-layout {
-  grid-template-columns: 184px minmax(0, 1fr);
-  gap: 24px;
-}
-.app.outpost .reference-market-rail {
-  padding-right: 16px;
-  gap: 5px;
-}
-.app.outpost .reference-market-rail > a {
-  min-height: 40px;
-  font-size: 12px;
-  padding: 10px;
-}
-.app.outpost .reference-market-rail > p {
-  font-size: 12px;
-  line-height: 1.8;
-}
 .app.outpost .market-query-panel {
   padding: 16px;
 }
@@ -687,10 +669,6 @@
   border-radius: 6px;
 }
 @media (max-width: 1100px) {
-  .app.outpost .reference-market-layout {
-    grid-template-columns: 156px minmax(0, 1fr);
-    gap: 18px;
-  }
   .app.outpost .market-workspace.is-setup {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -719,34 +697,6 @@
   }
 }
 @media (max-width: 780px) {
-  .app.outpost .reference-market-layout {
-    display: block;
-  }
-  .app.outpost .reference-market-rail {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 0 0 14px;
-    margin-bottom: 18px;
-    gap: 6px;
-  }
-  .app.outpost .reference-market-rail > :is(.eyebrow, p, .reference-rail-divider) {
-    display: none;
-  }
-  .app.outpost .reference-market-rail > a:nth-of-type(n + 5) {
-    display: none;
-  }
-  .app.outpost .reference-market-rail > a {
-    font-size: 11px;
-    padding: 8px;
-    min-height: 36px;
-  }
-  .app.outpost .reference-market-rail svg {
-    width: 15px;
-    height: 15px;
-  }
   .app.outpost .signin-page {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -934,9 +884,6 @@
   }
 }
 @media (max-width: 1100px) {
-  .app.outpost .reference-market-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .app.outpost .market-workspace.is-setup,
   .app.outpost .market-workspace.has-results {
     grid-template-columns: minmax(0, 1fr);
