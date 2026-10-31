@@ -470,12 +470,6 @@
   border-radius: 8px;
   border: 1px solid var(--border);
 }
-.app.outpost .guide-reading-header {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 24px;
-}
 .app.outpost .guide-reading-body {
   min-width: 0;
 }
@@ -633,9 +627,6 @@
   }
   .app.outpost .library-filter-bar {
     padding: 12px;
-  }
-  .app.outpost .guide-reading-header {
-    padding: 18px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

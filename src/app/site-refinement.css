@@ -863,16 +863,6 @@
       ),
       url("/albion/illustrations/build-v1-phone.webp");
   }
-  .app.outpost:not(.light) .detail-hero {
-    background-image:
-      linear-gradient(
-        90deg,
-        var(--bg) 35%,
-        color-mix(in srgb, var(--bg) 95%, transparent) 54%,
-        color-mix(in srgb, var(--bg) 52%, transparent)
-      ),
-      url("/albion/illustrations/build-v1-phone.webp");
-  }
   .app.outpost .premium-workspace-heading {
     background-image:
       linear-gradient(90deg, var(--panel) 45%, color-mix(in srgb, var(--panel) 88%, transparent)),

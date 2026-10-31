@@ -652,25 +652,6 @@
   font-size: 12px;
   color: var(--muted);
 }
-.library-back-link {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-.library-author-notes {
-  max-width: 78ch;
-  margin: 32px 0;
-}
-.library-author-notes h2 {
-  font-size: 20px;
-}
-.library-author-notes p {
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
 .library-detail-footer {
   display: flex;
   justify-content: space-between;
@@ -695,18 +676,6 @@
   background: var(--bg);
   border-radius: 4px;
 }
-.library-member-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 10px 0;
-}
-.library-member-label > span {
-  color: var(--accent);
-  font-size: 11px;
-}
 .grind-guide-art {
   display: flex;
   flex-direction: column;
@@ -726,31 +695,6 @@
   margin-top: 48px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
-}
-.guide-reading-header {
-  height: auto;
-  min-height: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  max-width: 1050px;
-  margin-bottom: 24px;
-}
-.guide-reading-header h1 {
-  margin: 0 0 12px;
-  max-width: 24ch;
-}
-.guide-reading-header p {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.7;
-}
-.guide-reading-header > div {
-  min-width: 0;
 }
 .guide-mobile-toc {
   display: none;
@@ -842,9 +786,6 @@
   max-height: calc(100dvh - 130px);
   overflow: auto;
   padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
 }
 .guide-reading-nav h2 {
   font-size: 14px;
@@ -875,10 +816,9 @@
 }
 .guide-reading-body > .library-provenance {
   margin-top: 0;
-  padding: 16px 20px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  padding: 14px 18px;
+  color: var(--muted);
+  font-size: 13px;
 }
 .guide-prose {
   font-size: 15px;
@@ -1188,10 +1128,6 @@
     position: static;
     max-height: 240px;
   }
-  .guide-reading-header > img {
-    width: 80px;
-    height: 80px;
-  }
   .app.outpost .build-detail-page .build-loadout-view,
   .app.outpost .build-loadout-view {
     grid-template-columns: 1fr;
@@ -1352,16 +1288,6 @@
   }
   .grind-guide-art span {
     font-size: 9px;
-  }
-  .guide-reading-header {
-    gap: 12px;
-  }
-  .guide-reading-header > img {
-    width: 60px;
-    height: 60px;
-  }
-  .guide-reading-header h1 {
-    font-size: 30px;
   }
   .guide-reading-body > footer {
     flex-direction: column;

@@ -388,10 +388,6 @@
 .app.outpost .library-comp-members > section {
   min-width: 0;
 }
-.app.outpost .library-member-label {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }

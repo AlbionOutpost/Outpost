@@ -754,42 +754,9 @@
   }
 }
 
-/* Player-facing polish: retain Outpost's charcoal/copper identity. */
-.item-back-link {
-  display: inline-flex;
-  margin-bottom: 16px;
-  min-height: 32px;
-  align-items: center;
-}
-.item-reference-summary {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.item-reference-summary > div {
-  min-width: 0;
-  flex: 1;
-}
-.item-reference-summary p {
-  margin: 4px 0;
-}
 .item-reference-slot {
   font-size: 16px;
   font-weight: 600;
-}
-.item-reference-summary code {
-  font-size: 12px;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-.item-data-notice {
-  margin: 24px 0;
-  padding: 12px 0;
-  border-block: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
 }
 .item-abilities > h2 {
   font: 600 20px/1.4 var(--font-ui);
@@ -959,13 +926,6 @@
   border-left-width: 1px;
 }
 @media (max-width: 780px) {
-  .item-reference-summary {
-    gap: 16px;
-  }
-  .item-reference-summary > .button {
-    width: 100%;
-    justify-content: center;
-  }
   .composition-toolbar {
     gap: 8px;
   }

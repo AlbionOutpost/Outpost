@@ -434,18 +434,8 @@
 .app.outpost .group-build-library .library-comp-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.app.outpost .group-build-detail .group-build-detail-tools {
-  position: relative;
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 10px;
-}
 .app.outpost .group-build-detail .library-comp-members {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.app.outpost .group-build-detail .group-loadout-card {
-  padding: 20px;
-  border-radius: 10px;
 }
 .app.outpost .personal-favorites-collection > section[aria-label="Account favorites"] {
   padding: 20px;

@@ -9,7 +9,10 @@ export function WorkspaceHeading({
   description,
   icon = "calculator",
   glyph,
+  emblem,
   scene,
+  cover,
+  titleId,
   children,
   actions,
 }: {
@@ -18,7 +21,13 @@ export function WorkspaceHeading({
   icon?: "calculator" | "account" | "timer";
   /** Original task emblem from the tool directory; overrides `icon`. */
   glyph?: Glyph;
+  /** Custom emblem content (an item render, a painted mark); overrides `glyph` and `icon`. */
+  emblem?: React.ReactNode;
   scene?: Scene;
+  /** A painting of the page's own (a guide cover) in place of the scene. */
+  cover?: string;
+  /** An id for the title, for in-page links back to the top. */
+  titleId?: string;
   /** Optional actions or tabs rendered under the title. */
   children?: React.ReactNode;
   /** Primary action rendered at the right edge of the masthead. */
@@ -26,14 +35,20 @@ export function WorkspaceHeading({
 }) {
   const Icon = icon === "account" ? Settings : icon === "timer" ? Clock3 : Calculator;
   return (
-    <header className="workspace-identity" data-scene={scene}>
+    <header
+      className="workspace-identity"
+      data-scene={cover ? "cover" : scene}
+      style={cover ? ({ "--scene": `url("${cover}")` } as React.CSSProperties) : undefined}
+    >
       <div className="workspace-identity-copy">
         <div className="workspace-identity-head">
           <span className="workspace-emblem" aria-hidden="true">
-            {glyph ? <ToolIcon name={glyph} size={26} /> : <Icon />}
+            {emblem ?? (glyph ? <ToolIcon name={glyph} size={26} /> : <Icon />)}
           </span>
           <div>
-            <h1 className="page-title display-title">{title}</h1>
+            <h1 id={titleId} className="page-title display-title">
+              {title}
+            </h1>
             <p className="intro">{description}</p>
           </div>
         </div>

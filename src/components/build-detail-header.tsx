@@ -30,7 +30,7 @@ export function BuildDetailHeader({
   collection?: "library" | "community";
 }) {
   return (
-    <section className="detail-hero" id="build-overview">
+    <section className="detail-hero masthead" data-scene="builds" id="build-overview">
       <div className="detail-breadcrumb">
         <Link href={collection === "library" ? "/builds/library" : "/builds"}>
           {collection === "library" ? "Build library" : "Community builds"}

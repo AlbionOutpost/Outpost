@@ -202,16 +202,6 @@
   background: var(--elevated);
 }
 
-.app.outpost:not(.light) .detail-hero {
-  background:
-    linear-gradient(
-      90deg,
-      var(--bg) 35%,
-      color-mix(in srgb, var(--bg) 95%, transparent) 54%,
-      color-mix(in srgb, var(--bg) 52%, transparent)
-    ),
-    url("/albion/illustrations/build-v1.webp") right 24% / 58% auto no-repeat;
-}
 .app.outpost.light .detail-inventory-panel {
   background: var(--panel);
 }
@@ -302,7 +292,7 @@
   gap: 18px;
   margin: 0 0 28px;
 }
-.app.outpost .workspace-identity[data-scene] {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene] {
   --scene: var(--scene-city);
   width: 100vw;
   margin: -32px 0 24px calc(50% - 50vw);
@@ -312,10 +302,10 @@
   align-items: flex-end;
   color: #f4f2ee;
 }
-.app.outpost .workspace-identity[data-scene] > * {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene] > * {
   position: relative;
 }
-.app.outpost .workspace-identity[data-scene]::before {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -326,22 +316,22 @@
     var(--scene) center 38% / cover no-repeat;
   mask-image: linear-gradient(180deg, #000 0%, #000 55%, #0008 78%, transparent 100%);
 }
-.app.outpost .workspace-identity[data-scene="market"] {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene="market"] {
   --scene: var(--scene-market);
 }
-.app.outpost .workspace-identity[data-scene="economy"] {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene="economy"] {
   --scene: var(--scene-economy);
 }
-.app.outpost .workspace-identity[data-scene="builds"] {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene="builds"] {
   --scene: var(--scene-build);
 }
-.app.outpost .workspace-identity[data-scene="comps"] {
+.app.outpost :is(.workspace-identity, .masthead)[data-scene="comps"] {
   --scene: var(--scene-composition);
 }
-.app.outpost.light .workspace-identity[data-scene] {
+.app.outpost.light :is(.workspace-identity, .masthead)[data-scene] {
   color: var(--text);
 }
-.app.outpost.light .workspace-identity[data-scene]::before {
+.app.outpost.light :is(.workspace-identity, .masthead)[data-scene]::before {
   background:
     linear-gradient(90deg, #efe6dcf5 0%, #efe6dcd0 32%, #efe6dc70 60%, #efe6dc20 82%),
     linear-gradient(0deg, var(--canvas-top) 0%, #efe6dcb0 30%, #efe6dc10 60%, #efe6dc00 100%),
@@ -420,7 +410,7 @@
   border-radius: var(--radius-md);
 }
 @media (max-width: 780px) {
-  .app.outpost .workspace-identity[data-scene] {
+  .app.outpost :is(.workspace-identity, .masthead)[data-scene] {
     margin: -24px 0 16px calc(50% - 50vw);
     padding: 40px calc(50vw - 50%) 40px;
     min-height: 240px;
@@ -1145,4 +1135,18 @@
   .app.outpost .guide-card a {
     height: 300px;
   }
+}
+.app.outpost .masthead-note {
+  margin: 12px 0 0;
+  color: #cfc8bf;
+  font-size: 12px;
+}
+.app.outpost .masthead-note code {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #0f1116a6;
+  font: 500 12px var(--font-data);
+}
+.app.outpost.light .masthead-note {
+  color: var(--muted);
 }

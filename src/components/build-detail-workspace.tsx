@@ -159,7 +159,7 @@ export function BuildDetailWorkspace({
       data-selected-slot={selectedSlot}
     >
       <div className="detail-workspace-grid">
-        <aside className="detail-build-context" aria-label="Build information">
+        <aside className="raised detail-build-context" aria-label="Build information">
           <h2>Build information</h2>
           <dl className="detail-facts">
             {information?.activity && (
@@ -214,7 +214,7 @@ export function BuildDetailWorkspace({
             Check loadout cost
           </a>
         </aside>
-        <section className="detail-inventory-panel" aria-label="Inventory loadout">
+        <section className="raised detail-inventory-panel" aria-label="Inventory loadout">
           <div className="detail-panel-heading">
             <h2>
               <Swords size={17} /> Equipment
@@ -231,7 +231,7 @@ export function BuildDetailWorkspace({
             Select a slot to inspect its abilities and alternatives.
           </p>
         </section>
-        <aside className="detail-summary-panel" aria-label="Build summary">
+        <aside className="raised detail-summary-panel" aria-label="Build summary">
           <div className="detail-panel-heading">
             <h2 ref={inspectorHeading} tabIndex={-1}>
               {selectedSlot}
@@ -298,7 +298,10 @@ export function BuildDetailWorkspace({
         </aside>
       </div>
       <div className="detail-secondary-sections">
-        <details className="detail-disclosure detail-other-abilities" id="build-all-abilities">
+        <details
+          className="raised detail-disclosure detail-other-abilities"
+          id="build-all-abilities"
+        >
           <summary>
             <span>
               <Layers size={16} /> Other equipment abilities
@@ -325,7 +328,7 @@ export function BuildDetailWorkspace({
           </div>
         </details>
         {recommendations && (
-          <details className="detail-disclosure detail-recommendations">
+          <details className="raised detail-disclosure detail-recommendations">
             <summary>
               <span>Recommended traits</span>
               <small>Author’s recommendations</small>
@@ -333,7 +336,10 @@ export function BuildDetailWorkspace({
             <div className="detail-disclosure-content">{recommendations}</div>
           </details>
         )}
-        <details className="detail-disclosure detail-alternatives-panel" id="build-alternatives">
+        <details
+          className="raised detail-disclosure detail-alternatives-panel"
+          id="build-alternatives"
+        >
           <summary>
             <span>Alternative equipment</span>
             <small>{altCount} configured choices</small>
@@ -428,7 +434,7 @@ export function BuildDetailWorkspace({
             )}
           </div>
         </details>
-        <details className="detail-disclosure detail-statistics-panel" id="build-stats">
+        <details className="raised detail-disclosure detail-statistics-panel" id="build-stats">
           <summary>
             <span>Build facts & assumptions</span>
             <small>
