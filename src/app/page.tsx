@@ -158,6 +158,22 @@ export default async function Home({
         />
       </div>
 
+      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
+        <div className="section-heading landing-section-heading">
+          <h2 id="home-activities-title">
+            A build for <em>every</em> activity.
+          </h2>
+          <p>
+            Pick what you are about to do and start from the five builds players like most for it,
+            ranked by likes.
+          </p>
+          <Link className="pill-link" href={`/builds/library${suffix}`}>
+            Build library <ArrowRight size={15} />
+          </Link>
+        </div>
+        <ActivityGrid activities={activities} suffix={suffix} />
+      </section>
+
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-tools-title">
@@ -217,6 +233,8 @@ export default async function Home({
         </div>
       </section>
 
+      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
+
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-guides-title">
@@ -231,24 +249,6 @@ export default async function Home({
           </Link>
         </div>
         <GuidesCarousel guides={latestGuides} suffix={suffix} />
-      </section>
-
-      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
-
-      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
-        <div className="section-heading landing-section-heading">
-          <h2 id="home-activities-title">
-            A build for <em>every</em> activity.
-          </h2>
-          <p>
-            Pick what you are about to do and start from the five builds players like most for it,
-            ranked by likes.
-          </p>
-          <Link className="pill-link" href={`/builds/library${suffix}`}>
-            Build library <ArrowRight size={15} />
-          </Link>
-        </div>
-        <ActivityGrid activities={activities} suffix={suffix} />
       </section>
 
       <div className="landing-wrap">

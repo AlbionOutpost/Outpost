@@ -1,7 +1,7 @@
 /* Landing page: the header on its own bar, then a painted hero that dissolves into the page,
-   the numbers Outpost measures, three teaser windows (build, Teams, comp), three tool cards
-   running on live data, a guides slider, the top kills as killboards, builds by activity and
-   a painted band with the Free and Supporter plans. Paintings and emblems are the owner's
+   the numbers Outpost measures, three teaser windows (build, Teams, comp), builds by
+   activity, three tool cards running on live data, the top kills as killboards, a guides
+   slider and a painted band with the Free and Supporter plans. Paintings and emblems are the owner's
    artwork; everything inside the cards is real software on real observations. */
 
 .app.outpost.home-route .main > .site-header {
