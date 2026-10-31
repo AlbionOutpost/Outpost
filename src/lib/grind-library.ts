@@ -11,6 +11,7 @@ import type {
 import type { JournalEntry } from "./journal-progress";
 import type { FishReference } from "./albion/fishing";
 import { paginateLibrary, type LibraryQuery } from "./grind-library-query";
+import { summariseActivities } from "./library-activities";
 
 // Immutable PUBLIC snapshots only; no user/account state enters these process-local indexes.
 let builds: LibraryBuild[] | undefined;
@@ -43,6 +44,8 @@ export const libraryCounts = async () => ({
   compositions: libraryCompositions().length,
   guides: libraryGuides().length,
 });
+/** The landing page's builds-by-activity summary. */
+export const libraryActivities = async () => summariseActivities(libraryBuilds());
 export const queryLibraryBuilds = (query: LibraryQuery) =>
   paginateLibrary(libraryBuilds(), query, 24);
 export const queryLibraryCompositions = (query: LibraryQuery) =>

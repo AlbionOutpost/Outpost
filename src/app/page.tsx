@@ -6,18 +6,17 @@ import { MarketCard } from "@/components/landing/market-card";
 import { PlannerCard } from "@/components/landing/planner-card";
 import { PreviewShell } from "@/components/landing/preview-shell";
 import { TopKills } from "@/components/landing/top-kills";
-import { ActivityGrid, type Activity } from "@/components/landing/activity-grid";
+import { ActivityGrid } from "@/components/landing/activity-grid";
 import { LandingWindows } from "@/components/landing/windows";
 import {
   featuredLibraryBuilds,
   findLibraryBuilds,
   findLibraryComposition,
-  libraryBuilds,
+  libraryActivities,
   libraryCounts,
   libraryGuides,
   librarySpellNames,
 } from "@/lib/grind-library";
-import { activityName } from "@/lib/grind-library-types";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { supporterPrice } from "@/lib/billing/price";
 import { readingMinutes } from "@/components/guide-cover-card";
@@ -43,44 +42,7 @@ const showcase = {
     { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
   planCity: "Martlock",
-  // The activities players ask for most, in the order the grid shows them
-  activities: [
-    "ZVZ",
-    "SMALL_SCALE",
-    "HELLGATE_5V5",
-    "FAME_FARM_GROUP_AVALON",
-    "FAME_FARM_GROUP",
-    "CORRUPTED_DUNGEON",
-    "MISTS_SOLO",
-    "GANK_GROUP",
-  ],
 } as const;
-
-/** Per activity: the build count, the weapons of its best-liked builds and the top build. */
-async function activityShowcase(): Promise<Activity[]> {
-  const rows = await libraryBuilds();
-  return showcase.activities.map((category) => {
-    const builds = rows
-      .filter((b) => b.category === category)
-      .toSorted((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
-    const weapons = [
-      ...new Set(
-        builds.flatMap((b) => {
-          const id = b.equipment.find((e) => e.slot === "Main hand")?.itemId;
-          return id ? [id] : [];
-        }),
-      ),
-    ].slice(0, 3);
-    const top = builds[0];
-    return {
-      category,
-      name: activityName(category),
-      builds: builds.length,
-      weapons,
-      top: top?.upvotes ? { title: top.title, slug: top.slug, upvotes: top.upvotes } : null,
-    };
-  });
-}
 
 export default async function Home({
   searchParams,
@@ -102,7 +64,7 @@ export default async function Home({
       findLibraryComposition(showcase.comp),
       libraryGuides(),
       playerCount(),
-      activityShowcase(),
+      libraryActivities(),
       supporterPrice(),
     ],
   );

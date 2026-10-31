@@ -2,13 +2,7 @@ import { Heart } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
 
-export type Activity = {
-  category: string;
-  name: string;
-  builds: number;
-  weapons: string[];
-  top: { title: string; slug: string; upvotes: number } | null;
-};
+import type { Activity } from "@/lib/library-activities";
 
 /**
  * Builds by what you are about to do: each activity with how many public builds it has, the
