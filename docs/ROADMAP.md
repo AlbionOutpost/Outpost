@@ -106,19 +106,20 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 
 Only the owner can do these.
 
-| #     | Action                                                                                                                                          |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| OA-1  | Publish the DNSSEC DS at Namecheap ([OPERATIONS.md](OPERATIONS.md#cloudflare-zone))                                                             |
-| OA-2  | Real Discord login test on production: sign in, reload, admin role appears, sign out, sign in again; check cookies are Secure/HttpOnly/SameSite |
-| OA-3  | Complete a real Turnstile challenge on comment, edit and report                                                                                 |
-| OA-4  | Provide operator name, address and contact email for the legal page; then set Discord Terms/Privacy URLs                                        |
-| OA-5  | Choose a code licence (none today)                                                                                                              |
-| OA-6  | Decide the current-patch data source and its rights (ao-bin-dumps has no declared licence)                                                      |
-| OA-7  | Run `node scripts/cloudflare-recovery.mjs bookmark` once after the next deploy to confirm recovery works                                        |
-| OA-8  | Enable required MFA on the GitHub org; decide on branch protection (paid plan for private repos)                                                |
-| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26** (a reminder is scheduled for 5 Jan 2027)                                           |
-| OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                             |
-| OA-11 | Delete leftover merged branches on GitHub                                                                                                       |
+| #     | Action                                                                                                                                                                                                                                                 |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| OA-1  | Publish the DNSSEC DS at Namecheap ([OPERATIONS.md](OPERATIONS.md#cloudflare-zone))                                                                                                                                                                    |
+| OA-2  | Real Discord login test on production: sign in, reload, admin role appears, sign out, sign in again; check cookies are Secure/HttpOnly/SameSite                                                                                                        |
+| OA-3  | Complete a real Turnstile challenge on comment, edit and report                                                                                                                                                                                        |
+| OA-4  | Provide operator name, address and contact email for the legal page; then set Discord Terms/Privacy URLs                                                                                                                                               |
+| OA-5  | Choose a code licence (none today)                                                                                                                                                                                                                     |
+| OA-6  | Decide the current-patch data source and its rights (ao-bin-dumps has no declared licence)                                                                                                                                                             |
+| OA-7  | Run `node scripts/cloudflare-recovery.mjs bookmark` once after the next deploy to confirm recovery works                                                                                                                                               |
+| OA-8  | Enable required MFA on the GitHub org; decide on branch protection (paid plan for private repos)                                                                                                                                                       |
+| OA-9  | Rotate the GitHub Workers deploy token before **2027-01-26** (a reminder is scheduled for 5 Jan 2027)                                                                                                                                                  |
+| OA-11 | Refresh the lint and OpenNext toolchain: `npm audit` reports moderate advisories in `minimatch`/`glob` reached only through `eslint`, `eslint-config-next` and `@opennextjs/cloudflare` (dev dependencies); the CI gate now covers the production tree |
+| OA-10 | Write down homepage acceptance criteria before the next homepage pass (four iterations were rejected in three days)                                                                                                                                    |
+| OA-11 | Delete leftover merged branches on GitHub                                                                                                                                                                                                              |
 
 ## Tech debt
 
