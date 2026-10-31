@@ -139,7 +139,7 @@ svg {
   color: var(--muted);
   margin: 18px 12px 8px;
 }
-header {
+header.site-header {
   height: 68px;
   display: flex;
   align-items: center;
@@ -154,7 +154,7 @@ header {
   align-items: center;
   gap: 14px;
 }
-header button {
+header.site-header button {
   color: var(--muted);
   background: none;
   border: 0;
@@ -165,7 +165,7 @@ header button {
   min-height: 40px;
   border-radius: var(--radius-sm);
 }
-header button:hover {
+header.site-header button:hover {
   color: var(--text);
   background: var(--elevated);
 }
@@ -1141,7 +1141,7 @@ kbd {
   main {
     padding: 28px;
   }
-  header {
+  header.site-header {
     padding: 0 28px;
   }
 }

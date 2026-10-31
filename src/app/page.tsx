@@ -159,7 +159,7 @@ export default async function Home({
       </div>
 
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
-        <div className="landing-section-heading">
+        <div className="section-heading landing-section-heading">
           <h2 id="home-tools-title">
             Powerful <em>tools</em> for every Albion player.
           </h2>
@@ -167,7 +167,7 @@ export default async function Home({
             From market research to build planning and group compositions — everything you need in
             one place.
           </p>
-          <Link className="text-link" href={`/tools${suffix}`}>
+          <Link className="pill-link" href={`/tools${suffix}`}>
             View all tools <ArrowRight size={15} />
           </Link>
         </div>
@@ -218,7 +218,7 @@ export default async function Home({
       </section>
 
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
-        <div className="landing-section-heading">
+        <div className="section-heading landing-section-heading">
           <h2 id="home-guides-title">
             Learn from <em>players</em>.
           </h2>
@@ -226,7 +226,7 @@ export default async function Home({
             {library.guides} guides on progression, gathering, PvE and the market, each with its
             author and the date it was last updated.
           </p>
-          <Link className="text-link" href={`/guides${suffix}`}>
+          <Link className="pill-link" href={`/guides${suffix}`}>
             All guides <ArrowRight size={15} />
           </Link>
         </div>

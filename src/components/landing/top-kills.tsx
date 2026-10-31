@@ -64,7 +64,7 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
     feed.events.every((e) => Date.parse(feed.fetchedAt) - Date.parse(e.occurredAt) < 86_400_000);
   return (
     <section className="landing-wrap landing-kills" aria-labelledby="home-kills-title">
-      <div className="landing-section-heading">
+      <div className="section-heading landing-section-heading">
         <h2 id="home-kills-title">
           Top kills <em>{fresh ? "today" : "this week"}</em>
         </h2>
@@ -72,7 +72,7 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
           The three highest-fame kills on {serverName}{" "}
           {fresh ? "in the past 24 hours" : "in the game’s current ranking"}.
         </p>
-        <Link className="text-link" href={`/tools/kill-feed${suffix}`}>
+        <Link className="pill-link" href={`/tools/kill-feed${suffix}`}>
           Open the kill feed <ArrowRight size={15} />
         </Link>
       </div>
@@ -105,7 +105,7 @@ function Kills({
         const isOpen = open === ev.id;
         const gear = ev.gearValue;
         return (
-          <article key={ev.id} className="kill-card">
+          <article key={ev.id} className="raised has-scene kill-card">
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img
               className="kill-trophy"

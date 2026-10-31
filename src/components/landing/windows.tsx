@@ -27,7 +27,7 @@ function Window({
   children: ReactNode;
 }) {
   return (
-    <article className="landing-window" data-scene={scene}>
+    <article className="raised has-scene landing-window" data-scene={scene}>
       <div className="landing-window-bar">{bar}</div>
       <div className="landing-window-body">{children}</div>
       <Link href={href} className="landing-window-foot">
