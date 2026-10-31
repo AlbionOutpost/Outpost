@@ -249,7 +249,7 @@ test("library Add to comp preserves sign-in return, explicit role and an unattac
   try {
     const guest = await anonymous.newPage();
     await guest.goto("/builds/library/battleaxe-mist-build?region=asia");
-    const sourceTitle = await guest.getByRole("heading", { level: 1 }).innerText();
+    const sourceTitle = (await guest.getByRole("heading", { level: 1 }).textContent()) as string;
     await guest.getByRole("link", { name: "Add to comp", exact: true }).click();
     await expect(guest).toHaveURL(/\/signin\?callbackUrl=/);
     const callback = new URL(guest.url()).searchParams.get("callbackUrl")!;
