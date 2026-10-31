@@ -7,7 +7,8 @@ import { SupporterActions } from "@/components/supporter-actions";
 import { authOptions } from "@/lib/auth";
 import { regionSchema } from "@/lib/albion/region-config";
 import { billingProfile } from "@/lib/billing/plan";
-import { getPrice, stripeConfig } from "@/lib/billing/stripe";
+import { supporterPrice } from "@/lib/billing/price";
+import { stripeConfig } from "@/lib/billing/stripe";
 import {
   ArrowRight,
   BadgeCheck,
@@ -23,32 +24,6 @@ export const metadata: Metadata = {
   title: "Supporter",
   description: "Outpost without ads and with a home for your team: the Supporter plan.",
 };
-
-let priceCache: { at: number; label: string | null } | null = null;
-/** The live price from Stripe, cached ten minutes; null when billing is off or Stripe is unreachable. */
-async function priceLabel() {
-  const config = stripeConfig();
-  if (!config) return null;
-  if (priceCache && Date.now() - priceCache.at < 600000) return priceCache.label;
-  try {
-    const price = await getPrice(config);
-    const amount =
-      price.unit_amount == null
-        ? null
-        : new Intl.NumberFormat("en", { style: "currency", currency: price.currency }).format(
-            price.unit_amount / 100,
-          );
-    const every = price.recurring
-      ? price.recurring.interval_count > 1
-        ? `every ${price.recurring.interval_count} ${price.recurring.interval}s`
-        : `per ${price.recurring.interval}`
-      : "";
-    priceCache = { at: Date.now(), label: amount ? `${amount} ${every}`.trim() : null };
-  } catch {
-    priceCache = { at: Date.now(), label: null };
-  }
-  return priceCache.label;
-}
 
 /**
  * The Supporter plan: no advertising and a Team workspace of your own, for a monthly
@@ -69,7 +44,7 @@ export default async function Supporter({
   const session = await getServerSession(authOptions);
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
   const supporter = profile?.plan === "SUPPORTER";
-  const price = await priceLabel();
+  const price = await supporterPrice();
   const renews = profile?.planRenewsAt
     ? profile.planRenewsAt.toLocaleDateString("en-GB", {
         day: "numeric",

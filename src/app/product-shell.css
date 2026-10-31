@@ -260,32 +260,107 @@
   min-height: 44px;
   border-radius: 8px;
 }
+/* Theme switch: a roomy track with the sun and moon at either end and an ember thumb that
+   travels between them. The leading edge leaves first and the trailing edge catches up, so the
+   thumb stretches like something sticky and snaps back into a circle. */
 .app.outpost .site-header .theme-switch {
-  display: inline-flex;
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 36px 36px;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   height: 44px;
-  padding: 4px;
+  padding: 0 4px;
   border: 1px solid #ffffff1c;
   border-radius: 999px;
-  background: #15181f;
+  background: radial-gradient(60px 30px at 75% 50%, #4f6fe01a, transparent 70%), #12151b;
+  box-shadow: inset 0 1px 3px #000a;
   cursor: pointer;
+  isolation: isolate;
+}
+.app.outpost .site-header .theme-switch-thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 44px;
+  right: 3px;
+  z-index: -1;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3a46b, var(--accent) 55%, #c95f22);
+  box-shadow:
+    inset 0 1px 0 #ffffff66,
+    inset 0 -2px 3px #0003,
+    0 0 14px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 2px 6px #0008;
+  transition:
+    right 300ms var(--ease-spring),
+    left 460ms var(--ease-out-expo) 70ms,
+    scale 200ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch[data-mode="light"] .theme-switch-thumb {
+  left: 3px;
+  right: 44px;
+  transition:
+    left 300ms var(--ease-spring),
+    right 460ms var(--ease-out-expo) 70ms,
+    scale 200ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch:active .theme-switch-thumb {
+  scale: 0.92 0.86;
 }
 .app.outpost .site-header .theme-switch-option {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   color: #8f8a83;
+  transition: color 260ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch-option svg {
   transition:
-    background 160ms var(--ease-out),
-    color 160ms var(--ease-out);
+    rotate 620ms var(--ease-spring),
+    scale 620ms var(--ease-spring);
 }
 .app.outpost .site-header .theme-switch-option.is-on {
-  background: var(--accent);
   color: #1a100b;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.app.outpost .site-header .theme-switch-option.is-sun:not(.is-on) svg {
+  rotate: -90deg;
+  scale: 0.8;
+}
+.app.outpost .site-header .theme-switch-option.is-moon:not(.is-on) svg {
+  rotate: 40deg;
+  scale: 0.8;
+}
+.app.outpost .site-header .theme-switch:hover .theme-switch-option:not(.is-on) {
+  color: #d8d2c8;
+}
+.app.outpost.light .site-header .theme-switch {
+  background: radial-gradient(60px 30px at 25% 50%, #f0a0601f, transparent 70%), var(--elevated);
+  box-shadow: inset 0 1px 3px #0000001f;
+}
+.app.outpost.light .site-header .theme-switch-option:not(.is-on) {
+  color: #7d766d;
+}
+.app.outpost.light .site-header .theme-switch:hover .theme-switch-option:not(.is-on) {
+  color: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost
+    .site-header
+    :is(.theme-switch-thumb, .theme-switch-option, .theme-switch-option svg) {
+    transition: none;
+  }
+}
+/* The theme change itself: the new page grows out of the switch (see the shell) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 1;
 }
 .app.outpost .site-header .home-auth-action,
 .app.outpost .site-header .discord-login {
@@ -308,7 +383,8 @@
   border-bottom-color: #0000001a;
   background: var(--panel);
 }
-.app.outpost.light .site-header :is(.search-trigger, .theme-switch, .discord-login) {
+.app.outpost.light .site-header :is(.search-trigger, .discord-login),
+.app.outpost.light .site-header .theme-switch {
   border-color: var(--border);
   background: var(--elevated);
   color: var(--text);
@@ -382,13 +458,17 @@
     display: none;
   }
 }
-/* Phones: the switch collapses to the current mode's icon, still one tap to change */
+/* Phones: the switch collapses to the current mode's icon on the ember disc, one tap to change */
 @media (max-width: 600px) {
   .app.outpost header.site-header .theme-switch {
     display: inline-flex;
-    padding: 4px;
+    padding: 3px;
   }
   .app.outpost header.site-header .theme-switch-option:not(.is-on) {
     display: none;
+  }
+  .app.outpost header.site-header .theme-switch[data-mode] .theme-switch-thumb {
+    left: 3px;
+    right: 3px;
   }
 }

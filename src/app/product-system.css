@@ -211,7 +211,16 @@
    masthead, full-bleed painted mastheads that dissolve into the page, raised panels with an
    ember top edge, inset wells inside them, display section headings and pill links.
    --------------------------------------------------------------------------------------------- */
+/* Registered so the card light can fade in and out instead of switching */
+@property --glow {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 0%;
+}
 .app.outpost {
+  /* Motion: expo-out for things that arrive or grow, a soft spring for things that travel */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
   --canvas-top: #17110e;
   --canvas-mid: #110f10;
   --canvas-end: #0c0d10;
@@ -265,22 +274,79 @@
     inset 0 1px 0 #ffffff, 0 0 0 1px color-mix(in srgb, var(--accent) 40%, #16203218),
     0 2px 0 #1620320a, 0 14px 30px -8px #16203240;
 }
-/* The canvas: lit from the top where the masthead sits, settling to night further down */
-.app.outpost:not(.home-route) .main {
+/* The canvas: one continuous surface under every page, landing included. A warm light from the
+   top (where the masthead or hero sits) eases out over the first screen and a half while the
+   base settles to night across the whole page height; faint embers keep deep sections alive and
+   a fine grain dithers the long dark ramps so they never band. Stops are eased, never linear. */
+.app.outpost {
+  --canvas-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --canvas-glow: #d9742f;
+  --canvas-grain-opacity: 0.035;
+  background-color: var(--canvas-end);
+}
+.app.outpost .main {
+  position: relative;
   isolation: isolate;
   overflow-x: clip;
-  background:
-    radial-gradient(1200px 520px at 50% 300px, #d9742f14 0%, #d9742f06 45%, transparent 70%),
+  background-color: var(--canvas-end);
+  background-image:
+    radial-gradient(
+      1200px 560px at 50% 260px,
+      color-mix(in srgb, var(--canvas-glow) 9%, transparent) 0%,
+      color-mix(in srgb, var(--canvas-glow) 4%, transparent) 40%,
+      transparent 72%
+    ),
+    radial-gradient(
+      1100px 900px at 12% 46%,
+      color-mix(in srgb, var(--canvas-glow) 4%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      1200px 1000px at 88% 78%,
+      color-mix(in srgb, var(--canvas-glow) 3.5%, transparent) 0%,
+      transparent 70%
+    ),
     linear-gradient(
       180deg,
-      var(--canvas-top) 0,
-      var(--canvas-top) 320px,
-      var(--canvas-mid) 900px,
-      var(--canvas-end) 1400px
+      var(--canvas-top) 0px,
+      color-mix(in oklab, var(--canvas-top) 97%, transparent) 140px,
+      color-mix(in oklab, var(--canvas-top) 90%, transparent) 300px,
+      color-mix(in oklab, var(--canvas-top) 78%, transparent) 480px,
+      color-mix(in oklab, var(--canvas-top) 62%, transparent) 680px,
+      color-mix(in oklab, var(--canvas-top) 44%, transparent) 880px,
+      color-mix(in oklab, var(--canvas-top) 27%, transparent) 1080px,
+      color-mix(in oklab, var(--canvas-top) 13%, transparent) 1280px,
+      color-mix(in oklab, var(--canvas-top) 4%, transparent) 1480px,
+      transparent 1680px
+    ),
+    linear-gradient(
+      180deg,
+      var(--canvas-mid) 0%,
+      color-mix(in oklab, var(--canvas-mid) 92%, var(--canvas-end)) 18%,
+      color-mix(in oklab, var(--canvas-mid) 72%, var(--canvas-end)) 38%,
+      color-mix(in oklab, var(--canvas-mid) 45%, var(--canvas-end)) 58%,
+      color-mix(in oklab, var(--canvas-mid) 20%, var(--canvas-end)) 78%,
+      var(--canvas-end) 100%
     );
 }
-.app.outpost.light:not(.home-route) .main {
-  background: linear-gradient(180deg, var(--canvas-top) 0, var(--canvas-mid) 520px);
+/* Grain above the gradients, below everything else */
+.app.outpost .main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--canvas-grain) 0 0 / 160px 160px;
+  opacity: var(--canvas-grain-opacity);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.app.outpost.light {
+  --canvas-glow: #e08a4a;
+  --canvas-grain-opacity: 0.05;
+}
+/* The landing spans the window; its sections keep their own measure */
+.app.outpost.home-route :is(.page-frame, .product-frame) {
+  max-width: none;
 }
 
 /* Masthead: full-bleed painting under the page title, dissolving into the canvas; the first
@@ -461,15 +527,20 @@
   isolation: isolate;
   overflow: hidden;
 }
+/* The painting is a fixed band at the top of the card that fades out: a card that grows (an
+   opened list, a longer result) reveals more scrim instead of stretching the art. */
 .app.outpost .raised.has-scene::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
   z-index: -2;
+  height: 540px;
   background: var(--scene, var(--scene-city)) center / cover no-repeat;
   opacity: 0.55;
   filter: saturate(0.85) blur(3px);
   transform: scale(1.04);
+  transform-origin: top;
+  mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
 }
 .app.outpost .raised.has-scene::after {
   content: "";
@@ -477,6 +548,11 @@
   inset: 0;
   z-index: -1;
   background:
+    radial-gradient(
+      560px circle at var(--mx, 50%) var(--my, -10%),
+      color-mix(in srgb, var(--accent) var(--glow), transparent),
+      transparent 62%
+    ),
     linear-gradient(180deg, var(--edge-light) 0%, #ffffff00 22%),
     linear-gradient(
       180deg,
@@ -502,15 +578,43 @@
 .app.outpost .raised[data-scene="city"] {
   --scene: var(--scene-city);
 }
-.app.outpost a.raised,
-.app.outpost .raised.is-link {
+/* Cards that lead somewhere (or are a live tool) grow toward the pointer and catch an ember
+   light that follows it; the light is drawn on the card's own surface, never over content. */
+.app.outpost :is(a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card) {
+  position: relative;
   transition:
-    transform 180ms var(--ease-out),
-    box-shadow 180ms var(--ease-out);
+    transform 380ms var(--ease-out-expo),
+    box-shadow 380ms var(--ease-out-expo),
+    --glow 380ms var(--ease-out-expo);
 }
-.app.outpost :is(a.raised, .raised.is-link):hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-raised-hover);
+.app.outpost :is(a.raised, .raised.is-link):not(.has-scene) {
+  background:
+    radial-gradient(
+      480px circle at var(--mx, 50%) var(--my, -10%),
+      color-mix(in srgb, var(--accent) var(--glow), transparent),
+      transparent 62%
+    ),
+    var(--surface-raised);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app.outpost :is(a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card):hover {
+    z-index: 2;
+    transform: scale(1.022);
+    box-shadow: var(--shadow-raised-hover);
+    --glow: 11%;
+  }
+  .app.outpost .kill-card:hover {
+    transform: scale(1.012);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+  .app.outpost :is(a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card):hover {
+    box-shadow: var(--shadow-raised-hover);
+  }
+}
+.app.outpost.light
+  :is(a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card):hover {
+  --glow: 7%;
 }
 .app.outpost .well {
   border: 1px solid var(--well-border);
@@ -588,7 +692,9 @@
   border-radius: 50%;
   background: var(--accent);
   color: #1a100b;
-  transition: transform 160ms var(--ease-out);
+  transition:
+    translate 420ms var(--ease-spring),
+    rotate 420ms var(--ease-spring);
 }
 .app.outpost .pill-link:hover {
   border-color: var(--accent);
@@ -596,7 +702,7 @@
   text-decoration: none;
 }
 .app.outpost .pill-link:hover svg {
-  transform: translateX(2px);
+  translate: 2px 0;
 }
 .app.outpost.light .pill-link {
   background: #ffffffd9;
@@ -1039,7 +1145,9 @@
     0 0 0 1px #000000b0,
     0 3px 0 #0a0b0e,
     0 18px 36px -10px #000d;
-  transition: transform 180ms var(--ease-out);
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo);
 }
 .app.outpost .guide-card img {
   position: absolute;
@@ -1048,13 +1156,20 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 400ms var(--ease-out);
+  transition: transform 900ms var(--ease-out-expo);
 }
-.app.outpost .guide-card a:hover {
-  transform: translateY(-3px);
-}
-.app.outpost .guide-card a:hover img {
-  transform: scale(1.04);
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app.outpost .guide-card a:hover {
+    transform: scale(1.025);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--accent) 60%, #ffffff3a),
+      0 0 0 1px color-mix(in srgb, var(--accent) 45%, #000000b0),
+      0 3px 0 #0a0b0e,
+      0 26px 48px -12px #000e;
+  }
+  .app.outpost .guide-card a:hover img {
+    transform: scale(1.08);
+  }
 }
 .app.outpost .guide-card-time {
   position: absolute;
@@ -1086,7 +1201,12 @@
 }
 .app.outpost .guide-card-copy h3 {
   margin: 0;
+  color: #f4f2ee;
   font: 800 20px/1.15 var(--font-display);
+}
+/* Copy sits on the painting's dark scrim in both themes */
+.app.outpost.light .guide-card-copy small {
+  color: #f5a36a;
 }
 .app.outpost .guide-card-copy > span {
   display: -webkit-box;

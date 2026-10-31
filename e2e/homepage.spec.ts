@@ -226,7 +226,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   const crafting = cards.nth(1);
   await expect(crafting.locator(".tool-item")).toContainText("Cape");
-  await expect(crafting.locator(".tool-item")).toContainText("Best of 5 recipes · Thetford");
+  await expect(crafting.locator(".tool-item")).toContainText("Thetford · best of 5 recipes");
   await expect(crafting.locator(".tool-table tbody tr")).toHaveCount(2);
   await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(
     /Lavish Cloth\s*4\s*3,594\s*14,376/,
@@ -249,7 +249,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   ).toHaveCount(3);
   await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*0 \/ 33/);
   await expect(planner.locator(".tool-summary")).toContainText(/Still to buy\s*13,000\+/);
-  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no Martlock listing");
+  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no listing");
   await planner
     .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
     .getByRole("button", { name: "Own one more" })
@@ -306,16 +306,28 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/kill-feed?region=europe",
   );
 
-  // Advertising stays off until configured; the ad-free offer is always there.
-  await expect(page.locator(".adsbygoogle")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Support Outpost and go ad-free" })).toHaveAttribute(
+  // Activities: real counts from the library, each linking to its filtered list.
+  const activities = page.locator(".activity-card");
+  await expect(activities).toHaveCount(8);
+  await expect(activities.first()).toHaveAttribute(
     "href",
-    "/supporter?region=europe",
+    "/builds/library?category=ZVZ&region=europe",
   );
-  await expect(page.locator(".landing-why-grid li")).toHaveCount(4);
-  await expect(page.locator(".landing-cta h2")).toHaveText(
-    "Make better decisionsin Albion Online.",
-  );
+  await expect(activities.first().locator(".activity-copy")).toContainText(/ZvZ\s*[\d,]+ builds/);
+  await expect(activities.first().locator(".activity-weapons img")).toHaveCount(3);
+
+  // Advertising stays off until configured; the plans say what is free and what supports.
+  await expect(page.locator(".adsbygoogle")).toHaveCount(0);
+  const plans = page.locator(".plan-card");
+  await expect(plans).toHaveCount(2);
+  await expect(plans.nth(0)).toContainText("No account needed");
+  await expect(plans.nth(1)).toContainText("No ads anywhere on Outpost");
+  // Billing is off in this environment: nothing is priced or sold.
+  await expect(plans.nth(1)).toContainText("Opening soon");
+  await expect(plans.nth(1)).not.toContainText(/\$|€|per month/);
+  await expect(
+    plans.nth(1).getByRole("link", { name: /About the Supporter plan/ }),
+  ).toHaveAttribute("href", "/supporter?region=europe");
   const footer = page.locator("footer.site-footer");
   await expect(footer.getByRole("navigation", { name: "Explore" })).toBeVisible();
   await expect(footer).toContainText("Albion Online Data Project");

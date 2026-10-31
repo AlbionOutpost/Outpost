@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import type React from "react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
 import { LoadoutBoard } from "@/components/loadout-board";
@@ -173,40 +174,50 @@ function Kills({
               type="button"
               className="kill-toggle"
               aria-expanded={isOpen}
+              aria-controls={`kill-people-${ev.id}`}
               disabled={!ev.crew.length}
               onClick={() => setOpen(isOpen ? null : ev.id)}
             >
               {ev.crew.length
                 ? `${isOpen ? "Hide" : "Show"} ${ev.crew.length} participant${ev.crew.length === 1 ? "" : "s"}`
                 : "No participants recorded"}
-              {ev.crew.length ? <span aria-hidden="true">{isOpen ? "▴" : "▾"}</span> : null}
+              {ev.crew.length ? <ChevronDown size={14} aria-hidden="true" /> : null}
             </button>
-            {isOpen && (
-              <ol className="kill-people" aria-label="Participants">
-                {ev.crew
-                  .toSorted((a, b) => b.damage + b.healing - (a.damage + a.healing))
-                  .map((p) => (
-                    <li key={p.name}>
-                      <span className="kill-person">
-                        <strong>{p.name}</strong>
-                        <small>
-                          {p.guild || "No guild"} · {p.itemPower ? Math.round(p.itemPower) : "—"} IP
-                        </small>
-                        <small>
-                          {p.damage ? `${p.damage.toLocaleString("en-US")} dmg` : ""}
-                          {p.damage && p.healing ? " · " : ""}
-                          {p.healing ? `${p.healing.toLocaleString("en-US")} healing` : ""}
-                        </small>
-                      </span>
-                      <span className="kill-kit">
-                        {p.equipment.slice(0, 6).map((e) => (
-                          <ItemIcon key={e.slot} id={e.itemId} size={28} />
-                        ))}
-                      </span>
-                    </li>
-                  ))}
-              </ol>
-            )}
+            {ev.crew.length ? (
+              // Always in the tree so the height can animate; closed, it is inert and hidden.
+              <div
+                className="kill-people-wrap"
+                id={`kill-people-${ev.id}`}
+                data-open={isOpen || undefined}
+                inert={!isOpen}
+              >
+                <ol className="kill-people" aria-label="Participants">
+                  {ev.crew
+                    .toSorted((a, b) => b.damage + b.healing - (a.damage + a.healing))
+                    .map((p, i) => (
+                      <li key={p.name} style={{ "--i": i } as React.CSSProperties}>
+                        <span className="kill-person">
+                          <strong>{p.name}</strong>
+                          <small>
+                            {p.guild || "No guild"} · {p.itemPower ? Math.round(p.itemPower) : "—"}{" "}
+                            IP
+                          </small>
+                          <small>
+                            {p.damage ? `${p.damage.toLocaleString("en-US")} dmg` : ""}
+                            {p.damage && p.healing ? " · " : ""}
+                            {p.healing ? `${p.healing.toLocaleString("en-US")} healing` : ""}
+                          </small>
+                        </span>
+                        <span className="kill-kit">
+                          {p.equipment.slice(0, 6).map((e) => (
+                            <ItemIcon key={e.slot} id={e.itemId} size={28} />
+                          ))}
+                        </span>
+                      </li>
+                    ))}
+                </ol>
+              </div>
+            ) : null}
           </article>
         );
       })}

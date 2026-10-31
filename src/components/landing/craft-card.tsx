@@ -62,8 +62,10 @@ export function CraftCard() {
           </strong>
           <small>
             {p
-              ? `Best of ${data!.value!.candidates} recipes · ${p.city}`
-              : (data?.error ?? "Pricing every candidate in every city")}
+              ? `${p.city} · best of ${data!.value!.candidates} recipes`
+              : data?.error
+                ? "No complete price set right now"
+                : "Pricing every candidate in every city"}
           </small>
         </span>
         <span className="tool-stepper" role="group" aria-label="Batches">

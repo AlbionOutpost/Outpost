@@ -6,15 +6,20 @@ import { MarketCard } from "@/components/landing/market-card";
 import { PlannerCard } from "@/components/landing/planner-card";
 import { PreviewShell } from "@/components/landing/preview-shell";
 import { TopKills } from "@/components/landing/top-kills";
+import { ActivityGrid, type Activity } from "@/components/landing/activity-grid";
 import { LandingWindows } from "@/components/landing/windows";
 import {
   featuredLibraryBuilds,
   findLibraryBuilds,
   findLibraryComposition,
+  libraryBuilds,
   libraryCounts,
   libraryGuides,
   librarySpellNames,
 } from "@/lib/grind-library";
+import { activityName } from "@/lib/grind-library-types";
+import { billingEnabled } from "@/lib/billing/stripe";
+import { supporterPrice } from "@/lib/billing/price";
 import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
 import { regionSchema, regions } from "@/lib/albion/region-config";
@@ -23,7 +28,7 @@ import { playerCount } from "@/lib/site-stats";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
-import { ArrowRight, BookOpen, Database, Layers, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Check } from "lucide-react";
 
 // What the page shows is chosen here and read from the public library or live observations;
 // nothing is staged. The build fills eight of the board's ten wells (no public build records a
@@ -38,7 +43,44 @@ const showcase = {
     { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
   planCity: "Martlock",
+  // The activities players ask for most, in the order the grid shows them
+  activities: [
+    "ZVZ",
+    "SMALL_SCALE",
+    "HELLGATE_5V5",
+    "FAME_FARM_GROUP_AVALON",
+    "FAME_FARM_GROUP",
+    "CORRUPTED_DUNGEON",
+    "MISTS_SOLO",
+    "GANK_GROUP",
+  ],
 } as const;
+
+/** Per activity: the build count, the weapons of its best-liked builds and the top build. */
+async function activityShowcase(): Promise<Activity[]> {
+  const rows = await libraryBuilds();
+  return showcase.activities.map((category) => {
+    const builds = rows
+      .filter((b) => b.category === category)
+      .toSorted((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
+    const weapons = [
+      ...new Set(
+        builds.flatMap((b) => {
+          const id = b.equipment.find((e) => e.slot === "Main hand")?.itemId;
+          return id ? [id] : [];
+        }),
+      ),
+    ].slice(0, 3);
+    const top = builds[0];
+    return {
+      category,
+      name: activityName(category),
+      builds: builds.length,
+      weapons,
+      top: top?.upvotes ? { title: top.title, slug: top.slug, upvotes: top.upvotes } : null,
+    };
+  });
+}
 
 export default async function Home({
   searchParams,
@@ -52,14 +94,19 @@ export default async function Home({
   const suffix = `?region=${region}`;
   // Two round trips to the library on Cloudflare: everything independent first, then the
   // comp's members, so the page streams without showing the shell fallback.
-  const [library, spellNames, picked, comp, guides, players] = await Promise.all([
-    libraryCounts(),
-    librarySpellNames(),
-    findLibraryBuilds([showcase.build]),
-    findLibraryComposition(showcase.comp),
-    libraryGuides(),
-    playerCount(),
-  ]);
+  const [library, spellNames, picked, comp, guides, players, activities, price] = await Promise.all(
+    [
+      libraryCounts(),
+      librarySpellNames(),
+      findLibraryBuilds([showcase.build]),
+      findLibraryComposition(showcase.comp),
+      libraryGuides(),
+      playerCount(),
+      activityShowcase(),
+      supporterPrice(),
+    ],
+  );
+  const billing = billingEnabled();
   const [fallback, members] = await Promise.all([
     picked.length ? Promise.resolve([]) : featuredLibraryBuilds(),
     comp ? findLibraryBuilds(comp.members) : Promise.resolve([]),
@@ -225,50 +272,28 @@ export default async function Home({
 
       <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
 
-      <section className="landing-wrap landing-why" aria-labelledby="home-why-title">
-        <h2 id="home-why-title">Why choose Outpost?</h2>
-        <ul className="landing-why-grid">
-          <li>
-            <Database size={22} aria-hidden="true" />
-            <strong>Real data, real insights</strong>
-            <span>
-              Live and historical market data from the Albion Online Data Project across all cities
-              and regions.
-            </span>
-          </li>
-          <li>
-            <Users size={22} aria-hidden="true" />
-            <strong>Built for players</strong>
-            <span>
-              {n(library.builds)} builds and {n(library.compositions)} group builds by Albion
-              players, each with its author and date.
-            </span>
-          </li>
-          <li>
-            <ShieldCheck size={22} aria-hidden="true" />
-            <strong>Transparent and reliable</strong>
-            <span>
-              Clear sources and source times; a missing price stays missing, an estimate is
-              labelled.
-            </span>
-          </li>
-          <li>
-            <Layers size={22} aria-hidden="true" />
-            <strong>Everything in one place</strong>
-            <span>
-              Market tools, build planning, calculators, guides, comps and Teams — designed to work
-              together.
-            </span>
-          </li>
-        </ul>
+      <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
+        <div className="section-heading landing-section-heading">
+          <h2 id="home-activities-title">
+            A build for <em>every</em> activity.
+          </h2>
+          <p>
+            Pick what you are about to do: the weapons its best-liked builds use, how many builds
+            players have shared for it and the one they like most.
+          </p>
+          <Link className="pill-link" href={`/builds/library${suffix}`}>
+            Build library <ArrowRight size={15} />
+          </Link>
+        </div>
+        <ActivityGrid activities={activities} suffix={suffix} />
       </section>
 
       <div className="landing-wrap">
-        <AdSlot placement="hub" suffix={suffix} offer />
+        <AdSlot placement="hub" suffix={suffix} />
       </div>
 
-      <section className="landing-cta" aria-labelledby="home-cta-title">
-        <picture className="landing-cta-art" aria-hidden="true">
+      <section className="landing-plans" aria-labelledby="home-plans-title">
+        <picture className="landing-plans-art" aria-hidden="true">
           <source media="(max-width: 700px)" srcSet="/albion/illustrations/market-v1-phone.webp" />
           <img
             src="/albion/illustrations/market-v1.webp"
@@ -279,23 +304,80 @@ export default async function Home({
             decoding="async"
           />
         </picture>
-        <div className="landing-wrap landing-cta-inner">
-          <p className="landing-eyebrow">Ready to get started?</p>
-          <h2 id="home-cta-title">
-            Make better decisions
-            <br />
-            in Albion Online.
-          </h2>
-          <p>Browse everything without an account, or sign in to save builds and run a Team.</p>
-          <div className="landing-actions">
-            <Link href={`/signin${suffix}`} className="button primary">
-              Create account <ArrowRight size={17} />
-            </Link>
-            <Link href={`/tools${suffix}`} className="button secondary">
-              Explore without an account
-            </Link>
+        <div className="landing-wrap landing-plans-inner">
+          <div className="section-heading landing-section-heading">
+            <h2 id="home-plans-title">
+              Free for everyone. <em>Supporters</em> keep it running.
+            </h2>
+            <p>
+              Every tool, build and guide is open without an account. A monthly Supporter plan
+              removes the ads and gives your guild its own Team workspace.
+            </p>
           </div>
-          <small>Free to use. Supporters go ad-free and run their own Team.</small>
+          <div className="plan-grid">
+            <article className="raised plan-card">
+              <header>
+                <span className="plan-name">Free</span>
+                <strong className="plan-price">No account needed</strong>
+              </header>
+              <ul>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Market explorer and {tools.length}{" "}
+                  calculators
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> {n(library.builds)} builds and{" "}
+                  {n(library.compositions)} group comps
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Guides, kill feed and timers
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Sign in with Discord to save builds, comps
+                  and scenarios
+                </li>
+              </ul>
+              <div className="plan-actions">
+                <Link href={`/tools${suffix}`} className="button secondary">
+                  Explore the tools
+                </Link>
+                <Link href={`/signin${suffix}`} className="plan-link">
+                  Sign in with Discord
+                </Link>
+              </div>
+            </article>
+            <article className="raised plan-card is-supporter">
+              <header>
+                <span className="plan-name">
+                  Supporter{!billing ? <span className="landing-chip">Opening soon</span> : null}
+                </span>
+                <strong className="plan-price">{price ?? "Monthly subscription"}</strong>
+              </header>
+              <ul>
+                <li>
+                  <Check size={16} aria-hidden="true" /> No ads anywhere on Outpost
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Create and run your own Teams
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Content announcements, RSVPs and the
+                  calendar
+                </li>
+                <li>
+                  <Check size={16} aria-hidden="true" /> Shared comps and loot splits for your
+                  members
+                </li>
+              </ul>
+              <div className="plan-actions">
+                <Link href={`/supporter${suffix}`} className="button primary">
+                  {billing ? "Become a Supporter" : "About the Supporter plan"}{" "}
+                  <ArrowRight size={17} />
+                </Link>
+                {billing ? <small>Cancel any time from your account.</small> : null}
+              </div>
+            </article>
+          </div>
         </div>
       </section>
     </div>
