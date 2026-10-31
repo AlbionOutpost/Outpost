@@ -74,7 +74,7 @@ test("catalog release persists, filters, paginates and exposes honest provenance
     expect((await page.request.get("/api/items?tier=9")).status()).toBe(400);
     await page.goto(`/items/${id}?region=asia`);
     await expect(page.getByRole("heading", { name: "Original metadata fixture" })).toBeVisible();
-    await expect(page.locator(".workspace-identity p")).toContainText(
+    await expect(page.locator(".workspace-identity p.intro")).toContainText(
       "Base item power not verified",
     );
     await page.reload();
