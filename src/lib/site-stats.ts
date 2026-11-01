@@ -9,16 +9,17 @@ import { db, databaseService } from "./db";
  */
 export type SiteStats = { monthlyPlayers: number; supporters: number };
 async function localSiteStats(): Promise<SiteStats> {
-  const since = new Date(Date.now() - 16 * 24 * 60 * 60 * 1000);
-  const [active, supporters] = await Promise.all([
-    db.session.findMany({
-      where: { expires: { gte: since } },
-      distinct: ["userId"],
-      select: { userId: true },
-    }),
+  const since = Date.now() - 16 * 24 * 60 * 60 * 1000;
+  // Filtered here rather than in SQL: the session store keeps dates in its own format, and a
+  // date comparison in the query silently matched nothing there.
+  const [sessions, supporters] = await Promise.all([
+    db.session.findMany({ select: { userId: true, expires: true } }),
     db.user.count({ where: { plan: "SUPPORTER" } }),
   ]);
-  return { monthlyPlayers: active.length, supporters };
+  const active = new Set(
+    sessions.filter((s) => new Date(s.expires).getTime() >= since).map((s) => s.userId),
+  );
+  return { monthlyPlayers: active.size, supporters };
 }
 export const siteStats: typeof localSiteStats = (...args) =>
   databaseService<SiteStats>("siteStats", args) ?? localSiteStats(...args);
