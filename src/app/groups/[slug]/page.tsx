@@ -42,8 +42,12 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
         description={data.group.description || "A team workspace on Outpost."}
       >
         <div className="landing-chips masthead-chips">
-          <span className="landing-chip is-muted">{data.group.region}</span>
-          <span className="landing-chip is-muted">{data.group.visibility.toLowerCase()}</span>
+          <span className="landing-chip is-muted">
+            {data.group.region.charAt(0).toUpperCase() + data.group.region.slice(1)}
+          </span>
+          <span className="landing-chip is-muted">
+            {data.group.visibility.charAt(0) + data.group.visibility.slice(1).toLowerCase()}
+          </span>
         </div>
         <Link className="pill-link is-small masthead-back team-back-link" href="/groups">
           All teams <ArrowLeft size={14} />
