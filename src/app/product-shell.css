@@ -369,6 +369,16 @@
 ::view-transition-new(root) {
   z-index: 1;
 }
+/* Going dark, the old (light) page sits on top and shrinks back into the switch */
+html[data-theme-reveal="in"]::view-transition-old(root) {
+  z-index: 2;
+}
+/* While the theme reveal runs the header is solid, so it never flickers between glass states */
+html[data-theme-reveal] .app.outpost .main > header.site-header {
+  background: var(--chrome);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 /* Clicks pass through the theme reveal, so the switch never waits for it to finish */
 ::view-transition {
   pointer-events: none;
