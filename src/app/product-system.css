@@ -1593,7 +1593,13 @@
   gap: 6px;
 }
 .app.outpost .landing-chip {
-  padding: 2px 9px;
+  /* Centred in its pill whatever height the row stretches it to */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  line-height: 1;
+  padding: 0 10px;
   color: var(--accent-ink);
   background: var(--accent-wash);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
