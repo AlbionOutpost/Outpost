@@ -6,7 +6,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Next session — inner pages to landing quality
 
-Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer~~ (done 1 Nov, below) → **Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor**, then Comp planner, Teams, Timers, Item database.
+Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer → Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor~~, then ~~Comp planner, Teams, Timers, Item database~~. All shipped 1 Nov (sections below); next: real item art and live prices checked on production, then the dashboard and remaining supporting pages.
 
 Per page, the bar is the landing (`src/app/page.tsx`, `homepage.css`):
 
@@ -76,6 +76,11 @@ Open items found on the way:
 ## Shipped — Teams inner pages (1 Nov)
 
 - Team overview cards are framed panels with one heading style (no more mixed uppercase), compact "View all" / "Open comps" pills instead of full-width buttons, capitalised region and visibility chips; the directory's selects are wells and its empty state drops the display face.
+
+## Shipped — Timers and Item database inner pages (1 Nov)
+
+- Timers: one framed toolbar (filter, count chip, reload and add on one row) instead of a full-width select with a colliding count and a stray reload button; the empty state is a dashed well; selects are wells.
+- Item database: category and List/Grid switches are pills, selects are wells, the category column reads as UI text, rows show their tier under the name instead of repeating the category and identifier, and "Compare prices" is a compact pill.
 
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
