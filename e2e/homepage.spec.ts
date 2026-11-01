@@ -322,18 +322,21 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     /^\/builds\/library\/[^?]+\?region=europe$/,
   );
 
-  // Advertising stays off until configured; the plans say what is free and what supports.
+  // Advertising stays off until configured; the closing band says what is free and what supports.
   await expect(page.locator(".adsbygoogle")).toHaveCount(0);
-  const plans = page.locator(".plan-card");
-  await expect(plans).toHaveCount(2);
-  await expect(plans.nth(0)).toContainText("No account needed");
-  await expect(plans.nth(1)).toContainText("No ads anywhere on Outpost");
+  const cta = page.locator(".landing-cta");
+  await expect(cta).toContainText("Free for everyone.");
+  await expect(cta.getByRole("link", { name: /Sign in with Discord/ })).toHaveAttribute(
+    "href",
+    "/signin?callbackUrl=%2Fdashboard",
+  );
   // Billing is off in this environment: nothing is priced or sold.
-  await expect(plans.nth(1)).toContainText("Opening soon");
-  await expect(plans.nth(1)).not.toContainText(/\$|€|per month/);
-  await expect(
-    plans.nth(1).getByRole("link", { name: /About the Supporter plan/ }),
-  ).toHaveAttribute("href", "/supporter?region=europe");
+  await expect(cta).toContainText("Opening soon");
+  await expect(cta).not.toContainText(/\$|€|per month/);
+  await expect(cta.getByRole("link", { name: /About the Supporter plan/ })).toHaveAttribute(
+    "href",
+    "/supporter?region=europe",
+  );
   const footer = page.locator("footer.site-footer");
   await expect(footer.getByRole("navigation", { name: "Explore" })).toBeVisible();
   await expect(footer).toContainText("Albion Online Data Project");

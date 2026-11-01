@@ -5,15 +5,25 @@ import { findRecipe } from "@/lib/albion/recipes";
 import "@/lib/albion/game/server-recipes";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
-import { initialProduction, production, type ProductionInput } from "@/lib/albion/production";
+import {
+  initialProduction,
+  production,
+  returnRateFromBonus,
+  type ProductionInput,
+} from "@/lib/albion/production";
+import bundled from "@/lib/albion/expanded-recipes.json" with { type: "json" };
 
-/** Recipes the landing card may showcase; the calculator takes any recipe. */
-const candidates = ["cape-t6", "bag-t6", "broadsword-t6", "bow-t6", "battleaxe-t6"] as const;
+/** Every bundled T4–T6 crafting recipe (27, 39 distinct items: one price request). */
+const candidates = (bundled as { id: string; kind: string }[])
+  .filter((r) => r.kind === "crafting" && /-t[4-6]$/.test(r.id))
+  .map((r) => r.id);
+/** A royal city's base production bonus (18%) without focus: about 15.3% of materials back. */
+const RETURN_RATE = Math.round(returnRateFromBonus(18) * 1000) / 10;
 type City = (typeof cities)[number];
 const royal = cities.filter((c): c is City => c !== "Black Market" && c !== "Brecilien");
 
 /**
- * The most worthwhile craft right now among a few recipes: every candidate priced in every
+ * The most worthwhile craft right now among the bundled T4–T6 recipes: every candidate priced in every
  * royal city from one batch of observations, run through the same `production()` as the
  * calculator, ranked by margin. Only cities where every price is known count as results;
  * if none qualify the best-covered scenario is returned with its missing prices listed.
@@ -55,7 +65,10 @@ export const GET = apiHandler("landing.craft", async (req: NextRequest) => {
       materialCity: city,
       outputCity: city,
       prices,
-      // Premium sales tax and the sell-order setup fee; no return rate, focus or station fee.
+      // The city's base resource return without focus, premium sales tax and the sell-order
+      // setup fee; no focus, city specialty bonus or station fee.
+      returns: Object.fromEntries(recipe.ingredients.map((i) => [i.id, true])),
+      returnRate: RETURN_RATE,
       tax: 4,
       setupFee: 2.5,
     });
@@ -99,7 +112,7 @@ export const GET = apiHandler("landing.craft", async (req: NextRequest) => {
       source: "Albion Online Data Project",
       batches: v.batches,
       candidates: recipes.length,
-      assumptions: { tax: 4, setupFee: 2.5, returnRate: 0, useFocus: false },
+      assumptions: { tax: 4, setupFee: 2.5, returnRate: RETURN_RATE, useFocus: false },
       best,
       byCity,
       unpriced,

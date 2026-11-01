@@ -8,6 +8,7 @@ import { useLoad } from "./use-load";
 
 type Pick = {
   candidates: number;
+  assumptions?: { returnRate: number };
   best: {
     recipe: { id: string; name: string; output: string };
     city: string;
@@ -63,7 +64,11 @@ export function CraftCard() {
           </strong>
           <small>
             {p
-              ? `${p.city} · best of ${data!.value!.candidates}`
+              ? `${p.city} · best of ${data!.value!.candidates}${
+                  data!.value!.assumptions?.returnRate
+                    ? ` · ${data!.value!.assumptions.returnRate}% return`
+                    : ""
+                }`
               : data?.error
                 ? "No complete price set right now"
                 : "Pricing every candidate in every city"}

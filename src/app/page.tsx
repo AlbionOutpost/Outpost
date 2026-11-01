@@ -28,7 +28,8 @@ import { playerCount } from "@/lib/site-stats";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
-import { ArrowRight, BookOpen, Check } from "lucide-react";
+import { DiscordMark } from "@/components/discord-mark";
+import { ArrowRight, BookOpen } from "lucide-react";
 
 // What the page shows is chosen here and read from the public library or live observations;
 // nothing is staged. The build fills eight of the board's ten wells (no public build records a
@@ -239,80 +240,26 @@ export default async function Home({
         <AdSlot placement="hub" suffix={suffix} />
       </div>
 
-      <section className="landing-plans" aria-labelledby="home-plans-title">
-        <div className="landing-wrap landing-plans-inner">
-          <div className="section-heading landing-section-heading">
-            <h2 id="home-plans-title">
-              Free for everyone. <em>Supporters</em> keep it running.
-            </h2>
-            <p>
-              Every tool, build and guide works without an account. Supporters get no ads and a Team
-              space for their guild, and it pays for the servers.
-            </p>
-          </div>
-          <div className="plan-grid">
-            <article className="raised has-scene plan-card" data-scene="city">
-              <header>
-                <span className="plan-name">Free</span>
-                <strong className="plan-price">No account needed</strong>
-              </header>
-              <ul>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Market explorer and {tools.length}{" "}
-                  calculators
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> {n(library.builds)} builds and{" "}
-                  {n(library.compositions)} group comps
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Guides, kill feed and timers
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Sign in with Discord to save builds, comps
-                  and scenarios
-                </li>
-              </ul>
-              <div className="plan-actions">
-                <Link href={`/tools${suffix}`} className="button secondary">
-                  Explore the tools
-                </Link>
-                <Link href={`/signin${suffix}`} className="plan-link">
-                  Sign in with Discord
-                </Link>
-              </div>
-            </article>
-            <article className="raised has-scene plan-card is-supporter" data-scene="market">
-              <header>
-                <span className="plan-name">
-                  Supporter{!billing ? <span className="landing-chip">Opening soon</span> : null}
-                </span>
-                <strong className="plan-price">{price ?? "Monthly subscription"}</strong>
-              </header>
-              <ul>
-                <li>
-                  <Check size={16} aria-hidden="true" /> No ads anywhere on Outpost
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Create and run your own Teams
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Content announcements, RSVPs and the
-                  calendar
-                </li>
-                <li>
-                  <Check size={16} aria-hidden="true" /> Shared comps and loot splits for your
-                  members
-                </li>
-              </ul>
-              <div className="plan-actions">
-                <Link href={`/supporter${suffix}`} className="button primary">
-                  {billing ? "Become a Supporter" : "About the Supporter plan"}{" "}
-                  <ArrowRight size={17} />
-                </Link>
-                {billing ? <small>Cancel any time from your account.</small> : null}
-              </div>
-            </article>
+      <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
+        <div className="raised has-scene landing-cta" data-scene="build">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/albion/icons/team-roles.webp" alt="" width={68} height={68} />
+          <h2 id="home-cta-title">
+            Free for everyone. <em>Supporters</em> keep it running.
+          </h2>
+          <p>
+            Every tool, build and guide works without an account. Sign in with Discord to save your
+            builds and comps; Supporters get no ads and a Team space for their guild
+            {price && billing ? ` for ${price}` : ""}.
+          </p>
+          <div className="landing-cta-actions">
+            <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
+              <DiscordMark /> Sign in with Discord
+            </Link>
+            <Link href={`/supporter${suffix}`} className="button secondary">
+              {billing ? "Become a Supporter" : "About the Supporter plan"}
+              {!billing ? <span className="landing-chip">Opening soon</span> : null}
+            </Link>
           </div>
         </div>
       </section>
