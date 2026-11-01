@@ -71,7 +71,7 @@ export default async function Builds({
         }
       />
       <div className="ecosystem-discovery-layout">
-        <aside className="ecosystem-filter-rail">
+        <aside className="raised ecosystem-filter-rail" aria-label="Build filters">
           <MobileFilterPanel>
             <form
               id="build-discovery-query"
@@ -136,7 +136,7 @@ export default async function Builds({
           </MobileFilterPanel>
         </aside>
         <section className="build-discovery-results ecosystem-results" aria-label="Matching builds">
-          <div className="ecosystem-result-toolbar">
+          <div className="raised ecosystem-result-toolbar">
             <label className="ecosystem-sort-label">
               Sort
               <select

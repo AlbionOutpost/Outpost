@@ -48,9 +48,6 @@ async function LibraryBuildCardContent({
           <h2 id={titleId}>{build.title}</h2>
         </Link>
         <span className="landing-chips">
-          <span className="landing-chip ecosystem-activity">
-            {activityName(build.category) || "Other"}
-          </span>
           <HeartChip
             count={build.upvotes}
             className="library-device-save"
@@ -92,6 +89,9 @@ async function LibraryBuildCardContent({
                 </span>
               )}
             </small>
+            <span className="landing-chip ecosystem-activity">
+              {activityName(build.category) || "Other"}
+            </span>
             <div className="ecosystem-card-spells" aria-label="Recorded main hand abilities">
               {main?.skills.length ? (
                 main.skills.slice(0, 4).map((id, i) => (
@@ -104,10 +104,8 @@ async function LibraryBuildCardContent({
                 <span className="ecosystem-no-spells">No recorded abilities</span>
               )}
             </div>
-            {/* The author's notes fill the space beside the board */}
-            <p className={`library-card-description${about ? "" : " is-empty"}`}>
-              {about || "No notes from the author."}
-            </p>
+            {/* The author's notes fill the space beside the board; none, nothing shown */}
+            {about && <p className="library-card-description">{about}</p>}
           </div>
           <div
             className="library-build-equipment"

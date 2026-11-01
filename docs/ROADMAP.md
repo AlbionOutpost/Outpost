@@ -56,6 +56,11 @@ Open items found on the way:
 - First page of the inner-page pass: sticky search rail, an item hero with lowest sell / highest buy / newest observation, a well table of city orders with spread, Lowest/Highest tags, per-price ages and Stale chips, a stacked two-line layout on phones, a selected-city detail that moves Price history to that city, and the landing chart for history (also on Gold, with hour labels for hourly data). Research list and watchlist open directly in their tabs.
 - 369 legacy market selectors removed from ten global stylesheets; the page's rules live in `market-explorer.css` and `history.css`.
 
+## Shipped — Build library inner page (1 Nov)
+
+- Library windows lead with the loadout board beside the weapon, author, activity chip, abilities and notes; titles get two lines; empty notes are no longer printed; phones show the date beside the author and drop the caption's duplicate (cards 178px).
+- Library and Community rails and toolbars share framed panels and well selects; the Community empty state spans the results column.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
