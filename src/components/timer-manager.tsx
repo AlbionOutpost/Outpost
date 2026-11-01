@@ -64,7 +64,7 @@ export function TimerManager({ initial }: { initial: Timer[] }) {
     });
   return (
     <div className="support-timers">
-      <div className="support-toolbar timer-toolbar">
+      <div className="raised support-toolbar timer-toolbar">
         <label>
           Show timers
           <select
@@ -77,9 +77,17 @@ export function TimerManager({ initial }: { initial: Timer[] }) {
             <option value="all">All timers</option>
           </select>
         </label>
-        <span>
+        <span className="timer-count">
           {visible.length} shown · {timers.filter((t) => t.status === "RUNNING").length} running
         </span>
+        <button
+          className="button secondary timer-reload"
+          type="button"
+          disabled={busy}
+          onClick={() => refresh().catch(() => setMessage("Could not reload timers."))}
+        >
+          Reload timers
+        </button>
         <button
           type="button"
           className="button primary"
@@ -95,13 +103,6 @@ export function TimerManager({ initial }: { initial: Timer[] }) {
           Add timer
         </button>
       </div>
-      <button
-        className="button secondary timer-reload"
-        disabled={busy}
-        onClick={() => refresh().catch(() => setMessage("Could not reload timers."))}
-      >
-        Reload timers
-      </button>
       <p className="timer-feedback" role="status">
         {message}
       </p>

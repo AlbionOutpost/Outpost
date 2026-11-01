@@ -1698,3 +1698,79 @@
 .app.outpost .guild-activity-grid > .panel :is(h2 + p, .eyebrow + h2) {
   margin-top: var(--space-2);
 }
+
+/* Timers (inner-page pass): one framed toolbar — filter, count chip, reload and add on a
+   single row — and an empty state that is a dashed well. */
+.app.outpost .support-timers .timer-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3) var(--space-4);
+  margin: 0 0 26px;
+  padding: var(--space-4) var(--space-5);
+}
+.app.outpost .support-timers .timer-toolbar > label {
+  display: grid;
+  gap: 6px;
+  width: min(260px, 100%);
+  margin: 0;
+  font: 600 12px/1.35 var(--font-ui);
+}
+.app.outpost
+  .support-timers
+  :is(.timer-toolbar, .timer-composer)
+  select:not([multiple]):not([size]) {
+  min-height: 42px;
+  padding: 0 36px 0 var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
+      no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
+      no-repeat,
+    var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+  appearance: none;
+}
+.app.outpost .support-timers .timer-count {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin: 0 auto 7px 0;
+  padding: 0 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .support-timers .timer-toolbar .button {
+  margin: 0;
+}
+.app.outpost .support-timers .support-empty {
+  margin: 0 0 26px;
+  padding: var(--space-6);
+  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-scrim) 82%, transparent);
+}
+.app.outpost .support-timers .support-empty h2 {
+  margin: 0 0 6px;
+  font: 650 18px/1.25 var(--font-ui);
+}
+.app.outpost .support-timers .support-empty p {
+  margin: 0;
+  color: var(--muted);
+}
+@media (max-width: 700px) {
+  .app.outpost .support-timers .timer-toolbar > label {
+    width: 100%;
+  }
+  .app.outpost .support-timers .timer-count {
+    margin-bottom: 0;
+  }
+}

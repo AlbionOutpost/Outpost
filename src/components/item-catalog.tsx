@@ -242,16 +242,21 @@ export function ItemCatalog({
                           {i.name}
                         </Link>
                         <small>
-                          {i.slot} · {i.id}
+                          {/^T(\d)_[^@]*(?:@(\d))?$/.test(i.id)
+                            ? i.id.replace(
+                                /^T(\d)_[^@]*(?:@(\d))?$/,
+                                (_, t, e) => `Tier ${t}.${e ?? 0}`,
+                              )
+                            : "No tier"}
                         </small>
                       </div>
                     </div>
                   </td>
-                  <td>{i.slot}</td>
-                  <td>{i.id}</td>
+                  <td className="catalog-category">{i.slot}</td>
+                  <td className="catalog-id">{i.id}</td>
                   <td>
                     <Link
-                      className="text-link"
+                      className="pill-link is-small catalog-compare"
                       href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
                     >
                       Compare prices →
