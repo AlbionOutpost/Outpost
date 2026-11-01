@@ -395,8 +395,8 @@ export function BuildEditor({
         disabled={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
       >
         <div className="editor-backline">
-          <Link href="/builds">
-            <ArrowLeft size={14} /> Builds
+          <Link className="pill-link is-small editor-back" href="/builds">
+            <ArrowLeft size={14} aria-hidden="true" /> Builds
           </Link>
           <span className="editor-draft-label" aria-live="polite">
             {saving
@@ -663,6 +663,10 @@ export function BuildEditor({
         {guest && !initial && !supportedEquipment.length && (
           <div className="build-editor-context">
             <div className="guest-build-notice">
+              <p>
+                <strong>Starting from scratch?</strong> Load a complete Battleaxe set to see how a
+                build fits together, then swap pieces.
+              </p>
               <button
                 type="button"
                 className="button secondary"
@@ -904,11 +908,8 @@ export function BuildEditor({
             />
           </details>
         )}
-        <div className="actions section">
-          <Link className="button secondary" href="/builds">
-            Back to builds
-          </Link>
-          {id && (
+        {id && (
+          <div className="actions section editor-danger-zone">
             <button
               type="button"
               className="button secondary negative"
@@ -929,8 +930,8 @@ export function BuildEditor({
             >
               Delete build
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </fieldset>
     </form>
   );

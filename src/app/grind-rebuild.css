@@ -545,15 +545,6 @@
 .app.outpost .build-command-bar .button {
   white-space: nowrap;
 }
-.app.outpost .guest-build-notice {
-  margin: 0 0 24px;
-  border-left-width: 1px;
-  padding: 14px 18px;
-  font-size: 12px;
-}
-.app.outpost .guest-build-notice p {
-  font-size: 12px;
-}
 .app.outpost .build-editor-context {
   border-top: 1px solid var(--border);
   padding: 14px 0;
@@ -1200,25 +1191,6 @@
   }
 }
 @media (max-width: 480px) {
-  .app.outpost .guest-build-notice {
-    flex-direction: row;
-    gap: 8px;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-  }
-  .guest-build-notice p {
-    display: none;
-  }
-  .guest-build-notice strong {
-    font-size: 11px;
-    line-height: 1.5;
-    display: block;
-  }
-  .app.outpost .guest-build-notice button {
-    padding: 8px;
-    min-height: 34px;
-    font-size: 10px;
-  }
   .app.outpost .build-command-bar {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

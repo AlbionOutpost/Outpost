@@ -33,13 +33,6 @@
 .app.outpost .object-editor-workspace .build-command-bar > label:first-child input {
   font-size: 19px;
 }
-.app.outpost .object-editor-workspace .guest-build-notice {
-  margin: 12px 0;
-  padding: 12px 16px;
-  border-left: 2px solid var(--accent);
-  background: var(--panel);
-  font-size: 13px;
-}
 .app.outpost .object-editor-workspace .editor-workspace-tabs {
   margin-top: 16px;
 }
@@ -528,11 +521,6 @@
     width: 18px;
     flex-shrink: 0;
     color: var(--accent-ink);
-  }
-  .app.outpost .object-editor-workspace .guest-build-notice {
-    align-items: start;
-    gap: 8px;
-    padding: 10px 12px;
   }
   .app.outpost .object-party-editor {
     padding-bottom: 90px;
