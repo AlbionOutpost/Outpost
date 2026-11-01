@@ -136,8 +136,20 @@ export class OutpostSession extends DurableObject<OutpostWebEnv> {
     await this.ctx.storage.deleteAll();
   }
 }
+/* Search for signed-out visitors only ever returns public library, catalog and tool rows, so
+ * the same query gives everyone the same answer: it is kept in the edge cache for ten minutes
+ * and answered without waking a render object. Anything with an account cookie (which can
+ * include private builds, comps and Teams) always goes to the app. */
+const SEARCH_TTL = 600;
+const signedIn = (request: Request) =>
+  /(?:^|;\s*)(?:__Secure-)?next-auth\.session-token=/.test(request.headers.get("Cookie") || "");
+function searchCacheKey(url: URL) {
+  const q = (url.searchParams.get("q") || "").trim().toLowerCase().replace(/\s+/g, " ");
+  if (url.pathname !== "/api/search" || q.length < 2 || q.length > 100) return null;
+  return new Request(`https://${url.hostname}/api/search?q=${encodeURIComponent(q)}`);
+}
 const worker = {
-  async fetch(request: Request, env: OutpostWebEnv) {
+  async fetch(request: Request, env: OutpostWebEnv, ctx?: ExecutionContext) {
     const url = new URL(request.url);
     if (url.hostname === "www.albionoutpost.com") {
       url.hostname = "albionoutpost.com";
@@ -145,9 +157,31 @@ const worker = {
       url.port = "";
       return Response.redirect(url.toString(), 308);
     }
+    const key = request.method === "GET" && !signedIn(request) ? searchCacheKey(url) : null;
+    const cache = key && typeof caches !== "undefined" ? caches.default : null;
+    if (cache && key) {
+      const hit = await cache.match(key).catch(() => undefined);
+      if (hit) {
+        const answer = new Response(hit.body, hit);
+        answer.headers.set("Cache-Control", "private, max-age=60");
+        answer.headers.set("X-Outpost-Search", "hit");
+        return answer;
+      }
+    }
     const session = await identity(request, env.OUTPOST_RENDER_SESSION_SECRET);
     const response = await env.SESSIONS.getByName(session.id).fetch(request);
     const result = new Response(response.body, response);
+    if (cache && key && response.status === 200) {
+      const body = await result.clone().arrayBuffer();
+      const stored = new Response(body, {
+        headers: {
+          "Content-Type": response.headers.get("Content-Type") || "application/json",
+          "Cache-Control": `public, max-age=${SEARCH_TTL}`,
+        },
+      });
+      const put = cache.put(key, stored).catch(() => {});
+      if (ctx) ctx.waitUntil(put);
+    }
     if (session.cookie) result.headers.append("Set-Cookie", session.cookie);
     result.headers.set("Cache-Control", "private, no-store");
     return result;

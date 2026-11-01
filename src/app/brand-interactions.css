@@ -188,10 +188,11 @@
 }
 .app.outpost .dropdown-panel {
   padding: 9px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 12px;
   border-top: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--panel-face);
   box-shadow: 0 14px 32px #0004;
   top: calc(100% + 12px);
   animation: none;

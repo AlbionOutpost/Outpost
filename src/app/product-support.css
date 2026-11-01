@@ -22,8 +22,9 @@
   gap: 16px;
   align-items: end;
   padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
 }
 .app.outpost .support-toolbar label {
@@ -43,13 +44,54 @@
   gap: 24px;
   align-items: start;
 }
+/* Four ways in, as framed cards like the landing's, then the work panels */
+.app.outpost .dashboard-quick {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px 22px;
+  margin: 0 0 32px;
+}
+.app.outpost .dashboard-quick-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 96px;
+  padding: 18px 20px;
+  color: var(--text);
+  text-decoration: none;
+}
+.app.outpost .dashboard-quick-card img {
+  filter: drop-shadow(0 4px 8px #000a);
+  transition:
+    scale 420ms var(--ease-spring),
+    rotate 420ms var(--ease-spring);
+}
+.app.outpost .dashboard-quick-card:hover img {
+  scale: 1.1;
+  rotate: -4deg;
+}
+.app.outpost .dashboard-quick-card strong {
+  display: block;
+  font: 800 20px/1.1 var(--font-display);
+}
+.app.outpost .dashboard-quick-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .dashboard-quick-card > svg {
+  color: var(--accent-ink);
+  transition: translate 380ms var(--ease-spring);
+}
+.app.outpost .dashboard-quick-card:hover > svg {
+  translate: 2px -2px;
+}
 .app.outpost .dashboard-recent,
 .app.outpost .dashboard-day-plan > section,
 .app.outpost .dashboard-calculations {
-  padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--panel);
+  padding: 22px;
   min-width: 0;
 }
 .app.outpost .dashboard-continue {
@@ -58,10 +100,20 @@
   justify-content: space-between;
   gap: 20px;
   padding: 20px;
-  background: var(--accent-wash);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background:
+    linear-gradient(100deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    var(--well);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--well-border));
+  border-radius: 10px;
   color: var(--text);
+  transition:
+    border-color 220ms var(--ease-out),
+    translate 320ms var(--ease-out-expo);
+}
+.app.outpost .dashboard-continue:hover {
+  border-color: var(--accent);
+  translate: 0 -2px;
+  text-decoration: none;
 }
 .app.outpost .dashboard-continue > span {
   display: grid;
@@ -111,8 +163,9 @@
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--well-border);
   border-radius: 8px;
+  background: var(--well);
   color: var(--muted);
   flex: none;
 }
@@ -221,8 +274,9 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 6px 24px;
   padding: 20px;
-  border: 1px solid var(--border);
-  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
+  background: var(--panel-face);
   border-radius: 10px;
 }
 .app.outpost .timer-row-state {
@@ -281,9 +335,10 @@
 }
 .app.outpost .timer-composer {
   padding: 20px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
-  background: var(--panel);
+  background: var(--panel-face);
 }
 .app.outpost .timer-composer > summary {
   cursor: pointer;
@@ -413,8 +468,9 @@
   position: relative;
   min-width: 0;
   padding: 18px 18px 18px 60px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
 }
 .app.outpost .support-home .reference-feature-grid > article > svg {
@@ -654,8 +710,9 @@
     position: sticky;
     top: 64px;
     z-index: 5;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: var(--panel-face);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 20px;
@@ -893,9 +950,10 @@
   place-items: center;
   width: 76px;
   height: 76px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 12px;
-  background: var(--panel);
+  background: var(--panel-face);
   font-size: 32px;
   font-weight: 650;
   flex: none;
@@ -944,8 +1002,9 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 6px 12px;
   padding: 18px 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   margin-bottom: 10px;
 }
@@ -970,9 +1029,10 @@
 }
 .app.outpost .support-team-workspace .guild-activity-grid > section {
   padding: 20px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
-  background: var(--panel);
+  background: var(--panel-face);
 }
 .app.outpost .support-team-workspace .guild-activity-grid h2 {
   font: 650 23px/1.3 var(--font-ui);
@@ -1035,8 +1095,9 @@
 }
 .app.outpost .team-create-layout > aside {
   padding: 24px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
 }
 .app.outpost .team-create-layout > aside h2 {
@@ -1098,8 +1159,9 @@
   display: grid;
   gap: 8px;
   padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   color: var(--text);
   text-align: left;
@@ -1508,4 +1570,38 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 14px;
   }
+}
+
+@media (max-width: 1100px) {
+  .app.outpost .dashboard-quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .dashboard-quick {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  .app.outpost .dashboard-quick-card {
+    min-height: 80px;
+  }
+}
+.app.outpost .device-library-favorites.panel {
+  margin-bottom: 24px;
+  padding: 22px;
+}
+/* Section heads inside panels: title left, its action right */
+.app.outpost .support-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 14px;
+}
+.app.outpost .support-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
 }

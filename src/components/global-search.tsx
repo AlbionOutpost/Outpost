@@ -1,17 +1,32 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
-import { Search, X, ArrowUpRight, CornerDownLeft, LoaderCircle } from "lucide-react";
+import { Search, X, ArrowUpRight, CornerDownLeft } from "lucide-react";
 import { ItemIcon } from "./item-icon";
-import { ToolIcon } from "./tool-icon";
 import { useAtlasRegion } from "./region-context";
+import { tools } from "@/lib/tool-directory";
+import { matchScore } from "@/lib/search-rank";
+import { kindEmblem, toolEmblem } from "@/lib/search-emblems";
 
-type SearchRow = { category: string; title: string; url: string; subtitle?: string; icon?: string };
+type SearchRow = {
+  category: string;
+  title: string;
+  url: string;
+  subtitle?: string;
+  icon?: string;
+  emblem?: string;
+  image?: string;
+};
 const destinations = [
-  { title: "Check a price", note: "Compare cities", url: "/tools/market", icon: "market" },
-  { title: "Create a build", note: "Gear & abilities", url: "/builds/new", icon: "equipment" },
-  { title: "Plan a comp", note: "Roles & loadouts", url: "/compositions/new", icon: "composition" },
-  { title: "Calculate profit", note: "Costs & returns", url: "/tools/flipping", icon: "trade" },
+  { title: "Check a price", note: "Compare cities", url: "/tools/market", emblem: "tool-market" },
+  { title: "Create a build", note: "Gear & spells", url: "/builds/new", emblem: "strip-builds" },
+  { title: "Plan a comp", note: "Roles & sets", url: "/compositions/new", emblem: "strip-comps" },
+  {
+    title: "Craft for profit",
+    note: "Costs & returns",
+    url: "/tools/crafting",
+    emblem: "tool-craft",
+  },
 ] as const;
 const categoryName = (category: string) =>
   category === "Compositions" ? "Comps" : category === "Groups" ? "Teams" : category;
@@ -21,20 +36,36 @@ function ResultIcon({ row }: { row: SearchRow }) {
     const id = decodeURIComponent(row.url.split("/").at(-1) || "");
     return <ItemIcon id={id} size={42} />;
   }
-  return (
-    <ToolIcon
-      name={
-        row.category === "Builds"
-          ? "equipment"
-          : row.category === "Compositions"
-            ? "composition"
-            : row.category === "Groups"
-              ? "guild"
-              : "catalog"
-      }
-      size={24}
-    />
-  );
+  if (row.image)
+    // Guide covers are our own library media
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className="command-result-cover" src={row.image} alt="" loading="lazy" />;
+  const emblem = row.emblem ?? kindEmblem[row.category as keyof typeof kindEmblem] ?? "tool-craft";
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={`/albion/icons/${emblem}.webp`} alt="" width={40} height={40} />;
+}
+/** Tools answer instantly from the bundled directory while the full search runs. */
+function localTools(query: string): SearchRow[] {
+  const q = query.trim();
+  return tools
+    .map((t) => ({
+      t,
+      score: Math.max(
+        matchScore(t.title, q),
+        matchScore(t.short, q),
+        matchScore(t.description, q) / 3,
+      ),
+    }))
+    .filter((r) => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(({ t }) => ({
+      category: "Tools",
+      title: t.title,
+      subtitle: t.description,
+      url: t.href,
+      emblem: toolEmblem(t.icon),
+    }));
 }
 export function GlobalSearch() {
   const dialog = useRef<HTMLDialogElement>(null),
@@ -46,6 +77,8 @@ export function GlobalSearch() {
   const [result, setResult] = useState<{ key: string; results: SearchRow[] } | null>(null);
   const [message, setMessage] = useState(""),
     [loading, setLoading] = useState(false);
+  // Answers already fetched this visit: going back to a query is instant.
+  const answers = useRef(new Map<string, SearchRow[]>());
   const resetSearch = useCallback(() => {
     setQuery("");
     setResult(null);
@@ -80,6 +113,15 @@ export function GlobalSearch() {
   }, [open, close]);
   useEffect(() => {
     if (!opened || query.trim().length < 2) return;
+    const known = answers.current.get(query.trim().toLowerCase());
+    if (known) {
+      setResult({ key: query, results: known });
+      setMessage(
+        known.length ? `${known.length} results` : "Nothing found. Try an item, weapon or tool.",
+      );
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => {
       fetch(`/api/search?q=${encodeURIComponent(query.trim())}`, { signal: controller.signal })
@@ -90,11 +132,12 @@ export function GlobalSearch() {
         })
         .then((b) => {
           if (controller.signal.aborted) return;
+          answers.current.set(query.trim().toLowerCase(), b.results);
           setResult({ key: query, results: b.results });
           setMessage(
             b.results.length
               ? `${b.results.length} results`
-              : "No matches. Try an item, weapon or tool name.",
+              : "Nothing found. Try an item, weapon or tool.",
           );
           setLoading(false);
         })
@@ -104,13 +147,16 @@ export function GlobalSearch() {
           setMessage(e instanceof Error ? e.message : "Search unavailable. Try again.");
           setLoading(false);
         });
-    }, 200);
+    }, 120);
     return () => {
       clearTimeout(timer);
       controller.abort();
     };
   }, [query, opened]);
-  const rows = query.trim().length >= 2 && result?.key === query ? result.results : [];
+  const searching = query.trim().length >= 2;
+  const settled = searching && result?.key === query;
+  // Until the full answer lands, tool matches show straight away with placeholders under them.
+  const rows = !searching ? [] : settled ? result.results : localTools(query);
   const categories = [...new Set(rows.map((r) => r.category))];
   const href = (url: string) => `${url}?region=${region}`;
   return (
@@ -205,7 +251,7 @@ export function GlobalSearch() {
                 setMessage("");
               }}
             />
-            {loading && <LoaderCircle className="search-loading" size={20} aria-hidden="true" />}
+            {loading && <span className="search-loading" aria-hidden="true" />}
             {query && (
               <button
                 type="button"
@@ -228,7 +274,8 @@ export function GlobalSearch() {
                   {destinations.map((d) => (
                     <Link key={d.url} data-search-result href={href(d.url)} onClick={close}>
                       <span className="command-destination-icon">
-                        <ToolIcon name={d.icon} size={24} />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`/albion/icons/${d.emblem}.webp`} alt="" width={40} height={40} />
                       </span>
                       <span>
                         <strong>{d.title}</strong>
@@ -255,7 +302,7 @@ export function GlobalSearch() {
                 </div>
               </>
             ) : (
-              <div className="command-results" aria-busy={loading}>
+              <div className="command-results" aria-busy={loading} key={settled ? query : "local"}>
                 {categories.map((category) => (
                   <section key={category} aria-label={`${categoryName(category)} results`}>
                     <h3>{categoryName(category)}</h3>
@@ -266,6 +313,7 @@ export function GlobalSearch() {
                           key={`${row.url}-${i}`}
                           data-search-result
                           className="command-result"
+                          style={{ "--i": rows.indexOf(row) } as React.CSSProperties}
                           href={href(row.url)}
                           onClick={close}
                           aria-label={`${categoryName(category)} ${row.title}`}
@@ -282,6 +330,16 @@ export function GlobalSearch() {
                       ))}
                   </section>
                 ))}
+                {!settled && loading ? (
+                  <div className="command-skeleton" aria-hidden="true">
+                    {[0, 1, 2].map((n) => (
+                      <span key={n} style={{ "--i": n } as React.CSSProperties}>
+                        <i />
+                        <b />
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             )}
             <p

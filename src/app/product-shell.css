@@ -338,6 +338,13 @@
 .app.outpost .site-header .theme-switch:hover .theme-switch-option:not(.is-on) {
   color: #d8d2c8;
 }
+.app.outpost .site-header .theme-switch:hover .theme-switch-option:not(.is-on) svg {
+  scale: 1;
+  rotate: 0deg;
+}
+.app.outpost .site-header .theme-switch-option.is-on svg {
+  filter: drop-shadow(0 1px 0 #ffffff55);
+}
 .app.outpost.light .site-header .theme-switch {
   background: radial-gradient(60px 30px at 25% 50%, #f0a0601f, transparent 70%), var(--elevated);
   box-shadow: inset 0 1px 3px #0000001f;
@@ -363,6 +370,10 @@
 }
 ::view-transition-new(root) {
   z-index: 1;
+}
+/* Clicks pass through the theme reveal, so the switch never waits for it to finish */
+::view-transition {
+  pointer-events: none;
 }
 .app.outpost .site-header .home-auth-action,
 .app.outpost .site-header .discord-login {

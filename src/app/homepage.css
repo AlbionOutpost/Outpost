@@ -1012,8 +1012,9 @@ a.landing-window-title:hover {
   box-shadow: 0 8px 20px #000c;
   cursor: pointer;
   transition:
-    background 160ms var(--ease-out),
-    transform 260ms var(--ease-out-expo);
+    background 200ms var(--ease-out),
+    box-shadow 320ms var(--ease-out),
+    transform 380ms var(--ease-spring);
 }
 .app.outpost .guides-arrow.is-prev {
   left: -22px;
@@ -1021,9 +1022,26 @@ a.landing-window-title:hover {
 .app.outpost .guides-arrow.is-next {
   right: -22px;
 }
+.app.outpost .guides-arrow svg {
+  transition: translate 380ms var(--ease-spring);
+}
 .app.outpost .guides-arrow:hover:not(:disabled) {
   background: var(--accent);
   color: #1a100b;
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 0 22px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 8px 20px #000c;
+  transform: scale(1.1);
+}
+.app.outpost .guides-arrow.is-next:hover:not(:disabled) svg {
+  translate: 2px 0;
+}
+.app.outpost .guides-arrow.is-prev:hover:not(:disabled) svg {
+  translate: -2px 0;
+}
+.app.outpost .guides-arrow:active:not(:disabled) {
+  transform: scale(0.94);
 }
 .app.outpost .guides-arrow[disabled] {
   display: none;
@@ -1568,18 +1586,13 @@ a.activity-top:hover {
 .app.outpost .plan-card.is-supporter li svg {
   color: var(--accent-ink);
 }
-.app.outpost .plan-card.is-supporter {
-  box-shadow:
-    var(--shadow-raised),
-    0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
-    0 0 60px -20px color-mix(in srgb, var(--accent) 60%, transparent);
-}
 .app.outpost .plan-card.is-supporter .plan-name {
   color: var(--accent-ink);
 }
 .app.outpost .plan-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 10px 16px;
 }

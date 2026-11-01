@@ -166,8 +166,9 @@
     grid-row: 1 / span 2;
     position: sticky;
     top: 16px;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: var(--panel-face);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 10px;
     padding: 16px;
     min-width: 0;
@@ -251,9 +252,10 @@
     display: block;
     grid-area: context;
     padding: 20px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 10px;
-    background: var(--panel);
+    background: var(--panel-face);
     position: sticky;
     top: 64px;
   }

@@ -24,6 +24,13 @@ Status as of 31 Oct 2026. Update this file when something ships, breaks or gets 
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — Albion light mode, game panels and a faster search (1 Nov)
+
+- Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
+- Dashboard: four framed quick actions, game panels, Discord picture as the emblem (also on settings).
+- Search: signed-out searches cached at the edge for ten minutes, no session lookup for guests, tool matches shown instantly, painted icons and guide covers, animated results.
+- Theme switch: own sun and moon, no wait between clicks. Pill buttons and slider arrows animate on hover. security.txt published.
+
 ## Shipped — backdrop, inventory light mode and sign-in fix (31 Oct)
 
 - Discord sign-in works again: Discord now sends `iss` on the callback and the provider names its issuer.

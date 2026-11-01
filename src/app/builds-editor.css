@@ -78,8 +78,9 @@
   min-width: 290px;
   max-width: min(360px, 90vw);
   padding: 18px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   box-shadow: 0 12px 30px #0004;
 }
@@ -161,8 +162,9 @@
 .app.outpost .editor-slot-panel.studio-loadout-list {
   padding: 18px;
   min-width: 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   box-shadow: none;
 }
@@ -479,8 +481,9 @@
   margin: 0;
   min-width: 0;
   padding: 22px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
 }
 .editor-notes-workspace .advanced-build {
@@ -499,8 +502,9 @@
 .editor-price-workspace {
   margin-top: 20px;
   padding: 18px 22px;
-  border: 1px solid var(--border);
-  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
+  background: var(--panel-face);
   border-radius: 8px;
 }
 .editor-price-workspace > summary {

@@ -12,6 +12,7 @@ import { tools } from "@/lib/tool-directory";
 import { GlobalSearch } from "./global-search";
 import { Wordmark } from "./wordmark";
 import { PointerGlow } from "./pointer-glow";
+import { MoonGlyph, SunGlyph } from "./theme-glyphs";
 import { RegionContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
@@ -105,6 +106,8 @@ export function Shell({
     trigger = useRef<HTMLButtonElement>(null),
     close = useRef<HTMLButtonElement>(null),
     header = useRef<HTMLElement>(null);
+  const lightRef = useRef(initialLight),
+    themeTransition = useRef<ViewTransition | null>(null);
   const [urlRegion, setUrlRegion] = useState<string | null>(null);
   const path = usePathname(),
     router = useRouter();
@@ -142,7 +145,10 @@ export function Shell({
   // The new theme washes over the page as a circle growing from the switch that was pressed;
   // without view transitions or with reduced motion it simply changes.
   const toggleTheme = (event?: ReactMouseEvent<HTMLElement>) => {
-    const next = !light;
+    // No cooldown: a click during the reveal finishes it at once and starts the next one.
+    themeTransition.current?.skipTransition();
+    const next = !lightRef.current;
+    lightRef.current = next;
     const commit = () => {
       flushSync(() => setLight(next));
       document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
@@ -154,12 +160,16 @@ export function Shell({
     const y = box ? box.top + box.height / 2 : 0;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     const transition = document.startViewTransition(commit);
+    themeTransition.current = transition;
+    transition.finished.finally(() => {
+      if (themeTransition.current === transition) themeTransition.current = null;
+    });
     transition.ready
       .then(() =>
         document.documentElement.animate(
           { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
           {
-            duration: 720,
+            duration: 520,
             easing: "cubic-bezier(0.16, 1, 0.3, 1)",
             pseudoElement: "::view-transition-new(root)",
           },
@@ -411,13 +421,13 @@ export function Shell({
                   className={`theme-switch-option is-sun${light ? " is-on" : ""}`}
                   aria-hidden="true"
                 >
-                  <Sun size={17} strokeWidth={2.2} />
+                  <SunGlyph />
                 </span>
                 <span
                   className={`theme-switch-option is-moon${light ? "" : " is-on"}`}
                   aria-hidden="true"
                 >
-                  <Moon size={16} strokeWidth={2.2} />
+                  <MoonGlyph />
                 </span>
               </button>
               {!authenticated ? (
