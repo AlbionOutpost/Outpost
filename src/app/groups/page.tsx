@@ -173,7 +173,7 @@ export default async function Groups({
       </div>
       {!rows.length && (
         <section className="raised guild-discovery-empty">
-          <span className="eyebrow">TEAM DISCOVERY</span>
+          <span className="eyebrow">Team discovery</span>
           <h2>{mine ? "No teams in this view" : "No matching teams"}</h2>
           {mine && !userId && (
             <Link className="button primary" href="/signin?callbackUrl=%2Fgroups%3Fmine%3D1">

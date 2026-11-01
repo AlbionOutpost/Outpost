@@ -174,8 +174,8 @@ export function GroupDashboard({
         </div>
         {tab === "Overview" && (
           <div className="guild-activity-grid">
-            <section className="guild-next-event">
-              <span className="eyebrow">NEXT EVENT</span>
+            <section className="panel guild-next-event">
+              <span className="eyebrow">Next event</span>
               {upcoming[0] ? (
                 <>
                   <h2>{upcoming[0].title}</h2>
@@ -210,10 +210,10 @@ export function GroupDashboard({
                 </>
               )}
             </section>
-            <section className="guild-recent-announcements">
+            <section className="panel guild-recent-announcements">
               <div className="section-heading">
                 <h2>Team announcements</h2>
-                <button className="button secondary" onClick={() => setTab("Announcements")}>
+                <button className="pill-link is-small" onClick={() => setTab("Announcements")}>
                   View all
                 </button>
               </div>
@@ -225,10 +225,10 @@ export function GroupDashboard({
               ))}
               {!data.announcements.length && <p>No announcements yet.</p>}
             </section>
-            <section className="guild-quick-comps">
+            <section className="panel guild-quick-comps">
               <div className="section-heading">
                 <h2>Shared comps</h2>
-                <button className="button secondary" onClick={() => setTab("Comps")}>
+                <button className="pill-link is-small" onClick={() => setTab("Comps")}>
                   Open comps
                 </button>
               </div>
@@ -279,7 +279,7 @@ export function GroupDashboard({
                 </button>
               </div>
             </section>
-            <section className="guild-upcoming">
+            <section className="panel guild-upcoming">
               <h2>Upcoming activities</h2>
               {upcoming.slice(1, 4).map((e) => (
                 <button className="guild-event-link" key={e.id} onClick={() => setTab("Events")}>
