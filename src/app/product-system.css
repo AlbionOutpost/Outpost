@@ -945,7 +945,8 @@
     inset 0 1px 0 var(--edge-light),
     var(--shadow-raised);
 }
-/* Every top-level working panel is framed like the landing's cards. The frame is drawn on the
+/* Every top-level working panel is framed like the landing's cards. Its background is rounded
+   (20px) so it stays inside the frame's cut corners instead of poking out past them. The frame is drawn on the
    panel itself (a 9-slice border image pushed 10px outside), its painting and scrim are its own
    background, so it needs no extra layers or positioning: sticky panels keep sticking and
    nothing can sit over a neighbouring control. A heavier scrim keeps forms easy to read. */
@@ -987,7 +988,7 @@
   ) {
   border: 0 solid transparent !important;
   border-image: var(--frame) 25 / 25px / 10px stretch !important;
-  border-radius: 4px !important;
+  border-radius: 20px !important;
   background:
     linear-gradient(
       180deg,
@@ -1170,6 +1171,11 @@
   .app.outpost :is(.button, button.button):hover:not(:disabled) {
     scale: 1.04;
     translate: 0 -1px;
+  }
+  /* Header controls sit edge to edge: they light up but never grow into each other */
+  .app.outpost .site-header :is(.button, button.button):hover:not(:disabled) {
+    scale: none;
+    translate: none;
   }
   .app.outpost .button.primary:hover:not(:disabled) {
     box-shadow:
@@ -1592,7 +1598,13 @@
   gap: 6px;
 }
 .app.outpost .landing-chip {
-  padding: 2px 9px;
+  /* Centred in its pill whatever height the row stretches it to */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  line-height: 1;
+  padding: 0 10px;
   color: var(--accent-ink);
   background: var(--accent-wash);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
