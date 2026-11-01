@@ -10,15 +10,25 @@ export function History({
   item = "T4_BAG",
   quality = 1,
   autoLoad = false,
+  embedded = false,
+  city: controlledCity,
+  onCityChange,
 }: {
   kind?: "history" | "gold";
   item?: string;
   quality?: number;
   /** Load the current selection as soon as it changes instead of waiting for the button. */
   autoLoad?: boolean;
+  /** Render inside a host panel: no panel chrome, heading or description of its own. */
+  embedded?: boolean;
+  /** History city owned by the host (the market page follows the selected city row). */
+  city?: string;
+  onCityChange?: (city: string) => void;
 }) {
   const region = useAtlasRegion();
-  const [city, setCity] = useState("Lymhurst");
+  const [ownCity, setOwnCity] = useState("Lymhurst");
+  const city = controlledCity ?? ownCity;
+  const setCity = onCityChange ?? setOwnCity;
   const [points, setPoints] = useState<Point[]>([]);
   const [key, setKey] = useState("");
   const [error, setError] = useState("");
@@ -97,24 +107,52 @@ export function History({
     max = visible.length ? Math.max(...visible.map((p) => p.price)) : 0;
   const start = visible.length ? sourceTimestamp(visible[0].timestamp) : 0,
     end = visible.length ? sourceTimestamp(visible[visible.length - 1].timestamp) : 0;
-  const xy = visible
-    .map(
-      (p) =>
-        `${64 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 616},${175 - ((p.price - min) / Math.max(1, max - min)) * 145}`,
-    )
-    .join(" ");
-  return (
-    <section className={`panel history-panel${kind === "gold" ? " gold-research-workspace" : ""}`}>
-      <h2>{kind === "gold" ? "Gold price observations" : "Historical sell-order averages"}</h2>
-      <p>
-        {kind === "gold"
-          ? "Up to 168 recent gold observations. Coverage varies by region."
-          : `Daily sell-order averages for ${item.toUpperCase()}, quality ${quality}, over the previous 30 days. These are not confirmed transaction prices.`}
-      </p>
-      <form onSubmit={submit} className="market-form">
+  // Plot area inside a 700×210 box: values span 30→175 vertically, x keeps a gutter either side.
+  const X0 = 12,
+    X1 = 688,
+    Y0 = 30,
+    Y1 = 175;
+  const at = (p: Point) => ({
+    x: X0 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * (X1 - X0),
+    y: Y1 - ((p.price - min) / Math.max(1, max - min)) * (Y1 - Y0),
+  });
+  const coords = visible.map(at);
+  const xy = coords.map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+  const area = coords.length
+    ? `M${coords[0].x.toFixed(1)} 200 L${xy.replaceAll(" ", " L")} L${coords[coords.length - 1].x.toFixed(1)} 200 Z`
+    : "";
+  // Full figures below 100k so neighbouring ticks never read the same; compact above.
+  const compact = (price: number) =>
+    price.toLocaleString(
+      "en-US",
+      price >= 100_000
+        ? { notation: "compact", maximumFractionDigits: max - min < max * 0.05 ? 2 : 1 }
+        : { maximumFractionDigits: 0 },
+    );
+  const day = (t: string) =>
+    new Date(sourceTimestamp(t)).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      timeZone: "UTC",
+    });
+  const last = visible.at(-1);
+  const gradient = `history-fill-${kind}`;
+  const body = (
+    <>
+      {!embedded && (
+        <>
+          <h2>{kind === "gold" ? "Gold price observations" : "Historical sell-order averages"}</h2>
+          <p>
+            {kind === "gold"
+              ? "Up to 168 recent gold observations. Coverage varies by region."
+              : `Daily sell-order averages for ${item.toUpperCase()}, quality ${quality}, over the previous 30 days. These are not confirmed transaction prices.`}
+          </p>
+        </>
+      )}
+      <form onSubmit={submit} className="history-controls">
         {kind === "history" && (
-          <label>
-            History city
+          <label className="history-city">
+            <span>History city</span>
             <select value={city} onChange={(e) => setCity(e.target.value)}>
               {cities.map((c) => (
                 <option key={c}>{c}</option>
@@ -122,7 +160,21 @@ export function History({
             </select>
           </label>
         )}
-        <button className="button secondary" disabled={busy}>
+        {kind === "history" && visible.length > 0 && (
+          <div className="history-range" role="group" aria-label="History date range">
+            {[7, 30].map((days) => (
+              <button
+                type="button"
+                aria-pressed={rangeDays === days}
+                key={days}
+                onClick={() => setRangeDays(days)}
+              >
+                {days} days
+              </button>
+            ))}
+          </div>
+        )}
+        <button className="pill-link is-small history-refresh" disabled={busy}>
           {busy
             ? "Fetching history…"
             : autoLoad
@@ -155,85 +207,79 @@ export function History({
               </div>
             </dl>
           )}
-          <div className="reference-history-toolbar">
-            <span className="history-series-key">
-              {kind === "gold" ? "Gold price" : "Daily sell-order average"} · silver
-            </span>
-            {kind === "history" && (
-              <div className="actions" role="group" aria-label="History date range">
-                {[7, 30].map((days) => (
-                  <button
-                    type="button"
-                    className="button secondary"
-                    aria-pressed={rangeDays === days}
-                    key={days}
-                    onClick={() => setRangeDays(days)}
-                  >
-                    {days} days
-                  </button>
+          <div className="history-chart">
+            <div className="history-chart-head">
+              <span className="history-series-key">
+                {kind === "gold" ? "Gold price" : `Daily sell-order average · ${city}`} · silver
+              </span>
+              {last && (
+                <span className="history-last">
+                  <b className="numeric">{last.price.toLocaleString("en-US")}</b>
+                  <small>{day(last.timestamp)}</small>
+                </span>
+              )}
+            </div>
+            <div className="reference-price-figure">
+              <div className="reference-price-axis" aria-hidden="true">
+                {[max, (min + max) / 2, min].map((price, i) => (
+                  <span key={i} title={`${price} silver`}>
+                    {compact(price)}
+                  </span>
                 ))}
               </div>
-            )}
-          </div>
-          {kind === "history" && (
-            <p className="muted">
-              Window ends at the latest returned observation,{" "}
-              {new Date(latest).toISOString().slice(0, 10)} UTC. Source coverage can be older than
-              today.
-            </p>
-          )}
-          <div className="reference-price-figure">
-            <div className="reference-price-axis" aria-hidden="true">
-              {[max, (min + max) / 2, min].map((price, i) => (
-                <span key={i} title={`${price} silver`}>
-                  {price.toLocaleString(undefined, {
-                    notation: "compact",
-                    maximumFractionDigits: 1,
-                  })}
-                </span>
-              ))}
-            </div>
-            <svg
-              role="img"
-              aria-label={`${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in table below.`}
-              viewBox="0 0 700 210"
-              preserveAspectRatio="none"
-              className="price-chart"
-            >
-              {[0, 0.5, 1].map((fraction) => (
-                <line
-                  key={fraction}
-                  x1="64"
-                  x2="680"
-                  y1={175 - fraction * 145}
-                  y2={175 - fraction * 145}
+              <svg
+                role="img"
+                aria-label={`${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in table below.`}
+                viewBox="0 0 700 210"
+                preserveAspectRatio="none"
+                className="price-chart"
+              >
+                <defs>
+                  <linearGradient id={gradient} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stopColor="currentColor" stopOpacity=".32" />
+                    <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {[0, 0.5, 1].map((fraction) => (
+                  <line
+                    key={fraction}
+                    x1="0"
+                    x2="700"
+                    y1={Y1 - fraction * (Y1 - Y0)}
+                    y2={Y1 - fraction * (Y1 - Y0)}
+                    className="history-grid"
+                  />
+                ))}
+                {coords.length > 1 && <path d={area} fill={`url(#${gradient})`} />}
+                <polyline
+                  points={xy}
+                  fill="none"
                   stroke="currentColor"
-                  opacity=".15"
+                  strokeWidth="2"
+                  vectorEffect="non-scaling-stroke"
                 />
-              ))}
-              <polyline points={xy} fill="none" stroke="var(--accent-ink)" strokeWidth="2" />
-              {visible.map((p, i) => (
-                <circle
-                  key={i}
-                  cx={
-                    64 + ((sourceTimestamp(p.timestamp) - start) / Math.max(1, end - start)) * 616
-                  }
-                  cy={175 - ((p.price - min) / Math.max(1, max - min)) * 145}
-                  r="3"
-                  fill="var(--accent-ink)"
-                >
-                  <title>
-                    {p.timestamp} UTC: {p.price} silver
-                  </title>
-                </circle>
-              ))}
-            </svg>
+                {visible.map((p, i) => (
+                  <circle key={i} cx={coords[i].x} cy={coords[i].y} r="3">
+                    <title>
+                      {p.timestamp} UTC: {p.price} silver
+                    </title>
+                  </circle>
+                ))}
+              </svg>
+            </div>
+            <div className="chart-range" aria-hidden="true">
+              {(visible.length > 4 ? [0, 0.25, 0.5, 0.75, 1] : [0, 1])
+                .map((f) => visible[Math.round(f * (visible.length - 1))])
+                .map((p, i) => (
+                  <span key={i}>{day(p.timestamp)}</span>
+                ))}
+            </div>
+            <p className="history-window">
+              {visible[0].timestamp.replace("T", " ")} – {last!.timestamp.replace("T", " ")} UTC
+              {kind === "history" && " · the window ends at the latest returned day"}
+            </p>
           </div>
-          <div className="chart-range">
-            <span>{visible[0].timestamp.replace("T", " ")} UTC</span>
-            <span>{visible[visible.length - 1].timestamp.replace("T", " ")} UTC</span>
-          </div>
-          <details>
+          <details className="history-observations">
             <summary>View {visible.length} source observations</summary>
             <div
               className="table-scroll"
@@ -245,16 +291,18 @@ export function History({
                 <thead>
                   <tr>
                     <th>Observed at (UTC)</th>
-                    <th>Silver</th>
-                    {kind === "history" && <th>Item count</th>}
+                    <th className="numeric">Silver</th>
+                    {kind === "history" && <th className="numeric">Item count</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {visible.map((p, i) => (
                     <tr key={i}>
                       <td>{p.timestamp.replace("T", " ")}</td>
-                      <td>{p.price.toLocaleString()}</td>
-                      {kind === "history" && <td>{p.count?.toLocaleString()}</td>}
+                      <td className="numeric">{p.price.toLocaleString()}</td>
+                      {kind === "history" && (
+                        <td className="numeric">{p.count?.toLocaleString()}</td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -281,17 +329,23 @@ export function History({
                   ? "Your selection is kept. Refresh history or change the selection to retry."
                   : "Your selection is kept. Use the load button to retry."
                 : loaded && key === current
-                  ? "Try another server or return later. A blank history does not mean the price is zero."
+                  ? "Try another city or return later. A blank history does not mean the price is zero."
                   : autoLoad
                     ? "History for the selected city loads as soon as it is chosen."
                     : "Load historical observations to inspect prices and their timestamps. Nothing is fetched until you request it."}
           </p>
         </div>
       )}
-      <small className="muted">
-        Albion Online Data Project · Five-minute application cache · Observation coverage varies by
-        server.
+      <small className="muted history-source">
+        Albion Online Data Project · five-minute cache · coverage varies by server.
       </small>
+    </>
+  );
+  return embedded ? (
+    <div className="history-panel is-embedded">{body}</div>
+  ) : (
+    <section className={`panel history-panel${kind === "gold" ? " gold-research-workspace" : ""}`}>
+      {body}
     </section>
   );
 }

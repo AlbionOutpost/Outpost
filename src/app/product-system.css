@@ -114,10 +114,6 @@
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
-.app.outpost
-  :is(.market-board, .market-item-panel, .detail-summary-panel, .detail-inventory-panel) {
-  background: var(--panel);
-}
 .app.outpost .detail-panel-heading h2 {
   font-size: 18px;
 }
@@ -207,9 +203,6 @@
 .app.outpost:not(.light) .anatomical-inventory > .inventory-body-silhouette {
   color: #d9bb8a;
   opacity: 0.1;
-}
-.app.outpost .market-table tbody tr:hover {
-  background: var(--elevated);
 }
 
 .app.outpost.light .detail-inventory-panel {
