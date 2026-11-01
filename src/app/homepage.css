@@ -1100,7 +1100,7 @@ a.landing-window-title:hover {
 }
 .app.outpost .kill-trophy {
   position: absolute;
-  top: 8px;
+  top: 16px;
   left: 50%;
   z-index: 1;
   width: 34px;
