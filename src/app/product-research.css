@@ -66,90 +66,6 @@
   font: 400 12px/1.4 var(--font-data);
   color: var(--muted);
 }
-.app.outpost .market-explorer-page .market-workspace.market-focused.market-rebuild {
-  grid-template-columns: 248px minmax(0, 1fr);
-  gap: 20px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-query-panel {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  padding: 16px;
-  position: sticky;
-  top: 20px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-query-panel .market-form {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-selection-row {
-  display: grid;
-  gap: 12px;
-  padding: 16px 0;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-filter-disclosures {
-  display: grid;
-  gap: 8px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-query-panel label {
-  font-size: 13px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-start-examples {
-  justify-content: flex-start;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-board {
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-  padding: 20px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-item-panel {
-  grid-column: 2;
-  grid-row: 2;
-  min-width: 0;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild > .reference-market-history {
-  grid-column: 2;
-  min-width: 0;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-saved-work {
-  grid-column: 2;
-  min-width: 0;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-results-heading h2 {
-  font-size: 20px;
-}
-.app.outpost .market-explorer-page .market-focused.market-rebuild .market-table th {
-  font-family: var(--font-ui);
-}
-@media (min-width: 1320px) {
-  .app.outpost
-    .market-explorer-page
-    .market-workspace.market-focused.market-rebuild.has-city-detail {
-    grid-template-columns: 248px minmax(0, 1fr) 300px;
-  }
-  .app.outpost
-    .market-explorer-page
-    .market-focused.market-rebuild.has-city-detail
-    > .market-item-panel {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    position: sticky;
-    top: 20px;
-  }
-  .app.outpost
-    .market-explorer-page
-    .market-focused.market-rebuild.has-city-detail
-    > .reference-market-history {
-    grid-column: 2 / -1;
-  }
-  .app.outpost
-    .market-explorer-page
-    .market-focused.market-rebuild.has-city-detail
-    > .market-saved-work {
-    grid-column: 2 / -1;
-  }
-}
 @media (min-width: 901px) {
   .app.outpost .ecosystem-library-page .library-discovery-workspace {
     display: grid;
@@ -201,37 +117,6 @@
   }
 }
 @media (max-width: 900px) {
-  .app.outpost .market-explorer-page .market-workspace.market-focused.market-rebuild,
-  .app.outpost
-    .market-explorer-page
-    .market-workspace.market-focused.market-rebuild.has-city-detail {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost
-    .market-explorer-page
-    .market-focused.market-rebuild
-    > :is(
-      .market-query-panel,
-      .market-board,
-      .market-item-panel,
-      .reference-market-history,
-      .market-saved-work
-    ) {
-    grid-column: 1;
-    grid-row: auto;
-    position: static;
-  }
-  .app.outpost
-    .market-explorer-page
-    .market-focused.market-rebuild
-    .market-query-panel
-    .market-form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .app.outpost .market-explorer-page .market-focused.market-rebuild .market-form > :first-child,
-  .app.outpost .market-explorer-page .market-focused.market-rebuild .market-form > button {
-    grid-column: 1/-1;
-  }
   .app.outpost .build-weapon-rail nav {
     max-height: 300px;
     overflow-y: auto;

@@ -69,7 +69,7 @@ test("market first use separates loading, source failure and a genuine missing r
     "No price observations for this selection",
   );
   await expect(page.locator(".task-state")).toContainText("No last observation is known");
-  await expect(page.locator(".market-item-panel")).toHaveCount(0);
+  await expect(page.locator(".mx-inspector")).toHaveCount(0);
   await expect(page.locator(".market-selection")).toContainText("Good");
   await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
   expect(calls).toBe(2);

@@ -105,7 +105,7 @@ test("history dates filter returned observations without inventing missing days"
   await expect(page.locator(".price-chart circle")).toHaveCount(3);
   await page.getByRole("button", { name: "7 days", exact: true }).click();
   await expect(page.locator(".price-chart circle")).toHaveCount(2);
-  await expect(page.locator(".reference-price-axis")).toContainText("1.2K");
+  await expect(page.locator(".reference-price-axis")).toContainText("1,200");
   await page.getByRole("button", { name: "30 days", exact: true }).click();
   await expect(page.locator(".price-chart circle")).toHaveCount(3);
 });

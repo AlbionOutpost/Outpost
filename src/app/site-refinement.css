@@ -30,10 +30,6 @@
 .app.outpost :is(input, textarea) {
   caret-color: var(--accent-ink);
 }
-.app.outpost :is(.panel, .market-query-panel, .market-board, .market-item-panel) {
-  background: var(--panel);
-  box-shadow: 0 8px 24px #00000012;
-}
 .app.outpost .panel > :first-child {
   margin-top: 0;
 }
@@ -409,114 +405,6 @@
 .app.outpost .signin-legal a {
   color: var(--muted);
 }
-.app.outpost .market-query-panel {
-  padding: 16px;
-}
-.app.outpost .market-workspace {
-  gap: 16px;
-}
-.app.outpost .market-workspace.is-setup {
-  grid-template-columns: minmax(0, 1fr) 280px;
-}
-.app.outpost .market-results-heading {
-  margin-bottom: 16px;
-}
-.app.outpost .market-results-heading h2 {
-  font-size: 18px;
-}
-.app.outpost .market-board {
-  padding: 18px;
-  min-height: 0;
-}
-.app.outpost .market-workspace .market-first-use {
-  border: 0;
-  background: transparent;
-  padding: 12px 0 0;
-  margin: 0;
-  box-shadow: none;
-}
-.app.outpost .market-workspace .market-selection {
-  padding: 0 0 20px;
-  gap: 14px;
-}
-.app.outpost .market-selection strong {
-  font-size: 22px;
-}
-.app.outpost .market-start-examples {
-  padding: 14px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.app.outpost .market-first-use > p {
-  font-size: 13px;
-  max-width: 65ch;
-}
-.app.outpost .market-source-note {
-  display: block;
-  margin-top: 18px;
-  font-size: 11px;
-  line-height: 1.75;
-}
-.app.outpost .market-item-panel {
-  padding: 18px;
-}
-.app.outpost .market-getting-started {
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-.app.outpost .market-getting-started .market-selected-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.app.outpost .market-getting-started h2 {
-  font-size: 17px;
-  margin: 0 0 4px;
-}
-.app.outpost .market-getting-started p {
-  font-size: 12px;
-  line-height: 1.7;
-  margin: 0 0 14px;
-}
-.app.outpost .market-selection-facts {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.app.outpost .market-selection-facts > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 9px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-}
-.app.outpost .market-selection-facts dd {
-  margin: 0;
-  color: var(--text);
-  text-align: right;
-}
-.app.outpost .market-getting-started .market-quick-help {
-  gap: 12px;
-  margin: 18px 0;
-}
-.app.outpost .market-getting-started .market-quick-help li {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-}
-.app.outpost .market-quick-help li svg {
-  width: 16px;
-  height: 16px;
-  color: var(--accent-ink);
-  flex-shrink: 0;
-}
-.app.outpost .market-quick-help li span {
-  font-size: 12px;
-  color: var(--muted);
-}
 .app.outpost #market-saved-research {
   display: grid;
   gap: 8px;
@@ -538,10 +426,6 @@
 }
 .app.outpost #market-saved-research details[open] summary {
   margin-inline: -12px;
-}
-.app.outpost .reference-market-history {
-  padding: 18px;
-  margin-top: 0;
 }
 /* Published PvP events, with source times and scoped data. */
 .app.outpost .combat-toolbar {
@@ -737,19 +621,6 @@
   border-radius: 6px;
 }
 @media (max-width: 1100px) {
-  .app.outpost .market-workspace.is-setup {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .market-getting-started .market-selected-item > img {
-    width: 56px;
-    height: 56px;
-  }
-  .app.outpost .market-selection-facts {
-    grid-template-columns: 1fr 1fr;
-  }
-  .app.outpost .market-getting-started .market-quick-help {
-    display: none;
-  }
   .app.outpost .combat-event-summary {
     grid-template-columns: 48px minmax(90px, 1fr) minmax(90px, 1fr) 90px 16px;
     gap: 12px;
@@ -791,24 +662,6 @@
   }
   .app.outpost .signin-panel-top {
     margin-bottom: 20px;
-  }
-  .app.outpost .market-query-panel,
-  .app.outpost .market-board,
-  .app.outpost .market-item-panel {
-    padding: 14px;
-  }
-  .app.outpost .market-first-use .market-selection strong {
-    font-size: 19px;
-  }
-  .app.outpost .market-getting-started .market-selected-item {
-    margin-bottom: 12px;
-  }
-  .app.outpost .market-selection-facts {
-    grid-template-columns: 1fr;
-  }
-  .app.outpost .market-getting-started > p,
-  .app.outpost .market-getting-started .market-selection-facts {
-    display: none;
   }
   .app.outpost .combat-toolbar {
     padding: 12px;
@@ -944,12 +797,6 @@
 @media (max-width: 780px) {
   .app.outpost .main > header.site-header {
     padding-inline: 12px;
-  }
-}
-@media (max-width: 1100px) {
-  .app.outpost .market-workspace.is-setup,
-  .app.outpost .market-workspace.has-results {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 .app.outpost .button-row {
