@@ -138,7 +138,9 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await page.goto("/?region=europe");
   await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
 
-  // The hero keeps the header on its own bar and shows only measured numbers.
+  // The hero keeps the header on its own bar and shows only measured numbers. Measure once the
+  // streamed page is in place (a still-hidden boundary reports a zero box).
+  await expect(page.locator(".landing-hero")).toBeVisible();
   const layout = await page.evaluate(() => {
     const h = document.querySelector(".site-header")!.getBoundingClientRect();
     const s = document.querySelector(".landing-hero")!.getBoundingClientRect();
