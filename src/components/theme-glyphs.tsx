@@ -19,8 +19,14 @@ export function SunGlyph() {
 export function MoonGlyph() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" className="theme-glyph">
-      <path d="M13.6 15.4A6.6 6.6 0 0 1 8.2 3.3a7 7 0 1 0 8.6 9.4 6.6 6.6 0 0 1-3.2 2.7Z" fill="currentColor" />
-      <path d="M14.6 3.2l.45 1.15 1.15.45-1.15.45-.45 1.15-.45-1.15L13 4.8l1.15-.45Z" fill="currentColor" />
+      <path
+        d="M13.6 15.4A6.6 6.6 0 0 1 8.2 3.3a7 7 0 1 0 8.6 9.4 6.6 6.6 0 0 1-3.2 2.7Z"
+        fill="currentColor"
+      />
+      <path
+        d="M14.6 3.2l.45 1.15 1.15.45-1.15.45-.45 1.15-.45-1.15L13 4.8l1.15-.45Z"
+        fill="currentColor"
+      />
       <circle cx="17" cy="8.4" r=".8" fill="currentColor" />
     </svg>
   );

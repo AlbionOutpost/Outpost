@@ -799,7 +799,11 @@
 /* Re-resolved where the palette changes (framed cards, mastheads), so boxes inside follow it */
 .app.outpost :is(.raised.has-scene, .workspace-identity[data-scene], .masthead[data-scene]) {
   --panel-face:
-    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--edge-light) 55%, transparent), transparent 60%),
+    radial-gradient(
+      120% 60% at 50% 0%,
+      color-mix(in srgb, var(--edge-light) 55%, transparent),
+      transparent 60%
+    ),
     var(--panel);
   --panel-edge: color-mix(in srgb, var(--accent) 18%, var(--border));
   --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
