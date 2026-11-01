@@ -51,7 +51,9 @@ describe("kill shortlist", () => {
 describe("ranking by estimated gear value", () => {
   const kill = (id: string, items: [string, number][]) => ({
     fame: 1,
-    victim: { equipment: items.map(([slot, _], i) => ({ slot, itemId: `ID${id}_${i}`, quality: 1 })) },
+    victim: {
+      equipment: items.map(([slot, _], i) => ({ slot, itemId: `ID${id}_${i}`, quality: 1 })),
+    },
     marker: id,
   });
   it("orders by priced gear value, highest first, and reports missing pieces", () => {
@@ -66,7 +68,10 @@ describe("ranking by estimated gear value", () => {
     expect(ranked[0].gearValue).toEqual({ total: 5000, priced: 1, missing: 0 });
   });
   it("ignores non-royal cities and counts unpriced pieces", () => {
-    const a = kill("A", [["Main hand", 1], ["Chest", 1]]);
+    const a = kill("A", [
+      ["Main hand", 1],
+      ["Chest", 1],
+    ]);
     const prices = [
       { item_id: "IDA_0", quality: 1, city: "Caerleon", sell_price_min: 9000 }, // not in list
     ] as never[];
