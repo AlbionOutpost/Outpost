@@ -2,24 +2,21 @@ import { db, databaseService } from "./db";
 
 /**
  * Public counts shown on the landing page. Only what is measured:
- * - players active this month: distinct accounts with a sign-in session used in the last 30
- *   days. Sessions last 14 days and are renewed at most daily on use, so a session still valid
- *   16 days ago was used within the last 30. Visitors who never sign in are not counted.
+ * - players active this month: signed-in accounts that opened any page in the last 30 days
+ *   (a signed-in visit touches the account's updatedAt at most twice a day, see auth.ts).
+ *   Visitors who never sign in are not counted.
  * - Supporters: accounts on the Supporter plan (written only by the Stripe webhook).
  */
 export type SiteStats = { monthlyPlayers: number; supporters: number };
 async function localSiteStats(): Promise<SiteStats> {
-  const since = Date.now() - 16 * 24 * 60 * 60 * 1000;
-  // Filtered here rather than in SQL: the session store keeps dates in its own format, and a
-  // date comparison in the query silently matched nothing there.
-  const [sessions, supporters] = await Promise.all([
-    db.session.findMany({ select: { userId: true, expires: true } }),
+  const since = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  // Filtered here rather than in SQL: the account store keeps dates in its own format.
+  const [users, supporters] = await Promise.all([
+    db.user.findMany({ select: { updatedAt: true } }),
     db.user.count({ where: { plan: "SUPPORTER" } }),
   ]);
-  const active = new Set(
-    sessions.filter((s) => new Date(s.expires).getTime() >= since).map((s) => s.userId),
-  );
-  return { monthlyPlayers: active.size, supporters };
+  const active = users.filter((u) => new Date(u.updatedAt).getTime() >= since).length;
+  return { monthlyPlayers: active, supporters };
 }
 export const siteStats: typeof localSiteStats = (...args) =>
   databaseService<SiteStats>("siteStats", args) ?? localSiteStats(...args);
