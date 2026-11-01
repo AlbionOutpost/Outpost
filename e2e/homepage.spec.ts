@@ -151,13 +151,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
   await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
   const stats = page.getByRole("term");
-  await expect(stats).toContainText([
-    "Active players",
-    "Builds",
-    "Guides",
-    "Tools",
-    "Supporters",
-  ]);
+  await expect(stats).toContainText(["Active players", "Builds", "Guides", "Tools", "Supporters"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
 
   // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
