@@ -61,6 +61,10 @@ Open items found on the way:
 - Library windows lead with the loadout board beside the weapon, author, activity chip, abilities and notes; titles get two lines; empty notes are no longer printed; phones show the date beside the author and drop the caption's duplicate (cards 178px).
 - Library and Community rails and toolbars share framed panels and well selects; the Community empty state spans the results column.
 
+## Shipped — Crafting calculator inner page (1 Nov)
+
+- Crafting, refining, enchanting, cooking and alchemy (one component): total profit is the headline figure (gain/loss in colour and words), per-output figures and cash lines in wells, accounting and assumptions folded into the results panel, price ages with Stale/Manual chips instead of raw ISO times, one section-title style, well selects, and saved runs in a "Keep this run" panel.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
