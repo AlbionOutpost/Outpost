@@ -169,19 +169,29 @@ export function Shell({
     const x = box ? box.left + box.width / 2 : innerWidth / 2;
     const y = box ? box.top + box.height / 2 : 0;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // To light: the new page grows out of the switch. To dark: the light page shrinks back
+    // into it. The header stays solid while the reveal runs (its blur cannot be captured).
+    const root = document.documentElement;
+    root.dataset.themeReveal = next ? "out" : "in";
     const transition = document.startViewTransition(commit);
     themeTransition.current = transition;
     transition.finished.finally(() => {
-      if (themeTransition.current === transition) themeTransition.current = null;
+      if (themeTransition.current === transition) {
+        themeTransition.current = null;
+        delete root.dataset.themeReveal;
+      }
     });
+    const small = `circle(0px at ${x}px ${y}px)`,
+      full = `circle(${radius}px at ${x}px ${y}px)`;
     transition.ready
       .then(() =>
-        document.documentElement.animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        root.animate(
+          { clipPath: next ? [small, full] : [full, small] },
           {
             duration: 520,
-            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-            pseudoElement: "::view-transition-new(root)",
+            easing: next ? "cubic-bezier(0.16, 1, 0.3, 1)" : "cubic-bezier(0.7, 0, 0.84, 0)",
+            fill: "forwards",
+            pseudoElement: next ? "::view-transition-new(root)" : "::view-transition-old(root)",
           },
         ),
       )
@@ -528,18 +538,9 @@ export function Shell({
                   affiliated with Sandbox Interactive.
                 </p>
               </div>
-              {footerColumns.map(([title, links], i) => (
+              {footerColumns.map(([title, links]) => (
                 <nav key={title} className="site-footer-column" aria-label={title}>
-                  <h2>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`/albion/icons/${["strip-content", "tool-craft", "team-roles"][i] ?? "tool-craft"}.webp`}
-                      alt=""
-                      width={26}
-                      height={26}
-                    />
-                    {title}
-                  </h2>
+                  <h2>{title}</h2>
                   {links
                     .filter(([url]) => !authenticated || url !== "/signin")
                     .map(([url, label]) => (
