@@ -373,12 +373,7 @@
 html[data-theme-reveal="in"]::view-transition-old(root) {
   z-index: 2;
 }
-/* While the theme reveal runs the header is solid, so it never flickers between glass states */
-html[data-theme-reveal] .app.outpost .main > header.site-header {
-  background: var(--chrome);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
+
 /* Clicks pass through the theme reveal, so the switch never waits for it to finish */
 ::view-transition {
   pointer-events: none;
@@ -504,16 +499,16 @@ html[data-theme-reveal] .app.outpost .main > header.site-header {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The header is glass over the painting: the scene shows through a dark tint and a blur, with a
+/* The header is glass over the painting: the scene shows through a dark tint, with a
    faint light along the top and an ember hairline at the bottom, so it is never a flat slab. */
 .app.outpost .main > header.site-header {
   z-index: 20;
   border-bottom: 1px solid transparent;
+  /* Tinted glass without a blur: a live blur cannot be captured by the theme reveal, so it
+     vanished and popped back on every switch; a plain tint looks the same before and after. */
   background:
     linear-gradient(180deg, #ffffff0d, transparent 60%),
-    color-mix(in srgb, var(--chrome) 58%, transparent);
-  backdrop-filter: blur(14px) saturate(1.35);
-  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+    color-mix(in srgb, var(--chrome) 72%, transparent);
   box-shadow:
     inset 0 1px 0 #ffffff12,
     0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent),
@@ -522,9 +517,25 @@ html[data-theme-reveal] .app.outpost .main > header.site-header {
 .app.outpost.light .main > header.site-header {
   background:
     linear-gradient(180deg, #ffffff1f, transparent 60%),
-    color-mix(in srgb, var(--chrome) 62%, transparent);
+    color-mix(in srgb, var(--chrome) 76%, transparent);
   box-shadow:
     inset 0 1px 0 #ffffff26,
     0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent),
     0 10px 30px -18px #3a251266;
+}
+
+/* Every header control is the same 44px tall, top and bottom aligned */
+.app.outpost
+  .site-header
+  :is(
+    .search-trigger,
+    .region-picker > button,
+    .theme-switch,
+    .home-auth-action,
+    .discord-login,
+    .account-dropdown > summary
+  ) {
+  box-sizing: border-box;
+  height: 44px !important;
+  min-height: 44px !important;
 }
