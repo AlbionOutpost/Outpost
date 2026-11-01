@@ -51,6 +51,10 @@ Open items found on the way:
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — two-handed weapons fill the off hand (1 Nov)
+
+- Builds, build detail and editor boards, landing windows, top kills and the kill feed show a two-handed main hand again in the empty off-hand slot at 50% opacity, as the game does.
+
 ## Shipped — Market Explorer inner page (1 Nov)
 
 - First page of the inner-page pass: sticky search rail, an item hero with lowest sell / highest buy / newest observation, a well table of city orders with spread, Lowest/Highest tags, per-price ages and Stale chips, a stacked two-line layout on phones, a selected-city detail that moves Price history to that city, and the landing chart for history (also on Gold, with hour labels for hourly data). Research list and watchlist open directly in their tabs.
