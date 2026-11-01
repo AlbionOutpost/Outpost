@@ -1132,56 +1132,6 @@
   ):focus-within {
   z-index: 6;
 }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .app.outpost
-      :is(
-        .panel,
-        .raised:not(.has-scene),
-        .build-command-bar,
-        .editor-inventory-panel,
-        .editor-slot-panel,
-        .party-command-bar,
-        .party-readiness,
-        .reference-available-builds,
-        .timer-composer,
-        .loadout-price-check,
-        .build-discovery-empty,
-        .calculator-inputs,
-        .fishing-main,
-        .calculation-readiness
-      ):not(
-        :is(
-            .panel,
-            .raised,
-            dialog,
-            .build-command-bar,
-            .editor-inventory-panel,
-            .editor-slot-panel,
-            .party-command-bar,
-            .party-readiness,
-            .reference-available-builds,
-            .timer-composer,
-            .loadout-price-check,
-            .build-discovery-empty,
-            .calculator-inputs,
-            .fishing-main,
-            .calculation-readiness
-          )
-          *
-      ) {
-      animation: panel-rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 40%;
-    }
-    @keyframes panel-rise {
-      from {
-        translate: 0 28px;
-        scale: 0.985;
-      }
-    }
-  }
-}
 .app.outpost .raised[data-scene="market"] {
   --scene: var(--scene-market);
 }

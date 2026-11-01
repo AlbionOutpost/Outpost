@@ -20,7 +20,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
     "href",
     "/tools/market?item=T6_METALBAR&quality=1&region=asia",
   );
-  await expect(page.locator(".landing-stats > div")).toHaveCount(4);
+  await expect(page.locator(".landing-stats > div")).toHaveCount(5);
   await expect(page.locator(".landing-window")).toHaveCount(3);
   await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
