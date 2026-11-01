@@ -6,7 +6,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Next session — inner pages to landing quality
 
-Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer~~ (done 1 Nov, below) → **Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor**, then Comp planner, Teams, Timers, Item database.
+Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer → Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor~~, then ~~Comp planner, Teams, Timers, Item database~~. All shipped 1 Nov (sections below); next: real item art and live prices checked on production, then the dashboard and remaining supporting pages.
 
 Per page, the bar is the landing (`src/app/page.tsx`, `homepage.css`):
 
