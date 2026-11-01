@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { buildInput } from "@/lib/builds/validation";
 import { BuildEditor } from "@/components/build-editor";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 export default async function EditBuild({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/signin");
@@ -15,7 +16,12 @@ export default async function EditBuild({ params }: { params: Promise<{ id: stri
   if (!build) notFound();
   return (
     <div className="build-editor-page">
-      <h1 className="page-title display-title">Edit build</h1>
+      <WorkspaceHeading
+        glyph="builds"
+        scene="builds"
+        title="Edit build"
+        description={build.title}
+      />
       <BuildEditor
         key={`${session.user.id}:${build.id}`}
         initial={buildInput.parse(build)}
