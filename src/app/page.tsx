@@ -244,8 +244,6 @@ export default async function Home({
 
       <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
         <div className="raised has-scene landing-cta" data-scene="build">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/albion/icons/team-roles.webp" alt="" width={68} height={68} />
           <h2 id="home-cta-title">
             Free for everyone. <em>Supporters</em> keep it running.
           </h2>
@@ -260,7 +258,6 @@ export default async function Home({
             </Link>
             <Link href={`/supporter${suffix}`} className="button secondary">
               {billing ? "Become a Supporter" : "About the Supporter plan"}
-              {!billing ? <span className="landing-chip">Opening soon</span> : null}
             </Link>
           </div>
         </div>
