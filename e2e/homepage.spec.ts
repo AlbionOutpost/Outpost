@@ -152,7 +152,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
   const stats = page.getByRole("term");
   await expect(stats).toContainText([
-    "Active players this month",
+    "Active players",
     "Builds",
     "Guides",
     "Tools",

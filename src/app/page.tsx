@@ -95,7 +95,7 @@ export default async function Home({
   const n = (value: number) => value.toLocaleString("en-US");
   // Measured counts only; the two account counts drop out if the database cannot answer.
   const stats = [
-    ...(players ? [{ value: players.monthlyPlayers, label: "Active players this month" }] : []),
+    ...(players ? [{ value: players.monthlyPlayers, label: "Active players" }] : []),
     { value: library.builds, label: "Builds" },
     { value: library.guides, label: "Guides" },
     { value: tools.length, label: "Tools" },
