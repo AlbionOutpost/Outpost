@@ -41,40 +41,40 @@
   background: var(--bg);
   color: var(--text);
 }
-/* Light mode is Albion's inventory: parchment panels in leather-brown frames, ink text and a
-   rust accent, never white. */
+/* Light mode is Albion's own UI: a dusty brown page, warm tan windows with darker tan rows,
+   leather-brown edges, ink text and a rust accent. Never white, never bright. */
 .app.outpost.light,
 .app.outpost.home-route.light {
-  --bg: #d8c6a1;
-  --sidebar: #e4d3af;
-  --chrome: #e4d3af;
-  --panel: #ebdcba;
-  --surface: #ebdcba;
-  --elevated: #dfcca6;
-  --surface-2: #dfcca6;
-  --surface-3: #d2bc93;
-  --border: #a3845a;
-  --premium-border: #a3845a;
-  --card-surface: #ebdcba;
-  --card-surface-hover: #e4d2ad;
-  --card-border: #a3845a;
-  --line-soft: color-mix(in srgb, #a3845a 60%, transparent);
-  --text: #2c1f12;
-  --secondary: #4d3823;
-  --muted: #674f35;
-  --text-muted: #674f35;
-  --accent: #9a4519;
-  --action: #9a4519;
-  --accent-ink: #8a3c13;
-  --accent-hover: #7a330e;
-  --action-hover: #7a330e;
-  --accent-wash: #9a451914;
-  --focus: #2c5a93;
-  --success: #2e6a2a;
-  --positive: #2e6a2a;
-  --error: #a3301f;
-  --negative: #a3301f;
-  --warning: #7a5410;
+  --bg: #c4a283;
+  --sidebar: #b8977a;
+  --chrome: #b8977a;
+  --panel: #d6b18e;
+  --surface: #d6b18e;
+  --elevated: #c4a283;
+  --surface-2: #c4a283;
+  --surface-3: #b8967a;
+  --border: #8a6b50;
+  --premium-border: #8a6b50;
+  --card-surface: #d6b18e;
+  --card-surface-hover: #cfa985;
+  --card-border: #8a6b50;
+  --line-soft: color-mix(in srgb, #8a6b50 55%, transparent);
+  --text: #2a1b10;
+  --secondary: #45301f;
+  --muted: #5c4432;
+  --text-muted: #5c4432;
+  --accent: #8f3d14;
+  --action: #8f3d14;
+  --accent-ink: #7a3210;
+  --accent-hover: #6e2c0c;
+  --action-hover: #6e2c0c;
+  --accent-wash: #8f3d1417;
+  --focus: #25507f;
+  --success: #2c5f26;
+  --positive: #2c5f26;
+  --error: #962a1b;
+  --negative: #962a1b;
+  --warning: #6c4a0c;
   background: var(--bg);
   color: var(--text);
 }
@@ -275,14 +275,14 @@
   }
 }
 .app.outpost.light {
-  --canvas-top: #d8c6a1;
-  --canvas-mid: #d8c6a1;
-  --canvas-end: #d8c6a1;
-  --surface-raised: #ebdcba;
-  --surface-scrim: #e4d3af;
-  --well: #dccaa3;
-  --well-border: #5a3e2633;
-  --edge-light: #f6ecd6;
+  --canvas-top: #a68d76;
+  --canvas-mid: #a68d76;
+  --canvas-end: #a68d76;
+  --surface-raised: #d6b18e;
+  --surface-scrim: #cfa985;
+  --well: #c4a283;
+  --well-border: #5a3e2640;
+  --edge-light: #ecc9a5;
   --raised-edge: #6b4a2a55;
   --raised-edge-top: #6b4a2a40;
   --raised-edge-hover: color-mix(in srgb, var(--accent) 55%, #6b4a2a40);
@@ -310,8 +310,8 @@
 }
 .app.outpost.light {
   --canvas-grain-opacity: 0.05;
-  --backdrop-veil: 18%;
-  --backdrop-deep: 88%;
+  --backdrop-veil: 28%;
+  --backdrop-deep: 90%;
 }
 .app.outpost .main {
   position: relative;
@@ -351,6 +351,18 @@
     color-mix(in oklab, var(--canvas-end) var(--backdrop-deep), transparent) 1700px
   );
   pointer-events: none;
+}
+/* Working pages settle sooner: their panels start right under the masthead */
+.app.outpost:not(.home-route) .main::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 160px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.4), transparent) 280px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.78), transparent) 380px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.95), transparent) 470px,
+    color-mix(in oklab, var(--canvas-end) var(--backdrop-deep), transparent) 560px
+  );
 }
 /* Grain above the scrim, below everything else */
 .app.outpost .main::after {
@@ -400,11 +412,18 @@
   background: linear-gradient(90deg, #0c0d10b8 0%, #0c0d1080 34%, #0c0d1020 62%, transparent 82%);
   mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
 }
-.app.outpost.light :is(.workspace-identity, .masthead)[data-scene]::before {
-  background: linear-gradient(90deg, #d8c6a1e8 0%, #d8c6a1b8 34%, #d8c6a148 62%, transparent 82%);
-}
+/* Mastheads sit on the painting, so like the landing hero they keep the night palette in
+   both themes: light copy over a dark shade. */
 .app.outpost.light :is(.workspace-identity, .masthead)[data-scene] {
-  color: var(--text);
+  --text: #f4f2ee;
+  --muted: #ddd8d0;
+  --accent: #ee945a;
+  --accent-ink: #ffb482;
+  --panel: #191d22;
+  --elevated: #24292f;
+  --border: #353b43;
+  --bg: #101215;
+  color: #f4f2ee;
 }
 .app.outpost .workspace-emblem {
   display: grid;
@@ -428,8 +447,25 @@
   width: 56px;
   height: 56px;
 }
-.app.outpost.light .workspace-emblem {
-  background: color-mix(in srgb, var(--panel) 85%, transparent);
+/* Painted emblems stand on their own, glowing a little, with no box around them */
+.app.outpost .workspace-emblem:has(> img.painted-emblem) {
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+.app.outpost .workspace-emblem > img.painted-emblem {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 4px 10px #000a)
+    drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+.app.outpost .workspace-emblem > img.account-emblem {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 8px 20px -6px #000c;
 }
 .app.outpost .workspace-identity-copy {
   flex: 1;
@@ -494,6 +530,10 @@
     width: 48px;
     height: 48px;
     border-radius: 12px;
+  }
+  .app.outpost .workspace-emblem > :is(img.painted-emblem, img.account-emblem) {
+    width: 48px;
+    height: 48px;
   }
   .app.outpost .workspace-emblem svg {
     width: 22px;
@@ -744,11 +784,43 @@
   box-shadow: inset 0 1px 2px #16203214;
 }
 /* Every working panel is raised; art stays on cards that are links to something */
-.app.outpost .panel {
-  border: 0;
+/* The panel face and edge, shared by every older page's own boxes too */
+.app.outpost {
+  --panel-face:
+    radial-gradient(
+      120% 60% at 50% 0%,
+      color-mix(in srgb, var(--edge-light) 55%, transparent),
+      transparent 60%
+    ),
+    var(--panel);
+  --panel-edge: color-mix(in srgb, var(--accent) 18%, var(--border));
+  --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
+}
+/* Re-resolved where the palette changes (framed cards, mastheads), so boxes inside follow it */
+.app.outpost :is(.raised.has-scene, .workspace-identity[data-scene], .masthead[data-scene]) {
+  --panel-face:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--edge-light) 55%, transparent), transparent 60%),
+    var(--panel);
+  --panel-edge: color-mix(in srgb, var(--accent) 18%, var(--border));
+  --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
+}
+/* Working panels are windows in the game's style: a soft top light over the surface, a hairline
+   ember edge brighter along the top, an inner highlight and a deep drop, so they sit on the
+   painting like the landing's cards without their art. */
+.app.outpost :is(.panel, .raised:not(.has-scene)) {
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--raised-edge));
+  border-top-color: color-mix(in srgb, var(--accent) 48%, var(--raised-edge-top));
   border-radius: 12px;
-  background: var(--surface-raised);
-  box-shadow: var(--shadow-raised);
+  background:
+    radial-gradient(
+      120% 60% at 50% 0%,
+      color-mix(in srgb, var(--edge-light) 60%, transparent),
+      transparent 60%
+    ),
+    var(--surface-raised);
+  box-shadow:
+    inset 0 1px 0 var(--edge-light),
+    var(--shadow-raised);
 }
 
 /* Section headings: display title with an ember word, one line, a pill link on the right */
@@ -814,13 +886,50 @@
     translate 420ms var(--ease-spring),
     rotate 420ms var(--ease-spring);
 }
+/* On hover an ember wash pours out of the arrow disc and fills the pill, the disc swells and
+   the arrow steps forward; pressing squeezes the pill slightly. */
+.app.outpost .pill-link {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.app.outpost .pill-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at calc(100% - 20px) 50%,
+    color-mix(in srgb, var(--accent) 26%, transparent) 0,
+    color-mix(in srgb, var(--accent) 10%, transparent) 60%,
+    transparent 61%
+  );
+  background-size: 0% 0%;
+  background-position: calc(100% - 20px) 50%;
+  background-repeat: no-repeat;
+  transition: background-size 520ms var(--ease-out-expo);
+}
 .app.outpost .pill-link:hover {
   border-color: var(--accent);
-  background: #1d2129;
   text-decoration: none;
 }
+.app.outpost .pill-link:hover::before {
+  background-size: 400% 400%;
+}
 .app.outpost .pill-link:hover svg {
-  translate: 2px 0;
+  translate: 3px 0;
+  scale: 1.12;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.app.outpost .pill-link:active {
+  scale: 0.97;
+}
+.app.outpost .pill-link {
+  transition:
+    border-color 220ms var(--ease-out),
+    background 220ms var(--ease-out),
+    scale 180ms var(--ease-out-expo);
 }
 .app.outpost.light .pill-link {
   background: var(--panel);
@@ -1384,7 +1493,9 @@
 }
 /* The guides hub uses the full page width so four covers sit side by side */
 .app.outpost .guide-discovery-page {
+  width: 100%;
   max-width: 1664px;
+  margin-inline: auto;
 }
 @media (max-width: 1400px) {
   .app.outpost .grind-guide-grid {

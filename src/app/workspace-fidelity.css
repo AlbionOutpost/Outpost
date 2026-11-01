@@ -1,9 +1,10 @@
 /* Workspace anatomy follows the supplied Market, production and equipment references. */
 .app.outpost .market-query-panel {
   grid-column: 1/-1;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
   padding: 16px;
   min-width: 0;
 }

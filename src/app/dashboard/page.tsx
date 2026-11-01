@@ -1,11 +1,12 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { AccountEmblem } from "@/components/account-emblem";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "@/components/link";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { EquipmentStrip } from "@/components/equipment-strip";
-import { Swords, Users, Flag, Clock3, ArrowUpRight } from "lucide-react";
+import { Flag, Clock3, ArrowUpRight } from "lucide-react";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
@@ -14,6 +15,7 @@ export default async function Dashboard() {
     where: { id: s.user.id },
     select: {
       name: true,
+      image: true,
       region: true,
       role: true,
       builds: {
@@ -61,10 +63,41 @@ export default async function Dashboard() {
   ]
     .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
     .slice(0, 8);
+  const quick = [
+    {
+      title: "Create a build",
+      note: "Full set, spells and swaps",
+      href: "/builds/new",
+      emblem: "strip-builds",
+      scene: "build",
+    },
+    {
+      title: "Plan a comp",
+      note: "Roles and sets for the party",
+      href: "/compositions/new",
+      emblem: "strip-comps",
+      scene: "composition",
+    },
+    {
+      title: "Check prices",
+      note: "Every city, buy and sell",
+      href: "/tools/market",
+      emblem: "tool-market",
+      scene: "market",
+    },
+    {
+      title: "Craft for profit",
+      note: "Costs, returns and margin",
+      href: "/tools/crafting",
+      emblem: "tool-craft",
+      scene: "city",
+    },
+  ];
   return (
     <div className="player-dashboard support-dashboard">
       <WorkspaceHeading
         icon="account"
+        emblem={<AccountEmblem image={u.image} />}
         scene="guides"
         title={`Welcome, ${u.name || "Adventurer"}.`}
         description="Pick up your plans, check your timers, and get your team ready."
@@ -74,8 +107,26 @@ export default async function Dashboard() {
           </Link>
         }
       />
+      <nav className="dashboard-quick" aria-label="Start something">
+        {quick.map((q) => (
+          <Link
+            key={q.href}
+            className="raised has-scene dashboard-quick-card"
+            data-scene={q.scene}
+            href={q.href}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/albion/icons/${q.emblem}.webp`} alt="" width={52} height={52} />
+            <span>
+              <strong>{q.title}</strong>
+              <small>{q.note}</small>
+            </span>
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
       <div className="dashboard-workspace">
-        <section className="dashboard-recent" aria-labelledby="recent-work-title">
+        <section className="panel dashboard-recent" aria-labelledby="recent-work-title">
           <div className="support-section-heading">
             <h2 id="recent-work-title">Pick up where you left off</h2>
             <Link className="button primary" href="/builds/new">
@@ -111,7 +162,13 @@ export default async function Dashboard() {
             {recent.slice(1).map((item) => (
               <Link key={`${item.type}:${item.id}`} href={item.href}>
                 <span className="support-record-icon">
-                  {item.type === "Build" ? <Swords size={19} /> : <Users size={19} />}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/albion/icons/${item.type === "Build" ? "strip-builds" : "strip-comps"}.webp`}
+                    alt=""
+                    width={30}
+                    height={30}
+                  />
                 </span>
                 <span>
                   <strong>{item.title}</strong>
@@ -130,7 +187,7 @@ export default async function Dashboard() {
           </nav>
         </section>
         <aside className="dashboard-day-plan">
-          <section>
+          <section className="panel">
             <div className="support-section-heading">
               <h2>
                 <Clock3 size={18} />
@@ -156,7 +213,7 @@ export default async function Dashboard() {
               </p>
             )}
           </section>
-          <section>
+          <section className="panel">
             <div className="support-section-heading">
               <h2>
                 <Flag size={18} />
@@ -189,7 +246,7 @@ export default async function Dashboard() {
           </section>
         </aside>
       </div>
-      <section className="dashboard-calculations">
+      <section className="panel dashboard-calculations">
         <div className="support-section-heading">
           <h2>Calculator plans</h2>
           <Link className="text-link" href="/tools">

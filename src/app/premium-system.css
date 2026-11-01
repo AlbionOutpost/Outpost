@@ -163,8 +163,9 @@
   gap: 12px;
   padding: 14px 16px;
   margin: 0 0 12px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   box-shadow: 0 5px 18px #00000025;
 }
@@ -438,9 +439,10 @@
   background: var(--accent-wash);
 }
 .app.outpost .party-member-card {
-  background: var(--panel);
+  background: var(--panel-face);
   border-radius: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
 }
 .app.outpost .guide-reading-body {
   min-width: 0;
@@ -610,9 +612,10 @@
 }
 .shopping-toolbar {
   padding: 16px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
 }
 .shopping-toolbar > div:first-child {
   display: grid;
@@ -867,8 +870,9 @@
   vertical-align: middle;
 }
 .app.outpost .premium-production .production-workspace .calculator-inputs > .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   padding: 18px;
   box-shadow: var(--premium-shadow);
@@ -1088,9 +1092,10 @@
   min-width: 135px;
   flex: 1;
   padding: 14px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
 }
 .readiness-role > span {
   display: grid;
@@ -1119,8 +1124,9 @@
   min-width: 245px;
   max-width: 330px;
   padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
 }
 .party-preparation-summary > span {
@@ -1182,9 +1188,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
     padding: 14px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 8px;
-    background: var(--panel);
+    background: var(--panel-face);
   }
   .app.outpost .shopping-table-panel th {
     grid-column: 1 / -1;
@@ -1455,9 +1462,10 @@
     gap: 12px;
   }
   .market-quality-cards > article {
-    border: 1px solid var(--border);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 8px;
-    background: var(--panel);
+    background: var(--panel-face);
     padding: 16px;
   }
   .app.outpost .market-quality-cards h4 {

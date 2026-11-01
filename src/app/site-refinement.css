@@ -490,8 +490,9 @@
   gap: 8px;
 }
 .app.outpost .combat-event {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -616,8 +617,9 @@
   grid-template-columns: 56px 1fr 1fr;
   gap: 20px;
   padding: 18px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 10px;
 }
 .app.outpost .combat-skeleton span {

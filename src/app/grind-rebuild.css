@@ -16,8 +16,9 @@
   gap: 20px;
 }
 .studio-equipment-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -239,8 +240,9 @@
   top: 96px;
   min-width: 0;
   padding: 20px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
 }
 .studio-overview-heading {
@@ -697,8 +699,9 @@
   border-radius: 6px;
 }
 .guide-feature-story {
-  border: 1px solid var(--border);
-  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
+  background: var(--panel-face);
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -893,18 +896,20 @@
 .app.outpost .build-loadout-abilities {
   grid-column: 1;
   grid-row: 1;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
   padding: 20px;
 }
 .app.outpost .build-detail-page .build-loadout-inventory,
 .app.outpost .build-loadout-inventory {
   grid-column: 2;
   grid-row: 1;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
   position: sticky;
   top: 96px;
   padding: 20px;
@@ -999,8 +1004,9 @@
 .loadout-price-check {
   margin: 32px 0;
   padding: 20px 24px;
-  border: 1px solid var(--border);
-  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
+  background: var(--panel-face);
   border-radius: 8px;
 }
 .loadout-price-check .library-section-heading {

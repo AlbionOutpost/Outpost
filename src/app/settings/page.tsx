@@ -6,6 +6,7 @@ import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms"
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { AccountEmblem } from "@/components/account-emblem";
 export default async function Settings({
   searchParams,
 }: {
@@ -23,6 +24,7 @@ export default async function Settings({
         title="Account settings"
         description="Manage your profile, preferred server and account data."
         icon="account"
+        emblem={<AccountEmblem image={user.image} />}
       />
       <div className="account-settings-workspace">
         <nav className="account-settings-navigation" aria-label="Settings sections">

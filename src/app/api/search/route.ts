@@ -8,7 +8,16 @@ import { tools } from "@/lib/tool-directory";
 import { queryLibraryBuilds, queryLibraryCompositions, libraryGuides } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { familyName, familyScore, matchScore, terms } from "@/lib/search-rank";
-type Row = { category: string; title: string; url: string; subtitle?: string; icon?: string };
+import { toolEmblem } from "@/lib/search-emblems";
+type Row = {
+  category: string;
+  title: string;
+  url: string;
+  subtitle?: string;
+  icon?: string;
+  emblem?: string;
+  image?: string;
+};
 const best = <T>(rows: readonly T[], score: (row: T) => number, take: number) =>
   rows
     .map((row) => ({ row, score: score(row) }))
@@ -23,10 +32,14 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
   const enchant = /(?:@|\.)([1-4])\b/.exec(q)?.[1];
   const nameWords = words.filter((w) => !/^(?:@|\.)?[1-4]$|^t[1-8]$/.test(w));
   const tier = /\bt([1-8])\b/i.exec(q)?.[1];
-  const s = await getServerSession(authOptions),
+  // Signed-out visitors skip the session lookup: one round trip less per keystroke.
+  const cookie = req.headers.get("cookie") || "";
+  const s = /(?:^|;\s*)(?:__Secure-)?next-auth\.session-token=/.test(cookie)
+      ? await getServerSession(authOptions)
+      : null,
     userId = s?.user?.id;
   const contains = (value: string) => ({ contains: value, mode: "insensitive" as const });
-  const [items, builds, compositions, groups, library, libraryComps] = await Promise.all([
+  const [items, builds, compositions, groups, library, libraryComps, guides] = await Promise.all([
     nameWords.length
       ? db.itemMetadata.findMany({
           where: {
@@ -81,6 +94,7 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
       page.matched || words.length < 2 ? page : queryLibraryBuilds({ q: compact }),
     ),
     Promise.resolve(queryLibraryCompositions({ q: words.join(" ") })),
+    Promise.resolve(libraryGuides()),
   ]);
   // One row per item family ("Battleaxe"), linked to its lowest matching tier.
   const families = new Map<
@@ -124,6 +138,7 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
     title: t.title,
     subtitle: t.description,
     url: t.href,
+    emblem: toolEmblem(t.icon),
   }));
   // Rank archive matches by title and weapon so an author name alone does not win.
   const libraryRows: Row[] = best(
@@ -140,7 +155,7 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
     icon: b.equipment.find((e) => e.slot === "Main hand")?.itemId,
   }));
   const guideRows: Row[] = best(
-    await Promise.resolve(libraryGuides()),
+    guides,
     (g) => Math.max(matchScore(g.title, q), matchScore(g.summary, q) / 2),
     4,
   ).map((g) => ({
@@ -148,6 +163,7 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
     title: g.title,
     subtitle: g.summary,
     url: `/guides/${g.slug}`,
+    ...(g.cover ? { image: g.cover.src } : {}),
   }));
   return NextResponse.json({
     // A tool whose name matches at least as well as any item is the likely destination.

@@ -1,8 +1,9 @@
 /* Recipe research and run accounting share a workspace, not a sequence of cards. */
 .production-recipe-browser {
   padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--panel-face);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
   min-width: 0;
 }
@@ -179,8 +180,9 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 20px;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: var(--panel-face);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
     border-radius: 8px;
     padding: 20px;
   }
@@ -319,9 +321,10 @@
   gap: 24px;
   margin-bottom: 20px;
   padding: 16px 20px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--panel-face);
 }
 .transport-route-strip > svg {
   color: var(--accent-ink);

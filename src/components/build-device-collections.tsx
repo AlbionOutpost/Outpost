@@ -166,7 +166,10 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
   const page = Math.min(requestedPage, pages);
   const visible = matching.slice((page - 1) * 24, page * 24);
   return (
-    <section className="device-library-favorites" aria-label="Library favorites on this device">
+    <section
+      className="panel device-library-favorites"
+      aria-label="Library favorites on this device"
+    >
       <div className="ecosystem-section-heading">
         <div>
           <h2>Library favorites</h2>
