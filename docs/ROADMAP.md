@@ -73,6 +73,10 @@ Open items found on the way:
 
 - Create and Edit open on the comps masthead; the empty roles strip no longer renders for an empty party (Available builds moves up beside the roster); the empty party is a dashed well; party sizes are pills; selects and inputs are wells; "Back to comps" is a pill.
 
+## Shipped — Teams inner pages (1 Nov)
+
+- Team overview cards are framed panels with one heading style (no more mixed uppercase), compact "View all" / "Open comps" pills instead of full-width buttons, capitalised region and visibility chips; the directory's selects are wells and its empty state drops the display face.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
