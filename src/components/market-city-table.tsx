@@ -80,7 +80,7 @@ export function MarketCityTable({
                     <span className="sr-only"> market details</span>
                   </button>
                 </th>
-                <td className="numeric">
+                <td className="numeric" data-label="Sell order">
                   {blackMarket ? (
                     <>
                       <span className="market-price-missing">—</span>
@@ -96,7 +96,7 @@ export function MarketCityTable({
                     />
                   )}
                 </td>
-                <td className="numeric">
+                <td className="numeric" data-label="Buy order">
                   <Price
                     value={r.buy_price_max}
                     date={r.buy_price_max_date}

@@ -1,5 +1,6 @@
 "use client";
 import "./economy-workspaces.css";
+import "./history.css";
 import { useEffect, useRef, useState } from "react";
 import { useAtlasRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -129,12 +130,16 @@ export function History({
         ? { notation: "compact", maximumFractionDigits: max - min < max * 0.05 ? 2 : 1 }
         : { maximumFractionDigits: 0 },
     );
+  // Hourly series (gold) label the time of day; daily series label the date.
+  const hourly = end - start < 2 * 86_400_000;
   const day = (t: string) =>
-    new Date(sourceTimestamp(t)).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-    });
+    hourly
+      ? `${new Date(sourceTimestamp(t)).toISOString().slice(11, 16)} UTC`
+      : new Date(sourceTimestamp(t)).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          timeZone: "UTC",
+        });
   const last = visible.at(-1);
   const gradient = `history-fill-${kind}`;
   const body = (

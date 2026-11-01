@@ -1,0 +1,107 @@
+/* Price history chart (Market Explorer and Gold): the landing chart in a well. Owned by
+   history.tsx. */
+
+.app.outpost .history-panel :is(.history-chart, .history-observations) {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .history-panel .history-chart {
+  padding: var(--space-4);
+}
+.app.outpost .history-panel .history-chart-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.app.outpost .history-panel .history-series-key {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .history-panel .history-last {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+.app.outpost .history-panel .history-last b {
+  font: 800 22px/1 var(--font-display);
+}
+.app.outpost .history-panel .history-last small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .history-panel .reference-price-figure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+}
+.app.outpost .history-panel .reference-price-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Matches the plot's value band (30→175 of 210) */
+  padding: calc(220px * 26 / 210) 0 calc(220px * 33 / 210);
+  min-width: 44px;
+  color: var(--muted);
+  font: 500 12px/1 var(--font-data);
+  text-align: right;
+}
+.app.outpost .history-panel .price-chart {
+  width: 100%;
+  height: 220px;
+  color: var(--accent);
+  overflow: visible;
+}
+.app.outpost .history-panel .price-chart circle {
+  fill: var(--accent-ink);
+  stroke: var(--surface-raised);
+  stroke-width: 1.5;
+}
+.app.outpost .history-panel .history-grid {
+  stroke: var(--edge-light);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+.app.outpost .history-panel .chart-range {
+  font-family: var(--font-ui);
+  display: flex;
+  justify-content: space-between;
+  margin: var(--space-2) 0 0 52px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .history-panel .history-window {
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .history-panel .history-observations > summary {
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  align-content: center;
+  color: var(--text);
+  font: 600 13px/40px var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .history-panel .history-observations[open] > .table-scroll {
+  max-height: 320px;
+  margin: 0 var(--space-3) var(--space-3);
+  overflow: auto;
+}
+.app.outpost .history-panel .history-observations table {
+  width: 100%;
+  font: 500 13px/1.3 var(--font-data);
+}
+@media (max-width: 700px) {
+  .app.outpost .history-panel .price-chart {
+    height: 180px;
+  }
+  .app.outpost .history-panel .reference-price-axis {
+    padding: calc(180px * 26 / 210) 0 calc(180px * 33 / 210);
+  }
+}

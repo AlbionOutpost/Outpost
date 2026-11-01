@@ -170,10 +170,7 @@ export function Market() {
   const filtersActive =
     extraCities.length > 0 || city || tier || category || enchantment || quality !== "1";
   return (
-    <div
-      className={`mx${hasResult ? " has-results" : " is-setup"}`}
-      aria-busy={loading}
-    >
+    <div className={`mx${hasResult ? " has-results" : " is-setup"}`} aria-busy={loading}>
       <aside className="raised mx-rail" aria-label="Market search and filters">
         <fieldset className="market-hydration-guard" disabled={!hydrated}>
           <legend className="sr-only">Choose an item, quality and city</legend>
@@ -476,10 +473,7 @@ export function Market() {
             </>
           )}
           {selectedQuote && (
-            <aside
-              className="mx-inspector"
-              aria-label="Selected city observation"
-            >
+            <aside className="mx-inspector" aria-label="Selected city observation">
               <div className="mx-inspector-head">
                 <span className="city-dot" data-city={selectedQuote.city} aria-hidden="true" />
                 <h3>{selectedQuote.city}</h3>
