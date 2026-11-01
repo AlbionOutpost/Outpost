@@ -28,6 +28,7 @@ import {
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
+import { sourceAge } from "@/lib/albion/source-age";
 import { ScenarioControls } from "./scenario-controls";
 import { ProductionPlan } from "./production-plan";
 import {
@@ -246,6 +247,9 @@ export function ProductionCalculator({
     v === null || v === undefined
       ? "Unavailable"
       : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  /** Gain / loss / even class for a figure; the text beside it always says which. */
+  const tone = (v: number | null | undefined) =>
+    v === null || v === undefined || v === 0 ? "is-even" : v < 0 ? "is-loss" : "is-gain";
   const coin = (v: number | null | undefined) =>
     v === null || v === undefined ? "Unavailable" : <Silver value={v} digits={2} />;
   const current = (id: string, quality: number, city = draft.materialCity) => {
@@ -884,8 +888,9 @@ export function ProductionCalculator({
                             <ItemIcon id={i.id} size={36} />
                             <strong>{i.name}</strong>
                             <small className="material-row-total">
-                              Total: {money(result?.rows.find((row) => row.id === i.id)?.gross)}{" "}
-                              silver
+                              {result?.rows.find((row) => row.id === i.id)?.gross == null
+                                ? "Total: —"
+                                : `Total: ${money(result?.rows.find((row) => row.id === i.id)?.gross)} silver`}
                             </small>
                           </span>
                         </th>
@@ -910,14 +915,16 @@ export function ProductionCalculator({
                           )}
                         </td>
                         <td>
-                          <small className="muted" title={p?.observedAt || i.id}>
-                            {p?.manual
-                              ? "Manual override"
-                              : p?.observedAt
-                                ? `${p.observedAt} UTC`
-                                : attempted
-                                  ? "No source observation"
-                                  : "Enter or load a price"}
+                          <small className="muted production-price-source">
+                            {p?.manual ? (
+                              <span className="production-chip">Manual</span>
+                            ) : p?.observedAt ? (
+                              <Observed at={p.observedAt} />
+                            ) : attempted ? (
+                              "No source observation"
+                            ) : (
+                              "Enter or load a price"
+                            )}
                           </small>
                           {kind !== "enchanting" && (
                             <label className="material-return-choice">
@@ -959,13 +966,21 @@ export function ProductionCalculator({
                 />
               </label>
 
-              <small className="muted">
-                {current(recipe.output, outputQuality, draft.outputCity)?.manual
-                  ? "Manual override"
-                  : current(recipe.output, outputQuality, draft.outputCity)?.observedAt ||
-                    (attempted
-                      ? "No output quote returned. Enter your sale price."
-                      : "Observations are loading; you can enter your expected sale price instead.")}
+              <small className="muted production-price-source">
+                {current(recipe.output, outputQuality, draft.outputCity)?.manual ? (
+                  <span className="production-chip">Manual</span>
+                ) : current(recipe.output, outputQuality, draft.outputCity)?.observedAt ? (
+                  <>
+                    {draft.outputCity} ·{" "}
+                    <Observed
+                      at={current(recipe.output, outputQuality, draft.outputCity)!.observedAt!}
+                    />
+                  </>
+                ) : attempted ? (
+                  "No output quote returned. Enter your sale price."
+                ) : (
+                  "Observations are loading; you can enter your expected sale price instead."
+                )}
               </small>
             </section>
           </div>
@@ -1042,104 +1057,72 @@ export function ProductionCalculator({
           )}
           {result?.complete && (
             <>
-              <div className="reference-result-cards">
-                <div
-                  className={
-                    result.profitPerItem === 0
-                      ? "neutral"
-                      : (result.profitPerItem ?? 0) < 0
-                        ? "negative"
-                        : "positive"
-                  }
-                >
-                  <span>Profit per output</span>
-                  <strong>{coin(result.profitPerItem)}</strong>
-                  <small>silver / item</small>
-                </div>
-                <div
-                  className={
-                    result.profit === 0
-                      ? "neutral"
-                      : (result.profit ?? 0) < 0
-                        ? "negative"
-                        : "positive"
-                  }
-                >
-                  <span>Total profit</span>
-                  <output aria-label="Estimated total profit" data-result="total-profit">
-                    {coin(result.profit)}
-                  </output>
-                  <small>silver / run</small>
+              <div className={`production-profit-hero ${tone(result.profit)}`} aria-live="polite">
+                <span>Total profit</span>
+                <output aria-label="Estimated total profit" data-result="total-profit">
+                  {coin(result.profit)}
+                </output>
+                <small>
+                  {result.profit === null
+                    ? "Unavailable"
+                    : result.profit > 0
+                      ? "Gain"
+                      : result.profit < 0
+                        ? "Loss"
+                        : "Break-even"}{" "}
+                  · silver for {(recipe.outputCount * draft.batches).toLocaleString()}{" "}
+                  {recipe.outputCount * draft.batches === 1 ? "output" : "outputs"}
+                </small>
+              </div>
+              <dl className="production-figures">
+                <div className={tone(result.profitPerItem)}>
+                  <dt>Profit per output</dt>
+                  <dd>{coin(result.profitPerItem)}</dd>
                 </div>
                 <div>
-                  <span>Cost per output</span>
-                  <strong>
+                  <dt>Cost per output</dt>
+                  <dd>
                     {coin(
                       result.cost === null
                         ? null
                         : result.cost / (recipe.outputCount * draft.batches),
                     )}
-                  </strong>
-                  <small>silver / item</small>
+                  </dd>
                 </div>
-                <div
-                  className={
-                    !result.margin ? "neutral" : result.margin < 0 ? "negative" : "positive"
-                  }
-                >
-                  <span>Profit margin</span>
-                  <strong>
-                    {result.margin === null ? "Unavailable" : `${money(result.margin)}%`}
-                  </strong>
-                  <small>of gross revenue</small>
+                <div className={tone(result.margin)}>
+                  <dt>Profit margin</dt>
+                  <dd>{result.margin === null ? "Unavailable" : `${money(result.margin)}%`}</dd>
                 </div>
-              </div>
-              <p className="muted">
+              </dl>
+              <dl className="production-cash-summary">
+                <div>
+                  <dt>Upfront silver</dt>
+                  <dd>{coin(result.upfront)}</dd>
+                </div>
+                <div>
+                  <dt>Net cash profit</dt>
+                  <dd>{coin(result.cashProfit)}</dd>
+                </div>
+                <div>
+                  <dt>Retained return value</dt>
+                  <dd>{coin(result.returnCredit)}</dd>
+                </div>
+                {draft.useFocus && (
+                  <div>
+                    <dt>Profit / focus</dt>
+                    <dd>{money(result.profitPerFocus)}</dd>
+                  </div>
+                )}
+              </dl>
+              <p className="production-result-note">
+                <CircleCheck size={16} aria-hidden="true" />
                 {Object.values(draft.prices).some((p) => p.manual)
                   ? "Includes manual prices. "
                   : "Source observations with recorded timestamps. "}
-                Station fees, returns and taxes use your assumptions.
+                Fees, returns and taxes use your assumptions; retained returns are valued separately
+                from cash profit.
               </p>
-            </>
-          )}
-          {result?.complete && (
-            <dl className="production-cash-summary">
-              <div>
-                <dt>Upfront silver</dt>
-                <dd>{coin(result.upfront)}</dd>
-              </div>
-              <div>
-                <dt>Net cash profit</dt>
-                <dd>{coin(result.cashProfit)}</dd>
-              </div>
-              <div>
-                <dt>Retained return value</dt>
-                <dd>{money(result.returnCredit)}</dd>
-              </div>
-              {draft.useFocus && (
-                <div>
-                  <dt>Profit / focus</dt>
-                  <dd>{money(result.profitPerFocus)}</dd>
-                </div>
-              )}
-            </dl>
-          )}
-          {result?.complete && (
-            <p className="production-result-note">
-              <CircleCheck size={16} aria-hidden="true" />
-              Based on your prices and assumptions. Retained returns are valued separately from cash
-              profit.
-            </p>
-          )}
-        </section>
-        {result?.complete && (
-          <section
-            className="panel production-accounting-panel"
-            aria-label="Detailed production accounting"
-          >
-            {" "}
-            {result?.complete && (
-              <details className="reference-accounting">
+              <details className="reference-accounting production-disclosure">
                 <summary>Detailed accounting · entire run</summary>
                 <dl>
                   {[
@@ -1168,49 +1151,45 @@ export function ProductionCalculator({
                   ))}
                 </dl>
               </details>
-            )}
-          </section>
-        )}
-        {result?.complete && (
-          <aside className="panel production-assumption-summary">
-            <details className="production-assumptions-details">
-              <summary>Your assumptions</summary>
-              <dl>
-                <div>
-                  <dt>Crafts / upgrades</dt>
-                  <dd>{draft.batches.toLocaleString()}</dd>
-                </div>
-                <div>
-                  <dt>Material market</dt>
-                  <dd>{draft.materialCity}</dd>
-                </div>
-                <div>
-                  <dt>Sale market</dt>
-                  <dd>{draft.outputCity}</dd>
-                </div>
-                <div>
-                  <dt>Station fee / craft</dt>
-                  <dd>{money(draft.stationFee)} silver</dd>
-                </div>
-                <div>
-                  <dt>Sales tax</dt>
-                  <dd>{draft.tax}%</dd>
-                </div>
-                <div>
-                  <dt>Setup fee</dt>
-                  <dd>{draft.setupFee}%</dd>
-                </div>
-              </dl>
-              <p className="muted">
-                These inputs define your estimate. Confirm fees and return assumptions at your
-                station before crafting.
-              </p>
-              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                Recipe source & limitations
-              </a>
-            </details>
-          </aside>
-        )}
+              <details className="production-assumptions-details production-disclosure">
+                <summary>Your assumptions</summary>
+                <dl>
+                  <div>
+                    <dt>Crafts / upgrades</dt>
+                    <dd>{draft.batches.toLocaleString()}</dd>
+                  </div>
+                  <div>
+                    <dt>Material market</dt>
+                    <dd>{draft.materialCity}</dd>
+                  </div>
+                  <div>
+                    <dt>Sale market</dt>
+                    <dd>{draft.outputCity}</dd>
+                  </div>
+                  <div>
+                    <dt>Station fee / craft</dt>
+                    <dd>{money(draft.stationFee)} silver</dd>
+                  </div>
+                  <div>
+                    <dt>Sales tax</dt>
+                    <dd>{draft.tax}%</dd>
+                  </div>
+                  <div>
+                    <dt>Setup fee</dt>
+                    <dd>{draft.setupFee}%</dd>
+                  </div>
+                </dl>
+                <p className="muted">
+                  These inputs define your estimate. Confirm fees and return assumptions at your
+                  station before crafting.
+                </p>
+                <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                  Recipe source & limitations
+                </a>
+              </details>
+            </>
+          )}
+        </section>
       </div>
       <ProductionSensitivity configuration={configuration} />
       <ProductionPlan
@@ -1222,36 +1201,59 @@ export function ProductionCalculator({
           document.getElementById("production-setup")?.focus();
         }}
       />
-      <button
-        type="button"
-        className="button secondary production-scenarios-toggle"
-        aria-expanded={showScenarios}
-        aria-controls="production-scenarios"
-        onClick={() => setShowScenarios(!showScenarios)}
-      >
-        Saved runs & sharing
-      </button>
-      <div
-        id="production-scenarios"
-        className={`production-scenarios${showScenarios ? " is-open" : ""}`}
-      >
-        <ScenarioControls
-          schema={productionSchema}
-          configuration={configuration}
-          onLoad={(value) => {
-            if (value.kind === kind && productionSchema.safeParse(value).success) {
-              request.current?.abort();
-              setDraft(value);
-              if (value.region !== region) {
-                document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-                const url = new URL(window.location.href);
-                url.searchParams.set("region", value.region);
-                router.replace(url.pathname + url.search + url.hash, { scroll: false });
+      <section className="panel production-saved-panel" aria-labelledby="production-saved-title">
+        <div className="production-saved-head">
+          <div>
+            <h2 id="production-saved-title">Keep this run</h2>
+            <p className="muted">Save it to your account, load an earlier run or share a link.</p>
+          </div>
+          <button
+            type="button"
+            className="pill-link is-small production-scenarios-toggle"
+            aria-expanded={showScenarios}
+            aria-controls="production-scenarios"
+            onClick={() => setShowScenarios(!showScenarios)}
+          >
+            Saved runs & sharing
+          </button>
+        </div>
+        <div
+          id="production-scenarios"
+          className={`production-scenarios${showScenarios ? " is-open" : ""}`}
+        >
+          <ScenarioControls
+            schema={productionSchema}
+            configuration={configuration}
+            onLoad={(value) => {
+              if (value.kind === kind && productionSchema.safeParse(value).success) {
+                request.current?.abort();
+                setDraft(value);
+                if (value.region !== region) {
+                  document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("region", value.region);
+                  router.replace(url.pathname + url.search + url.hash, { scroll: false });
+                }
               }
-            }
-          }}
-        />
-      </div>
+            }}
+          />
+        </div>
+      </section>
     </div>
+  );
+}
+
+/** A source observation's age with its exact UTC time kept on the element; Stale past an hour. */
+function Observed({ at }: { at: string }) {
+  const age = sourceAge(at);
+  const exact = `${at.replace("T", " ").slice(0, 16)} UTC`;
+  return (
+    <>
+      <time dateTime={at} title={exact}>
+        {age.label}
+        <span className="sr-only"> ({exact})</span>
+      </time>
+      {age.stale && <span className="production-chip is-stale">Stale</span>}
+    </>
   );
 }
