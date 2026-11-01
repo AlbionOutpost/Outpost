@@ -191,7 +191,7 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
           </b>
         </span>
         <span>
-          <small>Items to buy</small>
+          <small>Items left</small>
           <b>{toBuy}</b>
         </span>
       </div>

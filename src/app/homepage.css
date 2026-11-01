@@ -139,15 +139,16 @@
   flex: none;
   flex-direction: column-reverse;
   justify-content: flex-end;
+  align-items: center;
   gap: 4px;
   white-space: nowrap;
   margin: 0;
   padding: 0 28px;
+  text-align: center;
   border: 0;
   border-left: 1px solid #ffffff1f;
 }
 .app.outpost .landing-stats > div:first-child {
-  padding-left: 0;
   border-left: 0;
 }
 .app.outpost .landing-stats dd {
@@ -834,6 +835,12 @@ a.landing-window-title:hover {
 .app.outpost .tool-cities {
   padding: 10px 12px;
 }
+/* The planner's "nothing left" and "no city" lines sit centred in their box */
+.app.outpost .tool-cities li.tool-muted {
+  display: block;
+  padding: 6px 0;
+  text-align: center;
+}
 .app.outpost .tool-cities-head {
   display: block;
   margin-bottom: 6px;
@@ -983,8 +990,11 @@ a.landing-window-title:hover {
 }
 .app.outpost .tool-summary > span {
   display: grid;
-  gap: 4px;
-  padding: 10px 14px;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 12px 10px;
+  text-align: center;
 }
 .app.outpost .tool-summary > span + span {
   border-left: 1px solid #ffffff12;
@@ -1784,21 +1794,20 @@ a.activity-top:hover {
     flex: 1 1 auto;
   }
   /* One centred row: every measured number side by side */
+  /* Centred rows: three, then the rest, each number over its label */
   .app.outpost .landing-stats {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 18px;
     width: 100%;
     margin-top: 28px;
   }
   .app.outpost .landing-stats > div {
-    align-items: center;
-    padding: 0 8px;
+    flex: 0 0 33.333%;
+    padding: 0 6px;
+    border-left: 0;
     white-space: normal;
-    text-align: center;
-  }
-  .app.outpost .landing-stats > div:first-child {
-    padding-left: 8px;
   }
   .app.outpost .landing-stats dd {
     font-size: 26px;

@@ -1605,3 +1605,30 @@
   gap: 8px;
   margin: 0;
 }
+/* Framed settings menu keeps following the page */
+.app.outpost .support-settings nav.account-settings-navigation.panel {
+  position: sticky !important;
+  padding: 14px;
+}
+@media (max-width: 900px) {
+  .app.outpost .support-settings nav.account-settings-navigation.panel {
+    position: relative !important;
+  }
+}
+/* Framed neighbours keep room between them so their gems never touch */
+.app.outpost .shopping-toolbar {
+  margin-bottom: 26px;
+}
+.app.outpost .party-readiness {
+  margin-top: 26px;
+}
+@media (max-width: 780px) {
+  .app.outpost .support-settings nav.account-settings-navigation.panel {
+    margin-bottom: 26px;
+  }
+}
+/* Actions under a framed editor clear its bottom gem */
+.app.outpost .build-editor .actions.section,
+.app.outpost form > .actions.section {
+  margin-top: 28px;
+}

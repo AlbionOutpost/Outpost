@@ -11,7 +11,7 @@ import { saveWatchItem } from "../../src/lib/market-watch-service";
 import { HttpError } from "../../src/lib/http-error";
 import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/discovery-service";
 import { teamLoot } from "../../src/lib/groups/loot-service";
-import { countPlayers } from "../../src/lib/site-stats";
+import { siteStats } from "../../src/lib/site-stats";
 import { applySubscription, rememberCustomer } from "../../src/lib/billing/plan";
 
 const services = {
@@ -28,7 +28,7 @@ const services = {
   listAccountBuilds,
   listAccountFavorites,
   teamLoot,
-  countPlayers,
+  siteStats,
   applySubscription,
   rememberCustomer,
 };

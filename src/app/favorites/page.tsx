@@ -59,7 +59,7 @@ export default async function Favorites({
         description="Keep the loadouts you want to return to. Library saves stay on this device; account favorites follow your sign-in."
       />
       <DeviceLibraryFavorites compactEmpty={!!userId} />
-      <section aria-label="Account favorites">
+      <section className="panel" aria-label="Account favorites">
         <div className="ecosystem-section-heading">
           <div>
             <h2>

@@ -158,9 +158,10 @@ export function Shell({
     themeTransition.current?.skipTransition();
     const next = !lightRef.current;
     lightRef.current = next;
+    // Saved at once, so a reload straight after the click keeps the choice
+    document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
     const commit = () => {
       flushSync(() => setLight(next));
-      document.cookie = `atlas-theme=${next ? "light" : "dark"}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
     };
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (still || typeof document.startViewTransition !== "function") return commit();

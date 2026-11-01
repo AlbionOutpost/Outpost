@@ -24,7 +24,7 @@ import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
 import { regionSchema, regions } from "@/lib/albion/region-config";
 import { brandCopy } from "@/lib/brand-copy";
-import { playerCount } from "@/lib/site-stats";
+import { landingStats } from "@/lib/site-stats";
 import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
@@ -64,7 +64,7 @@ export default async function Home({
       findLibraryBuilds([showcase.build]),
       findLibraryComposition(showcase.comp),
       libraryGuides(),
-      playerCount(),
+      landingStats(),
       libraryActivities(),
       supporterPrice(),
     ],
@@ -93,11 +93,13 @@ export default async function Home({
       minutes: readingMinutes(g.content),
     }));
   const n = (value: number) => value.toLocaleString("en-US");
+  // Measured counts only; the two account counts drop out if the database cannot answer.
   const stats = [
-    ...(players != null ? [{ value: players, label: "Players signed up" }] : []),
-    { value: library.builds, label: "Public builds" },
-    { value: library.compositions, label: "Group comps" },
-    { value: tools.length, label: "Calculators" },
+    ...(players ? [{ value: players.monthlyPlayers, label: "Active players this month" }] : []),
+    { value: library.builds, label: "Builds" },
+    { value: library.guides, label: "Guides" },
+    { value: tools.length, label: "Tools" },
+    ...(players ? [{ value: players.supporters, label: "Supporters" }] : []),
   ];
   return (
     <div className="home-landing">
