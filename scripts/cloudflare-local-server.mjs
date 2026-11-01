@@ -64,10 +64,10 @@ writeFileSync(
 );
 writeFileSync(
   `${folder}/data-entry.ts`,
-  `import Data,{OutpostDatabase as Database,AbuseBudget} from ${JSON.stringify(resolve("cloudflare/database/worker.ts"))};
+  `import Data,{OutpostDatabase as Database,AbuseBudget,KillBoard} from ${JSON.stringify(resolve("cloudflare/database/worker.ts"))};
 import {catalogClient} from ${JSON.stringify(resolve("cloudflare/database/create-client.mjs"))};
 import {databaseFailure} from ${JSON.stringify(resolve("cloudflare/database/protocol.ts"))};
-export {AbuseBudget};
+export {AbuseBudget,KillBoard};
 export class OutpostDatabase extends Database {
  async fixtureFault(id,action){if(!/^atlas-test-[a-f0-9]{32}$/.test(id)||![null,'update','delete'].includes(action))throw Error('Invalid isolated fixture');const key='qa-fault:'+id;if(action)await this.ctx.storage.put(key,action);else await this.ctx.storage.delete(key);return true;}
  async query(queries){for(const q of queries){if(q.model==='user'&&['update','delete'].includes(q.operation)&&typeof q.args?.where?.id==='string'&&(await this.ctx.storage.get('qa-fault:'+q.args.where.id))===q.operation)return {ok:false,error:{kind:'unavailable'}};}return super.query(queries);}
