@@ -1172,6 +1172,11 @@
     scale: 1.04;
     translate: 0 -1px;
   }
+  /* Header controls sit edge to edge: they light up but never grow into each other */
+  .app.outpost .site-header :is(.button, button.button):hover:not(:disabled) {
+    scale: none;
+    translate: none;
+  }
   .app.outpost .button.primary:hover:not(:disabled) {
     box-shadow:
       0 0 24px -6px color-mix(in srgb, var(--accent) 80%, transparent),

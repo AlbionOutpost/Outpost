@@ -71,7 +71,7 @@
   background: var(--accent-wash);
 }
 /* Footer: no box of its own. It opens with a glowing ember rule and a gem like the card frames,
-   settles into the canvas below, and lays out the brand, three columns with painted marks and
+   settles into the canvas below, and lays out the brand, three columns and
    a legal line with a way back to the top. */
 .app.outpost .main > footer.site-footer {
   position: relative;
@@ -151,9 +151,6 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.app.outpost .site-footer-column h2 img {
-  filter: drop-shadow(0 2px 4px #0008);
-}
 .app.outpost .site-footer-column a {
   position: relative;
   display: inline-flex;
@@ -161,6 +158,7 @@
   width: fit-content;
   min-height: 32px;
   color: var(--muted);
+  font-weight: 600;
   text-decoration: none;
   transition:
     color 200ms var(--ease-out),

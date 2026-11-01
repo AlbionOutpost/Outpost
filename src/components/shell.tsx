@@ -528,18 +528,9 @@ export function Shell({
                   affiliated with Sandbox Interactive.
                 </p>
               </div>
-              {footerColumns.map(([title, links], i) => (
+              {footerColumns.map(([title, links]) => (
                 <nav key={title} className="site-footer-column" aria-label={title}>
-                  <h2>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`/albion/icons/${["strip-content", "tool-craft", "team-roles"][i] ?? "tool-craft"}.webp`}
-                      alt=""
-                      width={26}
-                      height={26}
-                    />
-                    {title}
-                  </h2>
+                  <h2>{title}</h2>
                   {links
                     .filter(([url]) => !authenticated || url !== "/signin")
                     .map(([url, label]) => (
