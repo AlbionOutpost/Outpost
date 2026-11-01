@@ -456,7 +456,7 @@ export function CompositionEditor({
           </section>
         )}
         <div className="reference-party-workspace">
-          <PartyReadiness members={draft.slots} region={draft.region} />
+          {draft.slots.length > 0 && <PartyReadiness members={draft.slots} region={draft.region} />}
           {(layout === "board" ||
             (layout === "auto" && draft.slots.length >= 2 && draft.slots.length <= 7)) && (
             <PartyBoard
@@ -654,7 +654,7 @@ export function CompositionEditor({
                   <Swords size={32} aria-hidden="true" />
                   <h2>Start with your party</h2>
                   <p>
-                    Choose a party size above, or add your first player below. Assign roles and gear
+                    Pick a party size below, or add your first player here. Assign roles and gear
                     one slot at a time.
                   </p>
                 </div>
@@ -908,7 +908,7 @@ export function CompositionEditor({
               {[1, 2, 5, 7, 10, 20].map((n) => (
                 <button
                   type="button"
-                  className="button secondary"
+                  className="comp-size-pill"
                   aria-pressed={n === draft.slots.length}
                   key={n}
                   onClick={() => resize(n)}
@@ -1035,7 +1035,7 @@ export function CompositionEditor({
               e.target.value = "";
             }}
           />
-          <Link className="button secondary" href="/compositions">
+          <Link className="pill-link is-small comp-back" href="/compositions">
             Back to comps
           </Link>
         </div>
