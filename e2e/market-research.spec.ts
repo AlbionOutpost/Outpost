@@ -35,7 +35,6 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   });
   await page.goto("/tools/market?region=asia&item=T4_BAG&quality=2");
   const tray = page.locator(".market-research-list");
-  await tray.locator("summary").click();
   await tray.getByRole("button", { name: "Add selected to research", exact: true }).click();
   await tray.getByRole("button", { name: "Refresh research quotes", exact: true }).click();
   await expect(tray).toContainText("1,234 silver");

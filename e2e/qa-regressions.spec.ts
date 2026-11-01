@@ -82,15 +82,19 @@ test("market sort and city filtering retain correct buy and sell columns", async
   );
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await page.getByLabel("Sort market prices").selectOption("buy");
+  await page
+    .getByRole("radiogroup", { name: "Sort market prices" })
+    .getByRole("radio", { name: "Highest buy" })
+    .click();
   await expect(page.locator(".market-board tbody tr").first()).toContainText("Lymhurst");
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
   await expect(page.locator(".market-board tbody tr td.numeric > span").nth(0)).toHaveText("100");
   await expect(page.locator(".market-board tbody tr td.numeric > span").nth(1)).toHaveText("50");
-  await expect(page.locator("tbody tr td.numeric .market-inline-time").first()).toContainText(
-    "10-25 00:00",
-  );
+  // Each order shows its age; the exact source time stays on the <time> element.
+  await expect(
+    page.locator("tbody tr td.numeric .market-inline-time time").first(),
+  ).toHaveAttribute("datetime", "2026-10-25T00:00:00");
 });
 test("decimal profit is visible and clearing numeric inputs causes no React warnings", async ({
   page,

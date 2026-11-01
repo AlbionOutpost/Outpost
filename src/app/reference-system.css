@@ -135,12 +135,6 @@
   outline: 2px solid var(--accent-hover);
   outline-offset: 3px;
 }
-.app.outpost
-  :is(.panel, .gear-pane, .market-item-panel, .party-board-card, .roster-row, .build-preview-card) {
-  border-color: var(--border);
-  border-radius: 8px;
-  background-color: var(--panel);
-}
 .app.outpost .numeric,
 .app.outpost td.numeric {
   font-family: var(--font-data);
@@ -313,14 +307,12 @@
   align-items: center;
   margin-bottom: 24px;
 }
-.reference-section-heading h2,
-.reference-market-entry h2 {
+.reference-section-heading h2 {
   font: 700 28px/1.25 var(--font-ui);
   letter-spacing: -0.02em;
   margin: 8px 0;
 }
-.reference-section-heading p,
-.reference-market-entry p {
+.reference-section-heading p {
   margin: 0;
   color: var(--muted);
 }
@@ -411,19 +403,6 @@
   font-size: 12px;
   color: var(--muted);
 }
-.reference-market-entry {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 24px;
-  border-top: 1px solid var(--border);
-  margin-top: 32px;
-  padding-top: 24px;
-}
-.reference-market-entry > div:first-child {
-  max-width: 75ch;
-}
 .reference-benefits {
   display: flex;
   gap: 32px;
@@ -442,187 +421,12 @@
   width: 20px;
   color: var(--accent);
 }
-.market-explorer-page {
-  min-width: 0;
-}
-.app.outpost .market-explorer-page > .page-title {
-  font-size: 28px;
-  margin: 8px 0;
-}
-.app.outpost .market-workspace,
-.app.outpost .market-workspace.is-setup {
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 16px;
-  align-items: start;
-}
-.app.outpost .market-workspace > .task-progress {
-  display: none;
-}
-.app.outpost .market-board {
-  min-width: 0;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  padding: 16px;
-  background: var(--panel-face);
-  border-radius: 8px;
-}
-.app.outpost .market-setup-heading h2 {
-  font-size: 18px;
-}
-.app.outpost .market-setup-heading p {
-  font-size: 13px;
-}
-.app.outpost .market-item-panel {
-  padding: 16px;
-  min-width: 0;
-}
-.app.outpost .market-getting-started {
-  padding: 0;
-  border: 0;
-}
-.app.outpost .market-getting-started h2 {
-  font-size: 18px;
-}
-.app.outpost .market-getting-started ul {
-  gap: 16px;
-}
-.app.outpost .market-getting-started li p {
-  font-size: 13px;
-}
 .app.outpost .market-form {
   grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr) auto;
   gap: 12px;
 }
 .app.outpost .market-form > .catalog-item-picker {
   grid-column: 1/-1;
-}
-.app.outpost .market-first-use {
-  padding: 16px;
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-top: 16px;
-}
-.app.outpost .market-first-use p {
-  font-size: 13px;
-}
-.app.outpost .market-selected-item {
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.app.outpost .market-selected-item h2 {
-  font-size: 19px;
-}
-.app.outpost .market-selected-item img {
-  max-width: 64px;
-  max-height: 64px;
-}
-.app.outpost .market-table-item {
-  min-width: 110px;
-}
-.app.outpost .market-table-toolbar {
-  margin-block: 16px;
-}
-.app.outpost .market-table-toolbar select {
-  max-width: 220px;
-}
-.app.outpost .market-quote-summary > div {
-  padding-block: 16px;
-}
-.app.outpost .market-quote-summary dt {
-  font-size: 12px;
-}
-.app.outpost .market-quote-summary dd {
-  font-size: 18px;
-}
-.app.outpost .market-table-caption {
-  padding-block: 12px;
-}
-.reference-city-filter {
-  margin-top: 16px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.reference-city-filter summary {
-  cursor: pointer;
-  padding-block: 8px;
-}
-.reference-city-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  padding-block: 12px;
-}
-.reference-city-options label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 36px;
-}
-.reference-filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.reference-filter-chips button {
-  min-height: 32px;
-  border: 1px solid var(--border);
-  background: var(--elevated);
-  color: var(--text);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 12px;
-}
-.app.outpost .selected-market-row {
-  background: var(--accent-wash);
-  box-shadow: inset 2px 0 var(--accent);
-}
-.market-row-select {
-  background: transparent;
-  border: 0;
-  color: var(--text);
-  padding: 8px 0;
-  text-align: left;
-}
-.reference-city-summary {
-  border-block: 1px solid var(--border);
-  padding-block: 12px;
-  margin-block: 16px;
-}
-.reference-city-summary h3 {
-  margin: 0 0 12px;
-}
-.reference-city-summary dl > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-block: 8px;
-}
-.reference-city-summary dd {
-  margin: 0;
-}
-.reference-city-summary p {
-  font-size: 12px;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-.reference-market-history {
-  grid-column: 1/-1;
-  padding: 20px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  background: var(--panel-face);
-  border-radius: 8px;
-  scroll-margin-top: 96px;
-}
-.reference-market-history h2 {
-  font-size: 20px;
-  margin: 0;
-}
-.app.outpost .reference-market-history .history-panel {
-  border: 0;
-  padding: 0;
-  margin-top: 16px;
 }
 /* Production: recipe, assumptions and quantity, followed by materials and results. */
 .app.outpost .production-calculator-page {
@@ -815,10 +619,6 @@
   }
   .app.outpost .site-header .search-trigger {
   }
-  .app.outpost .market-workspace,
-  .app.outpost .market-workspace.is-setup {
-    grid-template-columns: minmax(0, 1fr) 240px;
-  }
   .reference-hero {
     gap: 24px;
   }
@@ -882,9 +682,6 @@
   .app.outpost .production-calculator-page > .page-title {
     font-size: 28px;
   }
-  .app.outpost .market-explorer-page > .page-title {
-    font-size: 26px;
-  }
   .reference-hero {
     display: flex;
     flex-direction: column;
@@ -914,8 +711,7 @@
   .reference-section-heading {
     display: block;
   }
-  .reference-section-heading h2,
-  .reference-market-entry h2 {
+  .reference-section-heading h2 {
     font-size: 24px;
   }
   .reference-guide-link {
@@ -941,38 +737,11 @@
   .reference-feature .button {
     min-height: 40px;
   }
-  .reference-market-entry {
-    display: none;
-  }
-  .app.outpost .market-workspace,
-  .app.outpost .market-workspace.is-setup {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .market-item-panel {
-    grid-column: 1;
-  }
-  .app.outpost .market-getting-started ul {
-    display: none;
-  }
-  .app.outpost .market-first-use {
-    padding: 12px;
-  }
   .app.outpost .market-form {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .app.outpost .market-form > .button {
     grid-column: 1/-1;
-  }
-  .app.outpost .market-start-examples {
-    flex-wrap: wrap;
-  }
-  .reference-market-history {
-    padding: 16px;
-  }
-  .reference-market-history > .section-heading {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
   }
   .app.outpost .production-workspace {
     grid-template-columns: minmax(0, 1fr);
@@ -1010,9 +779,6 @@
   .app.outpost .gear-studio .gear-pane.mobile-active {
     display: block;
     margin-top: 16px;
-  }
-  .reference-city-options {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1404,36 +1170,6 @@
 .app.outpost.light .feature-role-preview span:first-child {
   color: #225a94;
 }
-.app.outpost .market-explorer-page .market-board table {
-  min-width: 0;
-  table-layout: auto;
-}
-.app.outpost .market-explorer-page .market-board :is(th, td):nth-child(n + 5) {
-  display: none;
-}
-.app.outpost .market-explorer-page .market-inline-time {
-  display: block;
-}
-@media (max-width: 600px) {
-  .app.outpost .market-explorer-page .market-board :is(th, td):first-child {
-    display: none;
-  }
-  .app.outpost .market-explorer-page .market-board :is(th, td) {
-    padding: 10px 4px;
-    font-size: 12px;
-  }
-  .app.outpost .market-row-select {
-    font-size: 12px;
-    overflow-wrap: anywhere;
-  }
-}
-.app.outpost .market-table-caption {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-.app.outpost .market-table-caption > span {
-  white-space: normal;
-}
 .app.outpost .reference-material-table {
   min-width: 0;
   table-layout: fixed;
@@ -1483,23 +1219,6 @@
   }
 }
 /* Final six-width review: keep contextual prices and party labels readable. */
-.app.outpost .market-explorer-page .market-item-panel {
-  display: block;
-}
-.app.outpost .market-quote-summary {
-  display: block;
-}
-.app.outpost .market-quote-summary > div {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.app.outpost .market-quote-summary dd {
-  margin: 0;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
 @media (max-width: 600px) {
   .app.outpost .party-board[data-party-size="5"] .party-board-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -1525,14 +1244,6 @@
 .app.outpost .reference-material-table th {
   overflow-wrap: normal;
 }
-.reference-history-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-}
 .history-series-key {
   color: var(--muted);
   font-size: 13px;
@@ -1545,11 +1256,6 @@
   margin-right: 8px;
   vertical-align: middle;
   background: var(--accent-ink);
-}
-.app.outpost .reference-history-toolbar .button[aria-pressed="true"] {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-  background: var(--accent-wash);
 }
 .reference-price-figure {
   display: grid;

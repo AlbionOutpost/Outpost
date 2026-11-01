@@ -51,12 +51,14 @@ export function MarketWatchlist({
     }
   }
   return (
-    <details className="market-watchlist">
-      <summary>Your market watchlist</summary>
-      <p className="muted">
-        Private saved item, region and quality selections. Prices load only when you request
-        observations.
-      </p>
+    <div className="market-watchlist">
+      <div className="mx-list-head">
+        <h3>Your market watchlist</h3>
+        <p className="muted">
+          Private saved item, region and quality selections. Prices load only when you request
+          observations.
+        </p>
+      </div>
       <div className="actions">
         <button
           type="button"
@@ -99,7 +101,7 @@ export function MarketWatchlist({
           )}
         </p>
       )}
-      {items?.length === 0 && <p>No saved items yet.</p>}
+      {items?.length === 0 && <p className="mx-list-empty">No saved items yet.</p>}
       <ul className="watchlist-items">
         {items?.map((i) => (
           <li key={i.id}>
@@ -125,6 +127,6 @@ export function MarketWatchlist({
           </li>
         ))}
       </ul>
-    </details>
+    </div>
   );
 }

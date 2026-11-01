@@ -428,16 +428,6 @@
   gap: 8px;
 }
 /* Consistent content density across market, party, guide and account workspaces. */
-.app.outpost
-  :is(.market-search-panel, .market-query-panel, .market-results-panel, .market-item-panel) {
-  border-radius: 8px;
-}
-.app.outpost .market-workspace .intro {
-  margin-bottom: 16px;
-}
-.app.outpost .market-workspace table tbody tr[aria-selected="true"] {
-  background: var(--accent-wash);
-}
 .app.outpost .party-member-card {
   background: var(--panel-face);
   border-radius: 8px;
@@ -1431,12 +1421,6 @@
   padding: 0 0 12px;
   text-align: left;
   color: var(--muted);
-}
-.app.outpost .market-explorer-page .market-board .market-quality-availability :is(td, th) {
-  display: table-cell;
-  padding: 12px;
-  text-align: left;
-  vertical-align: top;
 }
 .market-quality-availability td small {
   display: block;

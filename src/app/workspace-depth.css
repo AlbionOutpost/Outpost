@@ -535,25 +535,6 @@
     padding-bottom: 12px;
   }
 }
-.market-observation-legend {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  padding-bottom: 16px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.5;
-}
-.market-observation-legend strong {
-  color: var(--text);
-  font-family: var(--font-data);
-}
-.app.outpost .market-results-heading {
-  margin-bottom: 12px;
-}
 .cargo-capacity-summary strong {
   margin: 0;
   letter-spacing: 0;

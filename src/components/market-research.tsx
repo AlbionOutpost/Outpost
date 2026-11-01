@@ -35,19 +35,21 @@ export function MarketResearch({
     setMessage("Added to research. Refresh to compare observations.");
   }
   return (
-    <details className="market-watchlist market-research-list">
-      <summary>Research multiple items{items.length ? ` (${items.length}/12)` : ""}</summary>
-      <p className="muted">
-        Build a temporary shortlist, then refresh city quotes together. Quality stays with each
-        item. Quotes always use your selected region: {region}.
-      </p>
+    <div className="market-watchlist market-research-list">
+      <div className="mx-list-head">
+        <h3>Research multiple items{items.length ? ` (${items.length}/12)` : ""}</h3>
+        <p className="muted">
+          A temporary shortlist: add the selected item, then refresh every quote at once. Quality
+          stays with each item; quotes use {region}.
+        </p>
+      </div>
       <div className="actions">
         <button type="button" className="button secondary" onClick={add}>
           Add selected to research
         </button>
         <button
           type="button"
-          className="button"
+          className="button secondary"
           disabled={!items.length || busy}
           onClick={() => void refresh(items)}
         >
@@ -56,7 +58,10 @@ export function MarketResearch({
       </div>
       {message && <p role="status">{message}</p>}
       {!items.length && (
-        <p>Choose an item above and add it here. Compare up to 12 item and quality selections.</p>
+        <p className="mx-list-empty">
+          Nothing on the shortlist yet. Pick an item above and add it — up to 12 item and quality
+          selections.
+        </p>
       )}
       <ul className="watchlist-items research-items">
         {items.map((i) => (
@@ -92,6 +97,6 @@ export function MarketResearch({
           list. This shortlist is not saved; use your watchlist to keep selections.
         </p>
       )}
-    </details>
+    </div>
   );
 }

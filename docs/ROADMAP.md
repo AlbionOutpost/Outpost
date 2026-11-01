@@ -6,7 +6,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Next session — inner pages to landing quality
 
-Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: **Market explorer → Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor**, then Comp planner, Teams, Timers, Item database.
+Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer~~ (done 1 Nov, below) → **Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor**, then Comp planner, Teams, Timers, Item database.
 
 Per page, the bar is the landing (`src/app/page.tsx`, `homepage.css`):
 
@@ -50,6 +50,11 @@ Open items found on the way:
 - Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
+
+## Shipped — Market Explorer inner page (1 Nov)
+
+- First page of the inner-page pass: sticky search rail, an item hero with lowest sell / highest buy / newest observation, a well table of city orders with spread, Lowest/Highest tags, per-price ages and Stale chips, a stacked two-line layout on phones, a selected-city detail that moves Price history to that city, and the landing chart for history (also on Gold, with hour labels for hourly data). Research list and watchlist open directly in their tabs.
+- 369 legacy market selectors removed from ten global stylesheets; the page's rules live in `market-explorer.css` and `history.css`.
 
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 

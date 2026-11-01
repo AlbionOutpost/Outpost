@@ -42,7 +42,7 @@ test("regional market request and region invalidation", async ({ page }) => {
   );
   await page.goto("/tools/market?region=europe");
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator(".market-board tbody")).toContainText("STALE");
+  await expect(page.locator(".market-board tbody")).toContainText("Stale");
   await chooseRegion(page, "asia");
   await expect(page.locator("main")).toContainText("Region changed");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(0);

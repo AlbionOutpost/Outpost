@@ -1,314 +1,970 @@
-.app.outpost .market-explorer-page .market-workspace.market-focused {
+/* Market Explorer (/tools/market). The page owns these rules; they follow the landing's tool
+   cards: wells cut into framed panels, display-font headline figures, city dots, coins, gain
+   green / loss red with a sign, 12px floor. Framed panels stay dark in both themes, so the
+   tokens below read the same in light mode. */
+
+/* Layout: a sticky search rail beside the research column */
+.app.outpost .mx {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(280px, 312px) minmax(0, 1fr);
+  gap: 26px;
   align-items: start;
 }
-.app.outpost .market-explorer-page .market-workspace.market-focused.has-city-detail {
-  grid-template-columns: minmax(0, 1fr) 280px;
+.app.outpost .mx-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  min-width: 0;
 }
+.app.outpost .mx-rail {
+  position: sticky;
+  top: 96px;
+  padding: var(--space-5);
+}
+.app.outpost .mx :is(.mx-hero, .mx-board, .mx-history, .mx-saved) {
+  min-width: 0;
+  padding: var(--space-6);
+}
+.app.outpost .mx .market-hydration-guard {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Wells: what is cut into a panel */
 .app.outpost
-  .market-focused
-  > :is(.market-query-panel, .reference-market-history, .market-saved-work) {
-  grid-column: 1 / -1;
-  min-width: 0;
+  .mx
+  :is(
+    .mx-item-well,
+    .mx-figures > div,
+    .mx-table-well,
+    .mx-inspector,
+    .mx-disclosure,
+    .mx-select,
+    .mx-field > input,
+    .market-quality-availability,
+    .watchlist-items > li,
+    .mx-list-empty,
+    .mx-state,
+    .history-empty
+  ) {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
 }
-.app.outpost .market-focused .market-board {
-  padding: 18px;
-  min-height: 0;
-}
-.app.outpost .market-focused .market-query-panel .market-hydration-guard {
-  display: contents;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  min-width: 0;
-}
-.app.outpost .market-focused .market-board .market-table-caption {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-.app.outpost .market-focused .market-selection-row {
+
+/* Section heads: one title, one muted line, controls on the right */
+.app.outpost .mx-section-head {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px 24px;
-  flex-wrap: wrap;
-  padding: 14px 0 10px;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
 }
-.app.outpost .market-focused .market-selection {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  min-width: 0;
-  padding: 0;
-  gap: 10px;
-  border: 0;
-}
-.app.outpost .market-focused .market-selection strong {
-  display: block;
-  font: 650 15px/1.4 var(--font-ui);
-  overflow-wrap: anywhere;
-}
-.app.outpost .market-focused .market-selection span {
-  display: block;
-  color: var(--muted);
-  font: 400 12px/1.5 var(--font-ui);
-}
-.app.outpost .market-focused .market-start-examples {
+.app.outpost .mx-section-head h2 {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 5px;
-  padding: 0;
+  gap: var(--space-2);
   margin: 0;
-  border: 0;
+  font: 650 18px/1.25 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
 }
-.app.outpost .market-focused .market-start-examples > span {
-  margin-right: 4px;
-  color: var(--muted);
-  font-size: 11px;
-}
-.app.outpost .market-focused .market-start-examples button {
-  min-height: 32px;
-  padding: 5px 9px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  font-size: 12px;
-  background: var(--bg);
-}
-.app.outpost .market-focused .market-start-examples button[aria-pressed="true"] {
+.app.outpost .mx-section-head h2 svg {
   color: var(--accent-ink);
+}
+.app.outpost .mx-section-head p {
+  margin: var(--space-1) 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Rail: fields */
+.app.outpost .mx-form {
+  display: grid;
+  gap: var(--space-4);
+}
+.app.outpost .mx-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  font: 600 12px/1.35 var(--font-ui);
+}
+.app.outpost .mx-field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.app.outpost .mx-select {
+  position: relative;
+  display: block;
+}
+.app.outpost .mx-select select,
+.app.outpost .mx-field > input {
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 34px 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+  appearance: none;
+  box-shadow: none;
+}
+.app.outpost .mx-field > input {
+  padding-right: var(--space-3);
+  font-family: var(--font-data);
+}
+.app.outpost .mx-select select option {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+.app.outpost .mx-select > svg {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.app.outpost .mx-select:hover,
+.app.outpost .mx-select:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+.app.outpost .mx .catalog-item-picker,
+.app.outpost .mx .catalog-item-picker label {
+  margin: 0;
+}
+.app.outpost .mx-refresh {
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 44px;
+}
+.app.outpost .mx-refresh[disabled] svg {
+  animation: mx-spin 900ms linear infinite;
+}
+.app.outpost .mx-refresh:not([disabled]) svg {
+  animation: none;
+}
+@keyframes mx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Quick picks and filter pills */
+.app.outpost .mx-picks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.app.outpost .mx-picks > span {
+  margin-right: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .mx-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--well-border));
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--text);
+  font: 600 12px/1 var(--font-ui);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    background var(--motion-fast) var(--ease-out),
+    transform 180ms var(--ease-spring);
+}
+.app.outpost .mx-pill:hover {
   border-color: var(--accent);
   background: var(--accent-wash);
 }
-.app.outpost .market-focused .market-filter-disclosures {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: start;
-  gap: 8px 20px;
-  padding-top: 9px;
-  border-top: 1px solid var(--border);
-}
-.app.outpost .market-focused .market-filter-disclosures > details {
-  min-width: 0;
-  margin: 0;
-  font-size: 12px;
-}
-.app.outpost .market-focused .market-filter-disclosures summary {
-  min-height: 28px;
-  padding-block: 4px;
-}
-.app.outpost .market-focused .market-filter-disclosures > details[open] {
-  flex-basis: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background: var(--bg);
-}
-.app.outpost .market-focused .reference-filter-chips:empty {
-  display: none;
-}
-.app.outpost .market-focused .market-first-use {
-  display: flex;
-  align-items: start;
-  gap: 14px;
-  padding: 18px 0 8px;
-  margin: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.app.outpost .market-focused .market-first-use > svg {
-  flex: 0 0 auto;
-  margin-top: 3px;
+.app.outpost .mx-pill.is-on {
+  border-color: var(--accent);
+  background: var(--accent-wash);
   color: var(--accent-ink);
 }
-.app.outpost .market-focused .market-first-use h3 {
-  margin: 0 0 7px;
-  font: 650 17px/1.4 var(--font-ui);
+.app.outpost .mx-reset {
+  min-height: 30px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--accent-ink);
+  font: 600 12px/1 var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
-.app.outpost .market-focused .market-first-use p {
-  max-width: 75ch;
+.app.outpost .mx-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Disclosures: well rows with a turning chevron */
+.app.outpost .mx-disclosures {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .mx-disclosure {
   margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.7;
+  padding: 0;
 }
-.app.outpost .market-focused .market-results-heading {
-  margin-bottom: 10px;
-}
-.app.outpost .market-focused .market-source-note {
-  max-width: 110ch;
-  font-size: 11px;
-  line-height: 1.7;
-}
-.app.outpost .market-focused .market-observation-legend {
-  margin: 0 0 8px;
-  padding: 0 0 8px;
-}
-.app.outpost .market-focused .market-table-toolbar {
-  padding-bottom: 8px;
-}
-.app.outpost .market-focused .market-table-toolbar label {
+.app.outpost .mx-disclosure > summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  gap: 8px;
-  margin: 0;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  color: var(--text);
+  font: 600 13px/1.2 var(--font-ui);
+  list-style: none;
+  cursor: pointer;
 }
-.app.outpost .market-focused .market-table-toolbar select {
-  width: auto;
-  max-width: 180px;
-  margin: 0;
+.app.outpost .mx-disclosure > summary::-webkit-details-marker {
+  display: none;
 }
-.app.outpost .market-focused .market-best-observations {
-  margin-top: 18px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+.app.outpost .mx-disclosure > summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 220ms var(--ease-out-expo);
 }
-.app.outpost .market-focused .market-best-observations > p {
-  margin: 0 0 10px;
+.app.outpost .mx-disclosure[open] > summary::after {
+  transform: translateY(1px) rotate(225deg);
+}
+.app.outpost .mx-disclosure > summary em {
+  margin-left: auto;
   color: var(--muted);
-  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
 }
-.app.outpost .market-focused .market-best-observations .market-quote-summary {
+.app.outpost .mx-disclosure[open] > :not(summary) {
+  margin: 0 var(--space-3) var(--space-3);
+}
+.app.outpost .mx-disclosure .mx-field > input,
+.app.outpost .mx-disclosure .mx-select {
+  background: color-mix(in srgb, var(--edge-light) 55%, transparent);
+}
+.app.outpost .mx-filter-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--space-3);
+}
+.app.outpost .mx-city-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.app.outpost .mx-city-toggles label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  color: var(--text);
+  font: 600 12px/1 var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .mx-city-toggles input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.app.outpost .mx-city-toggles label:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.app.outpost .mx-city-toggles label:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.app.outpost .mx-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.app.outpost .mx-note.is-error {
+  color: var(--error);
+}
+
+/* Hero: the item and its three headline figures */
+.app.outpost .mx-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+.app.outpost .mx-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.app.outpost .mx-item-well {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--accent) 30%, transparent),
+      transparent 68%
+    ),
+    var(--well);
+}
+.app.outpost .mx-item-well img {
+  width: 80px;
+  height: 80px;
+}
+.app.outpost .mx-identity > div {
+  min-width: 0;
+}
+.app.outpost .mx-identity h2 {
+  margin: 0 0 var(--space-2);
+  font: 700 24px/1.15 var(--font-ui);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.app.outpost .mx-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 0;
 }
-.app.outpost .market-focused .market-best-observations .market-quote-summary > div {
-  display: block;
+.app.outpost .mx-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .mx-chip.is-tier {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--accent-ink);
+  font: 800 13px/1 var(--font-display);
+}
+.app.outpost .mx-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .mx-figures > div {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+}
+.app.outpost .mx-figures dt {
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-ui);
+}
+.app.outpost .mx-figures dd {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  margin: 0;
+}
+.app.outpost .mx-figures b {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 800 28px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .mx-figures b .silver {
+  gap: 6px;
+  font: inherit;
+}
+.app.outpost .mx-figures b .silver img {
+  width: 20px;
+  height: 20px;
+}
+.app.outpost .mx-figures small {
+  font-family: var(--font-ui);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.app.outpost .mx-hero-status {
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px dashed var(--well-border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Freshness and best-order tags (text, never colour alone) */
+.app.outpost .mx :is(.mx-stale, .mx-best) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font: 700 12px/1 var(--font-ui);
+}
+.app.outpost .mx .mx-stale {
+  border: 1px solid color-mix(in srgb, var(--warning) 50%, transparent);
+  color: var(--warning);
+}
+.app.outpost .mx .mx-best {
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+/* Sort and range segments */
+.app.outpost .mx-segment,
+.app.outpost .mx .history-range {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+}
+.app.outpost .mx-segment > button,
+.app.outpost .mx .history-range > button {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 700 12px/1 var(--font-ui);
+  cursor: pointer;
+  transition:
+    color var(--motion-fast) var(--ease-out),
+    background var(--motion-fast) var(--ease-out);
+}
+.app.outpost .mx-segment > button:hover,
+.app.outpost .mx .history-range > button:hover {
+  color: var(--text);
+}
+.app.outpost
+  .mx
+  :is(
+    .mx-segment > button[aria-checked="true"],
+    .mx-segment > button[aria-selected="true"],
+    .history-range > button[aria-pressed="true"]
+  ) {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+/* City orders table */
+.app.outpost .mx-table-well {
+  overflow-x: auto;
+  container-type: inline-size;
+}
+.app.outpost .mx-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .mx-table :is(th, td) {
+  padding: 10px var(--space-4);
+  border: 0;
+  border-top: 1px solid var(--well-border);
+  background: none;
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.app.outpost .mx-table thead th {
+  position: static;
+  height: 38px;
+  padding-block: 0;
+  border-top: 0;
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.app.outpost .mx-table abbr {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.app.outpost .mx-table :is(th, td):first-child {
+  width: 99%;
+  text-align: left;
+}
+.app.outpost .mx-table tbody tr {
+  transition: background var(--motion-fast) var(--ease-out);
+}
+.app.outpost .mx-table tbody tr:hover {
+  background: color-mix(in srgb, var(--edge-light) 55%, transparent);
+}
+.app.outpost .mx-table tbody tr.selected-market-row {
+  background: var(--accent-wash);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.app.outpost .mx-table td {
+  font: 600 15px/1.2 var(--font-data);
+}
+.app.outpost .mx-table td > .silver {
+  justify-content: flex-end;
+  gap: 5px;
+  font: inherit;
+}
+.app.outpost .mx-table td > .silver img {
+  width: 14px;
+  height: 14px;
+}
+.app.outpost .mx-table .market-inline-time {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 500 12px/1.2 var(--font-ui);
+}
+.app.outpost .mx-table .market-price-missing {
+  color: var(--muted);
+}
+.app.outpost .mx-table .is-gain {
+  color: var(--success);
+}
+.app.outpost .mx-table .is-loss {
+  color: var(--error);
+}
+.app.outpost .mx .market-row-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 600 14px/1.2 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+.app.outpost .mx .market-row-select:hover {
+  color: var(--accent-ink);
+}
+.app.outpost .mx .market-row-select[aria-pressed="true"] {
+  color: var(--accent-ink);
+}
+/* Narrow tables (phones): each city becomes a two-line row — the city, then its sell and buy
+   orders side by side under their own labels. The spread and coins drop; headers stay for
+   assistive tech. */
+@container (max-width: 520px) {
+  .app.outpost .mx-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .app.outpost .mx-table .mx-spread-col {
+    display: none;
+  }
+  .app.outpost .mx-table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px var(--space-3);
+    padding: var(--space-3);
+    border-top: 1px solid var(--well-border);
+  }
+  .app.outpost .mx-table tbody tr:first-child {
+    border-top: 0;
+  }
+  .app.outpost .mx-table tbody :is(th, td) {
+    width: auto;
+    padding: 0;
+    border: 0;
+    white-space: normal;
+  }
+  .app.outpost .mx-table tbody th {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .mx .market-row-select {
+    min-height: 32px;
+  }
+  .app.outpost .mx-table tbody td {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    font-size: 15px;
+  }
+  .app.outpost .mx-table tbody td:nth-child(2) {
+    justify-items: start;
+    text-align: left;
+  }
+  .app.outpost .mx-table tbody td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font: 600 12px/1.2 var(--font-ui);
+  }
+  .app.outpost .mx-table tbody td:nth-child(2) .market-inline-time {
+    justify-content: flex-start;
+  }
+  .app.outpost .mx-table .market-inline-time {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 0;
+  }
+  .app.outpost .mx-table td > .silver img {
+    display: none;
+  }
+}
+
+/* Selected city */
+.app.outpost .mx-inspector {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--well-border));
+}
+.app.outpost .mx-inspector-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.app.outpost .mx-inspector-head h3 {
+  margin: 0;
+  font: 650 16px/1.2 var(--font-ui);
+}
+.app.outpost .mx-inspector-head .mx-reset {
+  margin-left: auto;
+}
+.app.outpost .mx .reference-city-summary dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: 0;
+}
+.app.outpost .mx .reference-city-summary dl > div {
+  display: grid;
+  align-content: start;
+  margin: 0;
   padding: 0;
   border: 0;
 }
-.app.outpost .market-focused .market-best-observations dt {
-  margin-bottom: 4px;
+.app.outpost .mx .reference-city-summary dt {
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-ui);
+}
+.app.outpost .mx .reference-city-summary dd {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+}
+.app.outpost .mx .reference-city-summary .numeric {
+  justify-self: start;
+  font: 800 22px/1 var(--font-display);
+}
+.app.outpost .mx .reference-city-summary small {
+  color: var(--muted);
+  font-family: var(--font-ui);
   font-size: 12px;
 }
-.app.outpost .market-focused .market-best-observations dd {
-  margin: 0;
-  font-size: 18px;
-  text-align: left;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-.app.outpost .market-focused .market-best-observations dd small {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font: 400 11px/1.6 var(--font-ui);
-  white-space: normal;
-}
-.app.outpost .market-focused .market-city-inspector {
-  display: block;
-  position: sticky;
-  top: 80px;
-  padding: 18px;
-}
-.app.outpost .market-focused .market-inspector-heading {
+.app.outpost .mx-inspector-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.app.outpost .market-focused .market-inspector-heading span {
-  color: var(--muted);
-  font-size: 11px;
-}
-.app.outpost .market-focused .market-inspector-heading h2 {
-  margin: 4px 0 0;
-  font: 650 19px/1.3 var(--font-ui);
-}
-.app.outpost .market-focused .market-inspector-heading button {
-  font-size: 11px;
-}
-.app.outpost .market-focused .market-city-inspector .muted {
-  font-size: 12px;
-  line-height: 1.7;
-}
-.app.outpost .market-focused .market-saved-work {
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
-}
-.app.outpost .market-focused .market-saved-heading {
-  display: flex;
-  align-items: center;
-  gap: 9px;
   flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
-.app.outpost .market-focused .market-saved-heading > svg {
+
+/* States */
+.app.outpost .mx-state {
+  display: flex;
+  align-items: start;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+.app.outpost .mx-state > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent-ink);
+}
+.app.outpost .mx-state h3 {
+  margin: 0 0 6px;
+  font: 650 16px/1.3 var(--font-ui);
+}
+.app.outpost .mx-state p {
+  max-width: 68ch;
+  margin: 0 0 var(--space-3);
   color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
 }
-.app.outpost .market-focused .market-saved-heading h2 {
-  margin: 0;
-  font: 650 17px/1.4 var(--font-ui);
+.app.outpost .mx-state p:last-child {
+  margin-bottom: 0;
 }
-.app.outpost .market-focused .market-saved-heading > span {
-  margin-left: auto;
+.app.outpost .mx-empty {
+  margin-top: var(--space-3);
+  color: var(--muted);
+  font-size: 14px;
+}
+.app.outpost .mx-skeleton {
+  display: grid;
+  gap: 1px;
+  margin-top: var(--space-3);
+  overflow: hidden;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .mx-skeleton span {
+  height: 52px;
+  background: linear-gradient(90deg, transparent, var(--well-border), transparent) 0 0 / 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app.outpost .mx-skeleton span {
+    animation: mx-shimmer 1.4s linear infinite;
+  }
+}
+@keyframes mx-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+.app.outpost .mx-source {
+  margin: var(--space-4) 0 0;
   color: var(--muted);
   font-size: 12px;
+  line-height: 1.55;
 }
-.app.outpost .market-focused .market-saved-tabs {
+
+/* Quality coverage, inside the orders panel */
+.app.outpost .mx .market-quality-availability {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+}
+.app.outpost .mx .market-quality-availability .section-heading {
   display: flex;
-  gap: 18px;
-  margin: 12px 0 0;
-  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
 }
-.app.outpost .market-focused .market-saved-tabs > button {
-  padding: 10px 0;
-  min-height: 40px;
-  border: 0;
-  border-radius: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
+.app.outpost .mx .market-quality-availability h3 {
+  margin: 0 0 4px;
+  font: 650 15px/1.3 var(--font-ui);
+}
+.app.outpost .mx .market-quality-availability .section-heading p,
+.app.outpost .mx .market-quality-availability > p {
+  margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.5;
 }
-.app.outpost .market-focused .market-saved-tabs > button[aria-selected="true"] {
-  color: var(--accent-ink);
-  border-bottom-color: var(--accent);
+.app.outpost .mx .market-quality-availability > p:last-child {
+  margin-top: var(--space-3);
 }
-.app.outpost .market-focused .market-saved-work .market-watchlist {
-  margin: 12px 0 0;
+.app.outpost .mx .market-quality-availability .section-heading .button {
+  width: auto;
 }
-@media (max-width: 1100px) {
-  .app.outpost .market-explorer-page .market-workspace.market-focused.has-city-detail {
+.app.outpost .mx .history-panel.is-embedded {
+  display: grid;
+  gap: var(--space-4);
+}
+.app.outpost .mx .history-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .mx .history-city {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  font: 600 12px/1.35 var(--font-ui);
+}
+.app.outpost .mx .history-city select {
+  min-width: 180px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+}
+.app.outpost .mx .history-refresh {
+  margin-left: auto;
+}
+.app.outpost .mx .history-empty {
+  padding: var(--space-5);
+}
+.app.outpost .mx .history-empty h3 {
+  margin: 0 0 6px;
+  font: 650 15px/1.3 var(--font-ui);
+}
+.app.outpost .mx .history-empty p,
+.app.outpost .mx .history-source,
+.app.outpost .mx .mx-collapsed-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.app.outpost .mx .mx-collapsed-note {
+  font-size: 14px;
+}
+
+/* Keep researching */
+.app.outpost .mx .mx-saved [role="tabpanel"] {
+  display: grid;
+}
+.app.outpost .mx .mx-saved [role="tabpanel"][hidden] {
+  display: none;
+}
+.app.outpost .mx .market-watchlist {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .mx .mx-list-head h3 {
+  margin: 0 0 4px;
+  font: 650 15px/1.3 var(--font-ui);
+}
+.app.outpost .mx .mx-list-head p,
+.app.outpost .mx .market-watchlist > p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.app.outpost .mx .market-watchlist .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}
+.app.outpost .mx .mx-list-empty {
+  margin: 0;
+  padding: var(--space-4);
+  border-style: dashed;
+  color: var(--muted);
+  font-size: 14px;
+}
+.app.outpost .mx .watchlist-items {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .mx .watchlist-items:empty {
+  display: none;
+}
+.app.outpost .mx .watchlist-items > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+/* Tablet and phone */
+@media (max-width: 980px) {
+  .app.outpost .mx {
     grid-template-columns: minmax(0, 1fr);
   }
-  .app.outpost .market-focused .market-city-inspector {
+  .app.outpost .mx-rail {
     position: static;
   }
 }
-@media (max-width: 780px) {
-  .app.outpost .market-focused .market-selection-row {
-    gap: 10px;
-    padding: 12px 0 8px;
+@media (max-width: 700px) {
+  .app.outpost .mx,
+  .app.outpost .mx-main {
+    gap: 22px;
   }
-  .app.outpost .market-focused .market-start-examples {
-    margin-left: auto;
+  .app.outpost .mx-rail,
+  .app.outpost .mx :is(.mx-hero, .mx-board, .mx-history, .mx-saved) {
+    padding: var(--space-4);
   }
-  .app.outpost .market-focused .market-start-examples > span {
-    display: none;
+  .app.outpost .mx-item-well {
+    width: 72px;
+    height: 72px;
   }
-  .app.outpost .market-focused .market-board,
-  .app.outpost .market-focused .market-saved-work {
-    padding: 14px;
+  .app.outpost .mx-item-well img {
+    width: 60px;
+    height: 60px;
   }
-  .app.outpost .market-focused .market-saved-heading > span {
-    width: 100%;
-    margin: 0;
+  .app.outpost .mx-identity h2 {
+    font-size: 20px;
+  }
+  .app.outpost .mx-figures {
+    grid-template-columns: 1fr 1fr;
+  }
+  .app.outpost .mx-figures > div:last-child {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .mx-figures b {
+    font-size: 24px;
+  }
+  .app.outpost .mx-figures > div {
+    padding: var(--space-3);
+  }
+  .app.outpost .mx-section-head {
+    align-items: start;
+  }
+  .app.outpost .mx .history-refresh {
+    margin-left: 0;
+  }
+  .app.outpost .mx .reference-city-summary .numeric {
+    font-size: 20px;
+  }
+}
+@media (max-width: 380px) {
+  .app.outpost .mx-field-pair {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
