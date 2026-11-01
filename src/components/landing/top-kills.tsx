@@ -125,10 +125,7 @@ function Kills({
                 {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                 <img src="/albion/icons/fame.webp" alt="Kill fame" width={24} height={24} />
                 <strong>{fame(ev.fame)}</strong>
-                <span
-                  className="kill-killed"
-                  title={`Killed ${age.label} · ${ev.occurredAt.replace("T", " ").slice(0, 16)} UTC`}
-                >
+                <span className="kill-killed">
                   {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                   <img src="/albion/icons/kill-skull.webp" alt="" width={30} height={30} />
                   <em>Killed</em>

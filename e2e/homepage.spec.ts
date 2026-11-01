@@ -287,7 +287,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "title",
     /Estimated/,
   );
-  await expect(kills.nth(0).locator(".kill-killed")).toHaveAttribute("title", /Killed .* UTC/);
+  await expect(kills.nth(0).locator(".kill-killed .kill-ago")).toHaveText(/ago|now|Unavailable/);
   await expect(kills.nth(0).locator(".loadout-board")).toHaveCount(2);
   await expect(kills.nth(0).locator(".kill-loot li")).toHaveCount(18);
   await expect(kills.nth(2).locator(".kill-loot-empty")).toHaveText("Nothing carried");
