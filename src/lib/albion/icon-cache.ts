@@ -34,7 +34,7 @@ function remember(url: string, icon: Icon) {
 const cache = new Map<string, { icon: Icon; expires: number }>();
 let windowStart = 0,
   requests = 0;
-export async function renderIcon(id: string, quality: number): Promise<Icon> {
+async function renderOne(id: string, quality: number): Promise<Icon> {
   const inflight = inflightCache("renderer") as Map<string, Promise<Icon>>;
   const url = itemIconUrl(id, quality, 96),
     now = Date.now(),
@@ -100,4 +100,17 @@ export async function renderIcon(id: string, quality: number): Promise<Icon> {
   } finally {
     inflight.delete(url);
   }
+}
+
+/**
+ * Art for the requested item, falling back to the base-tier art when the render server has no
+ * image for the enchanted id (it 404s many @4 ids). The neutral placeholder is a last resort.
+ */
+export async function renderIcon(id: string, quality: number): Promise<Icon> {
+  const first = await renderOne(id, quality);
+  if (first.available) return first;
+  const base = id.replace(/@\d$/, "");
+  if (base === id) return first;
+  const fallback = await renderOne(base, quality);
+  return fallback.available ? fallback : first;
 }
