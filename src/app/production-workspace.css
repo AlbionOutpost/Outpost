@@ -337,3 +337,286 @@
     min-height: 32px;
   }
 }
+
+/* Inner-page pass (landing quality): the profit is the headline, figures and source rows are
+   wells, section titles share one style, controls are wells with a drawn chevron. Framed
+   panels stay dark in both themes, so these tokens read the same in light mode. */
+.app.outpost .production-workspace :is(.panel, .result) h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font: 650 18px/1.25 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.app.outpost .production-workspace .workspace-step {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-wash);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent);
+  color: var(--accent-ink);
+  font: 800 13px/1 var(--font-display);
+}
+
+/* Headline profit */
+.app.outpost .production-profit-hero {
+  display: grid;
+  gap: 6px;
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(120% 90% at 0% 0%, var(--hero-glow, transparent), transparent 60%), var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .production-profit-hero > span {
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-ui);
+}
+.app.outpost .production-profit-hero output {
+  display: block;
+  font: 800 44px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .production-profit-hero output .silver {
+  gap: 8px;
+  font: inherit;
+}
+.app.outpost .production-profit-hero output .silver img {
+  width: 28px;
+  height: 28px;
+}
+.app.outpost .production-profit-hero small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .production-profit-hero.is-gain {
+  --hero-glow: color-mix(in srgb, var(--success) 22%, transparent);
+}
+.app.outpost .production-profit-hero.is-loss {
+  --hero-glow: color-mix(in srgb, var(--error) 22%, transparent);
+}
+.app.outpost .production-profit-hero.is-gain output {
+  color: var(--success);
+}
+.app.outpost .production-profit-hero.is-loss output {
+  color: var(--error);
+}
+.app.outpost .production-workspace .production-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+}
+.app.outpost .production-workspace .production-figures > div {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .production-workspace .production-figures dt {
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-ui);
+}
+.app.outpost .production-workspace .production-figures dd {
+  justify-self: start;
+  margin: 0;
+  text-align: left;
+  font: 800 19px/1 var(--font-display);
+  white-space: nowrap;
+}
+.app.outpost .production-workspace .production-figures dd .silver {
+  justify-content: flex-start;
+  gap: 4px;
+  font: inherit;
+}
+.app.outpost .production-workspace .production-figures .is-gain dd {
+  color: var(--success);
+}
+.app.outpost .production-workspace .production-figures .is-loss dd {
+  color: var(--error);
+}
+.app.outpost .production-workspace .production-cash-summary {
+  display: grid;
+  gap: 0;
+  margin: var(--space-4) 0 0;
+}
+.app.outpost .production-workspace .production-cash-summary > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .production-workspace .production-cash-summary dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .production-workspace .production-cash-summary dd {
+  margin: 0;
+  font: 600 14px/1 var(--font-data);
+}
+.app.outpost .production-workspace .production-result-note {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.app.outpost .production-workspace .production-result-note svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--accent-ink);
+}
+.app.outpost .production-workspace .production-disclosure {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .production-workspace .production-disclosure > summary {
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  color: var(--text);
+  font: 600 13px/40px var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .production-workspace .production-disclosure[open] > :not(summary) {
+  margin: 0 var(--space-3) var(--space-3);
+}
+.app.outpost .production-workspace .production-disclosure dl {
+  display: grid;
+  gap: 0;
+}
+.app.outpost .production-workspace .production-disclosure dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 7px 0;
+  border: 0;
+  border-top: 1px solid var(--well-border);
+  font-size: 13px;
+}
+.app.outpost .production-workspace .production-disclosure dt {
+  color: var(--muted);
+}
+.app.outpost .production-workspace .production-disclosure dd {
+  margin: 0;
+  font-family: var(--font-data);
+}
+
+/* Material rows: source age and chips */
+.app.outpost .production-workspace .production-price-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .production-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 12px/1 var(--font-ui);
+}
+.app.outpost .production-chip.is-stale {
+  border-color: color-mix(in srgb, var(--warning) 50%, transparent);
+  background: transparent;
+  color: var(--warning);
+}
+.app.outpost .production-workspace .reference-material-table abbr {
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* Controls: well selects with a drawn chevron, checkboxes in the accent */
+.app.outpost :is(.production-workspace, .production-saved-panel) select:not([multiple]) {
+  min-height: 42px;
+  padding: 0 36px 0 var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
+      no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
+      no-repeat,
+    var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+  appearance: none;
+  cursor: pointer;
+}
+.app.outpost :is(.production-workspace, .production-saved-panel) select:not([multiple]) option {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+.app.outpost
+  :is(.production-workspace, .production-saved-panel)
+  input:not([type="checkbox"]):not([type="radio"]) {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+}
+.app.outpost
+  :is(.production-workspace, .production-saved-panel)
+  :is(select, input):not([type="checkbox"]):not([type="radio"]):is(:hover, :focus-visible) {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+.app.outpost .production-workspace input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+/* Saved runs: its own framed panel with the toggle as a pill */
+.app.outpost .production-saved-panel {
+  margin-top: 26px;
+}
+.app.outpost .production-saved-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.app.outpost .production-saved-head h2 {
+  margin: 0 0 4px;
+  font: 650 18px/1.25 var(--font-ui);
+}
+.app.outpost .production-saved-head p {
+  margin: 0;
+  font-size: 13px;
+}
+@media (max-width: 700px) {
+  .app.outpost .production-profit-hero output {
+    font-size: 36px;
+  }
+  .app.outpost .production-workspace .production-figures {
+    grid-template-columns: 1fr 1fr;
+  }
+  .app.outpost .production-workspace .production-figures > div:last-child {
+    grid-column: 1 / -1;
+  }
+}
