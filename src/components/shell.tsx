@@ -4,7 +4,17 @@ import { Suspense, useState, useRef, useEffect } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import { flushSync } from "react-dom";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Menu, X, Sun, Moon, ChevronDown, ArrowUpRight, Grid2X2 } from "lucide-react";
+import {
+  Menu,
+  X,
+  Sun,
+  Moon,
+  MoonStar,
+  ChevronDown,
+  ArrowUp,
+  ArrowUpRight,
+  Grid2X2,
+} from "lucide-react";
 import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
@@ -12,7 +22,6 @@ import { tools } from "@/lib/tool-directory";
 import { GlobalSearch } from "./global-search";
 import { Wordmark } from "./wordmark";
 import { PointerGlow } from "./pointer-glow";
-import { MoonGlyph, SunGlyph } from "./theme-glyphs";
 import { RegionContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
@@ -421,13 +430,13 @@ export function Shell({
                   className={`theme-switch-option is-sun${light ? " is-on" : ""}`}
                   aria-hidden="true"
                 >
-                  <SunGlyph />
+                  <Sun size={18} strokeWidth={2.1} />
                 </span>
                 <span
                   className={`theme-switch-option is-moon${light ? "" : " is-on"}`}
                   aria-hidden="true"
                 >
-                  <MoonGlyph />
+                  <MoonStar size={17} strokeWidth={2} />
                 </span>
               </button>
               {!authenticated ? (
@@ -507,32 +516,58 @@ export function Shell({
             </main>
           </div>
           <footer className="site-footer">
-            <div className="site-footer-brand">
-              <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                <Wordmark light={light} />
-              </Link>
-              <p>Independent Albion Online tools. Make your next move count.</p>
-              <p className="site-footer-source">
-                Prices are player observations from the Albion Online Data Project. Outpost is not
-                affiliated with Sandbox Interactive.
-              </p>
+            <div className="site-footer-inner">
+              <div className="site-footer-brand">
+                <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
+                  <Wordmark light={light} />
+                </Link>
+                <p>Independent Albion Online tools. Make your next move count.</p>
+                <p className="site-footer-source">
+                  Prices are player observations from the Albion Online Data Project. Outpost is not
+                  affiliated with Sandbox Interactive.
+                </p>
+              </div>
+              {footerColumns.map(([title, links], i) => (
+                <nav key={title} className="site-footer-column" aria-label={title}>
+                  <h2>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/albion/icons/${["strip-content", "tool-craft", "team-roles"][i] ?? "tool-craft"}.webp`}
+                      alt=""
+                      width={26}
+                      height={26}
+                    />
+                    {title}
+                  </h2>
+                  {links
+                    .filter(([url]) => !authenticated || url !== "/signin")
+                    .map(([url, label]) => (
+                      <Link key={url} href={href(url)}>
+                        {label}
+                      </Link>
+                    ))}
+                </nav>
+              ))}
             </div>
-            {footerColumns.map(([title, links]) => (
-              <nav key={title} className="site-footer-column" aria-label={title}>
-                <h2>{title}</h2>
-                {links
-                  .filter(([url]) => !authenticated || url !== "/signin")
-                  .map(([url, label]) => (
-                    <Link key={url} href={href(url)}>
-                      {label}
-                    </Link>
-                  ))}
-              </nav>
-            ))}
             <div className="site-footer-legal">
+              <span>© {new Date().getFullYear()} Outpost · made by Albion players</span>
               <Link href="/legal">
                 Privacy & terms <ArrowUpRight size={13} />
               </Link>
+              <button
+                type="button"
+                className="site-footer-top"
+                onClick={() =>
+                  window.scrollTo({
+                    top: 0,
+                    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                      ? "auto"
+                      : "smooth",
+                  })
+                }
+              >
+                Back to top <ArrowUp size={14} aria-hidden="true" />
+              </button>
             </div>
           </footer>
         </div>

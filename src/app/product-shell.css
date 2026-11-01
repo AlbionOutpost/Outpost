@@ -316,7 +316,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  color: #8f8a83;
+  color: #b3aca2;
   transition: color 260ms var(--ease-out-expo);
 }
 .app.outpost .site-header .theme-switch-option svg {
@@ -342,9 +342,7 @@
   scale: 1;
   rotate: 0deg;
 }
-.app.outpost .site-header .theme-switch-option.is-on svg {
-  filter: drop-shadow(0 1px 0 #ffffff55);
-}
+
 .app.outpost.light .site-header .theme-switch {
   background: radial-gradient(60px 30px at 25% 50%, #f0a0601f, transparent 70%), var(--elevated);
   box-shadow: inset 0 1px 3px #0000001f;

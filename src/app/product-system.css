@@ -307,6 +307,9 @@
   .app.outpost {
     --backdrop: url("/albion/illustrations/backdrop-v1-phone.webp");
   }
+  .app.outpost .site-backdrop {
+    inset: 0;
+  }
 }
 .app.outpost.light {
   --canvas-grain-opacity: 0.05;
@@ -321,7 +324,9 @@
 }
 .app.outpost .site-backdrop {
   position: fixed;
-  inset: 0;
+  /* The painting's left edge is a dark cliff: start it off-screen so the castle, the river and
+     the party fill the window evenly */
+  inset: 0 0 0 -24%;
   z-index: -2;
   background:
     linear-gradient(
@@ -329,6 +334,7 @@
       color-mix(in oklab, var(--canvas-end) var(--backdrop-veil), transparent) 0%,
       color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-veil) + 18%), transparent) 100%
     ),
+    radial-gradient(42% 60% at 34% 46%, #f2a46a26, transparent 70%),
     var(--backdrop) 62% 40% / cover no-repeat,
     var(--canvas-end);
   pointer-events: none;
