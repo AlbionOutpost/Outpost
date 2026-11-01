@@ -53,6 +53,13 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
       if (!("role" in user) || user.role !== "ADMIN") await promotePersistedOwner(user.id);
+      // Once a day a signed-in visit touches the account row, so its updatedAt doubles as the
+      // last visit behind "Active players this month". A failed touch never blocks the page.
+      const seen = "updatedAt" in user ? new Date(user.updatedAt as Date | string).getTime() : 0;
+      if (!(Date.now() - seen < 12 * 60 * 60 * 1000))
+        await db.user
+          .update({ where: { id: user.id }, data: { updatedAt: new Date() } })
+          .catch(() => {});
       if (session.user) session.user.id = user.id;
       return session;
     },
