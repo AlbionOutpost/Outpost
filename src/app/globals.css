@@ -4028,7 +4028,6 @@ button.party-loadout-card:hover {
 }
 .build-discovery-empty {
   padding: 24px 0;
-  max-width: 560px;
 }
 .build-discovery-empty h2 {
   font: 600 22px/1.4 var(--font-ui);
