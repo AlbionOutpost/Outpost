@@ -65,6 +65,10 @@ Open items found on the way:
 
 - Crafting, refining, enchanting, cooking and alchemy (one component): total profit is the headline figure (gain/loss in colour and words), per-output figures and cash lines in wells, accounting and assumptions folded into the results panel, price ages with Stale/Manual chips instead of raw ISO times, one section-title style, well selects, and saved runs in a "Keep this run" panel.
 
+## Shipped — Build editor inner page (1 Nov)
+
+- Create and Edit open on the builds masthead; the back link is a pill beside a draft-status chip; guests get a "Starting from scratch?" well with the example set; slot switches are pills; selects and inputs are wells; market estimates are a well disclosure; the duplicate "Back to builds" button is gone. Twenty legacy `.guest-build-notice` rules across five sheets (one hid the copy, one set 11px) were removed.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
