@@ -62,32 +62,15 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
     if (!r.ok) throw new Error(body.error || "Kill ranking unavailable.");
     return { feed: body as Feed, at: Date.now() };
   });
-  const feed = data?.value?.feed;
-  // "today" only when every featured kill really is from the past day; the source's ranking
-  // window lags at times.
-  const fresh =
-    !!feed &&
-    shown(feed.events).length > 0 &&
-    shown(feed.events).every(
-      (e) => Date.parse(feed.fetchedAt) - Date.parse(e.occurredAt) < 86_400_000,
-    );
-  // The source ranking can lag by days: say when its kills happened instead of "this week"
-  const oldest = feed ? Math.min(...shown(feed.events).map((e) => Date.parse(e.occurredAt))) : NaN;
-  const since = Number.isFinite(oldest)
-    ? new Date(oldest).toLocaleDateString("en-GB", { day: "numeric", month: "short" })
-    : null;
   return (
     <section className="landing-wrap landing-kills" aria-labelledby="home-kills-title">
       <div className="section-heading landing-section-heading">
         <h2 id="home-kills-title">
-          Top kills <em>{fresh ? "today" : "on the board"}</em>
+          Top kills <em>this week</em>
         </h2>
         <p>
-          {fresh
-            ? `The three juiciest kills on ${serverName} in the last 24 hours, gear and all.`
-            : `The three biggest kills on Albion’s own fame ranking for ${serverName}${
-                since ? `, from ${since}` : ""
-              }, gear and all.`}
+          The three most valuable kills on {serverName} in the last seven days, by the estimated
+          silver value of the victim&apos;s gear.
         </p>
         <Link className="pill-link" href={`/tools/kill-feed${suffix}`}>
           Open the kill feed <ArrowRight size={15} />

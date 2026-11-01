@@ -15,9 +15,15 @@
     "bindings": [
       { "name": "DATABASE", "class_name": "OutpostDatabase" },
       { "name": "BUDGETS", "class_name": "AbuseBudget" },
+      { "name": "KILLS", "class_name": "KillBoard" },
     ],
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["OutpostDatabase", "AbuseBudget"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["OutpostDatabase", "AbuseBudget"] },
+    { "tag": "v2-kill-board", "new_sqlite_classes": ["KillBoard"] },
+  ],
+  // Collects each server's live kill feed into its seven-day top-kills shortlist.
+  "triggers": { "crons": ["* * * * *"] },
   "d1_databases": [
     {
       "binding": "CATALOG",
