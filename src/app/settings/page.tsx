@@ -27,7 +27,7 @@ export default async function Settings({
         emblem={<AccountEmblem image={user.image} />}
       />
       <div className="account-settings-workspace">
-        <nav className="account-settings-navigation" aria-label="Settings sections">
+        <nav className="panel account-settings-navigation" aria-label="Settings sections">
           <a href="#profile-preferences">Profile & preferences</a>
           <a href="#account-billing">Supporter plan</a>
           <a href="#account-data">Export your data</a>

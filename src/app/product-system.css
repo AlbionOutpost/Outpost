@@ -630,7 +630,45 @@
 }
 /* Framed cards are game panels. In light mode they turn to the dark leather of Albion's
    inventory slots on the parchment page, so everything inside reads the same in both themes. */
-.app.outpost.light .raised.has-scene {
+.app.outpost.light
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   --bg: #1d150f;
   --sidebar: #1d150f;
   --panel: #33261b;
@@ -803,7 +841,47 @@
   --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
 }
 /* Re-resolved where the palette changes (framed cards, mastheads), so boxes inside follow it */
-.app.outpost :is(.raised.has-scene, .workspace-identity[data-scene], .masthead[data-scene]) {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    .workspace-identity[data-scene],
+    .masthead[data-scene],
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   --panel-face:
     radial-gradient(
       120% 60% at 50% 0%,
@@ -817,7 +895,42 @@
 /* Working panels are windows in the game's style: a soft top light over the surface, a hairline
    ember edge brighter along the top, an inner highlight and a deep drop, so they sit on the
    painting like the landing's cards without their art. */
-.app.outpost :is(.panel, .raised:not(.has-scene)) {
+.app.outpost
+  :is(
+    .panel,
+    .raised:not(.has-scene),
+    .build-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .party-command-bar,
+    .party-readiness,
+    .reference-available-builds,
+    .timer-composer,
+    .loadout-price-check,
+    .build-discovery-empty,
+    .calculator-inputs,
+    .fishing-main,
+    .calculation-readiness
+  ):is(
+    :is(
+        .panel,
+        .raised,
+        dialog,
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      )
+      *
+  ) {
   border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--raised-edge));
   border-top-color: color-mix(in srgb, var(--accent) 48%, var(--raised-edge-top));
   border-radius: 12px;
@@ -831,6 +944,103 @@
   box-shadow:
     inset 0 1px 0 var(--edge-light),
     var(--shadow-raised);
+}
+/* Every top-level working panel is framed like the landing's cards. The frame is drawn on the
+   panel itself (a 9-slice border image pushed 10px outside), its painting and scrim are its own
+   background, so it needs no extra layers or positioning: sticky panels keep sticking and
+   nothing can sit over a neighbouring control. A heavier scrim keeps forms easy to read. */
+.app.outpost
+  :is(
+    .panel,
+    .raised:not(.has-scene),
+    .build-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .party-command-bar,
+    .party-readiness,
+    .reference-available-builds,
+    .timer-composer,
+    .loadout-price-check,
+    .build-discovery-empty,
+    .calculator-inputs,
+    .fishing-main,
+    .calculation-readiness
+  ):not(
+    :is(
+        .panel,
+        .raised,
+        dialog,
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      )
+      *
+  ) {
+  border: 0 solid transparent !important;
+  border-image: var(--frame) 25 / 25px / 10px stretch !important;
+  border-radius: 4px !important;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface-scrim) 86%, transparent) 0%,
+      color-mix(in srgb, var(--surface-scrim) 92%, transparent) 60%,
+      color-mix(in srgb, var(--surface-scrim) 95%, transparent) 100%
+    ),
+    var(--scene, var(--scene-city)) center / cover no-repeat,
+    var(--surface-scrim) !important;
+  box-shadow:
+    0 0 26px -10px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 18px 36px -18px #000c !important;
+  color: var(--text);
+}
+.app.outpost.light
+  :is(
+    .panel,
+    .raised:not(.has-scene),
+    .build-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .party-command-bar,
+    .party-readiness,
+    .reference-available-builds,
+    .timer-composer,
+    .loadout-price-check,
+    .build-discovery-empty,
+    .calculator-inputs,
+    .fishing-main,
+    .calculation-readiness
+  ):not(
+    :is(
+        .panel,
+        .raised,
+        dialog,
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      )
+      *
+  ) {
+  box-shadow:
+    0 0 18px -10px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 12px 24px -16px #3a251266 !important;
 }
 
 /* Section headings: display title with an ember word, one line, a pill link on the right */
@@ -923,6 +1133,11 @@
 .app.outpost .pill-link:hover {
   border-color: var(--accent);
   text-decoration: none;
+  scale: 1.06;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 0 26px -6px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 10px 22px -10px #000c;
 }
 .app.outpost .pill-link:hover::before {
   background-size: 400% 400%;
@@ -933,13 +1148,38 @@
   box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .app.outpost .pill-link:active {
-  scale: 0.97;
+  scale: 0.96;
 }
 .app.outpost .pill-link {
   transition:
     border-color 220ms var(--ease-out),
     background 220ms var(--ease-out),
-    scale 180ms var(--ease-out-expo);
+    box-shadow 320ms var(--ease-out),
+    scale 420ms var(--ease-spring);
+}
+/* Every button lifts toward the pointer with a spring and settles when pressed */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .app.outpost :is(.button, button.button) {
+    transition:
+      background 200ms var(--ease-out),
+      border-color 200ms var(--ease-out),
+      box-shadow 320ms var(--ease-out),
+      scale 420ms var(--ease-spring),
+      translate 420ms var(--ease-spring);
+  }
+  .app.outpost :is(.button, button.button):hover:not(:disabled) {
+    scale: 1.04;
+    translate: 0 -1px;
+  }
+  .app.outpost .button.primary:hover:not(:disabled) {
+    box-shadow:
+      0 0 24px -6px color-mix(in srgb, var(--accent) 80%, transparent),
+      0 10px 20px -10px #000c;
+  }
+  .app.outpost :is(.button, button.button):active:not(:disabled) {
+    scale: 0.97;
+    translate: 0 0;
+  }
 }
 .app.outpost.light .pill-link {
   background: var(--panel);

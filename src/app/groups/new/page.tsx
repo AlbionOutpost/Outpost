@@ -19,7 +19,7 @@ export default async function NewGroup() {
       />
       <div className="team-create-layout">
         {allowed ? <GroupCreate /> : <SupporterGate kind="create" />}
-        <aside>
+        <aside className="panel">
           <h2>A workspace for your people</h2>
           <ol>
             <li>
