@@ -735,3 +735,116 @@
 .app.outpost .composition-detail-workspace .party-readiness {
   margin-block: 16px;
 }
+
+/* Comp planner (inner-page pass): opens on the comps masthead; the empty roster is a dashed
+   well with its first action, the role strip appears once someone is in the party, party
+   sizes are pills, and controls are wells. Framed panels stay dark in both themes. */
+.app.outpost .party-editor .comp-roster-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-6);
+  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-scrim) 82%, transparent);
+}
+.app.outpost .party-editor .comp-roster-empty > svg {
+  color: var(--accent-ink);
+}
+.app.outpost .party-editor .comp-roster-empty h2 {
+  margin: 0;
+  font: 650 18px/1.25 var(--font-ui);
+}
+.app.outpost .party-editor .comp-roster-empty p {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.app.outpost .party-editor .party-size-bar .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.app.outpost .party-editor .comp-size-pill {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-scrim) 88%, transparent);
+  color: var(--text);
+  font: 600 13px/1 var(--font-ui);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    background var(--motion-fast) var(--ease-out);
+}
+.app.outpost .party-editor .comp-size-pill:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+.app.outpost .party-editor .comp-size-pill[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.app.outpost .party-editor select:not([multiple]):not([size]) {
+  min-height: 42px;
+  padding: 0 36px 0 var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
+      no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
+      no-repeat,
+    var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+  appearance: none;
+  cursor: pointer;
+}
+.app.outpost .party-editor select:not([multiple]):not([size]) option {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+.app.outpost .party-editor input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.app.outpost .party-editor textarea {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+}
+.app.outpost
+  .party-editor
+  :is(select, input:not([type="checkbox"]):not([type="radio"]), textarea):is(
+    :hover,
+    :focus-visible
+  ) {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+.app.outpost .party-editor :is(.party-settings, .party-notes) > summary {
+  min-height: 40px;
+  color: var(--text);
+  font: 600 14px/40px var(--font-ui);
+}
+.app.outpost .party-editor .party-save-bar .comp-back {
+  align-self: center;
+}
+/* Without the role strip (empty party) the builds rail starts on the first row */
+.app.outpost
+  .object-party-editor
+  .reference-party-workspace:not(:has(> .party-readiness))
+  > .reference-available-builds {
+  grid-row: 1 / span 2;
+}
+.app.outpost .party-editor .comp-start-template + .reference-party-workspace {
+  margin-top: 26px;
+}
+.app.outpost .party-editor .comp-roster-empty {
+  max-width: none;
+}
