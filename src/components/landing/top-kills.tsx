@@ -4,6 +4,7 @@ import type React from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { LoadoutBoard } from "@/components/loadout-board";
 import { useAtlasRegion } from "@/components/region-context";
 import { sourceAge } from "@/lib/albion/source-age";
@@ -131,7 +132,7 @@ function Kills({
                   {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                   <img src="/albion/icons/kill-skull.webp" alt="" width={30} height={30} />
                   <em>Killed</em>
-                  <time className="sr-only" dateTime={ev.occurredAt}>
+                  <time className="kill-ago" dateTime={ev.occurredAt}>
                     {age.label}
                   </time>
                 </span>
@@ -160,7 +161,7 @@ function Kills({
               {ev.inventory.length ? (
                 <ul aria-label="Items the victim carried">
                   {ev.inventory.slice(0, 18).map((it, i) => (
-                    <li key={`${it.itemId}-${i}`} title={it.itemId}>
+                    <li key={`${it.itemId}-${i}`} title={equipmentName(it.itemId)}>
                       <span className="kill-loot-blank" aria-hidden="true">
                         ?
                       </span>
