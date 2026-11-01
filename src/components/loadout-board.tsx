@@ -2,6 +2,7 @@ import "@/app/loadout-board.css";
 import { ItemIcon } from "@/components/item-icon";
 import { SpellIcon } from "@/components/spell-icon";
 import type { BoardSlot } from "@/components/loadout-glyphs";
+import { offHandShadow } from "@/lib/albion/two-handed";
 
 /** The owner's slot marks (public/albion/slots): bag, cape, potion, food and mount, plus the
  * figure behind the board. Head, chest, boots and the hands stay as empty wells, as in the game. */
@@ -46,6 +47,8 @@ export function LoadoutBoard({
 }) {
   const bySlot = new Map(pieces.map((p) => [p.slot, p]));
   const icon = size === "hero" ? 72 : size === "card" ? 56 : 40;
+  // A two-handed main hand fills the off hand too; the game shows it there, faded.
+  const shadow = offHandShadow(bySlot.get("Main hand")?.itemId, bySlot.get("Off hand")?.itemId);
   const spell = size === "hero" ? 22 : 18;
   return (
     <div className={`loadout-board is-${size}`} role="list" aria-label={label}>
@@ -53,6 +56,7 @@ export function LoadoutBoard({
         <div key={c} className="loadout-board-column">
           {column.map((slot) => {
             const piece = bySlot.get(slot);
+            const ghost = slot === "Off hand" && !piece ? shadow : null;
             const mark = slotMarks[slot];
             const skills = piece?.skills ?? [];
             const actives = skills.filter((id) => !id.startsWith("PASSIVE"));
@@ -66,15 +70,25 @@ export function LoadoutBoard({
               <div
                 key={slot}
                 role="listitem"
-                className={`loadout-board-slot${piece ? "" : " is-empty"}${slot === "Mount" ? " is-mount" : ""}`}
+                className={`loadout-board-slot${piece ? "" : ghost ? " is-two-handed" : " is-empty"}${slot === "Mount" ? " is-mount" : ""}`}
                 data-slot={slot}
               >
                 <span
                   className="loadout-board-cell"
-                  title={piece ? `${slot}: ${piece.itemId}` : `${slot}: not recorded`}
+                  title={
+                    piece
+                      ? `${slot}: ${piece.itemId}`
+                      : ghost
+                        ? `${slot}: held by the two-handed ${ghost}`
+                        : `${slot}: not recorded`
+                  }
                 >
                   {piece ? (
                     <ItemIcon id={piece.itemId} size={icon} />
+                  ) : ghost ? (
+                    <span className="loadout-board-shadow" aria-hidden="true">
+                      <ItemIcon id={ghost} size={icon} />
+                    </span>
                   ) : mark ? (
                     // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
                     <img

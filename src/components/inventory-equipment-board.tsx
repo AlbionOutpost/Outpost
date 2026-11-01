@@ -1,4 +1,5 @@
 "use client";
+import { offHandShadow } from "@/lib/albion/two-handed";
 import { useId } from "react";
 import { InventorySlotGlyph } from "./inventory-slot-glyph";
 import { ItemIcon } from "./item-icon";
@@ -46,6 +47,14 @@ export function InventoryEquipmentBoard({
       />
       {buildInventoryLayout.map(({ slot, area, row, column }) => {
         const item = equipment.find((row) => row.slot === slot && row.itemId);
+        // A two-handed main hand fills the off hand too; the game shows it there, faded.
+        const shadow =
+          slot === "Off hand" && !item
+            ? offHandShadow(
+                equipment.find((row) => row.slot === "Main hand" && row.itemId)?.itemId,
+                null,
+              )
+            : null;
         const name = item?.name || item?.itemId || "Empty";
         const tooltip = `${prefix}-${slot.replaceAll(" ", "-")}`;
         return (
@@ -60,9 +69,15 @@ export function InventoryEquipmentBoard({
               type="button"
               data-slot={slot}
               data-area={area}
-              className={`inventory-equipment-slot${item ? " is-equipped" : " is-empty"}${selectedSlot === slot ? " is-selected" : ""}`}
+              className={`inventory-equipment-slot${item ? " is-equipped" : shadow ? " is-two-handed" : " is-empty"}${selectedSlot === slot ? " is-selected" : ""}`}
               aria-pressed={selectedSlot === slot}
-              aria-label={item ? `Inspect ${slot}: ${name}` : `Inspect ${slot} Empty`}
+              aria-label={
+                item
+                  ? `Inspect ${slot}: ${name}`
+                  : shadow
+                    ? `Inspect ${slot}: held by the two-handed main hand`
+                    : `Inspect ${slot} Empty`
+              }
               aria-describedby={tooltip}
               onClick={() => onSelectSlot(slot)}
             >
@@ -70,6 +85,10 @@ export function InventoryEquipmentBoard({
               <span className="inventory-slot-art">
                 {item ? (
                   <ItemIcon id={item.itemId} quality={item.quality} size={80} />
+                ) : shadow ? (
+                  <span className="inventory-slot-shadow" aria-hidden="true">
+                    <ItemIcon id={shadow} size={80} />
+                  </span>
                 ) : (
                   <InventorySlotGlyph slot={slot} />
                 )}
@@ -94,7 +113,7 @@ export function InventoryEquipmentBoard({
                   </span>
                 )}
               </span>
-              {!item && (
+              {!item && !shadow && (
                 <>
                   {" "}
                   <span className="inventory-empty-caption">Empty</span>

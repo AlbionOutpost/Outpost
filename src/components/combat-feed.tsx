@@ -16,11 +16,17 @@ import { useAtlasRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
 import { ItemIcon } from "./item-icon";
+import { offHandShadow } from "@/lib/albion/two-handed";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 function timestamp(value: string) {
   return new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
 }
 function Gear({ player }: { player: CombatEvent["killer"] }) {
+  // A two-handed main hand fills the off hand too; the game shows it there, faded.
+  const shadow = offHandShadow(
+    player.equipment.find((item) => item.slot === "Main hand")?.itemId,
+    player.equipment.find((item) => item.slot === "Off hand")?.itemId,
+  );
   return (
     <div className="combat-player-gear">
       <div>
@@ -45,6 +51,10 @@ function Gear({ player }: { player: CombatEvent["killer"] }) {
           >
             {item.itemId ? (
               <ItemIcon id={item.itemId} quality={item.quality || 1} size={42} />
+            ) : item.slot === "Off hand" && shadow ? (
+              <span className="combat-gear-shadow" aria-hidden="true">
+                <ItemIcon id={shadow} size={42} />
+              </span>
             ) : (
               <Shield size={19} aria-hidden="true" />
             )}

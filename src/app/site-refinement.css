@@ -824,3 +824,11 @@
       url("/albion/illustrations/hero-v1-phone.webp");
   }
 }
+
+/* Kill feed: a two-handed main hand repeats in the off-hand slot at half opacity. */
+.app.outpost .combat-gear-shadow {
+  display: contents;
+}
+.app.outpost .combat-gear-shadow img {
+  opacity: 0.5;
+}

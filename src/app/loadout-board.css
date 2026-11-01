@@ -87,3 +87,15 @@
 .app.outpost .loadout-board.is-hero .loadout-board-abilities > span {
   border-radius: 6px;
 }
+
+/* A two-handed main hand fills the off hand: the weapon repeats there at half opacity, as in
+   the game's own inventory, so the slot reads as taken rather than missing. */
+.app.outpost .loadout-board-slot.is-two-handed .loadout-board-cell {
+  border-style: solid;
+}
+.app.outpost .loadout-board-shadow {
+  display: contents;
+}
+.app.outpost .loadout-board-shadow img {
+  opacity: 0.5;
+}
