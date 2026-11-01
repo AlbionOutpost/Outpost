@@ -238,3 +238,11 @@
   .inventory-slot-art::after {
   content: none;
 }
+
+/* A two-handed main hand fills the off hand: the weapon repeats there at half opacity. */
+.app.outpost .inventory-slot-shadow {
+  display: contents;
+}
+.app.outpost .inventory-slot-shadow img {
+  opacity: 0.5;
+}
