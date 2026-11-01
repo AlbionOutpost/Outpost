@@ -575,7 +575,45 @@
     border-color 300ms var(--ease-out-expo),
     box-shadow 300ms var(--ease-out-expo);
 }
-.app.outpost .raised.has-scene {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   position: relative;
   isolation: isolate;
   /* Content stays inside; the frame, its glow and gems paint up to 14px beyond the edge */
@@ -588,14 +626,90 @@
    covers the whole card under an even scrim, so every card keeps its own scene top to bottom.
    The layer overhangs by 16px and is clipped back, keeping the blur's soft fringe out of view
    (no mask: masked, filtered layers drop out under a transformed parent in Chromium). */
-.app.outpost .raised.has-scene {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   --cut: 12px;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
-.app.outpost .raised.has-scene::before {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  )::before {
   content: "";
   position: absolute;
   inset: -16px;
@@ -619,9 +733,9 @@
       0 0 / 100% 100% no-repeat,
     linear-gradient(
         180deg,
-        color-mix(in srgb, var(--surface-scrim) 66%, transparent) 0%,
-        color-mix(in srgb, var(--surface-scrim) 76%, transparent) 45%,
-        color-mix(in srgb, var(--surface-scrim) 86%, transparent) 100%
+        color-mix(in srgb, var(--surface-scrim) var(--scrim-top, 66%), transparent) 0%,
+        color-mix(in srgb, var(--surface-scrim) var(--scrim-mid, 76%), transparent) 45%,
+        color-mix(in srgb, var(--surface-scrim) var(--scrim-end, 86%), transparent) 100%
       )
       0 0 / 100% 100% no-repeat,
     var(--scene, var(--scene-city)) center / cover no-repeat,
@@ -630,7 +744,45 @@
 }
 /* Framed cards are game panels. In light mode they turn to the dark leather of Albion's
    inventory slots on the parchment page, so everything inside reads the same in both themes. */
-.app.outpost.light .raised.has-scene {
+.app.outpost.light
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   --bg: #1d150f;
   --sidebar: #1d150f;
   --panel: #33261b;
@@ -671,7 +823,45 @@
 /* MMO frame: a bright ember outer line and a fainter inner line following the cut corners,
    studs in the corners and a gem at the top and bottom centre, all glowing; brighter on hover.
    Above the content but only in the card's edge, and never takes the pointer. */
-.app.outpost .raised.has-scene::after {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  )::after {
   content: "";
   position: absolute;
   inset: -10px;
@@ -689,21 +879,308 @@
   transition: filter 320ms var(--ease-out-expo);
 }
 /* On parchment the frame casts a short warm shadow instead of a night-time one */
-.app.outpost.light .raised.has-scene::after {
+.app.outpost.light
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  )::after {
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent))
     drop-shadow(0 6px 6px #3a251226);
 }
-.app.outpost.light .raised.has-scene:hover::after {
+.app.outpost.light
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ):hover::after {
   filter: drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 80%, transparent))
     drop-shadow(0 8px 8px #3a251233);
 }
-.app.outpost .raised.raised.has-scene:hover {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ):hover {
   border-color: transparent;
   box-shadow: none;
 }
-.app.outpost .raised.has-scene:hover::after {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ):hover::after {
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 90%, transparent))
     drop-shadow(0 16px 18px #000000b3);
+}
+/* Working panels on every page are framed like the landing's cards: the same frame, gems and
+   painting, under a heavier scrim so forms and tables stay easy to read. They never clip
+   (menus and suggestions inside must escape) and rise above their neighbours while in use. */
+.app.outpost
+  :is(
+    .panel,
+    .raised:not(.has-scene),
+    .build-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .party-command-bar,
+    .party-readiness,
+    .reference-available-builds,
+    .timer-composer,
+    .loadout-price-check,
+    .build-discovery-empty,
+    .calculator-inputs,
+    .fishing-main,
+    .calculation-readiness
+  ):not(
+    :is(
+        .panel,
+        .raised,
+        dialog,
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      )
+      *
+  ) {
+  --scrim-top: 86%;
+  --scrim-mid: 90%;
+  --scrim-end: 94%;
+  overflow: visible;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.app.outpost
+  :is(
+    .panel,
+    .raised:not(.has-scene),
+    .build-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .party-command-bar,
+    .party-readiness,
+    .reference-available-builds,
+    .timer-composer,
+    .loadout-price-check,
+    .build-discovery-empty,
+    .calculator-inputs,
+    .fishing-main,
+    .calculation-readiness
+  ):not(
+    :is(
+        .panel,
+        .raised,
+        dialog,
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      )
+      *
+  ):focus-within {
+  z-index: 6;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .app.outpost
+      :is(
+        .panel,
+        .raised:not(.has-scene),
+        .build-command-bar,
+        .editor-inventory-panel,
+        .editor-slot-panel,
+        .party-command-bar,
+        .party-readiness,
+        .reference-available-builds,
+        .timer-composer,
+        .loadout-price-check,
+        .build-discovery-empty,
+        .calculator-inputs,
+        .fishing-main,
+        .calculation-readiness
+      ):not(
+        :is(
+            .panel,
+            .raised,
+            dialog,
+            .build-command-bar,
+            .editor-inventory-panel,
+            .editor-slot-panel,
+            .party-command-bar,
+            .party-readiness,
+            .reference-available-builds,
+            .timer-composer,
+            .loadout-price-check,
+            .build-discovery-empty,
+            .calculator-inputs,
+            .fishing-main,
+            .calculation-readiness
+          )
+          *
+      ) {
+      animation: panel-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+    @keyframes panel-rise {
+      from {
+        translate: 0 28px;
+        scale: 0.985;
+      }
+    }
+  }
 }
 .app.outpost .raised[data-scene="market"] {
   --scene: var(--scene-market);
@@ -803,7 +1280,47 @@
   --panel-edge-top: color-mix(in srgb, var(--accent) 42%, var(--border));
 }
 /* Re-resolved where the palette changes (framed cards, mastheads), so boxes inside follow it */
-.app.outpost :is(.raised.has-scene, .workspace-identity[data-scene], .masthead[data-scene]) {
+.app.outpost
+  :is(
+    .raised.has-scene,
+    .workspace-identity[data-scene],
+    .masthead[data-scene],
+    :is(
+      .panel,
+      .raised:not(.has-scene),
+      .build-command-bar,
+      .editor-inventory-panel,
+      .editor-slot-panel,
+      .party-command-bar,
+      .party-readiness,
+      .reference-available-builds,
+      .timer-composer,
+      .loadout-price-check,
+      .build-discovery-empty,
+      .calculator-inputs,
+      .fishing-main,
+      .calculation-readiness
+    ):not(
+      :is(
+          .panel,
+          .raised,
+          dialog,
+          .build-command-bar,
+          .editor-inventory-panel,
+          .editor-slot-panel,
+          .party-command-bar,
+          .party-readiness,
+          .reference-available-builds,
+          .timer-composer,
+          .loadout-price-check,
+          .build-discovery-empty,
+          .calculator-inputs,
+          .fishing-main,
+          .calculation-readiness
+        )
+        *
+    )
+  ) {
   --panel-face:
     radial-gradient(
       120% 60% at 50% 0%,
@@ -817,7 +1334,7 @@
 /* Working panels are windows in the game's style: a soft top light over the surface, a hairline
    ember edge brighter along the top, an inner highlight and a deep drop, so they sit on the
    painting like the landing's cards without their art. */
-.app.outpost :is(.panel, .raised:not(.has-scene)) {
+.app.outpost :is(.panel, .raised:not(.has-scene)):is(:is(.panel, .raised) *) {
   border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--raised-edge));
   border-top-color: color-mix(in srgb, var(--accent) 48%, var(--raised-edge-top));
   border-radius: 12px;
@@ -923,6 +1440,11 @@
 .app.outpost .pill-link:hover {
   border-color: var(--accent);
   text-decoration: none;
+  scale: 1.06;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 0 26px -6px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 10px 22px -10px #000c;
 }
 .app.outpost .pill-link:hover::before {
   background-size: 400% 400%;
@@ -933,13 +1455,38 @@
   box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .app.outpost .pill-link:active {
-  scale: 0.97;
+  scale: 0.96;
 }
 .app.outpost .pill-link {
   transition:
     border-color 220ms var(--ease-out),
     background 220ms var(--ease-out),
-    scale 180ms var(--ease-out-expo);
+    box-shadow 320ms var(--ease-out),
+    scale 420ms var(--ease-spring);
+}
+/* Every button lifts toward the pointer with a spring and settles when pressed */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .app.outpost :is(.button, button.button) {
+    transition:
+      background 200ms var(--ease-out),
+      border-color 200ms var(--ease-out),
+      box-shadow 320ms var(--ease-out),
+      scale 420ms var(--ease-spring),
+      translate 420ms var(--ease-spring);
+  }
+  .app.outpost :is(.button, button.button):hover:not(:disabled) {
+    scale: 1.04;
+    translate: 0 -1px;
+  }
+  .app.outpost .button.primary:hover:not(:disabled) {
+    box-shadow:
+      0 0 24px -6px color-mix(in srgb, var(--accent) 80%, transparent),
+      0 10px 20px -10px #000c;
+  }
+  .app.outpost :is(.button, button.button):active:not(:disabled) {
+    scale: 0.97;
+    translate: 0 0;
+  }
 }
 .app.outpost.light .pill-link {
   background: var(--panel);
