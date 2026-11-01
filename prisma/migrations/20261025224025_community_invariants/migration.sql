@@ -1,0 +1,3 @@
+ALTER TABLE "ContentComment" ADD CONSTRAINT "Comment_exactly_one_target" CHECK (num_nonnulls("buildId", "compositionId") = 1), ADD CONSTRAINT "Comment_valid_body_version" CHECK (length("body") BETWEEN 3 AND 3000 AND "version" > 0);
+ALTER TABLE "CommentRevision" ADD CONSTRAINT "CommentRevision_valid_body_version" CHECK (length("body") BETWEEN 3 AND 3000 AND "version" > 0);
+ALTER TABLE "ContentReport" ADD CONSTRAINT "Report_exactly_one_target" CHECK (num_nonnulls("buildId", "compositionId", "commentId") = 1), ADD CONSTRAINT "Report_valid_state" CHECK ("status" IN ('OPEN','RESOLVED','DISMISSED') AND "version" > 0 AND length("reason") BETWEEN 10 AND 2000);

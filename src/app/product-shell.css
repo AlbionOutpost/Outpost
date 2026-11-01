@@ -1,0 +1,520 @@
+/* The shared product shell keeps the tools one click away. */
+.product-route:not(.light) {
+  --bg: #0d1217;
+  --sidebar: #10171c;
+  --panel: #141c22;
+  --elevated: #1b252d;
+  --border: #2c373f;
+  --accent: #bb5632;
+  --accent-ink: #f19a69;
+  --accent-wash: #35271f;
+  --muted: #afb9c2;
+}
+.product-route .site-header {
+  height: 72px;
+  padding: 0 max(24px, calc((100vw - 1536px) / 2 + 24px));
+  gap: 28px;
+  background: var(--sidebar);
+}
+.product-route .top-brand {
+  width: 154px;
+  min-width: 154px;
+}
+.product-route .top-brand .outpost-logo {
+  width: 154px;
+  height: auto;
+}
+.product-route .desktop-navigation {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 100%;
+}
+.product-route .desktop-navigation > a,
+.product-route .desktop-navigation > .nav-dropdown > summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 14px/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.product-route .desktop-navigation > a > svg {
+  display: none;
+}
+.product-route .desktop-navigation > a:hover,
+.product-route .desktop-navigation > a[aria-current="page"] {
+  color: var(--text);
+}
+.product-route .header-actions {
+  margin-left: auto;
+  min-width: 0;
+  gap: 12px;
+}
+.product-route .site-header .search-trigger {
+  justify-content: start;
+  width: 240px;
+  height: 36px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--elevated);
+}
+.product-route .search-shortcut {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  text-align: left;
+}
+.product-route .search-shortcut kbd {
+  display: none;
+}
+.product-frame {
+  display: block;
+  max-width: 1536px;
+  margin: 0 auto;
+  min-height: calc(100svh - 160px);
+}
+.product-frame > main {
+  width: 100%;
+  min-width: 0;
+  padding: 28px 24px;
+  max-width: none;
+  margin: 0;
+}
+.product-route footer {
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+}
+.product-route .home-auth-action {
+  display: inline-flex;
+  white-space: nowrap;
+  background: var(--action);
+  color: white;
+  border-color: var(--action);
+  font-size: 12px;
+  font-weight: 650;
+  min-height: 36px;
+}
+@media (max-width: 1350px) {
+  .product-route .site-header {
+    gap: 22px;
+  }
+  .product-route .desktop-navigation {
+    gap: 18px;
+  }
+  .product-route .site-header .search-trigger {
+    width: 34px;
+    height: 36px;
+    padding: 8px;
+    border: 0;
+    background: none;
+  }
+  .product-route .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .product-route .desktop-navigation {
+    display: none;
+  }
+  .product-route .site-header {
+    padding-inline: 20px;
+    gap: 16px;
+    height: 64px;
+  }
+  .product-route .top-brand {
+    width: auto;
+    min-width: 0;
+  }
+  .product-route .home-auth-action {
+    display: none;
+  }
+  .product-frame > main {
+    padding: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .product-frame > main {
+    padding: 16px;
+  }
+  .product-route .site-header {
+    padding-inline: 12px;
+    gap: 10px;
+  }
+  .product-route .top-brand .outpost-logo {
+    width: 130px;
+  }
+  .product-route .header-actions {
+    gap: 6px;
+  }
+}
+.product-route .production-mobile-summary > span:last-child {
+  color: var(--accent-ink);
+}
+.product-route .button.secondary:hover,
+.product-route .button.secondary:focus-visible {
+  color: var(--text);
+}
+/* Primary/secondary changes must stay readable throughout the state transition. */
+.product-route .button {
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-route .button {
+    transition: none;
+  }
+}
+
+/* Site header, every route: active section in ember with an underline, a wide search field,
+   the region pill, a two-state theme switch and the sign-in button. */
+.app.outpost .site-header {
+  height: 72px;
+  gap: 32px;
+  border-bottom: 1px solid #ffffff10;
+  background: #0f1116;
+}
+.app.outpost .site-header .desktop-navigation {
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+}
+.app.outpost .site-header .desktop-navigation > a,
+.app.outpost .site-header .desktop-navigation > .nav-dropdown > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  color: #d8d2c9;
+  font: 600 15px/1 var(--font-ui);
+}
+.app.outpost .site-header .desktop-navigation > a:hover,
+.app.outpost .site-header .desktop-navigation > .nav-dropdown > summary:hover {
+  color: #fff;
+}
+.app.outpost .site-header .desktop-navigation > a[aria-current="page"] {
+  color: var(--accent-ink);
+}
+.app.outpost .site-header .desktop-navigation > a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.app.outpost .site-header .header-actions {
+  margin-left: auto;
+  gap: 14px;
+}
+.app.outpost .site-header .search-trigger {
+  justify-content: start;
+  gap: 12px;
+  width: clamp(260px, 30vw, 500px);
+  height: 44px;
+  min-height: 44px;
+  padding: 0 10px 0 14px;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #15181f;
+  color: #a8a199;
+}
+.app.outpost .site-header .search-trigger:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, #ffffff1c);
+}
+.app.outpost .site-header .search-shortcut {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.app.outpost .site-header .search-shortcut kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  border: 1px solid #ffffff22;
+  border-radius: 5px;
+  background: #0f1116;
+  color: #d8d2c9;
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .site-header .region-picker > button,
+.app.outpost .site-header [aria-label="Albion region"] {
+  height: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+}
+/* Theme switch: a roomy track with the sun and moon at either end and an ember thumb that
+   travels between them. The leading edge leaves first and the trailing edge catches up, so the
+   thumb stretches like something sticky and snaps back into a circle. */
+.app.outpost .site-header .theme-switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 36px 36px;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 4px;
+  border: 1px solid #ffffff1c;
+  border-radius: 999px;
+  background: radial-gradient(60px 30px at 75% 50%, #4f6fe01a, transparent 70%), #12151b;
+  box-shadow: inset 0 1px 3px #000a;
+  cursor: pointer;
+  isolation: isolate;
+  /* Never squeezed by a long account name: the search box gives way first */
+  flex: none;
+}
+.app.outpost .site-header .theme-switch-thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 44px;
+  right: 3px;
+  z-index: -1;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3a46b, var(--accent) 55%, #c95f22);
+  box-shadow:
+    inset 0 1px 0 #ffffff66,
+    inset 0 -2px 3px #0003,
+    0 0 14px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 2px 6px #0008;
+  transition:
+    right 300ms var(--ease-spring),
+    left 460ms var(--ease-out-expo) 70ms,
+    scale 200ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch[data-mode="light"] .theme-switch-thumb {
+  left: 3px;
+  right: 44px;
+  transition:
+    left 300ms var(--ease-spring),
+    right 460ms var(--ease-out-expo) 70ms,
+    scale 200ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch:active .theme-switch-thumb {
+  scale: 0.92 0.86;
+}
+.app.outpost .site-header .theme-switch-option {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #b3aca2;
+  transition: color 260ms var(--ease-out-expo);
+}
+.app.outpost .site-header .theme-switch-option svg {
+  transition:
+    rotate 620ms var(--ease-spring),
+    scale 620ms var(--ease-spring);
+}
+.app.outpost .site-header .theme-switch-option.is-on {
+  color: #1a100b;
+}
+.app.outpost .site-header .theme-switch-option.is-sun:not(.is-on) svg {
+  rotate: -90deg;
+  scale: 0.8;
+}
+.app.outpost .site-header .theme-switch-option.is-moon:not(.is-on) svg {
+  rotate: 40deg;
+  scale: 0.8;
+}
+.app.outpost .site-header .theme-switch:hover .theme-switch-option:not(.is-on) {
+  color: #d8d2c8;
+}
+.app.outpost .site-header .theme-switch:hover .theme-switch-option:not(.is-on) svg {
+  scale: 1;
+  rotate: 0deg;
+}
+
+.app.outpost.light .site-header .theme-switch {
+  background: radial-gradient(60px 30px at 25% 50%, #f0a0601f, transparent 70%), var(--elevated);
+  box-shadow: inset 0 1px 3px #0000001f;
+}
+.app.outpost.light .site-header .theme-switch-option:not(.is-on) {
+  color: #7d766d;
+}
+.app.outpost.light .site-header .theme-switch:hover .theme-switch-option:not(.is-on) {
+  color: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost
+    .site-header
+    :is(.theme-switch-thumb, .theme-switch-option, .theme-switch-option svg) {
+    transition: none;
+  }
+}
+/* The theme change itself: the new page grows out of the switch (see the shell) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 1;
+}
+/* Clicks pass through the theme reveal, so the switch never waits for it to finish */
+::view-transition {
+  pointer-events: none;
+}
+.app.outpost .site-header .home-auth-action,
+.app.outpost .site-header .discord-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #15181f;
+  color: #f4f2ee;
+  font: 700 15px/1 var(--font-ui);
+}
+.app.outpost .site-header .discord-login:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, #ffffff1c);
+}
+.app.outpost.light .site-header {
+  border-bottom-color: #0000001a;
+  background: var(--panel);
+}
+.app.outpost.light .site-header :is(.search-trigger, .discord-login),
+.app.outpost.light .site-header .theme-switch {
+  border-color: var(--border);
+  background: var(--elevated);
+  color: var(--text);
+}
+.app.outpost.light .site-header .desktop-navigation > a,
+.app.outpost.light .site-header .desktop-navigation > .nav-dropdown > summary {
+  color: var(--text);
+}
+@media (max-width: 1350px) {
+  .app.outpost .site-header {
+    gap: 22px;
+  }
+  .app.outpost .site-header .desktop-navigation {
+    gap: 18px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 220px;
+  }
+  .app.outpost .site-header .search-shortcut kbd {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header {
+    height: 64px;
+    gap: 14px;
+  }
+  .app.outpost .site-header .search-trigger {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .app.outpost .site-header .search-shortcut {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .site-header .theme-switch {
+    display: none;
+  }
+}
+.app.outpost .site-header .search-trigger {
+  flex: 0 1 auto;
+  min-width: 200px;
+  max-width: none;
+}
+.app.outpost .site-header :is(.region-picker, .account-dropdown, .home-auth-action) {
+  flex: none;
+}
+.app.outpost .site-header .search-shortcut > span {
+  overflow: visible;
+  max-width: none;
+  text-overflow: clip;
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header .desktop-navigation {
+    display: none;
+  }
+}
+.app.outpost .site-header .search-trigger {
+  width: clamp(240px, 24vw, 480px);
+}
+@media (max-width: 1350px) {
+  .app.outpost .site-header .search-trigger {
+    width: 220px;
+  }
+}
+@media (max-width: 1100px) {
+  .app.outpost .site-header .search-trigger {
+    width: 44px;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost header.site-header .theme-switch {
+    display: none;
+  }
+}
+/* Phones: the switch collapses to the current mode's icon on the ember disc, one tap to change */
+@media (max-width: 600px) {
+  .app.outpost header.site-header .theme-switch {
+    display: inline-flex;
+    padding: 3px;
+  }
+  .app.outpost header.site-header .theme-switch-option:not(.is-on) {
+    display: none;
+  }
+  .app.outpost header.site-header .theme-switch[data-mode] .theme-switch-thumb {
+    left: 3px;
+    right: 3px;
+  }
+}
+/* Long Discord names stop at a sensible width instead of pushing the header around */
+.app.outpost .site-header .account-dropdown > summary > span {
+  max-width: 132px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The header is glass over the painting: the scene shows through a dark tint and a blur, with a
+   faint light along the top and an ember hairline at the bottom, so it is never a flat slab. */
+.app.outpost .main > header.site-header {
+  z-index: 20;
+  border-bottom: 1px solid transparent;
+  background:
+    linear-gradient(180deg, #ffffff0d, transparent 60%),
+    color-mix(in srgb, var(--chrome) 58%, transparent);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  box-shadow:
+    inset 0 1px 0 #ffffff12,
+    0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent),
+    0 10px 30px -18px #000c;
+}
+.app.outpost.light .main > header.site-header {
+  background:
+    linear-gradient(180deg, #ffffff1f, transparent 60%),
+    color-mix(in srgb, var(--chrome) 62%, transparent);
+  box-shadow:
+    inset 0 1px 0 #ffffff26,
+    0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent),
+    0 10px 30px -18px #3a251266;
+}

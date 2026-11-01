@@ -1,0 +1,341 @@
+/* Shared three-column calculator layout: library · inputs · sticky results. */
+.tool-workspace {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 320px;
+  gap: var(--space-6);
+  align-items: start;
+  margin: var(--space-8) 0;
+}
+.app.outpost .tool-workspace .panel {
+  padding: var(--space-5);
+  min-width: 0;
+}
+.tool-library h2,
+.tool-results h2 {
+  font-size: var(--text-lg);
+  margin: 0;
+}
+.tool-library-list {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+  max-height: 680px;
+  overflow-y: auto;
+}
+.app.outpost .tool-library-list button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  font-size: var(--text-sm);
+}
+.app.outpost .tool-library-list button[aria-pressed="true"] {
+  background: var(--accent-wash);
+  border-color: var(--accent);
+}
+.tool-library-list small {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--muted);
+}
+.tool-inputs {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.tool-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+.tool-identity :is(h2, p) {
+  margin: var(--space-1) 0;
+}
+.tool-identity p:not(.eyebrow),
+.tool-inputs small {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.tool-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.tool-section-heading h2 {
+  margin: 0;
+}
+.tool-price-field small {
+  display: block;
+  margin-top: var(--space-1);
+}
+.tool-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.tool-table :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+.tool-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  color: var(--muted);
+  font-weight: 500;
+}
+.tool-table .numeric {
+  text-align: right;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tool-table tbody tr:hover {
+  background: var(--elevated);
+}
+.tool-table input {
+  width: 9rem;
+  font-family: var(--font-data);
+}
+.tool-item-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+}
+.tool-results {
+  position: sticky;
+  top: 96px;
+}
+.tool-results > svg {
+  color: var(--accent);
+}
+.tool-main-result {
+  display: block;
+  margin: var(--space-3) 0;
+  font-family: var(--font-data);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.tool-main-result.negative {
+  color: var(--error);
+}
+.tool-main-result small {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  font-weight: 500;
+}
+.tool-results dl {
+  display: grid;
+  gap: var(--space-4);
+  border-block: 1px solid var(--border);
+  padding: var(--space-5) 0;
+  margin: var(--space-6) 0;
+}
+.tool-results dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+}
+.tool-results dt {
+  color: var(--muted);
+}
+.tool-results dd {
+  margin: 0;
+  text-align: right;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tool-results p {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+@media (max-width: 1280px) {
+  .tool-workspace {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .tool-results {
+    grid-column: 2;
+    position: static;
+  }
+  .tool-library {
+    grid-row: span 2;
+  }
+}
+@media (max-width: 700px) {
+  .tool-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: var(--space-6) 0;
+  }
+  .tool-workspace > * {
+    width: 100%;
+  }
+  .tool-library-list {
+    display: flex;
+    overflow-x: auto;
+    max-height: none;
+  }
+  .app.outpost .tool-library-list button {
+    flex: 0 0 auto;
+  }
+  .tool-results {
+    order: 3;
+  }
+}
+/* Reference tables page */
+.reference-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-6) 0 var(--space-3);
+}
+.app.outpost .reference-index a {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+.app.outpost .reference-index a:hover {
+  border-color: var(--accent);
+}
+.reference-note {
+  font-size: var(--text-sm);
+}
+.reference-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr));
+  gap: var(--space-5);
+  align-items: start;
+  margin-bottom: var(--space-10);
+}
+.app.outpost .reference-sections .panel {
+  padding: var(--space-5);
+  min-width: 0;
+  scroll-margin-top: 96px;
+}
+.reference-sections h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-lg);
+}
+.reference-block + .reference-block {
+  margin-top: var(--space-5);
+}
+.reference-block h3 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+}
+.reference-sections .table-scroll {
+  max-height: 520px;
+  overflow: auto;
+}
+/* Specialization & focus page */
+.mastery-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-4);
+}
+.mastery-spec-grid label {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 5rem;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.mastery-spec-grid input {
+  font-family: var(--font-data);
+  text-align: right;
+}
+.mastery-focus-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.mastery-focus-list li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--text-sm);
+}
+.mastery-focus-list small {
+  display: block;
+  color: var(--muted);
+  font-family: var(--font-data);
+}
+/* Roads of Avalon mapper */
+.avalon-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.avalon-time {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+.avalon-workspace .tool-library {
+  max-height: none;
+}
+.avalon-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.avalon-zone-info,
+.avalon-route small {
+  display: block;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: var(--text-xs);
+}
+.tool-table tr[data-closed="true"] {
+  opacity: 0.55;
+}
+.avalon-route {
+  display: grid;
+  gap: var(--space-3);
+  padding-left: var(--space-5);
+  margin: var(--space-4) 0;
+}
+.avalon-workspace .tool-results label {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+.app.outpost .tool-table .icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+}
+.app.outpost .tool-table .icon-button:hover {
+  color: var(--error);
+  border-color: var(--error);
+}

@@ -1,0 +1,14 @@
+{
+  "permission": "Owner authorized reuse of old pages in 2026-10-28 session",
+  "capturedAt": "2026-10-27",
+  "method": "Parse only the explicit JSON spell dictionary; resolve exact per-item craftingspelllist references/removals/slot fields. No scraped code execution, inferred spell names, statistics or unlocks.",
+  "sourceSha256": {
+    "Scrape/albiononlinegrind.com/report/assets/_next/static/chunks/1015-20150b4a5c8aefc7.js": "6c62e8f224bb314a1f6eb8bd1a7d6b38e3597c833ac5fac89e968419ff50e545",
+    "Scrape/albiononlinegrind.com/report/data/game-item-definitions.json": "66e5518b13414e641d7422a7698e8c2d1dbcd407cc63ab961ff773ecbd274d5b"
+  },
+  "items": 1195,
+  "options": 11873,
+  "outputSha256": "679a76d8bb303242e7883338fda354161b3cc468ac200d964f09d635f7b30a7a",
+  "currentPatchVerified": false,
+  "characterAndTierUnlocksVerified": false
+}

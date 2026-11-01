@@ -1,0 +1,156 @@
+.farming-workspace {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+  margin: 32px 0;
+}
+.app.outpost .farming-workspace .panel {
+  padding: 20px;
+  min-width: 0;
+}
+.farming-library h2 {
+  font-size: 18px;
+}
+.farming-library label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.farming-crop-list {
+  display: grid;
+  gap: 4px;
+  margin-top: 16px;
+  max-height: 680px;
+  overflow-y: auto;
+}
+.app.outpost .farming-crop-list button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: inherit;
+  font-size: 13px;
+}
+.app.outpost .farming-crop-list button[aria-pressed="true"] {
+  background: var(--elevated);
+  border-color: var(--border, #262d36);
+}
+.farming-crop-list small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+.farming-inputs {
+  display: grid;
+  gap: 20px;
+}
+.farming-inputs .input-grid {
+  align-items: start;
+}
+.farming-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border, #262d36);
+}
+.farming-identity :is(h2, p) {
+  margin: 4px 0;
+}
+.farming-inputs small,
+.farming-results p,
+.farming-inputs p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.farming-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.farming-results {
+  position: sticky;
+  top: 96px;
+}
+.farming-results > svg {
+  color: var(--accent, #f9733a);
+}
+.farming-main-result {
+  display: block;
+  font-size: 32px;
+  line-height: 1.3;
+  font-weight: 700;
+  margin: 12px 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.farming-results dl {
+  display: grid;
+  gap: 16px;
+  border-block: 1px solid var(--border, #262d36);
+  padding: 20px 0;
+  margin: 24px 0;
+}
+.farming-results dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+}
+.farming-results dt {
+  color: var(--muted);
+}
+.farming-results dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  .farming-workspace {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .farming-results {
+    grid-column: 2;
+    position: static;
+  }
+  .farming-library {
+    grid-row: span 2;
+  }
+}
+@media (max-width: 700px) {
+  .farming-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .farming-workspace > * {
+    width: 100%;
+  }
+  .farming-crop-list {
+    display: flex;
+    overflow-x: auto;
+    max-width: 100%;
+    padding: 4px;
+  }
+  .app.outpost .farming-crop-list button {
+    min-width: 156px;
+  }
+  .farming-results {
+    order: 2;
+  }
+  .farming-inputs .input-grid {
+    grid-template-columns: 1fr;
+  }
+}

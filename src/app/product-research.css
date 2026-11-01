@@ -1,0 +1,394 @@
+/* Research archetype: persistent desktop rails, readable tables and contextual data. */
+.build-weapon-rail {
+  min-width: 0;
+}
+.weapon-rail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.app.outpost .weapon-rail-heading h2 {
+  font: 650 15px/1.4 var(--font-ui);
+  margin: 0;
+}
+.weapon-rail-heading > span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.app.outpost .weapon-rail-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0 10px;
+  background: var(--bg);
+  margin-bottom: 12px;
+}
+.app.outpost .weapon-rail-search input {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  width: 100%;
+  min-width: 0;
+  font-size: 13px;
+}
+.build-weapon-rail nav {
+  display: grid;
+  gap: 2px;
+}
+.app.outpost .build-weapon-rail nav > a {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--secondary, var(--muted));
+  font-size: 13px;
+  text-decoration: none;
+}
+.app.outpost .build-weapon-rail nav > a:hover {
+  border-color: var(--border);
+  background: var(--elevated);
+}
+.app.outpost .build-weapon-rail nav > a[aria-current] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border-color: var(--border);
+}
+.build-weapon-rail a small {
+  font: 400 12px/1.4 var(--font-data);
+  color: var(--muted);
+}
+.app.outpost .market-explorer-page .market-workspace.market-focused.market-rebuild {
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 20px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-query-panel {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  padding: 16px;
+  position: sticky;
+  top: 20px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-query-panel .market-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-selection-row {
+  display: grid;
+  gap: 12px;
+  padding: 16px 0;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-filter-disclosures {
+  display: grid;
+  gap: 8px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-query-panel label {
+  font-size: 13px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-start-examples {
+  justify-content: flex-start;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-board {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  padding: 20px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-item-panel {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild > .reference-market-history {
+  grid-column: 2;
+  min-width: 0;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild > .market-saved-work {
+  grid-column: 2;
+  min-width: 0;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-results-heading h2 {
+  font-size: 20px;
+}
+.app.outpost .market-explorer-page .market-focused.market-rebuild .market-table th {
+  font-family: var(--font-ui);
+}
+@media (min-width: 1320px) {
+  .app.outpost
+    .market-explorer-page
+    .market-workspace.market-focused.market-rebuild.has-city-detail {
+    grid-template-columns: 248px minmax(0, 1fr) 300px;
+  }
+  .app.outpost
+    .market-explorer-page
+    .market-focused.market-rebuild.has-city-detail
+    > .market-item-panel {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 20px;
+  }
+  .app.outpost
+    .market-explorer-page
+    .market-focused.market-rebuild.has-city-detail
+    > .reference-market-history {
+    grid-column: 2 / -1;
+  }
+  .app.outpost
+    .market-explorer-page
+    .market-focused.market-rebuild.has-city-detail
+    > .market-saved-work {
+    grid-column: 2 / -1;
+  }
+}
+@media (min-width: 901px) {
+  .app.outpost .ecosystem-library-page .library-discovery-workspace {
+    display: grid;
+    grid-template-columns: 252px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .app.outpost .ecosystem-library-page .library-search-toolbar {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-filter-rail {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 16px;
+    background: var(--panel-face);
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
+    border-radius: 10px;
+    padding: 16px;
+    min-width: 0;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-results {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .app.outpost .ecosystem-library-page .mobile-filter-trigger {
+    display: none;
+  }
+  .app.outpost .ecosystem-library-page .mobile-filter-content {
+    display: block;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-filter-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .app.outpost .ecosystem-library-page .filter-drawer-heading {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .app.outpost .market-explorer-page .market-workspace.market-focused.market-rebuild,
+  .app.outpost
+    .market-explorer-page
+    .market-workspace.market-focused.market-rebuild.has-city-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost
+    .market-explorer-page
+    .market-focused.market-rebuild
+    > :is(
+      .market-query-panel,
+      .market-board,
+      .market-item-panel,
+      .reference-market-history,
+      .market-saved-work
+    ) {
+    grid-column: 1;
+    grid-row: auto;
+    position: static;
+  }
+  .app.outpost
+    .market-explorer-page
+    .market-focused.market-rebuild
+    .market-query-panel
+    .market-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .market-explorer-page .market-focused.market-rebuild .market-form > :first-child,
+  .app.outpost .market-explorer-page .market-focused.market-rebuild .market-form > button {
+    grid-column: 1/-1;
+  }
+  .app.outpost .build-weapon-rail nav {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+.detail-build-context {
+  display: none;
+  min-width: 0;
+}
+@media (min-width: 1320px) {
+  .app.outpost .detail-workspace-grid {
+    grid-template-columns: 240px minmax(320px, 0.9fr) minmax(0, 1.1fr);
+    grid-template-areas: "context inventory summary";
+    gap: 20px;
+  }
+  .app.outpost .detail-build-context {
+    display: block;
+    grid-area: context;
+    padding: 20px;
+    border: 1px solid var(--panel-edge);
+    border-top-color: var(--panel-edge-top);
+    border-radius: 10px;
+    background: var(--panel-face);
+    position: sticky;
+    top: 64px;
+  }
+  .app.outpost .detail-build-context h2 {
+    font: 650 18px/1.4 var(--font-ui);
+    margin: 0 0 16px;
+  }
+  .detail-build-context .detail-facts div {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .detail-build-context p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 8px 0;
+  }
+  .detail-build-context .button {
+    margin-top: 16px;
+    width: 100%;
+  }
+}
+.detail-context-completeness {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 16px;
+}
+.detail-context-completeness > strong {
+  font: 600 32px/1.2 var(--font-data);
+}
+.detail-context-completeness small {
+  font-size: 16px;
+  color: var(--muted);
+}
+.detail-context-completeness > span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.detail-context-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.detail-context-tags > span {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 4px 6px;
+  font-size: 12px;
+}
+.inventory-empty-caption {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.app.outpost .anatomical-inventory .slot-game-art {
+  display: grid;
+  place-items: center;
+}
+.app.outpost .anatomical-inventory .slot-game-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.app.outpost .ecosystem-library-page .ecosystem-filter-form .weapon-rail-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-form .weapon-rail-search input {
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  width: 100%;
+}
+.app.outpost .build-preview-card .equipment-strip {
+  justify-content: flex-start;
+}
+
+/* A compact scenic masthead and gear-led cards restore the game's visual identity. */
+.app.outpost .builds-ecosystem .builds-ecosystem-header {
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 36%,
+      color-mix(in srgb, var(--bg) 84%, transparent) 64%,
+      color-mix(in srgb, var(--bg) 32%, transparent)
+    ),
+    url("/albion/illustrations/build-v1.webp") right 18% / 60% auto no-repeat;
+  border-radius: 8px 8px 0 0;
+  padding-inline: 20px;
+  overflow: hidden;
+}
+.app.outpost .builds-heading-copy p {
+  max-width: 66ch;
+  color: var(--secondary);
+}
+.app.outpost .builds-heading-mark {
+  border-radius: 10px;
+  background: var(--accent-wash);
+}
+.app.outpost .builds-header-bottom {
+  margin-inline: -20px;
+  padding-inline: 12px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+}
+@media (max-width: 600px) {
+  .app.outpost .builds-ecosystem .builds-ecosystem-header {
+    padding-inline: 12px;
+    background-size: auto 100%;
+  }
+  .app.outpost .builds-header-bottom {
+    margin-inline: -12px;
+    padding-inline: 4px;
+  }
+}
+
+@media (min-width: 901px) {
+  .app.outpost .ecosystem-library-page .library-search-toolbar {
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) 220px auto auto;
+  }
+  .app.outpost .ecosystem-library-page .library-search-toolbar .ecosystem-sort-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .app.outpost .ecosystem-library-page .library-search-toolbar .ecosystem-sort-label select {
+    min-width: 0;
+    flex: 1;
+  }
+}

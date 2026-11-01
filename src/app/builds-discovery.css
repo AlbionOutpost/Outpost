@@ -1,0 +1,1303 @@
+/* Inventory-led build discovery. Counts, equipment and abilities come from recorded builds. */
+.app.outpost .builds-ecosystem {
+  max-width: 1488px;
+  margin: 0 auto;
+  min-width: 0;
+}
+.app.outpost .builds-ecosystem-header {
+  display: block;
+  position: static;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  padding: 22px 0 0;
+  background: linear-gradient(90deg, var(--bg), color-mix(in srgb, var(--panel) 45%, var(--bg)));
+}
+.app.outpost .builds-heading-copy {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 82px;
+  margin-bottom: 13px;
+}
+.builds-heading-mark {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.app.outpost .builds-ecosystem-header .page-title {
+  font: 750 28px/1.16 var(--font-ui);
+  letter-spacing: -0.7px;
+  margin: 0 0 8px;
+}
+.app.outpost .builds-heading-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 75ch;
+}
+.app.outpost .builds-heading-copy .builds-eyebrow {
+  font: 650 12px/1.2 var(--font-ui);
+  letter-spacing: 1.3px;
+  color: var(--accent-ink);
+  margin: 0 0 7px;
+}
+.builds-header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.builds-collection-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.app.outpost .builds-collection-tabs > a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 12px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+.app.outpost .builds-collection-tabs > a[aria-current="page"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.app.outpost .builds-header-bottom > .button {
+  min-height: 34px;
+  font-size: 12px;
+  padding: 7px 13px;
+  margin-bottom: 9px;
+  flex-shrink: 0;
+}
+.ecosystem-discovery-layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.ecosystem-filter-rail {
+  min-width: 0;
+  padding: 14px;
+}
+.ecosystem-filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.app.outpost .ecosystem-filter-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+}
+.app.outpost .ecosystem-filter-form :is(input, select) {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+  padding: 8px 9px;
+  min-height: 36px;
+}
+.ecosystem-filter-form fieldset {
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 14px 0 0;
+  margin: 0;
+  min-width: 0;
+}
+.app.outpost .ecosystem-filter-form legend {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ecosystem-family-list {
+  max-height: 380px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  margin: 3px -5px 13px;
+  padding: 0 4px;
+}
+.app.outpost .ecosystem-family-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 4px 5px;
+  color: var(--muted);
+  font-size: 12px;
+  border-radius: 4px;
+}
+.ecosystem-family-option > .numeric {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.ecosystem-family-option > img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+.app.outpost .ecosystem-family-option[aria-current="true"] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.app.outpost .ecosystem-filter-form p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+.ecosystem-results {
+  min-width: 0;
+}
+.ecosystem-result-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-height: 48px;
+}
+.ecosystem-source-switch {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  margin-right: auto;
+}
+.app.outpost .ecosystem-source-switch > a {
+  padding: 7px 9px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.app.outpost .ecosystem-source-switch > a[aria-current="page"] {
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  border-color: var(--border);
+}
+.ecosystem-source-switch .numeric {
+  font-size: 12px;
+  padding: 3px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  margin-left: 5px;
+}
+.app.outpost .ecosystem-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.app.outpost .ecosystem-sort-label select {
+  font-size: 12px;
+  min-height: 31px;
+  padding: 5px 24px 5px 8px;
+  max-width: 165px;
+}
+.app.outpost .ecosystem-apply-sort {
+  min-height: 31px;
+  font-size: 12px;
+  padding: 5px 9px;
+}
+.ecosystem-view-switch {
+  display: flex;
+  gap: 4px;
+  border-left: 1px solid var(--border);
+  padding-left: 8px;
+}
+.app.outpost .ecosystem-view-switch > a {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-view-switch > a[aria-current="true"] {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.ecosystem-results-subline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+}
+.app.outpost .ecosystem-results-subline > p {
+  font-size: 12px;
+  margin: 0;
+  color: var(--muted);
+}
+.ecosystem-results-subline strong {
+  color: var(--text);
+}
+.ecosystem-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.app.outpost .ecosystem-active-filters > a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-build-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .ecosystem-build-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  min-width: 0;
+  overflow: visible;
+  box-shadow: none;
+}
+.app.outpost .ecosystem-build-card:hover {
+  border-color: var(--accent);
+  background: var(--elevated);
+}
+.app.outpost .ecosystem-build-card > .ecosystem-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  color: var(--text);
+  min-width: 0;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent-wash), transparent 105px);
+}
+.ecosystem-card-topline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 27px;
+  min-height: 20px;
+}
+.app.outpost .ecosystem-activity {
+  display: inline-block;
+  padding: 3px 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ecosystem-card-kind {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+.ecosystem-card-spells {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+}
+.ecosystem-card-spells > span {
+  display: inline-flex;
+  max-width: 100%;
+}
+.ecosystem-card-spells img {
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+.ecosystem-no-spells {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.device-save-feedback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.app.outpost .view-list .ecosystem-build-grid {
+  grid-template-columns: 1fr;
+}
+.app.outpost .view-list .ecosystem-card-main {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(210px, 1.4fr) minmax(120px, 0.7fr);
+  align-items: center;
+  gap: 10px 18px;
+}
+.view-list .ecosystem-card-topline {
+  grid-column: 1;
+  grid-row: 1;
+}
+.view-list .ecosystem-card-spells {
+  grid-column: 2;
+  grid-row: 3;
+}
+.ecosystem-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 250px;
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  text-align: center;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-empty :is(h2, h3) {
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  margin: 12px 0 6px;
+  color: var(--text);
+}
+.app.outpost .ecosystem-empty p {
+  max-width: 55ch;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+.ecosystem-empty > svg {
+  color: var(--accent-ink);
+}
+.save-build-filter {
+  position: relative;
+  flex-shrink: 0;
+}
+.app.outpost .save-build-filter > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.save-build-filter > div {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  z-index: 12;
+  width: 260px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--elevated);
+  box-shadow: var(--premium-shadow);
+}
+.app.outpost .save-build-filter label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.app.outpost .save-build-filter input {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+}
+.app.outpost .save-build-filter p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 9px 0 0;
+}
+.ecosystem-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 24px 0 16px;
+}
+.app.outpost .ecosystem-section-heading h2 {
+  font: 700 20px/1.3 var(--font-ui);
+  margin: 0 0 6px;
+}
+.app.outpost .ecosystem-section-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.device-favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.device-favorite-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+}
+.device-favorite-card > .device-favorite-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 44px 18px 16px;
+  min-width: 0;
+  height: 100%;
+}
+.device-favorite-card > .device-favorite-content > span {
+  min-width: 0;
+}
+.app.outpost .device-favorite-card h3 {
+  font-size: 14px;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.app.outpost .device-favorite-card small {
+  font-size: 12px;
+  color: var(--accent-ink);
+}
+.app.outpost .device-favorite-card > .device-favorite-content > span > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.saved-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.saved-filter-list > article {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.saved-filter-list > article > div {
+  min-width: 0;
+  margin-right: auto;
+}
+.app.outpost .saved-filter-list h3 {
+  font-size: 15px;
+  margin: 0 0 5px;
+}
+.app.outpost .saved-filter-list p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1180px) {
+  .app.outpost .ecosystem-build-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ecosystem-discovery-layout {
+    grid-template-columns: 195px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .device-favorites-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .app.outpost .builds-ecosystem-header {
+    padding-top: 14px;
+  }
+  .ecosystem-discovery-layout {
+    grid-template-columns: 1fr;
+  }
+  .ecosystem-filter-rail {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .ecosystem-filter-form {
+    padding: 15px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .ecosystem-family-list {
+    max-height: 200px;
+  }
+  .builds-header-bottom {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .builds-collection-tabs {
+    order: 2;
+    width: 100%;
+    gap: 0;
+  }
+  .builds-header-bottom > .button {
+    margin-left: auto;
+  }
+  .app.outpost .builds-heading-copy {
+    min-height: 74px;
+    gap: 12px;
+  }
+  .builds-heading-mark {
+    width: 44px;
+    height: 44px;
+  }
+  .app.outpost .builds-ecosystem-header .page-title {
+    font-size: 25px;
+  }
+  .app.outpost .view-list .ecosystem-card-main {
+    grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.3fr);
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .builds-heading-copy p {
+    font-size: 12px;
+  }
+  .app.outpost .builds-heading-copy .builds-eyebrow {
+    font-size: 12px;
+  }
+  .app.outpost .builds-ecosystem-header .page-title {
+    font-size: 23px;
+  }
+  .builds-heading-mark {
+    display: none;
+  }
+  .app.outpost .builds-collection-tabs > a {
+    font-size: 12px;
+    padding: 12px 10px;
+    gap: 5px;
+  }
+  .builds-collection-tabs svg {
+    width: 13px;
+  }
+  .ecosystem-result-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ecosystem-source-switch {
+    width: 100%;
+    margin-right: 0;
+  }
+  .ecosystem-sort-label {
+    margin-right: auto;
+  }
+  .app.outpost .ecosystem-sort-label select {
+    max-width: 145px;
+  }
+  .ecosystem-view-switch {
+    padding-left: 5px;
+  }
+  .app.outpost .ecosystem-build-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .app.outpost .ecosystem-build-card > .ecosystem-card-main {
+    padding: 14px;
+  }
+  .ecosystem-card-topline {
+    padding-right: 36px;
+  }
+  .app.outpost .view-list .ecosystem-card-main {
+    display: flex;
+  }
+  .device-favorites-grid {
+    grid-template-columns: 1fr;
+  }
+  .saved-filter-list > article {
+    flex-wrap: wrap;
+    padding: 14px;
+    gap: 12px;
+  }
+  .saved-filter-list > article > div {
+    width: calc(100% - 38px);
+  }
+  .saved-filter-list > article > .button {
+    margin-left: 32px;
+  }
+  .saved-filter-list > article > .icon-button {
+    margin-left: auto;
+  }
+  .ecosystem-section-heading {
+    align-items: flex-start;
+  }
+  .ecosystem-section-heading > .text-link {
+    font-size: 12px;
+  }
+  .ecosystem-results-subline {
+    align-items: flex-start;
+  }
+  .save-build-filter > div {
+    right: -3px;
+    width: 250px;
+  }
+}
+.app.outpost .ecosystem-build-card.build-preview-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.app.outpost .ecosystem-build-card .equipment-strip {
+  display: flex;
+  gap: 3px;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  min-width: 0;
+  justify-content: flex-start;
+}
+.app.outpost .ecosystem-build-card .equipment-strip > .strip-slot {
+  flex: 0 1 40px;
+  min-width: 0;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.app.outpost .ecosystem-build-card .equipment-strip img {
+  width: 100%;
+  height: auto;
+  max-width: 40px;
+  border-radius: 3px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-footer {
+  margin: 0 12px;
+  padding: 8px 0 10px;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  min-height: 42px;
+  gap: 6px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-author small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .ecosystem-build-card .loadout-card-footer .build-card-save {
+  min-height: 28px;
+  padding: 4px 7px;
+  font-size: 12px;
+}
+.app.outpost .ecosystem-build-card .loadout-card-empty {
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .builds-ecosystem .account-build-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 1180px) {
+  .app.outpost .builds-ecosystem .account-build-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .builds-ecosystem .account-build-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 31px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: var(--panel);
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a[aria-current="true"] {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.app.outpost .builds-ecosystem .build-results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+.app.outpost .builds-ecosystem .build-results-heading h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.app.outpost .builds-ecosystem .build-results-heading > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .builds-ecosystem.view-list .account-build-grid {
+  grid-template-columns: 1fr;
+}
+.app.outpost .favorite-compositions-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .favorite-compositions-list > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.favorite-compositions-list > a > span:first-of-type {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin-right: auto;
+}
+.favorite-compositions-list svg {
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+.ecosystem-favorites-page .ecosystem-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 900px) {
+  .app.outpost .favorite-compositions-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .favorite-compositions-list {
+    grid-template-columns: 1fr;
+  }
+  .ecosystem-favorites-page section[aria-label="Account favorites"] > .ecosystem-section-heading {
+    flex-wrap: wrap;
+  }
+}
+
+.app.outpost .ecosystem-title-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.app.outpost .ecosystem-title-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.app.outpost .ecosystem-title-link:focus-visible {
+  outline: 0;
+}
+.app.outpost .ecosystem-title-link:focus-visible::after {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+.app.outpost .ecosystem-build-card .build-card-save,
+.app.outpost .device-favorite-card .build-card-save {
+  position: relative;
+  z-index: 2;
+}
+
+/* Phase A: a compact, weapon-led library. Full equipment belongs on build detail. */
+.app.outpost .ecosystem-library-page .library-discovery-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.app.outpost .library-search-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+}
+.app.outpost .library-search-toolbar .ecosystem-search-label {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.app.outpost .library-search-toolbar input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.app.outpost .library-search-toolbar .ecosystem-sort-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.app.outpost .library-search-toolbar .ecosystem-sort-label select {
+  max-width: none;
+  min-height: 38px;
+}
+.app.outpost .library-search-toolbar .ecosystem-apply-sort,
+.app.outpost .library-search-toolbar .ecosystem-view-switch > a {
+  min-height: 38px;
+}
+.app.outpost .library-search-toolbar .ecosystem-view-switch {
+  height: 38px;
+  align-items: center;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-rail {
+  width: 100%;
+  padding: 12px;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-form fieldset {
+  padding: 0;
+  border: 0;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-form legend {
+  padding-bottom: 7px;
+}
+.app.outpost .ecosystem-library-page .ecosystem-filter-form .library-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app.outpost .library-filter-actions .button {
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app.outpost .library-filter-actions .text-link {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app.outpost .ecosystem-library-page .ecosystem-results {
+  width: 100%;
+}
+.app.outpost .ecosystem-library-page .ecosystem-results-subline {
+  margin: 0 0 12px;
+}
+.app.outpost .ecosystem-library-page.view-list .ecosystem-card-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.6fr) minmax(200px, 1fr) minmax(145px, 0.7fr);
+  align-items: center;
+  gap: 16px;
+  padding-right: 52px;
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .app.outpost .ecosystem-library-page .ecosystem-filter-form {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .app.outpost .library-filter-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 900px) {
+  .app.outpost .ecosystem-library-page .ecosystem-filter-rail {
+    padding: 0;
+    border: 0;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-filter-form {
+    display: flex;
+    gap: 20px;
+    padding: 16px;
+    align-items: stretch;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-filter-form .library-filter-actions {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .app.outpost .ecosystem-library-page .mobile-filter-trigger {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .app.outpost .ecosystem-library-page.view-list .ecosystem-card-main {
+    display: flex;
+    padding-right: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .ecosystem-library-page .builds-ecosystem-header {
+    padding-top: 8px;
+    margin-bottom: 12px;
+    background: transparent;
+  }
+  .app.outpost .ecosystem-library-page .builds-heading-copy {
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+  .app.outpost .ecosystem-library-page .builds-heading-copy p {
+    line-height: 1.5;
+  }
+  .app.outpost .library-search-toolbar {
+    position: sticky;
+    top: var(--header-height, 56px);
+    z-index: 8;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: end;
+    gap: 8px;
+    padding: 10px;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-search-label {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-sort-label {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-sort-label select {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-view-switch {
+    padding-left: 5px;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-view-switch > a {
+    width: 30px;
+  }
+  .app.outpost .ecosystem-library-page .ecosystem-build-grid {
+    gap: 8px;
+  }
+}
+.app.outpost .ecosystem-library-page .builds-heading-copy {
+  min-height: 0;
+}
+@media (min-width: 901px) {
+  .app.outpost .ecosystem-library-page .ecosystem-filter-rail {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .app.outpost .collapsible-desktop .mobile-filter-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 8px 12px;
+    margin: 0;
+    font-size: 12px;
+  }
+  .app.outpost .collapsible-desktop:not(.expanded) > .mobile-filter-content {
+    display: none;
+  }
+  .app.outpost .collapsible-desktop.expanded > .mobile-filter-content {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .ecosystem-library-page .builds-ecosystem-header {
+    position: relative;
+  }
+  .app.outpost .ecosystem-library-page .builds-header-bottom > .button {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
+  .app.outpost .ecosystem-library-page .builds-heading-copy h1 {
+    max-width: calc(100% - 144px);
+  }
+}
+@media (min-width: 901px) {
+  .app.outpost .collapsible-desktop .mobile-filter-trigger {
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-ui);
+    cursor: pointer;
+  }
+  .app.outpost .collapsible-desktop .mobile-filter-trigger[aria-expanded="true"] {
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+}
+@media (max-width: 600px) {
+  .app.outpost .library-search-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .app.outpost .library-search-toolbar .ecosystem-view-switch {
+    display: none;
+  }
+}
+.app.outpost .library-search-toolbar :is(input, select) {
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.app.outpost .library-search-toolbar input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+/* Library build windows: bar, weapon + author + abilities beside the loadout board, a
+   caption line in. Three across; the list view stretches them to one per row. */
+/* Framed like every card that leads somewhere (product-system.css); only the layout here */
+.app.outpost .library-build-card.raised {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 18px 18px 0;
+}
+.app.outpost .library-build-card .ecosystem-title-link {
+  min-width: 0;
+  flex: 1;
+}
+/* The window has its own ways in (title, caption); no stretched link over the heart */
+.app.outpost .library-build-card .ecosystem-title-link::after {
+  content: none;
+}
+.app.outpost .library-build-card .ecosystem-title-link:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.app.outpost .library-build-card .ecosystem-title-link h2 {
+  margin: 0;
+  overflow: hidden;
+  font: 800 17px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .library-build-card .ecosystem-title-link:hover h2 {
+  color: var(--accent-ink);
+}
+.app.outpost .library-build-card .landing-chips {
+  flex: none;
+}
+.app.outpost .library-build-card > .ecosystem-card-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 12px;
+  padding: 0;
+  background: none;
+}
+.app.outpost .library-build-card .library-build-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.app.outpost .library-primary-weapon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--well-border);
+  border-radius: 10px;
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .library-primary-weapon img {
+  width: 56px;
+  height: 56px;
+}
+.app.outpost .library-build-copy {
+  min-width: 0;
+}
+.app.outpost .library-build-classification {
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .library-build-copy > small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .library-mobile-date {
+  display: none;
+}
+.app.outpost .library-build-card .ecosystem-card-spells {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.app.outpost .library-build-card .ecosystem-card-spells > span {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--well-border);
+  border-radius: 50%;
+  background: var(--well);
+}
+.app.outpost .library-build-card .ecosystem-card-spells img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+.app.outpost .library-build-card .ecosystem-no-spells {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .library-build-card .library-build-identity {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 0 12px;
+  align-items: start;
+}
+.app.outpost .library-build-equipment {
+  display: none;
+  gap: 4px;
+}
+.app.outpost .library-build-equipment > span {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+}
+.app.outpost .library-build-equipment img {
+  width: 30px;
+  height: 30px;
+}
+.app.outpost .library-build-board {
+  display: grid;
+  place-items: start end;
+}
+.app.outpost .library-build-board .loadout-board.is-mini {
+  --cell: 38px;
+  --gap: 3px;
+}
+.app.outpost .library-build-board .loadout-board-cell,
+.app.outpost .library-build-board .loadout-board-slot.is-empty .loadout-board-cell {
+  border-color: var(--well-border);
+  background: var(--well);
+}
+.app.outpost .library-card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  margin: 10px 0 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.app.outpost .library-card-description.is-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+.app.outpost .ecosystem-library-page.view-list .library-build-card > .ecosystem-card-main {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.app.outpost .ecosystem-library-page.view-list .library-build-card .library-build-identity {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+@media (max-width: 700px) {
+  .app.outpost .library-build-card.raised {
+    gap: 8px;
+    padding: 10px 12px 0;
+  }
+  .app.outpost .library-build-card > .ecosystem-card-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .library-build-board,
+  .app.outpost .library-build-card .ecosystem-card-spells,
+  .app.outpost .library-card-description {
+    display: none;
+  }
+  .app.outpost .library-build-equipment {
+    display: flex;
+    grid-column: 1 / -1;
+  }
+  .app.outpost .library-build-card .library-build-identity {
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+  }
+  .app.outpost .library-primary-weapon {
+    width: 48px;
+    height: 48px;
+  }
+  .app.outpost .library-primary-weapon img {
+    width: 42px;
+    height: 42px;
+  }
+  .app.outpost .library-card-caption {
+    margin-inline: -12px;
+    padding: 8px 12px;
+  }
+  .app.outpost .library-mobile-date {
+    display: inline;
+  }
+}

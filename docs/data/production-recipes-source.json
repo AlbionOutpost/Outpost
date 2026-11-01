@@ -1,0 +1,345 @@
+{
+  "revision": "1a469e53de028c5f85cdd80505f10cbd0a2515cf",
+  "sourceDate": "2026-10-12T11:25:12Z",
+  "source": "https://raw.githubusercontent.com/ao-data/ao-bin-dumps/1a469e53de028c5f85cdd80505f10cbd0a2515cf/items.xml",
+  "sourceSha256": "e034632b7a039ee308d5fc0bffb1368355c13cbd6ca2dabc9d0c5500130a685b",
+  "scope": "Minimal factual transcription: nine base crafting families at T4\u2013T8, five base refining resources at T4\u2013T8. Only first standard refining path; no hearts, enchantment or alternative recipes. All nine prior T4 crafting recipes independently match these archived records. Source game build and current-patch applicability remain unverified.",
+  "rights": "No upstream code, prose, descriptions or artwork redistributed. The archive has no declared license; no general redistribution or legal approval is asserted. This authored table transcribes only factual IDs, ingredient quantities, output counts and focus values. Operator legal review remains separate. Existing July names retain their MIT notice; supplementary resource names/identity are factual fields read from the official game-info API.",
+  "craftingRecipes": 45,
+  "refiningRecipes": 25,
+  "officialResourceNames": {
+    "T3_CLOTH": {
+      "name": "Neat Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T3_CLOTH/data",
+      "sha256": "e492d8ea88092b50ded8826f4a5e4b0e79a9e442b2b9e54cf61fd01f602ef660"
+    },
+    "T3_LEATHER": {
+      "name": "Thick Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T3_LEATHER/data",
+      "sha256": "11fa558115173f2ff114fa6e8570f8ebcd7d2213f12a65ab5f17ddba59641a21"
+    },
+    "T3_METALBAR": {
+      "name": "Bronze Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T3_METALBAR/data",
+      "sha256": "0ae4a3ee3029d30d8a3a57130c66aa46781d83174a4030ae0c97fb9ba83a3f96"
+    },
+    "T3_PLANKS": {
+      "name": "Chestnut Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T3_PLANKS/data",
+      "sha256": "2dbf72bb28634bff8528f109d2ac6efcfc6def7f4b02e3a503f5414271846ab8"
+    },
+    "T3_STONEBLOCK": {
+      "name": "Sandstone Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T3_STONEBLOCK/data",
+      "sha256": "b7e21f85c18540f527f8aa8a29abf67f2d3668349572154aa3bec991f1966d2d"
+    },
+    "T4_CLOTH": {
+      "name": "Fine Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_CLOTH/data",
+      "sha256": "1bc974ffc68d36be66e6802bded53162e5cf22679cec5bdafef304c77db57cf4"
+    },
+    "T4_FIBER": {
+      "name": "Hemp",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_FIBER/data",
+      "sha256": "d90a264fea7b77c62d616d17a91f7e6cdd635c98920a01a4c1e3cc94ce5fb597"
+    },
+    "T4_HIDE": {
+      "name": "Medium Hide",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_HIDE/data",
+      "sha256": "c4e453a10bfe22aee8f2c3f2014665cdde8b715d1a14460cd7ab3888cbeda8b8"
+    },
+    "T4_LEATHER": {
+      "name": "Worked Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_LEATHER/data",
+      "sha256": "bca58db486904ccc81817125c607cf2205bab2e5e3f99cb3eca46bf14403e77e"
+    },
+    "T4_METALBAR": {
+      "name": "Steel Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_METALBAR/data",
+      "sha256": "665f4a670b60fa7837bbb2ed4015554cb60cbb9516d6f826c594351bf8dba627"
+    },
+    "T4_ORE": {
+      "name": "Iron Ore",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_ORE/data",
+      "sha256": "7d1389a31c63a9c165a89e427ad09e7fd5be239d0ec77f579dea692143da3f69"
+    },
+    "T4_PLANKS": {
+      "name": "Pine Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_PLANKS/data",
+      "sha256": "4072526da6ee3cb5cad144b6ad4a6f322b59e56b47b88c7dfe2a8abda3cdf775"
+    },
+    "T4_ROCK": {
+      "name": "Travertine",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_ROCK/data",
+      "sha256": "95e0ef5a514a8117e4dd743d8773708e5e2abf1849a3fd1a169cf69fe779649a"
+    },
+    "T4_STONEBLOCK": {
+      "name": "Travertine Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_STONEBLOCK/data",
+      "sha256": "212fc435bc7cab6639f9e3aeb136b14854c3af704409786fc7ec26d8605e40c5"
+    },
+    "T4_WOOD": {
+      "name": "Pine Logs",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T4_WOOD/data",
+      "sha256": "874e80db24cd7b510eb0d46e74fbfe86fef87cc85cb64968bf7badd095d00ee4"
+    },
+    "T5_CLOTH": {
+      "name": "Ornate Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_CLOTH/data",
+      "sha256": "96d0ad18171c86994c87e2bb39337a9cabd5b0a6d05f10fd12d24c89888bb147"
+    },
+    "T5_HIDE": {
+      "name": "Heavy Hide",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_HIDE/data",
+      "sha256": "6e71489583d2c56c4d223b806e13c0f8df91f73486a902d07e37f91650be8e46"
+    },
+    "T5_LEATHER": {
+      "name": "Cured Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_LEATHER/data",
+      "sha256": "d1b1748f13ad8c7598b4a1106cb3809d80d8bc19ef20b2728dc93fce6179f663"
+    },
+    "T5_FIBER": {
+      "name": "Skyflower",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_FIBER/data",
+      "sha256": "72564ca81ab164889324283917a0fb61ab76ec694aa42e4c70a3bffeba3da295"
+    },
+    "T5_METALBAR": {
+      "name": "Titanium Steel Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_METALBAR/data",
+      "sha256": "0eeed29725e60180750df2fd2ff9809bf2e6fd278620a5df61755fd7ca97532a"
+    },
+    "T5_ORE": {
+      "name": "Titanium Ore",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_ORE/data",
+      "sha256": "196a925fe59974fcec8b00285666a6d09865749a7e1f2b0e9581603f4392c41d"
+    },
+    "T5_PLANKS": {
+      "name": "Cedar Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_PLANKS/data",
+      "sha256": "ce11cbcd9b440318bc881962bc1a1f78b3473705a38e6a6fdb226809ad520232"
+    },
+    "T5_ROCK": {
+      "name": "Granite",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_ROCK/data",
+      "sha256": "1f41a14261894e55085f5748b64f2df383c0ef370f4e4ba6d8282894e2270340"
+    },
+    "T5_STONEBLOCK": {
+      "name": "Granite Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_STONEBLOCK/data",
+      "sha256": "6b62001ff2741b9beb7e33278a18762509413ae28bc65ddad487887f081e39b6"
+    },
+    "T5_WOOD": {
+      "name": "Cedar Logs",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T5_WOOD/data",
+      "sha256": "88c89cbc1131ff6cf118b5a112b112ef83d3ba2e8c99059752c57a28312c3109"
+    },
+    "T6_CLOTH": {
+      "name": "Lavish Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_CLOTH/data",
+      "sha256": "7cdf7a56fd3d0f96d4de7bb0a392c27ad2fb54d524290d0d3ae5b089fef31b26"
+    },
+    "T6_FIBER": {
+      "name": "Amberleaf Cotton",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_FIBER/data",
+      "sha256": "06ed877bbfa6b26510c4fcd13104b9289a097a1e346c6c28fc3d8d8c611f14b8"
+    },
+    "T6_HIDE": {
+      "name": "Robust Hide",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_HIDE/data",
+      "sha256": "b212dd6f5a6f295b1489e4c535eba397f9140a8fc6da91e677a0c8dc27d847a8"
+    },
+    "T6_LEATHER": {
+      "name": "Hardened Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_LEATHER/data",
+      "sha256": "8e8268e2e83ec745f208ab5840a5d3ce1316f43e8c0443550eed739aec4d2598"
+    },
+    "T6_METALBAR": {
+      "name": "Runite Steel Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_METALBAR/data",
+      "sha256": "8440c4757d5fc19387f06a56c290fcc3c489b379f14ea3c5f4b4e4c6ff5d5985"
+    },
+    "T6_ORE": {
+      "name": "Runite Ore",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_ORE/data",
+      "sha256": "1fac58e7178ed57ea2122b91b2b9ac4962fb2dd7600ea9794147ab5deaa4d5f0"
+    },
+    "T6_PLANKS": {
+      "name": "Bloodoak Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_PLANKS/data",
+      "sha256": "20675c8d8a809e9d639b986c9fd7c3a681fc5638483a0fb54fe22c4796af2093"
+    },
+    "T6_ROCK": {
+      "name": "Slate",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_ROCK/data",
+      "sha256": "60b5ff867f5f043f1dd923647e81be7499a80600c281b1d3433910fd21e8b4b7"
+    },
+    "T6_STONEBLOCK": {
+      "name": "Slate Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_STONEBLOCK/data",
+      "sha256": "0f22fbe3c71a5dd8e9866bb5647824e12654c0d0980e13a2fa66ac5676586152"
+    },
+    "T6_WOOD": {
+      "name": "Bloodoak Logs",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T6_WOOD/data",
+      "sha256": "9a2443fc280bc2ee2a5045a5c8ec899affb8b24f140d169514296489ed895c62"
+    },
+    "T7_CLOTH": {
+      "name": "Opulent Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_CLOTH/data",
+      "sha256": "89aec2da40df70ea299d2b86d6c2dc736ca7fc894ac41872bfcadc75c5e93d76"
+    },
+    "T7_FIBER": {
+      "name": "Sunflax",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_FIBER/data",
+      "sha256": "103c44b987faed5b1a7b43cff19c2007be3c07361f1e1a3bb35a6f423e7b2b11"
+    },
+    "T7_HIDE": {
+      "name": "Thick Hide",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_HIDE/data",
+      "sha256": "9e4f6c6f2e5562ac4dd653ab88a04745f61731bd813b6780327d9aaa084adc3f"
+    },
+    "T7_LEATHER": {
+      "name": "Reinforced Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_LEATHER/data",
+      "sha256": "e312cfba1c43ecb5899bb6f87a72a0d3474e05e06a47822fa9db114ad84e9662"
+    },
+    "T7_METALBAR": {
+      "name": "Meteorite Steel Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_METALBAR/data",
+      "sha256": "65ca362221df69f95634234aa8b8824acca709b3b1ddec3191d109eeef4cf8e2"
+    },
+    "T7_ORE": {
+      "name": "Meteorite Ore",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_ORE/data",
+      "sha256": "42a9331e7899052ee4607b8d0a60bfc1a588993ba0c4344a4d7e7c5283507f99"
+    },
+    "T7_PLANKS": {
+      "name": "Ashenbark Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_PLANKS/data",
+      "sha256": "0224032c1d22850b5fb3bc17d996eb89b81c08e1aba308f14cf026835ec04e39"
+    },
+    "T7_ROCK": {
+      "name": "Basalt",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_ROCK/data",
+      "sha256": "4842306c3eb2dd1500196c29a3ddeb156ed45f583018c443dcf4fd7ddc98e187"
+    },
+    "T7_STONEBLOCK": {
+      "name": "Basalt Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_STONEBLOCK/data",
+      "sha256": "747caa023cc16a483f5c6e505c4116740faaef1ed242ddeef57c8ef3aad50e05"
+    },
+    "T7_WOOD": {
+      "name": "Ashenbark Logs",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T7_WOOD/data",
+      "sha256": "abfd3191eef9060a5da4f4bf5c9e23765bcea4e08c9d8ef129652a065383e437"
+    },
+    "T8_CLOTH": {
+      "name": "Baroque Cloth",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_CLOTH/data",
+      "sha256": "7cf456864d8fe06ebd78bedc5d08fbdf24364f7e20dbb6dd199c5bbeda669288"
+    },
+    "T8_FIBER": {
+      "name": "Ghost Hemp",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_FIBER/data",
+      "sha256": "5bf18eaf4a400e0d8014f00403837c6e33db659860ca4b97f6ab9ffd728b42a8"
+    },
+    "T8_HIDE": {
+      "name": "Resilient Hide",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_HIDE/data",
+      "sha256": "a9efd886e3723703a9e68d985991b5fe76437ad10aec0a2a7a5a5df38ac945c4"
+    },
+    "T8_METALBAR": {
+      "name": "Adamantium Steel Bar",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_METALBAR/data",
+      "sha256": "cb26400ec525f0589cf36abdec5ba6fde43c5f0f33f7d70f5ffe1996751f27b1"
+    },
+    "T8_LEATHER": {
+      "name": "Fortified Leather",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_LEATHER/data",
+      "sha256": "2187aa9a6c17e140db2d4c4ce197fbd5a1ddf8380211a031757edf97563a59e4"
+    },
+    "T8_ORE": {
+      "name": "Adamantium Ore",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_ORE/data",
+      "sha256": "5139ec98b4ef17e99cc58559b02deab8f25c084b09a1a84af57fbdf11721cda0"
+    },
+    "T8_PLANKS": {
+      "name": "Whitewood Planks",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_PLANKS/data",
+      "sha256": "f948f75e755f72aae0ef180e55f23202bb0c566551808475df7ed288e9f47cc5"
+    },
+    "T8_ROCK": {
+      "name": "Marble",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_ROCK/data",
+      "sha256": "5c28a45429e59dbf5be8375f08f6701d74791fe6ae92763abd18258b25922b2d"
+    },
+    "T8_STONEBLOCK": {
+      "name": "Marble Block",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_STONEBLOCK/data",
+      "sha256": "425716af3f552f58365857aac484761a6bdce7d994dd7fd7df9d9aa69df1e4e9"
+    },
+    "T8_WOOD": {
+      "name": "Whitewood Logs",
+      "revision": 345319,
+      "source": "https://gameinfo.albiononline.com/api/gameinfo/items/T8_WOOD/data",
+      "sha256": "d23ec73ddc4087a89b8f60912deac9456100c87e86dc1e75077a0583dd1422ff"
+    }
+  },
+  "currentPatchVerified": false,
+  "steelMismatch": "Resolved source applicability: T4_METALBAR, not T4_METALBAR_LEVEL4. Explicit standard recipe 2 T4_ORE + 1 T3_METALBAR -> 1 T4_METALBAR; base focus54. Official resource identity separately confirms Steel Bar.",
+  "outputSha256": "15a0cd88a5531c62597b5d687e0b8fc43618e0e14edb1fd734fd93c4aeb4d55c"
+}

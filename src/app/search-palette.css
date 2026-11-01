@@ -1,0 +1,393 @@
+/* The command palette owns its field and scrolling; shared form rules stay outside. */
+.app.outpost dialog.command-search {
+  --search-gap: clamp(12px, 8dvh, 72px);
+  width: min(640px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(640px, calc(100dvh - var(--search-gap) * 2));
+  margin: var(--search-gap) auto auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  transition: none;
+}
+.app.outpost dialog.command-search[open] {
+  display: flex;
+  flex-direction: column;
+}
+.app.outpost .command-search-inner {
+  display: contents;
+}
+.app.outpost .command-heading {
+  flex: 0 0 auto;
+  padding: 16px 20px 12px;
+}
+.app.outpost .command-heading h2 {
+  margin: 0;
+  font: 600 14px/20px var(--font-ui);
+  color: var(--text);
+}
+.app.outpost .command-dismiss {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app.outpost .command-input-wrap {
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 52px;
+  min-height: 52px;
+  margin: 0 20px 16px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--muted);
+}
+.app.outpost .command-input-wrap:focus-within {
+  border-color: transparent;
+  outline: 2px solid var(--accent-ink);
+  outline-offset: -1px;
+  box-shadow: none;
+  color: var(--accent-ink);
+}
+.app.outpost .command-input-wrap > svg {
+  flex-shrink: 0;
+}
+.app.outpost dialog.command-search .command-input-wrap input[type="search"] {
+  appearance: none;
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  height: 48px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+  color: var(--text);
+  font: 400 16px/24px var(--font-ui);
+}
+.app.outpost .command-input-wrap input::-webkit-search-cancel-button {
+  display: none;
+}
+.app.outpost .command-clear,
+.app.outpost .command-close {
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+}
+.app.outpost .command-clear:hover,
+.app.outpost .command-close:hover {
+  color: var(--text);
+}
+.app.outpost .command-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.app.outpost .command-results {
+  max-height: none;
+  overflow: visible;
+}
+.app.outpost .command-shortcuts {
+  gap: 8px;
+}
+.app.outpost .command-shortcuts a {
+  min-width: 0;
+  min-height: 68px;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  transform: none;
+  transition: transform 160ms ease-out;
+}
+.app.outpost .command-shortcuts a > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .command-shortcuts a > svg {
+  flex-shrink: 0;
+}
+.app.outpost .command-destination-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+.app.outpost .command-examples {
+  margin-top: 16px;
+  padding: 16px 0 0;
+  gap: 8px;
+}
+.app.outpost .command-examples button {
+  min-height: 32px;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.app.outpost .command-footer {
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 12px 20px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.app.outpost .command-result > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.command-result-text {
+  display: grid;
+  gap: 2px;
+}
+.command-result-text > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.command-result-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app.outpost .command-shortcuts a:hover {
+    transform: scale(1.02);
+  }
+}
+/* A search that feels alive: the palette rises in over a blurred page, a thin ember bar runs
+   under the field while it works, results arrive one after another and the row under the
+   pointer or keyboard lights up with an ember edge. */
+.app.outpost dialog.command-search::backdrop {
+  background: #0a0b0eb3;
+  backdrop-filter: blur(6px);
+}
+.app.outpost .command-input-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.app.outpost .command-input-wrap .search-loading {
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent) 0 0 / 40% 100%
+    no-repeat;
+  animation: search-scan 900ms var(--ease-out) infinite;
+}
+@keyframes search-scan {
+  from {
+    background-position: -40% 0;
+  }
+  to {
+    background-position: 140% 0;
+  }
+}
+.app.outpost .command-result,
+.app.outpost .command-shortcuts a {
+  position: relative;
+  transition:
+    background 180ms var(--ease-out),
+    transform 260ms var(--ease-out-expo);
+}
+.app.outpost .command-result::before,
+.app.outpost .command-shortcuts a::before {
+  content: "";
+  position: absolute;
+  inset: 8px auto 8px 0;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  scale: 1 0;
+  transition: scale 260ms var(--ease-out-expo);
+}
+.app.outpost .command-result:is(:hover, :focus-visible),
+.app.outpost .command-shortcuts a:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--accent) 11%, var(--elevated));
+  outline: none;
+}
+.app.outpost .command-result:is(:hover, :focus-visible)::before,
+.app.outpost .command-shortcuts a:is(:hover, :focus-visible)::before {
+  scale: 1 1;
+}
+.app.outpost .command-result > svg,
+.app.outpost .command-shortcuts a > svg {
+  transition:
+    translate 260ms var(--ease-out-expo),
+    color 180ms var(--ease-out);
+}
+.app.outpost .command-result:is(:hover, :focus-visible) > svg,
+.app.outpost .command-shortcuts a:is(:hover, :focus-visible) > svg {
+  translate: 2px -2px;
+  color: var(--accent-ink);
+}
+.app.outpost :is(.command-result-icon, .command-destination-icon) {
+  overflow: hidden;
+  transition: scale 320ms var(--ease-spring);
+}
+.app.outpost :is(.command-result-icon, .command-destination-icon) img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.app.outpost .command-result-icon img.command-result-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.app.outpost .command-result:is(:hover, :focus-visible) .command-result-icon,
+.app.outpost .command-shortcuts a:is(:hover, :focus-visible) .command-destination-icon {
+  scale: 1.08;
+}
+/* Placeholders under the instant tool matches while the full answer loads */
+.app.outpost .command-skeleton {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+}
+.app.outpost .command-skeleton span {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  padding: 9px;
+}
+.app.outpost .command-skeleton i,
+.app.outpost .command-skeleton b {
+  display: block;
+  height: 44px;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--text) 7%, transparent),
+        transparent
+      )
+      0 0 / 60% 100% no-repeat,
+    var(--elevated);
+  animation: search-shimmer 1100ms linear infinite;
+  animation-delay: calc(var(--i, 0) * 120ms);
+}
+.app.outpost .command-skeleton b {
+  height: 14px;
+  width: calc(80% - var(--i, 0) * 15%);
+}
+@keyframes search-shimmer {
+  from {
+    background-position:
+      -60% 0,
+      0 0;
+  }
+  to {
+    background-position:
+      160% 0,
+      0 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app.outpost dialog.command-search[open] {
+    animation: search-palette-enter 320ms var(--ease-out-expo) both;
+  }
+  .app.outpost dialog.command-search[open]::backdrop {
+    animation: search-backdrop-in 240ms var(--ease-out) both;
+  }
+  .app.outpost .command-result,
+  .app.outpost .command-shortcuts a {
+    animation: search-row-in 360ms var(--ease-out-expo) both;
+    animation-delay: calc(min(var(--i, 0), 10) * 28ms);
+  }
+  .app.outpost .command-shortcuts a:nth-child(2) {
+    --i: 1;
+  }
+  .app.outpost .command-shortcuts a:nth-child(3) {
+    --i: 2;
+  }
+  .app.outpost .command-shortcuts a:nth-child(4) {
+    --i: 3;
+  }
+  @keyframes search-palette-enter {
+    from {
+      opacity: 0;
+      translate: 0 -10px;
+      scale: 0.97;
+    }
+  }
+  @keyframes search-backdrop-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes search-row-in {
+    from {
+      opacity: 0;
+      translate: 0 6px;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.outpost .command-input-wrap .search-loading,
+  .app.outpost .command-skeleton :is(i, b) {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .app.outpost dialog.command-search {
+    --search-gap: 12px;
+    width: calc(100vw - 24px);
+  }
+  .app.outpost .command-heading,
+  .app.outpost .command-body,
+  .app.outpost .command-footer {
+    padding-inline: 14px;
+  }
+  .app.outpost .command-input-wrap {
+    margin-inline: 14px;
+  }
+  .app.outpost .command-shortcuts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .app.outpost .command-footer > span:first-child {
+    display: none;
+  }
+  .app.outpost .command-footer > span:last-child {
+    display: inline;
+  }
+}
+@media (max-height: 660px) {
+  .app.outpost dialog.command-search {
+    --search-gap: 12px;
+  }
+  .app.outpost .command-body {
+    padding-block: 12px;
+  }
+  .app.outpost .command-shortcuts a {
+    min-height: 56px;
+    padding-block: 6px;
+  }
+  .app.outpost .command-destination-icon {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .app.outpost .command-examples {
+    display: none;
+  }
+}

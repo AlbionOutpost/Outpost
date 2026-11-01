@@ -1,0 +1,67 @@
+[
+  {
+    "name": "hero",
+    "origin": "Built-in image_gen",
+    "classification": "Generated illustration, not genuine gameplay or official artwork",
+    "authorization": "User steering: find them yourself or generate some that actially look like albion online",
+    "original": "assets/source/homepage-illustrations-v1/hero-v1.png",
+    "optimized": "public/albion/illustrations/hero-v1.webp",
+    "originalSha256": "0eebae7683bc8ac7aeec438085350962ce146590887027c441693ff682393792",
+    "optimizedSha256": "64b6f1de9ed9eeb6ef8dddf1fa0245f4d427b4ad46933f9dfe4b26c939d3d5b2",
+    "optimizedBytes": 239818,
+    "prompt": "docs/assets/prompts/hero-v1.txt",
+    "runtimeUse": "Archived; replaced by genuine item-renderer equipment composition on 2026-10-27."
+  },
+  {
+    "name": "market",
+    "origin": "Built-in image_gen",
+    "classification": "Generated illustration, not genuine gameplay or official artwork",
+    "authorization": "User steering: find them yourself or generate some that actially look like albion online",
+    "original": "assets/source/homepage-illustrations-v1/market-v1.png",
+    "optimized": "public/albion/illustrations/market-v1.webp",
+    "originalSha256": "521cb3d5dbdaafc30304e21466a0f76d786153813cd1738cfc0e55006049917e",
+    "optimizedSha256": "ff763c2e144dc45331a4ffb1157ffaf5b890d849df1070f17f3a2a9c2904db7e",
+    "optimizedBytes": 128976,
+    "prompt": "docs/assets/prompts/market-v1.txt",
+    "runtimeUse": "Homepage Market destination vignette only; isometric homepage hero rejected by owner on 2026-10-29 and replaced by original cinematic city-overlook-v2."
+  },
+  {
+    "name": "build",
+    "origin": "Built-in image_gen",
+    "classification": "Generated illustration, not genuine gameplay or official artwork",
+    "authorization": "User steering: find them yourself or generate some that actially look like albion online",
+    "original": "assets/source/homepage-illustrations-v1/build-v1.png",
+    "optimized": "public/albion/illustrations/build-v1.webp",
+    "originalSha256": "6a6a5747b46f89ce9f6f0826538450fbd2f54b443aada44de2fb7fbaa9e5f018",
+    "optimizedSha256": "318639a9fce3784fe15e07da2ece53f2afe864d4d3d1fb198898f5785cdea924",
+    "optimizedBytes": 108052,
+    "prompt": "docs/assets/prompts/build-v1.txt",
+    "runtimeUse": "Restored locally on2026-10-29 as a restrained Builds discovery/detail masthead. Decorative original illustration only; real loadouts still use genuine renderer icons. Existing authorization and generated classification retained."
+  },
+  {
+    "name": "composition",
+    "origin": "Built-in image_gen",
+    "classification": "Generated illustration, not genuine gameplay or official artwork",
+    "authorization": "User steering: find them yourself or generate some that actially look like albion online",
+    "original": "assets/source/homepage-illustrations-v1/composition-v1.png",
+    "optimized": "public/albion/illustrations/composition-v1.webp",
+    "originalSha256": "9eb92a8eed4b96a473d1f42e1fa615fbd7be5dd15e019496f0dc6b5df0fc4cd9",
+    "optimizedSha256": "d1db0094df10949241766ab2f258912a08825a81ccfb941b685226352554401b",
+    "optimizedBytes": 98964,
+    "prompt": "docs/assets/prompts/composition-v1.txt",
+    "runtimeUse": "Archived; replaced by genuine item-renderer equipment composition on 2026-10-27."
+  },
+  {
+    "name": "city-overlook-v2",
+    "origin": "Built-in image_gen",
+    "classification": "Original generated fantasy illustration, not genuine gameplay or official artwork",
+    "authorization": "Owner requested the supplied cinematic city/adventurer reference on 2026-10-29; prior express generation authorization remains.",
+    "original": "assets/source/homepage-cinematic-v2/city-overlook.png",
+    "optimized": "public/albion/illustrations/city-overlook-v2.webp",
+    "originalSha256": "bd8ba2d56fcda2763b183d44f7a28e06532d8cfa71cd510bfe461d3ff0fd1624",
+    "optimizedSha256": "d561ce9bf7d744316a553d060be7368fd28caabc99ade8a5d77c7ddbbc9cb2ff",
+    "optimizedBytes": 181248,
+    "prompt": "docs/assets/prompts/city-overlook-v2.txt",
+    "runtimeUse": "Homepage hero only; live HTML and real records render all interface, equipment and price information."
+  }
+]

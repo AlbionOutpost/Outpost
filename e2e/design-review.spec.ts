@@ -1,0 +1,235 @@
+import { test, expect } from "@playwright/test";
+import { mockTopKills } from "./support/top-kills";
+import AxeBuilder from "@axe-core/playwright";
+import { mkdir, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { createTestDb } from "./support/db";
+const db = createTestDb();
+
+test("design review covers application pages, equipment, guilds and reduced motion", async ({
+  page,
+  context,
+}) => {
+  test.setTimeout(process.env.CI ? 360000 : 180000);
+  const id = `atlas-test-${randomUUID()}`,
+    token = randomUUID();
+  await db.user.create({
+    data: {
+      id,
+      name: "Atlas reviewer",
+      sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+    },
+  });
+  const group = await db.group.create({
+    data: {
+      name: "Atlas review guild",
+      slug: randomUUID(),
+      description: "Private planning space · temporary QA fixture",
+      region: "europe",
+      ownerId: id,
+      members: { create: { userId: id, role: "OWNER" } },
+    },
+  });
+  await db.groupEvent.create({
+    data: {
+      groupId: group.id,
+      title: "Guild gathering · QA fixture",
+      description: "Temporary schedule review, removed after the test.",
+      startsAt: new Date(Date.now() + 86400000),
+      timezone: "Europe/Berlin",
+      expectedParticipants: 20,
+      voiceInfo: "Guild voice",
+      authorId: id,
+    },
+  });
+  // Controlled observations are browser-test fixtures only; no example prices ship in the UI.
+  await mockTopKills(page);
+  await page.route("**/api/market?*", (route) =>
+    route.fulfill({
+      json: {
+        region: "europe",
+        prices: ["Bridgewatch", "Caerleon", "Lymhurst"].map((city, i) => ({
+          item_id: "T4_BAG",
+          quality: 1,
+          city,
+          sell_price_min: 1200 + i * 100,
+          buy_price_max: 1000 + i * 100,
+          sell_price_min_date: new Date().toISOString(),
+          buy_price_max_date: new Date().toISOString(),
+        })),
+      },
+    }),
+  );
+  await context.addCookies([
+    {
+      name: "next-auth.session-token",
+      value: token,
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
+  await mkdir(".qa/design-review", { recursive: true });
+  const rows = [];
+  try {
+    for (const theme of ["dark", "light"]) {
+      await context.addCookies([
+        { name: "atlas-theme", value: theme, domain: "localhost", path: "/" },
+      ]);
+      for (const width of [375, 768, 1440, 1920]) {
+        await page.setViewportSize({ width, height: 1000 });
+        for (const route of [
+          "/",
+          "/dashboard",
+          "/timers",
+          "/tools",
+          "/tools/market",
+          "/tools/crafting",
+          "/tools/refining",
+          "/tools/enchanting",
+          "/tools/transporting",
+          "/tools/flipping",
+          "/tools/gold",
+          "/items",
+          "/builds",
+          "/builds/new",
+          "/compositions",
+          "/compositions/new",
+          "/groups",
+          `/groups/${group.slug}`,
+          "/favorites",
+          "/settings",
+          "/legal",
+          "/guides",
+        ]) {
+          await page.goto(route);
+          await page.locator("main h1").waitFor();
+          await page.evaluate(() => document.fonts.ready);
+          expect(
+            await page.locator("body").evaluate((el) => getComputedStyle(el).fontFamily),
+          ).toMatch(/inter/i);
+          expect(
+            await page
+              .locator("main h1")
+              .first()
+              .evaluate((el) => getComputedStyle(el).fontFamily),
+          ).toMatch(
+            // Mastheads set their title in the display face; plain workspace titles stay in Inter.
+            route === "/" ||
+              (await page.locator("main h1.display-title:not(.page-title)").count()) ||
+              (await page.locator("main :is(.workspace-identity, .masthead) h1").count())
+              ? /barlow/i
+              : /inter/i,
+          );
+          if (route === "/tools/market") {
+            // Prices load on arrival; wait for the settled table before reading its styles.
+            await expect(
+              page.getByRole("button", { name: "Caerleon market details", exact: true }),
+            ).toBeVisible();
+            await expect(
+              page.getByRole("button", { name: "Refresh prices", exact: true }),
+            ).toBeEnabled();
+            await expect
+              .poll(() =>
+                page
+                  .locator("td.numeric")
+                  .first()
+                  .evaluate((el) => getComputedStyle(el).fontFamily),
+              )
+              .toMatch(/geistMono/i);
+          }
+          if (route === "/builds/new") {
+            await page
+              .getByRole("button", { name: "Choose Main hand equipment", exact: false })
+              .click();
+            await page.getByRole("button", { name: /^Equip Battleaxe\b/ }).click();
+          }
+          if (route === "/compositions/new") {
+            await page.getByRole("button", { name: "20 players", exact: true }).click();
+            if (width >= 1440) {
+              const row = page.locator(".party-roster .roster-row").first();
+              await row.evaluate((el) =>
+                el.scrollIntoView({ block: "center", behavior: "instant" }),
+              );
+              await row.locator(".member-select").hover();
+              await expect
+                .poll(async () => {
+                  const member = (await row.locator(".member-select").boundingBox())!;
+                  const drag = (await row.locator(".drag-handle").boundingBox())!;
+                  const move = (await row.locator(".roster-move").boundingBox())!;
+                  return (
+                    member.x >= drag.x + drag.width - 1 && member.x + member.width <= move.x + 1
+                  );
+                })
+                .toBe(true);
+              // Restore the route audit's original viewport after testing the row hit areas.
+              await page.mouse.move(0, 0);
+              await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+            }
+          }
+          const top = await page.locator(".site-header").boundingBox();
+          const content = await page.locator("main").boundingBox();
+          // Redesigned chrome is 88px on desktop and 76px on mobile/tablet.
+          expect(top!.height).toBeLessThanOrEqual(width > 1100 ? 96 : 80);
+          // The landing page runs its painted hero under a floating header by design.
+          if (route !== "/") expect(content!.y).toBeGreaterThanOrEqual(top!.y + top!.height);
+          const overflow = await page.evaluate(
+            () => document.documentElement.scrollWidth > innerWidth,
+          );
+          const axe = [375, 1440].includes(width)
+            ? await new AxeBuilder({ page })
+                .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"])
+                .analyze()
+            : null;
+          const name = route.startsWith("/groups/")
+            ? "guild"
+            : route.replaceAll("/", "_") || "home";
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({
+            path: `.qa/design-review/${theme === "light" ? "light-" : ""}${name}-${width}.png`,
+            fullPage: true,
+            caret: "initial",
+          });
+          rows.push({
+            route: name,
+            theme,
+            width,
+            overflow,
+            violations:
+              axe?.violations.map((v) => ({
+                id: v.id,
+                nodes: v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary })),
+              })) ?? [],
+          });
+        }
+      }
+    }
+    await page.goto("/");
+    await page.locator(".landing-card:first-child .landing-card-action").click();
+    await page.getByRole("combobox", { name: "Search market items" }).fill("T6_MAIN_AXE@1");
+    await page
+      .getByRole("listbox", { name: "Matching market items" })
+      .getByRole("option")
+      .first()
+      .click();
+    await page.getByText("Advanced item identifier", { exact: true }).click();
+    await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T6_MAIN_AXE@1");
+    await expect(page).toHaveURL(/region=europe/);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const animations = await page
+      .locator("main")
+      .evaluate(
+        (el) => el.getAnimations({ subtree: true }).filter((a) => a.playState === "running").length,
+      );
+    expect(animations).toBe(0);
+    await writeFile(".qa/design-review.json", JSON.stringify(rows, null, 2));
+    expect(rows).toHaveLength(176);
+    expect(rows.filter((r) => r.overflow)).toEqual([]);
+    expect(rows.flatMap((r) => r.violations)).toEqual([]);
+  } finally {
+    await db.group.delete({ where: { id: group.id } });
+    await db.user.delete({ where: { id } });
+  }
+});

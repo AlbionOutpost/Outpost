@@ -1,0 +1,56 @@
+{
+  "revision": "d72a159ed01ee4645b60d18633cd683779b9adc6",
+  "sourceDate": "2026-07-12T03:26:10Z",
+  "rightsReference": "Factual identity/slot/power and spell-name subset adapted from Muut Moku ao-item-snapshot, pinned d72a159ed01ee4645b60d18633cd683779b9adc6 (MIT, copyright 2025 Muut Moku; notice retained in public/licenses/ao-item-snapshot.txt). No descriptions or artwork copied. The repository license is not a grant of Sandbox Interactive trademarks/artwork rights or proof of October patch compatibility.",
+  "currentPatchVerified": false,
+  "unlockLevelsVerified": false,
+  "files": {
+    "mainhand": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mainhand.json",
+      "sha256": "99c1a39e9a184934b5dd29f1e2629de95d59c3362c464a1a26bccecfb7e16ef1"
+    },
+    "offhand": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/offhand.json",
+      "sha256": "4a52fb8989e2d22ebe95d57df9f1579a2cd222adec79f62cc1f42bf6168ccf1b"
+    },
+    "head": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/head.json",
+      "sha256": "0d0fe0837ec50db4858b39419776ae4664339650a2a39c1beed1f6d850ec3705"
+    },
+    "armor": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/armor.json",
+      "sha256": "d9ab9cedfb2dc47ba043f1c1de8e0191bd945cc7d69d053d7c084edeee513db1"
+    },
+    "shoes": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/shoes.json",
+      "sha256": "395e127be3635157e8e53738ad8ff9c9b891263bc8036ef3a694aa385dd0ad06"
+    },
+    "cape": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/cape.json",
+      "sha256": "c1e5927a8119e0cd5786ae7a8b0ab9c2db2cf681a1b562bdeaaf4562362602a2"
+    },
+    "bag": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/bag.json",
+      "sha256": "39cbab3c29a122290527f978ed6d9a6aadbed52fa3b28797c9c9b32f36b1a489"
+    },
+    "mount": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/mount.json",
+      "sha256": "fdf154e6c930d2159b9a0db6425314e1443c5348833a2b1a9f3f5abb62a58e58"
+    },
+    "food": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/food.json",
+      "sha256": "96dac8f3d868867514c7df94ee4e236ca4b21d093ef3376d39355ae7db76e076"
+    },
+    "potion": {
+      "url": "https://raw.githubusercontent.com/muutmoku/ao-item-snapshot/d72a159ed01ee4645b60d18633cd683779b9adc6/docs/data/latest/potion.json",
+      "sha256": "43b98731af2d5658b878d837c61e7ebafa4b58bd13d4eb0c450ea38a34f05c04"
+    }
+  },
+  "families": 377,
+  "variants": 7510,
+  "itemsWithSourceListedAbilities": 604,
+  "outputs": {
+    "source-equipment.json": "6f685c9d983f280b4ec1dc4ae3f07823a8bb7aeb6993abc6513151172b5dd337",
+    "source-abilities.json": "29ecf40d491b810f671e0142a71998ddfb238c972d3f2298d16cb8754a85b937"
+  }
+}
