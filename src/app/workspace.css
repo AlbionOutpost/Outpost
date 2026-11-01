@@ -33,6 +33,8 @@ main[data-width="reading"] {
 }
 main[data-width="marketing"]:not([data-page="home"]) {
   max-width: var(--content-marketing);
+  /* Capped marketing pages sit centred in the frame, not against its left edge */
+  margin-inline: auto;
 }
 .workspace-route .site-header {
   padding-inline: 28px;

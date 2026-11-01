@@ -4,11 +4,12 @@ interface __BaseEnv_OutpostDataEnv {
   CATALOG: D1Database;
   DATABASE: DurableObjectNamespace<import("./worker").OutpostDatabase>;
   BUDGETS: DurableObjectNamespace<import("./worker").AbuseBudget>;
+  KILLS: DurableObjectNamespace<import("./worker").KillBoard>;
 }
 declare namespace Cloudflare {
   interface GlobalProps {
     mainModule: typeof import("./worker");
-    durableNamespaces: "OutpostDatabase" | "AbuseBudget";
+    durableNamespaces: "OutpostDatabase" | "AbuseBudget" | "KillBoard";
   }
   interface Env extends __BaseEnv_OutpostDataEnv {}
 }

@@ -16,6 +16,10 @@ export interface OutpostDatabaseBinding {
   upstreamBlock(region: string, milliseconds: number): Promise<void>;
   archiveList(kind: string, input: LibraryQuery): Promise<unknown>;
   archiveFind(kind: string, keys: string[]): Promise<unknown[]>;
+  topKills(region: string): Promise<{
+    kills: { id: number; occurredAt: number; fame: number; raw: unknown }[];
+    collectedAt: string | null;
+  }>;
 }
 export function databaseBinding(): OutpostDatabaseBinding {
   const env = getCloudflareContext().env;

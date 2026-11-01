@@ -274,8 +274,8 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await page.getByRole("button", { name: "Next guides" }).click();
   await expect(page.getByRole("button", { name: "Previous guides" })).toBeVisible();
 
-  // Top kills: the heading says how old the ranking is, each card a killboard.
-  await expect(page.locator("#home-kills-title")).toHaveText("Top kills on the board");
+  // Top kills: the week's most valuable kills, each card a killboard.
+  await expect(page.locator("#home-kills-title")).toHaveText("Top kills this week");
   const kills = page.locator(".kill-card");
   await expect(kills).toHaveCount(3);
   await expect(kills.nth(0).locator(".kill-trophy")).toHaveAttribute("alt", "#1");

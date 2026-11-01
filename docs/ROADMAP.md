@@ -51,6 +51,10 @@ Open items found on the way:
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
 
+## Shipped — live top kills by gear value (1 Nov)
+
+- The landing's Top kills reads Outpost's own seven-day shortlist instead of Albion's lagging daily ranking. The data Worker keeps one `KillBoard` Durable Object per server, refilled every minute by a cron trigger from the live event feed and the weekly ranking; it stores the highest-fame kills of the last seven days (fame follows the victim's gear). The top-kills endpoint prices each shortlisted victim's worn gear at its lowest royal-city sell order and shows the three highest silver values. Heading now reads "Top kills this week". Trophies dropped 8px; the Guides page is centred.
+
 ## Shipped — two-handed weapons fill the off hand (1 Nov)
 
 - Builds, build detail and editor boards, landing windows, top kills and the kill feed show a two-handed main hand again in the empty off-hand slot at 50% opacity, as the game does.
