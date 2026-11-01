@@ -94,7 +94,23 @@ export const GET = apiHandler("landing.craft", async (req: NextRequest) => {
     };
   };
   const all = recipes.flatMap((r) => royal.map((city) => scenario(r, city)));
-  const complete = all.filter((s) => s.complete && s.margin != null);
+  // A lone sell order far above the item's usual price (someone listing a cape for millions)
+  // is a real observation but not a trade anyone will get: it may not be the showcase. An
+  // output priced over 2.5x its median across the royal cities (with 3+ quotes) is skipped.
+  const outputPrice = (id: string, city: City) =>
+    rows.find((p) => p.item_id === id && p.quality === 1 && p.city === city)?.sell_price_min || 0;
+  const median = (values: number[]) => {
+    const v = values.filter((x) => x > 0).sort((a, b) => a - b);
+    return v.length >= 3 ? v[Math.floor(v.length / 2)] : null;
+  };
+  const typical = new Map(
+    recipes.map((r) => [r.output, median(royal.map((c) => outputPrice(r.output, c)))]),
+  );
+  const believable = (s: (typeof all)[number]) => {
+    const usual = typical.get(s.recipe.output);
+    return usual == null || outputPrice(s.recipe.output, s.city) <= usual * 2.5;
+  };
+  const complete = all.filter((s) => s.complete && s.margin != null && believable(s));
   const best =
     complete.toSorted((a, b) => b.margin! - a.margin!)[0] ??
     all.toSorted((a, b) => a.missing.length - b.missing.length)[0];
