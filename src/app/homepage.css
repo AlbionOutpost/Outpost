@@ -66,8 +66,14 @@
   inset: 0;
   z-index: 0;
   background:
-    linear-gradient(90deg, #0c0d10e0 0%, #0c0d10a8 30%, #0c0d1030 58%, transparent 80%),
-    linear-gradient(0deg, #0c0d1066 0%, transparent 45%);
+    radial-gradient(
+      ellipse 46% 58% at 50% 56%,
+      #0c0d10b8 0%,
+      #0c0d1078 45%,
+      #0c0d1020 75%,
+      transparent 100%
+    ),
+    linear-gradient(0deg, #0c0d1055 0%, transparent 40%);
   mask-image: linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
   pointer-events: none;
 }
@@ -78,8 +84,20 @@
   padding-top: 96px;
   padding-bottom: 150px;
 }
+/* Centred over the painting, so the scene shows evenly on both sides */
 .app.outpost .landing-hero-copy {
-  max-width: 600px;
+  display: grid;
+  justify-items: center;
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+.app.outpost .landing-hero-copy .landing-actions {
+  justify-content: center;
+}
+.app.outpost .landing-hero h1,
+.app.outpost .landing-lede {
+  text-shadow: 0 2px 18px #000c;
 }
 .app.outpost .landing-hero h1 {
   margin: 0 0 16px;
@@ -94,7 +112,7 @@
 }
 .app.outpost .landing-lede {
   max-width: 50ch;
-  margin: 0 0 24px;
+  margin: 0 auto 24px;
   font-size: 17px;
   line-height: 1.55;
   color: #ddd8d0;
@@ -113,7 +131,7 @@
   display: flex;
   width: max-content;
   max-width: 100%;
-  margin: 40px 0 0;
+  margin: 40px auto 0;
   padding: 0;
 }
 .app.outpost .landing-stats > div {
@@ -1799,22 +1817,28 @@ a.activity-top:hover {
   .app.outpost .landing-actions .button {
     flex: 1 1 auto;
   }
+  /* One centred row: every measured number side by side */
   .app.outpost .landing-stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px 0;
-    width: auto;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    width: 100%;
     margin-top: 28px;
   }
   .app.outpost .landing-stats > div {
-    padding: 0 0 0 16px;
+    align-items: center;
+    padding: 0 8px;
+    white-space: normal;
+    text-align: center;
   }
-  .app.outpost .landing-stats > div:nth-child(odd) {
-    padding-left: 0;
-    border-left: 0;
+  .app.outpost .landing-stats > div:first-child {
+    padding-left: 8px;
   }
   .app.outpost .landing-stats dd {
-    font-size: 28px;
+    font-size: 26px;
+  }
+  .app.outpost .landing-stats dt {
+    font-size: 11px;
   }
   .app.outpost .landing-windows {
     margin-top: -16px;
