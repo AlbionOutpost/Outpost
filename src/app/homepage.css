@@ -1557,10 +1557,7 @@ a.activity-top:hover {
   color: var(--text);
   text-align: center;
 }
-.app.outpost .landing-cta img {
-  filter: drop-shadow(0 6px 14px #000a)
-    drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 40%, transparent));
-}
+
 .app.outpost .landing-cta h2 {
   max-width: 30ch;
   margin: 0;

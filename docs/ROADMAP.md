@@ -2,7 +2,34 @@
 
 The goal: the best Albion Online site ever made. Getting there means three things, in this order: **ship reliably** (green CI, real deploys, backups), **look world-class** (one coherent design system, fast on phones), and **go deeper than anyone** on the data and tools players actually use every day.
 
-Status as of 31 Oct 2026. Update this file when something ships, breaks or gets planned.
+Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
+
+## Next session — inner pages to landing quality
+
+Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: **Market explorer → Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor**, then Comp planner, Teams, Timers, Item database.
+
+Per page, the bar is the landing (`src/app/page.tsx`, `homepage.css`):
+
+- **Hierarchy:** one clear primary element per page (the thing the player came for) and a rhythm of sections, not a column of equal boxes.
+- **Insides restyled:** inputs, selects, tables, tabs and empty states in the landing's language (wells, display-font numbers, gain green/loss red, city dots, coin icons, 12px floor). No old grey 10–11px labels or default form controls.
+- **Motion:** hover lift/glow on anything clickable, spring buttons; reveals only through `LandingReveal`-style one-shot classes (IntersectionObserver), never transforms on panels driven by scroll (a shifted panel covered neighbouring controls).
+- **States:** loading, empty, error and stale designed and inviting; real data only, missing stays missing.
+- **Both themes and 390 / 1440 px**, checked in a browser; light mode framed panels are dark leather by design.
+
+Things learned the hard way (read before touching CSS):
+
+- Framed working panels draw their frame as a `border-image` on the panel itself (`product-system.css`, top-level panel selector). Do not reintroduce `::before`/`::after` layers or forced `position` on panels: it broke sticky panels (their `top` became an offset) and let a static panel's layer cover the page.
+- The production CSS minifier differs from local builds: `@property` initial values like `0%` became `0` and silently invalidated every card background. Keep custom properties unit-free with fallbacks; check the live site, not only local.
+- The header has no `backdrop-filter`: a live blur cannot be captured by the theme view transition and flickered on every switch.
+- Durable Object SQLite date comparisons in Prisma queries matched nothing; filter dates in code (`site-stats.ts`).
+- The deploy check runs under workerd with streamed pages; tests must wait for elements to be visible before measuring.
+- Bot commits (visual baselines) need their CI runs approved (`POST /actions/runs/{id}/approve`); dispatch `visual-baselines.yml` on the branch after any visual change.
+
+Open items found on the way:
+
+- **Top kills are not truly live.** We poll Albion's official `killfame?range=day` every 5 minutes, but that ranking lags by a week or more (on 1 Nov it held kills from 22–25 Oct) and Americas sometimes fails. A real 7-day top list needs a scheduled job that collects recent kill events around the clock and keeps the highest-fame ones (D1 or the data Durable Object), then the landing reads that. Until then the heading must not claim "this week" for older kills.
+- "Active players" counts signed-in accounts whose row was touched by a visit in the last 30 days (`updatedAt`, touched at most twice a day in `auth.ts`); visitors without an account are not counted.
+- Framed working panels have no centre gems (the border-image frame cannot draw outside elements); add them back only with a technique that needs no positioning.
 
 ## Now — foundations
 
