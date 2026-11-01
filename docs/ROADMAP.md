@@ -77,6 +77,11 @@ Open items found on the way:
 
 - Team overview cards are framed panels with one heading style (no more mixed uppercase), compact "View all" / "Open comps" pills instead of full-width buttons, capitalised region and visibility chips; the directory's selects are wells and its empty state drops the display face.
 
+## Shipped — Timers and Item database inner pages (1 Nov)
+
+- Timers: one framed toolbar (filter, count chip, reload and add on one row) instead of a full-width select with a colliding count and a stray reload button; the empty state is a dashed well; selects are wells.
+- Item database: category and List/Grid switches are pills, selects are wells, the category column reads as UI text, rows show their tier under the name instead of repeating the category and identifier, and "Compare prices" is a compact pill.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
