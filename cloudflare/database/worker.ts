@@ -16,6 +16,8 @@ import invariants from "../d1/migrations/0003_domain_invariants.sql";
 import teamLootSchema from "../d1/migrations/0004_team_loot_splits.sql";
 import supporterSchema from "../d1/migrations/0005_supporter_plan.sql";
 export { AbuseBudget } from "./budget";
+export { KillBoard } from "./kill-board";
+import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
 import { archiveList, archiveFind } from "./archive";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
 
@@ -203,6 +205,23 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
   async upstreamBlock(region: string, milliseconds: number) {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
     return (await this.#budget(`upstream:${region}`)).block(milliseconds);
+  }
+  /** The server's seven-day kill shortlist, kept by the cron trigger below. */
+  async topKills(region: string) {
+    if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
+    return this.env.KILLS.getByName(region).shortlist();
+  }
+  /** Every minute: read each server's live kill feed and the weekly ranking into its shortlist. */
+  async scheduled() {
+    await Promise.allSettled(
+      (["europe", "americas", "asia"] as const).map(async (region) => {
+        const candidates = await fetchKillCandidates(region);
+        if (!candidates.length) return;
+        await this.env.KILLS.getByName(region).record(
+          candidates.map((kill) => ({ ...kill, raw: JSON.stringify(kill.raw) })),
+        );
+      }),
+    );
   }
   archiveList(kind: string, input: LibraryQuery) {
     return archiveList(this.env.CATALOG, kind, input);
