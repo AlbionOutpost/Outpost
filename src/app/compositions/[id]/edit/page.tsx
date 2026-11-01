@@ -5,6 +5,7 @@ import { requireRead, canEdit } from "@/lib/compositions/service";
 import { editorOptions } from "@/lib/compositions/repository";
 import { compositionInput } from "@/lib/compositions/validation";
 import { HttpError } from "@/lib/api-errors";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import { CompositionEditor } from "@/components/composition-editor";
 export default async function EditComposition({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
@@ -20,7 +21,12 @@ export default async function EditComposition({ params }: { params: Promise<{ id
   if (!(await canEdit(row, session.user.id))) notFound();
   return (
     <div className="composition-editor-page">
-      <h1 className="page-title display-title">Edit comp</h1>
+      <WorkspaceHeading
+        glyph="composition"
+        scene="comps"
+        title="Edit comp"
+        description="Change roles, loadouts and notes; save to keep a new revision."
+      />
       <CompositionEditor
         key={`${session.user.id}:${id}`}
         ownerId={session.user.id}

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/link";
 import { authOptions } from "@/lib/auth";
 import { editorOptions } from "@/lib/compositions/repository";
@@ -87,7 +88,12 @@ export default async function NewComposition({
   }
   return (
     <div className="composition-editor-page">
-      <h1 className="page-title display-title">Create a comp</h1>
+      <WorkspaceHeading
+        glyph="composition"
+        scene="comps"
+        title="Create a comp"
+        description="Set the party size, give every slot a role and a loadout, then share it with your Team."
+      />
       {error ? (
         <section className="panel" role="alert">
           <h2>This loadout cannot be added</h2>

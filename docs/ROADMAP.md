@@ -69,6 +69,10 @@ Open items found on the way:
 
 - Create and Edit open on the builds masthead; the back link is a pill beside a draft-status chip; guests get a "Starting from scratch?" well with the example set; slot switches are pills; selects and inputs are wells; market estimates are a well disclosure; the duplicate "Back to builds" button is gone. Twenty legacy `.guest-build-notice` rules across five sheets (one hid the copy, one set 11px) were removed.
 
+## Shipped — Comp planner inner page (1 Nov)
+
+- Create and Edit open on the comps masthead; the empty roles strip no longer renders for an empty party (Available builds moves up beside the roster); the empty party is a dashed well; party sizes are pills; selects and inputs are wells; "Back to comps" is a pill.
+
 ## Shipped — Albion light mode, game panels and a faster search (1 Nov)
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
