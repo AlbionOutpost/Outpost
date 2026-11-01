@@ -206,7 +206,7 @@ Open items found on the way:
 | QA-014       | P2  | Tooling      | ESLint 9 deprecated; v10 blocked by Next plugin peers                                                                                                                                                                             |
 | COMBAT-CACHE | P2  | Data         | On Cloudflare the combat feed cache key (`atlas:combat:*`) is rejected by the Cache API wrapper, so every request hits the 12/min upstream budget (unverified at runtime)                                                         |
 | QA-019       | P2  | Community    | No spam defences beyond Turnstile and rate limits; no appeals                                                                                                                                                                     |
-| SEC-006      | P2  | Security     | No full-history secret scan; no private vulnerability contact in SECURITY.md                                                                                                                                                      |
+| SEC-006      | P2  | Security     | No full-history secret scan (a private disclosure contact is in SECURITY.md)                                                                                                                                                      |
 
 ## Owner actions
 
