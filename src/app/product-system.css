@@ -945,7 +945,8 @@
     inset 0 1px 0 var(--edge-light),
     var(--shadow-raised);
 }
-/* Every top-level working panel is framed like the landing's cards. The frame is drawn on the
+/* Every top-level working panel is framed like the landing's cards. Its background is rounded
+   (20px) so it stays inside the frame's cut corners instead of poking out past them. The frame is drawn on the
    panel itself (a 9-slice border image pushed 10px outside), its painting and scrim are its own
    background, so it needs no extra layers or positioning: sticky panels keep sticking and
    nothing can sit over a neighbouring control. A heavier scrim keeps forms easy to read. */
@@ -987,7 +988,7 @@
   ) {
   border: 0 solid transparent !important;
   border-image: var(--frame) 25 / 25px / 10px stretch !important;
-  border-radius: 4px !important;
+  border-radius: 20px !important;
   background:
     linear-gradient(
       180deg,
