@@ -31,6 +31,7 @@ model User {
   compositions Composition[]
   ownedGroups Group[]
   memberships GroupMember[]
+  libraryLikes LibraryLike[]
   builds Build[]
   accounts Account[]
   sessions Session[]
@@ -471,4 +472,15 @@ model MarketWatchItem {
  quality Int @default(1)
  createdAt DateTime @default(now())
  @@unique([userId,region,itemId,quality])
+}
+
+model LibraryLike {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind String
+  slug String
+  createdAt DateTime @default(now())
+  @@unique([userId, kind, slug])
+  @@index([kind, slug])
 }

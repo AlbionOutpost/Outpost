@@ -123,6 +123,30 @@ try {
     const result = await call("service", "constructor", []);
     assert.equal(result.ok, false);
   });
+  await check(
+    "library likes are account-bound, idempotent and cascade on account removal",
+    async () => {
+      const actor = `${fixture}-likes`;
+      await query("user", "create", { data: { id: actor } });
+      await service("setLibraryLike", "build", "battleaxe-mist-build", actor, true);
+      await service("setLibraryLike", "build", "battleaxe-mist-build", actor, true);
+      assert.equal(await query("libraryLike", "count", { where: { userId: actor } }), 1);
+      await service("setLibraryLike", "composition", "hellgate-5v5-front-to-back", actor, true);
+      assert.equal(await query("libraryLike", "count", { where: { userId: actor } }), 2);
+      await denied(
+        401,
+        "setLibraryLike",
+        "build",
+        "battleaxe-mist-build",
+        `${fixture}-missing-user`,
+        true,
+      );
+      await service("setLibraryLike", "build", "battleaxe-mist-build", actor, false);
+      assert.equal(await query("libraryLike", "count", { where: { userId: actor } }), 1);
+      await query("user", "deleteMany", { where: { id: actor } });
+      assert.equal(await query("libraryLike", "count", { where: { userId: actor } }), 0);
+    },
+  );
   await check("batch rollback after a foreign-key failure", async () => {
     const id = `${fixture}-rollback`;
     const reply = await call("query", [
@@ -757,7 +781,7 @@ try {
   try {
     await query("group", "deleteMany", { where: { id: groupId } });
     await query("user", "deleteMany", {
-      where: { id: { in: [userA, userB, `${fixture}-rollback`] } },
+      where: { id: { in: [userA, userB, `${fixture}-rollback`, `${fixture}-likes`] } },
     });
   } catch {}
   child.kill("SIGINT");
