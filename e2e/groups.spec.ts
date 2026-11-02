@@ -180,7 +180,13 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     );
     await officerPage.getByRole("button", { name: "New event", exact: true }).click();
     await officerPage.getByLabel("Event title").fill("Guild training operation");
-    await officerPage.getByLabel("Start time (your device local time)").fill("2026-11-02T20:00");
+    const tomorrowLocal = await officerPage.evaluate(() => {
+      const tomorrow = new Date(Date.now() + 86400000);
+      return new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+    });
+    await officerPage.getByLabel("Start time (your device local time)").fill(tomorrowLocal);
     await officerPage.getByRole("button", { name: "Schedule event" }).click();
     await expect(
       officerPage.getByRole("heading", { name: "Guild training operation" }),

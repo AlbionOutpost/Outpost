@@ -226,9 +226,10 @@
   /* Motion: expo-out for things that arrive or grow, a soft spring for things that travel */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
-  /* Card frame (9-slice) and its centre gem; ember lines, cut corners */
-  --frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='68' height='68' viewBox='0 0 68 68'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd08a'/%3E%3Cstop offset='.45' stop-color='%23f08a3a'/%3E%3Cstop offset='1' stop-color='%23c85a1c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M22 11H46L57 22V46L46 57H22L11 46V22Z' fill='none' stroke='url(%23g)' stroke-width='2.4'/%3E%3Cpath d='M23.6 15H44.4L53 23.6V44.4L44.4 53H23.6L15 44.4V23.6Z' fill='none' stroke='%23f08a3a' stroke-opacity='.55' stroke-width='1'/%3E%3Cpath d='M16.5 13.5L19.5 16.5L16.5 19.5L13.5 16.5ZM51.5 13.5L54.5 16.5L51.5 19.5L48.5 16.5ZM51.5 48.5L54.5 51.5L51.5 54.5L48.5 51.5ZM16.5 48.5L19.5 51.5L16.5 54.5L13.5 51.5Z' fill='%23ffb366'/%3E%3C/svg%3E");
-  --frame-gem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cpath d='M1 10H11M29 10H39' stroke='%23ffc27a' stroke-width='2'/%3E%3Cpath d='M20 2L28 10L20 18L12 10Z' fill='%23180f09' stroke='%23ffc27a' stroke-width='2'/%3E%3Cpath d='M20 6L24 10L20 14L16 10Z' fill='%23ff9a4a'/%3E%3C/svg%3E");
+  /* Card frame (9-slice) and its centre gem; aged copper lines, cut corners; no emissive trim */
+  --frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='68' height='68' viewBox='0 0 68 68'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2392715a'/%3E%3Cstop offset='.45' stop-color='%23684c3c'/%3E%3Cstop offset='1' stop-color='%233e322b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M22 11H46L57 22V46L46 57H22L11 46V22Z' fill='none' stroke='url(%23g)' stroke-width='1.5'/%3E%3Cpath d='M23.6 15H44.4L53 23.6V44.4L44.4 53H23.6L15 44.4V23.6Z' fill='none' stroke='%23684c3c' stroke-opacity='.32' stroke-width='.75'/%3E%3Cpath d='M16.5 13.5L19.5 16.5L16.5 19.5L13.5 16.5ZM51.5 13.5L54.5 16.5L51.5 19.5L48.5 16.5ZM51.5 48.5L54.5 51.5L51.5 54.5L48.5 51.5ZM16.5 48.5L19.5 51.5L16.5 54.5L13.5 51.5Z' fill='%23886047'/%3E%3C/svg%3E");
+  --frame-gem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cpath d='M1 10H11M29 10H39' stroke='%2380604b' stroke-width='1.2'/%3E%3Cpath d='M20 2L28 10L20 18L12 10Z' fill='%231b1816' stroke='%2380604b' stroke-width='1.2'/%3E%3Cpath d='M20 6L24 10L20 14L16 10Z' fill='%2379563d'/%3E%3C/svg%3E");
+  --frame-rule: #80604b;
   --canvas-top: #17110e;
   --canvas-mid: #110f10;
   --canvas-end: #0c0d10;
@@ -699,8 +700,8 @@
   color-scheme: dark;
   color: var(--text);
 }
-/* MMO frame: a bright ember outer line and a fainter inner line following the cut corners,
-   studs in the corners and a gem at the top and bottom centre, all glowing; brighter on hover.
+/* Aged copper trim: a fine outer edge, quiet inner line and dark metal studs/gems.
+   Depth comes from an offset shadow; hover/focus adds a restrained metal highlight.
    Above the content but only in the card's edge, and never takes the pointer. */
 .app.outpost .raised.has-scene::after {
   content: "";
@@ -714,27 +715,23 @@
     var(--frame-gem) center calc(100% - 1px) / 40px 20px no-repeat;
   background-origin: border-box;
   background-clip: border-box;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 70%, transparent))
-    drop-shadow(0 12px 14px #000000b3);
+  filter: drop-shadow(0 10px 14px #0008);
   pointer-events: none;
   transition: filter 320ms var(--ease-out-expo);
 }
 /* On parchment the frame casts a short warm shadow instead of a night-time one */
 .app.outpost.light .raised.has-scene::after {
-  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent))
-    drop-shadow(0 6px 6px #3a251226);
+  filter: drop-shadow(0 4px 6px #3a251222);
 }
-.app.outpost.light .raised.has-scene:hover::after {
-  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 80%, transparent))
-    drop-shadow(0 8px 8px #3a251233);
+.app.outpost.light .raised.has-scene:is(:hover, :focus-within)::after {
+  filter: brightness(1.1) drop-shadow(0 6px 8px #3a25122b);
 }
 .app.outpost .raised.raised.has-scene:hover {
   border-color: transparent;
   box-shadow: none;
 }
-.app.outpost .raised.has-scene:hover::after {
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 90%, transparent))
-    drop-shadow(0 16px 18px #000000b3);
+.app.outpost .raised.has-scene:is(:hover, :focus-within)::after {
+  filter: brightness(1.12) drop-shadow(0 12px 16px #0009);
 }
 .app.outpost .raised[data-scene="market"] {
   --scene: var(--scene-market);
@@ -991,9 +988,7 @@
     ),
     var(--scene, var(--scene-city)) center / cover no-repeat,
     var(--surface-scrim) !important;
-  box-shadow:
-    0 0 26px -10px color-mix(in srgb, var(--accent) 55%, transparent),
-    0 18px 36px -18px #000c !important;
+  box-shadow: 0 18px 36px -18px #000c !important;
   color: var(--text);
 }
 .app.outpost.light
@@ -1032,9 +1027,7 @@
       )
       *
   ) {
-  box-shadow:
-    0 0 18px -10px color-mix(in srgb, var(--accent) 45%, transparent),
-    0 12px 24px -16px #3a251266 !important;
+  box-shadow: 0 12px 24px -16px #3a251266 !important;
 }
 
 /* Section headings: display title with an ember word, one line, a pill link on the right */
