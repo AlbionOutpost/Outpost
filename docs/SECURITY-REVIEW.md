@@ -4,10 +4,10 @@ A third-party review of the predecessor site **albiononlinegrind.com** (a Supaba
 shipped a public anon key to the browser) reported seven issues on 27 Oct 2026. They all share
 one root cause: the browser could talk to the database directly, so authorization lived in
 client code and in Row-Level Security that was incomplete. **Outpost does not share that
-architecture**, and each class is prevented by construction. This records how, with code
+architecture**, and it uses different server-side boundaries. Those controls require route, service, cache and concurrency verification; architecture alone does not certify that an entire vulnerability class is prevented. This records how, with code
 references, and `tests/security-regression.test.ts` locks the testable invariants.
 
-## Why the whole class does not carry over
+## Relevant architectural differences
 
 - **No public database API.** The data Worker (`cloudflare/database/worker.ts`) is binding-only
   RPC: its public entrypoint returns `404` for every request (`OutpostData.fetch()`), and the
@@ -36,3 +36,7 @@ references, and `tests/security-regression.test.ts` locks the testable invariant
 - Full-history secret scan (SEC-006; a private disclosure contact already lives in SECURITY.md).
 
 The uploaded review package concerns the predecessor site only; nothing in it was executed here.
+
+## Repair and independent verification — 2 November 2026
+
+The owner-requested assessment found additional membership-capability, quota, body-size, billing-lifecycle and calculation defects beyond the predecessor checklist. The repair adds streamed limits, trusted-caller budgets, catalog identity checks, current invitation-issuer checks, safe billing reconciliation/deletion, and independent regression cases. Passing the small original regression file alone is insufficient evidence. [Billing scope and remaining provider gates](BILLING_SECURITY.md), [tooling advisory assessment](TOOLING_SECURITY.md), and the root QA reports keep implementation, local verification and deployed status separate. No comprehensive security certification is claimed.

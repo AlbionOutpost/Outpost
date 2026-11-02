@@ -24,6 +24,11 @@ if (process.argv[2] === "stop") {
   console.log("Owned QA container removed");
 } else {
   const name = `albion-atlas-qa-${randomUUID().replaceAll("-", "").slice(0, 10)}`;
+  const compose = JSON.parse(run(["compose", "config", "--format", "json"]));
+  const network = compose.networks?.default?.name;
+  const image = process.env.OUTPOST_QA_IMAGE || "albion-atlas:qa";
+  if (!network || !/^[a-zA-Z0-9_.-]+$/.test(network)) throw new Error("Invalid local QA network");
+  if (!/^[a-z0-9][a-z0-9./:@_-]{0,200}$/.test(image)) throw new Error("Invalid local QA image");
   try {
     run([
       "run",
@@ -31,7 +36,7 @@ if (process.argv[2] === "stop") {
       "--name",
       name,
       "--network",
-      "albionhelper_default",
+      network,
       "-p",
       "127.0.0.1:3102:3000",
       "--env-file",
@@ -42,7 +47,7 @@ if (process.argv[2] === "stop") {
       "DATABASE_URL=postgresql://atlas:atlas@db:5432/atlas",
       "-e",
       "REDIS_URL=redis://redis:6379",
-      "albion-atlas:qa",
+      image,
     ]);
     let health;
     for (let i = 0; i < 20; i++) {
@@ -65,7 +70,7 @@ if (process.argv[2] === "stop") {
       "console.log(require('fs').existsSync('/app/.env'))",
     ]);
     const home = await fetch("http://localhost:3102/");
-    const record = { name, image: "albion-atlas:qa", health, uid, hasEnv, homeStatus: home.status };
+    const record = { name, image, health, uid, hasEnv, homeStatus: home.status };
     writeFileSync(".qa/docker.json", JSON.stringify(record, null, 2));
     if (uid === "0" || hasEnv !== "false" || !home.ok)
       throw new Error("Container hardening check failed");
