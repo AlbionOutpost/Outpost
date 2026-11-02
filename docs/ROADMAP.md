@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Security repair — 2 November 2026
+
+The owner-requested security repair is implemented on a dedicated local branch and undergoing consolidated verification. It covers invitation revocation, caller/source quotas, streaming limits, cache isolation/headers, billing lifecycle and schema upgrades, calculator provenance/accounting, icon identity and responsive killboards. GitHub required checks and secret push protection were applied and read back; application changes have not been merged or deployed. The generated root QA reports and [security workflow](QA_WORKFLOW.md) distinguish implementation, test evidence, remaining tooling alerts and external gates.
+
 ## Next session — inner pages to landing quality
 
 Handover from the 31 Oct–1 Nov run. Every page already shares the backdrop, header, footer, palette, painted masthead emblems and framed panels; what is left is the **inside** of the pages. Work one page per round, in this order: ~~Market explorer → Build library → Crafting calculator (and its siblings: refining, cooking, alchemy) → Build editor~~, then ~~Comp planner, Teams, Timers, Item database~~. All shipped 1 Nov (sections below); next: real item art and live prices checked on production, then the dashboard and remaining supporting pages.

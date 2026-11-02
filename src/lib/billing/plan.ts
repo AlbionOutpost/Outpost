@@ -1,4 +1,5 @@
 import { db, databaseService } from "@/lib/db";
+import { HttpError } from "@/lib/http-error";
 
 export type Plan = "FREE" | "SUPPORTER";
 /** Stripe statuses that keep the Supporter benefits on. */
@@ -12,48 +13,46 @@ export const isSupporter = (user: { plan?: string | null } | null | undefined) =
 
 export type SubscriptionRecord = {
   customerId: string;
-  subscriptionId: string;
+  subscriptionId: string | null;
   status: string;
   periodEnd: number | null;
-  /** From the subscription's metadata; the customer id is the fallback match. */
-  userId?: string | null;
+  /** Account snapshot taken before retrieving the customer's subscriptions. */
+  expectedUpdatedAt: string;
 };
 
 /** Writes a subscription's state onto the account it belongs to. Returns the user id, or null when no account matches. */
 async function localApplySubscription(record: SubscriptionRecord) {
-  const user = await db.user.findFirst({
-    where: record.userId
-      ? { OR: [{ id: record.userId }, { stripeCustomerId: record.customerId }] }
-      : { stripeCustomerId: record.customerId },
-    select: { id: true, stripeSubscriptionId: true },
+  const user = await db.user.findUnique({
+    where: { stripeCustomerId: record.customerId },
+    select: { id: true },
   });
   if (!user) return null;
-  // A newer subscription on the same customer replaces the old one; an event for a
-  // subscription this account no longer holds is ignored.
-  if (user.stripeSubscriptionId && user.stripeSubscriptionId !== record.subscriptionId) {
-    const other = await db.user.findUnique({
-      where: { stripeSubscriptionId: record.subscriptionId },
-      select: { id: true },
-    });
-    if (other && other.id !== user.id) return null;
-  }
-  await db.user.update({
-    where: { id: user.id },
+  const expected = new Date(record.expectedUpdatedAt);
+  if (!Number.isFinite(expected.getTime())) throw new HttpError(400, "Invalid billing revision");
+  // Stripe calls happen before this write. Reject a snapshot if another webhook,
+  // checkout or profile change won in the meantime; Stripe retries a 409 response.
+  const changed = await db.user.updateMany({
+    where: { id: user.id, stripeCustomerId: record.customerId, updatedAt: expected },
     data: {
       plan: planForStatus(record.status),
       planStatus: record.status,
       planRenewsAt: record.periodEnd ? new Date(record.periodEnd * 1000) : null,
       stripeCustomerId: record.customerId,
       stripeSubscriptionId: record.subscriptionId,
+      updatedAt: new Date(Math.max(Date.now(), expected.getTime() + 1)),
     },
   });
+  if (!changed.count) throw new HttpError(409, "Billing changed. Retry reconciliation.");
   return user.id;
 }
 export const applySubscription: typeof localApplySubscription = (...args) =>
   databaseService("applySubscription", args) ?? localApplySubscription(...args);
 
 async function localRememberCustomer(userId: string, customerId: string) {
-  await db.user.update({ where: { id: userId }, data: { stripeCustomerId: customerId } });
+  await db.user.update({
+    where: { id: userId },
+    data: { stripeCustomerId: customerId },
+  });
   return true;
 }
 export const rememberCustomer: typeof localRememberCustomer = (...args) =>
@@ -70,5 +69,8 @@ export const billingProfile = (userId: string) =>
       planStatus: true,
       planRenewsAt: true,
       stripeCustomerId: true,
+      stripeSubscriptionId: true,
+      billingCheckout: true,
+      updatedAt: true,
     },
   });

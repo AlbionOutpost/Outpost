@@ -4,6 +4,121 @@ import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
+for (const edit of ["equipment", "spare sets", "notes"] as const) {
+  test(`pending build assignment preserves newer member ${edit}`, async ({ page, context }) => {
+    const userId = `atlas-test-${randomUUID()}`,
+      token = randomUUID();
+    let release: (() => void) | undefined;
+    let copiedBuildId = "";
+    try {
+      await db.user.create({
+        data: {
+          id: userId,
+          name: "Copy race tester",
+          sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+        },
+      });
+      const build = await db.build.create({
+        data: {
+          authorId: userId,
+          title: "Delayed axe build",
+          description: "",
+          strategy: "",
+          patchNotes: "",
+          contentType: "ZvZ",
+          region: "europe",
+          visibility: "PRIVATE",
+          equipmentSets: [],
+          equipment: {
+            create: [
+              {
+                slot: "Main hand",
+                itemId: "T4_MAIN_AXE",
+                quality: 1,
+                abilities: "Source author notes",
+                alternatives: "",
+                abilitySelections: {},
+                alternativeItemIds: [],
+              },
+            ],
+          },
+        },
+      });
+      copiedBuildId = build.id;
+      await context.addCookies([
+        {
+          name: "next-auth.session-token",
+          value: token,
+          domain: "localhost",
+          path: "/",
+          httpOnly: true,
+          sameSite: "Lax",
+        },
+      ]);
+      let started!: () => void;
+      const requested = new Promise<void>((resolve) => {
+        started = resolve;
+      });
+      const held = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await page.route("**/api/compositions/loadout?**", async (route) => {
+        started();
+        await held;
+        const response = await route.fetch();
+        await route.fulfill({ response });
+      });
+      await page.goto("/compositions/new");
+      await page.getByRole("button", { name: "Add member", exact: true }).click();
+      if (edit === "spare sets")
+        await page.getByLabel("Main hand equipment", { exact: true }).selectOption("MAIN_SWORD");
+      await page.getByLabel("Copy loadout from build", { exact: true }).selectOption(build.id);
+      await requested;
+      if (edit === "equipment")
+        await page.getByLabel("Main hand equipment", { exact: true }).selectOption("MAIN_SWORD");
+      if (edit === "spare sets") {
+        await page.locator(".equipment-set-tools > details > summary").click();
+        await page.getByLabel("Spare set name", { exact: true }).fill("Newer sword spare");
+        await page.getByRole("button", { name: "Save active as spare set", exact: true }).click();
+      }
+      if (edit === "notes")
+        await page.getByLabel("Member notes", { exact: true }).fill("My newer member note");
+      release!();
+      if (edit === "notes") {
+        await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue(
+          "MAIN_AXE",
+        );
+        await expect(page.getByRole("textbox", { name: "Member notes", exact: true })).toHaveValue(
+          /My newer member note\nMain hand author ability notes: Source author notes/,
+        );
+      } else {
+        await expect(page.getByLabel("Copy loadout from build", { exact: true })).toBeEnabled();
+        await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue(
+          "MAIN_SWORD",
+        );
+        if (edit === "spare sets")
+          await expect(
+            page.getByRole("heading", { name: "Newer sword spare", exact: true }),
+          ).toBeVisible();
+      }
+      await page.getByRole("button", { name: "Done editing member", exact: true }).click();
+      await expect(
+        page.getByText(
+          edit === "notes"
+            ? "Loadout copied into this member. Review the equipment and notes before saving."
+            : "This member's loadout changed while the build loaded. Your equipment and spare sets were kept; assign again to replace them.",
+          { exact: true },
+        ),
+      ).toBeVisible();
+    } finally {
+      release?.();
+      if (copiedBuildId)
+        await db.build.deleteMany({ where: { id: copiedBuildId, authorId: userId } });
+      await db.user.deleteMany({ where: { id: userId } });
+    }
+  });
+}
+
 test("20-player comp saves, reloads, edits, shares, duplicates and enforces group permissions", async ({
   page,
   context,

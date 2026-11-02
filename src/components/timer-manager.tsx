@@ -1,4 +1,5 @@
 "use client";
+import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useEffect, useState } from "react";
 import { remainingTime } from "@/lib/timers/engine";
 type Timer = {
@@ -11,7 +12,14 @@ type Timer = {
   durationMs: number;
   version: number;
 };
-export function TimerManager({ initial }: { initial: Timer[] }) {
+export function TimerManager({
+  initial,
+  initialCursor = null,
+}: {
+  initial: Timer[];
+  initialCursor?: string | null;
+}) {
+  const [nextCursor, setNextCursor] = useState<string | null>(initialCursor);
   const [timers, setTimers] = useState(initial),
     [now, setNow] = useState<number | null>(null),
     [message, setMessage] = useState(""),
@@ -23,10 +31,12 @@ export function TimerManager({ initial }: { initial: Timer[] }) {
     return () => clearInterval(id);
   }, []);
   async function refresh() {
+    setNextCursor(null);
     const r = await fetch("/api/timers"),
       b = await r.json();
     if (!r.ok) throw new Error(b.error);
     setTimers(b);
+    setNextCursor(r.headers.get("X-Next-Cursor"));
   }
   async function update(t: Timer, action: string, title?: string) {
     setBusy(true);
@@ -195,6 +205,17 @@ export function TimerManager({ initial }: { initial: Timer[] }) {
           );
         })}
       </div>
+      <AccountPageMore<Timer>
+        url="/api/timers"
+        cursor={nextCursor}
+        disabled={busy}
+        label="Load older timers"
+        onPage={(rows, cursor) => {
+          setTimers((current) => appendAccountRows(current, rows));
+          setNextCursor(cursor);
+        }}
+      />
+
       {!visible.length && (
         <section className="support-empty">
           <h2>{timers.length ? "No timers in this view" : "Your next reminder starts here"}</h2>

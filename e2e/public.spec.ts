@@ -21,31 +21,145 @@ test("market failure never substitutes prices", async ({ page }) => {
   await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
 });
 test("regional market request and region invalidation", async ({ page }) => {
-  await page.route("**/api/market?**", (route) =>
-    route.fulfill({
-      contentType: "application/json",
-      body: JSON.stringify({
-        region: "europe",
+  let releaseAsia!: () => void;
+  const asiaResponse = new Promise<void>((resolve) => {
+    releaseAsia = resolve;
+  });
+  let asiaRequested = false;
+  // This case tests market selection, not third-party history availability.
+  await page.route("**/api/history?**", (route) =>
+    route.fulfill({ status: 503, json: { error: "History unavailable in this fixture" } }),
+  );
+  await page.route("**/api/market?**", async (route) => {
+    const region = new URL(route.request().url()).searchParams.get("region");
+    if (region === "asia") {
+      asiaRequested = true;
+      await asiaResponse;
+    }
+    await route.fulfill({
+      json: {
+        region,
         prices: [
           {
             item_id: "T4_BAG",
-            city: "Lymhurst",
+            city: region === "asia" ? "Caerleon" : "Lymhurst",
             quality: 1,
-            sell_price_min: 100,
-            buy_price_max: 90,
+            sell_price_min: region === "asia" ? 9876 : 100,
+            buy_price_max: region === "asia" ? 8765 : 90,
             sell_price_min_date: "2020-01-01T00:00:00",
             buy_price_max_date: "2020-01-01T00:00:00",
           },
         ],
-      }),
-    }),
+      },
+    });
+  });
+  try {
+    await page.goto("/tools/market?region=europe");
+    await page.getByRole("button", { name: "Refresh prices" }).click();
+    const rows = page.locator(".market-board tbody tr");
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Lymhurst");
+    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("100");
+    await chooseRegion(page, "asia");
+    await expect.poll(() => asiaRequested).toBe(true);
+    // Deliberately hold the destination response beyond the 150ms autoload debounce:
+    // a stale callback must not restore Europe's URL, header or observations.
+    await page.waitForTimeout(400);
+    await expect(page).toHaveURL((url) => url.searchParams.get("region") === "asia");
+    await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
+    await expect(rows).toHaveCount(0);
+    releaseAsia();
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Caerleon");
+    await expect(rows).not.toContainText("Lymhurst");
+    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("9,876");
+    await expect(rows.locator('[data-label="Buy order"] .silver')).toHaveText("8,765");
+    await expect(page).toHaveURL((url) => url.searchParams.get("region") === "asia");
+    await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
+  } finally {
+    releaseAsia();
+  }
+});
+test("a delayed region navigation preserves the previous market history entry", async ({
+  page,
+}) => {
+  let releaseAsia!: () => void;
+  const asiaNavigation = new Promise<void>((resolve) => {
+    releaseAsia = resolve;
+  });
+  let asiaRscRequested = false;
+  let asiaMarketRequests = 0;
+  await page.route("**/api/history?**", (route) =>
+    route.fulfill({ status: 503, json: { error: "History unavailable in this fixture" } }),
   );
-  await page.goto("/tools/market?region=europe");
-  await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator(".market-board tbody")).toContainText("Stale");
-  await chooseRegion(page, "asia");
-  await expect(page.locator("main")).toContainText("Region changed");
-  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
+  await page.route("**/api/market?**", (route) => {
+    const region = new URL(route.request().url()).searchParams.get("region");
+    if (region === "asia") asiaMarketRequests++;
+    return route.fulfill({
+      json: {
+        region,
+        prices: [
+          {
+            item_id: "T4_BAG",
+            city: region === "asia" ? "Caerleon" : "Lymhurst",
+            quality: 1,
+            sell_price_min: region === "asia" ? 9876 : 100,
+            buy_price_max: region === "asia" ? 8765 : 90,
+            sell_price_min_date: "2020-01-01T00:00:00",
+            buy_price_max_date: "2020-01-01T00:00:00",
+          },
+        ],
+      },
+    });
+  });
+  await page.route("**/tools/market?**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get("region") !== "asia" || route.request().headers().rsc !== "1")
+      return route.continue();
+    asiaRscRequested = true;
+    const response = await route.fetch();
+    await asiaNavigation;
+    await route.fulfill({ response });
+  });
+  try {
+    // Establish a real earlier entry so a lost market entry would send Back to Home.
+    await page.goto("/?region=europe");
+    await page.goto("/tools/market?region=europe");
+    const rows = page.locator(".market-board tbody tr");
+    const picker = page.getByRole("combobox", { name: "Albion region", exact: true });
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Lymhurst");
+    const previousHistoryLength = await page.evaluate(() => history.length);
+    await picker.click();
+    await page.getByRole("option", { name: "Asia", exact: true }).click();
+    await expect.poll(() => asiaRscRequested).toBe(true);
+    await expect(picker).toHaveAttribute("data-region", "asia");
+    await expect(rows).toHaveCount(0);
+    // Keep the actual RSC navigation pending beyond the 150ms autoload debounce.
+    // The optimistic region must not replace the still-current Europe history entry.
+    await page.waitForTimeout(600);
+    await expect(page).toHaveURL((url) => url.searchParams.get("region") === "europe");
+    await expect(picker).toHaveAttribute("data-region", "asia");
+    await expect(rows).toHaveCount(0);
+    expect(await page.evaluate(() => history.length)).toBe(previousHistoryLength);
+    expect(asiaMarketRequests).toBe(0);
+    releaseAsia();
+    await expect(page).toHaveURL((url) => url.searchParams.get("region") === "asia");
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(previousHistoryLength + 1);
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Caerleon");
+    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("9,876");
+    await page.goBack();
+    await expect(page).toHaveURL(
+      (url) => url.pathname === "/tools/market" && url.searchParams.get("region") === "europe",
+    );
+    await expect(picker).toHaveAttribute("data-region", "europe");
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Lymhurst");
+    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("100");
+  } finally {
+    releaseAsia();
+  }
 });
 test("private account data requires authentication", async ({ request, page }) => {
   expect((await request.get("/api/account/export")).status()).toBe(401);

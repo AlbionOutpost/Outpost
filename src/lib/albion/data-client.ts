@@ -3,6 +3,7 @@ import { regions, regionSchema, type Region } from "./region-config";
 import { redis, rateLimit } from "../redis";
 import { retryDelay } from "./backoff";
 import { inflightCache } from "../inflight-cache";
+import { reserveCallerAttempt } from "./upstream-caller-budget";
 const cache = new Map<string, { until: number; data: unknown; bytes: number }>();
 let cacheBytes = 0;
 const maxCacheBytes = 8 * 1024 * 1024;
@@ -52,6 +53,7 @@ export async function requestData<T>(
     }
     let response: Response | undefined;
     for (let attempt = 0; attempt < 2; attempt++) {
+      await reserveCallerAttempt(region);
       // Published compressed source limits are100/minute and300/five minutes.
       // Reserve conservative shared windows for every attempt, including retries.
       if (

@@ -6,7 +6,7 @@ import {
   itemWeight,
 } from "../src/lib/albion/game/recipes";
 import { recipeFor, setRecipeResolver, upgradeCost, enchantable } from "../src/lib/albion/recipes";
-import { initialProduction, production } from "../src/lib/albion/production";
+import { initialProduction, production, productionSchema } from "../src/lib/albion/production";
 import { sourcedReturnRates, specialtyCity } from "../src/lib/albion/production-profile";
 import { focusEfficiency, focusPerCraft, focusSpecsFor } from "../src/lib/albion/focus";
 
@@ -90,6 +90,67 @@ it("prices an artifact recipe without crediting returns on the artifact", () => 
     returnCredit: 1600,
     profit: 8400,
   });
+});
+
+it("includes fixed recipe silver in scaled and restored cash and profit, separately from station fees", () => {
+  const input = initialProduction("crafting", "europe");
+  input.recipeId = "T4_WOOD_LEVEL1@1";
+  input.batches = 10;
+  input.stationFee = 20;
+  input.prices = { T4_WOOD: manual(100), "T4_WOOD_LEVEL1@1": manual(1000) };
+  // Ten conversions: 1,000 materials + 15,000 fixed recipe silver + 200 station.
+  // Revenue 10,000 => cash/economic loss 6,200; fixed silver receives no returns.
+  input.returnRate = 50;
+  input.returns = { T4_WOOD: true };
+  expect(gameRecipe(input.recipeId)?.silver).toBe(1500);
+  expect(production(productionSchema.parse(JSON.parse(JSON.stringify(input))))).toMatchObject({
+    complete: true,
+    grossMaterials: 1000,
+    recipeCost: 15000,
+    stationCost: 200,
+    upfront: 16200,
+    returnCredit: 0,
+    cost: 16200,
+    revenue: 10000,
+    profit: -6200,
+    cashProfit: -6200,
+  });
+  delete input.prices.T4_WOOD;
+  expect(production(input)).toMatchObject({
+    complete: false,
+    recipeCost: 15000,
+    upfront: null,
+    profit: null,
+  });
+});
+
+it("includes mandatory silver when enforcing the production cash limit", () => {
+  const input = initialProduction("crafting", "europe");
+  input.recipeId = "T4_WOOD_LEVEL1@1";
+  input.batches = 100000;
+  input.stationFee = 10000000;
+  // Station fees alone equal the cap; the additional 150m recipe silver exceeds it.
+  expect(() => production(input)).toThrow("Scenario totals exceed one trillion silver");
+});
+
+it("requires an explicit accounting choice for ambiguous legacy saved fees", () => {
+  const input = initialProduction("crafting", "europe");
+  input.recipeId = "T4_WOOD_LEVEL1@1";
+  input.stationFee = 1520;
+  input.prices = { T4_WOOD: manual(100), "T4_WOOD_LEVEL1@1": manual(1000) };
+  delete input.recipeSilverAccounting;
+  const original = structuredClone(input);
+  expect(() => production(input)).toThrow("Confirm whether its station fee includes");
+  expect(input).toEqual(original);
+  expect(production({ ...input, recipeSilverAccounting: "separate" })).toMatchObject({
+    upfront: 3120,
+    profit: -2120,
+  });
+  expect(
+    production({ ...input, recipeSilverAccounting: "separate", stationFee: 20 }),
+  ).toMatchObject({ upfront: 1620, profit: -620 });
+  // A legacy zero fee is unambiguous: the fixed requirement must still be charged.
+  expect(production({ ...input, stationFee: 0 })).toMatchObject({ upfront: 1600, profit: -600 });
 });
 
 it("uses the game upgrade costs for every slot", () => {

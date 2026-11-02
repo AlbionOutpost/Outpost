@@ -32,19 +32,24 @@ r                = (useFocus ? focusReturnRate : returnRate) / 100
 gross            = Σ qty·unitPrice
 returnCredit     = Σ (eligible) gross·r
 stationCost      = stationFee·batches
+recipeCost       = recorded recipe silver requirement·batches
 revenue          = outputPrice·outputCount·batches
 fees             = revenue·(tax + setupFee)/100
-cost             = gross − returnCredit + stationCost
+cost             = gross − returnCredit + stationCost + recipeCost
 profit           = revenue − fees − cost            (economic, values returns)
-cashProfit       = revenue − fees − gross − stationCost
+cashProfit       = revenue − fees − gross − stationCost − recipeCost
 profitPerFocus   = profit / focusUsed
 incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 ```
 
 - Output quality is fixed at 1 for refining, cooking and alchemy.
+- Recorded fixed recipe silver requirements are included automatically and never returned. The editable station/upgrade fee is an additional charge; upfront cash and plan totals include both. Restored scenarios are recalculated against their resolved recipe. Imported requirements still need current-game verification.
+- New runs record `recipeSilverAccounting: "separate"`. Older runs with both a nonzero recorded fee and a nonzero fixed recipe requirement retain their inputs but withhold calculations/save until the player confirms whether the fee is additional or includes the fixed requirement. The latter choice subtracts the known requirement only after confirmation, and is available only when the recorded total covers it. Legacy zero-fee runs can safely include the requirement automatically.
 - Enchanting rejects focus and return flags. Upgrades come from `game/upgrades.json`: each step from `.n−1` to `.n` costs the listed rune/soul/relic count (96 helmet/boots/cape/off-hand, 192 chest/bag, 288 one-handed, 384 two-handed).
 - Ingredients flagged `returnable: false` (artifacts, tokens, enchanting inputs) never earn return credit, whatever the saved flags say.
 - Recipes resolve by ID: bundled legacy IDs (`battleaxe-t4`) or game IDs (`T4_MAIN_AXE`, `T4_MAIN_AXE@2`, `T8_2H_BOW_HELL~2` for the second alternative). The client fetches game recipes from `/api/recipes`; server routes import `game/server-recipes.ts`.
+- Shared and saved restores first load their exact declared game recipe IDs (up to 30 in a plan, three concurrent reads), then validate the complete configuration before replacing inputs. Failed recipe loads leave the current draft intact. This does not relax server recipe validation.
+- Recipe links for a different production kind or cooking/alchemy category show a recoverable selection notice. The default-recipe action clears the incompatible selection and retains the chosen server.
 - `estimatedFocusCost(base, efficiency, batches) = base·2^(−efficiency/10000)·batches` (no per-operation rounding yet).
 - **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are saved on the device (`/tools/mastery`).
 - `returnRateFromBonus(b) = 1 − 1/(1 + b/100)`.
@@ -97,6 +102,8 @@ profit        = lootNet + emptyNet − cost        complete only when coverage =
 
 Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**.
 
+Observed prices retain execution provenance: instant journal purchases use asks, buy-order journal targets use bids, instant loot/empty-journal sales use bids, and listings use asks. Changing execution invalidates mismatched observations immediately, including when refresh fails; legacy observations without execution identity remain unavailable until refreshed. Explicit manual targets remain usable across execution changes.
+
 ## Roads of Avalon — `avalon-map.ts`
 
 Portals live in the browser (`outpost:avalon-map-v1`); one link per zone pair; `findRoute` is breadth-first over links that are still open.
@@ -143,4 +150,4 @@ Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`
 
 ## Known gaps
 
-No heart or transmutation recipes and no cheapest-path refining planner yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
+No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).

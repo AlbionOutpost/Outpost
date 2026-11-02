@@ -96,7 +96,9 @@ export default async function Settings({
             <h2>Close your account</h2>
             <p>
               Account deletion permanently removes your account, connected OAuth records and active
-              sessions. Transfer or close teams you own first.
+              sessions. Transfer or close teams you own first. Cancel any subscription through
+              Manage subscription first and wait until it has ended. We verify billing before
+              deletion and close unfinished checkout links.
             </p>
             <DeleteAccountForm />
           </section>

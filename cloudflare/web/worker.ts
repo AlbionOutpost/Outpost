@@ -1,5 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import app from "../../.open-next/worker.js";
+import type { OutpostDatabaseBinding } from "../database/web-driver";
+import { requestBudget, secureResponse } from "./request-budget";
 
 const lifetime = 30 * 60;
 const cookieName = "outpost-route";
@@ -155,7 +157,15 @@ const worker = {
       url.hostname = "albionoutpost.com";
       url.protocol = "https:";
       url.port = "";
-      return Response.redirect(url.toString(), 308);
+      return secureResponse(Response.redirect(url.toString(), 308), request);
+    }
+    const denial = await requestBudget(
+      request,
+      env.OUTPOST_DATA as unknown as OutpostDatabaseBinding,
+    );
+    if (denial) {
+      denial.headers.set("Cache-Control", "private, no-store");
+      return secureResponse(denial, request);
     }
     const key = request.method === "GET" && !signedIn(request) ? searchCacheKey(url) : null;
     const cache = key && typeof caches !== "undefined" ? caches.default : null;
@@ -165,7 +175,7 @@ const worker = {
         const answer = new Response(hit.body, hit);
         answer.headers.set("Cache-Control", "private, max-age=60");
         answer.headers.set("X-Outpost-Search", "hit");
-        return answer;
+        return secureResponse(answer, request);
       }
     }
     const session = await identity(request, env.OUTPOST_RENDER_SESSION_SECRET);
@@ -184,7 +194,7 @@ const worker = {
     }
     if (session.cookie) result.headers.append("Set-Cookie", session.cookie);
     result.headers.set("Cache-Control", "private, no-store");
-    return result;
+    return secureResponse(result, request);
   },
 };
 export default worker;

@@ -15,6 +15,10 @@ export const GET = apiHandler("laborers.prices", async (req: NextRequest) => {
       journalCity: z.enum(cities),
       lootCity: z.enum(cities),
       saleMode: z.enum(["instant", "listing"]),
+      buyOrder: z
+        .enum(["true", "false"])
+        .default("false")
+        .transform((value) => value === "true"),
     })
     .parse(Object.fromEntries(req.nextUrl.searchParams));
   if (v.journalCity === "Black Market" || v.lootCity === "Black Market")
@@ -26,12 +30,21 @@ export const GET = apiHandler("laborers.prices", async (req: NextRequest) => {
   const rows = await getPrices(v.region, [full, empty, ...loot.items.map((i) => i.id)], 1);
   const observe = (id: string, city: string, side: "buy" | "sale") => {
     const row = rows.find((r) => r.item_id === id && r.city === city && r.quality === 1);
-    // Buying the full journal takes a sell order; selling uses buy orders (instant) or a listing.
-    const instant = side === "sale" && v.saleMode === "instant";
-    const value = (instant ? row?.buy_price_max : row?.sell_price_min) || null;
+    // Buy orders and instant sales use the bid; instant purchases and listings use the ask.
+    const bid = side === "buy" ? v.buyOrder : v.saleMode === "instant";
+    const execution =
+      side === "buy"
+        ? v.buyOrder
+          ? "buy-order"
+          : "instant-purchase"
+        : v.saleMode === "instant"
+          ? "instant-sale"
+          : "listing";
+    const value = (bid ? row?.buy_price_max : row?.sell_price_min) || null;
     return {
       value,
-      observedAt: value ? (instant ? row!.buy_price_max_date : row!.sell_price_min_date) : null,
+      observedAt: value ? (bid ? row!.buy_price_max_date : row!.sell_price_min_date) : null,
+      execution,
       manual: false,
       region: v.region,
       city,

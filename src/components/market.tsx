@@ -11,16 +11,17 @@ import { MarketWatchlist } from "./market-watchlist";
 import { MarketQualityAvailability } from "./market-quality-availability";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
-import { useState, useRef, useEffect, useId, useSyncExternalStore } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useId, useSyncExternalStore } from "react";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
-import { useAtlasRegion } from "./region-context";
+import { useAtlasRegion, useRegionNavigationPending } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 export function Market() {
   const params = useSearchParams();
   const region = useAtlasRegion();
+  const regionPending = useRegionNavigationPending();
   const [item, setItem] = useState(params.get("item") || "T4_BAG");
   const [selectedName, setSelectedName] = useState("");
   const [category, setCategory] = useState(
@@ -64,7 +65,7 @@ export function Market() {
   const qualityControl = useRef<HTMLSelectElement | null>(null);
   const current = `${region}:${item.trim().toUpperCase()}:${quality}`;
   useEffect(() => () => controller.current?.abort(), [current]);
-  const loading = pendingKey === current;
+  const loading = regionPending || pendingKey === current;
   const hasResult = result?.key === current;
   const hasError = error?.key === current;
   const rows = result?.key === current ? result.rows : [];
@@ -87,6 +88,9 @@ export function Market() {
   const marketLabel =
     city || (extraCities.length ? `${extraCities.length} cities selected` : "All cities");
   async function load() {
+    // Wait for the router's push before native URL synchronization; otherwise a
+    // queued refresh can replace the previous region's browser-history entry.
+    if (regionPending) return;
     const url = new URL(window.location.href);
     const selection = {
       region,
@@ -133,16 +137,16 @@ export function Market() {
     await load();
   }
   const loadRef = useRef(load);
-  useEffect(() => {
+  useLayoutEffect(() => {
     loadRef.current = load;
   });
   // Research-first: a valid selection loads its prices as soon as it changes, so arriving
   // with ?item= or picking from the catalog shows city prices without a second click.
   useEffect(() => {
-    if (!hydrated || !validSelection) return;
+    if (!hydrated || !validSelection || regionPending) return;
     const timer = window.setTimeout(() => void loadRef.current(), 150);
     return () => window.clearTimeout(timer);
-  }, [current, hydrated, validSelection]);
+  }, [current, hydrated, validSelection, regionPending]);
   const newest = visible
     .flatMap((r) => [
       ...(r.sell_price_min ? [{ city: r.city, date: r.sell_price_min_date }] : []),

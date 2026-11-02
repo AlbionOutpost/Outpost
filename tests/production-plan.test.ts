@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { initialProduction } from "@/lib/albion/production";
 import { productionPlan, productionPlanSchema } from "@/lib/albion/production-plan";
+import { gameRecipe } from "@/lib/albion/game/recipes";
+import { registerRecipes } from "@/lib/albion/recipes";
 
 function run() {
   const value = initialProduction("crafting", "europe");
@@ -20,6 +22,53 @@ function run() {
   return value;
 }
 describe("production planning", () => {
+  it("keeps tiny plan revenue without exposing an infinite combined margin", () => {
+    const value = run();
+    value.prices.T4_MAIN_AXE.value = 1e-310;
+    const plan = productionPlan({ kind: "production-plan", region: "europe", runs: [value] });
+    expect(plan.complete).toBe(true);
+    expect(plan.revenue).toBe(1e-310);
+    expect(plan.profit).toBe(-1700);
+    expect(plan.margin).toBeNull();
+  });
+  it("aggregates known recipe silver after a saved plan is restored", () => {
+    registerRecipes([gameRecipe("T4_WOOD_LEVEL1@1")!]);
+    const first = initialProduction("crafting", "europe");
+    first.recipeId = "T4_WOOD_LEVEL1@1";
+    first.batches = 2;
+    for (const [id, value] of Object.entries({ T4_WOOD: 100, "T4_WOOD_LEVEL1@1": 1000 }))
+      first.prices[id] = {
+        value,
+        manual: true,
+        quality: 1,
+        region: null,
+        city: null,
+        observedAt: null,
+      };
+    const restored = productionPlanSchema.parse(
+      JSON.parse(
+        JSON.stringify({
+          kind: "production-plan",
+          region: "europe",
+          runs: [first, { ...first, batches: 3, stationFee: 20 }],
+        }),
+      ),
+    );
+    // Five materials cost500, mandatory silver7,500, additional station60, revenue5,000.
+    expect(productionPlan(restored)).toMatchObject({
+      complete: true,
+      recipeCost: 7500,
+      stationCost: 60,
+      upfront: 8060,
+      cost: 8060,
+      revenue: 5000,
+      profit: -3060,
+      cashProfit: -3060,
+    });
+    const legacy = structuredClone(restored);
+    delete legacy.runs[1].recipeSilverAccounting;
+    expect(() => productionPlan(legacy)).toThrow("Confirm whether its station fee includes");
+  });
   it("aggregates gross purchases separately from returns, cash and economic profit", () => {
     // Two axes: 32 bars at100 +16 planks at50; upfront4200, revenue6000,
     // tax600, retained resources800. Cash profit1200, economic profit2000.

@@ -102,6 +102,28 @@ for (const width of [320, 390, 768, 1440]) {
     await page.goto(`/builds/${visual.buildId}/edit`);
     await expect(page.getByLabel("Build title")).toHaveValue("Battleaxe expedition · QA fixture");
     await page.evaluate(() => document.fonts.ready);
+    await expect(async () => {
+      const variantLabels = await page
+        .locator(".editor-item-variants select")
+        .evaluateAll((controls: HTMLSelectElement[]) =>
+          controls.map((control) => {
+            const style = getComputedStyle(control);
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d")!;
+            context.font = style.font;
+            const widest = Math.max(
+              ...[...control.options].map((option) => context.measureText(option.label).width),
+            );
+            const available =
+              control.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+            return { label: control.getAttribute("aria-label"), available, widest };
+          }),
+        );
+      expect(variantLabels.filter(({ available, widest }) => available < widest)).toEqual([]);
+    }).toPass({ timeout: 5000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
     await expect(page.locator(".gear-studio")).toHaveScreenshot(`equipment-${width}.png`, options);
     await page.goto("/compositions?q=QA+Outpost+visual+roster&mine=1");
     await expect(page.locator(".composition-preview-card")).toHaveCount(1);

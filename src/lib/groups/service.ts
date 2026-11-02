@@ -121,6 +121,11 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
               where: { groupId_userId: { groupId, userId: action.userId } },
               data: { role: action.role },
             });
+            if (!canEditShared(action.role))
+              await tx.groupInvitation.updateMany({
+                where: { groupId, createdById: action.userId, acceptedAt: null, revokedAt: null },
+                data: { revokedAt: new Date() },
+              });
             return { updated: true };
           }
           case "remove": {
@@ -134,11 +139,19 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             await tx.groupMember.delete({
               where: { groupId_userId: { groupId, userId: action.userId } },
             });
+            await tx.groupInvitation.updateMany({
+              where: { groupId, createdById: action.userId, acceptedAt: null, revokedAt: null },
+              data: { revokedAt: new Date() },
+            });
             return { removed: true };
           }
           case "leave": {
             if (owner) throw new HttpError(409, "Transfer ownership before leaving");
             await tx.groupMember.delete({ where: { groupId_userId: { groupId, userId } } });
+            await tx.groupInvitation.updateMany({
+              where: { groupId, createdById: userId, acceptedAt: null, revokedAt: null },
+              data: { revokedAt: new Date() },
+            });
             return { left: true };
           }
           case "transfer": {
@@ -284,6 +297,14 @@ async function localAcceptInvitation(token: string, userId: string) {
         });
         if (!invite || invite.revokedAt || invite.acceptedAt || invite.expiresAt <= new Date())
           throw new HttpError(410, "Invitation expired, revoked or already used");
+        // Recheck the issuer as well as the bearer. This also closes outstanding links
+        // minted before removal/demotion revocation was introduced, or before account deletion.
+        const issuer = invite.createdById
+          ? await tx.groupMember.findUnique({
+              where: { groupId_userId: { groupId: invite.groupId, userId: invite.createdById } },
+            })
+          : null;
+        if (!canEditShared(issuer?.role)) throw new HttpError(410, "Invitation unavailable");
         if (
           await tx.groupMember.findUnique({
             where: { groupId_userId: { groupId: invite.groupId, userId } },

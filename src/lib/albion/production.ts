@@ -3,6 +3,7 @@ import { z } from "zod";
 import { regionSchema, cities } from "./region-config";
 import { recipeFor, findRecipe } from "./recipes";
 import { isStale } from "./freshness";
+import { finiteRatio } from "./finite-ratio";
 export const observation = z.object({
   value: z.number().nonnegative().max(1e12).nullable(),
   manual: z.boolean(),
@@ -14,6 +15,8 @@ export const observation = z.object({
 export const productionSchema = z
   .object({
     mechanicsProfile: mechanicsProfile.nullable().default(null),
+    // Missing on older saved runs whose manual station fee may include fixed recipe silver.
+    recipeSilverAccounting: z.literal("separate").optional(),
     kind: z.enum(["crafting", "refining", "enchanting"]),
     region: regionSchema,
     materialCity: z.enum(cities),
@@ -50,6 +53,11 @@ export const productionSchema = z
       });
   });
 export type ProductionInput = z.infer<typeof productionSchema>;
+export const legacyRecipeFeeMessage =
+  "Scenario uses an older fee model. Confirm whether its station fee includes the recipe silver requirement before calculating or saving.";
+export function needsRecipeFeeConfirmation(v: ProductionInput, recipe = recipeFor(v)) {
+  return !v.recipeSilverAccounting && (recipe.silver ?? 0) > 0 && v.stationFee > 0;
+}
 export function productionOutputQuality(
   v: Pick<ProductionInput, "kind" | "quality"> & { recipeId?: string },
 ) {
@@ -84,6 +92,7 @@ export function returnRateFromBonus(bonus: number) {
 export function production(input: ProductionInput) {
   const v = productionSchema.parse(input),
     recipe = recipeFor(v);
+  if (needsRecipeFeeConfirmation(v, recipe)) throw new Error(legacyRecipeFeeMessage);
   const rate = (v.useFocus ? v.focusReturnRate : v.returnRate) / 100;
   let grossMaterials = 0,
     returnCredit = 0,
@@ -122,9 +131,12 @@ export function production(input: ProductionInput) {
   });
   const outputPrice = price(recipe.output, productionOutputQuality(v), v.outputCity),
     outputQuantity = recipe.outputCount * v.batches,
-    stationCost = v.stationFee * v.batches;
+    stationCost = v.stationFee * v.batches,
+    // Fixed recipe silver is separate from the player's additional station charge.
+    // Neither charge is a returnable material or reduced by focus.
+    recipeCost = (recipe.silver ?? 0) * v.batches;
   if (
-    grossMaterials + stationCost > 1e12 ||
+    grossMaterials + stationCost + recipeCost > 1e12 ||
     (outputPrice !== null && outputPrice * outputQuantity > 1e12)
   )
     throw new Error("Scenario totals exceed one trillion silver");
@@ -139,9 +151,10 @@ export function production(input: ProductionInput) {
         ? null
         : grossMaterials,
       stationCost,
+      recipeCost,
       upfront: missing.some((id) => recipe.ingredients.some((i) => i.id === id))
         ? null
-        : grossMaterials + stationCost,
+        : grossMaterials + stationCost + recipeCost,
       profit: null,
       cashProfit: null,
       returnCredit: null,
@@ -156,9 +169,16 @@ export function production(input: ProductionInput) {
     };
   const revenue = outputPrice * outputQuantity,
     fees = (revenue * (v.tax + v.setupFee)) / 100,
-    cost = grossMaterials - returnCredit + stationCost,
+    cost = grossMaterials - returnCredit + stationCost + recipeCost,
     profit = revenue - fees - cost,
-    cashProfit = revenue - fees - grossMaterials - stationCost;
+    cashProfit = revenue - fees - grossMaterials - stationCost - recipeCost;
+  // Bounded inputs/revenue do not bound combined fees or losses independently.
+  if (
+    [fees, cost, profit, cashProfit].some(
+      (value) => !Number.isFinite(value) || Math.abs(value) > 1e12,
+    )
+  )
+    throw new Error("Scenario totals exceed one trillion silver");
   return {
     complete: true,
     missing: [],
@@ -167,18 +187,21 @@ export function production(input: ProductionInput) {
     outputQuantity,
     grossMaterials,
     stationCost,
-    upfront: grossMaterials + stationCost,
+    recipeCost,
+    upfront: grossMaterials + stationCost + recipeCost,
     profit,
     cashProfit,
     returnCredit,
     fees,
     revenue,
     cost,
-    roi: cost ? (profit / cost) * 100 : null,
-    margin: revenue ? (profit / revenue) * 100 : null,
-    profitPerFocus: v.useFocus ? profit / v.focusUsed : null,
-    incrementalPerFocus: v.useFocus ? (returnCredit - baseReturnCredit) / v.focusUsed : null,
-    profitPerItem: profit / outputQuantity,
+    roi: finiteRatio(profit, cost, 100),
+    margin: finiteRatio(profit, revenue, 100),
+    profitPerFocus: v.useFocus ? finiteRatio(profit, v.focusUsed) : null,
+    incrementalPerFocus: v.useFocus
+      ? finiteRatio(returnCredit - baseReturnCredit, v.focusUsed)
+      : null,
+    profitPerItem: finiteRatio(profit, outputQuantity),
   };
 }
 export function initialProduction(
@@ -189,6 +212,7 @@ export function initialProduction(
     kind,
     region,
     mechanicsProfile: null,
+    recipeSilverAccounting: "separate",
     materialCity: "Lymhurst",
     outputCity: "Lymhurst",
     recipeId: kind === "refining" ? "steel-bar-t4" : "battleaxe-t4",

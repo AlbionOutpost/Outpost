@@ -1,3 +1,4 @@
+import { accountPage, accountPageOrder } from "@/lib/account-pagination";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -9,19 +10,21 @@ export default async function Page() {
   if (!s?.user?.id) redirect("/signin");
   const timers = await db.timer.findMany({
     where: { userId: s.user.id },
-    orderBy: { updatedAt: "desc" },
-    take: 100,
+    orderBy: [...accountPageOrder],
+    take: 101,
   });
+  const page = accountPage(timers, 100);
   return (
     <>
       <WorkspaceHeading
         scene="economy"
         title="Personal timers"
-        description="Keep your cooldowns and reminders together. Your 100 most recent timers are saved to your account."
+        description="Keep your cooldowns and reminders together. Your timers are saved to your account; load older entries whenever you need them."
         icon="timer"
       />
       <TimerManager
-        initial={timers.map((t) => ({ ...t, dueAt: t.dueAt?.toISOString() ?? null }))}
+        initialCursor={page.cursor}
+        initial={page.items.map((t) => ({ ...t, dueAt: t.dueAt?.toISOString() ?? null }))}
       />
     </>
   );

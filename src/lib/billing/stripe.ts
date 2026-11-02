@@ -1,4 +1,5 @@
 import { HttpError } from "@/lib/http-error";
+import { readBoundedText } from "@/lib/request-body";
 
 /**
  * A small Stripe REST client. The SDK is not used: these four calls are all Outpost needs,
@@ -45,10 +46,18 @@ async function call<T>(
     headers,
     body,
     signal: AbortSignal.timeout(15000),
+    redirect: "error",
+    cache: "no-store",
   });
-  const json = (await response.json().catch(() => ({}))) as {
+  let json: {
     error?: { message?: string; code?: string };
   } & T;
+  try {
+    json = JSON.parse(await readBoundedText(response, 2 * 1024 * 1024));
+    if (!json || typeof json !== "object") throw new Error("Invalid provider payload");
+  } catch {
+    throw new HttpError(502, "Invalid billing provider response");
+  }
   if (!response.ok)
     throw new HttpError(
       502,
@@ -87,27 +96,35 @@ export async function createCustomer(
 
 export async function createCheckoutSession(
   config: StripeConfig,
-  input: { customerId: string; userId: string; successUrl: string; cancelUrl: string },
+  input: {
+    customerId: string;
+    userId: string;
+    successUrl: string;
+    cancelUrl: string;
+    priceId: string;
+  },
+  operationId: string,
 ) {
-  const session = await call<{ id: string; url: string | null }>(
+  const session = await call<StripeCheckout>(
     config,
     "POST",
     "/checkout/sessions",
     {
       mode: "subscription",
       customer: input.customerId,
-      "line_items[0][price]": config.priceId,
+      "line_items[0][price]": input.priceId,
       "line_items[0][quantity]": 1,
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
       client_reference_id: input.userId,
       "subscription_data[metadata][outpostUserId]": input.userId,
+      "metadata[outpostCheckoutId]": operationId,
       allow_promotion_codes: "true",
       billing_address_collection: "auto",
     },
+    `checkout-${operationId}`,
   );
-  if (!session.url) throw new HttpError(502, "Billing provider returned no checkout page");
-  return session.url;
+  return session;
 }
 
 export async function createPortalSession(
@@ -123,6 +140,7 @@ export async function createPortalSession(
 
 export type StripeSubscription = {
   id: string;
+  created: number;
   customer: string;
   status: string;
   current_period_end: number | null;
@@ -132,6 +150,67 @@ export type StripeSubscription = {
 };
 export const getSubscription = (config: StripeConfig, id: string) =>
   call<StripeSubscription>(config, "GET", `/subscriptions/${encodeURIComponent(id)}`);
+
+export type StripeCheckout = {
+  id: string;
+  customer: string;
+  mode: string;
+  status: "open" | "complete" | "expired";
+  url: string | null;
+  metadata?: Record<string, string>;
+  subscription?: string | null;
+};
+
+/** Fetch complete customer histories, or fail without changing local entitlements. */
+async function customerList<T extends { id: string; customer: string }>(
+  config: StripeConfig,
+  path: string,
+  customerId: string,
+  extra: Record<string, string> = {},
+): Promise<T[]> {
+  const records: T[] = [];
+  let cursor: string | undefined;
+  for (let page = 0; page < 10; page++) {
+    const list = await call<{ data: T[]; has_more: boolean }>(config, "GET", path, {
+      ...extra,
+      customer: customerId,
+      limit: 100,
+      starting_after: cursor,
+    });
+    if (
+      !Array.isArray(list.data) ||
+      list.data.length > 100 ||
+      typeof list.has_more !== "boolean" ||
+      list.data.some((row) => !row || typeof row.id !== "string" || row.customer !== customerId)
+    )
+      throw new HttpError(502, "Invalid billing provider list");
+    records.push(...list.data);
+    if (!list.has_more) return records;
+    const last = list.data.at(-1)?.id;
+    if (!last || last === cursor) throw new HttpError(502, "Invalid billing provider pagination");
+    cursor = last;
+  }
+  throw new HttpError(503, "Billing history requires reconciliation before this change");
+}
+
+export const listSubscriptions = (config: StripeConfig, customerId: string) =>
+  customerList<StripeSubscription>(config, "/subscriptions", customerId, { status: "all" });
+export const listCheckoutSessions = (config: StripeConfig, customerId: string) =>
+  customerList<StripeCheckout>(config, "/checkout/sessions", customerId);
+export const getCheckoutSession = (config: StripeConfig, id: string) =>
+  call<StripeCheckout>(config, "GET", `/checkout/sessions/${encodeURIComponent(id)}`);
+export async function expireCheckoutSession(config: StripeConfig, id: string) {
+  try {
+    return await call<StripeCheckout>(
+      config,
+      "POST",
+      `/checkout/sessions/${encodeURIComponent(id)}/expire`,
+    );
+  } catch {
+    // Another request may have expired or completed it while this call was in flight.
+    return getCheckoutSession(config, id);
+  }
+}
 
 const encoder = new TextEncoder();
 const hex = (bytes: ArrayBuffer) =>

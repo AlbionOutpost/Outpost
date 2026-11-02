@@ -1078,7 +1078,7 @@ a.landing-window-title:hover {
 /* Top kills: killboards */
 .app.outpost .kill-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
   align-items: start;
   gap: 24px;
 }
@@ -1238,7 +1238,7 @@ a.landing-window-title:hover {
 }
 .app.outpost .kill-loot ul {
   display: grid;
-  grid-template-columns: repeat(9, 34px);
+  grid-template-columns: repeat(9, minmax(0, 34px));
   justify-content: center;
   align-content: start;
   gap: 4px;
@@ -1249,8 +1249,9 @@ a.landing-window-title:hover {
   position: relative;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
   border: 1px solid #ffffff10;
   border-radius: 6px;
   background: #0f1116cc;
@@ -1267,8 +1268,8 @@ a.landing-window-title:hover {
 .app.outpost .kill-loot li img {
   position: relative;
   z-index: 1;
-  width: 34px;
-  height: 34px;
+  width: 100%;
+  height: 100%;
   border-radius: 6px;
 }
 .app.outpost .kill-loot li b {
@@ -1748,8 +1749,7 @@ a.activity-top:hover {
 /* ---------- Tablet ---------- */
 @media (max-width: 1100px) {
   .app.outpost .landing-windows,
-  .app.outpost .landing-card-grid,
-  .app.outpost .kill-grid {
+  .app.outpost .landing-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .app.outpost .guides-track {
@@ -1833,7 +1833,8 @@ a.activity-top:hover {
     grid-template-columns: 1fr;
     margin-bottom: 18px;
   }
-  .app.outpost .landing-section-heading .text-link {
+  .app.outpost .landing-section-heading .text-link,
+  .app.outpost .landing-section-heading > .pill-link {
     grid-column: 1;
     grid-row: auto;
     justify-self: start;

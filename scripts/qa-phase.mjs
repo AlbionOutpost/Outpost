@@ -9,12 +9,18 @@ const commands = [
   ["unit", ["npm", "test"]],
   ["game-data-structure", ["node", "--import", "tsx", "scripts/audit-game-data.ts", "--check"]],
   ["database-integration", ["npm", "run", "test:integration"]],
+  [
+    "authorization-regressions",
+    ["node", "--env-file=.env", "--import", "tsx", "scripts/test-billing-security.ts"],
+  ],
   ["build", ["npm", "run", "build"]],
   ["browser", ["npm", "run", "test:e2e"]],
-  // The gate covers what ships: the production dependency tree at every severity. Build and
-  // lint tooling (eslint, OpenNext) is reviewed on dependency updates rather than blocking
-  // every change on an advisory in a linter's glob matcher.
+  // Production advisories fail at every severity. Development-only alerts remain
+  // visible and the exact documented applicability assessment is checked separately.
   ["dependencies", ["npm", "audit", "--json", "--omit=dev"]],
+  // Preserve raw development alerts while checking the exact documented exception.
+  // A new advisory, changed legacy artifact or production exposure requires reassessment.
+  ["tooling-assessment", ["node", "scripts/verify-tooling-assessment.mjs"]],
   ["live-regions", ["npm", "run", "test:live"]],
 ];
 // QA_SKIP=live-regions,browser skips named checks (recorded as SKIPPED, not failures).

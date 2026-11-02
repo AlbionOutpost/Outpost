@@ -44,7 +44,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
               ["Steel Bar unit price", "100"],
               ["Pine Planks unit price", "50"],
               ["Output unit sale price", "3000"],
-              ["Station / upgrade fee per craft", "100"],
+              ["Additional station / upgrade fee per craft", "100"],
               ["Sales tax (%)", "10"],
             ]
           : kind === "refining"
@@ -53,7 +53,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
                 ["Bronze Bar unit price", "25"],
                 ["Output unit sale price", "500"],
                 ["Crafts / upgrades", "10"],
-                ["Station / upgrade fee per craft", "10"],
+                ["Additional station / upgrade fee per craft", "10"],
                 ["Sales tax (%)", "8"],
                 ["Sell order setup fee (%)", "2.5"],
               ]
@@ -62,7 +62,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
                 ["Adept's Rune unit price", "3"],
                 ["Output unit sale price", "4000"],
                 ["Crafts / upgrades", "2"],
-                ["Station / upgrade fee per craft", "50"],
+                ["Additional station / upgrade fee per craft", "50"],
                 ["Sales tax (%)", "10"],
               ];
       for (const [label, value] of fields)

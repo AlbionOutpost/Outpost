@@ -12,6 +12,8 @@ export function scanText(text, configured = {}) {
   if (/\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,})\b/.test(text))
     matches.push("github-token");
   if (/\bcf(?:at|ut|k)_[A-Za-z0-9_-]{40,}\b/.test(text)) matches.push("cloudflare-token");
+  if (/\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{20,}\b/.test(text)) matches.push("stripe-key");
+  if (/\bwhsec_[A-Za-z0-9]{24,}\b/.test(text)) matches.push("stripe-webhook");
   return matches;
 }
 

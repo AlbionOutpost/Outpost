@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { regionSchema } from "./region-config";
 import { decimalRatio } from "./decimal";
+import { finiteRatio } from "./finite-ratio";
 export const tradeSchema = z
   .object({
     buy: z.number().nonnegative().max(1e12),
@@ -60,8 +61,8 @@ export function trade(input: z.input<typeof tradeSchema>) {
     revenue,
     fees,
     profit,
-    margin: revenue ? (profit / revenue) * 100 : null,
-    roi: cost ? (profit / cost) * 100 : null,
+    margin: finiteRatio(profit, revenue, 100),
+    roi: finiteRatio(profit, cost, 100),
   };
 }
 export function returnedMaterialCost(cost: number, rate: number) {

@@ -1,4 +1,5 @@
 "use client";
+import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useState } from "react";
 import Link from "@/components/link";
 import { savedShoppingSchema, type ShoppingList } from "@/lib/albion/shopping";
@@ -10,17 +11,20 @@ export function ShoppingAccountLists({
   list: ShoppingList;
   onLoad: (list: ShoppingList) => void;
 }) {
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [title, setTitle] = useState(""),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
     [rows, setRows] = useState<Saved[]>([]);
   async function load() {
+    setNextCursor(null);
     setBusy(true);
     try {
       const r = await fetch("/api/scenarios?kind=shopping-list");
       const body = await r.json();
       if (!r.ok) throw new Error(body.error || "Could not open account lists");
       setRows(body);
+      setNextCursor(r.headers.get("X-Next-Cursor"));
       setMessage("Your account lists are ready. Choose a list on this server to restore it.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Could not open account lists");
@@ -137,6 +141,16 @@ export function ShoppingAccountLists({
             </div>
           );
         })}
+        <AccountPageMore<Saved>
+          url="/api/scenarios?kind=shopping-list"
+          cursor={nextCursor}
+          disabled={busy}
+          label="Load older account lists"
+          onPage={(older, cursor) => {
+            setRows((current) => appendAccountRows(current, older));
+            setNextCursor(cursor);
+          }}
+        />
       </div>
     </details>
   );

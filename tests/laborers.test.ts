@@ -5,6 +5,7 @@ import {
   laborerLoot,
   laborerReturnFactor,
   laborers,
+  type LaborerInput,
 } from "../src/lib/albion/laborers";
 const manual = (value: number) => ({
   value,
@@ -59,4 +60,110 @@ it("reports a lower bound when loot is unpriced and rejects invalid houses", () 
   expect(r.coverage).toBeCloseTo(13223 / 20000, 12);
   expect(laborers({ ...input, houseTier: 2, journalTier: 6 }).valid).toBe(false);
   expect(() => laborers({ ...input, lootCity: "Black Market" })).toThrow();
+});
+
+it("rejects wrong-side and legacy observations while preserving explicit manual prices", () => {
+  const input = initialLaborers("europe");
+  input.saleMode = "listing";
+  input.tax = 0;
+  input.setupFee = 0;
+  const observed = (value: number, execution?: LaborerInput["prices"][string]["execution"]) => ({
+    value,
+    execution,
+    manual: false,
+    region: "europe" as const,
+    city: "Lymhurst" as const,
+    quality: 1,
+    observedAt: new Date().toISOString(),
+  });
+  input.prices[journalId("WARRIOR", 4, true)] = observed(100, "instant-purchase");
+  for (const item of laborerLoot("WARRIOR", 4)!.items)
+    input.prices[item.id] = observed(1000, "listing");
+  expect(laborers(input)).toMatchObject({ complete: true, profit: 17100 });
+  // Listing asks provide no evidence that an instant sale can execute at that value.
+  expect(laborers({ ...input, saleMode: "instant" })).toMatchObject({
+    complete: false,
+    coverage: 0,
+    lootGross: 0,
+  });
+  const legacy = structuredClone(input);
+  for (const p of Object.values(legacy.prices)) delete p.execution;
+  expect(laborers(legacy)).toMatchObject({
+    complete: false,
+    coverage: 0,
+    cost: null,
+    profit: null,
+  });
+  expect(laborers({ ...input, buyOrder: true })).toMatchObject({
+    complete: false,
+    cost: null,
+    profit: null,
+  });
+  input.prices[journalId("WARRIOR", 4, true)].execution = "buy-order";
+  expect(laborers({ ...input, buyOrder: true })).toMatchObject({ complete: true, cost: 100 });
+  for (const p of Object.values(input.prices)) p.manual = true;
+  expect(laborers({ ...input, saleMode: "instant" })).toMatchObject({
+    complete: true,
+    profit: 17100,
+  });
+});
+
+function emptyJournalScenario() {
+  const input = initialLaborers("europe");
+  input.sellEmpty = true;
+  input.tax = 0;
+  input.setupFee = 0;
+  for (const row of laborerLoot(input.type, input.journalTier)!.items)
+    input.prices[row.id] = manual(0);
+  input.prices[journalId(input.type, input.journalTier, true)] = manual(0);
+  input.prices[journalId(input.type, input.journalTier, false)] = manual(0);
+  return input;
+}
+it("preserves a tiny journal purchase cost while withholding an infinite return ratio", () => {
+  const input = emptyJournalScenario();
+  input.prices[journalId(input.type, input.journalTier, true)] = manual(1e-300);
+  input.prices[journalId(input.type, input.journalTier, false)] = manual(1e12);
+  expect(laborers(input)).toMatchObject({
+    complete: true,
+    cost: 1e-300,
+    profit: 1e12,
+    margin: null,
+  });
+});
+it("bounds empty-journal gross sales before tax, including a scaled exact boundary", () => {
+  const input = emptyJournalScenario();
+  input.journals = 10000;
+  const empty = journalId(input.type, input.journalTier, false);
+  input.prices[empty] = manual(100_000_000);
+  expect(laborers(input)).toMatchObject({ complete: true, emptyNet: 1e12, profit: 1e12 });
+  // Ten thousand units add one silver when the unit price increases by0.0001.
+  input.prices[empty] = manual(100_000_000.0001);
+  expect(() => laborers(input)).toThrow("Laborer totals");
+  expect(() => laborers({ ...input, tax: 100 })).toThrow("Laborer totals");
+  input.prices[empty] = manual(1e12);
+  expect(() => laborers(input)).toThrow("Laborer totals");
+});
+it("bounds combined sale streams and fees even when each individual stream fits", () => {
+  const input = emptyJournalScenario();
+  const empty = journalId(input.type, input.journalTier, false);
+  input.prices[empty] = manual(1e12);
+  input.prices.T4_METALBAR = manual(1);
+  expect(() => laborers(input)).toThrow("Laborer totals");
+  input.prices.T4_METALBAR = manual(0);
+  // Gross1tn and sale fees2tn must fail even though net/profit are exactly-1tn.
+  expect(() => laborers({ ...input, saleMode: "listing", tax: 100, setupFee: 100 })).toThrow(
+    "Laborer totals",
+  );
+});
+it("bounds net loss separately from sale and purchase totals", () => {
+  const input = emptyJournalScenario();
+  input.saleMode = "listing";
+  input.tax = 100;
+  input.setupFee = 100;
+  input.prices[journalId(input.type, input.journalTier, false)] = manual(500e9);
+  input.prices[journalId(input.type, input.journalTier, true)] = manual(500e9);
+  // Gross500bn, fees1tn and cost500bn produce a supported loss of exactly1tn.
+  expect(laborers(input)).toMatchObject({ emptyNet: -500e9, cost: 500e9, profit: -1e12 });
+  input.prices[journalId(input.type, input.journalTier, true)] = manual(600e9);
+  expect(() => laborers(input)).toThrow("Laborer totals");
 });
