@@ -33,6 +33,9 @@ function member(): MemberSlot {
     equipmentSets: [],
   };
 }
+function memberLoadoutSnapshot(slot: MemberSlot) {
+  return JSON.stringify([slot.equipment, slot.equipmentSets, slot.sourceBuildId]);
+}
 export function CompositionEditor({
   initial,
   initialNotice,
@@ -167,7 +170,7 @@ export function CompositionEditor({
   }, [dirty]);
   const [active, setActive] = useState(0);
   const latestDraft = useRef(draft);
-  useEffect(() => {
+  useLayoutEffect(() => {
     latestDraft.current = draft;
   }, [draft]);
   const [rosterUndo, setRosterUndo] = useState<{ slots: MemberSlot[]; active: number } | null>(
@@ -209,8 +212,10 @@ export function CompositionEditor({
     setStatus("");
   }
   async function copyBuild(buildId: string) {
-    const targetId = draft.slots[active]?.id;
-    if (!buildId || !targetId || copyingBuild) return;
+    const initialTarget = draft.slots[active];
+    if (!buildId || !initialTarget || copyingBuild) return;
+    const targetId = initialTarget.id;
+    const initialLoadout = memberLoadoutSnapshot(initialTarget);
     setError("");
     setRosterUndo(null);
     setCopyingBuild(true);
@@ -220,6 +225,12 @@ export function CompositionEditor({
       if (!response.ok) throw new Error(body.error);
       const target = latestDraft.current.slots.find((slot) => slot.id === targetId);
       if (!target) return;
+      if (memberLoadoutSnapshot(target) !== initialLoadout) {
+        setStatus(
+          "This member's loadout changed while the build loaded. Your equipment and spare sets were kept; assign again to replace them.",
+        );
+        return;
+      }
       const combinedNotes = [target.notes, body.notes].filter(Boolean).join("\n");
       setDraft((current) => ({
         ...current,

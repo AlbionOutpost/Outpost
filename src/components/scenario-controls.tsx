@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { AccountPageMore, appendAccountRows } from "./account-page-more";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { z } from "zod";
 import type { Region } from "@/lib/albion/region-config";
 import { scenarioHashLimit, scenarioLink, type ScenarioHashKey } from "@/lib/scenario-link";
@@ -9,45 +10,80 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
   onLoad,
   schema,
   hashKey = "scenario",
+  prepare,
 }: {
   configuration: T;
   onLoad: (data: T) => void;
   schema: z.ZodType<T>;
   hashKey?: ScenarioHashKey;
+  prepare?: (configuration: unknown, signal?: AbortSignal) => Promise<void>;
 }) {
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [rows, setRows] = useState<Saved[]>([]);
   const [busy, setBusy] = useState(false);
   const restored = useRef(false);
+  const onLoadRef = useRef(onLoad);
+  const configurationRef = useRef(JSON.stringify(configuration));
+  const restoreGeneration = useRef(0);
+  useLayoutEffect(() => {
+    onLoadRef.current = onLoad;
+    configurationRef.current = JSON.stringify(configuration);
+  });
   useEffect(() => {
     if (restored.current) return;
-    const frame = window.requestAnimationFrame(() => {
+    const controller = new AbortController();
+    const frame = window.requestAnimationFrame(async () => {
       restored.current = true;
       const hash = window.location.hash;
       const prefix = `#${hashKey}=`;
       if (!hash.startsWith(prefix)) return;
+      const generation = ++restoreGeneration.current;
+      const initialConfiguration = configurationRef.current;
       try {
         if (hash.length > scenarioHashLimit) throw new Error();
-        const parsed = schema.parse(JSON.parse(decodeURIComponent(hash.slice(prefix.length))));
+        const raw = JSON.parse(decodeURIComponent(hash.slice(prefix.length)));
+        await prepare?.(raw, controller.signal);
+        if (controller.signal.aborted || generation !== restoreGeneration.current) return;
+        if (initialConfiguration !== configurationRef.current) {
+          setMessage(
+            "Your inputs changed while the recipe loaded. Your current inputs were kept; restore again to replace them.",
+          );
+          return;
+        }
+        const parsed = schema.parse(raw);
         if (parsed.kind !== configuration.kind) throw new Error();
-        onLoad(parsed);
+        onLoadRef.current(parsed);
         setMessage(
           "Shared static scenario restored. Observed prices retain their timestamps; refresh them before trading.",
         );
-      } catch {
-        setMessage("This shared scenario is invalid or belongs to another calculator.");
+      } catch (error) {
+        if (!controller.signal.aborted && generation === restoreGeneration.current)
+          setMessage(
+            prepare && error instanceof Error && error.message.startsWith("Saved recipe")
+              ? error.message
+              : "This shared scenario is invalid or belongs to another calculator. Your current inputs were kept.",
+          );
       }
     });
-    return () => window.cancelAnimationFrame(frame);
-  }, [configuration.kind, onLoad, schema, hashKey]);
+    return () => {
+      controller.abort();
+      // An operation counter, not a DOM ref: invalidate the latest pending restore on cleanup.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      restoreGeneration.current++;
+      window.cancelAnimationFrame(frame);
+    };
+  }, [configuration.kind, schema, hashKey, prepare]);
   async function refresh() {
+    setNextCursor(null);
     setBusy(true);
     try {
       const response = await fetch(`/api/scenarios?kind=${encodeURIComponent(configuration.kind)}`);
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
       setRows(body.filter((r: Saved) => r.kind === configuration.kind));
+      setNextCursor(response.headers.get("X-Next-Cursor"));
       setMessage("Loaded your most recent saved scenarios for this calculator.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Could not load scenarios");
@@ -136,19 +172,42 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
           <span>{r.title}</span>
           <button
             className="button secondary"
-            onClick={() => {
-              const parsed = schema.safeParse(r.configuration);
-              if (!parsed.success || parsed.data.kind !== configuration.kind) {
+            disabled={busy}
+            onClick={async () => {
+              const generation = ++restoreGeneration.current;
+              const initialConfiguration = configurationRef.current;
+              setBusy(true);
+              try {
+                await prepare?.(r.configuration);
+                if (generation !== restoreGeneration.current) return;
+                if (initialConfiguration !== configurationRef.current) {
+                  setMessage(
+                    "Your inputs changed while the recipe loaded. Your current inputs were kept; restore again to replace them.",
+                  );
+                  return;
+                }
+                const parsed = schema.safeParse(r.configuration);
+                if (!parsed.success || parsed.data.kind !== configuration.kind) {
+                  setMessage(
+                    "Saved scenario no longer matches the current format; no inputs were replaced.",
+                  );
+                  return;
+                }
+                onLoadRef.current(parsed.data);
+                setTitle(r.title);
                 setMessage(
-                  "Saved scenario no longer matches the current format; no inputs were replaced.",
+                  "Saved assumptions and region restored. Refresh market observations before trading.",
                 );
-                return;
+              } catch (error) {
+                if (generation !== restoreGeneration.current) return;
+                setMessage(
+                  error instanceof Error && error.message.startsWith("Saved recipe")
+                    ? error.message
+                    : "Saved scenario could not be restored. Your current inputs were kept.",
+                );
+              } finally {
+                if (generation === restoreGeneration.current) setBusy(false);
               }
-              onLoad(parsed.data);
-              setTitle(r.title);
-              setMessage(
-                "Saved assumptions and region restored. Refresh market observations before trading.",
-              );
             }}
           >
             Restore {r.title}
@@ -170,6 +229,21 @@ export function ScenarioControls<T extends { kind: string; region: Region }>({
           </button>
         </div>
       ))}
+      <AccountPageMore<Saved>
+        url={`/api/scenarios?kind=${encodeURIComponent(configuration.kind)}`}
+        cursor={nextCursor}
+        disabled={busy}
+        label="Load older scenarios"
+        onPage={(older, cursor) => {
+          setRows((current) =>
+            appendAccountRows(
+              current,
+              older.filter((r) => r.kind === configuration.kind),
+            ),
+          );
+          setNextCursor(cursor);
+        }}
+      />
     </section>
   );
 }

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { production, productionSchema } from "./production";
 import { recipeFor } from "./recipes";
 import { regionSchema } from "./region-config";
+import { finiteRatio } from "./finite-ratio";
 
 export const productionPlanSchema = z
   .object({
@@ -63,7 +64,16 @@ export function productionPlan(input: ProductionPlanInput) {
     }
   }
   function total(
-    key: "upfront" | "profit" | "cashProfit" | "returnCredit" | "fees" | "revenue" | "cost",
+    key:
+      | "upfront"
+      | "profit"
+      | "cashProfit"
+      | "returnCredit"
+      | "fees"
+      | "revenue"
+      | "cost"
+      | "recipeCost"
+      | "stationCost",
   ) {
     if (runs.some((run) => run.result[key] === null)) return null;
     const value = runs.reduce((sum, run) => sum + run.result[key]!, 0);
@@ -85,7 +95,9 @@ export function productionPlan(input: ProductionPlanInput) {
     fees: total("fees"),
     revenue,
     cost: total("cost"),
-    margin: revenue && profit !== null ? (profit / revenue) * 100 : null,
+    recipeCost: total("recipeCost"),
+    stationCost: total("stationCost"),
+    margin: finiteRatio(profit, revenue, 100),
     focus: plan.runs.reduce((sum, run) => sum + (run.useFocus ? run.focusUsed : 0), 0),
   };
 }

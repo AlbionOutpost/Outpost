@@ -12,6 +12,25 @@ describe("transparent trade arithmetic", () => {
   it("handles zero denominators", () => {
     expect(trade({ buy: 0, sell: 0, quantity: 1, tax: 0, fee: 0, transport: 0 }).roi).toBeNull();
   });
+  it("keeps tiny valid trade prices but reports unrepresentable percentages as unavailable", () => {
+    // Division itself can overflow, or the subsequent conversion to percent can overflow.
+    for (const buy of [1e-300, 1e-296]) {
+      expect(trade({ buy, sell: 1e12, quantity: 1, tax: 0, fee: 0, transport: 0 })).toMatchObject({
+        cost: buy,
+        profit: 1e12,
+        roi: null,
+        margin: 100,
+      });
+    }
+    expect(
+      trade({ buy: 1e12, sell: 1e-300, quantity: 1, tax: 0, fee: 0, transport: 0 }),
+    ).toMatchObject({
+      revenue: 1e-300,
+      profit: -1e12,
+      margin: null,
+      roi: -100,
+    });
+  });
   it("rejects negative costs and fractional quantities", () => {
     expect(() => trade({ buy: -1, sell: 2, quantity: 1, tax: 0, fee: 0, transport: 0 })).toThrow();
     expect(() => trade({ buy: 1, sell: 2, quantity: 1.5, tax: 0, fee: 0, transport: 0 })).toThrow();

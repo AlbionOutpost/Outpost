@@ -9,15 +9,15 @@ import { itemIconUrl } from "@/lib/albion/item-renderer";
  * enchantment and finally returns a neutral placeholder). The enchanted glow shows whenever
  * the server has it; otherwise the base artwork still identifies the item.
  */
-export function ItemIcon({
-  id,
-  quality = 1,
-  size = 48,
-}: {
-  id: string;
-  quality?: number;
-  size?: number;
-}) {
+type ItemIconProps = { id: string; quality?: number; size?: number };
+
+export function ItemIcon(props: ItemIconProps) {
+  // A new item, quality or render size must retry its own primary artwork. Remounting also
+  // prevents a late error from the previous image from advancing the new fallback chain.
+  return <ItemArtwork key={`${props.id}:${props.quality ?? 1}:${props.size ?? 48}`} {...props} />;
+}
+
+function ItemArtwork({ id, quality = 1, size = 48 }: ItemIconProps) {
   const [step, setStep] = useState(0);
   const render = Math.min(217, Math.max(96, size * 2));
   const base = id.replace(/@\d$/, "");

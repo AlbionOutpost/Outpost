@@ -18,6 +18,68 @@ function scenario() {
   return v;
 }
 describe("production economics", () => {
+  it("preserves tiny valid costs and revenue while withholding unrepresentable percentage ratios", () => {
+    const v = scenario();
+    v.stationFee = 0;
+    v.returnRate = 0;
+    v.tax = 0;
+    v.prices.T4_METALBAR.value = 1e-300;
+    v.prices.T4_PLANKS.value = 0;
+    v.prices.T4_MAIN_AXE.value = 1e12;
+    expect(production(v)).toMatchObject({
+      complete: true,
+      cost: 16e-300,
+      profit: 1e12,
+      roi: null,
+      margin: 100,
+    });
+    v.prices.T4_METALBAR.value = 100;
+    v.prices.T4_MAIN_AXE.value = 1e-300;
+    expect(Number.isFinite(production(v).margin)).toBe(true);
+    v.prices.T4_MAIN_AXE.value = 1e-310;
+    expect(production(v)).toMatchObject({
+      complete: true,
+      revenue: 1e-310,
+      profit: -1600,
+      margin: null,
+    });
+  });
+  it("bounds combined fees at the silver limit, including the next whole silver", () => {
+    const v = scenario();
+    v.stationFee = 0;
+    v.returnRate = 0;
+    v.tax = 100;
+    v.setupFee = 0;
+    v.prices.T4_METALBAR.value = 0;
+    v.prices.T4_PLANKS.value = 0;
+    v.prices.T4_MAIN_AXE.value = 1e12;
+    expect(production(v)).toMatchObject({ fees: 1e12, profit: 0, cashProfit: 0 });
+    // 0.0000000001% of 1e12 adds exactly one silver to the fee total.
+    expect(() => production({ ...v, setupFee: 0.0000000001 })).toThrow("Scenario totals");
+    expect(() => production({ ...v, setupFee: 100 })).toThrow("Scenario totals");
+  });
+  it("bounds losses independently of valid cost, revenue and fees, including cash before returns", () => {
+    const v = scenario();
+    v.stationFee = 0;
+    v.returnRate = 0;
+    v.tax = 100;
+    v.setupFee = 100;
+    v.prices.T4_METALBAR.value = 31_250_000_000;
+    v.prices.T4_PLANKS.value = 0;
+    v.prices.T4_MAIN_AXE.value = 500_000_000_000;
+    // Materials500bn, revenue500bn, fees1tn => loss exactly1tn is supported.
+    expect(production(v)).toMatchObject({
+      cost: 500e9,
+      fees: 1e12,
+      profit: -1e12,
+      cashProfit: -1e12,
+    });
+    v.prices.T4_METALBAR.value = 37_500_000_000;
+    // Materials600bn, revenue500bn, fees1tn => loss1.1tn is outside the model.
+    expect(() => production(v)).toThrow("Scenario totals");
+    // Returns lower economic loss to800bn but cash loss is still1.1tn.
+    expect(() => production({ ...v, returnRate: 50 })).toThrow("Scenario totals");
+  });
   it("warns on undated, invalid, old and future source observations without flagging manual prices", () => {
     const v = scenario();
     const source = {

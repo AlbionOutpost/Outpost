@@ -6,7 +6,13 @@ import {
   productionPlanSchema,
   type ProductionPlanInput,
 } from "@/lib/albion/production-plan";
-import { productionSchema, type ProductionInput } from "@/lib/albion/production";
+import {
+  productionSchema,
+  needsRecipeFeeConfirmation,
+  type ProductionInput,
+} from "@/lib/albion/production";
+import { recipeFor } from "@/lib/albion/recipes";
+import { prepareProductionRestore } from "@/lib/albion/recipe-restore";
 import { ScenarioControls } from "./scenario-controls";
 import { AddToShopping } from "./add-to-shopping";
 import { shoppingFromProduction } from "@/lib/albion/shopping";
@@ -45,6 +51,32 @@ export function ProductionPlan({
   }
   const valid = productionSchema.safeParse(current).success;
   const sameServer = !plan.runs.length || plan.region === current.region;
+  const legacyFees = plan.runs.flatMap((configuration, index) => {
+    try {
+      const recipe = recipeFor(configuration);
+      return needsRecipeFeeConfirmation(configuration, recipe)
+        ? [{ configuration, recipe, index }]
+        : [];
+    } catch {
+      return [];
+    }
+  });
+  function confirmPlanFee(index: number, includesRecipe: boolean) {
+    setPlan((currentPlan) => ({
+      ...currentPlan,
+      runs: currentPlan.runs.map((run, i) =>
+        i !== index
+          ? run
+          : {
+              ...run,
+              stationFee: includesRecipe
+                ? run.stationFee - (recipeFor(run).silver ?? 0)
+                : run.stationFee,
+              recipeSilverAccounting: "separate",
+            },
+      ),
+    }));
+  }
   async function refreshPrices() {
     const requested = plan;
     const controller = new AbortController();
@@ -144,6 +176,37 @@ export function ProductionPlan({
         </p>
       )}
       {error && <p role="alert">{error}</p>}
+      {legacyFees.map(({ configuration, recipe, index }) => (
+        <div className="task-state" key={index}>
+          <p>
+            Recipe {index + 1}: {recipe.name}. This saved run records{" "}
+            {silver(configuration.stationFee)} silver per craft; the recipe requires{" "}
+            {silver(recipe.silver ?? 0)}. Confirm whether that fee includes recipe silver before
+            calculating the plan.
+          </p>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => confirmPlanFee(index, false)}
+          >
+            Treat recipe {index + 1} fee as additional
+          </button>
+          <button
+            type="button"
+            className="button secondary"
+            disabled={configuration.stationFee < (recipe.silver ?? 0)}
+            onClick={() => confirmPlanFee(index, true)}
+          >
+            Recipe {index + 1} fee includes recipe silver
+          </button>
+          {configuration.stationFee < (recipe.silver ?? 0) && (
+            <p>
+              The recorded fee is below the fixed recipe requirement. Confirm it as additional to
+              continue.
+            </p>
+          )}
+        </div>
+      ))}
       {result && (
         <>
           <div className="production-plan-status">
@@ -290,6 +353,10 @@ export function ProductionPlan({
               <strong>{silver(result.cashProfit)}</strong>
             </div>
             <div>
+              <small>Recipe silver requirements</small>
+              <strong>{silver(result.recipeCost)}</strong>
+            </div>
+            <div>
               <small>Margin on sales</small>
               <strong>{result.margin === null ? "Incomplete" : `${silver(result.margin)}%`}</strong>
             </div>
@@ -389,6 +456,7 @@ export function ProductionPlan({
       <details>
         <summary>Save or restore a production plan</summary>
         <ScenarioControls
+          prepare={prepareProductionRestore}
           schema={productionPlanSchema}
           configuration={plan}
           hashKey="production-plan"

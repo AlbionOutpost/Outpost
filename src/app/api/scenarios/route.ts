@@ -1,3 +1,4 @@
+import { accountPage, accountPageFilter, accountPageOrder } from "@/lib/account-pagination";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
@@ -8,7 +9,7 @@ import { mutationUser, boundedJson } from "@/lib/http";
 import { transportSchema, transport } from "@/lib/albion/transport";
 import { tradeScenarioSchema } from "@/lib/albion/calculations";
 import "@/lib/albion/game/server-recipes";
-import { productionSchema, production } from "@/lib/albion/production";
+import { productionSchema, production, legacyRecipeFeeMessage } from "@/lib/albion/production";
 import { productionPlanSchema, productionPlan } from "@/lib/albion/production-plan";
 import { savedShoppingSchema } from "@/lib/albion/shopping";
 import { farmingSchema, farming } from "@/lib/albion/farming";
@@ -28,14 +29,20 @@ export const GET = apiHandler("scenario.list", async (req: NextRequest) => {
     ])
     .optional()
     .parse(req.nextUrl.searchParams.get("kind") || undefined);
-  return NextResponse.json(
-    await db.savedScenario.findMany({
-      where: { authorId: user.user.id, ...(kind ? { kind } : {}) },
-      orderBy: { updatedAt: "desc" },
-      take: 50,
-      select: { id: true, title: true, kind: true, configuration: true, updatedAt: true },
-    }),
-  );
+  const rows = await db.savedScenario.findMany({
+    where: {
+      authorId: user.user.id,
+      ...(kind ? { kind } : {}),
+      ...accountPageFilter(req.nextUrl.searchParams.get("cursor")),
+    },
+    orderBy: [...accountPageOrder],
+    take: 51,
+    select: { id: true, title: true, kind: true, configuration: true, updatedAt: true },
+  });
+  const page = accountPage(rows, 50);
+  return NextResponse.json(page.items, {
+    headers: page.cursor ? { "X-Next-Cursor": page.cursor } : {},
+  });
 });
 export const POST = apiHandler("scenario.save", async (req: NextRequest) => {
   const user = await mutationUser(req);
@@ -57,13 +64,17 @@ export const POST = apiHandler("scenario.save", async (req: NextRequest) => {
     if (input.configuration.kind === "transporting") transport(input.configuration);
     if (["crafting", "refining", "enchanting"].includes(input.configuration.kind))
       production(productionSchema.parse(input.configuration));
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message === legacyRecipeFeeMessage)
+      throw new HttpError(400, legacyRecipeFeeMessage);
     throw new HttpError(400, "Scenario inputs or totals exceed supported limits");
   }
   if (input.configuration.kind === "production-plan") {
     try {
       productionPlan(input.configuration);
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message === legacyRecipeFeeMessage)
+        throw new HttpError(400, legacyRecipeFeeMessage);
       throw new HttpError(400, "Plan inputs or totals exceed supported limits");
     }
   }

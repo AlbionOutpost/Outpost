@@ -1,4 +1,5 @@
 "use client";
+import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useState, useEffect, useRef } from "react";
 import { useAtlasRegion } from "./region-context";
@@ -39,6 +40,7 @@ function preselected(region: Region, initial: TransportPreselection) {
   };
 }
 export function TransportCalculator({ initial = {} }: { initial?: TransportPreselection }) {
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const region = useAtlasRegion(),
     [draft, setDraft] = useState(() => preselected(region, initial)),
     [message, setMessage] = useState(""),
@@ -510,10 +512,12 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             disabled={busy}
             onClick={async () => {
               try {
+                setNextCursor(null);
                 const r = await fetch("/api/scenarios?kind=transporting"),
                   b = await r.json();
                 if (!r.ok) throw new Error(b.error);
                 setSaved(b.filter((s: { kind: string }) => s.kind === "transporting"));
+                setNextCursor(r.headers.get("X-Next-Cursor"));
               } catch (e) {
                 setMessage(e instanceof Error ? e.message : "Load failed");
               }
@@ -553,6 +557,16 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             </button>
           </div>
         ))}
+        <AccountPageMore<(typeof saved)[number]>
+          url="/api/scenarios?kind=transporting"
+          cursor={nextCursor}
+          disabled={busy}
+          label="Load older transport plans"
+          onPage={(older, cursor) => {
+            setSaved((current) => appendAccountRows(current, older));
+            setNextCursor(cursor);
+          }}
+        />
         <p role="status">{message}</p>
       </details>
     </>

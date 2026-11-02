@@ -201,9 +201,13 @@ test("populated build editor preserves gear, choices and revisions across respon
     await expect(
       page.getByRole("button", { name: /^Inspect Main hand: Claymore\b/ }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Inspect Off hand Empty", exact: true }),
-    ).toBeVisible();
+    const occupiedOffHand = page.getByRole("button", {
+      name: "Inspect Off hand: held by the two-handed main hand",
+      exact: true,
+    });
+    await expect(occupiedOffHand).toBeVisible();
+    await expect(occupiedOffHand).toHaveClass(/is-two-handed/);
+    await expect(occupiedOffHand.locator(".inventory-slot-shadow img")).toHaveCount(1);
     await expect(page.getByLabel("Main hand alternative", { exact: true })).toHaveValue(
       "T6_MAIN_AXE@1",
     );
