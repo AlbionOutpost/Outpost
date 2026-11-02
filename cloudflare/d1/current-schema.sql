@@ -413,6 +413,16 @@ CREATE TABLE "MarketWatchItem" (
     CONSTRAINT "MarketWatchItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "LibraryLike" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "LibraryLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -541,3 +551,9 @@ CREATE INDEX "Timer_userId_updatedAt_idx" ON "Timer"("userId", "updatedAt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MarketWatchItem_userId_region_itemId_quality_key" ON "MarketWatchItem"("userId", "region", "itemId", "quality");
+
+-- CreateIndex
+CREATE INDEX "LibraryLike_kind_slug_idx" ON "LibraryLike"("kind", "slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LibraryLike_userId_kind_slug_key" ON "LibraryLike"("userId", "kind", "slug");

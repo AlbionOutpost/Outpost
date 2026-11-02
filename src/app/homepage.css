@@ -196,6 +196,7 @@
 }
 .app.outpost .landing-window {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   /* Clear of the frame's double line */
   padding: 16px 16px 0;
@@ -1550,7 +1551,7 @@ a.activity-top:hover {
 /* Closing call: one framed band, centred, its painting behind; sign in or read about Supporters */
 .app.outpost .landing-cta-wrap {
   margin-top: 104px;
-  padding-bottom: 24px;
+  padding-bottom: clamp(72px, 7vw, 112px);
 }
 .app.outpost .landing-cta {
   display: flex;
@@ -1947,4 +1948,45 @@ a.activity-top:hover {
   display: inline-flex;
   align-items: center;
   min-height: 28px;
+}
+
+/* Live values interpolate without changing the canonical accessible amount. */
+.app.outpost .animated-number {
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .tool-refresh-note {
+  min-height: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.app.outpost .tool-refresh-note:empty {
+  visibility: hidden;
+}
+.app.outpost .tool-plot {
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+.app.outpost .tool-plot-tip {
+  pointer-events: none;
+}
+.app.outpost .tool-plot-cursor line {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.55;
+}
+.app.outpost .tool-plot-cursor circle {
+  fill: currentColor;
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+.app.outpost .landing-window .heart-chip:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.app.outpost .tool-plot-x:has(i:only-child),
+.app.outpost .tool-plot-y:has(i:only-child) {
+  justify-content: center;
 }

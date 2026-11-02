@@ -35,7 +35,7 @@ import { ArrowRight, BookOpen } from "lucide-react";
 // nothing is staged. The build fills eight of the board's ten wells (no public build records a
 // bag or mount), the comp is a five-member party, the planner plan is an example priced live.
 const showcase = {
-  build: "hallowfall-healer-zvz-build",
+  build: "battleaxe-mist-build",
   comp: "hellgate-5v5-front-to-back",
   market: { id: "T6_METALBAR", kind: "Refined material · Tier 6" },
   plan: [

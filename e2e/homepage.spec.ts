@@ -20,6 +20,10 @@ const topKills = normalizeTopKills(
 test("landing page: hero numbers, teaser windows, live tool cards, guides, top kills and the footer", async ({
   page,
 }) => {
+  let releaseBatch!: () => void;
+  const heldBatch = new Promise<void>((resolve) => {
+    releaseBatch = resolve;
+  });
   await page.route("**/api/market?*", (route) =>
     route.fulfill({
       json: {
@@ -55,8 +59,9 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
       },
     }),
   );
-  await page.route("**/api/landing/craft?*", (route) => {
+  await page.route("**/api/landing/craft?*", async (route) => {
     const batches = Number(new URL(route.request().url()).searchParams.get("batches") ?? 1);
+    if (batches === 2) await heldBatch;
     return route.fulfill({
       json: {
         region: "europe",
@@ -166,16 +171,12 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(board.locator('[data-slot="Helmet"] .loadout-board-abilities img')).toHaveCount(2);
   await expect(board.locator('[data-slot="Bag"]')).toHaveClass(/is-empty/);
   const heart = windows.nth(0).locator(".heart-chip");
+  await expect(heart).toBeDisabled();
   await expect(heart).toHaveAttribute("aria-pressed", "false");
-  await heart.click();
-  await expect(heart).toHaveAttribute("aria-pressed", "true");
-  await expect(heart).toHaveAccessibleName(/Remove .* from this device/);
-  await expect(heart).toContainText(/\d/);
-  expect(
-    await page.evaluate(() =>
-      JSON.parse(localStorage.getItem("outpost:build-bookmarks:v1:europe") ?? "{}"),
-    ),
-  ).toMatchObject({ builds: [{ slug: "hallowfall-healer-zvz-build" }] });
+  await expect(heart).toHaveAccessibleName(/Sign in to like/);
+  await expect(windows.nth(2).locator(".heart-chip")).toBeDisabled();
+  await expect(windows.nth(1)).toContainText("Team Management");
+  await expect(windows.nth(0)).toContainText("Battleaxe Mist Build");
   await expect(
     windows.nth(1).getByRole("list", { name: "What a Team workspace does" }).getByRole("listitem"),
   ).toHaveCount(5);
@@ -214,6 +215,17 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(market.locator(".tool-plot-y i")).toHaveCount(3);
   await expect(market.locator(".tool-plot-x i").first()).toHaveText("1 Oct");
   await expect(market.locator(".tool-plot-tip")).toContainText("3,400");
+  const plot = market.getByRole("slider", { name: /Average price history/ });
+  await plot.focus();
+  await plot.press("Home");
+  await expect(market.locator(".tool-plot-tip")).toContainText("3,500");
+  await plot.press("ArrowRight");
+  await expect(market.locator(".tool-plot-tip")).toContainText("3,900");
+  const graph = await market.locator(".tool-plot svg").boundingBox();
+  await page.mouse.move(graph!.x + 1, graph!.y + graph!.height / 2);
+  await expect(market.locator(".tool-plot-tip")).toContainText("3,500");
+  await page.mouse.move(graph!.x + graph!.width - 1, graph!.y + graph!.height / 2);
+  await expect(market.locator(".tool-plot-tip")).toContainText("3,400");
   await market.getByRole("tab", { name: "7D" }).click();
   await expect(market.getByRole("tab", { name: "7D" })).toHaveAttribute("aria-selected", "true");
   await expect(market.getByRole("link", { name: /Open Market Explorer/ })).toHaveAttribute(
@@ -233,6 +245,15 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(crafting.locator(".tool-profit")).toContainText(/−\s*11,142[\s\S]*-41\.3%/);
   await expect(crafting.locator(".tool-cities li em")).toHaveCount(0);
   await crafting.getByRole("button", { name: "More batches" }).click();
+  try {
+    await expect(crafting.locator(".tool-card")).toHaveAttribute("aria-busy", "true");
+    await expect(crafting.locator(".tool-item")).toContainText("Cape");
+    await expect(crafting.locator(".tool-pair")).toContainText(/38,126[\s\S]*26,984/);
+    await expect(crafting.locator(".tool-refresh-note")).toContainText("Updating for 2 batches");
+  } finally {
+    releaseBatch();
+  }
+
   await expect(crafting.locator(".tool-stepper output")).toHaveText("2");
   await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(/28,752/);
   await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
@@ -344,6 +365,18 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
+    const clippedGear = await page
+      .locator(".landing-window")
+      .first()
+      .evaluate((card) => {
+        const outer = card.getBoundingClientRect();
+        return [...card.querySelectorAll(".loadout-board-cell")].filter((cell) => {
+          const rect = cell.getBoundingClientRect();
+          return rect.left < outer.left || rect.right > outer.right;
+        }).length;
+      });
+    expect(clippedGear).toBe(0);
+
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -403,4 +436,61 @@ test("robots points crawlers at a sitemap of public pages and keeps editors out"
   expect(sitemap).toContain("/tools/crafting</loc>");
   expect(sitemap).not.toContain("/builds/new</loc>");
   expect(sitemap).not.toContain("/api/");
+});
+
+test("planner amounts count down and up, and reduced motion shows exact results immediately", async ({
+  page,
+}) => {
+  await page.clock.install({ time: Date.now() - 60000 });
+  for (const endpoint of [
+    "**/api/landing/craft?*",
+    "**/api/market?*",
+    "**/api/history?*",
+    "**/api/combat-events/top?*",
+  ])
+    await page.route(endpoint, (route) =>
+      route.fulfill({
+        status: 503,
+        json: {
+          error: "Unrelated source intentionally unavailable in the isolated animation fixture",
+        },
+      }),
+    );
+  await page.route("**/api/market/batch?*", (route) => {
+    const items = (new URL(route.request().url()).searchParams.get("items") ?? "").split(",");
+    return route.fulfill({
+      json: {
+        region: "europe",
+        source: "Albion Online Data Project",
+        fetchedAt: new Date().toISOString(),
+        prices: items.map((id) => quote(id, "Martlock", 1000, 900, new Date().toISOString())),
+      },
+    });
+  });
+  await page.goto("/");
+  const planner = page.locator(".landing-card").nth(2);
+  await planner.scrollIntoViewIfNeeded();
+  await expect(planner.locator(".tool-summary")).toContainText("33,000");
+  await page.clock.pauseAt(Date.now() + 60000);
+  const owned = planner.getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ });
+  await owned.getByRole("button", { name: "Own one more" }).click();
+  const money = planner.locator('.tool-summary .animated-number[data-value="32000"] > span');
+  await expect(money).toHaveText("33,000");
+  await page.clock.runFor(160);
+  const intermediate = Number((await money.innerText()).replaceAll(",", ""));
+  expect(intermediate).toBeGreaterThan(32000);
+  expect(intermediate).toBeLessThan(33000);
+  await page.clock.runFor(400);
+  await expect(money).toHaveText("32,000");
+  await owned.getByRole("button", { name: "Own one fewer" }).click();
+  await page.clock.runFor(500);
+  await expect(
+    planner.locator('.tool-summary .animated-number[data-value="33000"] > span'),
+  ).toHaveText("33,000");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await owned.getByRole("button", { name: "Own one more" }).click();
+  await expect(
+    planner.locator('.tool-summary .animated-number[data-value="32000"] > span'),
+  ).toHaveText("32,000");
+  await page.clock.resume();
 });

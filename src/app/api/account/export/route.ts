@@ -27,6 +27,7 @@ export const GET = apiHandler("account.export", async () => {
       buildFavorites: true,
       compositionFavorites: true,
       buildVotes: true,
+      libraryLikes: true,
       comments: { include: { revisions: true } },
       reports: {
         select: {

@@ -16,7 +16,10 @@ import { applySubscription, rememberCustomer } from "../../src/lib/billing/plan"
 import { beginCheckout, updateCheckout } from "../../src/lib/billing/checkout";
 import { deleteAccountRecord } from "../../src/lib/account-deletion";
 
+import { setLibraryLike } from "../../src/lib/library-likes";
+
 const services = {
+  setLibraryLike,
   reviseBuild,
   duplicateBuild,
   saveComposition,
