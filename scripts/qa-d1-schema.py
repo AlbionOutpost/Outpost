@@ -9,6 +9,7 @@ db = sqlite3.connect(":memory:")
 db.executescript((root / "cloudflare/d1/migrations/0001_schema_candidate.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0003_domain_invariants.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0004_team_loot_splits.sql").read_text())
+db.executescript((root / "cloudflare/d1/migrations/0006_billing_checkout.sql").read_text())
 checks = []
 
 def check(name, fn):
@@ -64,6 +65,50 @@ def legacy_v2_upgrade():
     finally:
         legacy.close()
 check("old29-table SQLite v2 upgrades to v3 and v4 without changing existing user/team/build/gear", legacy_v2_upgrade)
+
+def billing_checkout_upgrade():
+    legacy = sqlite3.connect(":memory:")
+    backup = sqlite3.connect(":memory:")
+    restored = sqlite3.connect(":memory:")
+    try:
+        legacy.executescript((root / "cloudflare/d1/migrations/0001_schema_candidate.sql").read_text())
+        legacy.execute('CREATE TABLE _outpost_schema(version INTEGER NOT NULL PRIMARY KEY)')
+        legacy.execute('INSERT INTO _outpost_schema VALUES(4)')
+        legacy.execute('INSERT INTO "User"(id,name,updatedAt,plan,stripeCustomerId,stripeSubscriptionId) VALUES(?,?,?,?,?,?)', ("billing-owner", "Retained paid account", "2026-11-02T00:00:00Z", "SUPPORTER", "cus_fixture", "sub_fixture"))
+        legacy.commit()
+        before = legacy.execute('SELECT * FROM "User"').fetchall()
+        legacy.backup(backup)
+        migration = (root / "cloudflare/d1/migrations/0006_billing_checkout.sql").read_text()
+        legacy.execute("BEGIN")
+        legacy.execute(migration)
+        legacy.rollback()
+        assert "billingCheckout" not in [row[1] for row in legacy.execute('PRAGMA table_info("User")')]
+        assert legacy.execute('SELECT * FROM "User"').fetchall() == before
+        legacy.executescript(migration)
+        legacy.execute('UPDATE _outpost_schema SET version=5 WHERE version=4')
+        assert legacy.execute('SELECT version FROM _outpost_schema').fetchone() == (5,)
+        assert [row[:-1] for row in legacy.execute('SELECT * FROM "User"')] == before
+        assert legacy.execute('SELECT billingCheckout FROM "User"').fetchone() == (None,)
+        legacy.execute('UPDATE "User" SET billingCheckout=?', ('{"key":"fixture"}',))
+        assert json.loads(legacy.execute('SELECT billingCheckout FROM "User"').fetchone()[0]) == {"key": "fixture"}
+        backup.backup(restored)
+        assert restored.execute('SELECT * FROM "User"').fetchall() == before
+        assert restored.execute('SELECT version FROM _outpost_schema').fetchone() == (4,)
+    finally:
+        restored.close()
+        backup.close()
+        legacy.close()
+check("SQLite v4 to v5 preserves billing rows, nullable intent, transactional rollback and backup restore", billing_checkout_upgrade)
+
+def current_schema_candidate():
+    candidate = sqlite3.connect(":memory:")
+    try:
+        candidate.executescript((root / "cloudflare/d1/current-schema.sql").read_text())
+        candidate.execute('INSERT INTO "User"(id,updatedAt) VALUES(?,?)', ("candidate", "2026-11-02T00:00:00Z"))
+        assert candidate.execute('SELECT billingCheckout FROM "User"').fetchone() == (None,)
+    finally:
+        candidate.close()
+check("regenerated current schema supports fresh accounts without rewriting migration history", current_schema_candidate)
 
 db.execute('INSERT INTO "User"(id,updatedAt) VALUES(?,?)', ("qa-d1-owner", "2026-10-28T00:00:00Z"))
 build = 'INSERT INTO "Build"(id,authorId,title,description,contentType,region,strategy,patchNotes,updatedAt) VALUES(?,?,?,?,?,?,?,?,?)'

@@ -15,6 +15,7 @@ import {
   laborerSchema,
   laborerSource,
   laborerTypes,
+  laborerPriceMatches,
   type LaborerInput,
 } from "@/lib/albion/laborers";
 import "@/app/tool-workspace.css";
@@ -61,7 +62,18 @@ export function LaborersCalculator() {
       .catch(() => {});
     return () => active.abort();
   }, [idsKey]);
-  useEffect(() => () => request.current?.abort(), []);
+  useEffect(
+    () => () => request.current?.abort(),
+    [
+      region,
+      draft.type,
+      draft.journalTier,
+      draft.journalCity,
+      draft.lootCity,
+      draft.saleMode,
+      draft.buyOrder,
+    ],
+  );
   let result: ReturnType<typeof laborers> | null = null;
   let error = "";
   try {
@@ -83,6 +95,7 @@ export function LaborersCalculator() {
           region: null,
           city: null,
           quality: 1,
+          execution: null,
         },
       },
     }));
@@ -102,6 +115,7 @@ export function LaborersCalculator() {
         journalCity: requested.journalCity,
         lootCity: requested.lootCity,
         saleMode: requested.saleMode,
+        buyOrder: String(requested.buyOrder),
       });
       const r = await fetch(`/api/laborers/prices?${q}`, {
         signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]),
@@ -116,7 +130,8 @@ export function LaborersCalculator() {
           d.journalTier !== requested.journalTier ||
           d.journalCity !== requested.journalCity ||
           d.lootCity !== requested.lootCity ||
-          d.saleMode !== requested.saleMode
+          d.saleMode !== requested.saleMode ||
+          d.buyOrder !== requested.buyOrder
         )
           return d;
         const prices = { ...d.prices };
@@ -142,10 +157,18 @@ export function LaborersCalculator() {
   useEffect(() => {
     const timer = window.setTimeout(() => void loadRef.current(), 400);
     return () => window.clearTimeout(timer);
-  }, [region, draft.type, draft.journalTier, draft.journalCity, draft.lootCity, draft.saleMode]);
+  }, [
+    region,
+    draft.type,
+    draft.journalTier,
+    draft.journalCity,
+    draft.lootCity,
+    draft.saleMode,
+    draft.buyOrder,
+  ]);
   const priceInput = (id: string, label: string, city: string) => {
     const p = draft.prices[id];
-    const usable = p && p.value !== null && (p.manual || (p.region === region && p.city === city));
+    const usable = laborerPriceMatches(config, id, city, id === full);
     return (
       <label className="tool-price-field">
         {label}

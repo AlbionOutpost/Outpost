@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { batchQuery } from "@/lib/albion/market-quotes";
 import { getPrices } from "@/lib/albion/market-client";
+import { isSupportedMarketItem } from "@/lib/albion/market-supported";
 export async function GET(req: NextRequest) {
   const parsed = batchQuery.safeParse(Object.fromEntries(req.nextUrl.searchParams));
-  if (!parsed.success)
+  if (!parsed.success || parsed.data.items.some((id) => !isSupportedMarketItem(id)))
     return NextResponse.json(
       { error: "Choose up to 12 distinct items, a region and quality." },
       { status: 400 },

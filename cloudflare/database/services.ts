@@ -13,6 +13,8 @@ import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/di
 import { teamLoot } from "../../src/lib/groups/loot-service";
 import { siteStats } from "../../src/lib/site-stats";
 import { applySubscription, rememberCustomer } from "../../src/lib/billing/plan";
+import { beginCheckout, updateCheckout } from "../../src/lib/billing/checkout";
+import { deleteAccountRecord } from "../../src/lib/account-deletion";
 
 const services = {
   reviseBuild,
@@ -31,6 +33,9 @@ const services = {
   siteStats,
   applySubscription,
   rememberCustomer,
+  beginCheckout,
+  updateCheckout,
+  deleteAccountRecord,
 };
 export async function executeService(name: string, args: unknown[]) {
   if (

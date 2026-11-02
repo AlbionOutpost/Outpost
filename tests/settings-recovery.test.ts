@@ -1,4 +1,5 @@
 import { it, expect, vi } from "vitest";
+import { HttpError } from "@/lib/http-error";
 const m = vi.hoisted(() => ({
   update: vi.fn(),
   del: vi.fn(),
@@ -13,6 +14,10 @@ vi.mock("../src/lib/db", () => ({
   db: { user: { update: m.update, delete: m.del }, group: { count: m.count } },
 }));
 vi.mock("../src/lib/redis", () => ({ rateLimit: async () => true }));
+vi.mock("../src/lib/account-deletion", () => ({
+  verifyDeletionBilling: async () => null,
+  deleteAccountRecord: m.del,
+}));
 vi.mock("next/navigation", () => ({ redirect: m.redirect }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ set: vi.fn() }) }));
@@ -32,9 +37,8 @@ it("returns safe recoverable state on service errors and permits a later retry",
   );
   const del = new FormData();
   del.set("confirmation", "DELETE");
-  m.count.mockResolvedValue(1);
+  m.del.mockRejectedValueOnce(new HttpError(409, "Transfer group ownership before deletion."));
   expect((await deleteAccount({ error: "" }, del)).error).toContain("Transfer group ownership");
-  m.count.mockResolvedValue(0);
   m.del.mockRejectedValueOnce(new Error("secret-db"));
   expect((await deleteAccount({ error: "" }, del)).error).toContain("could not be completed");
 });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { regionSchema } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
+import { isSupportedMarketItem } from "@/lib/albion/market-supported";
 const query = z.object({
   region: regionSchema,
   item: z.string().regex(/^[A-Z0-9_@]{3,100}$/),
@@ -9,7 +10,7 @@ const query = z.object({
 });
 export async function GET(req: NextRequest) {
   const result = query.safeParse(Object.fromEntries(req.nextUrl.searchParams));
-  if (!result.success)
+  if (!result.success || !isSupportedMarketItem(result.data.item))
     return NextResponse.json({ error: "Invalid region, item ID or quality" }, { status: 400 });
   try {
     const { region, item, quality } = result.data;

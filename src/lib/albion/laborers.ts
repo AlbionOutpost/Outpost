@@ -3,6 +3,7 @@ import laborerData from "./game/laborers.json" with { type: "json" };
 import { observation } from "./production";
 import { cities, regionSchema } from "./region-config";
 import { isStale } from "./freshness";
+import { finiteRatio } from "./finite-ratio";
 export const laborerTypes = [
   "WARRIOR",
   "HUNTER",
@@ -24,6 +25,13 @@ const data = laborerData as unknown as {
 };
 export const laborerNames = data.names;
 export const laborerSource = "Laborer loot tables from game data, captured 27 Oct 2026";
+const laborerObservation = observation.extend({
+  // Older observations without execution provenance remain unpriced until refreshed.
+  execution: z
+    .enum(["instant-purchase", "buy-order", "instant-sale", "listing"])
+    .nullable()
+    .optional(),
+});
 export const journalId = (type: LaborerType, tier: number, full: boolean) =>
   `T${tier}_JOURNAL_${type}_${full ? "FULL" : "EMPTY"}`;
 /** Happiness return factor for a journal in a house, or null when the game does not allow it. */
@@ -54,12 +62,30 @@ export const laborerSchema = z
     buyOrder: z.boolean(),
     tax: z.number().min(0).max(100),
     setupFee: z.number().min(0).max(100),
-    prices: z.record(z.string().max(100), observation),
+    prices: z.record(z.string().max(100), laborerObservation),
   })
   .refine((v) => v.journalCity !== "Black Market" && v.lootCity !== "Black Market", {
     message: "The Black Market does not trade journals or resources",
   });
 export type LaborerInput = z.infer<typeof laborerSchema>;
+/** Shared identity rule for accounting and editable price displays. Manual targets are explicit. */
+export function laborerPriceMatches(v: LaborerInput, id: string, city: string, purchase = false) {
+  const p = v.prices[id];
+  const execution = purchase
+    ? v.buyOrder
+      ? "buy-order"
+      : "instant-purchase"
+    : v.saleMode === "instant"
+      ? "instant-sale"
+      : "listing";
+  return (
+    !!p &&
+    p.value !== null &&
+    p.quality === 1 &&
+    (p.manual ||
+      (p.value > 0 && p.region === v.region && p.city === city && p.execution === execution))
+  );
+}
 export function initialLaborers(region: LaborerInput["region"]): LaborerInput {
   return {
     kind: "laborers",
@@ -93,10 +119,9 @@ export function laborers(input: LaborerInput) {
       reason: "This journal tier cannot be used in that house tier.",
     };
   let stale = false;
-  const price = (id: string, city: string) => {
+  const price = (id: string, city: string, purchase = false) => {
     const p = v.prices[id];
-    if (!p || p.value === null || p.quality !== 1) return null;
-    if (!p.manual && (p.value === 0 || p.region !== v.region || p.city !== city)) return null;
+    if (!laborerPriceMatches(v, id, city, purchase)) return null;
     if (!p.manual && (!p.observedAt || isStale(p.observedAt))) stale = true;
     return p.value;
   };
@@ -112,16 +137,34 @@ export function laborers(input: LaborerInput) {
     const units = unitsPerJournal * item.share * v.journals;
     return { ...item, units, unit, value: unit === null ? null : unit * units };
   });
-  const full = price(journalId(v.type, v.journalTier, true), v.journalCity);
+  const full = price(journalId(v.type, v.journalTier, true), v.journalCity, true);
   const empty = v.sellEmpty ? price(journalId(v.type, v.journalTier, false), v.lootCity) : 0;
   const saleRate = 1 - (v.tax + (v.saleMode === "listing" ? v.setupFee : 0)) / 100;
   const lootGross = valuePerUnit * unitsPerJournal * v.journals;
   const lootNet = lootGross * saleRate;
-  const emptyNet = empty === null ? null : empty * v.journals * saleRate;
+  const emptyGross = empty === null ? null : empty * v.journals;
+  const emptyNet = emptyGross === null ? null : emptyGross * saleRate;
   const cost = full === null ? null : full * v.journals * (1 + (v.buyOrder ? v.setupFee : 0) / 100);
   const complete = coverage > 0.999999 && full !== null && emptyNet !== null;
   const profit = cost === null || emptyNet === null ? null : lootNet + emptyNet - cost;
-  if (Math.abs(lootGross) > 1e12 || (cost ?? 0) > 1e12)
+  // Check gross proceeds even at 100% tax, and combined totals as well as each stream.
+  // Missing values stay unknown; known partial amounts must still fit the supported range.
+  const knownGrossProceeds = lootGross + (emptyGross ?? 0);
+  const knownSaleFees = knownGrossProceeds * (1 - saleRate);
+  const knownNetProceeds = lootNet + (emptyNet ?? 0);
+  if (
+    [
+      lootGross,
+      lootNet,
+      emptyGross,
+      emptyNet,
+      knownGrossProceeds,
+      knownSaleFees,
+      knownNetProceeds,
+      cost,
+      profit,
+    ].some((value) => value !== null && (!Number.isFinite(value) || Math.abs(value) > 1e12))
+  )
     throw new Error("Laborer totals exceed one trillion silver");
   return {
     valid: true as const,
@@ -138,6 +181,6 @@ export function laborers(input: LaborerInput) {
     emptyNet,
     cost,
     profit,
-    margin: profit === null || !cost ? null : (profit / cost) * 100,
+    margin: finiteRatio(profit, cost, 100),
   };
 }

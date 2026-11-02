@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getGold, getHistory } from "@/lib/albion/history-client";
+import { isSupportedMarketItem } from "@/lib/albion/market-supported";
 const query = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("gold"), region: regionSchema }),
   z.object({
@@ -14,7 +15,10 @@ const query = z.discriminatedUnion("kind", [
 ]);
 export async function GET(req: NextRequest) {
   const parsed = query.safeParse(Object.fromEntries(req.nextUrl.searchParams));
-  if (!parsed.success)
+  if (
+    !parsed.success ||
+    (parsed.data.kind === "history" && !isSupportedMarketItem(parsed.data.item))
+  )
     return NextResponse.json({ error: "Invalid history request" }, { status: 400 });
   try {
     const p = parsed.data;

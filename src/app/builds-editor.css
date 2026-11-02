@@ -1087,3 +1087,11 @@
 .app.outpost .build-editor .editor-price-workspace[open] > :not(summary) {
   margin: 0 var(--space-4) var(--space-4);
 }
+@media (max-width: 600px) {
+  .app.outpost .build-editor .editor-item-variants.gear-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .build-editor .editor-item-variants > label:last-child {
+    grid-column: 1 / -1;
+  }
+}

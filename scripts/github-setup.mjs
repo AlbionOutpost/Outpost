@@ -74,7 +74,11 @@ export function branchPolicy(repo) {
               type: "required_status_checks",
               parameters: {
                 strict_required_status_checks_policy: true,
-                required_status_checks: [{ context: "quality" }],
+                do_not_enforce_on_create: false,
+                required_status_checks: [
+                  { context: "checks", integration_id: 15368 },
+                  { context: "browser", integration_id: 15368 },
+                ],
               },
             },
           ]

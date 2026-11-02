@@ -53,7 +53,9 @@ const sql =
       line = line.replace(/\bJSONB\b/g, "TEXT").replace(/DEFAULT (\[\]|\{\})/g, "DEFAULT '$1'");
       const checks = [];
       if (field?.type === "Json" || (field?.isList && field.kind !== "object")) {
-        checks.push(`json_valid("${column[1]}")`);
+        checks.push(
+          `${field.isRequired ? "" : `"${column[1]}" IS NULL OR `}json_valid("${column[1]}")`,
+        );
         if (field.isList) checks.push(`json_type("${column[1]}") = 'array'`);
       }
       if (field?.kind === "enum") {
@@ -69,13 +71,17 @@ const sql =
     })
     .join("\n");
 const hash = (text) => createHash("sha256").update(text).digest("hex");
+// Applied migration files are immutable. A regenerated full schema is an inspection
+// artifact; upgrades belong in new numbered migrations, never a rewritten baseline.
+const baseline = readFileSync("cloudflare/d1/migrations/0001_schema_candidate.sql", "utf8");
 const manifest =
   JSON.stringify(
     {
       status: "STAGING_ONLY_NOT_APPLICATION_COMPATIBLE",
       sourceSchemaSha256: hash(source),
       schemaSha256: hash(schema),
-      sqlSha256: hash(sql),
+      sqlSha256: hash(baseline),
+      currentSchemaSqlSha256: hash(sql),
       tables: models.length,
       indexes: (sql.match(/CREATE (?:UNIQUE )?INDEX/g) || []).length,
       differences: [
@@ -92,7 +98,7 @@ const manifest =
   ) + "\n";
 for (const [path, content] of [
   ["cloudflare/d1/schema.prisma", schema],
-  ["cloudflare/d1/migrations/0001_schema_candidate.sql", sql],
+  ["cloudflare/d1/current-schema.sql", `${sql.trimEnd()}\n`],
   ["cloudflare/d1/manifest.json", manifest],
 ]) {
   if (process.argv.includes("--check")) {

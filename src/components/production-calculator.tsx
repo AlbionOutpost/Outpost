@@ -25,11 +25,13 @@ import {
   productionSchema,
   returnRateFromBonus,
   productionOutputQuality,
+  needsRecipeFeeConfirmation,
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
 import { sourceAge } from "@/lib/albion/source-age";
 import { ScenarioControls } from "./scenario-controls";
+import { prepareProductionRestore } from "@/lib/albion/recipe-restore";
 import { ProductionPlan } from "./production-plan";
 import {
   productionPriceQuery,
@@ -46,9 +48,12 @@ export function ProductionCalculator({
 }) {
   const region = useAtlasRegion();
   const router = useRouter();
-  const [draft, setDraft] = useState(() => ({
+  const defaultDraft = () => ({
     ...initialProduction(kind, region),
     ...(category ? { recipeId: recipes.find((r) => r.category === category)!.id } : {}),
+  });
+  const [draft, setDraft] = useState(() => ({
+    ...defaultDraft(),
     ...(initialRecipeId && kind !== "enchanting" ? { recipeId: initialRecipeId } : {}),
   }));
   const [error, setError] = useState("");
@@ -59,7 +64,11 @@ export function ProductionCalculator({
   );
   const [searchError, setSearchError] = useState("");
   const [, setRecipeVersion] = useState(0);
-  const recipeKnown = kind === "enchanting" || !!findRecipe(draft.recipeId);
+  const selectedRecipe = kind === "enchanting" ? undefined : findRecipe(draft.recipeId);
+  const recipeKnown = kind === "enchanting" || !!selectedRecipe;
+  const incompatibleRecipe =
+    !!selectedRecipe &&
+    (selectedRecipe.kind !== kind || (!!category && selectedRecipe.category !== category));
   const [recipeMissing, setRecipeMissing] = useState(false);
   // Saved scenarios and links can name any recipe in the game data; fetch it on demand.
   useEffect(() => {
@@ -147,10 +156,10 @@ export function ProductionCalculator({
   // Manual prices survive unless "Replace manual overrides" is on, so a saved run keeps its edits.
   const loadRef = useRef<() => Promise<void>>(async () => {});
   useEffect(() => {
-    if (!recipeKnown) return;
+    if (!recipeKnown || incompatibleRecipe) return;
     const timer = window.setTimeout(() => void loadRef.current(), 400);
     return () => window.clearTimeout(timer);
-  }, [recipeKnown, requestKey]);
+  }, [recipeKnown, incompatibleRecipe, requestKey]);
   async function load() {
     request.current?.abort();
     const controller = new AbortController();
@@ -180,17 +189,29 @@ export function ProductionCalculator({
   useEffect(() => {
     loadRef.current = load;
   });
-  if (!recipeKnown)
+  if (!recipeKnown || incompatibleRecipe)
     return (
       <div className="production-journey premium-production">
-        <section className="panel" role="status">
-          {recipeMissing ? (
+        <section className="panel" role={recipeMissing || incompatibleRecipe ? "alert" : "status"}>
+          {recipeMissing || incompatibleRecipe ? (
             <>
-              <h2>Recipe not found</h2>
+              <h2>
+                {incompatibleRecipe ? "Recipe unavailable in this calculator" : "Recipe not found"}
+              </h2>
               <p className="muted">
-                This link or saved scenario names a recipe that is not in the game data.
+                {incompatibleRecipe
+                  ? "This recipe belongs to a different production calculator. Start with a supported recipe here."
+                  : "This link or saved scenario names a recipe that is not in the game data."}
               </p>
-              <Link className="button secondary" href={`/tools/${category || kind}`}>
+              <Link
+                className="button secondary"
+                href={`/tools/${category || kind}?region=${region}`}
+                onClick={() => {
+                  setDraft(defaultDraft());
+                  setRecipeMissing(false);
+                  setError("");
+                }}
+              >
                 Start with the default recipe
               </Link>
             </>
@@ -201,6 +222,7 @@ export function ProductionCalculator({
       </div>
     );
   const recipe = recipeFor(configuration);
+  const confirmLegacyFees = needsRecipeFeeConfirmation(configuration, recipe);
   const enchantFamily = enchantable.find((f) => f.code === draft.enchantFamily);
   // Only show game-data results so the list never flips between two naming schemes mid-search.
   const browseRecipes = searchResults?.recipes ?? [];
@@ -218,6 +240,7 @@ export function ProductionCalculator({
     setDraft((d) => ({
       ...d,
       [key]: value,
+      ...(key === "stationFee" ? { recipeSilverAccounting: "separate" as const } : {}),
       ...(d.mechanicsProfile &&
       ["recipeId", "returnRate", "focusReturnRate", "returns"].includes(key)
         ? {
@@ -581,13 +604,43 @@ export function ProductionCalculator({
                 </select>
               </label>
             </div>
+            {confirmLegacyFees && (
+              <div className="task-state" role="alert">
+                <p>
+                  This saved run predates automatic recipe silver costs. Its recorded fee is{" "}
+                  {money(draft.stationFee)} silver per craft; the recipe requires{" "}
+                  {money(recipe.silver ?? 0)}. Confirm what the recorded fee includes.
+                </p>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => update("recipeSilverAccounting", "separate")}
+                >
+                  Treat recorded fee as additional
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={draft.stationFee < (recipe.silver ?? 0)}
+                  onClick={() => update("stationFee", draft.stationFee - (recipe.silver ?? 0))}
+                >
+                  Recorded fee includes recipe silver
+                </button>
+                {draft.stationFee < (recipe.silver ?? 0) && (
+                  <p>
+                    The recorded fee is below the recipe requirement. Confirm it as additional or
+                    edit the additional station fee.
+                  </p>
+                )}
+              </div>
+            )}
             <details className="reference-advanced-assumptions">
               <summary>Station settings, focus & sources</summary>
               <details className="production-fees">
                 <summary>Markets & transaction fees</summary>
                 <div className="input-grid">
                   <label>
-                    Station / upgrade fee per craft
+                    Additional station / upgrade fee per craft
                     <input
                       type="number"
                       min={0}
@@ -596,6 +649,11 @@ export function ProductionCalculator({
                       onChange={(e) => update("stationFee", Number(e.target.value))}
                     />
                   </label>
+                  <p className="muted">
+                    {recipe.silver === undefined
+                      ? "No fixed recipe silver charge is recorded for this recipe. Confirm applicable charges in game and enter them above."
+                      : `Recorded recipe silver requirement: ${money(recipe.silver)} per craft, included automatically. Enter only additional station charges above. Confirm the recorded requirement in game.`}
+                  </p>
                   <label>
                     Sales tax (%)
                     <input
@@ -1127,6 +1185,7 @@ export function ProductionCalculator({
                 <dl>
                   {[
                     ["Total material cost", result?.grossMaterials],
+                    ["Recipe silver requirements", result?.recipeCost],
                     ["Station / upgrade fees", result?.stationCost],
                     ["Upfront silver requirement", result?.upfront],
                     ["Expected returned material value", result?.returnCredit],
@@ -1165,6 +1224,10 @@ export function ProductionCalculator({
                   <div>
                     <dt>Sale market</dt>
                     <dd>{draft.outputCity}</dd>
+                  </div>
+                  <div>
+                    <dt>Recipe silver / craft</dt>
+                    <dd>{money(recipe.silver ?? 0)} silver</dd>
                   </div>
                   <div>
                     <dt>Station fee / craft</dt>
@@ -1222,6 +1285,7 @@ export function ProductionCalculator({
           className={`production-scenarios${showScenarios ? " is-open" : ""}`}
         >
           <ScenarioControls
+            prepare={prepareProductionRestore}
             schema={productionSchema}
             configuration={configuration}
             onLoad={(value) => {

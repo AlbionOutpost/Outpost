@@ -9,6 +9,8 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { logEvent } from "@/lib/logging";
+import { deleteAccountRecord, verifyDeletionBilling } from "@/lib/account-deletion";
+import { HttpError } from "@/lib/http-error";
 const settings = z.object({
   name: z.string().trim().min(1).max(60),
   region: regionSchema,
@@ -76,12 +78,10 @@ export async function deleteAccount(
       return {
         error: "Too many requests or the request limiter is unavailable. Please retry later.",
       };
-    if (await db.group.count({ where: { ownerId: session.user.id } }))
-      return {
-        error: "Transfer group ownership or delete owned groups before deleting this account.",
-      };
-    await db.user.delete({ where: { id: session.user.id } });
-  } catch {
+    const clearance = await verifyDeletionBilling(session.user.id);
+    await deleteAccountRecord(session.user.id, clearance);
+  } catch (error) {
+    if (error instanceof HttpError) return { error: error.message };
     logEvent("error", "settings_mutation_unavailable", { code: "SERVICE_UNAVAILABLE" });
     return {
       error:

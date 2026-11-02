@@ -1,10 +1,16 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { databaseBinding } from "./web-driver";
+const publicCache = () => (caches as CacheStorage & { readonly default: Cache }).default;
 
 function cacheKey(key: string) {
-  if (!key.startsWith("atlas:data:") || key.length > 4200)
-    throw new Error("Only public regional market observations may enter the shared cache");
-  return new Request(`https://outpost-cache.invalid/market/${encodeURIComponent(key)}`);
+  if (/^atlas:combat:(europe|americas|asia):(0|[1-9]\d?|1\d\d|200)$/.test(key)) {
+    const offset = Number(key.split(":").at(-1));
+    if (offset % 20 === 0)
+      return new Request(`https://outpost-cache.invalid/combat/${encodeURIComponent(key)}`);
+  }
+  if (key.startsWith("atlas:data:") && key.length <= 4200)
+    return new Request(`https://outpost-cache.invalid/market/${encodeURIComponent(key)}`);
+  throw new Error("Only bounded public market and combat observations may enter the shared cache");
 }
 function cooldownRegion(key: string) {
   const match = /^atlas:upstream-block:(europe|americas|asia)$/.exec(key);
@@ -13,7 +19,7 @@ function cooldownRegion(key: string) {
 }
 const client = {
   async get(key: string) {
-    const response = await caches.default.match(cacheKey(key));
+    const response = await publicCache().match(cacheKey(key));
     return response ? response.text() : null;
   },
   async set(key: string, value: string, mode: string, duration: number) {
@@ -27,10 +33,11 @@ const client = {
       !Number.isInteger(duration) ||
       duration < 1 ||
       duration > 3600 ||
-      value.length > 2_000_000
+      value.length > 2_000_000 ||
+      (key.startsWith("atlas:combat:") && (duration > 45 || value.length > 200_000))
     )
       throw new Error("Invalid public cache entry");
-    await caches.default.put(
+    await publicCache().put(
       cacheKey(key),
       new Response(value, {
         headers: {

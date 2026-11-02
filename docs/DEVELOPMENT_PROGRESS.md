@@ -1,0 +1,21 @@
+# Development progress
+
+## 2 November 2026 — security repair and independent retest
+
+The 14 findings from the owner-requested assessment were traced to source and repaired or narrowly reassessed with evidence. Separate reviewers tested membership, billing, quotas, input bounds, caches, arithmetic, browser restoration and responsive artwork. Adversarial review also caught duplicate query-parameter budget evasion, checkout/deletion interleaving and late asynchronous draft overwrites; regressions were added. Existing migrations remain immutable; nullable checkout operation state is added through new PostgreSQL/SQLite migrations.
+
+GitHub main protection and secret push protection were applied and read back. Application source remains on the local repair branch; there was no application merge, deployment, real OAuth exchange or payment operation. Full gate results, explicit failures/blocks, report fingerprints and outstanding provider/game/owner gates are maintained in the generated root reports and the reviewed security remediation record.
+
+## Deeper-audit repair — 2 November 2026
+
+Four additional findings were repaired on the same isolated branch: completed-checkout concurrency, stale composition loadout copies, unpaged timer/scenario histories and wrong-kind recipe URLs. Personal lists preserve their array API while adding stable authenticated cursor pages and visible older-entry controls. The new browser regression exercises tied timestamps, deletion of a cursor boundary, other-user denial and all affected list surfaces. Composition/recipe tests cover delayed responses and controlled recovery. Billing tests distinguish exact completed subscriptions from empty or stale provider histories. Final verification:515 unit tests,154/155 full browser tests (one existing region case passed unchanged on isolated and Cloudflare reruns),9 affected Cloudflare cases,14 PostgreSQL lifecycle checks and23 local workerd checks. Closure evidence is recorded separately from the original audit and its historical failures. No application deployment is part of this work.
+
+## Repository synchronization — 2 November 2026
+
+The owner authorized pushing the reviewed repair branch and explicitly left real OAuth and Stripe lifecycle verification blocked. Safe hosted OAuth-start, cookie/state/PKCE and malformed-callback checks passed; configured OAuth credentials were present, while Stripe remained unconfigured. No credentials were requested again or copied into the repair checkout. Cloudflare token verification remained401 and zone access403. Source and browser assets were checked against nine owner-configured secret values with no matches.
+
+The region race was reproduced under repeated market requests and a delayed route response. The shell now invalidates region-scoped work immediately, while the market pauses background refresh and native URL synchronization until the router commits. Controlled tests verify old rows disappear, regional quotes remain distinct, browser history gains the new region, and Back restores the previous market. The development dependency graph remains compatible: the documented legacy advisory mechanism is absent, raw17 moderate tooling entries remain visible, and an automated exact-artifact guard with negative tests now checks that assessment on every phase. No unsupported peers or scanner suppression were introduced.
+
+Final full-suite, repeated-region, Cloudflare and source-publication evidence is recorded in the reviewed QA reports. Historical failures are retained separately. A branch push does not merge main or deploy the application; provider, management-access and other release gates remain explicit.
+
+Final branch validation passed all 12 automatic phase gates, including 519 unit tests, all 156 browser cases and the tooling-applicability guard. Final Cloudflare region/history/no-op controls passed 3/3, and the current browser/source boundary scan found no matches for nine owner-configured secret values. Production audit remains zero; the full tooling audit still has 17 explicitly assessed entries. These results do not close the owner-deferred real-provider or deployment gates.

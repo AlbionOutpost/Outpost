@@ -7,8 +7,8 @@ Production is https://albionoutpost.com on Cloudflare Free. Source is `AlbionOut
 `.github/workflows/cloudflare-preview.yml` ("Cloudflare deployment") runs on every push to `main` that touches more than docs/Markdown, on manual dispatch, and on published releases tagged `v*` (other tags skip both quality and deploy).
 
 1. **Quality** — reuses `quality.yml` (`checks` job only): format, docs check, local Postgres/Redis (`scripts/ci-local-services.mjs`), SQLite runtime check, source secret scan, `npm run qa:phase` (skipping the Node browser run, which the verify job replaces with the Cloudflare-mode run, and the live AODP check), bundle secret scan.
-2. **Verify** — three parallel shards, each: generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`, Cloudflare build, then `playwright test --shard=N/3` in Cloudflare mode.
-3. **Deploy** (environment `cloudflare-production`, one at a time, after every shard passed):
+2. **Verify** — generate and verify the SQLite runtime (Prisma wasm client, domain constraints, D1 schema check), stage catalog + library into a local D1, run `qa-cloudflare-database.mjs`, build Cloudflare, typecheck both Workers, then run `test:e2e:core` in Cloudflare mode. The separate full-suite workflow runs all browser tests.
+3. **Deploy** (environment `cloudflare-production`, one at a time, after both Quality and Verify pass):
    1. Regenerate the SQLite runtime.
    2. Production build with the Turnstile site key, `cloudflare-release-config.mjs` writes the real configs, secret scans.
    3. `cloudflare-free-check.mjs` (each bundle ≤3 MiB gzip, no paid features), then `wrangler deploy` **data Worker first, then web Worker**.
@@ -24,6 +24,17 @@ node scripts/qa-cloudflare-auth.mjs
 Every PR runs `quality.yml`; PRs and pushes that touch docs or Markdown also run `documentation.yml` (format, docs check, secret scan). A push to `main` deploys unless **every** changed file is under `docs/` or is `*.md`.
 
 The live AODP check (`npm run test:live`) is not part of CI because it spends real upstream budget; run the **Live data check** workflow manually (Actions → Live data check → Run workflow) when you need it.
+
+### Repository security controls
+
+The owner-authorized 2 November repair applied and read back the `Outpost security quality gates`
+ruleset on the default branch: pull requests, no force pushes/deletion, linear history, and
+required GitHub Actions `checks` and `browser` checks. No extra approving reviewer is required
+for the solo-owner workflow. Secret push protection is enabled. The bounded helper
+`node scripts/github-security-remediation.mjs` is read-only by default; `--apply` changes only
+that owned ruleset and secret push protection, preserving unrelated/inherited settings.
+It does not publish code or change repository visibility. Application deployment remains a
+separate action; local repair evidence does not prove that the live site contains the repair.
 
 ### Rolling back
 

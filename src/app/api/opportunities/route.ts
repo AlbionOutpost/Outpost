@@ -4,6 +4,7 @@ import { apiHandler, HttpError } from "@/lib/api-errors";
 import { transportBase, initialTransport, transport } from "@/lib/albion/transport";
 import { transportObservations } from "@/lib/albion/transport-prices";
 import { getPrices } from "@/lib/albion/market-client";
+import { requireSupportedMarketItems } from "@/lib/albion/market-supported";
 export const GET = apiHandler("opportunities.scan", async (req: NextRequest) => {
   const p = Object.fromEntries(req.nextUrl.searchParams);
   const v = transportBase
@@ -25,8 +26,9 @@ export const GET = apiHandler("opportunities.scan", async (req: NextRequest) => 
       400,
       "This scanner uses Black Market buy orders; use a manual transport target for a sell listing",
     );
-  const items = [...new Set(v.items)],
-    observations = await getPrices(v.region, items, v.quality);
+  const items = [...new Set(v.items)];
+  requireSupportedMarketItems(items);
+  const observations = await getPrices(v.region, items, v.quality);
   return NextResponse.json({
     region: v.region,
     observedAt: new Date().toISOString(),

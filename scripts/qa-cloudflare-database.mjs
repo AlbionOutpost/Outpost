@@ -260,6 +260,71 @@ try {
     await denied(410, "acceptInvitation", invitation.path.split("/").at(-1), userB);
     assert.equal(await query("groupMember", "count", { where: { groupId, userId: userB } }), 0);
   });
+  await check(
+    "removed invitation issuer loses all outstanding admission capabilities",
+    async () => {
+      await query("groupMember", "create", { data: { groupId, userId: userB, role: "OFFICER" } });
+      const invitation = await service("mutateGroup", groupId, userB, {
+        action: "invite",
+        hours: 1,
+      });
+      await service("mutateGroup", groupId, userA, { action: "remove", userId: userB });
+      await denied(410, "acceptInvitation", invitation.path.split("/").at(-1), userB);
+      assert.equal(await query("groupMember", "count", { where: { groupId, userId: userB } }), 0);
+      assert.ok(
+        (await query("groupInvitation", "findUnique", { where: { id: invitation.id } })).revokedAt,
+      );
+    },
+  );
+  await check(
+    "checkout intent survives RPC and clears to SQL null without permitting unverified deletion",
+    async () => {
+      await service("rememberCustomer", userB, `cus_${fixture}`);
+      const input = {
+        customerId: `cus_${fixture}`,
+        priceId: "price_fixture",
+        successUrl: "https://outpost.test/success",
+        cancelUrl: "https://outpost.test/cancel",
+      };
+      const intent = await service("beginCheckout", userB, input);
+      assert.equal((await service("beginCheckout", userB, input)).key, intent.key);
+      await service("updateCheckout", userB, intent.key, "cs_fixture");
+      assert.equal(
+        (await query("user", "findUnique", { where: { id: userB } })).billingCheckout.sessionId,
+        "cs_fixture",
+      );
+      await denied(409, "deleteAccountRecord", userB, null);
+      await service("updateCheckout", userB, intent.key, null);
+      assert.equal(
+        (await query("user", "findUnique", { where: { id: userB } })).billingCheckout,
+        null,
+      );
+    },
+  );
+  await check(
+    "billing snapshot CAS rejects an obsolete subscription write in Durable Object storage",
+    async () => {
+      const before = await query("user", "findUnique", { where: { id: userB } });
+      const record = {
+        customerId: `cus_${fixture}`,
+        subscriptionId: `sub_${fixture}`,
+        status: "active",
+        periodEnd: null,
+        expectedUpdatedAt: before.updatedAt,
+      };
+      await service("applySubscription", record);
+      await denied(409, "applySubscription", {
+        ...record,
+        subscriptionId: `sub_old_${fixture}`,
+        status: "canceled",
+      });
+      assert.equal((await query("user", "findUnique", { where: { id: userB } })).plan, "SUPPORTER");
+      await denied(409, "deleteAccountRecord", userB, {
+        customerId: record.customerId,
+        expectedUpdatedAt: before.updatedAt,
+      });
+    },
+  );
   let composition;
   await check("composition destination authorization, save and delete", async () => {
     const input = {
