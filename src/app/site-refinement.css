@@ -66,7 +66,7 @@
   border-color: var(--accent);
   background: var(--accent-wash);
 }
-/* Footer: no box of its own. It opens with a glowing ember rule and a gem like the card frames,
+/* Footer: no box of its own. It opens with a muted copper rule and a gem like the card frames,
    settles into the canvas below, and lays out the brand, three columns and
    a legal line with a way back to the top. */
 .app.outpost .main > footer.site-footer {
@@ -95,12 +95,12 @@
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in srgb, var(--accent) 70%, transparent) 30%,
-    var(--accent) 50%,
-    color-mix(in srgb, var(--accent) 70%, transparent) 70%,
+    color-mix(in srgb, var(--frame-rule) 65%, transparent) 30%,
+    var(--frame-rule) 50%,
+    color-mix(in srgb, var(--frame-rule) 65%, transparent) 70%,
     transparent
   );
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: none;
 }
 .app.outpost .main > footer.site-footer::after {
   content: "";
@@ -110,7 +110,7 @@
   width: 40px;
   height: 20px;
   background: var(--frame-gem) center / 40px 20px no-repeat;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 80%, transparent));
+  filter: drop-shadow(0 2px 3px #0005);
 }
 .app.outpost .site-footer-inner {
   display: grid;
