@@ -3,6 +3,7 @@ import { transportBase } from "@/lib/albion/transport";
 import { transportObservations } from "@/lib/albion/transport-prices";
 import { getPrices } from "@/lib/albion/market-client";
 import { apiHandler, HttpError } from "@/lib/api-errors";
+import { requireSupportedMarketItems } from "@/lib/albion/market-supported";
 export const GET = apiHandler("transport.prices", async (req: NextRequest) => {
   const v = transportBase
     .pick({
@@ -18,6 +19,7 @@ export const GET = apiHandler("transport.prices", async (req: NextRequest) => {
       quality: Number(req.nextUrl.searchParams.get("quality")),
     });
   if (v.fromCity === "Black Market") throw new HttpError(400, "Choose a player purchase market");
+  requireSupportedMarketItems([v.itemId]);
   return NextResponse.json(
     transportObservations(v, await getPrices(v.region, [v.itemId], v.quality)),
   );

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser } from "@/lib/http";
 import { billingProfile, rememberCustomer } from "@/lib/billing/plan";
-import { createCheckoutSession, createCustomer, stripeConfig } from "@/lib/billing/stripe";
+import { createCustomer, listSubscriptions, stripeConfig } from "@/lib/billing/stripe";
+import { requireSettledCheckout, terminalSubscription } from "@/lib/billing/reconciliation";
+import { beginCheckout, resolveCheckout, updateCheckout } from "@/lib/billing/checkout";
 import { regionSchema } from "@/lib/albion/region-config";
 
 /** Starts a Supporter subscription: creates the Stripe customer once, then hands back the checkout page. */
@@ -21,11 +23,33 @@ export const POST = apiHandler("billing.checkout", async (req: NextRequest) => {
     customerId = await createCustomer(config, profile);
     await rememberCustomer(profile.id, customerId);
   }
-  const url = await createCheckoutSession(config, {
+  const intent = await beginCheckout(profile.id, {
     customerId,
-    userId: profile.id,
+    priceId: config.priceId,
     successUrl: `${origin}/supporter?region=${region}&checkout=success`,
     cancelUrl: `${origin}/supporter?region=${region}&checkout=cancelled`,
   });
-  return NextResponse.json({ url });
+  // Reserve current state first. Every caller, including concurrent reusers, must
+  // verify provider state before resolving or creating this operation's session.
+  const verifySubscriptions = async () => {
+    const subscriptions = await listSubscriptions(config, intent.customerId);
+    if (subscriptions.some((subscription) => !terminalSubscription(subscription.status)))
+      throw new HttpError(409, "Manage your existing subscription before starting another.");
+    return subscriptions;
+  };
+  await verifySubscriptions();
+  const session = await resolveCheckout(config, intent);
+  if (session.status !== "open") {
+    // Completion may have happened after the first read. Empty/lagging history
+    // cannot retire a completed checkout: its exact subscription must be terminal.
+    requireSettledCheckout(session, await verifySubscriptions());
+    await updateCheckout(profile.id, intent.key, null);
+    throw new HttpError(
+      409,
+      "That checkout has finished. Refresh your plan before starting another.",
+    );
+  }
+  if (!session.url) throw new HttpError(502, "Billing provider returned no checkout page");
+  await updateCheckout(profile.id, intent.key, session.id);
+  return NextResponse.json({ url: session.url });
 });

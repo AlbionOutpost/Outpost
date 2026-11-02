@@ -6,6 +6,8 @@ import { pipeRedacted } from "./cloudflare-client.mjs";
 
 // Explicit test-only wrapper, generated outside source/deployment artifacts. Neither the
 // fixture transport nor fault injection is part of either production Worker bundle/config.
+// The generated local entry assigns distinct synthetic loopback client addresses to isolate
+// fixture journey budgets. Dedicated edge tests verify stable-address limits and cookie resets.
 if (process.env.E2E_CLOUDFLARE !== "1")
   throw new Error("Only the explicit local Cloudflare test runtime may start this harness");
 const folder = resolve(".qa/cloudflare-web-test");
@@ -60,7 +62,7 @@ chmodSync(`${folder}/web.jsonc`, 0o600);
 writeFileSync(`${folder}/data.jsonc`, JSON.stringify(dataConfig, null, 2));
 writeFileSync(
   `${folder}/web-entry.ts`,
-  `import app from ${JSON.stringify(resolve("cloudflare/web/worker.ts"))};export {OutpostSession} from ${JSON.stringify(resolve("cloudflare/web/worker.ts"))};import {encode,decode} from ${JSON.stringify(resolve("e2e/support/wire.ts"))};export default {async fetch(request,env,ctx){if(new URL(request.url).pathname!=='/__local_qa/fixture')return app.fetch(request,env,ctx);const actual=new TextEncoder().encode(request.headers.get('X-Outpost-QA-Key')??''),expected=new TextEncoder().encode(${JSON.stringify(key)});if(request.method!=='POST'||actual.length!==expected.length||!crypto.subtle.timingSafeEqual(actual,expected))return new Response('Not found',{status:404});const {method,args:frame}=await request.json();const args=decode(frame);let value;if(method==='query')value=await env.OUTPOST_DATA.fixtureQuery(...args);else if(method==='fault')value={ok:true,value:await env.FIXTURE_DATABASE.getByName('accounts-v1-eu').fixtureFault(...args)};else return new Response('Not found',{status:404});return Response.json(encode(value));}};`,
+  `import app from ${JSON.stringify(resolve("cloudflare/web/worker.ts"))};export {OutpostSession} from ${JSON.stringify(resolve("cloudflare/web/worker.ts"))};import {encode,decode} from ${JSON.stringify(resolve("e2e/support/wire.ts"))};let localRequest=0;export default {async fetch(request,env,ctx){if(new URL(request.url).pathname!=='/__local_qa/fixture'){const h=new Headers(request.headers);const n=++localRequest%65536;h.set('CF-Connecting-IP','127.0.'+(n>>8)+'.'+(n&255));return app.fetch(new Request(request,{headers:h}),env,ctx);}const actual=new TextEncoder().encode(request.headers.get('X-Outpost-QA-Key')??''),expected=new TextEncoder().encode(${JSON.stringify(key)});if(request.method!=='POST'||actual.length!==expected.length||!crypto.subtle.timingSafeEqual(actual,expected))return new Response('Not found',{status:404});const {method,args:frame}=await request.json();const args=decode(frame);let value;if(method==='query')value=await env.OUTPOST_DATA.fixtureQuery(...args);else if(method==='fault')value={ok:true,value:await env.FIXTURE_DATABASE.getByName('accounts-v1-eu').fixtureFault(...args)};else return new Response('Not found',{status:404});return Response.json(encode(value));}};`,
 );
 writeFileSync(
   `${folder}/data-entry.ts`,

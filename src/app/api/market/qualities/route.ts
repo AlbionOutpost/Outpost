@@ -5,10 +5,11 @@ import {
   summariseQualityAvailability,
 } from "@/lib/albion/market-availability";
 import { getPrices } from "@/lib/albion/market-client";
+import { isSupportedMarketItem } from "@/lib/albion/market-supported";
 
 export async function GET(req: NextRequest) {
   const parsed = qualityAvailabilityQuery.safeParse(Object.fromEntries(req.nextUrl.searchParams));
-  if (!parsed.success)
+  if (!parsed.success || !isSupportedMarketItem(parsed.data.item))
     return NextResponse.json({ error: "Choose a valid server, item and city." }, { status: 400 });
   try {
     const { region, item, city } = parsed.data;

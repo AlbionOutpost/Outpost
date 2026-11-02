@@ -24,6 +24,8 @@ model User {
   planRenewsAt DateTime?
   stripeCustomerId String? @unique
   stripeSubscriptionId String? @unique
+  /// Durable checkout intent and exact idempotent request; no payment credentials.
+  billingCheckout Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   compositions Composition[]

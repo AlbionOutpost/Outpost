@@ -15,6 +15,7 @@ import schema from "../d1/migrations/0001_schema_candidate.sql";
 import invariants from "../d1/migrations/0003_domain_invariants.sql";
 import teamLootSchema from "../d1/migrations/0004_team_loot_splits.sql";
 import supporterSchema from "../d1/migrations/0005_supporter_plan.sql";
+import billingCheckoutSchema from "../d1/migrations/0006_billing_checkout.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
@@ -86,7 +87,15 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
           this.ctx.storage.sql.exec(
             "UPDATE _outpost_schema SET version=4 WHERE version IN (1,2,3)",
           );
-        } else if (version !== 4) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 4) {
+          const columns = this.ctx.storage.sql
+            .exec<{ name: string }>("SELECT name FROM pragma_table_info('User')")
+            .toArray();
+          if (!columns.some((column) => column.name === "billingCheckout"))
+            this.ctx.storage.sql.exec(billingCheckoutSchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=5 WHERE version=4");
+        } else if (version !== 5) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);
