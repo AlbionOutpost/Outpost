@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
 import Link from "@/components/link";
 import { useOutpostRegion } from "@/components/region-context";
+import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
 import { compact, Silver } from "./silver";
 import { useLoad } from "./use-load";
@@ -23,6 +24,7 @@ type Price = {
 export function MarketCard({ item }: { item: { id: string; name: string; kind: string } }) {
   const region = useOutpostRegion();
   const [range, setRange] = useState<7 | 30>(30);
+  const [selection, setSelection] = useState<{ scope: string; index: number } | null>(null);
   const quotes = useLoad(`${region}:${item.id}`, async (signal) => {
     const r = await fetch(
       `/api/market?${new URLSearchParams({ region, item: item.id, quality: "1" })}`,
@@ -50,19 +52,45 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
       (d) => ({ v: d.avg_price, t: d.timestamp }),
     );
   });
-  const points = (history?.value ?? []).slice(-range);
+  const observations = (history?.value ?? [])
+    .filter((p) => Number.isFinite(p.v) && p.v > 0 && Number.isFinite(sourceTimestamp(p.t)))
+    .toSorted((a, b) => sourceTimestamp(a.t) - sourceTimestamp(b.t));
+  const lastTime = observations.length ? sourceTimestamp(observations.at(-1)!.t) : 0;
+  const points = observations.filter(
+    (p) => sourceTimestamp(p.t) >= lastTime - (range - 1) * 86400000,
+  );
+  const firstTime = points.length ? sourceTimestamp(points[0].t) : 0;
   const W = 320;
   const H = 96;
   const low = Math.min(...points.map((p) => p.v));
   const high = Math.max(...points.map((p) => p.v));
-  const xy = points.map((p, i) => [
-    (i / Math.max(1, points.length - 1)) * W,
-    H - 8 - ((p.v - low) / (high - low || 1)) * (H - 20),
+  const xy = points.map((p) => [
+    lastTime === firstTime
+      ? W / 2
+      : ((sourceTimestamp(p.t) - firstTime) / (lastTime - firstTime)) * W,
+    high === low ? H / 2 : H - 8 - ((p.v - low) / (high - low)) * (H - 20),
   ]);
   const line = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
-  const last = points.at(-1);
-  const day = (t: string) =>
-    new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  const scope = `${region}:${item.id}:${city}:${range}`;
+  const selectedIndex =
+    selection?.scope === scope ? Math.min(selection.index, points.length - 1) : points.length - 1;
+  const selected = points[selectedIndex];
+  function selectAt(event: React.PointerEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.querySelector("svg")?.getBoundingClientRect();
+    if (!rect?.width) return;
+    const x = Math.max(0, Math.min(W, ((event.clientX - rect.left) / rect.width) * W));
+    const index = xy.reduce(
+      (best, point, i) => (Math.abs(point[0] - x) < Math.abs(xy[best][0] - x) ? i : best),
+      0,
+    );
+    setSelection({ scope, index });
+  }
+  const day = (t: string | number) =>
+    new Date(typeof t === "string" ? sourceTimestamp(t) : t).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      timeZone: "UTC",
+    });
   return (
     <div className="tool-card">
       <Link className="tool-search" href={`/tools/market?item=${item.id}&region=${region}`}>
@@ -130,20 +158,56 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
                 type="button"
                 role="tab"
                 aria-selected={range === r}
-                onClick={() => setRange(r)}
+                onClick={() => {
+                  setRange(r);
+                  setSelection(null);
+                }}
               >
                 {r}D
               </button>
             ))}
           </span>
         </div>
-        {points.length > 1 ? (
+        {points.length > 0 ? (
           <>
-            <div className="tool-plot">
+            <div
+              className="tool-plot"
+              role="slider"
+              tabIndex={0}
+              aria-label={`Average price history in ${city}`}
+              aria-valuemin={0}
+              aria-valuemax={points.length - 1}
+              aria-valuenow={selectedIndex}
+              aria-valuetext={
+                selected
+                  ? `${day(selected.t)}: ${Math.round(selected.v).toLocaleString("en-US")} silver`
+                  : undefined
+              }
+              onPointerMove={selectAt}
+              onPointerDown={selectAt}
+              onPointerLeave={(event) => {
+                if (event.pointerType === "mouse" && event.currentTarget !== document.activeElement)
+                  setSelection(null);
+              }}
+              onKeyDown={(event) => {
+                let index = selectedIndex;
+                if (event.key === "ArrowLeft" || event.key === "ArrowDown") index--;
+                else if (event.key === "ArrowRight" || event.key === "ArrowUp") index++;
+                else if (event.key === "Home") index = 0;
+                else if (event.key === "End") index = points.length - 1;
+                else return;
+                event.preventDefault();
+                setSelection({ scope, index: Math.max(0, Math.min(points.length - 1, index)) });
+              }}
+            >
               <span className="tool-plot-y" aria-hidden="true">
                 <i>{compact(high)}</i>
-                <i>{compact((high + low) / 2)}</i>
-                <i>{compact(low)}</i>
+                {high !== low && (
+                  <>
+                    <i>{compact((high + low) / 2)}</i>
+                    <i>{compact(low)}</i>
+                  </>
+                )}
               </span>
               <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
                 <defs>
@@ -155,7 +219,9 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
                 {[0.08, 0.5, 0.92].map((f) => (
                   <line key={f} x1="0" x2={W} y1={H * f} y2={H * f} className="tool-grid" />
                 ))}
-                <path d={`${line} L${W} ${H} L0 ${H} Z`} fill={`url(#fill-${item.id})`} />
+                {points.length > 1 && (
+                  <path d={`${line} L${W} ${H} L0 ${H} Z`} fill={`url(#fill-${item.id})`} />
+                )}
                 <path
                   d={line}
                   fill="none"
@@ -163,19 +229,25 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
                   strokeWidth="2"
                   vectorEffect="non-scaling-stroke"
                 />
+                {xy[selectedIndex] && (
+                  <g className="tool-plot-cursor">
+                    <line x1={xy[selectedIndex][0]} x2={xy[selectedIndex][0]} y1="0" y2={H} />
+                    <circle cx={xy[selectedIndex][0]} cy={xy[selectedIndex][1]} r="3.5" />
+                  </g>
+                )}
               </svg>
-              {last && (
+              {selected && (
                 <span className="tool-plot-tip">
                   <b>
-                    <Silver value={last.v} />
+                    <Silver value={selected.v} animated={false} />
                   </b>
-                  <small>{day(last.t)}</small>
+                  <small>{day(selected.t)}</small>
                 </span>
               )}
             </div>
             <div className="tool-plot-x" aria-hidden="true">
-              {[0, 0.25, 0.5, 0.75, 1].map((f) => (
-                <i key={f}>{day(points[Math.round(f * (points.length - 1))].t)}</i>
+              {(points.length === 1 ? [0] : [0, 0.25, 0.5, 0.75, 1]).map((f) => (
+                <i key={f}>{day(firstTime + f * (lastTime - firstTime))}</i>
               ))}
             </div>
           </>

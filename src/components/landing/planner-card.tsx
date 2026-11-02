@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { AnimatedNumber } from "@/components/animated-number";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
 import { useBatchQuotes } from "@/components/market-batch-quotes";
@@ -129,12 +130,15 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
                     <b style={{ width: `${pct}%` }} />
                   </i>
                   <small>
-                    {h} / {l.qty} · {pct}%
+                    <AnimatedNumber value={h} /> / {l.qty} ·{" "}
+                    <AnimatedNumber value={pct} suffix="%" />
                   </small>
                 </span>
               ) : (
                 <span className="tool-queue-buy">
-                  <small>Buy {l.need}</small>
+                  <small>
+                    Buy <AnimatedNumber value={l.need} />
+                  </small>
                   <b>
                     <Silver value={l.best ? l.best.price * l.need : null} />
                   </b>
@@ -170,7 +174,7 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
         <span>
           <small>Owned</small>
           <b>
-            {owned} / {total}
+            <AnimatedNumber value={owned} /> / {total}
           </b>
         </span>
         <span>
@@ -192,7 +196,9 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
         </span>
         <span>
           <small>Items left</small>
-          <b>{toBuy}</b>
+          <b>
+            <AnimatedNumber value={toBuy} />
+          </b>
         </span>
       </div>
       <div className="tool-cities">

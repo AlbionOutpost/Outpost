@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "@/components/animated-number";
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
@@ -7,6 +8,7 @@ import { Silver } from "./silver";
 import { useLoad } from "./use-load";
 
 type Pick = {
+  batches: number;
   candidates: number;
   assumptions?: { returnRate: number };
   best: {
@@ -40,22 +42,33 @@ type Pick = {
 export function CraftCard() {
   const region = useOutpostRegion();
   const [batches, setBatches] = useState(1);
-  const data = useLoad(`${region}:${batches}`, async (signal) => {
-    const r = await fetch(
-      `/api/landing/craft?${new URLSearchParams({ region, batches: String(batches) })}`,
-      { signal },
-    );
-    const body = await r.json();
-    if (!r.ok) throw new Error(body.error || "Market observations unavailable.");
-    return body as Pick;
-  });
+  const data = useLoad(
+    `${region}:${batches}`,
+    async (signal) => {
+      const r = await fetch(
+        `/api/landing/craft?${new URLSearchParams({ region, batches: String(batches) })}`,
+        { signal },
+      );
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "Market observations unavailable.");
+      return body as Pick;
+    },
+    region,
+  );
   const p = data?.value?.best;
   const cost = p?.upfront != null && p.fees != null ? p.upfront + p.fees : null;
   const tone = p?.profit != null ? (p.profit >= 0 ? "is-gain" : "is-loss") : "";
   const name = (n: string) => n.replace(/^T\d /, "");
   const max = Math.max(...(data?.value?.byCity.map((c) => Math.abs(c.margin)) ?? [1]), 1);
   return (
-    <div className="tool-card">
+    <div className="tool-card" aria-busy={data?.updating ?? false}>
+      <span className="tool-refresh-note" role="status">
+        {data?.updating
+          ? `Updating for ${batches} batches…`
+          : data?.error && p
+            ? `Could not update. Showing the last ${data.value!.batches}-batch quote.`
+            : ""}
+      </span>
       <div className="tool-item is-recipe">
         {p ? <ItemIcon id={p.recipe.output} size={52} /> : <span className="tool-well" />}
         <span>
@@ -83,7 +96,9 @@ export function CraftCard() {
           >
             <Minus size={14} />
           </button>
-          <output aria-live="polite">{batches}</output>
+          <output aria-live="polite">
+            <AnimatedNumber value={batches} />
+          </output>
           <button
             type="button"
             aria-label="More batches"
@@ -112,7 +127,9 @@ export function CraftCard() {
                   <span>{name(r.name)}</span>
                 </span>
               </th>
-              <td>{r.quantity.toLocaleString("en-US")}</td>
+              <td>
+                <AnimatedNumber value={r.quantity} />
+              </td>
               <td>
                 <Silver value={r.unit} />
               </td>
@@ -131,7 +148,9 @@ export function CraftCard() {
           </b>
         </div>
         <div>
-          <span>Sells for ({p?.outputQuantity ?? 1})</span>
+          <span>
+            Sells for (<AnimatedNumber value={p?.outputQuantity ?? 1} />)
+          </span>
           <b>
             <Silver value={p?.revenue} />
           </b>
@@ -153,7 +172,13 @@ export function CraftCard() {
         </span>
         <span className="tool-profit-margin">
           <small>Margin</small>
-          <b>{p?.margin != null ? `${p.margin >= 0 ? "+" : ""}${p.margin.toFixed(1)}%` : "—"}</b>
+          <b>
+            {p?.margin != null ? (
+              <AnimatedNumber value={p.margin} digits={1} signed suffix="%" />
+            ) : (
+              "—"
+            )}
+          </b>
         </span>
       </div>
       <div className="tool-cities">

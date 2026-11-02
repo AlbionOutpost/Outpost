@@ -10,6 +10,7 @@ db.executescript((root / "cloudflare/d1/migrations/0001_schema_candidate.sql").r
 db.executescript((root / "cloudflare/d1/migrations/0003_domain_invariants.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0004_team_loot_splits.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0006_billing_checkout.sql").read_text())
+db.executescript((root / "cloudflare/d1/migrations/0007_library_likes.sql").read_text())
 checks = []
 
 def check(name, fn):
@@ -24,9 +25,9 @@ def denied(sql, parameters=()):
     raise AssertionError("Expected database integrity denial")
 
 def counts():
-    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 30
-    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 43
-check("30 application tables and 43 explicit indexes including team loot and the Supporter plan", counts)
+    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 31
+    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 45
+check("31 application tables and 45 explicit indexes including account library likes", counts)
 
 def legacy_v2_upgrade():
     # A separate disposable in-memory database only. Remove its fresh, empty
@@ -91,6 +92,19 @@ def billing_checkout_upgrade():
         assert legacy.execute('SELECT billingCheckout FROM "User"').fetchone() == (None,)
         legacy.execute('UPDATE "User" SET billingCheckout=?', ('{"key":"fixture"}',))
         assert json.loads(legacy.execute('SELECT billingCheckout FROM "User"').fetchone()[0]) == {"key": "fixture"}
+        likes_migration = (root / "cloudflare/d1/migrations/0007_library_likes.sql").read_text()
+        legacy.commit()
+        retained = legacy.execute('SELECT * FROM "User"').fetchall()
+        legacy.execute("BEGIN")
+        for statement in "\n".join(line for line in likes_migration.splitlines() if not line.lstrip().startswith("--")).split(";"):
+            if statement.strip(): legacy.execute(statement)
+        legacy.rollback()
+        assert not legacy.execute("SELECT name FROM sqlite_master WHERE name='LibraryLike'").fetchall()
+        legacy.executescript(likes_migration)
+        legacy.execute('UPDATE _outpost_schema SET version=6 WHERE version=5')
+        assert legacy.execute('SELECT version FROM _outpost_schema').fetchone() == (6,)
+        assert legacy.execute('SELECT * FROM "User"').fetchall() == retained
+        assert legacy.execute('SELECT count(*) FROM "LibraryLike"').fetchone() == (0,)
         backup.backup(restored)
         assert restored.execute('SELECT * FROM "User"').fetchall() == before
         assert restored.execute('SELECT version FROM _outpost_schema').fetchone() == (4,)
@@ -98,7 +112,7 @@ def billing_checkout_upgrade():
         restored.close()
         backup.close()
         legacy.close()
-check("SQLite v4 to v5 preserves billing rows, nullable intent, transactional rollback and backup restore", billing_checkout_upgrade)
+check("SQLite v4-v6 additive upgrades preserve billing rows, support rollback and restore", billing_checkout_upgrade)
 
 def current_schema_candidate():
     candidate = sqlite3.connect(":memory:")
@@ -148,10 +162,18 @@ def team_loot_upgrade():
 check("team loot additive upgrade retains rows, enforces constraints and cascades by team", team_loot_upgrade)
 check("unique build-slot identity enforced", lambda: denied(gear, ("qa-duplicate", "qa-d1-build", "Main hand", "T4_MAIN_SWORD", 1, "", "")))
 
+def library_likes():
+    db.execute('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("like-1", "qa-d1-owner", "build", "battleaxe-mist-build"))
+    denied('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("like-2", "qa-d1-owner", "build", "battleaxe-mist-build"))
+    denied('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("like-3", "qa-d1-owner", "bad-kind", "battleaxe-mist-build"))
+    denied('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("like-4", "missing-owner", "build", "battleaxe-mist-build"))
+check("account library like identity, kind and foreign-key constraints", library_likes)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0
     assert db.execute('SELECT count(*) FROM "BuildEquipment"').fetchone()[0] == 0
+    assert db.execute('SELECT count(*) FROM "LibraryLike"').fetchone()[0] == 0
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
 check("ownership cascade removes dependent gear without foreign-key errors", cascade)
 report = {"checkedAt": datetime.now(timezone.utc).isoformat(), "status": "PASS", "checks": checks, "scope": "In-memory SQLite migration constraints and round-trips only; not Prisma D1 transactions, authorization or production restore evidence"}

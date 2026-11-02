@@ -5,7 +5,7 @@ import Link from "@/components/link";
 import { LoadoutBoard } from "@/components/loadout-board";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
-import { HeartChip } from "./heart-chip";
+import { AccountLikeChip } from "./account-like-chip";
 
 /** One teaser window: a glimpse of the product above, the product's name and line below. */
 function Window({
@@ -68,7 +68,6 @@ export function LandingWindows({
   members: LibraryBuild[];
   suffix: string;
 }) {
-  const main = build?.equipment.find((e) => e.slot === "Main hand");
   const byId = new Map(members.map((b) => [b.id, b]));
   const crew = (comp?.members ?? []).flatMap((id) => {
     const b = byId.get(id);
@@ -93,21 +92,13 @@ export function LandingWindows({
               </Link>
               <span className="landing-chips">
                 <span className="landing-chip">{activityName(build.category)}</span>
-                {build.upvotes ? (
-                  <HeartChip
-                    count={build.upvotes}
-                    build={{
-                      id: build.id,
-                      slug: build.slug.length <= 200 ? build.slug : build.id,
-                      title: build.title.slice(0, 200),
-                      author: build.author.slice(0, 100),
-                      weaponName: build.weaponName.slice(0, 100),
-                      category: build.category,
-                      itemId: main?.itemId || "",
-                      updatedAt: build.updatedAt,
-                    }}
-                  />
-                ) : null}
+                <AccountLikeChip
+                  key={`build:${build.slug}`}
+                  kind="build"
+                  slug={build.slug}
+                  title={build.title}
+                  archivedCount={build.upvotes}
+                />
               </span>
             </>
           ) : (
@@ -131,12 +122,12 @@ export function LandingWindows({
       <Window
         scene="market"
         emblem="strip-content"
-        title="Content manager"
+        title="Team Management"
         line="Mass-ups, comps and loot splits for your guild. Supporter feature."
         href={`/groups${suffix}`}
         bar={
           <>
-            <span className="landing-window-title">Teams</span>
+            <span className="landing-window-title">Team Management</span>
             <span className="landing-chips">
               <span className="landing-chip">Supporter</span>
             </span>
@@ -178,7 +169,13 @@ export function LandingWindows({
               </Link>
               <span className="landing-chips">
                 <span className="landing-chip">{activityName(comp.category)}</span>
-                {comp.upvotes ? <HeartChip count={comp.upvotes} /> : null}
+                <AccountLikeChip
+                  key={`composition:${comp.slug}`}
+                  kind="composition"
+                  slug={comp.slug}
+                  title={comp.title}
+                  archivedCount={comp.upvotes}
+                />
               </span>
             </>
           ) : (

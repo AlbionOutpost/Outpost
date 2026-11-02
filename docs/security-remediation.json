@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-02T20:20:31.601374+00:00",
-  "baselineCommit": "d2ea511615948225f4a8157d56b77ebca4828bd9",
-  "branch": "fix/subtle-copper-frames",
-  "sourceFingerprint": "30507c8b50016c49adbe8ec75a97c53202112a69cacd126b0ef515c6aa5532e4",
-  "scope": "Owner-requested site-wide frame refinement on fix/subtle-copper-frames. Shared illustrated cards and top-level working panels use muted aged-copper trim, thinner strokes and offset shadows without orange halos; the footer ornament follows the same treatment in both themes. Hover/focus-within gives a restrained metal highlight. Existing artwork, layout, semantic colours and focus outlines are preserved. The first phase exposed an expired hard-coded Teams test date; the fixture now uses tomorrow in the browser local timezone, with application validation unchanged. Security repairs PR #66 and branding PR #67 are already live; this frame follow-up has not been pushed, merged or deployed. Real OAuth and Stripe lifecycle verification remain owner-deferred.",
+  "checkedAt": "2026-11-02T21:56:44.810636+00:00",
+  "baselineCommit": "5ef908f8257418cd645afc12000f415bc847a374",
+  "branch": "feat/landing-interactions",
+  "sourceFingerprint": "001243eb987fe51c567cd1fd47e5f76ed1707480d5f771e35803e57e01770e48",
+  "scope": "Owner-requested landing interactions: Team Management naming, existing Battleaxe PvP preview, account-backed build/composition likes, animated tool amounts with retained batch quotes, real observation chart hover/touch/keyboard selection, restrained section links, closing/footer spacing and shared background-only blur6px. Additive LibraryLike migrations and private data Worker schema6 are prepared and verified locally. PR #68 shared copper frames are already live at5ef908f; this landing follow-up is local only. Real OAuth and Stripe lifecycle verification remain owner-deferred.",
   "findings": [
     {
       "id": "F-01",
@@ -187,7 +187,7 @@
       "severity": "Low visual",
       "implementation": "Global frame/gem tokens use thinner muted copper artwork; both illustrated cards and working-panel border images lose their orange halos. Both themes and footer ornament updated. Hover/focus highlight remains subtle; focus outlines stay2px.",
       "verification": "48 desktop/mobile captures across8 routes and both themes; six landing/crafting widths. Single inherited frame/gem variant on every route. No document overflow. Representative captures, updated equipment/composition goldens, additional tool/activity/kill/closing captures and both-theme hover/keyboard focus states inspected. Final full phase519 units/156 browser cases/all12 gates passed.",
-      "deployment": "Local branch only; not pushed, merged or deployed"
+      "deployment": "Deployed5ef908f (PR #68); workflow41520375607 succeeded"
     },
     {
       "id": "QA-DATE-01",
@@ -195,14 +195,30 @@
       "severity": "Low test reliability",
       "implementation": "Generate tomorrow in the browser local timezone for the existing scheduling journey. No application validation or authorization changed.",
       "verification": "Original first phase155/156 preserved with Choose a future event date error; corrected Teams journey passed3/3 targeted repeats, then final full156/156 browser suite.",
-      "deployment": "Local test fixture only"
+      "deployment": "Merged test fixture in5ef908f (PR #68)"
+    },
+    {
+      "id": "LANDING-01",
+      "title": "Landing previews have inert controls and unclear hierarchy",
+      "severity": "Low UX/correctness",
+      "implementation": "Team Management; existing Battleaxe Mist PvP build; animated amounts and retained labelled same-region batch quotes; observed-time chart pointer/touch/keyboard selection; quieter links, more closing whitespace and shared background-only blur6px. Explicit minmax grid column contains equipment at320px.",
+      "verification": "Final full phase519 units/158 browser cases/all12 gates; six changed Cloudflare browser cases;48 current captures plus8 landing sections reviewed. New fixture test proves intermediate up/down amounts and reduced-motion exact values. Historical accessibility and320px clipping failures retained.",
+      "deployment": "Local only; not pushed, merged or deployed"
+    },
+    {
+      "id": "LIKE-01",
+      "title": "Landing hearts need authenticated persistent account state",
+      "severity": "Medium authorization boundary",
+      "implementation": "Private no-store canonical-target API; session-derived actor, Origin check, bounded strict body, rate quota, serializable idempotent unique likes, account export and deletion cascade. Imported archive votes remain separate immutable provenance. PG migration and SQLite0007/private schema6 are additive.",
+      "verification": "Anonymous/expired401, forgedOrigin403, injectedactor400, unknown404, canonical UUID alias, concurrent uniqueness, account separation, reload persistence, export and cascade; actual PostgreSQL and local workerd checks. Fixture sessions are not real OAuth.",
+      "deployment": "Local only; production schema/migration not applied"
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PASS",
-      "detail": "Final site-wide frame npm run qa:phase on Node22/local PostgreSQL/Redis:519 units,156/156 browser cases and all12 automatic gates PASS. First phase155/156 retained; its expired fixed event date was corrected and targeted repeats passed3/3 before the full rerun."
+      "detail": "Final CI=1 npm run qa:phase on Node22/local PostgreSQL/Redis:519 units,158/158 browser cases and all12 automatic gates PASS. First154/158 accessibility failures corrected; second157/158 timed out in bulk screenshots. Both runs preserved; final run uses existing single-worker CI settings and existing screenshot allowance, with no disabled assertions."
     },
     {
       "name": "Deep-fix browser regressions",
@@ -217,22 +233,22 @@
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Historical security repair evidence (before branding follow-up): 23 local workerd checks on current source; no new schema/migration changes in this deeper phase. Prior13 SQLite schema/upgrade/rollback checks retained separately."
+      "detail": "Current source passes24 actual local workerd checks including authenticated/idempotent build and composition likes, missing actor, unlike and cascade. SQLite migration0007 checks table/index totals, version upgrades, transactional rollback, preserved billing data, backup restore, identity/kind/FK denials and cascade. Private schema5\u21926 local only."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Historical security repair evidence (before branding follow-up): Fresh final OpenNext build and web Worker typecheck passed; data Worker types/runtime were unchanged from the verified backend repair."
+      "detail": "Current OpenNext build and both Worker typechecks pass. Six affected browser journeys pass under actual local Cloudflare runtime, including canonical account likes, chart interaction, retained batches, reduced motion and320px equipment bounds."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Historical security repair evidence (before branding follow-up): Data 1,022,342 bytes, web 2,500,219 bytes gzip; each below 3,145,728. Local dry runs only."
+      "detail": "Current local Wrangler dry runs: 1023079 gzip bytes for albionoutpost-data, 2513275 gzip bytes for albionoutpost-web; each below3,145,728 bytes. No deploy/production quota claim."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-frames:qa image passed UID1000, no /app/.env, PostgreSQL/Redis health and home200; owned QA container cleaned. No production container/deployment claim."
+      "detail": "Fresh outpost-landing-reviewed:qa image passes UID1000, no baked/app/.env, actual PostgreSQL/Redis health and home200. Owned local QA container removed."
     },
     {
       "name": "Dependencies",
@@ -242,32 +258,32 @@
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "Current source pattern scan924 text files and configured-secret browser artifact scan passed without matches. Earlier additional owner-configured nine-value scan remains historical evidence; no secret values copied or printed."
+      "detail": "Current source/config pattern scan930 text files and configured-secret browser artifact scan91 files passed with no matches; no credentials copied or printed. Narrow scans are not complete history/secret certification."
     },
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "16 before captures and48 final captures across8 routes in both themes, with1440/1920/768/390/375/320 on landing/crafting. All responses200 and no overflow; representative frames and five updated equipment/composition goldens inspected. Eight additional landing section captures and both-theme hover/keyboard focus checks passed. Local-library Chromium fallback with sandbox; reduced motion used for stable final captures. Owner acceptance separate."
+      "detail": "48 current captures across8 routes/both themes, with1440/1920/768/390/375/320 landing and crafting widths, plus8 landing section captures. All200/no overflow. Representative desktop/mobile cards, links, backdrop blur6px and closing gap inspected; every landing gear cell stays inside its card at320px. Earlier clipped320px capture preserved. Five existing premium equipment/composition goldens pass unchanged. Sandboxed local-library Chromium fallback; reduced-motion stable captures, separate normal-motion test."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "Fresh local frame container homepage lab: performance96,accessibility100,best practices96,SEO100,LCP about2.06s. No field/conformance or optimization claim."
+      "detail": "Fresh final local container homepage lab: performance97,accessibility100,best practices96,SEO100,LCP about2.0s. Earlier concurrent lab83/97 retained separately. Lab observations are not field/conformance evidence."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "All five root QA reports and implementation/project plan regenerated from reviewed phase outcomes; DESIGN and site-wide frame review updated. Earlier failing phase and expired-date cause preserved separately; docs/formatting/source hygiene checked."
+      "detail": "DESIGN, API and landing interaction review updated; all five root QA reports, implementation status and project plan regenerated from reviewed outcomes. Original failed runs preserved. Docs/formatting/source hygiene checked."
     },
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "Required checks/PR/linear history and secret push protection previously applied/read back; PR #67 passed and merged without bypasses. No frame follow-up push/merge/deploy."
+      "detail": "Required checks/PR/linear history and secret push protection previously applied/read back; PR #68 passed and merged without bypasses. New landing follow-up remains local."
     },
     {
       "name": "Application deployment",
       "status": "PREVIOUS RELEASE LIVE",
-      "detail": "PR #66 security repairs and PR #67 branding deployed successfully; d2ea511 live renamed export and SQLite/cache health verified in the previous release. Site-wide frame follow-up is local only."
+      "detail": "Previous shared frames PR #68 deployed5ef908f successfully (workflow41520375607). Landing follow-up has not been pushed/merged/deployed; private data Worker schema6 migration remains local."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -286,7 +302,8 @@
     "Existing game-data provenance/current-patch gaps, operator/legal approval, owner visual acceptance and full-product gaps remain independent; imported facts were not promoted to verified.",
     "Per-address source quotas require documented Cloudflare trusted-header topology. Self-hosted Node requires a trusted proxy strategy before equivalent public deployment.",
     "Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.",
-    "Site-wide frame final phase passed519 units/156 browser cases/all12 gates. First155/156 run is preserved: a fixed Teams test date expired; only that fixture changed before targeted3/3 and the final rerun. No exhaustive defect or full conformance claim.",
-    "Real OAuth and Stripe remain owner-deferred. Security repairs PR #66 and branding PR #67 are live; this site-wide frame follow-up is local only. Stored technical identifiers and immutable provenance retain historical names for compatibility."
+    "Landing final phase519 units/158 browser cases/all12 gates passed. Earlier154/158 accessibility failures and157/158 bulk screenshot timeout remain recorded. No exhaustive defect or full conformance claim.",
+    "Real OAuth and Stripe remain owner-deferred. PR #68 frames are live; current landing work is local only. Production migration and deployment require separately recorded authorization.",
+    "New private database schema6 rejects incompatible older schema5 backends. A future rollback must retain a compatible backend or use a rehearsed backup/restore strategy; this local migration evidence is not production restore proof."
   ]
 }

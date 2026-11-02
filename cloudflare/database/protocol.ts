@@ -10,6 +10,7 @@ export const models = new Set([
   "buildVersion",
   "buildFavorite",
   "buildVote",
+  "libraryLike",
   "composition",
   "compositionVersion",
   "compositionFavorite",
