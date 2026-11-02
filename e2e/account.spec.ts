@@ -41,6 +41,7 @@ test("database session authorizes only its own profile, export and deletion", as
     expect(user.region).toBe("asia");
     const response = await context.request.get("/api/account/export");
     expect(response.status()).toBe(200);
+    expect(response.headers()["content-disposition"]).toContain("albion-outpost-account.json");
     const exported = await response.json();
     expect(exported.profile.id).toBe(id);
     expect(JSON.stringify(exported)).not.toContain(token);

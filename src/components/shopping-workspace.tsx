@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingBag, RefreshCw, Download, Trash2, Check, ArrowRight, Undo2 } from "lucide-react";
 import Link from "@/components/link";
 import { ShoppingAccountLists } from "./shopping-account-lists";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 import { cities } from "@/lib/albion/region-config";
 import {
@@ -22,7 +22,7 @@ import { isStale } from "@/lib/albion/freshness";
 const money = (n: number | null) =>
   n === null ? "Prices needed" : n.toLocaleString("en-GB", { maximumFractionDigits: 2 });
 export function ShoppingWorkspace() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [state, setState] = useState<ShoppingList>({ version: 1, region, entries: [] });
   const [blocked, setBlocked] = useState(false),
     [loaded, setLoaded] = useState(false),

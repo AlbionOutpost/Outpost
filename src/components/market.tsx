@@ -16,11 +16,11 @@ import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
-import { useAtlasRegion, useRegionNavigationPending } from "./region-context";
+import { useOutpostRegion, useRegionNavigationPending } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 export function Market() {
   const params = useSearchParams();
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const regionPending = useRegionNavigationPending();
   const [item, setItem] = useState(params.get("item") || "T4_BAG");
   const [selectedName, setSelectedName] = useState("");

@@ -12,7 +12,7 @@ import {
 } from "@/lib/albion/farming";
 import { quoteResponse } from "@/lib/albion/market-quotes";
 import { cities } from "@/lib/albion/region-config";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 import { ScenarioControls } from "./scenario-controls";
 import "@/app/farming-workspace.css";
@@ -22,7 +22,7 @@ const money = (n: number | null | undefined) =>
     : n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 export function FarmingCalculator() {
   const router = useRouter();
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     [draft, setDraft] = useState(() => initialFarming(region));
   const [query, setQuery] = useState(""),
     [message, setMessage] = useState(""),

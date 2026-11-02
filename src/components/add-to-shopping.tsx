@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ShoppingBag, Check } from "lucide-react";
 import Link from "@/components/link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { mergeShopping, type ShoppingEntry } from "@/lib/albion/shopping";
 import { readShopping, writeShopping } from "./shopping-storage";
 import type { Region } from "@/lib/albion/region-config";
@@ -15,7 +15,7 @@ export function AddToShopping({
   label?: string;
   region?: Region;
 }) {
-  const selectedRegion = useAtlasRegion();
+  const selectedRegion = useOutpostRegion();
   const region = sourceRegion ?? selectedRegion;
   const [message, setMessage] = useState("");
   const [added, setAdded] = useState(false);

@@ -2,7 +2,7 @@
 import "./economy-workspaces.css";
 import "./history.css";
 import { useEffect, useRef, useState } from "react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { cities } from "@/lib/albion/region-config";
 type Point = { price: number; timestamp: string; count?: number };
@@ -26,7 +26,7 @@ export function History({
   city?: string;
   onCityChange?: (city: string) => void;
 }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [ownCity, setOwnCity] = useState("Lymhurst");
   const city = controlledCity ?? ownCity;
   const setCity = onCityChange ?? setOwnCity;

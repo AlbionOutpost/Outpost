@@ -45,7 +45,7 @@ export function eventCalendar(e: {
     [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Albion Atlas//Group Events//EN",
+      "PRODID:-//Albion Outpost//Group Events//EN",
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
       "BEGIN:VEVENT",

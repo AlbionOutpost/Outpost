@@ -6,7 +6,7 @@ import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { LoadoutBoard } from "@/components/loadout-board";
-import { useAtlasRegion } from "@/components/region-context";
+import { useOutpostRegion } from "@/components/region-context";
 import { sourceAge } from "@/lib/albion/source-age";
 import type { TopKill, TopKillsFeed } from "@/lib/albion/combat-events";
 import { compact } from "./silver";
@@ -55,7 +55,7 @@ function Side({ p, victim }: { p: Player; victim?: boolean }) {
  * their kit. The section heading says how old the kills are; nothing is estimated silently.
  */
 export function TopKills({ suffix, serverName }: { suffix: string; serverName: string }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [open, setOpen] = useState<Set<number>>(() => new Set());
   const data = useLoad(region, async (signal) => {
     const r = await fetch(`/api/combat-events/top?region=${region}`, { signal });

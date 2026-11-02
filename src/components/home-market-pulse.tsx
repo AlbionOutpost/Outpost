@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "@/components/link";
 import { ArrowUpRight, RefreshCw, Pause, Play } from "lucide-react";
 import { useVisibleRefresh } from "./use-visible-refresh";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 import {
   parseMarketPreview,
@@ -24,7 +24,7 @@ type Observation = {
   checkedAt: string | null;
 };
 export function HomeMarketPulse() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const { revision, paused, setPaused, refresh } = useVisibleRefresh();
   const [result, setResult] = useState<{
     region: string;

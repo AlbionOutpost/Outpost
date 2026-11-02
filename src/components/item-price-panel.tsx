@@ -2,7 +2,7 @@
 import { Silver } from "@/components/silver";
 import Link from "@/components/link";
 import { useEffect, useState } from "react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
@@ -26,7 +26,7 @@ function stamp(value: string) {
  * "what does it cost" without a detour. Each quote keeps its city, source time and freshness.
  */
 export function ItemPricePanel({ id }: { id: string }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const quality = 1;
   const key = `${region}:${id}:${quality}`;
   const [settled, setSettled] = useState<State | null>(null);
