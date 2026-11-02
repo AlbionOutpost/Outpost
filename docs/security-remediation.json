@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-02T16:45:58.394272+00:00",
-  "baselineCommit": "784e14d4a0d47cd6160cef6917c9da5802e54594",
-  "branch": "fix/outpost-branding",
-  "sourceFingerprint": "faabaebd60e7875f9a20b733345f5cdf8d5f5d140c7a946cbef910f9198164f9",
-  "scope": "Albion Outpost branding cleanup on fix/outpost-branding. The 21 preceding security/correctness repairs were merged in PR #66 and deployed as 784e14d, with bounded anonymous live checks passed. This follow-up updates download filenames, new export format names, calendar producer metadata, npm metadata and the region hook name; it has not been pushed, merged or deployed. Existing composition files remain importable. Stored cookies/cache keys, database/source provenance and calendar UIDs retain their identities. Real OAuth and Stripe lifecycle verification remain owner-deferred.",
+  "checkedAt": "2026-11-02T20:20:31.601374+00:00",
+  "baselineCommit": "d2ea511615948225f4a8157d56b77ebca4828bd9",
+  "branch": "fix/subtle-copper-frames",
+  "sourceFingerprint": "30507c8b50016c49adbe8ec75a97c53202112a69cacd126b0ef515c6aa5532e4",
+  "scope": "Owner-requested site-wide frame refinement on fix/subtle-copper-frames. Shared illustrated cards and top-level working panels use muted aged-copper trim, thinner strokes and offset shadows without orange halos; the footer ornament follows the same treatment in both themes. Hover/focus-within gives a restrained metal highlight. Existing artwork, layout, semantic colours and focus outlines are preserved. The first phase exposed an expired hard-coded Teams test date; the fixture now uses tomorrow in the browser local timezone, with application validation unchanged. Security repairs PR #66 and branding PR #67 are already live; this frame follow-up has not been pushed, merged or deployed. Real OAuth and Stripe lifecycle verification remain owner-deferred.",
   "findings": [
     {
       "id": "F-01",
@@ -179,14 +179,30 @@
       "severity": "Low branding",
       "implementation": "Albion Outpost account/composition/trade/calendar download names; new Outpost composition/trade formats; calendar producer and npm metadata; useOutpostRegion hook. Legacy composition format reader and stable storage/calendar identities retained. Immutable starter provenance remains historical.",
       "verification": "Full Node22 phase: 519 unit tests,156 browser tests,all12 gates passed. Existing browser journeys now assert account/composition filename, new composition format and legacy file re-import; calendar unit case asserts new producer and stable UID. Desktop/mobile screenshots inspected; no layout redesign.",
+      "deployment": "Deployed d2ea511 (PR #67); live renamed trade download and health verified"
+    },
+    {
+      "id": "FRAME-01",
+      "title": "Overbright shared frames compete with content across the application",
+      "severity": "Low visual",
+      "implementation": "Global frame/gem tokens use thinner muted copper artwork; both illustrated cards and working-panel border images lose their orange halos. Both themes and footer ornament updated. Hover/focus highlight remains subtle; focus outlines stay2px.",
+      "verification": "48 desktop/mobile captures across8 routes and both themes; six landing/crafting widths. Single inherited frame/gem variant on every route. No document overflow. Representative captures, updated equipment/composition goldens, additional tool/activity/kill/closing captures and both-theme hover/keyboard focus states inspected. Final full phase519 units/156 browser cases/all12 gates passed.",
       "deployment": "Local branch only; not pushed, merged or deployed"
+    },
+    {
+      "id": "QA-DATE-01",
+      "title": "Existing Teams event test used a fixed date that expired during verification",
+      "severity": "Low test reliability",
+      "implementation": "Generate tomorrow in the browser local timezone for the existing scheduling journey. No application validation or authorization changed.",
+      "verification": "Original first phase155/156 preserved with Choose a future event date error; corrected Teams journey passed3/3 targeted repeats, then final full156/156 browser suite.",
+      "deployment": "Local test fixture only"
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PASS",
-      "detail": "Branding follow-up npm run qa:phase:519 unit tests,156/156 browser tests and all12 automatic gates PASS on Node22 with isolated local PostgreSQL/Redis. Earlier runs retained in private evidence."
+      "detail": "Final site-wide frame npm run qa:phase on Node22/local PostgreSQL/Redis:519 units,156/156 browser cases and all12 automatic gates PASS. First phase155/156 retained; its expired fixed event date was corrected and targeted repeats passed3/3 before the full rerun."
     },
     {
       "name": "Deep-fix browser regressions",
@@ -216,7 +232,7 @@
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Historical security repair evidence (before branding follow-up): Final outpost-final-security:qa image: UID 1000, no /app/.env, healthy PostgreSQL/Redis and home 200; owned container cleaned."
+      "detail": "Fresh outpost-frames:qa image passed UID1000, no /app/.env, PostgreSQL/Redis health and home200; owned QA container cleaned. No production container/deployment claim."
     },
     {
       "name": "Dependencies",
@@ -226,32 +242,32 @@
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "923 source/config text files and 166 browser assets passed pattern/fixture checks. Additional scan checked 1,124 Git-visible files and 166 assets against nine owner-configured secret values; no matches and no values exported."
+      "detail": "Current source pattern scan924 text files and configured-secret browser artifact scan passed without matches. Earlier additional owner-configured nine-value scan remains historical evidence; no secret values copied or printed."
     },
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Branding follow-up desktop light flipping1440 and mobile composition375 captures inspected via sandboxed local-library Playwright fallback; full browser suite passed. Previous six-width security repair evidence remains historical. No layout changes or new full-design acceptance claim."
+      "detail": "16 before captures and48 final captures across8 routes in both themes, with1440/1920/768/390/375/320 on landing/crafting. All responses200 and no overflow; representative frames and five updated equipment/composition goldens inspected. Eight additional landing section captures and both-theme hover/keyboard focus checks passed. Local-library Chromium fallback with sandbox; reduced motion used for stable final captures. Owner acceptance separate."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "Historical security repair evidence (before branding follow-up): Final container homepage: performance 97, accessibility 100, best practices 96, SEO 100, LCP about 2.03s. Local lab only; no field or optimization claim."
+      "detail": "Fresh local frame container homepage lab: performance96,accessibility100,best practices96,SEO100,LCP about2.06s. No field/conformance or optimization claim."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "All five QA reports, status/plan and progress updated; historical failures remain separate. Docs, formatting, report freshness and whitespace checked."
+      "detail": "All five root QA reports and implementation/project plan regenerated from reviewed phase outcomes; DESIGN and site-wide frame review updated. Earlier failing phase and expired-date cause preserved separately; docs/formatting/source hygiene checked."
     },
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "Required checks/PR/linear history and secret push protection applied and verified before PR #66 merge. No protections bypassed. No branding follow-up push/merge/deploy."
+      "detail": "Required checks/PR/linear history and secret push protection previously applied/read back; PR #67 passed and merged without bypasses. No frame follow-up push/merge/deploy."
     },
     {
       "name": "Application deployment",
       "status": "PREVIOUS RELEASE LIVE",
-      "detail": "PR #66 deployed784e14d successfully; anonymous health, cached-search headers, duplicate-region rejection, market observations and desktop/mobile recipe recovery passed. Branding follow-up is local only."
+      "detail": "PR #66 security repairs and PR #67 branding deployed successfully; d2ea511 live renamed export and SQLite/cache health verified in the previous release. Site-wide frame follow-up is local only."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -270,7 +286,7 @@
     "Existing game-data provenance/current-patch gaps, operator/legal approval, owner visual acceptance and full-product gaps remain independent; imported facts were not promoted to verified.",
     "Per-address source quotas require documented Cloudflare trusted-header topology. Self-hosted Node requires a trusted proxy strategy before equivalent public deployment.",
     "Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.",
-    "Branding follow-up full phase passed519 units/156 browser cases/all12 gates. This does not establish exhaustive defect coverage, owner visual acceptance or real-provider verification.",
-    "Real OAuth and Stripe lifecycle verification remain blocked at the owner's request. Previous security repairs deployed through PR #66; this branding follow-up is local only. Stored technical identifiers and immutable provenance deliberately retain historical names for compatibility."
+    "Site-wide frame final phase passed519 units/156 browser cases/all12 gates. First155/156 run is preserved: a fixed Teams test date expired; only that fixture changed before targeted3/3 and the final rerun. No exhaustive defect or full conformance claim.",
+    "Real OAuth and Stripe remain owner-deferred. Security repairs PR #66 and branding PR #67 are live; this site-wide frame follow-up is local only. Stored technical identifiers and immutable provenance retain historical names for compatibility."
   ]
 }
