@@ -21,7 +21,7 @@ export const GET = apiHandler(
     return new Response(eventCalendar(e), {
       headers: {
         "Content-Type": "text/calendar; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="atlas-event.ics"',
+        "Content-Disposition": 'attachment; filename="albion-outpost-event.ics"',
       },
     });
   },

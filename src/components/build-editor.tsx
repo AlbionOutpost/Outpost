@@ -1,6 +1,6 @@
 "use client";
 import { LoadoutPriceCheck } from "./loadout-price-check";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
@@ -78,7 +78,7 @@ export function BuildEditor({
   ownerId?: string;
   recoveryKey?: string;
 }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [draft, setDraft] = useState<BuildInput>(initial || { ...empty, region });
   const [savedDraft, setSavedDraft] = useState(() =>
     JSON.stringify(initial || { ...empty, region }),

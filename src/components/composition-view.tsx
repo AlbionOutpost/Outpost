@@ -113,7 +113,7 @@ export function CompositionView({
                   new Blob(
                     [
                       JSON.stringify(
-                        { format: "albion-atlas-composition", version: 1, composition: parsed },
+                        { format: "albion-outpost-composition", version: 1, composition: parsed },
                         null,
                         2,
                       ),
@@ -123,7 +123,7 @@ export function CompositionView({
                 );
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "atlas-composition.json";
+                a.download = "albion-outpost-composition.json";
                 a.click();
                 URL.revokeObjectURL(url);
               }}

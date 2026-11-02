@@ -107,4 +107,4 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **No backups** of the private DO are scripted or tested yet.
 - **Two schemas** must be kept in parity by generation scripts; local tests run against Postgres, not the production SQLite path (the Cloudflare e2e run and `qa-cloudflare-database.mjs` cover that).
 - **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each.
-- Historical identifiers containing `atlas` (cookies `atlas-theme`/`atlas-region`, cache keys `atlas:*`, export formats `albion-atlas-*`, ICS UIDs) are kept for compatibility; renaming needs a backward-compatible reader.
+- Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.

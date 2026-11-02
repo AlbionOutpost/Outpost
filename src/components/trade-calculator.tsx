@@ -2,7 +2,7 @@
 import { CalculationReadiness } from "./calculation-readiness";
 import { useRouter } from "next/navigation";
 import { ScenarioControls } from "./scenario-controls";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { useState } from "react";
 import { trade, tradeSchema, tradeScenarioSchema } from "@/lib/albion/calculations";
 const fields = [
@@ -14,7 +14,7 @@ const fields = [
   { key: "transport", label: "Total transport / risk cost" },
 ] as const;
 export function TradeCalculator() {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     router = useRouter();
   const [values, setValues] = useState({
     buy: NaN,
@@ -150,7 +150,7 @@ export function TradeCalculator() {
               const blob = new Blob(
                 [
                   JSON.stringify(
-                    { kind: "albion-atlas-trade", version: 1, inputs: values, result },
+                    { kind: "albion-outpost-trade", version: 1, inputs: values, result },
                     null,
                     2,
                   ),
@@ -159,7 +159,7 @@ export function TradeCalculator() {
               );
               const a = document.createElement("a");
               a.href = URL.createObjectURL(blob);
-              a.download = "atlas-trade.json";
+              a.download = "albion-outpost-trade.json";
               a.click();
               URL.revokeObjectURL(a.href);
               setMessage("Scenario exported as JSON.");

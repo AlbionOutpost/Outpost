@@ -2,7 +2,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, CircleHelp, Layers, Swords } from "lucide-react";
 import Link from "./link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { InventoryEquipmentBoard, type InventoryEquipmentItem } from "./inventory-equipment-board";
 import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
@@ -107,7 +107,7 @@ export function BuildDetailWorkspace({
       });
     }
   }
-  const viewerRegion = useAtlasRegion(),
+  const viewerRegion = useOutpostRegion(),
     region = viewerRegion;
   const [selectedSlot, setSelectedSlot] = useState(
     equipment.find((item) => item.slot === "Main hand")?.slot || equipment[0]?.slot || "Helmet",

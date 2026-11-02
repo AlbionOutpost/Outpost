@@ -1,10 +1,10 @@
 "use client";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 export function GroupCreate() {
   const router = useRouter();
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   return (

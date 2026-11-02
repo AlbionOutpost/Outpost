@@ -3,11 +3,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Copy, Pencil, Trash2 } from "lucide-react";
 import Link from "./link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 
 /** Presentation only: each mutation rechecks the current server session and build ownership. */
 export function BuildCardOwnerActions({ id, title }: { id: string; title: string }) {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     router = useRouter(),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),

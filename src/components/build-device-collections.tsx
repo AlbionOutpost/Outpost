@@ -9,7 +9,7 @@ import {
   Grid2X2,
   List,
 } from "lucide-react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import Link from "./build-region-link";
 import { ItemIcon } from "./item-icon";
 import { activityName } from "@/lib/grind-library-types";
@@ -48,7 +48,7 @@ export function useDeviceBookmarks() {
   return { bookmarks, key, error, write };
 }
 function useCollection(kind: "bookmarks" | "filters") {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     key = buildDeviceKey(kind, region),
     raw = useSyncExternalStore(
       subscribe,

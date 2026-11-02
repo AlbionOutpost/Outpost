@@ -2,11 +2,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Search } from "lucide-react";
 import { parseJournalProgress, type JournalEntry } from "@/lib/journal-progress";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 
 export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const activeRegion = useRef(region);
   const [restoredRegion, setRestoredRegion] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ region: string; completed: string[] }>({

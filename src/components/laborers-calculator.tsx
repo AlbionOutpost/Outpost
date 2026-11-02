@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Hammer } from "lucide-react";
 import { CalculationReadiness } from "./calculation-readiness";
 import { ItemIcon } from "./item-icon";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import {
   initialLaborers,
@@ -36,7 +36,7 @@ const tierName = [
   "Elder",
 ];
 export function LaborersCalculator() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [draft, setDraft] = useState(() => initialLaborers(region));
   const [names, setNames] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");

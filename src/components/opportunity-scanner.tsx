@@ -3,7 +3,7 @@ import "./economy-workspaces.css";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, X } from "lucide-react";
 import Link from "@/components/link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
@@ -27,7 +27,7 @@ const stamp = (value: string | null) => {
  * current selection and every row keeps its own source times. Manual-ID entry stays available.
  */
 export function OpportunityScanner() {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     [items, setItems] = useState<string[]>(defaultItems),
     [names, setNames] = useState<Record<string, string>>({}),
     [manual, setManual] = useState(""),

@@ -6,7 +6,7 @@ import { Search, ArrowUpRight, X, Pin } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
 // Each tool crops one of the five paintings so the directory reads as places, not a list.
 const scenes: Record<string, { scene: string; at: string }> = {
@@ -50,7 +50,7 @@ function readToolShortcuts() {
   }
 }
 export function ToolDirectory() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const rawPins = useSyncExternalStore(subscribeToolShortcuts, readToolShortcuts, () => "[]");
   const pins = parseToolShortcuts(
     rawPins,

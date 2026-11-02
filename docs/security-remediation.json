@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-02T15:54:37.162014+00:00",
-  "baselineCommit": "7980f981abf95f058606d12cd2205f35404c346a",
-  "branch": "fix/security-audit-2026-11-02",
-  "sourceFingerprint": "933a7c5091e303bd32192bbf297e240b578cb08f47fe24e25ece965ebbf211ee",
-  "scope": "Owner-authorized audit repairs and repository synchronization on fix/security-audit-2026-11-02. Source changes are prepared for a reviewed branch push; no main merge or application deployment. Real OAuth and Stripe lifecycle verification remain blocked at the owner's explicit request.",
+  "checkedAt": "2026-11-02T16:45:58.394272+00:00",
+  "baselineCommit": "784e14d4a0d47cd6160cef6917c9da5802e54594",
+  "branch": "fix/outpost-branding",
+  "sourceFingerprint": "faabaebd60e7875f9a20b733345f5cdf8d5f5d140c7a946cbef910f9198164f9",
+  "scope": "Albion Outpost branding cleanup on fix/outpost-branding. The 21 preceding security/correctness repairs were merged in PR #66 and deployed as 784e14d, with bounded anonymous live checks passed. This follow-up updates download filenames, new export format names, calendar producer metadata, npm metadata and the region hook name; it has not been pushed, merged or deployed. Existing composition files remain importable. Stored cookies/cache keys, database/source provenance and calendar UIDs retain their identities. Real OAuth and Stripe lifecycle verification remain owner-deferred.",
   "findings": [
     {
       "id": "F-01",
@@ -11,7 +11,7 @@
       "severity": "High correctness",
       "implementation": "Separate nonreturnable recipe silver in production/plans/cash; legacy fee confirmation.",
       "verification": "Independent arithmetic and legacy restore browser regressions.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-01",
@@ -19,7 +19,7 @@
       "severity": "Medium",
       "implementation": "Revoke invitations on issuer remove/leave/demotion; recheck current authority on accept.",
       "verification": "PostgreSQL negative/permitted journeys and local workerd authorization.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-02",
@@ -27,7 +27,7 @@
       "severity": "Medium",
       "implementation": "Trusted-address quotas on routes and actual outbound attempts; reject unknown IDs and duplicate region parameters.",
       "verification": "Actual route/client/Worker bundles, retries/fanout and encoding bypass probes with isolated platform/upstream fixtures.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-03",
@@ -35,7 +35,7 @@
       "severity": "Medium",
       "implementation": "Streamed byte cutoff before auth parsing/webhook signature processing; bounded provider bodies.",
       "verification": "Oversized/chunked/lying-length/UTF8 cases, installed auth parser and successful cutoff mutation test.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-04",
@@ -43,7 +43,7 @@
       "severity": "Medium",
       "implementation": "Required main checks/browser, PRs, linear history and secret push protection; deploy requires quality plus runtime jobs.",
       "verification": "GitHub controls applied/read back; workflow inspected.",
-      "deployment": "Repository controls LIVE; workflow local only"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "B-01",
@@ -51,7 +51,7 @@
       "severity": "Medium",
       "implementation": "Persisted customer/configured-price association, complete bounded provider histories and revision CAS.",
       "verification": "Signed old-event, wrong-price, stale revision and provider-failure fixtures; actual local persistence.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "B-02",
@@ -59,7 +59,7 @@
       "severity": "Medium",
       "implementation": "Durable idempotent checkout intent, pending-session expiry, final subscription read and CAS-guarded deletion.",
       "verification": "Twelve PostgreSQL billing/authorization scenarios with strict in-process provider fixtures; no provider network.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "F-02",
@@ -67,7 +67,7 @@
       "severity": "Medium",
       "implementation": "Execution provenance on laborer quotes; immediate invalidation of wrong-side/legacy observations.",
       "verification": "Engine and failed-refresh browser regressions; fixture/manual prices remain labelled.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "R-01",
@@ -75,7 +75,7 @@
       "severity": "Medium reliability",
       "implementation": "Allowlisted public combat cache keys with bounded offsets, TTL and payload.",
       "verification": "Actual adapter round-trips33 valid keys; invalid/private keys denied.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-05",
@@ -83,7 +83,7 @@
       "severity": "Low",
       "implementation": "Address budget before cookie routing, actor creation and cache returns.",
       "verification": "Actual Worker fixture allows240, denies241; omitted/tampered cookies retain exhausted budget.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-06",
@@ -91,7 +91,7 @@
       "severity": "Low",
       "implementation": "Safe headers applied on every Worker return, including search-cache hits.",
       "verification": "Actual Worker cache tests pass; bounded live read still reproduces original missing headers.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "S-07",
@@ -99,7 +99,7 @@
       "severity": "Low application risk",
       "implementation": "Compatible glob/modern minimatch upgrades; narrow mechanism-specific assessment of genuine legacy3 source.",
       "verification": "Production audit0; full audit17 moderate propagated nodes remain visible. No version renaming or suppression.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "F-03",
@@ -107,7 +107,7 @@
       "severity": "Low",
       "implementation": "Artwork failure state keyed by item ID, quality and size.",
       "verification": "Sandboxed browser identity/fallback regression and actual rendered inspection.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "V-01",
@@ -115,7 +115,7 @@
       "severity": "Low",
       "implementation": "Kill cards fit320\u20131920px; shrinking inventory cells and separate phone CTA row.",
       "verification": "All six widths rendered/inspected; geometry and browser regressions.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "F-04 (retest)",
@@ -123,7 +123,7 @@
       "severity": "Low correctness",
       "implementation": "Bound all affected aggregate currency totals; shared finite-ratio helper withholds Infinity/NaN without altering tiny valid prices.",
       "verification": "Original cap probes reject, exact1trillion remains valid; tiny-denominator context regressions.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "V-02 (retest)",
@@ -131,7 +131,7 @@
       "severity": "Low",
       "implementation": "Full-width Quality row below600px; reviewed equipment goldens updated for committed design.",
       "verification": "Option-text fit/overflow assertions and320/390/768/1440 screenshot inspection.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "D-01",
@@ -139,7 +139,7 @@
       "title": "Completed-checkout concurrency",
       "implementation": "Every checkout resolver verifies current provider state after reservation; completed operations retire only against their exact terminal subscription. Deletion shares the lagging-history guard.",
       "verification": "Exact PostgreSQL replay409/409; concurrent permitted resubscribe creates one session;14 lifecycle and23 local workerd checks.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "D-02",
@@ -147,7 +147,7 @@
       "title": "Late composition loadout response overwrites newer edits",
       "implementation": "Pending copies compare target equipment, spare sets and source identity before applying; newer edits are preserved and notes-only changes still merge.",
       "verification": "Browser regressions cover newer gear, newer spare sets and permitted notes-only copy.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "D-03",
@@ -155,7 +155,7 @@
       "title": "Older timers/scenarios hidden beyond fixed list limits",
       "implementation": "Stable private cursor pages preserve array API; timers, all calculator scenarios, transport plans and shopping account lists expose older-entry controls.",
       "verification": "Actual route/UI test:101 timers/51 scenarios, timestamp ties, deleted anchors, outsider denial, malformed cursors and retry preservation.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "D-04",
@@ -163,7 +163,7 @@
       "title": "Wrong-kind recipe query crashes calculator",
       "implementation": "Known/fetched wrong-kind or category recipes show a controlled recovery state and a region-preserving default-recipe action.",
       "verification": "Four browser recovery cases; prior generic page failure reproduced in historical audit.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
     {
       "id": "R-02",
@@ -171,19 +171,27 @@
       "title": "Region refresh can race navigation and replace prior browser history",
       "implementation": "Region-scoped client work invalidates immediately; latest callbacks update before timers; market autoload and native URL writes pause until the router commits.",
       "verification": "Controlled API-delay and600ms RSC-delay cases,40 earlier repeated passes and20 final parallel passes; full156-case suite includes hidden old quotes, distinct new regional values and Back restoring the previous market.",
-      "deployment": "Repair branch source; application not deployed"
+      "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
+    },
+    {
+      "id": "BRAND-01",
+      "title": "Legacy Albion Atlas branding in downloads and source metadata",
+      "severity": "Low branding",
+      "implementation": "Albion Outpost account/composition/trade/calendar download names; new Outpost composition/trade formats; calendar producer and npm metadata; useOutpostRegion hook. Legacy composition format reader and stable storage/calendar identities retained. Immutable starter provenance remains historical.",
+      "verification": "Full Node22 phase: 519 unit tests,156 browser tests,all12 gates passed. Existing browser journeys now assert account/composition filename, new composition format and legacy file re-import; calendar unit case asserts new producer and stable UID. Desktop/mobile screenshots inspected; no layout redesign.",
+      "deployment": "Local branch only; not pushed, merged or deployed"
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PASS",
-      "detail": "Final exact-source npm run qa:phase:519 unit tests,156/156 browser tests and all12 automatic gates PASS. Earlier phase failures retained as history, not overwritten as passes."
+      "detail": "Branding follow-up npm run qa:phase:519 unit tests,156/156 browser tests and all12 automatic gates PASS on Node22 with isolated local PostgreSQL/Redis. Earlier runs retained in private evidence."
     },
     {
       "name": "Deep-fix browser regressions",
       "status": "PASS",
-      "detail": "Earlier 9-case deeper-fix Cloudflare batch passed; final 3-case Cloudflare regional/route-history/no-op visitor batch also passed. Node controlled regional repetitions passed 40/40, followed by 20/20 with the final route-history guard."
+      "detail": "Historical security repair evidence (before branding follow-up): Earlier 9-case deeper-fix Cloudflare batch passed; final 3-case Cloudflare regional/route-history/no-op visitor batch also passed. Node controlled regional repetitions passed 40/40, followed by 20/20 with the final route-history guard."
     },
     {
       "name": "PostgreSQL billing and authorization",
@@ -193,22 +201,22 @@
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "23 local workerd checks on current source; no new schema/migration changes in this deeper phase. Prior13 SQLite schema/upgrade/rollback checks retained separately."
+      "detail": "Historical security repair evidence (before branding follow-up): 23 local workerd checks on current source; no new schema/migration changes in this deeper phase. Prior13 SQLite schema/upgrade/rollback checks retained separately."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Fresh final OpenNext build and web Worker typecheck passed; data Worker types/runtime were unchanged from the verified backend repair."
+      "detail": "Historical security repair evidence (before branding follow-up): Fresh final OpenNext build and web Worker typecheck passed; data Worker types/runtime were unchanged from the verified backend repair."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Data 1,022,342 bytes, web 2,500,219 bytes gzip; each below 3,145,728. Local dry runs only."
+      "detail": "Historical security repair evidence (before branding follow-up): Data 1,022,342 bytes, web 2,500,219 bytes gzip; each below 3,145,728. Local dry runs only."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Final outpost-final-security:qa image: UID 1000, no /app/.env, healthy PostgreSQL/Redis and home 200; owned container cleaned."
+      "detail": "Historical security repair evidence (before branding follow-up): Final outpost-final-security:qa image: UID 1000, no /app/.env, healthy PostgreSQL/Redis and home 200; owned container cleaned."
     },
     {
       "name": "Dependencies",
@@ -223,12 +231,12 @@
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Six timer viewports inspected;24 Cloudflare captures for preserved gear, guard notice, recipe rejection and default recovery at320/375/390/768/1440/1920. Artwork unavailable fixtures explicitly labelled; owner acceptance separate. One1920 recovery image retains a transient automatic-price loading state; no price-readiness claim."
+      "detail": "Branding follow-up desktop light flipping1440 and mobile composition375 captures inspected via sandboxed local-library Playwright fallback; full browser suite passed. Previous six-width security repair evidence remains historical. No layout changes or new full-design acceptance claim."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "Final container homepage: performance 97, accessibility 100, best practices 96, SEO 100, LCP about 2.03s. Local lab only; no field or optimization claim."
+      "detail": "Historical security repair evidence (before branding follow-up): Final container homepage: performance 97, accessibility 100, best practices 96, SEO 100, LCP about 2.03s. Local lab only; no field or optimization claim."
     },
     {
       "name": "Documentation and formatting",
@@ -238,17 +246,17 @@
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "Main ruleset and secret push protection previously applied/read back. Source repair-branch push authorized; no merge or deployment."
+      "detail": "Required checks/PR/linear history and secret push protection applied and verified before PR #66 merge. No protections bypassed. No branding follow-up push/merge/deploy."
     },
     {
       "name": "Application deployment",
-      "status": "NOT DONE",
-      "detail": "Owner-authorized source branch synchronization; no main merge or application deployment. Final remote commit is reported in the push receipt."
+      "status": "PREVIOUS RELEASE LIVE",
+      "detail": "PR #66 deployed784e14d successfully; anonymous health, cached-search headers, duplicate-region rejection, market observations and desktop/mobile recipe recovery passed. Branding follow-up is local only."
     },
     {
       "name": "Cloudflare management/real providers",
       "status": "BLOCKED BY REQUEST",
-      "detail": "Owner explicitly declined real OAuth and Stripe checks. OAuth credentials are present; safe hosted state/PKCE, secure pre-login cookies and malformed callback rejection PASS, personal consent/session lifecycle untested. Stripe unconfigured. Cloudflare token verification401, zone403."
+      "detail": "Owner-deferred real Discord consent/session lifecycle and Stripe lifecycle. Prior CI production deployment succeeded using its environment credential; local management verification historically401/zone403. No owner login or real payment exercised."
     },
     {
       "name": "Tooling applicability guard",
@@ -262,7 +270,7 @@
     "Existing game-data provenance/current-patch gaps, operator/legal approval, owner visual acceptance and full-product gaps remain independent; imported facts were not promoted to verified.",
     "Per-address source quotas require documented Cloudflare trusted-header topology. Self-hosted Node requires a trusted proxy strategy before equivalent public deployment.",
     "Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.",
-    "Final full phase is all-pass519 units/156 browser cases. Earlier intermittent region and no-op helper failures are retained historically; the route/refresh/history race now has controlled delayed-route regressions. This is not an exhaustive defect guarantee.",
-    "OAuth personal consent/session lifecycle and Stripe real sandbox verification remain blocked at the owner's request. Management-token verification401/zone403 and deployment/provider/operator gates remain independent. A source branch push does not deploy the repaired application."
+    "Branding follow-up full phase passed519 units/156 browser cases/all12 gates. This does not establish exhaustive defect coverage, owner visual acceptance or real-provider verification.",
+    "Real OAuth and Stripe lifecycle verification remain blocked at the owner's request. Previous security repairs deployed through PR #66; this branding follow-up is local only. Stored technical identifiers and immutable provenance deliberately retain historical names for compatibility."
   ]
 }

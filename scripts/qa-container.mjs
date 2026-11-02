@@ -10,7 +10,7 @@ function run(args) {
 }
 if (process.argv[2] === "stop") {
   const record = JSON.parse(readFileSync(".qa/docker.json", "utf8"));
-  if (!/^albion-atlas-qa-[a-f0-9]+$/.test(record.name))
+  if (!/^albion-(?:outpost|atlas)-qa-[a-f0-9]+$/.test(record.name))
     throw new Error("Invalid audit container identity");
   if (record.cleaned) {
     console.log("Owned QA container is already removed");
@@ -23,10 +23,10 @@ if (process.argv[2] === "stop") {
   writeFileSync(".qa/docker.json", JSON.stringify(record, null, 2));
   console.log("Owned QA container removed");
 } else {
-  const name = `albion-atlas-qa-${randomUUID().replaceAll("-", "").slice(0, 10)}`;
+  const name = `albion-outpost-qa-${randomUUID().replaceAll("-", "").slice(0, 10)}`;
   const compose = JSON.parse(run(["compose", "config", "--format", "json"]));
   const network = compose.networks?.default?.name;
-  const image = process.env.OUTPOST_QA_IMAGE || "albion-atlas:qa";
+  const image = process.env.OUTPOST_QA_IMAGE || "albion-outpost:qa";
   if (!network || !/^[a-zA-Z0-9_.-]+$/.test(network)) throw new Error("Invalid local QA network");
   if (!/^[a-z0-9][a-z0-9./:@_-]{0,200}$/.test(image)) throw new Error("Invalid local QA image");
   try {

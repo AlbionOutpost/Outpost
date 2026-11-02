@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
 import { Search, X, ArrowUpRight, CornerDownLeft } from "lucide-react";
 import { ItemIcon } from "./item-icon";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { tools } from "@/lib/tool-directory";
 import { matchScore } from "@/lib/search-rank";
 import { kindEmblem, toolEmblem } from "@/lib/search-emblems";
@@ -70,7 +70,7 @@ function localTools(query: string): SearchRow[] {
 export function GlobalSearch() {
   const dialog = useRef<HTMLDialogElement>(null),
     input = useRef<HTMLInputElement>(null);
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [ready, setReady] = useState(false);
   const [opened, setOpened] = useState(false),
     [query, setQuery] = useState("");

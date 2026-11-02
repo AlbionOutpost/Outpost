@@ -12,6 +12,8 @@ it("escapes calendar injection, folds UTF-8 by octets and emits UTC/revision sta
     cancelled: true,
     version: 3,
   });
+  expect(text).toContain("PRODID:-//Albion Outpost//Group Events//EN");
+  expect(text).toContain("UID:event_1@albion-atlas"); // Stable identity prevents duplicate imported events.
   expect(text).toContain("DTSTART:20261101T180000Z");
   expect(text).toContain("SEQUENCE:3");
   expect(text).toContain("STATUS:CANCELLED");
