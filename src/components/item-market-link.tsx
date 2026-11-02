@@ -1,8 +1,8 @@
 "use client";
 import Link from "@/components/link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 export function ItemMarketLink({ id }: { id: string }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   return (
     <Link
       className="button primary"

@@ -2,7 +2,7 @@
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useState, useEffect, useRef } from "react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import {
   initialTransport,
   transport,
@@ -41,7 +41,7 @@ function preselected(region: Region, initial: TransportPreselection) {
 }
 export function TransportCalculator({ initial = {} }: { initial?: TransportPreselection }) {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     [draft, setDraft] = useState(() => preselected(region, initial)),
     [message, setMessage] = useState(""),
     [pendingKey, setPendingKey] = useState<string | null>(null),

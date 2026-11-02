@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -22,7 +22,7 @@ type Cost = {
   }[];
 };
 export function BuildCost({ id }: { id: string }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [city, setCity] = useState("Lymhurst");
   const [sets, setSets] = useState(1);
   const [result, setResult] = useState<Cost | null>(null);

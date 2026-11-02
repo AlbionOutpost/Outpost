@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "./build-region-link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 export function BuildActions({
   id,
   version,
@@ -17,7 +17,7 @@ export function BuildActions({
   compact?: boolean;
 }) {
   const router = useRouter();
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [message, setMessage] = useState("");
   const [revision, setRevision] = useState(String(revisions[0] || 1));
   const [busy, setBusy] = useState(false);

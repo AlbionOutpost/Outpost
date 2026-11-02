@@ -990,7 +990,11 @@ export function CompositionEditor({
                 new Blob(
                   [
                     JSON.stringify(
-                      { format: "albion-atlas-composition", version: 1, composition: parsed.data },
+                      {
+                        format: "albion-outpost-composition",
+                        version: 1,
+                        composition: parsed.data,
+                      },
                       null,
                       2,
                     ),
@@ -1000,7 +1004,7 @@ export function CompositionEditor({
               );
               const a = document.createElement("a");
               a.href = url;
-              a.download = "atlas-composition.json";
+              a.download = "albion-outpost-composition.json";
               a.click();
               URL.revokeObjectURL(url);
             }}
@@ -1023,7 +1027,12 @@ export function CompositionEditor({
               try {
                 if (f.size > 1048576) throw new Error("Import must be at most 1 MiB");
                 const json = JSON.parse(await f.text());
-                if (json.format !== "albion-atlas-composition" || json.version !== 1)
+                if (
+                  !["albion-outpost-composition", "albion-atlas-composition"].includes(
+                    json.format,
+                  ) ||
+                  json.version !== 1
+                )
                   throw new Error("Unsupported comp format");
                 const parsed = compositionInput.parse(json.composition);
                 setRosterUndo(null);

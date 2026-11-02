@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import { CatalogItemPicker } from "./catalog-item-picker";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import {
   parseMarketPreview,
@@ -91,7 +91,7 @@ function PreviewQuote({ value, date }: { value: number; date: string }) {
 }
 
 export function HomeMarketSearch() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [item, setItem] = useState({ id: "T4_BAG", name: "Bag · T4.0" });
   const [result, setResult] = useState<{ key: string; rows: PreviewPrice[] } | null>(null);
   const [error, setError] = useState<string | null>(null);

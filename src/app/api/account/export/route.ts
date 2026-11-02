@@ -71,7 +71,7 @@ export const GET = apiHandler("account.export", async () => {
     { exportedAt: new Date().toISOString(), profile: user },
     {
       headers: {
-        "Content-Disposition": "attachment; filename=albion-atlas-account.json",
+        "Content-Disposition": "attachment; filename=albion-outpost-account.json",
         "Cache-Control": "no-store",
       },
     },

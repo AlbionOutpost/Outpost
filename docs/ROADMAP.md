@@ -239,7 +239,7 @@ Only the owner can do these.
 
 - **Components** over 700 lines: `production-calculator` (1,216), `composition-editor` (1,045), `build-editor` (937), `group-dashboard` (898), `equipment-workbench` (869), `market` (752), `build-equipment-studio` (701). Split by responsibility when touched.
 - **Two runtimes, two schemas.** Decide whether the Node/Postgres/Redis path stays as a dev-only shim generated from one schema source, or local dev moves to workerd + SQLite.
-- **`atlas` identifiers** in cookies, cache keys, export formats, ICS UIDs and the npm package name — rename only with a backward-compatible reader.
+- **Brand compatibility:** new downloads, composition/trade exports, package metadata and calendar producer metadata use Albion Outpost. Legacy composition imports remain supported; stored cookies, cache keys, database/provenance identifiers and calendar UIDs retain their existing identity. See [architecture](ARCHITECTURE.md#known-architectural-limits).
 - **Auth.js v5** migration (currently next-auth v4 with a custom sign-in wrapper).
 - **CI speed:** the Node e2e run and the Cloudflare e2e run both execute on every `main` push; `test:live` spends real AODP budget inside `qa:phase`.
 - **Unused data:** `src/lib/albion/reviewed-crafting.json`; `assets.ts` ability-art status out of sync with `spell-icon.tsx`.

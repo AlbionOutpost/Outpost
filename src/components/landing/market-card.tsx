@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
 import Link from "@/components/link";
-import { useAtlasRegion } from "@/components/region-context";
+import { useOutpostRegion } from "@/components/region-context";
 import { sourceAge } from "@/lib/albion/source-age";
 import { compact, Silver } from "./silver";
 import { useLoad } from "./use-load";
@@ -21,7 +21,7 @@ type Price = {
  * without a listing is simply absent.
  */
 export function MarketCard({ item }: { item: { id: string; name: string; kind: string } }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [range, setRange] = useState<7 | 30>(30);
   const quotes = useLoad(`${region}:${item.id}`, async (signal) => {
     const r = await fetch(

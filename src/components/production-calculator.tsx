@@ -9,7 +9,7 @@ import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/components/link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import {
   recipes,
@@ -46,7 +46,7 @@ export function ProductionCalculator({
   category?: "cooking" | "alchemy";
   initialRecipeId?: string;
 }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const router = useRouter();
   const defaultDraft = () => ({
     ...initialProduction(kind, region),

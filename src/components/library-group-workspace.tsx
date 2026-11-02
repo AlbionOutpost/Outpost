@@ -2,7 +2,7 @@
 import { weaponRole } from "@/lib/compositions/weapon-roles";
 import { useState } from "react";
 import Link from "@/components/build-region-link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -20,7 +20,7 @@ export function LibraryGroupWorkspace({
   builds: LibraryBuild[];
   spellNames: Record<string, string>;
 }) {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     [equipment, setEquipment] = useState(true),
     [alternatives, setAlternatives] = useState(true),
     [mounts, setMounts] = useState(true),

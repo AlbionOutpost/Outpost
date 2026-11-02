@@ -4,7 +4,7 @@ import Link from "@/components/link";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { ToolIcon } from "./tool-icon";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 const weapons = [
   { id: "T4_MAIN_AXE", name: "Battleaxe" },
   { id: "T4_MAIN_SWORD", name: "Broadsword" },
@@ -30,7 +30,7 @@ function ShowcaseIcon({ id, size, lead = false }: { id: string; size: number; le
 /** Catalog browsing, not a recommended loadout or a claim about combat balance. */
 export function HomeEquipmentShowcase() {
   const [selected, setSelected] = useState(0),
-    region = useAtlasRegion();
+    region = useOutpostRegion();
   const weapon = weapons[selected];
   const href = (id: string) => `/items/${encodeURIComponent(id)}?region=${region}`;
   return (

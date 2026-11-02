@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { randomUUID } from "node:crypto";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
 for (const edit of ["equipment", "spare sets", "notes"] as const) {
@@ -291,11 +291,22 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     const download = page.waitForEvent("download");
     await page.getByText("More actions", { exact: true }).click();
     await page.getByRole("button", { name: "Export comp", exact: true }).click();
-    const exportPath = await (await download).path();
+    const downloaded = await download;
+    expect(downloaded.suggestedFilename()).toBe("albion-outpost-composition.json");
+    const exportPath = await downloaded.path();
     expect(exportPath).not.toBeNull();
     await page.goto("/compositions/new");
     await expect(page.getByLabel("Import comp file")).toBeEnabled();
     await page.getByLabel("Import comp file").setInputFiles(exportPath!);
+    await expect(page.getByLabel("Comp title")).toHaveValue("Independent public copy");
+    const exportedComp = JSON.parse(await readFile(exportPath!, "utf8"));
+    expect(exportedComp.format).toBe("albion-outpost-composition");
+    await page.getByLabel("Comp title").fill("Changed before legacy import");
+    await page.getByLabel("Import comp file").setInputFiles({
+      name: "atlas-composition.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify({ ...exportedComp, format: "albion-atlas-composition" })),
+    });
     await expect(page.getByLabel("Comp title")).toHaveValue("Independent public copy");
     await expect(
       page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),

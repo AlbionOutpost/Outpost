@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
 import { useBatchQuotes } from "@/components/market-batch-quotes";
-import { useAtlasRegion } from "@/components/region-context";
+import { useOutpostRegion } from "@/components/region-context";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
 import { Silver } from "./silver";
@@ -30,7 +30,7 @@ function readable(id: string) {
  * is an example; the prices are observations.
  */
 export function PlannerCard({ plan }: { plan: PlanLine[] }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [tab, setTab] = useState<"queue" | "buy">("queue");
   const [have, setHave] = useState<Record<string, number>>({});
   const { quotes, busy, refresh } = useBatchQuotes(region);

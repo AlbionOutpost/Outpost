@@ -4,7 +4,7 @@ import { fetchQuoteBatch, type QuoteSelection, type MarketPrice } from "@/lib/al
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 import Link from "@/components/link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 export function quoteKey(i: QuoteSelection) {
   return `${i.itemId}:${i.quality}`;
 }
@@ -60,7 +60,7 @@ export function BatchQuote({
   city?: string;
   purchaseOnly?: boolean;
 }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   if (!quote) return <span className="muted">Check prices to load community scans.</span>;
   const prices = city ? quote.prices.filter((row) => row.city === city) : quote.prices;
   const { ask, bid } = summarizeQuotes(prices);

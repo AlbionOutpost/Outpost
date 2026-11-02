@@ -6,7 +6,7 @@ import { fishConversion, fishFame, type FishReference } from "@/lib/albion/fishi
 import { cities } from "@/lib/albion/region-config";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 import { useBatchQuotes, quoteKey } from "./market-batch-quotes";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined
@@ -21,7 +21,7 @@ export function FishingCalculator({
   initialMode?: "chopping" | "leveling";
   compact?: boolean;
 }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const instance = useId();
   const [selectedId, setSelectedId] = useState(
     fish.find((f) => f.id === "T3_FISH_FRESHWATER_ALL_COMMON")?.id || fish[0].id,

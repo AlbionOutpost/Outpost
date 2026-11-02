@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
-import { useAtlasRegion } from "@/components/region-context";
+import { useOutpostRegion } from "@/components/region-context";
 import { Silver } from "./silver";
 import { useLoad } from "./use-load";
 
@@ -38,7 +38,7 @@ type Pick = {
  * complete price set. The stepper re-prices for more batches. A loss shows as a loss.
  */
 export function CraftCard() {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [batches, setBatches] = useState(1);
   const data = useLoad(`${region}:${batches}`, async (signal) => {
     const r = await fetch(

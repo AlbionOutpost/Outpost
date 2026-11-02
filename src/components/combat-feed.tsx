@@ -12,7 +12,7 @@ import {
   Skull,
   Swords,
 } from "lucide-react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
 import { ItemIcon } from "./item-icon";
@@ -65,7 +65,7 @@ function Gear({ player }: { player: CombatEvent["killer"] }) {
   );
 }
 export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
-  const region = useAtlasRegion();
+  const region = useOutpostRegion();
   const [offset, setOffset] = useState(0),
     [query, setQuery] = useState(""),
     [sort, setSort] = useState("latest"),

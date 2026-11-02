@@ -1,6 +1,6 @@
 "use client";
 import Link from "./link";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { compositionLaunchPath } from "@/lib/compositions/build-launch";
 import type { roles } from "@/lib/compositions/roles";
 import { UsersRound } from "lucide-react";
@@ -17,7 +17,7 @@ export function BuildCompositionLink({
   label?: string;
   className?: string;
 }) {
-  const region = useAtlasRegion(),
+  const region = useOutpostRegion(),
     href = compositionLaunchPath({
       ...(fromBuild ? { fromBuild } : {}),
       ...(fromLibrary ? { fromLibrary } : {}),

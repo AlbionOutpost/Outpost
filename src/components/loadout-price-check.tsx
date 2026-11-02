@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useAtlasRegion } from "./region-context";
+import { useOutpostRegion } from "./region-context";
 import { cities, type Region } from "@/lib/albion/region-config";
 import { useBatchQuotes, BatchQuote, quoteKey } from "./market-batch-quotes";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -18,7 +18,7 @@ export function LoadoutPriceCheck({
   /** Check prices once the section scrolls into view instead of waiting for the button. */
   autoLoad?: boolean;
 }) {
-  const selectedRegion = useAtlasRegion();
+  const selectedRegion = useOutpostRegion();
   const region = sourceRegion ?? selectedRegion;
   const [city, setCity] = useState("Fort Sterling");
   const { quotes, busy, refresh } = useBatchQuotes(region);
