@@ -1,6 +1,6 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
-import type { ReactNode } from "react";
 import Link from "@/components/build-region-link";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import activityOutlines from "@/lib/activity-outlines.json";
@@ -11,13 +11,11 @@ export function ActivityArtworkCard({
   name,
   builds,
   compact = false,
-  children,
 }: {
   category: string;
   name: string;
   builds: number;
   compact?: boolean;
-  children?: ReactNode;
 }) {
   const art = activityBackgrounds.find((a) => a.id === category);
   return (
@@ -29,6 +27,9 @@ export function ActivityArtworkCard({
         className={`activity-artwork-link ${styles.main}`}
         href={`/builds/library?category=${encodeURIComponent(category)}`}
         prefetch={false}
+        style={
+          art ? ({ "--activity-outline": activityOutlines[art.id] } as CSSProperties) : undefined
+        }
       >
         {art && (
           <Image
@@ -36,9 +37,13 @@ export function ActivityArtworkCard({
             alt=""
             fill
             sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1199px) 33vw, 380px"
-            style={{ clipPath: activityOutlines[art.id] }}
           />
         )}
+        <span className={styles.blur} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </span>
         <div className={styles.caption}>
           <div>
             <h3>{name}</h3>
@@ -51,7 +56,6 @@ export function ActivityArtworkCard({
           <ArrowUpRight size={21} aria-hidden="true" />
         </div>
       </Link>
-      {children && <div className={styles.footer}>{children}</div>}
     </article>
   );
 }
