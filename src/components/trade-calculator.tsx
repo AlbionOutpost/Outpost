@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "./animated-number";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useRouter } from "next/navigation";
 import { ScenarioControls } from "./scenario-controls";
@@ -189,7 +190,7 @@ export function TradeCalculator() {
                   : "positive"
             }
           >
-            {result ? result.profit.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
+            {result ? <AnimatedNumber value={result.profit} digits={2} minimumDigits={0} /> : "—"}
             <small> silver</small>
           </strong>
           {result && (
@@ -197,44 +198,72 @@ export function TradeCalculator() {
               <div>
                 <dt>Break-even sale per item</dt>
                 <dd>
-                  {result.breakEven === null
-                    ? "Unavailable within model limits"
-                    : result.breakEven.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  {result.breakEven === null ? (
+                    "Unavailable within model limits"
+                  ) : (
+                    <AnimatedNumber value={result.breakEven} digits={2} minimumDigits={0} />
+                  )}
                 </dd>
               </div>
               <div>
                 <dt>Minimum profitable whole-silver sale</dt>
                 <dd>
-                  {result.minimumProfitableSale === null
-                    ? "Unavailable within model limits"
-                    : result.minimumProfitableSale.toLocaleString()}
+                  {result.minimumProfitableSale === null ? (
+                    "Unavailable within model limits"
+                  ) : (
+                    <AnimatedNumber
+                      value={result.minimumProfitableSale}
+                      digits={2}
+                      minimumDigits={0}
+                    />
+                  )}
                 </dd>
               </div>
               <div>
                 <dt>Purchase + fees + transport</dt>
-                <dd>{result.cost.toLocaleString()}</dd>
+                <dd>
+                  <AnimatedNumber value={result.cost} digits={2} minimumDigits={0} />
+                </dd>
               </div>
               {values.buyMode === "buy-order" && (
                 <div>
                   <dt>Purchase order setup cost</dt>
-                  <dd>{result.purchaseFees.toLocaleString()}</dd>
+                  <dd>
+                    <AnimatedNumber value={result.purchaseFees} digits={2} minimumDigits={0} />
+                  </dd>
                 </div>
               )}
               <div>
                 <dt>Gross revenue</dt>
-                <dd>{result.revenue.toLocaleString()}</dd>
+                <dd>
+                  <AnimatedNumber value={result.revenue} digits={2} minimumDigits={0} />
+                </dd>
               </div>
               <div>
                 <dt>Sale taxes + sell setup fees</dt>
-                <dd>{result.fees.toLocaleString()}</dd>
+                <dd>
+                  <AnimatedNumber value={result.fees} digits={2} minimumDigits={0} />
+                </dd>
               </div>
               <div>
                 <dt>Profit margin</dt>
-                <dd>{result.margin === null ? "Unavailable" : `${result.margin.toFixed(2)}%`}</dd>
+                <dd>
+                  {result.margin === null ? (
+                    "Unavailable"
+                  ) : (
+                    <AnimatedNumber value={result.margin} digits={2} suffix="%" />
+                  )}
+                </dd>
               </div>
               <div>
                 <dt>Return on investment</dt>
-                <dd>{result.roi === null ? "Unavailable" : `${result.roi.toFixed(2)}%`}</dd>
+                <dd>
+                  {result.roi === null ? (
+                    "Unavailable"
+                  ) : (
+                    <AnimatedNumber value={result.roi} digits={2} suffix="%" />
+                  )}
+                </dd>
               </div>
             </dl>
           )}

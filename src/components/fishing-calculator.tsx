@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "./animated-number";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useId, useRef, useState } from "react";
 import { Fish, RefreshCw, Search } from "lucide-react";
@@ -9,9 +10,11 @@ import { useBatchQuotes, quoteKey } from "./market-batch-quotes";
 import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 const amount = (value: number | null | undefined) =>
-  value === null || value === undefined
-    ? "—"
-    : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  value === null || value === undefined ? (
+    "—"
+  ) : (
+    <AnimatedNumber value={value} digits={2} minimumDigits={0} />
+  );
 export function FishingCalculator({
   fish,
   initialMode = "chopping",

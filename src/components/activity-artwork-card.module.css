@@ -15,7 +15,7 @@
   filter: drop-shadow(0 4px 3px color-mix(in srgb, var(--activity-shadow) 70%, transparent))
     drop-shadow(0 16px 16px var(--activity-shadow));
 }
-.main img {
+.scene {
   object-fit: cover;
   clip-path: var(--activity-outline);
   border-radius: 0 0 8px 8px;
@@ -52,7 +52,7 @@
   flex-shrink: 0;
   color: #ffb477;
 }
-.main:hover img {
+.main:hover .scene {
   filter: brightness(1.06);
 }
 .main:focus-visible {
@@ -82,7 +82,7 @@
 }
 
 /* Three independently masked layers increase optical blur toward the bottom.
-   The image silhouettes above 40% remain sharp and the caption is a separate layer. */
+   The image silhouettes above 28% remain sharp and the caption is a separate layer. */
 .blur {
   position: absolute;
   inset: 0;
@@ -98,15 +98,15 @@
 }
 .blur > span:nth-child(1) {
   backdrop-filter: blur(3px);
-  mask-image: linear-gradient(to bottom, transparent 40%, #000 68%);
+  mask-image: linear-gradient(to bottom, transparent 28%, #000 60%);
 }
 .blur > span:nth-child(2) {
   backdrop-filter: blur(7px);
-  mask-image: linear-gradient(to bottom, transparent 58%, #000 88%);
+  mask-image: linear-gradient(to bottom, transparent 46%, #000 80%);
 }
 .blur > span:nth-child(3) {
   backdrop-filter: blur(14px);
-  mask-image: linear-gradient(to bottom, transparent 76%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 66%, #000 100%);
 }
 .main::before {
   content: "";
@@ -139,4 +139,54 @@
 
 :global(.app.outpost.light) .card {
   --activity-shadow: color-mix(in srgb, var(--text) 65%, transparent);
+}
+
+/* The body edge disappears before it reaches the cutout silhouettes. */
+.border {
+  position: absolute;
+  inset: 12% 0 0;
+  z-index: 3;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--text));
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-md) var(--radius-md);
+  mask-image: linear-gradient(to bottom, transparent, transparent 8%, #000 60%);
+  pointer-events: none;
+}
+.weapons {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+.weapons > span {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--well) 75%, transparent);
+  box-shadow:
+    0 2px 8px var(--activity-shadow),
+    inset 0 1px var(--raised-edge-top);
+}
+.weapons img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+}
+@media (max-width: 599px) {
+  .compact .weapons {
+    gap: var(--space-1);
+    margin-bottom: var(--space-1);
+  }
+  .compact .weapons > span {
+    width: 28px;
+    height: 28px;
+  }
+  .compact .main {
+    aspect-ratio: 1;
+  }
+  /* Keep the scene at its traced 6:5 crop while making room for phone labels. */
+  .compact .scene {
+    height: calc(100% / 1.2) !important;
+  }
 }

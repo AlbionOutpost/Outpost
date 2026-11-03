@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "./animated-number";
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useState, useEffect, useRef } from "react";
@@ -89,9 +90,11 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
   const update = <K extends keyof TransportInput>(k: K, value: TransportInput[K]) =>
     setDraft((d) => ({ ...d, [k]: value }));
   const money = (n: number | null | undefined) =>
-    n === null || n === undefined
-      ? "Unavailable"
-      : n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    n === null || n === undefined ? (
+      "Unavailable"
+    ) : (
+      <AnimatedNumber value={n} digits={2} minimumDigits={0} />
+    );
   async function load() {
     controller.current?.abort();
     const active = new AbortController();

@@ -294,3 +294,5 @@ Section links use compact8px-corner buttons with a plain arrow, without the old 
 ## Owner-requested activity-card depth — 3 November 2026
 
 Illustrated activity cards are the owner's explicit exception to the generic flat/grow-only hover rule: retain the raised image silhouettes, add contour shadows and restrained reflected light, and use a bounded3-degree perspective/6px lift only for fine-pointer hover without reduced motion. Keep a static depth treatment for touch/reduced motion. Progressive blur belongs to the decorative lower60% of the scene; labels, controls and actual equipment/data stay sharp. No most-liked ranking rows beneath the homepage activity cards.
+
+Activity weapon previews use the same source-backed overlay on the homepage and Builds collection. The body border fades toward the protruding silhouettes; bottom blur begins higher without blurring labels/icons. Phone caption space preserves the traced scene crop. Shared silver/result changes use420ms changed-digit rolls (stable unchanged places, actual accessible target, immediate reduced motion); initial/static numbers do not count up from zero. Decorative counters never fabricate activity.

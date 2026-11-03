@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 
 export const metadata = { title: "Builds by activity" };
 export default function Activities() {
-  const counts = new Map(buildDiscovery.activities.map((a) => [a.id, a.count]));
+  const counts = new Map(buildDiscovery.activities.map((a) => [a.id, a]));
   return (
     <div className="builds-ecosystem">
       <BuildDiscoveryHeader
@@ -29,7 +29,8 @@ export default function Activities() {
               key={a.id}
               category={a.id}
               name={a.name}
-              builds={counts.get(a.id) || 0}
+              builds={counts.get(a.id)?.count || 0}
+              weapons={counts.get(a.id)?.topWeapons}
             />
           ))}
         </div>
