@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Homepage and navigation — 4 November 2026
+
+The owner-authorized candidate adds a compact server menu without global search, Explore tools / Sign in action plates, a smaller centered Supporter cutout with correct reveal/spacing, six larger featured activities with larger weapon previews, stable Firefox card-hover lighting, shorter tool previews and a minimal six-link footer. The example planner keeps two items; missing market observations stay unavailable. All32 activities and the full tools remain available. [Design and verification details](design/HOME_HEADER_2026-11-03.md) and the reviewed QA record distinguish current implementation, test evidence, known screenshot/timing failures and pending protected publication. Broad launch NO-GO remains separate from this explicitly authorized incremental UI release.
+
 ## Security repair — 2 November 2026
 
 The owner-requested security repair is implemented on a dedicated local branch and undergoing consolidated verification. It covers invitation revocation, caller/source quotas, streaming limits, cache isolation/headers, billing lifecycle and schema upgrades, calculator provenance/accounting, icon identity and responsive killboards. GitHub required checks and secret push protection were applied and read back; application changes have not been merged or deployed. The generated root QA reports and [security workflow](QA_WORKFLOW.md) distinguish implementation, test evidence, remaining tooling alerts and external gates.

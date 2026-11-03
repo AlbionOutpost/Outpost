@@ -36,7 +36,7 @@ The upstream legacy tag still resolves to 3.1.5. Replacing it globally with mode
 
 ## Raw results and reproduction
 
-After installation, the complete npm audit still reports **17 moderate advisory entries**, propagated from the broad minimatch advisory onto the four legacy instances. These alerts remain visible; the repository does not claim a zero full-tree audit. Production-only audit reports **0**.
+After installation, the complete npm audit still reports **15 moderate advisory entries**, propagated from the broad minimatch advisory onto the four legacy instances. These alerts remain visible; the repository does not claim a zero full-tree audit. Production-only audit reports **0**.
 
 The first post-upgrade scan reported15 propagated entries; the refreshed final scan reported17, still derived from the same single legacy advisory. Final raw output is `.qa/security-retest/audit-all-final.json` and `audit-production-final.json`.
 
@@ -67,4 +67,6 @@ npm test -- tests/tooling-assessment.test.ts
 
 It performs a fresh raw npm audit by default. A saved raw report can be checked by passing its path as the first argument. The guard prints the nonzero raw count and fails on unexpected advisories, paths, source artifacts, production scope or mechanism changes. Its negative tests exercise these rejection cases. It also requires reassessment if the known advisory disappears, so the exception cannot silently outlive its purpose.
 
-**A passing guard is an advisory-specific applicability assessment, not a clean audit.** The current raw full audit still reports 17 moderate entries and `npm audit` still exits nonzero; production-only audit reports zero. Keep those raw audit results visible alongside this separate guard. This does not establish general denial-of-service safety for legacy minimatch or authorize untrusted glob input.
+**A passing guard is an advisory-specific applicability assessment, not a clean audit.** The current raw full audit still reports 15 moderate entries and `npm audit` still exits nonzero; production-only audit reports zero. Keep those raw audit results visible alongside this separate guard. This does not establish general denial-of-service safety for legacy minimatch or authorize untrusted glob input.
+
+Phase refresh (4 November 2026, Europe/Berlin): the fresh raw scan reports15 moderate development advisory entries and production-only0. The earlier reviewed snapshot reported17; its historical logs remain retained. The same exact-artifact/advisory-mechanism guard passes without suppressing raw alerts or changing dependencies.

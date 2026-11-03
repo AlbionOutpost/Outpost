@@ -18,11 +18,11 @@ test("journal progress survives reload, stays regional, filters completed entrie
   await expect(page.locator(".journal-objective.complete")).toHaveCount(0);
   await page.getByLabel("Hide completed", { exact: true }).uncheck();
   await page.getByRole("combobox", { name: "Albion region", exact: true }).click();
-  await page.getByRole("option", { name: "Asia", exact: true }).click();
+  await page.getByRole("option", { name: "Asia Albion East", exact: true }).click();
   await expect(first).toBeEnabled();
   await expect(page.getByRole("checkbox", { name: name!, exact: true }).first()).not.toBeChecked();
   await page.getByRole("combobox", { name: "Albion region", exact: true }).click();
-  await page.getByRole("option", { name: "Europe", exact: true }).click();
+  await page.getByRole("option", { name: "Europe Albion Europe", exact: true }).click();
   await expect(page.getByRole("checkbox", { name: name!, exact: true }).first()).toBeChecked();
   await page.getByText("Backup & restore progress", { exact: true }).click();
   const downloaded = page.waitForEvent("download");
@@ -116,7 +116,7 @@ test("fish accounting preserves manual zero and refresh overrides while excludin
   await expect(page.getByLabel("Chopped fish sale price", { exact: true })).toHaveValue("");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
   await page.getByRole("combobox", { name: "Albion region", exact: true }).click();
-  await page.getByRole("option", { name: "Asia", exact: true }).click();
+  await page.getByRole("option", { name: "Asia Albion East", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Chopped fish sale price", { exact: true })).toHaveValue("");
 });

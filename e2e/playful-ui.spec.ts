@@ -1,28 +1,19 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("search palette clears on dismissal, supports keyboard navigation and keeps the chosen region", async ({
+test("tool navigation keeps the chosen region without a global search overlay", async ({
   page,
 }) => {
   await page.goto("/?region=asia");
-  await page.getByRole("button", { name: /^Search items, builds, guides/ }).click();
-  const dialog = page.getByRole("dialog", { name: "Global search", exact: true });
-  const input = dialog.getByRole("searchbox");
-  await expect(input).toBeFocused();
-  await input.fill("transport");
-  await expect(
-    dialog.getByRole("link", { name: "Tools Transport planner", exact: true }),
-  ).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(dialog).not.toBeVisible();
+  await expect(page.locator(".search-trigger")).toHaveCount(0);
   await page.keyboard.press("Control+k");
-  await expect(input).toHaveValue("");
-  await input.fill("transport");
-  await expect(
-    dialog.getByRole("link", { name: "Tools Transport planner", exact: true }),
-  ).toHaveAttribute("href", "/tools/transporting?region=asia");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("Enter");
+  await expect(page.getByRole("dialog", { name: "Global search", exact: true })).toHaveCount(0);
+  await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
+  const transport = page
+    .locator(".desktop-navigation")
+    .getByRole("link", { name: /^Transport planner/ });
+  await expect(transport).toHaveAttribute("href", "/tools/transporting?region=asia");
+  await transport.click();
   await expect(page).toHaveURL(/tools\/transporting\?region=asia/);
   await expect(page.getByLabel("Albion region", { exact: true })).toHaveAttribute(
     "data-region",
@@ -30,7 +21,7 @@ test("search palette clears on dismissal, supports keyboard navigation and keeps
   );
 });
 
-test("equipment selection opens the real item, and the redesigned search and menus remain accessible", async ({
+test("equipment selection opens the real item, and the redesigned server selector and menus remain accessible", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -42,7 +33,7 @@ test("equipment selection opens the real item, and the redesigned search and men
     "href",
     "/tools/market?item=T6_METALBAR&quality=1&region=europe",
   );
-  await page.keyboard.press("Control+k");
+  await page.getByRole("combobox", { name: "Albion region" }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press("Escape");
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();

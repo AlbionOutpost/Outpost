@@ -104,15 +104,12 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
       page.getByRole("heading", { name: "Welcome, Personal planner.", exact: true }),
     ).toBeVisible();
     await expect(page.getByText("Manual crop reminder · RUNNING", { exact: true })).toBeVisible();
-    await expect(page.locator(".search-trigger")).toBeEnabled();
-    await page.keyboard.press("Control+k");
-    await expect(page.getByRole("dialog", { name: "Global search", exact: true })).toBeVisible();
+    await expect(page.locator(".search-trigger")).toHaveCount(0);
+    await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
     await page
-      .getByLabel("Search items, builds, comps, guides, Teams and tools", { exact: true })
-      .fill("transport");
-    await expect(page.getByRole("link", { name: "Tools Transport planner" })).toBeVisible();
-    await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("Enter");
+      .locator(".desktop-navigation")
+      .getByRole("link", { name: /^Transport planner/ })
+      .click();
     await expect(page).toHaveURL(/tools\/transporting/);
     await page.goto("/timers");
     for (const route of ["timers", "dashboard"]) {

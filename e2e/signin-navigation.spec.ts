@@ -92,7 +92,7 @@ test("the shared top navigation and Outpost browser icons stay consistent across
   for (const path of ["/", "/signin", "/legal", "/guides", "/builds/library"]) {
     await page.goto(path);
     const nav = page.getByRole("navigation", { name: "Main navigation", exact: true });
-    await expect(page.locator(".search-trigger")).toBeEnabled();
+    await expect(page.locator(".search-trigger")).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
     const left = (await nav.boundingBox())!.x;
     if (navigationLeft === undefined) navigationLeft = left;
