@@ -71,7 +71,7 @@ export function ActivityArtworkCard({
                     aria-label={weapon.name}
                     title={weapon.name}
                   >
-                    <ItemIcon id={weapon.itemId} size={48} />
+                    <ItemIcon id={weapon.itemId} size={56} />
                   </span>
                 ))}
               </span>

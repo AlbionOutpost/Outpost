@@ -30,7 +30,7 @@ import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
 import { DiscordMark } from "@/components/discord-mark";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, Hammer } from "lucide-react";
 
 // What the page shows is chosen here and read from the public library or live observations;
 // nothing is staged. The build fills eight of the board's ten wells (no public build records a
@@ -42,7 +42,6 @@ const showcase = {
   plan: [
     { itemId: "T4_CAPE", slot: "Cape", qty: 10 },
     { itemId: "T6_MAIN_SWORD", slot: "Main hand", qty: 3 },
-    { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
 } as const;
 
@@ -120,11 +119,25 @@ export default async function Home({
               leave town.
             </p>
             <div className="landing-actions">
-              <Link href={`/tools${suffix}`} className="button primary">
-                Explore Tools <ArrowRight size={17} />
+              <Link href={`/tools${suffix}`} className="button landing-hero-action is-primary">
+                <span className="hero-action-icon" aria-hidden="true">
+                  <Hammer size={24} />
+                </span>
+                <span className="hero-action-copy">
+                  <strong>Explore tools</strong>
+                  <small>Prices, crafting &amp; more</small>
+                </span>
+                <ArrowRight size={20} aria-hidden="true" />
               </Link>
-              <Link href={`/builds/activities${suffix}`} className="button secondary">
-                <BookOpen size={17} /> Browse Builds
+              <Link href={`/signin${suffix}`} className="button landing-hero-action">
+                <span className="hero-action-icon" aria-hidden="true">
+                  <DiscordMark />
+                </span>
+                <span className="hero-action-copy">
+                  <strong>Sign in</strong>
+                  <small>Save builds &amp; comps</small>
+                </span>
+                <ArrowRight size={20} aria-hidden="true" />
               </Link>
             </div>
             <dl className="landing-stats" aria-label="Outpost in numbers">

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 
 const targets =
-  ".landing-section-heading, .landing-card, .guides-carousel, .kill-card, .activity-grid > li, .plan-card";
+  ".landing-section-heading, .landing-card, .guides-carousel, .kill-card, .activity-grid > li, .landing-cta, .plan-card";
 
 /**
  * Marks landing sections as revealed the first time they come into view, so they rise into

@@ -53,7 +53,7 @@ test("live reduced-motion preference cancels growth and retains keyboard region 
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/tools");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.getByRole("button", { name: /^Search items, builds, guides/ })).toBeEnabled();
+  await expect(page.getByRole("combobox", { name: "Albion region" })).toBeEnabled();
   const card = page.locator(".directory-entry").first();
   await card.hover({ position: { x: 16, y: 16 } });
   await expect

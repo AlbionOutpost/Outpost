@@ -123,7 +123,7 @@ try {
         await evaluate(scroll);
         await new Promise((resolve) => setTimeout(resolve, 1200));
         const state = await evaluate(
-          `(()=>{const n=document.querySelector('${selector}'),card=n.querySelector('.landing-cta'),h=n.querySelector('h2'),r=card?.getBoundingClientRect(),hr=h?.getBoundingClientRect();return{viewport:innerWidth,dpr:devicePixelRatio,overflow:document.documentElement.scrollWidth>innerWidth,centerOffset:card?Math.abs((hr.left+hr.right-r.left-r.right)/2):null,bodyTop:card?parseFloat(getComputedStyle(card,'::before').top):null,mask:card?getComputedStyle(card.querySelector('.landing-cta-art img')).maskImage:null,surfaces:Array.from(n.querySelectorAll('[class*="_blur__"]>span')).map(s=>({backdrop:getComputedStyle(s).backdropFilter,filter:getComputedStyle(s).filter,image:getComputedStyle(s).backgroundImage}))};})()`,
+          `(()=>{const n=document.querySelector('${selector}'),card=n.querySelector('.landing-cta'),h=n.querySelector('h2'),r=card?.getBoundingClientRect(),hr=h?.getBoundingClientRect();return{viewport:innerWidth,dpr:devicePixelRatio,overflow:document.documentElement.scrollWidth>innerWidth,centerOffset:card?Math.abs((hr.left+hr.right-r.left-r.right)/2):null,bodyTop:card?parseFloat(getComputedStyle(card,'::before').top):null,mask:card?getComputedStyle(card.querySelector('.landing-cta-art img')).maskImage:null,surfaces:Array.from(n.querySelectorAll('.activity-artwork-link > span[aria-hidden="true"] > span')).map(s=>({backdrop:getComputedStyle(s).backdropFilter,filter:getComputedStyle(s).filter,image:getComputedStyle(s).backgroundImage}))};})()`,
         );
         assert.equal(state.viewport, width);
         assert.equal(state.dpr, 1);
@@ -133,7 +133,7 @@ try {
           assert.ok(state.bodyTop > 16);
           assert.match(state.mask, /crown-silhouette\.svg/);
         } else {
-          assert.equal(state.surfaces.length, 24);
+          assert.equal(state.surfaces.length, 18);
           for (const surface of state.surfaces) {
             assert.equal(surface.backdrop, "none");
             assert.match(surface.filter, /blur\(/);
@@ -150,6 +150,84 @@ try {
         report.results.push({ theme, width, name, file, ...state });
       }
     }
+    // Exercise real pointer hover, where the owner saw the Firefox edge return.
+    await command("browsingContext.setViewport", {
+      context,
+      viewport: { width: 1323, height: 900 },
+      devicePixelRatio: 1,
+    });
+    await command("browsingContext.navigate", {
+      context,
+      url: new URL("/builds/activities?region=europe", base).href,
+      wait: "complete",
+    });
+    await evaluate(
+      `(async()=>{await document.fonts.ready;const card=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"]');card.scrollIntoView({block:'center',behavior:'instant'});await card.querySelector('img[data-activity-scene]').decode();return true;})()`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1600));
+    const hoverState = () =>
+      evaluate(
+        `(()=>{const card=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"] .activity-artwork-link'),r=card.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,hovered:card.matches(':hover'),transform:getComputedStyle(card).transform,filter:getComputedStyle(card).filter,sceneFilter:getComputedStyle(card.querySelector('[data-activity-scene]')).filter,light:getComputedStyle(card,'::before').opacity,overflow:document.documentElement.scrollWidth>innerWidth};})()`,
+      );
+    const move = async (x, y) =>
+      command("input.performActions", {
+        context,
+        actions: [
+          {
+            type: "pointer",
+            id: "outpost-hover",
+            parameters: { pointerType: "mouse" },
+            actions: [
+              {
+                type: "pointerMove",
+                x: Math.round(x),
+                y: Math.round(y),
+                duration: 0,
+                origin: "viewport",
+              },
+            ],
+          },
+        ],
+      });
+    await move(0, 0);
+    const before = await hoverState();
+    const files = [],
+      states = [];
+    for (const state of ["before", "hover", "after"]) {
+      if (state === "hover") await move(before.x + before.width / 2, before.y + before.height / 2);
+      if (state === "after") await move(0, 0);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      await evaluate(
+        `(async()=>{const n=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"] .activity-artwork-link');await Promise.all(n.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})));return true;})()`,
+      );
+      const current = await hoverState();
+      assert.equal(current.hovered, state === "hover");
+      assert.equal(current.transform, "none");
+      assert.equal(current.sceneFilter, "none");
+      assert.equal(current.filter, before.filter);
+      assert.ok(Math.abs(current.x - before.x) < 0.5 && Math.abs(current.y - before.y) < 0.5);
+      assert.equal(current.overflow, false);
+      if (state === "hover") assert.ok(Number(current.light) > 0.99, JSON.stringify(current));
+      states.push({ state, ...current });
+      const screenshot = await command("browsingContext.captureScreenshot", {
+        context,
+        origin: "viewport",
+        format: { type: "image/png" },
+      });
+      const file = `${theme}-1323-gallery-${state}.png`;
+      await writeFile(join(folder, file), Buffer.from(screenshot.data, "base64"));
+      files.push(file);
+    }
+    report.results.push({
+      theme,
+      width: 1323,
+      name: "gallery-hover",
+      category: "GANK_GROUP",
+      stableGeometry: true,
+      nativePointer: true,
+      files,
+      states,
+    });
   }
   report.status = "PASS";
 } catch (error) {

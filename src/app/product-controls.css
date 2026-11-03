@@ -47,44 +47,7 @@
 .app.outpost .desktop-navigation {
   gap: 2px;
 }
-.app.outpost .site-header .search-trigger {
-  height: 38px;
-  min-height: 38px;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-  color: var(--muted);
-  gap: 10px;
-  box-shadow: none;
-}
-.app.outpost .site-header .search-trigger:hover {
-  border-color: var(--muted);
-  background: var(--elevated);
-  color: var(--text);
-}
-.app.outpost .site-header .search-trigger > svg {
-  width: 16px;
-  height: 16px;
-  color: var(--muted);
-}
-.app.outpost .site-header .search-shortcut {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex: 1;
-  font-size: 12px;
-  font-weight: 400;
-}
-.app.outpost .site-header .search-shortcut kbd {
-  border: 1px solid var(--border);
-  background: var(--bg);
-  border-radius: 4px;
-  color: var(--muted);
-  font: 10px/1.6 var(--font-ui);
-  padding: 0 4px;
-}
+/* The active server is compact; its menu gives every region a full, clear target. */
 .region-picker {
   position: relative;
 }
@@ -92,82 +55,122 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 124px;
-  height: 38px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
+  width: 148px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--radius-md);
+  background: var(--panel-face);
   color: var(--text);
-  font: 500 12px/1.4 var(--font-ui);
+  font: 600 13px/1.3 var(--font-ui);
+  box-shadow: inset 0 1px 0 var(--edge-light);
 }
-.region-picker-trigger > span {
+.region-trigger-copy {
+  display: grid;
   flex: 1;
   text-align: left;
+  gap: 0;
+}
+.region-trigger-copy small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
 }
 .region-picker-trigger > svg {
-  color: var(--muted);
   flex-shrink: 0;
 }
+.region-picker-trigger > svg:last-child {
+  color: var(--muted);
+}
 .app.outpost .region-picker-trigger:is(:hover, [aria-expanded="true"]) {
-  border-color: var(--border);
+  border-color: var(--accent);
   background: var(--elevated);
+}
+.region-picker-trigger[aria-expanded="true"] > svg:last-child {
+  rotate: 180deg;
 }
 .region-picker-panel {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 204px;
-  padding: 6px;
+  width: 296px;
+  padding: 12px;
   border: 1px solid var(--panel-edge);
   border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  background: var(--panel-face);
-  box-shadow: 0 8px 24px #0003;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow-raised);
   z-index: 90;
-  animation: none;
+}
+.region-picker-heading {
+  padding: 4px 4px 0;
+  color: var(--text);
+  font: 600 14px/1.4 var(--font-ui);
+}
+.region-picker-description {
+  margin: 4px 4px 12px;
+  color: var(--muted);
+  font: 400 12px/1.5 var(--font-ui);
+}
+.region-picker-panel [role="listbox"] {
+  display: grid;
+  gap: 4px;
 }
 .region-picker-panel [role="option"] {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 10px;
-  min-height: 44px;
-  border-radius: 4px;
+  min-height: 64px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--text);
-  font: 500 13px/20px var(--font-ui);
+  font: 600 14px/20px var(--font-ui);
 }
 .region-picker-panel [role="option"][aria-selected="true"] {
+  border-color: var(--panel-edge-top);
   background: var(--accent-wash);
   color: var(--accent-ink);
 }
 .region-picker:has(.region-picker-trigger:focus-visible) [role="option"][data-active="true"] {
-  outline: 1px solid var(--muted);
-  outline-offset: -1px;
+  outline: 2px solid var(--accent-ink);
+  outline-offset: -2px;
 }
 .region-picker-panel [role="option"][data-active="true"][aria-selected="false"] {
   background: var(--elevated);
 }
-.region-picker-panel [role="option"] > svg {
+.region-option-globe {
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-}
-.region-picker-panel [role="option"] > svg:last-child {
-  margin-left: auto;
+  width: 40px;
+  height: 40px;
 }
 .region-option-text {
   display: grid;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
+  flex: 1;
 }
 .region-option-text small {
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.3;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
 }
-.region-picker-panel [role="option"][aria-selected="true"] .region-option-text small {
-  color: color-mix(in srgb, var(--accent-ink) 75%, var(--muted));
+.region-option-check {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+[aria-selected="true"] > .region-option-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }
 /* Region globes: ember land on a night sea, a faint graticule, light from the upper left */
 .region-mark {
@@ -200,11 +203,8 @@
 .region-picker-trigger .region-mark {
   color: var(--accent-ink);
 }
-.region-picker-panel {
-  width: 236px;
-}
 .region-picker-note {
-  margin: 6px 6px 2px;
+  margin: 12px 4px 0;
   padding-top: 8px;
   border-top: 1px solid var(--border);
   color: var(--muted);
@@ -285,38 +285,26 @@
   .app.outpost .site-header {
     gap: 16px;
   }
-  .app.outpost .site-header .search-trigger {
-  }
-}
-@media (max-width: 1099px) {
-  .app.outpost .site-header .search-trigger {
-    height: 36px;
-    min-height: 36px;
-    padding: 0;
-    justify-content: center;
-  }
-  .app.outpost .site-header .search-shortcut {
-    display: none;
-  }
-  .app.outpost .region-picker-trigger {
-    width: 112px;
-  }
 }
 @media (max-width: 600px) {
   .app.outpost .site-header .header-actions {
     gap: 4px;
   }
   .app.outpost .region-picker-trigger {
-    width: 100px;
-    padding-inline: 8px;
-    gap: 6px;
+    width: 104px;
+    padding: 8px;
   }
-  .app.outpost .region-picker-trigger > svg:first-child {
+  .region-trigger-copy small {
+    display: none;
+  }
+  .app.outpost .region-picker-trigger > .region-mark {
     display: none;
   }
   .region-picker-panel {
-    left: auto;
-    right: 0;
+    right: auto;
+    left: calc(50% - 12px);
+    transform: translateX(-50%);
+    width: min(296px, calc(100vw - 24px));
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -334,13 +322,10 @@
   .app.outpost .site-header .top-brand .outpost-wordmark {
     width: 96px;
   }
-  .app.outpost .site-header .region-picker-trigger {
-    width: 86px;
-  }
   .app.outpost .site-header .header-actions {
     flex-shrink: 0;
   }
-  .app.outpost .site-header :is(.search-trigger, .theme-single, .navigation-trigger) {
+  .app.outpost .site-header :is(.theme-single, .navigation-trigger) {
     width: 32px;
     min-width: 32px;
   }

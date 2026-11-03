@@ -11,7 +11,6 @@
   border: 0;
   background: transparent;
   color: #fff5e9;
-  transform-origin: 50% 70%;
   filter: drop-shadow(0 4px 3px color-mix(in srgb, var(--activity-shadow) 70%, transparent))
     drop-shadow(0 16px 16px var(--activity-shadow));
 }
@@ -53,8 +52,8 @@
   flex-shrink: 0;
   color: #ffb477;
 }
-.main:hover .scene {
-  filter: brightness(1.06);
+.main:hover::before {
+  opacity: 1;
 }
 .main:focus-visible {
   outline: 3px solid var(--accent);
@@ -121,6 +120,7 @@
   inset: 0;
   clip-path: var(--activity-outline);
   z-index: 3;
+  opacity: 0.5;
   pointer-events: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   background: radial-gradient(
@@ -132,12 +132,6 @@
 .card:focus-within {
   position: relative;
   z-index: 2;
-}
-@media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    position: relative;
-    z-index: 2;
-  }
 }
 
 :global(.app.outpost.light) .card {
@@ -166,8 +160,8 @@
   display: block;
   position: relative;
   flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   margin-left: -12px;
   transform-origin: 50% 90%;
   border-radius: var(--radius-sm);
@@ -200,8 +194,8 @@
     margin-bottom: var(--space-1);
   }
   .compact .weapons > span {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     margin-left: -8px;
   }
   .compact .main {

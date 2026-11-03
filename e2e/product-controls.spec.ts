@@ -9,10 +9,9 @@ test("custom region picker preserves query state, keyboard choice, dismissal and
   const picker = page.getByRole("combobox", { name: "Albion region", exact: true });
   await picker.click();
   await expect(page.getByRole("listbox", { name: "Game servers" })).toBeVisible();
-  await expect(page.getByRole("option", { name: "Europe", exact: true })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  );
+  await expect(
+    page.getByRole("option", { name: "Europe Albion Europe", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
   expect(
     (
       await new AxeBuilder({ page })

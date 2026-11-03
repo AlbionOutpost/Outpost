@@ -63,9 +63,10 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
     best: cheapest(i),
     need: Math.max(0, p.qty - (have[p.itemId] ?? 0)),
   }));
-  const owned = Object.values(have).reduce((a, v) => a + v, 0);
   const total = plan.reduce((a, p) => a + p.qty, 0);
   const toBuy = lines.reduce((a, l) => a + l.need, 0);
+  // Count only the active plan, including when an example line is removed.
+  const owned = total - toBuy;
   const cost = lines.reduce((a, l) => a + (l.best?.price ?? 0) * l.need, 0);
   const unpriced = lines.filter((l) => l.need && !l.best).length;
   const byCity = perCity
@@ -111,39 +112,28 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
               <ItemIcon id={l.itemId} size={44} />
               <span className="tool-queue-name">
                 <strong>{readable(l.itemId)}</strong>
-                <small>
-                  {l.slot} ·{" "}
-                  {l.best ? (
-                    <>
-                      <Silver value={l.best.price} /> ea · {l.best.city}
-                    </>
-                  ) : loading ? (
-                    "checking prices…"
-                  ) : (
-                    "no sell order"
-                  )}
-                </small>
+                {!l.best && !loading && <small>No sell order</small>}
+                {tab === "queue" ? (
+                  <span className="tool-queue-progress">
+                    <i>
+                      <b style={{ width: `${pct}%` }} />
+                    </i>
+                    <small>
+                      <AnimatedNumber value={h} /> / {l.qty} ·{" "}
+                      <AnimatedNumber value={pct} suffix="%" />
+                    </small>
+                  </span>
+                ) : (
+                  <span className="tool-queue-buy">
+                    <small>
+                      Buy <AnimatedNumber value={l.need} />
+                    </small>
+                    <b>
+                      <Silver value={l.best ? l.best.price * l.need : null} />
+                    </b>
+                  </span>
+                )}
               </span>
-              {tab === "queue" ? (
-                <span className="tool-queue-progress">
-                  <i>
-                    <b style={{ width: `${pct}%` }} />
-                  </i>
-                  <small>
-                    <AnimatedNumber value={h} /> / {l.qty} ·{" "}
-                    <AnimatedNumber value={pct} suffix="%" />
-                  </small>
-                </span>
-              ) : (
-                <span className="tool-queue-buy">
-                  <small>
-                    Buy <AnimatedNumber value={l.need} />
-                  </small>
-                  <b>
-                    <Silver value={l.best ? l.best.price * l.need : null} />
-                  </b>
-                </span>
-              )}
               <span
                 className="tool-stepper is-small"
                 role="group"
