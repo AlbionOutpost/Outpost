@@ -588,7 +588,14 @@ test("membership callout precedes activity discovery and the footer keeps its na
 }) => {
   await page.goto("/?region=asia");
   const cta = page.locator(".landing-cta-wrap");
-  const activities = page.locator(".landing-activities");
+  const artwork = cta.locator(".landing-cta-art img");
+  await artwork.scrollIntoViewIfNeeded();
+  await artwork.evaluate((image: HTMLImageElement) => image.decode());
+  expect(await artwork.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(1536);
+  await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
+    "href",
+    "/supporter?region=asia",
+  );
   const before = await cta.evaluate((node) =>
     Boolean(
       node.compareDocumentPosition(document.querySelector(".landing-activities")!) &

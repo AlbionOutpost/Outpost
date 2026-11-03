@@ -1,0 +1,23 @@
+{
+  "suppliedOn": "2026-11-03",
+  "source": "Owner attachment codex-clipboard-i4jone.png, supplied specifically for the Supporter card",
+  "provenance": "Creator, generation method and third-party licensing not independently established. Owner-supplied artwork; no authentic game-scene or current-patch claim.",
+  "derivation": "Original 1536x1024 PNG archived unchanged; sharp WebP quality85 effort6 at original dimensions, no crop or retouch. Separate native SVG mask traced from the connected dark exterior in the top200 rows (RGB max24) and enclosed bow gap seeded at950,90; contours simplified0.5px with evenodd fill. Image pixels remain unchanged apart from WebP encoding. CSS fades only the lower illustration into the card surface.",
+  "assets": [
+    {
+      "path": "assets/source/supporter-courtyard/original.png",
+      "bytes": 1980026,
+      "sha256": "9ad25110fd9b2e389990346670a207fbb87cbc6bca8f8bd30d2b1f0b1db9d5c4"
+    },
+    {
+      "path": "public/scenes/supporter/courtyard.webp",
+      "bytes": 109248,
+      "sha256": "0ff9bc0e67647cd42c23ecba2b52b072b6cecffb392d4de73a509c0c5f6b5f27"
+    },
+    {
+      "path": "public/scenes/supporter/silhouette.svg",
+      "bytes": 7644,
+      "sha256": "10cbdd00694a8c12be35499dfac3e9306462733e443d1d23e85a946b9a8483b6"
+    }
+  ]
+}
