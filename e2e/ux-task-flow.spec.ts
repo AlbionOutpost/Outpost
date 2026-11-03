@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -27,7 +28,9 @@ for (const width of [390, 320]) {
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
     await page.getByRole("button", { name: "Review profit", exact: true }).click();
     // 10 × (3,000 - 16 × 100 - 8 × 50) = 10,000 silver, no supplied fees or returns.
-    await expect(page.locator("output[data-result=total-profit]")).toHaveText("10,000");
+    await expectResultText(page.locator("output[data-result=total-profit]"), "10,000", {
+      exact: true,
+    });
     await expect(page.locator("#production-results")).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.getByRole("button", { name: "1 Choose recipe", exact: true }).click();

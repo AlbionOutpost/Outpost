@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
@@ -40,9 +41,9 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
       ["Transport listing fee (%)", "2.5"],
     ])
       await page.getByLabel(label, { exact: true }).fill(value);
-    await expect(page.locator(".panel.result > strong")).toHaveText("292.5");
+    await expectResultText(page.locator(".panel.result > strong"), "292.5", { exact: true });
     await page.getByLabel("Sale execution", { exact: true }).selectOption("instant");
-    await expect(page.locator(".panel.result > strong")).toHaveText("330");
+    await expectResultText(page.locator(".panel.result > strong"), "330", { exact: true });
     await expect(page.getByLabel("Transport listing fee (%)", { exact: true })).toBeDisabled();
     await page.getByLabel("Sale execution", { exact: true }).selectOption("listing");
     await page.getByLabel("Available cargo capacity (kg)", { exact: true }).fill("0");
@@ -58,7 +59,7 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
     await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByRole("button", { name: "Load transport plans", exact: true }).click();
     await page.getByRole("button", { name: "Restore Verified cargo run", exact: true }).click();
-    await expect(page.locator(".panel.result > strong")).toHaveText("292.5");
+    await expectResultText(page.locator(".panel.result > strong"), "292.5", { exact: true });
     await page.setViewportSize({ width: 375, height: 812 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,

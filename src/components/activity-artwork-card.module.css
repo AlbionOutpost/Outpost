@@ -18,7 +18,7 @@
 .scene {
   object-fit: cover;
   clip-path: var(--activity-outline);
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 .main::after {
   content: "";
@@ -27,7 +27,7 @@
   z-index: 2;
   background: linear-gradient(transparent, #0b0c10b8 75%, #0b0c10e8);
   pointer-events: none;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 .caption {
   position: absolute;
@@ -77,6 +77,9 @@
     font-size: 12px;
   }
   .compact .caption > svg {
+    position: absolute;
+    right: 12px;
+    bottom: 14px;
     width: 16px;
   }
 }
@@ -88,7 +91,7 @@
   inset: 0;
   z-index: 1;
   overflow: hidden;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   pointer-events: none;
 }
 .blur > span {
@@ -115,16 +118,12 @@
   clip-path: var(--activity-outline);
   z-index: 3;
   pointer-events: none;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   background: radial-gradient(
     ellipse at var(--mx, 25%) var(--my, 15%),
-    var(--raised-edge-top),
+    color-mix(in srgb, var(--raised-edge-top) 40%, transparent),
     transparent 65%
   );
-  box-shadow:
-    inset 1px 0 var(--raised-edge-top),
-    inset -1px 0 color-mix(in srgb, var(--activity-shadow) 70%, transparent),
-    inset 0 -2px var(--edge-light);
 }
 .card:focus-within {
   position: relative;
@@ -146,25 +145,43 @@
   position: absolute;
   inset: 12% 0 0;
   z-index: 3;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--text));
-  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-md) var(--radius-md);
+  border: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: inset 0 0 0 2px var(--activity-shadow);
   mask-image: linear-gradient(to bottom, transparent, transparent 8%, #000 60%);
   pointer-events: none;
 }
 .weapons {
   display: flex;
-  gap: var(--space-1);
+  gap: 0;
+  padding: var(--space-1) 0 var(--space-1) var(--space-1);
   margin-bottom: var(--space-2);
 }
 .weapons > span {
   display: block;
-  width: 40px;
-  height: 40px;
+  position: relative;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  margin-left: -12px;
+  transform-origin: 50% 90%;
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--well) 75%, transparent);
   box-shadow:
     0 2px 8px var(--activity-shadow),
     inset 0 1px var(--raised-edge-top);
+}
+.weapons > span:first-child {
+  margin-left: 0;
+  rotate: -6deg;
+}
+.weapons > span:nth-child(2) {
+  translate: 0 -4px;
+  z-index: 1;
+}
+.weapons > span:nth-child(3) {
+  rotate: 6deg;
+  z-index: 2;
 }
 .weapons img {
   display: block;
@@ -175,12 +192,12 @@
 }
 @media (max-width: 599px) {
   .compact .weapons {
-    gap: var(--space-1);
     margin-bottom: var(--space-1);
   }
   .compact .weapons > span {
     width: 28px;
     height: 28px;
+    margin-left: -8px;
   }
   .compact .main {
     aspect-ratio: 1;

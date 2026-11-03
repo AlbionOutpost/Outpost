@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 test("changing quality allows a new history request while the old request is pending", async ({
   page,
@@ -61,7 +62,7 @@ test("gold chart exposes its actual observation values", async ({ page }) => {
     /minimum 9000, maximum 9100/,
   );
   await page.getByText("View 2 source observations").click();
-  await expect(page.locator("tbody")).toContainText("9,100");
+  await expectResultText(page.locator("tbody"), "9,100");
 });
 test("named item search preserves selected item and region", async ({ page }) => {
   await page.goto("/items?region=asia");

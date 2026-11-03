@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { expect, test } from "@playwright/test";
 
 test("a market refresh preserves a newer manual edit and warns about undated observations", async ({
@@ -42,7 +43,7 @@ test("a market refresh preserves a newer manual edit and warns about undated obs
   ).toBeEnabled();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("175");
   // 16 × 175 + 8 × 50 = 3,200 cost, 3,000 revenue, no supplied fees/returns.
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("-200");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-200", { exact: true });
   await expect(
     page.getByText("Stale or undated source observations included.", { exact: false }),
   ).toBeVisible();
@@ -83,5 +84,7 @@ test("a zero source-price sentinel cannot produce a complete profit estimate", a
     "T4 Battleaxe",
   );
   await page.getByLabel("Output unit sale price", { exact: true }).fill("0");
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("-2,000");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-2,000", {
+    exact: true,
+  });
 });

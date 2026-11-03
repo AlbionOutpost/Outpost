@@ -248,32 +248,15 @@
   }
 }
 
-/* Shared price/result digits roll only when their value changes. */
+/* Shared number flow keeps digit strips and width transitions continuous on interruption. */
 .animated-number {
+  display: inline-block;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-.number-digit {
-  display: inline-block;
-  clip-path: inset(0);
-  height: 1.2em;
-  vertical-align: baseline;
-  line-height: 1.2;
-}
-.number-wheel {
-  display: inline-block;
-  position: relative;
-}
-.number-wheel::before {
-  content: attr(data-previous);
-  position: absolute;
-  inset-inline-start: 0;
-  top: var(--previous-offset);
-}
-@media (prefers-reduced-motion: reduce) {
-  .number-wheel {
-    transform: none !important;
-  }
-  .number-wheel::before {
-    display: none;
-  }
+.animated-number number-flow-react {
+  font: inherit;
+  line-height: 1;
+  --number-flow-mask-height: 0.18em;
+  --number-flow-mask-width: 0.25em;
 }

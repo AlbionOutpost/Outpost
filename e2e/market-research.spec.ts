@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 test("research batches item qualities, distinguishes missing quotes and retains observations on failure", async ({
@@ -37,7 +38,7 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   const tray = page.locator(".market-research-list");
   await tray.getByRole("button", { name: "Add selected to research", exact: true }).click();
   await tray.getByRole("button", { name: "Refresh research quotes", exact: true }).click();
-  await expect(tray).toContainText("1,234 silver");
+  await expectResultText(tray, "1,234 silver");
   await expect(tray).toContainText("Stale");
   await expect(tray).toContainText("No buy order observed");
   const popupPromise = page.waitForEvent("popup");
@@ -50,7 +51,7 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   await expect(tray).toBeHidden();
   await page.getByRole("tab", { name: "Research list", exact: true }).click();
   await expect(tray.locator(".research-items > li")).toHaveCount(1);
-  await expect(tray).toContainText("1,234 silver");
+  await expectResultText(tray, "1,234 silver");
   expect(calls).toHaveLength(1);
   expect(calls[0].searchParams.get("region")).toBe("asia");
   expect(calls[0].searchParams.get("quality")).toBe("2");
@@ -65,7 +66,7 @@ test("research batches item qualities, distinguishes missing quotes and retains 
   );
   expect(calls).toHaveLength(2);
   expect(calls[1].searchParams.get("items")).toBe("T4_BAG,T4_MAIN_AXE");
-  await expect(tray).toContainText("1,234 silver");
+  await expectResultText(tray, "1,234 silver");
   await mkdir(".qa/product-next/market", { recursive: true });
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });

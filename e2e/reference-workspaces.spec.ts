@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { selectEditorSlot } from "./support/build-editor";
 import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
@@ -31,7 +32,7 @@ test("market city comparison selects details, removes city chips and invalidates
   await expect(page.locator(".market-board tbody tr")).toHaveCount(3);
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.getByRole("button", { name: "Lymhurst market details", exact: true }).click();
-  await expect(page.locator(".reference-city-summary")).toContainText("1,300");
+  await expectResultText(page.locator(".reference-city-summary"), "1,300");
   await expect(page.locator(".reference-city-summary")).toContainText("Not observed");
   await expect(page.locator(".reference-city-summary")).toContainText("No observation");
   const priceBounds = await page.locator(".reference-city-summary .numeric").first().boundingBox();

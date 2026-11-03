@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -96,11 +97,15 @@ test("fish accounting preserves manual zero and refresh overrides while excludin
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
   await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("100");
-  await expect(page.locator('[data-result="fish-chop-profit"]')).toHaveText("350 silver");
+  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "350 silver", {
+    exact: true,
+  });
   await page.getByLabel("Raw fish purchase price", { exact: true }).fill("0");
   await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("0");
-  await expect(page.locator('[data-result="fish-chop-profit"]')).toHaveText("1,350 silver");
+  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "1,350 silver", {
+    exact: true,
+  });
   await page.getByLabel("Fishing market city", { exact: true }).selectOption("Lymhurst");
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("");
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
@@ -123,8 +128,12 @@ test("fishing fame uses entered assumptions and whole-fish quantities", async ({
   await page.getByLabel("Fame per consumed fish", { exact: true }).fill("210");
   await page.getByText("Price basis & extra costs", { exact: true }).click();
   await page.getByLabel("Purchase order fee (%)", { exact: true }).fill("2.5");
-  await expect(page.locator('[data-result="fishing-fish-needed"]')).toHaveText("48");
-  await expect(page.locator('[data-result="fishing-target-cost"]')).toHaveText("49,200 silver");
+  await expectResultText(page.locator('[data-result="fishing-fish-needed"]'), "48", {
+    exact: true,
+  });
+  await expectResultText(page.locator('[data-result="fishing-target-cost"]'), "49,200 silver", {
+    exact: true,
+  });
   await page.getByLabel("Fame per consumed fish", { exact: true }).fill("0");
   await expect(page.locator('[data-result="fishing-fish-needed"]')).toHaveText("—");
 });
