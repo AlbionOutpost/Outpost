@@ -1423,13 +1423,59 @@ a.landing-window-title:hover {
   padding-bottom: 0;
 }
 .app.outpost .landing-cta {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px 40px;
-  padding: 40px;
+  /* The supplied artwork's flat body begins 152 / 1536 of its rendered width. */
+  --supporter-body-top: 9.9cqw;
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
   color: var(--text);
   text-align: left;
+}
+.app.outpost .landing-cta::before {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  z-index: -2;
+  border-radius: var(--radius-lg);
+  background: var(--illustration-bg);
+  box-shadow: var(--shadow-raised);
+}
+.app.outpost .landing-cta-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+}
+.app.outpost .landing-cta-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  mask: url("/scenes/supporter/silhouette.svg") center top / 100% auto no-repeat;
+}
+.app.outpost .landing-cta-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 16px 40px;
+  padding: max(24cqw, 240px) 40px 40px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(to bottom, transparent 25%, var(--illustration-bg) 100%);
+}
+.app.outpost .landing-cta-content::after {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 -2px 0 var(--raised-edge-top),
+    inset 1px 0 0 var(--raised-edge-top),
+    inset -1px 0 0 var(--raised-edge-top);
+  mask-image: linear-gradient(to bottom, transparent, black 70%);
+  pointer-events: none;
 }
 
 .app.outpost .landing-cta h2 {
@@ -1469,12 +1515,12 @@ a.landing-window-title:hover {
   padding: 0 22px;
   font-size: 16px;
 }
+.app.outpost .landing-cta .landing-cta-actions .button.primary {
+  color: var(--illustration-bg);
+}
 .app.outpost .landing-cta-actions .button svg {
   width: 20px;
   height: 20px;
-}
-.app.outpost .landing-cta-actions .landing-chip {
-  margin-left: 4px;
 }
 
 /* ---------- Motion ----------
@@ -1767,10 +1813,10 @@ a.landing-window-title:hover {
   .app.outpost .landing-cta-wrap {
     margin-top: 64px;
   }
-  .app.outpost .landing-cta {
+  .app.outpost .landing-cta-content {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
-    padding: 32px 20px;
+    padding: calc(66.667cqw - 32px) 20px 24px;
   }
   .app.outpost .landing-cta-actions {
     grid-column: 1;
