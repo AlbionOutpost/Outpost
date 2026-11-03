@@ -263,3 +263,5 @@ A release is "done" when all of these hold:
 ## Activity illustrations — 3 November 2026
 
 Owner-approved protruding category artwork is integrated into the current homepage activity section and the new Builds → Activities collection, using the existing listed-library counts and most-liked build links. Main desktop/mobile navigation and homepage actions reach it; Library, community and personal routes stay available. [Scope, provenance and release verification](design/ACTIVITY_BACKGROUNDS.md). Push/deployment explicitly authorized by the owner; actual CI and deployment outcomes are recorded separately from implementation.
+
+Activity illustration delivery: PR70 merged as06e30f5 and deployed successfully through41634703496. All required hosted checks,57 Cloudflare core cases and independent public homepage/category/mobile/region/image-hash checks pass; most-liked links remain functional. The [activity review](design/ACTIVITY_BACKGROUNDS.md#published-read-back) records exact versions and remaining independent gates. No new application migration, paid feature or credential change was made.
