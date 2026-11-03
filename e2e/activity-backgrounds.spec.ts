@@ -59,6 +59,23 @@ test("activity depth preserves click targets and respects reduced motion", async
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/builds/activities?region=asia");
   const card = page.getByRole("link", { name: /Solo Mists/ });
+  const surfaces = await card
+    .locator('span[aria-hidden="true"]')
+    .first()
+    .locator("span")
+    .evaluateAll((nodes) =>
+      nodes.map((n) => ({
+        backdrop: getComputedStyle(n).backdropFilter,
+        blur: getComputedStyle(n).filter,
+        image: getComputedStyle(n).backgroundImage,
+      })),
+    );
+  expect(surfaces).toHaveLength(3);
+  for (const surface of surfaces) {
+    expect(surface.backdrop).toBe("none");
+    expect(surface.blur).toContain("blur(");
+    expect(surface.image).toContain("mists-solo.webp");
+  }
   const before = (await card.boundingBox())!;
   await card.hover();
   await expect.poll(async () => (await card.boundingBox())!.y).toBeLessThan(before.y - 2);

@@ -31,7 +31,12 @@ export function ActivityArtworkCard({
         href={`/builds/library?category=${encodeURIComponent(category)}`}
         prefetch={false}
         style={
-          art ? ({ "--activity-outline": activityOutlines[art.id] } as CSSProperties) : undefined
+          art
+            ? ({
+                "--activity-outline": activityOutlines[art.id],
+                "--activity-scene": `url("${art.src}")`,
+              } as CSSProperties)
+            : undefined
         }
       >
         {art && (
