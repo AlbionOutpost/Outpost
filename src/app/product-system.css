@@ -232,7 +232,8 @@
   --frame-rule: #80604b;
   --canvas-top: #17110e;
   --canvas-mid: #110f10;
-  --canvas-end: #0c0d10;
+  --illustration-bg: #0c0d10;
+  --canvas-end: var(--illustration-bg);
   --surface-raised: #1b1e26;
   --surface-scrim: #171a21;
   --well: #0f1116cc;
@@ -627,6 +628,7 @@
 .app.outpost.light
   :is(
     .raised.has-scene,
+    .landing-cta,
     :is(
       .panel,
       .raised:not(.has-scene),
