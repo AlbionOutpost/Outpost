@@ -138,7 +138,7 @@ test("a delayed region navigation preserves the previous market history entry", 
     await expect(rows).toContainText("Lymhurst");
     const previousHistoryLength = await page.evaluate(() => history.length);
     await picker.click();
-    await page.getByRole("option", { name: "Asia", exact: true }).click();
+    await page.getByRole("option", { name: "Asia Albion East", exact: true }).click();
     await expect.poll(() => asiaRscRequested).toBe(true);
     await expect(picker).toHaveAttribute("data-region", "asia");
     await expect(rows).toHaveCount(0);

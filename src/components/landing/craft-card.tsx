@@ -163,18 +163,7 @@ export function CraftCard() {
               </span>
             </li>
           ))}
-          {(quote?.unpriced ?? [])
-            .slice(0, Math.max(0, 4 - (quote?.byCity.length ?? 0)))
-            .map((city) => (
-              <li key={city} className="is-unpriced">
-                <span>
-                  <span className="city-dot" data-city={city} />
-                  {city}
-                </span>
-                <span className="tool-cities-value">Missing prices</span>
-              </li>
-            ))}
-          {!quote?.byCity.length && !quote?.unpriced?.length && (
+          {!quote?.byCity.length && (
             <li className="tool-muted">
               {p && !p.complete
                 ? `No city has every price for this recipe; missing ${p.missing.length}.`
@@ -184,6 +173,12 @@ export function CraftCard() {
             </li>
           )}
         </ol>
+        {quote && quote.byCity.length > 0 && (quote.unpriced?.length ?? 0) > 0 && (
+          <p className="tool-cities-coverage">
+            {quote.byCity.length} {quote.byCity.length === 1 ? "city" : "cities"} priced · other
+            cities unavailable
+          </p>
+        )}
       </div>
     </div>
   );

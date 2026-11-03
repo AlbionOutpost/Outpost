@@ -24,7 +24,15 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(page.locator(".landing-window")).toHaveCount(3);
   await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
-  const browse = page.getByRole("link", { name: "Browse Builds", exact: true }).first();
+  await expect(
+    page.locator(".landing-actions").getByRole("link", { name: /^Explore tools/ }),
+  ).toHaveAttribute("href", "/tools?region=asia");
+  await expect(
+    page.locator(".landing-actions").getByRole("link", { name: /^Sign in/ }),
+  ).toHaveAttribute("href", "/signin?region=asia");
+  const browse = page
+    .getByRole("navigation", { name: "Main navigation", exact: true })
+    .getByRole("link", { name: "Builds", exact: true });
   await expect(browse).toHaveAttribute("href", "/builds/activities?region=asia");
   await browse.click();
   await expect(page).toHaveURL(/\/builds\/activities\?region=asia$/);
@@ -33,7 +41,10 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await create.click();
   await expect(page).toHaveURL(/\/builds\/new\?region=asia$/);
   await expect(page.getByRole("textbox", { name: "Build title", exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "Guides", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Main navigation", exact: true })
+    .getByRole("link", { name: "Guides", exact: true })
+    .click();
   await expect(page.locator(".desktop-navigation a[aria-current=page]")).toHaveText("Guides");
   await expect(
     page.getByRole("heading", { name: "Read a market quote", exact: true }),

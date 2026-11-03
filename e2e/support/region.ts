@@ -5,7 +5,11 @@ export async function chooseRegion(page: Page, region: "europe" | "americas" | "
   await picker.click();
   await page
     .getByRole("option", {
-      name: { europe: "Europe", americas: "Americas", asia: "Asia" }[region],
+      name: {
+        europe: "Europe Albion Europe",
+        americas: "Americas Albion West",
+        asia: "Asia Albion East",
+      }[region],
       exact: true,
     })
     .click();

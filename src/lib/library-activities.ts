@@ -10,16 +10,14 @@ export type Activity = {
   top: ActivityBuild[];
 };
 
-/** The activities players ask for most, in the order the landing grid shows them. */
+/** Featured activities, in the order the landing grid shows them. */
 export const landingActivities = [
-  "ZVZ",
+  "CRYSTAL_CREATURES",
   "SMALL_SCALE",
   "HELLGATE_5V5",
   "FAME_FARM_GROUP_AVALON",
-  "FAME_FARM_GROUP",
   "CORRUPTED_DUNGEON",
   "MISTS_SOLO",
-  "GANK_GROUP",
 ] as const;
 
 /**

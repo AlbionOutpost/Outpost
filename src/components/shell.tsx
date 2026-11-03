@@ -19,7 +19,6 @@ import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools } from "@/lib/tool-directory";
-import { GlobalSearch } from "./global-search";
 import { Wordmark } from "./wordmark";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
@@ -43,41 +42,14 @@ const sections = [
   ["/guides", "Guides"],
   ["/groups", "Teams"],
 ];
-const footerColumns: [string, [string, string][]][] = [
-  [
-    "Explore",
-    [
-      ["/tools/market", "Market prices"],
-      ["/builds/activities", "Builds by activity"],
-      ["/builds/library", "Build library"],
-      ["/compositions/library", "Group builds"],
-      ["/items", "Item database"],
-      ["/guides", "Player guides"],
-      ["/market-data", "About market data"],
-    ],
-  ],
-  [
-    "Tools",
-    [
-      ["/tools/crafting", "Crafting calculator"],
-      ["/tools/refining", "Refining calculator"],
-      ["/tools/flipping", "Flipping calculator"],
-      ["/tools/transporting", "Transport routes"],
-      ["/tools/reference", "Reference tables"],
-      ["/tools", "Every tool"],
-    ],
-  ],
-  [
-    "Your workspace",
-    [
-      ["/builds/new", "New build"],
-      ["/compositions/new", "New composition"],
-      ["/groups", "Team pages"],
-      ["/dashboard", "Dashboard"],
-      ["/signin", "Sign in to Outpost"],
-    ],
-  ],
-];
+const footerLinks = [
+  ["/tools", "Tools"],
+  ["/builds/activities", "Builds by activity"],
+  ["/compositions/library", "Comps"],
+  ["/guides", "Guides"],
+  ["/supporter", "Supporter"],
+  ["/market-data", "Market data"],
+] as const;
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
@@ -423,7 +395,6 @@ export function Shell({
               </Link>
               {primaryNavigation}
               <div className="header-actions">
-                <GlobalSearch />
                 <RegionPicker
                   value={region}
                   onChange={(next) => {
@@ -538,38 +509,16 @@ export function Shell({
             </div>
             <footer className="site-footer">
               <div className="site-footer-inner">
-                <div className="site-footer-brand">
-                  <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                    <Wordmark light={light} />
-                  </Link>
-                  <p>Independent Albion Online tools. Make your next move count.</p>
-                  <p className="site-footer-source">
-                    Prices are player observations from the Albion Online Data Project. Outpost is
-                    not affiliated with Sandbox Interactive.
-                  </p>
-                </div>
-                <div className="site-footer-navigation">
-                  {footerColumns.map(([title, links]) => (
-                    <nav key={title} className="site-footer-column" aria-label={title}>
-                      <h2>{title}</h2>
-                      <div className="site-footer-links">
-                        {links
-                          .filter(([url]) => !authenticated || url !== "/signin")
-                          .map(([url, label]) => (
-                            <Link key={url} href={href(url)}>
-                              {label}
-                            </Link>
-                          ))}
-                      </div>
-                    </nav>
-                  ))}
-                </div>
-              </div>
-              <div className="site-footer-legal">
-                <span>© {new Date().getFullYear()} Outpost · made by Albion players</span>
-                <Link href="/legal">
-                  Privacy & terms <ArrowUpRight size={13} />
+                <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
+                  <Wordmark light={light} />
                 </Link>
+                <nav className="site-footer-navigation" aria-label="Footer">
+                  {footerLinks.map(([url, label]) => (
+                    <Link key={url} href={href(url)}>
+                      {label}
+                    </Link>
+                  ))}
+                </nav>
                 <button
                   type="button"
                   className="site-footer-top"
@@ -584,6 +533,16 @@ export function Shell({
                 >
                   Back to top <ArrowUp size={14} aria-hidden="true" />
                 </button>
+              </div>
+              <div className="site-footer-legal">
+                <p className="site-footer-source">
+                  Independent Albion Online tools. Prices from the Albion Online Data Project. Not
+                  affiliated with Sandbox Interactive.
+                </p>
+                <span>© {new Date().getFullYear()} Outpost</span>
+                <Link href="/legal">
+                  Privacy &amp; terms <ArrowUpRight size={13} aria-hidden="true" />
+                </Link>
               </div>
             </footer>
           </div>

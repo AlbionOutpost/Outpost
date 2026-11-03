@@ -59,17 +59,16 @@ test("activity depth preserves click targets and respects reduced motion", async
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/builds/activities?region=asia");
   const card = page.getByRole("link", { name: /Solo Mists/ });
-  const surfaces = await card
-    .locator('span[aria-hidden="true"]')
-    .first()
-    .locator("span")
-    .evaluateAll((nodes) =>
-      nodes.map((n) => ({
-        backdrop: getComputedStyle(n).backdropFilter,
-        blur: getComputedStyle(n).filter,
-        image: getComputedStyle(n).backgroundImage,
-      })),
-    );
+  const layers = card.locator(':scope > span[aria-hidden="true"] > span');
+  // Cloudflare streams the card: wait for its layers before reading computed paint.
+  await expect(layers).toHaveCount(3);
+  const surfaces = await layers.evaluateAll((nodes) =>
+    nodes.map((n) => ({
+      backdrop: getComputedStyle(n).backdropFilter,
+      blur: getComputedStyle(n).filter,
+      image: getComputedStyle(n).backgroundImage,
+    })),
+  );
   expect(surfaces).toHaveLength(3);
   for (const surface of surfaces) {
     expect(surface.backdrop).toBe("none");
@@ -78,7 +77,17 @@ test("activity depth preserves click targets and respects reduced motion", async
   }
   const before = (await card.boundingBox())!;
   await card.hover();
-  await expect.poll(async () => (await card.boundingBox())!.y).toBeLessThan(before.y - 2);
+  await page.waitForTimeout(350);
+  const lit = (await card.boundingBox())!;
+  expect(Math.abs(lit.y - before.y)).toBeLessThan(0.5);
+  expect(Math.abs(lit.width - before.width)).toBeLessThan(0.5);
+  expect(await card.evaluate((n) => getComputedStyle(n).transform)).toBe("none");
+  expect(
+    await card.locator("[data-activity-scene]").evaluate((n) => getComputedStyle(n).filter),
+  ).toBe("none");
+  await expect
+    .poll(() => card.evaluate((n) => Number(getComputedStyle(n, "::before").opacity)))
+    .toBeGreaterThan(0.99);
   await card.click();
   await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
   await expect(page).toHaveURL(/region=asia/);
@@ -99,13 +108,10 @@ test("activity depth preserves click targets and respects reduced motion", async
 test("both activity grids overlay recorded weapons without ranking rows", async ({ page }) => {
   for (const path of ["/", "/builds/activities"]) {
     await page.goto(path);
-    const card = page.locator('.activity-artwork-card[data-activity="ZVZ"]');
+    const card = page.locator('.activity-artwork-card[data-activity="MISTS_SOLO"]');
     const weapons = card.locator("[data-activity-weapon]");
     await expect(weapons).toHaveCount(3);
-    await expect(weapons.first()).toHaveAttribute(
-      "data-activity-weapon",
-      "T8_2H_SHAPESHIFTER_SET2",
-    );
+    await expect(weapons.first()).toHaveAttribute("data-activity-weapon", "T8_2H_POLEHAMMER");
     await expect(weapons.first()).toHaveAccessibleName(/.+/);
     await expect(card.locator(".activity-top")).toHaveCount(0);
     const scene = (await card.locator("[data-activity-scene]").boundingBox())!;

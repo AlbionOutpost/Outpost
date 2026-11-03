@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Search } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
-import Link from "@/components/link";
 import { useOutpostRegion } from "@/components/region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
@@ -93,10 +91,6 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
     });
   return (
     <div className="tool-card">
-      <Link className="tool-search" href={`/tools/market?item=${item.id}&region=${region}`}>
-        <Search size={16} aria-hidden="true" />
-        <span>Search items, builds, guides…</span>
-      </Link>
       <div className="tool-item">
         <ItemIcon id={item.id} size={52} />
         <span>

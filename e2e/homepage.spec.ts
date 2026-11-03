@@ -110,7 +110,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
         fetchedAt: new Date().toISOString(),
         source: "Albion Online Data Project",
         prices: items.flatMap((id) =>
-          id === "T6_POTION_HEAL"
+          id === "T6_MAIN_SWORD"
             ? []
             : [
                 quote(id, "Martlock", 1000, 900, minutesAgo(5)),
@@ -150,7 +150,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
   const actions = page.locator(".landing-hero .landing-actions a");
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
-  await expect(actions.nth(1)).toHaveAttribute("href", "/builds/activities?region=europe");
+  await expect(actions.nth(1)).toHaveAttribute("href", "/signin?region=europe");
   const stats = page.getByRole("term");
   await expect(stats).toContainText(["Active players", "Builds", "Guides", "Tools", "Supporters"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
@@ -256,19 +256,19 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   const planner = cards.nth(2);
   await expect(
     planner.getByRole("list", { name: "Planned items" }).getByRole("listitem"),
-  ).toHaveCount(3);
-  await expectResultText(planner.locator(".tool-summary"), /Owned\s*0 \/ 33/);
-  await expectResultText(planner.locator(".tool-summary"), /Still to buy\s*13,000\+/);
-  await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no sell order");
+  ).toHaveCount(2);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*0 \/ 13/);
+  await expectResultText(planner.locator(".tool-summary"), /Still to buy\s*10,000\+/);
+  await expect(planner.locator(".tool-queue li").nth(1)).toContainText("No sell order");
   await planner
     .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
     .getByRole("button", { name: "Own one more" })
     .click();
-  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 33/);
-  await expectResultText(planner.locator(".tool-summary"), /12,000\+/);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 13/);
+  await expectResultText(planner.locator(".tool-summary"), /9,000\+/);
   await planner.getByRole("tab", { name: "Shopping list" }).click();
   await expectResultText(planner.locator(".tool-queue li").first(), /Buy 9/);
-  await expectResultText(planner.locator(".tool-cities li").first(), /Martlock[\s\S]*12,000\+/);
+  await expectResultText(planner.locator(".tool-cities li").first(), /Martlock[\s\S]*9,000\+/);
   await expect(planner.locator(".tool-cities li em")).toHaveCount(0);
   await expect(planner.getByRole("link", { name: /Open Crafting Planner/ })).toHaveAttribute(
     "href",
@@ -318,15 +318,18 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   // Activities: supplied cutout scenes and listed counts, without the removed ranking rows.
   const activities = page.locator(".activity-artwork-card");
-  await expect(activities).toHaveCount(8);
+  await expect(activities).toHaveCount(6);
   await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
     "href",
-    "/builds/library?category=ZVZ&region=europe",
+    "/builds/library?category=CRYSTAL_CREATURES&region=europe",
   );
   await expect(activities.first().locator(".activity-artwork-link")).toContainText(
-    /ZvZ\s*[\d,]+ builds/,
+    /Crystal Creatures\s*1 build/i,
   );
-  await expect(activities.first().locator("[data-activity-scene]")).toHaveAttribute("src", /zvz/);
+  await expect(activities.first().locator("[data-activity-scene]")).toHaveAttribute(
+    "src",
+    /crystal-creatures/,
+  );
   await expect(activities.first().locator("[data-activity-scene]")).toBeVisible();
   await expect(page.locator(".landing-activities .activity-top")).toHaveCount(0);
 
@@ -345,7 +348,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/supporter?region=europe",
   );
   const footer = page.locator("footer.site-footer");
-  await expect(footer.getByRole("navigation", { name: "Explore" })).toBeVisible();
+  await expect(footer.getByRole("navigation", { name: "Footer" })).toBeVisible();
   await expect(footer).toContainText("Albion Online Data Project");
 
   // Region picker: every server named, the current one marked.
@@ -461,15 +464,15 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   await page.goto("/");
   const planner = page.locator(".landing-card").nth(2);
   await planner.scrollIntoViewIfNeeded();
-  await expectResultText(planner.locator(".tool-summary"), "33,000");
+  await expectResultText(planner.locator(".tool-summary"), "13,000");
   const owned = planner.getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ });
   const flow = planner.locator(
-    '.tool-summary .animated-number[data-value="33000"] number-flow-react',
+    '.tool-summary .animated-number[data-value="13000"] number-flow-react',
   );
   await flow.evaluate((node) => node.setAttribute("data-continuity-check", "retained"));
   await owned.getByRole("button", { name: "Own one more" }).click();
-  const money = planner.locator('.tool-summary .animated-number[data-value="32000"]');
-  await expect(money).toHaveAccessibleName("32,000");
+  const money = planner.locator('.tool-summary .animated-number[data-value="12000"]');
+  await expect(money).toHaveAccessibleName("12,000");
   const moving = money.locator("number-flow-react");
   await expect
     .poll(() =>
@@ -485,8 +488,8 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   ).toBe(-1);
   // Reverse while the previous movement is active. The same flow/strips must survive.
   await owned.getByRole("button", { name: "Own one fewer" }).click();
-  const raised = planner.locator('.tool-summary .animated-number[data-value="33000"]');
-  await expect(raised).toHaveAccessibleName("33,000");
+  const raised = planner.locator('.tool-summary .animated-number[data-value="13000"]');
+  await expect(raised).toHaveAccessibleName("13,000");
   await expect(raised.locator("number-flow-react")).toHaveAttribute(
     "data-continuity-check",
     "retained",
@@ -498,7 +501,7 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   ).toBe(1);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await owned.getByRole("button", { name: "Own one more" }).click();
-  await expect(money).toHaveAccessibleName("32,000");
+  await expect(money).toHaveAccessibleName("12,000");
   await expect
     .poll(() =>
       moving.evaluate((node) =>
@@ -506,7 +509,7 @@ test("planner digits roll down and up, and reduced motion shows exact results im
       ),
     )
     .toBe(false);
-  await expect(moving.locator(".digit__num:not([inert])")).toHaveText(["3", "2", "0", "0", "0"]);
+  await expect(moving.locator(".digit__num:not([inert])")).toHaveText(["1", "2", "0", "0", "0"]);
 });
 
 test("craft quantity recalculates without refetching; shared digits roll and reduced motion settles", async ({
@@ -589,6 +592,17 @@ test("membership callout precedes activity discovery and the footer keeps its na
   await page.goto("/?region=asia");
   const cta = page.locator(".landing-cta-wrap");
   await cta.scrollIntoViewIfNeeded();
+  const callout = cta.locator(".landing-cta");
+  await expect(callout).toHaveClass(/is-revealed/);
+  await callout.evaluate(async (n) => {
+    await Promise.all(n.getAnimations({ subtree: false }).map((a) => a.finished.catch(() => {})));
+  });
+  const gap = await page.evaluate(
+    () =>
+      document.querySelector(".landing-activities")!.getBoundingClientRect().top -
+      document.querySelector(".landing-cta")!.getBoundingClientRect().bottom,
+  );
+  expect(gap).toBeGreaterThanOrEqual(96);
   const artwork = await cta.locator(".landing-cta").evaluate(async (card) => {
     const src = getComputedStyle(card, "::before").backgroundImage;
     const image = new Image();
@@ -621,8 +635,9 @@ test("membership callout precedes activity discovery and the footer keeps its na
   );
   expect(before).toBe(true);
   const footer = page.locator("footer.site-footer");
-  for (const group of ["Explore", "Tools", "Your workspace"])
-    await expect(footer.getByRole("navigation", { name: group, exact: true })).toBeVisible();
+  const footerNavigation = footer.getByRole("navigation", { name: "Footer", exact: true });
+  await expect(footerNavigation).toBeVisible();
+  await expect(footerNavigation.getByRole("link")).toHaveCount(6);
   await expect(
     footer.getByRole("link", { name: "Builds by activity", exact: true }),
   ).toHaveAttribute("href", "/builds/activities?region=asia");
