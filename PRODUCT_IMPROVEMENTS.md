@@ -2,10 +2,10 @@
 
 # Security and correctness improvements
 
-Reviewed 2026-11-02T21:56:44.810636+00:00. Baseline `5ef908f8257418cd645afc12000f415bc847a374`; branch `feat/landing-interactions`.
-Source fingerprint: `001243eb987fe51c567cd1fd47e5f76ed1707480d5f771e35803e57e01770e48`.
+Reviewed 2026-11-03T12:10:57.444179+00:00. Baseline `f71a57a8c8725955647bf3a6949e9378dad22d91`; branch `codex/activity-backgrounds`.
+Source fingerprint: `52df1d90f4e8818b58172a5644626b543720763fc5bfaf863789b75364a53b75`.
 
-Owner-requested landing interactions: Team Management naming, existing Battleaxe PvP preview, account-backed build/composition likes, animated tool amounts with retained batch quotes, real observation chart hover/touch/keyboard selection, restrained section links, closing/footer spacing and shared background-only blur6px. Additive LibraryLike migrations and private data Worker schema6 are prepared and verified locally. PR #68 shared copper frames are already live at5ef908f; this landing follow-up is local only. Real OAuth and Stripe lifecycle verification remain owner-deferred.
+Owner-approved32 category illustrations integrated into the current main-site homepage eight-activity section, shared cutout component and full Builds → Activities collection, with region-preserving main navigation, homepage actions, footer, collection tabs and sitemap. Current listed-library counts and independent most-liked links are preserved. Applied on latest main f71a57a instead of replacing newer source with the older local prototype. Owner explicitly requested push and production deployment on3 November2026. This record retains inherited security findings as historical evidence; it is not a new whole-product security audit. No auth, billing, schema, runtime secrets or production data changes are part of this feature.
 
 **Release: NO-GO.** Local implementation, local verification and deployment are separate. No application deployment or provider purchase is authorized by these reports.
 
@@ -46,5 +46,5 @@ The repair preserves existing brand, source facts and manual-price distinctions.
 - Per-address source quotas require documented Cloudflare trusted-header topology. Self-hosted Node requires a trusted proxy strategy before equivalent public deployment.
 - Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.
 - Landing final phase519 units/158 browser cases/all12 gates passed. Earlier154/158 accessibility failures and157/158 bulk screenshot timeout remain recorded. No exhaustive defect or full conformance claim.
-- Real OAuth and Stripe remain owner-deferred. PR #68 frames are live; current landing work is local only. Production migration and deployment require separately recorded authorization.
 - New private database schema6 rejects incompatible older schema5 backends. A future rollback must retain a compatible backend or use a rehearsed backup/restore strategy; this local migration evidence is not production restore proof.
+- Owner-approved activity appearance is locally verified; current push/merge/deployment remains pending the requested PR pipeline. Three unrelated local equipment screenshot comparisons remain open. Existing source/media rights, real providers, production recovery and field performance gates remain independent; formal NO-GO is retained.

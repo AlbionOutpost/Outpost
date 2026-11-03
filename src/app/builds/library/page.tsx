@@ -147,6 +147,9 @@ export default async function Library({
                   </label>
                   <select id="library-activity" name="category" defaultValue={category}>
                     <option value="">All activities</option>
+                    {category && !categories.includes(category) && (
+                      <option value={category}>{activityName(category)} (0)</option>
+                    )}
                     {categories.map((c) => (
                       <option key={c} value={c}>
                         {activityName(c)} (

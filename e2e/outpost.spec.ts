@@ -25,9 +25,9 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
   const browse = page.getByRole("link", { name: "Browse Builds", exact: true }).first();
-  await expect(browse).toHaveAttribute("href", "/builds/library?region=asia");
+  await expect(browse).toHaveAttribute("href", "/builds/activities?region=asia");
   await browse.click();
-  await expect(page).toHaveURL(/\/builds\/library\?region=asia$/);
+  await expect(page).toHaveURL(/\/builds\/activities\?region=asia$/);
   const create = page.getByRole("link", { name: "Create a build", exact: true });
   await expect(create).toHaveAttribute("href", "/builds/new?region=asia");
   await create.click();

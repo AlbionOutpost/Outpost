@@ -1,0 +1,79 @@
+.card {
+  min-width: 0;
+}
+.main {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  overflow: visible;
+  aspect-ratio: 1.2;
+  border: 0;
+  background: transparent;
+  color: #fff5e9;
+}
+.main img {
+  object-fit: cover;
+  border-radius: 0 0 8px 8px;
+}
+.main::after {
+  content: "";
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(transparent, #0b0c10e8 75%, #0b0c10fa);
+  pointer-events: none;
+  border-radius: 0 0 8px 8px;
+}
+.caption {
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+}
+.card .main .caption h3 {
+  margin: 0 0 6px;
+  color: #fff5e9;
+  font: 800 27px/1.1 var(--font-display);
+}
+.caption small {
+  color: #eee1d2;
+  font: 450 12px/1.5 var(--font-ui);
+}
+.caption > svg {
+  flex-shrink: 0;
+  color: #ffb477;
+}
+.main:hover img {
+  filter: brightness(1.06);
+}
+.main:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.footer {
+  margin-top: 12px;
+}
+.compact .caption {
+  padding: 16px;
+}
+@media (max-width: 599px) {
+  .caption {
+    padding: 18px;
+  }
+  .compact .caption {
+    padding: 12px;
+    gap: 6px;
+  }
+  .card.compact .main .caption h3 {
+    font-size: 20px;
+  }
+  .compact .caption small {
+    font-size: 12px;
+  }
+  .compact .caption > svg {
+    width: 16px;
+  }
+}
