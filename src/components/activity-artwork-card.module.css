@@ -1,4 +1,5 @@
 .card {
+  --activity-shadow: var(--well);
   min-width: 0;
 }
 .main {
@@ -10,22 +11,27 @@
   border: 0;
   background: transparent;
   color: #fff5e9;
+  transform-origin: 50% 70%;
+  filter: drop-shadow(0 4px 3px color-mix(in srgb, var(--activity-shadow) 70%, transparent))
+    drop-shadow(0 16px 16px var(--activity-shadow));
 }
 .main img {
   object-fit: cover;
+  clip-path: var(--activity-outline);
   border-radius: 0 0 8px 8px;
 }
 .main::after {
   content: "";
   position: absolute;
   inset: 35% 0 0;
-  background: linear-gradient(transparent, #0b0c10e8 75%, #0b0c10fa);
+  z-index: 2;
+  background: linear-gradient(transparent, #0b0c10b8 75%, #0b0c10e8);
   pointer-events: none;
   border-radius: 0 0 8px 8px;
 }
 .caption {
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   inset: auto 0 0;
   display: flex;
   align-items: center;
@@ -53,9 +59,6 @@
   outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
-.footer {
-  margin-top: 12px;
-}
 .compact .caption {
   padding: 16px;
 }
@@ -76,4 +79,64 @@
   .compact .caption > svg {
     width: 16px;
   }
+}
+
+/* Three independently masked layers increase optical blur toward the bottom.
+   The image silhouettes above 40% remain sharp and the caption is a separate layer. */
+.blur {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 0 0 8px 8px;
+  pointer-events: none;
+}
+.blur > span {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.blur > span:nth-child(1) {
+  backdrop-filter: blur(3px);
+  mask-image: linear-gradient(to bottom, transparent 40%, #000 68%);
+}
+.blur > span:nth-child(2) {
+  backdrop-filter: blur(7px);
+  mask-image: linear-gradient(to bottom, transparent 58%, #000 88%);
+}
+.blur > span:nth-child(3) {
+  backdrop-filter: blur(14px);
+  mask-image: linear-gradient(to bottom, transparent 76%, #000 100%);
+}
+.main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: var(--activity-outline);
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 0 0 8px 8px;
+  background: radial-gradient(
+    ellipse at var(--mx, 25%) var(--my, 15%),
+    var(--raised-edge-top),
+    transparent 65%
+  );
+  box-shadow:
+    inset 1px 0 var(--raised-edge-top),
+    inset -1px 0 color-mix(in srgb, var(--activity-shadow) 70%, transparent),
+    inset 0 -2px var(--edge-light);
+}
+.card:focus-within {
+  position: relative;
+  z-index: 2;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+:global(.app.outpost.light) .card {
+  --activity-shadow: color-mix(in srgb, var(--text) 65%, transparent);
 }
