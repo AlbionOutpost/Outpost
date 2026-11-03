@@ -48,6 +48,7 @@ const footerColumns: [string, [string, string][]][] = [
     "Explore",
     [
       ["/tools/market", "Market prices"],
+      ["/builds/activities", "Builds by activity"],
       ["/builds/library", "Build library"],
       ["/compositions/library", "Group builds"],
       ["/items", "Item database"],
@@ -124,7 +125,7 @@ export function Shell({
   const region = regionSchema.catch("europe").parse(urlRegion || savedRegion);
   const active = (href: string) => path === href || (href !== "/" && path.startsWith(`${href}/`));
   const href = (url: string) =>
-    `${url === "/builds" ? "/builds/library" : url === "/compositions" ? "/compositions/library" : url}?region=${region}`;
+    `${url === "/builds" ? "/builds/activities" : url === "/compositions" ? "/compositions/library" : url}?region=${region}`;
   const productShell = true;
   const workspace = !["/", "/signin", "/legal"].includes(path) && !path.startsWith("/guides");
   useEffect(() => {

@@ -154,7 +154,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
   const actions = page.locator(".landing-hero .landing-actions a");
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
-  await expect(actions.nth(1)).toHaveAttribute("href", "/builds/library?region=europe");
+  await expect(actions.nth(1)).toHaveAttribute("href", "/builds/activities?region=europe");
   const stats = page.getByRole("term");
   await expect(stats).toContainText(["Active players", "Builds", "Guides", "Tools", "Supporters"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
@@ -324,15 +324,18 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/kill-feed?region=europe",
   );
 
-  // Activities: listed counts, the weapons of the best-liked builds and the most liked build.
-  const activities = page.locator(".activity-card");
+  // Activities: supplied cutout scenes, listed counts and the most liked build.
+  const activities = page.locator(".activity-artwork-card");
   await expect(activities).toHaveCount(8);
-  await expect(activities.first().locator(".activity-copy")).toHaveAttribute(
+  await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
     "href",
     "/builds/library?category=ZVZ&region=europe",
   );
-  await expect(activities.first().locator(".activity-copy")).toContainText(/ZvZ\s*[\d,]+ builds/);
-  await expect(activities.first().locator(".activity-weapons img")).toHaveCount(3);
+  await expect(activities.first().locator(".activity-artwork-link")).toContainText(
+    /ZvZ\s*[\d,]+ builds/,
+  );
+  await expect(activities.first().locator("img")).toHaveAttribute("src", /zvz/);
+  await expect(activities.first().locator("img")).toBeVisible();
   await expect(activities.first().locator("a.activity-top")).toHaveAttribute(
     "href",
     /^\/builds\/library\/[^?]+\?region=europe$/,

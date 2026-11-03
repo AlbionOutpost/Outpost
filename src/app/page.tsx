@@ -122,7 +122,7 @@ export default async function Home({
               <Link href={`/tools${suffix}`} className="button primary">
                 Explore Tools <ArrowRight size={17} />
               </Link>
-              <Link href={`/builds/library${suffix}`} className="button secondary">
+              <Link href={`/builds/activities${suffix}`} className="button secondary">
                 <BookOpen size={17} /> Browse Builds
               </Link>
             </div>
@@ -213,8 +213,8 @@ export default async function Home({
             A build for <em>every</em> activity.
           </h2>
           <p>Pick your content and grab the builds other players liked most for it.</p>
-          <Link className="pill-link" href={`/builds/library${suffix}`}>
-            Build library <ArrowRight size={15} />
+          <Link className="pill-link" href={`/builds/activities${suffix}`}>
+            All activities <ArrowRight size={15} />
           </Link>
         </div>
         <ActivityGrid activities={activities} suffix={suffix} />
