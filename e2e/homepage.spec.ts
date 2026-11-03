@@ -324,7 +324,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/kill-feed?region=europe",
   );
 
-  // Activities: supplied cutout scenes, listed counts and the most liked build.
+  // Activities: supplied cutout scenes and listed counts, without the removed ranking rows.
   const activities = page.locator(".activity-artwork-card");
   await expect(activities).toHaveCount(8);
   await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
@@ -336,10 +336,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   );
   await expect(activities.first().locator("img")).toHaveAttribute("src", /zvz/);
   await expect(activities.first().locator("img")).toBeVisible();
-  await expect(activities.first().locator("a.activity-top")).toHaveAttribute(
-    "href",
-    /^\/builds\/library\/[^?]+\?region=europe$/,
-  );
+  await expect(page.locator(".landing-activities .activity-top")).toHaveCount(0);
 
   // Advertising stays off until configured; the closing band says what is free and what supports.
   await expect(page.locator(".adsbygoogle")).toHaveCount(0);

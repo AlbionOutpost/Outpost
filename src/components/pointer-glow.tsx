@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 
 const cards =
-  "a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card, .activity-card";
+  "a.raised, .raised.is-link, .landing-window, .landing-card, .kill-card, .activity-artwork-card";
 
 /**
  * Feeds the pointer position to the card under it (`--mx`, `--my` in the card's own
@@ -12,6 +12,7 @@ const cards =
 export function PointerGlow() {
   useEffect(() => {
     if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let last: PointerEvent | null = null;
     const apply = () => {
@@ -19,13 +20,14 @@ export function PointerGlow() {
       const event = last;
       const card =
         event?.target instanceof Element ? event.target.closest<HTMLElement>(cards) : null;
-      if (!event || !card) return;
+      if (!event || !card || reducedMotion.matches) return;
       const box = card.getBoundingClientRect();
       const scale = box.width ? card.offsetWidth / box.width : 1;
       card.style.setProperty("--mx", `${Math.round((event.clientX - box.left) * scale)}px`);
       card.style.setProperty("--my", `${Math.round((event.clientY - box.top) * scale)}px`);
     };
     const move = (event: PointerEvent) => {
+      if (reducedMotion.matches) return;
       last = event;
       if (!frame) frame = requestAnimationFrame(apply);
     };

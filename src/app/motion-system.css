@@ -228,3 +228,22 @@
   > .member-select:is(:hover, :active) {
   transform: none;
 }
+
+/* Owner-requested depth is scoped to the illustrated activity cards. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app.outpost[data-motion-enabled] .activity-artwork-link {
+    transition:
+      transform var(--motion-card-time) var(--motion-card-ease),
+      filter var(--motion-card-time) var(--motion-card-ease);
+    transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+  }
+  .app.outpost[data-motion-enabled] .activity-artwork-link:hover {
+    transform: perspective(900px) translateY(-6px) rotateX(3deg) rotateY(-3deg) scale(1.025);
+    filter: drop-shadow(0 8px 5px var(--activity-shadow, var(--well)))
+      drop-shadow(0 24px 20px var(--activity-shadow, var(--well)));
+  }
+  .app.outpost[data-motion-enabled] .activity-artwork-link:active {
+    transform: perspective(900px) translateY(-2px) rotateX(1deg) rotateY(-1deg) scale(0.99);
+    transition-duration: 90ms;
+  }
+}

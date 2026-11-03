@@ -212,12 +212,12 @@ export default async function Home({
           <h2 id="home-activities-title">
             A build for <em>every</em> activity.
           </h2>
-          <p>Pick your content and grab the builds other players liked most for it.</p>
+          <p>Pick your content and find a build for your next adventure.</p>
           <Link className="pill-link" href={`/builds/activities${suffix}`}>
             All activities <ArrowRight size={15} />
           </Link>
         </div>
-        <ActivityGrid activities={activities} suffix={suffix} />
+        <ActivityGrid activities={activities} />
       </section>
 
       <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />

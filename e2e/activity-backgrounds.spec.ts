@@ -51,3 +51,28 @@ test("main Builds navigation opens activity discovery", async ({ page }) => {
   await expect(page.locator("#library-activity")).toHaveValue("HELLGATE_5V5");
   await expect(page).toHaveURL(/region=asia/);
 });
+
+test("activity depth preserves click targets and respects reduced motion", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/builds/activities?region=asia");
+  const card = page.getByRole("link", { name: /Solo Mists/ });
+  const before = (await card.boundingBox())!;
+  await card.hover();
+  await expect.poll(async () => (await card.boundingBox())!.y).toBeLessThan(before.y - 2);
+  await card.click();
+  await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
+  await expect(page).toHaveURL(/region=asia/);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/builds/activities?region=asia");
+  await page.mouse.move(0, 0);
+  const still = (await card.boundingBox())!;
+  await card.hover();
+  await page.waitForTimeout(350);
+  const hovered = (await card.boundingBox())!;
+  expect(Math.abs(hovered.width - still.width)).toBeLessThan(0.5);
+  expect(Math.abs(hovered.y - still.y)).toBeLessThan(0.5);
+  await card.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
+});
