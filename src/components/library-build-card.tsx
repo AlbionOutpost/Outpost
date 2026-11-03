@@ -1,5 +1,6 @@
 import Link from "@/components/build-region-link";
-import { useId } from "react";
+import { useId, type CSSProperties } from "react";
+import { activityBackgroundFor } from "@/lib/activity-backgrounds";
 import { ArrowUpRight, Swords } from "lucide-react";
 import { ItemIcon } from "./item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -35,12 +36,15 @@ async function LibraryBuildCardContent({
     const row = build.equipment.find((item) => item.slot === slot);
     return row ? [row] : [];
   });
+  const art = activityBackgroundFor(build.category);
   const href = `/builds/library/${encodeURIComponent(slug)}`;
   const about = brandCopy(build.description || "").trim();
   return (
     <article
       className="raised has-scene library-build-card ecosystem-build-card"
-      data-scene={sceneFor(build.id)}
+      data-scene="build"
+      data-activity-background={art?.src}
+      style={art ? ({ "--scene": `url("${art.src}")` } as CSSProperties) : undefined}
       data-activity={build.category}
     >
       <div className="library-card-bar">
@@ -144,12 +148,4 @@ async function LibraryBuildCardContent({
       </Link>
     </article>
   );
-}
-
-/* Each card gets one of the paintings, chosen from the build id so it stays put across visits */
-const scenes = ["build", "composition", "city", "economy", "market"] as const;
-function sceneFor(id: string) {
-  let hash = 0;
-  for (const char of id) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-  return scenes[hash % scenes.length];
 }

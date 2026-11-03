@@ -1,5 +1,6 @@
 import Link from "@/components/build-region-link";
-import { useId } from "react";
+import { useId, type CSSProperties } from "react";
+import { activityBackgroundFor } from "@/lib/activity-backgrounds";
 import { ItemIcon } from "./item-icon";
 import { FavoriteBuildButton } from "./favorite-build-button";
 import { BuildCardOwnerActions } from "./build-card-owner-actions";
@@ -34,6 +35,7 @@ export function BuildPreviewCard({
   owned?: boolean;
 }) {
   const titleId = useId();
+  const art = activityBackgroundFor(b.contentType);
   const equipment = b.equipment.filter((item) => item.itemId),
     main = equipment.find((e) => e.slot === "Main hand"),
     date = discoveryDate(b.updatedAt);
@@ -49,7 +51,11 @@ export function BuildPreviewCard({
         .slice(0, 4)
     : [];
   return (
-    <article className="build-preview-card loadout-card ecosystem-build-card">
+    <article
+      className="build-preview-card loadout-card ecosystem-build-card"
+      data-activity-background={art?.src}
+      style={art ? ({ "--build-category-scene": `url("${art.src}")` } as CSSProperties) : undefined}
+    >
       <div className="build-preview-link loadout-card-link ecosystem-card-main">
         <div className="ecosystem-card-topline">
           <span className="ecosystem-activity">{b.contentType}</span>

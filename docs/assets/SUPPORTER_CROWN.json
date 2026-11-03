@@ -1,0 +1,18 @@
+{
+  "suppliedOn": "2026-11-03",
+  "source": "Owner attachment codex-clipboard-rkbeAg.png, replaces prior Supporter courtyard illustration at owner request",
+  "provenance": "Owner supplied for this use; creator, generation method and third-party licensing not independently established. No authentic game-scene/current-patch claim.",
+  "derivation": "Unchanged1374x1145 PNG archived; sharp WebP quality85 effort6 at original dimensions. No crop/retouch. Displayed through the restored centered callout original scene/scrim/frame styling, not a new foreground layout.",
+  "assets": [
+    {
+      "path": "assets/source/supporter-crown/original.png",
+      "bytes": 2469981,
+      "sha256": "bd64944e85f1ae948c07a6c4038642cd156c6048867990b5b43b08f87870c0d9"
+    },
+    {
+      "path": "public/scenes/supporter/crown-courtyard.webp",
+      "bytes": 195042,
+      "sha256": "124ad7c41c2030313103b71f0940990d25544957fc78232c6527a2a8bb4b0ced"
+    }
+  ]
+}

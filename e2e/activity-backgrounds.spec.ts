@@ -101,3 +101,45 @@ test("both activity grids overlay recorded weapons without ranking rows", async 
     }
   }
 });
+
+test("weapon previews stay transparent in both themes and category builds share their artwork", async ({
+  page,
+  context,
+}) => {
+  for (const theme of ["dark", "light"]) {
+    await context.addCookies([
+      { name: "atlas-theme", value: theme, domain: "localhost", path: "/" },
+    ]);
+    for (const path of ["/", "/builds/activities"]) {
+      await page.goto(path);
+      const card = page.locator('.activity-artwork-card[data-activity="MISTS_SOLO"]');
+      await card.scrollIntoViewIfNeeded();
+      const weapon = card.locator("[data-activity-weapon]").first();
+      for (const target of [weapon, weapon.locator("img")]) {
+        expect(await target.evaluate((n) => getComputedStyle(n).backgroundColor)).toBe(
+          "rgba(0, 0, 0, 0)",
+        );
+        expect(await target.evaluate((n) => getComputedStyle(n).borderTopWidth)).toBe("0px");
+      }
+    }
+    for (const [category, filename] of [
+      ["GANK_GROUP", "gank-group.webp"],
+      ["MISTS_SOLO", "mists-solo.webp"],
+      ["HELLGATE_5V5", "hellgate-5v5.webp"],
+    ]) {
+      await page.goto(`/builds/library?category=${category}&region=asia`);
+      const builds = page.locator(".library-build-card");
+      await expect(builds.first()).toBeVisible();
+      for (const build of await builds.all()) {
+        await expect(build).toHaveAttribute("data-activity", category);
+        await expect(build).toHaveAttribute(
+          "data-activity-background",
+          `/albion/activities/${filename}`,
+        );
+        expect(
+          await build.evaluate((n) => getComputedStyle(n, "::before").backgroundImage),
+        ).toContain(filename);
+      }
+    }
+  }
+});

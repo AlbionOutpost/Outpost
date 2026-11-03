@@ -293,6 +293,15 @@
   overflow: visible;
   box-shadow: none;
 }
+.app.outpost .build-preview-card[data-activity-background],
+.app.outpost .build-preview-card[data-activity-background]:hover {
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--panel) 88%, transparent),
+      color-mix(in srgb, var(--panel) 96%, transparent)
+    ),
+    var(--build-category-scene) center / cover no-repeat;
+}
 .app.outpost .ecosystem-build-card:hover {
   border-color: var(--accent);
   background: var(--elevated);
