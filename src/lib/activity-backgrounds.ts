@@ -161,3 +161,19 @@ export const activityBackgrounds = [
     src: "/albion/activities/off-meta.webp",
   },
 ] as const;
+
+/** Match only recorded category IDs/names and unambiguous editor labels. */
+export function activityBackgroundFor(category: string) {
+  const aliases: Record<string, string> = {
+    "Open World": "OPEN_WORLD",
+    "Solo PvE": "FAME_FARM_SOLO",
+    "Group PvE": "FAME_FARM_GROUP",
+    Roaming: "OPEN_WORLD",
+    "Small Scale PvP": "SMALL_SCALE",
+  };
+  return activityBackgrounds.find(
+    (art) =>
+      art.id === (aliases[category] || category) ||
+      art.name.toLowerCase() === category.toLowerCase(),
+  );
+}
