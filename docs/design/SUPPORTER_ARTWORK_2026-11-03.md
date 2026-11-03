@@ -1,0 +1,11 @@
+# Supporter courtyard artwork — 3 November 2026
+
+The owner supplied a new courtyard illustration for the homepage Supporter callout. It replaces the generic blurred build scene directly above activity discovery. Crown banners and weapons retain their natural proportions and protrude above the card body; the opaque black upper matte is removed by a native SVG mask, including the enclosed bow gap. There is no rectangular header behind the silhouette.
+
+The original attachment is archived unchanged. A 1536×1024 WebP derivative is lazy loaded with explicit dimensions and no client JavaScript. A separate SVG mask controls presentation; the bitmap is not cropped or retouched. The lower scene fades into the established dark surface, with an inset edge that fades toward the raised objects. Provenance, derivation, sizes and exact hashes are recorded in [the asset ledger](../assets/SUPPORTER_COURTYARD.json). Creator, generation method and licensing remain independently unverified; this is owner-supplied illustration, not evidence of an authentic game scene or game data.
+
+Desktop uses the full-width scene with text and actions along its lower edge. Phones preserve the whole illustration above stacked copy and full-width actions. The existing free-access copy, conditional billing price, region-aware Supporter destination, Discord sign-in and position before activity cards remain intact. Light mode uses the same dark illustrated-card context as existing game panels. No formulas, data, auth, schema, dependencies, provider settings or billing activation change.
+
+Verification and publication are independent. Current phase results, rendered widths, accessibility findings and release checkpoint are recorded in the reviewed QA record; actual deployment/read-back evidence is recorded separately after publication. Existing unrelated equipment screenshot failures and broader launch gates remain explicit.
+
+Rendered review caught the light theme inheriting the tan page canvas into the illustration fade. The scene now uses an explicit shared dark illustration token, and its copper primary action retains dark text. Initial captures and the defect are retained separately from corrected captures; automated axe checks alone did not detect this visual failure.
