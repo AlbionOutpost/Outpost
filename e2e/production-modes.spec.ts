@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { expect, test } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
@@ -68,14 +69,18 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
       for (const [label, value] of fields)
         await page.getByLabel(label, { exact: true }).fill(value);
       const expected = kind === "crafting" ? "600" : kind === "refining" ? "2,125" : "1,372";
-      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
+      await expectResultText(page.locator("output[data-result=total-profit]"), expected, {
+        exact: true,
+      });
       const batches = kind === "crafting" ? "1" : kind === "refining" ? "10" : "2";
       await page.getByLabel("Crafts / upgrades", { exact: true }).fill("0");
       await expect(page.getByRole("alert").filter({ hasText: "Check quantities" })).toContainText(
         "Check quantities",
       );
       await page.getByLabel("Crafts / upgrades", { exact: true }).fill(batches);
-      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
+      await expectResultText(page.locator("output[data-result=total-profit]"), expected, {
+        exact: true,
+      });
       const title = `QA ${kind} manual scenario`;
       if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
         await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
@@ -89,7 +94,9 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
       await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
       await page.getByRole("button", { name: `Restore ${title}`, exact: true }).click();
-      await expect(page.locator("output[data-result=total-profit]")).toHaveText(expected);
+      await expectResultText(page.locator("output[data-result=total-profit]"), expected, {
+        exact: true,
+      });
       await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue(batches);
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
@@ -103,7 +110,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         );
         if (width === 390) {
           await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
-          await expect(page.locator("#production-results")).toContainText(expected);
+          await expectResultText(page.locator("#production-results"), expected);
           await expect(page.locator("#production-results")).toBeInViewport();
           await page.evaluate(() => {
             (document.activeElement as HTMLElement)?.blur();
@@ -122,7 +129,9 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         await page.getByLabel("Return rate without focus (%)", { exact: true }).fill("20");
         await page.getByLabel("Apply returns to Steel Bar", { exact: true }).check();
         await page.getByLabel("Apply returns to Pine Planks", { exact: true }).check();
-        await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
+        await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+          exact: true,
+        });
         if (!(await page.getByLabel("Scenario title", { exact: true }).isVisible()))
           await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
         await page
@@ -143,7 +152,9 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         await expect(page.getByLabel("Return rate without focus (%)", { exact: true })).toHaveValue(
           "20",
         );
-        await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
+        await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+          exact: true,
+        });
       }
       expect(await db.savedScenario.count({ where: { authorId: id, kind } })).toBe(
         kind === "crafting" ? 2 : 1,

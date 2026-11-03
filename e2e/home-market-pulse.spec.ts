@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 
 test("market controls wait for client handlers before the first comparison", async ({ page }) => {
@@ -113,9 +114,10 @@ test("quality coverage is requested explicitly and never substitutes a different
   await expect(page.locator(".task-state")).toContainText("No price observations");
   expect(coverageCalls).toBe(0);
   await page.getByRole("button", { name: "Check other qualities", exact: true }).click();
-  await expect(
+  await expectResultText(
     page.getByRole("region", { name: "Quality availability comparison", exact: true }),
-  ).toContainText("2,345");
+    "2,345",
+  );
   await expect(
     page.getByRole("region", { name: "Quality availability comparison", exact: true }),
   ).toContainText("Bridgewatch · Needs recheck");

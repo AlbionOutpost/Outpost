@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 
 test("production prerequisites, genuine sensitivity and three-column composition", async ({
@@ -28,12 +29,17 @@ test("production prerequisites, genuine sensitivity and three-column composition
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
   await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
-  await expect(
+  await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+    exact: true,
+  });
+  await expectResultText(
     page.getByRole("region", { name: "Sale-price sensitivity scenarios" }),
-  ).toContainText("400");
+    "400",
+  );
   await page.getByLabel("Output unit sale price", { exact: true }).fill("1000");
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("-1,000");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-1,000", {
+    exact: true,
+  });
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeVisible();
@@ -56,9 +62,9 @@ test("manual trade requires prices, accepts explicit zero, and shows negative ou
   await expect(page.getByLabel("Purchase price per item", { exact: true })).toHaveValue("");
   await page.getByLabel("Purchase price per item", { exact: true }).fill("100");
   await page.getByLabel("Sale price per item", { exact: true }).fill("50");
-  await expect(result.locator(":scope > strong")).toHaveText("-50 silver");
+  await expectResultText(result.locator(":scope > strong"), "-50 silver", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("0");
-  await expect(result.locator(":scope > strong")).toHaveText("-100 silver");
+  await expectResultText(result.locator(":scope > strong"), "-100 silver", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("");
   await expect(result).toContainText("Add your trade prices");
   await expect(result.locator(":scope > strong")).toHaveText("— silver");
@@ -146,7 +152,9 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByLabel("Sales tax (%)", { exact: true }).fill("10");
   await page.getByText("Fees & extra costs", { exact: true }).click();
   // 150 - 100 - 15 sales tax = 35; collapsing must not reset the fee.
-  await expect(page.locator(".manual-trade-workspace .result > strong")).toHaveText("35 silver");
+  await expectResultText(page.locator(".manual-trade-workspace .result > strong"), "35 silver", {
+    exact: true,
+  });
   await expect(page.locator(".economy-assumption-readout")).toContainText("10% tax");
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
 
@@ -158,7 +166,9 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByLabel("Cost per trip", { exact: true }).fill("10");
   await page.getByText("Trip costs, risk & fees", { exact: true }).click();
   // The validated transport model requires at least one trip: 150-100-10=40.
-  await expect(page.locator(".transport-workspace .result > strong")).toHaveText("40");
+  await expectResultText(page.locator(".transport-workspace .result > strong"), "40", {
+    exact: true,
+  });
   await expect(page.locator(".economy-assumption-readout")).toContainText("10 silver/trip");
   await expect(page.getByLabel("Transport plan title", { exact: true })).toBeHidden();
 
@@ -171,7 +181,7 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByLabel("Unwatered seed yield (%)", { exact: true }).fill("50");
   await page.getByText("Seed returns & fees", { exact: true }).click();
   // Nine plants: 7200 revenue-18000 seeds+9000 retained seed credit=-1800.
-  await expect(page.locator('[data-result="farm-profit"]')).toHaveText("-1,800");
+  await expectResultText(page.locator('[data-result="farm-profit"]'), "-1,800", { exact: true });
   await expect(page.locator(".economy-assumption-readout")).toContainText("50% unwatered");
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
 });

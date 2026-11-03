@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { initialProduction } from "../src/lib/albion/production";
@@ -119,7 +120,9 @@ test("legacy production fees require a player accounting choice without replacin
   await page
     .getByRole("button", { name: "Recorded fee includes recipe silver", exact: true })
     .click();
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("-6,200");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-6,200", {
+    exact: true,
+  });
   await page.getByText("Station settings, focus & sources", { exact: true }).click();
   await page.getByText("Markets & transaction fees", { exact: true }).click();
   await expect(
@@ -205,12 +208,12 @@ test("laborer execution changes never reuse listing observations after a failed 
   await page.goto("/tools/laborers?region=europe");
   const execution = page.locator("label").filter({ hasText: "Sell loot by" }).locator("select");
   await execution.selectOption("listing");
-  await expect(page.locator(".tool-main-result")).toHaveText("15,294 silver");
+  await expectResultText(page.locator(".tool-main-result"), "15,294 silver", { exact: true });
   await expect(page.getByText("All prices in place", { exact: true })).toBeVisible();
   await execution.selectOption("instant");
   await expect(page.getByText("Fixture: buy orders unavailable", { exact: true })).toBeVisible();
   await expect(page.getByText("All prices in place", { exact: true })).toHaveCount(0);
-  await expect(page.locator(".tool-main-result")).not.toContainText("15,724");
+  await expectResultText(page.locator(".tool-main-result"), "15,724", { not: true });
   await expect(page.getByLabel("T4_METALBAR unit price", { exact: true })).toHaveValue("");
   await expect(page.getByText("Estimate is incomplete", { exact: true })).toBeVisible();
   await page.getByLabel("T4_METALBAR unit price", { exact: true }).fill("900");
@@ -282,7 +285,9 @@ test("production calculations save, reload, share and enforce scenario ownership
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-    await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,000");
+    await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+      exact: true,
+    });
     await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("Verified crafting scenario");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();

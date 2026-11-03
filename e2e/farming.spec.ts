@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
@@ -32,8 +33,8 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await page.getByLabel("Seed purchase fee (%)", { exact: true }).fill("1");
     await page.getByLabel("Produce sales tax + setup (%)", { exact: true }).fill("10");
     await page.getByLabel("Other costs per harvest · silver", { exact: true }).fill("100");
-    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");
-    await expect(page.locator(".farming-results")).toContainText("-13,100");
+    await expectResultText(page.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
+    await expectResultText(page.locator(".farming-results"), "-13,100");
     await page.route("**/api/market/batch?*", (route) =>
       route.fulfill({
         json: {
@@ -46,7 +47,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     );
     await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
     await expect(page.getByRole("status").first()).toContainText("Manual prices kept");
-    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");
+    await expectResultText(page.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
     await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("Harvest fixture");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
@@ -68,7 +69,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await shared.goto(
       `/tools/farming?region=europe#scenario=${encodeURIComponent(JSON.stringify(saved.configuration))}`,
     );
-    await expect(shared.locator('[data-result="farm-profit"]')).toHaveText("6,900");
+    await expectResultText(shared.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
     await shared.getByLabel("Plants to water", { exact: true }).fill("11");
     await expect(shared.getByLabel("Plants to water", { exact: true })).toHaveAttribute(
       "aria-invalid",
@@ -88,7 +89,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore Harvest fixture", exact: true }).click();
-    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("6,900");
+    await expectResultText(page.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
   } finally {
     await anonymous.close();
     await db.user.deleteMany({ where: { id } });

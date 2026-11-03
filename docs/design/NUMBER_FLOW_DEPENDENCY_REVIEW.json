@@ -1,0 +1,44 @@
+{
+  "scope": "Pinned dependency metadata/dist review; not a blanket security or legal certification",
+  "packages": [
+    {
+      "version": "0.6.2",
+      "integrity": "sha512-WjZuV4aA+vhRCgCF+adGLgFVVAJ8vdvq6EchRT2FiBIgElTXtDOA3YgkcMr9UHpvpS9v4H70AB5wZv0D9jc3QA==",
+      "license": "MIT",
+      "resolved": "https://registry.npmjs.org/@number-flow/react/-/react-0.6.2.tgz",
+      "name": "@number-flow/react"
+    },
+    {
+      "version": "0.6.2",
+      "integrity": "sha512-MCnImG4Q5vPwhSXnov56nOuyyKn6LC+Qd7II1UiKc+ACRtug5iAtn0+CwXNxM38AC5lSowEY+oYEtZX2qMnUyw==",
+      "license": "MIT",
+      "resolved": "https://registry.npmjs.org/number-flow/-/number-flow-0.6.2.tgz",
+      "name": "number-flow"
+    },
+    {
+      "version": "1.2.2",
+      "integrity": "sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==",
+      "license": "MIT",
+      "resolved": "https://registry.npmjs.org/esm-env/-/esm-env-1.2.2.tgz",
+      "name": "esm-env"
+    }
+  ],
+  "docs": "https://number-flow.barvian.me/",
+  "licenseRevision": "c5906cf35c86583e756a6b91e043291c10b416e0",
+  "licenseUrl": "https://raw.githubusercontent.com/barvian/number-flow/c5906cf35c86583e756a6b91e043291c10b416e0/LICENSE.md",
+  "licenseSha256": "f8a3eac9fd2ae94f18a2bf0459e57d90da539f015a7ec4ad6186a5ca33a6aa9a",
+  "review": "Published dist has no install helper, telemetry, fetch, eval or remote runtime loader. React18/19 peers; reviewed SSR/Declarative Shadow DOM, style injection, CSP compatibility, motion preference and fallback. Existing style-src unsafe-inline retained; script CSP unchanged. No dependency executable helper run.",
+  "distNotices": [
+    {
+      "name": "number-flow / @number-flow/react",
+      "path": "public/third-party/number-flow-LICENSE.txt",
+      "sha256": "f8a3eac9fd2ae94f18a2bf0459e57d90da539f015a7ec4ad6186a5ca33a6aa9a"
+    },
+    {
+      "name": "esm-env",
+      "path": "public/third-party/esm-env-LICENSE.txt",
+      "sha256": "6df5276ee7531fcc5446f19082c12e77bb6c5f081fd2b6d6cf88180a5ee36acd"
+    }
+  ],
+  "licenseNote": "Production notices copied from the exact pinned npm package LICENSE files; upstream reference revision is separately recorded."
+}
