@@ -1,5 +1,13 @@
 import Link from "./build-region-link";
-import { Swords, Compass, UserRound, Bookmark, SlidersHorizontal, Plus } from "lucide-react";
+import {
+  Swords,
+  Compass,
+  UserRound,
+  Bookmark,
+  SlidersHorizontal,
+  Plus,
+  LayoutGrid,
+} from "lucide-react";
 import { MastheadTabs } from "./masthead-tabs";
 import { WorkspaceHeading } from "./workspace-heading";
 
@@ -10,7 +18,7 @@ export function BuildDiscoveryHeader({
   title,
   description,
 }: {
-  active?: "browse" | "mine" | "favorites" | "saved";
+  active?: "browse" | "activities" | "mine" | "favorites" | "saved";
   source?: "library" | "community";
   title?: string;
   description?: string;
@@ -35,6 +43,12 @@ export function BuildDiscoveryHeader({
       <MastheadTabs
         label="Build collections"
         tabs={[
+          {
+            href: "/builds/activities",
+            label: "Activities",
+            icon: <LayoutGrid size={16} />,
+            current: current("activities"),
+          },
           {
             href: "/builds/library",
             label: "Library",

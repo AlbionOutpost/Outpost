@@ -1,0 +1,264 @@
+{
+  "suppliedOn": "2026-11-03",
+  "source": "Owner-supplied local card backgrounds folder",
+  "provenance": "Creator, generation method and third-party licensing not independently established. Supplied for use on Outpost activity/category cards; no authentic game-scene or current-patch claim.",
+  "derivation": "sharp: resize to 800px width without enlargement, WebP quality 82; no crop or retouch",
+  "assets": [
+    {
+      "id": "MISTS_SOLO",
+      "name": "Solo Mists",
+      "source": "card backgrounds/solo mists.png",
+      "sourceSha256": "d31ef1300161e2071e8510fb1d3cede3452f1845d43c2784fc2455b4fa8f3891",
+      "output": "public/albion/activities/mists-solo.webp",
+      "outputSha256": "b653f5820d7fca899a68b6f88f1b6240690dceb27323824e198c801401a6e0de"
+    },
+    {
+      "id": "MISTS_DUO",
+      "name": "Duo Mists",
+      "source": "card backgrounds/duo mists",
+      "sourceSha256": "2f941f67835acae7cc033f73a5b61b253908af48eb2c9f3f674db60c9c085ecb",
+      "output": "public/albion/activities/mists-duo.webp",
+      "outputSha256": "d49f89a0329fdbc986251a1821004885cdb71d46fc45eb5ed65fc072c811000f"
+    },
+    {
+      "id": "CORRUPTED_DUNGEON",
+      "name": "Corrupted Dungeons",
+      "source": "card backgrounds/corrupteddungeon.png",
+      "sourceSha256": "07192e188f7381de3f018ee174fc34f4ea96793431b18ba7ad24c29e7700ac34",
+      "output": "public/albion/activities/corrupted-dungeon.webp",
+      "outputSha256": "fad3994cf017648d896e19032619648e8f75563aec0c381b42b2b9158c216b92"
+    },
+    {
+      "id": "ABYSSAL_DEPTHS_2V2",
+      "name": "Abyssal Depths 2v2",
+      "source": "card backgrounds/abyssal depths 2v2.png",
+      "sourceSha256": "7766c34462be1b5ce62c4c57193da03f7e0904a5cb0b5447f352d67f5147ba6d",
+      "output": "public/albion/activities/abyssal-depths-2v2.webp",
+      "outputSha256": "7eadc79abd0efa1d1e11d9a00342666e91893febbf7875eb754636818f32dd56"
+    },
+    {
+      "id": "ABYSSAL_DEPTHS_3V3",
+      "name": "Abyssal Depths 3v3",
+      "source": "card backgrounds/abyssal depths 3v3.png",
+      "sourceSha256": "168c2e54db7d07bd07e142caa9d177517569894489d777479bc6c2cbfc7354a9",
+      "output": "public/albion/activities/abyssal-depths-3v3.webp",
+      "outputSha256": "023a9af84648a5dc3c7b70fab6d8189f5f9d7c5b7173e115d58e5c32d33d7b9c"
+    },
+    {
+      "id": "HELLGATE_2V2",
+      "name": "Hellgates 2v2",
+      "source": "card backgrounds/hellgates 2v2.png",
+      "sourceSha256": "f9ec4d2f66d4e0d91ff4b956a50ab919530e0a0b19b6b1a3585c57880bd9aa1d",
+      "output": "public/albion/activities/hellgate-2v2.webp",
+      "outputSha256": "8eb92c12a593d0b3e642f964c58935086b90fcf058cdcca1f7afd3cca2b03e85"
+    },
+    {
+      "id": "HELLGATE_5V5",
+      "name": "Hellgates 5v5",
+      "source": "card backgrounds/hellgate 5v5.png",
+      "sourceSha256": "5696653201482f85d53d41a47923b02e006c5abefc3b51df2e5603523d2f2df3",
+      "output": "public/albion/activities/hellgate-5v5.webp",
+      "outputSha256": "41a9e11b82fb7d18f6b4c11fb87adc94406eaaf803ef07f3d827b08468869756"
+    },
+    {
+      "id": "HELLGATE_10V10",
+      "name": "Hellgates 10v10",
+      "source": "card backgrounds/hellgate 10v10.png",
+      "sourceSha256": "3ba9607523aa52288491b7af8206b6057c887190e18f4645eb8735e8ef65e5fa",
+      "output": "public/albion/activities/hellgate-10v10.webp",
+      "outputSha256": "1f74008ebadaff766f6b74f63bf70a9a5225c7077a0bc0a85893318cff27f504"
+    },
+    {
+      "id": "SMALL_SCALE",
+      "name": "Small Scale",
+      "source": "card backgrounds/smallscale.png",
+      "sourceSha256": "9a2f76955732f2746a6efb84bdc38db7eb9562d2379e20f3bc1ea9fc79d70d28",
+      "output": "public/albion/activities/small-scale.webp",
+      "outputSha256": "4f58750ca56f3fcb024b73dd482d8bcb1497837b9e23e92a1c7c441bc5ff7197"
+    },
+    {
+      "id": "ZVZ",
+      "name": "ZvZ",
+      "source": "card backgrounds/zvz.png",
+      "sourceSha256": "af53fc7fc31186cb95c3b184e2f11b6732a8b87e7bc16dd089804f5a292954da",
+      "output": "public/albion/activities/zvz.webp",
+      "outputSha256": "6f0c5bcd66f4ca2ec8e72aa891fb1acf56ef44d0f42edb4606cfd2e57d1e418d"
+    },
+    {
+      "id": "BOMB_SQUAD",
+      "name": "Bomb Squad",
+      "source": "card backgrounds/bomb squad.png",
+      "sourceSha256": "e2b6fe7319ac06916157dfee2576a43c98ae2fef950ad0772b2a81132ca975f8",
+      "output": "public/albion/activities/bomb-squad.webp",
+      "outputSha256": "e8d5a09950e9c85f3b70fda6a1533e0fa5790fec9f68ab66498d69559955dd7f"
+    },
+    {
+      "id": "OPEN_WORLD",
+      "name": "Open World / Roaming",
+      "source": "card backgrounds/open world ⁄ roaming.png",
+      "sourceSha256": "99900f9d3d1a6babb839ba5a7b80591fe5a153d2c0aa30edd99400672368998f",
+      "output": "public/albion/activities/open-world.webp",
+      "outputSha256": "4483e985de070217008247eac8d31c3f3788427d78472022c3dfd4b295aa9893"
+    },
+    {
+      "id": "GANK_SOLO",
+      "name": "Solo Ganking",
+      "source": "card backgrounds/solo ganking.png",
+      "sourceSha256": "615645cddd564f5cfbc47d7e6e73fd75570ffe9a183e5b796f34a5b43d495602",
+      "output": "public/albion/activities/gank-solo.webp",
+      "outputSha256": "ae5e09e9595eafac07a60d20cf1a4c63b44d9cd0b07cde938ed03b0d0d166c7c"
+    },
+    {
+      "id": "GANK_DUO",
+      "name": "Duo Ganking",
+      "source": "card backgrounds/duo ganking.png",
+      "sourceSha256": "d9e822a18caaf9f55b3f7b6be2562c66689cda1f5f8a7f2eb6dee62b1f5a6dea",
+      "output": "public/albion/activities/gank-duo.webp",
+      "outputSha256": "8dda01c67b7fe7a7fd2a93e34685612610241071dd6f2c78f299b6f30f717f63"
+    },
+    {
+      "id": "GANK_GROUP",
+      "name": "Group Ganking",
+      "source": "card backgrounds/group ganking.png",
+      "sourceSha256": "a6e8607a2753befc5a494e331169d81ff3a7cea5e1d23974c56afb541aa58a1d",
+      "output": "public/albion/activities/gank-group.webp",
+      "outputSha256": "7a205e596b871835d8ea00eddccb3fca4f3c008224f2803c978ade90ffea72bf"
+    },
+    {
+      "id": "FACTION_WARFARE",
+      "name": "Faction Warfare",
+      "source": "card backgrounds/faction warfare.png",
+      "sourceSha256": "1b60513cf45a9fc09bca5d1992337b5acef609e3d49bb2e08d93124f5ae2d31d",
+      "output": "public/albion/activities/faction-warfare.webp",
+      "outputSha256": "36b6135ddaced578e0800b8b577bf6f01505fcb128b830c1a74ef963b835f8b9"
+    },
+    {
+      "id": "ARENA",
+      "name": "Arena",
+      "source": "card backgrounds/arena.png",
+      "sourceSha256": "352cac3e9dd6e9d80acd9165c17e486de6f571dcd782f83cd9500e824c6372b4",
+      "output": "public/albion/activities/arena.webp",
+      "outputSha256": "e3871d869d2d6bdb39c8f3f33ad25a7cff65dae9b7b455363f5c94b46ac56e50"
+    },
+    {
+      "id": "CRYSTAL_ARENA",
+      "name": "Crystal Arena",
+      "source": "card backgrounds/crystal arena.png",
+      "sourceSha256": "4a44c7504c5baca13c8be4a8f4a8bdcd05598990783c4d6bed30dc4441a7b38e",
+      "output": "public/albion/activities/crystal-arena.webp",
+      "outputSha256": "dd2c936b017e9a69a08e13d0918dd907d20029ee4ef0d74db648d36ead70ae1f"
+    },
+    {
+      "id": "CRYSTAL_ARENA_1V1",
+      "name": "Crystal Arena 1v1",
+      "source": "card backgrounds/crystal arena 1v1.png",
+      "sourceSha256": "e829d8a889193bc20096d87033fc0ffd9e6df6309635e5a2d612aa3ed1822bbb",
+      "output": "public/albion/activities/crystal-arena-1v1.webp",
+      "outputSha256": "169833b5162c5363e2be0f4494937dbbf3176c8625d94ad36782dfcf024e8951"
+    },
+    {
+      "id": "FAME_FARM_SOLO",
+      "name": "Solo PvE / Fame Farming",
+      "source": "card backgrounds/solo pve ⁄ fame farming.png",
+      "sourceSha256": "fad5c9c1ded006e999b6c28e624186927a99ad7bf29f92f1eec694c8c64fbe7d",
+      "output": "public/albion/activities/fame-farm-solo.webp",
+      "outputSha256": "bae955c13c9ef58e71797d4c0a92ce84c91dce0ffae6c2fd5f7ea3ccdaada188"
+    },
+    {
+      "id": "FAME_FARM_GROUP",
+      "name": "Group PvE / Fame Farming",
+      "source": "card backgrounds/group pve ⁄ fame farming.png",
+      "sourceSha256": "56a9abe3dde7a39d2bdadf86c9302a9eb5f98cdb7144f9b974f22dfc95cd8986",
+      "output": "public/albion/activities/fame-farm-group.webp",
+      "outputSha256": "9cbb778652fc12e7970704831f38b51ca43b9a8605e4cf954a07af84cfa7a791"
+    },
+    {
+      "id": "GROUP_DUNGEON",
+      "name": "Group Dungeons",
+      "source": "card backgrounds/group dungeons.png",
+      "sourceSha256": "2269b3ac26640f312ce748d8d9c86efa0959fb465fdfe7df7f4a4ae7253a3319",
+      "output": "public/albion/activities/group-dungeon.webp",
+      "outputSha256": "3d8939839ae8a85fb3f5bc74cbf43a12c8dd25b2f6f3ae0f787fb2212c2c6dc1"
+    },
+    {
+      "id": "FAME_FARM_GROUP_AVALON",
+      "name": "Avalonian Dungeons",
+      "source": "card backgrounds/avadungeon.png",
+      "sourceSha256": "59fdd57a0be77e40a44bb5ce508e172713ffb408a5cefa0f7966273ddf63f8bd",
+      "output": "public/albion/activities/fame-farm-group-avalon.webp",
+      "outputSha256": "6f57d9ce94191ec38701f1cf33383ad48f442b2c6692c19aa19bca88a008f60d"
+    },
+    {
+      "id": "HCE",
+      "name": "HCE",
+      "source": "card backgrounds/hce.png",
+      "sourceSha256": "74d24e5ea0cd0d3c2efc52522b95b9336db159b677ab890fdb2c348e9513bea0",
+      "output": "public/albion/activities/hce.webp",
+      "outputSha256": "22bbe7be3d36732fd4e149416ad09c9b66a06199153b7fb48c41d780ed66a3c7"
+    },
+    {
+      "id": "WORLD_BOSS",
+      "name": "World Boss",
+      "source": "card backgrounds/world boss",
+      "sourceSha256": "c661db6cf3f2d1d1683e3d76556360829d2777b8899acc4f333f888dc3a4878c",
+      "output": "public/albion/activities/world-boss.webp",
+      "outputSha256": "88b9573020546039cbef8e2c9ee7c36dab4fa04cfc5dcefced93adf5d26d32c6"
+    },
+    {
+      "id": "ANCIENT_LANDS",
+      "name": "Ancient Lands",
+      "source": "card backgrounds/ancient lands.png",
+      "sourceSha256": "c2477b910ce46e8b9b66c0da580cf3406a9ac56aa8cd57e3c32c9dd8a698cb9e",
+      "output": "public/albion/activities/ancient-lands.webp",
+      "outputSha256": "b9a7d2bc8ed0abb23e500477ff92d39a1a41de22e36ea1a8afd9351e4162c867"
+    },
+    {
+      "id": "CRYSTAL_CREATURES",
+      "name": "Crystal Creatures",
+      "source": "card backgrounds/crystal creatures.png",
+      "sourceSha256": "eee64a4b4fe7dd371985ae5359fe7bede102f7a5ef25b47827dba692629f2c5d",
+      "output": "public/albion/activities/crystal-creatures.webp",
+      "outputSha256": "defb05475df502e25580d68858ac39b7f0dd82699e784e58e8f8f70dbde06c5d"
+    },
+    {
+      "id": "TRACKING_SOLO",
+      "name": "Solo Tracking",
+      "source": "card backgrounds/solo tracking.png",
+      "sourceSha256": "f19df6d4f9361b526a5343fb328f1046454f932965ea887fb9d1d41524efdd63",
+      "output": "public/albion/activities/tracking-solo.webp",
+      "outputSha256": "742dc761502d67b00c6753be3faeb1964aceaca92a2d392e8afaaf3a31d68834"
+    },
+    {
+      "id": "TRACKING_GROUP",
+      "name": "Group Tracking",
+      "source": "card backgrounds/group tracking.png",
+      "sourceSha256": "9bad71e74bb3dde110038be9417dbe44be5579152505c9026cc89ec1bba96a0f",
+      "output": "public/albion/activities/tracking-group.webp",
+      "outputSha256": "37fef156901330c93f5e7fe55be9f54e608aef350cf7cb6cd23f8c46360852f9"
+    },
+    {
+      "id": "GATHERING",
+      "name": "Gathering",
+      "source": "card backgrounds/gathering.png",
+      "sourceSha256": "487f6ccf2f1dc2908de9fc3b23c047e863922c47181919631272b95b7ab70e1a",
+      "output": "public/albion/activities/gathering.webp",
+      "outputSha256": "3ced2bad235efc4257ef5d10a228cb5cca7bd7a2e9e034276fb1cfc13ec2337b"
+    },
+    {
+      "id": "TRANSPORTING",
+      "name": "Transporting",
+      "source": "card backgrounds/transporting.png",
+      "sourceSha256": "0f5e9b9b83f6b0b36b7cb2e116d17fef2ab025584244a74bf86452ac2f8f8f3c",
+      "output": "public/albion/activities/transporting.webp",
+      "outputSha256": "2ca48ac450a99faa15e7c571908d46e2400b639dc896aedb69fb4cc1abd5e3ca"
+    },
+    {
+      "id": "OFF_META",
+      "name": "Off Meta",
+      "source": "card backgrounds/off meta.png",
+      "sourceSha256": "8c6f93f38d819f138788601a9052f7826652baf83faf83a567662bb5832db3a2",
+      "output": "public/albion/activities/off-meta.webp",
+      "outputSha256": "e3b4e2d16fb2e0d8dff92eb44de35d239041b51e625a9fe74f088ef3b01e8427"
+    }
+  ]
+}
