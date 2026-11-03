@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
@@ -119,7 +120,7 @@ test("item detail loads city prices on arrival and links the item's variants", a
   await page.goto("/items/T4_MAIN_AXE?region=europe");
   const prices = page.getByRole("region", { name: "City price observations" });
   await expect(prices).toContainText("Lymhurst");
-  await expect(prices).toContainText("2,699");
+  await expectResultText(prices, "2,699");
   await expect(prices).toContainText("stale");
   await expect(page.locator(".item-price-summary")).toContainText("Lowest sell order");
   await expect(page.locator(".item-price-summary")).toContainText("Unavailable");

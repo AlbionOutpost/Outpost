@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -83,8 +84,10 @@ test("recipe drawer searches real variants, returns focus and keeps accounting i
   await page.getByLabel("Output unit sale price", { exact: true }).fill("5000");
   await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
   // Independent one-craft expectation: 16*100 + 8*200 = 3200; no supplied fees/returns.
-  await expect(page.locator("output[data-result=total-profit]")).toHaveText("1,800");
-  await expect(page.locator(".production-cash-summary")).toContainText("3,200");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "1,800", {
+    exact: true,
+  });
+  await expectResultText(page.locator(".production-cash-summary"), "3,200");
   expect(
     (
       await new AxeBuilder({ page })

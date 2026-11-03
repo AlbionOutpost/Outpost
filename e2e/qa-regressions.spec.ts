@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 test("preference cookie and market request agree without a region URL", async ({
@@ -89,8 +90,12 @@ test("market sort and city filtering retain correct buy and sell columns", async
   await expect(page.locator(".market-board tbody tr").first()).toContainText("Lymhurst");
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
-  await expect(page.locator(".market-board tbody tr td.numeric > span").nth(0)).toHaveText("100");
-  await expect(page.locator(".market-board tbody tr td.numeric > span").nth(1)).toHaveText("50");
+  await expectResultText(page.locator(".market-board tbody tr td.numeric > span").nth(0), "100", {
+    exact: true,
+  });
+  await expectResultText(page.locator(".market-board tbody tr td.numeric > span").nth(1), "50", {
+    exact: true,
+  });
   // Each order shows its age; the exact source time stays on the <time> element.
   await expect(
     page.locator("tbody tr td.numeric .market-inline-time time").first(),
@@ -107,7 +112,7 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
   const result = page.locator(".manual-trade-workspace .result");
-  await expect(result.locator(":scope > strong")).toContainText("0.5");
+  await expectResultText(result.locator(":scope > strong"), "0.5");
   await page.getByLabel("Purchase price per item").fill("");
   await expect(result.locator(".calculation-readiness")).toContainText("Purchase price per item");
   await expect(result.locator(":scope > strong")).toHaveText("— silver");
@@ -161,7 +166,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expect(page.locator(".result strong")).toContainText("500");
+  await expectResultText(page.locator(".result strong"), "500");
   await page.goBack();
   await expect(page.getByRole("heading", { name: "Market Explorer" })).toBeVisible();
 });

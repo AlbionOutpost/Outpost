@@ -548,18 +548,22 @@ export function Shell({
                     not affiliated with Sandbox Interactive.
                   </p>
                 </div>
-                {footerColumns.map(([title, links]) => (
-                  <nav key={title} className="site-footer-column" aria-label={title}>
-                    <h2>{title}</h2>
-                    {links
-                      .filter(([url]) => !authenticated || url !== "/signin")
-                      .map(([url, label]) => (
-                        <Link key={url} href={href(url)}>
-                          {label}
-                        </Link>
-                      ))}
-                  </nav>
-                ))}
+                <div className="site-footer-navigation">
+                  {footerColumns.map(([title, links]) => (
+                    <nav key={title} className="site-footer-column" aria-label={title}>
+                      <h2>{title}</h2>
+                      <div className="site-footer-links">
+                        {links
+                          .filter(([url]) => !authenticated || url !== "/signin")
+                          .map(([url, label]) => (
+                            <Link key={url} href={href(url)}>
+                              {label}
+                            </Link>
+                          ))}
+                      </div>
+                    </nav>
+                  ))}
+                </div>
               </div>
               <div className="site-footer-legal">
                 <span>© {new Date().getFullYear()} Outpost · made by Albion players</span>

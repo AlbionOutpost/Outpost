@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 test("calculate a trade with real input", async ({ page }) => {
@@ -5,7 +6,7 @@ test("calculate a trade with real input", async ({ page }) => {
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expect(page.locator(".result strong")).toContainText("500");
+  await expectResultText(page.locator(".result strong"), "500");
 });
 test("market failure never substitutes prices", async ({ page }) => {
   await page.route("**/api/market?**", (route) =>
@@ -59,7 +60,9 @@ test("regional market request and region invalidation", async ({ page }) => {
     const rows = page.locator(".market-board tbody tr");
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText("Lymhurst");
-    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("100");
+    await expectResultText(rows.locator('[data-label="Sell order"] .silver'), "100", {
+      exact: true,
+    });
     await chooseRegion(page, "asia");
     await expect.poll(() => asiaRequested).toBe(true);
     // Deliberately hold the destination response beyond the 150ms autoload debounce:
@@ -72,8 +75,12 @@ test("regional market request and region invalidation", async ({ page }) => {
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText("Caerleon");
     await expect(rows).not.toContainText("Lymhurst");
-    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("9,876");
-    await expect(rows.locator('[data-label="Buy order"] .silver')).toHaveText("8,765");
+    await expectResultText(rows.locator('[data-label="Sell order"] .silver'), "9,876", {
+      exact: true,
+    });
+    await expectResultText(rows.locator('[data-label="Buy order"] .silver'), "8,765", {
+      exact: true,
+    });
     await expect(page).toHaveURL((url) => url.searchParams.get("region") === "asia");
     await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   } finally {
@@ -148,7 +155,9 @@ test("a delayed region navigation preserves the previous market history entry", 
     await expect.poll(() => page.evaluate(() => history.length)).toBe(previousHistoryLength + 1);
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText("Caerleon");
-    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("9,876");
+    await expectResultText(rows.locator('[data-label="Sell order"] .silver'), "9,876", {
+      exact: true,
+    });
     await page.goBack();
     await expect(page).toHaveURL(
       (url) => url.pathname === "/tools/market" && url.searchParams.get("region") === "europe",
@@ -156,7 +165,9 @@ test("a delayed region navigation preserves the previous market history entry", 
     await expect(picker).toHaveAttribute("data-region", "europe");
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText("Lymhurst");
-    await expect(rows.locator('[data-label="Sell order"] .silver')).toHaveText("100");
+    await expectResultText(rows.locator('[data-label="Sell order"] .silver'), "100", {
+      exact: true,
+    });
   } finally {
     releaseAsia();
   }

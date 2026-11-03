@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { normalizeTopKills } from "../src/lib/albion/combat-events";
@@ -197,14 +198,15 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   const market = cards.nth(0);
   await expect(market.locator(".tool-item")).toContainText("Refined material · Tier 6");
   await expect(market.locator("tbody tr")).toHaveCount(3);
-  await expect(market.locator("tbody tr").nth(0)).toContainText(
+  await expectResultText(
+    market.locator("tbody tr").nth(0),
     /Bridgewatch\s*2,165\s*3,670\s*\+69\.5%/,
   );
   await expect(market.locator("tbody tr").nth(0).locator(".city-dot")).toHaveAttribute(
     "data-city",
     "Bridgewatch",
   );
-  await expect(market.locator("tbody tr").nth(1)).toContainText(/Caerleon\s*—\s*3,900\s*—/);
+  await expectResultText(market.locator("tbody tr").nth(1), /Caerleon\s*—\s*3,900\s*—/);
   await expect(market.locator("tbody tr").nth(2).locator("td").nth(1)).toHaveClass(/is-stale/);
   await expect(market.locator(".tool-plot svg")).toBeVisible();
   await expect(market.locator(".tool-plot-y i")).toHaveCount(3);
@@ -232,19 +234,20 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(crafting.locator(".tool-item")).toContainText("Cape");
   await expect(crafting.locator(".tool-item")).toContainText("Thetford · best of 5");
   await expect(crafting.locator(".tool-table tbody tr")).toHaveCount(2);
-  await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(
+  await expectResultText(
+    crafting.locator(".tool-table tbody tr").first(),
     /Lavish Cloth\s*4\s*3,594\s*14,376/,
   );
-  await expect(crafting.locator(".tool-pair")).toContainText(/38,126[\s\S]*26,984/);
+  await expectResultText(crafting.locator(".tool-pair"), /38,126[\s\S]*26,984/);
   await expect(crafting.locator(".tool-profit")).toHaveClass(/is-loss/);
-  await expect(crafting.locator(".tool-profit")).toContainText(/−\s*11,142[\s\S]*-41\.3%/);
+  await expectResultText(crafting.locator(".tool-profit"), /−\s*11,142[\s\S]*-41\.3%/);
   await expect(crafting.locator(".tool-cities li em")).toHaveCount(0);
   await crafting.getByRole("button", { name: "More batches" }).click();
   await expect(crafting.locator(".tool-card")).toHaveAttribute("aria-busy", "false");
   await expect(crafting.locator(".tool-refresh-note")).toHaveCount(0);
 
-  await expect(crafting.locator(".tool-stepper output")).toHaveText("2");
-  await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(/28,752/);
+  await expectResultText(crafting.locator(".tool-stepper output"), "2", { exact: true });
+  await expectResultText(crafting.locator(".tool-table tbody tr").first(), /28,752/);
   await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
     "href",
     "/tools/crafting?region=europe",
@@ -254,18 +257,18 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(
     planner.getByRole("list", { name: "Planned items" }).getByRole("listitem"),
   ).toHaveCount(3);
-  await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*0 \/ 33/);
-  await expect(planner.locator(".tool-summary")).toContainText(/Still to buy\s*13,000\+/);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*0 \/ 33/);
+  await expectResultText(planner.locator(".tool-summary"), /Still to buy\s*13,000\+/);
   await expect(planner.locator(".tool-queue li").nth(2)).toContainText("no sell order");
   await planner
     .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
     .getByRole("button", { name: "Own one more" })
     .click();
-  await expect(planner.locator(".tool-summary")).toContainText(/Owned\s*1 \/ 33/);
-  await expect(planner.locator(".tool-summary")).toContainText(/12,000\+/);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 33/);
+  await expectResultText(planner.locator(".tool-summary"), /12,000\+/);
   await planner.getByRole("tab", { name: "Shopping list" }).click();
-  await expect(planner.locator(".tool-queue li").first()).toContainText(/Buy 9/);
-  await expect(planner.locator(".tool-cities li").first()).toContainText(/Martlock[\s\S]*12,000\+/);
+  await expectResultText(planner.locator(".tool-queue li").first(), /Buy 9/);
+  await expectResultText(planner.locator(".tool-cities li").first(), /Martlock[\s\S]*12,000\+/);
   await expect(planner.locator(".tool-cities li em")).toHaveCount(0);
   await expect(planner.getByRole("link", { name: /Open Crafting Planner/ })).toHaveAttribute(
     "href",
@@ -458,36 +461,52 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   await page.goto("/");
   const planner = page.locator(".landing-card").nth(2);
   await planner.scrollIntoViewIfNeeded();
-  await expect(planner.locator(".tool-summary")).toContainText("33,000");
+  await expectResultText(planner.locator(".tool-summary"), "33,000");
   const owned = planner.getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ });
+  const flow = planner.locator(
+    '.tool-summary .animated-number[data-value="33000"] number-flow-react',
+  );
+  await flow.evaluate((node) => node.setAttribute("data-continuity-check", "retained"));
   await owned.getByRole("button", { name: "Own one more" }).click();
-  const money = planner.locator('.tool-summary .animated-number[data-value="32000"] > span');
-  await expect(money).toHaveText("32,000");
-  const digit = money.locator(".number-wheel");
-  await expect(digit).toHaveCount(1);
-  await expect(digit).toHaveAttribute("data-previous", "3");
-  await expect(digit).toHaveText("2");
-  expect(
-    await digit.evaluate(
-      (node) => (node.getAnimations()[0].effect as KeyframeEffect).getKeyframes()[0].transform,
-    ),
-  ).toBe("translateY(-100%)");
+  const money = planner.locator('.tool-summary .animated-number[data-value="32000"]');
+  await expect(money).toHaveAccessibleName("32,000");
+  const moving = money.locator("number-flow-react");
   await expect
     .poll(() =>
-      digit.evaluate((node) =>
-        node.getAnimations().some((animation) => animation.playState === "running"),
+      moving.evaluate((node) =>
+        node.shadowRoot!.getAnimations().some((a) => a.playState === "running"),
+      ),
+    )
+    .toBe(true);
+  expect(
+    await moving.evaluate(
+      (node) => (node as HTMLElement & { computedTrend: number }).computedTrend,
+    ),
+  ).toBe(-1);
+  // Reverse while the previous movement is active. The same flow/strips must survive.
+  await owned.getByRole("button", { name: "Own one fewer" }).click();
+  const raised = planner.locator('.tool-summary .animated-number[data-value="33000"]');
+  await expect(raised).toHaveAccessibleName("33,000");
+  await expect(raised.locator("number-flow-react")).toHaveAttribute(
+    "data-continuity-check",
+    "retained",
+  );
+  expect(
+    await raised
+      .locator("number-flow-react")
+      .evaluate((node) => (node as HTMLElement & { computedTrend: number }).computedTrend),
+  ).toBe(1);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await owned.getByRole("button", { name: "Own one more" }).click();
+  await expect(money).toHaveAccessibleName("32,000");
+  await expect
+    .poll(() =>
+      moving.evaluate((node) =>
+        node.shadowRoot!.getAnimations().some((a) => a.playState === "running"),
       ),
     )
     .toBe(false);
-  await owned.getByRole("button", { name: "Own one fewer" }).click();
-  const raised = planner.locator('.tool-summary .animated-number[data-value="33000"] > span');
-  await expect(raised).toHaveText("33,000");
-  await expect(raised.locator(".number-wheel")).toHaveAttribute("data-previous", "2");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await owned.getByRole("button", { name: "Own one more" }).click();
-  await expect(
-    planner.locator('.tool-summary .animated-number[data-value="32000"] > span'),
-  ).toHaveText("32,000");
+  await expect(moving.locator(".digit__num:not([inert])")).toHaveText(["3", "2", "0", "0", "0"]);
 });
 
 test("craft quantity recalculates without refetching; shared digits roll and reduced motion settles", async ({
@@ -527,7 +546,7 @@ test("craft quantity recalculates without refetching; shared digits roll and red
   const card = page
     .locator(".tool-card")
     .filter({ has: page.getByRole("group", { name: "Batches", exact: true }) });
-  await expect(card.locator(".tool-pair")).toContainText("439");
+  await expectResultText(card.locator(".tool-pair"), "439");
   await card.getByRole("button", { name: "More batches" }).click();
   await expect(card.locator('.animated-number[data-value="878"]')).toHaveAttribute(
     "aria-label",
@@ -536,23 +555,56 @@ test("craft quantity recalculates without refetching; shared digits roll and red
   await expect
     .poll(() =>
       card
-        .locator(".number-wheel")
+        .locator("number-flow-react")
         .evaluateAll((nodes) =>
           nodes.some((node) =>
-            node.getAnimations().some((animation) => animation.playState === "running"),
+            node.shadowRoot!.getAnimations().some((animation) => animation.playState === "running"),
           ),
         ),
     )
     .toBe(true);
-  await expect(card.locator(".tool-pair")).toContainText("878");
+  await expectResultText(card.locator(".tool-pair"), "878");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await card.getByRole("button", { name: "Fewer batches" }).click();
-  await expect(card.locator('.animated-number[data-value="439"]')).toHaveText("439");
+  await expectResultText(card.locator('.animated-number[data-value="439"]'), "439", {
+    exact: true,
+  });
   expect(
     await card
-      .locator(".number-wheel")
-      .evaluateAll((nodes) => nodes.flatMap((node) => node.getAnimations()).length),
+      .locator("number-flow-react")
+      .evaluateAll(
+        (nodes) =>
+          nodes
+            .flatMap((node) => node.shadowRoot!.getAnimations())
+            .filter((a) => a.playState === "running").length,
+      ),
   ).toBe(0);
   expect(requests).toEqual(["1"]);
   await expect(card).not.toContainText("Could not update");
+});
+
+test("membership callout precedes activity discovery and the footer keeps its navigation", async ({
+  page,
+}) => {
+  await page.goto("/?region=asia");
+  const cta = page.locator(".landing-cta-wrap");
+  const activities = page.locator(".landing-activities");
+  const before = await cta.evaluate((node) =>
+    Boolean(
+      node.compareDocumentPosition(document.querySelector(".landing-activities")!) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    ),
+  );
+  expect(before).toBe(true);
+  const footer = page.locator("footer.site-footer");
+  for (const group of ["Explore", "Tools", "Your workspace"])
+    await expect(footer.getByRole("navigation", { name: group, exact: true })).toBeVisible();
+  await expect(
+    footer.getByRole("link", { name: "Builds by activity", exact: true }),
+  ).toHaveAttribute("href", "/builds/activities?region=asia");
+  await footer.getByRole("link", { name: "Builds by activity", exact: true }).click();
+  await expect(page).toHaveURL(/builds\/activities\?region=asia/);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.locator("footer.site-footer").getByRole("button", { name: "Back to top" }).click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
 });

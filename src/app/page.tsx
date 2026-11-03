@@ -207,6 +207,27 @@ export default async function Home({
         </div>
       </section>
 
+      <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
+        <div className="raised has-scene landing-cta" data-scene="build">
+          <h2 id="home-cta-title">
+            Free for everyone. <em>Supporters</em> keep it running.
+          </h2>
+          <p>
+            Every tool, build and guide works without an account. Sign in with Discord to save your
+            builds and comps; Supporters get no ads and a Team space for their guild
+            {price && billing ? ` for ${price}` : ""}.
+          </p>
+          <div className="landing-cta-actions">
+            <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
+              <DiscordMark /> Sign in with Discord
+            </Link>
+            <Link href={`/supporter${suffix}`} className="button secondary">
+              {billing ? "Become a Supporter" : "About the Supporter plan"}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="landing-wrap landing-activities" aria-labelledby="home-activities-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-activities-title">
@@ -241,27 +262,6 @@ export default async function Home({
       <div className="landing-wrap">
         <AdSlot placement="hub" suffix={suffix} />
       </div>
-
-      <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
-        <div className="raised has-scene landing-cta" data-scene="build">
-          <h2 id="home-cta-title">
-            Free for everyone. <em>Supporters</em> keep it running.
-          </h2>
-          <p>
-            Every tool, build and guide works without an account. Sign in with Discord to save your
-            builds and comps; Supporters get no ads and a Team space for their guild
-            {price && billing ? ` for ${price}` : ""}.
-          </p>
-          <div className="landing-cta-actions">
-            <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
-              <DiscordMark /> Sign in with Discord
-            </Link>
-            <Link href={`/supporter${suffix}`} className="button secondary">
-              {billing ? "Become a Supporter" : "About the Supporter plan"}
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

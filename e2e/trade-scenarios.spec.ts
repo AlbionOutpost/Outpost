@@ -1,3 +1,4 @@
+import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
@@ -41,15 +42,17 @@ test("manual trade thresholds persist privately and remain available beyond othe
       ["Total transport / risk cost", "50"],
     ])
       await page.getByLabel(label, { exact: true }).fill(value);
-    await expect(page.locator(".panel.result > strong")).toContainText("292.5");
-    await expect(
+    await expectResultText(page.locator(".panel.result > strong"), "292.5");
+    await expectResultText(
       page.locator(".panel.result dl > div").filter({ hasText: "Break-even sale per item" }),
-    ).toContainText("117.32");
-    await expect(
+      "117.32",
+    );
+    await expectResultText(
       page
         .locator(".panel.result dl > div")
         .filter({ hasText: "Minimum profitable whole-silver sale" }),
-    ).toContainText("118");
+      "118",
+    );
     await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("QA saved manual trade");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
@@ -78,7 +81,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore QA saved manual trade", exact: true }).click();
     await expect(page.getByLabel("Quantity", { exact: true })).toHaveValue("10");
-    await expect(page.locator(".panel.result > strong")).toContainText("292.5");
+    await expectResultText(page.locator(".panel.result > strong"), "292.5");
     const guest = await browser.newContext();
     try {
       expect((await guest.request.get("/api/scenarios?kind=flipping")).status()).toBe(401);
@@ -155,15 +158,17 @@ test("manual trade thresholds persist privately and remain available beyond othe
       await page.getByText("Fees & extra costs", { exact: true }).click();
     await page.getByLabel("Purchase execution", { exact: true }).selectOption("buy-order");
     await page.getByLabel("Purchase order setup fee (%)", { exact: true }).fill("2.5");
-    await expect(page.locator(".panel.result > strong")).toContainText("267.5");
-    await expect(
+    await expectResultText(page.locator(".panel.result > strong"), "267.5");
+    await expectResultText(
       page.locator(".panel.result dl > div").filter({ hasText: "Purchase order setup cost" }),
-    ).toContainText("25");
-    await expect(
+      "25",
+    );
+    await expectResultText(
       page
         .locator(".panel.result dl > div")
         .filter({ hasText: "Minimum profitable whole-silver sale" }),
-    ).toContainText("121");
+      "121",
+    );
     await page.getByLabel("Scenario title", { exact: true }).fill("QA purchase order trade");
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
@@ -178,10 +183,11 @@ test("manual trade thresholds persist privately and remain available beyond othe
     await expect(page.getByLabel("Purchase order setup fee (%)", { exact: true })).toHaveValue(
       "2.5",
     );
-    await expect(page.locator(".panel.result > strong")).toContainText("267.5");
-    await expect(
+    await expectResultText(page.locator(".panel.result > strong"), "267.5");
+    await expectResultText(
       page.locator(".panel.result dl > div").filter({ hasText: "Purchase order setup cost" }),
-    ).toContainText("25");
+      "25",
+    );
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
       await page.evaluate(() => {

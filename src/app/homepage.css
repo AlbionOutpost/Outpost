@@ -1417,25 +1417,25 @@ a.landing-window-title:hover {
   padding: 0;
   list-style: none;
 }
-/* Closing call: one framed band, centred, its painting behind; sign in or read about Supporters */
+/* Membership callout sits between the tools and activity discovery. */
 .app.outpost .landing-cta-wrap {
-  margin-top: 104px;
-  padding-bottom: clamp(72px, 7vw, 112px);
+  margin-top: 80px;
+  padding-bottom: 0;
 }
 .app.outpost .landing-cta {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 16px;
-  padding: 64px 40px 60px;
+  gap: 16px 40px;
+  padding: 40px;
   color: var(--text);
-  text-align: center;
+  text-align: left;
 }
 
 .app.outpost .landing-cta h2 {
   max-width: 30ch;
   margin: 0;
-  font: 800 clamp(34px, 4vw, 54px) / 1 var(--font-display);
+  font: 800 clamp(32px, 3.2vw, 44px) / 1.05 var(--font-display);
   text-transform: uppercase;
   text-wrap: balance;
 }
@@ -1444,14 +1444,18 @@ a.landing-window-title:hover {
   color: var(--accent);
 }
 .app.outpost .landing-cta p {
-  max-width: 60ch;
+  grid-column: 1;
+  max-width: 68ch;
   margin: 0;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.55;
 }
 .app.outpost .landing-cta-actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
@@ -1764,7 +1768,14 @@ a.landing-window-title:hover {
     margin-top: 64px;
   }
   .app.outpost .landing-cta {
-    padding: 44px 20px 40px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 32px 20px;
+  }
+  .app.outpost .landing-cta-actions {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 0;
   }
   .app.outpost .landing-cta-actions .button {
     width: 100%;
