@@ -67,7 +67,20 @@ const out = {
     .sort((a, b) => a.name.localeCompare(b.name)),
   weapons: [...weapons.values()].sort((a, b) => a.name.localeCompare(b.name)),
   activities: [...activities]
-    .map(([id, count]) => ({ id, count }))
+    .map(([id, count]) => {
+      // Same recorded top-five scope as the original landing weapon previews.
+      const top = rows
+        .filter((b) => listed(b) && b.category === id)
+        .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0))
+        .slice(0, 5);
+      const weapons = new Map();
+      for (const build of top) {
+        const itemId = build.equipment.find((e) => e.slot === "Main hand")?.itemId;
+        if (itemId && !weapons.has(itemId))
+          weapons.set(itemId, { itemId, name: build.weaponName || "Main-hand weapon" });
+      }
+      return { id, count, topWeapons: [...weapons.values()].slice(0, 3) };
+    })
     .sort((a, b) => a.id.localeCompare(b.id)),
   tags: [...tags.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
 };

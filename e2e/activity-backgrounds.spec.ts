@@ -24,9 +24,11 @@ test("mobile activity art loads and empty categories stay truthful", async ({ pa
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/builds/activities");
   const mists = page.getByRole("link", { name: /Solo Mists/ });
-  await expect(mists.locator("img")).toBeVisible();
+  await expect(mists.locator("[data-activity-scene]")).toBeVisible();
   await expect
-    .poll(() => mists.locator("img").evaluate((img: HTMLImageElement) => img.naturalWidth))
+    .poll(() =>
+      mists.locator("[data-activity-scene]").evaluate((img: HTMLImageElement) => img.naturalWidth),
+    )
     .toBeGreaterThan(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("link", { name: "Arena No builds listed yet", exact: true }).click();
@@ -75,4 +77,27 @@ test("activity depth preserves click targets and respects reduced motion", async
   await card.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
+});
+
+test("both activity grids overlay recorded weapons without ranking rows", async ({ page }) => {
+  for (const path of ["/", "/builds/activities"]) {
+    await page.goto(path);
+    const card = page.locator('.activity-artwork-card[data-activity="ZVZ"]');
+    const weapons = card.locator("[data-activity-weapon]");
+    await expect(weapons).toHaveCount(3);
+    await expect(weapons.first()).toHaveAttribute(
+      "data-activity-weapon",
+      "T8_2H_SHAPESHIFTER_SET2",
+    );
+    await expect(weapons.first()).toHaveAccessibleName(/.+/);
+    await expect(card.locator(".activity-top")).toHaveCount(0);
+    const scene = (await card.locator("[data-activity-scene]").boundingBox())!;
+    for (const weapon of await weapons.all()) {
+      const box = (await weapon.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(scene.x);
+      expect(box.x + box.width).toBeLessThanOrEqual(scene.x + scene.width + 1);
+      expect(box.y).toBeGreaterThan(scene.y);
+      expect(box.y + box.height).toBeLessThan(scene.y + scene.height);
+    }
+  }
 });

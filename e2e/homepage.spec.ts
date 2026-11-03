@@ -20,10 +20,6 @@ const topKills = normalizeTopKills(
 test("landing page: hero numbers, teaser windows, live tool cards, guides, top kills and the footer", async ({
   page,
 }) => {
-  let releaseBatch!: () => void;
-  const heldBatch = new Promise<void>((resolve) => {
-    releaseBatch = resolve;
-  });
   await page.route("**/api/market?*", (route) =>
     route.fulfill({
       json: {
@@ -61,7 +57,6 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   );
   await page.route("**/api/landing/craft?*", async (route) => {
     const batches = Number(new URL(route.request().url()).searchParams.get("batches") ?? 1);
-    if (batches === 2) await heldBatch;
     return route.fulfill({
       json: {
         region: "europe",
@@ -245,14 +240,8 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(crafting.locator(".tool-profit")).toContainText(/−\s*11,142[\s\S]*-41\.3%/);
   await expect(crafting.locator(".tool-cities li em")).toHaveCount(0);
   await crafting.getByRole("button", { name: "More batches" }).click();
-  try {
-    await expect(crafting.locator(".tool-card")).toHaveAttribute("aria-busy", "true");
-    await expect(crafting.locator(".tool-item")).toContainText("Cape");
-    await expect(crafting.locator(".tool-pair")).toContainText(/38,126[\s\S]*26,984/);
-    await expect(crafting.locator(".tool-refresh-note")).toContainText("Updating for 2 batches");
-  } finally {
-    releaseBatch();
-  }
+  await expect(crafting.locator(".tool-card")).toHaveAttribute("aria-busy", "false");
+  await expect(crafting.locator(".tool-refresh-note")).toHaveCount(0);
 
   await expect(crafting.locator(".tool-stepper output")).toHaveText("2");
   await expect(crafting.locator(".tool-table tbody tr").first()).toContainText(/28,752/);
@@ -334,8 +323,8 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(activities.first().locator(".activity-artwork-link")).toContainText(
     /ZvZ\s*[\d,]+ builds/,
   );
-  await expect(activities.first().locator("img")).toHaveAttribute("src", /zvz/);
-  await expect(activities.first().locator("img")).toBeVisible();
+  await expect(activities.first().locator("[data-activity-scene]")).toHaveAttribute("src", /zvz/);
+  await expect(activities.first().locator("[data-activity-scene]")).toBeVisible();
   await expect(page.locator(".landing-activities .activity-top")).toHaveCount(0);
 
   // Advertising stays off until configured; the closing band says what is free and what supports.
@@ -438,10 +427,9 @@ test("robots points crawlers at a sitemap of public pages and keeps editors out"
   expect(sitemap).not.toContain("/api/");
 });
 
-test("planner amounts count down and up, and reduced motion shows exact results immediately", async ({
+test("planner digits roll down and up, and reduced motion shows exact results immediately", async ({
   page,
 }) => {
-  await page.clock.install({ time: Date.now() - 60000 });
   for (const endpoint of [
     "**/api/landing/craft?*",
     "**/api/market?*",
@@ -471,26 +459,100 @@ test("planner amounts count down and up, and reduced motion shows exact results 
   const planner = page.locator(".landing-card").nth(2);
   await planner.scrollIntoViewIfNeeded();
   await expect(planner.locator(".tool-summary")).toContainText("33,000");
-  await page.clock.pauseAt(Date.now() + 60000);
   const owned = planner.getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ });
   await owned.getByRole("button", { name: "Own one more" }).click();
   const money = planner.locator('.tool-summary .animated-number[data-value="32000"] > span');
-  await expect(money).toHaveText("33,000");
-  await page.clock.runFor(160);
-  const intermediate = Number((await money.innerText()).replaceAll(",", ""));
-  expect(intermediate).toBeGreaterThan(32000);
-  expect(intermediate).toBeLessThan(33000);
-  await page.clock.runFor(400);
   await expect(money).toHaveText("32,000");
+  const digit = money.locator(".number-wheel");
+  await expect(digit).toHaveCount(1);
+  await expect(digit).toHaveAttribute("data-previous", "3");
+  await expect(digit).toHaveText("2");
+  expect(
+    await digit.evaluate(
+      (node) => (node.getAnimations()[0].effect as KeyframeEffect).getKeyframes()[0].transform,
+    ),
+  ).toBe("translateY(-100%)");
+  await expect
+    .poll(() =>
+      digit.evaluate((node) =>
+        node.getAnimations().some((animation) => animation.playState === "running"),
+      ),
+    )
+    .toBe(false);
   await owned.getByRole("button", { name: "Own one fewer" }).click();
-  await page.clock.runFor(500);
-  await expect(
-    planner.locator('.tool-summary .animated-number[data-value="33000"] > span'),
-  ).toHaveText("33,000");
+  const raised = planner.locator('.tool-summary .animated-number[data-value="33000"] > span');
+  await expect(raised).toHaveText("33,000");
+  await expect(raised.locator(".number-wheel")).toHaveAttribute("data-previous", "2");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await owned.getByRole("button", { name: "Own one more" }).click();
   await expect(
     planner.locator('.tool-summary .animated-number[data-value="32000"] > span'),
   ).toHaveText("32,000");
-  await page.clock.resume();
+});
+
+test("craft quantity recalculates without refetching; shared digits roll and reduced motion settles", async ({
+  page,
+}) => {
+  const requests: string[] = [];
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname !== "/api/landing/craft")
+      return route.fulfill({ status: 503, json: { error: "Unavailable in this controlled test" } });
+    requests.push(url.searchParams.get("batches") || "");
+    return route.fulfill({
+      json: {
+        batches: 1,
+        candidates: 1,
+        best: {
+          recipe: { id: "cape-t4", name: "T4 Cape", output: "T4_CAPE" },
+          city: "Lymhurst",
+          rows: [{ id: "T4_CLOTH", name: "Cloth", quantity: 4, unit: 100, gross: 400 }],
+          outputQuantity: 1,
+          complete: true,
+          missing: [],
+          upfront: 400,
+          fees: 39,
+          revenue: 600,
+          profit: 222.2,
+          margin: 37.0333,
+        },
+        byCity: [{ city: "Lymhurst", profit: 222.2, margin: 37.0333 }],
+        unpriced: [],
+      },
+    });
+  });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  // Use the existing showcase wrapper, independent of layout styling.
+  const card = page
+    .locator(".tool-card")
+    .filter({ has: page.getByRole("group", { name: "Batches", exact: true }) });
+  await expect(card.locator(".tool-pair")).toContainText("439");
+  await card.getByRole("button", { name: "More batches" }).click();
+  await expect(card.locator('.animated-number[data-value="878"]')).toHaveAttribute(
+    "aria-label",
+    "878",
+  );
+  await expect
+    .poll(() =>
+      card
+        .locator(".number-wheel")
+        .evaluateAll((nodes) =>
+          nodes.some((node) =>
+            node.getAnimations().some((animation) => animation.playState === "running"),
+          ),
+        ),
+    )
+    .toBe(true);
+  await expect(card.locator(".tool-pair")).toContainText("878");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await card.getByRole("button", { name: "Fewer batches" }).click();
+  await expect(card.locator('.animated-number[data-value="439"]')).toHaveText("439");
+  expect(
+    await card
+      .locator(".number-wheel")
+      .evaluateAll((nodes) => nodes.flatMap((node) => node.getAnimations()).length),
+  ).toBe(0);
+  expect(requests).toEqual(["1"]);
+  await expect(card).not.toContainText("Could not update");
 });

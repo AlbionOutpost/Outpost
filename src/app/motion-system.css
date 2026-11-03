@@ -247,3 +247,33 @@
     transition-duration: 90ms;
   }
 }
+
+/* Shared price/result digits roll only when their value changes. */
+.animated-number {
+  font-variant-numeric: tabular-nums;
+}
+.number-digit {
+  display: inline-block;
+  clip-path: inset(0);
+  height: 1.2em;
+  vertical-align: baseline;
+  line-height: 1.2;
+}
+.number-wheel {
+  display: inline-block;
+  position: relative;
+}
+.number-wheel::before {
+  content: attr(data-previous);
+  position: absolute;
+  inset-inline-start: 0;
+  top: var(--previous-offset);
+}
+@media (prefers-reduced-motion: reduce) {
+  .number-wheel {
+    transform: none !important;
+  }
+  .number-wheel::before {
+    display: none;
+  }
+}
