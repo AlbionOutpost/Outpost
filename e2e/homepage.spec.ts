@@ -588,10 +588,23 @@ test("membership callout precedes activity discovery and the footer keeps its na
 }) => {
   await page.goto("/?region=asia");
   const cta = page.locator(".landing-cta-wrap");
-  const artwork = cta.locator(".landing-cta-art img");
-  await artwork.scrollIntoViewIfNeeded();
-  await artwork.evaluate((image: HTMLImageElement) => image.decode());
-  expect(await artwork.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(1536);
+  await cta.scrollIntoViewIfNeeded();
+  const artwork = await cta.locator(".landing-cta").evaluate(async (card) => {
+    const src = getComputedStyle(card, "::before").backgroundImage;
+    const image = new Image();
+    image.src = "/scenes/supporter/crown-courtyard.webp";
+    await image.decode();
+    const heading = card.querySelector("h2")!.getBoundingClientRect();
+    const bounds = card.getBoundingClientRect();
+    return {
+      src,
+      width: image.naturalWidth,
+      centered: Math.abs(heading.x + heading.width / 2 - bounds.x - bounds.width / 2),
+    };
+  });
+  expect(artwork.src).toContain("crown-courtyard.webp");
+  expect(artwork.width).toBe(1374);
+  expect(artwork.centered).toBeLessThan(2);
   await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
     "href",
     "/supporter?region=asia",
