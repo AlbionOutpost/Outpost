@@ -598,12 +598,16 @@ test("membership callout precedes activity discovery and the footer keeps its na
     const bounds = card.getBoundingClientRect();
     return {
       src,
+      cutout: getComputedStyle(card.querySelector(".landing-cta-art img")!).maskImage,
+      bodyTop: parseFloat(getComputedStyle(card, "::before").top),
       width: image.naturalWidth,
       centered: Math.abs(heading.x + heading.width / 2 - bounds.x - bounds.width / 2),
     };
   });
   expect(artwork.src).toContain("crown-courtyard.webp");
   expect(artwork.width).toBe(1374);
+  expect(artwork.cutout).toContain("crown-silhouette.svg");
+  expect(artwork.bodyTop).toBeGreaterThan(16);
   expect(artwork.centered).toBeLessThan(2);
   await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
     "href",

@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-03T20:29:31.146994+00:00",
-  "baselineCommit": "d1573ba3bccf101de12d9e6af02a9a7d7f73006b",
-  "branch": "codex/card-artwork-corrections",
-  "sourceFingerprint": "71a1796b119b69b8b9035d7ebf918df6e7c818c325df891ace69432dbece5ff4",
-  "scope": "Owner corrections: restore the original centered Supporter layout with the new crown scene; constrain activity effects to the image silhouette; remove added weapon preview fills/borders; replace ID-hashed generic build scenes with category artwork in library/community previews. Original attachments and exact asset provenance preserved. No formulas, auth/cache/schema/provider/dependency or game data changes. Current candidate evidence is separate from inherited historical findings; prepublication checkpoint for already owner-authorized protected deployment.",
+  "checkedAt": "2026-11-03T21:32:34.068194+00:00",
+  "baselineCommit": "d6bc406a0a6c03243c7b8d36bd0c7a3f3793c025",
+  "branch": "codex/cutout-surfaces",
+  "sourceFingerprint": "a45135aed2e97d4958f3eb8a21fcc2db59ee56838a2284986df240c386cb4928",
+  "scope": "Owner clarification: centered Supporter content with the crown/arch protruding above the body; native SVG cutout and responsive fade replace the rectangular frame. Firefox100% hairline follow-up removes rectangular backdrop sampling and permanent idle perspective; masked layers blur artwork directly. Adds a native Firefox regression runner using fresh temporary profile/loopback BiDi/default sandbox settings. No original bitmap, game facts/IDs, formulas, auth/cache/schema/provider/dependency changes. Exact owner GPU artifact was not reproduced headlessly; no all-Firefox/owner-hardware certification. Current evidence is distinct from inherited findings; prepublication checkpoint for already owner-authorized protected deployment.",
   "findings": [
     {
       "id": "F-01",
@@ -259,14 +259,20 @@
       "id": "UI-CARD-ARTWORK-CORRECTIONS",
       "implementation": "COMPLETE: original centered Supporter typography/padding/copy/actions/frame restored with new crown courtyard background; activity blur/shade/rim share source clip; only fanned preview icon/wrapper fills/borders removed; library/community scenes resolve known categories with neutral fallback for ambiguous labels. No content, item IDs or game facts changed.",
       "verification": "Current phase524 units/163 of166 browsers (only3 existing equipment goldens);62 Cloudflare core cases;24 local data cases, Worker types/bundles, rendered both themes/six standard widths plus1323 normal-motion2x and targeted category scenes. Dev-focused12/13 two-initial-request/hydration warnings retained; production request assertion passes without weakening. Details below.",
-      "deployment": "PENDING required PR checks and normal owner-authorized deployment/public read-back."
+      "deployment": "Published d6bc406a (PR76/run41714073318), actual public UI14 checks/asset hash and cooldown hosted/OAuth-start checks pass. Owner still sees Firefox hairline and requests centered protruding Supporter art; those remain open and are addressed by this follow-up, not certified resolved by previous Chromium captures."
+    },
+    {
+      "id": "UI-FIREFOX-CENTERED-CUTOUT",
+      "implementation": "COMPLETE candidate: centered Supporter copy/actions below raised crown/arch with native SVG silhouette, dark body/earlier phone fade; activity blur uses own artwork instead of backdrop sampling, idle perspective removed, hover/reduced motion and prior category/icon corrections retained. Native Firefox verification helper uses fresh temporary profile/random loopback port/owned cleanup without disabling sandbox.",
+      "verification": "Node524 units/163 of166 browsers (only3 existing equipment goldens),62 workerd core/24 data cases/types/free/container;33 Chromium scoped axe/rendered checks plus12 native Firefox159100%zoom checks in both themes.45 target variants reviewed via5 contact sheets and critical full-size screenshots. Exact owner GPU-specific line not reproduced headlessly; eliminated risky rendering path, not a cross-platform certificate.",
+      "deployment": "PENDING protected PR and owner-authorized normal merge/deploy/public read-back."
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Current Node22 CI=1 phase11/12 PASS,524 units and163/166 browser cases. Only existing equipment golden mismatches320/390/768 fail; no baselines changed. CI=1 uses the existing serial worker and360s bulk-review allowance. The unchanged production quantity/reversal/request assertions pass. Earlier dev-focused12/13 duplicate-initial-request failure and metadata/Shell hydration warnings are retained; not a claim that all development hydration behavior is certified."
+      "detail": "Current Node22 CI=1 phase11/12 PASS,524 units/163 of166 browser cases. Only existing equipment golden mismatches320/390/768 fail; no baselines/assertions weakened. Existing serial/bulk-review allowance used. New cutout/body and no-backdrop regression assertions pass; native helper syntax/lint checked independently after addition."
     },
     {
       "name": "Deep-fix browser regressions",
@@ -276,62 +282,62 @@
     {
       "name": "PostgreSQL billing and authorization",
       "status": "PASS",
-      "detail": "Current isolated local phase database integration and billing/authorization regressions pass. Fixtures are not actual OAuth/payments."
+      "detail": "Current isolated phase database integration and billing/authorization regressions pass; fixture sessions are not real OAuth/payments."
     },
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Current constraints/schema/local import and24 actual workerd data cases pass. No schema or game mechanics change."
+      "detail": "Current constraints/schema/local staging and24 actual workerd data cases pass. No schema or mechanics changes."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Current Cloudflare build, both Worker typechecks and62 core browser cases pass, including centered callout and category scenes/transparency in both themes."
+      "detail": "Current Cloudflare production build, both Worker typechecks and62 core cases pass, including no-backdrop artwork blur, raised centered callout and existing category/icon checks."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Actual current Wrangler dry-runs: albionoutpost-data 1023980 gzip bytes, albionoutpost-web 2534216 gzip bytes. Both under3,145,728; no paid features. Not deployed CPU/quota/field certification."
+      "detail": "Actual current Wrangler dry-runs: albionoutpost-data 1023980 gzip bytes, albionoutpost-web 2534226 gzip bytes. Both below3,145,728; no paid feature. Not CPU/quota/field certification."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-card-corrections:qa: UID1000, no baked.env, isolated actual PostgreSQL/Redis health, category page and new crown art200. Owned acceptance container removed."
+      "detail": "Fresh outpost-cutout-surfaces:qa: UID1000, no baked.env, actual isolated PostgreSQL/Redis health, category page and new crown artwork200; owned acceptance container removed."
     },
     {
       "name": "Dependencies",
       "status": "ASSESSED",
-      "detail": "No dependency changes. Current production audit0 advisories;17 moderate development propagation entries remain visible under the existing exact mechanism assessment."
+      "detail": "No dependency changes. Production audit0 advisories; existing17 moderate development propagation entries stay visible under exact unchanged tooling mechanism assessment."
     },
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "Current candidate source/artifact and staged owner-value scans show no findings. Not full Git history/complete secret audit certification."
+      "detail": "Current candidate source/artifact/staged owner-value scans report no findings. No full history/secret audit certificate."
     },
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "44 current local workerd scoped axe/rendered checks: four changed surfaces at1440/1920/768/390/375/320 dark,1440/390/320 light, and1323 normal-motion2x in both themes.0 scoped violations, document overflow or page errors. Target/normal viewport captures retained and all target variants inspected; centered old composition, transparent fanned icons, clipped effect edges and category build scenes reviewed. Browser MCP unavailable under approval policy; sandboxed local Playwright fallback."
+      "detail": "33 local workerd Chromium scoped axe/rendered checks across changed callout/home/gallery at1440/1920/768/390/375/320 dark,1440/390/320 light, and1323normal-motion2x both themes:0 violations/overflow/page errors. Native Firefox159100%zoom adds12 geometry/mask/no-backdrop viewport checks at1323/390/320 both themes. All45 variants inspected through5 contact sheets and critical full-size captures. Exact owner hardware line not reproduced in headless baseline; no all-browser/GPU claim. Browser MCP unavailable; sandboxed Playwright and native loopback BiDi fallback used."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One local initial-homepage workerd mobile sample:Performance75/Accessibility100/LCP5569ms/CLS0.053. Not a controlled speedup or field result; loading targets remain open."
+      "detail": "One local initial-route workerd mobile sample:Performance74/Accessibility100/LCP6091ms/CLS0.053. Separate from functional Firefox/Chromium capture runs. Not controlled speedup/field evidence; loading targets remain open."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "New correction/design/source/hash ledger and roadmap; all seven owned QA/project reports regenerated. Current docs/format/source/artifact/staged owner-value checks before push. Unknown illustration provenance remains explicit; original preserved."
+      "detail": "Cutout/Firefox design/limits, native runner workflow, source-mask ledger/hash and roadmap updated; all seven owned QA/project reports regenerated. Current docs/format/source/artifact/staged owner-value checks before push. OriginalPNG/WebP unchanged."
     },
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "PR75 required docs/quality/browser passed before normal squash d1573ba3. Current corrective branch must pass required PR checks before owner-authorized normal merge; no bypass/force push."
+      "detail": "PR76 passed required checks before normal squash d6bc406a. Current candidate must pass protected PR checks before owner-authorized normal merge; no force push/bypass."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "Latest verified d1573ba3 via41704899797:data7c1dbbaf-0c7d-400f-93ed-fc20d2b14306/web06739deb-4627-4238-857e-763cc2ee9f01. Owner-requested corrective layout/art/category follow-up awaits protected PR/pipeline and actual public read-back. Broader independent launch gates remain NO-GO."
+      "detail": "Latest verified d6bc406a via41714073318:data24f0a88a-3ed6-49c6-b146-0f8671723aa6/web6a200bb5-276f-4011-91e9-becb5de87cb3. Current Firefox/cutout follow-up awaits protected PR/pipeline and public read-back. Broader independent launch NO-GO persists."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -346,12 +352,12 @@
     {
       "name": "Public activity integration",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "Prior d1573ba3 actual public image/mask hashes, three widths, placement/copy/region link pass. Current correction restores earlier centered composition/new scene and changes card effects/icons/category images; repeat these publicly after this exact build deploys."
+      "detail": "d6bc406a actual public UI14 checks/asset hash/category scenes/region links pass. Owner Firefox edge and centered-cutout clarification supersede previous rendering acceptance. Verify new surfaces and SVG publicly in both native Firefox and Chromium after deployment."
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "d1573ba3 actual strict health/data/private-denial/WAF and OAuth-start PKCE/cookie checks pass. Repeat after this corrective release. Real consent/payment/private sessions remain independently untested."
+      "detail": "d6bc406a hosted full smokePASS after20/min market-budget cooldown (initialFAIL retained, protection unchanged); OAuth-startPASS without real consent. Repeat current hosted health/denial/WAF/OAuth start after UI read-back cooldown; real provider consent/payment remains unverified."
     }
   ],
   "limits": [
@@ -362,6 +368,6 @@
     "Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.",
     "Landing final phase519 units/158 browser cases/all12 gates passed. Earlier154/158 accessibility failures and157/158 bulk screenshot timeout remain recorded. No exhaustive defect or full conformance claim.",
     "New private database schema6 rejects incompatible older schema5 backends. A future rollback must retain a compatible backend or use a rehearsed backup/restore strategy; this local migration evidence is not production restore proof.",
-    "Current owner-authorized card corrections await protected publication. Three existing equipment goldens remain; development-focused two-initial-request and metadata hydration warnings are retained separately from passing production acceptance. Broad source/legal/provider-consent/recovery/loading/field/full-product NO-GO remains independent. Unknown/ambiguous editor category labels use the neutral existing fallback; party sizes and game facts are not guessed."
+    "Owner-authorized centered-cutout/Firefox follow-up awaits protected publication. Exact owner GPU hairline not reproduced headlessly; native Firefox159100%checks verify supported rendering path and geometry, not all user hardware. Three existing equipment goldens, development hydration observations and loading targets remain recorded. Broad independent source/legal/provider-consent/recovery/field/full-product launch NO-GO remains separate."
   ]
 }

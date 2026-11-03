@@ -2,7 +2,7 @@
   "suppliedOn": "2026-11-03",
   "source": "Owner attachment codex-clipboard-rkbeAg.png, replaces prior Supporter courtyard illustration at owner request",
   "provenance": "Owner supplied for this use; creator, generation method and third-party licensing not independently established. No authentic game-scene/current-patch claim.",
-  "derivation": "Unchanged1374x1145 PNG archived; sharp WebP quality85 effort6 at original dimensions. No crop/retouch. Displayed through the restored centered callout original scene/scrim/frame styling, not a new foreground layout.",
+  "derivation": "Original1374x1145 PNG archived unchanged; WebPquality85 effort6. Owner clarified centered content with protruding artwork; separateSVG mask controlscutout. No rasterretouch.",
   "assets": [
     {
       "path": "assets/source/supporter-crown/original.png",
@@ -13,6 +13,12 @@
       "path": "public/scenes/supporter/crown-courtyard.webp",
       "bytes": 195042,
       "sha256": "124ad7c41c2030313103b71f0940990d25544957fc78232c6527a2a8bb4b0ced"
+    },
+    {
+      "path": "public/scenes/supporter/crown-silhouette.svg",
+      "bytes": 2854,
+      "sha256": "3bf594819d9de43731f7a0fceb5447b342d7a80be56c0955224cf52c69ef41f4"
     }
-  ]
+  ],
+  "cutoutDerivation": "Separate native SVG silhouette: connected dark exterior in first200rows, RGBmax24, positive component labels touchingtop; foreground touchingthetop stays included. Contour0.5px simplification, evenodd fill. Source PNG/WebP unchanged; CSS masks only presentation."
 }

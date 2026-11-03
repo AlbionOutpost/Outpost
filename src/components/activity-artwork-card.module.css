@@ -85,7 +85,8 @@
   }
 }
 
-/* Three independently masked layers increase optical blur toward the bottom.
+/* Blur the supplied artwork directly; never sample a rectangular backdrop surface.
+   Three independently masked layers increase optical blur toward the bottom.
    The image silhouettes above 28% remain sharp and the caption is a separate layer. */
 .blur {
   clip-path: var(--activity-outline);
@@ -100,17 +101,18 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
+  background: var(--activity-scene) center / 100% 100% no-repeat;
 }
 .blur > span:nth-child(1) {
-  backdrop-filter: blur(3px);
+  filter: blur(3px);
   mask-image: linear-gradient(to bottom, transparent 28%, #000 60%);
 }
 .blur > span:nth-child(2) {
-  backdrop-filter: blur(7px);
+  filter: blur(7px);
   mask-image: linear-gradient(to bottom, transparent 46%, #000 80%);
 }
 .blur > span:nth-child(3) {
-  backdrop-filter: blur(14px);
+  filter: blur(14px);
   mask-image: linear-gradient(to bottom, transparent 66%, #000 100%);
 }
 .main::before {
@@ -208,5 +210,9 @@
   /* Keep the scene at its traced 6:5 crop while making room for phone labels. */
   .compact .scene {
     height: calc(100% / 1.2) !important;
+  }
+  .compact .blur > span {
+    background-size: 100% calc(100% / 1.2);
+    background-position: top;
   }
 }

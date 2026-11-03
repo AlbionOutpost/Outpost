@@ -235,7 +235,7 @@
     transition:
       transform var(--motion-card-time) var(--motion-card-ease),
       filter var(--motion-card-time) var(--motion-card-ease);
-    transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+    transform: none;
   }
   .app.outpost[data-motion-enabled] .activity-artwork-link:hover {
     transform: perspective(900px) translateY(-6px) rotateX(3deg) rotateY(-3deg) scale(1.025);

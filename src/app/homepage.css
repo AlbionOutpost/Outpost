@@ -1423,13 +1423,67 @@ a.landing-window-title:hover {
   padding-bottom: 0;
 }
 .app.outpost .landing-cta {
+  --supporter-art-width: min(100cqw, 960px);
+  --supporter-body-top: calc(var(--supporter-art-width) * 0.1085);
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  color: var(--text);
+  text-align: center;
+}
+.app.outpost .landing-cta::before {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  z-index: -2;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--illustration-bg) 88%, transparent),
+      var(--illustration-bg)
+    ),
+    url("/scenes/supporter/crown-courtyard.webp") center / cover;
+  box-shadow: var(--shadow-raised);
+}
+.app.outpost .landing-cta-art {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  z-index: -1;
+  width: min(100%, 960px);
+  overflow: hidden;
+  translate: -50% 0;
+  pointer-events: none;
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.app.outpost .landing-cta-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  mask: url("/scenes/supporter/crown-silhouette.svg") center top / 100% auto no-repeat;
+}
+.app.outpost .landing-cta-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 64px 40px 60px;
-  color: var(--text);
-  text-align: center;
+  padding: calc(var(--supporter-art-width) * 0.38) 40px 40px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    color-mix(in srgb, var(--illustration-bg) 80%, transparent) 65%,
+    var(--illustration-bg)
+  );
+}
+.app.outpost .landing-cta-content::after {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 2px var(--well);
+  mask-image: linear-gradient(transparent, black 70%);
+  pointer-events: none;
 }
 
 .app.outpost .landing-cta h2 {
@@ -1470,7 +1524,7 @@ a.landing-window-title:hover {
   height: 20px;
 }
 .app.outpost .landing-cta-actions .button.primary {
-  color: var(--bg);
+  color: var(--illustration-bg);
 }
 
 /* ---------- Motion ----------
@@ -1763,8 +1817,15 @@ a.landing-window-title:hover {
   .app.outpost .landing-cta-wrap {
     margin-top: 64px;
   }
-  .app.outpost .landing-cta {
-    padding: 44px 20px 40px;
+  .app.outpost .landing-cta-content {
+    padding: calc(var(--supporter-art-width) * 0.42) 20px 32px;
+    background: linear-gradient(
+      to bottom,
+      transparent calc(var(--supporter-art-width) * 0.28),
+      color-mix(in srgb, var(--illustration-bg) 90%, transparent)
+        calc(var(--supporter-art-width) * 0.5),
+      var(--illustration-bg) calc(var(--supporter-art-width) * 0.84)
+    );
   }
   .app.outpost .landing-cta-actions {
     margin-top: 8px;

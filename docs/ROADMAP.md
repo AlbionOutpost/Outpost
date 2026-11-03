@@ -275,3 +275,5 @@ Owner-requested homepage polish after PR73: replace swapped-digit motion with pi
 - Homepage Supporter courtyard: owner-supplied illustration integrated above activity discovery with a raised silhouette, readable lower copy and responsive actions. Phase/release evidence: [design note](design/SUPPORTER_ARTWORK_2026-11-03.md).
 
 - Owner card-artwork corrections: restore the centered Supporter callout with the replacement crown scene, constrain activity effects to the silhouette, remove preview icon fills, and resolve build scenes by category. [Scope/evidence](design/CARD_ARTWORK_CORRECTIONS_2026-11-03.md).
+
+- Centered Supporter cutout plus Firefox card rendering: separate crown silhouette above the body, centered copy/actions, direct artwork blur in place of backdrop sampling, no idle perspective transform, and a native Firefox regression runner. [Design and limits](design/CENTERED_CUTOUTS_FIREFOX_2026-11-03.md).
