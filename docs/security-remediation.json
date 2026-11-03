@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-03T13:04:31.273631+00:00",
-  "baselineCommit": "63159d47c542205342991497b0cb2b670983bb0e",
-  "branch": "codex/activity-card-depth",
-  "sourceFingerprint": "a6bb939b8b77a21c29f8e83386c1dbb1b509b098854108674d899842aef1ca8e",
-  "scope": "Owner-requested follow-up after the approved activity-card release: remove homepage Most liked rows and spacing, add progressive3/7/14px blur over the decorative lower60% while labels/top silhouettes stay sharp, contour shadows/reflection/bevel and scoped3-degree/6px hover perspective. Touch/reduced-motion stay static, with existing pointer-light writes suppressed under reduced motion. Dead ranking/fanned-weapon CSS removed; no new dependency, listener per card, data/schema/auth change or raster edit. The earlier PR70 application06e30f5 and delivery record63159d4 are already live; this refinement is local pending the requested PR/deployment pipeline. Historical security findings remain inherited evidence, not a new whole-product audit.",
+  "checkedAt": "2026-11-03T17:07:06.038662+00:00",
+  "baselineCommit": "bfdf9b6403f4deaf0fedbfca18c6f5ee7844eeb7",
+  "branch": "codex/activity-weapon-overlays",
+  "sourceFingerprint": "6cab54f913a3fd408319f0e5182bec0c5d406639d5bb9fb0b673557122b25b81",
+  "scope": "Owner-authorized follow-up to published PR72/bfdf9b6: source-backed weapon overlays on homepage and Builds activity cards, higher progressive blur and an outer border fading near protruding art. Landing crafting quantities recalculate immediately from the loaded observations, removing the failed-refresh/older-quantity state. Shared silver and calculator outputs use changed-digit rolls with exact accessible targets and reduced motion. No new dependency, provider configuration, auth/private cache/schema change or raster edit. Historical security findings remain inherited evidence rather than a new whole-product audit. This checkpoint precedes the requested protected-PR/deployment pipeline; actual publication is recorded separately.",
   "findings": [
     {
       "id": "F-01",
@@ -223,14 +223,32 @@
       "id": "UI-ACTIVITY-DEPTH",
       "implementation": "COMPLETE: ranking rows removed, progressive artwork blur and scoped depth feedback",
       "verification": "159/162 full Node browser cases;14 affected Cloudflare journeys; responsive/reduced-motion checks; independent pixel/loading gates remain open",
-      "deployment": "PENDING requested PR/pipeline"
+      "deployment": "Deployed bfdf9b6 via41642726726; public desktop/mobile/reduced-motion checks passed. Data13799181-e776-4e60-bacb-ce27969cb299; webf87fe381-9653-4eaa-a5b9-2143e5c592cb."
+    },
+    {
+      "id": "UI-ACTIVITY-WEAPONS",
+      "implementation": "COMPLETE: shared source-backed main-hand previews, raised blur masks and fading body border on both activity grids. Phone scene crop preserved.",
+      "verification": "522 units;161/164 full Node browsers with only existing equipment goldens open.32 affected Cloudflare cases and six-width/scoped axe review pass.",
+      "deployment": "PENDING protected PR/pipeline"
+    },
+    {
+      "id": "CALC-LANDING-QUANTITY",
+      "implementation": "COMPLETE: quantity-only projection of the loaded quote, preserving nulls/unit prices/margins/region boundaries; obsolete failed-refresh banner removed.",
+      "verification": "Independent12-batch accounting, loss/null/bounds units; actual browser quantity changes without another request; initial unavailability and region regressions retained.",
+      "deployment": "PENDING protected PR/pipeline"
+    },
+    {
+      "id": "UI-ROLLING-NUMBERS",
+      "implementation": "COMPLETE: shared420ms changed-digit rolls for silver and calculator results, actual accessible values, stable unchanged digits and immediate reduced motion.",
+      "verification": "Native Web Animations direction/changed-digit checks, rapid12-batch rendered review, reduced-motion tests and affected calculator/browser regressions.",
+      "deployment": "PENDING protected PR/pipeline"
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Current Node22 full phase11/12 PASS:519 units and159/162 browsers. Only the same equipment pixel comparisons at320/390/768 remain open; new depth/reduced-motion/click/region journey passes. No unrelated baselines rewritten."
+      "detail": "Current Node22 phase11/12 PASS:522 units;161/164 browsers. Only existing320/390/768 equipment golden mismatches remain; no baselines rewritten. Earlier intermediate run had one obsolete interpolation assertion; updated rolling-direction/target assertion passes in the full rerun."
     },
     {
       "name": "Deep-fix browser regressions",
@@ -245,22 +263,22 @@
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Fresh current local Cloudflare runtime generation/data types/schema and24 actual workerd database cases pass. Current PG integration and authorization regressions also pass; no private data/API/schema changes."
+      "detail": "Current local generation, data types/schema and24 real workerd data cases pass. Current disposable PostgreSQL integration and billing/authorization regressions pass; no private API/data/schema changes."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Current OpenNext build and both Worker typechecks pass;14 affected local Cloudflare homepage/category/navigation/motion journeys pass. Final light-shadow palette correction is recaptured separately; fixture entry is never deployed."
+      "detail": "Fresh OpenNext build and both Worker typechecks pass.32 affected Cloudflare cases cover home/activity collection, rolling directions/reduced motion, crafting, trade, transport, farming/fishing and production. Final build rerun follows small dead-style/test cleanup; fixture entry never deploys."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Final depth-refinement dry runs: albionoutpost-data 1023048 gzip bytes, albionoutpost-web 2519430 gzip bytes; both below3,145,728; no paid service enabled."
+      "detail": "Final exact-source Wrangler dry runs: albionoutpost-data 1023980 gzip bytes, albionoutpost-web 2520832 gzip bytes; both below3,145,728; no paid feature enabled."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-activity-depth:qa image UID1000, no baked/app/.env, actual local PostgreSQL/Redis health, activity page and image200; owned container cleaned. Final light-shadow correction retains the same application routes/data boundary."
+      "detail": "Fresh final outpost-activity-weapons:qa image, UID1000, no baked /app/.env, actual local PostgreSQL/Redis health, collection/image200 and owned-container cleanup. No production data touched."
     },
     {
       "name": "Dependencies",
@@ -275,12 +293,12 @@
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Homepage8/collection32 cards at1440/1920/768/390/375/320 plus light homepage: all images decoded, zero overflow/page errors,13 clean scoped axe checks. Production upper image contours remain intact; title/count crisp, no ranking rows. Hover moves/lifts and reduced motion restores exact stable bounds. Light shadow adjusted from glow to a dark theme-derived shadow."
+      "detail": "Both grids at1440/1920/768/390/375/320: all artwork/item images decoded, no document overflow/page errors,13 clean scoped axe checks including light homepage. Inspected all widths, gallery variants and controlled12-batch phone arithmetic; corrected phone trace crop and changed-digit baseline. Native hover/reduced-motion journeys pass. Tall element screenshot skip-link artifact documented separately."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One local workerd initial-homepage mobile sample: Performance75/Accessibility100/LCP5882ms/CLS0.035, before the final light-only shadow correction. Loading target remains open; not a controlled improvement or field result."
+      "detail": "One current local workerd initial-route mobile sample: Performance74/Accessibility100/LCP6021ms/CLS0.035. Not a controlled speedup/public/field result; loading target remains open."
     },
     {
       "name": "Documentation and formatting",
@@ -290,12 +308,12 @@
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "Required documentation, checks and browser gates passed on PR70 before a normal owner-authorized squash merge. No administrator bypass, force push, branch deletion or policy change. Prior ruleset/secret-protection read-back remains historical evidence."
+      "detail": "PR72 required gates passed before normal owner-authorized squash merge bfdf9b6. Current follow-up must pass protected PR checks before normal merge; no bypass/force push/policy change."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "Earlier PR70 application06e30f5 remains live (data698e856f-ff94-4445-840b-ae048e359b8d; web4b1b1ae9-1c5f-47ef-aac8-be0e05e1c785). The owner-authorized depth/blur/ranking-removal refinement will follow required PR checks and normal Cloudflare verification/deployment."
+      "detail": "Latest verified delivery bfdf9b6/41642726726: data13799181-e776-4e60-bacb-ce27969cb299, webf87fe381-9653-4eaa-a5b9-2143e5c592cb. Current overlays/quantity/number follow-up is explicitly owner-authorized and pending protected PR/deployment; independent formal launch gates remain open."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -310,12 +328,12 @@
     {
       "name": "Public activity integration",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "Actual earlier06e30f5 public proof remains historical; final ranking-free/blur/depth refinement will be checked on public HTTPS after its exact deployment."
+      "detail": "Published bfdf9b6 verified8 homepage/32 gallery cards, no ranking rows, three blur layers, hover/reduced motion, Asia navigation/mobile/no page errors and3 exact WebP hashes. Repeat after this exact update ships."
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "Earlier06e30f5 strict public health/data/private-denial/WAF and OAuth startup passed. No new genuine personal consent, payment or private session claim; repeat public checks after this refinement ships."
+      "detail": "Published bfdf9b6 strict public health/data/private-denial/WAF and OAuth-start PKCE/cookie checks passed. Repeat after this refinement; genuine consent/payments/private session remain untested."
     }
   ],
   "limits": [
@@ -326,6 +344,6 @@
     "Historical phase/browser failures are retained in the earlier private reports. This deeper repair has its own final full-phase and affected Cloudflare evidence; fixture providers remain distinct from real OAuth/payments.",
     "Landing final phase519 units/158 browser cases/all12 gates passed. Earlier154/158 accessibility failures and157/158 bulk screenshot timeout remain recorded. No exhaustive defect or full conformance claim.",
     "New private database schema6 rejects incompatible older schema5 backends. A future rollback must retain a compatible backend or use a rehearsed backup/restore strategy; this local migration evidence is not production restore proof.",
-    "Current depth/blur refinement is pending publication; earlier activity release remains live. Three local equipment pixel comparisons and loading targets remain open. Formal NO-GO continues for independent provider/legal/source/recovery/field/full-product gates; scoped UI verification is separate from deployment."
+    "Current owner-authorized weapon/blur/border and crafting/number refinement is pending protected PR publication. Three existing local equipment golden mismatches and loading targets remain open. Formal NO-GO remains for independent provider/legal/source/recovery/field/full-product gates; scoped UI and release evidence are separate."
   ]
 }

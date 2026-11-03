@@ -151,3 +151,9 @@ Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`
 ## Known gaps
 
 No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
+
+## Landing crafting quantity projection
+
+The landing showcase loads one `/api/landing/craft?batches=1` quote per selected region. Its1–50 batch stepper uses `resizeCraftQuote`: quantity, material gross, upfront cost, fees, revenue and profit scale by `requestedBatches / quotedBatches`. Unit prices, return/tax assumptions, margin, missing prices and city ordering do not change. This is exact under the existing production engine's linear per-batch accounting; no per-craft rounding or new observation is claimed. All values remain in silver. Region changes discard the previous quote. Initial missing/error observations stay unavailable; the obsolete failed-refresh banner is removed.
+
+Independent fixture:4 cloth at100, output600,15.3% returns,6.5% sales fees → at12 batches48 cloth,4800 upfront,7200 revenue,468 fees,2666.4 economic profit. Null prices remain null; losses remain losses. Units/assumptions in the full production engine remain unchanged. Shared display transitions expose actual targets immediately to accessibility; the animated digits do not become calculation inputs.

@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/build-region-link";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import activityOutlines from "@/lib/activity-outlines.json";
+import { ItemIcon } from "@/components/item-icon";
 import styles from "./activity-artwork-card.module.css";
 
 export function ActivityArtworkCard({
@@ -11,11 +12,13 @@ export function ActivityArtworkCard({
   name,
   builds,
   compact = false,
+  weapons = [],
 }: {
   category: string;
   name: string;
   builds: number;
   compact?: boolean;
+  weapons?: { itemId: string; name: string }[];
 }) {
   const art = activityBackgrounds.find((a) => a.id === category);
   return (
@@ -33,6 +36,8 @@ export function ActivityArtworkCard({
       >
         {art && (
           <Image
+            className={styles.scene}
+            data-activity-scene="true"
             src={art.src}
             alt=""
             fill
@@ -44,8 +49,28 @@ export function ActivityArtworkCard({
           <span />
           <span />
         </span>
+        <span className={styles.border} aria-hidden="true" />
         <div className={styles.caption}>
           <div>
+            {weapons.length > 0 && (
+              <span
+                className={styles.weapons}
+                role="group"
+                aria-label="Weapons from top category builds"
+              >
+                {weapons.slice(0, 3).map((weapon) => (
+                  <span
+                    key={weapon.itemId}
+                    data-activity-weapon={weapon.itemId}
+                    role="img"
+                    aria-label={weapon.name}
+                    title={weapon.name}
+                  >
+                    <ItemIcon id={weapon.itemId} size={48} />
+                  </span>
+                ))}
+              </span>
+            )}
             <h3>{name}</h3>
             <small>
               {builds

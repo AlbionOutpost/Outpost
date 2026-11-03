@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "./animated-number";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useRef, useState } from "react";
 import { Sprout } from "lucide-react";
@@ -17,9 +18,11 @@ import { ItemIcon } from "./item-icon";
 import { ScenarioControls } from "./scenario-controls";
 import "@/app/farming-workspace.css";
 const money = (n: number | null | undefined) =>
-  n === null || n === undefined
-    ? "Not calculated"
-    : n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  n === null || n === undefined ? (
+    "Not calculated"
+  ) : (
+    <AnimatedNumber value={n} digits={2} minimumDigits={0} />
+  );
 export function FarmingCalculator() {
   const router = useRouter();
   const region = useOutpostRegion(),

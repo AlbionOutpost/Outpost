@@ -1,4 +1,5 @@
 "use client";
+import { AnimatedNumber } from "./animated-number";
 import { Silver } from "@/components/silver";
 import { ProductionSensitivity } from "./production-sensitivity";
 import { CalculationReadiness } from "./calculation-readiness";
@@ -1149,7 +1150,18 @@ export function ProductionCalculator({
                 </div>
                 <div className={tone(result.margin)}>
                   <dt>Profit margin</dt>
-                  <dd>{result.margin === null ? "Unavailable" : `${money(result.margin)}%`}</dd>
+                  <dd>
+                    {result.margin === null ? (
+                      "Unavailable"
+                    ) : (
+                      <AnimatedNumber
+                        value={result.margin}
+                        digits={2}
+                        minimumDigits={0}
+                        suffix="%"
+                      />
+                    )}
+                  </dd>
                 </div>
               </dl>
               <dl className="production-cash-summary">
@@ -1168,7 +1180,17 @@ export function ProductionCalculator({
                 {draft.useFocus && (
                   <div>
                     <dt>Profit / focus</dt>
-                    <dd>{money(result.profitPerFocus)}</dd>
+                    <dd>
+                      {result.profitPerFocus == null ? (
+                        "Unavailable"
+                      ) : (
+                        <AnimatedNumber
+                          value={result.profitPerFocus}
+                          digits={2}
+                          minimumDigits={0}
+                        />
+                      )}
+                    </dd>
                   </div>
                 )}
               </dl>
@@ -1205,7 +1227,13 @@ export function ProductionCalculator({
                   ].map(([label, value]) => (
                     <div key={String(label)}>
                       <dt>{label}</dt>
-                      <dd>{money(value as number | null | undefined)}</dd>
+                      <dd>
+                        {value == null ? (
+                          "Unavailable"
+                        ) : (
+                          <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
+                        )}
+                      </dd>
                     </div>
                   ))}
                 </dl>

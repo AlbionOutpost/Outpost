@@ -1801,18 +1801,6 @@ a.landing-window-title:hover {
   min-height: 28px;
 }
 
-/* Live values interpolate without changing the canonical accessible amount. */
-.app.outpost .animated-number {
-  font-variant-numeric: tabular-nums;
-}
-.app.outpost .tool-refresh-note {
-  min-height: 18px;
-  font-size: 12px;
-  color: var(--muted);
-}
-.app.outpost .tool-refresh-note:empty {
-  visibility: hidden;
-}
 .app.outpost .tool-plot {
   touch-action: pan-y;
   cursor: crosshair;

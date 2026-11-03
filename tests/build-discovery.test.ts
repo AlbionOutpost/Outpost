@@ -27,6 +27,24 @@ describe("source-backed build discovery", () => {
     expect(weaponFamily("Battleaxe")).toBe("axe");
     expect(weaponFamily("Unknown weapon")).toBe("other");
   });
+  it("previews only distinct main hands from each category's recorded top five listed builds", () => {
+    for (const activity of buildDiscovery.activities) {
+      const top = rows
+        .filter((b) => b.category === activity.id && b.updatedAt >= "2026" && (b.upvotes ?? 0) >= 1)
+        .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0))
+        .slice(0, 5);
+      const expected = [
+        ...new Set(
+          top.flatMap((b) =>
+            b.equipment.filter((e) => e.slot === "Main hand").map((e) => e.itemId),
+          ),
+        ),
+      ].slice(0, 3);
+      expect(activity.topWeapons.map((weapon) => weapon.itemId)).toEqual(expected);
+    }
+    expect(buildDiscovery.activities.find((a) => a.id === "ZVZ")?.topWeapons).toHaveLength(3);
+    expect(buildDiscovery.activities.find((a) => a.id === "ARENA")).toBeUndefined();
+  });
   it("combines exact weapon, family, activity and case-insensitive recorded tags", () => {
     const expected = rows.filter(
       (b) =>

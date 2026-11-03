@@ -1087,107 +1087,463 @@
   "activities": [
     {
       "id": "ABYSSAL_DEPTHS_2V2",
-      "count": 77
+      "count": 77,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_NATURESTAFF_CRYSTAL",
+          "name": "Forgebark Staff"
+        },
+        {
+          "itemId": "T8_2H_ENIGMATICSTAFF",
+          "name": "Enigmatic Staff"
+        },
+        {
+          "itemId": "T8_MAIN_RAPIER_MORGANA",
+          "name": "Bloodletter"
+        }
+      ]
     },
     {
       "id": "ABYSSAL_DEPTHS_3V3",
-      "count": 8
+      "count": 8,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_AXE",
+          "name": "Greataxe"
+        },
+        {
+          "itemId": "T8_2H_DOUBLEBLADEDSTAFF_CRYSTAL",
+          "name": "Phantom Twinblade"
+        },
+        {
+          "itemId": "T8_2H_SCYTHE_CRYSTAL",
+          "name": "Crystal Reaper"
+        }
+      ]
     },
     {
       "id": "ANCIENT_LANDS",
-      "count": 3
+      "count": 3,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_HOLYSTAFF",
+          "name": "Great Holy Staff"
+        },
+        {
+          "itemId": "T8_MAIN_SWORD",
+          "name": "Broadsword"
+        },
+        {
+          "itemId": "T8_2H_DOUBLEBLADEDSTAFF_CRYSTAL",
+          "name": "Phantom Twinblade"
+        }
+      ]
     },
     {
       "id": "BOMB_SQUAD",
-      "count": 20
+      "count": 20,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_CROSSBOW_CANNON_AVALON",
+          "name": "Energy Shaper"
+        },
+        {
+          "itemId": "T8_2H_BOW_HELL",
+          "name": "Wailing Bow"
+        },
+        {
+          "itemId": "T8_2H_KNUCKLES_AVALON",
+          "name": "Fists of Avalon"
+        }
+      ]
     },
     {
       "id": "CORRUPTED_DUNGEON",
-      "count": 22
+      "count": 22,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DUALAXE_KEEPER",
+          "name": "Bear Paws"
+        },
+        {
+          "itemId": "T8_MAIN_1HCROSSBOW",
+          "name": "Light Crossbow"
+        },
+        {
+          "itemId": "T8_2H_KNUCKLES_AVALON",
+          "name": "Fists of Avalon"
+        }
+      ]
     },
     {
       "id": "CRYSTAL_ARENA",
-      "count": 72
+      "count": 72,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DAGGERPAIR_CRYSTAL",
+          "name": "Twin Slayers"
+        },
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_SET2",
+          "name": "Rootbound Staff"
+        },
+        {
+          "itemId": "T8_2H_LONGBOW",
+          "name": "Longbow"
+        }
+      ]
     },
     {
       "id": "CRYSTAL_ARENA_1V1",
-      "count": 28
+      "count": 28,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_1HCROSSBOW",
+          "name": "Light Crossbow"
+        },
+        {
+          "itemId": "T8_MAIN_FIRESTAFF_CRYSTAL",
+          "name": "Flamewalker Staff"
+        },
+        {
+          "itemId": "T8_MAIN_SPEAR_LANCE_AVALON",
+          "name": "Daybreaker"
+        }
+      ]
     },
     {
       "id": "CRYSTAL_CREATURES",
-      "count": 1
+      "count": 1,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DUALCROSSBOW_HELL",
+          "name": "Boltcasters"
+        }
+      ]
     },
     {
       "id": "FAME_FARM_GROUP",
-      "count": 295
+      "count": 295,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_BOW_AVALON",
+          "name": "Mistpiercer"
+        },
+        {
+          "itemId": "T8_2H_ARCANE_RINGPAIR_AVALON",
+          "name": "Evensong"
+        },
+        {
+          "itemId": "T8_2H_BOW_KEEPER",
+          "name": "Bow of Badon"
+        }
+      ]
     },
     {
       "id": "FAME_FARM_GROUP_AVALON",
-      "count": 108
+      "count": 108,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_MACE_HELL",
+          "name": "Incubus Mace"
+        },
+        {
+          "itemId": "T8_2H_ENIGMATICSTAFF",
+          "name": "Enigmatic Staff"
+        },
+        {
+          "itemId": "T8_2H_CLAYMORE_AVALON",
+          "name": "Kingmaker"
+        }
+      ]
     },
     {
       "id": "FAME_FARM_SOLO",
-      "count": 15
+      "count": 15,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_MORGANA",
+          "name": "Bloodmoon Staff"
+        },
+        {
+          "itemId": "T8_MAIN_NATURESTAFF",
+          "name": "Journeyman's Nature Staff"
+        },
+        {
+          "itemId": "T8_MAIN_FIRESTAFF",
+          "name": "Fire Staff"
+        }
+      ]
     },
     {
       "id": "GANK_DUO",
-      "count": 4
+      "count": 4,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_HAMMER_UNDEAD",
+          "name": "Tombhammer"
+        },
+        {
+          "itemId": "T8_MAIN_HOLYSTAFF_AVALON",
+          "name": "Hallowfall"
+        },
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_MORGANA",
+          "name": "Bloodmoon Staff"
+        }
+      ]
     },
     {
       "id": "GANK_GROUP",
-      "count": 71
+      "count": 71,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_CLAWPAIR",
+          "name": "Claws"
+        },
+        {
+          "itemId": "T8_MAIN_SPEAR",
+          "name": "Spear"
+        },
+        {
+          "itemId": "T8_2H_NATURESTAFF_HELL",
+          "name": "Blight Staff"
+        }
+      ]
     },
     {
       "id": "GANK_SOLO",
-      "count": 11
+      "count": 11,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DAGGERPAIR",
+          "name": "Dagger Pair"
+        },
+        {
+          "itemId": "T8_2H_BOW_KEEPER",
+          "name": "Bow of Badon"
+        },
+        {
+          "itemId": "T8_2H_DUALSICKLE_UNDEAD",
+          "name": "Deathgivers"
+        }
+      ]
     },
     {
       "id": "GATHERING",
-      "count": 9
+      "count": 9,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DOUBLEBLADEDSTAFF",
+          "name": "Double Bladed Staff"
+        },
+        {
+          "itemId": "T8_2H_FIRE_RINGPAIR_AVALON",
+          "name": "Dawnsong"
+        },
+        {
+          "itemId": "T8_2H_FROSTSTAFF_CRYSTAL",
+          "name": "Arctic Staff"
+        }
+      ]
     },
     {
       "id": "HCE",
-      "count": 7
+      "count": 7,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_CURSEDSTAFF_CRYSTAL",
+          "name": "Rotcaller Staff"
+        },
+        {
+          "itemId": "T8_2H_KNUCKLES_SET3",
+          "name": "Spiked Gauntlets"
+        },
+        {
+          "itemId": "T8_2H_FROSTSTAFF_CRYSTAL",
+          "name": "Arctic Staff"
+        }
+      ]
     },
     {
       "id": "HELLGATE_2V2",
-      "count": 6
+      "count": 6,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_HOLYSTAFF",
+          "name": "Holy Staff"
+        },
+        {
+          "itemId": "T8_2H_CLAYMORE",
+          "name": "Claymore"
+        },
+        {
+          "itemId": "T8_2H_CLEAVER_HELL",
+          "name": "Carving Sword"
+        }
+      ]
     },
     {
       "id": "HELLGATE_5V5",
-      "count": 21
+      "count": 21,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_GLAIVE_CRYSTAL",
+          "name": "Rift Glaive"
+        },
+        {
+          "itemId": "T8_2H_BOW",
+          "name": "Bow"
+        },
+        {
+          "itemId": "T8_2H_NATURESTAFF_HELL",
+          "name": "Blight Staff"
+        }
+      ]
     },
     {
       "id": "MISTS_SOLO",
-      "count": 32
+      "count": 32,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_POLEHAMMER",
+          "name": "Polehammer"
+        },
+        {
+          "itemId": "T8_2H_QUARTERSTAFF",
+          "name": "Quarterstaff"
+        },
+        {
+          "itemId": "T8_2H_COMBATSTAFF_MORGANA",
+          "name": "Black Monk Stave"
+        }
+      ]
     },
     {
       "id": "OFF_META",
-      "count": 32
+      "count": 32,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_AVALON",
+          "name": "Lightcaller"
+        },
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_SET2",
+          "name": "Rootbound Staff"
+        },
+        {
+          "itemId": "T8_2H_ENIGMATICSTAFF",
+          "name": "Enigmatic Staff"
+        }
+      ]
     },
     {
       "id": "OPEN_WORLD",
-      "count": 70
+      "count": 70,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_LONGBOW",
+          "name": "Longbow"
+        },
+        {
+          "itemId": "T8_MAIN_SPEAR",
+          "name": "Spear"
+        },
+        {
+          "itemId": "T8_MAIN_MACE_CRYSTAL",
+          "name": "Dreadstorm Monarch"
+        }
+      ]
     },
     {
       "id": "SMALL_SCALE",
-      "count": 204
+      "count": 204,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_CLEAVER_HELL",
+          "name": "Carving Sword"
+        },
+        {
+          "itemId": "T8_2H_GLACIALSTAFF",
+          "name": "Glacial Staff"
+        },
+        {
+          "itemId": "T8_2H_FIRE_RINGPAIR_AVALON",
+          "name": "Dawnsong"
+        }
+      ]
     },
     {
       "id": "TRACKING_GROUP",
-      "count": 59
+      "count": 59,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_HOLYSTAFF_UNDEAD",
+          "name": "Redemption Staff"
+        },
+        {
+          "itemId": "T8_2H_SCYTHE_CRYSTAL",
+          "name": "Crystal Reaper"
+        },
+        {
+          "itemId": "T8_2H_DAGGERPAIR",
+          "name": "Dagger Pair"
+        }
+      ]
     },
     {
       "id": "TRANSPORTING",
-      "count": 17
+      "count": 17,
+      "topWeapons": [
+        {
+          "itemId": "T8_MAIN_CURSEDSTAFF_UNDEAD",
+          "name": "Lifecurse Staff"
+        },
+        {
+          "itemId": "T8_2H_HOLYSTAFF_UNDEAD",
+          "name": "Redemption Staff"
+        },
+        {
+          "itemId": "T8_MAIN_HOLYSTAFF_AVALON",
+          "name": "Hallowfall"
+        }
+      ]
     },
     {
       "id": "WORLD_BOSS",
-      "count": 9
+      "count": 9,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_DUALCROSSBOW_HELL",
+          "name": "Boltcasters"
+        },
+        {
+          "itemId": "T8_MAIN_MACE_HELL",
+          "name": "Incubus Mace"
+        },
+        {
+          "itemId": "T8_2H_HOLYSTAFF_HELL",
+          "name": "Fallen Staff"
+        }
+      ]
     },
     {
       "id": "ZVZ",
-      "count": 171
+      "count": 171,
+      "topWeapons": [
+        {
+          "itemId": "T8_2H_SHAPESHIFTER_SET2",
+          "name": "Rootbound Staff"
+        },
+        {
+          "itemId": "T8_2H_HAMMER_CRYSTAL",
+          "name": "Truebolt Hammer"
+        },
+        {
+          "itemId": "T8_MAIN_HOLYSTAFF_AVALON",
+          "name": "Hallowfall"
+        }
+      ]
     }
   ],
   "tags": [

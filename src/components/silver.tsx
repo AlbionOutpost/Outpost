@@ -4,7 +4,7 @@ export function Silver({
   value,
   plain = "—",
   digits = 0,
-  animate = false,
+  animate = true,
 }: {
   value: number | null | undefined;
   plain?: string;
@@ -18,7 +18,7 @@ export function Silver({
       {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
       <img src="/albion/icons/silver.webp" alt="" width={16} height={16} />
       {animate ? (
-        <AnimatedNumber value={value} digits={digits} />
+        <AnimatedNumber value={value} digits={digits} minimumDigits={0} />
       ) : (
         value.toLocaleString("en-US", { maximumFractionDigits: digits })
       )}
