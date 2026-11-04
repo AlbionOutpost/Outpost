@@ -33,24 +33,16 @@ export function GuidesCarousel({ guides, suffix }: { guides: GuideSlide[]; suffi
                 </span>
               )}
             </span>
-            <span className={styles.readTime}>
-              <Clock size={13} aria-hidden="true" />
-              {guide.minutes} min read
+            <span className={styles.meta}>
+              <span className={styles.readTime}>
+                <Clock size={13} aria-hidden="true" />
+                {guide.minutes} min read
+              </span>
+              <small className={styles.category}>{guide.category}</small>
             </span>
             <span className={styles.copy}>
-              <small className={styles.category}>{guide.category}</small>
               <h3>{guide.title}</h3>
               {index === 0 && <span className={styles.summary}>{guide.summary}</span>}
-              <span className={styles.byline}>
-                By {guide.author} <span aria-hidden="true">·</span> Updated{" "}
-                <time dateTime={guide.updatedAt}>
-                  {new Date(guide.updatedAt).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    timeZone: "UTC",
-                  })}
-                </time>
-              </span>
             </span>
           </Link>
         </article>

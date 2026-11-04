@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-04T03:11:53.270520+00:00",
-  "baselineCommit": "273a46861249bd38f6edea1e4f16de3728ae0b64",
-  "branch": "codex/supporter-corner-followup",
-  "sourceFingerprint": "e35ab35a06494e6d5f25a4bdc7b69c7a7379154869b8a2d73d58446c80dfb0fd",
-  "scope": "Owner corrections: entire Supporter surface follows supplied crown silhouette; whole activity artwork/blur/border grows and presses together; equal desktop tool/subgrid tracks with shorter graph/taller profit panel and readable narrow financial scrolling; all guide copy bottom-left with correct scene framing. Shared motion audited across all52route patterns and supplemented for real control/card primitives; confirmed-success reactions for account/device/build/community controls without initial-state pops, duplicate pending submissions or success feedback on failures. Existing API permissions/count math/calculator facts/assets unchanged. New reaction spec registered in core command; no dependency changes. Explicit protected push/deploy authorized; current evidence is prepublication. PR80 was deployed successfully; live manual Firefox review found tiny remaining RGB black corner protrusions. This follow-up changes only the derived SVG corner curve and lower rectangular mask continuation. Original WebP, layout, interaction code, dependencies and APIs are unchanged. Current local eight Chromium and fourteen native Firefox cases were inspected; final protected/public corner acceptance remains pending.",
+  "checkedAt": "2026-11-04T13:32:57.489556+00:00",
+  "baselineCommit": "0d03b9b04ee01e69c0b56930f14442fe85579b98",
+  "branch": "codex/landing-density-footer",
+  "sourceFingerprint": "7e41268a3da1c2ce363c91b8f1ddf2d9358d3b660022fefd75a166f97c9fa32f",
+  "scope": "Owner landing-page follow-up: compact profit/margin to about62px, reserve real-material space and select among15existing two-input T4\u2013T6 showcase recipes; move guide categories upper-right and remove landing author/date lines; replace the minimal footer bar with two coherent groups. Original recipe facts, formulas/rates, observation identity, full-calculator choices, artwork, shared motion, permissions and private caches remain unchanged. Current evidence is a prepublication checkpoint; protected CI and actual public readback remain separate.",
   "findings": [
     {
       "id": "F-01",
@@ -290,12 +290,12 @@
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Current corner follow-up Node22 fullphase11/12gates;524units,167/170browsers. Only the same three existing equipment goldens fail. Build/types/lint/data/database/authorization/audit/tooling/regions pass. Evidence .qa/card-motion-polish/corner-phase/. No goldens or assertions suppressed."
+      "detail": "Current Node22 fullphase11/12gates:524units,167/170browsers. Only the same three existing equipment goldens at320/390/768 fail. Updated homepage guide/cost/profit assertions pass without relaxed price/count/permission expectations. Build/types/lint/data/database/authorization/audit/tooling/regions pass. Evidence .qa/landing-layout-followup/."
     },
     {
       "name": "Deep-fix browser regressions",
       "status": "PASS",
-      "detail": "66finalCloudflare core cases including newreaction spec;8focused pending/error/reduced/duplicate/reader-owner persistence/keyboard/hover/press cases pass.12visual motion journeys include actual intermediateframes, both themes, toolCTA/footer/hero/guide grow/press/release and explicitly mocked localaccount-like visuals."
+      "detail": "Current fullproduction suite passes affected homepage/control/reaction/region/missing-price cases. Local guides12viewport/theme cases and footer12render+2keyboard journeys pass with scopedaxe0/overflow0; tool12cases show62.390625pxprofit,2real materials and aligneddesktop card/action tracks. ProtectedCloudflare core remains pending currentcandidate."
     },
     {
       "name": "PostgreSQL billing and authorization",
@@ -305,12 +305,12 @@
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "24localD1runtime cases and both Worker typechecks pass. No server API/count/permission/cache/schema changes; privacy/denial checks retained."
+      "detail": "Current24localD1runtime/authorization cases pass. No serverpermission/privatecache/schema changes; fullphase repeats PostgreSQL/database/auth regressions. Current protectedWorker build/types remains a separatepending gate."
     },
     {
       "name": "Cloudflare build/types",
-      "status": "PASS",
-      "detail": "FinalOpenNextbuild and Worker types pass. Localproduction-config regeneration blocked because release-clone runtime selection/sitekey inputs are absent; existing reviewed binding-only configs reused for current bundle dry-runs, with all binding/config source unchanged. Production CI must validate owner-configured selection/secrets."
+      "status": "PENDING",
+      "detail": "Previous0d03b9b was deployed with currentruntime/binding contracts; no binding/schema/cache configuration changes. New API showcase selection and UI need their own protectedCloudflare build/types/core verification before deployment."
     },
     {
       "name": "Free bundle dry-runs",
@@ -320,7 +320,7 @@
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh final outpost-card-corners:qa image built; UID1000/no baked.env, isolatedPG/Redishealth, page/asset200; ownedcontainer removed. Previous initial-before-export failure retained separately."
+      "detail": "Fresh outpost-landing-density:qa built and accepted: UID1000, no baked.env, isolatedPG/Redishealthy, page/art200. Ownedcontainer removed."
     },
     {
       "name": "Dependencies",
@@ -335,27 +335,27 @@
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Current corner-only follow-up: eight actual local Chromium cases1920/1440/768/375 both themes plus14nativeFirefox cases1323/390/320 inspected; blackearprotrusions removed and copy/buttons readable. Prior full60scoped/72fit layout and52route sourceaudit remain for unchangedUI; actualPR80 guides12cases and tools/windows48captures reviewed with unavailableprices separate. BrowserMCP denial/sandboxed fallback/native owned-pointer emulation/field-private limits retained."
+      "detail": "Current12cases each for tools/guides/footer across1920/1440/768/390/375/320both themes; actualviewport and section captures inspected. Toolprofit62.390625px; guidecorner metadata16px with no textoverlap/byline; footerall6regional links/keyboard/backtotop retained, scopedaxe0. Initial minheight-only profit and sparse single-input recipe states retained; corrected integrated sweep passes. MCPapproval denial and nonexecutableImpeccable launcher handled by permitted fallback/projectcontext; no security/global preference changes."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One separate finalworkerdmobile sample:performance76/accessibility100,LCP5566ms/CLS0.063. Not field or a controlledspeedup; loadingtargets remain open."
+      "detail": "CurrentNode standalone production initial-route mobile sample79performance/100accessibility,LCP5062ms/CLS0. Different runtime from previousworkerd sample, so no controlledspeedup/comparison or fieldclaim; loadingtargets remain open."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "Current corner design/progress/roadmap and all seven generated QA/project reports updated from actual phase and visual evidence; docs47Markdown, format and source/artifact scans pass. Final staged owner-value scan/protected CI/public receipt remain separate."
+      "detail": "API/calculator scope and currentdesign/progress/roadmap updated; seven generated QA/project reports current. Docs48Markdown, formatting and source/currentNodeartifact configured-value scans pass. Finalstagedscan/protectedCI/publicreceipt remain separate."
     },
     {
       "name": "GitHub controls",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "PR80 passed required quality/documentation/browser checks and permitted squash to273a4686; Cloudflare41763139142 succeeded. Current two-rendering-file corner follow-up must pass own protected checks; no force/admin/rule bypass."
+      "detail": "PR81 passed normal requiredchecks and permitted squash to0d03b9b; deployment41766320284 succeeded. Current candidate must pass its own requiredchecks. No branch/rule/admin/force bypass."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "PR80 deployed273a4686 through successful41763139142. Tiny manual-visual corner follow-up awaits normal protected publication/public asset/readback. Broader product launch NO-GO remains separate."
+      "detail": "Previous0d03b9b via successful41766320284. Current landing density/footer candidate awaits normal protected publication and fresh public rendering/recipe proof. Broader product-launch NO-GO remains independent."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -370,12 +370,12 @@
     {
       "name": "Public activity integration",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR80 actualpublic12layout/16motion/native14 review completed; manualnative exposed tinySupporter ears despitegeometryPASS. Initial assetcomparison correctly failed whenlocalSVG changed during sweep; original mismatch/captures retained. Final corner deployment needs fresh public sourcehash and manual acceptance."
+      "detail": "0d03b9b final public12responsive/16motion/native14 and exactassets passed. Current changes do not touch cutout/activity/sharedmotion code; new tool/guide/footer proof is required after publishing."
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "727a2064 hosted smoke/OAuth-start passed2026-11-04T01:32Z. Currentdescendant requires fresh denials/cookie-state checks after normalcooldown. Realproviderconsent/payment remains deferred."
+      "detail": "0d03b9b hostedhealth/denial/OAuth-start/cookie/state checks passed. Current deployment needs fresh safe publicchecks after normalcooldown; genuine providerconsent/payments remain deferred."
     }
   ],
   "limits": [
@@ -387,6 +387,7 @@
     "New private database schema6 rejects incompatible older schema5 backends. A future rollback must retain a compatible backend or use a rehearsed backup/restore strategy; this local migration evidence is not production restore proof.",
     "Current raw full npm audit reports15 moderate development entries under the exact unchanged applicability guard; production-only audit is0. Historical documentation recorded17 in its earlier snapshot. No alerts suppressed.",
     "Current silhouette/sharedmotion candidate awaits protected publication/public readback. Mandatoryphase retains three existing equipment golden mismatches.52route source coverage is indirect; not every privateworkflow rendered. Native pointer-capability emulation/earlytimedprobe limits, missing localproduction selectioninputs, initialcontainer timing and oversizedscreenshot artifacts remain recorded. Operator/legal/provider-consent/current-patch/recovery/loading/field/full-product launch NO-GO remains independent.",
-    "PR80 live review caught tiny Supporter RGB corner pixels after geometry passed; final two-rendering-file contour correction has its own local phase/visual/container evidence and awaits protected/currentpublic readback. Earlier public asset mismatch during local source change is retained, not counted as final asset acceptance."
+    "PR80 live review caught tiny Supporter RGB corner pixels after geometry passed; final two-rendering-file contour correction has its own local phase/visual/container evidence and awaits protected/currentpublic readback. Earlier public asset mismatch during local source change is retained, not counted as final asset acceptance.",
+    "Current landing-density/footer follow-up changes showcase coverage27\u219215 existing multi-material candidates, not recipe facts or accounting. Full calculator coverage and source/current-patch limits remain. Initial intrinsic-height and sparse single-input visual states are retained; current protected/public proof is pending in committed checkpoint documents."
   ]
 }

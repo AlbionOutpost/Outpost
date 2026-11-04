@@ -239,6 +239,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     /Lavish Cloth\s*4\s*3,594\s*14,376/,
   );
   await expectResultText(crafting.locator(".tool-pair"), /38,126[\s\S]*26,984/);
+  expect((await crafting.locator(".tool-profit").boundingBox())!.height).toBeLessThanOrEqual(64);
   await expect(crafting.locator(".tool-profit")).toHaveClass(/is-loss/);
   await expectResultText(crafting.locator(".tool-profit"), /−\s*11,142[\s\S]*-41\.3%/);
   await expect(crafting.locator(".tool-cities li em")).toHaveCount(0);
@@ -295,7 +296,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
       Math.min(...toolBounds.map((r) => r.actionBottom)),
   ).toBeLessThan(1);
 
-  // Editorial guides: one lead read alongside two supporting stories, all copy bottom-left.
+  // Editorial guides: story copy bottom-left, category/read time top-right; no byline.
   const guides = page.locator(".landing-guides article");
   await expect(guides).toHaveCount(3);
   await expect(guides.first().getByText(/\d+ min read/)).toBeVisible();
@@ -307,14 +308,21 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     nodes.map((node) => {
       const { x, y, width, height } = node.getBoundingClientRect();
       const title = node.querySelector("h3")!.getBoundingClientRect();
-      const byline = node.querySelector("time")!.parentElement!.getBoundingClientRect();
+      const copy = node
+        .querySelector("h3")!
+        .parentElement!.lastElementChild!.getBoundingClientRect();
+      const category = node.querySelector("small")!.getBoundingClientRect();
       return {
         x,
         y,
         width,
         height,
         titleInset: title.x - x,
-        bottomInset: y + height - byline.bottom,
+        bottomInset: y + height - copy.bottom,
+        categoryRight: x + width - category.right,
+        categoryTop: category.top - y,
+        categoryBottom: category.bottom,
+        titleTop: title.top,
       };
     }),
   );
@@ -327,7 +335,13 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     expect(story.titleInset).toBeLessThanOrEqual(30);
     expect(story.bottomInset).toBeGreaterThanOrEqual(20);
     expect(story.bottomInset).toBeLessThanOrEqual(30);
+    expect(story.categoryRight).toBeGreaterThanOrEqual(15);
+    expect(story.categoryRight).toBeLessThanOrEqual(17);
+    expect(story.categoryTop).toBeLessThan(65);
+    expect(story.categoryBottom).toBeLessThan(story.titleTop);
   }
+  await expect(guides.locator("time")).toHaveCount(0);
+  await expect(guides.getByText(/^By .+ · Updated /)).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Next guides" })).toHaveCount(0);
 
   // Top kills: the week's most valuable kills, each card a killboard.

@@ -488,8 +488,12 @@ a.landing-window-title:hover {
   height: 100%;
 }
 .app.outpost .landing-card[data-scene="build"] .tool-card {
-  grid-template-rows: auto auto auto minmax(92px, 1fr) auto;
+  /* A short recipe must not expand the profit summary into a spacer. */
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
   align-content: stretch;
+}
+.app.outpost .landing-card[data-scene="build"] .is-materials {
+  height: 100%;
 }
 .app.outpost .landing-card[data-scene="city"] .tool-card {
   grid-template-rows: auto minmax(0, 1fr) auto auto;
@@ -898,15 +902,18 @@ a.landing-window-title:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 92px;
-  padding: 14px 12px;
+  min-height: 60px;
+  padding: 6px 12px;
   border: 1px solid #ffffff14;
   border-radius: var(--radius-md);
   background: #0f1116c4;
 }
+.app.outpost .tool-profit small {
+  line-height: 1.2;
+}
 .app.outpost .tool-profit > span {
   display: grid;
-  gap: 10px;
+  gap: 4px;
 }
 .app.outpost .tool-profit b {
   display: inline-flex;

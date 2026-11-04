@@ -13,9 +13,9 @@ import {
 } from "@/lib/albion/production";
 import bundled from "@/lib/albion/expanded-recipes.json" with { type: "json" };
 
-/** Every bundled T4–T6 crafting recipe (27, 39 distinct items: one price request). */
-const candidates = (bundled as { id: string; kind: string }[])
-  .filter((r) => r.kind === "crafting" && /-t[4-6]$/.test(r.id))
+/** A detailed showcase: bundled T4–T6 crafts with at least two actual inputs, one price batch. */
+const candidates = (bundled as { id: string; kind: string; ingredients: unknown[] }[])
+  .filter((r) => r.kind === "crafting" && /-t[4-6]$/.test(r.id) && r.ingredients.length >= 2)
   .map((r) => r.id);
 /** A royal city's base production bonus (18%) without focus: about 15.3% of materials back. */
 const RETURN_RATE = Math.round(returnRateFromBonus(18) * 1000) / 10;
@@ -23,7 +23,7 @@ type City = (typeof cities)[number];
 const royal = cities.filter((c): c is City => c !== "Black Market" && c !== "Brecilien");
 
 /**
- * The most worthwhile craft right now among the bundled T4–T6 recipes: every candidate priced in every
+ * The most worthwhile multi-material craft among the bundled T4–T6 recipes: every candidate priced in every
  * royal city from one batch of observations, run through the same `production()` as the
  * calculator, ranked by margin. Only cities where every price is known count as results;
  * if none qualify the best-covered scenario is returned with its missing prices listed.
