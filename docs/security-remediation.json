@@ -386,7 +386,7 @@
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "Current root source and final Cloudflare browser-artifact scans PASS: source-scan.log and artifact-scan.log. Staged configured-value scan PASS21files/0newmatches/0retainedfixtures in staged-secrets.json; root repeats after final document stage. Unknown/history scanning remains outside these scoped checks; no credential values copied into this record."
+      "detail": "Current corrective source and browser-artifact scans PASS. The14-file corrective candidate configured-value scan reports0newmatches/0retainedfixtures; final documentation follow-up is scanned separately before push. Earlier21-file scan belongs the prior legal-layout candidate. Unknown/history scanning remains outside these scoped checks; no credential values copied into this record."
     },
     {
       "name": "Responsive visual review",
