@@ -1,6 +1,9 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { History } from "@/components/history";
-export const metadata = { title: "Gold price history" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/gold", await searchParams);
+}
 export default function Page() {
   return (
     <>

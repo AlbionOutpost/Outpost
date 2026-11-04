@@ -5,6 +5,7 @@ import { useState, useSyncExternalStore } from "react";
 import { Search, ArrowUpRight, X, Pin } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
+import { toolEmblem } from "@/lib/search-emblems";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
@@ -164,7 +165,13 @@ export function ToolDirectory() {
                   >
                     <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
                       <span className="tool-symbol" aria-hidden="true">
-                        <ToolIcon name={t.icon} size={24} />
+                        {/* eslint-disable-next-line @next/next/no-img-element -- existing owner-supplied task emblem */}
+                        <img
+                          src={`/albion/icons/${toolEmblem(t.icon)}.webp`}
+                          alt=""
+                          width={56}
+                          height={56}
+                        />
                       </span>
                       <div>
                         <h3>{t.title}</h3>

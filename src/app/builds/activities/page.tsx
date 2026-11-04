@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { ArrowUpRight } from "lucide-react";
 import { ActivityArtworkCard } from "@/components/activity-artwork-card";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
@@ -6,7 +7,9 @@ import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import { buildDiscovery } from "@/lib/build-discovery";
 import styles from "./page.module.css";
 
-export const metadata = { title: "Builds by activity" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/builds/activities", await searchParams);
+}
 export default function Activities() {
   const counts = new Map(buildDiscovery.activities.map((a) => [a.id, a]));
   return (

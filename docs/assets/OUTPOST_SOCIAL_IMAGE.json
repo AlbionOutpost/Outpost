@@ -1,0 +1,42 @@
+{
+  "asset": "Outpost static social share card",
+  "created": "2026-11-04",
+  "output": "public/brand/outpost-social.png",
+  "width": 1200,
+  "height": 630,
+  "format": "PNG",
+  "generator": "scripts/build-social-image.mjs",
+  "classification": "Code-composited brand artwork using an existing owner-supplied logo and an existing generated decorative scene; not a gameplay screenshot or official Albion artwork.",
+  "authorization": "Owner requested richer site/share previews; existing owner logo and decorative art reused. No new image generation or independent third-party license determination.",
+  "sources": [
+    {
+      "path": "public/brand/outpost-social.png",
+      "bytes": 809098,
+      "sha256": "fa77176c877f8ac0b89c68b1749c0f9794d705ce1fedc1ae94405aa118778366"
+    },
+    {
+      "path": "public/brand/outpost-logo-dark.webp",
+      "bytes": 66438,
+      "sha256": "4bc134748077f2816c02681b2f685383f0ee2ad208482dc8a3dd4488fcc910d8"
+    },
+    {
+      "path": "public/albion/illustrations/hero-v1.webp",
+      "bytes": 115800,
+      "sha256": "2a5e7f08aa79b0c7b035f855edf155757ac528bf880eff7bd10c523f513466b4"
+    },
+    {
+      "path": "public/fonts/inter-latin-400-800.woff2",
+      "bytes": 36992,
+      "sha256": "69a6704255300c984ecd962610f034dc9ba3e82e9b6eca87884f93d8a78a6826"
+    },
+    {
+      "path": "node_modules/@fontsource/barlow-condensed/files/barlow-condensed-latin-800-normal.woff2",
+      "bytes": 22464,
+      "sha256": "2515494e8cc2ca07c86ea78766cfa104b796aa6ed5d66821c01d51dbb0b52bce"
+    }
+  ],
+  "priorProvenance": ["docs/assets/OUTPOST_LOGO.json", "docs/assets/GENERATED_ILLUSTRATIONS.json"],
+  "modifications": "Existing scene cropped to1200x630; charcoal gradient, Barlow Condensed/Inter live typography and owner logo composited with sandboxed local Playwright; no remote image requests.",
+  "delivery": "Committed static public/brand/outpost-social.png used in page-specific Open Graph and Twitter metadata. No runtime image generation, user avatars, private entity art or remote fetch.",
+  "reproduction": "PLAYWRIGHT_BROWSERS_PATH=/home/bttw/.cache/ms-playwright node scripts/build-social-image.mjs (Node22; repository dependencies and sandboxed Chromium required). Browser/font versions can affect output pixels."
+}

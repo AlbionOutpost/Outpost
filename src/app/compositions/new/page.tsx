@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -16,7 +17,7 @@ import { findLibraryComposition, findLibraryBuilds, librarySpellNames } from "@/
 import { copyLibraryGroup } from "@/lib/compositions/library-group";
 export const dynamic = "force-dynamic";
 // Editors are not search results; keep crawlers from spending the request budget here.
-export const metadata = { robots: { index: false, follow: false } };
+export const metadata = privateMetadata("Create a composition");
 export default async function NewComposition({
   searchParams,
 }: {

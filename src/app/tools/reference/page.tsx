@@ -1,10 +1,13 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import referenceTables from "@/lib/albion/game/reference-tables.json" with { type: "json" };
 import "@/app/tool-workspace.css";
-export const metadata = { title: "Reference tables" };
 type Table = { heading: string | null; header: string[]; rows: string[][] };
 const tables = referenceTables as { slug: string; title: string; tables: Table[] }[];
 const numeric = /^[\d.,%\s–-]+(kg|%)?$/;
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/reference", await searchParams);
+}
 export default function Page() {
   return (
     <>

@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -5,6 +6,7 @@ import { GroupCreate } from "@/components/group-create";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { SupporterGate } from "@/components/supporter-gate";
 import { canCreateTeam } from "@/lib/billing/gate";
+export const metadata = privateMetadata("Create a Team");
 export default async function NewGroup() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/signin");

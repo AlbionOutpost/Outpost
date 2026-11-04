@@ -1,7 +1,10 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { db } from "@/lib/db";
 import { ItemCatalog } from "@/components/item-catalog";
-export const metadata = { title: "Item database" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/items", await searchParams);
+}
 export default async function Page() {
   const [metadata, total, slots] = await Promise.all([
     db.itemMetadata.findMany({

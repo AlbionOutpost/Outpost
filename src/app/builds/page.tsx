@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { BuildRegionInput } from "@/components/build-region-link";
 import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
@@ -16,6 +17,9 @@ import { LayoutGrid, List } from "lucide-react";
 import { featuredLibraryBuilds } from "@/lib/grind-library";
 import { LibraryBuildCard } from "@/components/library-build-card";
 export const dynamic = "force-dynamic";
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/builds", await searchParams);
+}
 export default async function Builds({
   searchParams,
 }: {

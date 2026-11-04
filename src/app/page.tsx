@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import "./homepage.css";
 import Image from "next/image";
 import { AdSlot } from "@/components/ad-slot";
@@ -46,6 +47,9 @@ const showcase = {
   ],
 } as const;
 
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/", await searchParams);
+}
 export default async function Home({
   searchParams,
 }: {
@@ -267,8 +271,6 @@ export default async function Home({
         <ActivityGrid activities={activities} />
       </section>
 
-      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
-
       <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
         <div className="section-heading landing-section-heading">
           <h2 id="home-guides-title">
@@ -284,6 +286,8 @@ export default async function Home({
         </div>
         <GuidesCarousel guides={latestGuides} suffix={suffix} />
       </section>
+
+      <TopKills suffix={suffix} serverName={`Albion ${regions[region].label}`} />
 
       <div className="landing-wrap">
         <AdSlot placement="hub" suffix={suffix} />

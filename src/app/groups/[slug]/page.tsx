@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ArrowLeft } from "lucide-react";
 import { SupporterGate } from "@/components/supporter-gate";
@@ -12,6 +13,7 @@ import { db } from "@/lib/db";
 import { groupDashboard } from "@/lib/groups/dashboard";
 import { HttpError } from "@/lib/api-errors";
 import { GroupDashboard, GroupRequest } from "@/components/group-dashboard";
+export const metadata = privateMetadata("Team workspace");
 export default async function GroupPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const session = await getServerSession(authOptions);

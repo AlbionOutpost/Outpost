@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import Link from "@/components/build-region-link";
 import { BuildRegionInput } from "@/components/build-region-link";
@@ -10,7 +11,7 @@ import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { Layers, Cloud, LayoutGrid, List } from "lucide-react";
 import { z } from "zod";
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Favorite builds" };
+export const metadata = privateMetadata("Favorites");
 export default async function Favorites({
   searchParams,
 }: {

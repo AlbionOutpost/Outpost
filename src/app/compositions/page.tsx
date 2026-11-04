@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { Layers, Users, UserRound } from "lucide-react";
@@ -12,6 +13,9 @@ import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { ItemIcon } from "@/components/item-icon";
 import { EquipmentGlyph } from "@/components/equipment-overview";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/compositions", await searchParams);
+}
 export default async function Compositions({
   searchParams,
 }: {
