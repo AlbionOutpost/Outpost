@@ -4,7 +4,7 @@ import { ChevronDown, Info } from "lucide-react";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { resolveLegalLocale } from "@/lib/legal-language";
 import { legalCopy } from "./legal-copy";
-import { LegalLanguageSwitch } from "./legal-language-switch";
+import { LegalLanguageSwitch, LegalSectionRestore } from "./legal-language-switch";
 import styles from "./legal.module.css";
 
 export const dynamic = "force-dynamic";
@@ -101,6 +101,7 @@ export default async function Legal({ searchParams }: Props) {
               );
             })}
           </article>
+          <LegalSectionRestore />
         </div>
       </div>
     </div>
