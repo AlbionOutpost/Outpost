@@ -34,11 +34,11 @@ export function GuidesCarousel({ guides, suffix }: { guides: GuideSlide[]; suffi
               )}
             </span>
             <span className={styles.meta}>
+              <small className={styles.category}>{guide.category}</small>
               <span className={styles.readTime}>
                 <Clock size={13} aria-hidden="true" />
                 {guide.minutes} min read
               </span>
-              <small className={styles.category}>{guide.category}</small>
             </span>
             <span className={styles.copy}>
               <h3>{guide.title}</h3>
