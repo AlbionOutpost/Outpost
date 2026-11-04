@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { BuildEditor } from "@/components/build-editor";
@@ -6,7 +7,7 @@ import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { regionSchema } from "@/lib/albion/region-config";
 // Editors are not search results; keep crawlers from spending the request budget here.
-export const metadata = { robots: { index: false, follow: false } };
+export const metadata = privateMetadata("Create a build");
 export default async function NewBuild({
   searchParams,
 }: {

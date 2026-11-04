@@ -1,7 +1,9 @@
+import { privateMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import Link from "@/components/build-region-link";
 import { ArrowUpRight } from "lucide-react";
 import { db } from "@/lib/db";
+export const metadata = privateMetadata("Player profile");
 export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const u = await db.user.findUnique({

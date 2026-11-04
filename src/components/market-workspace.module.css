@@ -1,0 +1,231 @@
+/* Market is a working surface: the selected gear and its orders share one desk. */
+.page.page.page :global(.workspace-identity[data-scene]) {
+  min-height: 0;
+  margin-bottom: 32px;
+  padding-block: 36px 28px;
+}
+.page.page :global(.workspace-identity h1) {
+  font-size: 40px;
+  line-height: 1;
+}
+.page.page :global(.workspace-identity-head) {
+  align-items: center;
+}
+.page.page :global(.workspace-identity .intro) {
+  margin-top: 8px;
+  max-width: 62ch;
+}
+.page.page :global(.masthead-tabs) {
+  margin-top: 20px;
+}
+.workspace.workspace.workspace {
+  grid-template-columns: minmax(260px, 288px) minmax(0, 1fr);
+  gap: 28px;
+}
+.workspace.workspace :global(.mx-rail) {
+  padding: 20px;
+  top: 88px;
+}
+.workspace.workspace :global(.mx-main) {
+  gap: 32px;
+}
+.workspace.workspace :global(.mx-rail .button.primary) {
+  color: var(--illustration-bg);
+}
+.marketDesk {
+  border-image: var(--frame) 25 / 25px / 10px stretch;
+  min-width: 0;
+  isolation: isolate;
+}
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-hero),
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-board) {
+  margin: 0;
+  padding: 24px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: none;
+}
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-hero)::before,
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-hero)::after,
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-board)::before,
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-board)::after {
+  display: none;
+}
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-hero) {
+  padding-bottom: 20px;
+  gap: 0;
+}
+.workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-board) {
+  border-top: 1px solid var(--well-border);
+  padding-top: 20px;
+}
+.workspace.workspace :global(.mx-identity) {
+  gap: 16px;
+}
+.workspace.workspace :global(.mx-item-well) {
+  width: 80px;
+  height: 80px;
+}
+.workspace.workspace :global(.mx-item-well img) {
+  width: 72px;
+  height: 72px;
+}
+.workspace.workspace :global(.mx-identity h2) {
+  font: 800 30px/1.08 var(--font-display);
+}
+.workspace.workspace :global(.mx-figures) {
+  margin-top: 20px;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+}
+.workspace.workspace :global(.mx-figures > div) {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding: 16px;
+}
+.workspace.workspace :global(.mx-figures > div + div) {
+  border-left: 1px solid var(--well-border);
+}
+.workspace.workspace :global(.mx-figures b) {
+  font-size: 26px;
+}
+.workspace.workspace :global(.mx-section-head h2) {
+  font: 800 26px/1.1 var(--font-display);
+}
+.related {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 24px;
+  margin-top: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--well-border);
+}
+.related h2 {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  font: 600 13px/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.related a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+  padding-block: 6px;
+  font-size: 13px;
+  text-decoration: none;
+}
+.related a:hover {
+  color: var(--accent-ink);
+}
+.related a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 1100px) {
+  .workspace.workspace.workspace {
+    grid-template-columns: minmax(240px, 260px) minmax(0, 1fr);
+    gap: 22px;
+  }
+  .workspace.workspace :global(.mx-figures) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .workspace.workspace :global(.mx-figures > div:last-child) {
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid var(--well-border);
+  }
+}
+@media (max-width: 980px) {
+  .workspace.workspace.workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace.workspace :global(.mx-rail) {
+    position: static;
+  }
+  .related {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
+  .related h2 {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  .page.page.page :global(.workspace-identity[data-scene]) {
+    margin-bottom: 24px;
+    padding-block: 24px 20px;
+  }
+  .page.page :global(.workspace-identity h1) {
+    font-size: 32px;
+  }
+  .page.page :global(.workspace-identity .intro) {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .page.page :global(.masthead-tabs) {
+    margin-top: 16px;
+  }
+  .workspace.workspace :global(.mx-rail) {
+    padding: 16px;
+  }
+  .workspace.workspace :global(.mx-form) {
+    gap: 12px;
+  }
+  .workspace.workspace :global(.mx-field-pair) {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .workspace.workspace :global(.mx-disclosures) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .workspace.workspace :global(.mx-disclosure:last-child) {
+    grid-column: 1 / -1;
+  }
+  .workspace.workspace :global(.mx-disclosure[open]) {
+    grid-column: 1 / -1;
+  }
+  .related {
+    margin-top: 16px;
+    padding-top: 14px;
+    column-gap: 16px;
+  }
+  .related a {
+    font-size: 12px;
+  }
+  .workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-hero),
+  .workspace.workspace.workspace .marketDesk.marketDesk :global(.mx-board) {
+    padding: 16px;
+  }
+  .workspace.workspace :global(.mx-figures > div) {
+    padding: 12px;
+  }
+  .workspace.workspace :global(.mx-figures b) {
+    font-size: 24px;
+  }
+}
+@media (min-width: 701px) and (max-width: 980px) {
+  .workspace.workspace :global(.market-hydration-guard) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 24px;
+  }
+  .workspace.workspace :global(.mx-disclosures) {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .workspace.workspace :global(.mx-active-filters),
+  .workspace.workspace :global(.mx-note) {
+    grid-column: 1 / -1;
+  }
+}

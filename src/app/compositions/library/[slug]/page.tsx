@@ -1,3 +1,5 @@
+import { archiveShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import Link from "@/components/link";
 import { notFound } from "next/navigation";
 import { findLibraryBuilds, findLibraryComposition, librarySpellNames } from "@/lib/grind-library";
@@ -6,6 +8,15 @@ import { LibraryGroupWorkspace } from "@/components/library-group-workspace";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { HeartChip } from "@/components/heart-chip";
 import { ArrowLeft } from "lucide-react";
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return archiveShareMetadata("composition", (await params).slug, await searchParams);
+}
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const composition = await findLibraryComposition(slug);

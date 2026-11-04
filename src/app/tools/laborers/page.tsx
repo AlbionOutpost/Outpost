@@ -1,6 +1,9 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { LaborersCalculator } from "@/components/laborers-calculator";
-export const metadata = { title: "Laborers calculator" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/laborers", await searchParams);
+}
 export default function Page() {
   return (
     <>

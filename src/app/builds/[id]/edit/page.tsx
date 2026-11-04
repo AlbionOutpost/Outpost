@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -5,6 +6,7 @@ import { db } from "@/lib/db";
 import { buildInput } from "@/lib/builds/validation";
 import { BuildEditor } from "@/components/build-editor";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+export const metadata = privateMetadata("Edit build");
 export default async function EditBuild({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/signin");

@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import Link from "@/components/link";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { inviteHash } from "@/lib/groups/service";
 import { AcceptInvite } from "@/components/accept-invite";
+export const metadata = privateMetadata("Team invitation");
 export default async function Invitation({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   if (!/^[a-f0-9]{64}$/.test(token)) notFound();

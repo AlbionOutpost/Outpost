@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -20,11 +20,9 @@ import { cities, regions, regionSchema } from "@/lib/albion/region-config";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
-  title: "Market data & coverage",
-  description:
-    "Understand market observations, find missing prices and contribute with the Albion Data Project client.",
-};
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/market-data", await searchParams);
+}
 export default async function MarketDataPage({
   searchParams,
 }: {

@@ -1,6 +1,7 @@
 "use client";
 import { ArrowRight, ChevronDown, Database, RotateCw, SlidersHorizontal } from "lucide-react";
 import "./market-explorer.css";
+import styles from "./market-workspace.module.css";
 import { History } from "./history";
 import Link from "@/components/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
@@ -174,7 +175,10 @@ export function Market() {
   const filtersActive =
     extraCities.length > 0 || city || tier || category || enchantment || quality !== "1";
   return (
-    <div className={`mx${hasResult ? " has-results" : " is-setup"}`} aria-busy={loading}>
+    <div
+      className={`mx ${styles.workspace}${hasResult ? " has-results" : " is-setup"}`}
+      aria-busy={loading}
+    >
       <aside className="raised mx-rail" aria-label="Market search and filters">
         <fieldset className="market-hydration-guard" disabled={!hydrated}>
           <legend className="sr-only">Choose an item, quality and city</legend>
@@ -406,199 +410,202 @@ export function Market() {
         </fieldset>
       </aside>
       <div className="mx-main">
-        <MarketQuoteHero
-          item={item}
-          name={selectedItemName}
-          quality={quality}
-          region={region}
-          scope={marketLabel}
-          summary={
-            hasResult && visibleSummary.available > 0
-              ? { ask: visibleSummary.ask, bid: visibleSummary.bid }
-              : null
-          }
-          newest={newest}
-          status={heroStatus}
-          now={now}
-        />
-        <section className="raised market-board mx-board" aria-labelledby="market-board-title">
-          <header className="mx-section-head">
-            <div>
-              <h2 id="market-board-title">City orders</h2>
-              <p>
-                {hasResult
-                  ? `${visible.length} ${visible.length === 1 ? "city" : "cities"} · ${summary.stale} of ${summary.available} orders older than an hour`
-                  : loading
-                    ? "Requesting observations"
-                    : hasError
-                      ? "Request failed · selection kept"
-                      : validSelection
-                        ? `${marketLabel} · ready to compare`
-                        : "Choose an item to continue"}
-              </p>
-            </div>
+        <div className={`raised ${styles.marketDesk}`}>
+          <MarketQuoteHero
+            item={item}
+            name={selectedItemName}
+            quality={quality}
+            region={region}
+            scope={marketLabel}
+            summary={
+              hasResult && visibleSummary.available > 0
+                ? { ask: visibleSummary.ask, bid: visibleSummary.bid }
+                : null
+            }
+            newest={newest}
+            status={heroStatus}
+            now={now}
+          />
+          <section className="raised market-board mx-board" aria-labelledby="market-board-title">
+            <header className="mx-section-head">
+              <div>
+                <h2 id="market-board-title">City orders</h2>
+                <p>
+                  {hasResult
+                    ? `${visible.length} ${visible.length === 1 ? "city" : "cities"} · ${summary.stale} of ${summary.available} orders older than an hour`
+                    : loading
+                      ? "Requesting observations"
+                      : hasError
+                        ? "Request failed · selection kept"
+                        : validSelection
+                          ? `${marketLabel} · ready to compare`
+                          : "Choose an item to continue"}
+                </p>
+              </div>
+              {hasResult && summary.available > 0 && (
+                <div className="mx-segment" role="radiogroup" aria-label="Sort market prices">
+                  {(
+                    [
+                      ["city", "City"],
+                      ["sell", "Lowest sell"],
+                      ["buy", "Highest buy"],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={sort === value}
+                      key={value}
+                      onClick={() => setSort(value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </header>
             {hasResult && summary.available > 0 && (
-              <div className="mx-segment" role="radiogroup" aria-label="Sort market prices">
-                {(
-                  [
-                    ["city", "City"],
-                    ["sell", "Lowest sell"],
-                    ["buy", "Highest buy"],
-                  ] as const
-                ).map(([value, label]) => (
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={sort === value}
-                    key={value}
-                    onClick={() => setSort(value)}
-                  >
-                    {label}
+              <>
+                <MarketCityTable
+                  rows={visible}
+                  ask={visibleSummary.ask}
+                  bid={visibleSummary.bid}
+                  selectedCity={selectedQuote?.city ?? ""}
+                  onSelect={selectCity}
+                  now={now}
+                />
+                {!visible.length && (
+                  <div className="empty market-empty mx-empty" role="status">
+                    No city matches these filters. Reset filters to see the scanned markets.
+                  </div>
+                )}
+              </>
+            )}
+            {selectedQuote && (
+              <aside className="mx-inspector" aria-label="Selected city observation">
+                <div className="mx-inspector-head">
+                  <span className="city-dot" data-city={selectedQuote.city} aria-hidden="true" />
+                  <h3>{selectedQuote.city}</h3>
+                  <button type="button" className="mx-reset" onClick={() => setSelectedCity("")}>
+                    Close details
                   </button>
+                </div>
+                <section className="reference-city-summary" aria-live="polite">
+                  <dl>
+                    <div>
+                      <dt>Sell order</dt>
+                      <dd>
+                        <span className="numeric">
+                          {selectedQuote.city === "Black Market"
+                            ? "Not sold here"
+                            : selectedQuote.sell_price_min
+                              ? selectedQuote.sell_price_min.toLocaleString("en-US")
+                              : "Not observed"}
+                        </span>
+                        <small>
+                          {selectedQuote.sell_price_min
+                            ? `${observedAt(selectedQuote.sell_price_min_date)} UTC · ${sourceAge(selectedQuote.sell_price_min_date, now).label}`
+                            : "No observation"}
+                        </small>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Buy order</dt>
+                      <dd>
+                        <span className="numeric">
+                          {selectedQuote.buy_price_max
+                            ? selectedQuote.buy_price_max.toLocaleString("en-US")
+                            : "Not observed"}
+                        </span>
+                        <small>
+                          {selectedQuote.buy_price_max
+                            ? `${observedAt(selectedQuote.buy_price_max_date)} UTC · ${sourceAge(selectedQuote.buy_price_max_date, now).label}`
+                            : "No observation"}
+                        </small>
+                      </dd>
+                    </div>
+                  </dl>
+                </section>
+                <div className="mx-inspector-actions">
+                  <Link className="pill-link is-small" href={`/tools/flipping?region=${region}`}>
+                    Plan a trade <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
+                  <a className="pill-link is-small" href="#market-history-research">
+                    {selectedQuote.city} price history
+                  </a>
+                </div>
+              </aside>
+            )}
+            {!hasResult && (
+              <div className="market-first-use mx-state" role="status">
+                <Database size={24} aria-hidden="true" />
+                <div>
+                  <h3>
+                    {loading
+                      ? "Checking the markets…"
+                      : hasError
+                        ? "Your selection is safe"
+                        : validSelection
+                          ? "Loading city prices"
+                          : "Choose a valid item"}
+                  </h3>
+                  <p>
+                    {loading
+                      ? "Fetching player observations from the Albion Online Data Project. Each order keeps its own source time."
+                      : hasError
+                        ? "Refresh prices to retry, or change the selection. No failed or previous observation is shown as a current quote."
+                        : validSelection
+                          ? "Sell and buy orders load for every selection as soon as you make it."
+                          : "Search for an item, choose a quick pick, or enter its item identifier."}
+                  </p>
+                </div>
+              </div>
+            )}
+            {loading && !hasResult && (
+              <div className="mx-skeleton" aria-hidden="true">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <span key={i} />
                 ))}
               </div>
             )}
-          </header>
-          {hasResult && summary.available > 0 && (
-            <>
-              <MarketCityTable
-                rows={visible}
-                ask={visibleSummary.ask}
-                bid={visibleSummary.bid}
-                selectedCity={selectedQuote?.city ?? ""}
-                onSelect={selectCity}
-                now={now}
-              />
-              {!visible.length && (
-                <div className="empty market-empty mx-empty" role="status">
-                  No city matches these filters. Reset filters to see the scanned markets.
+            {hasResult && !summary.available && (
+              <div className="task-state mx-state" role="status">
+                <Database size={24} aria-hidden="true" />
+                <div>
+                  <h3>No price observations for this selection</h3>
+                  <p>
+                    No last observation is known for this selection. The Albion Online Data Project
+                    collects prices when players running its client open markets in game. A missing
+                    observation is not a zero price or proof that the item is unavailable.
+                  </p>
+                  <Link
+                    className="pill-link is-small"
+                    href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
+                  >
+                    See how to get market coverage <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
                 </div>
-              )}
-            </>
-          )}
-          {selectedQuote && (
-            <aside className="mx-inspector" aria-label="Selected city observation">
-              <div className="mx-inspector-head">
-                <span className="city-dot" data-city={selectedQuote.city} aria-hidden="true" />
-                <h3>{selectedQuote.city}</h3>
-                <button type="button" className="mx-reset" onClick={() => setSelectedCity("")}>
-                  Close details
-                </button>
               </div>
-              <section className="reference-city-summary" aria-live="polite">
-                <dl>
-                  <div>
-                    <dt>Sell order</dt>
-                    <dd>
-                      <span className="numeric">
-                        {selectedQuote.city === "Black Market"
-                          ? "Not sold here"
-                          : selectedQuote.sell_price_min
-                            ? selectedQuote.sell_price_min.toLocaleString("en-US")
-                            : "Not observed"}
-                      </span>
-                      <small>
-                        {selectedQuote.sell_price_min
-                          ? `${observedAt(selectedQuote.sell_price_min_date)} UTC · ${sourceAge(selectedQuote.sell_price_min_date, now).label}`
-                          : "No observation"}
-                      </small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Buy order</dt>
-                    <dd>
-                      <span className="numeric">
-                        {selectedQuote.buy_price_max
-                          ? selectedQuote.buy_price_max.toLocaleString("en-US")
-                          : "Not observed"}
-                      </span>
-                      <small>
-                        {selectedQuote.buy_price_max
-                          ? `${observedAt(selectedQuote.buy_price_max_date)} UTC · ${sourceAge(selectedQuote.buy_price_max_date, now).label}`
-                          : "No observation"}
-                      </small>
-                    </dd>
-                  </div>
-                </dl>
-              </section>
-              <div className="mx-inspector-actions">
-                <Link className="pill-link is-small" href={`/tools/flipping?region=${region}`}>
-                  Plan a trade <ArrowRight size={15} aria-hidden="true" />
-                </Link>
-                <a className="pill-link is-small" href="#market-history-research">
-                  {selectedQuote.city} price history
-                </a>
-              </div>
-            </aside>
-          )}
-          {!hasResult && (
-            <div className="market-first-use mx-state" role="status">
-              <Database size={24} aria-hidden="true" />
-              <div>
-                <h3>
-                  {loading
-                    ? "Checking the markets…"
-                    : hasError
-                      ? "Your selection is safe"
-                      : validSelection
-                        ? "Loading city prices"
-                        : "Choose a valid item"}
-                </h3>
-                <p>
-                  {loading
-                    ? "Fetching player observations from the Albion Online Data Project. Each order keeps its own source time."
-                    : hasError
-                      ? "Refresh prices to retry, or change the selection. No failed or previous observation is shown as a current quote."
-                      : validSelection
-                        ? "Sell and buy orders load for every selection as soon as you make it."
-                        : "Search for an item, choose a quick pick, or enter its item identifier."}
-                </p>
-              </div>
-            </div>
-          )}
-          {loading && !hasResult && (
-            <div className="mx-skeleton" aria-hidden="true">
-              {Array.from({ length: 6 }, (_, i) => (
-                <span key={i} />
-              ))}
-            </div>
-          )}
-          {hasResult && !summary.available && (
-            <div className="task-state mx-state" role="status">
-              <Database size={24} aria-hidden="true" />
-              <div>
-                <h3>No price observations for this selection</h3>
-                <p>
-                  No last observation is known for this selection. The Albion Online Data Project
-                  collects prices when players running its client open markets in game. A missing
-                  observation is not a zero price or proof that the item is unavailable.
-                </p>
-                <Link
-                  className="pill-link is-small"
-                  href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
-                >
-                  See how to get market coverage <ArrowRight size={15} aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          )}
-          {hasResult && (
-            <MarketQualityAvailability
-              region={region}
-              item={item}
-              city={city || (extraCities.length === 1 ? extraCities[0] : "")}
-              quality={quality}
-              onChoose={(next) => {
-                setQuality(next);
-                requestAnimationFrame(() => qualityControl.current?.focus());
-              }}
-            />
-          )}
-          <p className="market-source-note mx-source">
-            Albion Online Data Project · sell orders are listings, buy orders are offers · older
-            than an hour is marked stale · times in UTC · an observation is not a guaranteed trade.
-          </p>
-        </section>
+            )}
+            {hasResult && (
+              <MarketQualityAvailability
+                region={region}
+                item={item}
+                city={city || (extraCities.length === 1 ? extraCities[0] : "")}
+                quality={quality}
+                onChoose={(next) => {
+                  setQuality(next);
+                  requestAnimationFrame(() => qualityControl.current?.focus());
+                }}
+              />
+            )}
+            <p className="market-source-note mx-source">
+              Albion Online Data Project · sell orders are listings, buy orders are offers · older
+              than an hour is marked stale · times in UTC · an observation is not a guaranteed
+              trade.
+            </p>
+          </section>
+        </div>
         <section
           className="raised reference-market-history mx-history"
           id="market-history-research"
@@ -710,6 +717,21 @@ export function Market() {
             <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
           </div>
         </section>
+        <nav className={styles.related} aria-label="Related market tools">
+          <h2>Take the next step</h2>
+          <Link href={`/tools/flipping?region=${region}`}>
+            Flipping calculator <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+          <Link href={`/tools/crafting?region=${region}`}>
+            Crafting calculator <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+          <Link href={`/tools/refining?region=${region}`}>
+            Refining calculator <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+          <Link href={`/guides?region=${region}`}>
+            Player guides <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </nav>
       </div>
     </div>
   );

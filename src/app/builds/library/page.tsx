@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
 import Link from "@/components/build-region-link";
@@ -11,7 +12,9 @@ import { BuildWeaponRail } from "@/components/build-weapon-rail";
 import { buildDiscovery } from "@/lib/build-discovery";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { LayoutGrid, List, Search, Swords, X } from "lucide-react";
-export const metadata = { title: "Albion Online builds" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/builds/library", await searchParams);
+}
 export default async function Library({
   searchParams,
 }: {

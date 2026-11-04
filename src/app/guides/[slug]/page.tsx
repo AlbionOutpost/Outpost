@@ -1,3 +1,5 @@
+import { archiveShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import Link from "@/components/build-region-link";
 import { notFound } from "next/navigation";
@@ -11,9 +13,14 @@ import { ItemIcon } from "@/components/item-icon";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { readingMinutes } from "@/components/guide-cover-card";
 import { ArrowLeft } from "lucide-react";
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const guide = await findLibraryGuide((await params).slug);
-  return { title: guide?.title || "Guide not found", description: guide?.summary };
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return archiveShareMetadata("guide", (await params).slug, await searchParams);
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const guide = await findLibraryGuide((await params).slug);

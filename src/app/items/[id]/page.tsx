@@ -1,3 +1,5 @@
+import { itemShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import BackLink from "@/components/build-region-link";
@@ -43,12 +45,15 @@ async function itemId(params: Promise<{ id: string }>) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
-  const id = await itemId(params);
-  const item = await db.itemMetadata.findUnique({ where: { id }, select: { name: true } });
-  return { title: item ? `${item.name} · Item` : "Item" };
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return itemShareMetadata((await params).id, await searchParams);
 }
-
 export default async function Item({ params }: { params: Promise<{ id: string }> }) {
   const id = await itemId(params);
   const item = await db.itemMetadata.findUnique({ where: { id }, include: { release: true } });

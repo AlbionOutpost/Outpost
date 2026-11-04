@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { Compass, Shield } from "lucide-react";
@@ -6,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
+export const metadata = privateMetadata("Teams");
 export default async function Groups({
   searchParams,
 }: {

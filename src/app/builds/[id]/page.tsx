@@ -1,3 +1,5 @@
+import { authoredShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import { CommunityPanel } from "@/components/community-panel";
 import { SavedEquipmentSets } from "@/components/saved-equipment-sets";
 import { equipmentSets } from "@/lib/albion/equipment-sets";
@@ -14,6 +16,15 @@ import { canReadBuild } from "@/lib/builds/validation";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
 import { BuildShareControls } from "@/components/build-share-controls";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return authoredShareMetadata("build", (await params).id, await searchParams);
+}
 export default async function BuildPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
