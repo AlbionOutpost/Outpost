@@ -45,3 +45,7 @@ Owner follow-up compacts profit/margin, selects a real multi-material recipe for
 ## 2026-11-04 — Inline guide metadata clarification
 
 PR82 shipped the landing density/footer refinement. The owner clarified that category belongs left of reading time in the same top-right row. Current two-file UI correction passes productionbuild/homepage7 and12responsive guide cases, including320px internal label wrapping. Parentfullphase and final newprotected/public evidence remain separate. [Checkpoint](design/LANDING_DENSITY_FOOTER_2026-11-04.md).
+
+## 2026-11-04 — Homepage hierarchy and spacing
+
+Paired public build/comp previews now lead to the actual creators; Team capabilities sit in a compact companion strip. Three persistent live tools share one accessible preview, with wider section/card rhythm and preserved inputs. Current full Node22 phase11/12:524units,167/170browsers; only three existing equipment goldens fail. Local rendered/state/keyboard/pointer review,24D1runtime and fresh container pass. [Design and evidence](design/HOMEPAGE_RHYTHM_2026-11-04.md). Protected publication and exact-head public/native proof remain pending at this committed checkpoint; broader launchNO-GO remains separate.

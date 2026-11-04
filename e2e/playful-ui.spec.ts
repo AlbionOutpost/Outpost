@@ -26,7 +26,7 @@ test("equipment selection opens the real item, and the redesigned server selecto
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  const item = page.locator(".landing-card:first-child .landing-card-action");
+  const item = page.locator('.landing-card[data-scene="market"] .landing-card-action');
   // The shell streams behind a Suspense fallback; wait for the real page before auditing it.
   await expect(item).toBeVisible();
   await expect(item).toHaveAttribute(

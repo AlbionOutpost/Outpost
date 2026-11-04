@@ -1,34 +1,41 @@
-/* All spare height belongs to the preview, never its title or action. */
+/* The two examples share a bounded preview height; actions never stretch apart. */
 .windows.windows .window.window {
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  padding: 14px 14px 0;
+  grid-template-rows: auto minmax(304px, auto) auto;
+  padding: 16px 16px 0;
+  min-width: 0;
+  container-type: inline-size;
 }
 
 .windows.windows .bar.bar {
   align-self: start;
-  min-height: 40px;
-  margin: 0 -14px 12px;
-  padding: 0 16px 10px;
+  min-height: 44px;
+  margin: 0 -16px 12px;
+  padding: 0 18px 12px;
+}
+
+.windows.windows .bar.bar :global(.landing-window-title) {
+  font-size: 18px;
 }
 
 .windows.windows .body.body {
   min-width: 0;
-  align-content: stretch;
+  min-height: 304px;
+  align-content: center;
 }
 
-.windows.windows .body.body > :global(.loadout-board) {
+.windows.windows .body.body > :global(.loadout-board.is-card) {
   align-self: center;
-  --gap: 10px;
-  --cell: min(72px, calc((100cqw - 2 * var(--gap)) / 3));
+  --gap: 8px;
+  --cell: min(64px, calc((100cqw - 2 * var(--gap)) / 3));
   margin-top: 0;
 }
 
 .windows.windows .foot.foot {
   grid-template-columns: 40px minmax(0, 1fr) auto;
   align-self: end;
-  gap: 9px;
-  margin: 12px -14px 0;
-  padding: 12px 16px 14px;
+  gap: 12px;
+  margin: 12px -16px 0;
+  padding: 14px 18px 16px;
   min-height: 82px;
 }
 
@@ -37,23 +44,132 @@
   height: 40px;
 }
 
-.windows.windows .features.features {
-  gap: 8px;
-}
-
-.windows.windows .features.features li {
-  min-height: 54px;
-  padding: 7px 9px;
-  gap: 9px;
-}
-
-.windows.windows .features.features small {
-  white-space: normal;
-  line-height: 1.35;
+.windows.windows .foot.foot strong {
+  font-size: 18px;
 }
 
 .windows.windows .body.body > :global(.landing-roster) {
-  grid-auto-rows: minmax(54px, 1fr);
+  height: auto;
+  grid-template-rows: repeat(5, minmax(54px, auto));
+  grid-auto-rows: minmax(54px, auto);
+  gap: 8px;
+}
+
+.windows.windows .body.body :global(.landing-roster-who) strong {
+  font-size: 15px;
+}
+
+.team.team {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.6fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+  min-width: 0;
+}
+
+.teamIntro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.teamIntro > img {
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.teamHeading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+:global(.app.outpost) .teamHeading h3 {
+  margin: 0;
+  font: 800 20px/1.15 var(--font-display);
+}
+
+.teamIntro p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font: 400 12px/1.5 var(--font-ui);
+}
+
+.teamFeatures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.teamFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font: 500 12px/1.4 var(--font-ui);
+}
+
+.teamFeatures img {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.teamAction {
+  white-space: nowrap;
+  justify-self: end;
+}
+
+@container (max-width: 420px) {
+  .windows.windows .bar.bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .windows.windows .bar.bar :global(.landing-window-title) {
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-who) strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) {
+    gap: 3px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) img {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .team.team {
+    grid-template-columns: minmax(220px, 1fr) minmax(0, 1.4fr);
+    gap: 16px 24px;
+  }
+
+  .teamFeatures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .teamAction {
+    grid-column: 2;
+  }
 }
 
 @media (max-width: 700px) {
@@ -76,19 +192,41 @@
     width: 26px;
     height: 26px;
   }
-}
 
-@media (min-width: 769px) and (max-width: 1150px) {
-  .windows.windows .bar.bar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
+  .team.team {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+    gap: 14px;
   }
 
+  .teamIntro {
+    gap: 8px;
+  }
+
+  .teamIntro > img {
+    width: 32px;
+    height: 32px;
+  }
+
+  :global(.app.outpost) .teamHeading h3 {
+    font-size: 18px;
+  }
+
+  .teamHeading {
+    gap: 6px 8px;
+  }
+
+  .teamAction {
+    grid-column: auto;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 360px) {
   .windows.windows .body.body :global(.landing-roster) li {
-    grid-template-columns: 10px 36px minmax(0, 1fr);
+    grid-template-columns: 10px 36px minmax(0, 1fr) auto;
     gap: 6px;
-    padding: 6px;
+    padding-inline: 6px;
   }
 
   .windows.windows .body.body :global(.landing-roster-weapon),
@@ -98,12 +236,11 @@
   }
 
   .windows.windows .body.body :global(.landing-roster-armor) {
-    grid-column: 3;
-    margin-top: -4px;
+    gap: 2px;
   }
 
   .windows.windows .body.body :global(.landing-roster-armor) img {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
   }
 }
