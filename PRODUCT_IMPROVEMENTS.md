@@ -2,10 +2,10 @@
 
 # Security and correctness improvements
 
-Reviewed 2026-11-04T13:32:57.489556+00:00. Baseline `0d03b9b04ee01e69c0b56930f14442fe85579b98`; branch `codex/landing-density-footer`.
-Source fingerprint: `7e41268a3da1c2ce363c91b8f1ddf2d9358d3b660022fefd75a166f97c9fa32f`.
+Reviewed 2026-11-04T14:10:44.633264+00:00. Baseline `a4371cebcc5ecf2287580df3399dc632edc48ee7`; branch `codex/guide-inline-metadata`.
+Source fingerprint: `a003767ae68526b4f09015e1493671299f74a84f81b00108c4b456b4b2f4abe1`.
 
-Owner landing-page follow-up: compact profit/margin to about62px, reserve real-material space and select among15existing two-input T4–T6 showcase recipes; move guide categories upper-right and remove landing author/date lines; replace the minimal footer bar with two coherent groups. Original recipe facts, formulas/rates, observation identity, full-calculator choices, artwork, shared motion, permissions and private caches remain unchanged. Current evidence is a prepublication checkpoint; protected CI and actual public readback remain separate.
+Owner clarified guide metadata placement after PR82 shipped: category belongs immediately left of reading time in the same upper-right row. The category may wrap inside its own pill on narrow phones; reading time remains beside it. Only landing guide markup/styles and their geometry regression change. Recipe selection, tool density, footer, images, data and server/private behavior remain as PR82. Current committed record is prepublication; own protected build/public proof remains separate.
 
 **Release: NO-GO.** Local implementation, local verification and deployment are separate. No application deployment or provider purchase is authorized by these reports.
 
@@ -62,3 +62,4 @@ The repair preserves existing brand, source facts and manual-price distinctions.
 - Current silhouette/sharedmotion candidate awaits protected publication/public readback. Mandatoryphase retains three existing equipment golden mismatches.52route source coverage is indirect; not every privateworkflow rendered. Native pointer-capability emulation/earlytimedprobe limits, missing localproduction selectioninputs, initialcontainer timing and oversizedscreenshot artifacts remain recorded. Operator/legal/provider-consent/current-patch/recovery/loading/field/full-product launch NO-GO remains independent.
 - PR80 live review caught tiny Supporter RGB corner pixels after geometry passed; final two-rendering-file contour correction has its own local phase/visual/container evidence and awaits protected/currentpublic readback. Earlier public asset mismatch during local source change is retained, not counted as final asset acceptance.
 - Current landing-density/footer follow-up changes showcase coverage27→15 existing multi-material candidates, not recipe facts or accounting. Full calculator coverage and source/current-patch limits remain. Initial intrinsic-height and sparse single-input visual states are retained; current protected/public proof is pending in committed checkpoint documents.
+- Owner clarified inline category-left/time-right metadata afterPR82 publication. Current follow-up is a small two-file UI correction with productionbuild/homepage7 and twelve responsive cases; parentfullphase/data/provider evidence remains separately identified. Final public/native checks require the new exact deployed revision.
