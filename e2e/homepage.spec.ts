@@ -256,36 +256,44 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   const planner = cards.nth(2);
   await expect(
     planner.getByRole("list", { name: "Planned items" }).getByRole("listitem"),
-  ).toHaveCount(2);
-  await expectResultText(planner.locator(".tool-summary"), /Owned\s*0 \/ 13/);
-  await expectResultText(planner.locator(".tool-summary"), /Still to buy\s*10,000\+/);
+  ).toHaveCount(3);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*0 \/ 33/);
+  await expectResultText(planner.locator(".tool-summary"), /Still to buy\s*30,000\+/);
   await expect(planner.locator(".tool-queue li").nth(1)).toContainText("No sell order");
   await planner
     .getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ })
     .getByRole("button", { name: "Own one more" })
     .click();
-  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 13/);
-  await expectResultText(planner.locator(".tool-summary"), /9,000\+/);
+  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 33/);
+  await expectResultText(planner.locator(".tool-summary"), /29,000\+/);
   await planner.getByRole("tab", { name: "Shopping list" }).click();
-  await expectResultText(planner.locator(".tool-queue li").first(), /Buy 9/);
-  await expectResultText(planner.locator(".tool-cities li").first(), /Martlock[\s\S]*9,000\+/);
+  await expectResultText(planner.locator(".tool-queue li").first(), /9 left/);
+  await expectResultText(planner.locator(".tool-cities li").first(), /Martlock[\s\S]*29,000\+/);
   await expect(planner.locator(".tool-cities li em")).toHaveCount(0);
   await expect(planner.getByRole("link", { name: /Open Crafting Planner/ })).toHaveAttribute(
     "href",
     "/shopping-list?region=europe",
   );
 
-  // Guides slide three at a time with their reading time.
-  const guides = page.locator(".guide-card");
-  await expect(guides).toHaveCount(8);
-  await expect(guides.first().locator(".guide-card-time")).toHaveText(/\d+ min read/);
+  // Editorial guides: one lead read alongside two supporting stories.
+  const guides = page.locator(".landing-guides article");
+  await expect(guides).toHaveCount(3);
+  await expect(guides.first().getByText(/\d+ min read/)).toBeVisible();
   await expect(guides.first().getByRole("link")).toHaveAttribute(
     "href",
     /\/guides\/[a-z0-9-]+\?region=europe/,
   );
-  await expect(page.getByRole("button", { name: "Previous guides" })).toBeHidden();
-  await page.getByRole("button", { name: "Next guides" }).click();
-  await expect(page.getByRole("button", { name: "Previous guides" })).toBeVisible();
+  const storyBoxes = await guides.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const { x, y, width, height } = node.getBoundingClientRect();
+      return { x, y, width, height };
+    }),
+  );
+  expect(storyBoxes[0].height).toBeGreaterThan(storyBoxes[1].height * 1.8);
+  expect(storyBoxes[1].x).toBeGreaterThan(storyBoxes[0].x);
+  expect(storyBoxes[2].x).toBe(storyBoxes[1].x);
+  expect(storyBoxes[2].y).toBeGreaterThan(storyBoxes[1].y);
+  await expect(page.getByRole("button", { name: "Next guides" })).toHaveCount(0);
 
   // Top kills: the week's most valuable kills, each card a killboard.
   await expect(page.locator("#home-kills-title")).toHaveText("Top kills this week");
@@ -464,15 +472,15 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   await page.goto("/");
   const planner = page.locator(".landing-card").nth(2);
   await planner.scrollIntoViewIfNeeded();
-  await expectResultText(planner.locator(".tool-summary"), "13,000");
+  await expectResultText(planner.locator(".tool-summary"), "33,000");
   const owned = planner.getByRole("group", { name: /Owned T4 Cape|Owned .*Cape/ });
   const flow = planner.locator(
-    '.tool-summary .animated-number[data-value="13000"] number-flow-react',
+    '.tool-summary .animated-number[data-value="33000"] number-flow-react',
   );
   await flow.evaluate((node) => node.setAttribute("data-continuity-check", "retained"));
   await owned.getByRole("button", { name: "Own one more" }).click();
-  const money = planner.locator('.tool-summary .animated-number[data-value="12000"]');
-  await expect(money).toHaveAccessibleName("12,000");
+  const money = planner.locator('.tool-summary .animated-number[data-value="32000"]');
+  await expect(money).toHaveAccessibleName("32,000");
   const moving = money.locator("number-flow-react");
   await expect
     .poll(() =>
@@ -488,8 +496,8 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   ).toBe(-1);
   // Reverse while the previous movement is active. The same flow/strips must survive.
   await owned.getByRole("button", { name: "Own one fewer" }).click();
-  const raised = planner.locator('.tool-summary .animated-number[data-value="13000"]');
-  await expect(raised).toHaveAccessibleName("13,000");
+  const raised = planner.locator('.tool-summary .animated-number[data-value="33000"]');
+  await expect(raised).toHaveAccessibleName("33,000");
   await expect(raised.locator("number-flow-react")).toHaveAttribute(
     "data-continuity-check",
     "retained",
@@ -501,7 +509,7 @@ test("planner digits roll down and up, and reduced motion shows exact results im
   ).toBe(1);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await owned.getByRole("button", { name: "Own one more" }).click();
-  await expect(money).toHaveAccessibleName("12,000");
+  await expect(money).toHaveAccessibleName("32,000");
   await expect
     .poll(() =>
       moving.evaluate((node) =>
@@ -509,7 +517,7 @@ test("planner digits roll down and up, and reduced motion shows exact results im
       ),
     )
     .toBe(false);
-  await expect(moving.locator(".digit__num:not([inert])")).toHaveText(["1", "2", "0", "0", "0"]);
+  await expect(moving.locator(".digit__num:not([inert])")).toHaveText(["3", "2", "0", "0", "0"]);
 });
 
 test("craft quantity recalculates without refetching; shared digits roll and reduced motion settles", async ({
@@ -615,11 +623,15 @@ test("membership callout precedes activity discovery and the footer keeps its na
       cutout: getComputedStyle(card.querySelector(".landing-cta-art img")!).maskImage,
       bodyTop: parseFloat(getComputedStyle(card, "::before").top),
       width: image.naturalWidth,
+      cardWidth: bounds.width,
+      artworkWidth: card.querySelector(".landing-cta-art img")!.getBoundingClientRect().width,
       centered: Math.abs(heading.x + heading.width / 2 - bounds.x - bounds.width / 2),
     };
   });
-  expect(artwork.src).toContain("crown-courtyard.webp");
+  expect(artwork.src).toBe("none");
   expect(artwork.width).toBe(1374);
+  expect(artwork.cardWidth).toBeLessThanOrEqual(1040);
+  expect(Math.abs(artwork.artworkWidth - artwork.cardWidth)).toBeLessThan(2);
   expect(artwork.cutout).toContain("crown-silhouette.svg");
   expect(artwork.bodyTop).toBeGreaterThan(16);
   expect(artwork.centered).toBeLessThan(2);

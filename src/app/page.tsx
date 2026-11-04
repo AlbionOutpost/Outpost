@@ -42,6 +42,7 @@ const showcase = {
   plan: [
     { itemId: "T4_CAPE", slot: "Cape", qty: 10 },
     { itemId: "T6_MAIN_SWORD", slot: "Main hand", qty: 3 },
+    { itemId: "T6_POTION_HEAL", slot: "Potion", qty: 20 },
   ],
 } as const;
 

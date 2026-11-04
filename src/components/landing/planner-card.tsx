@@ -8,6 +8,7 @@ import { useOutpostRegion } from "@/components/region-context";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
 import { Silver } from "./silver";
+import styles from "./planner-card.module.css";
 
 export type PlanLine = { itemId: string; slot: string; qty: number };
 const royal = ["Martlock", "Bridgewatch", "Lymhurst", "Fort Sterling", "Thetford", "Caerleon"];
@@ -84,7 +85,7 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
     .slice(0, 3);
   const top = Math.max(...byCity.map((c) => c.total), 1);
   return (
-    <div className="tool-card">
+    <div className={`tool-card ${styles.planner}`}>
       <div className="tool-tabs" role="tablist" aria-label="Planner view">
         <button
           type="button"
@@ -103,7 +104,7 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
           Shopping list
         </button>
       </div>
-      <ul className="tool-queue" aria-label="Planned items">
+      <ul className={`tool-queue ${styles.queue}`} aria-label="Planned items">
         {lines.map((l) => {
           const h = have[l.itemId] ?? 0;
           const pct = Math.round((h / l.qty) * 100);
@@ -124,9 +125,9 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
                     </small>
                   </span>
                 ) : (
-                  <span className="tool-queue-buy">
+                  <span className={`tool-queue-buy ${styles.buy}`}>
                     <small>
-                      Buy <AnimatedNumber value={l.need} />
+                      <AnimatedNumber value={l.need} /> left
                     </small>
                     <b>
                       <Silver value={l.best ? l.best.price * l.need : null} />

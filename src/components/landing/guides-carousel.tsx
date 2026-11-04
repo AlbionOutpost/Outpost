@@ -1,60 +1,60 @@
-"use client";
-import { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { GuideCoverCard, type GuideCover } from "@/components/guide-cover-card";
+import Image from "next/image";
+import { Clock } from "lucide-react";
+import Link from "@/components/link";
+import { ItemIcon } from "@/components/item-icon";
+import type { GuideCover } from "@/components/guide-cover-card";
+import styles from "./guides-feature.module.css";
 
 export type GuideSlide = GuideCover;
 
-/**
- * Guides as a sliding row: three at a time on desktop, arrows page through the rest, a swipe
- * on phones. Reading time is computed from each guide's own text by the page.
- */
+/** One lead story and two supporting reads; the full library remains one link away. */
 export function GuidesCarousel({ guides, suffix }: { guides: GuideSlide[]; suffix: string }) {
-  const track = useRef<HTMLDivElement>(null);
-  const [edge, setEdge] = useState({ start: true, end: guides.length <= 3 });
-  const update = () => {
-    const t = track.current;
-    if (!t) return;
-    setEdge({ start: t.scrollLeft <= 4, end: t.scrollLeft + t.clientWidth >= t.scrollWidth - 4 });
-  };
-  useEffect(() => {
-    const id = requestAnimationFrame(update);
-    window.addEventListener("resize", update);
-    return () => {
-      cancelAnimationFrame(id);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-  const page = (dir: 1 | -1) => {
-    const t = track.current;
-    if (!t) return;
-    t.scrollBy({ left: dir * t.clientWidth, behavior: "smooth" });
-  };
+  if (!guides.length) return null;
   return (
-    <div className="guides-carousel">
-      <button
-        type="button"
-        className="guides-arrow is-prev"
-        aria-label="Previous guides"
-        disabled={edge.start}
-        onClick={() => page(-1)}
-      >
-        <ChevronLeft size={22} />
-      </button>
-      <div className="guides-track" ref={track} onScroll={update}>
-        {guides.map((g) => (
-          <GuideCoverCard key={g.slug} guide={g} suffix={suffix} />
-        ))}
-      </div>
-      <button
-        type="button"
-        className="guides-arrow is-next"
-        aria-label="Next guides"
-        disabled={edge.end}
-        onClick={() => page(1)}
-      >
-        <ChevronRight size={22} />
-      </button>
+    <div className={`guides-carousel ${styles.grid}`}>
+      {guides.slice(0, 3).map((guide, index) => (
+        <article
+          key={guide.slug}
+          className={`${styles.story} ${index === 0 ? styles.lead : styles.side}`}
+        >
+          <Link href={`/guides/${guide.slug}${suffix}`} className={styles.link}>
+            <span className={styles.art} aria-hidden="true">
+              {guide.cover ? (
+                <Image
+                  unoptimized
+                  src={guide.cover.src}
+                  width={guide.cover.width}
+                  height={guide.cover.height}
+                  alt=""
+                />
+              ) : (
+                <span className={styles.fallback}>
+                  <ItemIcon id={guide.itemId || "T4_BAG"} size={96} />
+                </span>
+              )}
+            </span>
+            <span className={styles.readTime}>
+              <Clock size={13} aria-hidden="true" />
+              {guide.minutes} min read
+            </span>
+            <span className={styles.copy}>
+              <small className={styles.category}>{guide.category}</small>
+              <h3>{guide.title}</h3>
+              {index === 0 && <span className={styles.summary}>{guide.summary}</span>}
+              <span className={styles.byline}>
+                By {guide.author} <span aria-hidden="true">·</span> Updated{" "}
+                <time dateTime={guide.updatedAt}>
+                  {new Date(guide.updatedAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    timeZone: "UTC",
+                  })}
+                </time>
+              </span>
+            </span>
+          </Link>
+        </article>
+      ))}
     </div>
   );
 }

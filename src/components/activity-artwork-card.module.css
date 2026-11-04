@@ -210,3 +210,62 @@
     background-position: top;
   }
 }
+
+/* The artwork remains in its traced plane. Only the unmasked foreground comes
+   toward the player: the weapon fan opens, labels rise, and the action leads on. */
+@media (prefers-reduced-motion: no-preference) {
+  .caption {
+    transition: translate 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .caption > svg {
+    transition: translate 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .weapons > span {
+    transition:
+      translate 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      rotate 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .main:focus-visible .caption {
+    translate: 0 -6px;
+  }
+  .main:focus-visible .weapons > span:first-child {
+    translate: -3px -3px;
+    rotate: -12deg;
+  }
+  .main:focus-visible .weapons > span:nth-child(2) {
+    translate: 0 -8px;
+  }
+  .main:focus-visible .weapons > span:nth-child(3) {
+    translate: 3px -3px;
+    rotate: 12deg;
+  }
+  .main:focus-visible .caption > svg {
+    translate: 3px -3px;
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .main:hover .caption {
+    translate: 0 -6px;
+  }
+  .main:hover .weapons > span:first-child {
+    translate: -3px -3px;
+    rotate: -12deg;
+  }
+  .main:hover .weapons > span:nth-child(2) {
+    translate: 0 -8px;
+  }
+  .main:hover .weapons > span:nth-child(3) {
+    translate: 3px -3px;
+    rotate: 12deg;
+  }
+  .main:hover .caption > svg {
+    translate: 3px -3px;
+  }
+}
+
+@media (max-width: 360px) {
+  .compact .weapons > span {
+    width: 48px;
+    height: 48px;
+  }
+}
