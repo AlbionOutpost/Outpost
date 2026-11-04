@@ -293,3 +293,7 @@ Implemented outer native Supporter mask, uniform activity artwork/blur/border gr
 ## Final card corner verification — 4 November 2026
 
 The shared motion and aligned preview refinement shipped throughPR80. A manual live Firefox review caught tiny residual black corner pixels missed by geometry checks; the follow-up refines only the Supporter SVG contour and lower mask continuation. Current local desktop/phone captures in both themes are clean. Protected checks, final public delivery evidence and existing product-launch blockers remain independent.
+
+## 2026-11-04 — Landing density and footer refinement
+
+Owner follow-up compacts profit/margin, selects a real multi-material recipe for the preview, moves guide categories upper-right, removes landing guide author/date lines and gives the minimal footer two coherent groups. All existing recipe facts, accounting and full-calculator choices remain. Both-theme desktop/phone captures and scoped keyboard/axe checks are inspected; current full-phase/protected/public delivery evidence remains separate. [Design and verification checkpoint](design/LANDING_DENSITY_FOOTER_2026-11-04.md).

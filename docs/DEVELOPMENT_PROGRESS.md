@@ -37,3 +37,7 @@ Implemented outer native Supporter mask, uniform activity artwork/blur/border gr
 ## 2026-11-04 — Final Supporter contour correction
 
 PR80 deployed through41763139142. Its live visual review found tiny black Supporter corner protrusions despite passing geometry. The derived mask now follows the supplied rounded edge farther down before joining the straight sides; its lower continuation starts below that curve. Only mask/CSS changed. Local Chromium8 and nativeFirefox14 inspected cases show clean desktop/phone corners in both themes. Current full-phase/protected publication and final public receipt remain separate; prior3equipment goldens and broader launch NO-GO are retained. [Evidence and boundaries](design/CARD_MOTION_POLISH_2026-11-04.md).
+
+## 2026-11-04 — Landing density and footer refinement
+
+Owner follow-up compacts profit/margin, selects a real multi-material recipe for the preview, moves guide categories upper-right, removes landing guide author/date lines and gives the minimal footer two coherent groups. All existing recipe facts, accounting and full-calculator choices remain. Both-theme desktop/phone captures and scoped keyboard/axe checks are inspected; current full-phase/protected/public delivery evidence remains separate. [Design and verification checkpoint](design/LANDING_DENSITY_FOOTER_2026-11-04.md).
