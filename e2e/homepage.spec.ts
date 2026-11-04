@@ -311,7 +311,9 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
       const copy = node
         .querySelector("h3")!
         .parentElement!.lastElementChild!.getBoundingClientRect();
-      const category = node.querySelector("small")!.getBoundingClientRect();
+      const categoryNode = node.querySelector("small")!;
+      const category = categoryNode.getBoundingClientRect();
+      const readTime = categoryNode.nextElementSibling!.getBoundingClientRect();
       return {
         x,
         y,
@@ -319,7 +321,11 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
         height,
         titleInset: title.x - x,
         bottomInset: y + height - copy.bottom,
-        categoryRight: x + width - category.right,
+        metaRight: x + width - readTime.right,
+        categoryGap: readTime.left - category.right,
+        metaCenterOffset: Math.abs(
+          (category.top + category.bottom - readTime.top - readTime.bottom) / 2,
+        ),
         categoryTop: category.top - y,
         categoryBottom: category.bottom,
         titleTop: title.top,
@@ -335,8 +341,11 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     expect(story.titleInset).toBeLessThanOrEqual(30);
     expect(story.bottomInset).toBeGreaterThanOrEqual(20);
     expect(story.bottomInset).toBeLessThanOrEqual(30);
-    expect(story.categoryRight).toBeGreaterThanOrEqual(15);
-    expect(story.categoryRight).toBeLessThanOrEqual(17);
+    expect(story.metaRight).toBeGreaterThanOrEqual(15);
+    expect(story.metaRight).toBeLessThanOrEqual(17);
+    expect(story.categoryGap).toBeGreaterThanOrEqual(7);
+    expect(story.categoryGap).toBeLessThanOrEqual(9);
+    expect(story.metaCenterOffset).toBeLessThan(1);
     expect(story.categoryTop).toBeLessThan(65);
     expect(story.categoryBottom).toBeLessThan(story.titleTop);
   }

@@ -297,3 +297,7 @@ The shared motion and aligned preview refinement shipped throughPR80. A manual l
 ## 2026-11-04 — Landing density and footer refinement
 
 Owner follow-up compacts profit/margin, selects a real multi-material recipe for the preview, moves guide categories upper-right, removes landing guide author/date lines and gives the minimal footer two coherent groups. All existing recipe facts, accounting and full-calculator choices remain. Both-theme desktop/phone captures and scoped keyboard/axe checks are inspected; current full-phase/protected/public delivery evidence remains separate. [Design and verification checkpoint](design/LANDING_DENSITY_FOOTER_2026-11-04.md).
+
+## 2026-11-04 — Inline guide metadata clarification
+
+PR82 shipped the landing density/footer refinement. The owner clarified that category belongs left of reading time in the same top-right row. Current two-file UI correction passes productionbuild/homepage7 and12responsive guide cases, including320px internal label wrapping. Parentfullphase and final newprotected/public evidence remain separate. [Checkpoint](design/LANDING_DENSITY_FOOTER_2026-11-04.md).
