@@ -1,0 +1,15 @@
+# Legal reading and Supporter contrast
+
+The owner requested readable Supporter text and a properly styled legal page that follows the browser language. Baseline is PR86, commit301b567. This is a focused follow-up, not another landing layout change.
+
+The Supporter heading now has an offset soft text shadow. A feathered dark backing stays behind the copy, and the paragraph uses a brighter illustration-specific foreground. The image, silhouette, card dimensions, centered group and action destinations remain unchanged.
+
+The previous legal page inherited financial monospace/right alignment for operator details and sat on an unframed black rectangle. The new reading panel has left-aligned Inter text, concise pending labels, consistent section dividers, a desktop contents rail and a compact native disclosure for phone navigation. Full missing-information requirements remain in adjacent prose. The visible draft notice expands to the complete explanation; missing operator facts and legal approval have not been hidden or declared complete. Inline text links remain underlined.
+
+Full English and German copies preserve all12 sections,31 original literal link destinations, operator fields, payment branches and source/AI/media disclosures. English/German are selected from the browser's weighted language preferences. An explicit `lang=en` or `lang=de` choice overrides detection; other languages fall back to English. The visible switch preserves region and the current section. No translation service or additional preference cookie is introduced. This does not translate the whole application into arbitrary languages or establish legal approval.
+
+Source controls: installed Next async headers/metadata guidance, project frontend/visual QA and the staged Impeccable reading/contrast guidance. The known Browser MCP approval restriction remains; actual checks use the permitted normally sandboxed local-library fallback and fresh native Firefox profiles. Initial test selector ambiguity and Playwright's forced locale overriding test extra headers were isolated; final tests use actual browser locales and assert outgoing language headers.
+
+Baseline captures are `.qa/legal-readability/baseline/`, original exact-PR86 public captures remain under `.qa/market-legal-sharing/public/`. Final local dev evidence is `.qa/legal-language/` (24 top views and16 bounded content samples, both languages/themes across six widths) and `.qa/legal-readability/` (Supporter comparisons). Root inspected final desktop English, phone German and Supporter originals; the design/test agent inspected all locale/theme contact sheets. Three focused browser journeys and45 new locale/copy tests pass. Full phase, production/container/Cloudflare and exact-head public verification are recorded independently by the release workflow.
+
+Operator identity, contracts, retention/transfers, consumer-rights mechanisms and legal approval remain incomplete. Billing and ad requests stay off. Existing equipment screenshot failures, real provider consent, current-patch/media rights, full accessibility and owner acceptance remain separate gates.
