@@ -509,40 +509,44 @@ export function Shell({
             </div>
             <footer className="site-footer">
               <div className="site-footer-inner">
-                <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                  <Wordmark light={light} />
-                </Link>
-                <nav className="site-footer-navigation" aria-label="Footer">
-                  {footerLinks.map(([url, label]) => (
-                    <Link key={url} href={href(url)}>
-                      {label}
+                <div className="site-footer-brand">
+                  <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
+                    <Wordmark light={light} />
+                  </Link>
+                  <p className="site-footer-source">
+                    Independent Albion Online tools. Prices from the Albion Online Data Project. Not
+                    affiliated with Sandbox Interactive.
+                  </p>
+                </div>
+                <div className="site-footer-links">
+                  <nav className="site-footer-navigation" aria-label="Footer">
+                    {footerLinks.map(([url, label]) => (
+                      <Link key={url} href={href(url)}>
+                        {label}
+                      </Link>
+                    ))}
+                  </nav>
+                  <div className="site-footer-legal">
+                    <span>© {new Date().getFullYear()} Outpost</span>
+                    <Link href="/legal">
+                      Privacy &amp; terms <ArrowUpRight size={13} aria-hidden="true" />
                     </Link>
-                  ))}
-                </nav>
-                <button
-                  type="button"
-                  className="site-footer-top"
-                  onClick={() =>
-                    window.scrollTo({
-                      top: 0,
-                      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-                        ? "auto"
-                        : "smooth",
-                    })
-                  }
-                >
-                  Back to top <ArrowUp size={14} aria-hidden="true" />
-                </button>
-              </div>
-              <div className="site-footer-legal">
-                <p className="site-footer-source">
-                  Independent Albion Online tools. Prices from the Albion Online Data Project. Not
-                  affiliated with Sandbox Interactive.
-                </p>
-                <span>© {new Date().getFullYear()} Outpost</span>
-                <Link href="/legal">
-                  Privacy &amp; terms <ArrowUpRight size={13} aria-hidden="true" />
-                </Link>
+                    <button
+                      type="button"
+                      className="site-footer-top"
+                      onClick={() =>
+                        window.scrollTo({
+                          top: 0,
+                          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                            ? "auto"
+                            : "smooth",
+                        })
+                      }
+                    >
+                      Back to top <ArrowUp size={14} aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </footer>
           </div>

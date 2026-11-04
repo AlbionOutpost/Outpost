@@ -9,7 +9,7 @@ import { Silver } from "./silver";
 import { useLoad } from "./use-load";
 
 /**
- * The most worthwhile craft right now, as `/api/landing/craft` picks it: materials with unit and
+ * The most worthwhile multi-material showcase craft, as `/api/landing/craft` picks it: materials with unit and
  * total, cost against sale price, profit and margin, then the same recipe in every city with a
  * complete price set. The stepper recalculates from the same loaded observations. A loss shows as a loss.
  */
