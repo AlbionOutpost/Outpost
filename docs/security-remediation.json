@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-04T15:49:40.808719+00:00",
-  "baselineCommit": "56dde354d38a9f4d99aebbd9fa12939cf9cb1fba",
-  "branch": "codex/homepage-rhythm",
-  "sourceFingerprint": "2b2127cc848fe37f3a31b0db4b5afd557bc9b4eb55126a5868b2e2677be3e79e",
-  "scope": "Owner-authorized homepage hierarchy and spacing: paired public build/comp examples with real creator actions; a compact truthful Team capability strip; one active live tool preview selected from three accessible choices, all three widgets mounted to preserve inputs. Wider section/card gaps and natural preview height replace six competing detailed panels. Activity count/art/motion, guide metadata, data/calculations, providers, schema and permissions are retained. This committed record is a prepublication checkpoint; protected CI and exact-head public/native delivery evidence remain separate. Broader launch NO-GO is unchanged.",
+  "checkedAt": "2026-11-04T17:19:40.011921+00:00",
+  "baselineCommit": "a34f0d8af7455bd739f39d9b1fe1d2af11fd6eb7",
+  "branch": "codex/revert-homepage-rhythm",
+  "sourceFingerprint": "b2f21f4c5f60400a564b41f784d07ca71f16964876aab4e9a3b210a3a3c538ce",
+  "scope": "Owner rejected PR84 and explicitly requested the prior page. Restore ALL application source and browser-test files exactly to PR83 merge56dde354: three planning windows, three simultaneous tool cards, original spacing/responsive styles and PR83 inline guide metadata. Remove the experimental tool selector/Team strip. Preserve Git history and historical QA/design records, explicitly mark PR84 withdrawn, and make no new design, data, formula, schema, asset or server-permission changes. This committed rollback checkpoint precedes required protected publication and exact-head live verification; broader product launch remains NO-GO.",
   "findings": [
     {
       "id": "F-01",
@@ -289,81 +289,89 @@
       "id": "UI-HOMEPAGE-RHYTHM",
       "title": "Competing dense landing panels obscure planning and live tools",
       "severity": "UI/interaction",
-      "implementation": "COMPLETE locally: build and comp previews share two columns, Team capabilities use a companion strip, tools have a single persistent active preview and accessible three-way selector. Section rhythm112px, card gaps32px and activity rows48px. Retains public examples, regional creator URLs, all real tool inputs and existing data contracts.",
+      "implementation": "WITHDRAWN by owner after PR84 publication; the full src/e2e trees are restored exactly to PR83 in the current rollback candidate. Historical implementation/evidence below does not imply owner acceptance.",
       "verification": "Final Node22 mandatoryphase11/12:524units,167/170browsers; only three existing equipment goldens fail. Initial stale Team/roster selectors and nested edge-target test locator corrected without weakening content/arithmetic checks; focused homepage7 and full rerun pass affected journeys. General14render/axe cases,14planning,3state/financial-scroll and9actualpointer edge-hit cases reviewed. Current24D1runtime, freshcontainer and lab sample recorded. Protected/currentpublic proof pending.",
-      "deployment": "PENDING normal required PR checks, authorized squash/deployment and final exact-head public/native readback."
+      "deployment": "PR84 shipped as a34f0d8af7455bd739f39d9b1fe1d2af11fd6eb7; owner then rejected it. Current normal rollback publication pending."
+    },
+    {
+      "id": "UI-PR84-REVERT",
+      "title": "Restore owner-preferred PR83 homepage",
+      "severity": "Owner-requested UI rollback",
+      "implementation": "COMPLETE locally: runtime and e2e trees exactly match56dde354 (PR83), including three Build/Team/Comp windows and all three tool cards. Git history and rejected-design evidence retained.",
+      "verification": "Current Node22 full phase11/12:524units,167/170browsers; only three existing equipment goldens fail. Twelve both-theme/six-width scoped rendered/axe cases pass and all four contact sheets reviewed. Fresh non-root container,24D1runtime and current production lab sample recorded. Exact restored source comparison empty; new protected/public proof pending.",
+      "deployment": "PENDING required PR checks and normal owner-authorized deployment of the revert."
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Current Node22 full phase11/12 gates:524units and167/170browsers. Only three known equipment screenshot mismatches at320/390/768 fail; no snapshots/assertions suppressed. Initial full phase166/170 and intermediate homepage6/7 are retained; corrected Team/roster/relative-locator test references pass focused7/7 and final full rerun. Protected Cloudflare core remains a separate gate."
+      "detail": "Current rollback Node22 full phase11/12:524unit tests,167/170browser cases. Only three existing equipment screenshot mismatches at320/390/768fail; no goldens/assertions suppressed. Runtime and e2e source trees exactly match PR83."
     },
     {
       "name": "Deep-fix browser regressions",
       "status": "PASS",
-      "detail": "Current final production homepage7/7 and all other affected full-suite journeys pass: public examples vs real creator destinations, three mounted/one accessible tool, inactive inert/hidden, preserved inputs, stable settled frame, repeated actual edge clicks, keyboard navigation, honest missing sources and exact quantity/request behavior."
+      "detail": "Current full phase passes all affected homepage journeys with original3windows/3tools and PR83 guide metadata. No test weakening: original PR83 e2e tree is restored byte-for-byte."
     },
     {
       "name": "PostgreSQL billing and authorization",
       "status": "PASS",
-      "detail": "Current isolated phase integration/migration/backup/restore and billing/authorization regressions pass. No schema/private boundary changes; fixture sessions remain distinct from real OAuth/payments."
+      "detail": "Current isolated integration/migrations/backup/restore and billing/authorization regressions pass. No schema or private boundary changes; fixtures are not real providers."
     },
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Current local data Worker24 cases pass, including permissions/private data and shared quota isolation. Schema/backend/bindings unchanged. Protected Worker verification remains separate."
+      "detail": "Current local24D1runtime cases pass. Restored application source contains no backend, binding, schema or private-cache change."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PENDING",
-      "detail": "Current local Node production build and24D1runtime pass. Required protected workflow will build Cloudflare and typecheck both Worker projects before normal deployment; no binding/schema/cache changes."
+      "detail": "Current local Node production build and24D1runtime pass; the rollback must pass own required protected Cloudflare build/types/core checks before publication."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PREVIOUSLY VERIFIED",
-      "detail": "PR83 passed current reviewed binding-only Free-bundle limits. Own protected build/dry-runs are required for the new client layout; no service purchase or new paid binding."
+      "detail": "PR83 and PR84 passed reviewed Free binding/bundle limits. Current exact-PR83 restoration still requires its own protected production dry-runs; no services or paid bindings added."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-homepage-rhythm:qa image: current homepage selector markup present, page/art200, UID1000, no baked.env, isolated PostgreSQL/Redis healthy. Owned acceptance and benchmark containers removed."
+      "detail": "Fresh outpost-homepage-revert:qa: restored homepage200/no new tool selector, UID1000/no baked.env, isolated services healthy. Local browser checks and lab sample use this image; owned container cleanup follows checks."
     },
     {
       "name": "Dependencies",
       "status": "ASSESSED",
-      "detail": "No dependency changes. Current production audit0 advisories; raw15moderate development entries remain under the unchanged exact mechanism/artifact guard."
+      "detail": "No dependency changes. Current production audit0; unchanged exact tooling assessment preserves15raw moderate development alerts."
     },
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "Current source and production browser-artifact configured-value scans pass; staged owner-value scan required before commit. No full-history/unknown-secret certification."
+      "detail": "Source/artifact configured-value scans pass. Initial staged helper failed when reading the two deleted files; corrected candidate commit scan covers21published-content files with0matches before push. The documentation follow-up uses the corrected staged scanner (deleted files excluded). No secrets were published, values printed, or history/unknown-secret certification claimed."
     },
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Current general14cases (both themes1920/1440/1024/768/390/375/320), planning14cases (1100instead1024),3input/keyboard/financial-scroll journeys and9actualroute edge/emblem/helper hits pass. Six representative section contact sheets inspected across desktop/tablet/320 both themes; viewport and section-fit captures distinguished. Initial axe label mismatch fixed structurally; shared hover hit-area collapse fixed with local inner-button transform:none. New exact-head public/native proof pending."
+      "detail": "Twelve current rendered/scoped-axe cases at1920/1440/768/390/375/320in both themes pass:3windows Build\u2192Team\u2192Comp,3visible tools/noToolShowcase, compact profit\u226464, equal desktop card/action baselines, inlineguidepill8pxgap,6regionalfooterlinks and no document overflow/page errors. Root inspected all4contact sheets. Actual viewport and fitted-section captures remain distinct. New native/public proof pending."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One fresh current local container Node production mobile sample:76performance/100accessibility,LCP5638ms,CLS0.0632. Concurrent local QA makes this an observation, not a controlled speedup, public-load or field result; loading targets remain open."
+      "detail": "One current local container mobile sample:79performance/100accessibility,LCP4813ms/CLS0.0632. Restoring old source is not a speedup or field-performance certification."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "Current design/progress/roadmap and seven generated reports updated from actual evidence. Documentation/format/source/artifact/staged checks recorded separately before commit; final protected/public receipt follows deployment."
+      "detail": "Rollback design/progress/roadmap and seven generated reports reflect actual evidence; PR84 design explicitly withdrawn. Docs/format/source/artifact/staged checks run before commit. Final receipt supplements committed prepublication checkpoint."
     },
     {
       "name": "GitHub controls",
       "status": "PENDING",
-      "detail": "PR83 passed required checks and deployed56dde354. This new hierarchy must pass own checks/browser/documentation and merge normally; noforce/admin/rulebypass."
+      "detail": "PR84 passed normally before owner rejection. Current rollback must pass own checks/browser/documentation and merge without force/admin or rule bypass."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "PR83 inline guide metadata is the deployed baseline. New owner-authorized homepage hierarchy is locally implemented and awaits normal protected delivery/current public readback. Broader launchNO-GO unchanged."
+      "detail": "Current live baseline is rejected PR84/a34f0d8. Owner explicitly requested restoration of PR83. Local exact restoration is ready; normal protected rollback/current live verification pending."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -373,17 +381,17 @@
     {
       "name": "Tooling applicability guard",
       "status": "PASS",
-      "detail": "Current qa:phase exact-artifact tooling guard passes, preserving15raw development alerts. No dependency/artifact applicability change."
+      "detail": "Current exact-artifact tooling guard passes while preserving15raw development alerts. No dependency mechanism/artifact changed."
     },
     {
       "name": "Public activity integration",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR83 deployment and public evidence remain historical. This phase changes homepage spacing and planning/tool hierarchy; new exact-head public/native checks are required. Activity cutout artwork/motion source is retained."
+      "detail": "Cutout artwork/motion and category data remain PR83 source. Rollback restores original spacing; final exact-head public/native review remains required."
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR83 safe hosted checks passed. New delivery requires fresh normal prices after cooldown and hosted health/denial/OAuth-start/cookie-state checks. Genuine consent/token exchange/payments remain deferred."
+      "detail": "PR84 safe hosted/start checks passed; rollback final current health/denial/OAuth-start and normal fresh prices remain separate. Genuine provider consent/payments remain deferred."
     }
   ],
   "limits": [
@@ -398,6 +406,8 @@
     "PR80 live review caught tiny Supporter RGB corner pixels after geometry passed; final two-rendering-file contour correction has its own local phase/visual/container evidence and awaits protected/currentpublic readback. Earlier public asset mismatch during local source change is retained, not counted as final asset acceptance.",
     "Current landing-density/footer follow-up changes showcase coverage27\u219215 existing multi-material candidates, not recipe facts or accounting. Full calculator coverage and source/current-patch limits remain. Initial intrinsic-height and sparse single-input visual states are retained; current protected/public proof is pending in committed checkpoint documents.",
     "Owner clarified inline category-left/time-right metadata afterPR82 publication. Current follow-up is a small two-file UI correction with productionbuild/homepage7 and twelve responsive cases; parentfullphase/data/provider evidence remains separately identified. Final public/native checks require the new exact deployed revision.",
-    "Homepage-rhythm evidence is scoped to public UI, local fixture authorization and current local production checks. All three tool components remain mounted and fetch under the existing contract; no lazy-loading/API-budget reduction is claimed. Development StrictMode double effects and the initial harness NumberFlow text/relative-locator failures are retained separately. Native/public verification requires the new exact successful deployment. Existing equipment goldens, field loading/provider/legal/current-patch/recovery/full-product gates remain open."
+    "Homepage-rhythm evidence is scoped to public UI, local fixture authorization and current local production checks. All three tool components remain mounted and fetch under the existing contract; no lazy-loading/API-budget reduction is claimed. Development StrictMode double effects and the initial harness NumberFlow text/relative-locator failures are retained separately. Native/public verification requires the new exact successful deployment. Existing equipment goldens, field loading/provider/legal/current-patch/recovery/full-product gates remain open.",
+    "The owner rejected the PR84 design despite its automated/targeted checks. Current rollback restores PR83 application/tests exactly and preserves that human decision; no visual polish/acceptance claim is inferred from test passes. Current public/native verification requires the new successful rollback deployment. Existing equipment goldens and provider/legal/current-patch/recovery/field/full-product limits remain open.",
+    "Rollback scan tooling initially attempted to read deleted selector files from the index and failed; the already-created, unpushed source commit was checked directly (21files,0configured-value matches), and the reporting follow-up is scanned with deletion-aware staging. This helper error is distinct from an application/credential finding."
   ]
 }

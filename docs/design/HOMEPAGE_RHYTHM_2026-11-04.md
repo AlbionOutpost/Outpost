@@ -1,5 +1,6 @@
 # Homepage rhythm and product discovery — 4 November 2026
 
+**Status: withdrawn after owner rejection; superseded by the [PR83 restoration](HOMEPAGE_REVERT_2026-11-04.md).** The implementation and measurements below describe the historical PR84 experiment.
 Status: implemented locally; mandatory phase verification is running. Merge, deployment and actual public acceptance for this revision are pending. This record distinguishes the local visual/interaction evidence from those later gates.
 
 ## Problem and design direction

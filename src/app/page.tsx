@@ -5,7 +5,6 @@ import { CraftCard } from "@/components/landing/craft-card";
 import { GuidesCarousel } from "@/components/landing/guides-carousel";
 import { MarketCard } from "@/components/landing/market-card";
 import { PlannerCard } from "@/components/landing/planner-card";
-import { ToolShowcase } from "@/components/landing/tool-showcase";
 import { PreviewShell } from "@/components/landing/preview-shell";
 import { TopKills } from "@/components/landing/top-kills";
 import { ActivityGrid } from "@/components/landing/activity-grid";
@@ -154,13 +153,7 @@ export default async function Home({
         </div>
       </section>
 
-      <section className="landing-wrap landing-planning" aria-labelledby="home-planning-title">
-        <div className="section-heading landing-section-heading">
-          <h2 id="home-planning-title">
-            Build your kit. <em>Plan your comp.</em>
-          </h2>
-          <p>Create a loadout, arrange your party and keep your Team on the same page.</p>
-        </div>
+      <div className="landing-wrap">
         <LandingWindows
           build={build}
           spellNames={spellLabels}
@@ -168,7 +161,7 @@ export default async function Home({
           members={members}
           suffix={suffix}
         />
-      </section>
+      </div>
 
       <section className="landing-wrap landing-tools" aria-labelledby="home-tools-title">
         <div className="section-heading landing-section-heading">
@@ -183,7 +176,7 @@ export default async function Home({
             View all tools <ArrowRight size={15} />
           </Link>
         </div>
-        <ToolShowcase>
+        <div className="landing-card-grid">
           <PreviewShell
             id="home-market"
             emblem="tool-market"
@@ -226,7 +219,7 @@ export default async function Home({
           >
             <PlannerCard plan={[...showcase.plan]} />
           </PreviewShell>
-        </ToolShowcase>
+        </div>
       </section>
 
       <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
