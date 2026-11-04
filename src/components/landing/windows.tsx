@@ -52,8 +52,9 @@ const teamFeatures = [
 ] as const;
 
 /**
- * A public build and comp show the two planning tools with recorded equipment and
- * abilities. Team capabilities follow as a compact companion, without private guild data.
+ * Three windows riding the hero's edge: a public build on the game's board with the chosen
+ * abilities on the items, what a Team workspace does, and a public comp read as a roster by
+ * weapon type. Everything shown is recorded in the library; nothing is staged.
  */
 export function LandingWindows({
   build,
@@ -78,9 +79,9 @@ export function LandingWindows({
       <Window
         scene="build"
         emblem="strip-builds"
-        title="Build creator"
+        title="Build planner"
         line="Put together a full set with spells and swaps, then share it."
-        href={`/builds/new${suffix}`}
+        href={`/builds/library${suffix}`}
         bar={
           build ? (
             <>
@@ -102,7 +103,7 @@ export function LandingWindows({
               </span>
             </>
           ) : (
-            <span className="landing-window-title">Build creator</span>
+            <span className="landing-window-title">Build planner</span>
           )
         }
       >
@@ -120,11 +121,47 @@ export function LandingWindows({
       </Window>
 
       <Window
+        scene="market"
+        emblem="strip-content"
+        title="Team Management"
+        line="Mass-ups, comps and loot splits for your guild. Supporter feature."
+        href={`/groups${suffix}`}
+        bar={
+          <>
+            <span className="landing-window-title">Team Management</span>
+            <span className="landing-chips">
+              <span className="landing-chip">Supporter</span>
+            </span>
+          </>
+        }
+      >
+        <ol
+          className={`landing-features ${styles.features}`}
+          aria-label="What a Team workspace does"
+        >
+          {teamFeatures.map(([icon, name, line]) => (
+            <li key={icon}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+              <img src={`/albion/icons/${icon}.webp`} alt="" width={40} height={40} />
+              <span>
+                <strong>{name}</strong>
+                <small>{line}</small>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </Window>
+
+      <Window
         scene="composition"
         emblem="strip-comps"
         title="Comp planner"
         line="Build the comp, hand out the sets and get everyone on the same page."
-        href={`/compositions/new${suffix}`}
+        href={
+          comp
+            ? `/compositions/library/${encodeURIComponent(comp.slug)}${suffix}`
+            : `/compositions/library${suffix}`
+        }
         bar={
           comp ? (
             <>
@@ -156,35 +193,6 @@ export function LandingWindows({
           <p className="landing-window-empty">No public group build to show.</p>
         )}
       </Window>
-      <aside
-        className={`raised has-scene ${styles.team}`}
-        data-scene="market"
-        aria-label="Team Management"
-      >
-        <div className={styles.teamIntro}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-          <img src="/albion/icons/strip-content.webp" alt="" width={40} height={40} />
-          <div>
-            <div className={styles.teamHeading}>
-              <h3>Team Management</h3>
-              <span className="landing-chip">Supporter</span>
-            </div>
-            <p>Run a Team with Supporter. Members join free.</p>
-          </div>
-        </div>
-        <ul className={styles.teamFeatures} aria-label="What a Team workspace does">
-          {teamFeatures.map(([icon, name, line]) => (
-            <li key={icon} title={line}>
-              {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-              <img src={`/albion/icons/${icon}.webp`} alt="" width={24} height={24} />
-              <span>{name}</span>
-            </li>
-          ))}
-        </ul>
-        <Link href={`/groups${suffix}`} className={`pill-link ${styles.teamAction}`}>
-          Explore Teams <ArrowUpRight size={16} aria-hidden="true" />
-        </Link>
-      </aside>
     </div>
   );
 }

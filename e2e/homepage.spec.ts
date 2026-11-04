@@ -1,13 +1,5 @@
 import { expectResultText } from "./support/result-text";
-import { test, expect, type Page } from "@playwright/test";
-
-type HomeTool = "Market Explorer" | "Crafting Calculator" | "Crafting Planner";
-async function activateTool(page: Page, name: HomeTool) {
-  const tabs = page.getByRole("tablist", { name: "Explore Outpost tools" });
-  await tabs.getByRole("tab", { name, exact: true }).click();
-  await expect(page.getByRole("tabpanel", { name, exact: true })).toBeVisible();
-}
-
+import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { normalizeTopKills } from "../src/lib/albion/combat-events";
 
@@ -166,7 +158,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
   // does, and a comp read as a roster by weapon type.
   const windows = page.locator(".landing-window");
-  await expect(windows).toHaveCount(2);
+  await expect(windows).toHaveCount(3);
   const board = windows.nth(0).locator(".loadout-board");
   await expect(board.getByRole("listitem")).toHaveCount(10);
   await expect(board.locator('[data-slot="Main hand"] .loadout-board-abilities img')).toHaveCount(
@@ -178,16 +170,14 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(heart).toBeDisabled();
   await expect(heart).toHaveAttribute("aria-pressed", "false");
   await expect(heart).toHaveAccessibleName(/Sign in to like/);
-  await expect(windows.nth(1).locator(".heart-chip")).toBeDisabled();
-  const team = page.getByRole("complementary", { name: "Team Management" });
-  await expect(team).toContainText("Team Management");
-  await expect(team.getByRole("link")).toHaveAttribute("href", "/groups?region=europe");
+  await expect(windows.nth(2).locator(".heart-chip")).toBeDisabled();
+  await expect(windows.nth(1)).toContainText("Team Management");
   await expect(windows.nth(0)).toContainText("Battleaxe Mist Build");
   await expect(
-    team.getByRole("list", { name: "What a Team workspace does" }).getByRole("listitem"),
+    windows.nth(1).getByRole("list", { name: "What a Team workspace does" }).getByRole("listitem"),
   ).toHaveCount(5);
   const roster = windows
-    .nth(1)
+    .nth(2)
     .getByRole("list", { name: "Members by weapon type" })
     .getByRole("listitem");
   await expect(roster).toHaveCount(5);
@@ -196,17 +186,9 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "href",
     /\/builds\/library\/[a-z0-9-]+\?region=europe/,
   );
-  await expect(windows.nth(1).locator(".landing-window-foot")).toHaveAttribute(
+  await expect(windows.nth(2).locator(".landing-window-foot")).toHaveAttribute(
     "href",
-    "/compositions/new?region=europe",
-  );
-  await expect(windows.nth(1).locator(".landing-window-title")).toHaveAttribute(
-    "href",
-    "/compositions/library/hellgate-5v5-front-to-back?region=europe",
-  );
-  await expect(windows.nth(0).locator(".landing-window-foot")).toHaveAttribute(
-    "href",
-    "/builds/new?region=europe",
+    /\/compositions\/library\/hellgate-5v5-front-to-back/,
   );
 
   // Tool cards, loaded from the mocked endpoints once in view.
@@ -248,7 +230,6 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/market?item=T6_METALBAR&quality=1&region=europe",
   );
 
-  await activateTool(page, "Crafting Calculator");
   const crafting = cards.nth(1);
   await expect(crafting.locator(".tool-item")).toContainText("Cape");
   await expect(crafting.locator(".tool-item")).toContainText("Thetford · best of 5");
@@ -273,7 +254,6 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/tools/crafting?region=europe",
   );
 
-  await activateTool(page, "Crafting Planner");
   const planner = cards.nth(2);
   await expect(
     planner.getByRole("list", { name: "Planned items" }).getByRole("listitem"),
@@ -296,77 +276,25 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/shopping-list?region=europe",
   );
 
-  // The single live preview keeps its space, local inputs and DOM across tool changes.
-  const preview = page.locator(".tool-showcase-preview");
-  const previewHeight = (await preview.boundingBox())!.height;
-  const tabs = page.getByRole("tablist", { name: "Explore Outpost tools" });
-  await expect(page.getByRole("tabpanel")).toHaveCount(1);
-  const panels = page.locator(".tool-showcase-panel");
-  await expect(panels).toHaveCount(3);
-  await expect(panels.locator(".landing-card")).toHaveCount(3);
-  await expect(page.locator("#home-tool-panel-market")).toHaveAttribute("inert", "");
-  await expect(page.locator("#home-tool-panel-crafting")).toHaveAttribute("aria-hidden", "true");
-  await expect(page.getByRole("group", { name: "Batches", exact: true })).toHaveCount(0);
-
-  await activateTool(page, "Market Explorer");
-  await expect(market.getByRole("tab", { name: "7D" })).toHaveAttribute("aria-selected", "true");
-  expect(Math.abs((await preview.boundingBox())!.height - previewHeight)).toBeLessThan(1);
-  await activateTool(page, "Crafting Calculator");
-  await expectResultText(crafting.locator(".tool-stepper output"), "2", { exact: true });
-  await expectResultText(crafting.locator(".tool-table tbody tr").first(), /28,752/);
-  expect(Math.abs((await preview.boundingBox())!.height - previewHeight)).toBeLessThan(1);
-  await activateTool(page, "Crafting Planner");
-  await expect(planner.getByRole("tab", { name: "Shopping list" })).toHaveAttribute(
-    "aria-selected",
-    "true",
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(450);
+  const toolBounds = await cards.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const card = node.getBoundingClientRect();
+      const action = node.querySelector(".landing-card-action")!.getBoundingClientRect();
+      return { height: card.height, bottom: card.bottom, actionBottom: action.bottom };
+    }),
   );
-  await expectResultText(planner.locator(".tool-summary"), /Owned\s*1 \/ 33/);
-  await expectResultText(planner.locator(".tool-queue li").first(), /9 left/);
-  expect(Math.abs((await preview.boundingBox())!.height - previewHeight)).toBeLessThan(1);
-
-  const plannerTab = tabs.getByRole("tab", { name: "Crafting Planner", exact: true });
-  await plannerTab.focus();
-  await plannerTab.press("Home");
-  await expect(tabs.getByRole("tab", { name: "Market Explorer", exact: true })).toBeFocused();
-  await expect(tabs.getByRole("tab", { name: "Market Explorer", exact: true })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  );
-  await page.keyboard.press("ArrowRight");
-  await expect(tabs.getByRole("tab", { name: "Crafting Calculator", exact: true })).toBeFocused();
-  await expect(
-    page.getByRole("tabpanel", { name: "Crafting Calculator", exact: true }),
-  ).toBeVisible();
-  await page.keyboard.press("End");
-  await expect(plannerTab).toBeFocused();
-  await expect(plannerTab).toHaveAttribute("aria-selected", "true");
-  await expect(tabs.locator('[tabindex="0"]')).toHaveCount(1);
-
-  // The entire option stays clickable after hover settles, including the emblem/edge
-  // outside the inner label button. Revisit each option to catch hover hit-area collapse.
-  for (let round = 0; round < 2; round++) {
-    for (const name of ["Crafting Calculator", "Market Explorer", "Crafting Planner"] as const) {
-      const tab = tabs.getByRole("tab", { name, exact: true });
-      const option = tabs
-        .locator("[data-active]")
-        .filter({ has: page.getByRole("tab", { name, exact: true }) });
-      await option.scrollIntoViewIfNeeded();
-      const beforeHover = (await option.boundingBox())!;
-      await page.mouse.move(beforeHover.x + 10, beforeHover.y + beforeHover.height / 2);
-      await page.waitForTimeout(200);
-      const settled = (await option.boundingBox())!;
-      const label = (await tab.boundingBox())!;
-      // Deliberately exercise the padded outside edge, rather than the title's centre.
-      expect(settled.x + 10).toBeLessThan(label.x);
-      await page.mouse.move(settled.x + 10, settled.y + settled.height / 2);
-      await page.mouse.down();
-      await page.mouse.up();
-      await expect(tab).toBeFocused();
-      await expect(tab).toHaveAttribute("aria-selected", "true");
-      await expect(option).toHaveAttribute("data-active", "true");
-      await expect(page.getByRole("tabpanel", { name, exact: true })).toBeVisible();
-    }
-  }
+  expect(
+    Math.max(...toolBounds.map((r) => r.height)) - Math.min(...toolBounds.map((r) => r.height)),
+  ).toBeLessThan(1);
+  expect(
+    Math.max(...toolBounds.map((r) => r.bottom)) - Math.min(...toolBounds.map((r) => r.bottom)),
+  ).toBeLessThan(1);
+  expect(
+    Math.max(...toolBounds.map((r) => r.actionBottom)) -
+      Math.min(...toolBounds.map((r) => r.actionBottom)),
+  ).toBeLessThan(1);
 
   // Editorial guides: story copy bottom-left, category/read time top-right; no byline.
   const guides = page.locator(".landing-guides article");
@@ -536,10 +464,8 @@ test("landing page keeps every state honest when the sources are down", async ({
   const cards = page.locator(".landing-card");
   await cards.first().scrollIntoViewIfNeeded();
   await expect(cards.nth(0).locator("tbody")).toContainText("Source unavailable");
-  await activateTool(page, "Crafting Calculator");
   await expect(cards.nth(1).locator(".tool-item")).toContainText("Unavailable");
   await expect(cards.nth(1).locator(".tool-profit")).toContainText("—");
-  await activateTool(page, "Crafting Planner");
   await expect(cards.nth(2).locator(".tool-summary")).toContainText(/Still to buy\s*No prices/);
   await expect(page.locator(".landing-kills")).toContainText("kill ranking is unavailable");
   await expect(page.locator(".kill-card")).toHaveCount(0);
@@ -602,7 +528,6 @@ test("planner digits roll down and up, and reduced motion shows exact results im
     });
   });
   await page.goto("/");
-  await activateTool(page, "Crafting Planner");
   const planner = page.locator(".landing-card").nth(2);
   await planner.scrollIntoViewIfNeeded();
   await expectResultText(planner.locator(".tool-summary"), "33,000");
@@ -686,7 +611,6 @@ test("craft quantity recalculates without refetching; shared digits roll and red
   });
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await activateTool(page, "Crafting Calculator");
   // Use the existing showcase wrapper, independent of layout styling.
   const card = page
     .locator(".tool-card")

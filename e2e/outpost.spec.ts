@@ -15,14 +15,13 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(logo).toHaveAttribute("src", /outpost-logo/);
   await logo.evaluate((node: HTMLImageElement) => node.decode());
   expect(await logo.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
-  await expect(
-    page.locator('.landing-card[data-scene="market"] .landing-card-action'),
-  ).toBeVisible();
-  await expect(
-    page.locator('.landing-card[data-scene="market"] .landing-card-action'),
-  ).toHaveAttribute("href", "/tools/market?item=T6_METALBAR&quality=1&region=asia");
+  await expect(page.locator(".landing-card:first-child .landing-card-action")).toBeVisible();
+  await expect(page.locator(".landing-card:first-child .landing-card-action")).toHaveAttribute(
+    "href",
+    "/tools/market?item=T6_METALBAR&quality=1&region=asia",
+  );
   await expect(page.locator(".landing-stats > div")).toHaveCount(5);
-  await expect(page.locator(".landing-window")).toHaveCount(2);
+  await expect(page.locator(".landing-window")).toHaveCount(3);
   await expect(page.locator(".home-terminal, .terminal-city-prices")).toHaveCount(0);
   await expect(page.locator(".field-map, .atlas-art")).toHaveCount(0);
   await expect(

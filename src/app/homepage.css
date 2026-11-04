@@ -1,7 +1,8 @@
-/* Landing page: a painted hero, measured counts, paired build/comp previews with a
-   Team companion, one active live tool preview, the Supporter band, activity cards,
-   killboards and featured guides. Paintings and emblems are the owner's artwork;
-   public examples and observed prices retain their existing data boundaries. */
+/* Landing page: the header on its own bar, then a painted hero that dissolves into the page,
+   the numbers Outpost measures, three teaser windows (build, Teams, comp), builds by
+   activity, three tool cards running on live data, the top kills as killboards, a guides
+   slider and a painted band with the Free and Supporter plans. Paintings and emblems are the owner's
+   artwork; everything inside the cards is real software on real observations. */
 
 .app.outpost.home-route .main > .site-header {
   position: relative;
@@ -11,8 +12,6 @@
 }
 .app.outpost .home-landing {
   --landing-width: 1240px;
-  --landing-section-space: 112px;
-  --landing-card-gap: 32px;
   --page-top: #17110e;
   width: 100%;
   overflow-x: clip;
@@ -222,6 +221,7 @@
 }
 
 /* Inset panels inside the surfaces */
+.app.outpost .landing-features li,
 .app.outpost .tool-search,
 .app.outpost .tool-item,
 .app.outpost .tool-table,
@@ -239,14 +239,14 @@
   box-shadow: inset 0 1px 3px #0009;
 }
 
-/* Related planning examples share a row; Team capabilities sit underneath. */
+/* Windows: three across, riding the hero's edge; the content fades into the footer */
 .app.outpost .landing-windows {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--landing-card-gap);
-  margin-top: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: -24px;
 }
 .app.outpost .landing-window {
   display: grid;
@@ -294,6 +294,11 @@ a.landing-window-title:hover {
 }
 .app.outpost .landing-window-body > .loadout-board {
   align-self: center;
+}
+/* Lists share the board's height evenly, so no window is left with a gap */
+.app.outpost .landing-window-body > .landing-roster {
+  grid-auto-rows: 1fr;
+  height: 100%;
 }
 .app.outpost .landing-window-empty {
   margin: 0;
@@ -343,8 +348,11 @@ a.landing-window-title:hover {
   container-type: inline-size;
 }
 .app.outpost .landing-window .loadout-board.is-card {
+  --gap: 12px;
+  --cell: min(84px, calc((100cqw - 2 * var(--gap)) / 3));
   justify-content: center;
   width: 100%;
+  margin-top: 4px;
 }
 .app.outpost .landing-window .loadout-board-slot {
   grid-template-rows: var(--cell);
@@ -375,17 +383,51 @@ a.landing-window-title:hover {
 .app.outpost .landing-window .loadout-board-cell img.loadout-board-mark {
   opacity: 0.5;
 }
+/* Teams: what a workspace does, rows that stretch to the board's height */
+.app.outpost .landing-features {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 8px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .landing-features li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+}
+.app.outpost .landing-features img {
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .landing-features strong {
+  display: block;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.outpost .landing-features small {
+  display: block;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 /* Section headings: title, one line, a pill link on the right */
 .app.outpost .landing-tools,
 .app.outpost .landing-guides,
 .app.outpost .landing-kills {
-  margin-top: var(--landing-section-space);
-}
-.app.outpost .landing-planning {
-  margin-top: 64px;
+  margin-top: 96px;
 }
 .app.outpost .landing-section-heading {
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 .app.outpost .landing-section-heading h2 {
   font-size: clamp(32px, 3.2vw, 44px);
@@ -398,13 +440,20 @@ a.landing-window-title:hover {
 }
 
 /* Tool cards */
+.app.outpost .landing-card-grid {
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+}
 .app.outpost .landing-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto auto;
-  gap: 20px;
-  min-width: 0;
-  padding: 24px;
+  /* Share the title, live preview and action tracks across each desktop row. */
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  gap: 12px;
+  padding: 20px 18px 18px;
 }
 .app.outpost .landing-card-head {
   display: grid;
@@ -1466,14 +1515,14 @@ a.landing-window-title:hover {
 .app.outpost .activity-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 48px var(--landing-card-gap);
+  gap: 26px 22px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 /* Membership callout sits between the tools and activity discovery. */
 .app.outpost .landing-cta-wrap {
-  margin-top: 96px;
+  margin-top: 80px;
   padding-bottom: 0;
   filter: drop-shadow(0 12px 20px var(--well));
 }
@@ -1732,6 +1781,10 @@ a.landing-window-title:hover {
 
 /* ---------- Tablet ---------- */
 @media (max-width: 1100px) {
+  .app.outpost .landing-windows,
+  .app.outpost .landing-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .app.outpost .guides-track {
     grid-auto-columns: calc((100% - 24px) / 2);
   }
@@ -1795,22 +1848,23 @@ a.landing-window-title:hover {
   .app.outpost .landing-stats dt {
     font-size: 11px;
   }
+  .app.outpost .landing-windows {
+    margin-top: -16px;
+  }
   .app.outpost .landing-windows,
+  .app.outpost .landing-card-grid,
   .app.outpost .kill-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 32px;
+    gap: 26px;
   }
   .app.outpost .landing-tools,
   .app.outpost .landing-guides,
   .app.outpost .landing-kills {
-    margin-top: 88px;
-  }
-  .app.outpost .landing-planning {
-    margin-top: 48px;
+    margin-top: 64px;
   }
   .app.outpost .landing-section-heading {
     grid-template-columns: 1fr;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
   }
   .app.outpost .landing-section-heading .text-link,
   .app.outpost .landing-section-heading > .pill-link {
@@ -1864,13 +1918,13 @@ a.landing-window-title:hover {
   }
   .app.outpost .activity-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 40px 24px;
+    gap: 26px 22px;
   }
   .app.outpost .landing-activities {
-    margin-top: 96px;
+    margin-top: 80px;
   }
   .app.outpost .landing-cta-wrap {
-    margin-top: 80px;
+    margin-top: 64px;
   }
   .app.outpost .landing-cta-content {
     padding: calc(var(--supporter-art-width) * 0.42) 20px 24px;

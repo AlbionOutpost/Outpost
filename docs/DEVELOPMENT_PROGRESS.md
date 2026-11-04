@@ -49,3 +49,7 @@ PR82 shipped the landing density/footer refinement. The owner clarified that cat
 ## 2026-11-04 — Homepage hierarchy and spacing
 
 Paired public build/comp previews now lead to the actual creators; Team capabilities sit in a compact companion strip. Three persistent live tools share one accessible preview, with wider section/card rhythm and preserved inputs. Current full Node22 phase11/12:524units,167/170browsers; only three existing equipment goldens fail. Local rendered/state/keyboard/pointer review,24D1runtime and fresh container pass. [Design and evidence](design/HOMEPAGE_RHYTHM_2026-11-04.md). Protected publication and exact-head public/native proof remain pending at this committed checkpoint; broader launchNO-GO remains separate.
+
+## 2026-11-04 — Revert PR84 after owner rejection
+
+The owner explicitly requested the prior homepage. Application and e2e trees now match PR83 exactly: three planning windows and three simultaneous tools return, experimental selector/Team strip removed. Historical evidence is retained and the PR84 design marked withdrawn. Current Node22 phase524units/167of170browsers (only3existinggoldens),12render/axe cases,24D1runtime and fresh container pass. [Rollback checkpoint](design/HOMEPAGE_REVERT_2026-11-04.md). Normal protected publication/current public proof remain pending; broader launchNO-GO unchanged.
