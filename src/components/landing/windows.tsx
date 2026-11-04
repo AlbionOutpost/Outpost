@@ -6,6 +6,7 @@ import { LoadoutBoard } from "@/components/loadout-board";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
 import { AccountLikeChip } from "./account-like-chip";
+import styles from "./windows.module.css";
 
 /** One teaser window: a glimpse of the product above, the product's name and line below. */
 function Window({
@@ -26,10 +27,10 @@ function Window({
   children: ReactNode;
 }) {
   return (
-    <article className="raised has-scene landing-window" data-scene={scene}>
-      <div className="landing-window-bar">{bar}</div>
-      <div className="landing-window-body">{children}</div>
-      <Link href={href} className="landing-window-foot">
+    <article className={`raised has-scene landing-window ${styles.window}`} data-scene={scene}>
+      <div className={`landing-window-bar ${styles.bar}`}>{bar}</div>
+      <div className={`landing-window-body ${styles.body}`}>{children}</div>
+      <Link href={href} className={`landing-window-foot ${styles.foot}`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
         <img src={`/albion/icons/${emblem}.webp`} alt="" width={48} height={48} />
         <span>
@@ -74,7 +75,7 @@ export function LandingWindows({
     return b ? [b] : [];
   });
   return (
-    <div className="landing-windows" aria-label="A look inside Outpost">
+    <div className={`landing-windows ${styles.windows}`} aria-label="A look inside Outpost">
       <Window
         scene="build"
         emblem="strip-builds"
@@ -134,7 +135,10 @@ export function LandingWindows({
           </>
         }
       >
-        <ol className="landing-features" aria-label="What a Team workspace does">
+        <ol
+          className={`landing-features ${styles.features}`}
+          aria-label="What a Team workspace does"
+        >
           {teamFeatures.map(([icon, name, line]) => (
             <li key={icon}>
               {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}

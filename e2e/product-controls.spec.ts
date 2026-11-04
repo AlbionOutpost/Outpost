@@ -95,3 +95,35 @@ test("recipe drawer searches real variants, returns focus and keeps accounting i
     ).violations,
   ).toEqual([]);
 });
+
+test("theme reveal stays visible in both directions and accepts interruption", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  const toggle = page.getByRole("button", { name: "Toggle theme", exact: true });
+  for (const pressed of ["true", "false"]) {
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-pressed", pressed);
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          document
+            .getAnimations()
+            .some(
+              (animation) =>
+                (animation.effect as KeyframeEffect | null)?.pseudoElement ===
+                  "::view-transition-new(root)" && animation.playState === "running",
+            ),
+        ),
+      )
+      .toBe(true);
+    await expect(page.locator("html")).not.toHaveAttribute("data-theme-reveal");
+  }
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme-reveal");
+  await page.reload();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+});

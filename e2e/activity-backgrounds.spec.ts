@@ -76,11 +76,18 @@ test("activity depth preserves click targets and respects reduced motion", async
     expect(surface.image).toContain("mists-solo.webp");
   }
   const before = (await card.boundingBox())!;
+  const title = card.getByRole("heading", { level: 3 });
+  const weapon = card.locator("[data-activity-weapon]").first();
+  const titleBefore = (await title.boundingBox())!;
+  const weaponBefore = (await weapon.boundingBox())!;
   await card.hover();
   await page.waitForTimeout(350);
   const lit = (await card.boundingBox())!;
   expect(Math.abs(lit.y - before.y)).toBeLessThan(0.5);
   expect(Math.abs(lit.width - before.width)).toBeLessThan(0.5);
+  // Only the independent foreground advances; the traced/filter stack stays stable.
+  expect((await title.boundingBox())!.y).toBeLessThan(titleBefore.y - 4);
+  expect((await weapon.boundingBox())!.y).toBeLessThan(weaponBefore.y - 7);
   expect(await card.evaluate((n) => getComputedStyle(n).transform)).toBe("none");
   expect(
     await card.locator("[data-activity-scene]").evaluate((n) => getComputedStyle(n).filter),
@@ -95,11 +102,13 @@ test("activity depth preserves click targets and respects reduced motion", async
   await page.goto("/builds/activities?region=asia");
   await page.mouse.move(0, 0);
   const still = (await card.boundingBox())!;
+  const titleStill = (await title.boundingBox())!;
   await card.hover();
   await page.waitForTimeout(350);
   const hovered = (await card.boundingBox())!;
   expect(Math.abs(hovered.width - still.width)).toBeLessThan(0.5);
   expect(Math.abs(hovered.y - still.y)).toBeLessThan(0.5);
+  expect(Math.abs((await title.boundingBox())!.y - titleStill.y)).toBeLessThan(0.5);
   await card.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");

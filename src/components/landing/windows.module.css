@@ -1,0 +1,109 @@
+/* All spare height belongs to the preview, never its title or action. */
+.windows.windows .window.window {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 14px 14px 0;
+}
+
+.windows.windows .bar.bar {
+  align-self: start;
+  min-height: 40px;
+  margin: 0 -14px 12px;
+  padding: 0 16px 10px;
+}
+
+.windows.windows .body.body {
+  min-width: 0;
+  align-content: stretch;
+}
+
+.windows.windows .body.body > :global(.loadout-board) {
+  align-self: center;
+  --gap: 10px;
+  --cell: min(72px, calc((100cqw - 2 * var(--gap)) / 3));
+  margin-top: 0;
+}
+
+.windows.windows .foot.foot {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-self: end;
+  gap: 9px;
+  margin: 12px -14px 0;
+  padding: 12px 16px 14px;
+  min-height: 82px;
+}
+
+.windows.windows .foot.foot > img {
+  width: 40px;
+  height: 40px;
+}
+
+.windows.windows .features.features {
+  gap: 8px;
+}
+
+.windows.windows .features.features li {
+  min-height: 54px;
+  padding: 7px 9px;
+  gap: 9px;
+}
+
+.windows.windows .features.features small {
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.windows.windows .body.body > :global(.landing-roster) {
+  grid-auto-rows: minmax(54px, 1fr);
+}
+
+@media (max-width: 700px) {
+  .windows.windows .body.body :global(.landing-roster) li {
+    gap: 7px;
+    padding-block: 6px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-who) strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) {
+    gap: 3px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) img {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1150px) {
+  .windows.windows .bar.bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster) li {
+    grid-template-columns: 10px 36px minmax(0, 1fr);
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-weapon),
+  .windows.windows .body.body :global(.landing-roster-weapon) img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) {
+    grid-column: 3;
+    margin-top: -4px;
+  }
+
+  .windows.windows .body.body :global(.landing-roster-armor) img {
+    width: 26px;
+    height: 26px;
+  }
+}

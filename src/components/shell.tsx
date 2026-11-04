@@ -143,10 +143,10 @@ export function Shell({
     const x = box ? box.left + box.width / 2 : innerWidth / 2;
     const y = box ? box.top + box.height / 2 : 0;
     const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    // To light: the new page grows out of the switch. To dark: the light page shrinks back
-    // into it. The header stays solid while the reveal runs (its blur cannot be captured).
+    // Reveal the destination theme with the same deceleration in either direction.
+    // Animating the outgoing light snapshot made the dark change feel delayed.
     const root = document.documentElement;
-    root.dataset.themeReveal = next ? "out" : "in";
+    root.dataset.themeReveal = "out";
     const transition = document.startViewTransition(commit);
     themeTransition.current = transition;
     transition.finished.finally(() => {
@@ -160,12 +160,12 @@ export function Shell({
     transition.ready
       .then(() =>
         root.animate(
-          { clipPath: next ? [small, full] : [full, small] },
+          { clipPath: [small, full] },
           {
             duration: 520,
-            easing: next ? "cubic-bezier(0.16, 1, 0.3, 1)" : "cubic-bezier(0.7, 0, 0.84, 0)",
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
             fill: "forwards",
-            pseudoElement: next ? "::view-transition-new(root)" : "::view-transition-old(root)",
+            pseudoElement: "::view-transition-new(root)",
           },
         ),
       )
