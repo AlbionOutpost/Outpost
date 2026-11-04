@@ -1,6 +1,7 @@
 "use client";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Star } from "lucide-react";
+import { ReactionFeedback } from "./reaction-feedback";
 import Link from "@/components/build-region-link";
 export function FavoriteBuildButton({
   id,
@@ -20,6 +21,8 @@ export function FavoriteBuildButton({
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const messageId = useId();
+  const pending = useRef(false);
+  const [feedback, setFeedback] = useState(0);
   if (!authenticated)
     return (
       <Link
@@ -32,6 +35,8 @@ export function FavoriteBuildButton({
       </Link>
     );
   async function toggle() {
+    if (pending.current) return;
+    pending.current = true;
     setBusy(true);
     setError("");
     try {
@@ -50,9 +55,11 @@ export function FavoriteBuildButton({
         throw new Error("The server did not confirm your favorite. Refresh and try again.");
       setCount((c) => Math.max(0, c + (body.favorite === saved ? 0 : body.favorite ? 1 : -1)));
       setSaved(body.favorite);
+      setFeedback((n) => n + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not update favorite. Try again.");
     } finally {
+      pending.current = false;
       setBusy(false);
     }
   }
@@ -68,7 +75,9 @@ export function FavoriteBuildButton({
         onClick={toggle}
         title={saved ? "Remove from favorites" : "Save build"}
       >
-        <Star size={17} fill={saved ? "currentColor" : "none"} />
+        <ReactionFeedback sequence={feedback} active={saved}>
+          <Star size={17} fill={saved ? "currentColor" : "none"} />
+        </ReactionFeedback>
         {count > 0 && <span className="numeric">{count}</span>}
       </button>
       {error && (

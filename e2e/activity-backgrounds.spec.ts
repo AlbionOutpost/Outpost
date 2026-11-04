@@ -83,19 +83,39 @@ test("activity depth preserves click targets and respects reduced motion", async
   await card.hover();
   await page.waitForTimeout(350);
   const lit = (await card.boundingBox())!;
-  expect(Math.abs(lit.y - before.y)).toBeLessThan(0.5);
-  expect(Math.abs(lit.width - before.width)).toBeLessThan(0.5);
-  // Only the independent foreground advances; the traced/filter stack stays stable.
+  expect(lit.width).toBeGreaterThan(before.width * 1.02);
+  expect(lit.width).toBeLessThan(before.width * 1.03);
+  // The full scene grows as one plane, with a little extra foreground depth.
+  expect((await card.locator("[data-activity-scene]").boundingBox())!.width).toBeCloseTo(
+    lit.width,
+    0,
+  );
   expect((await title.boundingBox())!.y).toBeLessThan(titleBefore.y - 4);
   expect((await weapon.boundingBox())!.y).toBeLessThan(weaponBefore.y - 7);
-  expect(await card.evaluate((n) => getComputedStyle(n).transform)).toBe("none");
+  expect(
+    await card.evaluate((n) => new DOMMatrixReadOnly(getComputedStyle(n).transform).a),
+  ).toBeCloseTo(1.025, 2);
   expect(
     await card.locator("[data-activity-scene]").evaluate((n) => getComputedStyle(n).filter),
   ).toBe("none");
   await expect
     .poll(() => card.evaluate((n) => Number(getComputedStyle(n, "::before").opacity)))
     .toBeGreaterThan(0.99);
-  await card.click();
+  await page.mouse.down();
+  await expect
+    .poll(async () => (await card.boundingBox())!.width)
+    .toBeLessThan(before.width * 0.99);
+  await page.mouse.move(0, 0);
+  await page.mouse.up();
+  await expect
+    .poll(async () => Math.abs((await card.boundingBox())!.width - before.width))
+    .toBeLessThan(0.5);
+  await page.keyboard.press("Tab");
+  await card.focus();
+  await expect
+    .poll(async () => (await card.boundingBox())!.width)
+    .toBeGreaterThan(before.width * 1.02);
+  await page.keyboard.press("Enter");
   await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
   await expect(page).toHaveURL(/region=asia/);
   await page.emulateMedia({ reducedMotion: "reduce" });

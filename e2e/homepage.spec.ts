@@ -275,7 +275,27 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     "/shopping-list?region=europe",
   );
 
-  // Editorial guides: one lead read alongside two supporting stories.
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(450);
+  const toolBounds = await cards.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const card = node.getBoundingClientRect();
+      const action = node.querySelector(".landing-card-action")!.getBoundingClientRect();
+      return { height: card.height, bottom: card.bottom, actionBottom: action.bottom };
+    }),
+  );
+  expect(
+    Math.max(...toolBounds.map((r) => r.height)) - Math.min(...toolBounds.map((r) => r.height)),
+  ).toBeLessThan(1);
+  expect(
+    Math.max(...toolBounds.map((r) => r.bottom)) - Math.min(...toolBounds.map((r) => r.bottom)),
+  ).toBeLessThan(1);
+  expect(
+    Math.max(...toolBounds.map((r) => r.actionBottom)) -
+      Math.min(...toolBounds.map((r) => r.actionBottom)),
+  ).toBeLessThan(1);
+
+  // Editorial guides: one lead read alongside two supporting stories, all copy bottom-left.
   const guides = page.locator(".landing-guides article");
   await expect(guides).toHaveCount(3);
   await expect(guides.first().getByText(/\d+ min read/)).toBeVisible();
@@ -286,13 +306,28 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   const storyBoxes = await guides.evaluateAll((nodes) =>
     nodes.map((node) => {
       const { x, y, width, height } = node.getBoundingClientRect();
-      return { x, y, width, height };
+      const title = node.querySelector("h3")!.getBoundingClientRect();
+      const byline = node.querySelector("time")!.parentElement!.getBoundingClientRect();
+      return {
+        x,
+        y,
+        width,
+        height,
+        titleInset: title.x - x,
+        bottomInset: y + height - byline.bottom,
+      };
     }),
   );
   expect(storyBoxes[0].height).toBeGreaterThan(storyBoxes[1].height * 1.8);
   expect(storyBoxes[1].x).toBeGreaterThan(storyBoxes[0].x);
   expect(storyBoxes[2].x).toBe(storyBoxes[1].x);
   expect(storyBoxes[2].y).toBeGreaterThan(storyBoxes[1].y);
+  for (const story of storyBoxes) {
+    expect(story.titleInset).toBeGreaterThanOrEqual(20);
+    expect(story.titleInset).toBeLessThanOrEqual(30);
+    expect(story.bottomInset).toBeGreaterThanOrEqual(20);
+    expect(story.bottomInset).toBeLessThanOrEqual(30);
+  }
   await expect(page.getByRole("button", { name: "Next guides" })).toHaveCount(0);
 
   // Top kills: the week's most valuable kills, each card a killboard.
@@ -621,6 +656,7 @@ test("membership callout precedes activity discovery and the footer keeps its na
     return {
       src,
       cutout: getComputedStyle(card.querySelector(".landing-cta-art img")!).maskImage,
+      surfaceCutout: getComputedStyle(card).maskImage,
       bodyTop: parseFloat(getComputedStyle(card, "::before").top),
       width: image.naturalWidth,
       cardWidth: bounds.width,
@@ -633,6 +669,7 @@ test("membership callout precedes activity discovery and the footer keeps its na
   expect(artwork.cardWidth).toBeLessThanOrEqual(1040);
   expect(Math.abs(artwork.artworkWidth - artwork.cardWidth)).toBeLessThan(2);
   expect(artwork.cutout).toContain("crown-silhouette.svg");
+  expect(artwork.surfaceCutout).toContain("crown-silhouette.svg");
   expect(artwork.bodyTop).toBeGreaterThan(16);
   expect(artwork.centered).toBeLessThan(2);
   await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
