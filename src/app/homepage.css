@@ -1576,6 +1576,7 @@ a.landing-window-title:hover {
 }
 .app.outpost .landing-cta-content {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1590,6 +1591,15 @@ a.landing-window-title:hover {
     color-mix(in srgb, var(--illustration-bg) 80%, transparent) 65%,
     var(--illustration-bg)
   );
+}
+.app.outpost .landing-cta-content::before {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 8% 4%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, #080a0fce, #080a0f85 45%, transparent 74%);
+  filter: blur(14px);
+  pointer-events: none;
 }
 .app.outpost .landing-cta-content::after {
   content: "";
@@ -1607,6 +1617,9 @@ a.landing-window-title:hover {
   font: 800 clamp(30px, 3.2vw, 44px) / 1 var(--font-display);
   text-transform: uppercase;
   text-wrap: balance;
+  text-shadow:
+    0 2px 3px #000e,
+    0 4px 18px #000c;
 }
 .app.outpost .landing-cta h2 em {
   font-style: normal;
@@ -1615,7 +1628,8 @@ a.landing-window-title:hover {
 .app.outpost .landing-cta p {
   max-width: 60ch;
   margin: 0;
-  color: var(--muted);
+  color: #e4e1db;
+  text-shadow: 0 1px 3px #000e;
   font-size: 15px;
   line-height: 1.55;
 }
