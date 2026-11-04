@@ -99,49 +99,56 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
         </span>
         <b className="tool-tier">{item.id.slice(0, 2)}</b>
       </div>
-      <table className="tool-table">
-        <thead>
-          <tr>
-            <th scope="col">City</th>
-            <th scope="col">Buy order</th>
-            <th scope="col">Sell order</th>
-            <th scope="col">Spread</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.slice(0, 6).map((p) => {
-            const spread = p.buy_price_max
-              ? (p.sell_price_min - p.buy_price_max) / p.buy_price_max
-              : null;
-            const age = sourceAge(p.sell_price_min_date, quotes!.value!.at);
-            return (
-              <tr key={p.city} title={`Seen ${age.label}`}>
-                <th scope="row">
-                  <span className="city-dot" data-city={p.city} />
-                  {p.city}
-                </th>
-                <td>{p.buy_price_max ? <Silver value={p.buy_price_max} /> : "—"}</td>
-                <td className={age.stale ? "is-stale" : undefined}>
-                  <Silver value={p.sell_price_min} />
-                </td>
-                <td className={spread == null ? "" : spread >= 0 ? "is-gain" : "is-loss"}>
-                  {spread == null
-                    ? "—"
-                    : `${spread >= 0 ? "+" : "−"}${Math.abs(spread * 100).toFixed(1)}%`}
+      <div
+        className="tool-table-scroll"
+        role="region"
+        aria-label="Market prices by city"
+        tabIndex={0}
+      >
+        <table className="tool-table">
+          <thead>
+            <tr>
+              <th scope="col">City</th>
+              <th scope="col">Buy order</th>
+              <th scope="col">Sell order</th>
+              <th scope="col">Spread</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, 6).map((p) => {
+              const spread = p.buy_price_max
+                ? (p.sell_price_min - p.buy_price_max) / p.buy_price_max
+                : null;
+              const age = sourceAge(p.sell_price_min_date, quotes!.value!.at);
+              return (
+                <tr key={p.city} title={`Seen ${age.label}`}>
+                  <th scope="row">
+                    <span className="city-dot" data-city={p.city} />
+                    {p.city}
+                  </th>
+                  <td>{p.buy_price_max ? <Silver value={p.buy_price_max} /> : "—"}</td>
+                  <td className={age.stale ? "is-stale" : undefined}>
+                    <Silver value={p.sell_price_min} />
+                  </td>
+                  <td className={spread == null ? "" : spread >= 0 ? "is-gain" : "is-loss"}>
+                    {spread == null
+                      ? "—"
+                      : `${spread >= 0 ? "+" : "−"}${Math.abs(spread * 100).toFixed(1)}%`}
+                  </td>
+                </tr>
+              );
+            })}
+            {!rows.length && (
+              <tr>
+                <td colSpan={4} className="tool-muted">
+                  {quotes?.error ??
+                    (quotes ? "No listings for this item right now." : "Loading quotes…")}
                 </td>
               </tr>
-            );
-          })}
-          {!rows.length && (
-            <tr>
-              <td colSpan={4} className="tool-muted">
-                {quotes?.error ??
-                  (quotes ? "No listings for this item right now." : "Loading quotes…")}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
       <div className="tool-chart">
         <div className="tool-chart-head">
           <span>Average price ({city})</span>

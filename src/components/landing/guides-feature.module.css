@@ -17,6 +17,7 @@
 .link {
   position: relative;
   display: grid;
+  align-content: end;
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -57,20 +58,20 @@
   background: linear-gradient(180deg, #11121600 18%, #11121638 38%, #111216eb 78%, #111216 100%);
 }
 
-.side .link {
-  align-content: center;
-  padding: 52px 24px 24px 43%;
+.side .copy {
+  gap: 8px;
+  padding: 64px 24px 22px;
 }
 
 .side .art::after {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(90deg, #11121600 0%, #11121655 26%, #111216e8 47%, #111216fa 100%);
+  background: linear-gradient(180deg, #11121600 0%, #11121640 25%, #111216df 60%, #111216fa 100%);
 }
 
 .side .art > img {
-  object-position: 35% center;
+  object-position: center 35%;
 }
 
 .copy {
@@ -167,12 +168,8 @@
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   }
 
-  .side .link {
-    padding: 56px 20px 24px 30%;
-  }
-
-  .side .art::after {
-    background: linear-gradient(90deg, #11121655, #111216dd 35%, #111216f5 100%);
+  .side .copy {
+    padding-inline: 20px;
   }
 
   :global(.app.outpost) .grid .copy h3 {
@@ -205,11 +202,10 @@
 
   .side .link {
     min-height: 220px;
-    padding: 56px 20px 24px 38%;
   }
 
-  .side .art::after {
-    background: linear-gradient(90deg, #11121600, #111216b8 30%, #111216f2 48%, #111216 100%);
+  .side .copy {
+    padding: 72px 20px 22px;
   }
 
   .summary {
@@ -223,10 +219,6 @@
 }
 
 @media (max-width: 360px) {
-  .side .link {
-    padding-left: 30%;
-  }
-
   :global(.app.outpost) .grid .copy h3 {
     font-size: 24px;
   }

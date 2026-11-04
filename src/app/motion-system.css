@@ -36,11 +36,25 @@
       .desktop-navigation > a,
       .weapon-shortcuts > a,
       .top-brand,
-      .footer-wordmark
+      .footer-wordmark,
+      .pill-link,
+      .build-card-save,
+      .masthead-tabs > a,
+      .production-mode-nav > a,
+      .discovery-tabs > a,
+      .workspace-navigation a,
+      .detail-section-navigation > a,
+      .profile-section-links > a,
+      .tool-shortcuts > div > a,
+      .dashboard-team-link,
+      .landing-card-action,
+      .landing-window-foot
     ) {
     transition:
       transform var(--motion-control-time) var(--motion-ease),
-      border-color 150ms ease-out;
+      border-color 150ms ease-out,
+      background var(--motion-control-time) var(--motion-ease),
+      color var(--motion-control-time) var(--motion-ease);
     transform-origin: center;
   }
   :root
@@ -52,7 +66,19 @@
       .desktop-navigation > a,
       .weapon-shortcuts > a,
       .top-brand,
-      .footer-wordmark
+      .footer-wordmark,
+      .pill-link,
+      .build-card-save,
+      .masthead-tabs > a,
+      .production-mode-nav > a,
+      .discovery-tabs > a,
+      .workspace-navigation a,
+      .detail-section-navigation > a,
+      .profile-section-links > a,
+      .tool-shortcuts > div > a,
+      .dashboard-team-link,
+      .landing-card-action,
+      .landing-window-foot
     ):active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.96);
     transition-duration: 90ms;
@@ -70,7 +96,12 @@
       .directory-entry,
       .composition-preview-card,
       .guide-discovery-card,
-      .guild-discovery-card
+      .guild-discovery-card,
+      .library-build-card,
+      .homepage-build-tile,
+      .dashboard-quick-card,
+      .guide-card > a,
+      .guides-carousel article > a
     ):active:not(:has(button:active, input:active, select:active, textarea:active)) {
     transform: scale(0.985);
     transition: transform 90ms var(--motion-ease);
@@ -102,7 +133,19 @@
       .desktop-navigation > a,
       .weapon-shortcuts > a,
       .top-brand,
-      .footer-wordmark
+      .footer-wordmark,
+      .pill-link,
+      .build-card-save,
+      .masthead-tabs > a,
+      .production-mode-nav > a,
+      .discovery-tabs > a,
+      .workspace-navigation a,
+      .detail-section-navigation > a,
+      .profile-section-links > a,
+      .tool-shortcuts > div > a,
+      .dashboard-team-link,
+      .landing-card-action,
+      .landing-window-foot
     ):hover:not(:disabled, [aria-disabled="true"]) {
     transform: scale(1.045);
   }
@@ -115,7 +158,19 @@
       .desktop-navigation > a,
       .weapon-shortcuts > a,
       .top-brand,
-      .footer-wordmark
+      .footer-wordmark,
+      .pill-link,
+      .build-card-save,
+      .masthead-tabs > a,
+      .production-mode-nav > a,
+      .discovery-tabs > a,
+      .workspace-navigation a,
+      .detail-section-navigation > a,
+      .profile-section-links > a,
+      .tool-shortcuts > div > a,
+      .dashboard-team-link,
+      .landing-card-action,
+      .landing-window-foot
     ):active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.96);
   }
@@ -135,7 +190,12 @@
       .directory-entry,
       .composition-preview-card,
       .guide-discovery-card,
-      .guild-discovery-card
+      .guild-discovery-card,
+      .library-build-card,
+      .homepage-build-tile,
+      .dashboard-quick-card,
+      .guide-card > a,
+      .guides-carousel article > a
     ) {
     transform: none;
     transition:
@@ -153,7 +213,12 @@
       .directory-entry,
       .composition-preview-card,
       .guide-discovery-card,
-      .guild-discovery-card
+      .guild-discovery-card,
+      .library-build-card,
+      .homepage-build-tile,
+      .dashboard-quick-card,
+      .guide-card > a,
+      .guides-carousel article > a
     ):hover {
     transform: scale(1.022);
     z-index: 2;
@@ -167,7 +232,12 @@
       .directory-entry,
       .composition-preview-card,
       .guide-discovery-card,
-      .guild-discovery-card
+      .guild-discovery-card,
+      .library-build-card,
+      .homepage-build-tile,
+      .dashboard-quick-card,
+      .guide-card > a,
+      .guides-carousel article > a
     ):active:not(:has(button:active, input:active, select:active, textarea:active)) {
     transform: scale(0.985);
     transition-duration: 90ms;
@@ -210,6 +280,24 @@
       .composition-preview-card,
       .guide-discovery-card,
       .guild-discovery-card,
+      .library-build-card,
+      .homepage-build-tile,
+      .dashboard-quick-card,
+      .guide-card > a,
+      .guides-carousel article > a,
+      .workspace-navigation a,
+      .detail-section-navigation > a,
+      .profile-section-links > a,
+      .tool-shortcuts > div > a,
+      .dashboard-team-link,
+      .landing-card-action,
+      .landing-window-foot,
+      .pill-link,
+      .build-card-save,
+      .masthead-tabs > a,
+      .production-mode-nav > a,
+      .discovery-tabs > a,
+      .activity-artwork-link,
       .character-slot,
       .strip-slot,
       .gear-browser-item
@@ -229,11 +317,6 @@
   transform: none;
 }
 
-/* The cutout stack stays in its native plane: rotating filtered clips can expose
-   a rectangular compositor edge in Firefox. Hover changes the surface light only. */
-.app.outpost[data-motion-enabled] .activity-artwork-link:is(:hover, :active) {
-  transform: none;
-}
 @media (prefers-reduced-motion: no-preference) {
   .activity-artwork-link::before {
     transition: opacity var(--motion-card-time) var(--motion-card-ease);
@@ -251,4 +334,70 @@
   line-height: 1;
   --number-flow-mask-height: 0.18em;
   --number-flow-mask-width: 0.25em;
+}
+
+/* Shared confirmation feedback is driven only by successful user actions. */
+.reaction-feedback-host,
+.reaction-feedback-mark {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  line-height: 1;
+}
+.reaction-feedback-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.reaction-feedback-particles i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  --angle: calc(var(--particle) * 60deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reaction-feedback-mark[data-feedback="added"] {
+    animation: outpost-reaction-pop 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reaction-feedback-mark[data-feedback="removed"] {
+    animation: outpost-reaction-release 240ms ease-out;
+  }
+  .reaction-feedback-mark[data-feedback="added"] .reaction-feedback-particles i {
+    animation: outpost-reaction-particle 520ms ease-out forwards;
+  }
+}
+@keyframes outpost-reaction-pop {
+  0% {
+    transform: scale(0.68);
+  }
+  45% {
+    transform: scale(1.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes outpost-reaction-release {
+  0% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes outpost-reaction-particle {
+  0% {
+    opacity: 0.9;
+    transform: rotate(var(--angle)) translateY(-6px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateY(-22px) scale(0.35);
+  }
 }

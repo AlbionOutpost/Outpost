@@ -442,13 +442,16 @@ a.landing-window-title:hover {
 /* Tool cards */
 .app.outpost .landing-card-grid {
   display: grid;
-  align-items: start;
+  align-items: stretch;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  column-gap: 24px;
+  row-gap: 12px;
 }
 .app.outpost .landing-card {
   display: grid;
-  grid-template-rows: auto auto auto;
+  /* Share the title, live preview and action tracks across each desktop row. */
+  grid-row: span 3;
+  grid-template-rows: subgrid;
   gap: 12px;
   padding: 20px 18px 18px;
 }
@@ -476,6 +479,21 @@ a.landing-window-title:hover {
 .app.outpost .landing-card-body {
   display: grid;
   min-width: 0;
+}
+.app.outpost .landing-card[data-scene="market"] .tool-card {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: stretch;
+}
+.app.outpost .landing-card[data-scene="market"] .tool-table {
+  height: 100%;
+}
+.app.outpost .landing-card[data-scene="build"] .tool-card {
+  grid-template-rows: auto auto auto minmax(92px, 1fr) auto;
+  align-content: stretch;
+}
+.app.outpost .landing-card[data-scene="city"] .tool-card {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
 }
 .app.outpost .landing-card-action {
   display: inline-flex;
@@ -572,6 +590,23 @@ a.landing-window-title:hover {
   overflow: hidden;
   font-variant-numeric: tabular-nums;
 }
+.app.outpost .tool-table-scroll {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-radius: var(--radius-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--well);
+}
+.app.outpost .tool-table-scroll:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.app.outpost .landing-card .tool-card .tool-table-scroll .tool-table :is(th, td) {
+  /* Narrow layouts scroll every financial column instead of hiding observations. */
+  display: table-cell;
+}
 .app.outpost .tool-table th,
 .app.outpost .tool-table td {
   height: 34px;
@@ -642,10 +677,34 @@ a.landing-window-title:hover {
   .app.outpost .tool-table td .silver img {
     display: none;
   }
+  .app.outpost .tool-table-scroll .tool-table {
+    min-width: 290px;
+  }
+  .app.outpost .tool-table-scroll .tool-table.is-materials {
+    min-width: 310px;
+  }
 }
 @container (max-width: 260px) {
   .app.outpost .tool-pair b {
     font-size: 18px;
+  }
+  .app.outpost .tool-item.is-recipe {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .app.outpost .tool-item.is-recipe > img,
+  .app.outpost .tool-item.is-recipe > .tool-well {
+    grid-row: span 2;
+    width: 40px;
+    height: 40px;
+  }
+  .app.outpost .tool-item.is-recipe .tool-stepper {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .app.outpost .tool-item.is-recipe :is(strong, small) {
+    overflow: visible;
+    white-space: normal;
   }
 }
 /* A status line spanning the table wraps like prose */
@@ -718,12 +777,12 @@ a.landing-window-title:hover {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 8px;
-  height: 96px;
+  height: 72px;
   color: var(--accent);
 }
 .app.outpost .tool-plot svg {
   width: 100%;
-  height: 96px;
+  height: 72px;
 }
 .app.outpost .tool-grid {
   stroke: #ffffff12;
@@ -773,7 +832,7 @@ a.landing-window-title:hover {
 .app.outpost .tool-plot-empty {
   display: grid;
   place-items: center;
-  height: 96px;
+  height: 72px;
 }
 .app.outpost .tool-stepper {
   display: inline-grid;
@@ -839,14 +898,15 @@ a.landing-window-title:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  min-height: 92px;
+  padding: 14px 12px;
   border: 1px solid #ffffff14;
   border-radius: var(--radius-md);
   background: #0f1116c4;
 }
 .app.outpost .tool-profit > span {
   display: grid;
-  gap: 4px;
+  gap: 10px;
 }
 .app.outpost .tool-profit b {
   display: inline-flex;
@@ -1457,6 +1517,7 @@ a.landing-window-title:hover {
 .app.outpost .landing-cta-wrap {
   margin-top: 80px;
   padding-bottom: 0;
+  filter: drop-shadow(0 12px 20px var(--well));
 }
 .app.outpost .landing-cta {
   --supporter-art-width: 100cqw;
@@ -1468,6 +1529,18 @@ a.landing-window-title:hover {
   container-type: inline-size;
   color: var(--text);
   text-align: center;
+  /* The whole surface follows the supplied silhouette, including its top corners.
+     Extend only the already-square lower body when phone copy exceeds the image. */
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  mask-image: url("/scenes/supporter/crown-silhouette.svg"), linear-gradient(#000, #000);
+  mask-size:
+    100% auto,
+    100% calc(100% - var(--supporter-art-width) * 0.15);
+  mask-position:
+    center top,
+    center bottom;
+  mask-repeat: no-repeat;
 }
 .app.outpost .landing-cta::before {
   content: "";
@@ -1476,7 +1549,6 @@ a.landing-window-title:hover {
   z-index: -2;
   border-radius: var(--radius-lg);
   background: var(--illustration-bg);
-  box-shadow: var(--shadow-raised);
 }
 .app.outpost .landing-cta-art {
   position: absolute;
