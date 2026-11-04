@@ -107,6 +107,26 @@ test("legal language follows the browser and explicit choice without external tr
   }
 });
 
+test("cold legal links reach their section after delayed font layout", async ({ browser }) => {
+  for (const locale of ["en", "de"] as const) {
+    const context = await browser.newContext({ locale: locale === "de" ? "de-DE" : "en-GB" });
+    try {
+      const page = await context.newPage();
+      await page.route("**/*.woff2", async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 650));
+        await route.continue();
+      });
+      await page.goto(`http://localhost:3000/legal?lang=${locale}#privacy`);
+      await page.evaluate(() => document.fonts.ready);
+      await expect(page.locator(`main div[lang="${locale}"] #privacy`)).toBeInViewport();
+      await page.reload();
+      await expect(page.locator(`main div[lang="${locale}"] #privacy`)).toBeInViewport();
+    } finally {
+      await context.close();
+    }
+  }
+});
+
 test("both legal languages retain responsive reading, keyboard contents and cookie table access", async ({
   page,
   context,

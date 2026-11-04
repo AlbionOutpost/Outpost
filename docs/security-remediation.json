@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-04T22:42:57.991939+00:00",
-  "baselineCommit": "301b5676a233f449bff840c1a1915e30e121945d",
-  "branch": "codex/legal-language-readability",
-  "sourceFingerprint": "43b71b10447c43482b58e5b165bad672ddbef3913e0c8f11729b090bc0f31c9b",
-  "scope": "Owner-authorized readability and language follow-up to deployed PR86 (301b5676). Add soft Supporter text shadow, a feathered backing and brighter copy while preserving existing image, silhouette and geometry. Replace inherited financial styling on the legal draft with a left-aligned Inter reading panel, concise pending labels, complete adjacent requirements and responsive contents. Preserve all 12 sections and 31 literal link destinations in English/German, select the weighted browser language with English fallback, and support an explicit language switch that preserves region and section without a translator service or new cookie. No ad/payment activation, operator identity invention, game/formula/schema change or homepage layout replacement. This is a PREPUBLICATION checkpoint: prior PR86 has its own successful deployment/public receipt, while this candidate awaits protected publication and exact-head public verification. Broader product/commercial launch remains NO-GO.",
+  "checkedAt": "2026-11-04T23:13:57.265372+00:00",
+  "baselineCommit": "9b4ee5e73adb20de68084e8d9bf92e780117c76b",
+  "branch": "codex/legal-streamed-section-scroll",
+  "sourceFingerprint": "26e409684b3b827e2dd493eb88468ef178529d35211a522768237ad06326f89b",
+  "scope": "Finish the owner-requested Supporter readability and bilingual legal release. PR87 merged but production verification failed its unchanged keyboard section-link viewport assertion, so it never deployed; actual public baseline remained PR86/301b567. Add legal-only client section restoration after streamed hydration/font layout, preserve the original assertion and add cold/delayed-font/reload regressions. The Supporter styling, full EN/DE drafts, language negotiation and legal content remain unchanged from the prior locally verified candidate. This is a prepublication checkpoint for the corrective PR; normal protected/current public verification follows. No payment/ad activation, data/formula/schema or authorization change; broad commercial/full-product launch remains NO-GO.",
   "findings": [
     {
       "id": "F-01",
@@ -113,7 +113,7 @@
       "id": "V-01",
       "title": "Top-kill cards overflow their borders at tablet width",
       "severity": "Low",
-      "implementation": "Kill cards fit320–1920px; shrinking inventory cells and separate phone CTA row.",
+      "implementation": "Kill cards fit320\u20131920px; shrinking inventory cells and separate phone CTA row.",
       "verification": "All six widths rendered/inspected; geometry and browser regressions.",
       "deployment": "Deployed in 784e14d (PR #66); prior live checks documented separately"
     },
@@ -331,19 +331,27 @@
       "severity": "User-requested UI/readability",
       "implementation": "Complete locally: restrained Supporter text shadow/feathered backing and brighter paragraph without geometry changes; framed left-aligned Inter legal reading surface, concise explicit pending labels and responsive native contents disclosure. Full English/German copy retains12sections/31literalhrefs, weighted browser-language selection, English fallback and manual lang override preserving region/hash. No external translation service, new preference cookie, ads or payments enabled.",
       "verification": "Current Node22 full phase659units/172of175browsers; only3previous equipment goldens fail. Current24D1runtime,71Cloudflarecore/types/freshdryruns, non-root container and36productionChromium cases pass. Local language/copy45tests and3focused browser journeys pass; nativeFirefox14pass, critical root images inspected. One current homepage mobile lab sample76performance/100accessibility,LCP5569ms/CLS0.06318 is observational only. Source/artifact and21-file staged scans pass; exact final stage rechecked by root.",
-      "deployment": "PENDING normal protected publication and new exact-head public/native readback; operator/legal/provider approval remains open."
+      "deployment": "PR87 merged9b4ee5 but production41929236400 failed verification at the keyboard language-switch #privacy viewport assertion and did not deploy. Public PR86/301b567 remained unchanged. Corrective section-restoration candidate follows; original styling/content evidence retained."
+    },
+    {
+      "id": "UI-LEGAL-STREAM-SCROLL",
+      "title": "Restore legal section position after streamed language navigation",
+      "severity": "User-visible navigation correctness",
+      "implementation": "Legal-only client restorer mounted after document; settle current section after hydration/fonts and on hash/history navigation, with frame/listener cleanup. Existing region/hash/viewport test preserved; new cold delayed-font direct-link/reload regression in EN/DE.",
+      "verification": "Current Node22 phase659units/173of176browser cases (only3existinggoldens); current24D1runtime/build/types/72CFcore/freshdryruns pass. Fresh non-root production8cold/keyboard-switch/reload cases pass in both languages/themes at1440/390. Prior36layout/14native evidence is source-equivalent for unchanged styling; current public proof pending.",
+      "deployment": "PENDING corrective protected publication; failed PR87 run was not deployed."
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Current Node22/local-services qa:phase11/12 gates:659units,172/175browsers. Only three previously recorded equipment screenshot mismatches at320/390/768fail; no golden updates, test exclusions or waived failures. Raw phase and diffs: .qa/legal-readability/phase/."
+      "detail": "Current full unskipped Node22 phase11/12:659units,173/176browsers; only the same3existing equipment goldens fail at320/390/768. Original failed production assertion remains and now passes locally; no snapshot/test weakening."
     },
     {
       "name": "Deep-fix browser regressions",
       "status": "PASS",
-      "detail": "All affected homepage/legal/share/authorization journeys pass in current full phase. Three focused locale/manual-switch journeys and45new language/copy units pass; explicit language, browser preference, region/hash retention and complete copy/links remain meaningful assertions."
+      "detail": "Current72Cloudflarecore and current Node browser cases pass all4legal journeys, including preserved keyboard switch/region/hash viewport plus cold delayed-font direct links/reloads. Current container8independent source-real behavior cases pass."
     },
     {
       "name": "PostgreSQL billing and authorization",
@@ -353,22 +361,22 @@
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Current24localD1runtime cases pass. No migrations, paid binding, private data permission or cache changes. Authority: .qa/legal-readability/pipeline-summary.json."
+      "detail": "Current24localD1runtime cases pass; no data/runtime-schema or private permission changes."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Final OpenNext build, data/web Worker TypeScript projects and71/71Cloudflarecore browser cases pass. Deliberate denied/fault requests remain part of regression coverage, not unexplained production failures."
+      "detail": "Current OpenNext build, both Worker TypeScript projects and72/72localCloudflarecore pass. No production deployment implied by local workerd tests."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Fresh final orchestration and both Wrangler dry-runs pass: data1023980B/web2542664B gzip under retained repository3MiB conservative gate, not a statement of current provider policy. Final worker entry fingerprint and actual exits recorded in pipeline-summary.json; no deployment by these commands."
+      "detail": "Fresh allowlisted release config and both actual bundle dry-runs pass conservative repository threshold; current receipts .qa/legal-stream-scroll/. No paid binding, public route or management-credential change."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-legal-readability:qa runs non-root UID1000 with no baked .env; homepage200 and local PostgreSQL/Redis healthy. Production Chromium36 cases pass across English/German Legal and Supporter, both themes at1440/1920/768/390/375/320, with0pageerrors. Local anonymous rendering is distinct from new public deployment or provider consent."
+      "detail": "Fresh outpost-legal-stream-scroll:qa,UID1000/no baked.env/healthy isolated services.8cold-font/keyboard-language-switch/reload cases pass in EN/DE,both themes,1440/390. Cleanup follows checks."
     },
     {
       "name": "Dependencies",
@@ -383,7 +391,7 @@
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Current local development24locale/theme/width top views and16bounded content samples inspected; production Chromium36 cases cover English/German Legal plus Supporter in both themes at1440/1920/768/390/375/320 with0pageerrors. Root inspected critical originals; contact-sheet review covers reading hierarchy, pending disclosure, long-copy wrapping and unchanged Supporter geometry. Earlier selector/locale harness mistakes and first rendering captures remain distinct; no complete accessibility/allGPU/owner-acceptance claim."
+      "detail": "Prior styling/content proof36production layout cases+14nativeFirefox cases remains source-equivalent; correction only changes legal scroll restoration. Current8production cold-link/switch/reload cases pass; root inspected390restoredprivacy heading. Final exact-head public proof pending; no universal browser/GPU/conformance claim."
     },
     {
       "name": "Native Firefox review",
@@ -393,22 +401,22 @@
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One current local Docker production homepage mobile sample:76performance/100accessibility, LCP5568.86ms/CLS0.063183. Evidence .qa/legal-readability/lighthouse-summary.json. Not a controlled improvement, public network measurement or field result; lab does not close loading/field-performance gates."
+      "detail": "Prior current-feature homepage sample76performance/100accessibility,LCP5569ms,CLS0.06318 is retained: Supporter/home source is identical and this fix touches only legal scroll restoration. No controlled improvement, new final-artifact performance or field claim."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "Current design/copy ledger, legal readiness record, progress/roadmap and all seven generated root reports identify this source fingerprint, retained failures and pending publication. Nine changed/newsource/testfiles formatted after final source edits; generator consistency and report checks run independently."
+      "detail": "Corrective design note, all7generated QA/progress reports and project progress preserve failed production evidence, inferred timing cause, unchanged assertion, regression and current local results. Publication receipt supplements this checkpoint."
     },
     {
       "name": "GitHub controls",
       "status": "PENDING",
-      "detail": "This candidate requires its own normal protected checks/browser/documentation, merge and successful deployment. Prior PR86 success is historical; no force/admin, skipped required job or branch-rule change authorized."
+      "detail": "PR87 passed required PRchecks and merged normally, but production verification caught one actual navigation failure and blocked deployment. Corrective PR must pass its own protected checks/exact-head normal merge; no force/admin/retry-to-hide-failure."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "New candidate follows deployed PR86 baseline301b5676/run41914907559. Owner authorized publication; current language/readability source remains local until normal protected delivery and exact-head public receipt."
+      "detail": "Actual public baseline remains PR86/301b567. PR87/9b4ee5 was not deployed because run41929236400 failed. Owner-authorized corrective publication/current public readback pending."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -423,12 +431,12 @@
     {
       "name": "Public activity integration",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR86 public48cases and native receipts verified deployed301b5676. Current change preserves activity layout and Supporter silhouette/geometry; final candidate public evidence remains required."
+      "detail": "PR86 public cutout/motion verified. Prior local14native cases cover source-identical Supporter shadow/backing styling; corrected release needs its own final public readback."
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
       "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR86 deployed public health/market/data/denial/start and search/share receipts are retained under .qa/market-legal-sharing/. They do not close current candidate public readback or genuine OAuth/payment consent."
+      "detail": "PR86 actual public smoke/OAuth-start evidence remains baseline. This correction changes only legal fragment scrolling; new public legal/locale/Supporter/health proof pending, not real OAuth/payment consent."
     }
   ],
   "limits": [
@@ -441,12 +449,13 @@
     "Historical checkpoint (retained): Current raw full npm audit reports15 moderate development entries under the exact unchanged applicability guard; production-only audit is0. Historical documentation recorded17 in its earlier snapshot. No alerts suppressed.",
     "Historical checkpoint (retained): Current silhouette/sharedmotion candidate awaits protected publication/public readback. Mandatoryphase retains three existing equipment golden mismatches.52route source coverage is indirect; not every privateworkflow rendered. Native pointer-capability emulation/earlytimedprobe limits, missing localproduction selectioninputs, initialcontainer timing and oversizedscreenshot artifacts remain recorded. Operator/legal/provider-consent/current-patch/recovery/loading/field/full-product launch NO-GO remains independent.",
     "Historical checkpoint (retained): PR80 live review caught tiny Supporter RGB corner pixels after geometry passed; final two-rendering-file contour correction has its own local phase/visual/container evidence and awaits protected/currentpublic readback. Earlier public asset mismatch during local source change is retained, not counted as final asset acceptance.",
-    "Historical checkpoint (retained): Current landing-density/footer follow-up changes showcase coverage27→15 existing multi-material candidates, not recipe facts or accounting. Full calculator coverage and source/current-patch limits remain. Initial intrinsic-height and sparse single-input visual states are retained; current protected/public proof is pending in committed checkpoint documents.",
+    "Historical checkpoint (retained): Current landing-density/footer follow-up changes showcase coverage27\u219215 existing multi-material candidates, not recipe facts or accounting. Full calculator coverage and source/current-patch limits remain. Initial intrinsic-height and sparse single-input visual states are retained; current protected/public proof is pending in committed checkpoint documents.",
     "Owner clarified inline category-left/time-right metadata afterPR82 publication. Current follow-up is a small two-file UI correction with productionbuild/homepage7 and twelve responsive cases; parentfullphase/data/provider evidence remains separately identified. Final public/native checks require the new exact deployed revision.",
     "Homepage-rhythm evidence is scoped to public UI, local fixture authorization and current local production checks. All three tool components remain mounted and fetch under the existing contract; no lazy-loading/API-budget reduction is claimed. Development StrictMode double effects and the initial harness NumberFlow text/relative-locator failures are retained separately. Native/public verification requires the new exact successful deployment. Existing equipment goldens, field loading/provider/legal/current-patch/recovery/full-product gates remain open.",
     "The owner rejected the PR84 design despite its automated/targeted checks. Current rollback restores PR83 application/tests exactly and preserves that human decision; no visual polish/acceptance claim is inferred from test passes. Current public/native verification requires the new successful rollback deployment. Existing equipment goldens and provider/legal/current-patch/recovery/field/full-product limits remain open.",
     "Rollback scan tooling initially attempted to read deleted selector files from the index and failed; the already-created, unpushed source commit was checked directly (21files,0configured-value matches), and the reporting follow-up is scanned with deletion-aware staging. This helper error is distinct from an application/credential finding.",
     "Historical checkpoint (retained): Current Market/legal/sharing phase is an owner-authorized incremental release, not paid/commercial launch approval. German operator/contract/processor/retention/transfer facts and applicable cancellation/withdrawal mechanisms remain incomplete; ads/payments stay off. Search Console ownership and sitemap submission, indexing/ranking and platform preview-cache refresh are external owner/service actions. Current full phase retains3existing equipment goldens; first transient integration/harness/config failures are retained and corrected reruns identified. Earlier phase-specific pending statements above are historical; this checkpoint and final delivery receipt identify the active source.",
-    "ACTIVE CHECKPOINT: legal-language-readability candidate after deployed PR86. Current phase659units/172of175browsers retains3existing equipment goldens;24D1runtime/71Cloudflarecore/types/freshdryruns/container/36productionChromium pass. NativeFirefox14PASS and current homepage lab76performance/100accessibility are recorded separately; scoped source/artifact/staged scans pass. Protected publication, exact final staged scan and exact-head public receipt remain pending. Earlier phase-specific pending/audit counts above are historical, not current status. English/German copies and language selection do not supply operator identity, legal approval, complete provider contracts/retention/transfers or required consumer-rights functions. Billing and advertising remain off; broad commercial/full-product launch stays NO-GO."
+    "ACTIVE CHECKPOINT: legal-language-readability candidate after deployed PR86. Current phase659units/172of175browsers retains3existing equipment goldens;24D1runtime/71Cloudflarecore/types/freshdryruns/container/36productionChromium pass. NativeFirefox14PASS and current homepage lab76performance/100accessibility are recorded separately; scoped source/artifact/staged scans pass. Protected publication, exact final staged scan and exact-head public receipt remain pending. Earlier phase-specific pending/audit counts above are historical, not current status. English/German copies and language selection do not supply operator identity, legal approval, complete provider contracts/retention/transfers or required consumer-rights functions. Billing and advertising remain off; broad commercial/full-product launch stays NO-GO.",
+    "The initial bilingual/legal PR87 production run failed and did not deploy; this correction retains that failure and the unchanged viewport assertion. Streaming/font timing is an evidence-supported inference, not a universal browser diagnosis. Current full phase retains3existing goldens; exact corrective deployment and public proof remain separate. Prior layout/native/homepage lab evidence is scoped to source-equivalent unchanged styles/content."
   ]
 }
