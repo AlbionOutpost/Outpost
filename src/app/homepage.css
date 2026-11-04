@@ -1536,7 +1536,7 @@ a.landing-window-title:hover {
   mask-image: url("/scenes/supporter/crown-silhouette.svg"), linear-gradient(#000, #000);
   mask-size:
     100% auto,
-    100% calc(100% - var(--supporter-art-width) * 0.15);
+    100% calc(100% - var(--supporter-art-width) * 0.18);
   mask-position:
     center top,
     center bottom;

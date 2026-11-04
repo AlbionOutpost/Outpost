@@ -289,3 +289,7 @@ Implemented wider single-scene Supporter, restored stable-artwork foreground mot
 ## 2026-11-04 — Owner card/motion corrections
 
 Implemented outer native Supporter mask, uniform activity artwork/blur/border grow+press, shared control/card feedback and confirmed-success like/favorite/upvote pops, equal desktop tool tracks with72pxgraph/92pxprofit, reachable narrow financial columns and bottom-left guide copy. Source audit covers all52route patterns; private/manual coverage limits remain explicit. Node22phase11/12 (524units,167/170browsers, only3existinggoldens);66finalCloudflare core/24runtime/types/free/container pass;60scoped rendered/axe cases,12visualmotion, nativeFirefox14withmouse-emulation,16scrollregions and12touch cases reviewed. [Detailed current checkpoint](design/CARD_MOTION_POLISH_2026-11-04.md). Normal protected publication and public proof pending; full-product NO-GO remains independent.
+
+## Final card corner verification — 4 November 2026
+
+The shared motion and aligned preview refinement shipped throughPR80. A manual live Firefox review caught tiny residual black corner pixels missed by geometry checks; the follow-up refines only the Supporter SVG contour and lower mask continuation. Current local desktop/phone captures in both themes are clean. Protected checks, final public delivery evidence and existing product-launch blockers remain independent.
