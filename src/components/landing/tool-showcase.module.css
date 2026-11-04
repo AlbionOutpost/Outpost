@@ -1,0 +1,234 @@
+.showcase {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.4fr);
+  align-items: start;
+  gap: clamp(32px, 5vw, 72px);
+}
+.choices {
+  padding-top: 8px;
+}
+.tabs {
+  display: grid;
+  gap: 16px;
+}
+.option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 18px;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  min-height: 108px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--well);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease-out,
+    background 180ms ease-out,
+    transform 180ms var(--ease-out-expo);
+}
+.option img {
+  width: 48px;
+  height: 48px;
+}
+.tab {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.tab::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  border-radius: var(--radius-lg);
+}
+.label {
+  min-width: 0;
+}
+.tab strong {
+  display: block;
+  font: 700 18px/1.25 var(--font-ui);
+}
+.description {
+  margin: 6px 0 0;
+  display: block;
+  color: var(--muted);
+  font: 400 13px/1.5 var(--font-ui);
+}
+.option > svg {
+  color: var(--muted);
+  transition: transform 180ms var(--ease-out-expo);
+}
+.option[data-active="true"] {
+  border-color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.option[data-active="true"] > svg {
+  color: var(--accent-ink);
+  transform: translateX(3px);
+}
+.tab:focus-visible {
+  outline: none;
+}
+.tab:focus-visible::after {
+  outline: 3px solid var(--accent-ink);
+  outline-offset: 4px;
+}
+.short {
+  display: none !important;
+}
+.hint {
+  max-width: 34ch;
+  margin: 24px 20px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.panel {
+  grid-area: 1 / 1;
+  align-self: start;
+  min-width: 0;
+}
+.panel[data-active="true"] {
+  animation: tool-surface-in 220ms var(--ease-out-expo) both;
+}
+@keyframes tool-surface-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.panel[data-active="false"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.panel:focus-visible {
+  outline: 3px solid var(--accent-ink);
+  outline-offset: 6px;
+  border-radius: var(--radius-lg);
+}
+:global(.app.outpost) .showcase :global(.landing-card-body) {
+  display: block;
+}
+:global(.app.outpost) .showcase :global(.tool-card) {
+  gap: 16px;
+}
+:global(.app.outpost) .showcase :global(.landing-card-action) {
+  min-height: 52px;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .option:hover {
+    transform: translateX(3px);
+    border-color: var(--accent-ink);
+  }
+  .option:active {
+    transform: scale(0.985);
+  }
+}
+@media (max-width: 1000px) {
+  .showcase {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.4fr);
+    gap: 28px;
+  }
+  .option {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+  .option img {
+    width: 40px;
+    height: 40px;
+  }
+  .option > svg {
+    display: none;
+  }
+  .tab strong {
+    font-size: 16px;
+  }
+}
+@media (max-width: 780px) {
+  .showcase {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .choices {
+    padding: 0;
+  }
+  .tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .option {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+    min-height: 100px;
+    padding: 12px 8px;
+  }
+  .tab .full,
+  .description {
+    margin: 6px 0 0;
+    display: none;
+  }
+  .tab .short {
+    display: block !important;
+    font-size: 14px;
+  }
+  .hint {
+    margin: 16px 0 0;
+    max-width: none;
+    text-align: center;
+  }
+  :global(.app.outpost) .showcase :global(.landing-card) {
+    padding: 20px;
+  }
+}
+@media (max-width: 360px) {
+  .tabs {
+    gap: 8px;
+  }
+  .option {
+    min-height: 92px;
+  }
+  .option img {
+    width: 32px;
+    height: 32px;
+  }
+  :global(.app.outpost) .showcase :global(.landing-card) {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .option,
+  .option > svg {
+    transition: none;
+  }
+  .panel[data-active="true"] {
+    animation: none;
+  }
+}
+
+/* The option owns feedback; transforming the inner button would shrink its stretched hit area. */
+:global(:root .app.outpost[data-motion-enabled]) .showcase .tab[role="tab"]:is(:hover, :active) {
+  transform: none;
+}
