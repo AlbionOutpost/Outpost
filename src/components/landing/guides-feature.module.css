@@ -1,0 +1,244 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(220px, auto));
+  gap: 20px;
+}
+
+.story {
+  min-width: 0;
+  margin: 0;
+}
+
+.lead {
+  grid-row: span 2;
+}
+
+.link {
+  position: relative;
+  display: grid;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 14px;
+  background: #111216;
+  color: #f4f2ee;
+  box-shadow:
+    0 0 0 1px #b99b7b66,
+    0 14px 26px -18px #000b;
+  text-decoration: none;
+  transition: box-shadow 300ms var(--ease-out-expo);
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.art > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease-out-expo);
+}
+
+.lead .link {
+  align-content: end;
+  min-height: 460px;
+}
+
+.lead .art::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(180deg, #11121600 18%, #11121638 38%, #111216eb 78%, #111216 100%);
+}
+
+.side .link {
+  align-content: center;
+  padding: 52px 24px 24px 43%;
+}
+
+.side .art::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, #11121600 0%, #11121655 26%, #111216e8 47%, #111216fa 100%);
+}
+
+.side .art > img {
+  object-position: 35% center;
+}
+
+.copy {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lead .copy {
+  padding: 120px 28px 28px;
+}
+
+.category {
+  color: #f5a36a;
+  font: 700 12px/1.35 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+:global(.app.outpost) .grid .copy h3 {
+  margin: 0;
+  color: #f4f2ee;
+  font: 800 28px/1.08 var(--font-display);
+  text-wrap: balance;
+}
+
+:global(.app.outpost) .grid .lead h3 {
+  font-size: clamp(32px, 2.8vw, 42px);
+}
+
+.summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 54ch;
+  color: #ddd8d0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.byline {
+  color: #c9c2b8;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.byline > span {
+  padding-inline: 3px;
+}
+
+.readTime {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid #ffffff35;
+  border-radius: 999px;
+  background: #101114d9;
+  color: #f4f2ee;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fallback {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  background: #24292f;
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 5px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .link:hover .art > img {
+    transform: scale(1.045);
+  }
+
+  .link:hover {
+    box-shadow:
+      0 0 0 1px #e9b58b9c,
+      0 20px 32px -18px #000c;
+  }
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+
+  .side .link {
+    padding: 56px 20px 24px 30%;
+  }
+
+  .side .art::after {
+    background: linear-gradient(90deg, #11121655, #111216dd 35%, #111216f5 100%);
+  }
+
+  :global(.app.outpost) .grid .copy h3 {
+    font-size: 26px;
+  }
+
+  :global(.app.outpost) .grid .lead h3 {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+
+  .lead {
+    grid-row: auto;
+  }
+
+  .lead .link {
+    min-height: 380px;
+  }
+
+  .lead .copy {
+    padding: 112px 20px 24px;
+  }
+
+  .side .link {
+    min-height: 220px;
+    padding: 56px 20px 24px 38%;
+  }
+
+  .side .art::after {
+    background: linear-gradient(90deg, #11121600, #111216b8 30%, #111216f2 48%, #111216 100%);
+  }
+
+  .summary {
+    -webkit-line-clamp: 4;
+    font-size: 13px;
+  }
+
+  .copy {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .side .link {
+    padding-left: 30%;
+  }
+
+  :global(.app.outpost) .grid .copy h3 {
+    font-size: 24px;
+  }
+
+  :global(.app.outpost) .grid .lead h3 {
+    font-size: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .art > img {
+    transition: none;
+  }
+}

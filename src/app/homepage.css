@@ -1459,8 +1459,8 @@ a.landing-window-title:hover {
   padding-bottom: 0;
 }
 .app.outpost .landing-cta {
-  --supporter-art-width: min(100cqw, 640px);
-  width: min(100%, 760px);
+  --supporter-art-width: 100cqw;
+  width: min(100%, 1040px);
   margin-inline: auto;
   --supporter-body-top: calc(var(--supporter-art-width) * 0.1085);
   position: relative;
@@ -1475,23 +1475,18 @@ a.landing-window-title:hover {
   inset: var(--supporter-body-top) 0 0;
   z-index: -2;
   border-radius: var(--radius-lg);
-  background:
-    linear-gradient(
-      color-mix(in srgb, var(--illustration-bg) 88%, transparent),
-      var(--illustration-bg)
-    ),
-    url("/scenes/supporter/crown-courtyard.webp") center / cover;
+  background: var(--illustration-bg);
   box-shadow: var(--shadow-raised);
 }
 .app.outpost .landing-cta-art {
   position: absolute;
   inset: 0 auto 0 50%;
   z-index: -1;
-  width: min(100%, 640px);
+  width: 100%;
   overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   translate: -50% 0;
   pointer-events: none;
-  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
 .app.outpost .landing-cta-art img {
   display: block;
@@ -1505,7 +1500,7 @@ a.landing-window-title:hover {
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: calc(var(--supporter-art-width) * 0.38) 32px 24px;
+  padding: calc(var(--supporter-art-width) * 0.32) 40px 32px;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   background: linear-gradient(
     to bottom,
@@ -1871,6 +1866,9 @@ a.landing-window-title:hover {
   }
 }
 @media (max-width: 360px) {
+  .app.outpost .activity-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .app.outpost .landing-hero h1 {
     font-size: 42px;
   }
