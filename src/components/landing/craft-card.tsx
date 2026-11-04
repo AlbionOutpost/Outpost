@@ -72,37 +72,44 @@ export function CraftCard() {
           </button>
         </span>
       </div>
-      <table className="tool-table is-materials">
-        <thead>
-          <tr>
-            <th scope="col">Required materials</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Price (ea)</th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(p?.rows ?? []).map((r) => (
-            <tr key={r.id}>
-              <th scope="row">
-                <span className="tool-table-item">
-                  <ItemIcon id={r.id} size={26} />
-                  <span>{name(r.name)}</span>
-                </span>
-              </th>
-              <td>
-                <AnimatedNumber value={r.quantity} />
-              </td>
-              <td>
-                <Silver value={r.unit} />
-              </td>
-              <td>
-                <Silver value={r.gross} />
-              </td>
+      <div
+        className="tool-table-scroll"
+        role="region"
+        aria-label="Crafting material prices"
+        tabIndex={0}
+      >
+        <table className="tool-table is-materials">
+          <thead>
+            <tr>
+              <th scope="col">Required materials</th>
+              <th scope="col">Qty</th>
+              <th scope="col">Price (ea)</th>
+              <th scope="col">Total</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {(p?.rows ?? []).map((r) => (
+              <tr key={r.id}>
+                <th scope="row">
+                  <span className="tool-table-item">
+                    <ItemIcon id={r.id} size={26} />
+                    <span>{name(r.name)}</span>
+                  </span>
+                </th>
+                <td>
+                  <AnimatedNumber value={r.quantity} />
+                </td>
+                <td>
+                  <Silver value={r.unit} />
+                </td>
+                <td>
+                  <Silver value={r.gross} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="tool-pair">
         <div>
           <span>Total crafting cost</span>

@@ -1326,11 +1326,9 @@
 .app.outpost .heart-chip.is-on {
   border-color: #f4f2ee66;
   box-shadow: 0 0 0 3px #f4f2ee4d;
-  animation: heart-ring 520ms ease-out forwards;
 }
 .app.outpost .heart-chip.is-on svg {
   fill: currentColor;
-  animation: heart-pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
 }
 .app.outpost .heart-chip-burst {
   position: absolute;

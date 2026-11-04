@@ -14,6 +14,12 @@ await mkdir(folder, { recursive: true });
 const temporary = await mkdtemp(join(tmpdir(), "outpost-firefox-cutouts-"));
 const profile = join(temporary, "profile");
 await mkdir(profile);
+// Native headless Firefox reports no physical pointing device. This isolated
+// profile emulates a desktop mouse for hover queries; no global/profile policy changes.
+await writeFile(
+  join(profile, "user.js"),
+  'user_pref("ui.primaryPointerCapabilities", 6);\nuser_pref("ui.allPointerCapabilities", 6);\n',
+);
 const browser = spawn(
   process.env.OUTPOST_FIREFOX_BIN || "firefox",
   ["--headless", "--no-remote", "--profile", profile, "--remote-debugging-port=0"],
@@ -100,6 +106,8 @@ try {
     if (response.type === "exception") throw new Error("Firefox page evaluation failed");
     return JSON.parse(response.result.value);
   };
+  report.pointerEmulation =
+    "Desktop mouse capability in a fresh task-owned profile; normal sandbox";
   for (const theme of ["dark", "light"]) {
     await command("browsingContext.navigate", { context, url: base.href, wait: "complete" });
     await evaluate(
@@ -167,7 +175,7 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 1600));
     const hoverState = () =>
       evaluate(
-        `(()=>{const card=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"] .activity-artwork-link'),r=card.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,hovered:card.matches(':hover'),transform:getComputedStyle(card).transform,filter:getComputedStyle(card).filter,sceneFilter:getComputedStyle(card.querySelector('[data-activity-scene]')).filter,light:getComputedStyle(card,'::before').opacity,overflow:document.documentElement.scrollWidth>innerWidth};})()`,
+        `(()=>{const card=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"] .activity-artwork-link'),r=card.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,hovered:card.matches(':hover'),pressed:card.matches(':active'),transform:getComputedStyle(card).transform,filter:getComputedStyle(card).filter,sceneFilter:getComputedStyle(card.querySelector('[data-activity-scene]')).filter,sceneWidth:card.querySelector('[data-activity-scene]').getBoundingClientRect().width,layers:Array.from(card.querySelectorAll(':scope > span[aria-hidden="true"]')).map(n=>({width:n.getBoundingClientRect().width,transform:getComputedStyle(n).transform})),light:getComputedStyle(card,'::before').opacity,overflow:document.documentElement.scrollWidth>innerWidth};})()`,
       );
     const move = async (x, y) =>
       command("input.performActions", {
@@ -193,19 +201,70 @@ try {
     const before = await hoverState();
     const files = [],
       states = [];
-    for (const state of ["before", "hover", "after"]) {
+    const press = (down) =>
+      command("input.performActions", {
+        context,
+        actions: [
+          {
+            type: "pointer",
+            id: "outpost-hover",
+            parameters: { pointerType: "mouse" },
+            actions: [{ type: down ? "pointerDown" : "pointerUp", button: 0 }],
+          },
+        ],
+      });
+    for (const state of ["before", "hover", "press", "after"]) {
       if (state === "hover") await move(before.x + before.width / 2, before.y + before.height / 2);
-      if (state === "after") await move(0, 0);
+      if (state === "press") await press(true);
+      if (state === "after") {
+        // Keep the normal pointer-up inside the link and suppress this probe's
+        // navigation only; dragging the native link out starts Firefox's drag UI.
+        await evaluate(
+          "(()=>{document.querySelector('.activity-artwork-card[data-activity=\"GANK_GROUP\"] .activity-artwork-link').addEventListener('click',e=>e.preventDefault(),{once:true});return true;})()",
+        );
+        await press(false);
+        await move(0, 0);
+        await command("input.releaseActions", { context });
+      }
+      if (state === "hover" || state === "press") {
+        // Flush the changed pseudo state so headless Gecko starts its transition
+        // before the timed sample, rather than at the sampling read itself.
+        await hoverState();
+        await new Promise((resolve) => setTimeout(resolve, state === "hover" ? 80 : 25));
+        const frame = await hoverState();
+        assert.ok(frame.width / before.width >= 0.98 && frame.width / before.width <= 1.03);
+        assert.ok(Math.abs(frame.sceneWidth - frame.width) < 0.5);
+        for (const layer of frame.layers) assert.ok(Math.abs(layer.width - frame.width) < 0.5);
+        const frameShot = await command("browsingContext.captureScreenshot", {
+          context,
+          origin: "viewport",
+          format: { type: "image/png" },
+        });
+        const frameFile = `${theme}-1323-gallery-${state}-intermediate.png`;
+        await writeFile(join(folder, frameFile), Buffer.from(frameShot.data, "base64"));
+        states.push({ state: `${state}-intermediate`, ...frame });
+        files.push(frameFile);
+      }
       await new Promise((resolve) => setTimeout(resolve, 400));
       await evaluate(
         `(async()=>{const n=document.querySelector('.activity-artwork-card[data-activity="GANK_GROUP"] .activity-artwork-link');await Promise.all(n.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{})));return true;})()`,
       );
       const current = await hoverState();
-      assert.equal(current.hovered, state === "hover");
-      assert.equal(current.transform, "none");
+      assert.equal(current.hovered, state === "hover" || state === "press");
+      const expected = state === "hover" ? 1.025 : state === "press" ? 0.985 : 1;
+      assert.ok(
+        Math.abs(current.width / before.width - expected) < 0.002,
+        JSON.stringify({ state, before, current, expected }),
+      );
+      assert.ok(Math.abs(current.sceneWidth - current.width) < 0.5);
+      for (const layer of current.layers) {
+        assert.ok(Math.abs(layer.width - current.width) < 0.5);
+        assert.equal(layer.transform, "none");
+      }
       assert.equal(current.sceneFilter, "none");
       assert.equal(current.filter, before.filter);
-      assert.ok(Math.abs(current.x - before.x) < 0.5 && Math.abs(current.y - before.y) < 0.5);
+      if (state === "after")
+        assert.ok(Math.abs(current.x - before.x) < 0.5 && Math.abs(current.y - before.y) < 0.5);
       assert.equal(current.overflow, false);
       if (state === "hover") assert.ok(Number(current.light) > 0.99, JSON.stringify(current));
       states.push({ state, ...current });
@@ -223,7 +282,8 @@ try {
       width: 1323,
       name: "gallery-hover",
       category: "GANK_GROUP",
-      stableGeometry: true,
+      fullArtworkGrowth: true,
+      pressAndReturn: true,
       nativePointer: true,
       files,
       states,

@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
+import { Heart, ThumbsUp } from "lucide-react";
+import { ReactionFeedback } from "./reaction-feedback";
 import { TurnstileChallenge } from "./turnstile-challenge";
 type Comment = {
   id: string;
@@ -31,6 +33,8 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
     [edit, setEdit] = useState<Comment | null>(null),
     [busy, setBusy] = useState(false),
     [history, setHistory] = useState<{ version: number; body: string }[]>([]);
+  const pending = useRef(false);
+  const [feedback, setFeedback] = useState({ favorite: 0, vote: 0 });
   const url = `/api/community/${kind}/${id}`;
   async function refresh(page = 1) {
     const r = await fetch(`${url}?page=${page}`),
@@ -54,12 +58,14 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
     return () => controller.abort();
   }, [url]);
   async function act(input: unknown, success: string) {
+    if (pending.current) return false;
     const action = (input as { action?: string }).action;
     const protectedAction = ["comment", "edit-comment", "report"].includes(action || "");
     if (protectedAction && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
       setMessage("Complete the bot verification before posting.");
       return false;
     }
+    pending.current = true;
     setBusy(true);
     setMessage("");
     try {
@@ -74,12 +80,15 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
         b = await r.json();
       if (!r.ok) throw new Error(b.error);
       await refresh();
+      if (action === "favorite" || action === "vote")
+        setFeedback((n) => ({ ...n, [action]: n[action] + 1 }));
       setMessage(success);
       return true;
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Action failed");
       return false;
     } finally {
+      pending.current = false;
       setBusy(false);
       if (protectedAction) {
         setTurnstileToken("");
@@ -111,6 +120,9 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                 )
               }
             >
+              <ReactionFeedback sequence={feedback.favorite} active={data.favorite}>
+                <Heart size={16} fill={data.favorite ? "currentColor" : "none"} />
+              </ReactionFeedback>
               {data.favorite ? "Remove favorite" : "Add favorite"} ({data.favoriteCount})
             </button>
             {kind === "build" && (
@@ -125,6 +137,9 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                   )
                 }
               >
+                <ReactionFeedback sequence={feedback.vote} active={data.voted}>
+                  <ThumbsUp size={16} fill={data.voted ? "currentColor" : "none"} />
+                </ReactionFeedback>
                 {data.voted ? "Remove vote" : "Upvote build"} ({data.voteCount})
               </button>
             )}

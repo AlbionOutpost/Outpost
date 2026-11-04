@@ -9,6 +9,7 @@ import {
   Grid2X2,
   List,
 } from "lucide-react";
+import { ReactionFeedback } from "./reaction-feedback";
 import { useOutpostRegion } from "./region-context";
 import Link from "./build-region-link";
 import { ItemIcon } from "./item-icon";
@@ -81,6 +82,7 @@ export function LibrarySaveButton({
 }) {
   const { bookmarks, error, key } = useCollection("bookmarks"),
     [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState(0);
   const saved = bookmarks.builds.some((b) => b.id === build.id);
   return (
     <span className="library-save-control">
@@ -108,13 +110,16 @@ export function LibrarySaveButton({
                   : [build, ...bookmarks.builds],
               }),
             );
+            setFeedback((n) => n + 1);
             setMessage(saved ? "Removed from device favorites." : "Saved on this device.");
           } catch (e) {
             setMessage(e instanceof Error ? e.message : "Could not save on this device.");
           }
         }}
       >
-        {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+        <ReactionFeedback sequence={feedback} active={saved}>
+          {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+        </ReactionFeedback>
         {showLabel && <span>{saved ? "Saved on device" : "Save on device"}</span>}
       </button>
       {(message || error) && (

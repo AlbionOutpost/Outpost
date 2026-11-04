@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { ReactionFeedback } from "./reaction-feedback";
 import { useDeviceBookmarks } from "@/components/build-device-collections";
 import { bookmarksSchema, type SavedLibraryBuild } from "@/lib/build-device-collections";
 
@@ -57,23 +58,16 @@ export function HeartChip({
                   : [build, ...store.bookmarks.builds],
               }),
             );
-            if (!saved) setBurst((b) => b + 1);
+            setBurst((b) => b + 1);
             setNote(saved ? "Removed from device favourites." : "Saved on this device.");
           } catch (e) {
             setNote(e instanceof Error ? e.message : "Could not save on this device.");
           }
         }}
       >
-        <span className="heart-chip-icon">
-          <Heart size={13} aria-hidden="true" />
-          {burst > 0 && (
-            <span key={burst} className="heart-chip-burst" aria-hidden="true">
-              {Array.from({ length: 8 }, (_, i) => (
-                <i key={i} style={{ "--i": i } as React.CSSProperties} />
-              ))}
-            </span>
-          )}
-        </span>
+        <ReactionFeedback sequence={burst} active={saved} className="heart-chip-icon">
+          <Heart size={13} />
+        </ReactionFeedback>
         {shown}
       </button>
       <span className="sr-only" role="status">
