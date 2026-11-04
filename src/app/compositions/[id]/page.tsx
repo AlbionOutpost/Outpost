@@ -1,3 +1,5 @@
+import { authoredShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import { CommunityPanel } from "@/components/community-panel";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
@@ -8,6 +10,15 @@ import { db } from "@/lib/db";
 import { compositionInput } from "@/lib/compositions/validation";
 import { HttpError } from "@/lib/api-errors";
 import { CompositionView } from "@/components/composition-view";
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return authoredShareMetadata("composition", (await params).id, await searchParams);
+}
 export default async function CompositionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);

@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Bookmark, ChevronRight, Layers3, ShieldCheck, Users } from "lucide-react";
@@ -6,7 +7,7 @@ import { LoginButton } from "@/components/login-button";
 import { SignInError } from "@/components/sign-in-error";
 import { safeSignInPageReturn } from "@/lib/sign-in-return";
 import Link from "@/components/link";
-export const metadata = { title: "Sign in" };
+export const metadata = privateMetadata("Sign in");
 export default async function Signin({
   searchParams,
 }: {

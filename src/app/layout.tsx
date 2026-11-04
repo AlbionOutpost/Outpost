@@ -1,3 +1,4 @@
+import { rootMetadata } from "@/lib/seo";
 import { AdsenseLoader } from "@/components/adsense-loader";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
@@ -40,11 +41,7 @@ import "./product-system.css";
 import "./product-research.css";
 import "./product-support.css";
 import "./editor-workspaces.css";
-export const metadata: Metadata = {
-  title: { default: "Outpost | Albion tools", template: "%s | Outpost" },
-  description:
-    "Free Albion Online market research and planning tools. Clear data, transparent calculations, all three regions.",
-};
+export const metadata: Metadata = rootMetadata();
 export default async function Layout({ children }: { children: React.ReactNode }) {
   await connection();
   const jar = await cookies();

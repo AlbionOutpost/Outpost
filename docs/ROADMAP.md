@@ -309,3 +309,9 @@ Paired public build/comp previews now lead to the actual creators; Team capabili
 ## 2026-11-04 — Revert PR84 after owner rejection
 
 The owner explicitly requested the prior homepage. Application and e2e trees now match PR83 exactly: three planning windows and three simultaneous tools return, experimental selector/Team strip removed. Historical evidence is retained and the PR84 design marked withdrawn. Current Node22 phase524units/167of170browsers (only3existinggoldens),12render/axe cases,24D1runtime and fresh container pass. [Rollback checkpoint](design/HOMEPAGE_REVERT_2026-11-04.md). Normal protected publication/current public proof remain pending; broader launchNO-GO unchanged.
+
+## 2026-11-04 — Market, legal draft and search/share integration
+
+The owner-preferred PR83 layout restored in PR85 remains. Supporter copy is centered without resizing; guides precede weekly kills. Market/Tools working surfaces extend the landing brand while preserving task controls. Public-only search/share metadata, branded OG image,11519-URL sitemap and optional Google/Bing verification wiring are implemented. German legal information is an explicit draft; missing operator/consumer-rights/operational facts remain open. Google ad requests fail closed pending real consent/revocation; no payments enabled.
+
+Final Node22 phase:614units and171/174browsers, only3existing equipment goldens fail. Current24D1runtime,70CFcore/types/dryruns, freshnon-rootcontainer,48productionroutecases/16scopedaxe and nativeFirefox14home+12Market/Tools pass. Production/lab/negative metadata details and first failures are preserved in [phase design/evidence](design/MARKET_LEGAL_SHARING_2026-11-04.md), [SEO](SEO_AND_SOCIAL_SHARING.md), [legal activation ledger](legal/GERMAN_LEGAL_DRAFT_2026-11-04.md) and [tooling reassessment](TOOLING_SECURITY.md). Protected publication/current public receipt pending at this checkpoint; full-product/commercial launch remains NO-GO.

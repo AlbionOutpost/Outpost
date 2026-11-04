@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -7,6 +8,7 @@ import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
+export const metadata = privateMetadata("Settings");
 export default async function Settings({
   searchParams,
 }: {

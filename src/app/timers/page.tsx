@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { accountPage, accountPageOrder } from "@/lib/account-pagination";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -5,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TimerManager } from "@/components/timer-manager";
+export const metadata = privateMetadata("Timers");
 export default async function Page() {
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) redirect("/signin");

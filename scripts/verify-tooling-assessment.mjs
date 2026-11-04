@@ -34,20 +34,45 @@ const knownPropagation = new Set([
   "typescript-eslint",
 ]);
 
-/** Applicability guard only: passing does not change the raw audit or clear its advisories. */
+/** Raw audit plus exact-artifact guard; no branch suppresses or clears advisories. */
 export function verifyToolingAssessment(audit, artifacts) {
   assert.equal(audit.auditReportVersion, 2, "Unexpected audit format; reassessment required");
   assert(!audit.error, "Audit failed; no assessment can be established");
   const vulnerabilities = audit.vulnerabilities;
   assert(
-    vulnerabilities?.minimatch,
-    "Known advisory absent; reassess or retire this exception guard",
+    vulnerabilities && typeof vulnerabilities === "object" && !Array.isArray(vulnerabilities),
+    "Missing or malformed audit vulnerabilities",
   );
   const counts = audit.metadata?.vulnerabilities;
   assert(
     counts &&
-      counts.total === Object.keys(vulnerabilities).length &&
-      counts.moderate === counts.total,
+      ["total", "info", "low", "moderate", "high", "critical"].every(
+        (severity) => Number.isSafeInteger(counts[severity]) && counts[severity] >= 0,
+      ),
+    "Missing or malformed audit counts",
+  );
+  assert.deepEqual(artifacts.map((artifact) => artifact.path).sort(), [...legacyPaths].sort());
+  for (const artifact of artifacts) {
+    assert.equal(artifact.version, "3.1.5", "Legacy version changed");
+    assert.equal(artifact.sha256, sourceHash, "Legacy source changed; reassessment required");
+    assert.equal(artifact.developmentOnly, true, "Legacy dependency reached production scope");
+    assert.equal(artifact.callable, true, "Legacy callable API changed");
+    assert.equal(artifact.mechanismAbsent, true, "Assessed mechanism is no longer absent");
+    assert.equal(artifact.globParts, 1, "Legacy preprocessing behavior changed");
+  }
+  if (Object.keys(vulnerabilities).length === 0) {
+    for (const severity of ["total", "info", "low", "moderate", "high", "critical"])
+      assert.equal(counts[severity], 0, "Empty audit entries contradict severity counts");
+    return {
+      rawAudit: counts,
+      artifacts,
+      assessment:
+        "Raw audit reports no known advisories at scan time; exact reviewed artifacts retained",
+    };
+  }
+  assert(vulnerabilities.minimatch, "Unexpected advisory; reassessment required");
+  assert(
+    counts.total === Object.keys(vulnerabilities).length && counts.moderate === counts.total,
     "Unexpected audit counts/severities; reassessment required",
   );
   for (const severity of ["info", "low", "high", "critical"])
@@ -94,21 +119,27 @@ export function verifyToolingAssessment(audit, artifacts) {
     }
     assert(explained, `Unexplained advisory propagation: ${name}`);
   }
-  assert.deepEqual(artifacts.map((artifact) => artifact.path).sort(), [...legacyPaths].sort());
-  for (const artifact of artifacts) {
-    assert.equal(artifact.version, "3.1.5", "Legacy version changed");
-    assert.equal(artifact.sha256, sourceHash, "Legacy source changed; reassessment required");
-    assert.equal(artifact.developmentOnly, true, "Legacy dependency reached production scope");
-    assert.equal(artifact.callable, true, "Legacy callable API changed");
-    assert.equal(artifact.mechanismAbsent, true, "Assessed mechanism is no longer absent");
-    assert.equal(artifact.globParts, 1, "Legacy preprocessing behavior changed");
-  }
   return {
     rawAudit: counts,
     knownAdvisory: advisoryUrl,
     artifacts,
     assessment: "Known-mechanism applicability only; raw audit is NOT clean",
   };
+}
+
+/** A failed/partial npm process is never evidence of a clean audit. */
+export function parseAuditProcess(result) {
+  assert(!result.error && !result.signal, "Audit process failed or was interrupted");
+  assert(result.status === 0 || result.status === 1, "Audit process failed");
+  const audit = JSON.parse(result.stdout);
+  assert(!audit.error, "Audit failed; no assessment can be established");
+  assert(
+    result.status !== 1 ||
+      (Number.isSafeInteger(audit.metadata?.vulnerabilities?.total) &&
+        audit.metadata.vulnerabilities.total > 0),
+    "Audit exit status does not describe advisory findings",
+  );
+  return audit;
 }
 
 function installedArtifacts(root) {
@@ -143,15 +174,16 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   try {
     const root = process.cwd();
     const file = process.argv[2];
-    const raw = file
-      ? readFileSync(file, "utf8")
-      : spawnSync("npm", ["audit", "--json"], {
-          cwd: root,
-          encoding: "utf8",
-          maxBuffer: 8 * 1024 * 1024,
-          timeout: 30000,
-        }).stdout;
-    const audit = JSON.parse(raw);
+    const audit = file
+      ? JSON.parse(readFileSync(file, "utf8"))
+      : parseAuditProcess(
+          spawnSync("npm", ["audit", "--json", "--include=dev"], {
+            cwd: root,
+            encoding: "utf8",
+            maxBuffer: 8 * 1024 * 1024,
+            timeout: 30000,
+          }),
+        );
     console.log(
       `Raw npm audit: ${audit.metadata?.vulnerabilities?.total ?? "unknown"} advisories (${file ? "supplied raw report" : "live scan"}); no alerts suppressed.`,
     );

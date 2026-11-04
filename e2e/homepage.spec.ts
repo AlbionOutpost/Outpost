@@ -352,6 +352,16 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(guides.locator("time")).toHaveCount(0);
   await expect(guides.getByText(/^By .+ · Updated /)).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Next guides" })).toHaveCount(0);
+  expect(
+    await page
+      .locator(".landing-guides")
+      .evaluate((section) =>
+        Boolean(
+          section.compareDocumentPosition(document.querySelector("#home-kills-title")!) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+        ),
+      ),
+  ).toBe(true);
 
   // Top kills: the week's most valuable kills, each card a killboard.
   await expect(page.locator("#home-kills-title")).toHaveText("Top kills this week");
@@ -675,7 +685,9 @@ test("membership callout precedes activity discovery and the footer keeps its na
     image.src = "/scenes/supporter/crown-courtyard.webp";
     await image.decode();
     const heading = card.querySelector("h2")!.getBoundingClientRect();
+    const actions = card.querySelector(".landing-cta-actions")!.getBoundingClientRect();
     const bounds = card.getBoundingClientRect();
+    const bodyTop = parseFloat(getComputedStyle(card, "::before").top);
     return {
       src,
       cutout: getComputedStyle(card.querySelector(".landing-cta-art img")!).maskImage,
@@ -685,6 +697,9 @@ test("membership callout precedes activity discovery and the footer keeps its na
       cardWidth: bounds.width,
       artworkWidth: card.querySelector(".landing-cta-art img")!.getBoundingClientRect().width,
       centered: Math.abs(heading.x + heading.width / 2 - bounds.x - bounds.width / 2),
+      copyVerticalOffset: Math.abs(
+        (heading.top + actions.bottom) / 2 - (bounds.top + bodyTop + bounds.bottom) / 2,
+      ),
     };
   });
   expect(artwork.src).toBe("none");
@@ -695,6 +710,7 @@ test("membership callout precedes activity discovery and the footer keeps its na
   expect(artwork.surfaceCutout).toContain("crown-silhouette.svg");
   expect(artwork.bodyTop).toBeGreaterThan(16);
   expect(artwork.centered).toBeLessThan(2);
+  expect(artwork.copyVerticalOffset).toBeLessThan(2);
   await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
     "href",
     "/supporter?region=asia",

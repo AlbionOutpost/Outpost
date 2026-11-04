@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { cookies } from "next/headers";
 import { getServerSession } from "next-auth";
 import Link from "@/components/link";
@@ -20,16 +20,14 @@ import {
 } from "lucide-react";
 import "@/app/supporter.css";
 
-export const metadata: Metadata = {
-  title: "Supporter",
-  description: "Outpost without ads and with a home for your team: the Supporter plan.",
-};
-
 /**
  * The Supporter plan: no advertising and a Team workspace of your own, for a monthly
  * subscription through Stripe. States: billing not configured (nothing for sale, nothing
  * locked), signed out, free account, supporter.
  */
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/supporter", await searchParams);
+}
 export default async function Supporter({
   searchParams,
 }: {

@@ -3,7 +3,9 @@
 // routes stay out (see src/app/robots.ts); item pages are left to natural crawling.
 import { readFileSync, writeFileSync } from "node:fs";
 import { tools } from "../src/lib/tool-directory";
-const base = new URL(process.env.OUTPOST_PUBLIC_URL || "https://albionoutpost.com").origin;
+import { publicOrigin } from "../src/lib/seo";
+import { activityBackgrounds } from "../src/lib/activity-backgrounds";
+const base = publicOrigin();
 const read = <T>(name: string): T =>
   JSON.parse(readFileSync(`public/library/grind-${name}.json`, "utf8"));
 type Entry = { path: string; lastModified?: string; changeFrequency: string; priority: number };
@@ -18,13 +20,20 @@ const entries: Entry[] = [
   { path: "/compositions", changeFrequency: "daily", priority: 0.6 },
   { path: "/guides", changeFrequency: "weekly", priority: 0.8 },
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
-  { path: "/groups", changeFrequency: "weekly", priority: 0.5 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/premium", changeFrequency: "monthly", priority: 0.3 },
-  { path: "/legal", changeFrequency: "yearly", priority: 0.2 },
+  { path: "/supporter", changeFrequency: "monthly", priority: 0.3 },
   ...tools
-    .filter((tool) => tool.href.startsWith("/tools/") && tool.href !== "/tools/market")
+    .filter(
+      (tool) =>
+        tool.href.startsWith("/tools/") &&
+        !["/tools/market", "/tools/death-feed"].includes(tool.href),
+    )
     .map((tool) => ({ path: tool.href, changeFrequency: "weekly", priority: 0.8 })),
+  ...activityBackgrounds.map((activity) => ({
+    path: `/builds/library?category=${encodeURIComponent(activity.id)}`,
+    changeFrequency: "weekly",
+    priority: 0.6,
+  })),
   ...read<{ slug: string; updatedAt: string }[]>("guides").map((guide) => ({
     path: `/guides/${encodeURIComponent(guide.slug)}`,
     lastModified: guide.updatedAt,
@@ -45,7 +54,8 @@ const entries: Entry[] = [
   })),
 ];
 const seen = new Set<string>();
-const escape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const escape = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const date = (value?: string) => {
   const time = value ? Date.parse(value) : NaN;
   return Number.isFinite(time)

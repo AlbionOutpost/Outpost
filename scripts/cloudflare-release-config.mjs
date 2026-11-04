@@ -29,8 +29,14 @@ web.vars = {
   OUTPOST_OWNER_DISCORD_ID: "303585687460904970",
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: sitekey,
   TURNSTILE_HOSTNAMES: "albionoutpost.com,www.albionoutpost.com",
-  // Optional: the AdSense publisher id turns the loader, ads.txt and the CSP origins on; the
-  // two unit ids turn the placements on.
+  // Optional public search-engine verification tokens. No fabricated fallback; blank values omit tags.
+  ...Object.fromEntries(
+    ["GOOGLE_SITE_VERIFICATION", "BING_SITE_VERIFICATION"]
+      .filter((name) => /^[A-Za-z0-9_-]{1,256}$/.test(values[name] ?? ""))
+      .map((name) => [name, values[name]]),
+  ),
+  // Optional ownership metadata/seller declaration. Configuration alone does not load
+  // advertising: consent/revocation integration must be implemented before serving ads.
   ...(/^ca-pub-\d{6,20}$/.test(values.NEXT_PUBLIC_ADSENSE_CLIENT ?? "")
     ? {
         NEXT_PUBLIC_ADSENSE_CLIENT: values.NEXT_PUBLIC_ADSENSE_CLIENT,

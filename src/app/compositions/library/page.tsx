@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/link";
@@ -7,7 +8,9 @@ import { CompRoster } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { ArrowUpRight, Layers, Users, Swords } from "lucide-react";
-export const metadata = { title: "Group Builds" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/compositions/library", await searchParams);
+}
 export default async function Page({
   searchParams,
 }: {

@@ -1,6 +1,9 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TransportCalculator } from "@/components/transport-calculator";
-export const metadata = { title: "Transport calculator" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/transporting", await searchParams);
+}
 export default async function Page({
   searchParams,
 }: {

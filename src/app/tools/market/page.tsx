@@ -1,15 +1,12 @@
-import {
-  ChartNoAxesCombined,
-  History,
-  Calculator,
-  Star,
-  BookOpen,
-  Hammer,
-  Pickaxe,
-} from "lucide-react";
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { ChartNoAxesCombined, History, Star } from "lucide-react";
 import { Market } from "@/components/market";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import styles from "@/components/market-workspace.module.css";
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/market", await searchParams);
+}
 export default async function Page({
   searchParams,
 }: {
@@ -17,7 +14,7 @@ export default async function Page({
 }) {
   const p = await searchParams;
   return (
-    <div className="market-explorer-page">
+    <div className={`market-explorer-page ${styles.page}`}>
       <WorkspaceHeading
         glyph="market"
         scene="market"
@@ -28,8 +25,9 @@ export default async function Page({
           label="Market tools"
           tabs={[
             {
-              href: "/tools/market",
-              label: "Market Explorer",
+              href: "#market-board-title",
+              label: "City orders",
+              anchor: true,
               icon: <ChartNoAxesCombined size={16} />,
               current: true,
             },
@@ -45,14 +43,6 @@ export default async function Page({
               icon: <Star size={16} />,
               anchor: true,
             },
-            {
-              href: "/tools/flipping",
-              label: "Flipping calculator",
-              icon: <Calculator size={16} />,
-            },
-            { href: "/tools/crafting", label: "Crafting", icon: <Hammer size={16} /> },
-            { href: "/tools/refining", label: "Refining", icon: <Pickaxe size={16} /> },
-            { href: "/guides", label: "Guides", icon: <BookOpen size={16} /> },
           ]}
         />
       </WorkspaceHeading>

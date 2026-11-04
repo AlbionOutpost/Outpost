@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
 import { getServerSession } from "next-auth";
@@ -8,6 +9,7 @@ import { db } from "@/lib/db";
 import { EquipmentStrip } from "@/components/equipment-strip";
 import { Flag, Clock3, ArrowUpRight } from "lucide-react";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
+export const metadata = privateMetadata("Dashboard");
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) redirect("/signin");

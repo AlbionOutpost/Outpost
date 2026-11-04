@@ -1,3 +1,4 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
@@ -6,7 +7,9 @@ import { GuideDirectory } from "@/components/guide-directory";
 import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
-export const metadata = { title: "Guides" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/guides", await searchParams);
+}
 export default async function Guides({
   searchParams,
 }: {

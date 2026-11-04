@@ -1,3 +1,5 @@
+import { archiveShareMetadata } from "@/lib/seo-public";
+import type { SeoQuery } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import Link from "@/components/build-region-link";
 import { notFound } from "next/navigation";
@@ -20,9 +22,14 @@ import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-det
 import { LibraryBuildCard } from "@/components/library-build-card";
 import { BuildShareControls } from "@/components/build-share-controls";
 import { brandCopy } from "@/lib/brand-copy";
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const build = await findLibraryBuild((await params).slug);
-  return { title: build?.title || "Build not found" };
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<SeoQuery>;
+}) {
+  return archiveShareMetadata("build", (await params).slug, await searchParams);
 }
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params,

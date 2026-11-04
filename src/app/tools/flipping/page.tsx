@@ -1,7 +1,10 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { OpportunityScanner } from "@/components/opportunity-scanner";
 import { TradeCalculator } from "@/components/trade-calculator";
-export const metadata = { title: "Market flipping" };
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/flipping", await searchParams);
+}
 export default function Page() {
   return (
     <div className="trade-calculator-page">

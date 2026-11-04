@@ -1,3 +1,4 @@
+import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -7,6 +8,7 @@ import { compositionInput } from "@/lib/compositions/validation";
 import { HttpError } from "@/lib/api-errors";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { CompositionEditor } from "@/components/composition-editor";
+export const metadata = privateMetadata("Edit composition");
 export default async function EditComposition({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/signin");
