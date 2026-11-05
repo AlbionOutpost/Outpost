@@ -47,9 +47,9 @@ Remaining external owner actions:
 
 ## Verification and limits
 
-- Node22 `npx vitest run tests/seo.test.ts`: **70 passed**. Route/query identity, malformed canonical paths, optional verification, PNG dimensions, anonymous public-only queries, visibility/group/adapter denial, revocation and generated sitemap/Worker config fixtures.
-- Node22 `npm run typecheck`: **passed** after the final test-only child-process environment typing correction. Parent mandatory phase remains release authority.
-- `e2e/seo.spec.ts`: **2 passed** on the local dev server; latest rerun1.4s. Actual browser Market canonical/OG/Twitter; Twitterbot blocking head for an archived build; PNG HTTP200/MIME/1200×630; actual sitemap/robots; isolated local PUBLIC build/composition success; private/unlisted/hidden/Team denial; fixture owner private body with generic head; public-to-private revocation. Evidence: `.qa/seo/e2e.log` and standard Playwright report.
+- Node 22 `npx vitest run tests/seo.test.ts`: **70 passed**. Route/query identity, malformed canonical paths, optional verification, PNG dimensions, anonymous public-only queries, visibility/group/adapter denial, revocation and generated sitemap/Worker config fixtures.
+- Node 22 `npm run typecheck`: **passed** after the final test-only child-process environment typing correction. Parent mandatory phase remains release authority.
+- `e2e/seo.spec.ts`: **2 passed** on the local dev server; latest rerun 1.4s. Actual browser Market canonical/OG/Twitter; Twitterbot blocking head for an archived build; PNG HTTP 200/MIME/1200×630; actual sitemap/robots; isolated local PUBLIC build/composition success; private/unlisted/hidden/Team denial; fixture owner private body with generic head; public-to-private revocation. Evidence: `.qa/seo/e2e.log` and standard Playwright report.
 - Static PNG visually inspected at native resolution: legible owner logo, charcoal/copper typography and decorative scene, without private/user fields.
 - Sitemap fixture tests verify unique absolute same-origin URLs, no credentials/fragments, known category queries only and private/editor/draft/redirect family exclusions.
 
@@ -57,7 +57,7 @@ Fixture sessions are local test evidence, not real Discord OAuth. No production 
 
 ## Primary references
 
-Implementation used the installed Next16.4.3 metadata/OG/robots guides, including async page parameters and blocking heads for HTML-limited bots.
+Implementation used the installed Next 16.4.3 metadata/OG/robots guides, including async page parameters and blocking heads for HTML-limited bots.
 
 - [Next metadata and Open Graph](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)
 - [Google canonicalization](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)

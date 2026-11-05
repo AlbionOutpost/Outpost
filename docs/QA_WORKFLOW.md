@@ -19,10 +19,10 @@ Keep billing, genuine Discord OAuth, live deployment/migration, operator/legal, 
 
 The tooling guard leaves raw development alerts visible. It fails on any unassessed advisory, artifact, scope or mechanism change; passing it does not mean the full dependency audit is clean. Region browser helpers wait for committed navigation when the selection changes; choosing an already selected region is a no-op. Controlled market tests cover both delayed API responses and delayed route responses, including preservation of the Back destination.
 
-For the shared cutout cards, also run native Firefox at100% zoom after starting the local UI:
+For the shared cutout cards, also run native Firefox at 100% zoom after starting the local UI:
 
 ```bash
 OUTPOST_FIREFOX_BASE=http://localhost:3000 node scripts/qa-firefox-cutouts.mjs
 ```
 
-This optional system-Firefox runner uses a fresh task-owned profile, random loopback-only BiDi port and normal sandbox settings; it never uses a personal profile. It checks both themes at1323/390/320 and captures `.qa/firefox-cutouts/`. Inspect the screenshots; passing geometry/CSS checks do not prove the absence of an owner-specific GPU artifact. Run it independently of loading benchmarks, and keep real public HTTP/provider verification separate from the local fixture transport.
+This optional system-Firefox runner uses a fresh task-owned profile, random loopback-only BiDi port and normal sandbox settings; it never uses a personal profile. It checks both themes at 1323/390/320 and captures `.qa/firefox-cutouts/`. Inspect the screenshots; passing geometry/CSS checks do not prove the absence of an owner-specific GPU artifact. Run it independently of loading benchmarks, and keep real public HTTP/provider verification separate from the local fixture transport.

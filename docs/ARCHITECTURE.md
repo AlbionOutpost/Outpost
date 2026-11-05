@@ -109,7 +109,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each.
 - Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.
 
-## Administrative controls (schema7)
+## Administrative controls (schema 7)
 
 The administration domain in `src/lib/admin` supplies current-role read services, atomic audited gift/session/ban mutations, and atomic OAuth session creation/resolution. `DiscordBan` and `AdminAudit` are private models. Gifts use separate account fields and never write Stripe subscription state. Session creation and ban checks are named services so the same concurrency boundary runs inside the private SQLite transaction as on PostgreSQL. There are no browser role-grant or arbitrary database endpoints. See the [role/action matrix and recovery constraints](ADMINISTRATION.md).
 
