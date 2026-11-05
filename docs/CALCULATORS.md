@@ -160,7 +160,9 @@ No cheapest-path refining planner (including heart/transmutation alternatives) y
 
 The landing showcase loads one `/api/landing/craft?batches=1` quote per selected region. Its1–50 batch stepper uses `resizeCraftQuote`: quantity, material gross, upfront cost, fees, revenue and profit scale by `requestedBatches / quotedBatches`. Unit prices, return/tax assumptions, margin, missing prices and city ordering do not change. This is exact under the existing production engine's linear per-batch accounting; no per-craft rounding or new observation is claimed. All values remain in silver. Region changes discard the previous quote. Initial missing/error observations stay unavailable; the obsolete failed-refresh banner is removed.
 
-Independent fixture:4 cloth at100, output600,15.3% returns,6.5% sales fees → at12 batches48 cloth,4800 upfront,7200 revenue,468 fees,2666.4 economic profit. Null prices remain null; losses remain losses. Units/assumptions in the full production engine remain unchanged. Shared display transitions expose actual targets immediately to accessibility; the animated digits do not become calculation inputs.
+The quote's return assumption is the exact royal-city base rate without focus, 100·18/118 = 15.2542…% (bonus 18, see the return profile above); it is rounded only for display (“15.3% return”).
+
+Independent fixture: 4 cloth at 100, output 600, 18/118 returns, 6.5% sales fees → at 12 batches 48 cloth, 4,800 upfront, 7,200 revenue, 468 fees, 7,200 − 468 − 4,800·100/118 = 2,664.2034 economic profit. Null prices remain null; losses remain losses. Units/assumptions in the full production engine remain unchanged. Shared display transitions expose actual targets immediately to accessibility; the animated digits do not become calculation inputs.
 
 ### Landing preview material density — 4 November 2026
 
