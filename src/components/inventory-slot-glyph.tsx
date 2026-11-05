@@ -11,8 +11,8 @@ const marks: Record<string, string> = {
 export function InventorySlotGlyph({ slot }: { slot: string }) {
   const mark = marks[slot];
   if (!mark) return null;
-  // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- owner-supplied mark
     <img
       className="inventory-slot-mark"
       data-slot-mark={slot}
