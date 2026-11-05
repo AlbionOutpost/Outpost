@@ -332,3 +332,69 @@ test("production calculations save, reload, share and enforce scenario ownership
     await db.user.delete({ where: { id } });
   }
 });
+
+for (const failure of [
+  {
+    status: 429,
+    body: "Market request budget exhausted. Retry shortly.",
+    message: "Too many market requests. Please wait a minute, then refresh.",
+  },
+  {
+    status: 503,
+    body: "<html>Proxy unavailable</html>",
+    message: "Market observations are temporarily unavailable. Please retry shortly.",
+  },
+  {
+    status: 200,
+    body: "malformed upstream document",
+    message: "Market observations are temporarily unavailable. Please retry shortly.",
+  },
+]) {
+  test(`production keeps edits and recovers from a non-JSON ${failure.status} price response`, async ({
+    page,
+  }) => {
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let started!: () => void;
+    const requested = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    let attempt = 0;
+    await page.route("**/api/economy/prices?**", async (route) => {
+      if (++attempt === 1) {
+        started();
+        await held;
+        await route.fulfill({
+          status: failure.status,
+          contentType: "text/plain",
+          body: failure.body,
+        });
+      } else await route.fulfill({ json: { prices: {} } });
+    });
+    await page.goto("/tools/crafting?region=europe");
+    await requested;
+    await page.getByLabel("Steel Bar unit price", { exact: true }).fill("123");
+    await page.getByLabel("Crafts / upgrades", { exact: true }).fill("7");
+    release();
+    await expect(page.getByText(failure.message, { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
+    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("7");
+    await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
+    await expect(page.getByText(/Unexpected token|not valid JSON|Proxy unavailable/)).toHaveCount(
+      0,
+    );
+    const recovered = page.waitForResponse((response) =>
+      response.url().includes("/api/economy/prices?"),
+    );
+    await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
+    await recovered;
+    await expect(
+      page.getByRole("button", { name: "Refresh market observations", exact: true }),
+    ).toBeEnabled();
+    await expect(page.getByText(failure.message, { exact: true })).toHaveCount(0);
+    await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
+    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("7");
+  });
+}

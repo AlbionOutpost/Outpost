@@ -85,6 +85,36 @@ describe("trusted edge request budgets", () => {
       expect(await requestBudget(req("/api/%6darket?region=europe"), binding)).toBeNull();
     expect((await requestBudget(req("/api/market?region=europe"), binding))?.status).toBe(429);
   });
+  it("returns JSON and retry metadata for API denials without changing the20-request limit", async () => {
+    const binding = budgets();
+    for (let i = 0; i < 20; i++)
+      expect(await requestBudget(req("/api/economy/prices?region=europe"), binding)).toBeNull();
+    const response = (await requestBudget(req("/api/economy/prices?region=europe"), binding))!;
+    expect(response.status).toBe(429);
+    expect(response.headers.get("content-type")).toContain("application/json");
+    expect(response.headers.get("retry-after")).toBe("60");
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(await response.json()).toEqual({
+      error: "Too many market requests. Please wait a minute, then refresh.",
+    });
+  });
+  it("keeps limiter failure closed with JSON for APIs and readable text for page requests", async () => {
+    const binding = {
+      rateLimit: vi.fn(async () => {
+        throw Error("private failure detail");
+      }),
+    };
+    const api = (await requestBudget(req("/api/market"), binding))!;
+    expect(api.status).toBe(503);
+    expect(await api.json()).toEqual({
+      error: "Requests are temporarily unavailable. Please retry shortly.",
+    });
+    const page = (await requestBudget(req("/tools/market"), binding))!;
+    expect(page.status).toBe(503);
+    expect(page.headers.get("content-type")).toContain("text/plain");
+    expect(page.headers.get("retry-after")).toBe("60");
+    expect(await page.text()).toBe("Requests are temporarily unavailable. Please retry shortly.");
+  });
   it("retains safe headers on cached JSON and invitation/denial paths without exposing cookies", () => {
     const cached = secureResponse(
       Response.json({ results: [] }, { headers: { "X-Outpost-Search": "hit" } }),
