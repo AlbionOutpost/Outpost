@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/build-region-link";
@@ -7,18 +6,45 @@ import activityOutlines from "@/lib/activity-outlines.json";
 import { ItemIcon } from "@/components/item-icon";
 import styles from "./activity-artwork-card.module.css";
 
+/** The artwork is 800px wide; `scripts/activity-image-variants.mjs` writes the narrower files. */
+const srcSet = (src: string) =>
+  `${[400, 600].map((w) => `${src.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`).join(", ")}, ${src} 800w`;
+/** A full card's width on the library's activities page. */
+const librarySizes =
+  "(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1199px) 33vw, 380px";
+
+/** The sharp scene and its three blur layers share one candidate: one download per card. */
+function Art({ src, sizes, scene }: { src: string; sizes: string; scene?: boolean }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static artwork with its own srcset
+    <img
+      className={scene ? styles.scene : undefined}
+      data-activity-scene={scene ? "true" : undefined}
+      src={src}
+      srcSet={srcSet(src)}
+      sizes={sizes}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 export function ActivityArtworkCard({
   category,
   name,
   builds,
   compact = false,
   weapons = [],
+  sizes = librarySizes,
 }: {
   category: string;
   name: string;
   builds: number;
   compact?: boolean;
   weapons?: { itemId: string; name: string }[];
+  /** The card's rendered width in its grid, so each screen loads the width it draws. */
+  sizes?: string;
 }) {
   const art = activityBackgrounds.find((a) => a.id === category);
   return (
@@ -34,25 +60,15 @@ export function ActivityArtworkCard({
           art
             ? ({
                 "--activity-outline": activityOutlines[art.id],
-                "--activity-scene": `url("${art.src}")`,
               } as CSSProperties)
             : undefined
         }
       >
-        {art && (
-          <Image
-            className={styles.scene}
-            data-activity-scene="true"
-            src={art.src}
-            alt=""
-            fill
-            sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1199px) 33vw, 380px"
-          />
-        )}
+        {art && <Art src={art.src} sizes={sizes} scene />}
         <span className={styles.blur} aria-hidden="true">
-          <span />
-          <span />
-          <span />
+          {[0, 1, 2].map((layer) => (
+            <span key={layer}>{art && <Art src={art.src} sizes={sizes} />}</span>
+          ))}
         </span>
         <span className={styles.border} aria-hidden="true" />
         <div className={styles.caption}>

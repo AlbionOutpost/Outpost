@@ -77,14 +77,20 @@ test("activity depth preserves click targets and respects reduced motion", async
     nodes.map((n) => ({
       backdrop: getComputedStyle(n).backdropFilter,
       blur: getComputedStyle(n).filter,
-      image: getComputedStyle(n).backgroundImage,
+      image: n.querySelector("img")?.getAttribute("src") ?? "",
+      srcset: n.querySelector("img")?.getAttribute("srcset") ?? "",
     })),
   );
+  const scene = card.locator("[data-activity-scene]");
+  const sceneSrcset = await scene.getAttribute("srcset");
+  expect(sceneSrcset).toContain("mists-solo-400w.webp 400w");
   expect(surfaces).toHaveLength(3);
   for (const surface of surfaces) {
     expect(surface.backdrop).toBe("none");
     expect(surface.blur).toContain("blur(");
     expect(surface.image).toContain("mists-solo.webp");
+    // The blur layers offer the scene's own candidates, so the artwork downloads once.
+    expect(surface.srcset).toBe(sceneSrcset);
   }
   const before = (await card.boundingBox())!;
   const title = card.getByRole("heading", { level: 3 });
