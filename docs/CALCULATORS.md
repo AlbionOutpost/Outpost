@@ -87,6 +87,8 @@ transportCost = trips·costPerTrip + risk
 → trade(), with setup fee only in listing mode
 ```
 
+`tripsNeeded` divides the exact decimal inputs as BigInt rationals (`decimal.ts`), so a load that exactly fills the capacity is never pushed into an extra trip by floating-point error: 3 × 0.1 kg in 0.3 kg is **1** trip, 4 × 0.1 kg is 2.
+
 `transportPriceMatches()` enforces item/quality/region/city/execution identity. The UI fills weight per item from `/api/items/game` (only replacing an empty or previously auto-filled value) and offers mount presets from `mounts.ts` (carry weight bonus per quality, without the character's own load).
 
 ## Laborers — `laborers.ts` → `laborers()`

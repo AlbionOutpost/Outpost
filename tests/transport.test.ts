@@ -1,5 +1,10 @@
 import { it, expect } from "vitest";
-import { initialTransport, transport, transportSchema } from "../src/lib/albion/transport";
+import {
+  initialTransport,
+  transport,
+  transportSchema,
+  tripsNeeded,
+} from "../src/lib/albion/transport";
 import {
   transportObservations,
   mergeTransportObservations,
@@ -23,6 +28,23 @@ it("calculates capacity-constrained trips, fees and independent transport profit
   expect(r.fees).toBe(157.5);
   expect(r.profit).toBe(292.5);
   expect(r.roi).toBeCloseTo((292.5 / 1050) * 100);
+});
+it("counts trips exactly at decimal capacity boundaries", () => {
+  // 3 × 0.1 kg = 0.3 kg exactly fills a 0.3 kg capacity: one trip, not two.
+  const v = initialTransport("europe");
+  v.quantity = 3;
+  v.weight = 0.1;
+  v.capacity = 0.3;
+  v.costPerTrip = 100;
+  expect(transport(v)).toMatchObject({ trips: 1, transportCost: 100 });
+  // One more 0.1 kg item (0.4 kg) needs a second trip.
+  expect(transport({ ...v, quantity: 4 })).toMatchObject({ trips: 2, transportCost: 200 });
+  // 7 × 0.7 kg = 4.9 kg in 0.7 kg trips is exactly 7; 1.1 kg × 3 = 3.3 kg in 1.1 kg is 3.
+  expect(tripsNeeded(7, 0.7, 0.7)).toBe(7);
+  expect(tripsNeeded(3, 1.1, 1.1)).toBe(3);
+  expect(tripsNeeded(10, 0.3, 0.9)).toBe(4); // 3.0 kg / 0.9 kg = 3.33… → 4
+  expect(tripsNeeded(1_000_000, 1e6, 1e-9)).toBe(1e21);
+  expect(tripsNeeded(5, 0, 100)).toBe(1); // weightless cargo still needs one trip
 });
 it("rejects zero-valued source sentinels while preserving deliberate manual zero prices", () => {
   const v = initialTransport("europe");

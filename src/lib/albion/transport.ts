@@ -3,6 +3,19 @@ import { observation } from "./production";
 import { cities, regionSchema } from "./region-config";
 import { trade } from "./calculations";
 import { isStale } from "./freshness";
+import { decimalRatio } from "./decimal";
+/**
+ * Trips needed to carry the load, from the exact decimal inputs: 3 × 0.1 kg in 0.3 kg is one
+ * trip, though 3 × 0.1 / 0.3 is 1.0000000000000002 in floating point.
+ */
+export function tripsNeeded(quantity: number, weight: number, capacity: number) {
+  const [wn, wd] = decimalRatio(weight),
+    [cn, cd] = decimalRatio(capacity),
+    numerator = BigInt(quantity) * wn * cd,
+    denominator = wd * cn,
+    trips = (numerator + denominator - 1n) / denominator;
+  return Math.max(1, Number(trips));
+}
 export const transportBase = z.object({
   kind: z.literal("transporting"),
   region: regionSchema,
@@ -82,7 +95,7 @@ export function transportPriceMatches(v: TransportInput, side: "buy" | "sell") {
 export function transport(input: TransportInput) {
   const v = transportSchema.parse(input),
     totalWeight = v.quantity * v.weight,
-    trips = Math.max(1, Math.ceil(totalWeight / v.capacity)),
+    trips = tripsNeeded(v.quantity, v.weight, v.capacity),
     transportCost = trips * v.costPerTrip + v.risk;
   if (transportCost > 1e12) throw new Error("Transport costs exceed one trillion silver");
   const complete = transportPriceMatches(v, "buy") && transportPriceMatches(v, "sell");
