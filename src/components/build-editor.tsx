@@ -268,6 +268,9 @@ export function BuildEditor({
   }, [guest, guestDeviceKey]);
   useEffect(() => {
     if (!guest || !guestRecoveryReady || protectedGuestRecord.current) return;
+    // A restored or explicitly saved draft needs no delayed write. Leaving that timer
+    // armed could replace a storage record changed while this clean draft was open.
+    if (deviceSaved && !dirty) return;
     const parsed = buildInput.safeParse(draft);
     if (!parsed.success) return;
     const timer = setTimeout(() => {
@@ -286,7 +289,7 @@ export function BuildEditor({
       }
     }, 700);
     return () => clearTimeout(timer);
-  }, [draft, guest, guestRecoveryReady, guestDeviceKey]);
+  }, [draft, guest, guestRecoveryReady, guestDeviceKey, deviceSaved, dirty]);
   const router = useRouter();
   const update = <K extends keyof BuildInput>(key: K, value: BuildInput[K]) =>
     setDraft({ ...draft, [key]: value });

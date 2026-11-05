@@ -16,7 +16,7 @@ export default async function Page({
         glyph="refine"
         scene="economy"
         title="Refining calculator"
-        description="Make every resource count. Compare material costs, station settings and the value of your refined output."
+        description="Compare material costs, return rates, station settings and the value of your refined output."
       />
       <ProductionCalculator
         initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}

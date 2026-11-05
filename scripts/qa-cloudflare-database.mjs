@@ -27,6 +27,19 @@ writeFileSync(
     2,
   ),
 );
+const protectedOwner = "700000000000000001";
+const dataConfig = JSON.parse(
+  readFileSync("cloudflare/database/wrangler.jsonc", "utf8").replace(/,\s*([}\]])/g, "$1"),
+);
+dataConfig.main = resolve("cloudflare/database/worker.ts");
+dataConfig.alias = Object.fromEntries(
+  Object.entries(dataConfig.alias).map(([name, path]) => [
+    name,
+    resolve("cloudflare/database", path),
+  ]),
+);
+dataConfig.vars = { ...dataConfig.vars, OUTPOST_OWNER_DISCORD_ID: protectedOwner };
+writeFileSync(`${folder}/data.jsonc`, JSON.stringify(dataConfig, null, 2));
 const log = openSync(`${folder}/runtime.log`, "w");
 const child = spawn(
   process.execPath,
@@ -36,7 +49,7 @@ const child = spawn(
     "--config",
     `${folder}/wrangler.jsonc`,
     "--config",
-    "cloudflare/database/wrangler.jsonc",
+    `${folder}/data.jsonc`,
     "--ip",
     "127.0.0.1",
     "--port",
@@ -743,6 +756,113 @@ try {
     assert.equal((await promote(userA)).count, 1);
     assert.equal((await query("user", "findUnique", { where: { id: userA } })).role, "ADMIN");
     assert.equal((await promote(userA)).count, 0);
+  });
+  await check("private admin services enforce roles and preserve subscription state", async () => {
+    const admin = `${fixture}-admin`,
+      target = `${fixture}-admin-target`;
+    const discordId = `8${Date.now()}9876`;
+    try {
+      await query("user", "create", { data: { id: admin, role: "ADMIN" } });
+      await query("user", "create", {
+        data: {
+          id: target,
+          plan: "SUPPORTER",
+          accounts: {
+            create: { type: "oauth", provider: "discord", providerAccountId: discordId },
+          },
+        },
+      });
+      await denied(403, "adminBanAction", admin, {
+        discordId: protectedOwner,
+        action: "ban",
+        days: 7,
+        version: 0,
+        reason: "Owner protection negative fixture",
+        confirmation: `BAN ${protectedOwner}`,
+      });
+      assert.equal(await query("discordBan", "count", { where: { discordId: protectedOwner } }), 0);
+      let row = await query("user", "findUnique", { where: { id: target } });
+      await denied(403, "adminUserAction", target, target, {
+        action: "grant",
+        days: 30,
+        reason: "Denied local fixture",
+        expectedUpdatedAt: row.updatedAt,
+      });
+      await service("adminUserAction", admin, target, {
+        action: "grant",
+        days: 30,
+        reason: "Local fixture gift",
+        expectedUpdatedAt: row.updatedAt,
+      });
+      row = await query("user", "findUnique", { where: { id: target } });
+      assert.equal(row.plan, "SUPPORTER");
+      assert.ok(Date.parse(row.supporterGiftUntil) > Date.now());
+      await service("adminUserAction", admin, target, {
+        action: "revoke-gift",
+        reason: "Local fixture revoke",
+        expectedUpdatedAt: row.updatedAt,
+      });
+      row = await query("user", "findUnique", { where: { id: target } });
+      assert.equal(row.plan, "SUPPORTER");
+      assert.equal(row.supporterGiftUntil, null);
+      const overview = await service("adminOverview", admin);
+      assert.ok(overview.counts.users >= 2);
+      assert.equal(overview.trend.length, 30);
+      const sessions = Array.from({ length: 8 }, () => ({
+        userId: target,
+        sessionToken: randomUUID(),
+        expires: new Date(Date.now() + 600000).toISOString(),
+      }));
+      await query("session", "createMany", { data: sessions });
+      const review = await service("adminReview", admin);
+      assert.ok(review.users.some((u) => u.id === target && u._count.sessions >= 8));
+      assert.equal((await query("user", "findUnique", { where: { id: target } })).bannedAt, null);
+      const ban = {
+        discordId,
+        action: "ban",
+        days: 7,
+        version: 0,
+        reason: "Local fixture ban",
+        confirmation: `BAN ${discordId}`,
+      };
+      const token = randomUUID();
+      await Promise.allSettled([
+        service("createActiveSession", {
+          userId: target,
+          sessionToken: token,
+          expires: new Date(Date.now() + 600000).toISOString(),
+        }),
+        service("adminBanAction", admin, ban),
+      ]);
+      assert.equal(await service("activeSession", token), null);
+      assert.equal(await query("session", "count", { where: { userId: target } }), 0);
+      await denied(403, "createActiveSession", {
+        userId: target,
+        sessionToken: randomUUID(),
+        expires: new Date(Date.now() + 600000).toISOString(),
+      });
+      await service("adminBanAction", admin, {
+        ...ban,
+        action: "unban",
+        days: 0,
+        version: 1,
+        confirmation: `UNBAN ${discordId}`,
+      });
+      const after = randomUUID();
+      await service("createActiveSession", {
+        userId: target,
+        sessionToken: after,
+        expires: new Date(Date.now() + 600000).toISOString(),
+      });
+      assert.ok(await service("activeSession", after));
+      assert.equal(await service("activeSession", token), null);
+      await query("user", "update", { where: { id: admin }, data: { role: "USER" } });
+      await denied(403, "adminOverview", admin);
+    } finally {
+      await query("adminAudit", "deleteMany", { where: { actorId: admin } });
+      await query("discordBan", "deleteMany", { where: { discordId } });
+      await query("user", "deleteMany", { where: { id: { in: [admin, target] } } });
+    }
   });
   await check("fixture cleanup cascades related private records", async () => {
     await query("group", "delete", { where: { id: groupId } });

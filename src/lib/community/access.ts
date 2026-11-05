@@ -3,9 +3,13 @@ import { db } from "../db";
 import { HttpError } from "../http-error";
 import type { z } from "zod";
 import { targetKind } from "./validation";
+import { accountBanned } from "../admin/policy";
 export async function requireModerator(userId: string, client: Prisma.TransactionClient = db) {
-  const u = await client.user.findUnique({ where: { id: userId }, select: { role: true } });
-  if (!u || !["ADMIN", "MODERATOR"].includes(u.role))
+  const u = await client.user.findUnique({
+    where: { id: userId },
+    select: { role: true, bannedAt: true, bannedUntil: true },
+  });
+  if (!u || accountBanned(u) || !["ADMIN", "MODERATOR"].includes(u.role))
     throw new HttpError(403, "Moderator access required");
 }
 export async function communityTarget(

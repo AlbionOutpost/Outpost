@@ -11,6 +11,7 @@ db.executescript((root / "cloudflare/d1/migrations/0003_domain_invariants.sql").
 db.executescript((root / "cloudflare/d1/migrations/0004_team_loot_splits.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0006_billing_checkout.sql").read_text())
 db.executescript((root / "cloudflare/d1/migrations/0007_library_likes.sql").read_text())
+db.executescript((root / "cloudflare/d1/migrations/0008_admin_controls.sql").read_text())
 checks = []
 
 def check(name, fn):
@@ -25,9 +26,9 @@ def denied(sql, parameters=()):
     raise AssertionError("Expected database integrity denial")
 
 def counts():
-    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 31
-    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 45
-check("31 application tables and 45 explicit indexes including account library likes", counts)
+    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0] == 33
+    assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='index' AND sql IS NOT NULL").fetchone()[0] == 47
+check("33 application tables and 47 explicit indexes including staff access controls", counts)
 
 def legacy_v2_upgrade():
     # A separate disposable in-memory database only. Remove its fresh, empty
@@ -113,6 +114,38 @@ def billing_checkout_upgrade():
         backup.close()
         legacy.close()
 check("SQLite v4-v6 additive upgrades preserve billing rows, support rollback and restore", billing_checkout_upgrade)
+
+def admin_controls_upgrade():
+    old = sqlite3.connect(":memory:")
+    backup = sqlite3.connect(":memory:")
+    restored = sqlite3.connect(":memory:")
+    try:
+        for file in ["0001_schema_candidate.sql", "0003_domain_invariants.sql", "0004_team_loot_splits.sql", "0006_billing_checkout.sql", "0007_library_likes.sql"]:
+            old.executescript((root / "cloudflare/d1/migrations" / file).read_text())
+        old.execute('INSERT INTO "User"(id,name,updatedAt,plan,stripeCustomerId) VALUES(?,?,?,?,?)', ("admin-upgrade", "Retained fixture", "2026-11-05T00:00:00Z", "SUPPORTER", "cus_fixture"))
+        old.execute('INSERT INTO "Account"(id,userId,type,provider,providerAccountId) VALUES(?,?,?,?,?)', ("admin-account", "admin-upgrade", "oauth", "discord", "123456789012345678"))
+        old.execute('INSERT INTO "Session"(id,userId,sessionToken,expires) VALUES(?,?,?,?)', ("admin-session", "admin-upgrade", "local-fixture-only", "2027-01-01T00:00:00Z"))
+        old.commit()
+        names=["User", "Account", "Session"]
+        before={name:old.execute(f'SELECT * FROM "{name}"').fetchall() for name in names}
+        old.backup(backup)
+        sql=(root / "cloudflare/d1/migrations/0008_admin_controls.sql").read_text()
+        old.execute("BEGIN")
+        for statement in "\n".join(line for line in sql.splitlines() if not line.lstrip().startswith("--")).split(";"):
+            if statement.strip():old.execute(statement)
+        old.rollback()
+        assert "bannedAt" not in [r[1] for r in old.execute('PRAGMA table_info("User")')]
+        assert {name:old.execute(f'SELECT * FROM "{name}"').fetchall() for name in names}==before
+        old.executescript(sql)
+        assert [r[:-4] for r in old.execute('SELECT * FROM "User"')]==before["User"]
+        for name in ["Account","Session"]:assert old.execute(f'SELECT * FROM "{name}"').fetchall()==before[name]
+        assert old.execute('SELECT supporterGiftUntil,supporterGiftPermanent,bannedAt,bannedUntil FROM "User"').fetchone()==(None,0,None,None)
+        backup.backup(restored)
+        assert {name:restored.execute(f'SELECT * FROM "{name}"').fetchall() for name in names}==before
+        assert "bannedAt" not in [r[1] for r in restored.execute('PRAGMA table_info("User")')]
+    finally:
+        restored.close();backup.close();old.close()
+check("Private admin upgrade preserves paid accounts, OAuth links and sessions, rolls back and restores", admin_controls_upgrade)
 
 def current_schema_candidate():
     candidate = sqlite3.connect(":memory:")
