@@ -1,15 +1,24 @@
 import type { NextAuthOptions } from "next-auth";
-import type { AdapterUser } from "next-auth/adapters";
+import type { AdapterAccount, AdapterUser } from "next-auth/adapters";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
-import { grantOwnerAdmin, promotePersistedOwner } from "./owner-admin";
+import { grantOwnerAdmin, promoteOwnerOnce } from "./owner-admin";
 import { activeSession, createActiveSession } from "./admin/sessions";
 import { discordBanned } from "./admin/access";
 const adapter = PrismaAdapter(db);
 export const authOptions: NextAuthOptions = {
   adapter: {
     ...adapter,
+    // Outpost never calls Discord on the player's behalf, so provider tokens are not kept:
+    // a database or backup leak must not hand out live Discord access.
+    linkAccount: (account: AdapterAccount) =>
+      adapter.linkAccount!({
+        ...account,
+        access_token: undefined,
+        refresh_token: undefined,
+        id_token: undefined,
+      }),
     createSession: createActiveSession,
     async getSessionAndUser(token) {
       const result = await activeSession(token);
@@ -67,7 +76,7 @@ export const authOptions: NextAuthOptions = {
       return account?.provider === "discord" && !(await discordBanned(account.providerAccountId));
     },
     async session({ session, user }) {
-      if (!("role" in user) || user.role !== "ADMIN") await promotePersistedOwner(user.id);
+      if (!("role" in user) || user.role !== "ADMIN") await promoteOwnerOnce(user.id);
       if (session.user) session.user.id = user.id;
       return session;
     },

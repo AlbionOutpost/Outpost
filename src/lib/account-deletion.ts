@@ -101,6 +101,21 @@ async function localDeleteAccountRecord(userId: string, clearance: BillingCleara
               "Billing changed. Retry account deletion after checking your subscription.",
             );
         }
+        // Team comps belong to the team, not just their author: hand them to the team's owner
+        // (never this user, who owns no team by now) instead of cascading them away.
+        const shared = await tx.composition.findMany({
+          where: { authorId: userId, groupId: { not: null }, visibility: "GROUP" },
+          select: { id: true, group: { select: { ownerId: true } } },
+        });
+        const byOwner = new Map<string, string[]>();
+        for (const comp of shared)
+          if (comp.group)
+            byOwner.set(comp.group.ownerId, [...(byOwner.get(comp.group.ownerId) ?? []), comp.id]);
+        for (const [ownerId, ids] of byOwner)
+          await tx.composition.updateMany({
+            where: { id: { in: ids }, authorId: userId },
+            data: { authorId: ownerId },
+          });
         await tx.user.delete({ where: { id: userId } });
         return { deleted: true };
       },
