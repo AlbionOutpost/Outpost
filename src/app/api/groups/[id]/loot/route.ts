@@ -14,7 +14,7 @@ export const GET = apiHandler("team.loot.read", async (_req: NextRequest, ctx: C
 export const POST = apiHandler("team.loot.save", async (req: NextRequest, ctx: Context) => {
   const actor = await mutationUser(req);
   if (actor.error) return actor.error;
-  await requireTeamManagement((await ctx.params).id);
+  await requireTeamManagement((await ctx.params).id, undefined, actor.userId!);
   return NextResponse.json(
     await teamLoot((await ctx.params).id, actor.userId!, await boundedJson(req)),
   );
