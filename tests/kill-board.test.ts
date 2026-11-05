@@ -49,6 +49,8 @@ describe("kill shortlist", () => {
 });
 
 describe("ranking by estimated gear value", () => {
+  const now = Date.parse("2026-11-05T12:00:00Z");
+  const recent = "2026-11-04T12:00:00";
   const kill = (id: string, items: [string, number][]) => ({
     fame: 1,
     victim: {
@@ -60,10 +62,22 @@ describe("ranking by estimated gear value", () => {
     const a = kill("A", [["Main hand", 1]]);
     const b = kill("B", [["Main hand", 1]]);
     const prices = [
-      { item_id: "IDA_0", quality: 1, city: "Martlock", sell_price_min: 1000 },
-      { item_id: "IDB_0", quality: 1, city: "Martlock", sell_price_min: 5000 },
+      {
+        item_id: "IDA_0",
+        quality: 1,
+        city: "Martlock",
+        sell_price_min: 1000,
+        sell_price_min_date: recent,
+      },
+      {
+        item_id: "IDB_0",
+        quality: 1,
+        city: "Martlock",
+        sell_price_min: 5000,
+        sell_price_min_date: recent,
+      },
     ] as never[];
-    const ranked = rankByGearValue([a, b], prices, ["Martlock"]);
+    const ranked = rankByGearValue([a, b], prices, ["Martlock"], now);
     expect(ranked.map((k) => k.marker)).toEqual(["B", "A"]);
     expect(ranked[0].gearValue).toEqual({ total: 5000, priced: 1, missing: 0 });
   });
@@ -73,9 +87,46 @@ describe("ranking by estimated gear value", () => {
       ["Chest", 1],
     ]);
     const prices = [
-      { item_id: "IDA_0", quality: 1, city: "Caerleon", sell_price_min: 9000 }, // not in list
+      {
+        item_id: "IDA_0",
+        quality: 1,
+        city: "Caerleon",
+        sell_price_min: 9000,
+        sell_price_min_date: recent,
+      }, // not in list
     ] as never[];
-    const ranked = rankByGearValue([a], prices, ["Martlock"]);
+    const ranked = rankByGearValue([a], prices, ["Martlock"], now);
     expect(ranked[0].gearValue).toBeNull();
+  });
+  it("treats listings older than the kill window, or undated, as missing", () => {
+    const a = kill("A", [
+      ["Main hand", 1],
+      ["Chest", 1],
+    ]);
+    const prices = [
+      {
+        item_id: "IDA_0",
+        quality: 1,
+        city: "Martlock",
+        sell_price_min: 100,
+        sell_price_min_date: "2026-06-01T00:00:00",
+      },
+      {
+        item_id: "IDA_0",
+        quality: 1,
+        city: "Martlock",
+        sell_price_min: 400,
+        sell_price_min_date: recent,
+      },
+      {
+        item_id: "IDA_1",
+        quality: 1,
+        city: "Martlock",
+        sell_price_min: 50,
+        sell_price_min_date: "0001-01-01T00:00:00",
+      },
+    ] as never[];
+    const ranked = rankByGearValue([a], prices, ["Martlock"], now);
+    expect(ranked[0].gearValue).toEqual({ total: 400, priced: 1, missing: 1 });
   });
 });

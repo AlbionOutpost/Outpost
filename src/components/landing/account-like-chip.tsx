@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Heart } from "lucide-react";
 import { ReactionFeedback } from "@/components/reaction-feedback";
+
+const FOCUS_REFRESH = 5 * 60_000;
 type Likes = {
   count: number;
   archivedCount: number;
@@ -30,8 +32,10 @@ export function AccountLikeChip({
   useEffect(() => {
     const requests = generation.current;
     const controller = new AbortController();
+    let lastRead = 0;
     const read = async () => {
       if (pending.current) return;
+      lastRead = Date.now();
       const version = ++generation.current.version;
       try {
         const r = await fetch(url, { signal: controller.signal, cache: "no-store" });
@@ -43,12 +47,17 @@ export function AccountLikeChip({
           setNote(e instanceof Error ? e.message : "Likes unavailable.");
       }
     };
+    // Coming back to the tab refreshes a like made elsewhere, but at most every five minutes:
+    // each read costs a Worker, a Durable Object and a D1 request.
+    const refresh = () => {
+      if (Date.now() - lastRead >= FOCUS_REFRESH) void read();
+    };
     void read();
-    window.addEventListener("focus", read);
+    window.addEventListener("focus", refresh);
     return () => {
       requests.version++;
       controller.abort();
-      window.removeEventListener("focus", read);
+      window.removeEventListener("focus", refresh);
     };
   }, [url]);
   const label = !value?.signedIn
