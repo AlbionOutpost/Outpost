@@ -202,6 +202,12 @@ def library_likes():
     denied('INSERT INTO "LibraryLike"(id,userId,kind,slug) VALUES(?,?,?,?)', ("like-4", "missing-owner", "build", "battleaxe-mist-build"))
 check("account library like identity, kind and foreign-key constraints", library_likes)
 
+def clear_oauth_tokens():
+    db.execute('INSERT INTO "Account"(id,userId,type,provider,providerAccountId,access_token,refresh_token,id_token) VALUES(?,?,?,?,?,?,?,?)', ("acct-tokens", "qa-d1-owner", "oauth", "discord", "303585687460904970", "at", "rt", "it"))
+    db.executescript((root / "cloudflare/d1/migrations/0009_clear_oauth_tokens.sql").read_text())
+    assert db.execute('SELECT access_token, refresh_token, id_token, providerAccountId FROM "Account" WHERE id=?', ("acct-tokens",)).fetchone() == (None, None, None, "303585687460904970")
+check("provider tokens are cleared while the account link is kept", clear_oauth_tokens)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

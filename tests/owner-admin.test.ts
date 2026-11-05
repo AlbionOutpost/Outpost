@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   users: new Map<string, { role: string; provider: string; providerAccountId: string }>(),
+  writes: 0,
 }));
 vi.mock("../src/lib/db", () => ({
   db: {
@@ -12,6 +13,7 @@ vi.mock("../src/lib/db", () => ({
         where: { id: string; accounts: { some: { provider: string; providerAccountId: string } } };
         data: { role: string };
       }) => {
+        state.writes++;
         const user = state.users.get(where.id),
           identity = where.accounts.some;
         if (
@@ -26,7 +28,7 @@ vi.mock("../src/lib/db", () => ({
     },
   },
 }));
-import { grantOwnerAdmin, promotePersistedOwner } from "../src/lib/owner-admin";
+import { grantOwnerAdmin, promoteOwnerOnce, promotePersistedOwner } from "../src/lib/owner-admin";
 const owner = "303585687460904970";
 beforeEach(() => {
   vi.stubEnv("OUTPOST_OWNER_DISCORD_ID", owner);
@@ -75,5 +77,16 @@ it("promotes an existing authenticated owner using only the stored Discord link"
   await promotePersistedOwner("owner");
   expect(state.users.get("owner")?.role).toBe("ADMIN");
   await promotePersistedOwner("outsider");
+  expect(state.users.get("outsider")?.role).toBe("USER");
+});
+
+it("checks each session user once instead of writing on every request", async () => {
+  state.writes = 0;
+  await promoteOwnerOnce("owner");
+  await promoteOwnerOnce("owner");
+  await promoteOwnerOnce("outsider");
+  await promoteOwnerOnce("outsider");
+  expect(state.writes).toBe(2);
+  expect(state.users.get("owner")?.role).toBe("ADMIN");
   expect(state.users.get("outsider")?.role).toBe("USER");
 });

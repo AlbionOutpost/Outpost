@@ -99,7 +99,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 
 **Abuse controls.** Rate limits per route — public routes share one **site-wide** counter per route group (e.g. all `/api/market*` routes share 120/min), signed-in budgets are per user (e.g. market 120/min, history/economy/transport/build-cost 60/min, opportunities 30/min, export 5/h, delete 3/h), Turnstile on comments/edits/reports in production (fails closed when partly configured), WAF rule blocking sensitive paths, Bot Fight Mode.
 
-**Headers.** Per-request CSP nonce with `strict-dynamic`; `img-src` self/data/blob/`render.albiononline.com`; Turnstile allowed in script/frame/connect; AdSense origins (googlesyndication, doubleclick, adtrafficquality) are added to script/frame/img/connect only when `NEXT_PUBLIC_ADSENSE_CLIENT` is a valid `ca-pub-` id; `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. HSTS on https, `nosniff`, `X-Frame-Options: DENY`, restrictive Permissions-Policy, `Cache-Control: private, no-store` on dynamic responses, `no-referrer` on invitation pages.
+**Headers.** Per-request CSP nonce with `strict-dynamic`; `img-src` self/data/blob/`render.albiononline.com`; Turnstile allowed in script/frame/connect; AdSense origins (googlesyndication, doubleclick, adtrafficquality) are deliberately **not** in the policy: no ad request is made until a consent and withdrawal integration exists (`src/components/adsense-loader.tsx`, `ad-slot.tsx`; asserted by `tests/advertising-privacy.test.ts`), and `NEXT_PUBLIC_ADSENSE_CLIENT` only emits the ownership `<meta>`. Turning ads on means adding a certified consent platform first, then those origins; `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. HSTS on https, `nosniff`, `X-Frame-Options: DENY`, restrictive Permissions-Policy, `Cache-Control: private, no-store` on dynamic responses (signed-out `/api/search`, `/api/landing/craft` and `/api/combat-events/top` are answered from the edge cache, keyed on validated parameters, for two minutes; see `cloudflare/web/edge-cache.ts`), `no-referrer` on invitation pages.
 
 ## Known architectural limits
 
@@ -109,7 +109,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each.
 - Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.
 
-## Administrative controls (schema7)
+## Administrative controls (schema 7)
 
 The administration domain in `src/lib/admin` supplies current-role read services, atomic audited gift/session/ban mutations, and atomic OAuth session creation/resolution. `DiscordBan` and `AdminAudit` are private models. Gifts use separate account fields and never write Stripe subscription state. Session creation and ban checks are named services so the same concurrency boundary runs inside the private SQLite transaction as on PostgreSQL. There are no browser role-grant or arbitrary database endpoints. See the [role/action matrix and recovery constraints](ADMINISTRATION.md).
 

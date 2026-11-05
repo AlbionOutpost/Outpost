@@ -38,7 +38,7 @@ separate action; local repair evidence does not prove that the live site contain
 
 ### Rolling back
 
-- **Web Worker:** `npm run cloudflare -- rollback --name albionoutpost-web` (or pick a compatible version in the dashboard). Check both schema compatibility and security behavior: pre-admin web code does not enforce schema7 bans. Retain matching enforcement or roll forward; a database-readable build alone is not a safe rollback.
+- **Web Worker:** `npm run cloudflare -- rollback --name albionoutpost-web` (or pick a compatible version in the dashboard). Check both schema compatibility and security behavior: pre-admin web code does not enforce schema 7 bans. Retain matching enforcement or roll forward; a database-readable build alone is not a safe rollback.
 - **Data Worker:** only roll back to a version built for the **same private schema version**. After a schema bump the DO has already migrated; roll forward with a fix instead.
 - **D1 catalog:** D1 Time Travel can restore to any point in the last 7 days (30 on paid plans).
 - **Private data:** see [Backups and recovery](#backups-and-recovery).
@@ -53,7 +53,7 @@ separate action; local repair evidence does not prove that the live site contain
 | Validate/install D1 invariants                 | `node scripts/cloudflare-stage-invariants.mjs [--apply]`                                                                                    |
 | Create/verify the D1 database                  | `npm run cloudflare:d1:provision -- --apply`                                                                                                |
 
-The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`.
+The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`. The library push also (re)creates the archive indexes in `cloudflare/d1/migrations/0002_owned_library.sql`; all statements are `IF NOT EXISTS`, so rerunning it on an already-staged archive only adds missing indexes.
 
 ## Runtime configuration
 
@@ -157,4 +157,4 @@ These are tracked in [ROADMAP.md](ROADMAP.md#owner-actions).
 
 Use `/admin` with the configured owner's verified Discord account. A global MODERATOR has reports only. No public endpoint assigns global roles. Gift Supporter access, revoke sessions and manage Outpost identity bans through the reasoned/versioned controls rather than direct database edits. Gifts do not alter paid subscriptions; bans do not cancel them or remove Team ownership. Review reported activity before acting; the queue is a triage aid, not a verdict. Minimal ban/audit identifiers survive account deletion and currently have no automated retention purge.
 
-Private database schema7 requires the matching data Worker and additive migration0008. Do not roll back to schema6. Preserve ban enforcement during any web rollback. [Administrative runbook](ADMINISTRATION.md) covers permissions, expiries, sign-in races, retained data and verification limits.
+Private database schema 7 requires the matching data Worker and additive migration 0008. Do not roll back to schema 6. Preserve ban enforcement during any web rollback. [Administrative runbook](ADMINISTRATION.md) covers permissions, expiries, sign-in races, retained data and verification limits.

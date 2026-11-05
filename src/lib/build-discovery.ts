@@ -4,6 +4,9 @@ export const discoveryWeapons = index.weapons;
 export function weaponFamily(name: string | undefined) {
   return index.weapons.find((weapon) => weapon.name === name)?.family ?? "other";
 }
+export function allWeapons() {
+  return index.weapons;
+}
 export function familyWeapons(family: string) {
   return index.weapons.filter((weapon) => weapon.family === family);
 }

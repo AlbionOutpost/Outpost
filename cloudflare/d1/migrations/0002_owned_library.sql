@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS OwnedLibrary (
 CREATE UNIQUE INDEX IF NOT EXISTS OwnedLibrary_slug ON OwnedLibrary(kind, slug);
 CREATE INDEX IF NOT EXISTS OwnedLibrary_order ON OwnedLibrary(kind, ordinal);
 CREATE INDEX IF NOT EXISTS OwnedLibrary_title ON OwnedLibrary(kind, titleOrdinal);
+-- Expression indexes matching archiveList's default and newest ORDER BY exactly, so a page walks
+-- the index and stops at LIMIT instead of scanning and sorting every payload.
+CREATE INDEX IF NOT EXISTS OwnedLibrary_likes ON OwnedLibrary(kind, coalesce(json_extract(payload, '$.upvotes'), 0) DESC, ordinal);
+CREATE INDEX IF NOT EXISTS OwnedLibrary_newest ON OwnedLibrary(kind, julianday(json_extract(payload, '$.updatedAt')) DESC, ordinal);
 CREATE TABLE IF NOT EXISTS OwnedLibraryManifest (
   kind TEXT NOT NULL PRIMARY KEY CHECK(kind IN ('builds', 'compositions')),
   checksum TEXT NOT NULL,

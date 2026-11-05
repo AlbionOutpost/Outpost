@@ -42,7 +42,7 @@ export function CraftCard() {
             {p
               ? `${p.city} · best of ${quote!.candidates}${
                   quote!.assumptions?.returnRate
-                    ? ` · ${quote!.assumptions.returnRate}% return`
+                    ? ` · ${quote!.assumptions.returnRate.toFixed(1)}% return`
                     : ""
                 }`
               : data?.error

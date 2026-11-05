@@ -181,6 +181,7 @@ export function laborers(input: LaborerInput) {
     emptyNet,
     cost,
     profit,
-    margin: finiteRatio(profit, cost, 100),
+    // Return on the full-journal cost (profit ÷ cost), not a margin on sales.
+    roi: finiteRatio(profit, cost, 100),
   };
 }

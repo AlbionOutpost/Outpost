@@ -2,8 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const users = new Map<string, { plan: string }>();
 const groups = new Map<string, { ownerId: string }>();
+const members = new Set<string>();
 vi.mock("@/lib/db", () => ({
   db: {
+    groupMember: {
+      findUnique: async ({
+        where,
+      }: {
+        where: { groupId_userId: { groupId: string; userId: string } };
+      }) => {
+        const { groupId, userId } = where.groupId_userId;
+        return members.has(`${groupId}:${userId}`) ? { userId } : null;
+      },
+    },
     user: {
       findUnique: async ({ where }: { where: { id: string } }) => users.get(where.id) ?? null,
     },
@@ -23,6 +34,7 @@ describe("Supporter gates", () => {
   beforeEach(() => {
     users.clear();
     groups.clear();
+    members.clear();
     users.set("free", { plan: "FREE" });
     users.set("sup", { plan: "SUPPORTER" });
     groups.set("g-free", { ownerId: "free" });
@@ -49,5 +61,19 @@ describe("Supporter gates", () => {
     await expect(requireTeamManagement("g-free", "leave")).resolves.toBeUndefined();
     await expect(requireTeamManagement("g-free")).rejects.toMatchObject({ status: 402 });
     await expect(requireTeamManagement("missing", "event")).rejects.toMatchObject({ status: 402 });
+    // Winding down stays open on a lapsed team.
+    for (const a of ["remove", "transfer", "delete"])
+      await expect(requireTeamManagement("g-free", a)).resolves.toBeUndefined();
+  });
+  it("lets outsiders through to the service's 404 instead of revealing the owner's plan", async () => {
+    process.env.STRIPE_SECRET_KEY = "sk_test";
+    process.env.STRIPE_WEBHOOK_SECRET = "whsec";
+    process.env.STRIPE_PRICE_SUPPORTER = "price_1";
+    members.add("g-free:free");
+    await expect(requireTeamManagement("g-free", "event", "free")).rejects.toMatchObject({
+      status: 402,
+    });
+    await expect(requireTeamManagement("g-free", "event", "stranger")).resolves.toBeUndefined();
+    await expect(requireTeamManagement("missing", "event", "stranger")).resolves.toBeUndefined();
   });
 });

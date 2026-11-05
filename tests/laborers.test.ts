@@ -48,6 +48,9 @@ it("prices a T4 blacksmith run by hand", () => {
   expect(r.lootGross).toBeCloseTo(1410.4, 9);
   // 8% instant-sale tax: 1,297.568 loot + 92 empty journal − 1,000 full journal.
   expect(r.profit).toBeCloseTo(389.568, 9);
+  // Return on cost is profit ÷ full-journal cost: 389.568 / 1,000 = 38.9568 %.
+  expect(r.roi).toBeCloseTo(38.9568, 9);
+  expect(r).not.toHaveProperty("margin");
   expect(r.complete).toBe(true);
 });
 it("reports a lower bound when loot is unpriced and rejects invalid houses", () => {
@@ -127,7 +130,7 @@ it("preserves a tiny journal purchase cost while withholding an infinite return 
     complete: true,
     cost: 1e-300,
     profit: 1e12,
-    margin: null,
+    roi: null,
   });
 });
 it("bounds empty-journal gross sales before tax, including a scaled exact boundary", () => {

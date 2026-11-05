@@ -1,7 +1,7 @@
 import type { LibraryBuild, LibraryComposition } from "../../src/lib/grind-library-types";
 import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
 import { HttpError } from "../../src/lib/http-error";
-import { familyWeapons } from "../../src/lib/build-discovery";
+import { allWeapons, familyWeapons } from "../../src/lib/build-discovery";
 import { LISTED_SINCE } from "../../src/lib/library-scope";
 
 const kindCheck = (kind: string) => {
@@ -40,18 +40,15 @@ export async function archiveList(
     values.push(weapon);
   }
   if (kind === "builds" && family) {
-    const names = familyWeapons(family).map((row) => row.name);
+    // Names travel as one JSON parameter (D1 caps bound parameters at 100). "Other" matches what
+    // weaponFamily() maps there locally: any weapon missing from the discovery index, or none.
     if (family === "other") {
-      const known = familyWeapons("other").map((row) => row.name);
-      where += known.length
-        ? ` AND (json_extract(payload, '$.weaponName') IN (${known.map(() => "?").join(",")}) OR coalesce(json_extract(payload, '$.weaponName'), '') = '')`
-        : " AND coalesce(json_extract(payload, '$.weaponName'), '') = ''";
-      values.push(...known);
+      where +=
+        " AND coalesce(json_extract(payload, '$.weaponName'), '') NOT IN (SELECT value FROM json_each(?))";
+      values.push(JSON.stringify(allWeapons().map((row) => row.name)));
     } else {
-      where += names.length
-        ? ` AND json_extract(payload, '$.weaponName') IN (${names.map(() => "?").join(",")})`
-        : " AND 0";
-      values.push(...names);
+      where += " AND json_extract(payload, '$.weaponName') IN (SELECT value FROM json_each(?))";
+      values.push(JSON.stringify(familyWeapons(family).map((row) => row.name)));
     }
   }
   if (kind === "builds" && tag) {
@@ -86,6 +83,16 @@ export async function archiveList(
     page,
     pages,
   };
+}
+/** Listed totals per collection straight from the manifest: two rows read, no payload scan. */
+export async function archiveTotals(binding: D1Database): Promise<Record<string, number>> {
+  const result = await binding
+    .prepare("SELECT kind, total FROM OwnedLibraryManifest")
+    .all<{ kind: string; total: number }>();
+  const totals = Object.fromEntries(result.results.map((row) => [row.kind, row.total]));
+  if (typeof totals.builds !== "number" || typeof totals.compositions !== "number")
+    throw new Error("Reviewed archive is not staged");
+  return totals;
 }
 export async function archiveFind(
   binding: D1Database,

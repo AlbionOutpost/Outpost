@@ -56,9 +56,11 @@ describe("plan mapping", () => {
       expect(planForStatus(s)).toBe("FREE");
   });
   it("gates management, never participation", () => {
-    for (const a of ["profile", "event", "invite", "share-build", "delete"])
+    for (const a of ["profile", "event", "invite", "share-build"])
       expect(teamManagementActions.has(a)).toBe(true);
-    for (const a of ["request", "rsvp", "leave"]) expect(teamManagementActions.has(a)).toBe(false);
+    // Winding a team down is never paywalled: a lapsed owner can still delete their account.
+    for (const a of ["request", "rsvp", "leave", "remove", "transfer", "delete"])
+      expect(teamManagementActions.has(a)).toBe(false);
   });
 });
 

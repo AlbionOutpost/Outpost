@@ -18,10 +18,11 @@ import supporterSchema from "../d1/migrations/0005_supporter_plan.sql";
 import billingCheckoutSchema from "../d1/migrations/0006_billing_checkout.sql";
 import libraryLikesSchema from "../d1/migrations/0007_library_likes.sql";
 import adminSchema from "../d1/migrations/0008_admin_controls.sql";
+import clearOauthTokens from "../d1/migrations/0009_clear_oauth_tokens.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
-import { archiveList, archiveFind } from "./archive";
+import { archiveList, archiveFind, archiveTotals } from "./archive";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
 
 type QueryClient = {
@@ -105,7 +106,11 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
         if (version >= 1 && version <= 6) {
           this.ctx.storage.sql.exec(adminSchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=7 WHERE version=6");
-        } else if (version !== 7) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 7) {
+          this.ctx.storage.sql.exec(clearOauthTokens);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=8 WHERE version=7");
+        } else if (version !== 8) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);
@@ -247,5 +252,8 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
   }
   archiveFind(kind: string, keys: string[]) {
     return archiveFind(this.env.CATALOG, kind, keys);
+  }
+  archiveTotals() {
+    return archiveTotals(this.env.CATALOG);
   }
 }

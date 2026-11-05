@@ -1,8 +1,8 @@
 /** The signed-in player's Discord picture as a page emblem; the gear emblem when there is none. */
 export function AccountEmblem({ image }: { image?: string | null }) {
   if (!image)
-    // eslint-disable-next-line @next/next/no-img-element
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         className="painted-emblem"
         src="/albion/icons/team-roles.webp"

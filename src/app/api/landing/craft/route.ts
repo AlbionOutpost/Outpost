@@ -5,20 +5,19 @@ import { findRecipe } from "@/lib/albion/recipes";
 import "@/lib/albion/game/server-recipes";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
-import {
-  initialProduction,
-  production,
-  returnRateFromBonus,
-  type ProductionInput,
-} from "@/lib/albion/production";
+import { initialProduction, production, type ProductionInput } from "@/lib/albion/production";
 import bundled from "@/lib/albion/expanded-recipes.json" with { type: "json" };
 
 /** A detailed showcase: bundled T4–T6 crafts with at least two actual inputs, one price batch. */
 const candidates = (bundled as { id: string; kind: string; ingredients: unknown[] }[])
   .filter((r) => r.kind === "crafting" && /-t[4-6]$/.test(r.id) && r.ingredients.length >= 2)
   .map((r) => r.id);
-/** A royal city's base production bonus (18%) without focus: about 15.3% of materials back. */
-const RETURN_RATE = Math.round(returnRateFromBonus(18) * 1000) / 10;
+/**
+ * A royal city's base production bonus (18%) without focus: exactly 18/118 of materials back
+ * (15.254…%). Kept unrounded for the calculation; the card rounds it only for display.
+ */
+const BASE_BONUS = 18;
+const RETURN_RATE = (100 * BASE_BONUS) / (100 + BASE_BONUS);
 type City = (typeof cities)[number];
 const royal = cities.filter((c): c is City => c !== "Black Market" && c !== "Brecilien");
 

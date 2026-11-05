@@ -31,3 +31,14 @@ export async function promotePersistedOwner(userId: string) {
     data: { role: "ADMIN" },
   });
 }
+
+/* The session callback runs on every authenticated request. The persisted-link check is a
+ * write transaction, so each user is checked once per isolate rather than on every page view;
+ * sign-in (grantOwnerAdmin) still promotes the owner immediately. */
+const checked = new Set<string>();
+export async function promoteOwnerOnce(userId: string) {
+  if (checked.has(userId)) return;
+  await promotePersistedOwner(userId);
+  if (checked.size >= 1000) checked.clear();
+  checked.add(userId);
+}

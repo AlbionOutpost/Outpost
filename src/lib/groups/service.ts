@@ -19,6 +19,15 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
         });
         if (action.action === "request") {
           if (actor) throw new HttpError(409, "You are already a member");
+          // Private teams are invisible to outsiders: answer exactly as if the team did not exist.
+          if (group.visibility !== "PUBLIC") throw new HttpError(404, "Group not found");
+          const previous = await tx.groupMembershipRequest.findUnique({
+            where: { groupId_userId: { groupId, userId } },
+            select: { status: true },
+          });
+          // A rejection stands; re-requesting must not put the player back in the queue.
+          if (previous?.status === "REJECTED")
+            throw new HttpError(409, "This team declined your membership request");
           await tx.groupMembershipRequest.upsert({
             where: { groupId_userId: { groupId, userId } },
             create: { groupId, userId, message: action.message },
@@ -198,7 +207,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             if (
               action.compositionId &&
               !(await tx.composition.findFirst({
-                where: { id: action.compositionId, groupId, visibility: "GROUP" },
+                where: { id: action.compositionId, groupId, visibility: "GROUP", hiddenAt: null },
               }))
             )
               throw new HttpError(403, "Select a composition shared with this group");

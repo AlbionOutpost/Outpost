@@ -12,6 +12,8 @@ const entitlementSelect = {
  * Running a Team is a Supporter feature: creating a workspace and managing one (profile,
  * events, announcements, invites, roles, shared builds, loot splits) need the owner on the
  * Supporter plan. Viewing, requesting to join, RSVPs and leaving stay open to every member.
+ * Removing members, transferring ownership and deleting the team are never locked: a lapsed
+ * owner must always be able to wind a team down (account deletion requires it).
  * Until billing is configured nothing is for sale, so nothing is locked.
  */
 export const teamManagementActions = new Set([
@@ -21,9 +23,6 @@ export const teamManagementActions = new Set([
   "revoke",
   "decide",
   "role",
-  "remove",
-  "transfer",
-  "delete",
   "announcement",
   "remove-announcement",
   "event",
@@ -60,7 +59,21 @@ export async function teamManagementOpen(groupId: string) {
 export async function requireTeamCreation(userId: string) {
   if (!(await canCreateTeam(userId))) throw new HttpError(402, supporterMessage.create);
 }
-export async function requireTeamManagement(groupId: string, action?: string) {
+/**
+ * Throws 402 when a gated action targets a lapsed team. Outsiders and missing teams pass
+ * through so the service answers them with its own 404, and the plan of a private team's
+ * owner is never revealed to non-members.
+ */
+export async function requireTeamManagement(groupId: string, action?: string, userId?: string) {
   if (action !== undefined && !teamManagementActions.has(action)) return;
+  if (!billingEnabled()) return;
+  if (
+    userId &&
+    !(await db.groupMember.findUnique({
+      where: { groupId_userId: { groupId, userId } },
+      select: { userId: true },
+    }))
+  )
+    return;
   if (!(await teamManagementOpen(groupId))) throw new HttpError(402, supporterMessage.manage);
 }

@@ -10,7 +10,11 @@ export const POST = apiHandler(
     if (auth.error) return auth.error;
     const body = (await boundedJson(req)) as { action?: unknown };
     const id = (await ctx.params).id;
-    await requireTeamManagement(id, typeof body?.action === "string" ? body.action : "");
+    await requireTeamManagement(
+      id,
+      typeof body?.action === "string" ? body.action : "",
+      auth.userId!,
+    );
     return NextResponse.json(await mutateGroup(id, auth.userId!, body));
   },
 );

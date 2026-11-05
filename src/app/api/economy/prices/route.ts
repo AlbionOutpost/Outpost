@@ -5,7 +5,7 @@ import { recipeFor } from "@/lib/albion/recipes";
 import "@/lib/albion/game/server-recipes";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
-import { productionOutputQuality } from "@/lib/albion/production";
+import { productionOutputQuality, productionSellsInstantly } from "@/lib/albion/production";
 export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   const v = z
     .object({
@@ -32,8 +32,15 @@ export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
       id: i.id,
       quality: i.quality === "selected" ? v.quality : 1,
       city: v.materialCity,
+      execution: "instant-purchase" as const,
     })),
-    { id: recipe.output, quality: productionOutputQuality(v), city: v.outputCity },
+    {
+      id: recipe.output,
+      quality: productionOutputQuality(v),
+      city: v.outputCity,
+      // The Black Market only buys instantly, at its highest buy order; elsewhere the output is listed.
+      execution: productionSellsInstantly(v) ? ("instant-sale" as const) : ("listing" as const),
+    },
   ];
   const rows = (
     await Promise.all(
@@ -54,12 +61,15 @@ export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
         const row = rows.find(
           (p) => p.item_id === r.id && p.quality === r.quality && p.city === r.city,
         );
+        const bid = r.execution === "instant-sale";
+        const value = (bid ? row?.buy_price_max : row?.sell_price_min) || null;
         return [
           r.id,
           {
-            value: row?.sell_price_min || null,
+            value,
             manual: false,
-            observedAt: row?.sell_price_min ? row.sell_price_min_date : null,
+            observedAt: value ? (bid ? row!.buy_price_max_date : row!.sell_price_min_date) : null,
+            execution: r.execution,
             region: v.region,
             city: r.city,
             quality: r.quality,

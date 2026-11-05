@@ -4,27 +4,25 @@ Use Node 22, the locked install and isolated local PostgreSQL/Redis services. Ru
 
 For Cloudflare changes also run `node scripts/qa-cloudflare-runtime.mjs`, build with `node scripts/cloudflare-build.mjs`, typecheck both Worker projects, check the Free bundle limits and exercise the changed flows under the local Cloudflare browser harness. Its fixture entry is never deployed. Run relevant container/Lighthouse checks for runtime/UI changes and inspect desktop/mobile screenshots rather than accepting source or automated scores alone.
 
-After verification, update the reviewed, sanitized `docs/security-remediation.json` record using actual command outcomes. Regenerate all five root QA reports, implementation status and project plan:
+After verification, run the documentation and secret checks, and record actual command outcomes (including failures and skips) in the PR:
 
 ```bash
-node scripts/security-remediation-reports.mjs
-node scripts/security-remediation-reports.mjs --check
 node scripts/docs-check.mjs
 node scripts/qa-source-secrets.mjs
 node scripts/qa-secret-scan.mjs
 npm run format:check
 ```
 
-The report generator will not overwrite documents it does not own or promote the release verdict. It formats the reviewed record; it does not verify claims or manufacture missing evidence. Ignored `.qa` logs/screenshots remain local evidence, while the sanitized source record retains counts, statuses and artifact hashes for portable review. The previous Python report/inventory generators are absent from this GitHub revision; the original checkout's older reports remain historical and are not silently regenerated against a different source tree.
+Ignored `.qa` logs/screenshots remain local evidence; summarize counts and statuses in the PR rather than committing generated status reports.
 
 Keep billing, genuine Discord OAuth, live deployment/migration, operator/legal, current-patch source data and owner visual acceptance as independent gates. Never include credentials, cookie/session values, private records or database dumps in reports or uploaded artifacts. No benchmark, audit, passing parser or screenshot closes those gates automatically.
 
 The tooling guard leaves raw development alerts visible. It fails on any unassessed advisory, artifact, scope or mechanism change; passing it does not mean the full dependency audit is clean. Region browser helpers wait for committed navigation when the selection changes; choosing an already selected region is a no-op. Controlled market tests cover both delayed API responses and delayed route responses, including preservation of the Back destination.
 
-For the shared cutout cards, also run native Firefox at100% zoom after starting the local UI:
+For the shared cutout cards, also run native Firefox at 100% zoom after starting the local UI:
 
 ```bash
 OUTPOST_FIREFOX_BASE=http://localhost:3000 node scripts/qa-firefox-cutouts.mjs
 ```
 
-This optional system-Firefox runner uses a fresh task-owned profile, random loopback-only BiDi port and normal sandbox settings; it never uses a personal profile. It checks both themes at1323/390/320 and captures `.qa/firefox-cutouts/`. Inspect the screenshots; passing geometry/CSS checks do not prove the absence of an owner-specific GPU artifact. Run it independently of loading benchmarks, and keep real public HTTP/provider verification separate from the local fixture transport.
+This optional system-Firefox runner uses a fresh task-owned profile, random loopback-only BiDi port and normal sandbox settings; it never uses a personal profile. It checks both themes at 1323/390/320 and captures `.qa/firefox-cutouts/`. Inspect the screenshots; passing geometry/CSS checks do not prove the absence of an owner-specific GPU artifact. Run it independently of loading benchmarks, and keep real public HTTP/provider verification separate from the local fixture transport.
