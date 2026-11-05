@@ -13,6 +13,14 @@ const marketRoutes = new Set([
   "/api/combat-events/top",
 ]);
 
+/** API callers must receive their JSON error contract even when denied before Next runs. */
+function denied(request: Request, message: string, status: number, retry = false) {
+  const headers = { "Cache-Control": "no-store", ...(retry ? { "Retry-After": "60" } : {}) };
+  return new URL(request.url).pathname.startsWith("/api/")
+    ? Response.json({ error: message }, { status, headers })
+    : new Response(message, { status, headers });
+}
+
 /** Cloudflare overwrites this address header. Routing cookies and forwarded headers are not identity. */
 export async function requestBudget(
   request: Request,
@@ -20,36 +28,37 @@ export async function requestBudget(
 ): Promise<Response | null> {
   const address = request.headers.get("cf-connecting-ip");
   if (!address || !/^[0-9a-f:.]{3,45}$/i.test(address))
-    return new Response("Trusted client address unavailable", { status: 503 });
+    return denied(request, "Trusted client address unavailable", 503);
   try {
     if (!(await binding.rateLimit(`edge:requests:${address}`, 240, 60)))
-      return new Response("Request budget exhausted. Retry shortly.", {
-        status: 429,
-        headers: { "Retry-After": "60" },
-      });
+      return denied(request, "Too many requests. Please wait a minute, then retry.", 429, true);
     const url = new URL(request.url);
     if (url.searchParams.getAll("region").length > 1)
-      return new Response("Choose one server", { status: 400 });
+      return denied(request, "Choose one server", 400);
     let pathname: string;
     try {
       pathname = decodeURIComponent(url.pathname).replace(/\/+/g, "/").replace(/\/$/, "");
     } catch {
-      return new Response("Invalid request path", { status: 400 });
+      return denied(request, "Invalid request path", 400);
     }
     if (marketRoutes.has(pathname) || /^\/api\/builds\/[^/]+\/cost$/.test(pathname)) {
       const asked = url.searchParams.get("region") || "europe";
       const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
       if (!(await binding.rateLimit(`edge:market:${region}:${address}`, 20, 60)))
-        return new Response("Market request budget exhausted. Retry shortly.", {
-          status: 429,
-          headers: { "Retry-After": "60" },
-        });
+        return denied(
+          request,
+          "Too many market requests. Please wait a minute, then refresh.",
+          429,
+          true,
+        );
     }
   } catch {
-    return new Response("Request limiter unavailable. Retry shortly.", {
-      status: 503,
-      headers: { "Retry-After": "60" },
-    });
+    return denied(
+      request,
+      "Requests are temporarily unavailable. Please retry shortly.",
+      503,
+      true,
+    );
   }
   return null;
 }

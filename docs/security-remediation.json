@@ -1,9 +1,9 @@
 {
-  "checkedAt": "2026-11-05T01:29:26.603010+00:00",
-  "baselineCommit": "2d3d845a506fb5e832180c821f2c63d245bc1123",
-  "branch": "codex/admin-platform",
-  "sourceFingerprint": "a90c266d9ee9dc38bee58935beb7e6154e09eebc800cea31f2273b2947e7404c",
-  "scope": "Owner-authorized administration platform and older working-page refresh. Implement real stored-record counts/30-day charts, current-role user management, manually reviewed account signals, independent Supporter gifts, session revocation, persistent Discord identity bans and atomic audit records. Protect bans across signup/session races and account recreation; pass the configured owner identity to the private backend. Refresh shared task mastheads/surfaces/settings while retaining the landing and established gear/personal-comp styling. Fix the independently reproduced clean guest-draft autosave race. Additive private schema7 migration; no payment/ad activation, real user entitlement/ban mutation, game fact/formula/asset/dependency change or global-role assignment endpoint. This is a prepublication checkpoint; protected exact-head publication and public readback follow separately. Broader commercial/full-product launch remains NO-GO.",
+  "checkedAt": "2026-11-05T02:03:31.046024+00:00",
+  "baselineCommit": "740a04004a44c3800d1d6dd35559d237ab73fc4d",
+  "branch": "codex/price-limit-feedback",
+  "sourceFingerprint": "1fc9ed157f42b984ad1412fa7e0d465497af36c38161448addea39fe66fab990",
+  "scope": "Follow up the verified live administration delivery (PR89/740a040). Actual public review exposed plaintext edge429 responses surfacing as JSON SyntaxErrors in crafting. Keep every quota/trusted-address/fail-closed boundary, return JSON/no-store for API denials, and render readable production failure states without merging failed prices or erasing edits. Add response-contract/preservation/recovery regressions; no formula/data/entitlement/auth/migration/dependency or rate allowance change. Include the actual PR89 delivery receipt and independent public proof, retaining the hosted managed-challenge limitation. This is a prepublication checkpoint for the small feedback patch; its own protected publication/public readback follows. Broader full-product/commercial launch remains NO-GO.",
   "findings": [
     {
       "id": "F-01",
@@ -347,7 +347,7 @@
       "severity": "Capability/security boundary",
       "implementation": "Overview/users/details/review/audit and preserved moderator queue; reasoned/versioned current-ADMIN transactional grants/session revocation/identity bans. Separate gifts from paid state; deny banned identity before login, at atomic session creation and on session resolution. Minimal ban/audit records survive profile deletion. Schema7 additive PG/SQLite migration and private owner-ID binding.",
       "verification": "670 units; 5 admin browser journeys in the179/182 Node full run and77/77 final Cloudflare core; 7 final PostgreSQL atomic cases;25 native Worker groups and15 SQLite contracts. Negative role/Origin/injection/stale revision/race/deletion/owner checks. Real OAuth/payment/production recovery remain separate.",
-      "deployment": "PENDING protected publication and public readback; no real user actions used for QA."
+      "deployment": "Verified deployed in PR89/740a040, successful production41949566466; actual public31 boundary/health/provider/navigation checks,16 layouts and12 native Firefox checks. Genuine owner/provider lifecycle and production restore remain separate."
     },
     {
       "id": "UI-WORKSPACE-ADMIN",
@@ -355,7 +355,7 @@
       "severity": "UI/responsive",
       "implementation": "Brand-consistent quiet admin surfaces and responsive navigation/user rows; readable chart alternatives, clear actions and modal focus. Bounded title-case working mastheads with inherited light/dark palette, calmer panels and corrected mobile Settings offset. Existing landing/gear/personal-comp designs retained.",
       "verification": "316 broad responsive observations,24 validated populated-route supplements,36 final native Firefox cases,8 final interaction checks and24 scoped axe scans. Invalid direct comp fixture, wrong guide slug, unauthorized edit and invalid invitation states are explicitly distinguished; actual images/contact sheets inspected, not inferred from no-overflow. Last scrollbar-only refinement verified in final native/CF build.",
-      "deployment": "PENDING protected publication and public readback."
+      "deployment": "Verified deployed in PR89/740a040, successful production41949566466; actual public31 boundary/health/provider/navigation checks,16 layouts and12 native Firefox checks. Genuine owner/provider lifecycle and production restore remain separate."
     },
     {
       "id": "GUEST-CLEAN-DRAFT-AUTOSAVE",
@@ -363,44 +363,52 @@
       "severity": "Data recovery correctness",
       "implementation": "Skip delayed autosave for unchanged device-saved/restored drafts; retain explicit save, dirty-draft autosave and protected recovery behavior.",
       "verification": "Controlled-clock original failure retained; original guest recovery assertion unchanged; new timing regression and complete current browser run pass. No fixture result claimed as a real user recovery.",
-      "deployment": "PENDING protected publication and public readback."
+      "deployment": "Verified deployed in PR89/740a040, successful production41949566466; actual public31 boundary/health/provider/navigation checks,16 layouts and12 native Firefox checks. Genuine owner/provider lifecycle and production restore remain separate."
+    },
+    {
+      "id": "UI-PRICE-LIMIT-FEEDBACK",
+      "title": "Plain-text edge price denials expose a JSON parser error",
+      "severity": "User-visible reliability",
+      "implementation": "API budget failures use JSON/no-store with unchanged statuses, retry header and limits. Calculator checks status before parsing;429/read/shape failures show controlled messages, preserve quantities/manual prices and withhold incomplete profit. No automatic retry or formula change.",
+      "verification": "New2 edge tests and3 browser cases;672units;181/185fullbrowser with3known goldens and1unchanged longeditor timeout retained; unchanged editor plus all13production journeys pass14/14 isolated. Final80CFcore,25Worker groups,15SQLite contracts/types/freedryruns and36 responsive error states/6axe pass.",
+      "deployment": "PENDING normal protected follow-up publication and exact public JSON-denial/UI readback. PR89 admin remains verified live."
     }
   ],
   "checks": [
     {
       "name": "Major phase",
       "status": "PARTIAL",
-      "detail": "Unskipped Node22 phase12/13 gates:670 units,179/182 browser cases; only the three existing equipment goldens at320/390/768 fail. No snapshots/assertions weakened. Final small themed-scrollbar/config/owner-test follow-up is covered separately by final types/lint/atomic/native/Cloudflare checks."
+      "detail": "Follow-up full unskipped Node22 phase12/13:672units,181/185browser cases.3pre-existing equipment goldens plus unchanged90-second editor timeout retained. Same editor and all13production journeys pass14/14 isolated with unchanged timeout/assertions. Concurrent screenshot contention is an inference, not a proved cause; no full-pass claim."
     },
     {
       "name": "Admin and guest regression journeys",
       "status": "PASS",
-      "detail": "All5 admin journeys and both original/new guest recovery cases pass in the full run. Atomic creation/ban serialization, current roles, paid-versus-gift state, role injection, Origin and stale revisions have negative/permitted coverage."
+      "detail": "Existing admin/guest cases pass in the broad follow-up. New3 non-JSON429/503/malformed200 regressions preserve manual price123/quantity7, withhold incomplete profit and complete explicit refresh recovery. All14 focused editor/production cases and80 final CFcore pass."
     },
     {
       "name": "PostgreSQL billing and authorization",
       "status": "PASS",
-      "detail": "Full phase migrations/integration/backup/restore, existing billing/current-ownership/private-cache regressions pass. Final dedicated7 admin/session cases include pre-account owner protection, concurrent bans, revoked cookies, demotion and deletion-resistant identity bans. Fixtures are not real OAuth or Stripe."
+      "detail": "Current full-phase database migration/integration/backup/restore, existing billing/ownership/private-cache regressions and7 atomic admin/session checks pass. No formula, entitlement, auth service or migration change in this follow-up."
     },
     {
       "name": "Cloudflare database/runtime",
       "status": "PASS",
-      "detail": "Final25 native local Worker test groups and15 SQLite contracts pass:33 tables/47 indexes; schema6\u21927 preserves paid User/Account/Session rows, rollback/restore contracts; actual named admin/session services and configured synthetic owner denial pass. Production restore unproved."
+      "detail": "Final25 native Worker groups and15 SQLite contracts pass on existing schema7;33tables/47indexes. The price patch changes no private data/schema services or paid bindings."
     },
     {
       "name": "Cloudflare build/types",
       "status": "PASS",
-      "detail": "Final OpenNext build, both Worker TypeScript projects and77/77 actual local Cloudflare core browser tests pass. Fixture/fault wrapper never deploys. Final Node typecheck and lint pass (8 existing warnings retained)."
+      "detail": "Fresh follow-up OpenNext build, both Worker typechecks and80/80 actual local Cloudflare core pass, including the3 new production failures. Final core uses the strengthened completed-refresh assertions."
     },
     {
       "name": "Free bundle dry-runs",
       "status": "PASS",
-      "detail": "Fresh reviewed release configuration and both Wrangler dry-runs pass3MiB limits: data1,028,352 bytes; web2,577,132 bytes compressed. Same reviewed owner ID asserted on both configs; no management credential/runtime secret in vars or new public data endpoint."
+      "detail": "Fresh reviewed release configs and actual data/web dry-runs pass conservative Free thresholds. Exact sizes in .qa/price-limit-feedback/free-bundles.json. Owner binding and private backend schema remain unchanged."
     },
     {
       "name": "Container",
       "status": "PASS",
-      "detail": "Fresh outpost-admin-platform:qa standalone image,UID1000/no baked.env/healthy local PG+Redis. Final native/interaction/populated-route checks use the final image; shared services retained. Task container cleanup follows acceptance."
+      "detail": "Fresh outpost-price-feedback:qa,UID1000/no baked.env/healthy local services.36 local production failure-state cases across6widths/both themes, all manual-input and missing-result assertions pass. Owned container cleanup follows; no real user records used."
     },
     {
       "name": "Dependencies",
@@ -410,37 +418,37 @@
     {
       "name": "Secret scanning",
       "status": "PASS",
-      "detail": "Current source pattern/configured-value and187 browser-artifact scans pass. Actual79 staged files checked against canonical and original owner configured secrets:0 new matches,0 retained fixture matches. No values printed/copied; no token/private QA harness shipped. Unknown/history coverage remains separate."
+      "detail": "Current source/configured-value and187browser-artifact scans pass. Actual15 staged follow-up files checked against canonical/owner configured values:0matches; final restage rechecked before commit. Prior admin79-file scan retained separately. No token values/private records copied; history/unknown coverage remains outside scope."
     },
     {
       "name": "Responsive visual review",
       "status": "PASS",
-      "detail": "Final corrected app:316 broad Chromium captures at six widths/both themes for12 primary surfaces, desktop/phone across other families;24 populated owner/archive supplements and8 interaction checks. Root inspected actual representative final images/contact sheets.8 initial invalid direct comp fixture captures are error-state evidence, corrected via real validator; wrong guide/denied edit/invalid invitation distinguished. Not every dynamic record/state certified."
+      "detail": "Current36 failure-state journeys have above-fold and scrolled-notice captures at1440/1920/768/390/375/320, both themes.6scoped axe scans report0violations; actual phone/dark and desktop/light notices inspected. First phone harness missed the real material step; corrected via normal UI interaction, not forced DOM/style. Prior admin316+24 and public16source-equivalent layout evidence remains separate."
     },
     {
       "name": "Native Firefox review",
-      "status": "PASS",
-      "detail": "Final stock Firefox159 at100% zoom, fresh owned profile/normal sandbox,36 authenticated local-fixture cases across1440/390/320 and both themes. Real native Enter/ArrowLeft chart controls pass; themed phone rail scrollbar inspected. No all-version/GPU/provider claim."
+      "status": "PREVIOUS RELEASE VERIFIED",
+      "detail": "PR89 final local36 and exact actual public12Firefox159 cases passed at100%. No CSS/browser-specific behavior changes in this follow-up. New final public failure feedback still needs its own deployed readback; provider consent remains unverified."
     },
     {
       "name": "Lighthouse lab",
       "status": "OBSERVED",
-      "detail": "One standalone item-database mobile sample:81 performance/100 accessibility,LCP4586ms,CLS0.06318. No controlled speedup or field result. It predates only admin scrollbar/owner config/test changes; item-page source is equivalent."
+      "detail": "One current standalone crafting mobile sample82performance/100accessibility,LCP4430ms,CLS0.06318. Different route from the prior item-page sample; no controlled speedup or field comparison."
     },
     {
       "name": "Documentation and formatting",
       "status": "PASS",
-      "detail": "Administration runbook/role matrix/schema7 recovery constraints, API/architecture/operations/product/roadmap/design/progress and seven generated QA reports are current. Final report generator check,59 Markdown link checks, repository format check and source/artifact/staged scans pass. Publication receipts follow separately."
+      "detail": "Actual admin delivery receipt, new failure-state design/progress and all7root reports updated.61Markdown files/docs links, formatting, report generation and scoped source/artifact/staged scans pass. Original public failure, hosted challenge and broad editor timeout are preserved with scoped successful retests."
     },
     {
       "name": "GitHub controls",
       "status": "PENDING",
-      "detail": "Baseline PR88 deployed successfully after protected checks. This administration candidate must pass required PR checks and exact-head normal merge; no force/admin merge, branch-rule change or retry to conceal failures."
+      "detail": "PR89 passed protected checks and normal exact-tree squash740a040; production41949566466 succeeded. This small follow-up needs its own required checks and exact-head normal merge. No force/admin merge or rule changes."
     },
     {
       "name": "Application deployment",
       "status": "PENDING",
-      "detail": "Public baseline PR88/2d3d845. Owner-authorized protected schema7 data/web publication and anonymous/fake-cookie denial/public UI readback still pending at this committed checkpoint. No real customer changes performed."
+      "detail": "Admin PR89 remains actually deployed and independently public verified. The feedback follow-up is not deployed at this checkpoint; requires protected publication and actual denial/UI readback. No real user gift/ban or provider action performed."
     },
     {
       "name": "Cloudflare management/real providers",
@@ -454,8 +462,8 @@
     },
     {
       "name": "Hosted health, data, permissions and OAuth start",
-      "status": "PREVIOUS RELEASE VERIFIED",
-      "detail": "PR88 successful run41933474394 and final public receipts are baseline evidence. The new schema/admin/session code needs its own exact deployed public readback; real consent/payment and a production restore are not implied."
+      "status": "PASS",
+      "detail": "Exact deployed public evidence:31 boundary/health/provider/navigation checks,16 working/home layouts and12 stock Firefox159 checks in both themes. Hosted predeployment verification succeeded; its public smoke probe was BLOCKED by a Cloudflare managed challenge and did not verify the app. Independent actual public checks from this environment pass with protection unchanged. Current ADMIN/non-admin fixture flows remain local; real owner/provider consent and Stripe lifecycles not exercised."
     }
   ],
   "limits": [
@@ -477,6 +485,7 @@
     "The initial bilingual/legal PR87 production run failed and did not deploy; this correction retains that failure and the unchanged viewport assertion. Streaming/font timing is an evidence-supported inference, not a universal browser diagnosis. Current full phase retains3existing goldens; exact corrective deployment and public proof remain separate. Prior layout/native/homepage lab evidence is scoped to source-equivalent unchanged styles/content.",
     "Private schema7 rejects older schema6 data Workers: roll forward. Older web builds can read the additive schema but lack new ban enforcement; database compatibility alone is not a secure rollback. No production schema7 backup/restore drill is proved.",
     "Admin metrics count stored records, not visitors/revenue/unique humans. Charts cap at5,000 newest events per series with disclosure; review signals are manual/bounded and not fraud verdicts. Minimal identity-ban/audit records survive deletion; retention/purge policy remains an operator/legal decision.",
-    "Current phase retains three pre-existing equipment golden mismatches. Initial lint errors/composition screenshot scope issue, guest autosave failure, invalid visual fixture and early harness/container/geometry failures are preserved with their fixes or retests; no universal console-error-free or accessibility-conformance claim."
+    "Current phase retains three pre-existing equipment golden mismatches. Initial lint errors/composition screenshot scope issue, guest autosave failure, invalid visual fixture and early harness/container/geometry failures are preserved with their fixes or retests; no universal console-error-free or accessibility-conformance claim.",
+    "Price-feedback follow-up full phase retains the original3goldens plus a90-second editor timeout. The exact unchanged editor and allproduction cases pass isolated; initial failure remains recorded. Screenshot workload contention is only an inference. Real public price availability remains bounded by quotas and third-party coverage; readable failure feedback is not a successful quote."
   ]
 }

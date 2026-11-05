@@ -169,20 +169,23 @@ export function ProductionCalculator({
     setPendingKey(requestKey);
     setAttemptedKey(requestKey);
     setError("");
+    let failureMessage = "Market observations are temporarily unavailable. Please retry shortly.";
     try {
       const response = await fetch(`/api/economy/prices?${requestKey}`, {
         signal: controller.signal,
       });
+      if (response.status === 429)
+        failureMessage = "Too many market requests. Please wait a minute, then refresh.";
+      if (!response.ok) throw new Error("Market request failed");
       const body = await response.json();
       if (controller.signal.aborted) return;
-      if (!response.ok) throw new Error(body.error);
       const observedPrices = productionSchema.shape.prices.parse(body.prices);
       setDraft((d) =>
         mergeProductionObservations({ ...d, region }, requested, observedPrices, overwrite),
       );
-    } catch (e) {
+    } catch {
       if (controller.signal.aborted) return;
-      setError(e instanceof Error ? e.message : "Market observations unavailable");
+      setError(failureMessage);
     } finally {
       if (request.current === controller) setPendingKey(null);
     }
