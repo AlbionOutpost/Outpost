@@ -34,7 +34,7 @@ returnCredit     = Σ (eligible) gross·r
 stationCost      = stationFee·batches
 recipeCost       = recorded recipe silver requirement·batches
 revenue          = outputPrice·outputCount·batches
-fees             = revenue·(tax + setupFee)/100
+fees             = revenue·(tax + setupFee)/100   (Black Market output: revenue·tax/100)
 cost             = gross − returnCredit + stationCost + recipeCost
 profit           = revenue − fees − cost            (economic, values returns)
 cashProfit       = revenue − fees − gross − stationCost − recipeCost
@@ -43,6 +43,7 @@ incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 ```
 
 - Output quality is fixed at 1 for refining, cooking and alchemy.
+- **Black Market output** sells instantly: `/api/economy/prices` fills it from `buy_price_max` (its date as the observation time) and tags the observation `execution: "instant-sale"`; materials are tagged `instant-purchase` and other outputs `listing` (both `sell_price_min`). Only sales tax applies — no setup fee. A source observation for Black Market output without `instant-sale` provenance (older saved runs, asks) stays missing until refreshed; manual prices are accepted. Example: T4 battleaxe at 3,000, materials 2,000, tax 4 %, setup 2.5 % → fees **120**, profit **880** (a Lymhurst listing: 195 / 805).
 - Recorded fixed recipe silver requirements are included automatically and never returned. The editable station/upgrade fee is an additional charge; upfront cash and plan totals include both. Restored scenarios are recalculated against their resolved recipe. Imported requirements still need current-game verification.
 - New runs record `recipeSilverAccounting: "separate"`. Older runs with both a nonzero recorded fee and a nonzero fixed recipe requirement retain their inputs but withhold calculations/save until the player confirms whether the fee is additional or includes the fixed requirement. The latter choice subtracts the known requirement only after confirmation, and is available only when the recorded total covers it. Legacy zero-fee runs can safely include the requirement automatically.
 - Enchanting rejects focus and return flags. Upgrades come from `game/upgrades.json`: each step from `.n−1` to `.n` costs the listed rune/soul/relic count (96 helmet/boots/cape/off-hand, 192 chest/bag, 288 one-handed, 384 two-handed).

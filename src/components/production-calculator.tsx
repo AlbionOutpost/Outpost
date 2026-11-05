@@ -27,6 +27,7 @@ import {
   returnRateFromBonus,
   productionOutputQuality,
   needsRecipeFeeConfirmation,
+  productionSellsInstantly,
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
@@ -284,7 +285,9 @@ export function ProductionCalculator({
     return p &&
       (p.manual || p.value !== 0) &&
       p.quality === quality &&
-      (p.manual || (p.region === region && p.city === city))
+      (p.manual || (p.region === region && p.city === city)) &&
+      // Black Market output is only priced by an instant-sale bid, as in production().
+      (p.manual || city !== "Black Market" || p.execution === "instant-sale")
       ? p
       : null;
   };
@@ -680,6 +683,12 @@ export function ProductionCalculator({
                       onChange={(e) => update("setupFee", Number(e.target.value))}
                     />
                   </label>
+                  {productionSellsInstantly(draft) && (
+                    <p className="muted">
+                      The Black Market buys instantly at its highest buy order, so only sales tax
+                      applies; the setup fee is not charged.
+                    </p>
+                  )}
                 </div>
               </details>
               {kind !== "enchanting" && (
@@ -894,7 +903,9 @@ export function ProductionCalculator({
           </div>
           <p className="production-price-help">
             Observed prices for {draft.materialCity} load with each change; edit any price by hand.
-            Output sells in {draft.outputCity}.
+            {productionSellsInstantly(draft)
+              ? "Output sells instantly to the Black Market's highest buy order."
+              : `Output sells in ${draft.outputCity}.`}
           </p>
           {attempted && !busy && !error && !result?.complete && (
             <p className="task-state" role="status">
@@ -1270,7 +1281,11 @@ export function ProductionCalculator({
                   </div>
                   <div>
                     <dt>Setup fee</dt>
-                    <dd>{draft.setupFee}%</dd>
+                    <dd>
+                      {productionSellsInstantly(draft)
+                        ? "Not charged (instant Black Market sale)"
+                        : `${draft.setupFee}%`}
+                    </dd>
                   </div>
                 </dl>
                 <p className="muted">

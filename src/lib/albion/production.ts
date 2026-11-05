@@ -12,6 +12,18 @@ export const observation = z.object({
   city: z.enum(cities).nullable(),
   quality: z.number().int().min(1).max(5),
 });
+/**
+ * Production observations record which side of the book they came from. The Black Market only
+ * buys instantly, so its output price must be an instant-sale bid; older observations without
+ * that provenance stay unpriced there until refreshed.
+ */
+export const productionObservation = observation.extend({
+  execution: z.enum(["instant-purchase", "instant-sale", "listing"]).nullable().optional(),
+});
+/** The Black Market fills only instant sales: sales tax applies, a sell-order setup fee never does. */
+export function productionSellsInstantly(v: Pick<ProductionInput, "outputCity">) {
+  return v.outputCity === "Black Market";
+}
 export const productionSchema = z
   .object({
     mechanicsProfile: mechanicsProfile.nullable().default(null),
@@ -24,7 +36,7 @@ export const productionSchema = z
     recipeId: z.string().max(60),
     batches: z.number().int().min(1).max(100000),
     quality: z.number().int().min(1).max(5),
-    prices: z.record(z.string().max(100), observation),
+    prices: z.record(z.string().max(100), productionObservation),
     returns: z.record(z.string().max(100), z.boolean()),
     returnRate: z.number().min(0).max(99.9),
     focusReturnRate: z.number().min(0).max(99.9),
@@ -107,7 +119,8 @@ export function production(input: ProductionInput) {
       p.value === null ||
       (!p.manual && p.value === 0) ||
       p.quality !== quality ||
-      (!p.manual && (p.region !== v.region || p.city !== city))
+      (!p.manual && (p.region !== v.region || p.city !== city)) ||
+      (!p.manual && city === "Black Market" && p.execution !== "instant-sale")
     ) {
       missing.push(id);
       return null;
@@ -168,7 +181,7 @@ export function production(input: ProductionInput) {
       profitPerItem: null,
     };
   const revenue = outputPrice * outputQuantity,
-    fees = (revenue * (v.tax + v.setupFee)) / 100,
+    fees = (revenue * (v.tax + (productionSellsInstantly(v) ? 0 : v.setupFee))) / 100,
     cost = grossMaterials - returnCredit + stationCost + recipeCost,
     profit = revenue - fees - cost,
     cashProfit = revenue - fees - grossMaterials - stationCost - recipeCost;

@@ -137,6 +137,33 @@ describe("production economics", () => {
     expect(r.incrementalPerFocus).toBe(4);
     expect(r.profitPerFocus).toBe(14);
   });
+  it("charges only sales tax on an instant Black Market sale", () => {
+    const v = scenario();
+    v.returns = {};
+    v.stationFee = 0;
+    v.tax = 4;
+    v.setupFee = 2.5;
+    // Lymhurst listing: 3,000 × (4 + 2.5)% = 195 fees → 3,000 − 195 − 2,000 = 805.
+    expect(production(v)).toMatchObject({ complete: true, fees: 195, profit: 805 });
+    // The Black Market buys instantly: 3,000 × 4% = 120 fees → 3,000 − 120 − 2,000 = 880.
+    v.outputCity = "Black Market";
+    expect(production(v)).toMatchObject({ complete: true, fees: 120, profit: 880, cashProfit: 880 });
+    const bid = {
+      value: 3000,
+      manual: false,
+      observedAt: new Date().toISOString(),
+      region: "europe" as const,
+      city: "Black Market" as const,
+      quality: 1,
+    };
+    // A source price needs instant-sale provenance; listing asks and legacy rows stay missing.
+    v.prices.T4_MAIN_AXE = { ...bid, execution: "instant-sale" };
+    expect(production(v)).toMatchObject({ complete: true, fees: 120, profit: 880 });
+    v.prices.T4_MAIN_AXE = { ...bid, execution: "listing" };
+    expect(production(v)).toMatchObject({ complete: false, profit: null, fees: null });
+    v.prices.T4_MAIN_AXE = bid;
+    expect(production(v)).toMatchObject({ complete: false, missing: ["T4_MAIN_AXE"] });
+  });
   it("never substitutes missing or mismatched source prices", () => {
     const v = scenario();
     v.prices.T4_METALBAR = {
