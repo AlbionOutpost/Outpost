@@ -20,8 +20,8 @@ for (const slot of Object.keys(snapshotSlots) as Array<keyof typeof snapshotSlot
     slot,
     manifest.files[slot].url,
   );
-  items.push(...result.items);
-  const { items: _items, ...coverage } = result;
+  const { items: snapshotItems, ...coverage } = result;
+  items.push(...snapshotItems);
   files.push({ slot, ...coverage, records: result.items.length });
 }
 const bundle = catalogBundle.parse({

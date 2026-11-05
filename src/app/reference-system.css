@@ -197,17 +197,6 @@
 .app.outpost .header-actions {
   gap: 12px;
 }
-.app.outpost .site-header .search-trigger {
-  min-height: 36px;
-  height: 36px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-.app.outpost .search-shortcut {
-  font-size: 12px;
-  font-weight: 400;
-}
 .app.outpost .region {
   background: transparent;
   border: none;
@@ -617,8 +606,6 @@
   .app.outpost .desktop-navigation {
     gap: 16px;
   }
-  .app.outpost .site-header .search-trigger {
-  }
   .reference-hero {
     gap: 24px;
   }
@@ -663,11 +650,6 @@
   .app.outpost .top-brand .outpost-logo {
     width: 112px;
     min-width: 112px;
-  }
-  .app.outpost .site-header .search-trigger {
-  }
-  .app.outpost .site-header .search-shortcut {
-    display: none;
   }
   .app.outpost .discord-login {
     display: none;

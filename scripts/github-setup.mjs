@@ -222,7 +222,8 @@ export async function setup(api = ghApi, apply = false) {
   for (const name of repositories) {
     const path = `repos/${organization}/${name}`;
     // GitHub rejects even allow_forking:false when the organization already bans forks.
-    const { allow_forking: _forking, ...writableRepoPolicy } = repoPolicy;
+    const writableRepoPolicy = { ...repoPolicy };
+    delete writableRepoPolicy.allow_forking;
     await api("PATCH", path, writableRepoPolicy);
     assertFields(await api("GET", path), repoPolicy, name);
     await api("PUT", `${path}/actions/permissions`, actionPolicy);

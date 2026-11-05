@@ -50,29 +50,6 @@
   min-width: 0;
   gap: 12px;
 }
-.product-route .site-header .search-trigger {
-  justify-content: start;
-  width: 240px;
-  height: 36px;
-  min-height: 36px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--elevated);
-}
-.product-route .search-shortcut {
-  display: flex;
-  flex: 1;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  white-space: nowrap;
-  text-align: left;
-}
-.product-route .search-shortcut kbd {
-  display: none;
-}
 .product-frame {
   display: block;
   max-width: 1536px;
@@ -109,16 +86,6 @@
   }
   .product-route .desktop-navigation {
     gap: 18px;
-  }
-  .product-route .site-header .search-trigger {
-    width: 34px;
-    height: 36px;
-    padding: 8px;
-    border: 0;
-    background: none;
-  }
-  .product-route .search-shortcut {
-    display: none;
   }
 }
 @media (max-width: 1100px) {
@@ -220,39 +187,6 @@
 .app.outpost .site-header .header-actions {
   margin-left: auto;
   gap: 14px;
-}
-.app.outpost .site-header .search-trigger {
-  justify-content: start;
-  gap: 12px;
-  width: clamp(260px, 30vw, 500px);
-  height: 44px;
-  min-height: 44px;
-  padding: 0 10px 0 14px;
-  border: 1px solid #ffffff1c;
-  border-radius: 8px;
-  background: #15181f;
-  color: #a8a199;
-}
-.app.outpost .site-header .search-trigger:hover {
-  border-color: color-mix(in srgb, var(--accent) 50%, #ffffff1c);
-}
-.app.outpost .site-header .search-shortcut {
-  display: flex;
-  flex: 1;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-.app.outpost .site-header .search-shortcut kbd {
-  display: inline-block;
-  padding: 3px 7px;
-  border: 1px solid #ffffff22;
-  border-radius: 5px;
-  background: #0f1116;
-  color: #d8d2c9;
-  font: 600 12px/1 var(--font-ui);
 }
 .app.outpost .site-header .region-picker > button,
 .app.outpost .site-header [aria-label="Albion region"] {
@@ -387,7 +321,7 @@
   border-bottom-color: #0000001a;
   background: var(--panel);
 }
-.app.outpost.light .site-header :is(.search-trigger, .discord-login),
+.app.outpost.light .site-header :is(.discord-login),
 .app.outpost.light .site-header .theme-switch {
   border-color: var(--border);
   background: var(--elevated);
@@ -404,25 +338,11 @@
   .app.outpost .site-header .desktop-navigation {
     gap: 18px;
   }
-  .app.outpost .site-header .search-trigger {
-    width: 220px;
-  }
-  .app.outpost .site-header .search-shortcut kbd {
-    display: none;
-  }
 }
 @media (max-width: 1100px) {
   .app.outpost .site-header {
     height: 64px;
     gap: 14px;
-  }
-  .app.outpost .site-header .search-trigger {
-    width: 44px;
-    padding: 0;
-    justify-content: center;
-  }
-  .app.outpost .site-header .search-shortcut {
-    display: none;
   }
 }
 @media (max-width: 600px) {
@@ -430,35 +350,12 @@
     display: none;
   }
 }
-.app.outpost .site-header .search-trigger {
-  flex: 0 1 auto;
-  min-width: 200px;
-  max-width: none;
-}
 .app.outpost .site-header :is(.region-picker, .account-dropdown, .home-auth-action) {
   flex: none;
-}
-.app.outpost .site-header .search-shortcut > span {
-  overflow: visible;
-  max-width: none;
-  text-overflow: clip;
 }
 @media (max-width: 1100px) {
   .app.outpost .site-header .desktop-navigation {
     display: none;
-  }
-}
-.app.outpost .site-header .search-trigger {
-  width: clamp(240px, 24vw, 480px);
-}
-@media (max-width: 1350px) {
-  .app.outpost .site-header .search-trigger {
-    width: 220px;
-  }
-}
-@media (max-width: 1100px) {
-  .app.outpost .site-header .search-trigger {
-    width: 44px;
   }
 }
 @media (max-width: 600px) {
@@ -518,7 +415,6 @@
 .app.outpost
   .site-header
   :is(
-    .search-trigger,
     .region-picker > button,
     .theme-switch,
     .home-auth-action,

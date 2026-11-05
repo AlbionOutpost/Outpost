@@ -213,7 +213,7 @@ Surfaces sit on the canvas. Depth comes from one raised surface, not from border
 - **Site-wide frames:** aged copper, not illuminated gold. Shared `--frame` runs from `#92715a` through `#684c3c` to `#3e322b`, with a 1.5px outer stroke and a quiet 0.75px inner line. Dark metal studs and gems use `--frame-gem`; the footer rule uses `--frame-rule`. Illustrated cards, top-level working panels and both themes share these tokens. Hover/focus may add a restrained metal highlight, never an orange halo. Keep primary controls and keyboard focus indicators distinct.
 - Radii: **7px** controls, **12px** raised surfaces and dialogs (**6px** framed cards), **8px** wells. Pills (999px) are for tabs, chips, hearts and the "View all" links (`.pill-link`) only.
 - Item wells are square with a 6–8px radius and a consistent frame; tier/enchant badges sit in a fixed corner.
-- Icons: Lucide at 16/20px for UI; original task emblems (`feature-emblem.tsx`, `tool-icon.tsx`) for destinations. Never use item art as a UI icon.
+- Icons: Lucide at 16/20px for UI; original task emblems (`tool-icon.tsx`) for destinations. Never use item art as a UI icon.
 
 ## Components
 
@@ -225,7 +225,7 @@ Primary (ember, dark text) for the one main action per view; secondary (panel + 
 
 ### Inputs / Fields
 
-Sunk `night-chrome` wells, 40px tall, label above, helper/validation below. Search fields carry a leading icon and a `Ctrl K` hint in the header. Numbers are typed in Geist Mono and right-aligned in tables.
+Sunk `night-chrome` wells, 40px tall, label above, helper/validation below. Search fields carry a leading icon. Numbers are typed in Geist Mono and right-aligned in tables.
 
 ### Cards / Containers
 
@@ -237,7 +237,7 @@ Sticky header, 12px uppercase-free labels, Geist Mono numbers right-aligned, row
 
 ### Navigation
 
-One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · wide search field (placeholder text + `Ctrl K` key cap; narrows to an icon ≤1100px) · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. Mobile uses a modal drawer.
+One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. Mobile uses a modal drawer.
 
 ### Equipment board (signature component)
 
@@ -289,10 +289,10 @@ The featured build is the existing Battleaxe Mist Build, tagged PVP in the impor
 
 Tool amounts count between confirmed values after a user change, preserve the prior quote with an updating/last-loaded notice during same-region refreshes, and clear immediately across regions. Reduced motion shows the exact target immediately. History tooltips show actual observed daily averages, with pointer/touch/keyboard selection and UTC dates; sparse dates keep proportional spacing and single observations remain visible.
 
-Section links use compact8px-corner buttons with a plain arrow, without the old circular arrow disc, enlargement or halo. The closing Supporter band has72–112px bottom padding. Illustrated card backgrounds use6px blur on their background pseudo-element; text, gear, controls and frame remain sharp. A minmax(0,1fr) window track prevents long title/chip content stretching the equipment board on phones. See [interaction review](docs/design/LANDING_INTERACTIONS_2026-11-02.md) for evidence and remaining limits.
+Section links use compact 8px-corner buttons with a plain arrow, without the old circular arrow disc, enlargement or halo. The closing Supporter band has 72–112px bottom padding. Illustrated card backgrounds use 6px blur on their background pseudo-element; text, gear, controls and frame remain sharp. A minmax(0,1fr) window track prevents long title/chip content stretching the equipment board on phones. See [interaction review](docs/design/LANDING_INTERACTIONS_2026-11-02.md) for evidence and remaining limits.
 
 ## Owner-requested activity-card depth — 3 November 2026
 
-Illustrated activity cards are the owner's explicit exception to the generic flat/grow-only hover rule: retain the raised image silhouettes, add contour shadows and restrained reflected light, and use a bounded3-degree perspective/6px lift only for fine-pointer hover without reduced motion. Keep a static depth treatment for touch/reduced motion. Progressive blur belongs to the decorative lower60% of the scene; labels, controls and actual equipment/data stay sharp. No most-liked ranking rows beneath the homepage activity cards.
+Illustrated activity cards are the owner's explicit exception to the generic flat/grow-only hover rule: retain the raised image silhouettes, add contour shadows and restrained reflected light, and use a bounded 3-degree perspective/6px lift only for fine-pointer hover without reduced motion. Keep a static depth treatment for touch/reduced motion. Progressive blur belongs to the decorative lower 60% of the scene; labels, controls and actual equipment/data stay sharp. No most-liked ranking rows beneath the homepage activity cards.
 
-Activity weapon previews share the former overlapping fan on the homepage and Builds collection: outer previews rotate6degrees, middle rises4px, with recorded item art kept sharp. One dark inset rim fades toward protruding silhouettes; all lower scene/blur/shade corners share12px radii. Phone caption space preserves the traced scene crop and the arrow sits beside the build count. Shared silver/result changes use NumberFlow continuous spring-shaped digit and width transitions with retained strips during interruption, actual accessible targets and immediate reduced motion. Initial/static numbers do not count up from zero. Numeric-symbol presence transitions are a scoped exception to the generic no-fade rule; decorative counters never fabricate activity. The free-access callout precedes activity discovery. Footer navigation uses grouped horizontal rows beside the brand, with two-column link groups on phones. See the [owner refinement](docs/design/HOMEPAGE_POLISH_2026-11-03.md).
+Activity weapon previews share the former overlapping fan on the homepage and Builds collection: outer previews rotate 6 degrees, middle rises 4px, with recorded item art kept sharp. One dark inset rim fades toward protruding silhouettes; all lower scene/blur/shade corners share 12px radii. Phone caption space preserves the traced scene crop and the arrow sits beside the build count. Shared silver/result changes use NumberFlow continuous spring-shaped digit and width transitions with retained strips during interruption, actual accessible targets and immediate reduced motion. Initial/static numbers do not count up from zero. Numeric-symbol presence transitions are a scoped exception to the generic no-fade rule; decorative counters never fabricate activity. The free-access callout precedes activity discovery. Footer navigation uses grouped horizontal rows beside the brand, with two-column link groups on phones. See the [owner refinement](docs/design/HOMEPAGE_POLISH_2026-11-03.md).

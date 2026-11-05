@@ -54,7 +54,7 @@ describe("ranking by estimated gear value", () => {
   const kill = (id: string, items: [string, number][]) => ({
     fame: 1,
     victim: {
-      equipment: items.map(([slot, _], i) => ({ slot, itemId: `ID${id}_${i}`, quality: 1 })),
+      equipment: items.map(([slot], i) => ({ slot, itemId: `ID${id}_${i}`, quality: 1 })),
     },
     marker: id,
   });

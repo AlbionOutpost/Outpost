@@ -20,7 +20,7 @@ The work uses route/component CSS Modules. The installed Next CSS guide was read
 
 Local-library Playwright with normal Chromium sandbox was used; it is not Browser MCP evidence. The MCP restriction from the current session remains unchanged. Final screenshot matrix: both themes at 1440×900, 1920×1080, 768×1024, 390×844, 375×812 and 320×844 for each route (24 route/theme/width cases), with no document overflow. Actual viewport contact sheets and representative full-page images were inspected at `.qa/market-operate/final/` and `.qa/tools-operate/final/`.
 
-Commands completed on Node22:
+Commands completed on Node 22:
 
 - `npm run typecheck` — PASS.
 - ESLint on both pages, Market and ToolDirectory — PASS.
@@ -30,10 +30,10 @@ Additional actual UI checks in both themes passed: keyboard city details and mat
 
 An initial ad hoc harness used exact label-text lookup for the history select and failed despite the accessible combobox being present in its snapshot. The ignored checker was corrected to use the actual combobox role/name; its initial log is retained at `.qa/market-operate/interactions-initial.log`. Application behavior did not change for that harness failure.
 
-Native Firefox159 at 100% uses a fresh task-owned profile, normal sandbox and loopback BiDi. Both routes/themes at1323,390,320 are checked independently of Chromium; source availability remains actual rather than fixture-controlled. The first native light-phone Tools capture exposed a default bright scrollbar track; the route-scoped scrollbar colors were corrected to copper/transparent and the initial evidence retained at `.qa/market-operate/native-initial/`. Final native verification passed all 12 route/theme/width cases. Both contact sheets and critical full-size images were inspected; the corrected track is copper/transparent. Final native evidence is `.qa/market-operate/native-local/`; owned Firefox/profile processes were cleaned after the runner exited0.
+Native Firefox 159 at 100% uses a fresh task-owned profile, normal sandbox and loopback BiDi. Both routes/themes at 1323,390,320 are checked independently of Chromium; source availability remains actual rather than fixture-controlled. The first native light-phone Tools capture exposed a default bright scrollbar track; the route-scoped scrollbar colors were corrected to copper/transparent and the initial evidence retained at `.qa/market-operate/native-initial/`. Final native verification passed all 12 route/theme/width cases. Both contact sheets and critical full-size images were inspected; the corrected track is copper/transparent. Final native evidence is `.qa/market-operate/native-local/`; owned Firefox/profile processes were cleaned after the runner exited 0.
 
 ## Limits and handoff
 
 Fixtures do not establish live pricing or current-patch game verification. Native captured observations can contain fresh, stale and missing sides; they do not establish complete city coverage. Existing long control text can truncate inside its labelled input, and narrow task/category navigation intentionally scrolls horizontally while keyboard focus can reach its links. No provider OAuth/payment consent or real saved-account mutation was performed by these design checks.
 
-The parent integration agent owns mandatory `qa:phase`, production-build checks, root QA/progress reports, independent final review and any authorized release. This note is rendered implementation evidence, not owner acceptance or a whole-product release approval.
+The parent integration agent owns mandatory `qa:phase`, production-build checks, independent final review and any authorized release. This note is rendered implementation evidence, not owner acceptance or a whole-product release approval.

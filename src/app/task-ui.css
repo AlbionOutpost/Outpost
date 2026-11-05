@@ -17,8 +17,7 @@
     .button,
     .desktop-navigation > a,
     .desktop-navigation summary,
-    .header-region,
-    .search-trigger
+    .header-region
   ) {
   border-radius: var(--radius-control);
 }

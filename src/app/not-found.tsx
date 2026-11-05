@@ -3,7 +3,7 @@ import Link from "@/components/link";
 export default function NotFound() {
   return (
     <section className="outpost-not-found" aria-labelledby="not-found-title">
-      <picture className="not-found-art" aria-hidden="true">
+      <picture className="not-found-art">
         <source media="(max-width: 700px)" srcSet="/albion/illustrations/hero-v1-phone.webp" />
         <img src="/albion/illustrations/hero-v1.webp" alt="" width={1600} height={900} />
       </picture>
