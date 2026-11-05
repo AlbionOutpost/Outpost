@@ -93,17 +93,19 @@ it("batches production inputs by quality and selects explicit region and markets
 });
 it("prices Black Market output from its highest buy order and keeps missing bids missing", async () => {
   mocks.limit.mockResolvedValue(true);
-  mocks.prices.mockReset().mockImplementation(async (_region: string, items: string[], quality: number) =>
-    items.map((item_id) => ({
-      item_id,
-      quality,
-      city: item_id === "T4_MAIN_AXE" ? "Black Market" : "Lymhurst",
-      sell_price_min: 5000,
-      sell_price_min_date: "2026-01-01T00:00:00",
-      buy_price_max: item_id === "T4_MAIN_AXE" ? 3000 : 90,
-      buy_price_max_date: "2026-01-02T00:00:00",
-    })),
-  );
+  mocks.prices
+    .mockReset()
+    .mockImplementation(async (_region: string, items: string[], quality: number) =>
+      items.map((item_id) => ({
+        item_id,
+        quality,
+        city: item_id === "T4_MAIN_AXE" ? "Black Market" : "Lymhurst",
+        sell_price_min: 5000,
+        sell_price_min_date: "2026-01-01T00:00:00",
+        buy_price_max: item_id === "T4_MAIN_AXE" ? 3000 : 90,
+        buy_price_max_date: "2026-01-02T00:00:00",
+      })),
+    );
   const { GET } = await import("../src/app/api/economy/prices/route");
   const params = new URLSearchParams({
     kind: "crafting",

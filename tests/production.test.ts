@@ -147,7 +147,12 @@ describe("production economics", () => {
     expect(production(v)).toMatchObject({ complete: true, fees: 195, profit: 805 });
     // The Black Market buys instantly: 3,000 × 4% = 120 fees → 3,000 − 120 − 2,000 = 880.
     v.outputCity = "Black Market";
-    expect(production(v)).toMatchObject({ complete: true, fees: 120, profit: 880, cashProfit: 880 });
+    expect(production(v)).toMatchObject({
+      complete: true,
+      fees: 120,
+      profit: 880,
+      cashProfit: 880,
+    });
     const bid = {
       value: 3000,
       manual: false,
