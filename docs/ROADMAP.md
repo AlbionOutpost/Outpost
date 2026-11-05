@@ -4,6 +4,20 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Codebase review fixes — 5 November 2026
+
+A full review of the last ~40 PRs. Fixed:
+
+- **Account deletion:** a lapsed Supporter could not transfer or delete their Team, and so could not delete their account. Remove, transfer and delete are no longer paywalled. A deleted author's team comps now pass to the team owner instead of being cascaded away.
+- **Teams:** join requests to private Teams return 404 (the same answer as a missing Team), a rejection is not reopened by re-requesting, the Supporter gate no longer reveals a private Team's owner plan to outsiders, and moderated comps can't be attached to new events.
+- **Calculators:** Black Market production output is priced from the highest buy order and charges no setup fee; laborers "Margin" is relabelled return on cost; transport trip counts use exact decimals; the landing quote uses the unrounded 18/118 return rate.
+- **Free-tier cost:** landing counts read the archive manifest instead of scanning about 11.5k D1 rows per view; expression indexes cover the library's default and newest orders (they take effect on the next `cloudflare-stage-library.mjs --apply`); the landing quote and top kills are edge-cached for signed-out visitors, and cache hits skip the rate-limit object; like chips refresh on focus at most every five minutes; the owner-promotion write runs once per user per isolate instead of on every request.
+- **Data truth:** top-kill gear value ignores listings older than the seven-day kill window.
+- **Security:** Discord OAuth tokens are no longer stored; signed-out search is cached for two minutes (was ten).
+- **Cleanup:** removed dead components, `home-fidelity.css`, the header-search CSS and dead `workspace-refresh.css` rules; deleted the generated root status reports; restored spaces dropped around numbers in the docs.
+
+Still open from the review: require an owner approval before merges to `main` deploy; get the weekly visual suite green and regenerate baselines on CI; fold the rest of `workspace-refresh.css` into the owning sheets; per-user caps and expired-row cleanup for private data; move homepage client fetches server-side; serve smaller activity artwork; null the Discord tokens already stored (`UPDATE Account SET access_token = NULL, refresh_token = NULL, id_token = NULL`).
+
 ## Homepage and navigation — 4 November 2026
 
 The owner-authorized candidate adds a compact server menu without global search, Explore tools / Sign in action plates, a smaller centered Supporter cutout with correct reveal/spacing, six larger featured activities with larger weapon previews, stable Firefox card-hover lighting, shorter tool previews and a minimal six-link footer. The example planner keeps two items; missing market observations stay unavailable. All 32 activities and the full tools remain available. [Design and verification details](design/HOME_HEADER_2026-11-03.md) and the reviewed QA record distinguish current implementation, test evidence, known screenshot/timing failures and pending protected publication. Broad launch NO-GO remains separate from this explicitly authorized incremental UI release.
@@ -102,7 +116,7 @@ Open items found on the way:
 
 - Light mode in Albion's own UI colours (dusty brown page, tan windows); every page's panels share the landing's panel look and mastheads keep the night style with painted emblems.
 - Dashboard: four framed quick actions, game panels, Discord picture as the emblem (also on settings).
-- Search: signed-out searches cached at the edge for ten minutes, no session lookup for guests, tool matches shown instantly, painted icons and guide covers, animated results.
+- Search: signed-out searches cached at the edge (two minutes since 5 Nov), no session lookup for guests, tool matches shown instantly, painted icons and guide covers, animated results.
 - Theme switch: own sun and moon, no wait between clicks. Pill buttons and slider arrows animate on hover. security.txt published.
 
 ## Shipped — backdrop, inventory light mode and sign-in fix (31 Oct)

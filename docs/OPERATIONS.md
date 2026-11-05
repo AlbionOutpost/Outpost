@@ -53,7 +53,7 @@ separate action; local repair evidence does not prove that the live site contain
 | Validate/install D1 invariants                 | `node scripts/cloudflare-stage-invariants.mjs [--apply]`                                                                                    |
 | Create/verify the D1 database                  | `npm run cloudflare:d1:provision -- --apply`                                                                                                |
 
-The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`.
+The catalog push reads your local Postgres catalog (run `npm run data:sync` first); the library push reads `public/library/grind-*.json`. The library push also (re)creates the archive indexes in `cloudflare/d1/migrations/0002_owned_library.sql`; all statements are `IF NOT EXISTS`, so rerunning it on an already-staged archive only adds missing indexes.
 
 ## Runtime configuration
 
