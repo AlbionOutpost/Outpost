@@ -1,5 +1,5 @@
 name: Library data
-# Carries the archive's like counts and the listed build total into the staged D1 library
+# Ensures the archive indexes, then carries the archive's like counts and the listed build total into the staged D1 library
 # (scripts/cloudflare-library-upvotes.mjs). Manual only; idempotent; writes production data,
 # so it runs in the protected production environment.
 on:
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
-      - name: Carry like counts into D1
+      - name: Ensure archive indexes and carry like counts into D1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
