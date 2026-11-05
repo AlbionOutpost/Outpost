@@ -10,7 +10,7 @@ The owner-authorized candidate adds a compact server menu without global search,
 
 ## Security repair — 2 November 2026
 
-The owner-requested security repair is implemented on a dedicated local branch and undergoing consolidated verification. It covers invitation revocation, caller/source quotas, streaming limits, cache isolation/headers, billing lifecycle and schema upgrades, calculator provenance/accounting, icon identity and responsive killboards. GitHub required checks and secret push protection were applied and read back; application changes have not been merged or deployed. The generated root QA reports and [security workflow](QA_WORKFLOW.md) distinguish implementation, test evidence, remaining tooling alerts and external gates.
+The owner-requested security repair is implemented on a dedicated local branch and undergoing consolidated verification. It covers invitation revocation, caller/source quotas, streaming limits, cache isolation/headers, billing lifecycle and schema upgrades, calculator provenance/accounting, icon identity and responsive killboards. GitHub required checks and secret push protection were applied and read back; application changes have not been merged or deployed. The [security workflow](QA_WORKFLOW.md) distinguishes implementation, test evidence, remaining tooling alerts and external gates.
 
 ## Next session — inner pages to landing quality
 

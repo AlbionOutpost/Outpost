@@ -36,4 +36,4 @@ Native Firefox159 at 100% uses a fresh task-owned profile, normal sandbox and lo
 
 Fixtures do not establish live pricing or current-patch game verification. Native captured observations can contain fresh, stale and missing sides; they do not establish complete city coverage. Existing long control text can truncate inside its labelled input, and narrow task/category navigation intentionally scrolls horizontally while keyboard focus can reach its links. No provider OAuth/payment consent or real saved-account mutation was performed by these design checks.
 
-The parent integration agent owns mandatory `qa:phase`, production-build checks, root QA/progress reports, independent final review and any authorized release. This note is rendered implementation evidence, not owner acceptance or a whole-product release approval.
+The parent integration agent owns mandatory `qa:phase`, production-build checks, independent final review and any authorized release. This note is rendered implementation evidence, not owner acceptance or a whole-product release approval.

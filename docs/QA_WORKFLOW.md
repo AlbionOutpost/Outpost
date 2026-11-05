@@ -4,18 +4,16 @@ Use Node 22, the locked install and isolated local PostgreSQL/Redis services. Ru
 
 For Cloudflare changes also run `node scripts/qa-cloudflare-runtime.mjs`, build with `node scripts/cloudflare-build.mjs`, typecheck both Worker projects, check the Free bundle limits and exercise the changed flows under the local Cloudflare browser harness. Its fixture entry is never deployed. Run relevant container/Lighthouse checks for runtime/UI changes and inspect desktop/mobile screenshots rather than accepting source or automated scores alone.
 
-After verification, update the reviewed, sanitized `docs/security-remediation.json` record using actual command outcomes. Regenerate all five root QA reports, implementation status and project plan:
+After verification, run the documentation and secret checks, and record actual command outcomes (including failures and skips) in the PR:
 
 ```bash
-node scripts/security-remediation-reports.mjs
-node scripts/security-remediation-reports.mjs --check
 node scripts/docs-check.mjs
 node scripts/qa-source-secrets.mjs
 node scripts/qa-secret-scan.mjs
 npm run format:check
 ```
 
-The report generator will not overwrite documents it does not own or promote the release verdict. It formats the reviewed record; it does not verify claims or manufacture missing evidence. Ignored `.qa` logs/screenshots remain local evidence, while the sanitized source record retains counts, statuses and artifact hashes for portable review. The previous Python report/inventory generators are absent from this GitHub revision; the original checkout's older reports remain historical and are not silently regenerated against a different source tree.
+Ignored `.qa` logs/screenshots remain local evidence; summarize counts and statuses in the PR rather than committing generated status reports.
 
 Keep billing, genuine Discord OAuth, live deployment/migration, operator/legal, current-patch source data and owner visual acceptance as independent gates. Never include credentials, cookie/session values, private records or database dumps in reports or uploaded artifacts. No benchmark, audit, passing parser or screenshot closes those gates automatically.
 

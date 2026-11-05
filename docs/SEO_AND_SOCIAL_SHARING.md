@@ -1,6 +1,6 @@
 # Search discovery and social sharing
 
-Implemented locally on 4 November 2026. Integration, release and public readback remain governed by the root QA/release reports. Search-engine ownership, indexing, ranking and social-platform cache refreshes are external states; this implementation does not establish them.
+Implemented locally on 4 November 2026. Search-engine ownership, indexing, ranking and social-platform cache refreshes are external states; this implementation does not establish them.
 
 ## Metadata and discovery
 

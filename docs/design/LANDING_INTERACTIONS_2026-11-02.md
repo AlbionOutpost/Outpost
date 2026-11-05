@@ -29,7 +29,7 @@ The client disables signed-out hearts, but the API is the authority. Fixture ses
 
 ## Evidence and limits
 
-Raw artifacts are in ignored `.qa/landing-interactions-2026-11-02`. References are the owner's supplied screenshots and the previous deployed5ef908f design. Final capture matrices cover both themes and six landing/calculator widths; representative other pages cover the shared link/background treatment. Current reviewed command outcomes are recorded in `docs/security-remediation.json` and its generated root reports. Final preview captures are local; observed game prices may be missing/stale and are not asserted to be live complete observations.
+Raw artifacts are in ignored `.qa/landing-interactions-2026-11-02`. References are the owner's supplied screenshots and the previous deployed5ef908f design. Final capture matrices cover both themes and six landing/calculator widths; representative other pages cover the shared link/background treatment. Final preview captures are local; observed game prices may be missing/stale and are not asserted to be live complete observations.
 
 Historical failures are retained: duplicate concurrent upsert handling, stale fixture schema table/index totals, a migration-test comment parser, a missing async declaration in a held-response fixture, a missing source field in the isolated animation fixture, four full-suite accessibility failures in new labels, and an initial320px window clipping capture. They are separate from later corrected checks. No release verdict is promoted by this record.
 
