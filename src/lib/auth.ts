@@ -1,10 +1,22 @@
 import type { NextAuthOptions } from "next-auth";
+import type { AdapterUser } from "next-auth/adapters";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "./db";
 import { grantOwnerAdmin, promotePersistedOwner } from "./owner-admin";
+import { activeSession, createActiveSession } from "./admin/sessions";
+import { discordBanned } from "./admin/access";
+const adapter = PrismaAdapter(db);
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  adapter: {
+    ...adapter,
+    createSession: createActiveSession,
+    async getSessionAndUser(token) {
+      const result = await activeSession(token);
+      // Prisma's nullable email is supported by the existing adapter at runtime.
+      return result ? { session: result.session, user: result.user as AdapterUser } : null;
+    },
+  },
   pages: { signIn: "/signin" },
   session: { strategy: "database", maxAge: 60 * 60 * 24 * 14 },
   providers:
@@ -51,17 +63,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
+    async signIn({ account }) {
+      return account?.provider === "discord" && !(await discordBanned(account.providerAccountId));
+    },
     async session({ session, user }) {
       if (!("role" in user) || user.role !== "ADMIN") await promotePersistedOwner(user.id);
-      // Once a day a signed-in visit touches the account row, so its updatedAt doubles as the
-      // last visit behind "Active players this month". A failed touch never blocks the page.
-      const seen = "updatedAt" in user ? new Date(user.updatedAt as Date | string).getTime() : 0;
-      // try/await, not .catch(): on Cloudflare the data client returns a thenable without .catch,
-      // and the TypeError broke every signed-in request (sign-in included) on 1 Nov.
-      if (!(Date.now() - seen < 12 * 60 * 60 * 1000))
-        try {
-          await db.user.update({ where: { id: user.id }, data: { updatedAt: new Date() } });
-        } catch {}
       if (session.user) session.user.id = user.id;
       return session;
     },

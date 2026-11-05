@@ -325,3 +325,7 @@ Current Node22 phase: 659 units and 172/175 browser cases; the same three equipm
 ## 2026-11-05 — Complete legal release after blocked section-navigation check
 
 PR87 merged but failed production verification and did not deploy. A legal-only restorer now aligns the preserved fragment after hydration/fonts; the original viewport assertion is retained and a cold-load regression added. Current659units/173of176browsers (only3existinggoldens),24D1runtime,72CFcore/types/freshdryruns and8freshcontainer cases pass. [Corrective evidence](design/LEGAL_SECTION_SCROLL_2026-11-05.md). Protected corrective publication/current public proof pending; legal/operator/provider/full-product limits remain open.
+
+## Administration follow-up
+
+The overview, current-role user management, manual review signals, Supporter gifts, session revocation, persistent Discord identity bans and audit pages are implemented. They do not supply visitor analytics, revenue reporting, automated fraud verdicts or role assignment. Operator decisions on audit/ban retention and a rehearsed production schema7 recovery remain separate work. The current interface retains existing Team ownership and paid billing when an account is banned; support procedures must handle those consequences.

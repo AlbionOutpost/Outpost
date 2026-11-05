@@ -79,8 +79,16 @@ export function Shell({
   initialLight?: boolean;
   initialRegion?: string;
   authenticated?: boolean;
-  account?: { name: string | null; image: string | null } | null;
+  account?: { name: string | null; image: string | null; role?: string } | null;
 }) {
+  const currentAccountLinks = [
+    ...accountLinks,
+    ...(account?.role === "ADMIN"
+      ? [["/admin", "Administration"]]
+      : account?.role === "MODERATOR"
+        ? [["/admin/reports", "Moderation"]]
+        : []),
+  ];
   const [open, setOpen] = useState(false),
     [light, setLight] = useState(initialLight),
     [savedRegion, setSavedRegion] = useState(initialRegion);
@@ -244,13 +252,13 @@ export function Shell({
         </Link>
       ))}
       <details
-        className={`nav-dropdown more-dropdown${accountLinks.some(([url]) => url !== "/signin" && active(url)) ? " is-active" : ""}`}
+        className={`nav-dropdown more-dropdown${currentAccountLinks.some(([url]) => url !== "/signin" && active(url)) ? " is-active" : ""}`}
       >
         <summary>
           More <ChevronDown size={13} />
         </summary>
         <div className="dropdown-panel">
-          {accountLinks
+          {currentAccountLinks
             .filter(([url]) => url !== "/signin")
             .map(([url, label]) => (
               <Link
@@ -352,7 +360,7 @@ export function Shell({
                   ))}
                 </div>
                 <div className="nav-label">YOUR WORKSPACE</div>
-                {accountLinks
+                {currentAccountLinks
                   .filter(([url]) => !authenticated || url !== "/signin")
                   .map(([url, label]) => (
                     <Link key={url} href={href(url)} onClick={navigate}>
@@ -458,7 +466,7 @@ export function Shell({
                       <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
                     </summary>
                     <div className="dropdown-panel">
-                      {accountLinks
+                      {currentAccountLinks
                         .filter(([url]) => !authenticated || url !== "/signin")
                         .map(([url, label]) => (
                           <Link

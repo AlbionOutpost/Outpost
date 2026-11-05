@@ -232,3 +232,32 @@ test("guest can edit, preview, save, restore and export a build without gaining 
     await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).title, sourceKey),
   ).toBe("Deliberately replaced source draft");
 });
+
+test("a restored guest draft does not overwrite a changed storage record on its old timer", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto("/builds/new?from=battleaxe-mist-build&region=europe");
+  await page.getByLabel("Build title", { exact: true }).fill("QA storage race fixture");
+  await page.getByRole("button", { name: "Save on this device", exact: true }).click();
+  const key = await page.evaluate(() =>
+    Object.keys(localStorage).find((k) => {
+      try {
+        return (
+          k.startsWith("outpost-guest-build-v1") &&
+          JSON.parse(localStorage.getItem(k)!).title === "QA storage race fixture"
+        );
+      } catch {
+        return false;
+      }
+    }),
+  );
+  expect(key).toBeTruthy();
+  await page.reload();
+  await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
+    "QA storage race fixture",
+  );
+  await page.evaluate((key) => localStorage.setItem(key!, '{"incomplete":true}'), key);
+  await page.clock.fastForward(1500);
+  expect(await page.evaluate((key) => localStorage.getItem(key!), key)).toBe('{"incomplete":true}');
+});

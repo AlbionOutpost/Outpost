@@ -65,6 +65,10 @@ export const GET = apiHandler("account.export", async () => {
         },
       },
       builds: { include: { equipment: true, versions: true } },
+      supporterGiftUntil: true,
+      supporterGiftPermanent: true,
+      bannedAt: true,
+      bannedUntil: true,
       accounts: { select: { provider: true, providerAccountId: true } },
     },
   });

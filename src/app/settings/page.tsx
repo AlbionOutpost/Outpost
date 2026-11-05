@@ -1,3 +1,5 @@
+import { isSupporter } from "@/lib/billing/plan";
+import { giftedSupporter } from "@/lib/admin/policy";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -36,7 +38,9 @@ export default async function Settings({
           <a href="#account-session">Current session</a>
           <a href="#account-delete">Close account</a>
           {["ADMIN", "MODERATOR"].includes(user.role) && (
-            <Link href="/admin/reports">Moderation dashboard</Link>
+            <Link href={user.role === "ADMIN" ? "/admin" : "/admin/reports"}>
+              {user.role === "ADMIN" ? "Admin dashboard" : "Moderation dashboard"}
+            </Link>
           )}
         </nav>
         <div className="account-settings-content">
@@ -64,13 +68,15 @@ export default async function Settings({
             <div>
               <h2>Supporter plan</h2>
               <p>
-                {user.plan === "SUPPORTER"
-                  ? `Active${user.planRenewsAt ? ` · renews ${user.planRenewsAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
+                {isSupporter(user)
+                  ? giftedSupporter(user)
+                    ? `Supporter gift active${user.supporterGiftUntil && !user.supporterGiftPermanent ? ` until ${user.supporterGiftUntil.toLocaleDateString("en-GB")}` : " until revoked"}. No advertising and your own Team workspace.`
+                    : `Active${user.planRenewsAt ? ` · renews ${user.planRenewsAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
                   : "Free. Supporters see no advertising and can run a Team workspace."}
               </p>
             </div>
             <Link className="button secondary" href="/supporter">
-              {user.plan === "SUPPORTER" ? "Manage subscription" : "See the Supporter plan"}
+              {isSupporter(user) ? "View Supporter benefits" : "See the Supporter plan"}
             </Link>
           </section>
           <section className="panel settings-data-section" id="account-data">

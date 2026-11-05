@@ -15,12 +15,15 @@ export default async function Page() {
   }
   return (
     <div className="support-admin-page">
-      <h1 className="page-title display-title">Community reports</h1>
-      <p className="intro">
-        Every review rechecks your current database role and records an audit entry. Reported
-        content is untrusted user text.
-      </p>
-      <ModerationQueue />
+      <header className="admin-heading">
+        <div>
+          <h1>Community reports</h1>
+          <p>Review player reports and hide, restore or resolve content with a recorded reason.</p>
+        </div>
+      </header>
+      <div className="admin-surface">
+        <ModerationQueue />
+      </div>
     </div>
   );
 }

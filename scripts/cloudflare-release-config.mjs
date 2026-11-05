@@ -48,6 +48,8 @@ web.vars = {
       }
     : {}),
 };
+// The binding-only mutation service must protect the configured owner even before signup.
+data.vars = { ...data.vars, OUTPOST_OWNER_DISCORD_ID: web.vars.OUTPOST_OWNER_DISCORD_ID };
 // Domain attachment is managed separately. Routine releases preserve the existing owned domains.
 const directory = ".qa/cloudflare-release";
 mkdirSync(directory, { recursive: true });
