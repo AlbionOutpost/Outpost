@@ -145,7 +145,7 @@ Open items found on the way:
 ## Shipped — landing page v5 and header (31 Oct)
 
 - The home page is rebuilt to the owner's final mockup: a hero that dissolves into the page with a measured-numbers row (`countPlayers` service + library counts), three teaser windows on its edge (a public build on the board with chosen abilities and a device-saving ♥, what a Team does, a comp as a roster by weapon type), three live tool cards in one chrome (Market Explorer with a six-city table and dated chart, Crafting Calculator picking the best of five T6 recipes through `/api/landing/craft`, Crafting Planner with queue/shopping tabs), a guides slider with reading time, and three killboards from Game Info's kill-fame ranking (`/api/combat-events/top`, inventories, participants, estimated gear value). Cards share a raised surface with the scene blurred behind. `/api/economy/preview` and the earlier preview components are gone.
-- Site-wide header: 72px bar, ember underline on the current section, wide search field with a `Ctrl K` cap, region pill, two-state sun/moon switch.
+- Site-wide header: 72px bar, ember underline on the current section, wide search field with a `Ctrl K` cap (removed on 4 Nov in favour of the server menu; `/api/search` remains), region pill, two-state sun/moon switch.
 
 ## Shipped — landing page tool cards (30 Oct)
 
@@ -212,7 +212,7 @@ Open items found on the way:
 | ------------ | --- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PERF-002     | P1  | Performance  | Mobile LCP 3.6–5.3 s across key routes                                                                                                                                                                                            |
 | DES-ART      | P2  | Design       | Mastheads ship on every hub with the five existing scenes; dedicated scenes for Teams, Guides and the Roads mapper would replace the shared ones (owner to supply)                                                                |
-| DES-CSS      | P1  | Design       | 31 global stylesheets, 7 redefine the palette; `home-fidelity.css` is dead; ~332 hex literals, 52 font sizes                                                                                                                      |
+| DES-CSS      | P1  | Design       | 40 global stylesheets in `src/app`, 7 redefine the palette; ~332 hex literals, 52 font sizes                                                                                                                                      |
 | AUD-11       | P2  | A11y         | Unlabelled `<aside>` landmarks in fishing, team loot, guide directory, shopping and farming                                                                                                                                       |
 | QA-015       | P3  | Architecture | Direct `db.` reads in 14 page modules (e.g. builds/[id], builds/[id]/edit, compositions, compositions/new, dashboard, groups, groups/[slug], invitations/[token], players/[id], market-data, timers, items, items/[id], settings) |
 | QA-014       | P2  | Tooling      | ESLint 9 deprecated; v10 blocked by Next plugin peers                                                                                                                                                                             |

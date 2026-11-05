@@ -213,7 +213,7 @@ Surfaces sit on the canvas. Depth comes from one raised surface, not from border
 - **Site-wide frames:** aged copper, not illuminated gold. Shared `--frame` runs from `#92715a` through `#684c3c` to `#3e322b`, with a 1.5px outer stroke and a quiet 0.75px inner line. Dark metal studs and gems use `--frame-gem`; the footer rule uses `--frame-rule`. Illustrated cards, top-level working panels and both themes share these tokens. Hover/focus may add a restrained metal highlight, never an orange halo. Keep primary controls and keyboard focus indicators distinct.
 - Radii: **7px** controls, **12px** raised surfaces and dialogs (**6px** framed cards), **8px** wells. Pills (999px) are for tabs, chips, hearts and the "View all" links (`.pill-link`) only.
 - Item wells are square with a 6–8px radius and a consistent frame; tier/enchant badges sit in a fixed corner.
-- Icons: Lucide at 16/20px for UI; original task emblems (`feature-emblem.tsx`, `tool-icon.tsx`) for destinations. Never use item art as a UI icon.
+- Icons: Lucide at 16/20px for UI; original task emblems (`tool-icon.tsx`) for destinations. Never use item art as a UI icon.
 
 ## Components
 
@@ -225,7 +225,7 @@ Primary (ember, dark text) for the one main action per view; secondary (panel + 
 
 ### Inputs / Fields
 
-Sunk `night-chrome` wells, 40px tall, label above, helper/validation below. Search fields carry a leading icon and a `Ctrl K` hint in the header. Numbers are typed in Geist Mono and right-aligned in tables.
+Sunk `night-chrome` wells, 40px tall, label above, helper/validation below. Search fields carry a leading icon. Numbers are typed in Geist Mono and right-aligned in tables.
 
 ### Cards / Containers
 
@@ -237,7 +237,7 @@ Sticky header, 12px uppercase-free labels, Geist Mono numbers right-aligned, row
 
 ### Navigation
 
-One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · wide search field (placeholder text + `Ctrl K` key cap; narrows to an icon ≤1100px) · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. Mobile uses a modal drawer.
+One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. Mobile uses a modal drawer.
 
 ### Equipment board (signature component)
 

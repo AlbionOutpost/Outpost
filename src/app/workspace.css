@@ -39,67 +39,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
 .workspace-route .site-header {
   padding-inline: 28px;
 }
-.workspace-navigation {
-  border-right: 1px solid var(--line-soft);
-  padding: 24px 12px;
-  background: var(--sidebar);
-}
-.workspace-navigation nav {
-  position: sticky;
-  top: 16px;
-}
-.workspace-navigation section {
-  margin-top: 24px;
-}
-.workspace-navigation h2 {
-  padding: 0 12px;
-  margin-bottom: 8px;
-  font: 600 11px/1.5 var(--font-ui);
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.workspace-navigation a {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-height: 42px;
-  padding: 9px 12px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.4;
-}
-.workspace-navigation a:hover {
-  color: var(--text);
-  background: var(--elevated);
-}
-.workspace-navigation a[aria-current="page"] {
-  color: var(--text);
-  border-color: var(--border);
-  background: var(--accent-wash);
-  box-shadow: inset 3px 0 var(--accent);
-}
-.workspace-navigation a[aria-current="page"] svg {
-  color: var(--accent-ink);
-}
-.workspace-navigation .workspace-overview {
-  color: var(--text);
-  font-weight: 600;
-}
-.workspace-navigation .workspace-saved {
-  margin-top: 32px;
-  border-top: 1px solid var(--border);
-  border-radius: 0;
-  padding-top: 16px;
-}
-.workspace-saved small {
-  display: block;
-  font-size: 11px;
-  margin-top: 4px;
-  font-weight: 400;
-}
 .workspace-route footer {
   max-width: 1840px;
   margin-top: 0;
@@ -233,10 +172,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   .workspace-frame {
     grid-template-columns: 176px minmax(0, 1fr);
   }
-  .workspace-navigation a {
-    font-size: 12px;
-    padding-inline: 8px;
-  }
   .workspace-frame > main {
     padding: 24px;
   }
@@ -247,9 +182,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
 @media (max-width: 1100px) {
   .workspace-frame {
     display: block;
-  }
-  .workspace-navigation {
-    display: none;
   }
   .workspace-route .site-header {
     padding-inline: 24px;
@@ -287,27 +219,5 @@ main[data-width="marketing"]:not([data-page="home"]) {
 @media (min-width: 1101px) and (max-width: 1279px) {
   .workspace-frame {
     grid-template-columns: 64px minmax(0, 1fr);
-  }
-  .workspace-navigation {
-    padding: 24px 8px;
-  }
-  .workspace-navigation section {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-soft);
-  }
-  .workspace-navigation h2,
-  .workspace-navigation a span {
-    display: none;
-  }
-  .workspace-navigation a,
-  .workspace-navigation .workspace-overview {
-    justify-content: center;
-    padding: 10px;
-    font-size: 0;
-    gap: 0;
-  }
-  .workspace-navigation .workspace-saved {
-    margin-top: 16px;
   }
 }

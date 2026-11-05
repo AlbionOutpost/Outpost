@@ -22,7 +22,6 @@ import "./product-controls.css";
 import "./workspace-depth.css";
 import "./loadout-cards.css";
 import "./motion-system.css";
-import "./search-palette.css";
 import "./build-grind-workspace.css";
 import "./grind-rebuild.css";
 import "./journal-workspace.css";
