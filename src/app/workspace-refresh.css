@@ -1,0 +1,252 @@
+/* Working pages inherit the landing's type and copper, with quiet, readable task surfaces. */
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity[data-scene] {
+  min-height: 0;
+  width: 100%;
+  --text: inherit;
+  --muted: inherit;
+  --accent: inherit;
+  --accent-ink: inherit;
+  --panel: inherit;
+  --elevated: inherit;
+  --border: inherit;
+  --bg: inherit;
+  color: var(--text);
+  padding: 28px;
+  margin: 0 0 28px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: none;
+  gap: 28px;
+  align-items: center;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity[data-scene]::before,
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity[data-scene]::after {
+  display: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity
+  .page-title {
+  font: 800 clamp(30px, 3.4vw, 46px)/1.08 var(--font-display);
+  text-transform: none;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  text-shadow: none;
+  color: var(--text);
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity
+  .intro {
+  max-width: 66ch;
+  margin-top: 9px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--secondary);
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-emblem {
+  width: 58px;
+  height: 64px;
+  flex: 0 0 58px;
+  filter: drop-shadow(0 4px 5px #0004);
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-emblem
+  .painted-emblem {
+  width: 58px;
+  height: 58px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity-head {
+  gap: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .support-items-page,
+    .guild-discovery-page,
+    .support-comp-library,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard,
+    .trade-page,
+    .reference-tables-page
+  )
+  > .panel,
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.production-reference-grid, .production-grid, .reference-production-grid)
+  > .panel {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  backdrop-filter: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .guild-discovery-page,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard
+  )
+  :is(.panel, .raised) {
+  background-color: color-mix(in srgb, var(--surface) 97%, transparent);
+  background-image: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .guild-discovery-page,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard
+  )
+  :is(.panel, .raised)::before {
+  background-image: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.reference-recipe-identity, .production-reference-grid, .production-grid)
+  h2 {
+  font-family: var(--font-ui);
+  letter-spacing: -0.01em;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.inventory-search, .catalogue-filters, .guild-discovery-filters) {
+  padding: 20px;
+  gap: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .workspace-identity
+  .masthead-tabs {
+  margin-top: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .account-settings-navigation {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .account-settings-content {
+  gap: 28px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .settings-data-section {
+  align-items: center;
+  gap: 24px;
+}
+.app.outpost:not(.home-route) main:not(:has(.gear-studio, .composition-directory)) .product-table {
+  background: var(--surface);
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .product-table
+  th {
+  font: 600 11px/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .product-table
+  td {
+  padding-block: 16px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.panel, .raised)
+  :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-identity[data-scene] {
+    padding: 20px;
+    margin-bottom: 20px;
+    gap: 18px;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-identity-head {
+    gap: 12px;
+    align-items: start;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-emblem {
+    width: 44px;
+    flex-basis: 44px;
+    height: 48px;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-emblem
+    .painted-emblem {
+    width: 44px;
+    height: 44px;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-identity
+    .intro {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .workspace-identity
+    .page-title {
+    font-size: 32px;
+  }
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .settings-data-section {
+    align-items: stretch;
+    gap: 18px;
+  }
+}
+/* Painted cover cards retain their own scenes; working windows use their quiet surface. */
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .panel:not(.has-scene),
+    .calculator-inputs,
+    .build-command-bar,
+    .party-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .timer-composer
+  ) {
+  --scene: none;
+}
+
+/* A relative sidebar must not retain the desktop sticky top offset. */
+@media (max-width: 900px) {
+  .app.outpost .support-settings nav.account-settings-navigation.panel {
+    top: auto;
+    margin-bottom: 0;
+  }
+}

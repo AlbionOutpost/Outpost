@@ -93,3 +93,17 @@ The timers page, calculator saved scenarios, transport plans and shopping accoun
 `POST` to the same route requires a current server session, matching Origin and JSON body `{ "active": true }` (or false to remove the caller's like). The body is strictly bounded to1KiB and accepts no actor/count fields. Existing per-account mutation quotas apply. Unknown entries return404; anonymous/expired sessions401; cross-origin requests403; invalid/extra fields400. A unique account/kind/canonical-slug identity plus bounded serializable conflict retries makes repeated writes idempotent.
 
 The new `LibraryLike` rows are private account records with public aggregate counts. They do not rewrite imported archive votes or existing device favourites. Account export includes only the account's own rows; deleting the account cascades them. PostgreSQL migration `20261102210000_library_likes` and additive SQLite migration `0007_library_likes.sql` add the store. The private Worker upgrades schema5 to6. A web rollback can retain schema6; an older schema5 backend needs compatibility or a roll-forward plan. No production migration is implied by this API documentation.
+
+## Account administration
+
+All routes below require a current global ADMIN. Anonymous/expired sessions return401; ordinary users and MODERATOR return403. Reads and writes are private/no-store. POST uses exact Origin, the existing per-user mutation quota,8KiB JSON and strict validation; current ADMIN is checked again inside the transaction. No role assignment or billing cancellation API is exposed.
+
+| Route                                       | Purpose                                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GET /api/admin/users?q=&filter=all&page=1` | Search/paginate selected user records,20/page; filter all/supporters/review/banned                            |
+| `GET /api/admin/users/[id]`                 | Selected account details, current ban, open report count, latest20 relevant administrative actions            |
+| `POST /api/admin/users/[id]`                | Strict grant/revoke-gift/revoke-sessions action, reason and `expectedUpdatedAt`; grant accepts30/90/365/0days |
+| `GET /api/admin/bans?discordId=`            | Current persistent ban/version for a17–20digit Discord ID                                                     |
+| `POST /api/admin/bans`                      | Strict ban/unban, Discord ID, version, reason,7/30/0days and exact typed confirmation                         |
+
+Zero days means until revoked.409 indicates a stale revision/version and requires reloading. Owner/ADMIN ban protection returns403; protected session revocation returns400. Unknown users404. Additional overview/review/audit reads are named private database services invoked by server pages, not public analytics endpoints. Full semantics, privacy and migration limits: [Administration](ADMINISTRATION.md).

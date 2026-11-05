@@ -26,6 +26,11 @@ model User {
   stripeSubscriptionId String? @unique
   /// Durable checkout intent and exact idempotent request; no payment credentials.
   billingCheckout Json?
+  /// Staff gifts are independent of Stripe and expire without a background job.
+  supporterGiftUntil DateTime?
+  supporterGiftPermanent Boolean @default(false)
+  bannedAt DateTime?
+  bannedUntil DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   compositions Composition[]
@@ -54,6 +59,26 @@ model User {
   reviewedReports ContentReport[] @relation("ReportReviewer")
   moderationLogs ModerationLog[]
 
+}
+model DiscordBan {
+  discordId String @id
+  reason String
+  createdById String
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  revokedAt DateTime?
+  version Int @default(1)
+}
+model AdminAudit {
+  id String @id @default(cuid())
+  /// Immutable actor/target identifiers; no OAuth credentials or session tokens.
+  actorId String
+  targetId String
+  action String
+  reason String
+  createdAt DateTime @default(now())
+  @@index([createdAt])
+  @@index([targetId, createdAt])
 }
 model Account {
   id String @id @default(cuid())

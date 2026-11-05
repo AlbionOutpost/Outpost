@@ -41,6 +41,7 @@ import "./product-system.css";
 import "./product-research.css";
 import "./product-support.css";
 import "./editor-workspaces.css";
+import "./workspace-refresh.css";
 export const metadata: Metadata = rootMetadata();
 export default async function Layout({ children }: { children: React.ReactNode }) {
   await connection();
@@ -49,7 +50,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const user = session?.user?.id
     ? await db.user.findUnique({
         where: { id: session.user.id },
-        select: { region: true, name: true, image: true },
+        select: { region: true, name: true, image: true, role: true },
       })
     : null;
   const initialRegion = regionSchema
@@ -71,7 +72,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <Shell
           key={`${initialRegion}:${initialLight}`}
           authenticated={!!session?.user?.id}
-          account={user ? { name: user.name, image: user.image } : null}
+          account={user ? { name: user.name, image: user.image, role: user.role } : null}
           initialLight={initialLight}
           initialRegion={initialRegion}
         >

@@ -122,9 +122,9 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
             </p>
             <p>
               Optionale Angaben wie Albion-Charaktername und Region sowie Erstellungs- und
-              Aktualisierungszeit gehören zum Profil. Bei angemeldeten Besuchen wird der
-              Aktualisierungszeitpunkt höchstens ungefähr alle zwölf Stunden berührt; er dient auch
-              der aggregierten Anzeige aktiver Spieler.
+              Aktualisierungszeit gehören zum Profil. Die öffentliche Kontenzahl zählt registrierte
+              Konten; daraus werden keine Besuchszahlen oder aktuell angemeldeten Spieler
+              abgeleitet.
             </p>
             <h3>Gespeicherte Inhalte und Zusammenarbeit</h3>
             <p>
@@ -348,6 +348,16 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
         title: "Speicherdauer, Export & Löschung",
         body: (
           <>
+            <p>
+              Administratoren können befristete oder widerrufliche Supporter-Geschenke und
+              Discord-Kontosperren verwalten. Dabei speichern wir die zugehörigen Konto- oder
+              Discord-Kennungen, Beginn und gegebenenfalls Ablauf sowie den Grund und die handelnde
+              Administration in einem Zugriffsprotokoll. Geschenke ändern keine Stripe-Abonnements.
+              Aktive Sperren widerrufen Sitzungen und verhindern weitere Anmeldungen. Sperrkennungen
+              und minimale Administrationsprotokolle werden zur Missbrauchsabwehr getrennt von
+              löschbaren Profilen aufbewahrt; die konkreten, erforderlichen Aufbewahrungsfristen
+              sind noch vom Betreiber festzulegen.
+            </p>
             <p>
               Serverseitige Kontoinhalte bleiben grundsätzlich für die jeweils genutzten Funktionen
               gespeichert, bis sie gelöscht werden oder der Zweck entfällt. Eine vollständige
@@ -756,9 +766,8 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
             </p>
             <p>
               Optional details such as your Albion character name and region, along with creation
-              and update timestamps, form part of your profile. During signed-in visits, the update
-              timestamp is touched no more than approximately once every twelve hours; it also
-              supports the aggregate display of active players.
+              and update timestamps, form part of your profile. The public account count measures
+              registered accounts, not website visits or players currently online.
             </p>
             <h3>Saved content and collaboration</h3>
             <p>
@@ -974,6 +983,15 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
         title: "Retention, export & deletion",
         body: (
           <>
+            <p>
+              Administrators can manage time-limited or revocable Supporter gifts and Discord
+              account bans. We record the related account or Discord identifiers, start and optional
+              expiry, reason and administrator in an access audit trail. Gifts do not change Stripe
+              subscriptions. Active bans revoke sessions and prevent new sign-ins. Ban identifiers
+              and minimal administrative audit records are retained separately from deletable
+              profiles for abuse prevention; the operator still needs to define the necessary
+              retention periods.
+            </p>
             <p>
               Server-side account content is generally stored for the features used until it is
               deleted or its purpose ceases. A complete approved retention schedule for accounts,

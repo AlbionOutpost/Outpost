@@ -6,7 +6,8 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { SupporterActions } from "@/components/supporter-actions";
 import { authOptions } from "@/lib/auth";
 import { regionSchema } from "@/lib/albion/region-config";
-import { billingProfile } from "@/lib/billing/plan";
+import { giftedSupporter } from "@/lib/admin/policy";
+import { billingProfile, isSupporter } from "@/lib/billing/plan";
 import { supporterPrice } from "@/lib/billing/price";
 import { stripeConfig } from "@/lib/billing/stripe";
 import {
@@ -41,7 +42,7 @@ export default async function Supporter({
   const configured = stripeConfig() !== null;
   const session = await getServerSession(authOptions);
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
-  const supporter = profile?.plan === "SUPPORTER";
+  const supporter = isSupporter(profile);
   const price = await supporterPrice();
   const renews = profile?.planRenewsAt
     ? profile.planRenewsAt.toLocaleDateString("en-GB", {
@@ -90,7 +91,21 @@ export default async function Supporter({
         </article>
       </section>
       <section className="raised premium-status" aria-labelledby="premium-status-title">
-        {!configured ? (
+        {giftedSupporter(profile) ? (
+          <>
+            <h2 id="premium-status-title">Your Supporter gift is active</h2>
+            <p>
+              You have all Supporter benefits
+              {profile?.supporterGiftUntil && !profile.supporterGiftPermanent
+                ? ` until ${profile.supporterGiftUntil.toLocaleDateString("en-GB")}`
+                : " until the gift is revoked"}
+              . This gift does not create a charge or change an existing subscription.
+            </p>
+            {profile?.stripeCustomerId && configured && (
+              <SupporterActions region={region} mode="manage" />
+            )}
+          </>
+        ) : !configured ? (
           <>
             <h2 id="premium-status-title">Not for sale yet</h2>
             <p>

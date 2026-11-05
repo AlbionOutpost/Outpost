@@ -26,7 +26,7 @@ export default async function Page() {
         glyph="catalog"
         scene="market"
         title="Item database"
-        description="Every item's stats, abilities, recipes, tiers and current prices. Find gear by name, tier and enchantment."
+        description="Browse Albion equipment by name, tier and enchantment, then compare reported market prices."
       />
       <ItemCatalog metadata={metadata} total={total} categories={slots.map((i) => i.slot).sort()} />
     </>

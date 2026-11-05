@@ -17,8 +17,33 @@ CREATE TABLE "User" (
     "stripeCustomerId" TEXT,
     "stripeSubscriptionId" TEXT,
     "billingCheckout" TEXT CHECK ("billingCheckout" IS NULL OR json_valid("billingCheckout")),
+    "supporterGiftUntil" DATETIME,
+    "supporterGiftPermanent" BOOLEAN NOT NULL DEFAULT false,
+    "bannedAt" DATETIME,
+    "bannedUntil" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "DiscordBan" (
+    "discordId" TEXT NOT NULL PRIMARY KEY,
+    "reason" TEXT NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" DATETIME,
+    "revokedAt" DATETIME,
+    "version" INTEGER NOT NULL DEFAULT 1
+);
+
+-- CreateTable
+CREATE TABLE "AdminAudit" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "actorId" TEXT NOT NULL,
+    "targetId" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -431,6 +456,12 @@ CREATE UNIQUE INDEX "User_stripeCustomerId_key" ON "User"("stripeCustomerId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_stripeSubscriptionId_key" ON "User"("stripeSubscriptionId");
+
+-- CreateIndex
+CREATE INDEX "AdminAudit_createdAt_idx" ON "AdminAudit"("createdAt");
+
+-- CreateIndex
+CREATE INDEX "AdminAudit_targetId_createdAt_idx" ON "AdminAudit"("targetId", "createdAt");
 
 -- CreateIndex
 CREATE INDEX "Account_userId_idx" ON "Account"("userId");

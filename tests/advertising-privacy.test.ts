@@ -71,7 +71,7 @@ describe("advertising is closed without a real consent/revocation integration", 
       expect(await AdSlot({ placement, offer: true })).toBeNull();
     expect(state.user).toHaveBeenCalledWith({
       where: { id: "server-supporter" },
-      select: { plan: true },
+      select: { plan: true, supporterGiftUntil: true, supporterGiftPermanent: true },
     });
   });
 
@@ -83,8 +83,21 @@ describe("advertising is closed without a real consent/revocation integration", 
     noAdMarkup(html);
     expect(state.user).toHaveBeenCalledWith({
       where: { id: "free-account" },
-      select: { plan: true },
+      select: { plan: true, supporterGiftUntil: true, supporterGiftPermanent: true },
     });
+  });
+
+  it("server-side gifts suppress offers and expired gifts do not", async () => {
+    state.session.mockResolvedValue({ user: { id: "gift-account" } });
+    state.user.mockResolvedValue({
+      plan: "FREE",
+      supporterGiftUntil: new Date(Date.now() + 60000),
+    });
+    expect(await AdSlot({ placement: "hub", offer: true })).toBeNull();
+    state.user.mockResolvedValue({ plan: "FREE", supporterGiftUntil: new Date(Date.now() - 1) });
+    expect(renderToStaticMarkup(await AdSlot({ placement: "hub", offer: true }))).toContain(
+      'href="/supporter"',
+    );
   });
 
   it("server entitlement failures do not fall back to an advertising or offer response", async () => {

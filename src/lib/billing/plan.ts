@@ -1,5 +1,6 @@
 import { db, databaseService } from "@/lib/db";
 import { HttpError } from "@/lib/http-error";
+import { giftedSupporter } from "../admin/policy";
 
 export type Plan = "FREE" | "SUPPORTER";
 /** Stripe statuses that keep the Supporter benefits on. */
@@ -8,8 +9,16 @@ const activeStatuses = new Set(["active", "trialing", "past_due"]);
 export const planForStatus = (status: string | null | undefined): Plan =>
   status && activeStatuses.has(status) ? "SUPPORTER" : "FREE";
 
-export const isSupporter = (user: { plan?: string | null } | null | undefined) =>
-  user?.plan === "SUPPORTER";
+export const isSupporter = (
+  user:
+    | {
+        plan?: string | null;
+        supporterGiftUntil?: Date | string | null;
+        supporterGiftPermanent?: boolean;
+      }
+    | null
+    | undefined,
+) => user?.plan === "SUPPORTER" || giftedSupporter(user);
 
 export type SubscriptionRecord = {
   customerId: string;
@@ -66,6 +75,8 @@ export const billingProfile = (userId: string) =>
       name: true,
       email: true,
       plan: true,
+      supporterGiftUntil: true,
+      supporterGiftPermanent: true,
       planStatus: true,
       planRenewsAt: true,
       stripeCustomerId: true,

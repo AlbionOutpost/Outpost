@@ -13,6 +13,10 @@ const commands = [
     "authorization-regressions",
     ["node", "--env-file=.env", "--import", "tsx", "scripts/test-billing-security.ts"],
   ],
+  [
+    "admin-authorization",
+    ["node", "--env-file=.env", "--import", "tsx", "scripts/test-admin-security.ts"],
+  ],
   ["build", ["npm", "run", "build"]],
   ["browser", ["npm", "run", "test:e2e"]],
   // Production advisories fail at every severity. Development-only alerts remain

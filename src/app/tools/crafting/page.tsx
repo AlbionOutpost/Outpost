@@ -16,7 +16,7 @@ export default async function Page({
         glyph="craft"
         scene="economy"
         title="Crafting calculator"
-        description="Plan. Calculate. Craft with confidence. Price your materials and see what your run could earn."
+        description="Choose a recipe, price your materials and compare the costs, returns and profit of your run."
       />
       <ProductionCalculator
         initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}

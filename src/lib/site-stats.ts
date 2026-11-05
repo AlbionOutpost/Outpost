@@ -1,22 +1,23 @@
 import { db, databaseService } from "./db";
 
-/**
- * Public counts shown on the landing page. Only what is measured:
- * - players active this month: signed-in accounts that opened any page in the last 30 days
- *   (a signed-in visit touches the account's updatedAt at most twice a day, see auth.ts).
- *   Visitors who never sign in are not counted.
- * - Supporters: accounts on the Supporter plan (written only by the Stripe webhook).
- */
+/** Public aggregates: registered Outpost accounts and current paid/gift entitlements.
+ * Account edits do not imply visits. No traffic/online-user analytics is inferred. */
+// Keep the legacy RPC field for compatible web rollbacks; it now counts registered accounts.
 export type SiteStats = { monthlyPlayers: number; supporters: number };
 async function localSiteStats(): Promise<SiteStats> {
-  const since = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  // Filtered here rather than in SQL: the account store keeps dates in its own format.
-  const [users, supporters] = await Promise.all([
-    db.user.findMany({ select: { updatedAt: true } }),
-    db.user.count({ where: { plan: "SUPPORTER" } }),
+  const [accounts, supporters] = await Promise.all([
+    db.user.count(),
+    db.user.count({
+      where: {
+        OR: [
+          { plan: "SUPPORTER" },
+          { supporterGiftPermanent: true },
+          { supporterGiftUntil: { gt: new Date() } },
+        ],
+      },
+    }),
   ]);
-  const active = users.filter((u) => new Date(u.updatedAt).getTime() >= since).length;
-  return { monthlyPlayers: active, supporters };
+  return { monthlyPlayers: accounts, supporters };
 }
 export const siteStats: typeof localSiteStats = (...args) =>
   databaseService<SiteStats>("siteStats", args) ?? localSiteStats(...args);

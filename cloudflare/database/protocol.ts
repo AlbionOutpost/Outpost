@@ -2,6 +2,8 @@ import { HttpError } from "../../src/lib/http-error";
 
 export const models = new Set([
   "user",
+  "discordBan",
+  "adminAudit",
   "account",
   "session",
   "verificationToken",
