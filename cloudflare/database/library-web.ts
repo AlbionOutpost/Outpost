@@ -54,11 +54,22 @@ export const queryLibraryCompositions = async (input: LibraryQuery) =>
   (await databaseBinding()
     .archiveList("compositions", input)
     .catch(() => publicLibraryPage("compositions", input))) as LibraryPage<LibraryComposition>;
-/** Totals for the landing page: the archive manifest answers each count with one row. */
-export const libraryCounts = async () => ({
-  builds: (await queryLibraryBuilds({ page: 1 })).total,
-  compositions: (await queryLibraryCompositions({ page: 1 })).total,
-  guides: (await libraryGuides()).length,
+/** Totals for the landing page: the archive manifest answers both counts in one small read. */
+export const libraryCounts = cache(async () => {
+  const [totals, guides] = await Promise.all([
+    databaseBinding()
+      .archiveTotals()
+      .catch(async () => {
+        // An older data worker without archiveTotals, or D1 unavailable: use the public index.
+        const [builds, compositions] = await Promise.all([
+          publicLibraryPage("builds", { page: 1 }),
+          publicLibraryPage("compositions", { page: 1 }),
+        ]);
+        return { builds: builds.total, compositions: compositions.total };
+      }),
+    libraryGuides(),
+  ]);
+  return { builds: totals.builds, compositions: totals.compositions, guides: guides.length };
 });
 const featured = [
   "battleaxe-mist-build",

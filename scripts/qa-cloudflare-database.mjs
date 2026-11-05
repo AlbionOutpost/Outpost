@@ -10,7 +10,7 @@ mkdirSync(folder, { recursive: true });
 // has no HTTP query endpoint and always returns 404. Never deploy this harness.
 writeFileSync(
   `${folder}/harness.mjs`,
-  `export default {async fetch(request,env){if(new URL(request.url).pathname==='/local-only-worker-fetch')return env.DATA.fetch(request);if(new URL(request.url).pathname!=='/local-only-test')return new Response('Not found',{status:404});const {method,args}=await request.json();if(method==='serviceShape'){const reply=await env.DATA.service(...args);return Response.json({reply,dates:reply.ok?(reply.value.builds||[]).map(row=>(row.build||row).updatedAt instanceof Date):[]});}if(!['query','service','rateLimit','upstreamBlock','upstreamBlocked','health','archiveList','archiveFind'].includes(method))return new Response('Denied',{status:403});return Response.json((await env.DATA[method](...args)) ?? null);}};`,
+  `export default {async fetch(request,env){if(new URL(request.url).pathname==='/local-only-worker-fetch')return env.DATA.fetch(request);if(new URL(request.url).pathname!=='/local-only-test')return new Response('Not found',{status:404});const {method,args}=await request.json();if(method==='serviceShape'){const reply=await env.DATA.service(...args);return Response.json({reply,dates:reply.ok?(reply.value.builds||[]).map(row=>(row.build||row).updatedAt instanceof Date):[]});}if(!['query','service','rateLimit','upstreamBlock','upstreamBlocked','health','archiveList','archiveFind','archiveTotals'].includes(method))return new Response('Denied',{status:403});return Response.json((await env.DATA[method](...args)) ?? null);}};`,
 );
 writeFileSync(
   `${folder}/wrangler.jsonc`,
@@ -724,6 +724,7 @@ try {
     const comps = await call("archiveList", "compositions", { page: 1 });
     assert.equal(comps.total, 682);
     assert.equal(comps.rows.length, 18);
+    assert.deepEqual(await call("archiveTotals"), { builds: builds.length, compositions: 682 });
   });
   // Persisted provider links are the authority used by owner-admin promotion. These are
   // isolated database fixtures, never evidence of a Discord consent/token exchange.

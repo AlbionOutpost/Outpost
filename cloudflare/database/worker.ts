@@ -21,7 +21,7 @@ import adminSchema from "../d1/migrations/0008_admin_controls.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
-import { archiveList, archiveFind } from "./archive";
+import { archiveList, archiveFind, archiveTotals } from "./archive";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
 
 type QueryClient = {
@@ -247,5 +247,8 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
   }
   archiveFind(kind: string, keys: string[]) {
     return archiveFind(this.env.CATALOG, kind, keys);
+  }
+  archiveTotals() {
+    return archiveTotals(this.env.CATALOG);
   }
 }

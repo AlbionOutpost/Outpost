@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import app from "../../.open-next/worker.js";
 import type { OutpostDatabaseBinding } from "../database/web-driver";
 import { requestBudget, secureResponse } from "./request-budget";
+import { edgeCacheEntry } from "./edge-cache";
 
 const lifetime = 30 * 60;
 const cookieName = "outpost-route";
@@ -138,18 +139,6 @@ export class OutpostSession extends DurableObject<OutpostWebEnv> {
     await this.ctx.storage.deleteAll();
   }
 }
-/* Search for signed-out visitors only ever returns public library, catalog and tool rows, so
- * the same query gives everyone the same answer: it is kept in the edge cache for ten minutes
- * and answered without waking a render object. Anything with an account cookie (which can
- * include private builds, comps and Teams) always goes to the app. */
-const SEARCH_TTL = 600;
-const signedIn = (request: Request) =>
-  /(?:^|;\s*)(?:__Secure-)?next-auth\.session-token=/.test(request.headers.get("Cookie") || "");
-function searchCacheKey(url: URL) {
-  const q = (url.searchParams.get("q") || "").trim().toLowerCase().replace(/\s+/g, " ");
-  if (url.pathname !== "/api/search" || q.length < 2 || q.length > 100) return null;
-  return new Request(`https://${url.hostname}/api/search?q=${encodeURIComponent(q)}`);
-}
 const worker = {
   async fetch(request: Request, env: OutpostWebEnv, ctx?: ExecutionContext) {
     const url = new URL(request.url);
@@ -159,6 +148,18 @@ const worker = {
       url.port = "";
       return secureResponse(Response.redirect(url.toString(), 308), request);
     }
+    const entry = edgeCacheEntry(request);
+    const cache = entry && typeof caches !== "undefined" ? caches.default : null;
+    // A cache hit is answered before the rate-limit object: it costs no Durable Object request.
+    if (cache && entry) {
+      const hit = await cache.match(entry.key).catch(() => undefined);
+      if (hit) {
+        const answer = new Response(hit.body, hit);
+        answer.headers.set("Cache-Control", "private, max-age=60");
+        answer.headers.set("X-Outpost-Edge", "hit");
+        return secureResponse(answer, request);
+      }
+    }
     const denial = await requestBudget(
       request,
       env.OUTPOST_DATA as unknown as OutpostDatabaseBinding,
@@ -167,29 +168,18 @@ const worker = {
       denial.headers.set("Cache-Control", "private, no-store");
       return secureResponse(denial, request);
     }
-    const key = request.method === "GET" && !signedIn(request) ? searchCacheKey(url) : null;
-    const cache = key && typeof caches !== "undefined" ? caches.default : null;
-    if (cache && key) {
-      const hit = await cache.match(key).catch(() => undefined);
-      if (hit) {
-        const answer = new Response(hit.body, hit);
-        answer.headers.set("Cache-Control", "private, max-age=60");
-        answer.headers.set("X-Outpost-Search", "hit");
-        return secureResponse(answer, request);
-      }
-    }
     const session = await identity(request, env.OUTPOST_RENDER_SESSION_SECRET);
     const response = await env.SESSIONS.getByName(session.id).fetch(request);
     const result = new Response(response.body, response);
-    if (cache && key && response.status === 200) {
+    if (cache && entry && response.status === 200) {
       const body = await result.clone().arrayBuffer();
       const stored = new Response(body, {
         headers: {
           "Content-Type": response.headers.get("Content-Type") || "application/json",
-          "Cache-Control": `public, max-age=${SEARCH_TTL}`,
+          "Cache-Control": `public, max-age=${entry.ttl}`,
         },
       });
-      const put = cache.put(key, stored).catch(() => {});
+      const put = cache.put(entry.key, stored).catch(() => {});
       if (ctx) ctx.waitUntil(put);
     }
     if (session.cookie) result.headers.append("Set-Cookie", session.cookie);
