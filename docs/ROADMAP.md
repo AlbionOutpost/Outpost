@@ -13,10 +13,10 @@ A full review of the last ~40 PRs. Fixed:
 - **Calculators:** Black Market production output is priced from the highest buy order and charges no setup fee; laborers "Margin" is relabelled return on cost; transport trip counts use exact decimals; the landing quote uses the unrounded 18/118 return rate.
 - **Free-tier cost:** landing counts read the archive manifest instead of scanning about 11.5k D1 rows per view; expression indexes cover the library's default and newest orders (they take effect on the next `cloudflare-stage-library.mjs --apply`); the landing quote and top kills are edge-cached for signed-out visitors, and cache hits skip the rate-limit object; like chips refresh on focus at most every five minutes; the owner-promotion write runs once per user per isolate instead of on every request.
 - **Data truth:** top-kill gear value ignores listings older than the seven-day kill window.
-- **Security:** Discord OAuth tokens are no longer stored; signed-out search is cached for two minutes (was ten).
+- **Security:** Discord OAuth tokens are no longer stored, and tokens stored earlier are cleared by private-store schema step 8 on the next data Worker deploy (Postgres: migration `20261105220000_clear_oauth_tokens`); signed-out search is cached for two minutes (was ten).
 - **Cleanup:** removed dead components, `home-fidelity.css`, the header-search CSS and dead `workspace-refresh.css` rules; deleted the generated root status reports; restored spaces dropped around numbers in the docs.
 
-Still open from the review: require an owner approval before merges to `main` deploy; get the weekly visual suite green and regenerate baselines on CI; fold the rest of `workspace-refresh.css` into the owning sheets; per-user caps and expired-row cleanup for private data; move homepage client fetches server-side; serve smaller activity artwork; null the Discord tokens already stored (`UPDATE Account SET access_token = NULL, refresh_token = NULL, id_token = NULL`).
+Still open from the review: require an owner approval before merges to `main` deploy; get the weekly visual suite green and regenerate baselines on CI; fold the rest of `workspace-refresh.css` into the owning sheets; per-user caps and expired-row cleanup for private data; move homepage client fetches server-side; serve smaller activity artwork.
 
 ## Homepage and navigation — 4 November 2026
 
