@@ -171,7 +171,8 @@ const worker = {
     const session = await identity(request, env.OUTPOST_RENDER_SESSION_SECRET);
     const response = await env.SESSIONS.getByName(session.id).fetch(request);
     const result = new Response(response.body, response);
-    if (cache && entry && response.status === 200) {
+    // An answer with a failed part (`X-Outpost-Partial`) is served but never kept.
+    if (cache && entry && response.status === 200 && !response.headers.has("X-Outpost-Partial")) {
       const body = await result.clone().arrayBuffer();
       const stored = new Response(body, {
         headers: {

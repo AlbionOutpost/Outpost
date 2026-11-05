@@ -8,6 +8,7 @@ const marketRoutes = new Set([
   "/api/transport/prices",
   "/api/economy/prices",
   "/api/laborers/prices",
+  "/api/landing",
   "/api/landing/craft",
   "/api/opportunities",
   "/api/combat-events/top",

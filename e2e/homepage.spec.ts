@@ -1,5 +1,5 @@
 import { expectResultText } from "./support/result-text";
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { normalizeTopKills } from "../src/lib/albion/combat-events";
 
@@ -18,123 +18,109 @@ const topKills = normalizeTopKills(
   JSON.parse(readFileSync("tests/fixtures/combat-top-kills.json", "utf8")),
 );
 
+type Part = Record<string, unknown>;
+const down = (error: string) => ({ ok: false, error });
+/** One `/api/landing` answer; every part not given is unavailable with `error`. */
+async function routeLanding(
+  page: Page,
+  parts: { market?: Part; history?: Part; craft?: Part; planner?: Part; kills?: Part },
+  error = "Unrelated source intentionally unavailable in this fixture",
+) {
+  await page.route("**/api/landing?*", (route) =>
+    route.fulfill({
+      json: {
+        region: new URL(route.request().url()).searchParams.get("region"),
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        market: down(error),
+        history: { ...down(error), city: "Bridgewatch" },
+        craft: down(error),
+        planner: down(error),
+        kills: down(error),
+        ...parts,
+      },
+    }),
+  );
+}
+
 test("landing page: hero numbers, teaser windows, live tool cards, guides, top kills and the footer", async ({
   page,
 }) => {
-  await page.route("**/api/market?*", (route) =>
-    route.fulfill({
-      json: {
-        region: "europe",
-        fetchedAt: new Date().toISOString(),
-        source: "Albion Online Data Project",
-        prices: [
-          quote("T6_METALBAR", "Martlock", 4190, 3900, minutesAgo(180)),
-          quote("T6_METALBAR", "Bridgewatch", 3670, 2165, minutesAgo(9)),
-          quote("T6_METALBAR", "Caerleon", 3900, 0, minutesAgo(30)),
+  const plan = ["T4_CAPE", "T6_MAIN_SWORD", "T6_POTION_HEAL"];
+  await routeLanding(page, {
+    market: {
+      ok: true,
+      item: "T6_METALBAR",
+      prices: [
+        quote("T6_METALBAR", "Martlock", 4190, 3900, minutesAgo(180)),
+        quote("T6_METALBAR", "Bridgewatch", 3670, 2165, minutesAgo(9)),
+        quote("T6_METALBAR", "Caerleon", 3900, 0, minutesAgo(30)),
+      ],
+    },
+    history: {
+      ok: true,
+      item: "T6_METALBAR",
+      city: "Bridgewatch",
+      data: [
+        { item_count: 10, avg_price: 3500, timestamp: "2026-10-01T00:00:00" },
+        { item_count: 12, avg_price: 3900, timestamp: "2026-10-15T00:00:00" },
+        { item_count: 8, avg_price: 3400, timestamp: "2026-10-29T00:00:00" },
+      ],
+    },
+    craft: {
+      ok: true,
+      region: "europe",
+      source: "Albion Online Data Project",
+      batches: 1,
+      candidates: 5,
+      assumptions: { tax: 4, setupFee: 2.5, returnRate: 0, useFocus: false },
+      best: {
+        recipe: { id: "cape-t6", name: "T6 Cape", output: "T6_CAPE", kind: "crafting" },
+        city: "Thetford",
+        rows: [
+          { id: "T6_CLOTH", name: "Lavish Cloth", quantity: 4, unit: 3594, gross: 14376 },
+          { id: "T6_LEATHER", name: "Hardened Leather", quantity: 4, unit: 5499, gross: 21996 },
         ],
+        outputQuantity: 1,
+        complete: true,
+        missing: [],
+        stale: false,
+        upfront: 36372,
+        fees: 1754,
+        revenue: 26984,
+        profit: -11142,
+        margin: -41.3,
       },
-    }),
-  );
-  await page.route("**/api/history?*", (route) =>
-    route.fulfill({
-      json: {
-        region: "europe",
-        fetchedAt: new Date().toISOString(),
-        source: "Albion Online Data Project",
-        data: [
-          {
-            location: "Bridgewatch",
-            item_id: "T6_METALBAR",
-            quality: 1,
-            data: [
-              { item_count: 10, avg_price: 3500, timestamp: "2026-10-01T00:00:00" },
-              { item_count: 12, avg_price: 3900, timestamp: "2026-10-15T00:00:00" },
-              { item_count: 8, avg_price: 3400, timestamp: "2026-10-29T00:00:00" },
+      byCity: [
+        { city: "Thetford", profit: -11142, margin: -41.3 },
+        { city: "Lymhurst", profit: -13826, margin: -50.1 },
+      ],
+    },
+    planner: {
+      ok: true,
+      prices: plan.flatMap((id) =>
+        id === "T6_MAIN_SWORD"
+          ? []
+          : [
+              quote(id, "Martlock", 1000, 900, minutesAgo(5)),
+              quote(id, "Thetford", 1200, 900, minutesAgo(5)),
             ],
-          },
-        ],
-      },
-    }),
-  );
-  await page.route("**/api/landing/craft?*", async (route) => {
-    const batches = Number(new URL(route.request().url()).searchParams.get("batches") ?? 1);
-    return route.fulfill({
-      json: {
-        region: "europe",
-        source: "Albion Online Data Project",
-        batches,
-        candidates: 5,
-        assumptions: { tax: 4, setupFee: 2.5, returnRate: 0, useFocus: false },
-        best: {
-          recipe: { id: "cape-t6", name: "T6 Cape", output: "T6_CAPE", kind: "crafting" },
-          city: "Thetford",
-          rows: [
-            {
-              id: "T6_CLOTH",
-              name: "Lavish Cloth",
-              quantity: 4 * batches,
-              unit: 3594,
-              gross: 14376 * batches,
-            },
-            {
-              id: "T6_LEATHER",
-              name: "Hardened Leather",
-              quantity: 4 * batches,
-              unit: 5499,
-              gross: 21996 * batches,
-            },
-          ],
-          outputQuantity: batches,
-          complete: true,
-          missing: [],
-          stale: false,
-          upfront: 36372 * batches,
-          fees: 1754 * batches,
-          revenue: 26984 * batches,
-          profit: -11142 * batches,
-          margin: -41.3,
-        },
-        byCity: [
-          { city: "Thetford", profit: -11142 * batches, margin: -41.3 },
-          { city: "Lymhurst", profit: -13826 * batches, margin: -50.1 },
-        ],
-      },
-    });
+      ),
+    },
+    kills: {
+      ok: true,
+      region: "europe",
+      source: "Albion Online Game Info",
+      fetchedAt: "2026-10-30T21:45:00Z",
+      window: { days: 7 },
+      events: topKills.map((e, i) => ({
+        ...e,
+        inventory: i === 2 ? [] : e.inventory,
+        crew: i === 1 ? e.crew.slice(0, 4) : e.crew,
+        gearValue: i === 2 ? null : { total: 232_520_000, priced: 7, missing: 1 },
+      })),
+    },
   });
-  await page.route("**/api/market/batch?*", (route) => {
-    const u = new URL(route.request().url());
-    const items = (u.searchParams.get("items") ?? "").split(",");
-    return route.fulfill({
-      json: {
-        region: "europe",
-        fetchedAt: new Date().toISOString(),
-        source: "Albion Online Data Project",
-        prices: items.flatMap((id) =>
-          id === "T6_MAIN_SWORD"
-            ? []
-            : [
-                quote(id, "Martlock", 1000, 900, minutesAgo(5)),
-                quote(id, "Thetford", 1200, 900, minutesAgo(5)),
-              ],
-        ),
-      },
-    });
-  });
-  await page.route("**/api/combat-events/top?*", (route) =>
-    route.fulfill({
-      json: {
-        region: "europe",
-        source: "Albion Online Game Info",
-        fetchedAt: "2026-10-30T21:45:00Z",
-        events: topKills.map((e, i) => ({
-          ...e,
-          inventory: i === 2 ? [] : e.inventory,
-          crew: i === 1 ? e.crew.slice(0, 4) : e.crew,
-          gearValue: i === 2 ? null : { total: 232_520_000, priced: 7, missing: 1 },
-        })),
-      },
-    }),
-  );
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
   await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
@@ -455,20 +441,10 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 });
 
 test("landing page keeps every state honest when the sources are down", async ({ page }) => {
-  for (const path of [
-    "**/api/market?*",
-    "**/api/history?*",
-    "**/api/landing/craft?*",
-    "**/api/market/batch?*",
-  ])
-    await page.route(path, (route) =>
-      route.fulfill({ status: 503, json: { error: "Source unavailable" } }),
-    );
-  await page.route("**/api/combat-events/top?*", (route) =>
-    route.fulfill({
-      status: 503,
-      json: { error: "Albion’s kill ranking is unavailable right now." },
-    }),
+  await routeLanding(
+    page,
+    { kills: down("Albion’s kill ranking is unavailable right now.") },
+    "Source unavailable",
   );
   await page.goto("/?region=europe");
   const cards = page.locator(".landing-card");
@@ -512,30 +488,13 @@ test("robots points crawlers at a sitemap of public pages and keeps editors out"
 test("planner digits roll down and up, and reduced motion shows exact results immediately", async ({
   page,
 }) => {
-  for (const endpoint of [
-    "**/api/landing/craft?*",
-    "**/api/market?*",
-    "**/api/history?*",
-    "**/api/combat-events/top?*",
-  ])
-    await page.route(endpoint, (route) =>
-      route.fulfill({
-        status: 503,
-        json: {
-          error: "Unrelated source intentionally unavailable in the isolated animation fixture",
-        },
-      }),
-    );
-  await page.route("**/api/market/batch?*", (route) => {
-    const items = (new URL(route.request().url()).searchParams.get("items") ?? "").split(",");
-    return route.fulfill({
-      json: {
-        region: "europe",
-        source: "Albion Online Data Project",
-        fetchedAt: new Date().toISOString(),
-        prices: items.map((id) => quote(id, "Martlock", 1000, 900, new Date().toISOString())),
-      },
-    });
+  await routeLanding(page, {
+    planner: {
+      ok: true,
+      prices: ["T4_CAPE", "T6_MAIN_SWORD", "T6_POTION_HEAL"].map((id) =>
+        quote(id, "Martlock", 1000, 900, new Date().toISOString()),
+      ),
+    },
   });
   await page.goto("/");
   const planner = page.locator(".landing-card").nth(2);
@@ -594,28 +553,39 @@ test("craft quantity recalculates without refetching; shared digits roll and red
   const requests: string[] = [];
   await page.route("**/api/**", async (route) => {
     const url = new URL(route.request().url());
-    if (url.pathname !== "/api/landing/craft")
+    if (url.pathname !== "/api/landing")
       return route.fulfill({ status: 503, json: { error: "Unavailable in this controlled test" } });
-    requests.push(url.searchParams.get("batches") || "");
+    requests.push(url.search);
+    const error = { ok: false, error: "Unavailable in this controlled test" };
     return route.fulfill({
       json: {
-        batches: 1,
-        candidates: 1,
-        best: {
-          recipe: { id: "cape-t4", name: "T4 Cape", output: "T4_CAPE" },
-          city: "Lymhurst",
-          rows: [{ id: "T4_CLOTH", name: "Cloth", quantity: 4, unit: 100, gross: 400 }],
-          outputQuantity: 1,
-          complete: true,
-          missing: [],
-          upfront: 400,
-          fees: 39,
-          revenue: 600,
-          profit: 222.2,
-          margin: 37.0333,
+        region: url.searchParams.get("region"),
+        fetchedAt: new Date().toISOString(),
+        source: "Albion Online Data Project",
+        market: error,
+        history: { ...error, city: "Bridgewatch" },
+        planner: error,
+        kills: error,
+        craft: {
+          ok: true,
+          batches: 1,
+          candidates: 1,
+          best: {
+            recipe: { id: "cape-t4", name: "T4 Cape", output: "T4_CAPE" },
+            city: "Lymhurst",
+            rows: [{ id: "T4_CLOTH", name: "Cloth", quantity: 4, unit: 100, gross: 400 }],
+            outputQuantity: 1,
+            complete: true,
+            missing: [],
+            upfront: 400,
+            fees: 39,
+            revenue: 600,
+            profit: 222.2,
+            margin: 37.0333,
+          },
+          byCity: [{ city: "Lymhurst", profit: 222.2, margin: 37.0333 }],
+          unpriced: [],
         },
-        byCity: [{ city: "Lymhurst", profit: 222.2, margin: 37.0333 }],
-        unpriced: [],
       },
     });
   });
@@ -658,7 +628,8 @@ test("craft quantity recalculates without refetching; shared digits roll and red
             .filter((a) => a.playState === "running").length,
       ),
   ).toBe(0);
-  expect(requests).toEqual(["1"]);
+  // One homepage request; changing the quantity recalculates from it.
+  expect(requests).toEqual(["?region=europe"]);
   await expect(card).not.toContainText("Could not update");
 });
 

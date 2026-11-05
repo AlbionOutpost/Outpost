@@ -6,14 +6,11 @@ import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { LoadoutBoard } from "@/components/loadout-board";
-import { useOutpostRegion } from "@/components/region-context";
 import { sourceAge } from "@/lib/albion/source-age";
-import type { TopKill, TopKillsFeed } from "@/lib/albion/combat-events";
+import type { TopKill } from "@/lib/albion/combat-events";
+import type { LandingKill as Kill, LandingKills as Feed } from "@/lib/landing-data";
+import { useLandingPart } from "./landing-data";
 import { compact } from "./silver";
-import { useLoad } from "./use-load";
-
-type Kill = TopKill & { gearValue: { total: number; priced: number; missing: number } | null };
-type Feed = Omit<TopKillsFeed, "events"> & { events: Kill[] };
 type Player = TopKill["killer"];
 
 const ip = (p: Player) => (p.itemPower ? Math.round(p.itemPower).toLocaleString("en-US") : "—");
@@ -55,14 +52,12 @@ function Side({ p, victim }: { p: Player; victim?: boolean }) {
  * their kit. The section heading says how old the kills are; nothing is estimated silently.
  */
 export function TopKills({ suffix, serverName }: { suffix: string; serverName: string }) {
-  const region = useOutpostRegion();
   const [open, setOpen] = useState<Set<number>>(() => new Set());
-  const data = useLoad(region, async (signal) => {
-    const r = await fetch(`/api/combat-events/top?region=${region}`, { signal });
-    const body = await r.json();
-    if (!r.ok) throw new Error(body.error || "Kill ranking unavailable.");
-    return { feed: body as Feed, at: Date.now() };
-  });
+  const kills = useLandingPart("kills");
+  const data = kills && {
+    error: kills.error,
+    value: kills.value && { feed: kills.value as Feed, at: kills.at },
+  };
   return (
     <section className="landing-wrap landing-kills" aria-labelledby="home-kills-title">
       <div className="section-heading landing-section-heading">
