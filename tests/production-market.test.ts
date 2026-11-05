@@ -91,3 +91,62 @@ it("batches production inputs by quality and selects explicit region and markets
   const exhausted = await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`));
   expect(exhausted.status).toBe(503);
 });
+it("prices Black Market output from its highest buy order and keeps missing bids missing", async () => {
+  mocks.limit.mockResolvedValue(true);
+  mocks.prices
+    .mockReset()
+    .mockImplementation(async (_region: string, items: string[], quality: number) =>
+      items.map((item_id) => ({
+        item_id,
+        quality,
+        city: item_id === "T4_MAIN_AXE" ? "Black Market" : "Lymhurst",
+        sell_price_min: 5000,
+        sell_price_min_date: "2026-01-01T00:00:00",
+        buy_price_max: item_id === "T4_MAIN_AXE" ? 3000 : 90,
+        buy_price_max_date: "2026-01-02T00:00:00",
+      })),
+    );
+  const { GET } = await import("../src/app/api/economy/prices/route");
+  const params = new URLSearchParams({
+    kind: "crafting",
+    region: "europe",
+    recipeId: "battleaxe-t4",
+    materialCity: "Lymhurst",
+    outputCity: "Black Market",
+    quality: "1",
+    enchantFamily: "MAIN_AXE",
+    tier: "4",
+    fromEnchant: "0",
+    toEnchant: "1",
+  });
+  const body = await (
+    await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`))
+  ).json();
+  // Materials are bought instantly from asks; the Black Market output sells instantly into bids.
+  expect(body.prices.T4_METALBAR).toMatchObject({
+    value: 5000,
+    observedAt: "2026-01-01T00:00:00",
+    execution: "instant-purchase",
+  });
+  expect(body.prices.T4_MAIN_AXE).toMatchObject({
+    value: 3000,
+    observedAt: "2026-01-02T00:00:00",
+    execution: "instant-sale",
+    city: "Black Market",
+  });
+  mocks.prices.mockResolvedValue([
+    {
+      item_id: "T4_MAIN_AXE",
+      quality: 1,
+      city: "Black Market",
+      sell_price_min: 5000,
+      sell_price_min_date: "2026-01-01T00:00:00",
+      buy_price_max: 0,
+      buy_price_max_date: "0001-01-01T00:00:00",
+    },
+  ]);
+  const missing = await (
+    await GET(new NextRequest(`http://localhost/api/economy/prices?${params}`))
+  ).json();
+  expect(missing.prices.T4_MAIN_AXE).toMatchObject({ value: null, observedAt: null });
+});

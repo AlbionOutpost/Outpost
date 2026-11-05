@@ -34,7 +34,7 @@ returnCredit     = Σ (eligible) gross·r
 stationCost      = stationFee·batches
 recipeCost       = recorded recipe silver requirement·batches
 revenue          = outputPrice·outputCount·batches
-fees             = revenue·(tax + setupFee)/100
+fees             = revenue·(tax + setupFee)/100   (Black Market output: revenue·tax/100)
 cost             = gross − returnCredit + stationCost + recipeCost
 profit           = revenue − fees − cost            (economic, values returns)
 cashProfit       = revenue − fees − gross − stationCost − recipeCost
@@ -43,6 +43,7 @@ incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 ```
 
 - Output quality is fixed at 1 for refining, cooking and alchemy.
+- **Black Market output** sells instantly: `/api/economy/prices` fills it from `buy_price_max` (its date as the observation time) and tags the observation `execution: "instant-sale"`; materials are tagged `instant-purchase` and other outputs `listing` (both `sell_price_min`). Only sales tax applies — no setup fee. A source observation for Black Market output without `instant-sale` provenance (older saved runs, asks) stays missing until refreshed; manual prices are accepted. Example: T4 battleaxe at 3,000, materials 2,000, tax 4 %, setup 2.5 % → fees **120**, profit **880** (a Lymhurst listing: 195 / 805).
 - Recorded fixed recipe silver requirements are included automatically and never returned. The editable station/upgrade fee is an additional charge; upfront cash and plan totals include both. Restored scenarios are recalculated against their resolved recipe. Imported requirements still need current-game verification.
 - New runs record `recipeSilverAccounting: "separate"`. Older runs with both a nonzero recorded fee and a nonzero fixed recipe requirement retain their inputs but withhold calculations/save until the player confirms whether the fee is additional or includes the fixed requirement. The latter choice subtracts the known requirement only after confirmation, and is available only when the recorded total covers it. Legacy zero-fee runs can safely include the requirement automatically.
 - Enchanting rejects focus and return flags. Upgrades come from `game/upgrades.json`: each step from `.n−1` to `.n` costs the listed rune/soul/relic count (96 helmet/boots/cape/off-hand, 192 chest/bag, 288 one-handed, 384 two-handed).
@@ -86,6 +87,8 @@ transportCost = trips·costPerTrip + risk
 → trade(), with setup fee only in listing mode
 ```
 
+`tripsNeeded` divides the exact decimal inputs as BigInt rationals (`decimal.ts`), so a load that exactly fills the capacity is never pushed into an extra trip by floating-point error: 3 × 0.1 kg in 0.3 kg is **1** trip, 4 × 0.1 kg is 2.
+
 `transportPriceMatches()` enforces item/quality/region/city/execution identity. The UI fills weight per item from `/api/items/game` (only replacing an empty or previously auto-filled value) and offers mount presets from `mounts.ts` (carry weight bonus per quality, without the character's own load).
 
 ## Laborers — `laborers.ts` → `laborers()`
@@ -98,9 +101,10 @@ lootNet       = valuePerUnit · units · journals · (1 − (tax + listing setup
 emptyNet      = sellEmpty ? emptyPrice · journals · same rate : 0
 cost          = fullPrice · journals · (1 + buyOrder setup/100)
 profit        = lootNet + emptyNet − cost        complete only when coverage = 100 %
+roi           = profit / cost · 100              shown as "Return on cost"; null when cost is 0
 ```
 
-Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**.
+Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**, return on cost **38.9568 %**.
 
 Observed prices retain execution provenance: instant journal purchases use asks, buy-order journal targets use bids, instant loot/empty-journal sales use bids, and listings use asks. Changing execution invalidates mismatched observations immediately, including when refresh fails; legacy observations without execution identity remain unavailable until refreshed. Explicit manual targets remain usable across execution changes.
 
@@ -156,7 +160,9 @@ No cheapest-path refining planner (including heart/transmutation alternatives) y
 
 The landing showcase loads one `/api/landing/craft?batches=1` quote per selected region. Its1–50 batch stepper uses `resizeCraftQuote`: quantity, material gross, upfront cost, fees, revenue and profit scale by `requestedBatches / quotedBatches`. Unit prices, return/tax assumptions, margin, missing prices and city ordering do not change. This is exact under the existing production engine's linear per-batch accounting; no per-craft rounding or new observation is claimed. All values remain in silver. Region changes discard the previous quote. Initial missing/error observations stay unavailable; the obsolete failed-refresh banner is removed.
 
-Independent fixture:4 cloth at100, output600,15.3% returns,6.5% sales fees → at12 batches48 cloth,4800 upfront,7200 revenue,468 fees,2666.4 economic profit. Null prices remain null; losses remain losses. Units/assumptions in the full production engine remain unchanged. Shared display transitions expose actual targets immediately to accessibility; the animated digits do not become calculation inputs.
+The quote's return assumption is the exact royal-city base rate without focus, 100·18/118 = 15.2542…% (bonus 18, see the return profile above); it is rounded only for display (“15.3% return”).
+
+Independent fixture: 4 cloth at 100, output 600, 18/118 returns, 6.5% sales fees → at 12 batches 48 cloth, 4,800 upfront, 7,200 revenue, 468 fees, 7,200 − 468 − 4,800·100/118 = 2,664.2034 economic profit. Null prices remain null; losses remain losses. Units/assumptions in the full production engine remain unchanged. Shared display transitions expose actual targets immediately to accessibility; the animated digits do not become calculation inputs.
 
 ### Landing preview material density — 4 November 2026
 
