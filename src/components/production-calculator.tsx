@@ -902,7 +902,7 @@ export function ProductionCalculator({
             </button>
           </div>
           <p className="production-price-help">
-            Observed prices for {draft.materialCity} load with each change; edit any price by hand.
+            Observed prices for {draft.materialCity} load with each change; edit any price by hand.{" "}
             {productionSellsInstantly(draft)
               ? "Output sells instantly to the Black Market's highest buy order."
               : `Output sells in ${draft.outputCity}.`}
