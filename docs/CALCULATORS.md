@@ -99,9 +99,10 @@ lootNet       = valuePerUnit · units · journals · (1 − (tax + listing setup
 emptyNet      = sellEmpty ? emptyPrice · journals · same rate : 0
 cost          = fullPrice · journals · (1 + buyOrder setup/100)
 profit        = lootNet + emptyNet − cost        complete only when coverage = 100 %
+roi           = profit / cost · 100              shown as "Return on cost"; null when cost is 0
 ```
 
-Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**.
+Fees are subtracted from the sale like every other calculator (the archived site divided by 1.065/1.105 here, which understates tax). Unpriced loot gives a labelled lower bound. Reference case: T4 blacksmith, T4 house → 17.2 units; bars 100, planks 50, cloth 20 → 82/unit, 1,410.4 gross; 8 % tax, full 1,000, empty 100 → profit **389.568**, return on cost **38.9568 %**.
 
 Observed prices retain execution provenance: instant journal purchases use asks, buy-order journal targets use bids, instant loot/empty-journal sales use bids, and listings use asks. Changing execution invalidates mismatched observations immediately, including when refresh fails; legacy observations without execution identity remain unavailable until refreshed. Explicit manual targets remain usable across execution changes.
 

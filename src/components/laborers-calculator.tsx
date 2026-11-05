@@ -482,8 +482,8 @@ export function LaborersCalculator() {
                 <dd>{money(result.cost)}</dd>
               </div>
               <div>
-                <dt>Margin</dt>
-                <dd>{result.margin === null ? "—" : `${result.margin.toFixed(1)}%`}</dd>
+                <dt>Return on cost</dt>
+                <dd>{result.roi === null ? "—" : `${result.roi.toFixed(1)}%`}</dd>
               </div>
             </dl>
             <p className="muted">
