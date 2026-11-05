@@ -1,4 +1,15 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator } from "@playwright/test";
+
+async function waitForCardMotion(card: Locator) {
+  await card.evaluate(async (node) => {
+    // Flush the new pseudo-state before querying its CSS transitions. A wall-clock
+    // sleep can expire before the browser starts painting, especially on a busy runner.
+    void getComputedStyle(node).transform;
+    await Promise.all(
+      node.getAnimations({ subtree: true }).map((animation) => animation.finished.catch(() => {})),
+    );
+  });
+}
 
 test("activity cards open the matching library category and preserve region", async ({ page }) => {
   await page.goto("/builds/library?region=americas");
@@ -81,7 +92,7 @@ test("activity depth preserves click targets and respects reduced motion", async
   const titleBefore = (await title.boundingBox())!;
   const weaponBefore = (await weapon.boundingBox())!;
   await card.hover();
-  await page.waitForTimeout(350);
+  await waitForCardMotion(card);
   const lit = (await card.boundingBox())!;
   expect(lit.width).toBeGreaterThan(before.width * 1.02);
   expect(lit.width).toBeLessThan(before.width * 1.03);
@@ -124,7 +135,7 @@ test("activity depth preserves click targets and respects reduced motion", async
   const still = (await card.boundingBox())!;
   const titleStill = (await title.boundingBox())!;
   await card.hover();
-  await page.waitForTimeout(350);
+  await waitForCardMotion(card);
   const hovered = (await card.boundingBox())!;
   expect(Math.abs(hovered.width - still.width)).toBeLessThan(0.5);
   expect(Math.abs(hovered.y - still.y)).toBeLessThan(0.5);
