@@ -246,11 +246,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-html:has(.editor-save-bar.is-docked) {
-  scroll-padding-bottom: 96px;
+html:has(.focused-build-editor) {
+  scroll-padding-bottom: 104px;
 }
-.app.outpost .focused-build-editor:has(.editor-save-bar.is-docked) {
-  padding-bottom: 72px;
+/* The page ends above the docked bar: the footer is never under it */
+body:has(.editor-save-bar.is-docked) {
+  padding-bottom: 92px;
 }
 
 /* Workspace tabs: the detail page's pill navigation */
@@ -321,7 +322,7 @@ html:has(.editor-save-bar.is-docked) {
 .app.outpost .focused-build-editor .inventory-editor-studio {
   display: grid;
   grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
-  align-items: start;
+  align-items: stretch;
   gap: 26px;
   margin: 0;
   padding: 0;
@@ -340,10 +341,42 @@ html:has(.editor-save-bar.is-docked) {
   background: var(--surface-raised);
 }
 .app.outpost .focused-build-editor .editor-inventory-panel {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
-  position: sticky;
-  top: 16px;
+}
+.app.outpost .editor-piece-strip {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .editor-piece-strip > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .editor-piece-strip > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.app.outpost .editor-piece-strip button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+  box-shadow: none;
+}
+.app.outpost .editor-piece-strip button[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.app.outpost .editor-piece-strip img {
+  border-radius: 5px;
 }
 .app.outpost .focused-build-editor .editor-inventory-panel > :first-child {
   margin-bottom: 0;
@@ -533,10 +566,9 @@ html:has(.editor-save-bar.is-docked) {
   justify-items: center;
   align-content: start;
   gap: 6px;
-  flex: 1 1 96px;
-  max-width: 132px;
   min-width: 0;
-  min-height: 112px;
+  max-width: none;
+  min-height: 108px;
   margin: 0;
   padding: 12px 8px;
   border: 1px solid var(--well-border);
@@ -598,15 +630,24 @@ html:has(.editor-save-bar.is-docked) {
 }
 .app.outpost .editor-ability-piece {
   display: grid;
-  grid-template-columns: minmax(150px, 0.4fr) minmax(0, 1fr);
+  grid-template-columns: minmax(150px, 0.32fr) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--well-border);
 }
-.app.outpost .editor-ability-piece.is-selected {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+.app.outpost .editor-ability-piece:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.app.outpost .editor-ability-piece.is-selected .editor-ability-piece-head strong {
+  color: var(--accent-ink);
+}
+/* Four columns, so every piece's Q / W / E / Passive line up and the weapon fills the row */
+.app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
 }
 .app.outpost .editor-ability-piece-head {
   display: flex;
@@ -648,8 +689,8 @@ html:has(.editor-save-bar.is-docked) {
   justify-content: flex-start;
   gap: 12px;
   min-width: 0;
-  min-height: 66px;
-  padding: 6px 12px 6px 6px;
+  min-height: 60px;
+  padding: 3px 12px 3px 3px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
@@ -840,7 +881,7 @@ html:has(.editor-save-bar.is-docked) {
 .app.outpost .editor-notes-workspace {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 26px;
 }
 .app.outpost .editor-notes-panel.raised {
@@ -952,8 +993,8 @@ html:has(.editor-save-bar.is-docked) {
   inset: 0 0 0 auto;
   margin: 0;
   padding: 0;
-  border: 0;
-  border-left: 1px solid color-mix(in srgb, var(--frame-rule) 70%, var(--border));
+  border: 0 solid transparent;
+  border-image: var(--frame) 25 / 25px / 10px stretch;
   border-radius: 0;
   background: var(--surface-raised);
   box-shadow: var(--shadow-raised);
@@ -1087,9 +1128,6 @@ html:has(.editor-save-bar.is-docked) {
   .app.outpost .editor-notes-workspace,
   .app.outpost .editor-preview-top {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .focused-build-editor .editor-inventory-panel {
-    position: static;
   }
   .app.outpost .editor-template-browser {
     grid-template-columns: minmax(0, 1fr);
@@ -1244,9 +1282,8 @@ html:has(.editor-save-bar.is-docked) {
   .app.outpost .editor-starter-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .app.outpost .focused-build-editor label.editor-spell-tile {
-    flex-basis: calc(50% - 4px);
-    max-width: none;
+  .app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 360px) {
@@ -1254,11 +1291,11 @@ html:has(.editor-save-bar.is-docked) {
     --cell: 60px;
     --gap: 12px;
   }
-  .app.outpost .editor-save-bar > .button {
-    font-size: 13px;
-    padding-inline: 8px;
+  .app.outpost .editor-save-bar {
+    flex-direction: column;
+    align-items: stretch;
   }
-  .app.outpost .editor-save-bar > .button > svg {
-    display: none;
+  .app.outpost .editor-save-bar > .button {
+    flex: none;
   }
 }

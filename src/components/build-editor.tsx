@@ -784,6 +784,7 @@ export function BuildEditor({
             boardEmpty={
               !initial && (
                 <EmptyWell
+                  emblem="strip-builds"
                   title="Nothing equipped yet"
                   line="Start from a full Battleaxe set, then swap pieces."
                   action={
