@@ -196,7 +196,7 @@ Three families, three jobs. All are self-hosted via `next/font/local` (`src/app/
 
 ## Layout
 
-- **Content width**: `--page-width` (1240px, the landing's measure) for hubs and reading pages, `--workspace-width` (1392px) for dense workspaces (calculators, editors, market, admin). Gutters `--page-gutter`: 32px desktop, 16px phone. Routes still on their own max-widths move to these tokens as each page batch lands.
+- **Content width**: one width per page type, never per tab. `--page-width` (1240px, the landing's measure) for everything a player browses or reads: hubs, lists and libraries (every Builds tab including Favorites, Comps and Group Builds, `/tools`, items, guides, Teams), detail pages (a build, a comp, an item) and account pages. `--workspace-width` (1392px) for the places a player works: every tool under `/tools/*` (calculators, Market Explorer, gold, reference), the Crafting Planner, the build and comp editors, admin. Tabs of one section always share a width. Gutters `--page-gutter`: 32px desktop, 16px phone.
 - **Spacing** on the 4/8 scale in the frontmatter. Use the tokens (`--space-*`); do not hand-pick 5/7/14/18px gaps.
 - **Breakpoints (target)**: 1280 (wide), 980 (tablet / editor split), 700 (phone layout), 390 (reference phone). The current CSS mostly uses 1100, 780 and 600 plus ~45 ad-hoc values; converge on the targets when touching a page. Design and verify at 1440, 1920, 768, 390, 375 and 320.
 - **One page archetype per task** — never flatten every page into the same stacked panels:
@@ -282,7 +282,7 @@ Sticky header, 12px uppercase-free labels, Geist Mono numbers right-aligned, row
 
 ### Navigation
 
-One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. Mobile uses a modal drawer.
+One 72px header on every route: logo · Market · Builds · Comps · Tools ▾ · Guides · Teams · More · region pill with a small globe of that server's half of the world (orthographic, Natural Earth land, turns into view when the region changes) · sun/moon switch (86px track, an ember thumb that stretches toward the new side and snaps back; the new theme grows out of the switch as a circle via a view transition; phones show the current mode only) · Discord sign-in. The current section carries an ember underline; nav labels are transparent and only scale on hover — no filled hover boxes. The Tools menu groups tools by the `/tools` sections (`toolSections` in `src/lib/tool-directory.ts`) in three columns, one line per tool with its painted emblem (`toolPaintings`) or its line glyph in a small well, never taller than the viewport, with "All tools" pinned at its foot. Mobile uses a modal drawer on the raised surface: 12px mixed-case muted labels, the main five with their painted emblems, the same tool groups as rows in wells, the current page in ember wash.
 
 ### Equipment board (signature component)
 

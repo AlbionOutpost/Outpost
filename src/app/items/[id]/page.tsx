@@ -182,7 +182,6 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           <BackLink className="pill-link is-small masthead-back" href="/items">
             <ArrowLeft size={14} aria-hidden="true" /> Item database
           </BackLink>
-          <code className="item-id-chip">{id}</code>
           <ItemMarketLink id={id} />
         </div>
       </WorkspaceHeading>

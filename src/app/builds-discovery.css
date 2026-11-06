@@ -1,6 +1,8 @@
-/* Inventory-led build discovery. Counts, equipment and abilities come from recorded builds. */
+/* Inventory-led build discovery. Counts, equipment and abilities come from recorded builds.
+   Every Builds tab (activities, library, community, mine, favorites) shares the landing's page
+   width, so switching tabs never changes the frame. */
 .app.outpost .builds-ecosystem {
-  max-width: var(--workspace-width);
+  max-width: var(--page-width);
   margin: 0 auto;
   min-width: 0;
 }
@@ -1176,10 +1178,6 @@
   font-size: 12px;
 }
 
-/* Hubs (activities, favorites) use the landing's reading width; lists with a rail stay wider */
-.app.outpost .builds-ecosystem.builds-hub {
-  max-width: var(--page-width);
-}
 /* The closing band: one framed card, centred like the landing's call band */
 .app.outpost .builds-next-step.raised {
   display: grid;

@@ -85,26 +85,22 @@ export function GrindGuideDirectory({
   const count = matches.length;
   return (
     <>
-      <section className={`grind-guide-library ${styles.section}`} aria-labelledby="guides-library">
-        <SectionHeading
-          id="guides-library"
-          title={
-            filtered ? (
+      <section
+        className={`grind-guide-library ${styles.section}`}
+        {...(filtered ? { "aria-labelledby": "guides-library" } : { "aria-label": "Every guide" })}
+      >
+        {/* Unfiltered, the masthead already names the list; a search gets its own heading */}
+        {filtered && (
+          <SectionHeading
+            id="guides-library"
+            title={
               <>
                 Matching <em>guides</em>
               </>
-            ) : (
-              <>
-                Every <em>guide</em>
-              </>
-            )
-          }
-          line={
-            filtered
-              ? `${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`
-              : `${guides.length} guides on progression, gathering, PvE, PvP, trading and crafting.`
-          }
-        />
+            }
+            line={`${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`}
+          />
+        )}
         <form action="/guides" className={`raised ${styles.filters}`} role="search">
           <BuildRegionInput />
           {category && <input type="hidden" name="category" value={category} />}

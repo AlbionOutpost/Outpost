@@ -1,5 +1,5 @@
-/* Gold: a reading page on the landing measure */
+/* Gold: a tool page, on the workspace measure like Market Explorer and the calculators */
 .page {
-  max-width: var(--page-width);
+  max-width: var(--workspace-width);
   margin-inline: auto;
 }

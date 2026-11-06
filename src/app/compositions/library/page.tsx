@@ -45,7 +45,7 @@ export default async function Page({
         scene="comps"
         title="Group Builds"
         accent="Builds"
-        description={`${total.toLocaleString()} comps recorded by players, each with every member’s loadout. Copy one to plan your own party around it.`}
+        description={`Group Builds are whole comps: a party’s roles with every member’s loadout. ${total.toLocaleString()} recorded by players; copy one to plan your own party around it.`}
         actions={
           <Link href="/compositions/new" className="button primary">
             Create a comp

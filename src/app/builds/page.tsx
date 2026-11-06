@@ -2,7 +2,6 @@ import { BuildsNextStep } from "@/components/builds-next-step";
 import { WellSelect } from "@/components/well-select";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { BuildRegionInput } from "@/components/build-region-link";
-import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { CommunityBuildCard } from "@/components/community-build-card";
 import { BuildSortSelect } from "@/components/build-sort-select";
@@ -219,31 +218,6 @@ export default async function Builds({
               </p>
               <SaveBuildFilter path="/builds" query={query} />
             </div>
-            <nav
-              className="weapon-shortcuts ecosystem-weapon-shortcuts"
-              aria-label="Weapon shortcuts"
-            >
-              <Link
-                href={href({ weapon: "", family: "", page: "1" })}
-                aria-current={!weapon ? "true" : undefined}
-              >
-                All weapons
-              </Link>
-              {[
-                ["MAIN_AXE", "Battleaxe", "T4_MAIN_AXE"],
-                ["MAIN_SWORD", "Broadsword", "T4_MAIN_SWORD"],
-                ["2H_BOW", "Bow", "T4_2H_BOW"],
-              ].map(([code, name, item]) => (
-                <Link
-                  key={code}
-                  href={href({ weapon: code, family: "", page: "1" })}
-                  aria-current={weapon === code ? "true" : undefined}
-                >
-                  <ItemIcon id={item} size={25} />
-                  {name}
-                </Link>
-              ))}
-            </nav>
             <div className="build-discovery-grid account-build-grid">
               {builds.map((b) => (
                 <CommunityBuildCard

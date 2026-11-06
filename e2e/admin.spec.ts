@@ -141,13 +141,16 @@ test("Supporter gifts are auditable, reject stale writes, expire and preserve pa
       where: { id: f.ids[3] },
       data: { supporterGiftUntil: new Date(Date.now() - 1000) },
     });
+    // An expired gift leaves a free account: /settings carries no plan line any more, and the
+    // gift state is gone from the plan page (which, with billing off, no longer exists for them).
     const other = await f.contexts[3].newPage();
     await other.goto("/settings");
-    await expect(
-      other.getByText("Free. Supporters see no advertising and can run a Team workspace.", {
-        exact: true,
-      }),
-    ).toBeVisible();
+    await expect(other.getByRole("heading", { name: "Account settings" })).toBeVisible();
+    await expect(other.getByText(/Supporter gift/)).toHaveCount(0);
+    await other.goto("/supporter");
+    await expect(other.getByRole("heading", { name: "Your Supporter gift is active" })).toHaveCount(
+      0,
+    );
     d = await f.detail(3);
     const admin = await f.contexts[0].newPage();
     await admin.goto(`/admin/users/${f.ids[3]}`);

@@ -140,10 +140,9 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       ).toHaveAttribute("aria-pressed", "false");
       await page.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
       await expect(page.locator(".community-build-card")).toHaveCount(7);
-      await page
-        .getByRole("navigation", { name: "Weapon shortcuts" })
-        .getByRole("link", { name: /Battleaxe/ })
-        .click();
+      await page.getByRole("button", { name: "Filter builds", exact: true }).click();
+      await page.getByLabel("Filter build weapon", { exact: true }).selectOption("MAIN_AXE");
+      await page.getByRole("button", { name: "Search builds", exact: true }).click();
       await expect(page).toHaveURL(/mine=1/);
       await expect(page.getByLabel("Search build titles")).toHaveValue(`${label}`);
       await expect(page.locator(".community-build-card")).toHaveCount(3);

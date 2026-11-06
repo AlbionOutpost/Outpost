@@ -1,6 +1,6 @@
 /* Inventory-led detail workspace. All item and ability metadata comes from the authored loadout. */
 .app.outpost .build-detail-redesign {
-  max-width: var(--workspace-width);
+  max-width: var(--page-width);
   margin: 0 auto;
   min-width: 0;
   padding-top: 18px;

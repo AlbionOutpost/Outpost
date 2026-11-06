@@ -104,17 +104,6 @@
 .app.outpost .item-masthead-row > :last-child {
   margin-left: auto;
 }
-.app.outpost .item-id-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font: 600 12px/1 var(--font-data);
-}
 
 /* Abilities: one row per slot, its key on the left and the choices in aligned columns */
 .app.outpost .item-ability-columns {
