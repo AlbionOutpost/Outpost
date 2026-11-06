@@ -1,13 +1,18 @@
 "use client";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useRef, useState } from "react";
-import { ShoppingBag, RefreshCw, Download, Trash2, Check, ArrowRight, Undo2 } from "lucide-react";
+import { RefreshCw, Download, Trash2, Check, ArrowRight, Undo2, Minus, Plus } from "lucide-react";
 import Link from "@/components/link";
 import { ShoppingAccountLists } from "./shopping-account-lists";
 import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
+import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
+import { WellSelect } from "./well-select";
+import { Silver } from "./silver";
 import { cities } from "@/lib/albion/region-config";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { landingShowcase } from "@/lib/landing-showcase";
 import {
   shoppingListSchema,
   shoppingSummary,
@@ -17,10 +22,27 @@ import {
   type ShoppingEntry,
 } from "@/lib/albion/shopping";
 import { readShopping, writeShopping } from "./shopping-storage";
-import { fetchQuoteBatch } from "@/lib/albion/market-quotes";
+import { fetchQuoteBatch, type MarketPrice } from "@/lib/albion/market-quotes";
 import { isStale } from "@/lib/albion/freshness";
+import styles from "./shopping-workspace.module.css";
+
 const money = (n: number | null) =>
   n === null ? "Prices needed" : n.toLocaleString("en-GB", { maximumFractionDigits: 2 });
+const royal = ["Martlock", "Bridgewatch", "Lymhurst", "Fort Sterling", "Thetford", "Caerleon"];
+/** The landing's example plan, as purchase lines with no prices yet. */
+const examplePlan = (): ShoppingEntry[] =>
+  landingShowcase.plan.map((line) => ({
+    itemId: line.itemId,
+    name: equipmentName(line.itemId).replace(/ · T(\d)\.\d$/, " (T$1)"),
+    city: "Lymhurst",
+    quality: 1,
+    quantity: line.qty,
+    owned: 0,
+    unitPrice: null,
+    priceKind: "manual",
+    observedAt: null,
+  }));
+
 export function ShoppingWorkspace() {
   const region = useOutpostRegion();
   const [state, setState] = useState<ShoppingList>({ version: 1, region, entries: [] });
@@ -29,7 +51,13 @@ export function ShoppingWorkspace() {
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const [undo, setUndo] = useState<ShoppingList | null>(null);
+  const [tab, setTab] = useState<"buy" | "queue">("buy");
+  const [compare, setCompare] = useState<{
+    state: "idle" | "loading" | "ready" | "error";
+    quotes: { itemId: string; quality: number; prices: MarketPrice[] }[];
+  }>({ state: "idle", quotes: [] });
   const controller = useRef<AbortController | null>(null);
+  const comparison = useRef<AbortController | null>(null);
   const checkedPrices = useRef(new Set<string>());
   useEffect(() => {
     function restore() {
@@ -49,6 +77,7 @@ export function ShoppingWorkspace() {
       setMessage("");
       setUndo(null);
       setBusy(false);
+      setCompare({ state: "idle", quotes: [] });
       checkedPrices.current.clear();
       restore();
     });
@@ -57,6 +86,7 @@ export function ShoppingWorkspace() {
     return () => {
       cancelAnimationFrame(frame);
       controller.current?.abort();
+      comparison.current?.abort();
       window.removeEventListener("outpost-shopping-change", restore);
       window.removeEventListener("storage", restore);
     };
@@ -131,28 +161,73 @@ export function ShoppingWorkspace() {
       if (controller.current === active) setBusy(false);
     }
   }
+  /** Sell orders in every royal city for what is still to buy; nothing is written to the list. */
+  async function compareCities() {
+    const items = result.rows.filter((row) => row.buy > 0).slice(0, 100);
+    if (!items.length) return;
+    const active = new AbortController();
+    comparison.current?.abort();
+    comparison.current = active;
+    setCompare({ state: "loading", quotes: [] });
+    try {
+      const quotes = await fetchQuoteBatch(region, items, active.signal);
+      if (!active.signal.aborted)
+        setCompare({
+          state: quotes.every((q) => q.error) ? "error" : "ready",
+          quotes,
+        });
+    } catch {
+      if (!active.signal.aborted) setCompare({ state: "error", quotes: [] });
+    }
+  }
+  const toBuy = result.rows.filter((row) => row.buy > 0);
+  const byCity =
+    compare.state === "ready"
+      ? royal
+          .map((city) => {
+            let total = 0,
+              missing = 0;
+            for (const row of toBuy) {
+              const quote = compare.quotes
+                .find((q) => q.itemId === row.itemId && q.quality === row.quality)
+                ?.prices.find(
+                  (p) => p.city === city && p.sell_price_min > 0 && !isStale(p.sell_price_min_date),
+                );
+              if (quote) total += quote.sell_price_min * row.buy;
+              else missing++;
+            }
+            return { city, total, missing };
+          })
+          .filter((c) => c.missing < toBuy.length)
+          .toSorted((a, b) => a.missing - b.missing || a.total - b.total)
+          .slice(0, 4)
+      : [];
+  const top = Math.max(...byCity.map((c) => c.total), 1);
+  const totalQuantity = result.rows.reduce((sum, row) => sum + row.quantity, 0);
+  const ownedQuantity = result.rows.reduce(
+    (sum, row) => sum + Math.min(row.owned, row.quantity),
+    0,
+  );
   return (
-    <div className="shopping-workspace">
+    <div className={styles.page}>
       <WorkspaceHeading
-        glyph="catalog"
+        glyph="transport"
         scene="market"
         title="Crafting Planner"
-        description="Combine loadouts and crafting materials. Count what you own, then buy what you need."
+        accent="Planner"
+        description={`List what you want to craft, tick off what you have and buy the rest. Saved on this device for ${region.charAt(0).toUpperCase() + region.slice(1)}.`}
         actions={
           <Link className="button secondary" href={`/builds/library?region=${region}`}>
-            Find a loadout <ArrowRight size={16} />
+            Find a loadout <ArrowRight size={16} aria-hidden="true" />
           </Link>
         }
-      >
-        <p className="masthead-note shopping-save-note">
-          Saved on this device · {region.charAt(0).toUpperCase() + region.slice(1)}
-        </p>
-      </WorkspaceHeading>
+      />
       {blocked ? (
-        <div className="panel" role="alert">
+        <section className={`panel ${styles.gate}`} role="alert">
           <h2>Your saved list needs attention</h2>
           <p>{message}</p>
           <button
+            type="button"
             className="button secondary"
             onClick={() => {
               if (window.confirm("Reset the saved shopping list for this server?")) {
@@ -164,103 +239,85 @@ export function ShoppingWorkspace() {
           >
             Reset saved list
           </button>
-        </div>
-      ) : (
-        <>
-          <div className="raised shopping-toolbar">
-            <div>
-              <strong>{list.entries.length} purchase lines</strong>
-              <span>
-                {result.ready} ready · {result.remainingItems.toLocaleString()} items to buy
-              </span>
-            </div>
-            <div className="actions">
-              <button
-                type="button"
-                className="button secondary"
-                disabled={busy || !list.entries.length}
-                onClick={refresh}
-              >
-                <RefreshCw size={15} />
-                {busy ? "Updating prices…" : "Refresh city prices"}
-              </button>
-              <button
-                type="button"
-                className="button secondary"
-                disabled={!undo}
-                onClick={() => {
-                  if (undo?.region === region) {
-                    commit(undo, false);
-                    setUndo(null);
-                  }
-                }}
-              >
-                <Undo2 size={15} />
-                Undo
-              </button>
-              <button
-                type="button"
-                className="button secondary"
-                disabled={!list.entries.length}
-                onClick={() => {
-                  const url = URL.createObjectURL(
-                    new Blob([JSON.stringify(list, null, 2)], { type: "application/json" }),
-                  );
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `outpost-shopping-${region}.json`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                <Download size={15} />
-                Export list
-              </button>
-            </div>
+        </section>
+      ) : !loaded ? (
+        <section className={`panel ${styles.gate}`}>
+          <StatusLine>Opening your shopping list…</StatusLine>
+        </section>
+      ) : !list.entries.length ? (
+        <section className={`panel ${styles.empty}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+          <img src="/albion/icons/tool-planner.webp" alt="" width={64} height={64} />
+          <h2>Start with a loadout or a crafting plan.</h2>
+          <p>
+            Shop a build from its page, or send a production plan’s materials here. The same items
+            add up; what you own is counted separately. Or try a small example first.
+          </p>
+          <div className={styles.emptyActions}>
+            <button
+              type="button"
+              className="button primary"
+              onClick={() => commit({ ...list, entries: examplePlan() }, false)}
+            >
+              Try the example plan
+            </button>
+            <Link href={`/builds/new?region=${region}`} className="button secondary">
+              Create a build
+            </Link>
+            <Link href={`/tools/crafting?region=${region}`} className="button secondary">
+              Plan a craft
+            </Link>
           </div>
-          {message && (
-            <p role="status" className="shopping-message">
-              {message}
-            </p>
-          )}
-          {!loaded ? (
-            <div className="panel empty">Opening your shopping list…</div>
-          ) : !list.entries.length ? (
-            <section className="panel shopping-empty">
-              <ShoppingBag size={40} />
-              <h2>Start with a loadout or a crafting plan.</h2>
-              <p>
-                Add equipment from a build, or send the materials from your production plan here.
-                Quantities combine automatically; owned items stay separate.
-              </p>
-              <div className="actions">
-                <Link href={`/builds/new?region=${region}`} className="button primary">
-                  Create a build
-                </Link>
-                <Link href={`/tools/crafting?region=${region}`} className="button secondary">
-                  Plan a craft
-                </Link>
+          {message && <StatusLine>{message}</StatusLine>}
+        </section>
+      ) : (
+        <div className={styles.layout}>
+          <section className={`panel ${styles.main}`} aria-labelledby="shopping-title">
+            <div className={styles.mainHead}>
+              <PanelHead
+                id="shopping-title"
+                title={`${list.entries.length} purchase lines`}
+                line={`${result.ready} ready · ${result.remainingItems.toLocaleString()} items to buy`}
+              />
+              <div className={styles.tabs} role="tablist" aria-label="Planner view">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === "buy"}
+                  aria-controls="shopping-view"
+                  onClick={() => setTab("buy")}
+                >
+                  Shopping list
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === "queue"}
+                  aria-controls="shopping-view"
+                  onClick={() => setTab("queue")}
+                >
+                  Crafting queue ({list.entries.length})
+                </button>
               </div>
-            </section>
-          ) : (
-            <div className="shopping-layout">
-              <section className="panel shopping-table-panel">
+            </div>
+            <div id="shopping-view" role="tabpanel" aria-labelledby="shopping-title">
+              {tab === "buy" ? (
                 <div
-                  className="table-scroll"
+                  className={styles.tableScroll}
                   role="region"
                   aria-label="Shopping requirements"
                   tabIndex={0}
                 >
-                  <table>
+                  <table className={styles.table}>
                     <thead>
                       <tr>
-                        <th>Equipment / material</th>
-                        <th>Need</th>
-                        <th>Own</th>
-                        <th>Buy</th>
-                        <th>Unit price</th>
-                        <th>Total</th>
-                        <th>
+                        <th scope="col">Item and city</th>
+                        <th scope="col">Need</th>
+                        <th scope="col">Own</th>
+                        <th scope="col">Buy</th>
+                        <th scope="col">Unit price</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">
                           <span className="sr-only">Actions</span>
                         </th>
                       </tr>
@@ -269,13 +326,13 @@ export function ShoppingWorkspace() {
                       {result.rows.map((row) => {
                         const key = shoppingKey(row);
                         return (
-                          <tr key={key} className={row.buy === 0 ? "shopping-ready" : ""}>
+                          <tr key={key} data-ready={row.buy === 0 ? "" : undefined}>
                             <th scope="row">
-                              <div className="shopping-item">
-                                <ItemIcon id={row.itemId} quality={row.quality} size={52} />
+                              <div className={styles.item}>
+                                <ItemIcon id={row.itemId} quality={row.quality} size={44} />
                                 <div>
                                   <strong>{row.name}</strong>
-                                  <select
+                                  <WellSelect
                                     aria-label={`${row.name} purchase city`}
                                     value={row.city}
                                     onChange={(e) =>
@@ -296,7 +353,7 @@ export function ShoppingWorkspace() {
                                           {city}
                                         </option>
                                       ))}
-                                  </select>
+                                  </WellSelect>
                                 </div>
                               </div>
                             </th>
@@ -320,7 +377,7 @@ export function ShoppingWorkspace() {
                                 onChange={(e) => update(key, { owned: Number(e.target.value) })}
                               />
                             </td>
-                            <td className="numeric" data-label="Buy">
+                            <td className={styles.num} data-label="Buy">
                               {row.buy}
                             </td>
                             <td data-label="Unit price">
@@ -340,51 +397,56 @@ export function ShoppingWorkspace() {
                                   })
                                 }
                               />
-                              <small>
+                              <small
+                                data-tone={row.stale || row.unavailableMarket ? "stale" : undefined}
+                              >
                                 {row.unavailableMarket
-                                  ? "Choose a player purchase market"
+                                  ? "Choose a player market"
                                   : row.stale
-                                    ? "Stale · refresh needed"
+                                    ? "Stale · refresh"
                                     : row.unitPrice === null
                                       ? "Not priced"
                                       : row.priceKind === "manual"
-                                        ? "Manual price"
+                                        ? "Your price"
                                         : row.priceKind === "plan"
                                           ? "Plan estimate"
                                           : `Observed ${row.observedAt} UTC`}
                               </small>
                             </td>
-                            <td className="numeric" data-label="Total">
-                              {row.cost === null ? "—" : money(row.cost)}
+                            <td className={styles.num} data-label="Total">
+                              {row.cost === null ? (
+                                <span className={styles.muted}>—</span>
+                              ) : (
+                                <Silver value={row.cost} digits={2} animate={false} />
+                              )}
                             </td>
-                            <td className="shopping-actions-cell">
-                              <div className="shopping-row-actions">
-                                <button
-                                  type="button"
-                                  className="button secondary"
-                                  aria-label={`Mark ${row.name} ${row.buy === 0 ? "needed" : "owned"}`}
-                                  onClick={() =>
-                                    update(key, { owned: row.buy === 0 ? 0 : row.quantity })
-                                  }
-                                >
-                                  <Check size={15} />
-                                </button>
-                                <button
-                                  type="button"
-                                  className="button secondary"
-                                  aria-label={`Remove ${row.name}`}
-                                  onClick={() =>
-                                    commit({
-                                      ...list,
-                                      entries: list.entries.filter(
-                                        (item) => shoppingKey(item) !== key,
-                                      ),
-                                    })
-                                  }
-                                >
-                                  <Trash2 size={15} />
-                                </button>
-                              </div>
+                            <td className={styles.rowActions}>
+                              <button
+                                type="button"
+                                className={styles.iconButton}
+                                aria-pressed={row.buy === 0}
+                                aria-label={`Mark ${row.name} ${row.buy === 0 ? "needed" : "owned"}`}
+                                onClick={() =>
+                                  update(key, { owned: row.buy === 0 ? 0 : row.quantity })
+                                }
+                              >
+                                <Check size={16} aria-hidden="true" />
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.iconButton}
+                                aria-label={`Remove ${row.name}`}
+                                onClick={() =>
+                                  commit({
+                                    ...list,
+                                    entries: list.entries.filter(
+                                      (item) => shoppingKey(item) !== key,
+                                    ),
+                                  })
+                                }
+                              >
+                                <Trash2 size={16} aria-hidden="true" />
+                              </button>
                             </td>
                           </tr>
                         );
@@ -392,54 +454,205 @@ export function ShoppingWorkspace() {
                     </tbody>
                   </table>
                 </div>
-              </section>
-              <aside className="panel shopping-summary">
-                <ShoppingBag size={26} />
-                <h2>Purchase summary</h2>
-                {result.missing > 0 && (
-                  <CalculationReadiness
-                    title={`${result.missing} purchase lines need prices`}
-                    missing={result.rows
-                      .filter((row) => row.buy > 0 && row.cost === null)
-                      .slice(0, 5)
-                      .map((row) => `${row.name} · ${row.city}`)}
-                  >
-                    Refresh city prices or enter a unit price. The complete total stays unavailable
-                    until every needed purchase is priced.
-                  </CalculationReadiness>
-                )}
-                <span>Item purchase estimate</span>
-                <strong className="shopping-total">
-                  {result.total === null ? "Incomplete" : money(result.total)}
-                </strong>
-                <small>silver · after owned inventory</small>
-                <dl>
-                  <div>
-                    <dt>Priced purchases</dt>
-                    <dd>{money(result.knownCost)}</dd>
-                  </div>
-                  <div>
-                    <dt>Prices still needed</dt>
-                    <dd>{result.missing}</dd>
-                  </div>
-                  <div>
-                    <dt>Ready lines</dt>
-                    <dd>
-                      {result.ready} / {list.entries.length}
-                    </dd>
-                  </div>
-                </dl>
-                <p>
-                  Item prices are recent observations or your own inputs. Order fees and transport
-                  are separate. Check listings before buying. Crafting returns are not treated as
-                  inventory you already own.
-                </p>
-              </aside>
+              ) : (
+                <ul className={styles.queue} aria-label="Crafting queue">
+                  {result.rows.map((row) => {
+                    const key = shoppingKey(row);
+                    const owned = Math.min(row.owned, row.quantity);
+                    const pct = Math.round((owned / row.quantity) * 100);
+                    return (
+                      <li key={key} data-ready={row.buy === 0 ? "" : undefined}>
+                        <ItemIcon id={row.itemId} quality={row.quality} size={44} />
+                        <span className={styles.queueName}>
+                          <strong>{row.name}</strong>
+                          <span className={styles.progress} aria-hidden="true">
+                            <b style={{ width: `${pct}%` }} />
+                          </span>
+                          <small>
+                            {owned} / {row.quantity} owned · {pct}% · {row.city}
+                          </small>
+                        </span>
+                        <span
+                          className={styles.stepper}
+                          role="group"
+                          aria-label={`Owned ${row.name}`}
+                        >
+                          <button
+                            type="button"
+                            aria-label={`Own one fewer ${row.name}`}
+                            disabled={!row.owned}
+                            onClick={() => update(key, { owned: row.owned - 1 })}
+                          >
+                            <Minus size={14} aria-hidden="true" />
+                          </button>
+                          <output>{owned}</output>
+                          <button
+                            type="button"
+                            aria-label={`Own one more ${row.name}`}
+                            disabled={row.owned >= row.quantity}
+                            onClick={() => update(key, { owned: row.owned + 1 })}
+                          >
+                            <Plus size={14} aria-hidden="true" />
+                          </button>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
-          )}
-        </>
+            <div className={styles.toolbar}>
+              <button type="button" className="button secondary" disabled={busy} onClick={refresh}>
+                <RefreshCw size={15} aria-hidden="true" />
+                {busy ? "Updating prices…" : "Refresh city prices"}
+              </button>
+              <button
+                type="button"
+                className="button secondary"
+                disabled={!undo}
+                onClick={() => {
+                  if (undo?.region === region) {
+                    commit(undo, false);
+                    setUndo(null);
+                  }
+                }}
+              >
+                <Undo2 size={15} aria-hidden="true" />
+                Undo
+              </button>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => {
+                  const url = URL.createObjectURL(
+                    new Blob([JSON.stringify(list, null, 2)], { type: "application/json" }),
+                  );
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `outpost-shopping-${region}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                <Download size={15} aria-hidden="true" />
+                Export list
+              </button>
+            </div>
+            {message && <StatusLine>{message}</StatusLine>}
+          </section>
+          <aside className={`panel ${styles.summary}`} aria-labelledby="shopping-summary-title">
+            <PanelHead id="shopping-summary-title" emblem="silver" title="Still to buy" />
+            <div className={styles.figure} data-complete={result.total !== null ? "" : undefined}>
+              <small>Purchase estimate</small>
+              <strong className="shopping-total">
+                {result.total === null ? "Incomplete" : money(result.total)}
+              </strong>
+              <small>silver after what you own</small>
+            </div>
+            <dl className={styles.stats}>
+              <div>
+                <dt>Owned</dt>
+                <dd>
+                  {ownedQuantity.toLocaleString()} / {totalQuantity.toLocaleString()}
+                </dd>
+              </div>
+              <div>
+                <dt>Items left</dt>
+                <dd>{result.remainingItems.toLocaleString()}</dd>
+              </div>
+              <div>
+                <dt>Priced so far</dt>
+                <dd>{money(result.knownCost)}</dd>
+              </div>
+            </dl>
+            {result.missing > 0 && (
+              <div className={styles.readiness} role="status">
+                <strong>
+                  {result.missing} {result.missing === 1 ? "line needs" : "lines need"} a price
+                </strong>
+                <ul>
+                  {result.rows
+                    .filter((row) => row.buy > 0 && row.cost === null)
+                    .slice(0, 5)
+                    .map((row) => (
+                      <li key={shoppingKey(row)}>
+                        {row.name} · {row.city}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+            <div className={styles.cities}>
+              <div className={styles.citiesHead}>
+                <span>Cheapest city to buy the rest</span>
+                {toBuy.length > 0 && (
+                  <button
+                    type="button"
+                    className="pill-link is-small"
+                    disabled={compare.state === "loading"}
+                    onClick={compareCities}
+                  >
+                    {compare.state === "ready" ? "Check again" : "Compare cities"}
+                  </button>
+                )}
+              </div>
+              {toBuy.length === 0 ? (
+                <StatusLine>Nothing left to buy.</StatusLine>
+              ) : compare.state === "loading" ? (
+                <StatusLine>Checking the royal cities…</StatusLine>
+              ) : compare.state === "error" ? (
+                <StatusLine tone="error">
+                  City prices could not be loaded. Try again shortly.
+                </StatusLine>
+              ) : compare.state === "idle" ? (
+                <StatusLine>Compare recent sell orders in the six royal cities.</StatusLine>
+              ) : byCity.length ? (
+                <ol>
+                  {byCity.map((c, i) => (
+                    <li key={c.city}>
+                      <span>
+                        <span className="city-dot" data-city={c.city} />
+                        {c.city}
+                        {i === 0 && !c.missing && <em>Cheapest</em>}
+                      </span>
+                      <i aria-hidden="true">
+                        <b style={{ width: `${(c.total / top) * 100}%` }} />
+                      </i>
+                      <span className={styles.cityValue}>
+                        <Silver value={c.total} animate={false} />
+                        {c.missing ? <small> +{c.missing} unpriced</small> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <StatusLine>No royal city has a recent sell order for these items.</StatusLine>
+              )}
+            </div>
+            <p className={styles.fine}>
+              Prices are recent sell orders or your own. Order fees and transport are separate;
+              check listings before you buy.
+            </p>
+          </aside>
+        </div>
       )}
       {!blocked && loaded && <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />}
+      <section className={`raised has-scene ${styles.cta}`} data-scene="economy">
+        <h2>
+          Find something worth <em>crafting</em>
+        </h2>
+        <p>
+          See what a recipe makes before you buy the materials, or start from a published build.
+        </p>
+        <div className={styles.emptyActions}>
+          <Link className="button primary" href={`/tools/crafting?region=${region}`}>
+            Price a craft <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <Link className="button secondary" href={`/builds?region=${region}`}>
+            Browse builds
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
