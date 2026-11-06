@@ -150,7 +150,8 @@
 .windowBody > p {
   margin: 0;
 }
-:global(.app.outpost) .foot.foot {
+/* Beats the landing windows' 40px icon column (.windows.windows .foot.foot) in any CSS order */
+:global(.app.outpost) .window .foot.foot {
   grid-template-columns: minmax(0, 1fr) auto;
   min-height: 0;
   text-decoration: none;
@@ -163,21 +164,6 @@
 }
 .phoneOnly {
   display: none;
-}
-.pages {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
-  color: var(--muted);
-  font-size: 13px;
-}
-.pages > :first-child {
-  justify-self: end;
-}
-.pages > :last-child {
-  justify-self: start;
 }
 
 /* Section toolbar: what each member shows, and the share menu */
@@ -351,16 +337,6 @@
   position: relative;
   height: 100%;
 }
-/* The role's colour on the window's left edge, inside the frame */
-.memberEdge {
-  position: absolute;
-  top: 18px;
-  bottom: 18px;
-  left: 7px;
-  width: 3px;
-  border-radius: 3px;
-  background: var(--role, var(--well-border));
-}
 :global(.app.outpost) .memberTitle.memberTitle {
   flex: 1 1 auto;
   gap: 8px;
@@ -408,11 +384,6 @@
   width: 40px;
   height: 40px;
 }
-.footGo {
-  display: grid;
-  place-items: center;
-  color: var(--accent-ink);
-}
 .memberNote {
   margin: 0;
   color: var(--muted);
@@ -442,33 +413,13 @@
   color: var(--muted);
   font-size: 12px;
 }
-.abilityIcons,
-.swapIcons {
+.abilityIcons {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
 .abilityIcons img {
   border-radius: 50%;
-}
-.swaps {
-  display: grid;
-  gap: 6px;
-  padding-top: 10px;
-  border-top: 1px solid var(--well-border);
-}
-.swapsLabel {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-.swapIcons > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-.swapIcons img {
-  border-radius: 6px;
 }
 .mounts {
   display: flex;

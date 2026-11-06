@@ -9,9 +9,11 @@ test("group builds are discoverable and retain every member while presentation c
   await page.getByRole("link", { name: "Group Builds", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Group Builds", exact: true })).toBeVisible();
   await page.goto("/compositions/library/dreamteam?region=asia");
-  await expect(page.locator("[data-comp-member]")).toHaveCount(17);
+  // Starts as one roster row per member; the boards are one click away.
+  await expect(page.getByRole("list", { name: /roster$/ }).getByRole("listitem")).toHaveCount(17);
   await expect(page.getByRole("heading", { name: "The party", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Abilities", exact: true }).click();
+  await expect(page.locator("[data-comp-member]")).toHaveCount(17);
   await expect(page.getByLabel("Slot 1 recorded abilities", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Swaps", exact: true }).click();
   await expect(page.getByLabel("Slot 1 equipment alternatives", { exact: true })).toHaveCount(0);
@@ -73,7 +75,7 @@ test("cloning a public group build saves all positions privately without changin
     expect(slots.filter((slot) => !slot.mandatory)).toHaveLength(10);
     expect((await outsider.request.get(`/api/compositions/${savedId}`)).status()).toBe(404);
     await page.goto("/compositions/library/dreamteam");
-    await expect(page.locator("[data-comp-member]")).toHaveCount(17);
+    await expect(page.getByRole("list", { name: /roster$/ }).getByRole("listitem")).toHaveCount(17);
   } finally {
     await outsider.close();
     await db.user.deleteMany({ where: { id } });

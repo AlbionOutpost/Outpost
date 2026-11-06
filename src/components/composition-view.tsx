@@ -136,9 +136,6 @@ export function CompositionActions({
 
 /** One member's window body: the loadout on the board, or every piece with its abilities. */
 export function memberCard(slot: MemberSlot, i: number, detailed: boolean): CompMemberCard {
-  const swaps = slot.equipment.flatMap((e) =>
-    e.alternatives.map((alt, j) => ({ slot: e.slot, alt, key: `${e.slot}-${alt}-${j}` })),
-  );
   return {
     member: slotRosterMember(slot),
     title: slot.playerName || `Slot ${i + 1}`,
@@ -149,7 +146,16 @@ export function memberCard(slot: MemberSlot, i: number, detailed: boolean): Comp
       ]
         .filter(Boolean)
         .join(" · ") || (slot.mandatory ? "Required slot" : "Optional slot"),
-    badges: !slot.mandatory && <span className="landing-chip is-muted">Optional</span>,
+    badges: (
+      <>
+        {!slot.mandatory && <span className="landing-chip is-muted">Optional</span>}
+        {slot.substitute && (
+          <span className="landing-chip is-muted" title={`Substitute: ${slot.substitute}`}>
+            Sub: {slot.substitute}
+          </span>
+        )}
+      </>
+    ),
     body: (
       <>
         {detailed ? (
@@ -180,26 +186,11 @@ export function memberCard(slot: MemberSlot, i: number, detailed: boolean): Comp
           )
         ) : (
           <LoadoutBoard
-            pieces={slot.equipment}
+            pieces={slot.equipment.map((e) => ({ ...e, swap: e.alternatives[0] }))}
             size="card"
             abilities={false}
             label={`Member ${i + 1} equipment`}
           />
-        )}
-        {swaps.length > 0 && (
-          <div className={styles.swaps} role="group" aria-label={`Member ${i + 1} swaps`}>
-            <span className={styles.swapsLabel}>Swaps</span>
-            <span className={styles.swapIcons}>
-              {swaps.map(({ slot: piece, alt, key }) => (
-                <span key={key} title={`${piece}: ${equipmentName(alt)}`}>
-                  <ItemIcon id={alt} size={32} />
-                  <span className="sr-only">
-                    {piece}: {equipmentName(alt)}
-                  </span>
-                </span>
-              ))}
-            </span>
-          </div>
         )}
         {detailed && <SavedEquipmentSets sets={slot.equipmentSets} />}
         {!detailed && slot.equipmentSets.length > 0 && (
