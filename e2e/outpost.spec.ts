@@ -36,7 +36,9 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(browse).toHaveAttribute("href", "/builds/activities?region=asia");
   await browse.click();
   await expect(page).toHaveURL(/\/builds\/activities\?region=asia$/);
-  const create = page.getByRole("link", { name: "Create a build", exact: true });
+  const create = page
+    .locator(".workspace-identity")
+    .getByRole("link", { name: "Create a build", exact: true });
   await expect(create).toHaveAttribute("href", "/builds/new?region=asia");
   await create.click();
   await expect(page).toHaveURL(/\/builds\/new\?region=asia$/);
