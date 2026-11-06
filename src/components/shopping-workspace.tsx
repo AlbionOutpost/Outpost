@@ -246,8 +246,7 @@ export function ShoppingWorkspace() {
         </section>
       ) : !list.entries.length ? (
         <section className={`panel ${styles.empty}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-          <img src="/albion/icons/tool-planner.webp" alt="" width={64} height={64} />
+          {/* The masthead already shows the planner's emblem */}
           <h2>Start with a loadout or a crafting plan.</h2>
           <p>
             Shop a build from its page, or send a production plan’s materials here. The same items
@@ -659,17 +658,18 @@ export function ShoppingWorkspace() {
       )}
       <section className={`raised has-scene ${styles.cta}`} data-scene="economy">
         <h2>
-          Find something worth <em>crafting</em>
+          Buy it in the right <em>city</em>
         </h2>
         <p>
-          See what a recipe makes before you buy the materials, or start from a published build.
+          Compare every city’s sell orders before you set out, or work out what the haul between
+          cities costs.
         </p>
         <div className={styles.emptyActions}>
-          <Link className="button primary" href={`/tools/crafting?region=${region}`}>
-            Price a craft <ArrowRight size={16} aria-hidden="true" />
+          <Link className="button primary" href={`/tools/market?region=${region}`}>
+            Check market prices <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link className="button secondary" href={`/builds?region=${region}`}>
-            Browse builds
+          <Link className="button secondary" href={`/tools/transport?region=${region}`}>
+            Plan the haul
           </Link>
         </div>
       </section>

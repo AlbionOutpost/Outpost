@@ -119,9 +119,12 @@ export function TimerManager({
         description="Crops, laborers, a castle chest: set the countdown and check it from any device."
         icon="timer"
         actions={
-          <button type="button" className="button primary" onClick={openComposer}>
-            <Plus size={17} aria-hidden="true" /> Add timer
-          </button>
+          // While the first-timer form is already open, it is the page's one action
+          composerOpen && !timers.length ? undefined : (
+            <button type="button" className="button primary" onClick={openComposer}>
+              <Plus size={17} aria-hidden="true" /> Add timer
+            </button>
+          )
         }
       >
         <div className={`landing-chips ${styles.chips}`}>
@@ -191,7 +194,7 @@ export function TimerManager({
               </WellSelect>
             </Field>
             <Field label="Manual duration (minutes)">
-              <input name="duration" type="number" min={1} max={30000} required />
+              <input name="duration" type="number" min={1} max={30000} required placeholder="90" />
             </Field>
             <div className={styles.timerFormActions}>
               {timers.length > 0 && (

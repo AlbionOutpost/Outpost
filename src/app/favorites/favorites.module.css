@@ -1,0 +1,17 @@
+/* With nothing saved to the account yet, player builds and comps sit side by side, so the page
+   is two short rows of empty wells rather than a tall stack of them. Content takes the full
+   width again as soon as either list has something in it. */
+@media (min-width: 901px) {
+  :global(.app.outpost)
+    .account.account:not(
+      :has(:global(.account-build-grid), :global(.favorite-compositions-list), form)
+    ) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 24px;
+  }
+}
+:global(.app.outpost) .account.account > section {
+  min-width: 0;
+}

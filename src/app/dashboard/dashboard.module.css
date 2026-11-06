@@ -1,0 +1,44 @@
+/* The signed-in hub: builds and comps as the landing's windows, then Teams, timers and plans
+   as three panels in a row, each at its own height. */
+.section,
+.trio {
+  min-width: 0;
+  margin-top: 56px;
+}
+.section:first-of-type {
+  margin-top: 8px;
+}
+.windows {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.windows > li {
+  display: grid;
+  min-width: 0;
+}
+.trio {
+  display: grid;
+  margin-bottom: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+@media (max-width: 1100px) {
+  .windows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .trio {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .windows,
+  .trio {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+}

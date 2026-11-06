@@ -57,7 +57,11 @@ test("dashboard equipment previews remain private across warmed user sessions", 
     await page.goto("/dashboard");
     const preview = page.locator("[data-dashboard-work]").filter({ hasText: build.title });
     await expect(preview).toBeVisible();
-    await expect(preview.locator("[data-albion-icon]")).toHaveAttribute("src", /T4_MAIN_AXE/);
+    // The build window shows the main hand on its board and again in its foot
+    await expect(preview.locator("[data-albion-icon]").first()).toHaveAttribute(
+      "src",
+      /T4_MAIN_AXE/,
+    );
     const otherPage = await outsider.newPage();
     await otherPage.goto("http://localhost:3000/dashboard");
     await expect(

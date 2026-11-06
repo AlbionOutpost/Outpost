@@ -41,7 +41,7 @@ export default async function Page() {
           },
           {
             href: "/tools/laborers",
-            emblem: "fame",
+            emblem: "tool-planner",
             title: "Laborers",
             line: "What a full journal brings back.",
             scene: "city",

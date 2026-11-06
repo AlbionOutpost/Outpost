@@ -9,6 +9,10 @@
 :global(.app.outpost) .page.page > :global(.workspace-identity) {
   margin-bottom: 0;
 }
+/* The one masthead action sits level with the title block, not below its two-line description */
+:global(.app.outpost) .page.page :global(.workspace-identity-actions) {
+  align-self: center;
+}
 :global(.app.outpost) .page.page input[type="number"],
 :global(.app.outpost) .page.page input:not([type]) {
   width: 100%;
@@ -474,9 +478,6 @@
   margin: 0;
   padding: 40px 24px;
   text-align: center;
-}
-:global(.app.outpost) .empty.empty > img {
-  filter: drop-shadow(0 4px 10px #000a);
 }
 :global(.app.outpost) .empty.empty h2,
 :global(.app.outpost) .gate.gate h2 {
