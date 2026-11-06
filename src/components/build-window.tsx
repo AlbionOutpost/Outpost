@@ -1,4 +1,6 @@
+import "@/app/landing-window.css";
 import "@/app/build-window.css";
+import windows from "./landing/windows.module.css";
 import type { CSSProperties, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/build-region-link";
@@ -53,59 +55,62 @@ export function BuildWindow({
   const date = discoveryDate(updatedAt);
   const art = activityBackgroundFor(category);
   return (
-    <article
-      className={`raised has-scene landing-window build-window ${className}`}
-      data-scene="build"
-      data-activity={category}
-      data-activity-background={art?.src}
-      style={art ? ({ "--scene": `url("${art.src}")` } as CSSProperties) : undefined}
-    >
-      <div className="landing-window-bar">
-        <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
-          <h2 id={titleId}>{title}</h2>
-        </Link>
-        <span className="landing-chips">
-          <span className="landing-chip">{activity}</span>
-          {heart}
-        </span>
-      </div>
-      <div className="landing-window-body">
-        {children ??
-          (pieces?.length ? (
-            <LoadoutBoard
-              pieces={pieces}
-              spellNames={spellNames}
-              size="card"
-              choices
-              label={`${title} loadout`}
-            />
-          ) : (
-            <p className="landing-window-empty">No equipment recorded for this build.</p>
-          ))}
-      </div>
-      <div className="landing-window-foot">
-        <span className="build-window-weapon" aria-hidden="true">
-          {weaponItemId ? <ItemIcon id={weaponItemId} size={48} /> : null}
-        </span>
-        <span>
-          <strong>{weaponName || "Equipment plan"}</strong>
-          <small>
-            By {author || "Adventurer"}
-            {date && (
-              <>
-                {" · "}
-                <time dateTime={new Date(updatedAt).toISOString()}>{date}</time>
-              </>
-            )}
-          </small>
-        </span>
-        <span className="build-window-way">
-          {owner}
-          <Link href={href} tabIndex={-1} aria-hidden="true" className="build-window-open">
-            <ArrowUpRight size={20} aria-hidden="true" />
+    // The landing's window module, so a build card is sized exactly like the landing's window
+    <div className={`${windows.windows} build-window-slot`}>
+      <article
+        className={`raised has-scene landing-window ${windows.window} build-window ${className}`}
+        data-scene="build"
+        data-activity={category}
+        data-activity-background={art?.src}
+        style={art ? ({ "--scene": `url("${art.src}")` } as CSSProperties) : undefined}
+      >
+        <div className={`landing-window-bar ${windows.bar}`}>
+          <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
+            <h2 id={titleId}>{title}</h2>
           </Link>
-        </span>
-      </div>
-    </article>
+          <span className="landing-chips">
+            <span className="landing-chip">{activity}</span>
+            {heart}
+          </span>
+        </div>
+        <div className={`landing-window-body ${windows.body}`}>
+          {children ??
+            (pieces?.length ? (
+              <LoadoutBoard
+                pieces={pieces}
+                spellNames={spellNames}
+                size="card"
+                choices
+                label={`${title} loadout`}
+              />
+            ) : (
+              <p className="landing-window-empty">No equipment recorded for this build.</p>
+            ))}
+        </div>
+        <div className={`landing-window-foot ${windows.foot}`}>
+          <span className="build-window-weapon" aria-hidden="true">
+            {weaponItemId ? <ItemIcon id={weaponItemId} size={48} /> : null}
+          </span>
+          <span>
+            <strong>{weaponName || "Equipment plan"}</strong>
+            <small>
+              By {author || "Adventurer"}
+              {date && (
+                <>
+                  {" · "}
+                  <time dateTime={new Date(updatedAt).toISOString()}>{date}</time>
+                </>
+              )}
+            </small>
+          </span>
+          <span className="build-window-way">
+            {owner}
+            <Link href={href} tabIndex={-1} aria-hidden="true" className="build-window-open">
+              <ArrowUpRight size={20} aria-hidden="true" />
+            </Link>
+          </span>
+        </div>
+      </article>
+    </div>
   );
 }
