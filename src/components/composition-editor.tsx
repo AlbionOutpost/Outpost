@@ -599,7 +599,7 @@ export function CompositionEditor({
           </Disclosure>
         </section>
         <div className={styles.planner}>
-          <section className={styles.party} aria-labelledby="comp-plan">
+          <section className={`panel ${styles.panel}`} aria-labelledby="comp-plan">
             <PanelHead
               id="comp-plan"
               title="Your party"
@@ -627,22 +627,6 @@ export function CompositionEditor({
                         <Undo2 size={14} aria-hidden="true" /> Undo roster change
                       </button>
                     )}
-                    <span className={styles.segment} role="group" aria-label="Comp layout">
-                      <button
-                        type="button"
-                        aria-pressed={boardView}
-                        onClick={() => setLayout("board")}
-                      >
-                        Board
-                      </button>
-                      <button
-                        type="button"
-                        aria-pressed={!boardView}
-                        onClick={() => setLayout("roster")}
-                      >
-                        Rows
-                      </button>
-                    </span>
                   </>
                 )
               }
@@ -830,6 +814,26 @@ export function CompositionEditor({
                     <Plus size={16} aria-hidden="true" />
                     Add member
                   </button>
+                  <span
+                    className={`${styles.segment} ${styles.wideOnly} ${styles.layoutToggle}`}
+                    role="group"
+                    aria-label="Comp layout"
+                  >
+                    <button
+                      type="button"
+                      aria-pressed={boardView}
+                      onClick={() => setLayout("board")}
+                    >
+                      Board
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={!boardView}
+                      onClick={() => setLayout("roster")}
+                    >
+                      Rows
+                    </button>
+                  </span>
                   {!boardView && (
                     <>
                       <label className={styles.inlineField}>

@@ -8,7 +8,7 @@ import { activityName } from "@/lib/grind-library-types";
 import { CompRoster } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
@@ -96,17 +96,16 @@ export default async function Page({
           line={
             filtered
               ? `Matching ${[q && `“${q}”`, category && activityName(category)].filter(Boolean).join(" in ")}, most liked first.`
-              : "Most liked first. Each window shows the first five members by weapon type."
+              : "Most liked first. Roles are read from each member’s weapon."
           }
         />
         {rows.length ? (
-          <ul className={styles.grid}>
+          <CompGrid>
             {rows.map((comp) => {
               const members = comp.members.flatMap((id) => {
                 const b = memberBuilds.get(id);
                 return b ? [b] : [];
               });
-              const more = comp.members.length - 5;
               return (
                 <li key={comp.slug}>
                   <CompWindow
@@ -118,7 +117,9 @@ export default async function Page({
                         {comp.upvotes != null && <HeartChip count={comp.upvotes} />}
                       </>
                     }
-                    caption={`${comp.members.length} members · by ${comp.author}${more > 0 ? ` · +${more} more` : ""}`}
+                    total={comp.members.length}
+                    noun="member"
+                    byline={`By ${comp.author}`}
                   >
                     {members.length ? (
                       <CompRoster members={members} linked={false} />
@@ -129,7 +130,7 @@ export default async function Page({
                 </li>
               );
             })}
-          </ul>
+          </CompGrid>
         ) : (
           <EmptyWell
             emblem="team-comps"

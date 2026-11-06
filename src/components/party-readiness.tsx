@@ -22,21 +22,20 @@ export function PartyReadiness({ members, region }: { members: MemberSlot[]; reg
     ).length;
   return (
     <section className={styles.readiness} aria-label="Party preparation">
-      <ul className={styles.roleCounts} aria-label="Planned roles">
+      <dl className={styles.pairs}>
         {[...roles].map(([role, { count, tone }]) => (
-          <li key={role} data-role={tone}>
-            <b>{count}</b> {role}
-          </li>
+          <div key={role} className={styles.pair} data-role={tone}>
+            <dt>{role}</dt>
+            <dd>{count}</dd>
+          </div>
         ))}
-      </ul>
-      <dl className={styles.readyFigures}>
-        <div>
+        <div className={`${styles.pair} ${styles.pairSplit}`}>
           <dt>Players named</dt>
           <dd>
             {assigned}/{members.length}
           </dd>
         </div>
-        <div>
+        <div className={styles.pair}>
           <dt>Required weapons</dt>
           <dd>
             {equipped}/{required.length}

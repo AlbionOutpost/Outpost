@@ -79,11 +79,12 @@
   min-height: 42px;
 }
 
-/* Comp windows in a list: three across, one height per row, roster at the top */
+/* Comp windows in a list: three across like the landing's windows (landing-window.css gives
+   the chrome); roster rows share the window's height so a row of windows ends level */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px 24px;
+  gap: 24px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -92,68 +93,49 @@
   display: grid;
   min-width: 0;
 }
-:global(.app.outpost) .window.window {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  min-width: 0;
-  padding: 14px 14px 0;
-}
-.bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 0;
-  min-height: 40px;
-  margin: 0 -14px 12px;
-  padding: 0 16px 10px;
-  /* The landing window's ember rule, fading at both ends */
-  background: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in srgb, var(--accent) 55%, transparent) 18%,
-      color-mix(in srgb, var(--accent) 55%, transparent) 82%,
-      transparent
-    )
-    bottom / 100% 1px no-repeat;
-}
 :global(.app.outpost) .windowTitle.windowTitle {
-  flex: 1;
+  flex: 1 1 auto;
+}
+.windowTitle h3 {
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  font: 800 16px/1.25 var(--font-display);
-  letter-spacing: 0.01em;
+  font: inherit;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow: 0 1px 2px #000c;
 }
-.windowTitle > a {
-  color: var(--text);
-}
-.windowTitle > a:hover {
-  color: var(--accent-ink);
-}
-.windowTitle > a:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+.windowTitle:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
   border-radius: 4px;
 }
-.chips {
+:global(.app.outpost) .chips.chips {
   flex: none;
+  max-width: 62%;
 }
-.windowBody {
-  display: grid;
-  align-content: start;
+:global(.app.outpost) .chips.chips > :global(.landing-chip) {
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.windowBody :global(.landing-roster) {
+:global(.app.outpost) .windowBody :global(.landing-roster) {
   grid-template-rows: none;
-  grid-auto-rows: 54px;
-  height: auto;
+  grid-auto-rows: minmax(54px, 1fr);
+  height: 100%;
+}
+:global(.app.outpost) .windowBody :global(.landing-roster-who) > span,
+:global(.app.outpost) .memberToggle :global(.landing-roster-who) > span,
+:global(.app.outpost) .rowSelect :global(.landing-roster-who) > span,
+:global(.app.outpost) .partyRow :global(.landing-roster-who) > span,
+:global(.app.outpost) .rosterPanel :global(.landing-roster-who) > span {
+  display: block;
 }
 .windowBody :global(.landing-roster-player),
-.memberToggle :global(.landing-roster-player) {
+.memberToggle :global(.landing-roster-player),
+.rowSelect :global(.landing-roster-player),
+.partyRow :global(.landing-roster-player),
+.rosterPanel :global(.landing-roster-player) {
   color: var(--muted);
   font-size: 12px;
   font-weight: 500;
@@ -161,34 +143,19 @@
 .windowBody > p {
   margin: 0;
 }
-:global(.app.outpost) .caption.caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 14px -14px 0;
-  padding: 12px 18px 16px;
-  border-top: 1px solid var(--well-border);
-  background: linear-gradient(#0000004d, #0000001a);
-  color: var(--muted);
-  font-size: 12px;
+:global(.app.outpost) .foot.foot {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 0;
   text-decoration: none;
 }
-.caption > span:first-child {
-  min-width: 0;
+.foot strong,
+.foot small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.captionGo {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent-ink);
-  font-weight: 700;
-}
-:global(.app.outpost) .window:hover .captionGo {
-  color: var(--accent);
+.phoneOnly {
+  display: none;
 }
 .pages {
   display: grid;
@@ -344,11 +311,12 @@
   color: var(--error);
 }
 
-/* Members: framed windows on wide screens */
+/* Members: the landing's windows three across with the build window's board; phones get one
+   window of roster rows instead (.phoneRoster) */
 .members {
   display: grid;
-  grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
-  gap: 26px 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -369,17 +337,12 @@
 .member[data-role="Support"] {
   --role: var(--role-support);
 }
-.memberToggle {
+:global(.app.outpost) .phoneRoster.phoneRoster {
   display: none;
 }
 :global(.app.outpost) .memberWindow.memberWindow {
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  align-content: start;
-  gap: 10px;
-  min-width: 0;
   position: relative;
-  padding: 16px 16px 18px 20px;
+  height: 100%;
 }
 /* The role's colour on the window's left edge, inside the frame */
 .memberEdge {
@@ -391,70 +354,63 @@
   border-radius: 3px;
   background: var(--role, var(--well-border));
 }
-.memberBar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-.memberN {
-  color: var(--muted);
-  font: 700 12px/1 var(--font-mono, var(--font-ui));
-  font-variant-numeric: tabular-nums;
-}
-.memberRole {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--role, var(--accent-ink));
-  font-size: 12px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 :global(.app.outpost) .memberTitle.memberTitle {
-  margin: 0;
+  flex: 1 1 auto;
+  gap: 8px;
+}
+.memberTitle > :last-child {
+  min-width: 0;
   overflow: hidden;
-  font: 800 16px/1.25 var(--font-display);
-  letter-spacing: 0.01em;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  text-shadow: 0 1px 2px #000c;
 }
 .memberTitle a {
-  color: var(--text);
+  color: inherit;
 }
 .memberTitle a:hover {
   color: var(--accent-ink);
 }
-.memberTitle small {
-  display: block;
-  margin-top: 2px;
-  overflow: hidden;
+.memberN {
+  flex: none;
   color: var(--muted);
-  font: 500 12px/1.3 var(--font-ui);
-  text-overflow: ellipsis;
-  text-shadow: none;
+  font: 700 12px/1 var(--font-mono, var(--font-ui));
+  font-variant-numeric: tabular-nums;
 }
-.memberBody {
+:global(.app.outpost) .roleChip.roleChip {
+  border-color: color-mix(in srgb, var(--role, var(--accent)) 50%, transparent);
+  background: color-mix(in srgb, var(--role, var(--accent)) 12%, transparent);
+  color: var(--role, var(--accent-ink));
+}
+:global(.app.outpost) .memberBody.memberBody {
   display: grid;
   align-content: start;
   gap: 12px;
-  min-width: 0;
+  container-type: inline-size;
+}
+:global(.app.outpost) .memberFoot.memberFoot {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+.memberFoot strong,
+.memberFoot small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.footWeapon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+.footGo {
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
 }
 .memberNote {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-}
-.memberBoard {
-  display: grid;
-  place-items: center;
-  padding: 2px 0;
-}
-.memberBoard :global(.loadout-board.is-mini) {
-  --cell: 46px;
-  --gap: 6px;
 }
 .abilities {
   display: grid;
@@ -544,9 +500,6 @@
 .afterSection {
   margin-top: 56px;
 }
-.community {
-  margin-top: 26px;
-}
 .prose {
   margin: 0;
   color: var(--secondary);
@@ -560,78 +513,73 @@
   align-items: center;
   gap: var(--space-3) var(--space-5);
   margin-bottom: var(--space-5);
-  padding: 10px 12px 10px 14px;
+  padding: 12px 14px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: inset 0 1px 3px #0009;
 }
-.roleCounts {
+/* Figure pairs: a 12px label over a Barlow figure, as on the landing's tool cards */
+.pairs {
   display: flex;
   flex: 1 1 auto;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.roleCounts > li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 30px;
-  padding: 0 10px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  color: var(--secondary);
-  font-size: 13px;
-}
-.roleCounts > li::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--role, var(--muted));
-}
-.roleCounts > li[data-role="Tank"] {
-  --role: var(--role-tank);
-}
-.roleCounts > li[data-role="Healer"] {
-  --role: var(--role-healer);
-}
-.roleCounts > li[data-role="DPS"] {
-  --role: var(--role-dps);
-}
-.roleCounts > li[data-role="Support"] {
-  --role: var(--role-support);
-}
-.roleCounts b {
-  color: var(--text);
-  font: 800 15px/1 var(--font-display);
-  font-variant-numeric: tabular-nums;
-}
-.readyFigures {
-  display: flex;
-  gap: var(--space-5);
+  gap: var(--space-3) var(--space-5);
   margin: 0;
 }
-.readyFigures > div {
+.pair {
   display: grid;
   gap: 2px;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 10px;
   border: 0;
+  border-left: 3px solid var(--role, var(--well-border));
 }
-.readyFigures dt {
+.pair[data-role="Tank"] {
+  --role: var(--role-tank);
+}
+.pair[data-role="Healer"] {
+  --role: var(--role-healer);
+}
+.pair[data-role="DPS"] {
+  --role: var(--role-dps);
+}
+.pair[data-role="Support"] {
+  --role: var(--role-support);
+}
+.pairSplit {
+  margin-left: auto;
+}
+.pair dt {
   color: var(--muted);
   font-size: 12px;
 }
-.readyFigures dd {
+.pair dd {
   margin: 0;
+  text-align: left;
   padding: 0;
   border: 0;
   font: 800 20px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
+}
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 var(--space-4);
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.warning > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--warning);
 }
 .readiness :global(.shopping-add-control) {
   margin: 0;
@@ -697,8 +645,8 @@
   .rosterPanel :global(.landing-roster) {
     grid-template-columns: minmax(0, 1fr);
   }
-  .readyFigures {
-    flex: 1 1 100%;
+  .pairSplit {
+    margin-left: 0;
   }
   .readiness :global(.shopping-add-control) {
     flex: 1 1 100%;
@@ -718,29 +666,92 @@
   :global(.app.outpost) .filters.hasSelect {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* The comp tabs wrap rather than run off the edge */
+  :global(.app.outpost) .page :global(.masthead-tabs) {
+    flex-wrap: wrap;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+    mask-image: none;
+  }
   .grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 26px;
   }
-  .windowBody :global(.landing-roster) {
-    grid-auto-rows: auto;
+  /* Phones: windows as tall as their rows, the first three members, "+N more" in the foot */
+  :global(.app.outpost) .windowBody :global(.landing-roster) {
+    grid-auto-rows: minmax(54px, auto);
+    height: auto;
   }
-  .windowBody :global(.landing-roster) li,
-  .memberToggle {
-    min-height: 54px;
+  .windowBody :global(.landing-roster) > li:nth-child(n + 4) {
+    display: none;
+  }
+  .wideOnly {
+    display: none;
+  }
+  .phoneOnly {
+    display: inline;
   }
 
-  /* Phones: the comp as roster rows; a tap opens that member's window under its row */
+  /* Comp pages: one window of roster rows; a tap opens the member's board under its row */
   .members {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
+    display: none;
   }
-  :global(.app.outpost) .memberToggle.memberToggle {
+  :global(.app.outpost) .phoneRoster.phoneRoster {
+    display: grid;
+    padding-bottom: 14px;
+  }
+  .phoneRows {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .phoneRows > .member {
+    display: grid;
+    gap: 0;
+  }
+  .phoneBody {
+    display: grid;
+    gap: 12px;
+    margin: 0 0 6px;
+    padding: 14px 10px 6px;
+    border-left: 3px solid var(--role, var(--well-border));
+    container-type: inline-size;
+  }
+  .phoneBody[hidden] {
+    display: none;
+  }
+  .phoneBodyTitle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font: 800 15px/1.2 var(--font-display);
+  }
+  .phoneBodyTitle a {
+    color: var(--text);
+  }
+  .phoneBody :global(.loadout-board.is-card) {
+    --gap: 10px;
+    --cell: min(76px, calc((100cqw - 2 * var(--gap)) / 3));
+    justify-content: center;
+    width: 100%;
+  }
+  .phoneBody :global(.loadout-board-cell) {
+    border: 1px solid #ffffff1a;
+    background: #15181f99;
+  }
+  :global(.app.outpost) .memberToggle.memberToggle,
+  :global(.app.outpost) .partyRow.partyRow {
     display: grid;
     grid-template-columns: 12px 44px minmax(0, 1fr) auto 18px;
     align-items: center;
     gap: 9px;
     width: 100%;
+    min-height: 56px;
     padding: 5px 10px 5px 6px;
     border: 1px solid var(--well-border);
     border-left: 3px solid var(--role, var(--well-border));
@@ -752,18 +763,22 @@
     text-align: left;
     cursor: pointer;
   }
-  .memberToggle:focus-visible {
+  .memberToggle:focus-visible,
+  .partyRow:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-  .memberToggle :global(.landing-roster-armor) {
+  .memberToggle :global(.landing-roster-armor),
+  .partyRow :global(.landing-roster-armor) {
     gap: 3px;
   }
-  .memberToggle :global(.landing-roster-armor) img {
+  .memberToggle :global(.landing-roster-armor) img,
+  .partyRow :global(.landing-roster-armor) img {
     width: 26px;
     height: 26px;
   }
-  .memberToggle :global(.landing-roster-who) strong {
+  .memberToggle :global(.landing-roster-who) strong,
+  .partyRow :global(.landing-roster-who) strong {
     font-size: 13px;
   }
   .memberChevron {
@@ -771,16 +786,6 @@
   }
   .memberToggle[aria-expanded="true"] .memberChevron {
     rotate: 180deg;
-  }
-  :global(.app.outpost) .memberWindow.memberWindow {
-    display: none;
-    margin: 12px 0 10px;
-  }
-  :global(.app.outpost) .memberWindow.memberWindow[data-open] {
-    display: grid;
-  }
-  .memberBar {
-    display: none;
   }
   .showLabel {
     position: absolute;
@@ -795,10 +800,12 @@
   }
 }
 @media (max-width: 360px) {
-  :global(.app.outpost) .memberToggle :global(.landing-roster-armor) {
+  :global(.app.outpost) .memberToggle :global(.landing-roster-armor),
+  :global(.app.outpost) .partyRow :global(.landing-roster-armor) {
     display: none;
   }
-  :global(.app.outpost) .memberToggle.memberToggle {
+  :global(.app.outpost) .memberToggle.memberToggle,
+  :global(.app.outpost) .partyRow.partyRow {
     grid-template-columns: 12px 44px minmax(0, 1fr) 18px;
   }
 }
@@ -1015,53 +1022,41 @@
   gap: var(--space-3);
 }
 
-/* The planner's party board: the member windows are the buttons */
-.partyCard {
-  display: grid;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
+/* The planner's party board: each window is one big button (the foot's Edit covers it) */
 .partyRow {
   display: none;
 }
-.partyCard .memberWindow {
-  height: 100%;
-}
-.partyCard .memberTitle,
-.partyCard .memberBoard {
-  display: block;
-}
-.partyCard .memberBoard {
+.partyCard {
   display: grid;
+  min-width: 0;
 }
-:global(.app.outpost) .partyCard:hover .memberWindow,
-:global(.app.outpost) .partyCard:focus-visible .memberWindow {
-  --frame-glow: 1;
+.partyEdit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-ink);
+  font: 700 13px/1 var(--font-ui);
+  cursor: pointer;
 }
-.partyCard:focus-visible {
+/* Stretched over the whole window, so a tap anywhere on the member opens its editor */
+.partyEdit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.partyEdit:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
-  border-radius: var(--radius-md);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
-.partyCard[aria-pressed="true"] .memberTitle {
+.partyCard[data-active] :global(.landing-window-title) {
   color: var(--accent-ink);
 }
-.partyFoot {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--well-border);
-  color: var(--muted);
-  font-size: 12px;
-}
-
 /* Rows: a roster row with a drag handle and move buttons */
 .rows {
   display: grid;
@@ -1166,6 +1161,9 @@
   opacity: 0.4;
   cursor: default;
 }
+.layoutToggle {
+  margin-left: auto;
+}
 .planFoot {
   display: flex;
   flex-wrap: wrap;
@@ -1250,29 +1248,21 @@
     flex-basis: 100%;
   }
   /* Phone: the party board reads as roster rows; each opens the member's editor */
-  .partyRow {
+  .partyCard {
+    display: none;
+  }
+  .members:has(.partyRow) {
     display: grid;
-    grid-template-columns: 12px 44px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 9px;
-    min-height: 56px;
-    padding: 5px 10px 5px 6px;
-    border: 1px solid var(--well-border);
-    border-left: 3px solid var(--role, var(--well-border));
-    border-radius: var(--radius-md);
-    background: var(--well);
-    box-shadow: inset 0 1px 3px #0009;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
   }
-  .partyCard[aria-pressed="true"] .partyRow {
+  .partyRow[aria-pressed="true"] {
     border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
-    border-left-color: var(--role, var(--accent));
   }
-  .partyRow :global(.landing-roster-armor) img,
   .rowSelect :global(.landing-roster-armor) img {
     width: 26px;
     height: 26px;
   }
-  .partyRow :global(.landing-roster-armor),
   .rowSelect :global(.landing-roster-armor) {
     gap: 3px;
   }
@@ -1319,11 +1309,9 @@
   }
 }
 @media (max-width: 360px) {
-  :global(.app.outpost) .partyRow :global(.landing-roster-armor),
   :global(.app.outpost) .rowSelect :global(.landing-roster-armor) {
     display: none;
   }
-  .partyRow,
   :global(.app.outpost) .rowSelect.rowSelect {
     grid-template-columns: 12px 44px minmax(0, 1fr);
   }

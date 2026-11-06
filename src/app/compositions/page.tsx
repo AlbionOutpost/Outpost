@@ -11,7 +11,7 @@ import { readStoredComposition } from "@/lib/compositions/stored";
 import { slotRosterMember } from "@/lib/compositions/roster";
 import { RosterRows } from "@/components/comp-roster";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
@@ -128,20 +128,13 @@ export default async function Compositions({
               </>
             )
           }
-          line={
-            q
-              ? `Titles with “${q}”.`
-              : shown.length
-                ? "Last updated first, five members per window."
-                : undefined
-          }
+          line={q ? `Titles with “${q}”.` : shown.length ? "Last updated first." : undefined}
         />
         {shown.length ? (
-          <ul className={styles.grid}>
+          <CompGrid>
             {shown.map((r) => {
               const { composition } = readStoredComposition(r);
               const players = composition.slots.length;
-              const more = players - 5;
               return (
                 <li key={r.id}>
                   <CompWindow
@@ -153,7 +146,9 @@ export default async function Compositions({
                         <span className="landing-chip is-muted">{visibility[r.visibility]}</span>
                       </>
                     }
-                    caption={`${players} ${players === 1 ? "player" : "players"} · by ${r.author.name || "Adventurer"}${more > 0 ? ` · +${more} more` : ""}`}
+                    total={players}
+                    noun="player"
+                    byline={`By ${r.author.name || "Adventurer"}`}
                   >
                     {players ? (
                       <RosterRows
@@ -167,7 +162,7 @@ export default async function Compositions({
                 </li>
               );
             })}
-          </ul>
+          </CompGrid>
         ) : q ? (
           <EmptyWell
             emblem="team-comps"

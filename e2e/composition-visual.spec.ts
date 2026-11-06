@@ -156,6 +156,8 @@ test("populated five and twenty player fixtures remain editable and export a wid
         );
       }
       if (count === 5) {
+        // The layout switch is a wide-screen control; phones always read the party as rows.
+        await page.setViewportSize({ width: 1440, height: 900 });
         await page.getByRole("button", { name: "Rows", exact: true }).click();
         await expect(
           page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),

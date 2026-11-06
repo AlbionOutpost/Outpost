@@ -45,8 +45,9 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     await page.getByRole("button", { name: /^Equip Battleaxe\b/ }).click();
     await page.getByLabel("Main hand E", { exact: true }).selectOption("Blood Bandit");
     await page.getByRole("button", { name: "Done editing member", exact: true }).click();
-    await expect(page.getByRole("button", { name: /^Edit player 1 loadout\b/ })).toContainText(
-      "First caller",
+    await expect(page.getByRole("button", { name: /^Edit player 1 loadout\b/ })).toHaveAttribute(
+      "aria-label",
+      /First caller/,
     );
     await page.getByRole("button", { name: "Save comp", exact: true }).click();
     await expect(

@@ -134,7 +134,7 @@ test("community favorite and vote confirmations animate only after server succes
     ]);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto(`/builds/${build.id}`);
-    const panel = page.getByRole("heading", { name: "Community discussion" }).locator("..");
+    const panel = page.getByRole("region", { name: "Community discussion" });
     for (const label of [/Add favorite/, /Upvote build/]) {
       const control = panel
         .locator(".actions > button")

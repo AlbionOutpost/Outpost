@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Download, Link2, Pencil, Trash2 } from "lucide-react";
+import { Copy, Download, Link2, Pencil, Trash2, TriangleAlert } from "lucide-react";
 import Link from "@/components/build-region-link";
 import type { CompositionInput, MemberSlot } from "@/lib/compositions/validation";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -141,12 +141,14 @@ export function memberCard(slot: MemberSlot, i: number, detailed: boolean): Comp
   );
   return {
     member: slotRosterMember(slot),
-    title: (
-      <>
-        {slot.playerName || "Open slot"}
-        {slot.substitute && <small>Substitute: {slot.substitute}</small>}
-      </>
-    ),
+    title: slot.playerName || `Slot ${i + 1}`,
+    line:
+      [
+        slot.playerName ? "" : "No player named yet",
+        slot.substitute ? `Substitute: ${slot.substitute}` : "",
+      ]
+        .filter(Boolean)
+        .join(" · ") || (slot.mandatory ? "Required slot" : "Optional slot"),
     badges: !slot.mandatory && <span className="landing-chip is-muted">Optional</span>,
     body: (
       <>
@@ -177,14 +179,12 @@ export function memberCard(slot: MemberSlot, i: number, detailed: boolean): Comp
             <p className={styles.memberNote}>No equipment chosen yet.</p>
           )
         ) : (
-          <div className={styles.memberBoard}>
-            <LoadoutBoard
-              pieces={slot.equipment}
-              size="mini"
-              abilities={false}
-              label={`Member ${i + 1} equipment`}
-            />
-          </div>
+          <LoadoutBoard
+            pieces={slot.equipment}
+            size="card"
+            abilities={false}
+            label={`Member ${i + 1} equipment`}
+          />
         )}
         {swaps.length > 0 && (
           <div className={styles.swaps} role="group" aria-label={`Member ${i + 1} swaps`}>
@@ -240,13 +240,14 @@ export function CompositionView({
           line={`${slots.length} ${slots.length === 1 ? "player" : "players"}. Open a member for their loadout and swaps.`}
         />
         {dropped > 0 && (
-          <div className={styles.notice}>
-            <StatusLine tone="stale">
+          <p className={styles.warning} role="status">
+            <TriangleAlert size={18} aria-hidden="true" />
+            <span>
               {dropped === 1 ? "One member" : `${dropped} members`} of this comp could not be read
               and {dropped === 1 ? "is" : "are"} not shown.
               {editable ? ` Saving a new revision removes ${dropped === 1 ? "it" : "them"}.` : ""}
-            </StatusLine>
-          </div>
+            </span>
+          </p>
         )}
         {slots.length ? (
           <>
@@ -286,6 +287,7 @@ export function CompositionView({
               <CompMembers
                 cards={slots.map((slot, i) => memberCard(slot, i, mode === "details"))}
                 label={`${composition.title} members`}
+                title="Party roster"
               />
             )}
           </>

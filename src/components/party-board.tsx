@@ -1,14 +1,16 @@
 "use client";
 import { ArrowRight } from "lucide-react";
 import type { MemberSlot } from "@/lib/compositions/validation";
-import { memberRole, slotRosterMember } from "@/lib/compositions/roster";
+import { slotRosterMember } from "@/lib/compositions/roster";
 import { LoadoutBoard } from "./loadout-board";
 import { RosterRowCells } from "./comp-roster";
+import { CompMemberWindow } from "./comp-members";
+import windows from "./landing/windows.module.css";
 import styles from "./comps.module.css";
 
 /**
- * The planner's party: every member as a framed window with its loadout on the game's board, each
- * one a button that opens that member's editor. Phones show the same members as roster rows.
+ * The planner's party: every member as the landing's window with its loadout on the board, three
+ * across; the whole window opens that member's editor. Phones show the members as roster rows.
  */
 export function PartyBoard({
   members,
@@ -20,60 +22,63 @@ export function PartyBoard({
   active?: number;
 }) {
   return (
-    <ol
-      className={styles.members}
-      aria-label="Visual party loadouts"
-      style={members.length === 5 ? { ["--columns" as string]: 5 } : undefined}
-    >
-      {members.map((member, i) => {
-        const row = slotRosterMember(member);
-        return (
-          <li key={member.id} className={styles.member} data-role={row.tone} data-party-card="">
-            <button
-              type="button"
-              className={styles.partyCard}
-              aria-pressed={active === i}
-              onClick={() => onSelect(i)}
-            >
-              <span className="sr-only">Edit player {i + 1} loadout: </span>
-              <span className={styles.partyRow}>
+    <div className={windows.windows}>
+      <ol className={styles.members} aria-label="Visual party loadouts">
+        {members.map((member, i) => {
+          const row = slotRosterMember(member);
+          const label = `Edit player ${i + 1} loadout: ${member.playerName || `Slot ${i + 1}`}`;
+          return (
+            <li key={member.id} className={styles.member} data-role={row.tone} data-party-card="">
+              <button
+                type="button"
+                className={styles.partyRow}
+                aria-pressed={active === i}
+                aria-label={label}
+                onClick={() => onSelect(i)}
+              >
                 <RosterRowCells member={row} n={i + 1} />
-              </span>
-              <span className={`raised has-scene ${styles.memberWindow}`} data-scene="composition">
-                <span className={styles.memberEdge} aria-hidden="true" />
-                <span className={styles.memberBar}>
-                  <span className={styles.memberN}>{i + 1}</span>
-                  <span className={styles.memberRole}>{memberRole(member)}</span>
-                  {!member.mandatory && <span className="landing-chip is-muted">Optional</span>}
-                </span>
-                <span className={styles.memberTitle}>{member.playerName || `Slot ${i + 1}`}</span>
-                <span className={styles.memberBoard}>
-                  <LoadoutBoard
-                    pieces={member.equipment}
-                    size="mini"
-                    abilities={false}
-                    label={`Player ${i + 1} equipment`}
-                  />
-                </span>
-                <span className={styles.partyFoot}>
-                  <span>
-                    {member.equipmentSets.length
+                <ArrowRight className={styles.memberChevron} size={18} aria-hidden="true" />
+              </button>
+              <div className={styles.partyCard} data-active={active === i ? "" : undefined}>
+                <CompMemberWindow
+                  n={i + 1}
+                  card={{
+                    member: row,
+                    title: member.playerName || `Slot ${i + 1}`,
+                    badges: !member.mandatory && (
+                      <span className="landing-chip is-muted">Optional</span>
+                    ),
+                    line: member.equipmentSets.length
                       ? `${member.equipmentSets.length} spare ${member.equipmentSets.length === 1 ? "set" : "sets"}`
-                      : member.equipment.some((e) => e.alternatives.length)
-                        ? "Swaps set"
-                        : member.equipment.length
-                          ? `${member.equipment.length} of 10 slots`
-                          : "No loadout yet"}
-                  </span>
-                  <span className={styles.captionGo}>
-                    Edit <ArrowRight size={14} aria-hidden="true" />
-                  </span>
-                </span>
-              </span>
-            </button>
-          </li>
-        );
-      })}
-    </ol>
+                      : member.equipment.length
+                        ? `${member.equipment.length} of 10 slots`
+                        : "No loadout yet",
+                    body: (
+                      <LoadoutBoard
+                        pieces={member.equipment}
+                        size="card"
+                        abilities={false}
+                        label={`Player ${i + 1} equipment`}
+                      />
+                    ),
+                  }}
+                  action={
+                    <button
+                      type="button"
+                      className={styles.partyEdit}
+                      aria-pressed={active === i}
+                      aria-label={label}
+                      onClick={() => onSelect(i)}
+                    >
+                      Edit <ArrowRight size={14} aria-hidden="true" />
+                    </button>
+                  }
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }

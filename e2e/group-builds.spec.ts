@@ -15,12 +15,9 @@ test("group builds are discoverable and retain every member while presentation c
   await expect(page.getByLabel("Slot 1 recorded abilities", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Swaps", exact: true }).click();
   await expect(page.getByLabel("Slot 1 equipment alternatives", { exact: true })).toHaveCount(0);
-  await page.getByRole("button", { name: "Mounts", exact: true }).click();
+  // No member of this Group Build records a mount, so there is nothing to show or hide.
+  await expect(page.getByRole("button", { name: "Mounts", exact: true })).toBeDisabled();
   await expect(page.getByRole("heading", { name: "Recorded mounts", exact: true })).toHaveCount(0);
-  await page.getByRole("button", { name: "Mounts", exact: true }).click();
-  await expect(
-    page.getByText("No member’s build records a mount.", { exact: false }),
-  ).toBeVisible();
   await expect(page.getByRole("link", { name: "Copy to my comps", exact: true })).toHaveAttribute(
     "href",
     /fromComposition=dreamteam/,

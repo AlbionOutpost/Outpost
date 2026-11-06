@@ -83,9 +83,7 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
         </Link>
       </WorkspaceHeading>
       <CompositionView id={id} composition={composition} editable={editable} dropped={dropped} />
-      <div className={styles.community}>
-        <CommunityPanel kind="composition" id={id} />
-      </div>
+      <CommunityPanel kind="composition" id={id} />
       <CompNextSteps
         show={["builds", "library", "teams"]}
         title={

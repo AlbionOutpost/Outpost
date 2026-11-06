@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Link2 } from "lucide-react";
-import Link from "@/components/build-region-link";
 import { useOutpostRegion } from "./region-context";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
@@ -104,19 +103,20 @@ export function LibraryGroupWorkspace({
     );
     return {
       member: libraryRosterMember(build, index),
-      title: <Link href={`/builds/library/${encodeURIComponent(build.slug)}`}>{build.title}</Link>,
+      title: build.title,
+      href: `/builds/library/${encodeURIComponent(build.slug)}`,
+      line: `Slot ${index + 1}${optional ? " · Optional" : ""} · role by weapon type`,
       badges: optional,
       body: (
         <>
           {view === "equipment" ? (
-            <div className={styles.memberBoard}>
-              <LoadoutBoard
-                pieces={rows}
-                size="mini"
-                abilities={false}
-                label={`Slot ${index + 1} equipment`}
-              />
-            </div>
+            <LoadoutBoard
+              pieces={rows}
+              spellNames={spellNames}
+              size="card"
+              choices
+              label={`Slot ${index + 1} equipment`}
+            />
           ) : (
             <ul className={styles.abilities} aria-label={`Slot ${index + 1} recorded abilities`}>
               {rows.map((row) => (
@@ -221,7 +221,9 @@ export function LibraryGroupWorkspace({
             <button
               type="button"
               className={styles.toggle}
-              aria-pressed={mounts}
+              aria-pressed={!!recordedMounts.length && mounts}
+              disabled={!recordedMounts.length}
+              title={recordedMounts.length ? undefined : "No member’s build records a mount"}
               onClick={() => setMounts((on) => !on)}
             >
               Mounts
@@ -245,27 +247,23 @@ export function LibraryGroupWorkspace({
             )}
           </CompMenu>
         </div>
-        <CompMembers cards={cards} label={`${composition.title} members`} />
+        <CompMembers cards={cards} label={`${composition.title} members`} title="Party roster" />
       </section>
-      {mounts && (
+      {mounts && recordedMounts.length > 0 && (
         <section className={`panel ${styles.panel}`} aria-labelledby="comp-mounts">
           <PanelHead
             id="comp-mounts"
             title="Recorded mounts"
             line="What the members’ builds ride. Agree on mounts before you set out."
           />
-          {recordedMounts.length ? (
-            <ul className={styles.mounts}>
-              {recordedMounts.map((id) => (
-                <li key={id}>
-                  <ItemIcon id={id} size={48} />
-                  <span>{equipmentName(id)}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <StatusLine>No member’s build records a mount.</StatusLine>
-          )}
+          <ul className={styles.mounts}>
+            {recordedMounts.map((id) => (
+              <li key={id}>
+                <ItemIcon id={id} size={48} />
+                <span>{equipmentName(id)}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
     </>
