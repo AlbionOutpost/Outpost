@@ -4,16 +4,19 @@ import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Search, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
-import { regions } from "@/lib/albion/region-config";
+import { cities, regions } from "@/lib/albion/region-config";
+import { fetchQuoteBatch, type MarketPrice } from "@/lib/albion/market-quotes";
+import { rankByGearValue, type GearValue } from "@/lib/albion/kill-value";
 import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceAge } from "@/lib/albion/source-age";
 import { ItemIcon } from "./item-icon";
+import { KillCard } from "./kill-card";
 import { LoadoutBoard } from "./loadout-board";
 import { WellSelect } from "./well-select";
 import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
-import { StatusLine, Unavailable } from "./status-line";
+import { StatusLine } from "./status-line";
 import { NextStepCards } from "./next-step-cards";
 import styles from "./combat-feed.module.css";
 
@@ -21,36 +24,14 @@ type Player = CombatEvent["killer"];
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 const utc = (value: string) =>
   new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
-const pieces = (p: Player) =>
-  p.equipment.flatMap((e) => (e.itemId ? [{ slot: e.slot, itemId: e.itemId }] : []));
-
-/** One side of a killboard, as on the landing's top kills: name, guild, IP, then the board. */
-function Side({ player, victim, lead }: { player: Player; victim?: boolean; lead?: boolean }) {
-  return (
-    <div className={`${styles.side}${victim ? ` ${styles.victim}` : ""}`}>
-      <span className={`${styles.who}${lead ? " combat-identity" : ""}`}>
-        <strong title={player.name}>{player.name}</strong>
-        <small>
-          {player.guild || "No guild"}
-          {player.alliance ? ` [${player.alliance}]` : ""}
-        </small>
-        <small>
-          {player.itemPower ? (
-            `${Math.round(player.itemPower).toLocaleString("en-US")} IP`
-          ) : (
-            <Unavailable label="IP unavailable" />
-          )}
-        </small>
-      </span>
-      <LoadoutBoard
-        pieces={pieces(player)}
-        size="mini"
-        abilities={false}
-        label={`${player.name} equipment`}
-      />
-    </div>
+const royal = cities.filter((c) => c !== "Black Market" && c !== "Brecilien");
+/** The victim's worn pieces, as the landing prices them: item and quality. */
+const worn = (event: CombatEvent) =>
+  event.victim.equipment.flatMap((p) =>
+    p.itemId ? [{ itemId: p.itemId, quality: p.quality ?? 1 }] : [],
   );
-}
+const priceKey = (region: string, item: { itemId: string; quality: number }) =>
+  `${region}:${item.itemId}:${item.quality}`;
 
 /** Every recorded piece by name and quality, for the item details. */
 function Gear({ player, victim }: { player: Player; victim?: boolean }) {
@@ -150,6 +131,54 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
     .toSorted((a, b) =>
       sort === "fame" ? b.fame - a.fame : Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
     );
+  // The victims' worn gear, priced once per piece and server like the landing's top kills:
+  // each piece at its cheapest royal-city sell order seen in the last week.
+  const [prices, setPrices] = useState<ReadonlyMap<string, MarketPrice[]>>(() => new Map());
+  const [pricing, setPricing] = useState<string | null>(null);
+  useEffect(() => {
+    if (!feed) return;
+    const missing = [
+      ...new Map(
+        feed.events
+          .flatMap(worn)
+          .filter((item) => !prices.has(priceKey(region, item)))
+          .map((item) => [priceKey(region, item), item]),
+      ).values(),
+    ].slice(0, 100);
+    if (!missing.length) return;
+    const active = new AbortController();
+    const frame = requestAnimationFrame(() => {
+      setPricing(key);
+      fetchQuoteBatch(region, missing, active.signal)
+        .then((rows) => {
+          const found = new Map(rows.map((row) => [priceKey(region, row), row]));
+          return missing.map((item) => {
+            const row = found.get(priceKey(region, item));
+            return [priceKey(region, item), row && !row.error ? row.prices : []];
+          });
+        })
+        // A failed batch leaves those pieces without a listing; the figure says so with "—".
+        .catch(() => missing.map((item) => [priceKey(region, item), []]))
+        .then((entries) => {
+          if (active.signal.aborted) return;
+          setPrices((current) => new Map([...current, ...(entries as [string, MarketPrice[]][])]));
+          setPricing(null);
+        });
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      active.abort();
+    };
+  }, [feed, region, key, prices]);
+  /** Undefined while pricing; pieces past the 100-piece cap count as without a listing. */
+  const gearValue = (event: CombatEvent): GearValue | undefined => {
+    const items = worn(event);
+    if (!items.length) return null;
+    const known = items.filter((item) => prices.has(priceKey(region, item)));
+    if (known.length < items.length && pricing === key) return undefined;
+    const quotes = known.flatMap((item) => prices.get(priceKey(region, item)) ?? []);
+    return rankByGearValue([event], quotes, royal)[0].gearValue;
+  };
   const loading = pending === key || (!feed && error?.key !== key);
   const failed = error?.key === key;
   const kills = mode === "kills";
@@ -265,27 +294,27 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </div>
       )}
       {!feed ? (
-        <div className={styles.grid} aria-busy={loading}>
-          {loading && (
+        loading ? (
+          <div className={`kill-grid ${styles.grid}`} aria-busy="true">
             <div className={styles.loading}>
               <StatusLine>Loading the {kills ? "kill" : "death"} feed…</StatusLine>
             </div>
-          )}
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className={`raised has-scene ${styles.card} ${styles.skeleton}${loading ? ` ${styles.breathing}` : ""}`}
-              data-scene={["build", "composition", "market"][i]}
-              aria-hidden="true"
-            >
-              <div className={styles.boards}>
-                <LoadoutBoard pieces={[]} size="mini" abilities={false} />
-                <div className={styles.mid} />
-                <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`raised has-scene kill-card ${styles.card} ${styles.skeleton}`}
+                data-scene={["build", "composition", "market"][i]}
+                aria-hidden="true"
+              >
+                <div className="kill-boards">
+                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+                  <div className="kill-mid" />
+                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : null
       ) : !events.length ? (
         <div className={styles.empty}>
           <EmptyWell
@@ -315,50 +344,31 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           />
         </div>
       ) : (
-        <div className={styles.grid} aria-label={`Published ${noun}`} role="list">
+        <section className={`kill-grid ${styles.grid}`} aria-label={`Published ${noun}`}>
           {events.map((event, i) => {
-            const lead = kills ? event.killer : event.victim;
-            const other = kills ? event.victim : event.killer;
-            const old = Date.parse(feed.fetchedAt) - Date.parse(event.occurredAt) > 15 * 60000;
-            const future = Date.parse(event.occurredAt) > Date.parse(feed.fetchedAt) + 60000;
+            const at = Date.parse(feed.fetchedAt);
+            // The game publishes most fights minutes late; flag only the ones an hour behind.
+            const old = at - Date.parse(event.occurredAt) > 60 * 60000;
+            const future = Date.parse(event.occurredAt) > at + 60000;
             const isOpen = open.has(event.id);
-            const age = sourceAge(event.occurredAt, Date.parse(feed.fetchedAt));
             return (
-              <article
+              <KillCard
                 key={event.id}
-                role="listitem"
-                className={`raised has-scene combat-event ${styles.card}`}
-                data-scene={["build", "composition", "market"][i % 3]}
+                event={event}
+                at={at}
+                gearValue={gearValue(event)}
+                scene={["build", "composition", "market"][i % 3]}
+                className={`combat-event ${styles.card}`}
               >
-                <div className={`combat-event-summary ${styles.boards}`}>
-                  <Side player={lead} victim={!kills} lead />
-                  <div className={styles.mid}>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-                    <img src="/albion/icons/fame.webp" alt="" width={24} height={24} />
-                    <strong>{event.fame.toLocaleString("en-US")}</strong>
-                    <small>kill fame</small>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-                    <img
-                      className={styles.skull}
-                      src="/albion/icons/kill-skull.webp"
-                      alt=""
-                      width={30}
-                      height={30}
-                    />
-                    <em>{kills ? "Killed" : "Killed by"}</em>
-                    <time dateTime={event.occurredAt} title={utc(event.occurredAt)}>
-                      {age.label}
-                    </time>
-                  </div>
-                  <Side player={other} victim={kills} />
-                </div>
                 <div className={styles.foot}>
                   <span className={styles.footMeta}>
-                    {event.participants !== null
-                      ? `${event.participants} ${event.participants === 1 ? "participant" : "participants"}`
-                      : "Participants not reported"}
+                    <span>
+                      {event.participants !== null
+                        ? `${event.participants} ${event.participants === 1 ? "participant" : "participants"}`
+                        : "Participants not reported"}
+                    </span>
                     {(old || future) && (
-                      <span className={styles.delayed}>
+                      <span className={styles.delayed} title={utc(event.occurredAt)}>
                         {future ? "Source time is ahead" : "Delayed source event"}
                       </span>
                     )}
@@ -393,10 +403,10 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
                     </p>
                   </div>
                 </div>
-              </article>
+              </KillCard>
             );
           })}
-        </div>
+        </section>
       )}
       {feed && (offset > 0 || feed.events.length >= 20) && (
         <nav className={styles.pager} aria-label="Combat feed pages">
@@ -435,7 +445,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             Gear up for the next <em>fight</em>
           </>
         }
-        line="Find a PvP loadout, plan your party, or price the set before you risk it."
+        line="Find a PvP loadout, plan your party, or see the same fights from the other side."
         link={{ href: "/builds", label: "All builds" }}
         cards={[
           {
@@ -452,13 +462,21 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             line: "Plan the party: roles, loadouts and swaps for every slot.",
             scene: "composition",
           },
-          {
-            href: "/tools/market",
-            emblem: "tool-market",
-            title: "Market Explorer",
-            line: "Prices in every city, so you know what a set costs to replace.",
-            scene: "market",
-          },
+          kills
+            ? {
+                href: "/tools/kill-feed?view=deaths",
+                emblem: "fame",
+                title: "Death feed",
+                line: "The same fights, from the side that lost them.",
+                scene: "city",
+              }
+            : {
+                href: "/tools/kill-feed",
+                emblem: "trophy-gold",
+                title: "Kill feed",
+                line: "The same fights, from the side that won them.",
+                scene: "city",
+              },
         ]}
       />
     </div>
