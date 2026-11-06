@@ -23,6 +23,7 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
+  RetryLine,
 } from "./calculator-shell";
 import {
   coin,
@@ -393,12 +394,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
           Loading prices for {draft.fromCity} and {draft.toCity}…
         </StatusLine>
       ) : priceMessage?.error ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{priceMessage.text}</StatusLine>
-          <button type="button" onClick={load}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={load}>{priceMessage.text}</RetryLine>
       ) : missing.length && !manualPrices ? (
         <StatusLine tone="stale">
           No order was seen for {missing.length === 2 ? "either price" : "one price"} at this

@@ -11,6 +11,7 @@ import { ItemIcon } from "./item-icon";
 import { PanelHead } from "./panel-head";
 import { Disclosure } from "./disclosure";
 import { EmptyWell } from "./empty-well";
+import { RetryLine } from "./calculator-shell";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import { Observed, coin, Missing, PRICE_ERROR } from "./calculator-figures";
@@ -263,12 +264,7 @@ export function OpportunityScanner() {
       ) : from === to ? (
         <StatusLine>Pick two different cities to scan a route.</StatusLine>
       ) : error?.key === query ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{error.message}</StatusLine>
-          <button type="button" onClick={() => void scan()}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={() => void scan()}>{error.message}</RetryLine>
       ) : busy && !hasResult ? (
         <StatusLine>
           Scanning {items.length} {items.length === 1 ? "item" : "items"} from {from} to {to}…

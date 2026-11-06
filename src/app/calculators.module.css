@@ -186,7 +186,7 @@
 }
 :global(.app.outpost) .specs.specs ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
   gap: 6px;
   margin: 0;
   padding: 0;
@@ -288,10 +288,22 @@
   white-space: nowrap;
 }
 
-/* Roads of Avalon: three panels of one height on wide screens */
-@media (min-width: 1181px) {
-  :global(.app.outpost) .equalPanels.equalPanels section:global(.panel) {
-    align-self: stretch;
+/* Roads of Avalon: the two zones side by side, then the portal's size and time left */
+:global(.app.outpost) .portalFields.portalFields.portalFields {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+:global(.app.outpost) .portalFields.portalFields > label {
+  grid-column: span 2;
+}
+:global(.app.outpost) .portalFields.portalFields > label:nth-of-type(-n + 2) {
+  grid-column: span 3;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .portalFields.portalFields > label {
+    grid-column: span 3;
+  }
+  :global(.app.outpost) .portalFields.portalFields > label:nth-of-type(-n + 3) {
+    grid-column: 1 / -1;
   }
 }
 :global(.app.outpost) .portalForm.portalForm {
@@ -300,10 +312,10 @@
 }
 :global(.app.outpost) .equalPanels.equalPanels input:not([type]) {
   width: 100%;
-  min-height: 40px;
+  min-height: 42px;
   padding: 0 12px;
   border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: inset 0 1px 3px #0009;
   color: var(--text);
@@ -451,6 +463,20 @@
 }
 :global(.app.outpost) .routeFields.routeFields {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+/* Five fields: the second row's two share it rather than leave a hole */
+@media (min-width: 701px) {
+  :global(.app.outpost) .routeFields.routeFields {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  :global(.app.outpost) .routeFields.routeFields > label {
+    grid-column: span 2;
+  }
+  :global(.app.outpost)
+    .routeFields.routeFields:has(> label:nth-child(5):last-child)
+    > label:nth-child(n + 4) {
+    grid-column: span 3;
+  }
 }
 :global(.app.outpost) .scanItems.scanItems {
   display: grid;
@@ -733,14 +759,16 @@
   text-align: center;
 }
 
-/* The neutral seal stands in for missing tool art, framed as a tile like the painted emblems */
+/* The neutral seal stands in for missing tool art, framed as a tile like the painted emblems.
+   It fills the masthead's emblem box, so it shrinks with it on phones. */
 :global(.app.outpost) .sealTile.sealTile {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
   border: 2px solid color-mix(in srgb, var(--accent) 70%, #000);
-  border-radius: 12px;
+  border-radius: inherit;
   background: radial-gradient(circle at 50% 35%, #2a2018, #120e0b 70%);
   box-shadow:
     inset 0 0 0 2px #0008,
@@ -749,6 +777,6 @@
     0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 :global(.app.outpost) .sealTile.sealTile img {
-  width: 44px;
-  height: 44px;
+  width: 70%;
+  height: 70%;
 }

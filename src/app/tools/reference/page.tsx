@@ -2,9 +2,11 @@ import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { PanelHead } from "@/components/panel-head";
 import { ReferenceJump } from "@/components/reference-jump";
+import { ItemIcon } from "@/components/item-icon";
 import { CalculatorCta } from "@/components/calculator-cta";
 import { cities } from "@/lib/albion/region-config";
 import referenceTables from "@/lib/albion/game/reference-tables.json" with { type: "json" };
+import gameItems from "@/lib/albion/game/items.json" with { type: "json" };
 import styles from "@/components/calculator-shell.module.css";
 import r from "./reference.module.css";
 type Table = { heading: string | null; header: string[]; rows: string[][] };
@@ -30,6 +32,21 @@ const tables = (referenceTables as { slug: string; title: string; tables: Table[
   tables: t.tables.map((table) => normalise(t.slug, table)),
 }));
 const numeric = /^[\d.,%\s–+-]+(kg|%)?$/;
+/** Item names from the game data, to the one item id each names; a name two items share is left out. */
+const itemIds = new Map<string, string | null>();
+for (const [id, [name]] of Object.entries(gameItems as Record<string, unknown[]>)) {
+  const key = String(name).toLowerCase();
+  itemIds.set(key, itemIds.has(key) ? null : id);
+}
+const itemId = (name: string) => itemIds.get(name.toLowerCase()) ?? undefined;
+/** Columns where (nearly) every row names an item get the item's icon. */
+function itemColumns(table: Table) {
+  return new Set(
+    table.header
+      .map((_, c) => c)
+      .filter((c) => table.rows.filter((row) => itemId(row[c])).length >= table.rows.length * 0.8),
+  );
+}
 const cityNames = new Set<string>(cities);
 /** "Two Handed Weapon" → "Two-handed weapon"; city names keep their capitals. */
 function sentence(text: string) {
@@ -42,7 +59,7 @@ function sentence(text: string) {
   out = out.replace(/ ([A-Z])(?=[a-z])/g, (_, first: string) => ` ${first.toLowerCase()}`);
   return out.replace(/\u0000(\d+)\u0000/g, (_, i: string) => kept[Number(i)]);
 }
-function Cell({ value }: { value: string }) {
+function Cell({ value, item }: { value: string; item?: boolean }) {
   // An empty source cell: nothing given for this row (no bonus, no speed class)
   if (!value)
     return (
@@ -58,6 +75,16 @@ function Cell({ value }: { value: string }) {
         {value}
       </span>
     );
+  if (item) {
+    // A name the game data doesn't match keeps the column's line, with no art
+    const id = itemId(value);
+    return (
+      <span className={r.item}>
+        {id ? <ItemIcon id={id} size={28} /> : <span className={r.noArt} aria-hidden="true" />}
+        {value}
+      </span>
+    );
+  }
   return <>{value}</>;
 }
 export async function generateMetadata({ searchParams }: SeoPageProps) {
@@ -76,14 +103,11 @@ export default function Page() {
       <div className={r.layout}>
         <nav className={`panel ${r.rail}`} aria-label="Reference tables">
           <PanelHead title="Tables" line="Captured from the game on 27 Oct 2026." as="h2" />
-          <ReferenceJump className={r.jump} sections={tables} />
-          <ul className={r.index}>
-            {tables.map((t) => (
-              <li key={t.slug}>
-                <a href={`#${t.slug}`}>{sentence(t.title)}</a>
-              </li>
-            ))}
-          </ul>
+          <ReferenceJump
+            jumpClassName={r.jump}
+            listClassName={r.index}
+            sections={tables.map((t) => ({ slug: t.slug, title: sentence(t.title) }))}
+          />
         </nav>
         <div className={r.sections}>
           {tables.map((t) => (
@@ -103,54 +127,65 @@ export default function Page() {
                     : `${t.tables[0].rows.length} ${t.tables[0].rows.length === 1 ? "row" : "rows"}`
                 }
               />
-              {t.tables.map((table, index) => (
-                <div key={index} className={r.block}>
-                  {table.heading && t.tables.length > 1 && <h3>{sentence(table.heading)}</h3>}
+              {t.tables.map((table, index) => {
+                const items = itemColumns(table);
+                return (
                   <div
-                    className={r.scroll}
-                    tabIndex={0}
-                    role="region"
-                    aria-label={table.heading ?? t.title}
+                    key={index}
+                    className={r.block}
+                    data-narrow={table.header.length <= 2 ? "" : undefined}
                   >
-                    <table className={r.table}>
-                      <thead>
-                        <tr>
-                          {table.header.map((cell, i) => (
-                            <th
-                              key={i}
-                              scope="col"
-                              className={
-                                i > 0 && table.rows.every((row) => !row[i] || numeric.test(row[i]))
-                                  ? r.numeric
-                                  : undefined
-                              }
-                            >
-                              {cell ? sentence(cell) : <span className="sr-only">Type</span>}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {table.rows.map((row, ri) => (
-                          <tr key={ri}>
-                            {row.map((cell, c) =>
-                              c === 0 ? (
-                                <th key={c} scope="row">
-                                  <Cell value={cell} />
-                                </th>
-                              ) : (
-                                <td key={c} className={numeric.test(cell) ? r.numeric : undefined}>
-                                  <Cell value={cell} />
-                                </td>
-                              ),
-                            )}
+                    {table.heading && t.tables.length > 1 && <h3>{sentence(table.heading)}</h3>}
+                    <div
+                      className={r.scroll}
+                      tabIndex={0}
+                      role="region"
+                      aria-label={table.heading ?? t.title}
+                    >
+                      <table className={r.table}>
+                        <thead>
+                          <tr>
+                            {table.header.map((cell, i) => (
+                              <th
+                                key={i}
+                                scope="col"
+                                className={
+                                  i > 0 &&
+                                  table.rows.every((row) => !row[i] || numeric.test(row[i]))
+                                    ? r.numeric
+                                    : undefined
+                                }
+                              >
+                                {cell ? sentence(cell) : <span className="sr-only">Type</span>}
+                              </th>
+                            ))}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {table.rows.map((row, ri) => (
+                            <tr key={ri}>
+                              {row.map((cell, c) =>
+                                c === 0 ? (
+                                  <th key={c} scope="row">
+                                    <Cell value={cell} item={items.has(c)} />
+                                  </th>
+                                ) : (
+                                  <td
+                                    key={c}
+                                    className={numeric.test(cell) ? r.numeric : undefined}
+                                  >
+                                    <Cell value={cell} item={items.has(c)} />
+                                  </td>
+                                ),
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </section>
           ))}
           <p className={styles.help}>

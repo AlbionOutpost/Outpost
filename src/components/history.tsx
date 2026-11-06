@@ -203,8 +203,37 @@ export function History({
           {refresh}
         </form>
       )}
+      {!visible.length && kind === "gold" && (
+        // The figures and chart keep their places while there is nothing to show
+        <dl className="history-figures">
+          {["Latest", "Lowest", "Highest"].map((label) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>
+                <b className="numeric">
+                  <Unavailable />
+                </b>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       {!visible.length && (
-        <div className="history-state">
+        <div className={`history-state${kind === "gold" ? " is-chart" : ""}`}>
+          {kind === "gold" && (
+            <svg viewBox="0 0 700 210" preserveAspectRatio="none" aria-hidden="true">
+              {[0, 0.5, 1].map((fraction) => (
+                <line
+                  key={fraction}
+                  x1="0"
+                  x2="700"
+                  y1={Y1 - fraction * (Y1 - Y0)}
+                  y2={Y1 - fraction * (Y1 - Y0)}
+                  className="history-grid"
+                />
+              ))}
+            </svg>
+          )}
           <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
           {failed && (
             <button type="button" className="pill-link is-small" onClick={() => void load()}>
