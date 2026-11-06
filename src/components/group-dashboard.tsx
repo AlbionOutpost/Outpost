@@ -190,12 +190,8 @@ export function GroupDashboard({
       <WorkspaceHeading
         scene="comps"
         emblem={<TeamMark name={group.name} />}
+        // A player-named title: no ember accent word on someone else's words
         title={group.name}
-        accent={
-          group.name.trim().split(/\s+/).length > 1
-            ? group.name.trim().split(/\s+/).pop()
-            : undefined
-        }
         description={group.description || "A Team workspace on Outpost."}
         actions={primary}
       >

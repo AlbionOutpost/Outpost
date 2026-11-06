@@ -32,7 +32,6 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
     if (e instanceof HttpError && e.status === 404) notFound();
     throw e;
   }
-  const words = data.group.name.trim().split(/\s+/);
   if (data.membership && data.dashboard)
     return (
       <div className={styles.page}>
@@ -65,7 +64,6 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
         scene="comps"
         emblem={<TeamMark name={data.group.name} />}
         title={data.group.name}
-        accent={words.length > 1 ? words.at(-1) : undefined}
         description={data.group.description || "A Team workspace on Outpost."}
       >
         <TeamChips

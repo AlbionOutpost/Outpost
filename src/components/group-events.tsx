@@ -113,7 +113,6 @@ export function GroupEvents({
         </ul>
       ) : (
         <EmptyWell
-          emblem="team-calendar"
           title={filter === "upcoming" ? "No event scheduled" : "No events in this view"}
           line={
             filter === "upcoming"
@@ -175,39 +174,67 @@ function EventCard({
         </button>
       </div>
       <div id={detailId} className={styles.eventBody} hidden={!open}>
-        {e.description && <p className="preserve">{e.description}</p>}
-        <dl className={styles.eventFacts}>
-          <div>
-            <dt>Voice</dt>
-            <dd>{e.voiceInfo || "Not set"}</dd>
+        <div className={styles.eventMain}>
+          {e.description && <p className="preserve">{e.description}</p>}
+          <dl className={styles.eventFacts}>
+            <div>
+              <dt>Voice</dt>
+              <dd>{e.voiceInfo || "Not set"}</dd>
+            </div>
+            <div>
+              <dt>Answers</dt>
+              <dd>
+                {rsvpCount(e, "AVAILABLE")} available · {rsvpCount(e, "MAYBE")} maybe ·{" "}
+                {rsvpCount(e, "UNAVAILABLE")} unavailable
+              </dd>
+            </div>
+          </dl>
+          {e.rsvps.length > 0 && (
+            <ul className={styles.rsvps} aria-label={`Answers for ${e.title}`}>
+              {e.rsvps.map((r) => (
+                <li key={r.userId} data-status={r.status}>
+                  {r.name} · {rsvpLabel[r.status] ?? r.status}
+                  {r.role ? ` · ${r.role}` : ""}
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className={styles.rowActions}>
+            <a
+              className="pill-link is-small"
+              href={`/api/groups/${groupId}/events/${e.id}/calendar`}
+            >
+              <CalendarArrowDown size={14} aria-hidden="true" /> Add to calendar
+            </a>
+            {e.compositionId && (
+              <Link className="pill-link is-small" href={`/compositions/${e.compositionId}`}>
+                <Swords size={14} aria-hidden="true" /> Assigned comp
+              </Link>
+            )}
+            {editor && !e.cancelled && <GroupEventEditor groupId={groupId} event={e} />}
+            {editor && !e.cancelled && (
+              <button
+                type="button"
+                className={`pill-link is-small ${styles.lossButton}`}
+                disabled={busy}
+                onClick={() => run({ action: "cancel-event", eventId: e.id })}
+              >
+                Cancel event
+              </button>
+            )}
           </div>
-          <div>
-            <dt>Answers</dt>
-            <dd>
-              {rsvpCount(e, "AVAILABLE")} available · {rsvpCount(e, "MAYBE")} maybe ·{" "}
-              {rsvpCount(e, "UNAVAILABLE")} unavailable
-            </dd>
-          </div>
-        </dl>
-        {e.rsvps.length > 0 && (
-          <ul className={styles.rsvps} aria-label={`Answers for ${e.title}`}>
-            {e.rsvps.map((r) => (
-              <li key={r.userId} data-status={r.status}>
-                {r.name} · {rsvpLabel[r.status] ?? r.status}
-                {r.role ? ` · ${r.role}` : ""}
-              </li>
-            ))}
-          </ul>
-        )}
+        </div>
         {!e.cancelled && (
           <form
-            className={styles.rsvpForm}
+            className={`well ${styles.rsvpForm}`}
+            aria-label={`Your answer for ${e.title}`}
             onSubmit={(event) => {
               event.preventDefault();
               const f = new FormData(event.currentTarget);
               run({ action: "rsvp", eventId: e.id, status: f.get("status"), role: f.get("role") });
             }}
           >
+            <p className={styles.rsvpTitle}>{mine ? "Your answer" : "Will you be there?"}</p>
             <Field label="Your response">
               <WellSelect
                 name="status"
@@ -232,27 +259,6 @@ function EventCard({
             </button>
           </form>
         )}
-        <div className={styles.rowActions}>
-          <a className="button secondary" href={`/api/groups/${groupId}/events/${e.id}/calendar`}>
-            <CalendarArrowDown size={14} aria-hidden="true" /> Add to calendar
-          </a>
-          {e.compositionId && (
-            <Link className="button secondary" href={`/compositions/${e.compositionId}`}>
-              <Swords size={14} aria-hidden="true" /> Assigned comp
-            </Link>
-          )}
-          {editor && !e.cancelled && <GroupEventEditor groupId={groupId} event={e} />}
-          {editor && !e.cancelled && (
-            <button
-              type="button"
-              className={`button secondary ${styles.lossButton}`}
-              disabled={busy}
-              onClick={() => run({ action: "cancel-event", eventId: e.id })}
-            >
-              Cancel event
-            </button>
-          )}
-        </div>
       </div>
     </article>
   );
