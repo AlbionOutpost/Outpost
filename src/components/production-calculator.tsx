@@ -17,7 +17,8 @@ import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import shell from "./calculator-shell.module.css";
+import own from "@/app/production-calculator.module.css";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/components/link";
@@ -50,6 +51,8 @@ import {
   productionPriceQuery,
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
+// The shared calculator wells, plus the crafting family's own rules.
+const s = { ...shell, ...own };
 export function ProductionCalculator({
   kind,
   category,

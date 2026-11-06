@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CircleCheck, RefreshCw } from "lucide-react";
 import { ItemIcon } from "./item-icon";
+import { Silver } from "./silver";
+import { itemLabel } from "@/lib/albion/item-label";
 import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import {
@@ -24,14 +26,18 @@ import {
   ResultRows,
   useCalculatorStep,
 } from "./calculator-shell";
-import { coin, PriceSource, profitTone, profitWord } from "./calculator-figures";
+import { PriceSource, profitTone, profitWord, Missing, PRICE_ERROR } from "./calculator-figures";
 import { Disclosure } from "./disclosure";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
+/** Silver in whole coins: the game never shows fractions of a silver. Display only. */
+const whole = (v: number | null | undefined) =>
+  v == null || !Number.isFinite(v) ? <Missing /> : <Silver value={Math.round(v)} />;
 const units = (n: number | null | undefined, digits = 2) =>
   n === null || n === undefined
-    ? "—"
+    ? "Unavailable"
     : n.toLocaleString("en-US", { maximumFractionDigits: digits });
 const tradeCities = cities.filter((c) => c !== "Black Market");
 const tierName = [
@@ -47,7 +53,6 @@ const tierName = [
 ];
 const gathering = (type: string) =>
   ["FISHING", "WOOD", "STONE", "ORE", "FIBER", "HIDE"].includes(type) ? "Gathering" : "Crafting";
-class PriceError extends Error {}
 const steps = ["laborer-run", "laborer-prices", "laborer-result"];
 export function LaborersCalculator() {
   const region = useOutpostRegion();
@@ -56,6 +61,7 @@ export function LaborersCalculator() {
   const [failure, setFailure] = useState("");
   const [busy, setBusy] = useState(false);
   const [picker, setPicker] = useState(false);
+  const [showAllLoot, setShowAllLoot] = useState(false);
   const [step, goToStep] = useCalculatorStep(steps);
   const request = useRef<AbortController | null>(null);
   const config = { ...draft, region };
@@ -137,7 +143,7 @@ export function LaborersCalculator() {
         signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]),
       });
       const b = await r.json();
-      if (!r.ok) throw new PriceError(b.error);
+      if (!r.ok) throw new Error(b.error);
       const observed = laborerSchema.shape.prices.parse(b.prices);
       if (active.signal.aborted) return;
       setDraft((d) => {
@@ -157,9 +163,8 @@ export function LaborersCalculator() {
         }
         return { ...d, prices };
       });
-    } catch (e) {
-      if (!active.signal.aborted)
-        setFailure(e instanceof PriceError && e.message ? e.message : "Prices couldn’t be loaded.");
+    } catch {
+      if (!active.signal.aborted) setFailure(PRICE_ERROR);
     } finally {
       if (request.current === active) setBusy(false);
     }
@@ -183,7 +188,7 @@ export function LaborersCalculator() {
     draft.buyOrder,
   ]);
   const title = `${tierName[draft.journalTier]} ${laborerNames[draft.type]}`;
-  const name = (id: string) => names[id] ?? id;
+  const name = (id: string) => itemLabel(id, names);
   const valid = result?.valid ? result : null;
   const journalRow = (id: string, isFull: boolean) => {
     const p = draft.prices[id];
@@ -221,14 +226,16 @@ export function LaborersCalculator() {
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
-          {value === null ? <span className={s.dash}>—</span> : coin(value * count)}
+          {value === null ? <Missing /> : whole(value * count)}
         </span>
       </li>
     );
   };
-  const rows = valid
-    ? valid.rows
-    : loot.items.map((i) => ({ ...i, units: null, unit: null, value: null }));
+  const allRows = (
+    valid ? valid.rows : loot.items.map((i) => ({ ...i, units: null, unit: null, value: null }))
+  ).toSorted((a, b) => b.share - a.share);
+  // The biggest shares first; the rare enchanted drops wait behind "Show all loot".
+  const rows = showAllLoot ? allRows : allRows.slice(0, 5);
   const browser = (
     <div className={s.browser} aria-label="Laborer browser" role="group">
       <div className={s.browserHead}>
@@ -348,8 +355,8 @@ export function LaborersCalculator() {
             value={draft.saleMode}
             onChange={(e) => update("saleMode", e.target.value as LaborerInput["saleMode"])}
           >
-            <option value="instant">Selling to buy orders</option>
-            <option value="listing">Posting sell orders</option>
+            <option value="instant">Buy orders</option>
+            <option value="listing">My sell orders</option>
           </WellSelect>
         </label>
       </div>
@@ -459,13 +466,23 @@ export function LaborersCalculator() {
                 />
                 <span className={s.matTotal}>
                   <span className="sr-only">Value </span>
-                  {row.value == null ? <span className={s.dash}>—</span> : coin(row.value)}
+                  {row.value == null ? <Missing /> : whole(row.value)}
                 </span>
               </li>
             );
           })}
         </ul>
       </div>
+      {allRows.length > 5 && (
+        <button
+          type="button"
+          className={`button secondary ${c.moreLoot}`}
+          aria-expanded={showAllLoot}
+          onClick={() => setShowAllLoot((v) => !v)}
+        >
+          {showAllLoot ? "Show the main loot" : `Show all ${allRows.length} loot items`}
+        </button>
+      )}
       <p className={s.help}>
         Loot shares come from the game’s loot tables (27 Oct 2026). Type a price for anything the
         market hasn’t seen.
@@ -507,7 +524,7 @@ export function LaborersCalculator() {
         tone={profit === null ? "even" : profitTone(profit)}
         value={
           <output aria-label="Expected profit" data-result="laborer-profit">
-            {profit === null ? <span className={s.dash}>—</span> : coin(profit)}
+            {profit === null ? <Missing /> : whole(profit)}
           </output>
         }
         note={
@@ -521,17 +538,16 @@ export function LaborersCalculator() {
         }
         aside={{
           label: "Return on cost",
-          value:
-            valid?.roi == null ? <span className={s.dash}>—</span> : `${valid.roi.toFixed(1)}%`,
+          value: valid?.roi == null ? <Missing /> : `${valid.roi.toFixed(1)}%`,
         }}
       />
       <ResultPair
         result="laborer-cash"
         items={[
-          { label: "Journals cost", value: valid?.cost == null ? na : coin(valid.cost) },
+          { label: "Journals cost", value: valid?.cost == null ? na : whole(valid.cost) },
           {
             label: "Loot after fees",
-            value: valid && valid.coverage > 0 ? coin(valid.lootNet) : na,
+            value: valid && valid.coverage > 0 ? whole(valid.lootNet) : na,
           },
         ]}
       />
@@ -564,7 +580,7 @@ export function LaborersCalculator() {
               ? [
                   {
                     label: "Empty journal after fees",
-                    value: valid.emptyNet == null ? <Unavailable /> : coin(valid.emptyNet),
+                    value: valid.emptyNet == null ? <Unavailable /> : whole(valid.emptyNet),
                   },
                 ]
               : []),
@@ -595,10 +611,10 @@ export function LaborersCalculator() {
               <span className={s.summaryPending}>
                 {missing.length
                   ? `${missing.length} ${missing.length === 1 ? "price" : "prices"} to go`
-                  : "—"}
+                  : "Unavailable"}
               </span>
             ) : (
-              coin(profit)
+              whole(profit)
             ),
         }}
         steps={[

@@ -14,10 +14,14 @@ import {
 } from "@/lib/albion/avalon-map";
 import { CalculatorShell, ResultFigure, useCalculatorStep } from "./calculator-shell";
 import { StatusLine } from "./status-line";
+import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import { Missing } from "./calculator-figures";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const KEY = "outpost:avalon-map-v1";
+/** No painted Roads art yet; the neutral seal stands in (see the batch 4 report). */
+const EMBLEM = "fame";
 const ICON_LABEL: Record<string, string> = {
   GREEN: "green chest",
   BLUE: "blue chest",
@@ -40,19 +44,6 @@ function zoneInfo(name: string) {
   const zone = roadZones.get(name);
   if (!zone) return null;
   return `T${zone.tier} · ${zone.icons.map((i) => `${i.count && i.count > 1 ? `${i.count}× ` : ""}${ICON_LABEL[i.node] ?? i.node.toLowerCase()}`).join(", ")}`;
-}
-/** A drawn road network: three zones and the portals between them, for the empty map. */
-function RoadsSketch() {
-  return (
-    <svg className={c.sketch} viewBox="0 0 120 72" aria-hidden="true">
-      <path d="M18 52 L58 18 L102 44 M58 18 L60 58" />
-      <path className={c.sketchOpen} d="M18 52 L60 58 L102 44" />
-      <circle cx="18" cy="52" r="7" />
-      <circle cx="58" cy="18" r="7" />
-      <circle cx="102" cy="44" r="7" />
-      <circle className={c.sketchHome} cx="60" cy="58" r="6" />
-    </svg>
-  );
 }
 export function AvalonMapper() {
   const [map, setMap] = useState<AvalonMap>(emptyAvalonMap);
@@ -187,7 +178,7 @@ export function AvalonMapper() {
       {message && (
         <StatusLine tone={message.error ? "error" : "default"}>{message.text}</StatusLine>
       )}
-      <button className={`button primary ${c.start}`} type="submit">
+      <button className={`button secondary ${c.start}`} type="submit">
         Save portal
       </button>
     </form>
@@ -208,7 +199,7 @@ export function AvalonMapper() {
                 </small>
               </span>
               <span className={c.portalMeta}>
-                <b>{now ? remaining(l, now) : "—"}</b>
+                <b>{now ? remaining(l, now) : "…"}</b>
                 <small>{l.size} players</small>
               </span>
               <button
@@ -253,19 +244,24 @@ export function AvalonMapper() {
       </div>
     </>
   ) : (
-    <div className={c.emptyMap}>
-      <RoadsSketch />
-      <p className={c.emptyTitle}>No portals yet</p>
-      <p className={c.emptyLine}>
-        Add each connection your scout finds with the time it has left. Closed ones grey out on
-        their own.
-      </p>
-      <button type="button" className="button secondary" onClick={startAdding}>
-        Add your first portal <ArrowRight size={16} aria-hidden="true" />
-      </button>
+    <div className={c.columnEmpty}>
+      <EmptyWell
+        emblem={EMBLEM}
+        title="No portals yet"
+        line="Add each connection your scout finds, with its time left."
+        action={
+          <button type="button" className="button secondary" onClick={startAdding}>
+            Add your first portal <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        }
+      />
     </div>
   );
   const hops = route ? route.zones.length - 1 : null;
+  // Destinations are the zones on your map: a route can only run through saved portals.
+  const destinations = [...new Set(map.links.flatMap((l) => [l.a, l.b]))]
+    .filter((zone) => zone !== home)
+    .sort((x, y) => x.localeCompare(y));
   const routePanel = (
     <>
       <div className={s.fields}>
@@ -285,20 +281,26 @@ export function AvalonMapper() {
         </label>
         <label className={s.wide}>
           Destination
-          <input
-            list="avalon-zones"
-            autoComplete="off"
-            placeholder="Where you want to go"
-            value={target}
+          <WellSelect
+            aria-label="Destination"
+            value={destinations.includes(target) ? target : ""}
+            disabled={!destinations.length}
             onChange={(e) => setTarget(e.target.value)}
-          />
+          >
+            <option value="">
+              {destinations.length ? "Choose a zone on your map" : "Save a portal first"}
+            </option>
+            {destinations.map((zone) => (
+              <option key={zone}>{zone}</option>
+            ))}
+          </WellSelect>
         </label>
       </div>
       <ResultFigure
         label="Fewest portals"
         value={
           <span data-result="avalon-hops">
-            {hops === null ? <span className={s.dash}>—</span> : hops.toLocaleString()}
+            {hops === null ? <Missing /> : hops.toLocaleString()}
           </span>
         }
         note={
@@ -316,7 +318,11 @@ export function AvalonMapper() {
               <strong>{zone}</strong>
               {zoneInfo(zone) && <small>{zoneInfo(zone)}</small>}
               {route.links[i] && (
-                <small className={c.routeLink}>
+                <small
+                  className={
+                    Date.parse(route.links[i].expiresAt) - now < 30 * 60000 ? c.soon : undefined
+                  }
+                >
                   {route.links[i].size}-player portal · {remaining(route.links[i], now)} left
                 </small>
               )}

@@ -126,12 +126,13 @@ export function CalculatorShell({
             )}
           </section>
         ))}
-        {details && (
-          <div className={styles.details} data-active={step === last ? "" : undefined}>
-            {details}
-          </div>
-        )}
       </div>
+      {/* Outside the grid, so the sticky result stops at the grid's end and never covers it */}
+      {details && (
+        <div className={styles.details} data-active={step === last ? "" : undefined}>
+          {details}
+        </div>
+      )}
     </div>
   );
 }

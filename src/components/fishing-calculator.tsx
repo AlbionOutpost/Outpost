@@ -16,12 +16,12 @@ import {
   ResultRows,
   useCalculatorStep,
 } from "./calculator-shell";
-import { coin, PriceSource, profitTone } from "./calculator-figures";
+import { coin, PriceSource, profitTone, Missing, PRICE_ERROR } from "./calculator-figures";
 import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined ? (
@@ -183,7 +183,7 @@ export function FishingCalculator({
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
-          {total === null ? <span className={s.dash}>—</span> : coin(total)}
+          {total === null ? <Missing /> : coin(total)}
         </span>
       </li>
     );
@@ -379,7 +379,7 @@ export function FishingCalculator({
         <StatusLine>Loading prices in {city}…</StatusLine>
       ) : selectedQuote?.error ? (
         <div className={s.errorLine}>
-          <StatusLine tone="error">{selectedQuote.error}</StatusLine>
+          <StatusLine tone="error">{PRICE_ERROR}</StatusLine>
           <button type="button" onClick={() => void refreshAll()}>
             Retry
           </button>
@@ -398,7 +398,7 @@ export function FishingCalculator({
             selected.id,
             "ask",
             `Buy ${selected.name}`,
-            `Lowest sell order · ${mode === "chopping" ? quantity.toLocaleString() : (leveling?.needed?.toLocaleString() ?? "—")} fish`,
+            `Lowest sell order · ${mode === "chopping" ? quantity.toLocaleString() : (leveling?.needed?.toLocaleString() ?? "how many")} fish`,
             mode === "chopping" ? quantity : (leveling?.needed ?? null),
           )}
           {mode === "chopping" &&
@@ -419,7 +419,7 @@ export function FishingCalculator({
               "T1_FISHCHOPS",
               saleBasis,
               "Sell chopped",
-              `${sideLabel} · ${chops === null ? "—" : chops.toLocaleString()} chopped fish`,
+              `${sideLabel} · ${chops === null ? "" : `${chops.toLocaleString()} `}chopped fish`,
               chops,
               true,
             )}
@@ -484,7 +484,7 @@ export function FishingCalculator({
             tone={advantage === null ? "even" : profitTone(advantage)}
             value={
               <span data-result="fish-chop-advantage">
-                {advantage === null ? <span className={s.dash}>—</span> : coin(advantage)}
+                {advantage === null ? <Missing /> : coin(advantage)}
               </span>
             }
             note={
@@ -521,7 +521,7 @@ export function FishingCalculator({
             label="Cost of your fame target"
             value={
               <span data-result="fishing-target-cost">
-                {leveling?.cost == null ? <span className={s.dash}>—</span> : coin(leveling.cost)}
+                {leveling?.cost == null ? <Missing /> : coin(leveling.cost)}
               </span>
             }
             note={
@@ -695,7 +695,7 @@ export function FishingCalculator({
                     <span className={s.summaryPending}>
                       {missing.length
                         ? `${missing.length} ${missing.length === 1 ? "input" : "inputs"} to go`
-                        : "—"}
+                        : "Unavailable"}
                     </span>
                   ) : (
                     coin(advantage)
@@ -708,7 +708,7 @@ export function FishingCalculator({
                     <span className={s.summaryPending}>
                       {missing.length
                         ? `${missing.length} ${missing.length === 1 ? "input" : "inputs"} to go`
-                        : "—"}
+                        : "Unavailable"}
                     </span>
                   ) : (
                     coin(leveling.cost)

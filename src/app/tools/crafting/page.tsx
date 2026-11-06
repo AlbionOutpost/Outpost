@@ -1,7 +1,7 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ProductionCalculator } from "@/components/production-calculator";
-import styles from "@/app/production-calculator.module.css";
+import styles from "@/components/calculator-shell.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/crafting", await searchParams);
 }

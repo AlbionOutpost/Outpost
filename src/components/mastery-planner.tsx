@@ -14,8 +14,9 @@ import { CalculatorShell, useCalculatorStep } from "./calculator-shell";
 import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
+import { Missing } from "./calculator-figures";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const groups = Object.entries(masteryGroups);
 const steps = ["mastery-board", "mastery-focus"];
@@ -96,15 +97,15 @@ export function MasteryPlanner() {
       </label>
       <ul className={c.railList}>
         {groups.map(([id, g]) => {
-          const first = masteryCategories.find((c) => c.id === g.categoryIds[0]);
           return (
             <li key={id}>
               <button type="button" aria-pressed={group === id} onClick={() => setGroup(id)}>
-                {first && <ItemIcon id={first.itemId} size={36} />}
                 <span>
                   {g.label}
                   <small>
-                    {loaded ? `${total(specsOf(g.categoryIds)).toLocaleString()} levels` : "—"}
+                    {loaded
+                      ? `${total(specsOf(g.categoryIds)).toLocaleString()} levels`
+                      : "Loading…"}
                   </small>
                 </span>
               </button>
@@ -124,19 +125,13 @@ export function MasteryPlanner() {
             <Disclosure
               key={category.id}
               defaultOpen={index === 0}
-              summary={
-                <span className={c.categoryName}>
-                  <ItemIcon id={category.itemId} size={32} />
-                  {category.name}
-                </span>
-              }
+              summary={<span className={c.categoryName}>{category.name}</span>}
               meta={loaded ? `${total(ids)} / ${ids.length * 100}` : undefined}
             >
               <div className={c.specs}>
                 <ul>
                   {category.specs.map((spec) => (
                     <li key={spec.id}>
-                      <ItemIcon id={spec.itemId} size={32} />
                       <label htmlFor={`spec-${spec.id}`}>{spec.name}</label>
                       <input
                         id={`spec-${spec.id}`}
@@ -212,12 +207,16 @@ export function MasteryPlanner() {
                       : "Uses no focus"}
                   </small>
                 </span>
-                <b>
-                  {r.baseFocus && perCraft !== null
-                    ? perCraft.toLocaleString("en-US", { maximumFractionDigits: 1 })
-                    : "—"}
-                  {r.baseFocus ? <small> focus</small> : null}
-                </b>
+                {r.baseFocus && perCraft !== null ? (
+                  <b>
+                    {perCraft.toLocaleString("en-US", { maximumFractionDigits: 1 })}
+                    <small className={c.unit}> focus</small>
+                  </b>
+                ) : r.baseFocus ? (
+                  <Missing />
+                ) : (
+                  <small className={c.unit}>None</small>
+                )}
               </li>
             );
           })}

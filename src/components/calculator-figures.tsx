@@ -1,7 +1,7 @@
 import { Silver } from "./silver";
 import { Unavailable } from "./status-line";
 import { sourceAge } from "@/lib/albion/source-age";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 
 /** Silver with the coin, or "— Unavailable" when the figure is missing. */
 export const coin = (v: number | null | undefined) =>
@@ -10,6 +10,16 @@ export const coin = (v: number | null | undefined) =>
   ) : (
     <Silver value={v} digits={2} />
   );
+
+/** A missing figure in a figure, total or row: the muted "— Unavailable", never a bare dash. */
+export const Missing = () => (
+  <span className={s.na}>
+    <Unavailable />
+  </span>
+);
+
+/** The one line every calculator shows when a price request fails; Retry sits beside it. */
+export const PRICE_ERROR = "Prices couldn’t be loaded. Your inputs were kept.";
 
 /** Gain, loss or even, for ResultFigure, ResultRows and the phone summary bar. */
 export const profitTone = (v: number | null | undefined) =>

@@ -198,6 +198,8 @@ test("manual trade thresholds persist privately and remain available beyond othe
         true,
       );
     }
+    // Saved plans sit with the result; wide screens show every step at once.
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/tools/transporting");
     await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByRole("button", { name: "Load transport plans", exact: true }).click();

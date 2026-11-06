@@ -5,7 +5,7 @@ import { FishingCalculator } from "@/components/fishing-calculator";
 import { CalculatorCta } from "@/components/calculator-cta";
 import { libraryFishing } from "@/lib/grind-library";
 import Link from "@/components/link";
-import styles from "@/app/production-calculator.module.css";
+import styles from "@/components/calculator-shell.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/fishing", await searchParams);
 }
@@ -14,7 +14,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        glyph="fish"
+        emblem={
+          // No painted emblem for this tool yet; the neutral seal stands in (batch 4 report)
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className="painted-emblem"
+            src="/albion/icons/fame.webp"
+            alt=""
+            width={64}
+            height={64}
+          />
+        }
         scene="economy"
         title="Fishing calculator"
         accent="Fishing"

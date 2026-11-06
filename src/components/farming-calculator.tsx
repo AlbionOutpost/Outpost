@@ -23,11 +23,18 @@ import {
   ResultRows,
   useCalculatorStep,
 } from "./calculator-shell";
-import { coin, PriceSource, profitTone, profitWord } from "./calculator-figures";
+import {
+  coin,
+  PriceSource,
+  profitTone,
+  profitWord,
+  Missing,
+  PRICE_ERROR,
+} from "./calculator-figures";
 import { Disclosure } from "./disclosure";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const steps = ["farming-plan", "farming-prices", "farming-result"];
 const cropLabel = (crop: (typeof crops)[number]) => `T${crop.tier} · ${crop.type}`;
@@ -110,10 +117,10 @@ export function FarmingCalculator() {
           ? "Prices loaded. Manual prices kept."
           : "Prices loaded.",
       });
-    } catch (e) {
+    } catch {
       if (!request.signal.aborted)
         setMessage({
-          text: e instanceof Error ? e.message : "Prices couldn’t be loaded.",
+          text: PRICE_ERROR,
           error: true,
         });
     } finally {
@@ -204,7 +211,7 @@ export function FarmingCalculator() {
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
-          {total === null ? <span className={s.dash}>—</span> : coin(total)}
+          {total === null ? <Missing /> : coin(total)}
         </span>
       </li>
     );
@@ -450,9 +457,7 @@ export function FarmingCalculator() {
         label="Profit with seed returns"
         tone={complete ? profitTone(result!.profit) : "even"}
         value={
-          <output data-result="farm-profit" className={complete ? undefined : c.notCalculated}>
-            {complete ? coin(result!.profit) : "Not calculated"}
-          </output>
+          <output data-result="farm-profit">{complete ? coin(result!.profit) : <Missing />}</output>
         }
         note={
           complete
@@ -578,6 +583,7 @@ export function FarmingCalculator() {
         label="Farming workflow"
         step={step}
         onStep={goToStep}
+        details={details}
         summary={{
           label: "Profit",
           tone: complete ? profitTone(result!.profit) : "even",
@@ -587,7 +593,7 @@ export function FarmingCalculator() {
             <span className={s.summaryPending}>
               {missing.length
                 ? `${missing.length} ${missing.length === 1 ? "input" : "inputs"} to go`
-                : "—"}
+                : "Unavailable"}
             </span>
           ),
         }}
@@ -627,7 +633,6 @@ export function FarmingCalculator() {
           },
         ]}
       />
-      {details}
     </div>
   );
 }

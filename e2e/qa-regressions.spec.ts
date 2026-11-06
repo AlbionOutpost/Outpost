@@ -115,7 +115,7 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await expectResultText(result, "0.5");
   await page.getByLabel("Purchase price per item").fill("");
   await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
-  await expect(result).toHaveText("—");
+  await expect(result).toHaveText("—Unavailable");
   await expect(page.getByRole("button", { name: "Export scenario", exact: true })).toBeDisabled();
   expect(errors).toEqual([]);
 });

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "@/components/build-region-link";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 
 /**
  * The closing band of a calculator page, as on /tools/crafting and the landing: a display title

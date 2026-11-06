@@ -4,7 +4,7 @@ import { OpportunityScanner } from "@/components/opportunity-scanner";
 import { TradeCalculator } from "@/components/trade-calculator";
 import { SectionHeading } from "@/components/section-heading";
 import { CalculatorCta } from "@/components/calculator-cta";
-import styles from "@/app/production-calculator.module.css";
+import styles from "@/components/calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/flipping", await searchParams);

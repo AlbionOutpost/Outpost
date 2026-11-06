@@ -5,10 +5,30 @@ import { ReferenceJump } from "@/components/reference-jump";
 import { CalculatorCta } from "@/components/calculator-cta";
 import { cities } from "@/lib/albion/region-config";
 import referenceTables from "@/lib/albion/game/reference-tables.json" with { type: "json" };
-import styles from "@/app/production-calculator.module.css";
+import styles from "@/components/calculator-shell.module.css";
 import r from "./reference.module.css";
 type Table = { heading: string | null; header: string[]; rows: string[][] };
-const tables = referenceTables as { slug: string; title: string; tables: Table[] }[];
+/**
+ * The source mixes "Fast (115%)" with a bare "50%" in one Speed column. Split it into the figure
+ * and its class so every row lines up; a class the source doesn't give stays empty.
+ */
+function normalise(slug: string, table: Table): Table {
+  if (slug !== "riding-mount-speed") return table;
+  const at = table.header.indexOf("Speed");
+  if (at < 0) return table;
+  return {
+    ...table,
+    header: [...table.header.slice(0, at), "Speed", "Speed class", ...table.header.slice(at + 1)],
+    rows: table.rows.map((row) => {
+      const m = /^(.*?)\s*\((\d+%)\)$/.exec(row[at]) ?? [row[at], "", row[at]];
+      return [...row.slice(0, at), m[2], m[1], ...row.slice(at + 1)];
+    }),
+  };
+}
+const tables = (referenceTables as { slug: string; title: string; tables: Table[] }[]).map((t) => ({
+  ...t,
+  tables: t.tables.map((table) => normalise(t.slug, table)),
+}));
 const numeric = /^[\d.,%\s–+-]+(kg|%)?$/;
 const cityNames = new Set<string>(cities);
 /** "Two Handed Weapon" → "Two-handed weapon"; city names keep their capitals. */

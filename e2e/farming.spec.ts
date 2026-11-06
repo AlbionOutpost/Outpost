@@ -22,7 +22,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
       { name: "next-auth.session-token", value: token, domain: "localhost", path: "/" },
     ]);
     await page.goto("/tools/farming?region=europe");
-    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("Not calculated");
+    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("—Unavailable");
     await page.getByLabel("Seeds to plant", { exact: true }).fill("10");
     await page.getByLabel("Plants to water", { exact: true }).fill("5");
     await page.getByLabel("Harvest per plant", { exact: true }).fill("8");

@@ -13,11 +13,11 @@ import {
   ResultRows,
   useCalculatorStep,
 } from "./calculator-shell";
-import { coin, profitTone, profitWord } from "./calculator-figures";
+import { coin, profitTone, profitWord, Missing } from "./calculator-figures";
 import { Disclosure } from "./disclosure";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const fields = [
   { key: "buy", label: "Purchase price per item" },
@@ -156,7 +156,7 @@ export function TradeCalculator() {
         tone={result ? profitTone(result.profit) : "even"}
         value={
           <output aria-label="Estimated net profit" data-result="trade-profit">
-            {result ? coin(result.profit) : <span className={s.dash}>—</span>}
+            {result ? coin(result.profit) : <Missing />}
           </output>
         }
         note={
@@ -166,8 +166,7 @@ export function TradeCalculator() {
         }
         aside={{
           label: "Margin",
-          value:
-            result?.margin != null ? number(result.margin, "%") : <span className={s.dash}>—</span>,
+          value: result?.margin != null ? number(result.margin, "%") : <Missing />,
         }}
       />
       <ResultPair
@@ -277,6 +276,7 @@ export function TradeCalculator() {
         label="Trade check"
         step={step}
         onStep={goToStep}
+        details={details}
         steps={[
           {
             id: steps[0],
@@ -293,7 +293,6 @@ export function TradeCalculator() {
           },
         ]}
       />
-      {details}
     </div>
   );
 }

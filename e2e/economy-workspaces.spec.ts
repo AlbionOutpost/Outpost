@@ -71,7 +71,7 @@ test("manual trade requires prices, accepts explicit zero, and shows negative ou
   await expectResultText(result, "-100", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("");
   await expect(page.locator('[data-result="readiness"]')).toContainText("Sale price per item");
-  await expect(result).toHaveText("—");
+  await expect(result).toHaveText("—Unavailable");
 });
 
 test("item filters recover from no results and item back links retain server", async ({ page }) => {

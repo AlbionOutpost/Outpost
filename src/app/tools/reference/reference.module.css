@@ -117,6 +117,11 @@
 :global(.app.outpost) .table.table tbody th {
   font-weight: 600;
 }
+:global(.app.outpost) .table.table tbody td:not(.numeric) {
+  min-width: 9ch;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 :global(.app.outpost) .table.table .numeric {
   font-family: var(--font-data);
   font-variant-numeric: tabular-nums;

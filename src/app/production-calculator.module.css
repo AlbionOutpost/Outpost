@@ -1,165 +1,5 @@
-/* Crafting, refining, enchanting, cooking and alchemy: one calculator on CalculatorShell.
-   Everything here is scoped to the calculator; the shell owns the layout. */
-:global(.app.outpost) .page.page {
-  width: min(100%, var(--workspace-width));
-  margin-inline: auto;
-}
-:global(.app.outpost) .journey.journey {
-  display: grid;
-  gap: 26px;
-  min-width: 0;
-}
-:global(.app.outpost) .journey.journey :is(input[type="number"], input[type="search"]) {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-}
-:global(.app.outpost) .journey.journey input[type="number"] {
-  font-family: var(--font-data);
-  font-variant-numeric: tabular-nums;
-}
-:global(.app.outpost) .journey.journey :is(input, button, a, select):focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-/* Calculator switch: pill tabs that scroll on phones, with a fade where they continue */
-:global(.app.outpost) .modeBar.modeBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  min-width: 0;
-}
-:global(.app.outpost) .modes.modes {
-  display: flex;
-  gap: var(--space-2);
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent);
-}
-:global(.app.outpost) .modes.modes::-webkit-scrollbar {
-  display: none;
-}
-:global(.app.outpost) .modes.modes a {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  min-height: 40px;
-  padding: 0 16px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--secondary);
-  font: 600 14px/1 var(--font-ui);
-  text-decoration: none;
-}
-:global(.app.outpost) .modes.modes a:hover {
-  color: var(--text);
-}
-:global(.app.outpost) .modes.modes a[aria-current="page"] {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-:global(.app.outpost) .modes.modes a:last-child {
-  margin-right: 56px;
-}
-:global(.app.outpost) .modeBar.modeBar > :global(.pill-link) {
-  flex: none;
-}
-
-/* Step 1: recipe and run */
-:global(.app.outpost) .identity.identity {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  gap: 6px 14px;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .identity.identity > img {
-  border-radius: var(--radius-sm);
-}
-:global(.app.outpost) .identity.identity h3 {
-  margin: 0 0 4px;
-  font: 800 20px/1.1 var(--font-display);
-  text-wrap: balance;
-}
-:global(.app.outpost) .identity.identity p {
-  margin: 0;
-  color: var(--secondary);
-  font-size: 13px;
-}
-:global(.app.outpost) .identity.identity small {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-:global(.app.outpost) .identity.identity small.historical {
-  color: var(--warning);
-}
-:global(.app.outpost) .identity.identity > :global(.button) {
-  grid-column: 1 / -1;
-  min-height: 40px;
-}
-:global(.app.outpost) .fields.fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-:global(.app.outpost) .fields.fields > label {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
-}
-:global(.app.outpost) .fields.fields > .wide,
-:global(.app.outpost) .fields.fields > .help {
-  grid-column: 1 / -1;
-}
-:global(.app.outpost) .help.help {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-:global(.app.outpost) .help.help strong {
-  color: var(--text);
-  font-family: var(--font-data);
-}
-:global(.app.outpost) .stack.stack {
-  display: grid;
-  gap: var(--space-3);
-}
-/* Disclosures inside a disclosure read as sections of it, not wells in a well */
-:global(.app.outpost) .stack.stack > div:has(> button[aria-expanded]) {
-  border: 0;
-  border-top: 1px solid var(--well-border);
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-:global(.app.outpost) .stack.stack > div:has(> button[aria-expanded]) > button {
-  padding-inline: 0;
-}
-:global(.app.outpost) .stack.stack > div:has(> button[aria-expanded]) > div > div > div {
-  padding-inline: 0;
-}
+/* Crafting, refining, enchanting, cooking and alchemy: what only they need on top of the
+   shared calculator wells in calculator-shell.module.css. */
 :global(.app.outpost) .quick.quick {
   display: flex;
   gap: var(--space-2);
@@ -199,135 +39,6 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
-
-/* Step 2: prices, in the landing's material well */
-:global(.app.outpost) .materials.materials {
-  container-type: inline-size;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .materials.materials ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-:global(.app.outpost) .matHead.matHead,
-:global(.app.outpost) .mat.mat {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 96px 92px;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-}
-:global(.app.outpost) .matHead.matHead {
-  padding-block: 9px;
-  color: var(--muted);
-  font: 600 12px/1 var(--font-ui);
-}
-:global(.app.outpost) .matHead.matHead span:first-child {
-  grid-column: 1 / 3;
-}
-:global(.app.outpost) .matHead.matHead span:not(:first-child) {
-  text-align: right;
-}
-:global(.app.outpost) .mat.mat {
-  border-top: 1px solid var(--well-border);
-}
-:global(.app.outpost) .mat.mat > img {
-  border-radius: var(--radius-sm);
-}
-:global(.app.outpost) .matOutput.matOutput {
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
-}
-:global(.app.outpost) .matName.matName {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-}
-:global(.app.outpost) .matName.matName strong {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
-}
-:global(.app.outpost) .matName.matName small {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.35;
-}
-:global(.app.outpost) .returns.returns {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: fit-content;
-  min-height: 24px;
-  color: var(--secondary);
-  font-size: 12px;
-  cursor: pointer;
-}
-:global(.app.outpost) .returns.returns input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--accent);
-}
-:global(.app.outpost) .matTotal.matTotal {
-  font: 600 13px/1.2 var(--font-data);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-:global(.app.outpost) .matTotal.matTotal :global(.silver) {
-  justify-content: flex-end;
-}
-:global(.app.outpost) .matTotal.matTotal :global(.silver img) {
-  width: 13px;
-  height: 13px;
-}
-:global(.app.outpost) .journey.journey .matInput.matInput {
-  min-height: 38px;
-  padding: 0 8px;
-  text-align: right;
-}
-:global(.app.outpost) .dash.dash {
-  color: var(--muted);
-}
-@container (max-width: 380px) {
-  :global(.app.outpost) .matHead.matHead {
-    display: none;
-  }
-  :global(.app.outpost) .mat.mat {
-    grid-template-columns: 40px minmax(0, 1fr) auto;
-    grid-template-areas: "icon name name" "icon input total";
-    row-gap: 8px;
-  }
-  :global(.app.outpost) .mat.mat {
-    border-top: 0;
-  }
-  :global(.app.outpost) .mat.mat + .mat.mat {
-    border-top: 1px solid var(--well-border);
-  }
-  :global(.app.outpost) .mat.mat > img {
-    grid-area: icon;
-    align-self: start;
-  }
-  :global(.app.outpost) .matName.matName {
-    grid-area: name;
-  }
-  :global(.app.outpost) .journey.journey .matInput.matInput {
-    grid-area: input;
-    max-width: 140px;
-  }
-  :global(.app.outpost) .matTotal.matTotal {
-    grid-area: total;
-  }
-}
 :global(.app.outpost) .overwrite.overwrite {
   display: flex;
   flex-wrap: wrap;
@@ -341,84 +52,8 @@
   flex: 1 1 200px;
   max-width: 260px;
 }
-:global(.app.outpost) .refresh.refresh {
-  gap: 6px;
-  min-height: 36px;
-  padding-inline: 12px;
-}
-:global(.app.outpost) .chip.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 1px 7px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-:global(.app.outpost) .chip.stale {
-  border-color: color-mix(in srgb, var(--warning) 50%, transparent);
-  background: color-mix(in srgb, var(--warning) 10%, transparent);
-  color: var(--warning);
-}
 :global(.app.outpost) .missing.missing {
   color: var(--warning);
-}
-
-/* Step 3: the result card, as the landing's Crafting card */
-:global(.app.outpost) .resultItem.resultItem {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
-  padding: 10px 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .resultItem.resultItem > img {
-  border-radius: var(--radius-sm);
-}
-:global(.app.outpost) .resultItem.resultItem > span {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-:global(.app.outpost) .resultItem.resultItem strong {
-  font: 800 17px/1.15 var(--font-display);
-}
-:global(.app.outpost) .resultItem.resultItem small {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-:global(.app.outpost) .readiness.readiness {
-  display: grid;
-  gap: var(--space-2);
-  padding: 12px 14px;
-  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
-  border-radius: var(--radius-md);
-  font-size: 13px;
-}
-:global(.app.outpost) .readiness.readiness ul {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  padding: 0 0 0 18px;
-  color: var(--secondary);
-}
-:global(.app.outpost) .readiness.readiness :global(.button) {
-  justify-self: start;
-  min-height: 40px;
-}
-:global(.app.outpost) .resultNote.resultNote {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
 }
 :global(.app.outpost) .sensitivity.sensitivity {
   display: grid;
@@ -477,10 +112,6 @@
 :global(.app.outpost) .tableScroll.tableScroll td:global(.is-loss) {
   color: var(--victim);
 }
-:global(.app.outpost) .summaryPending.summaryPending {
-  color: var(--secondary);
-  font: 600 14px/1.2 var(--font-ui);
-}
 
 /* Unknown recipe, saved runs */
 :global(.app.outpost) .gate.gate {
@@ -503,27 +134,6 @@
 :global(.app.outpost) .scenarios.scenarios[hidden] {
   display: none;
 }
-
-/* Recipe drawer */
-:global(.app.outpost) .browser.browser {
-  display: grid;
-  gap: var(--space-3);
-  min-width: 0;
-}
-:global(.app.outpost) .browserHead.browserHead {
-  display: grid;
-  gap: 6px;
-}
-:global(.app.outpost) .browserSearch.browserSearch {
-  display: grid;
-  gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
-}
-:global(.app.outpost) .browserCount.browserCount {
-  color: var(--muted);
-  font-size: 12px;
-}
 :global(.app.outpost) .tiers.tiers {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -543,50 +153,6 @@
   background: var(--accent-wash);
   color: var(--accent-ink);
 }
-:global(.app.outpost) .browserList.browserList {
-  display: grid;
-  gap: 4px;
-}
-:global(.app.outpost) .browserList.browserList > button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  min-height: 56px;
-  padding: 8px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text);
-  text-align: left;
-  cursor: pointer;
-}
-:global(.app.outpost) .browserList.browserList > button:hover {
-  background: var(--well);
-}
-:global(.app.outpost) .browserList.browserList > button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-  background: var(--accent-wash);
-}
-:global(.app.outpost) .browserList.browserList > button > span {
-  display: grid;
-  flex: 1;
-  gap: 3px;
-  min-width: 0;
-}
-:global(.app.outpost) .browserList.browserList strong {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-:global(.app.outpost) .browserList.browserList small {
-  color: var(--muted);
-  font-size: 12px;
-}
-:global(.app.outpost) .browserList.browserList > button > svg {
-  flex: none;
-  color: var(--accent-ink);
-}
 :global(.app.outpost) .browserNote.browserNote {
   margin: 0;
   padding-top: var(--space-3);
@@ -594,20 +160,6 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
-}
-
-@media (max-width: 780px) {
-  :global(.app.outpost) .modeBar.modeBar > :global(.pill-link) {
-    display: none;
-  }
-  :global(.app.outpost) .journey.journey {
-    gap: var(--space-4);
-  }
-}
-@media (max-width: 360px) {
-  :global(.app.outpost) .fields.fields {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 /* City & specialization profile (inside the station settings disclosure) */
@@ -647,41 +199,6 @@
   color: var(--secondary);
   font-family: var(--font-data);
 }
-:global(.app.outpost) .errorLine.errorLine {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-3);
-  padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--error) 35%, var(--well-border));
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .errorLine.errorLine > button {
-  flex: none;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font: 700 12px/1 var(--font-ui);
-  cursor: pointer;
-}
-:global(.app.outpost) .alert.alert {
-  margin: 0;
-  color: var(--error);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-/* Missing figures read as text, not as a squeezed display number */
-:global(.app.outpost) .na.na {
-  color: var(--muted);
-  font: 500 14px/1.2 var(--font-ui);
-}
 
 /* Run details: sensitivity beside the accounting, full width under the steps */
 :global(.app.outpost) .details.details {
@@ -706,41 +223,5 @@
 @media (max-width: 980px) {
   :global(.app.outpost) .detailsGrid.detailsGrid {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* Closing band, as on the landing */
-:global(.app.outpost) .cta.cta {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-3);
-  margin-top: 28px;
-  padding: 44px 24px 36px;
-  text-align: center;
-}
-:global(.app.outpost) .cta.cta h2 {
-  margin: 0;
-  font: 800 clamp(28px, 3vw, 40px) / 1.05 var(--font-display);
-}
-:global(.app.outpost) .cta.cta h2 em {
-  color: var(--accent);
-  font-style: normal;
-}
-:global(.app.outpost) .cta.cta p {
-  max-width: 56ch;
-  margin: 0;
-  color: var(--secondary);
-  font-size: 16px;
-}
-:global(.app.outpost) .ctaActions.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-@media (max-width: 700px) {
-  :global(.app.outpost) .ctaActions.ctaActions :global(.button) {
-    flex: 1 1 auto;
   }
 }

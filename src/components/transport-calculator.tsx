@@ -24,11 +24,18 @@ import {
   ResultRows,
   useCalculatorStep,
 } from "./calculator-shell";
-import { coin, PriceSource, profitTone, profitWord } from "./calculator-figures";
+import {
+  coin,
+  PriceSource,
+  profitTone,
+  profitWord,
+  Missing,
+  PRICE_ERROR,
+} from "./calculator-figures";
 import { Disclosure } from "./disclosure";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 export type TransportPreselection = {
   item?: string;
@@ -53,7 +60,6 @@ function preselected(region: Region, initial: TransportPreselection) {
     ...(quality >= 1 && quality <= 5 ? { quality } : {}),
   };
 }
-class PriceError extends Error {}
 const steps = ["transport-route", "transport-prices", "transport-result"];
 export function TransportCalculator({ initial = {} }: { initial?: TransportPreselection }) {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -125,18 +131,14 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
           signal: AbortSignal.any([active.signal, AbortSignal.timeout(15000)]),
         }),
         b = await r.json();
-      if (!r.ok) throw new PriceError(b.error);
+      if (!r.ok) throw new Error(b.error);
       const buy = transportSchema.shape.buy.parse(b.buy),
         sell = transportSchema.shape.sell.parse(b.sell);
       if (active.signal.aborted) return;
       setDraft((d) => mergeTransportObservations({ ...d, region }, requested, { buy, sell }));
       setPriceMessage(null);
-    } catch (e) {
-      if (!active.signal.aborted)
-        setPriceMessage({
-          text: e instanceof PriceError && e.message ? e.message : "Prices couldn’t be loaded.",
-          error: true,
-        });
+    } catch {
+      if (!active.signal.aborted) setPriceMessage({ text: PRICE_ERROR, error: true });
     } finally {
       if (controller.current === active) setPendingKey(null);
     }
@@ -379,7 +381,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
-          {total === null ? <span className={s.dash}>—</span> : coin(total)}
+          {total === null ? <Missing /> : coin(total)}
         </span>
       </li>
     );
@@ -452,7 +454,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
               {coin(result!.profit)}
             </output>
           ) : (
-            <span className={s.dash}>—</span>
+            <Missing />
           )
         }
         note={
@@ -464,7 +466,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
         }
         aside={{
           label: "Margin",
-          value: complete ? number(result!.margin, "%") : <span className={s.dash}>—</span>,
+          value: complete ? number(result!.margin, "%") : <Missing />,
         }}
       />
       <ResultPair
@@ -640,6 +642,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
         label="Transport workflow"
         step={step}
         onStep={goToStep}
+        details={details}
         summary={{
           label: "Net profit",
           tone: complete ? profitTone(result!.profit) : "even",
@@ -649,7 +652,7 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             <span className={s.summaryPending}>
               {missing.length
                 ? `${missing.length} ${missing.length === 1 ? "price" : "prices"} to go`
-                : "—"}
+                : "Unavailable"}
             </span>
           ),
         }}
@@ -689,7 +692,6 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
           },
         ]}
       />
-      {details}
     </div>
   );
 }

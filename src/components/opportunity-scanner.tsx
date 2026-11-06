@@ -10,12 +10,13 @@ import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemIcon } from "./item-icon";
 import { PanelHead } from "./panel-head";
 import { Disclosure } from "./disclosure";
+import { EmptyWell } from "./empty-well";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import { Observed, coin } from "./calculator-figures";
+import { Observed, coin, Missing, PRICE_ERROR } from "./calculator-figures";
 import type { transport } from "@/lib/albion/transport";
 import type { transportObservations } from "@/lib/albion/transport-prices";
-import s from "@/app/production-calculator.module.css";
+import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 type Row = ReturnType<typeof transport> &
   ReturnType<typeof transportObservations> & { itemId: string };
@@ -78,11 +79,11 @@ export function OpportunityScanner() {
         b = await r.json();
       if (!r.ok) throw new Error(b.error);
       if (!active.signal.aborted) setResult({ key, rows: b.rows, methodology: b.methodology });
-    } catch (e) {
+    } catch {
       if (!active.signal.aborted)
         setError({
           key,
-          message: e instanceof Error && e.message ? e.message : "The scan couldn’t load.",
+          message: PRICE_ERROR,
         });
     } finally {
       if (controller.current === active) setPendingKey(null);
@@ -254,10 +255,11 @@ export function OpportunityScanner() {
         </div>
       </div>
       {!items.length ? (
-        <div className={c.emptyMap}>
-          <p className={c.emptyTitle}>Nothing to scan yet</p>
-          <p className={c.emptyLine}>Search for an item above, or paste a list of item IDs.</p>
-        </div>
+        <EmptyWell
+          emblem="tool-market"
+          title="Nothing to scan yet"
+          line="Search for an item above, or paste a list of item IDs."
+        />
       ) : from === to ? (
         <StatusLine>Pick two different cities to scan a route.</StatusLine>
       ) : error?.key === query ? (
@@ -322,19 +324,11 @@ export function OpportunityScanner() {
                 </span>
                 <span className={c.flipPrice}>
                   <span className={c.flipLabel}>Buy · {from}</span>
-                  {r.buy ? (
-                    <Quote value={r.buy.value} at={r.buy.observedAt} />
-                  ) : (
-                    <span className={s.dash}>—</span>
-                  )}
+                  {r.buy ? <Quote value={r.buy.value} at={r.buy.observedAt} /> : <Missing />}
                 </span>
                 <span className={c.flipPrice}>
                   <span className={c.flipLabel}>Sell · {to}</span>
-                  {r.sell ? (
-                    <Quote value={r.sell.value} at={r.sell.observedAt} />
-                  ) : (
-                    <span className={s.dash}>—</span>
-                  )}
+                  {r.sell ? <Quote value={r.sell.value} at={r.sell.observedAt} /> : <Missing />}
                 </span>
                 <span className={c.flipNet}>
                   <span className="sr-only">Net: </span>
@@ -345,20 +339,27 @@ export function OpportunityScanner() {
                       <Unavailable />
                     </span>
                   ) : (
-                    <span className={s.dash}>—</span>
+                    <Missing />
                   )}
                 </span>
                 <span className={c.flipMargin}>
                   <span className="sr-only">Margin: </span>
                   {r.margin == null ? "" : `${r.margin.toFixed(1)}%`}
                 </span>
-                <Link
-                  className={`pill-link ${c.flipAction}`}
-                  aria-label={`Plan haul for ${label(r.itemId)}`}
-                  href={`/tools/transporting?${new URLSearchParams({ region, item: r.itemId, from, to, quality })}`}
-                >
-                  Plan haul <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                {r.complete ? (
+                  <Link
+                    className={`pill-link ${c.flipAction}`}
+                    aria-label={`Plan haul for ${label(r.itemId)}`}
+                    href={`/tools/transporting?${new URLSearchParams({ region, item: r.itemId, from, to, quality })}`}
+                  >
+                    Plan haul <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  // Nothing to plan until both prices exist; the place stays so rows line up.
+                  <span className={`pill-link ${c.flipAction}`} aria-disabled="true">
+                    Plan haul <ArrowRight size={14} aria-hidden="true" />
+                  </span>
+                )}
               </li>
             ))}
           </ul>

@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "@/components/link";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
-import s from "@/app/production-calculator.module.css";
+import shell from "./calculator-shell.module.css";
+import own from "@/app/production-calculator.module.css";
 import { readMasteryLevels, writeMasteryLevels } from "@/lib/mastery-storage";
 import {
   mechanicsProfile,
@@ -18,6 +19,8 @@ import {
   focusPerCraft,
   masteryCategories,
 } from "@/lib/albion/focus";
+// The shared calculator wells, plus the crafting family's own rules.
+const s = { ...shell, ...own };
 const specNames = new Map(
   masteryCategories.flatMap((c) => c.specs.map((s) => [s.id, `${s.name}`] as const)),
 );
