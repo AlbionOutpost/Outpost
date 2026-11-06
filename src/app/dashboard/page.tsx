@@ -97,7 +97,12 @@ export default async function Dashboard() {
           take: 4,
           orderBy: { updatedAt: "desc" },
         },
-        memberships: { include: { group: { select: { name: true, slug: true } } }, take: 5 },
+        memberships: {
+          include: {
+            group: { select: { name: true, slug: true, crestItem: true, crestColor: true } },
+          },
+          take: 5,
+        },
         timers: {
           where: { status: { not: "COMPLETED" } },
           orderBy: { updatedAt: "desc" },
@@ -325,7 +330,12 @@ export default async function Dashboard() {
               {u.memberships.map((member) => (
                 <li key={member.groupId}>
                   <Link className={`well ${styles.row}`} href={`/groups/${member.group.slug}`}>
-                    <TeamMark name={member.group.name} size="small" />
+                    <TeamMark
+                      name={member.group.name}
+                      crestItem={member.group.crestItem}
+                      crestColor={member.group.crestColor}
+                      size="small"
+                    />
                     <span className={styles.rowCopy}>
                       <strong>{member.group.name}</strong>
                     </span>
