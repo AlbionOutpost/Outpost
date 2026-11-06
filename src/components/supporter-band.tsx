@@ -1,11 +1,11 @@
+import "@/app/supporter-band.css";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import styles from "./supporter-band.module.css";
 
 /**
- * The landing's Supporter band (the crown over the courtyard, cut to its silhouette), for the
- * pages about the plan: a display title with one ember word, one line and up to two actions.
- * Same markup and measurements as the landing's `.landing-cta`, which loads only on `/`.
+ * The Supporter band: the crown over the courtyard, cut to its silhouette, with a display
+ * title (one word in `<em>`), one line and up to two actions. The landing's callout, the
+ * Supporter page's hero and the Teams pages' closing band are all this component.
  */
 export function SupporterBand({
   id,
@@ -13,6 +13,7 @@ export function SupporterBand({
   line,
   actions,
   as: Heading = "h2",
+  className = "supporter-band-page",
   children,
 }: {
   id: string;
@@ -20,12 +21,15 @@ export function SupporterBand({
   line: ReactNode;
   actions?: ReactNode;
   as?: "h1" | "h2";
+  /** Classes for the outer section; the landing passes its own frame and spacing. */
+  className?: string;
+  /** A short note under the actions. */
   children?: ReactNode;
 }) {
   return (
-    <section className={styles.wrap} aria-labelledby={id}>
-      <div className={`landing-cta ${styles.band}`}>
-        <div className={styles.art} aria-hidden="true">
+    <section className={`landing-cta-wrap ${className}`} aria-labelledby={id}>
+      <div className="landing-cta">
+        <div className="landing-cta-art" aria-hidden="true">
           <Image
             src="/scenes/supporter/crown-courtyard.webp"
             width={1374}
@@ -35,12 +39,10 @@ export function SupporterBand({
             priority={Heading === "h1"}
           />
         </div>
-        <div className={styles.content}>
-          <Heading id={id} className={styles.title}>
-            {title}
-          </Heading>
-          <p className={styles.line}>{line}</p>
-          {actions && <div className={styles.actions}>{actions}</div>}
+        <div className="landing-cta-content">
+          <Heading id={id}>{title}</Heading>
+          <p>{line}</p>
+          {actions && <div className="landing-cta-actions">{actions}</div>}
           {children}
         </div>
       </div>

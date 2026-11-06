@@ -1,6 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import "./homepage.css";
-import Image from "next/image";
 import { AdSlot } from "@/components/ad-slot";
 import { CraftCard } from "@/components/landing/craft-card";
 import { GuidesCarousel } from "@/components/landing/guides-carousel";
@@ -24,6 +23,7 @@ import {
 } from "@/lib/grind-library";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { supporterPrice } from "@/lib/billing/price";
+import { SupporterBand } from "@/components/supporter-band";
 import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
 import { regionSchema, regions } from "@/lib/albion/region-config";
@@ -216,37 +216,32 @@ export default async function Home({
           </div>
         </section>
 
-        <section className="landing-wrap landing-cta-wrap" aria-labelledby="home-cta-title">
-          <div className="landing-cta">
-            <div className="landing-cta-art" aria-hidden="true">
-              <Image
-                src="/scenes/supporter/crown-courtyard.webp"
-                width={1374}
-                height={1145}
-                alt=""
-                unoptimized
-              />
-            </div>
-            <div className="landing-cta-content">
-              <h2 id="home-cta-title">
-                Free for everyone. <em>Supporters</em> keep it running.
-              </h2>
-              <p>
-                Every tool, build and guide works without an account. Sign in with Discord to save
-                your builds and comps; Supporters get no ads and a Team space for their guild
-                {price && billing ? ` for ${price}` : ""}.
-              </p>
-              <div className="landing-cta-actions">
-                <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
-                  <DiscordMark /> Sign in with Discord
-                </Link>
-                <Link href={`/supporter${suffix}`} className="button secondary">
-                  {billing ? "Become a Supporter" : "About the Supporter plan"}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        <SupporterBand
+          id="home-cta-title"
+          className="landing-wrap"
+          title={
+            <>
+              Free for everyone. <em>Supporters</em> keep it running.
+            </>
+          }
+          line={
+            <>
+              Every tool, build and guide works without an account. Sign in with Discord to save
+              your builds and comps; Supporters get no ads and a Team space for their guild
+              {price && billing ? ` for ${price}` : ""}.
+            </>
+          }
+          actions={
+            <>
+              <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
+                <DiscordMark /> Sign in with Discord
+              </Link>
+              <Link href={`/supporter${suffix}`} className="button secondary">
+                {billing ? "Become a Supporter" : "About the Supporter plan"}
+              </Link>
+            </>
+          }
+        />
 
         <section
           className="landing-wrap landing-activities"

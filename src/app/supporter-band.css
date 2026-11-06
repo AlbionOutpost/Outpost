@@ -1,22 +1,26 @@
-/* The landing's Supporter band (homepage.css `.landing-cta`), measured the same, for the plan's
-   own pages. The surface follows the crown silhouette; the copy sits in the courtyard's body. */
-:global(.app.outpost) .wrap.wrap {
-  margin: 96px 0 72px;
+/* The Supporter band: the crown over the courtyard, cut to its silhouette. One component
+   (`supporter-band.tsx`) for the landing's callout, the Supporter page and the Teams pages;
+   moved here from homepage.css unchanged. */
+.app.outpost .landing-cta-wrap {
+  margin-top: 80px;
+  padding-bottom: 0;
   filter: drop-shadow(0 12px 20px var(--well));
 }
-:global(.app.outpost) .band.band {
+.app.outpost .landing-cta {
   --supporter-art-width: 100cqw;
   --supporter-copy-insets: calc(var(--supporter-art-width) * 0.32 + 32px);
+  width: min(100%, 1040px);
+  margin-inline: auto;
   --supporter-body-top: calc(var(--supporter-art-width) * 0.1085);
   position: relative;
   isolation: isolate;
   container-type: inline-size;
-  width: min(100%, 1040px);
-  margin-inline: auto;
-  overflow: hidden;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   color: var(--text);
   text-align: center;
+  /* The whole surface follows the supplied silhouette, including its top corners.
+     Extend only the already-square lower body when phone copy exceeds the image. */
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   mask-image: url("/scenes/supporter/crown-silhouette.svg"), linear-gradient(#000, #000);
   mask-size:
     100% auto,
@@ -26,7 +30,7 @@
     center bottom;
   mask-repeat: no-repeat;
 }
-:global(.app.outpost) .band.band::before {
+.app.outpost .landing-cta::before {
   content: "";
   position: absolute;
   inset: var(--supporter-body-top) 0 0;
@@ -34,7 +38,7 @@
   border-radius: var(--radius-lg);
   background: var(--illustration-bg);
 }
-:global(.app.outpost) .art.art {
+.app.outpost .landing-cta-art {
   position: absolute;
   inset: 0 auto 0 50%;
   z-index: -1;
@@ -44,19 +48,20 @@
   translate: -50% 0;
   pointer-events: none;
 }
-:global(.app.outpost) .art.art img {
+.app.outpost .landing-cta-art img {
   display: block;
   width: 100%;
   height: auto;
   mask: url("/scenes/supporter/crown-silhouette.svg") center top / 100% auto no-repeat;
 }
-:global(.app.outpost) .content.content {
+.app.outpost .landing-cta-content {
   position: relative;
   isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  /* Center the copy inside the illustrated body while preserving the card's height. */
   padding: calc((var(--supporter-body-top) + var(--supporter-copy-insets)) / 2) 40px
     calc((var(--supporter-copy-insets) - var(--supporter-body-top)) / 2);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
@@ -67,7 +72,7 @@
     var(--illustration-bg)
   );
 }
-:global(.app.outpost) .content.content::before {
+.app.outpost .landing-cta-content::before {
   content: "";
   position: absolute;
   inset: var(--supporter-body-top) 8% 4%;
@@ -76,7 +81,17 @@
   filter: blur(14px);
   pointer-events: none;
 }
-:global(.app.outpost) .title.title {
+.app.outpost .landing-cta-content::after {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 2px var(--well);
+  mask-image: linear-gradient(transparent, black 70%);
+  pointer-events: none;
+}
+
+.app.outpost .landing-cta :is(h1, h2) {
   max-width: 30ch;
   margin: 0;
   font: 800 clamp(30px, 3.2vw, 44px) / 1 var(--font-display);
@@ -86,26 +101,26 @@
     0 2px 3px #000e,
     0 4px 18px #000c;
 }
-:global(.app.outpost) .title.title em {
+.app.outpost .landing-cta :is(h1, h2) em {
   font-style: normal;
   color: var(--accent);
 }
-:global(.app.outpost) .line.line {
+.app.outpost .landing-cta p {
   max-width: 60ch;
   margin: 0;
   color: #e4e1db;
+  text-shadow: 0 1px 3px #000e;
   font-size: 15px;
   line-height: 1.55;
-  text-shadow: 0 1px 3px #000e;
 }
-:global(.app.outpost) .actions.actions {
+.app.outpost .landing-cta-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
   margin-top: 8px;
 }
-:global(.app.outpost) .actions.actions :global(.button) {
+.app.outpost .landing-cta-actions .button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -113,17 +128,25 @@
   padding: 0 22px;
   font-size: 15px;
 }
-:global(.app.outpost) .actions.actions :global(.button.primary) {
+.app.outpost .landing-cta-actions .button svg {
+  width: 20px;
+  height: 20px;
+}
+.app.outpost .landing-cta-actions .button.primary {
   color: var(--illustration-bg);
 }
+/* Away from the landing the band closes the page, so it keeps room above the footer */
+.app.outpost .supporter-band-page {
+  margin-bottom: 72px;
+}
 @media (max-width: 700px) {
-  :global(.app.outpost) .wrap.wrap {
-    margin: 64px 0 48px;
+  .app.outpost .landing-cta-wrap {
+    margin-top: 64px;
   }
-  :global(.app.outpost) .band.band {
+  .app.outpost .landing-cta {
     --supporter-copy-insets: calc(var(--supporter-art-width) * 0.42 + 24px);
   }
-  :global(.app.outpost) .content.content {
+  .app.outpost .landing-cta-content {
     padding-inline: 20px;
     background: linear-gradient(
       to bottom,
@@ -133,11 +156,14 @@
       var(--illustration-bg) calc(var(--supporter-art-width) * 0.84)
     );
   }
-  :global(.app.outpost) .actions.actions {
-    align-self: stretch;
+  .app.outpost .landing-cta-actions {
+    margin-top: 8px;
   }
-  :global(.app.outpost) .actions.actions :global(.button) {
+  .app.outpost .landing-cta-actions .button {
     width: 100%;
     justify-content: center;
+  }
+  .app.outpost .supporter-band-page {
+    margin-bottom: 48px;
   }
 }

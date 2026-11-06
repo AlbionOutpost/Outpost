@@ -157,9 +157,9 @@ export default async function Supporter({
         actions={state.actions}
       >
         {configured && (
-          <p className="supporter-note">
+          <span className="supporter-note">
             <Lock size={14} aria-hidden="true" /> Outpost never sees your card.
-          </p>
+          </span>
         )}
       </SupporterBand>
       <section className="supporter-includes" aria-labelledby="supporter-includes">
