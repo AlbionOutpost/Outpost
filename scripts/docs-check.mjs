@@ -6,7 +6,13 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
 const root = resolve(dirname(new URL(import.meta.url).pathname), "..");
-const vendored = ["impeccable", "vercel-react-best-practices"].map((n) => `.claude/skills/${n}/`);
+const vendored = [
+  "impeccable",
+  "vercel-react-best-practices",
+  "workers-best-practices",
+  "durable-objects",
+  "wrangler",
+].map((n) => `.claude/skills/${n}/`);
 const files = execFileSync(
   "git",
   ["ls-files", "--cached", "--others", "--exclude-standard", "*.md"],
