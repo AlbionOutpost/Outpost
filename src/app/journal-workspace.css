@@ -127,6 +127,9 @@
 .app.outpost .journal-list > div:first-child {
   margin: 0;
 }
+.app.outpost .journal-list > div:first-child h2 {
+  font-size: 22px;
+}
 .app.outpost .journal-toolbar {
   display: flex;
   align-items: center;

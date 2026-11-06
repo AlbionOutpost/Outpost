@@ -7,6 +7,7 @@ import { LoadoutBoard } from "@/components/loadout-board";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceAge } from "@/lib/albion/source-age";
 import { compact } from "@/components/silver";
+import { Unavailable } from "@/components/status-line";
 import type { CombatEvent, TopKill } from "@/lib/albion/combat-events";
 import type { GearValue } from "@/lib/albion/kill-value";
 
@@ -18,7 +19,13 @@ export type KillCardEvent = CombatEvent & {
   crew?: TopKill["crew"];
 };
 
-const ip = (p: Player) => (p.itemPower ? Math.round(p.itemPower).toLocaleString("en-US") : "—");
+/** Item power as recorded, or the muted "— IP unavailable" when the game left it out. */
+const ip = (power: number | null) =>
+  power ? (
+    `${Math.round(power).toLocaleString("en-US")} IP`
+  ) : (
+    <Unavailable label="IP unavailable" />
+  );
 const fame = (n: number) =>
   n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}m` : `${Math.round(n / 1000)}k`;
 const pieces = (p: Player) =>
@@ -34,7 +41,7 @@ function Side({ p, victim }: { p: Player; victim?: boolean }) {
           {p.guild || "No guild"}
           {p.alliance ? ` [${p.alliance}]` : ""}
         </small>
-        <small>{ip(p)} IP</small>
+        <small>{ip(p.itemPower)}</small>
       </div>
       <LoadoutBoard
         pieces={pieces(p)}
@@ -178,7 +185,7 @@ export function KillCard({
                   <span className="kill-person">
                     <strong>{p.name}</strong>
                     <small>
-                      {p.guild || "No guild"} · {p.itemPower ? Math.round(p.itemPower) : "—"} IP
+                      {p.guild || "No guild"} · {ip(p.itemPower)}
                     </small>
                     <small>
                       {p.damage ? `${p.damage.toLocaleString("en-US")} dmg` : ""}

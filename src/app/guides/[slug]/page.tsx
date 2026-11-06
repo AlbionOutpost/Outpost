@@ -87,13 +87,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <JournalChecklist entries={await libraryJournal()} />
       ) : (
         <>
-          {guide.toc.length > 0 && (
-            <div className={styles.mobileToc}>
-              <Disclosure summary="In this guide" meta={`${guide.toc.length} sections`}>
-                <Contents toc={guide.toc} />
-              </Disclosure>
-            </div>
-          )}
           <div className={styles.layout}>
             <aside className={`raised ${styles.rail}`} aria-labelledby="guide-contents">
               <h2 id="guide-contents">In this guide</h2>
@@ -106,9 +99,18 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </a>
             </aside>
             <div className={styles.body}>
-              <article className={`raised guide-prose ${styles.prose}`}>
-                <GuideArticleContent nodes={guide.content} />
-              </article>
+              <div className={`raised ${styles.doc}`}>
+                {guide.toc.length > 0 && (
+                  <div className={styles.mobileToc}>
+                    <Disclosure summary="In this guide" meta={`${guide.toc.length} sections`}>
+                      <Contents toc={guide.toc} />
+                    </Disclosure>
+                  </div>
+                )}
+                <article className={`guide-prose ${styles.prose}`}>
+                  <GuideArticleContent nodes={guide.content} />
+                </article>
+              </div>
               {guide.slug === "fishing-leveling-guide" && (
                 <section className={styles.tool} aria-labelledby="guide-tool">
                   <SectionHeading

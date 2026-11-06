@@ -140,8 +140,7 @@
   color: var(--victim);
   font: 800 12px/1 var(--font-ui);
   font-style: normal;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 .app.outpost .kill-ago {
   color: var(--muted);
@@ -158,8 +157,7 @@
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   text-align: center;
 }
 .app.outpost .kill-loot ul,

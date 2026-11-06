@@ -20,7 +20,7 @@
   padding-inline: calc(50vw - 50% + max(0px, (100% - var(--reader-width)) / 2));
 }
 :global(.app.outpost) .page :global(.workspace-identity h1) {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 /* The landing hero's oval shade behind the copy, over the cover */
 :global(.app.outpost) .page :global(.workspace-identity-copy) {
@@ -114,9 +114,11 @@
   min-width: 0;
 }
 /* The reading page: a framed document, as on /legal, with the text at about 68 characters */
-:global(.app.outpost) .prose.prose {
+:global(.app.outpost) .doc.doc {
   min-width: 0;
   padding: 40px 48px 48px;
+}
+.prose {
   color: var(--secondary);
   font-size: 16px;
   line-height: 1.75;
@@ -240,7 +242,7 @@
     grid-template-columns: 220px minmax(0, 1fr);
     gap: 28px;
   }
-  :global(.app.outpost) .prose.prose {
+  :global(.app.outpost) .doc.doc {
     padding: 32px 36px 40px;
   }
 }
@@ -253,7 +255,7 @@
   }
   .mobileToc {
     display: block;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   .mobileToc .contents {
     padding-top: 4px;
@@ -263,8 +265,10 @@
   :global(.app.outpost) .page :global(.workspace-identity) {
     min-height: 0;
   }
-  :global(.app.outpost) .prose.prose {
-    padding: 24px 18px 28px;
+  :global(.app.outpost) .doc.doc {
+    padding: 20px 18px 28px;
+  }
+  .prose {
     font-size: 15px;
   }
   :global(.app.outpost) .prose h2 {
