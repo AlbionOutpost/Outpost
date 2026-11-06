@@ -248,7 +248,7 @@ export function CompositionView({
             <div className={styles.toolbar}>
               <div className={styles.show} role="group" aria-label="Show the party as">
                 <span className={styles.showLabel}>Show</span>
-                <span className={styles.segment}>
+                <span className="segmented">
                   {(
                     [
                       ["loadouts", "Loadouts"],

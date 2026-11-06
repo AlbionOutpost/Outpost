@@ -117,7 +117,7 @@ export default async function Builds({
                 <option value="saved">Most saved</option>
               </BuildSortSelect>
             </label>
-            <div className="ecosystem-view-switch" aria-label="Build layout">
+            <div className="segmented ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
                 aria-label="Grid view"

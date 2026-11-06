@@ -19,8 +19,6 @@
 :global(.app.outpost) .jump.jump {
   display: none;
   gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .index.index {
   display: grid;

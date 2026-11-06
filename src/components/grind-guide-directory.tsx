@@ -1,4 +1,4 @@
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
 import { GuideCoverCard, readingMinutes, type GuideCover } from "./guide-cover-card";
@@ -6,6 +6,7 @@ import { SectionHeading } from "./section-heading";
 import { EmptyWell } from "./empty-well";
 import type { LibraryGuide } from "@/lib/grind-library-types";
 import styles from "@/app/guides/guides.module.css";
+import { SearchInput } from "./field";
 
 export const guideArtwork: Record<string, string> = {
   "market-flipping-guide": "T4_BAG",
@@ -118,8 +119,7 @@ export function GrindGuideDirectory({
           <div className={styles.searchRow}>
             <label className={styles.search}>
               <span className="sr-only">Search guides</span>
-              <Search size={16} aria-hidden="true" />
-              <input
+              <SearchInput
                 type="search"
                 name="q"
                 defaultValue={query}

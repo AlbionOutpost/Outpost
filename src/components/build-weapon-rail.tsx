@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Search, Swords } from "lucide-react";
+import { Swords } from "lucide-react";
 import Link from "./build-region-link";
 import { ItemIcon } from "./item-icon";
+import { SearchInput } from "./field";
 export function BuildWeaponRail({
   families,
   weapons,
@@ -37,9 +38,8 @@ export function BuildWeaponRail({
         <h2>Weapons</h2>
       </div>
       <label className="weapon-rail-search">
-        <Search size={16} />
         <span className="sr-only">Search weapon families</span>
-        <input
+        <SearchInput
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

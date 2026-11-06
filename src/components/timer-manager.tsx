@@ -222,7 +222,7 @@ export function TimerManager({
             <h2 id="timer-list-title" className="sr-only">
               Your timers
             </h2>
-            <div className={styles.segments} role="group" aria-label="Timer status">
+            <div className={`segmented ${styles.segments}`} role="group" aria-label="Timer status">
               {filters.map(([value, label]) => (
                 <button
                   key={value}

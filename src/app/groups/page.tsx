@@ -1,5 +1,5 @@
 import { privateMetadata } from "@/lib/seo";
-import { ArrowUpRight, Compass, Search, Shield } from "lucide-react";
+import { ArrowUpRight, Compass, Shield } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
@@ -7,6 +7,7 @@ import { MastheadTabs } from "@/components/masthead-tabs";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import { WellSelect } from "@/components/well-select";
+import { SearchInput } from "@/components/field";
 import {
   TeamMark,
   TeamNextSteps,
@@ -139,21 +140,18 @@ export default async function Groups({
       >
         <input type="hidden" name="mine" value={mine ? "1" : "0"} />
         <label className={styles.filterSearch}>
-          <span className={styles.fieldLabel}>Search teams</span>
-          <span className={styles.search}>
-            <Search size={16} aria-hidden="true" />
-            <input
-              name="q"
-              defaultValue={q}
-              maxLength={80}
-              type="search"
-              aria-label="Search teams"
-              placeholder="Team name or description"
-            />
-          </span>
+          <span>Search teams</span>
+          <SearchInput
+            name="q"
+            defaultValue={q}
+            maxLength={80}
+            type="search"
+            aria-label="Search teams"
+            placeholder="Team name or description"
+          />
         </label>
-        <label className={styles.filterField}>
-          <span className={styles.fieldLabel}>Region</span>
+        <label>
+          <span>Region</span>
           <WellSelect aria-label="Team region" name="region" defaultValue={region}>
             <option value="">All regions</option>
             {Object.entries(regions).map(([value, r]) => (
@@ -163,8 +161,8 @@ export default async function Groups({
             ))}
           </WellSelect>
         </label>
-        <label className={styles.filterField}>
-          <span className={styles.fieldLabel}>Visibility</span>
+        <label>
+          <span>Visibility</span>
           <WellSelect aria-label="Team visibility" name="visibility" defaultValue={visibility}>
             <option value="">All teams</option>
             <option value="PUBLIC">Public</option>

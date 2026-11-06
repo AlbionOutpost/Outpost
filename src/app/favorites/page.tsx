@@ -133,7 +133,10 @@ export default async function Favorites({
                         <option value="title">Title A–Z</option>
                       </BuildSortSelect>
                     </label>
-                    <div className="ecosystem-view-switch" aria-label="Favorite build layout">
+                    <div
+                      className="segmented ecosystem-view-switch"
+                      aria-label="Favorite build layout"
+                    >
                       <Link
                         href={href({
                           view: "grid",

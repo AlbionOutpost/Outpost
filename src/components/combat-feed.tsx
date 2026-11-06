@@ -2,7 +2,7 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Search, Skull, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { GearValue } from "@/lib/albion/kill-value";
@@ -22,6 +22,7 @@ import { Disclosure } from "./disclosure";
 import { StatusLine } from "./status-line";
 import { NextStepCards } from "./next-step-cards";
 import styles from "./combat-feed.module.css";
+import { SearchInput } from "./field";
 
 type Player = CombatEvent["killer"];
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
@@ -162,9 +163,8 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
       </WorkspaceHeading>
       <section className={`raised ${styles.toolbar}`} aria-label="Feed filters">
         <label className={styles.search}>
-          <Search size={16} aria-hidden="true" />
           <span className="sr-only">Filter this feed page by player or guild</span>
-          <input
+          <SearchInput
             placeholder="Filter this page by player or guild…"
             value={query}
             maxLength={100}

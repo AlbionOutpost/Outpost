@@ -2,13 +2,14 @@
 import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
-import { Search, ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
+import { ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
 import { tools, toolGroups, toolPaintings, toolSections } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
 import { SectionHeading } from "./section-heading";
+import { SearchInput } from "./field";
 
 type Tool = (typeof tools)[number];
 // Each tool crops one of the five paintings so the directory reads as places, not a list.
@@ -106,9 +107,8 @@ export function ToolDirectory() {
       />
       <div className="directory-toolbar">
         <label className="directory-search">
-          <Search size={18} aria-hidden="true" />
           <span className="sr-only">Find a tool</span>
-          <input
+          <SearchInput
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

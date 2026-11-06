@@ -13,20 +13,7 @@
 :global(.app.outpost) .page.page :global(.workspace-identity-actions) {
   align-self: center;
 }
-:global(.app.outpost) .page.page input[type="number"],
-:global(.app.outpost) .page.page input:not([type]) {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 10px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-}
 :global(.app.outpost) .page.page input[type="number"] {
-  font-family: var(--font-data);
   text-align: right;
 }
 :global(.app.outpost) .layout.layout {
@@ -260,13 +247,15 @@
 :global(.app.outpost) .queue.queue li[data-ready] .progress b {
   background: var(--killer);
 }
+/* Stepper: − number + in one field well */
 :global(.app.outpost) .stepper.stepper {
   display: inline-grid;
   grid-auto-flow: column;
   align-items: center;
   border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .stepper.stepper button {
   display: grid;
@@ -279,8 +268,8 @@
   cursor: pointer;
 }
 :global(.app.outpost) .stepper.stepper button:disabled {
-  opacity: 0.35;
-  cursor: default;
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 :global(.app.outpost) .page.page .stepper.stepper input {
   width: 56px;
@@ -506,11 +495,7 @@
   gap: var(--space-2);
 }
 :global(.app.outpost) .accountForm.accountForm label {
-  display: grid;
   flex: 1 1 240px;
-  gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .savedRow.savedRow {
   display: flex;

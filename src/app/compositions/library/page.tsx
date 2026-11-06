@@ -1,5 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
-import { Search } from "lucide-react";
+
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/build-region-link";
@@ -15,6 +15,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import { WellSelect } from "@/components/well-select";
 import styles from "@/components/comps.module.css";
+import { SearchInput } from "@/components/field";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions/library", await searchParams);
 }
@@ -62,16 +63,13 @@ export default async function Page({
       >
         <label>
           Search comps
-          <span className={styles.searchWell}>
-            <Search size={16} aria-hidden="true" />
-            <input
-              type="search"
-              name="q"
-              maxLength={100}
-              defaultValue={q}
-              placeholder="Comp name or author"
-            />
-          </span>
+          <SearchInput
+            type="search"
+            name="q"
+            maxLength={100}
+            defaultValue={q}
+            placeholder="Comp name or author"
+          />
         </label>
         <label>
           Activity

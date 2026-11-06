@@ -18,6 +18,7 @@ import { Missing } from "./calculator-figures";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { SearchInput } from "./field";
 const groups = Object.entries(masteryGroups);
 const steps = ["mastery-board", "mastery-focus"];
 const specsOf = (ids: string[]) =>
@@ -167,9 +168,9 @@ export function MasteryPlanner() {
   const recipes = found?.key === term ? found.recipes : null;
   const focus = (
     <>
-      <label className={c.searchField}>
+      <label>
         Item
-        <input
+        <SearchInput
           type="search"
           placeholder="Search an item, e.g. Battleaxe"
           value={query}

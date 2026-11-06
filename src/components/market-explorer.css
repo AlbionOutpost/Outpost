@@ -43,8 +43,6 @@
     .mx-table-well,
     .mx-inspector,
     .mx-disclosure,
-    .mx-select,
-    .mx-field > input,
     .market-quality-availability,
     .watchlist-items > li,
     .mx-list-empty,
@@ -90,55 +88,12 @@
   gap: var(--space-4);
 }
 .app.outpost .mx-field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
   margin: 0;
-  color: var(--text);
-  font: 600 12px/1.35 var(--font-ui);
 }
 .app.outpost .mx-field-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
-}
-.app.outpost .mx-select {
-  position: relative;
-  display: block;
-}
-.app.outpost .mx-select select,
-.app.outpost .mx-field > input {
-  width: 100%;
-  min-height: 42px;
-  margin: 0;
-  padding: 0 34px 0 var(--space-3);
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-  appearance: none;
-  box-shadow: none;
-}
-.app.outpost .mx-field > input {
-  padding-right: var(--space-3);
-  font-family: var(--font-data);
-}
-.app.outpost .mx-select select option {
-  background: var(--surface-raised);
-  color: var(--text);
-}
-.app.outpost .mx-select > svg {
-  position: absolute;
-  top: 50%;
-  right: var(--space-3);
-  color: var(--muted);
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.app.outpost .mx-select:hover,
-.app.outpost .mx-select:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
 }
 .app.outpost .mx .catalog-item-picker,
 .app.outpost .mx .catalog-item-picker label {
@@ -277,10 +232,6 @@
 }
 .app.outpost .mx-disclosure[open] > :not(summary) {
   margin: 0 var(--space-3) var(--space-3);
-}
-.app.outpost .mx-disclosure .mx-field > input,
-.app.outpost .mx-disclosure .mx-select {
-  background: color-mix(in srgb, var(--edge-light) 55%, transparent);
 }
 .app.outpost .mx-filter-grid {
   display: grid;
@@ -480,38 +431,6 @@
 }
 
 /* Sort and range segments */
-.app.outpost .mx-segment {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-}
-.app.outpost .mx-segment > button {
-  min-height: 30px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font: 700 12px/1 var(--font-ui);
-  cursor: pointer;
-  transition:
-    color var(--motion-fast) var(--ease-out),
-    background var(--motion-fast) var(--ease-out);
-}
-.app.outpost .mx-segment > button:hover {
-  color: var(--text);
-}
-.app.outpost
-  .mx
-  :is(.mx-segment > button[aria-checked="true"], .mx-segment > button[aria-selected="true"]) {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-
 /* City orders table */
 .app.outpost .mx-table-well {
   overflow-x: auto;

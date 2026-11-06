@@ -164,7 +164,7 @@ export function LibraryGroupWorkspace({
         <div className={styles.toolbar}>
           <div className={styles.show} role="group" aria-label="Show on each member">
             <span className={styles.showLabel}>Show</span>
-            <span className={styles.segment}>
+            <span className="segmented">
               <button
                 type="button"
                 aria-pressed={view === "roster"}

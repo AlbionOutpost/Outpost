@@ -92,7 +92,7 @@ export default async function Library({
                 <option value="title">Build title</option>
               </BuildSortSelect>
             </label>
-            <div className="ecosystem-view-switch" aria-label="Build layout">
+            <div className="segmented ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
                 aria-label="Grid view"

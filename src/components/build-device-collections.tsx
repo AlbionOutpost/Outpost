@@ -27,6 +27,8 @@ import {
   savedFilterHref,
   type SavedLibraryBuild,
 } from "@/lib/build-device-collections";
+import { WellSelect } from "./well-select";
+import { SearchInput } from "./field";
 const event = "outpost:build-device-change";
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -195,7 +197,7 @@ export function DeviceLibraryFavorites() {
         <div className="raised ecosystem-result-toolbar favorites-toolbar">
           <label className="ecosystem-search-label">
             <span className="sr-only">Search library favorites</span>
-            <input
+            <SearchInput
               type="search"
               value={query}
               maxLength={100}
@@ -209,7 +211,7 @@ export function DeviceLibraryFavorites() {
           </label>
           <label className="ecosystem-sort-label">
             Sort
-            <select
+            <WellSelect
               value={sort}
               aria-label="Sort library favorites"
               onChange={(event) => {
@@ -219,9 +221,13 @@ export function DeviceLibraryFavorites() {
             >
               <option value="saved">Recently saved</option>
               <option value="title">Title A–Z</option>
-            </select>
+            </WellSelect>
           </label>
-          <div className="ecosystem-view-switch" role="group" aria-label="Library favorite display">
+          <div
+            className="segmented ecosystem-view-switch"
+            role="group"
+            aria-label="Library favorite display"
+          >
             <button
               type="button"
               aria-label="Library favorites grid"

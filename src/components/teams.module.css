@@ -366,56 +366,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
-:global(.app.outpost) .field.field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-:global(.app.outpost) .field.field[data-wide] {
-  grid-column: 1 / -1;
-}
-:global(.app.outpost) .field.field > label {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-:global(.app.outpost) .fieldLabel.fieldLabel {
-  color: var(--muted);
-  font: 600 12px/1.3 var(--font-ui);
-}
-:global(.app.outpost) .fieldHint.fieldHint {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea) {
-  width: 100%;
-  min-height: 42px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1.4 var(--font-ui);
-}
-:global(.app.outpost) :is(.field, .requestForm) textarea {
-  min-height: 112px;
-  padding: 10px 12px;
-  resize: vertical;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea):focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
-}
-:global(.app.outpost) .field.field :global(select) {
-  width: 100%;
-}
-:global(.app.outpost) .field.field > label > span:has(> select) {
-  display: flex;
-}
 :global(.app.outpost) .formActions.formActions {
   display: flex;
   flex-wrap: wrap;
@@ -432,21 +382,6 @@
 :global(.app.outpost) .inlineLabel.inlineLabel {
   display: inline-flex;
   margin: 0;
-}
-:global(.app.outpost) .search.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 0;
-}
-:global(.app.outpost) .search.search > svg {
-  position: absolute;
-  left: 12px;
-  color: var(--accent-ink);
-  pointer-events: none;
-}
-:global(.app.outpost) .search.search input {
-  padding-left: 38px;
 }
 :global(.app.outpost) .requestForm.requestForm {
   display: grid;
@@ -962,18 +897,6 @@
   margin: 0 0 56px;
   padding: var(--space-5) var(--space-6);
 }
-:global(.app.outpost) :is(.filterSearch, .filterField) {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  margin: 0;
-}
-:global(.app.outpost) .filterField :global(select) {
-  width: 100%;
-}
-:global(.app.outpost) .filterField > span:has(> select) {
-  display: flex;
-}
 :global(.app.outpost) .section.section {
   margin: 0;
 }
@@ -1083,7 +1006,7 @@
   font: 500 14px/1 var(--font-ui);
   white-space: nowrap;
 }
-:global(.app.outpost) .field .prefixed.prefixed > input {
+:global(.app.outpost) .prefixed.prefixed > input {
   flex: 1;
   min-width: 0;
   padding-left: 0;
@@ -1105,10 +1028,6 @@
   order: -1;
   flex-basis: 100%;
   margin: 0;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea)::placeholder {
-  color: var(--muted);
-  opacity: 0.75;
 }
 
 /* An empty well in a narrow panel: its action drops under the copy instead of squeezing it */

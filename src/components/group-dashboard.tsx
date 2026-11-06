@@ -295,8 +295,8 @@ export function GroupRequest({ groupId }: { groupId: string }) {
         }
       }}
     >
-      <label className={styles.field}>
-        <span className={styles.fieldLabel}>Message to team leaders</span>
+      <label>
+        <span>Message to team leaders</span>
         <textarea
           name="message"
           maxLength={1000}

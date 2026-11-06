@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { MoreHorizontal, Search } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { StatusLine } from "./status-line";
 import { Pagination } from "./pagination";
 import { WellSelect } from "./well-select";
+import { SearchInput } from "./field";
 import type { TeamContext } from "./group-dashboard";
 import { plural, roleLabel } from "./group-parts";
 import styles from "./teams.module.css";
@@ -61,10 +62,9 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         title="Members"
         line={`${plural(data.memberCount, "member")} · owners and admins manage roles`}
       />
-      <label className={styles.search}>
+      <label>
         <span className="sr-only">Find a member</span>
-        <Search size={16} aria-hidden="true" />
-        <input
+        <SearchInput
           type="search"
           aria-label="Find a member"
           value={query}
