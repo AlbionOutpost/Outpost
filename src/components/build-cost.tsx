@@ -136,7 +136,8 @@ export function BuildCost({ id }: { id: string }) {
       <div className="loadout-price-total" aria-live="polite">
         <div className="build-cost-figure">
           <small>
-            {sets === 1 ? "Loadout" : `${sets} loadouts`} in {city}
+            Loadout total in {city}
+            {sets > 1 && ` · ${sets} sets`}
           </small>
           <strong className="build-cost-total">
             {!shown ? (

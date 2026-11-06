@@ -150,13 +150,13 @@ function DeviceFavoriteCard({ build }: { build: SavedLibraryBuild }) {
       weaponItemId={build.itemId || undefined}
       author={build.author}
       updatedAt={build.updatedAt}
-      heart={<HeartChip build={build} className="library-device-save" />}
+      heart={<HeartChip build={build} text="Saved" className="library-device-save" />}
     >
       <div className="build-window-summary">
-        <span>
-          {build.itemId ? <ItemIcon id={build.itemId} size={72} /> : <Bookmark size={28} />}
+        <span aria-hidden="true">
+          {build.itemId ? <ItemIcon id={build.itemId} size={72} /> : null}
         </span>
-        <small className="detail-muted">Saved in this browser · full loadout on the build</small>
+        <small className="detail-muted">Open the build for its full loadout</small>
       </div>
     </BuildWindow>
   );

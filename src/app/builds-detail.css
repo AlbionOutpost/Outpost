@@ -1339,9 +1339,6 @@
 .app.outpost .build-detail-page .detail-workspace-grid {
   align-items: stretch;
 }
-.app.outpost .build-detail-page #build-cost {
-  margin-top: 26px;
-}
 .app.outpost .build-detail-page :is(.loadout-price-check, .build-cost-panel) {
   margin: 0;
   padding: 22px 24px;
@@ -1532,9 +1529,6 @@
 }
 
 /* Revisions: duplicate and restore in one framed panel */
-.app.outpost .build-revisions-panel {
-  margin-top: 26px;
-}
 .app.outpost .build-revisions-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1662,15 +1656,6 @@
   }
 }
 
-/* The discussion panel is shared with Comps; on build detail it takes the panel title type */
-.app.outpost .build-detail-page #build-discussion > .panel {
-  margin-top: 26px;
-}
-.app.outpost .build-detail-page #build-discussion > .panel > h2 {
-  margin: 0 0 4px;
-  font: 800 21px/1.15 var(--font-display);
-  text-shadow: 0 1px 2px #000c;
-}
 @media (max-width: 700px) {
   .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary {
     flex-wrap: nowrap;
@@ -1769,37 +1754,16 @@
   gap: 10px;
 }
 
-/* Discussion and revisions are working panels like the rest of the page */
-.app.outpost .build-detail-page #build-discussion > .panel,
-.app.outpost .build-detail-page .build-revisions-panel {
-  padding: 22px 24px;
-}
-.app.outpost .build-detail-page #build-discussion > .panel > p.muted {
+/* The discussion panel is shared with Comps */
+.app.outpost .build-detail-page .detail-panel-frame > .panel > p.muted {
   margin: 0 0 12px;
   color: var(--muted);
   font-size: 13px;
 }
 
-/* Section tabs on phones scroll sideways with snapping and a fade at the cut edge */
 @media (max-width: 700px) {
-  .app.outpost .build-detail-page .detail-section-navigation {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
-    mask-image: linear-gradient(90deg, #000 85%, transparent);
-    padding-right: 40px;
-  }
-  .app.outpost .build-detail-page .detail-section-navigation > a {
-    scroll-snap-align: start;
-  }
   .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > small {
     display: none;
-  }
-  .app.outpost .build-detail-page #build-discussion > .panel,
-  .app.outpost .build-detail-page .build-revisions-panel {
-    padding: 16px;
   }
 }
 .app.outpost .build-detail-page .detail-selected-item > .pill-link {
@@ -1807,4 +1771,72 @@
 }
 .app.outpost .build-cost-figure > strong > span > span:first-child {
   font-size: 22px;
+}
+
+/* Cost, revisions and discussion are framed like Build details: the frame and painting are the
+   wrapper's, the panel inside stays plain */
+.app.outpost .build-detail-page .detail-panel-frame {
+  margin-top: 26px;
+  padding: 0;
+}
+.app.outpost .build-detail-page .detail-panel-frame > :is(.panel, .loadout-price-check) {
+  margin: 0;
+  padding: 22px 24px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.app.outpost .build-detail-page .detail-panel-frame > .panel > h2 {
+  margin: 0 0 4px;
+  font: 800 21px/1.15 var(--font-display);
+  text-shadow: 0 1px 2px #000c;
+}
+.app.outpost .build-detail-page .detail-build-context.raised {
+  align-self: start;
+}
+.app.outpost .build-detail-page .detail-piece-strip > div {
+  gap: 4px;
+}
+.app.outpost .build-detail-page .detail-piece-strip button {
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .weapon-rail-more {
+  justify-self: start;
+  margin-top: 8px;
+}
+/* Rail actions stack, each the rail's full width */
+.app.outpost .builds-ecosystem .ecosystem-filter-rail .library-filter-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.app.outpost .builds-ecosystem .ecosystem-filter-rail .library-filter-actions > * {
+  width: 100%;
+  justify-content: center;
+}
+@media (max-width: 700px) {
+  .app.outpost .build-detail-page .detail-panel-frame > :is(.panel, .loadout-price-check) {
+    padding: 16px;
+  }
+  /* Section tabs wrap on phones, like the collection tabs */
+  .app.outpost .build-detail-page .detail-section-navigation {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding-right: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .app.outpost .build-detail-page .detail-section-navigation > a {
+    min-height: 40px;
+  }
+  /* The chevron stays at the right edge when the meta hides */
+  .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > span {
+    margin-right: auto;
+  }
+}
+@media (max-width: 420px) {
+  .app.outpost .loadout-price-total {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

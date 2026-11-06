@@ -60,8 +60,6 @@ export function LibraryBuildVideos({ build }: { build: LibraryBuild }) {
         {links.map((video, i) => (
           <li key={`${video.url}-${i}`}>
             <a href={video.url} target="_blank" rel="noopener noreferrer">
-              {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-              <img src="/albion/icons/strip-content.webp" alt="" width={40} height={40} />
               <span>
                 <strong>
                   {video.kind === "channel"

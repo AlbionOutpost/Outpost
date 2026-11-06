@@ -145,6 +145,7 @@ export default async function Builds({
                 <input type="hidden" name="view" value={view} />
                 <BuildWeaponRail
                   path="/builds"
+                  limit={8}
                   selected={family}
                   families={buildDiscovery.families}
                   weapons={buildDiscovery.weapons.filter((w) => w.count > 0)}

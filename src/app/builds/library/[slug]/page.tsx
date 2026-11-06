@@ -134,7 +134,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           ) : undefined
         }
         cost={
-          <div id="build-cost">
+          <div id="build-cost" className="raised detail-panel-frame">
             <LoadoutPriceCheck equipment={equipment} autoLoad />
           </div>
         }

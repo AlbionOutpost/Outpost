@@ -10,6 +10,7 @@ export function BuildWeaponRail({
   total,
   query,
   path = "/builds/library",
+  limit,
 }: {
   families: readonly { id: string; name: string; count: number }[];
   weapons: readonly { family: string; itemId: string }[];
@@ -18,11 +19,16 @@ export function BuildWeaponRail({
   total?: number;
   query: Record<string, string>;
   path?: "/builds/library" | "/builds";
+  /** Show this many families until the player asks for all (the selected one always shows). */
+  limit?: number;
 }) {
   const [search, setSearch] = useState("");
-  const visible = families.filter((f) =>
+  const [all, setAll] = useState(false);
+  const matching = families.filter((f) =>
     f.name.toLowerCase().includes(search.trim().toLowerCase()),
   );
+  const short = !!limit && !all && !search.trim() && matching.length > limit;
+  const visible = short ? matching.filter((f, i) => i < limit || f.id === selected) : matching;
   const href = (family: string) =>
     `${path}?${new URLSearchParams({ ...query, family, weapon: "", page: "1" })}`;
   return (
@@ -67,6 +73,15 @@ export function BuildWeaponRail({
           );
         })}
       </nav>
+      {short && (
+        <button
+          type="button"
+          className="pill-link is-small weapon-rail-more"
+          onClick={() => setAll(true)}
+        >
+          Show all {matching.length} families
+        </button>
+      )}
       {!visible.length && <p role="status">No matching family. Try axe, bow or staff.</p>}
     </section>
   );

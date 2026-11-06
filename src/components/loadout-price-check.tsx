@@ -56,6 +56,20 @@ export function LoadoutPriceCheck({
         line={`One of each equipped item at its quality, bought in the city you pick on the ${regions[region].label} server.`}
         actions={
           <div className="loadout-quote-actions">
+            <label>
+              <span className="sr-only">Purchase city</span>
+              <WellSelect
+                aria-label="Loadout purchase city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              >
+                {cities
+                  .filter((c) => c !== "Black Market")
+                  .map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+              </WellSelect>
+            </label>
             <AddToShopping
               region={region}
               label="Shop this loadout"
@@ -71,21 +85,6 @@ export function LoadoutPriceCheck({
                 observedAt: null,
               }))}
             />
-
-            <label>
-              <span className="sr-only">Purchase city</span>
-              <WellSelect
-                aria-label="Loadout purchase city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              >
-                {cities
-                  .filter((c) => c !== "Black Market")
-                  .map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-              </WellSelect>
-            </label>
             <button
               type="button"
               className="button secondary"

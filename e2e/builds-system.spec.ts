@@ -49,7 +49,10 @@ test("library discovery keeps URL filters, region and device collections through
   await page.reload();
   await expect(page.locator(".device-library-favorites")).toContainText(title);
   await page
-    .getByRole("button", { name: `Remove ${title} from this device's favourites`, exact: true })
+    .getByRole("button", {
+      name: `Remove ${title} from this device's favourites · Saved`,
+      exact: true,
+    })
     .click();
   await expect(page.locator(".device-library-favorites")).not.toContainText(title);
   // Exercise the actual 24-card boundary using genuine owned public records.

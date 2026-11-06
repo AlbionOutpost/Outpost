@@ -103,7 +103,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           visibility: build.visibility,
         }}
         cost={
-          <div id="build-cost">
+          <div id="build-cost" className="raised detail-panel-frame">
             <BuildCost id={id} />
           </div>
         }
@@ -138,7 +138,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
         }
       />
       <SavedEquipmentSets sets={equipmentSets.parse(build.equipmentSets)} />
-      <div id="build-actions">
+      <div id="build-actions" className="raised detail-panel-frame">
         <BuildActions
           id={id}
           version={build.version}
@@ -146,7 +146,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           revisions={build.versions.map((v) => v.version)}
         />
       </div>
-      <div id="build-discussion">
+      <div id="build-discussion" className="raised detail-panel-frame">
         <CommunityPanel kind="build" id={id} />
       </div>
       <BuildsNextStep
