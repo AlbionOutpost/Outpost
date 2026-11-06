@@ -76,6 +76,15 @@ export function secureResponse(response: Response, request: Request) {
       : "strict-origin-when-cross-origin",
   );
   result.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  // API answers are data, never documents: nothing in them may load, run or be framed. NextAuth's
+  // own HTML endpoints under /api/auth keep the app policy set by the proxy.
+  const path = new URL(request.url).pathname;
+  if (
+    path.startsWith("/api/") &&
+    !path.startsWith("/api/auth/") &&
+    !result.headers.has("Content-Security-Policy")
+  )
+    result.headers.set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
   if (new URL(request.url).protocol === "https:")
     result.headers.set("Strict-Transport-Security", "max-age=31536000");
   return result;

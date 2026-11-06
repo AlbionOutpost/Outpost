@@ -1,0 +1,7 @@
+# Workers Static Assets serve these files without running the Worker, so they need their own
+# security headers (the Worker adds the same set to everything it answers).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000

@@ -124,6 +124,18 @@ describe("trusted edge request budgets", () => {
     expect(cached.headers.get("strict-transport-security")).toBe("max-age=31536000");
     expect(cached.headers.get("x-outpost-search")).toBe("hit");
     expect(cached.headers.get("set-cookie")).toBeNull();
+    expect(cached.headers.get("content-security-policy")).toBe(
+      "default-src 'none'; frame-ancestors 'none'",
+    );
+    // NextAuth's HTML endpoints and pages keep the policy the app proxy sets.
+    expect(
+      secureResponse(new Response("ok"), req("/api/auth/error")).headers.get(
+        "content-security-policy",
+      ),
+    ).toBeNull();
+    expect(
+      secureResponse(new Response("ok"), req("/builds")).headers.get("content-security-policy"),
+    ).toBeNull();
     expect(
       secureResponse(new Response(null, { status: 403 }), req("/invitations/token")).headers.get(
         "referrer-policy",
