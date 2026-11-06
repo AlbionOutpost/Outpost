@@ -732,3 +732,23 @@
   padding: var(--space-6) var(--space-4);
   text-align: center;
 }
+
+/* The neutral seal stands in for missing tool art, framed as a tile like the painted emblems */
+:global(.app.outpost) .sealTile.sealTile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 2px solid color-mix(in srgb, var(--accent) 70%, #000);
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 35%, #2a2018, #120e0b 70%);
+  box-shadow:
+    inset 0 0 0 2px #0008,
+    inset 0 2px 6px #0009,
+    0 4px 10px #000a,
+    0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+:global(.app.outpost) .sealTile.sealTile img {
+  width: 44px;
+  height: 44px;
+}

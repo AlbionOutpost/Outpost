@@ -3,6 +3,7 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TransportCalculator } from "@/components/transport-calculator";
 import { CalculatorCta } from "@/components/calculator-cta";
 import styles from "@/components/calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/transporting", await searchParams);
 }
@@ -18,14 +19,10 @@ export default async function Page({
       <WorkspaceHeading
         emblem={
           // No painted emblem for this tool yet; the neutral seal stands in (batch 4 report)
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            className="painted-emblem"
-            src="/albion/icons/fame.webp"
-            alt=""
-            width={64}
-            height={64}
-          />
+          <span className={c.sealTile}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+            <img src="/albion/icons/fame.webp" alt="" width={44} height={44} />
+          </span>
         }
         scene="economy"
         title="Transport calculator"

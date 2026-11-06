@@ -43,7 +43,14 @@ function sentence(text: string) {
   return out.replace(/\u0000(\d+)\u0000/g, (_, i: string) => kept[Number(i)]);
 }
 function Cell({ value }: { value: string }) {
-  if (!value) return <span className={r.none}>None</span>;
+  // An empty source cell: nothing given for this row (no bonus, no speed class)
+  if (!value)
+    return (
+      <span className={r.none}>
+        <span aria-hidden="true">—</span>
+        <span className="sr-only">None</span>
+      </span>
+    );
   if (cityNames.has(value))
     return (
       <span className={r.city}>

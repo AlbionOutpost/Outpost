@@ -43,6 +43,7 @@ import {
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
+import { Missing, PRICE_ERROR } from "./calculator-figures";
 import { sourceAge } from "@/lib/albion/source-age";
 import { ScenarioControls } from "./scenario-controls";
 import { prepareProductionRestore } from "@/lib/albion/recipe-restore";
@@ -188,7 +189,7 @@ export function ProductionCalculator({
     setPendingKey(requestKey);
     setAttemptedKey(requestKey);
     setError("");
-    let failureMessage = "Market observations are temporarily unavailable. Please retry shortly.";
+    let failureMessage = PRICE_ERROR;
     try {
       const response = await fetch(`/api/economy/prices?${requestKey}`, {
         signal: controller.signal,
@@ -883,11 +884,7 @@ export function ProductionCalculator({
                 />
                 <span className={s.matTotal}>
                   <span className="sr-only">Total </span>
-                  {gross == null ? (
-                    <span className={s.dash}>—</span>
-                  ) : (
-                    <Silver value={gross} digits={2} />
-                  )}
+                  {gross == null ? <Missing /> : <Silver value={gross} digits={2} />}
                 </span>
               </li>
             );
@@ -914,11 +911,7 @@ export function ProductionCalculator({
             />
             <span className={s.matTotal}>
               <span className="sr-only">Total </span>
-              {result?.revenue == null ? (
-                <span className={s.dash}>—</span>
-              ) : (
-                <Silver value={result.revenue} digits={2} />
-              )}
+              {result?.revenue == null ? <Missing /> : <Silver value={result.revenue} digits={2} />}
             </span>
           </li>
         </ul>
@@ -976,7 +969,7 @@ export function ProductionCalculator({
             label: "Margin",
             value:
               result.margin === null ? (
-                "—"
+                <Missing />
               ) : (
                 <AnimatedNumber value={result.margin} digits={1} minimumDigits={0} suffix="%" />
               ),
@@ -985,7 +978,7 @@ export function ProductionCalculator({
       ) : (
         <ResultFigure
           label="Total profit"
-          value={<span className={s.dash}>—</span>}
+          value={<Missing />}
           note={
             busy
               ? "Loading prices…"
@@ -995,7 +988,7 @@ export function ProductionCalculator({
                   ? "Finish pricing your run"
                   : "Price this run to see your profit"
           }
-          aside={{ label: "Margin", value: <span className={s.dash}>—</span> }}
+          aside={{ label: "Margin", value: <Missing /> }}
         />
       )}
       <ResultPair
@@ -1195,7 +1188,7 @@ export function ProductionCalculator({
             <span className={s.summaryPending}>
               {missingPrices.length
                 ? `${missingPrices.length} ${missingPrices.length === 1 ? "price" : "prices"} to go`
-                : "—"}
+                : "Unavailable"}
             </span>
           ),
         }}

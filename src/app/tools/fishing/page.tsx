@@ -6,6 +6,7 @@ import { CalculatorCta } from "@/components/calculator-cta";
 import { libraryFishing } from "@/lib/grind-library";
 import Link from "@/components/link";
 import styles from "@/components/calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/fishing", await searchParams);
 }
@@ -16,14 +17,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
       <WorkspaceHeading
         emblem={
           // No painted emblem for this tool yet; the neutral seal stands in (batch 4 report)
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            className="painted-emblem"
-            src="/albion/icons/fame.webp"
-            alt=""
-            width={64}
-            height={64}
-          />
+          <span className={c.sealTile}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+            <img src="/albion/icons/fame.webp" alt="" width={44} height={44} />
+          </span>
         }
         scene="economy"
         title="Fishing calculator"

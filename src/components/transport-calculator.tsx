@@ -242,8 +242,8 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             value={draft.saleMode}
             onChange={(e) => update("saleMode", e.target.value as TransportInput["saleMode"])}
           >
-            <option value="instant">Sell to a buy order</option>
-            <option value="listing">Post a sell order</option>
+            <option value="instant">Buy order</option>
+            <option value="listing">My sell order</option>
           </WellSelect>
         </label>
         <label>

@@ -442,13 +442,38 @@ HEADINGS = {
 # Obvious transcription errors in the source page, corrected and listed in the ledger.
 CORRECTIONS = {("island-upgrade-cost", 0, 1, 4): ("520,00", "520,000")}
 corrections_applied = []
+# The table pages break one name over several text nodes ("Crenellated" / "Burdock") as well as
+# listing several names in one cell, so text nodes are joined back into a name only where the
+# words are a name in the item catalog, or one parenthesised phrase. Anything else keeps " · ".
+KNOWN_NAMES = {entry[0] for entry in items.values() if entry[0]}
+
+
+def cell_text(cell) -> str:
+    parts = list(cell.stripped_strings)
+    out, i = [], 0
+    while i < len(parts):
+        for j in range(len(parts), i, -1):
+            if " ".join(parts[i:j]) in KNOWN_NAMES:
+                out.append(" ".join(parts[i:j]))
+                i = j
+                break
+        else:
+            out = None
+            break
+    if out is not None:
+        return " · ".join(out)
+    text = " · ".join(parts)
+    m = re.fullmatch(r"([A-Za-z]+) · \(([^()]*)\)", text)
+    return f"{m.group(1)} ({m.group(2).replace(' · ', ' ')})" if m else text
+
+
 reference = []
 for slug, title in REFERENCE:
     page = soup(f"table__{slug}.html")
     blocks = []
     for t in page.find_all("table"):
         heading = t.find_previous(["h2", "h3"])
-        rows = [[" · ".join(c.stripped_strings) for c in r.find_all(["th", "td"])] for r in t.find_all("tr")]
+        rows = [[cell_text(c) for c in r.find_all(["th", "td"])] for r in t.find_all("tr")]
         rows = [r for r in rows if any(r)]
         if slug == "transport-mount-capacity" and len(rows) > 100:
             continue  # the cargo table is generated from item weights instead

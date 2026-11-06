@@ -106,7 +106,7 @@
   text-align: left;
   vertical-align: top;
 }
-:global(.app.outpost) .table.table thead th {
+:global(.app.outpost) .table.table :is(thead, thead tr, thead th) {
   border-top: 0;
   background: none;
   color: var(--muted);
@@ -118,9 +118,16 @@
   font-weight: 600;
 }
 :global(.app.outpost) .table.table tbody td:not(.numeric) {
-  min-width: 9ch;
+  min-width: 14ch;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+}
+/* Names and short labels keep their words whole; the table scrolls instead */
+:global(.app.outpost) .table.table tbody th {
+  min-width: 12ch;
+}
+:global(.app.outpost) .table.table :is(th, td) {
+  hyphens: none;
 }
 :global(.app.outpost) .table.table .numeric {
   font-family: var(--font-data);

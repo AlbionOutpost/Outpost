@@ -346,12 +346,12 @@ for (const failure of [
   {
     status: 503,
     body: "<html>Proxy unavailable</html>",
-    message: "Market observations are temporarily unavailable. Please retry shortly.",
+    message: "Prices couldn’t be loaded. Your inputs were kept.",
   },
   {
     status: 200,
     body: "malformed upstream document",
-    message: "Market observations are temporarily unavailable. Please retry shortly.",
+    message: "Prices couldn’t be loaded. Your inputs were kept.",
   },
 ]) {
   test(`production keeps edits and recovers from a non-JSON ${failure.status} price response`, async ({
