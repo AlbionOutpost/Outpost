@@ -133,7 +133,7 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     const dashboard = await context.newPage();
     await dashboard.goto("/dashboard");
     await expect(
-      dashboard.getByRole("link", { name: "Open calculator and load plans", exact: true }),
+      dashboard.getByRole("link", { name: /^Combined crafting fixture/ }),
     ).toHaveAttribute("href", "/tools/crafting?region=europe#production-plan-title");
     await dashboard.close();
     const privateList = await outsider.request.get("/api/scenarios?kind=production-plan");

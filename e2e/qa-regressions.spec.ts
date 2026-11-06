@@ -22,22 +22,26 @@ test("preference cookie and market request agree without a region URL", async ({
   await expect.poll(() => requested).toBe("asia");
 });
 test("changing quality or item invalidates previously loaded prices", async ({ page }) => {
+  // Like the source, the fixture only has observations for Normal quality.
   await page.route("**/api/market?**", (route) =>
     route.fulfill({
       contentType: "application/json",
       body: JSON.stringify({
         region: "europe",
-        prices: [
-          {
-            item_id: "T4_BAG",
-            city: "Lymhurst",
-            quality: 1,
-            sell_price_min: 100,
-            buy_price_max: 90,
-            sell_price_min_date: "2026-10-25T18:00:00",
-            buy_price_max_date: "2026-10-25T18:00:00",
-          },
-        ],
+        prices:
+          new URL(route.request().url()).searchParams.get("quality") !== "1"
+            ? []
+            : [
+                {
+                  item_id: "T4_BAG",
+                  city: "Lymhurst",
+                  quality: 1,
+                  sell_price_min: 100,
+                  buy_price_max: 90,
+                  sell_price_min_date: "2026-10-25T18:00:00",
+                  buy_price_max_date: "2026-10-25T18:00:00",
+                },
+              ],
       }),
     }),
   );
@@ -49,7 +53,9 @@ test("changing quality or item invalidates previously loaded prices", async ({ p
     .filter({ has: page.locator('option[value="5"]') })
     .first()
     .selectOption("2");
-  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
+  // The board keeps its city rows, but no Normal-quality price carries over to Good.
+  await expect(page.locator(".market-board tbody")).not.toContainText("100");
+  await expect(page.locator(".market-board tbody")).not.toContainText("90");
 });
 
 test("market sort and city filtering retain correct buy and sell columns", async ({ page }) => {

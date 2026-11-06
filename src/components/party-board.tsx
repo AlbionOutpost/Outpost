@@ -34,9 +34,10 @@ export function PartyBoard({
                 type="button"
                 className={styles.partyRow}
                 aria-pressed={active === i}
-                aria-label={label}
                 onClick={() => onSelect(i)}
               >
+                {/* The row's own text names it (WCAG 2.5.3), after what the button does. */}
+                <span className="sr-only">Edit player {i + 1} loadout: </span>
                 <RosterRowCells member={row} n={i + 1} />
                 <ArrowRight className={styles.memberChevron} size={18} aria-hidden="true" />
               </button>

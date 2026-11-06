@@ -49,7 +49,8 @@
 }
 :global(.app.outpost) .body.body {
   min-height: 0;
-  overflow: hidden;
+  /* clip, not hidden: focusing a field while the panel opens can't scroll it under the toggle */
+  overflow: clip;
 }
 :global(.app.outpost) .inner.inner {
   padding: 0 var(--space-4) var(--space-4);
