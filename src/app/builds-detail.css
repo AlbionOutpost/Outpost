@@ -1115,12 +1115,13 @@
 .detail-summary-panel h2[tabindex] {
   scroll-margin-top: 72px;
 }
-.detail-inventory-return {
+/* Phones only: there the inspector sits under the board */
+.app.outpost .detail-context-actions .detail-inventory-return {
   display: none;
 }
 @media (max-width: 700px) {
-  .detail-inventory-return {
-    display: block;
+  .app.outpost .detail-context-actions .detail-inventory-return {
+    display: flex;
     width: 100%;
     font-size: 13px;
   }
@@ -1760,15 +1761,13 @@
   font: 800 21px/1.15 var(--font-display);
   text-shadow: 0 1px 2px #000c;
 }
-/* Build information matches its neighbours' height: facts at the top, the counts settle at the foot */
+/* Build information sits at its content's height beside the board: facts, then the counts */
 @media (min-width: 1320px) {
   .app.outpost .build-detail-page .detail-build-context.raised {
     position: static;
     display: flex;
     flex-direction: column;
-  }
-  .app.outpost .build-detail-page .detail-build-context .detail-context-completeness {
-    margin-top: auto;
+    align-self: start;
   }
 }
 .app.outpost .build-detail-page .detail-piece-strip > div {

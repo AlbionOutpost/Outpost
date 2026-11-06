@@ -380,7 +380,7 @@
   background: var(--elevated);
   box-shadow: 0 8px 24px #0005;
 }
-.app.outpost .build-share-menu button {
+.app.outpost .build-share-menu :is(button, a) {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -394,7 +394,7 @@
   text-align: left;
   font-size: 12px;
 }
-.app.outpost .build-share-menu button:hover {
+.app.outpost .build-share-menu :is(button, a):hover {
   background: var(--panel);
   color: var(--accent-ink);
 }

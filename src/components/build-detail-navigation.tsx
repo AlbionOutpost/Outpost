@@ -57,7 +57,8 @@ function revealCurrentSection() {
   );
 }
 
-export function BuildDetailNavigation() {
+/** Section links under the masthead; `links={false}` keeps only the deep-link handling. */
+export function BuildDetailNavigation({ links = true }: { links?: boolean } = {}) {
   const current = useSyncExternalStore(subscribe, currentSection, serverSection);
   useEffect(() => {
     const frame = requestAnimationFrame(revealCurrentSection);
@@ -69,6 +70,7 @@ export function BuildDetailNavigation() {
       window.removeEventListener("popstate", revealCurrentSection);
     };
   }, []);
+  if (!links) return null;
   return (
     <nav className="masthead-tabs detail-section-navigation" aria-label="Build sections">
       {sections.map(([id, name]) => (

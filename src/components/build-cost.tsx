@@ -208,8 +208,11 @@ export function BuildCost({ id }: { id: string }) {
       <p className="library-provenance">
         Prices from the Albion Online Data Project, scanned by players. Items without a price are
         left out of the total.{" "}
-        <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
-          How market scans work →
+        <Link
+          className="pill-link is-small"
+          href={`/market-data?${new URLSearchParams({ region, city })}`}
+        >
+          How market scans work
         </Link>
       </p>
     </section>

@@ -111,17 +111,20 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 name: equipmentName(item.itemId),
                 qualityNote: "Normal planning quality",
               }))}
+              more={
+                <BuildCompositionLink
+                  fromLibrary={build.slug.length <= 200 ? build.slug : build.id}
+                  className=""
+                />
+              }
             />
           </>
         }
       />
-      <BuildDetailNavigation />
+      <BuildDetailNavigation links={false} />
       <BuildLoadoutView
         equipment={equipment}
         qualityAssumed
-        extraActions={
-          <BuildCompositionLink fromLibrary={build.slug.length <= 200 ? build.slug : build.id} />
-        }
         information={{
           activity: activityName(build.category),
           author: build.author,

@@ -317,9 +317,11 @@ export function BuildDetailWorkspace({
             <a className="pill-link is-small detail-inventory-return" href="#build-equipment">
               Back to equipment <ArrowUp size={14} aria-hidden="true" />
             </a>
-            <a className="button secondary" href="#build-cost">
-              Check loadout cost <ArrowUpRight size={14} />
-            </a>
+            {!cost && (
+              <a className="button secondary" href="#build-cost">
+                Check loadout cost <ArrowUpRight size={14} />
+              </a>
+            )}
             {extraActions}
           </div>
           <p className="detail-muted detail-ability-guidance">
