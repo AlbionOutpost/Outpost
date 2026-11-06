@@ -5,6 +5,7 @@ import { retrySerialization } from "../serialization-retry";
 import { HttpError } from "../http-error";
 import { canEditShared, canManageMembers } from "../groups/permissions";
 import { compositionInput, type CompositionInput } from "./validation";
+import { readStoredComposition } from "./stored";
 type Client = Prisma.TransactionClient;
 export async function groupRole(client: Client, groupId: string, userId?: string) {
   if (!userId) return null;
@@ -57,7 +58,8 @@ async function localSaveComposition(userId: string, input: unknown, id?: string,
         const existingSources = new Set<string>();
         if (id) {
           const current = await requireRead(id, userId, tx);
-          for (const slot of compositionInput.parse(current).slots)
+          // Older rows may hold member ids from before today's rules; read them leniently.
+          for (const slot of readStoredComposition(current).composition.slots)
             if (slot.sourceBuildId) existingSources.add(slot.sourceBuildId);
           if (!(await canEdit(current, userId, tx)))
             throw new HttpError(403, "You cannot edit this composition");
@@ -108,8 +110,9 @@ async function localSaveComposition(userId: string, input: unknown, id?: string,
 }
 async function localDuplicateComposition(id: string, userId: string) {
   const row = await requireRead(id, userId);
+  // The copy is built from what the stored comp still holds and then fully validated.
   const input = compositionInput.parse({
-    ...row,
+    ...readStoredComposition(row).composition,
     title: `${row.title.slice(0, 90)} (copy)`,
     visibility: "PRIVATE",
     groupId: null,

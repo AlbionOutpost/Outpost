@@ -152,19 +152,6 @@
   grid-auto-rows: 54px;
   height: auto;
 }
-/* Role lines in mixed case, like every other label (the landing's roster still sets them in
-   capitals from product-system.css) */
-:global(.app.outpost) .windowBody :global(.landing-roster-who) > span,
-:global(.app.outpost) .memberToggle :global(.landing-roster-who) > span {
-  letter-spacing: 0;
-  text-transform: none;
-}
-.windowBody :global(.landing-roster-who) > span,
-.memberToggle :global(.landing-roster-who) > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .windowBody :global(.landing-roster-player),
 .memberToggle :global(.landing-roster-player) {
   color: var(--muted);
@@ -658,13 +645,6 @@
   grid-auto-rows: 58px;
   height: auto;
 }
-:global(.app.outpost) .rosterPanel :global(.landing-roster-who) > span {
-  letter-spacing: 0;
-  text-transform: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .rosterPanel :global(.landing-roster-player) {
   color: var(--muted);
   font-size: 12px;
@@ -1149,14 +1129,6 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-:global(.app.outpost) .rowSelect :global(.landing-roster-who) > span,
-:global(.app.outpost) .partyRow :global(.landing-roster-who) > span {
-  overflow: hidden;
-  letter-spacing: 0;
-  text-overflow: ellipsis;
-  text-transform: none;
-  white-space: nowrap;
 }
 .rowSelect :global(.landing-roster-player),
 .partyRow :global(.landing-roster-player) {
