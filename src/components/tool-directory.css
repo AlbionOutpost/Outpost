@@ -1,6 +1,6 @@
 /* Tools directory, in the landing's language: a search and category pills under the masthead,
    then one section per kind of task with a mixed-case heading, its tools as framed cards
-   (emblem, Barlow title, one line, data state) three across. Phones list the same tools as
+   (emblem or glyph mark in the same slot, Barlow title, one line) three across. Phones list the same tools as
    compact rows in wells. Ends on the Crafting Planner band. */
 .app.outpost .support-tools-directory {
   display: grid;
@@ -174,18 +174,10 @@
   grid-auto-rows: 1fr;
   gap: 26px 24px;
 }
-/* Four tools never leave a lone card under three: one row of four when they are all copy,
-   two by two when emblems need the width */
+/* Four tools never leave a lone card under three: two by two */
 @media (min-width: 701px) {
   .app.outpost .support-tools-directory .directory-entries:has(> :nth-child(4):last-child) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1101px) {
-  .app.outpost
-    .support-tools-directory
-    .directory-entries:has(> :nth-child(4):last-child):not(:has([data-emblem])) {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 .app.outpost .support-tools-directory .directory-entry {
@@ -218,9 +210,20 @@
   object-fit: contain;
   filter: drop-shadow(0 3px 6px #0009);
 }
-/* A tool without its own emblem yet gives the gutter to its copy */
-.app.outpost .support-tools-directory .directory-entry-link:not([data-emblem]) {
-  grid-template-columns: minmax(0, 1fr);
+/* A tool without a painting of its own: its line glyph in a well of the emblem's size, so every
+   title in a section starts at the same x */
+.app.outpost .tool-mark {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  color: var(--accent-ink);
+}
+.app.outpost .support-tools-directory .tool-shortcuts .tool-mark {
+  width: 28px;
+  border-radius: 8px;
 }
 .app.outpost .support-tools-directory .directory-entry-copy {
   grid-column: -2;
@@ -240,27 +243,6 @@
   color: var(--secondary);
   font-size: 13px;
   line-height: 1.45;
-}
-.app.outpost .support-tools-directory .tool-availability {
-  align-self: flex-start;
-  margin-top: auto;
-  padding: 2px 9px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--secondary);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.5;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.app.outpost .support-tools-directory .tool-availability[data-live] {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
 }
 .app.outpost .support-tools-directory .directory-arrow {
   position: absolute;

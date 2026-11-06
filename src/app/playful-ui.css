@@ -112,21 +112,6 @@
   overflow: hidden;
   border-radius: 14px;
 }
-.tools-menu-heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 19px 20px 15px;
-  border-bottom: 1px solid var(--border);
-}
-.tools-menu-heading > span {
-  font-size: 16px;
-  font-weight: 700;
-}
-.tools-menu-heading small {
-  font-size: 12px;
-  color: var(--muted);
-}
 .tools-menu-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

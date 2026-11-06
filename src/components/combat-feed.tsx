@@ -409,7 +409,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           kills
             ? {
                 href: "/tools/kill-feed?view=deaths",
-                emblem: "fame",
+                emblem: "kill-skull",
                 title: "Death feed",
                 line: "The same fights, from the side that lost them.",
                 scene: "city",

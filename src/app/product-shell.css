@@ -467,3 +467,162 @@
 .app.outpost .more-dropdown-panel a[aria-current="page"] strong {
   color: var(--accent-ink);
 }
+
+/* The Tools menu: the directory's sections in three columns, one line per tool with its painted
+   emblem (or its glyph in a small well), "All tools" pinned under them. The panel never runs
+   past the viewport; only the columns scroll. It hangs from the header (not the summary), centred,
+   so it stays on screen at every desktop width. */
+.app.outpost .desktop-navigation > .tools-dropdown {
+  position: static;
+}
+/* A transformed details box would hold the panel inside it; the panel's own arrival animates */
+.app.outpost .nav-dropdown.tools-dropdown.tools-dropdown::details-content {
+  transform: none;
+}
+.app.outpost .tools-menu-panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  left: max(24px, calc(50% - 380px));
+  width: min(760px, calc(100% - 48px));
+  max-height: calc(100dvh - 96px);
+  padding: 0;
+  overflow: hidden;
+}
+.app.outpost .tools-menu-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.app.outpost .tools-menu-column {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.app.outpost .tools-menu-group {
+  margin: 0 0 4px;
+  padding: 0 8px;
+  color: var(--muted);
+  font: 600 12px/1.4 var(--font-ui);
+}
+.app.outpost .tools-menu-column a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--text);
+  font: 600 14px/1.25 var(--font-ui);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.outpost .tools-menu-column a:hover,
+.app.outpost .tools-menu-column a:focus-visible {
+  background: var(--elevated);
+}
+.app.outpost :is(.tools-menu-column, .drawer-list) a[aria-current="page"] {
+  background: var(--accent-wash);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent-ink);
+}
+.app.outpost .tool-menu-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--accent-ink);
+}
+.app.outpost .tool-menu-mark.well {
+  border-radius: 8px;
+}
+.app.outpost .tool-menu-mark img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px #0008);
+}
+.app.outpost .tools-menu-panel .tools-menu-all {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--space-6);
+}
+
+/* Phone drawer: the landing's raised panel, mixed-case 12px labels, the main five with their
+   emblems, tools and account links as rows in wells, the current page in ember. */
+.app.outpost .mobile-navigation {
+  border-right: 1px solid var(--raised-edge);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+.app.outpost .mobile-navigation nav {
+  display: grid;
+  gap: 0;
+}
+.app.outpost .drawer-label {
+  margin: var(--space-5) 4px var(--space-2);
+  color: var(--muted);
+  font: 600 12px/1.4 var(--font-ui);
+}
+.app.outpost .mobile-navigation nav > .drawer-label:first-child {
+  margin-top: 0;
+}
+.app.outpost .drawer-main {
+  display: grid;
+  gap: 2px;
+}
+.app.outpost .drawer-main a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  color: var(--text);
+  font: 800 19px/1 var(--font-display);
+}
+.app.outpost .drawer-main img {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.app.outpost .drawer-main a[aria-current="page"] {
+  background: var(--accent-wash);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent-ink);
+}
+.app.outpost .drawer-list {
+  display: grid;
+  padding: 4px;
+}
+.app.outpost .drawer-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--secondary);
+  font: 600 14px/1.25 var(--font-ui);
+}
+.app.outpost .drawer-list a:hover {
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  color: var(--text);
+}
+.app.outpost .drawer-list a + a {
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .mobile-navigation .drawer-all {
+  justify-self: start;
+  margin-top: var(--space-4);
+}
+.app.outpost .mobile-navigation nav > .button {
+  margin-top: var(--space-3);
+}

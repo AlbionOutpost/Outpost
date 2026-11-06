@@ -21,7 +21,7 @@ import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const KEY = "outpost:avalon-map-v1";
 /** No painted Roads art yet; the neutral seal stands in (see the batch 4 report). */
-const EMBLEM = "fame";
+const EMBLEM = "tool-planner";
 const ICON_LABEL: Record<string, string> = {
   GREEN: "green chest",
   BLUE: "blue chest",

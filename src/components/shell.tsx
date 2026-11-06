@@ -24,23 +24,42 @@ import {
 import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
-import { tools } from "@/lib/tool-directory";
+import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
 import { Wordmark } from "./wordmark";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
 import { regionSchema } from "@/lib/albion/region-config";
 
-// The header's tools menu follows the tool directory, so the two never drift apart.
-const headerTools = ["Economy", "Builds & comps", "Teams & community"].flatMap((group) =>
-  tools.filter((t) => t.group === group && t.href.startsWith("/tools")),
-);
-const toolLinks: [string, string][] = [
-  ["/tools", "All tools"],
-  ...headerTools.map((t): [string, string] => [t.href, t.title]),
-  ["/shopping-list", "Crafting planner"],
-  ["/items", "Item database"],
+// The header's tools menu groups by the tool directory's sections, so the two never drift apart:
+// three columns, the third holding gathering and the two look-up tools.
+type DirectoryTool = (typeof tools)[number];
+const toolGroup = (title: string, hrefs: readonly string[]) => ({
+  title,
+  tools: hrefs.flatMap((url) => tools.filter((t) => t.href === url)),
+});
+const toolColumns = [
+  [toolGroup(toolSections[0].title, toolSections[0].hrefs)],
+  [toolGroup(toolSections[1].title, toolSections[1].hrefs)],
+  [
+    toolGroup(toolSections[2].title, toolSections[2].hrefs),
+    toolGroup("Look up", ["/items", "/tools/kill-feed"]),
+  ],
 ];
+/** A tool's painted emblem where it has one, else its line glyph in a small well. */
+function ToolMenuMark({ tool }: { tool: DirectoryTool }) {
+  const painting = toolPaintings[tool.href];
+  return (
+    <span className={`tool-menu-mark${painting ? "" : " well"}`} aria-hidden="true">
+      {painting ? (
+        // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
+        <img src={`/albion/icons/${painting}.webp`} alt="" width={28} height={28} />
+      ) : (
+        <ToolIcon name={tool.icon} size={15} />
+      )}
+    </span>
+  );
+}
 const sections = [
   ["/tools/market", "Market"],
   ["/builds", "Builds"],
@@ -48,6 +67,14 @@ const sections = [
   ["/guides", "Guides"],
   ["/groups", "Teams"],
 ];
+/** The drawer's main five carry the painted emblems the landing uses for them. */
+const sectionEmblems: Record<string, string> = {
+  "/tools/market": "tool-market",
+  "/builds": "strip-builds",
+  "/compositions": "strip-comps",
+  "/guides": "strip-content",
+  "/groups": "team-roles",
+};
 const footerLinks = [
   ["/tools", "Tools"],
   ["/builds/activities", "Builds by activity"],
@@ -76,7 +103,7 @@ const moreItems: Record<
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
-  ["/shopping-list", "Shopping list"],
+  ["/shopping-list", "Crafting Planner"],
   ["/favorites", "My favorites"],
   ["/settings", "Settings"],
   ["/signin", "Sign in"],
@@ -229,45 +256,35 @@ export function Shell({
         </Link>
       ))}
       <details
-        className={`nav-dropdown${(active("/tools") && path !== "/tools/market") || active("/items") || homeSection[path] === "/tools" ? " is-active" : ""}`}
+        className={`nav-dropdown tools-dropdown${(active("/tools") && path !== "/tools/market") || active("/items") || homeSection[path] === "/tools" ? " is-active" : ""}`}
       >
         <summary>
           <Grid2X2 size={17} /> Tools <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel tools-dropdown-panel">
-          <div className="tools-menu-heading">
-            <span>Markets & calculators</span>
-            <small>Outpost tools</small>
-          </div>
-          <div className="tools-menu-grid">
-            {toolLinks
-              .filter(([url]) => url !== "/tools")
-              .map(([url, label]) => (
-                <Link
-                  key={url}
-                  href={href(url)}
-                  onClick={navigate}
-                  aria-current={path === url ? "page" : undefined}
-                >
-                  <span className="dropdown-tool-icon">
-                    <ToolIcon
-                      name={tools.find((tool) => tool.href === url)?.icon ?? "catalog"}
-                      size={25}
-                    />
-                  </span>
-                  <span>
-                    <strong>{label}</strong>
-                    <small>
-                      {url === "/items"
-                        ? "Stats, recipes, tiers and prices"
-                        : url === "/shopping-list"
-                          ? "Queue a session, buy what you need"
-                          : (tools.find((tool) => tool.href === url)?.description ?? "")}
-                    </small>
-                  </span>
-                  <ArrowUpRight size={15} />
-                </Link>
-              ))}
+        <div className="dropdown-panel tools-menu-panel">
+          <div className="tools-menu-columns">
+            {toolColumns.map((column, i) => (
+              <div key={i} className="tools-menu-column">
+                {column.map((group) => (
+                  <div key={group.title} role="group" aria-label={group.title}>
+                    <p className="tools-menu-group" aria-hidden="true">
+                      {group.title}
+                    </p>
+                    {group.tools.map((tool) => (
+                      <Link
+                        key={tool.href}
+                        href={href(tool.href)}
+                        onClick={navigate}
+                        aria-current={path === tool.href ? "page" : undefined}
+                      >
+                        <ToolMenuMark tool={tool} />
+                        {tool.title}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
           <Link className="tools-menu-all" href={href("/tools")} onClick={navigate}>
             All tools <ArrowUpRight size={16} />
@@ -393,38 +410,64 @@ export function Shell({
                 </button>
               </div>
               <nav aria-label="Mobile navigation">
-                <div className="nav-label">EXPLORE OUTPOST</div>
-                {sections.map(([url, label]) => (
-                  <Link
-                    key={url}
-                    href={href(url)}
-                    onClick={navigate}
-                    aria-current={active(url) ? "page" : undefined}
-                  >
-                    {label}
-                  </Link>
-                ))}
-                <div className="nav-label">TOOLS & MARKETS</div>
-                <div className="drawer-tool-grid">
-                  {toolLinks.map(([url, label]) => (
+                <p className="drawer-label">Explore</p>
+                <div className="drawer-main">
+                  {sections.map(([url, label]) => (
                     <Link
                       key={url}
                       href={href(url)}
                       onClick={navigate}
-                      aria-current={path === url ? "page" : undefined}
+                      aria-current={active(url) ? "page" : undefined}
                     >
+                      {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+                      <img
+                        src={`/albion/icons/${sectionEmblems[url]}.webp`}
+                        alt=""
+                        width={32}
+                        height={32}
+                      />
                       {label}
                     </Link>
                   ))}
                 </div>
-                <div className="nav-label">YOUR WORKSPACE</div>
-                {currentAccountLinks
-                  .filter(([url]) => !authenticated || url !== "/signin")
-                  .map(([url, label]) => (
-                    <Link key={url} href={href(url)} onClick={navigate}>
-                      {label}
-                    </Link>
-                  ))}
+                {toolColumns.flat().map((group) => (
+                  <div key={group.title} role="group" aria-label={group.title}>
+                    <p className="drawer-label" aria-hidden="true">
+                      {group.title}
+                    </p>
+                    <div className="drawer-list well">
+                      {group.tools.map((tool) => (
+                        <Link
+                          key={tool.href}
+                          href={href(tool.href)}
+                          onClick={navigate}
+                          aria-current={path === tool.href ? "page" : undefined}
+                        >
+                          <ToolMenuMark tool={tool} />
+                          {tool.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <Link className="pill-link drawer-all" href={href("/tools")} onClick={navigate}>
+                  All tools <ArrowUpRight size={15} aria-hidden="true" />
+                </Link>
+                <p className="drawer-label">Your account</p>
+                <div className="drawer-list well">
+                  {currentAccountLinks
+                    .filter(([url]) => !authenticated || url !== "/signin")
+                    .map(([url, label]) => (
+                      <Link
+                        key={url}
+                        href={href(url)}
+                        onClick={navigate}
+                        aria-current={path === url ? "page" : undefined}
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                </div>
                 {authenticated && <LogoutButton />}
               </nav>
               <button

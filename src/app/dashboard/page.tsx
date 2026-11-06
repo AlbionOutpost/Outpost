@@ -99,11 +99,25 @@ export default async function Dashboard() {
   if (!u) redirect("/signin");
   const now = renderedAt();
   const builds = mine.builds.slice(0, 3);
+  // A short shelf of each sits side by side instead of one card in a wide empty row
+  const paired = builds.length < 3 && u.compositions.length < 3;
+  const quick = [
+    { title: "New build", href: "/builds/new", emblem: "strip-builds", scene: "build" },
+    {
+      title: "New comp",
+      href: "/compositions/new",
+      emblem: "strip-comps",
+      scene: "composition",
+    },
+    { title: "Craft", href: "/tools/crafting", emblem: "tool-craft", scene: "economy" },
+    { title: "Market", href: "/tools/market", emblem: "tool-market", scene: "market" },
+    { title: "Your Teams", href: "/groups?mine=1", emblem: "team-roles", scene: "city" },
+  ];
   return (
     <div className={account.page}>
       <WorkspaceHeading
         icon="account"
-        emblem={<AccountEmblem image={u.image} />}
+        emblem={<AccountEmblem image={u.image} fallback="trophy-gold" />}
         scene="guides"
         title={`Welcome, ${u.name || "Adventurer"}.`}
         accent="Welcome"
@@ -121,103 +135,120 @@ export default async function Dashboard() {
           </span>
         }
       />
-      <section className={styles.section} aria-labelledby="dash-builds">
-        <SectionHeading
-          id="dash-builds"
-          title={
-            <>
-              Your <em>builds</em>
-            </>
-          }
-          line={
-            mine.total
-              ? `${mine.total.toLocaleString("en-GB")} saved, last edited first.`
-              : "Loadouts you make or copy are kept on your account."
-          }
-          link={mine.total ? { href: "/builds?mine=1", label: "All your builds" } : undefined}
-        />
-        {builds.length ? (
-          <ul className={styles.windows}>
-            {builds.map((b) => (
-              <li key={b.id} data-dashboard-work="">
-                <CommunityBuildCard
-                  build={b}
-                  authenticated
-                  saved={b.favorites.length > 0}
-                  favoriteCount={b._count.favorites}
-                  owned
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <EmptyWell
-            emblem="strip-builds"
-            title="No builds yet"
-            line="Start from an empty board, or copy one from the library and change the pieces."
-            action={
-              <Link className="button secondary" href="/builds/new">
-                Create a build
-              </Link>
+      <nav className={styles.quick} aria-label="Start something">
+        {quick.map((q) => (
+          <Link
+            key={q.href}
+            className={`raised has-scene dashboard-quick-card ${styles.quickCard}`}
+            data-scene={q.scene}
+            href={q.href}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+            <img src={`/albion/icons/${q.emblem}.webp`} alt="" width={40} height={40} />
+            <strong>{q.title}</strong>
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
+      <div className={paired ? styles.pair : undefined}>
+        <section className={styles.section} aria-labelledby="dash-builds">
+          <SectionHeading
+            id="dash-builds"
+            title={
+              <>
+                Your <em>builds</em>
+              </>
             }
+            line={
+              mine.total
+                ? `${mine.total.toLocaleString("en-GB")} saved, last edited first.`
+                : "Loadouts you make or copy are kept on your account."
+            }
+            link={mine.total ? { href: "/builds?mine=1", label: "All your builds" } : undefined}
           />
-        )}
-      </section>
-      <section className={styles.section} aria-labelledby="dash-comps">
-        <SectionHeading
-          id="dash-comps"
-          title={
-            <>
-              Your <em>comps</em>
-            </>
-          }
-          line={
-            u.compositions.length
-              ? "Party plans you made, last edited first."
-              : "Plan who plays what, then share it with your Team."
-          }
-          link={
-            u.compositions.length
-              ? { href: "/compositions?mine=1", label: "All your comps" }
-              : undefined
-          }
-        />
-        {u.compositions.length ? (
-          <CompGrid>
-            {u.compositions.map((c) => {
-              const roster = rosterOf(c.slots);
-              return (
-                <li key={c.id} data-dashboard-work="">
-                  <CompWindow
-                    title={c.title}
-                    href={`/compositions/${c.id}`}
-                    total={roster.total}
-                    noun="member"
-                    byline={`Edited ${day(c.updatedAt)}`}
-                  >
-                    {roster.members.length ? (
-                      <RosterRows members={roster.members} label={`${c.title} roster`} />
-                    ) : (
-                      <p className="landing-window-empty">No members planned yet.</p>
-                    )}
-                  </CompWindow>
+          {builds.length ? (
+            <ul className={styles.windows}>
+              {builds.map((b) => (
+                <li key={b.id} data-dashboard-work="">
+                  <CommunityBuildCard
+                    build={b}
+                    authenticated
+                    saved={b.favorites.length > 0}
+                    favoriteCount={b._count.favorites}
+                    owned
+                  />
                 </li>
-              );
-            })}
-          </CompGrid>
-        ) : (
-          <EmptyWell
-            emblem="strip-comps"
-            title="No comps yet"
-            line="Give each slot a role and a loadout, or copy a Group Build."
-            action={
-              <Link className="button secondary" href="/compositions/new">
-                Plan a comp
-              </Link>
+              ))}
+            </ul>
+          ) : (
+            <EmptyWell
+              emblem="strip-builds"
+              title="No builds yet"
+              line="Start from an empty board, or copy one from the library and change the pieces."
+              action={
+                <Link className="button secondary" href="/builds/new">
+                  Create a build
+                </Link>
+              }
+            />
+          )}
+        </section>
+        <section className={styles.section} aria-labelledby="dash-comps">
+          <SectionHeading
+            id="dash-comps"
+            title={
+              <>
+                Your <em>comps</em>
+              </>
+            }
+            line={
+              u.compositions.length
+                ? "Party plans you made, last edited first."
+                : "Plan who plays what, then share it with your Team."
+            }
+            link={
+              u.compositions.length
+                ? { href: "/compositions?mine=1", label: "All your comps" }
+                : undefined
             }
           />
-        )}
-      </section>
+          {u.compositions.length ? (
+            <CompGrid>
+              {u.compositions.map((c) => {
+                const roster = rosterOf(c.slots);
+                return (
+                  <li key={c.id} data-dashboard-work="">
+                    <CompWindow
+                      title={c.title}
+                      href={`/compositions/${c.id}`}
+                      total={roster.total}
+                      noun="member"
+                      byline={`Edited ${day(c.updatedAt)}`}
+                    >
+                      {roster.members.length ? (
+                        <RosterRows members={roster.members} label={`${c.title} roster`} />
+                      ) : (
+                        <p className="landing-window-empty">No members planned yet.</p>
+                      )}
+                    </CompWindow>
+                  </li>
+                );
+              })}
+            </CompGrid>
+          ) : (
+            <EmptyWell
+              emblem="strip-comps"
+              title="No comps yet"
+              line="Give each slot a role and a loadout, or copy a Group Build."
+              action={
+                <Link className="button secondary" href="/compositions/new">
+                  Plan a comp
+                </Link>
+              }
+            />
+          )}
+        </section>
+      </div>
       <div className={styles.trio}>
         <section className={`panel ${account.panel}`} aria-labelledby="dash-teams">
           <PanelHead
@@ -373,7 +404,7 @@ export default async function Dashboard() {
           },
           {
             href: "/guides",
-            emblem: "fame",
+            emblem: "strip-content",
             title: "Guides",
             line: "Progression, gathering and PvE from players.",
             scene: "economy",
