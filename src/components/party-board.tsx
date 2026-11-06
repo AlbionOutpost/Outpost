@@ -26,7 +26,8 @@ export function PartyBoard({
       <ol className={styles.members} aria-label="Visual party loadouts">
         {members.map((member, i) => {
           const row = slotRosterMember(member);
-          const label = `Edit player ${i + 1} loadout: ${member.playerName || `Slot ${i + 1}`}`;
+          // Screen readers hear the role with the player, as sighted players see it on the row.
+          const label = `Edit player ${i + 1} loadout: ${[row.role, member.playerName || `Slot ${i + 1}`].filter(Boolean).join(" ")}`;
           return (
             <li key={member.id} className={styles.member} data-role={row.tone} data-party-card="">
               <button
