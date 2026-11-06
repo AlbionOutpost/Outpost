@@ -1,6 +1,8 @@
 /* Placeholders sit in wells on the backdrop and breathe slowly; no shimmer sweep */
+/* At least a screen tall, so the footer never shows and then jumps away when the page arrives */
 .loading {
   display: block;
+  min-height: 100svh;
 }
 .emblem,
 .title,

@@ -4,12 +4,6 @@
    slider and a painted band with the Free and Supporter plans. Paintings and emblems are the owner's
    artwork; everything inside the cards is real software on real observations. */
 
-.app.outpost.home-route .main > .site-header {
-  position: relative;
-}
-.app.outpost.home-route .main main {
-  padding: 0;
-}
 .app.outpost .home-landing {
   --landing-width: 1240px;
   --page-top: #17110e;
