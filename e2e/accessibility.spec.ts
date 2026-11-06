@@ -16,7 +16,6 @@ const pages = [
   "/guides/albion-journal-guide",
   "/items",
   "/market-data",
-  "/supporter",
   "/signin",
   "/legal",
 ];
