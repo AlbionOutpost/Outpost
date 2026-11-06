@@ -123,7 +123,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?region=europe");
-  await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
+  await expect(page.locator("h1")).toHaveText("Your Albion advantage.");
 
   // The hero keeps the header on its own bar and shows only measured numbers. Measure once the
   // streamed page is in place (a still-hidden boundary reports a zero box).
