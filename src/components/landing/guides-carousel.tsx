@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import Link from "@/components/link";
@@ -6,6 +7,10 @@ import type { GuideCover } from "@/components/guide-cover-card";
 import styles from "./guides-feature.module.css";
 
 export type GuideSlide = GuideCover;
+
+/** The cover again, blurred under it: art with a transparent edge (the activity cut-outs) still
+ * fills the card instead of letting the dark card show through. */
+export const coverBackdrop = (src: string) => ({ "--cover": `url("${src}")` }) as CSSProperties;
 
 /** One lead story and two supporting reads; the full library remains one link away. */
 export function GuidesCarousel({ guides, suffix }: { guides: GuideSlide[]; suffix: string }) {
@@ -18,7 +23,11 @@ export function GuidesCarousel({ guides, suffix }: { guides: GuideSlide[]; suffi
           className={`${styles.story} ${index === 0 ? styles.lead : styles.side}`}
         >
           <Link href={`/guides/${guide.slug}${suffix}`} className={styles.link}>
-            <span className={styles.art} aria-hidden="true">
+            <span
+              className={styles.art}
+              aria-hidden="true"
+              style={guide.cover ? coverBackdrop(guide.cover.src) : undefined}
+            >
               {guide.cover ? (
                 <Image
                   unoptimized

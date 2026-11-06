@@ -26,6 +26,7 @@ import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
+import Image from "next/image";
 import { Wordmark } from "./wordmark";
 import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
@@ -77,12 +78,49 @@ const sectionEmblems: Record<string, string> = {
   "/guides": "strip-content",
   "/groups": "team-roles",
 };
-const footerLinks = [
-  ["/tools", "Tools"],
-  ["/builds/activities", "Builds by activity"],
-  ["/compositions/library", "Comps"],
-  ["/guides", "Guides"],
-  ["/market-data", "Market data"],
+/** The footer directory: four labelled columns of real routes (no Supporter: everything is free). */
+const footerColumns = [
+  {
+    label: "Tools",
+    links: [
+      ["/tools/market", "Market Explorer"],
+      ["/tools/crafting", "Crafting Calculator"],
+      ["/tools/flipping", "Flipping"],
+      ["/shopping-list", "Crafting Planner"],
+      ["/items", "Item database"],
+      ["/tools", "All tools"],
+    ],
+  },
+  {
+    label: "Builds & Comps",
+    links: [
+      ["/builds/activities", "Builds by activity"],
+      ["/builds/library", "Build library"],
+      ["/builds", "Community builds"],
+      ["/compositions/library", "Group Builds"],
+      ["/compositions/new", "Plan a comp"],
+    ],
+  },
+  {
+    label: "Guides",
+    links: [
+      ["/guides", "All guides"],
+      ["/guides/first-silver", "Your first silver"],
+      ["/guides/focus-and-resource-return-rate", "Focus and RRR"],
+      ["/guides/hellgates-guide", "Hellgates"],
+      ["/guides/put-every-role-in-place", "Plan a party comp"],
+    ],
+  },
+  {
+    label: "Outpost",
+    links: [
+      ["/groups", "Teams"],
+      ["/dashboard", "Dashboard"],
+      ["/timers", "Timers"],
+      ["/market-data", "How prices work"],
+      ["/settings", "Settings"],
+    ],
+  },
 ] as const;
 /** Header menu entries, grouped, each with its glyph. Signed in, the account menu holds
  * "Your account" and More keeps only Planning, so no link shows twice (the drawer lists all). */
@@ -607,42 +645,55 @@ export function Shell({
             <footer className="site-footer">
               <div className="site-footer-inner">
                 <div className="site-footer-brand">
-                  <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                    <Wordmark light={light} />
+                  {/* The painted banner mark beside the name, as one lockup */}
+                  <Link href={href("/")} className="site-footer-lockup" aria-label="Outpost home">
+                    <Image src="/brand/outpost-mark.png" width={44} height={44} alt="" />
+                    <span>Outpost</span>
                   </Link>
+                  <p className="site-footer-line">
+                    Markets, builds, comps and crafting for Albion Online, in one place.
+                  </p>
                   <p className="site-footer-source">
-                    Independent Albion Online tools. Prices from the Albion Online Data Project. Not
-                    affiliated with Sandbox Interactive.
+                    Prices from the{" "}
+                    <a href="https://www.albion-online-data.com/" rel="noopener noreferrer">
+                      Albion Online Data Project
+                    </a>
+                    . Not affiliated with or endorsed by Sandbox Interactive.
                   </p>
                 </div>
-                <div className="site-footer-links">
-                  <nav className="site-footer-navigation" aria-label="Footer">
-                    {footerLinks.map(([url, label]) => (
-                      <Link key={url} href={href(url)}>
-                        {label}
-                      </Link>
-                    ))}
-                  </nav>
-                  <div className="site-footer-legal">
-                    <span>© {new Date().getFullYear()} Outpost</span>
-                    <Link href="/legal">
-                      Privacy &amp; terms <ArrowUpRight size={13} aria-hidden="true" />
-                    </Link>
-                    <button
-                      type="button"
-                      className="site-footer-top"
-                      onClick={() =>
-                        window.scrollTo({
-                          top: 0,
-                          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-                            ? "auto"
-                            : "smooth",
-                        })
-                      }
-                    >
-                      Back to top <ArrowUp size={14} aria-hidden="true" />
-                    </button>
-                  </div>
+                <nav className="site-footer-navigation" aria-label="Footer">
+                  {footerColumns.map((column, c) => (
+                    <div key={column.label} className="site-footer-column">
+                      <p className="site-footer-label" id={`footer-column-${c}`}>
+                        {column.label}
+                      </p>
+                      <ul aria-labelledby={`footer-column-${c}`}>
+                        {column.links.map(([url, label]) => (
+                          <li key={url}>
+                            <Link href={href(url)}>{label}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </nav>
+                <div className="site-footer-legal">
+                  <span>© {new Date().getFullYear()} Outpost</span>
+                  <Link href="/legal">Privacy &amp; terms</Link>
+                  <button
+                    type="button"
+                    className="site-footer-top"
+                    onClick={() =>
+                      window.scrollTo({
+                        top: 0,
+                        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                          ? "auto"
+                          : "smooth",
+                      })
+                    }
+                  >
+                    Back to top <ArrowUp size={14} aria-hidden="true" />
+                  </button>
                 </div>
               </div>
             </footer>

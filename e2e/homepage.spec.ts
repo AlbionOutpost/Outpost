@@ -693,9 +693,25 @@ test("membership callout precedes activity discovery and the footer keeps its na
   const footer = page.locator("footer.site-footer");
   const footerNavigation = footer.getByRole("navigation", { name: "Footer", exact: true });
   await expect(footerNavigation).toBeVisible();
-  // Everything is free for now: the footer no longer links the Supporter plan
-  await expect(footerNavigation.getByRole("link")).toHaveCount(5);
-  await expect(footerNavigation.getByRole("link", { name: "Supporter" })).toHaveCount(0);
+  // Four labelled columns of real routes, 5 or 6 links each, nothing floating loose.
+  // Everything is free for now: the footer no longer links the Supporter plan.
+  const columns = { Tools: 6, "Builds & Comps": 5, Guides: 5, Outpost: 5 };
+  for (const [name, count] of Object.entries(columns)) {
+    await expect(
+      footerNavigation.getByRole("list", { name, exact: true }).getByRole("link"),
+    ).toHaveCount(count);
+  }
+  await expect(footerNavigation.getByRole("list")).toHaveCount(4);
+  await expect(footerNavigation.getByRole("link")).toHaveCount(21);
+  for (const link of await footerNavigation.getByRole("link").all())
+    expect(await link.getAttribute("href")).toMatch(/^\/[a-z]/);
+  await expect(footer.getByRole("link", { name: /Supporter/ })).toHaveCount(0);
+  await expect(footer.getByRole("link", { name: "Privacy & terms", exact: true })).toHaveAttribute(
+    "href",
+    "/legal",
+  );
+  await expect(footer).toContainText("Not affiliated with or endorsed by Sandbox Interactive");
+  await expect(footer.getByRole("link", { name: "Outpost home", exact: true })).toBeVisible();
   await expect(
     footer.getByRole("link", { name: "Builds by activity", exact: true }),
   ).toHaveAttribute("href", "/builds/activities?region=asia");

@@ -63,19 +63,22 @@
   border-color: var(--accent);
   background: var(--accent-wash);
 }
-/* Footer: brand/provenance and a compact directory form two deliberate groups. */
+/* Footer, in the landing's language: the brand and where the numbers come from, four labelled
+   link columns, then a bottom bar with ©, Privacy & terms and Back to top. Muted 12px labels over
+   14px links; columns form a 2 × 2 grid on phones, every link a 44px row. */
 .app.outpost .main > footer.site-footer {
   position: relative;
   display: block;
   width: 100%;
   max-width: none;
   min-height: 0;
-  margin: 64px 0 0;
-  padding: 0 32px 28px;
+  margin: 80px 0 0;
+  padding: 0 var(--page-gutter, 32px);
   border: 0;
-  background: color-mix(in srgb, var(--canvas-end) 88%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--frame-rule) 55%, transparent);
+  background: color-mix(in srgb, var(--chrome) 92%, transparent);
   color: var(--muted);
-  font-size: 12px;
+  font: 400 14px/1.5 var(--font-ui);
 }
 .app.outpost .main > footer.site-footer::before,
 .app.outpost .main > footer.site-footer::after {
@@ -83,157 +86,201 @@
 }
 .app.outpost .site-footer-inner {
   display: grid;
-  grid-template-columns: minmax(240px, 400px) max-content;
-  align-items: start;
-  justify-content: space-between;
-  gap: 32px 64px;
-  max-width: 1120px;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 48px 72px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
+  padding: 56px 0 0;
 }
 .app.outpost .site-footer-brand {
   display: grid;
+  align-content: start;
   gap: 12px;
   justify-items: start;
 }
-.app.outpost .site-footer-brand > .footer-wordmark {
-  display: block;
-  width: 128px;
+/* The lockup: the painted banner mark beside OUTPOST in the display face */
+.app.outpost .site-footer-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-bottom: 4px;
+  color: var(--text);
+  text-decoration: none;
 }
-.app.outpost .footer-wordmark .outpost-wordmark {
-  width: 100%;
-  height: auto;
+.app.outpost .site-footer-lockup > img {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+.app.outpost .site-footer-lockup > span {
+  font: 800 26px/1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.app.outpost .site-footer-lockup:hover > span {
+  color: var(--accent-ink);
+}
+.app.outpost .site-footer-line {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--secondary);
+  font: 400 14px/1.55 var(--font-ui);
+  text-wrap: pretty;
 }
 .app.outpost .site-footer-source {
-  max-width: 48ch;
+  max-width: 38ch;
   margin: 0;
-  font: 400 12px/1.6 var(--font-ui);
   color: var(--muted);
+  font: 400 12px/1.6 var(--font-ui);
+  text-wrap: pretty;
 }
-.app.outpost .site-footer-links {
-  display: grid;
-  gap: 12px;
+.app.outpost .site-footer-source a {
+  color: var(--secondary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--muted) 60%, transparent);
+  text-underline-offset: 3px;
+}
+.app.outpost .site-footer-source a:hover {
+  color: var(--accent-ink);
+  text-decoration-color: currentColor;
 }
 .app.outpost .site-footer-navigation {
   display: grid;
-  grid-template-columns: repeat(3, max-content);
-  gap: 0 32px;
-  align-items: center;
-  justify-content: space-between;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 24px;
   margin: 0;
 }
-.app.outpost .site-footer-navigation a {
+.app.outpost .site-footer-column {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+.app.outpost .site-footer-label {
+  margin: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+  letter-spacing: 0.02em;
+}
+.app.outpost .site-footer-column ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .site-footer-column a {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
-  color: var(--text);
-  font: 500 13px/1.4 var(--font-ui);
+  min-height: 32px;
+  color: var(--secondary);
+  font: 500 14px/1.35 var(--font-ui);
   text-decoration: none;
-  text-underline-offset: 5px;
+  text-underline-offset: 4px;
   transition: color 160ms ease-out;
 }
-.app.outpost .site-footer-navigation a:hover {
+.app.outpost .site-footer-column a:hover {
   color: var(--accent-ink);
   text-decoration: underline;
 }
+.app.outpost .site-footer :is(a, button):focus-visible {
+  outline: 2px solid var(--focus, var(--accent));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 .app.outpost .site-footer-legal {
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 24px;
   margin: 0;
+  padding: 16px 0 20px;
+  border-top: 1px solid var(--border);
   color: var(--muted);
   font: 400 12px/1.5 var(--font-ui);
 }
 .app.outpost .site-footer-legal > span {
   white-space: nowrap;
 }
-.app.outpost .site-footer-legal a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 36px;
-  color: var(--muted);
-  text-decoration: none;
-}
-.app.outpost .site-footer-legal a:hover {
-  color: var(--text);
-}
+.app.outpost .site-footer-legal a,
 .app.outpost .site-footer-top {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
   gap: 6px;
   min-height: 36px;
   padding: 0;
-  margin-left: auto;
   border: 0;
   background: transparent;
   color: var(--muted);
   font: inherit;
+  text-decoration: none;
   cursor: pointer;
 }
+.app.outpost .site-footer-top {
+  margin-left: auto;
+}
+.app.outpost .site-footer-legal a:hover,
 .app.outpost .site-footer-top:hover {
   color: var(--text);
 }
-@media (max-width: 850px) {
-  .app.outpost .site-footer-inner {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 32px;
-  }
-  .app.outpost .site-footer-navigation {
-    grid-template-columns: repeat(2, max-content);
-    gap: 0 20px;
-    justify-content: start;
-  }
-  .app.outpost .site-footer-legal {
-    gap: 0 16px;
-  }
-  .app.outpost .site-footer-top {
-    margin-left: 0;
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost .main > footer.site-footer {
-    margin-top: 48px;
-    padding: 0 20px 24px;
-  }
+/* Tablet: the brand takes its own row above the four columns */
+@media (max-width: 980px) {
   .app.outpost .site-footer-inner {
     grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-    padding-top: 24px;
+    gap: 40px;
   }
-  .app.outpost .site-footer-brand {
-    gap: 8px;
-  }
-  .app.outpost .site-footer-brand > .footer-wordmark {
-    width: 116px;
-  }
+  .app.outpost .site-footer-line,
   .app.outpost .site-footer-source {
-    max-width: 48ch;
+    max-width: 60ch;
   }
-  .app.outpost .site-footer-links {
-    gap: 12px;
+}
+/* Phones: the columns as a 2 × 2 grid, every link a comfortable 44px row */
+@media (max-width: 700px) {
+  .app.outpost .main > footer.site-footer {
+    margin-top: 56px;
+    padding: 0 var(--page-gutter, 16px);
+  }
+  .app.outpost .site-footer-inner {
+    gap: 32px;
+    padding-top: 40px;
   }
   .app.outpost .site-footer-navigation {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
   }
-  .app.outpost .site-footer-navigation a {
+  .app.outpost .site-footer-column {
+    gap: 4px;
+  }
+  .app.outpost .site-footer-column a {
+    width: 100%;
     min-height: 44px;
-    font-size: 12px;
   }
   .app.outpost .site-footer-legal {
     gap: 0 20px;
+    padding-bottom: 16px;
   }
   .app.outpost .site-footer-legal a,
   .app.outpost .site-footer-top {
-    min-height: 40px;
+    min-height: 44px;
+  }
+}
+/* The narrowest phones: © over Privacy & terms, Back to top beside both, never on a line alone */
+@media (max-width: 360px) {
+  .app.outpost .site-footer-legal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  .app.outpost .site-footer-legal > span {
+    min-height: 32px;
+    align-content: center;
+    display: grid;
   }
   .app.outpost .site-footer-top {
-    margin-left: auto;
+    grid-row: 1 / span 2;
+    grid-column: 2;
   }
 }
 .app.outpost .directory-start {

@@ -74,7 +74,8 @@ test("restored guides are readable documents and compositions retain every membe
   await page.getByRole("link", { name: "The two lines", exact: true }).click();
   await expect(page).toHaveURL(/#section-the-two-lines$/);
   await page.goto("/compositions/library/dreamteam");
-  await expect(page.getByRole("list", { name: /roster$/ }).getByRole("listitem")).toHaveCount(17);
+  // Every member opens as its own build window
+  await expect(page.locator("[data-comp-member]")).toHaveCount(17);
   for (const width of [320, 375, 390, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

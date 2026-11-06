@@ -14,7 +14,8 @@ import { LoadoutBoard, type BoardPiece } from "./loadout-board";
  * over an ember rule, the loadout on the game's board at window width with the chosen
  * abilities on the pieces, and one foot row (the weapon, who made it, when, the way in).
  * Library, player and device-saved builds all use it; `children` replaces the board when
- * only a summary of the build is stored.
+ * only a summary of the build is stored. Comp pages reuse it for each member: `chips` puts the
+ * member's role on the bar, `line` says who plays it, and a member with no build page has no `href`.
  */
 export function BuildWindow({
   className = "",
@@ -25,35 +26,58 @@ export function BuildWindow({
   activity,
   weaponName,
   weaponItemId,
+  weaponQuality,
   author,
   updatedAt,
   pieces,
   spellNames,
+  abilities = true,
   heart,
+  chips,
+  line,
+  number,
+  heading: Heading = "h2",
   owner,
   children,
 }: {
   className?: string;
   titleId: string;
-  href: string;
+  /** The build's page; without one the title is plain text and the foot has no way in. */
+  href?: string;
   title: string;
   /** Activity id or label, for the window's painting. */
   category: string;
-  activity: string;
+  activity?: string;
   weaponName: string;
   weaponItemId?: string;
-  author: string | null;
-  updatedAt: string | Date;
+  weaponQuality?: number;
+  author?: string | null;
+  updatedAt?: string | Date;
   pieces?: BoardPiece[];
   spellNames?: Record<string, string>;
+  /** False when the stored abilities are names rather than spell ids (a player comp's members). */
+  abilities?: boolean;
   /** The ♥ count pill: device or account favourite. */
-  heart: ReactNode;
+  heart?: ReactNode;
+  /** Chips that replace the activity chip on the bar (a comp member's role). */
+  chips?: ReactNode;
+  /** The foot's second line, in place of the author and date. */
+  line?: ReactNode;
+  /** A comp member's place in the party, before the title. */
+  number?: number;
+  heading?: "h2" | "h3";
   /** The owner's menu, beside the way in. */
   owner?: ReactNode;
   children?: ReactNode;
 }) {
-  const date = discoveryDate(updatedAt);
+  const date = updatedAt ? discoveryDate(updatedAt) : null;
   const art = activityBackgroundFor(category);
+  const name = (
+    <>
+      {number != null && <span className="build-window-n">{number}</span>}
+      <Heading id={titleId}>{title}</Heading>
+    </>
+  );
   return (
     // The landing's window module, so a build card is sized exactly like the landing's window
     <div className={`${windows.windows} build-window-slot`}>
@@ -65,11 +89,15 @@ export function BuildWindow({
         style={art ? ({ "--scene": `url("${art.src}")` } as CSSProperties) : undefined}
       >
         <div className={`landing-window-bar ${windows.bar}`}>
-          <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
-            <h2 id={titleId}>{title}</h2>
-          </Link>
+          {href ? (
+            <Link href={href} className="landing-window-title" aria-labelledby={titleId}>
+              {name}
+            </Link>
+          ) : (
+            <span className="landing-window-title">{name}</span>
+          )}
           <span className="landing-chips">
-            <span className="landing-chip">{activity}</span>
+            {chips ?? <span className="landing-chip">{activity}</span>}
             {heart}
           </span>
         </div>
@@ -81,6 +109,7 @@ export function BuildWindow({
                 spellNames={spellNames}
                 size="card"
                 choices
+                abilities={abilities}
                 label={`${title} loadout`}
               />
             ) : (
@@ -89,26 +118,34 @@ export function BuildWindow({
         </div>
         <div className={`landing-window-foot ${windows.foot}`}>
           <span className="build-window-weapon" aria-hidden="true">
-            {weaponItemId ? <ItemIcon id={weaponItemId} size={48} /> : null}
+            {weaponItemId ? <ItemIcon id={weaponItemId} quality={weaponQuality} size={48} /> : null}
           </span>
           <span>
             <strong>{weaponName || "Equipment plan"}</strong>
             <small>
-              By {author || "Adventurer"}
-              {date && (
+              {line ?? (
                 <>
-                  {" · "}
-                  <time dateTime={new Date(updatedAt).toISOString()}>{date}</time>
+                  By {author || "Adventurer"}
+                  {date && updatedAt && (
+                    <>
+                      {" · "}
+                      <time dateTime={new Date(updatedAt).toISOString()}>{date}</time>
+                    </>
+                  )}
                 </>
               )}
             </small>
           </span>
-          <span className="build-window-way">
-            {owner}
-            <Link href={href} tabIndex={-1} aria-hidden="true" className="build-window-open">
-              <ArrowUpRight size={20} aria-hidden="true" />
-            </Link>
-          </span>
+          {(owner || href) && (
+            <span className="build-window-way">
+              {owner}
+              {href && (
+                <Link href={href} tabIndex={-1} aria-hidden="true" className="build-window-open">
+                  <ArrowUpRight size={20} aria-hidden="true" />
+                </Link>
+              )}
+            </span>
+          )}
         </div>
       </article>
     </div>

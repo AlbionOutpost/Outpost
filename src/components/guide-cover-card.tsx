@@ -3,6 +3,7 @@ import { Clock } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import type { GuideNode } from "@/lib/grind-library-types";
+import { coverBackdrop } from "./landing/guides-carousel";
 import styles from "./guide-cover-card.module.css";
 
 export type GuideCover = {
@@ -52,7 +53,10 @@ export function GuideCoverCard({
   const date = guideDate(guide.updatedAt);
   return (
     <article className={`guide-card ${styles.card}${className ? ` ${className}` : ""}`}>
-      <Link href={`/guides/${guide.slug}${suffix}`}>
+      <Link
+        href={`/guides/${guide.slug}${suffix}`}
+        style={guide.cover ? coverBackdrop(guide.cover.src) : undefined}
+      >
         {guide.cover ? (
           <Image
             unoptimized
