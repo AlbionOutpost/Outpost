@@ -2,6 +2,14 @@
 import { useEffect, useState } from "react";
 import { allocateLoot, lootConfiguration, type LootConfiguration } from "@/lib/groups/loot";
 import { accountLogoutEvent } from "@/lib/account-build-drafts";
+import { Download, Plus, RotateCcw, X } from "lucide-react";
+import { PanelHead } from "./panel-head";
+import { EmptyWell } from "./empty-well";
+import { StatusLine } from "./status-line";
+import { WellSelect } from "./well-select";
+import { Disclosure } from "./disclosure";
+import { Field } from "./group-parts";
+import styles from "./teams.module.css";
 
 type Saved = {
   id: string;
@@ -166,77 +174,98 @@ export function TeamLootWorkspace({
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+  const name = (id: string) => members.find((m) => m.userId === id)?.name || "Former team member";
+  const silver = (n: number) => `${n.toLocaleString("en")} silver`;
   return (
-    <section className="team-loot-workspace" aria-label="Team loot splits">
-      <div className="section-heading">
-        <div>
-          <h2>Loot splits</h2>
-          <p>Record the pool, reimburse expenses, then share the remaining silver fairly.</p>
-        </div>
-        <div className="button-row">
-          <button type="button" className="button secondary" onClick={exportDraft}>
-            Export split JSON
-          </button>
-          {editable && (
-            <button type="button" className="button primary" disabled={busy} onClick={save}>
-              {busy ? "Saving…" : "Save loot split"}
-            </button>
-          )}
-        </div>
-      </div>
+    <section className={`team-loot-workspace ${styles.loot}`} aria-label="Team loot splits">
       {error && (
-        <p role="alert" className="error">
+        <p role="alert" className={styles.alert}>
           {error}
         </p>
       )}
-      {message && <p role="status">{message}</p>}
-      <div className="team-loot-columns">
-        <aside className="panel">
-          <h3>Saved splits</h3>
-          <p>Latest 50 · visible to current team members.</p>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => {
-              setLoaded(false);
-              setLoadAttempt((attempt) => attempt + 1);
-            }}
-          >
-            Refresh saved splits
-          </button>
-          {editable && (
-            <button type="button" className="button secondary" onClick={() => open(null)}>
-              New split
-            </button>
-          )}
-          {saved.map((row) => (
+      {message && (
+        <p role="status" className={styles.saved}>
+          {message}
+        </p>
+      )}
+      <div className={styles.lootColumns}>
+        <aside className={`panel ${styles.panel}`} aria-labelledby="team-loot-saved">
+          <PanelHead
+            id="team-loot-saved"
+            emblem="team-loot"
+            title="Saved splits"
+            line="The latest 50, for current members."
+          />
+          <div className={styles.rowActions}>
+            {editable && (
+              <button type="button" className="button secondary" onClick={() => open(null)}>
+                <Plus size={16} aria-hidden="true" /> New split
+              </button>
+            )}
             <button
               type="button"
-              key={row.id}
-              className="team-saved-split"
-              aria-pressed={selected?.id === row.id}
-              onClick={() => open(row)}
+              className="pill-link is-small"
+              onClick={() => {
+                setLoaded(false);
+                setError("");
+                setLoadAttempt((attempt) => attempt + 1);
+              }}
             >
-              {row.title}
-              <small>Revision {row.version}</small>
+              <RotateCcw size={14} aria-hidden="true" /> Refresh saved splits
             </button>
-          ))}
-          {loaded && !saved.length && <p>No saved splits yet.</p>}
+          </div>
+          {saved.length > 0 && (
+            <ul className={styles.list}>
+              {saved.map((row) => (
+                <li key={row.id}>
+                  <button
+                    type="button"
+                    className={`well ${styles.wellRow}`}
+                    aria-pressed={selected?.id === row.id}
+                    onClick={() => open(row)}
+                  >
+                    <span className={styles.rowCopy}>
+                      <strong>{row.title}</strong>
+                      <small>Revision {row.version}</small>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {!loaded && !error && active && <StatusLine>Loading saved splits…</StatusLine>}
+          {loaded && !saved.length && (
+            <EmptyWell
+              title="No saved splits yet"
+              line={
+                editable
+                  ? "Fill in the split and save it to keep a record."
+                  : "Officers save splits here."
+              }
+            />
+          )}
         </aside>
-        <div>
-          <fieldset disabled={!editable || busy} className="panel team-loot-inputs">
-            <legend>Split inputs</legend>
-            <label>
-              Split name
+        <fieldset disabled={!editable || busy} className={`panel ${styles.panel}`}>
+          <legend className="sr-only">Split inputs</legend>
+          <PanelHead
+            title="The haul"
+            line="Record the pool, repay the costs, share the rest."
+            actions={
+              <button type="button" className="pill-link is-small" onClick={exportDraft}>
+                <Download size={14} aria-hidden="true" /> Export JSON
+              </button>
+            }
+          />
+          <div className={styles.formGrid}>
+            <Field label="Split name">
               <input
                 aria-label="Split name"
                 maxLength={100}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
-            </label>
-            <label>
-              Total loot pool (silver)
+            </Field>
+            <Field label="Total loot pool (silver)">
               <input
                 aria-label="Total loot pool (silver)"
                 type="number"
@@ -248,59 +277,62 @@ export function TeamLootWorkspace({
                   setConfiguration({ ...configuration, pool: Number(e.target.value) })
                 }
               />
-            </label>
-            <h3>Expenses</h3>
-            <p>Manual reimbursements deducted before sharing the remainder.</p>
-            {configuration.expenses.map((expense, i) => (
-              <div className="team-loot-expense" key={i}>
-                <label>
-                  Expense {i + 1}
-                  <input
-                    aria-label={`Expense ${i + 1} description`}
-                    maxLength={100}
-                    value={expense.label}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        expenses: configuration.expenses.map((row, j) =>
-                          j === i ? { ...row, label: e.target.value } : row,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-                <label>
-                  Silver
-                  <input
-                    aria-label={`Expense ${i + 1} silver`}
-                    type="number"
-                    min={0}
-                    step={1}
-                    value={expense.silver}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        expenses: configuration.expenses.map((row, j) =>
-                          j === i ? { ...row, silver: Number(e.target.value) } : row,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="text-link"
-                  onClick={() =>
+            </Field>
+          </div>
+          <h3 className={styles.subhead}>Expenses</h3>
+          <p className={styles.subline}>
+            Repairs, food and other costs, paid back before the share.
+          </p>
+          {configuration.expenses.map((expense, i) => (
+            <div className={`well ${styles.lootRow}`} key={i}>
+              <Field label={`Expense ${i + 1}`}>
+                <input
+                  aria-label={`Expense ${i + 1} description`}
+                  maxLength={100}
+                  value={expense.label}
+                  onChange={(e) =>
                     setConfiguration({
                       ...configuration,
-                      expenses: configuration.expenses.filter((_, j) => j !== i),
+                      expenses: configuration.expenses.map((row, j) =>
+                        j === i ? { ...row, label: e.target.value } : row,
+                      ),
                     })
                   }
-                >
-                  Remove expense {i + 1}
-                </button>
-              </div>
-            ))}
+                />
+              </Field>
+              <Field label="Silver">
+                <input
+                  aria-label={`Expense ${i + 1} silver`}
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={expense.silver}
+                  onChange={(e) =>
+                    setConfiguration({
+                      ...configuration,
+                      expenses: configuration.expenses.map((row, j) =>
+                        j === i ? { ...row, silver: Number(e.target.value) } : row,
+                      ),
+                    })
+                  }
+                />
+              </Field>
+              <button
+                type="button"
+                className={styles.iconButton}
+                aria-label={`Remove expense ${i + 1}`}
+                onClick={() =>
+                  setConfiguration({
+                    ...configuration,
+                    expenses: configuration.expenses.filter((_, j) => j !== i),
+                  })
+                }
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            </div>
+          ))}
+          <div className={styles.rowActions}>
             <button
               type="button"
               className="button secondary"
@@ -312,144 +344,149 @@ export function TeamLootWorkspace({
                 })
               }
             >
-              Add expense
+              <Plus size={16} aria-hidden="true" /> Add expense
             </button>
-            <h3>Participants & shares</h3>
-            <p>Equal shares split evenly. Use more shares for an agreed weighted payout.</p>
-            {configuration.participants.map((participant, i) => (
-              <div className="team-loot-participant" key={participant.userId}>
-                <span>
-                  {members.find((m) => m.userId === participant.userId)?.name ||
-                    "Former team member"}
-                </span>
-                <label>
-                  Shares
-                  <input
-                    aria-label={`Shares for ${members.find((m) => m.userId === participant.userId)?.name || participant.userId}`}
-                    type="number"
-                    min={1}
-                    max={1000}
-                    step={1}
-                    value={participant.shares}
-                    onChange={(e) =>
-                      setConfiguration({
-                        ...configuration,
-                        participants: configuration.participants.map((row, j) =>
-                          j === i ? { ...row, shares: Number(e.target.value) } : row,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="text-link"
-                  onClick={() =>
+          </div>
+          <h3 className={styles.subhead}>Participants &amp; shares</h3>
+          <p className={styles.subline}>
+            One share each splits evenly; give more shares for an agreed bigger cut.
+          </p>
+          {configuration.participants.map((participant, i) => (
+            <div className={`well ${styles.lootRow}`} key={participant.userId}>
+              <span className={styles.rowCopy}>
+                <strong>{name(participant.userId)}</strong>
+              </span>
+              <Field label="Shares">
+                <input
+                  aria-label={`Shares for ${members.find((m) => m.userId === participant.userId)?.name || participant.userId}`}
+                  type="number"
+                  min={1}
+                  max={1000}
+                  step={1}
+                  value={participant.shares}
+                  onChange={(e) =>
                     setConfiguration({
                       ...configuration,
-                      participants: configuration.participants.filter((_, j) => j !== i),
+                      participants: configuration.participants.map((row, j) =>
+                        j === i ? { ...row, shares: Number(e.target.value) } : row,
+                      ),
                     })
                   }
-                >
-                  Remove participant {i + 1}
-                </button>
-              </div>
-            ))}
-            <label>
-              Add participant
-              <select
-                aria-label="Add loot participant"
-                value=""
-                disabled={configuration.participants.length >= 400}
-                onChange={(e) => {
-                  if (e.target.value)
-                    setConfiguration({
-                      ...configuration,
-                      participants: [
-                        ...configuration.participants,
-                        { userId: e.target.value, shares: 1 },
-                      ],
-                    });
-                }}
+                />
+              </Field>
+              <button
+                type="button"
+                className={styles.iconButton}
+                aria-label={`Remove participant ${i + 1}`}
+                onClick={() =>
+                  setConfiguration({
+                    ...configuration,
+                    participants: configuration.participants.filter((_, j) => j !== i),
+                  })
+                }
               >
-                <option value="">Choose a team member</option>
-                {members
-                  .filter((m) => !configuration.participants.some((p) => p.userId === m.userId))
-                  .map((m) => (
-                    <option key={m.userId} value={m.userId}>
-                      {m.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-            <label>
-              Split notes
-              <textarea
-                maxLength={2000}
-                value={configuration.notes}
-                onChange={(e) => setConfiguration({ ...configuration, notes: e.target.value })}
-              />
-            </label>
-          </fieldset>
-          <section className="panel team-loot-results" aria-label="Loot payout preview">
-            <h3>Payout preview</h3>
-            {result ? (
-              <>
-                <dl>
-                  <div>
-                    <dt>Loot pool</dt>
-                    <dd>{result.pool.toLocaleString()} silver</dd>
-                  </div>
-                  <div>
-                    <dt>Expenses</dt>
-                    <dd>{result.expenses.toLocaleString()} silver</dd>
-                  </div>
-                  <div>
-                    <dt>Shared payout</dt>
-                    <dd>{result.net.toLocaleString()} silver</dd>
-                  </div>
-                </dl>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Participant</th>
-                      <th>Shares</th>
-                      <th>Payout</th>
+                <X size={16} aria-hidden="true" />
+              </button>
+            </div>
+          ))}
+          <Field label="Add participant">
+            <WellSelect
+              aria-label="Add loot participant"
+              value=""
+              disabled={configuration.participants.length >= 400}
+              onChange={(e) => {
+                if (e.target.value)
+                  setConfiguration({
+                    ...configuration,
+                    participants: [
+                      ...configuration.participants,
+                      { userId: e.target.value, shares: 1 },
+                    ],
+                  });
+              }}
+            >
+              <option value="">Choose a team member</option>
+              {members
+                .filter((m) => !configuration.participants.some((p) => p.userId === m.userId))
+                .map((m) => (
+                  <option key={m.userId} value={m.userId}>
+                    {m.name}
+                  </option>
+                ))}
+            </WellSelect>
+          </Field>
+          <Field label="Split notes">
+            <textarea
+              maxLength={2000}
+              value={configuration.notes}
+              onChange={(e) => setConfiguration({ ...configuration, notes: e.target.value })}
+            />
+          </Field>
+        </fieldset>
+        <section className={`panel ${styles.panel}`} aria-label="Loot payout preview">
+          <PanelHead
+            title="Payout"
+            line="A record for the team; Outpost moves no silver in game."
+          />
+          {result ? (
+            <>
+              <dl className={styles.facts}>
+                <div>
+                  <dt>Loot pool</dt>
+                  <dd>{silver(result.pool)}</dd>
+                </div>
+                <div>
+                  <dt>Expenses</dt>
+                  <dd>{silver(result.expenses)}</dd>
+                </div>
+                <div className={styles.factLead}>
+                  <dt>Shared payout</dt>
+                  <dd>{silver(result.net)}</dd>
+                </div>
+              </dl>
+              <table className={`well ${styles.table}`}>
+                <thead>
+                  <tr>
+                    <th scope="col">Participant</th>
+                    <th scope="col">Shares</th>
+                    <th scope="col">Payout</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.payouts.map((row) => (
+                    <tr key={row.userId}>
+                      <th scope="row">{name(row.userId)}</th>
+                      <td>{row.shares}</td>
+                      <td>
+                        {silver(row.silver)}
+                        {row.roundingSilver > 0 && <small>+1 rounding</small>}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {result.payouts.map((row) => (
-                      <tr key={row.userId}>
-                        <td>
-                          {members.find((m) => m.userId === row.userId)?.name ||
-                            "Former team member"}
-                        </td>
-                        <td>{row.shares}</td>
-                        <td>
-                          {row.silver.toLocaleString()} silver
-                          {row.roundingSilver > 0 && <small>Includes 1 rounding silver</small>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p>
-                  {result.roundingSilver} rounding silver allocated by largest fractional remainder;
-                  ties use stable member ID. Unallocated: 0 silver.
-                </p>
-              </>
-            ) : (
-              <p>
-                Choose at least one participant and valid whole-silver amounts. Expenses must fit
-                within the pool.
-              </p>
-            )}
-            <p>
-              Manual accounting only. Save records the plan; Outpost does not transfer silver in
-              Albion.
-            </p>
-          </section>
-        </div>
+                  ))}
+                </tbody>
+              </table>
+              {result.roundingSilver > 0 && (
+                <Disclosure summary="How rounding works">
+                  <p className={styles.subline}>
+                    {result.roundingSilver} leftover silver goes one each to the largest fractional
+                    shares; ties go by member ID. Nothing is left unallocated.
+                  </p>
+                </Disclosure>
+              )}
+            </>
+          ) : (
+            <StatusLine>
+              Add at least one participant and whole-silver amounts; expenses must fit in the pool.
+            </StatusLine>
+          )}
+          {editable && (
+            <div className={styles.formActions}>
+              <button type="button" className="button primary" disabled={busy} onClick={save}>
+                {busy ? "Saving…" : "Save loot split"}
+              </button>
+            </div>
+          )}
+        </section>
       </div>
     </section>
   );

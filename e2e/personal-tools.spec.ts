@@ -103,7 +103,9 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
     await expect(
       page.getByRole("heading", { name: "Welcome, Personal planner.", exact: true }),
     ).toBeVisible();
-    await expect(page.getByText("Manual crop reminder · RUNNING", { exact: true })).toBeVisible();
+    await expect(
+      page.locator("[data-dashboard-timer]").filter({ hasText: "Manual crop reminder" }),
+    ).toContainText("Running");
     await expect(page.locator(".search-trigger")).toHaveCount(0);
     await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
     await page
@@ -133,7 +135,7 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
       ).toEqual([]);
     }
     await page.goto("/timers");
-    await page.getByText("More timer actions", { exact: true }).click();
+    await page.getByRole("button", { name: "More timer actions", exact: true }).click();
     page.once("dialog", (d) => d.accept());
     await page.getByRole("button", { name: "Delete timer", exact: true }).click();
     await expect(

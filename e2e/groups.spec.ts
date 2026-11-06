@@ -128,7 +128,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     expect((await action(0, { action: "role", userId: ids[1], role: "ADMIN" })).status()).toBe(200);
     const memberPage = await clients[3].newPage();
     await memberPage.goto(`/groups/${slug}`);
-    await memberPage.getByLabel("Message to group leaders").fill("I would like to join the roster");
+    await memberPage.getByLabel("Message to team leaders").fill("I would like to join the roster");
     await memberPage.getByRole("button", { name: "Request membership" }).click();
     await expect(memberPage.getByRole("status")).toContainText("Membership request saved");
     await page.reload();
@@ -197,7 +197,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await memberPage.getByLabel("Your role", { exact: true }).fill("Healer");
     await memberPage.getByRole("button", { name: "Save RSVP" }).click();
     await expect(
-      memberPage.getByText("Guild tester 3: MAYBE · Healer", { exact: true }),
+      memberPage.getByText("Guild tester 3 · Maybe · Healer", { exact: true }),
     ).toBeVisible();
     expect(
       await db.eventRSVP.count({ where: { userId: ids[3], status: "MAYBE", role: "Healer" } }),

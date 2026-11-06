@@ -3,6 +3,7 @@ import { giftedSupporter } from "@/lib/admin/policy";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { Download, ShieldCheck } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
@@ -10,7 +11,20 @@ import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
+import { PanelHead } from "@/components/panel-head";
+import { NextStepCards } from "@/components/next-step-cards";
+import { regionLabel } from "@/components/group-parts";
+import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Settings");
+
+const date = (d: Date) =>
+  d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
 export default async function Settings({
   searchParams,
 }: {
@@ -21,34 +35,68 @@ export default async function Settings({
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect("/signin");
   const query = await searchParams;
+  const supporter = isSupporter(user);
+  const plan = supporter
+    ? giftedSupporter(user)
+      ? `Supporter gift${user.supporterGiftUntil && !user.supporterGiftPermanent ? ` until ${date(user.supporterGiftUntil)}` : ", no end date"}`
+      : `Supporter${user.planRenewsAt ? ` · renews ${date(user.planRenewsAt)}` : ""}`
+    : "Free";
+  const sections = [
+    ["profile-preferences", "Profile & preferences"],
+    ["account-billing", "Supporter plan"],
+    ["account-data", "Export your data"],
+    ["account-session", "Current session"],
+    ["account-delete", "Close account"],
+  ] as const;
   return (
-    <div className="support-settings">
+    <div className={styles.page}>
       <WorkspaceHeading
         scene="guides"
         title="Account settings"
-        description="Manage your profile, preferred server and account data."
+        accent="settings"
+        description="Your name, your server and the data Outpost keeps for you."
         icon="account"
         emblem={<AccountEmblem image={user.image} />}
-      />
-      <div className="account-settings-workspace">
-        <nav className="panel account-settings-navigation" aria-label="Settings sections">
-          <a href="#profile-preferences">Profile & preferences</a>
-          <a href="#account-billing">Supporter plan</a>
-          <a href="#account-data">Export your data</a>
-          <a href="#account-session">Current session</a>
-          <a href="#account-delete">Close account</a>
-          {["ADMIN", "MODERATOR"].includes(user.role) && (
-            <Link href={user.role === "ADMIN" ? "/admin" : "/admin/reports"}>
+        actions={
+          ["ADMIN", "MODERATOR"].includes(user.role) ? (
+            <Link
+              className="button secondary"
+              href={user.role === "ADMIN" ? "/admin" : "/admin/reports"}
+            >
+              <ShieldCheck size={16} aria-hidden="true" />
               {user.role === "ADMIN" ? "Admin dashboard" : "Moderation dashboard"}
             </Link>
-          )}
+          ) : undefined
+        }
+      >
+        <div className={`landing-chips ${styles.chips}`}>
+          <span className={supporter ? "landing-chip" : "landing-chip is-muted"}>{plan}</span>
+          <span className="landing-chip is-muted">{regionLabel(user.region)}</span>
+          <span className="landing-chip is-muted">Signed in with Discord</span>
+        </div>
+      </WorkspaceHeading>
+      <div className={styles.settings}>
+        <nav className={`raised ${styles.rail}`} aria-label="Settings sections">
+          {sections.map(([id, label]) => (
+            <a key={id} href={`#${id}`} data-danger={id === "account-delete" ? "" : undefined}>
+              {label}
+            </a>
+          ))}
         </nav>
-        <div className="account-settings-content">
-          <section className="panel" id="profile-preferences">
-            <h2>Profile & preferences</h2>
-            {query.saved && <p role="status">Preferences saved.</p>}
+        <div className={styles.settingsBody}>
+          <section
+            className={`panel ${styles.panel}`}
+            id="profile-preferences"
+            aria-labelledby="pref-title"
+          >
+            <PanelHead id="pref-title" title="Profile & preferences" />
+            {query.saved && (
+              <p role="status" className={styles.saved}>
+                Preferences saved.
+              </p>
+            )}
             {query.error && (
-              <p role="alert" className="error">
+              <p role="alert" className={styles.alert}>
                 {query.error === "ownership"
                   ? "Transfer team ownership or delete owned teams before deleting this account."
                   : query.error === "rate"
@@ -64,54 +112,106 @@ export default async function Settings({
               }}
             />
           </section>
-          <section className="panel settings-data-section" id="account-billing">
-            <div>
-              <h2>Supporter plan</h2>
-              <p>
-                {isSupporter(user)
-                  ? giftedSupporter(user)
-                    ? `Supporter gift active${user.supporterGiftUntil && !user.supporterGiftPermanent ? ` until ${user.supporterGiftUntil.toLocaleDateString("en-GB")}` : " until revoked"}. No advertising and your own Team workspace.`
-                    : `Active${user.planRenewsAt ? ` · renews ${user.planRenewsAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
-                  : "Free. Supporters see no advertising and can run a Team workspace."}
-              </p>
-            </div>
-            <Link className="button secondary" href="/supporter">
-              {isSupporter(user) ? "View Supporter benefits" : "See the Supporter plan"}
-            </Link>
+          <section
+            className={`panel ${styles.panel}`}
+            id="account-billing"
+            aria-labelledby="plan-title"
+          >
+            <PanelHead
+              id="plan-title"
+              emblem="team-roles"
+              title="Supporter plan"
+              line={
+                supporter
+                  ? `${plan}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
+                  : "Free. Supporters see no advertising and can run a Team workspace."
+              }
+              actions={
+                <Link className="button secondary" href="/supporter">
+                  {supporter ? "View Supporter benefits" : "See the Supporter plan"}
+                </Link>
+              }
+            />
           </section>
-          <section className="panel settings-data-section" id="account-data">
-            <div>
-              <h2>Your data, your choice</h2>
-              <p>
-                Download the profile data and plans held by Outpost. Your export is created for your
-                signed-in account.
-              </p>
-            </div>
-            <a className="button secondary" href="/api/account/export">
-              Export personal data
-            </a>
+          <section
+            className={`panel ${styles.panel}`}
+            id="account-data"
+            aria-labelledby="data-title"
+          >
+            <PanelHead
+              id="data-title"
+              title="Export your data"
+              line="One JSON file with your profile, builds, comps, timers and saved plans."
+              actions={
+                <a className="button secondary" href="/api/account/export">
+                  <Download size={16} aria-hidden="true" /> Export personal data
+                </a>
+              }
+            />
           </section>
-          <section className="panel settings-session-section" id="account-session">
-            <div>
-              <h2>Current session</h2>
-              <p>
-                Signed in as <strong>{user.name || "Adventurer"}</strong> through Discord.
-              </p>
-            </div>
-            <LogoutButton />
+          <section
+            className={`panel ${styles.panel}`}
+            id="account-session"
+            aria-labelledby="session-title"
+          >
+            <PanelHead
+              id="session-title"
+              title="Current session"
+              line={`Signed in as ${user.name || "Adventurer"} through Discord on this browser.`}
+              actions={<LogoutButton />}
+            />
           </section>
-          <section className="panel settings-delete-section" id="account-delete">
-            <h2>Close your account</h2>
-            <p>
-              Account deletion permanently removes your account, connected OAuth records and active
-              sessions. Transfer or close teams you own first. Cancel any subscription through
-              Manage subscription first and wait until it has ended. We verify billing before
-              deletion and close unfinished checkout links.
-            </p>
+          <section
+            className={`panel ${styles.panel} ${styles.danger}`}
+            id="account-delete"
+            aria-labelledby="delete-title"
+          >
+            <PanelHead
+              id="delete-title"
+              title="Close your account"
+              line="Deletes your account, its sign-in records and sessions for good."
+            />
+            <ul className={styles.checklist}>
+              <li>Hand over or delete the teams you own first.</li>
+              <li>Cancel a Supporter subscription and let it end before you delete.</li>
+              <li>We check billing before deleting and close any open checkout links.</li>
+            </ul>
             <DeleteAccountForm />
           </section>
         </div>
       </div>
+      <NextStepCards
+        id="settings-next"
+        title={
+          <>
+            Back to your <em>plans</em>
+          </>
+        }
+        line="Everything you saved, one click away."
+        cards={[
+          {
+            href: "/dashboard",
+            emblem: "strip-builds",
+            title: "Dashboard",
+            line: "Recent builds, comps, timers and teams.",
+            scene: "build",
+          },
+          {
+            href: "/timers",
+            emblem: "team-calendar",
+            title: "Timers",
+            line: "Crops, laborers and reminders.",
+            scene: "economy",
+          },
+          {
+            href: "/favorites",
+            emblem: "strip-comps",
+            title: "Favorites",
+            line: "Builds and comps you saved.",
+            scene: "composition",
+          },
+        ]}
+      />
     </div>
   );
 }

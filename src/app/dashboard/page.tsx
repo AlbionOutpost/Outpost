@@ -1,15 +1,26 @@
 import { privateMetadata } from "@/lib/seo";
-import { WorkspaceHeading } from "@/components/workspace-heading";
-import { AccountEmblem } from "@/components/account-emblem";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { ArrowRight, ArrowUpRight, Settings, ShieldCheck } from "lucide-react";
 import Link from "@/components/link";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { AccountEmblem } from "@/components/account-emblem";
+import { EquipmentStrip } from "@/components/equipment-strip";
+import { PanelHead } from "@/components/panel-head";
+import { EmptyWell } from "@/components/empty-well";
+import { NextStepCards } from "@/components/next-step-cards";
+import { TeamMark, roleLabel } from "@/components/group-parts";
+import { timerCategory, timerStatus, timerLeft } from "@/components/timer-labels";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { EquipmentStrip } from "@/components/equipment-strip";
-import { Flag, Clock3, ArrowUpRight } from "lucide-react";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
+import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Dashboard");
+
+const renderedAt = () => Date.now();
+const day = (d: Date) =>
+  new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(d);
+
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) redirect("/signin");
@@ -45,6 +56,7 @@ export default async function Dashboard() {
     },
   });
   if (!u) redirect("/signin");
+  const now = renderedAt();
   const recent = [
     ...u.builds.map((build) => ({
       id: build.id,
@@ -87,37 +99,39 @@ export default async function Dashboard() {
       emblem: "tool-market",
       scene: "market",
     },
-    {
-      title: "Craft for profit",
-      note: "Costs, returns and margin",
-      href: "/tools/crafting",
-      emblem: "tool-craft",
-      scene: "city",
-    },
   ];
+  const [last, ...rest] = recent;
   return (
-    <div className="player-dashboard support-dashboard">
+    <div className={styles.page}>
       <WorkspaceHeading
         icon="account"
         emblem={<AccountEmblem image={u.image} />}
         scene="guides"
         title={`Welcome, ${u.name || "Adventurer"}.`}
-        description="Pick up your plans, check your timers, and get your team ready."
+        accent="Welcome"
+        description="Pick up your plans, check your timers and get your team ready."
         actions={
-          <Link className="button secondary" href="/settings">
-            Settings & data
-          </Link>
+          <span className={styles.headActions}>
+            {["ADMIN", "MODERATOR"].includes(u.role) && (
+              <Link className="button secondary" href="/admin/reports">
+                <ShieldCheck size={16} aria-hidden="true" /> Moderation queue
+              </Link>
+            )}
+            <Link className="button secondary" href="/settings">
+              <Settings size={16} aria-hidden="true" /> Settings &amp; data
+            </Link>
+          </span>
         }
       />
-      <nav className="dashboard-quick" aria-label="Start something">
+      <nav className={styles.quick} aria-label="Start something">
         {quick.map((q) => (
           <Link
             key={q.href}
-            className="raised has-scene dashboard-quick-card"
+            className={`raised has-scene ${styles.quickCard}`}
             data-scene={q.scene}
             href={q.href}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img src={`/albion/icons/${q.emblem}.webp`} alt="" width={52} height={52} />
             <span>
               <strong>{q.title}</strong>
@@ -127,164 +141,251 @@ export default async function Dashboard() {
           </Link>
         ))}
       </nav>
-      <div className="dashboard-workspace">
-        <section className="panel dashboard-recent" aria-labelledby="recent-work-title">
-          <div className="support-section-heading">
-            <h2 id="recent-work-title">Pick up where you left off</h2>
-            <Link className="button primary" href="/builds/new">
-              Create build
-            </Link>
-          </div>
-          {recent[0] ? (
-            <Link className="dashboard-continue" href={recent[0].href}>
-              <span>
-                <small>Last edited · {recent[0].type}</small>
-                <strong>{recent[0].title}</strong>
-                <span>
-                  Continue your plan <ArrowUpRight size={15} />
-                </span>
-              </span>
-              <EquipmentStrip
-                equipment={recent[0].equipment}
-                slots={["Main hand", "Helmet", "Chest", "Boots"]}
-                hideEmpty
-                size={44}
-              />
-            </Link>
-          ) : (
-            <div className="support-empty">
-              <h3>Make room for your next adventure.</h3>
-              <p>Create a loadout or plan a party. Your saved work will appear here.</p>
-              <Link className="text-link" href="/compositions/new">
-                Plan your first comp →
-              </Link>
-            </div>
-          )}
-          <div className="dashboard-work-list">
-            {recent.slice(1).map((item) => (
-              <Link key={`${item.type}:${item.id}`} href={item.href}>
-                <span className="support-record-icon">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/albion/icons/${item.type === "Build" ? "strip-builds" : "strip-comps"}.webp`}
-                    alt=""
-                    width={30}
-                    height={30}
-                  />
-                </span>
-                <span>
-                  <strong>{item.title}</strong>
-                  <small>
-                    {item.type} · Edited {item.updatedAt.toISOString().slice(0, 10)}
-                  </small>
-                </span>
-                <ArrowUpRight size={16} />
-              </Link>
-            ))}
-          </div>
-          <nav className="dashboard-collection-links" aria-label="Your saved work">
-            <Link href="/builds?mine=1">My builds</Link>
-            <Link href="/compositions?mine=1">My comps</Link>
-            <Link href="/favorites">Favorites</Link>
-          </nav>
-        </section>
-        <aside className="dashboard-day-plan">
-          <section className="panel">
-            <div className="support-section-heading">
-              <h2>
-                <Clock3 size={18} />
-                Personal timers
-              </h2>
-              <Link href="/timers" className="text-link">
-                Manage →
-              </Link>
-            </div>
-            {u.timers.length ? (
-              u.timers.slice(0, 4).map((timer) => (
-                <p className="dashboard-timer" key={timer.id}>
-                  {timer.title} · {timer.status}
-                </p>
-              ))
-            ) : (
-              <p>
-                No active reminders.{" "}
-                <Link className="text-link" href="/timers">
-                  Add a timer
-                </Link>{" "}
-                for your next session.
-              </p>
-            )}
-          </section>
-          <section className="panel">
-            <div className="support-section-heading">
-              <h2>
-                <Flag size={18} />
-                Your teams
-              </h2>
-              <Link href="/groups?mine=1" className="text-link">
-                All teams →
-              </Link>
-            </div>
-            {u.memberships.map((member) => (
-              <Link
-                className="dashboard-team-link"
-                key={member.groupId}
-                href={`/groups/${member.group.slug}`}
-              >
-                <strong>{member.group.name}</strong>
-                <small>{member.role.toLowerCase()}</small>
-                <ArrowUpRight size={15} />
-              </Link>
-            ))}
-            {!u.memberships.length && (
-              <p>
-                Join through a team invitation, or{" "}
-                <Link className="text-link" href="/groups/new">
-                  create a workspace
+      <div className={styles.grid}>
+        <section
+          className={`panel ${styles.panel} ${styles.wide}`}
+          aria-labelledby="recent-work-title"
+        >
+          <PanelHead
+            id="recent-work-title"
+            title="Pick up where you left off"
+            line={recent.length ? "Your latest builds and comps, last edited first." : undefined}
+            actions={
+              <span className={styles.pills}>
+                <Link className="pill-link is-small" href="/builds?mine=1">
+                  My builds
                 </Link>
-                .
-              </p>
+                <Link className="pill-link is-small" href="/compositions?mine=1">
+                  My comps
+                </Link>
+                <Link className="pill-link is-small" href="/favorites">
+                  Favorites
+                </Link>
+              </span>
+            }
+          />
+          {last ? (
+            <>
+              <Link className={`well ${styles.continue}`} href={last.href} data-dashboard-work="">
+                <span className={styles.continueCopy}>
+                  <small>
+                    Last edited · {last.type} · {day(last.updatedAt)}
+                  </small>
+                  <strong>{last.title}</strong>
+                  <span className={styles.continueGo}>
+                    Continue <ArrowRight size={15} aria-hidden="true" />
+                  </span>
+                </span>
+                {last.equipment.length > 0 && (
+                  <EquipmentStrip
+                    equipment={last.equipment}
+                    slots={["Main hand", "Helmet", "Chest", "Boots"]}
+                    hideEmpty
+                    size={48}
+                  />
+                )}
+              </Link>
+              {rest.length > 0 && (
+                <ul className={styles.list}>
+                  {rest.map((item) => (
+                    <li key={`${item.type}:${item.id}`}>
+                      <Link
+                        className={`well ${styles.row}`}
+                        href={item.href}
+                        data-dashboard-work=""
+                      >
+                        <span className={styles.kind}>
+                          {item.equipment.some((e) => e.slot === "Main hand") ? (
+                            <EquipmentStrip
+                              equipment={item.equipment}
+                              slots={["Main hand"]}
+                              hideEmpty
+                              size={36}
+                            />
+                          ) : (
+                            item.type
+                          )}
+                        </span>
+                        <span className={styles.rowCopy}>
+                          <strong>{item.title}</strong>
+                          <small>
+                            {item.type} · Edited {day(item.updatedAt)}
+                          </small>
+                        </span>
+                        <ArrowUpRight className={styles.arrow} size={16} aria-hidden="true" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <EmptyWell
+              emblem="strip-comps"
+              title="Nothing saved yet"
+              line="Builds and comps you save show up here, ready to open again."
+              action={
+                <Link className="button secondary" href="/builds/new">
+                  Create a build
+                </Link>
+              }
+            />
+          )}
+        </section>
+        <div className={styles.side}>
+          <section className={`panel ${styles.panel}`} aria-labelledby="dash-timers">
+            <PanelHead
+              id="dash-timers"
+              emblem="team-calendar"
+              title="Timers"
+              actions={
+                <Link href="/timers" className="pill-link is-small">
+                  {u.timers.length ? "Manage" : "Add a timer"}{" "}
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              }
+            />
+            {u.timers.length ? (
+              <ul className={styles.list}>
+                {u.timers.slice(0, 4).map((timer) => (
+                  <li key={timer.id} className={`well ${styles.row}`} data-dashboard-timer="">
+                    <span className={styles.rowCopy}>
+                      <strong>{timer.title}</strong>
+                      <small>
+                        {timerCategory(timer.category)} · {timerLeft(timer, now)}
+                      </small>
+                    </span>
+                    <span
+                      className={
+                        timer.status === "RUNNING" ? "landing-chip" : "landing-chip is-muted"
+                      }
+                    >
+                      {timerStatus(timer.status)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyWell
+                title="No timers running"
+                line="Crops, laborers or a raid start: set a countdown you can check from here."
+              />
             )}
           </section>
-        </aside>
-      </div>
-      <section className="panel dashboard-calculations">
-        <div className="support-section-heading">
-          <h2>Calculator plans</h2>
-          <Link className="text-link" href="/tools">
-            Open tools →
-          </Link>
+          <section className={`panel ${styles.panel}`} aria-labelledby="dash-teams">
+            <PanelHead
+              id="dash-teams"
+              emblem="team-roles"
+              title="Your teams"
+              actions={
+                <Link
+                  href={u.memberships.length ? "/groups?mine=1" : "/groups"}
+                  className="pill-link is-small"
+                >
+                  {u.memberships.length ? "All teams" : "Find a team"}{" "}
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              }
+            />
+            {u.memberships.length ? (
+              <ul className={styles.list}>
+                {u.memberships.map((member) => (
+                  <li key={member.groupId}>
+                    <Link className={`well ${styles.row}`} href={`/groups/${member.group.slug}`}>
+                      <TeamMark name={member.group.name} size="small" />
+                      <span className={styles.rowCopy}>
+                        <strong>{member.group.name}</strong>
+                      </span>
+                      <span className="landing-chip is-muted">{roleLabel(member.role)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyWell
+                title="Not in a team yet"
+                line="Join through an invitation link, or find a public team."
+              />
+            )}
+          </section>
         </div>
-        {u.savedScenarios.map((plan) => {
-          const parsed =
-            plan.kind === "production-plan"
-              ? productionPlanSchema.safeParse(plan.configuration)
-              : null;
-          const href = parsed?.success
-            ? `/tools/${parsed.data.runs[0].kind}?region=${parsed.data.region}#production-plan-title`
-            : `/tools/${plan.kind === "production-plan" ? "crafting" : plan.kind}`;
-          return (
-            <div key={plan.id} className="dashboard-plan-link">
-              <strong>{plan.title}</strong>
-              <Link href={href} className="text-link">
-                Open calculator and load plans <ArrowUpRight size={15} />
-              </Link>
-            </div>
-          );
-        })}
-        {!u.savedScenarios.length && (
-          <p>
-            Saved calculations will appear here. You can use the public tools without saving a plan.
-          </p>
-        )}
-      </section>
-      <footer className="support-page-footnote">
-        Showing up to eight recent entries per collection. Team-only plans require current
-        membership.{" "}
-        {["ADMIN", "MODERATOR"].includes(u.role) && (
-          <Link href="/admin/reports">Open moderation queue →</Link>
-        )}
-      </footer>
+        <section className={`panel ${styles.panel} ${styles.full}`} aria-labelledby="dash-plans">
+          <PanelHead
+            id="dash-plans"
+            emblem="tool-craft"
+            title="Calculator plans"
+            line={
+              u.savedScenarios.length ? "Saved production runs; open one to load it." : undefined
+            }
+          />
+          {u.savedScenarios.length ? (
+            <ul className={styles.planGrid}>
+              {u.savedScenarios.map((plan) => {
+                const parsed =
+                  plan.kind === "production-plan"
+                    ? productionPlanSchema.safeParse(plan.configuration)
+                    : null;
+                const href = parsed?.success
+                  ? `/tools/${parsed.data.runs[0].kind}?region=${parsed.data.region}#production-plan-title`
+                  : `/tools/${plan.kind === "production-plan" ? "crafting" : plan.kind}`;
+                return (
+                  <li key={plan.id}>
+                    <Link href={href} className={`well ${styles.row}`}>
+                      <span className={styles.rowCopy}>
+                        <strong>{plan.title}</strong>
+                        <small>Saved {day(plan.updatedAt)}</small>
+                      </span>
+                      <ArrowUpRight className={styles.arrow} size={16} aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <EmptyWell
+              title="No saved plans"
+              line="Save a production run in a calculator to come back to it here."
+              action={
+                <Link className="button secondary" href="/tools/crafting">
+                  Open the crafting calculator
+                </Link>
+              }
+            />
+          )}
+        </section>
+      </div>
+      <NextStepCards
+        id="dash-next"
+        title={
+          <>
+            Plan the next <em>run</em>
+          </>
+        }
+        line="Cost the craft, list what to buy and read up before you leave town."
+        cards={[
+          {
+            href: "/tools/crafting",
+            emblem: "tool-craft",
+            title: "Crafting Calculator",
+            line: "See if a craft makes silver.",
+            scene: "build",
+          },
+          {
+            href: "/shopping-list",
+            emblem: "tool-planner",
+            title: "Crafting Planner",
+            line: "Tick off what you have, buy the rest.",
+            scene: "city",
+          },
+          {
+            href: "/guides",
+            emblem: "strip-content",
+            title: "Guides",
+            line: "Progression, gathering and PvE from players.",
+            scene: "economy",
+          },
+        ]}
+      />
     </div>
   );
 }

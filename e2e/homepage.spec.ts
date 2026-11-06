@@ -463,8 +463,7 @@ test("supporter page explains the plan without selling anything while billing is
 }) => {
   await page.goto("/premium?region=europe");
   await expect(page).toHaveURL(/\/supporter\?region=europe/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Support Outpost");
-  await expect(page.getByRole("heading", { name: "Not for sale yet" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Supporter is not on sale yet");
   await expect(page.getByRole("link", { name: /Sign in with Discord/ })).toHaveAttribute(
     "href",
     "/signin?region=europe",

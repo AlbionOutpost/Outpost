@@ -1,13 +1,27 @@
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Bookmark, ChevronRight, Layers3, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { LoginButton } from "@/components/login-button";
 import { SignInError } from "@/components/sign-in-error";
+import { PanelHead } from "@/components/panel-head";
 import { safeSignInPageReturn } from "@/lib/sign-in-return";
 import Link from "@/components/link";
+import { NextStepCards } from "@/components/next-step-cards";
+import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Sign in");
+
+const benefits = [
+  [
+    "strip-builds",
+    "Your builds, with every revision",
+    "Save loadouts, swaps and spells; go back to any version.",
+  ],
+  ["strip-comps", "Comps your party can open", "Share a comp by link, or keep it to your Team."],
+  ["team-roles", "A Team for your guild", "Events with RSVPs, shared sets and loot splits."],
+] as const;
+
 export default async function Signin({
   searchParams,
 }: {
@@ -19,7 +33,7 @@ export default async function Signin({
   const destination = callbackUrl.startsWith("/invitations/")
     ? "your team invitation"
     : callbackUrl.startsWith("/compositions")
-      ? "your composition"
+      ? "your comp"
       : callbackUrl.startsWith("/builds")
         ? "your loadout"
         : callbackUrl.startsWith("/groups")
@@ -27,71 +41,93 @@ export default async function Signin({
           : "your dashboard";
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
   return (
-    <div className="signin-page support-signin">
-      <div className="signin-introduction">
-        <div className="signin-brand-symbol" aria-hidden="true">
-          <ShieldCheck size={40} />
-        </div>
-        <h1>
-          Make yourself <br />
-          <span>at home in Outpost.</span>
+    <div className={styles.signin} data-signin="">
+      <div className={styles.signinCopy}>
+        <h1 className={styles.signinTitle}>
+          Save your <em>builds</em> and bring your team
         </h1>
-        <p>Keep your loadouts close and your team ready for the next run.</p>
-        <ul>
-          <li>
-            <Layers3 aria-hidden="true" />
-            <div>
-              <strong>Your builds, ready to go</strong>
-              <span>Save revisions, equipment swaps and party plans.</span>
-            </div>
-          </li>
-          <li>
-            <Bookmark aria-hidden="true" />
-            <div>
-              <strong>A place for your favorites</strong>
-              <span>Keep useful builds and comps in your account.</span>
-            </div>
-          </li>
-          <li>
-            <Users aria-hidden="true" />
-            <div>
-              <strong>Bring your team together</strong>
-              <span>Invite your members and coordinate your next session.</span>
-            </div>
-          </li>
-        </ul>
+        <p className={styles.signinLede}>
+          Every tool works without an account. Sign in with Discord to keep what you make and plan
+          with your guild.
+        </p>
       </div>
-      <section className="raised signin-panel" aria-labelledby="signin-title">
-        <div className="signin-panel-top">
-          <ShieldCheck size={23} aria-hidden="true" />
-          <span>OUTPOST ACCOUNT</span>
-        </div>
-        <h2 id="signin-title">Continue with Discord</h2>
-        <p>Use your Discord account to save your plans and join your team.</p>
-        <p className="signin-return-context">After sign-in, continue to {destination}.</p>
+      <ul className={styles.benefits}>
+        {benefits.map(([emblem, title, line]) => (
+          <li key={emblem} className="well">
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+            <img src={`/albion/icons/${emblem}.webp`} alt="" width={44} height={44} />
+            <span>
+              <strong>{title}</strong>
+              <small>{line}</small>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <section
+        className={`panel ${styles.panel} ${styles.signinPanel}`}
+        aria-labelledby="signin-title"
+      >
+        <PanelHead
+          id="signin-title"
+          title="Continue with Discord"
+          line={`After sign-in you go straight to ${destination}.`}
+        />
         <SignInError error={params.error} />
         {configured ? (
           <LoginButton callbackUrl={callbackUrl} />
         ) : (
-          <div className="signin-unavailable" role="status">
-            <strong>Sign-in is temporarily unavailable</strong>
-            <p>Your public tools and device drafts still work. Try again later.</p>
+          <div className={`well ${styles.unavailable}`} role="status">
+            <strong>Sign-in is unavailable right now</strong>
+            <p>Public tools and device drafts still work. Try again later.</p>
           </div>
         )}
-        <div className="signin-permissions">
-          <ShieldCheck size={17} aria-hidden="true" />
-          <p>
-            We request your Discord identity and email only. No server permissions or external
-            notifications. Discord sign-in does not verify an Albion character.
-          </p>
-        </div>
-        <Link className="signin-guest-link" href="/tools">
-          Explore without an account <ChevronRight size={16} />
-        </Link>
-        <p className="signin-legal">
-          By continuing, review our <Link href="/legal">privacy & terms</Link>.
+        <p className={styles.signinNote}>
+          Outpost asks Discord for your name, picture and email only: no server permissions, no
+          messages. It does not check your Albion character.
         </p>
+        <div className={styles.signinFoot}>
+          <Link className="pill-link is-small" href="/tools">
+            Explore without an account <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+          <Link className="pill-link is-small" href="/legal">
+            Privacy &amp; terms
+          </Link>
+        </div>
       </section>
+      <div className={styles.signinNext}>
+        <NextStepCards
+          id="signin-next"
+          title={
+            <>
+              Or start <em>without</em> an account
+            </>
+          }
+          line="Prices, calculators and the build library are open to everyone."
+          cards={[
+            {
+              href: "/tools/market",
+              emblem: "tool-market",
+              title: "Market Explorer",
+              line: "Prices in every city.",
+              scene: "market",
+            },
+            {
+              href: "/tools/crafting",
+              emblem: "tool-craft",
+              title: "Crafting Calculator",
+              line: "See if a craft makes silver.",
+              scene: "build",
+            },
+            {
+              href: "/builds/library",
+              emblem: "strip-content",
+              title: "Build library",
+              line: "Recorded builds by activity.",
+              scene: "city",
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }

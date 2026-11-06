@@ -1,0 +1,143 @@
+/* The landing's Supporter band (homepage.css `.landing-cta`), measured the same, for the plan's
+   own pages. The surface follows the crown silhouette; the copy sits in the courtyard's body. */
+:global(.app.outpost) .wrap.wrap {
+  margin: 96px 0 72px;
+  filter: drop-shadow(0 12px 20px var(--well));
+}
+:global(.app.outpost) .band.band {
+  --supporter-art-width: 100cqw;
+  --supporter-copy-insets: calc(var(--supporter-art-width) * 0.32 + 32px);
+  --supporter-body-top: calc(var(--supporter-art-width) * 0.1085);
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  width: min(100%, 1040px);
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  color: var(--text);
+  text-align: center;
+  mask-image: url("/scenes/supporter/crown-silhouette.svg"), linear-gradient(#000, #000);
+  mask-size:
+    100% auto,
+    100% calc(100% - var(--supporter-art-width) * 0.18);
+  mask-position:
+    center top,
+    center bottom;
+  mask-repeat: no-repeat;
+}
+:global(.app.outpost) .band.band::before {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 0 0;
+  z-index: -2;
+  border-radius: var(--radius-lg);
+  background: var(--illustration-bg);
+}
+:global(.app.outpost) .art.art {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  z-index: -1;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  translate: -50% 0;
+  pointer-events: none;
+}
+:global(.app.outpost) .art.art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  mask: url("/scenes/supporter/crown-silhouette.svg") center top / 100% auto no-repeat;
+}
+:global(.app.outpost) .content.content {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: calc((var(--supporter-body-top) + var(--supporter-copy-insets)) / 2) 40px
+    calc((var(--supporter-copy-insets) - var(--supporter-body-top)) / 2);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    color-mix(in srgb, var(--illustration-bg) 80%, transparent) 65%,
+    var(--illustration-bg)
+  );
+}
+:global(.app.outpost) .content.content::before {
+  content: "";
+  position: absolute;
+  inset: var(--supporter-body-top) 8% 4%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, #080a0fce, #080a0f85 45%, transparent 74%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+:global(.app.outpost) .title.title {
+  max-width: 30ch;
+  margin: 0;
+  font: 800 clamp(30px, 3.2vw, 44px) / 1 var(--font-display);
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow:
+    0 2px 3px #000e,
+    0 4px 18px #000c;
+}
+:global(.app.outpost) .title.title em {
+  font-style: normal;
+  color: var(--accent);
+}
+:global(.app.outpost) .line.line {
+  max-width: 60ch;
+  margin: 0;
+  color: #e4e1db;
+  font-size: 15px;
+  line-height: 1.55;
+  text-shadow: 0 1px 3px #000e;
+}
+:global(.app.outpost) .actions.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+:global(.app.outpost) .actions.actions :global(.button) {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+:global(.app.outpost) .actions.actions :global(.button.primary) {
+  color: var(--illustration-bg);
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .wrap.wrap {
+    margin: 64px 0 48px;
+  }
+  :global(.app.outpost) .band.band {
+    --supporter-copy-insets: calc(var(--supporter-art-width) * 0.42 + 24px);
+  }
+  :global(.app.outpost) .content.content {
+    padding-inline: 20px;
+    background: linear-gradient(
+      to bottom,
+      transparent calc(var(--supporter-art-width) * 0.28),
+      color-mix(in srgb, var(--illustration-bg) 90%, transparent)
+        calc(var(--supporter-art-width) * 0.5),
+      var(--illustration-bg) calc(var(--supporter-art-width) * 0.84)
+    );
+  }
+  :global(.app.outpost) .actions.actions {
+    align-self: stretch;
+  }
+  :global(.app.outpost) .actions.actions :global(.button) {
+    width: 100%;
+    justify-content: center;
+  }
+}

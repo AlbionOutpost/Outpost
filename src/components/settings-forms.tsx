@@ -1,6 +1,10 @@
 "use client";
 import { useActionState, useState } from "react";
 import { saveSettings, deleteAccount } from "@/app/settings/actions";
+import { WellSelect } from "./well-select";
+import { Field } from "./group-parts";
+import styles from "./account.module.css";
+
 export function PreferencesForm({
   initial,
 }: {
@@ -13,42 +17,50 @@ export function PreferencesForm({
     values.region !== initial.region ||
     values.characterName !== initial.characterName;
   return (
-    <form action={action} className="settings-form">
-      <label>
-        Display name
-        <input
-          name="name"
-          required
-          maxLength={60}
-          value={values.name}
-          onChange={(e) => setValues({ ...values, name: e.target.value })}
-        />
-      </label>
-      <label>
-        Albion region
-        <select
-          name="region"
-          value={values.region}
-          onChange={(e) => setValues({ ...values, region: e.target.value })}
+    <form action={action} className={styles.form}>
+      <div className={styles.formGrid}>
+        <Field label="Display name" hint="Shown on your public builds, comps and comments.">
+          <input
+            name="name"
+            required
+            maxLength={60}
+            value={values.name}
+            onChange={(e) => setValues({ ...values, name: e.target.value })}
+          />
+        </Field>
+        <Field label="Albion region" hint="Prices and tools open on this server.">
+          <WellSelect
+            name="region"
+            value={values.region}
+            onChange={(e) => setValues({ ...values, region: e.target.value })}
+          >
+            <option value="europe">Europe</option>
+            <option value="americas">Americas</option>
+            <option value="asia">Asia</option>
+          </WellSelect>
+        </Field>
+        <Field
+          label="Albion character name"
+          wide
+          hint="Typed in by you; Outpost does not check it against the game."
         >
-          <option value="europe">Europe</option>
-          <option value="americas">Americas</option>
-          <option value="asia">Asia</option>
-        </select>
-      </label>
-      <label>
-        Albion character name (manually entered, unverified)
-        <input
-          name="characterName"
-          maxLength={40}
-          pattern="[a-zA-Z0-9 _-]*"
-          value={values.characterName}
-          onChange={(e) => setValues({ ...values, characterName: e.target.value })}
-        />
-      </label>
-      <div className="settings-save-bar">
-        <span className="settings-draft-state">
-          {dirty ? "Unsaved changes" : "Your current preferences"}
+          <input
+            name="characterName"
+            maxLength={40}
+            pattern="[a-zA-Z0-9 _-]*"
+            value={values.characterName}
+            onChange={(e) => setValues({ ...values, characterName: e.target.value })}
+          />
+        </Field>
+      </div>
+      {state.error && (
+        <p role="alert" className={styles.alert}>
+          {state.error}
+        </p>
+      )}
+      <div className={styles.saveBar}>
+        <span className={dirty ? "landing-chip" : "landing-chip is-muted"}>
+          {dirty ? "Unsaved changes" : "Saved"}
         </span>
         <button
           className="button secondary"
@@ -62,21 +74,16 @@ export function PreferencesForm({
           {pending ? "Saving preferences…" : "Save preferences"}
         </button>
       </div>
-      {state.error && (
-        <p role="alert" className="error">
-          {state.error}
-        </p>
-      )}
     </form>
   );
 }
+
 export function DeleteAccountForm() {
   const [state, action, pending] = useActionState(deleteAccount, { error: "" }),
     [confirmation, setConfirmation] = useState("");
   return (
-    <form className="settings-form" action={action}>
-      <label>
-        Type DELETE to permanently delete your account
+    <form className={styles.deleteForm} action={action}>
+      <Field label="Type DELETE to permanently delete your account">
         <input
           name="confirmation"
           required
@@ -85,12 +92,12 @@ export function DeleteAccountForm() {
           value={confirmation}
           onChange={(e) => setConfirmation(e.target.value)}
         />
-      </label>
-      <button className="button secondary negative" disabled={pending}>
+      </Field>
+      <button className={`button secondary ${styles.lossButton}`} disabled={pending}>
         {pending ? "Deleting account…" : "Permanently delete account"}
       </button>
       {state.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={`${styles.alert} ${styles.fullRow}`}>
           {state.error}
         </p>
       )}
