@@ -55,9 +55,7 @@ test("journal progress survives reload, stays regional, filters completed entrie
   await page
     .getByRole("searchbox", { name: "Search objectives or rewards", exact: true })
     .fill("not-a-journal-objective");
-  await expect(
-    page.getByRole("heading", { name: "No objectives match.", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("No objectives match.", { exact: true })).toBeVisible();
 });
 
 test("fish accounting preserves manual zero and refresh overrides while excluding stale, missing and other-city prices", async ({

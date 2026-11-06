@@ -163,11 +163,12 @@ test("community discovery filters real equipment without exposing private builds
     await page.screenshot({ path: ".qa/reference-review/build-browser-375.png", fullPage: true });
     await page.goto("/guides");
     await page.getByLabel("Search guides").fill("return assumptions");
-    await expect(page.locator(".guide-discovery-card")).toHaveCount(1);
-    await page.getByText("Read guide", { exact: true }).click();
-    await expect(page.locator(".guide-body")).toContainText("Production tools");
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await expect(page.locator(".guide-note")).toHaveCount(1);
+    await expect(page.locator(".guide-note")).toContainText("Production tools");
     await page.getByLabel("Search guides").fill("unmatched topic xyz");
-    await expect(page.getByText("No guide matches this search. Try another topic.")).toBeVisible();
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await expect(page.getByText("No guide matches that search.", { exact: true })).toBeVisible();
   } finally {
     await db.user.deleteMany({ where: { id } });
   }

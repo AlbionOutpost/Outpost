@@ -1,0 +1,242 @@
+/* Guide reader (/guides/[slug]): the guide's own cover as the masthead, then a raised contents
+   rail beside one reading column, centred in the landing's measure, and a closing row. */
+.page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+}
+/* The shell narrows reading routes to 880px; the reader needs the rail beside its column */
+:global(.app.outpost main):has(> .page) {
+  max-width: calc(var(--page-width) + 2 * var(--page-gutter));
+}
+/* The cover is the guide's art; an emblem beside the title would only repeat it */
+:global(.app.outpost) .page :global(.workspace-emblem) {
+  display: none;
+}
+:global(.app.outpost) .page :global(.workspace-identity) {
+  min-height: 360px;
+}
+:global(.app.outpost) .chips.chips {
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 256px minmax(0, 700px);
+  align-items: start;
+  gap: 64px;
+  margin-top: 8px;
+}
+
+/* Contents rail: a raised panel that stays in view; it never scrolls on its own */
+:global(.app.outpost) .rail.rail {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding: 20px;
+}
+:global(.app.outpost) .rail h2 {
+  margin: 0;
+  font: 800 19px/1.15 var(--font-display);
+}
+.contents {
+  display: grid;
+  width: 100%;
+  gap: 2px;
+}
+:global(.app.outpost) .contents a {
+  display: block;
+  padding: 6px 10px;
+  margin-inline: -10px;
+  border-radius: var(--radius-sm);
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+:global(.app.outpost) .contents a:hover {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.railNote {
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mobileToc {
+  display: none;
+}
+
+/* Reading column */
+.body {
+  display: grid;
+  gap: 48px;
+  min-width: 0;
+}
+.prose {
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose p {
+  margin: 0 0 18px;
+}
+.prose :is(h2, h3, h4) {
+  color: var(--text);
+  scroll-margin-top: 100px;
+  text-wrap: balance;
+}
+:global(.app.outpost) .prose h2 {
+  margin: 48px 0 16px;
+  font: 800 30px/1.1 var(--font-display);
+}
+:global(.app.outpost) .prose h3 {
+  margin: 32px 0 10px;
+  font: 650 18px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .prose h4 {
+  margin: 24px 0 8px;
+  font: 650 16px/1.4 var(--font-ui);
+}
+.prose strong,
+.prose b {
+  color: var(--text);
+}
+:global(.app.outpost) .prose a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.prose :is(ul, ol) {
+  margin: 0 0 18px;
+  padding-left: 22px;
+}
+.prose li {
+  margin: 6px 0;
+}
+.prose li::marker {
+  color: var(--accent);
+}
+.prose blockquote {
+  margin: 24px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--well-border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.prose :global(.guide-article-image) {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 28px 0;
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 0 1px var(--raised-edge),
+    0 14px 26px -18px #000b;
+}
+/* Item renders inline in the text sit in a small well */
+.prose :global(img[data-albion-icon]) {
+  vertical-align: middle;
+}
+.prose :global(.guide-table-scroll) {
+  max-width: 100%;
+  margin: 24px 0;
+  overflow: auto;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.prose :global(.guide-table-scroll):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+:global(.app.outpost) .prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .prose :is(th, td) {
+  min-width: 100px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--well-border);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+}
+:global(.app.outpost) .prose th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.prose tr:last-child > td {
+  border-bottom: 0;
+}
+.tool {
+  display: grid;
+  gap: 24px;
+}
+.tool > * {
+  margin-block: 0;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .rail.rail {
+    display: none;
+  }
+  .mobileToc {
+    display: block;
+    margin-bottom: 24px;
+  }
+  .mobileToc .contents {
+    padding-top: 4px;
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .page :global(.workspace-identity) {
+    min-height: 0;
+  }
+  .prose {
+    font-size: 15px;
+  }
+  :global(.app.outpost) .prose h2 {
+    margin-top: 40px;
+    font-size: 26px;
+  }
+  .body {
+    gap: 40px;
+  }
+}
+@media print {
+  .rail,
+  .mobileToc {
+    display: none;
+  }
+  .layout {
+    display: block;
+  }
+}

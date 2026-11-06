@@ -1,244 +1,355 @@
-.journal-checklist {
-  min-width: 0;
+/* Journal tracker (/guides/albion-journal-guide): a sticky progress rail beside the objectives
+   panel. Loaded by journal-checklist.tsx only. */
+.app.outpost .journal-tracker {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
 }
-.journal-source-details {
-  margin: 0 0 24px;
+.app.outpost .journal-rail {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  gap: var(--space-5);
+  padding: 20px;
+}
+
+/* The completed figure, in the landing's display numerals */
+.app.outpost .journal-progress {
+  display: grid;
+  gap: 6px;
+}
+.app.outpost .journal-progress-label,
+.app.outpost .journal-progress-note {
   color: var(--muted);
   font-size: 12px;
-  line-height: 1.7;
 }
-.journal-source-details summary {
+.app.outpost .journal-progress-figure {
+  color: var(--text);
+  font: 800 40px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .journal-progress-figure > span {
+  color: var(--muted);
+  font-size: 22px;
+}
+.app.outpost .journal-meter {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--well);
+  box-shadow: inset 0 1px 2px #0009;
+}
+.app.outpost .journal-meter > span {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+/* Categories: one row each with its own count and meter */
+.app.outpost .journal-categories {
+  display: grid;
+  gap: 2px;
+  margin-inline: -8px;
+}
+.app.outpost .journal-categories > button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--secondary);
+  font: 500 13px/1.3 var(--font-ui);
+  text-align: left;
   cursor: pointer;
 }
-.journal-source-details p {
-  max-width: 85ch;
-  margin: 12px 0 0;
+.app.outpost .journal-categories > button:hover {
+  color: var(--text);
+  background: var(--accent-wash);
 }
-.journal-introduction {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 24px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  background: var(--panel-face);
-  border-radius: 8px;
+.app.outpost .journal-categories > button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
 }
-.journal-introduction h2 {
-  font-size: 22px;
-  margin: 0 0 8px;
-  letter-spacing: -0.025em;
-}
-.journal-introduction p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.65;
-  margin: 0;
-  max-width: 65ch;
-}
-.journal-progress-count {
-  flex-shrink: 0;
-}
-.journal-progress-count strong {
-  display: block;
-  font: 500 26px/1.4 var(--font-data);
-  color: var(--accent);
-}
-.journal-progress-count strong span {
-  color: var(--muted);
-  font-size: 16px;
-}
-.journal-progress-count small {
-  color: var(--muted);
-  font-size: 11px;
-}
-.journal-toolbar {
-  display: flex;
-  align-items: end;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 24px 0 16px;
-}
-.journal-toolbar > label {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-.journal-toolbar > label:first-child {
-  flex: 1 1 300px;
-}
-.journal-toolbar > label > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.journal-toolbar .journal-hide-completed {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0;
-}
-.journal-hide-completed input {
-  width: 16px;
-  height: 16px;
-}
-.journal-objectives {
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  background: var(--panel-face);
+.app.outpost .journal-category-name {
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.journal-objective {
+.app.outpost .journal-category-count {
+  color: var(--muted);
+  font: 500 12px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .journal-categories .journal-meter {
+  grid-column: 1 / -1;
+  height: 3px;
+}
+.app.outpost .journal-backup {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) minmax(150px, 0.5fr);
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+  justify-items: start;
+  gap: var(--space-3);
 }
-.journal-objective:last-child {
-  border-bottom: 0;
-}
-.journal-objective strong {
+.app.outpost .journal-backup p {
+  margin: 0;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
-  font-weight: 600;
 }
-.journal-objective small {
-  display: block;
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 5px;
-}
-.journal-objective.complete strong {
-  text-decoration: line-through;
-  text-decoration-color: var(--muted);
-  color: var(--muted);
-}
-.journal-completion-control {
+.app.outpost .journal-import {
   display: grid;
-  place-items: center;
+  gap: 6px;
+  width: 100%;
+  color: var(--secondary);
+  font: 600 12px/1.35 var(--font-ui);
 }
-.journal-completion-control input {
-  width: 18px;
-  height: 18px;
+.app.outpost .journal-import input {
+  max-width: 100%;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Objectives panel */
+.app.outpost .journal-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+.app.outpost .journal-list > div:first-child {
+  margin: 0;
+}
+.app.outpost .journal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.app.outpost .journal-search {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+}
+.app.outpost .journal-search > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.app.outpost .journal-search > input {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--space-3) 0 38px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1.2 var(--font-ui);
+}
+.app.outpost .journal-category-select {
+  display: none;
+  margin: 0;
+}
+.app.outpost .journal-hide-completed {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-ui);
   cursor: pointer;
 }
-.journal-reward {
+.app.outpost .journal-hide-completed input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.app.outpost .journal-message {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Rows: a well each, the whole objective is the tick target */
+.app.outpost .journal-objectives {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+}
+.app.outpost .journal-objective {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+  align-items: center;
+  gap: 16px;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .journal-objective-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+/* The real checkbox covers the whole row, invisible, so the row is the tick target */
+.app.outpost .journal-objective-label > input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.app.outpost .journal-check {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid color-mix(in srgb, var(--accent) 45%, var(--well-border));
+  border-radius: 7px;
+  background: var(--panel);
+  color: transparent;
+}
+.app.outpost .journal-objective-label:hover .journal-check {
+  border-color: var(--accent);
+}
+.app.outpost .journal-objective-label > input:focus-visible + .journal-check {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.app.outpost .journal-objective-label > input:disabled ~ * {
+  cursor: progress;
+}
+.app.outpost .journal-objective.complete .journal-check {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+.app.outpost .journal-objective-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.app.outpost .journal-objective-copy strong {
+  overflow: hidden;
+  color: var(--text);
+  font: 600 14px/1.35 var(--font-ui);
+  text-overflow: ellipsis;
+}
+.app.outpost .journal-objective-copy small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .journal-objective.complete .journal-objective-copy strong {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.app.outpost .journal-reward {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--muted);
+  min-width: 0;
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.35;
 }
-.journal-reward img {
-  flex-shrink: 0;
+.app.outpost .journal-reward > :first-child {
+  flex: none;
+  width: 36px;
 }
-.journal-pagination {
+.app.outpost .journal-reward > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.outpost .journal-pagination {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 20px 0;
-}
-.journal-pagination > span {
-  font-size: 11px;
-  color: var(--muted);
-}
-.journal-backup {
-  margin-top: 24px;
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  font-size: 12px;
-}
-.journal-backup summary {
-  cursor: pointer;
-}
-.journal-backup p {
-  color: var(--muted);
-  line-height: 1.6;
-}
-.journal-backup > div {
-  display: flex;
-  align-items: end;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.journal-backup label {
-  display: grid;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 12px;
-  max-width: 100%;
-}
-.journal-backup input {
-  max-width: 100%;
-}
-.journal-message {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
-}
-.journal-empty {
-  padding: 32px 20px;
-  text-align: center;
-}
-.journal-empty h3 {
-  margin: 0 0 8px;
-}
-.journal-empty p {
+  justify-content: center;
+  gap: var(--space-3);
   color: var(--muted);
   font-size: 13px;
 }
+.app.outpost .journal-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (max-width: 980px) {
+  .app.outpost .journal-tracker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The rail shrinks to the progress figure and the backup; the category list becomes a select */
+  .app.outpost .journal-rail {
+    position: static;
+  }
+  .app.outpost .journal-categories {
+    display: none;
+  }
+  .app.outpost .journal-category-select {
+    display: block;
+    flex: 0 1 220px;
+  }
+}
 @media (max-width: 700px) {
-  .journal-introduction {
-    flex-direction: column;
-    align-items: start;
-    gap: 16px;
-    padding: 20px;
+  .app.outpost .journal-rail,
+  .app.outpost .journal-list {
+    padding: var(--space-4);
   }
-  .journal-progress-count strong {
-    font-size: 24px;
+  .app.outpost .journal-toolbar {
+    flex-wrap: wrap;
   }
-  .journal-toolbar {
-    gap: 12px;
-  }
-  .journal-toolbar > label:first-child {
+  .app.outpost .journal-search {
     flex-basis: 100%;
   }
-  .journal-toolbar > label:nth-child(2) {
-    flex: 1 1 150px;
+  .app.outpost .journal-category-select {
+    flex: 1 1 160px;
+    min-width: 0;
   }
-  .journal-objective {
-    grid-template-columns: 20px minmax(0, 1fr);
-    gap: 10px 12px;
-    padding: 14px;
+  .app.outpost .journal-objective {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 8px 12px 10px 8px;
   }
-  .journal-objective strong {
+  .app.outpost .journal-reward {
+    padding-left: 44px;
+  }
+  .app.outpost .journal-pagination {
+    justify-content: space-between;
+  }
+  .app.outpost .journal-pagination > span {
     font-size: 12px;
-  }
-  .journal-reward {
-    grid-column: 2;
-    font-size: 10px;
-  }
-  .journal-reward img {
-    width: 28px;
-    height: 28px;
-  }
-  .journal-pagination .button {
-    padding: 8px 10px;
-    min-height: 36px;
-    font-size: 11px;
-  }
-  .journal-pagination > span {
-    flex-basis: 100%;
-    order: 1;
-    text-align: center;
+    white-space: nowrap;
   }
 }

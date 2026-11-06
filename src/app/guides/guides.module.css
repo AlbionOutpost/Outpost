@@ -1,0 +1,176 @@
+/* Guides hub (/guides): the landing's guide stories, one search with topic pills, cover cards
+   three across, the tool notes panel and a closing row. Page width is the landing's measure. */
+.page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+}
+.section {
+  display: grid;
+  gap: 28px;
+  margin-top: 64px;
+}
+.section:first-of-type {
+  margin-top: 8px;
+}
+/* The landing's guide stories, with the topic chip in mixed case like every inner page */
+.carousel :global(.guides-carousel) small {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Search: topic pills over one search well, in a framed bar like the item database */
+:global(.app.outpost) .filters.filters {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+}
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .topics > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-ui);
+  text-decoration: none;
+}
+:global(.app.outpost) .topics > a:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .topics > a[aria-current="page"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.searchRow {
+  display: flex;
+  gap: var(--space-3);
+}
+.search {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+}
+.search > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+:global(.app.outpost) .search > input {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 var(--space-3) 0 38px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1.2 var(--font-ui);
+}
+:global(.app.outpost) .searchRow > button {
+  flex: none;
+  min-height: 44px;
+}
+
+/* Cover cards, three across like the landing's card rows */
+:global(.app.outpost) .grid.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* Notes on Outpost's tools: a working panel of four wells */
+:global(.app.outpost) .notes.notes {
+  padding: var(--space-6);
+}
+.noteList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.note {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  scroll-margin-top: 100px;
+}
+:global(.app.outpost) .note h3 {
+  margin: 0;
+  font: 650 16px/1.3 var(--font-ui);
+}
+.noteBody {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.noteBody p {
+  margin: 0;
+}
+:global(.app.outpost) .noteBody a {
+  color: var(--accent-ink);
+}
+
+@media (max-width: 1100px) {
+  :global(.app.outpost) .grid.grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .section {
+    gap: 20px;
+    margin-top: 48px;
+  }
+  :global(.app.outpost) .filters.filters,
+  :global(.app.outpost) .notes.notes {
+    padding: var(--space-4);
+  }
+  /* Topics scroll sideways with a fade on the cut edge instead of wrapping into four rows */
+  .topics {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--space-4) * -1);
+    padding-inline: var(--space-4);
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  }
+  :global(.app.outpost) .topics > a {
+    flex: none;
+    min-height: 40px;
+  }
+  :global(.app.outpost) .grid.grid,
+  .noteList {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .noteList {
+    gap: var(--space-3);
+  }
+  .note {
+    padding: 16px;
+  }
+}

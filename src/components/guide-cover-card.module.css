@@ -1,0 +1,69 @@
+/* Guide cover card, in the landing guide stories' chrome (guides-feature.module.css): the
+   base frame, scrim and hover come from `.guide-card` in product-system.css. */
+:global(.app.outpost) .card.card > a {
+  height: 340px;
+}
+.meta {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  left: 14px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.category {
+  min-width: 0;
+  overflow: hidden;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--illustration-bg) 90%, transparent);
+  color: #ffb482;
+  font: 700 12px/1.35 var(--font-ui);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.time {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid #ffffff35;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--illustration-bg) 85%, transparent);
+  color: #f4f2ee;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+:global(.app.outpost) .copy.copy {
+  gap: 8px;
+  padding: 96px 20px 20px;
+}
+:global(.app.outpost) .copy.copy h3 {
+  overflow: hidden;
+  font-size: 24px;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px #000c;
+}
+:global(.app.outpost) .card.card > a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 5px;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .card.card > a {
+    height: 280px;
+  }
+  :global(.app.outpost) .copy.copy {
+    padding: 72px 18px 18px;
+  }
+  :global(.app.outpost) .copy.copy h3 {
+    font-size: 22px;
+  }
+}
