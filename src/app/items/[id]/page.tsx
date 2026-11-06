@@ -23,6 +23,8 @@ import { buildDiscovery } from "@/lib/build-discovery";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import Link from "@/components/build-region-link";
 import "@/components/economy-workspaces.css";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList } from "@/lib/structured-data";
 
 /** Every tier and enchantment this item id could take; the catalog decides which exist. */
 function variantIds(id: string) {
@@ -117,6 +119,13 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
     );
   return (
     <div className="item-reference-page">
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Items", path: "/items" },
+          { name: item.name, path: `/items/${encodeURIComponent(id)}` },
+        ])}
+      />
       <WorkspaceHeading
         scene="market"
         emblem={<ItemIcon id={id} size={56} />}

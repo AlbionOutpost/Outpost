@@ -6,6 +6,8 @@ import { BookOpen, Coins, Swords } from "lucide-react";
 import { GuideDirectory } from "@/components/guide-directory";
 import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
+import { JsonLd } from "@/components/json-ld";
+import { itemListLd } from "@/lib/structured-data";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/guides", await searchParams);
@@ -43,6 +45,15 @@ export default async function Guides({
           ]}
         />
       </WorkspaceHeading>
+      <JsonLd
+        data={itemListLd(
+          "Albion Online guides",
+          (await libraryGuides()).map((g) => ({
+            name: g.title,
+            path: `/guides/${encodeURIComponent(g.slug)}`,
+          })),
+        )}
+      />
       <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
       <AdSlot placement="hub" />
       <div className="section-heading outpost-guide-heading">

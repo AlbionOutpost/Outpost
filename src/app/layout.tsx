@@ -6,8 +6,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regionSchema } from "@/lib/albion/region-config";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Shell } from "@/components/shell";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList, crumbsForPath, siteGraph } from "@/lib/structured-data";
 import { inter, barlowCondensed, barlowDisplay, geistMono } from "./fonts";
 import "./globals.css";
 import "./workspace.css";
@@ -42,6 +44,7 @@ import "./product-support.css";
 import "./editor-workspaces.css";
 import "./workspace-refresh.css";
 export const metadata: Metadata = rootMetadata();
+export const viewport: Viewport = { themeColor: "#101014", colorScheme: "dark light" };
 export default async function Layout({ children }: { children: React.ReactNode }) {
   await connection();
   const jar = await cookies();
@@ -52,6 +55,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
         select: { region: true, name: true, image: true, role: true },
       })
     : null;
+  const path = (await headers()).get("x-outpost-path") ?? "";
+  const crumbs = crumbsForPath(path);
   const initialRegion = regionSchema
     .catch("europe")
     .parse(
@@ -77,6 +82,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
         >
           {children}
         </Shell>
+        {path === "/" && <JsonLd data={siteGraph()} />}
+        {crumbs && <JsonLd data={breadcrumbList(crumbs)} />}
       </body>
     </html>
   );

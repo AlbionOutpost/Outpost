@@ -33,8 +33,7 @@ export default async function Signin({
           <ShieldCheck size={40} />
         </div>
         <h1>
-          Make yourself
-          <br />
+          Make yourself <br />
           <span>at home in Outpost.</span>
         </h1>
         <p>Keep your loadouts close and your team ready for the next run.</p>

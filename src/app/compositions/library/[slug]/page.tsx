@@ -8,6 +8,8 @@ import { LibraryGroupWorkspace } from "@/components/library-group-workspace";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { HeartChip } from "@/components/heart-chip";
 import { ArrowLeft } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList } from "@/lib/structured-data";
 export async function generateMetadata({
   params,
   searchParams,
@@ -37,6 +39,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   );
   return (
     <div className="library-page group-build-detail">
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Group build library", path: "/compositions/library" },
+          {
+            name: composition.title,
+            path: `/compositions/library/${encodeURIComponent(composition.slug)}`,
+          },
+        ])}
+      />
       <WorkspaceHeading
         glyph="composition"
         scene="comps"

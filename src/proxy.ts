@@ -17,6 +17,7 @@ export function proxy(request: NextRequest) {
   ].join("; ");
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
+  headers.set("x-outpost-path", request.nextUrl.pathname);
   headers.set("Content-Security-Policy", policy);
   // The shell renders on the server with the region the URL asks for (it no longer reads the
   // query string itself, which forced the whole page to wait for JavaScript).

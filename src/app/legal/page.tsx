@@ -25,6 +25,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
         ? "Betreiberangaben, Datenschutz, Nutzungsregeln und Zahlungshinweise für Outpost. Entwurf mit gekennzeichneten offenen Angaben."
         : "Outpost operator information, privacy, terms and payment details. A draft with clearly marked information still to be completed.",
     robots: { index: false, follow: true },
+    // The page serves English and German from ?lang; declared so the pair is understood once indexing is enabled.
+    alternates: {
+      languages: { en: "/legal?lang=en", de: "/legal?lang=de", "x-default": "/legal" },
+    },
   };
 }
 export default async function Legal({ searchParams }: Props) {

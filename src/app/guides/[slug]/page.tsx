@@ -13,6 +13,25 @@ import { ItemIcon } from "@/components/item-icon";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { readingMinutes } from "@/components/guide-cover-card";
 import { ArrowLeft } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
+import { articleLd, breadcrumbList } from "@/lib/structured-data";
+const guideLd = (guide: {
+  title: string;
+  slug: string;
+  summary: string;
+  author: string;
+  updatedAt: string;
+}) => {
+  const path = `/guides/${encodeURIComponent(guide.slug)}`;
+  return [
+    articleLd({ ...guide, description: guide.summary, path }),
+    breadcrumbList([
+      { name: "Home", path: "/" },
+      { name: "Guides", path: "/guides" },
+      { name: guide.title, path },
+    ]),
+  ];
+};
 export async function generateMetadata({
   params,
   searchParams,
@@ -28,6 +47,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (guide.slug === "albion-journal-guide")
     return (
       <div className="journal-guide-page support-guide-article">
+        {guideLd(guide).map((data, i) => (
+          <JsonLd data={data} key={i} />
+        ))}
         <WorkspaceHeading
           glyph="reference"
           scene="guides"
@@ -52,6 +74,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     );
   return (
     <div className="grind-guide-article support-guide-article">
+      {guideLd(guide).map((data, i) => (
+        <JsonLd data={data} key={i} />
+      ))}
       <WorkspaceHeading
         scene="guides"
         cover={guide.cover?.src}

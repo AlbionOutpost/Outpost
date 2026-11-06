@@ -105,8 +105,7 @@ export default async function Home({
             <div className="landing-hero-copy">
               <p className="landing-eyebrow">Independent Albion Online tools</p>
               <h1 id="home-title">
-                Your Albion
-                <br />
+                Your Albion <br />
                 <em>advantage.</em>
               </h1>
               <p className="landing-lede">

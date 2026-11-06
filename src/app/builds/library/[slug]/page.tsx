@@ -21,6 +21,8 @@ import { BuildCompositionLink } from "@/components/build-composition-link";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
 import { LibraryBuildCard } from "@/components/library-build-card";
 import { BuildShareControls } from "@/components/build-share-controls";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList } from "@/lib/structured-data";
 import { brandCopy } from "@/lib/brand-copy";
 export async function generateMetadata({
   params,
@@ -78,6 +80,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     : [];
   return (
     <div className="build-detail-page library-build-detail build-detail-redesign">
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Build library", path: "/builds/library" },
+          { name: build.title, path: `/builds/library/${encodeURIComponent(build.slug)}` },
+        ])}
+      />
       <BuildDetailHeader
         title={build.title}
         description={brandCopy(build.description)}
