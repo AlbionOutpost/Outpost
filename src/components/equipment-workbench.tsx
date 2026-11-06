@@ -231,7 +231,7 @@ export function EquipmentWorkbench({
           >
             {[0, 1, 2, 3, 4].map((t) => (
               <option key={t} value={t}>
-                {t ? `Enchant .${t}` : "Flat .0"}
+                {t ? `@${t}` : "Flat"}
               </option>
             ))}
           </WellSelect>

@@ -552,7 +552,7 @@ export function BuildEquipmentStudio({
                       .filter((e) => !!findEquipment(equipmentId(found.family, found.tier, e)))
                       .map((e) => (
                         <option key={e} value={e}>
-                          {e ? `Enchant .${e}` : "Flat .0"}
+                          {e ? `@${e}` : "Flat"}
                         </option>
                       ))}
                   </WellSelect>
@@ -775,7 +775,7 @@ export function BuildEquipmentStudio({
                 >
                   {[0, 1, 2, 3, 4].map((e) => (
                     <option key={e} value={e}>
-                      {e ? `Enchant .${e}` : "Flat .0"}
+                      {e ? `@${e}` : "Flat"}
                     </option>
                   ))}
                 </WellSelect>
