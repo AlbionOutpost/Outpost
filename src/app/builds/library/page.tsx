@@ -59,6 +59,7 @@ export default async function Library({
       <BuildDiscoveryHeader
         active={view === "saved" ? "saved" : "browse"}
         title="Build Library"
+        accent="Library"
         description="Find a loadout by weapon, activity or author. Copy it and make it yours."
       />
       {view === "saved" ? (
@@ -216,7 +217,6 @@ export default async function Library({
             </div>
             {!rows.length && (
               <EmptyWell
-                emblem="strip-builds"
                 title="No loadouts match that search"
                 line="Try another weapon, activity or playstyle, or remove a filter above."
                 action={
@@ -251,7 +251,15 @@ export default async function Library({
           </section>
         </div>
       )}
-      <BuildsNextStep />
+      <BuildsNextStep
+        title={
+          <>
+            Make <em>your</em> version
+          </>
+        }
+        line="Start from any of these loadouts, swap the pieces you want and keep it on your account."
+        secondary={{ href: "/builds", label: "Community builds" }}
+      />
     </div>
   );
 }

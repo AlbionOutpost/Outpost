@@ -312,7 +312,6 @@ export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
         </>
       ) : (
         <EmptyWell
-          emblem="strip-builds"
           title="No library builds saved yet"
           line="Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
           action={

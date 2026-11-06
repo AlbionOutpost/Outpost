@@ -1565,6 +1565,11 @@
     margin: 64px 0 48px;
     padding: 20px 16px;
   }
+  /* Actions stack under the copy, full width */
+  .app.outpost .builds-next-step :has(> .button.primary) {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
   .app.outpost .builds-next-step .button {
     flex: 1 1 auto;
     justify-content: center;

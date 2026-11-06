@@ -116,15 +116,24 @@ test("equipment discovery preserves filters, private boundaries and saved favori
         .getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true })
         .click();
       await expect(
-        card.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
+        card.getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        }),
       ).toHaveAttribute("aria-pressed", "true");
       await page.reload();
       await expect(
-        page.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
+        page.getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        }),
       ).toHaveAttribute("aria-pressed", "true");
       expect(await db.buildFavorite.count({ where: { userId: id, buildId: ids[0] } })).toBe(1);
       await page
-        .getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true })
+        .getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        })
         .click();
       await expect(
         page.getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true }),

@@ -45,6 +45,7 @@ export default function Activities() {
       <BuildDiscoveryHeader
         active="activities"
         title="Choose your activity"
+        accent="activity"
         description="Pick the content you play and open the builds players use for it."
       />
       <section aria-label="Build activities" className={styles.sections}>

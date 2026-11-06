@@ -97,7 +97,8 @@ export default async function Favorites({
     >
       <BuildDiscoveryHeader
         active="favorites"
-        title="Favorites"
+        title="Your favorites"
+        accent="favorites"
         description="The builds and comps you saved to come back to."
       />
       <div className="favorites-sections">
@@ -222,7 +223,6 @@ export default async function Favorites({
                 )}
                 {!builds.length && (
                   <EmptyWell
-                    emblem="strip-builds"
                     title={
                       q ? "No favorite builds match this search" : "No player builds saved yet"
                     }
@@ -276,7 +276,6 @@ export default async function Favorites({
                   </div>
                 ) : (
                   <EmptyWell
-                    emblem="strip-comps"
                     title="No comps saved yet"
                     line="Add a comp to your favorites to keep it for your next group session."
                     action={
@@ -297,7 +296,15 @@ export default async function Favorites({
           )}
         </section>
       </div>
-      <BuildsNextStep />
+      <BuildsNextStep
+        title={
+          <>
+            Make one <em>yours</em>
+          </>
+        }
+        line="Open a saved build, copy it into the editor and change the pieces you want."
+        secondary={{ href: "/builds/library", label: "Build library" }}
+      />
     </div>
   );
 }

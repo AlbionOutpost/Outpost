@@ -16,11 +16,14 @@ export function BuildDiscoveryHeader({
   active = "browse",
   source = "library",
   title,
+  accent,
   description,
 }: {
   active?: "browse" | "activities" | "mine" | "favorites" | "saved";
   source?: "library" | "community";
   title?: string;
+  /** One word of the title in ember, as on the landing. */
+  accent?: string;
   description?: string;
 }) {
   const current = (id: string) => (active === "browse" ? source === id : active === id);
@@ -29,6 +32,7 @@ export function BuildDiscoveryHeader({
       glyph="builds"
       scene="builds"
       title={title || "Albion Online Builds"}
+      accent={accent}
       description={
         description ||
         "Find your next playstyle. Explore equipment, abilities and alternatives for every adventure."

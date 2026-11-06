@@ -73,6 +73,7 @@ export default async function Builds({
         active={mine ? "mine" : "browse"}
         source="community"
         title={mine ? "My Builds" : "Community builds"}
+        accent={mine ? "Builds" : "Community"}
         description={
           mine
             ? "Your loadouts and their revisions. Private builds stay visible only to you."
@@ -82,7 +83,6 @@ export default async function Builds({
       {mine && !session?.user?.id ? (
         <div className="build-signin-well">
           <EmptyWell
-            emblem="strip-builds"
             title="Sign in to see your builds"
             line="Builds you create are kept on your Discord account. Device favourites work without signing in."
             action={
@@ -244,7 +244,6 @@ export default async function Builds({
             </div>
             {!builds.length && (
               <EmptyWell
-                emblem="strip-builds"
                 title={
                   filtered
                     ? "No matching loadouts"
@@ -318,7 +317,27 @@ export default async function Builds({
           </section>
         </div>
       )}
-      <BuildsNextStep />
+      {mine ? (
+        <BuildsNextStep
+          title={
+            <>
+              Plan the <em>next</em> one
+            </>
+          }
+          line="Start from an empty board or a library build, then put it in a comp for your Team."
+          secondary={{ href: "/compositions", label: "Plan a comp" }}
+        />
+      ) : (
+        <BuildsNextStep
+          title={
+            <>
+              Publish <em>your</em> build
+            </>
+          }
+          line="Set a build to Public in the editor and it shows here for every player on your server."
+          secondary={{ href: "/builds/library", label: "Build library" }}
+        />
+      )}
     </div>
   );
 }
