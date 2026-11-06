@@ -16,6 +16,12 @@ Evaluated on 6 November 2026; the review table is at the end.
 | Next.js docs in `node_modules/next/dist/docs`                                  | Next 16 APIs: exact installed version                                        | —                                                                        |
 | Session MCP: GitHub, Cloudflare (`Cloudflare__*`), Claude Docs                 | PRs/CI; Cloudflare docs and account reads                                    | Settings changes the owner hasn't asked for                              |
 
+Reverse engineering: the `reverse-engineer-anything` skill drives the REA MCP server. It is not
+preinstalled (cloud sessions start fresh); run `sudo bash scripts/setup-rea.sh` once in the session that
+needs it (REA 6.8.0, Ghidra 12.1.4 checked against a pinned SHA-256, JDK 21; about 1.2 GB, needs the
+GitHub release hosts allowed). Use it only on artifacts we are allowed to inspect, never on the Albion
+Online client or servers.
+
 Built-in commands worth knowing: `/context` (what fills the window), `/cost`, `/skills` and
 `/skill-doctor` (context cost per skill), `/doctor`, `/advisor`, `/output-style`, `/compact`.
 

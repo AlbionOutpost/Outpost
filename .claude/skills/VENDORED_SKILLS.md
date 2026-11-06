@@ -19,8 +19,8 @@ Notes:
 - `stop-slop` and `humanizer` are checklists for UI and marketing copy, not hard rules: UI labels may be terse, and German legal pages (`src/app/legal`) must not be rewritten by them.
 
 - `better-typography` gives Tailwind equivalents; Outpost uses plain CSS and DESIGN.md's type scale.
-- `reverse-engineer-anything` is instructions only. Its REA MCP server and analysis engines are not
-  installed (owner decision needed). Never point it at the Albion Online client or servers: that
+- `reverse-engineer-anything` is instructions only. Its REA MCP server and Ghidra are installed on
+  demand with `scripts/setup-rea.sh`. Never point it at the Albion Online client or servers: that
   conflicts with the game's terms and with DATA.md.
 - Not vendored: Cloudflare `nextjs-on-cloudflare` (steers work to vinext; Outpost runs on OpenNext).
 
