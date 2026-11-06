@@ -2,26 +2,46 @@ import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { OpportunityScanner } from "@/components/opportunity-scanner";
 import { TradeCalculator } from "@/components/trade-calculator";
+import { SectionHeading } from "@/components/section-heading";
+import { CalculatorCta } from "@/components/calculator-cta";
+import styles from "@/app/production-calculator.module.css";
+import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/flipping", await searchParams);
 }
 export default function Page() {
   return (
-    <div className="trade-calculator-page">
+    <div className={`${styles.page} ${c.flipping}`}>
       <WorkspaceHeading
         glyph="trade"
         scene="market"
         title="Market flipping"
-        description="Scan a route for items worth hauling, then check one trade's net return with your own prices and fees."
+        accent="flipping"
+        description="Scan a route for items that sell for more in the other city, then check one trade with your own prices and fees."
       />
       <OpportunityScanner />
-      <section className="flip-manual-trade" aria-labelledby="flip-manual-heading">
-        <h2 id="flip-manual-heading">Check one trade by hand</h2>
-        <p className="muted">
-          Enter the prices you expect to pay and receive. Nothing here is loaded from the market.
-        </p>
+      <section className={c.handCheck} aria-labelledby="flip-manual-heading">
+        <SectionHeading
+          id="flip-manual-heading"
+          title={
+            <>
+              Check one trade by <em>hand</em>
+            </>
+          }
+          line="Type what you expect to pay and get. Nothing here loads from the market."
+        />
         <TradeCalculator />
       </section>
+      <CalculatorCta
+        title={
+          <>
+            Found a flip worth <em>hauling</em>?
+          </>
+        }
+        line="Weigh the cargo against your mount, count the trips and set aside silver for the risk."
+        primary={{ href: "/tools/transporting", label: "Plan the haul" }}
+        secondary={{ href: "/tools/market", label: "Market Explorer" }}
+      />
     </div>
   );
 }

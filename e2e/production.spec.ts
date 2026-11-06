@@ -206,14 +206,16 @@ test("laborer execution changes never reuse listing observations after a failed 
   await page.goto("/tools/laborers?region=europe");
   const execution = page.locator("label").filter({ hasText: "Sell loot by" }).locator("select");
   await execution.selectOption("listing");
-  await expectResultText(page.locator(".tool-main-result"), "15,294 silver", { exact: true });
-  await expect(page.getByText("All prices in place", { exact: true })).toBeVisible();
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,294", {
+    exact: true,
+  });
+  // Every price is in: no checklist of missing prices.
+  await expect(page.locator('[data-result="readiness"]')).toHaveCount(0);
   await execution.selectOption("instant");
   await expect(page.getByText("Fixture: buy orders unavailable", { exact: true })).toBeVisible();
-  await expect(page.getByText("All prices in place", { exact: true })).toHaveCount(0);
-  await expectResultText(page.locator(".tool-main-result"), "15,724", { not: true });
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,724", { not: true });
   await expect(page.getByLabel("T4_METALBAR unit price", { exact: true })).toHaveValue("");
-  await expect(page.getByText("Estimate is incomplete", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Loot prices");
   await page.getByLabel("T4_METALBAR unit price", { exact: true }).fill("900");
   await page.getByRole("button", { name: "Refresh market prices", exact: true }).click();
   await expect(page.getByText("Fixture: buy orders unavailable", { exact: true })).toBeVisible();

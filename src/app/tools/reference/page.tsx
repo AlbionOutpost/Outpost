@@ -1,80 +1,146 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { PanelHead } from "@/components/panel-head";
+import { ReferenceJump } from "@/components/reference-jump";
+import { CalculatorCta } from "@/components/calculator-cta";
+import { cities } from "@/lib/albion/region-config";
 import referenceTables from "@/lib/albion/game/reference-tables.json" with { type: "json" };
-import "@/app/tool-workspace.css";
+import styles from "@/app/production-calculator.module.css";
+import r from "./reference.module.css";
 type Table = { heading: string | null; header: string[]; rows: string[][] };
 const tables = referenceTables as { slug: string; title: string; tables: Table[] }[];
-const numeric = /^[\d.,%\s–-]+(kg|%)?$/;
+const numeric = /^[\d.,%\s–+-]+(kg|%)?$/;
+const cityNames = new Set<string>(cities);
+/** "Two Handed Weapon" → "Two-handed weapon"; city names keep their capitals. */
+function sentence(text: string) {
+  const kept: string[] = [];
+  let out = text
+    .replace(/(F|f)avorite/g, "$1avourite")
+    .replace(/\b(One|Two) Handed\b/g, "$1-handed");
+  for (const city of cityNames)
+    out = out.replaceAll(city, () => `\u0000${kept.push(city) - 1}\u0000`);
+  out = out.replace(/ ([A-Z])(?=[a-z])/g, (_, first: string) => ` ${first.toLowerCase()}`);
+  return out.replace(/\u0000(\d+)\u0000/g, (_, i: string) => kept[Number(i)]);
+}
+function Cell({ value }: { value: string }) {
+  if (!value) return <span className={r.none}>None</span>;
+  if (cityNames.has(value))
+    return (
+      <span className={r.city}>
+        <span className="city-dot" data-city={value} aria-hidden="true" />
+        {value}
+      </span>
+    );
+  return <>{value}</>;
+}
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/reference", await searchParams);
 }
 export default function Page() {
   return (
-    <>
+    <div className={styles.page}>
       <WorkspaceHeading
         glyph="reference"
         scene="economy"
         title="Reference tables"
-        description="City bonuses, laborer happiness, crafting fame, mounts, islands, banks and attunement traits."
+        accent="Reference"
+        description="City bonuses, laborer happiness, crafting fame, mounts, islands, banks and attunement traits in one place."
       />
-      <nav className="reference-index" aria-label="Reference tables">
-        {tables.map((t) => (
-          <a key={t.slug} href={`#${t.slug}`}>
-            {t.title}
-          </a>
-        ))}
-      </nav>
-      <p className="muted reference-note">
-        Game reference data captured 27 Oct 2026. Values can change with a patch; confirm in game
-        before large investments.
-      </p>
-      <div className="reference-sections">
-        {tables.map((t) => (
-          <section key={t.slug} id={t.slug} className="panel" aria-labelledby={`${t.slug}-title`}>
-            <h2 id={`${t.slug}-title`}>{t.title}</h2>
-            {t.tables.map((table, index) => (
-              <div key={index} className="reference-block">
-                {table.heading && t.tables.length > 1 && <h3>{table.heading}</h3>}
-                <div
-                  className="table-scroll"
-                  tabIndex={0}
-                  role="region"
-                  aria-label={table.heading ?? t.title}
-                >
-                  <table className="tool-table">
-                    <thead>
-                      <tr>
-                        {table.header.map((cell, i) => (
-                          <th key={i} scope="col">
-                            {cell}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {table.rows.map((row, r) => (
-                        <tr key={r}>
-                          {row.map((cell, c) =>
-                            c === 0 ? (
-                              <th key={c} scope="row">
-                                {cell}
-                              </th>
-                            ) : (
-                              <td key={c} className={numeric.test(cell) ? "numeric" : undefined}>
-                                {cell || "—"}
-                              </td>
-                            ),
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+      <div className={r.layout}>
+        <nav className={`panel ${r.rail}`} aria-label="Reference tables">
+          <PanelHead title="Tables" line="Captured from the game on 27 Oct 2026." as="h2" />
+          <ReferenceJump className={r.jump} sections={tables} />
+          <ul className={r.index}>
+            {tables.map((t) => (
+              <li key={t.slug}>
+                <a href={`#${t.slug}`}>{sentence(t.title)}</a>
+              </li>
             ))}
-          </section>
-        ))}
+          </ul>
+        </nav>
+        <div className={r.sections}>
+          {tables.map((t) => (
+            <section
+              key={t.slug}
+              id={t.slug}
+              tabIndex={-1}
+              className={`panel ${r.section}`}
+              aria-labelledby={`${t.slug}-title`}
+            >
+              <PanelHead
+                id={`${t.slug}-title`}
+                title={sentence(t.title)}
+                line={
+                  t.tables.length > 1
+                    ? `${t.tables.length} tables`
+                    : `${t.tables[0].rows.length} ${t.tables[0].rows.length === 1 ? "row" : "rows"}`
+                }
+              />
+              {t.tables.map((table, index) => (
+                <div key={index} className={r.block}>
+                  {table.heading && t.tables.length > 1 && <h3>{sentence(table.heading)}</h3>}
+                  <div
+                    className={r.scroll}
+                    tabIndex={0}
+                    role="region"
+                    aria-label={table.heading ?? t.title}
+                  >
+                    <table className={r.table}>
+                      <thead>
+                        <tr>
+                          {table.header.map((cell, i) => (
+                            <th
+                              key={i}
+                              scope="col"
+                              className={
+                                i > 0 && table.rows.every((row) => !row[i] || numeric.test(row[i]))
+                                  ? r.numeric
+                                  : undefined
+                              }
+                            >
+                              {cell ? sentence(cell) : <span className="sr-only">Type</span>}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {table.rows.map((row, ri) => (
+                          <tr key={ri}>
+                            {row.map((cell, c) =>
+                              c === 0 ? (
+                                <th key={c} scope="row">
+                                  <Cell value={cell} />
+                                </th>
+                              ) : (
+                                <td key={c} className={numeric.test(cell) ? r.numeric : undefined}>
+                                  <Cell value={cell} />
+                                </td>
+                              ),
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </section>
+          ))}
+          <p className={styles.help}>
+            Values change with patches. Check in game before a big investment.
+          </p>
+        </div>
       </div>
-    </>
+      <CalculatorCta
+        title={
+          <>
+            Put the bonuses to <em>work</em>
+          </>
+        }
+        line="Pick the city with the right bonus in the crafting or refining calculator and see what the run makes."
+        primary={{ href: "/tools/crafting", label: "Open the crafting calculator" }}
+        secondary={{ href: "/tools/refining", label: "Refining" }}
+      />
+    </div>
   );
 }

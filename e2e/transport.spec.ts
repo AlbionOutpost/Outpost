@@ -41,13 +41,19 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
       ["Transport listing fee (%)", "2.5"],
     ])
       await page.getByLabel(label, { exact: true }).fill(value);
-    await expectResultText(page.locator(".panel.result > strong"), "292.5", { exact: true });
+    await expectResultText(page.locator('[data-result="transport-profit"]'), "292.5", {
+      exact: true,
+    });
     await page.getByLabel("Sale execution", { exact: true }).selectOption("instant");
-    await expectResultText(page.locator(".panel.result > strong"), "330", { exact: true });
+    await expectResultText(page.locator('[data-result="transport-profit"]'), "330", {
+      exact: true,
+    });
     await expect(page.getByLabel("Transport listing fee (%)", { exact: true })).toBeDisabled();
     await page.getByLabel("Sale execution", { exact: true }).selectOption("listing");
     await page.getByLabel("Available cargo capacity (kg)", { exact: true }).fill("0");
-    await expect(page.locator(".transport-route-profit")).toContainText("positive capacity");
+    await expect(page.locator("#transport-result [role=alert]")).toContainText(
+      "capacity above zero",
+    );
     await page.getByLabel("Available cargo capacity (kg)", { exact: true }).fill("100");
     await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByLabel("Transport plan title", { exact: true }).fill("Verified cargo run");
@@ -59,11 +65,18 @@ test("transport arithmetic and saved plans persist with explicit price provenanc
     await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByRole("button", { name: "Load transport plans", exact: true }).click();
     await page.getByRole("button", { name: "Restore Verified cargo run", exact: true }).click();
-    await expectResultText(page.locator(".panel.result > strong"), "292.5", { exact: true });
+    await expectResultText(page.locator('[data-result="transport-profit"]'), "292.5", {
+      exact: true,
+    });
     await page.setViewportSize({ width: 375, height: 812 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
+    // Phones show one step at a time; saved plans sit with the result.
+    await page
+      .getByRole("navigation", { name: "Transport workflow" })
+      .getByRole("button", { name: /Review profit/ })
+      .click();
     await page.screenshot({ path: ".qa/screenshots/transport-375.png", fullPage: true });
     await page.getByRole("button", { name: "Delete Verified cargo run", exact: true }).click();
     await expect(page.getByText("Transport plan deleted.", { exact: true })).toBeVisible();

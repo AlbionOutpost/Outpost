@@ -111,11 +111,11 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await page.goto("/tools/flipping");
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
-  const result = page.locator(".manual-trade-workspace .result");
-  await expectResultText(result.locator(":scope > strong"), "0.5");
+  const result = page.locator('[data-result="trade-profit"]');
+  await expectResultText(result, "0.5");
   await page.getByLabel("Purchase price per item").fill("");
-  await expect(result.locator(".calculation-readiness")).toContainText("Purchase price per item");
-  await expect(result.locator(":scope > strong")).toHaveText("— silver");
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
+  await expect(result).toHaveText("—");
   await expect(page.getByRole("button", { name: "Export scenario", exact: true })).toBeDisabled();
   expect(errors).toEqual([]);
 });
@@ -165,7 +165,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expectResultText(page.locator(".result strong"), "500");
+  await expectResultText(page.locator('[data-result="trade-profit"]'), "500");
   await page.goBack();
   await expect(page.getByRole("heading", { name: "Market Explorer" })).toBeVisible();
 });
