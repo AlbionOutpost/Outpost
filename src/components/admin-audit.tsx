@@ -1,3 +1,17 @@
+import { EmptyWell } from "@/components/empty-well";
+
+const label = (action: string) => {
+  const text = action.replaceAll("-", " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+const when = (value: Date | string) =>
+  new Date(value).toLocaleString("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }) + " UTC";
+
+/** Every recorded change as a well: what was done, the reason given, who and to whom, and when. */
 export function AdminAuditRows({
   rows,
 }: {
@@ -13,31 +27,34 @@ export function AdminAuditRows({
   return rows.length ? (
     <ol className="admin-audit-list">
       {rows.map((row) => (
-        <li key={row.id}>
-          <div>
-            <strong>{row.action.replaceAll("-", " ")}</strong>
-            <time dateTime={new Date(row.createdAt).toISOString()}>
-              {new Date(row.createdAt).toLocaleString("en-GB", {
-                dateStyle: "medium",
-                timeStyle: "short",
-                timeZone: "UTC",
-              })}{" "}
-              UTC
-            </time>
+        <li key={row.id} className="well">
+          <div className="admin-audit-head">
+            <strong>{label(row.action)}</strong>
+            <time dateTime={new Date(row.createdAt).toISOString()}>{when(row.createdAt)}</time>
           </div>
           <p>{row.reason}</p>
-          <small>
-            Actor <code>{row.actorId}</code> · Target <code>{row.targetId}</code>
-          </small>
+          <dl>
+            <div>
+              <dt>Actor</dt>
+              <dd>
+                <code>{row.actorId}</code>
+              </dd>
+            </div>
+            <div>
+              <dt>Target</dt>
+              <dd>
+                <code>{row.targetId}</code>
+              </dd>
+            </div>
+          </dl>
         </li>
       ))}
     </ol>
   ) : (
-    <div className="admin-empty">
-      <h3>No administrative changes yet</h3>
-      <p>
-        Premium grants, bans and session revocations will appear here with their actor and reason.
-      </p>
-    </div>
+    <EmptyWell
+      emblem="team-calendar"
+      title="No administrative changes yet"
+      line="Supporter gifts, bans and session revocations appear here with who made them and why."
+    />
   );
 }

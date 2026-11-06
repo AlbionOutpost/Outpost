@@ -1,10 +1,21 @@
 import Link from "@/components/link";
-import { Search, ArrowUpRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { adminPageActor } from "@/lib/admin/page-access";
 import { adminUsers } from "@/lib/admin/queries";
 import { isSupporter } from "@/lib/billing/plan";
 import { accountBanned } from "@/lib/admin/policy";
 import { AdminDiscordBan } from "@/components/admin-user-actions";
+import { AdminFrame } from "@/components/admin-frame";
+import { AdminChip, roleLabel } from "@/components/admin-chip";
+import { PanelHead } from "@/components/panel-head";
+import { EmptyWell } from "@/components/empty-well";
+import { NextStepCards } from "@/components/next-step-cards";
+const filters = [
+  ["all", "All accounts"],
+  ["supporters", "Supporters"],
+  ["review", "Needs review"],
+  ["banned", "Banned"],
+] as const;
 export default async function AdminUsersPage({
   searchParams,
 }: {
@@ -18,127 +29,165 @@ export default async function AdminUsersPage({
   });
   const url = (page: number, filter = data.query.filter) =>
     "/admin/users?" + new URLSearchParams({ q: data.query.q, filter, page: String(page) });
+  const date = (d: Date | string) =>
+    new Date(d).toLocaleDateString("en-GB", { timeZone: "UTC", dateStyle: "medium" });
   return (
-    <>
-      <header className="admin-heading">
-        <div>
-          <h1>Users & access</h1>
-          <p>Find an account, review its history and manage access deliberately.</p>
-        </div>
-        <AdminDiscordBan />
-      </header>
-      <section className="admin-surface">
-        <form className="admin-search" method="get">
-          <label htmlFor="admin-search">
-            <Search size={18} />
+    <AdminFrame
+      title="Users & access"
+      accent="access"
+      description="Find an account, review its history and change access with a recorded reason."
+      emblem="team-roles"
+      actions={<AdminDiscordBan />}
+      closing={
+        <NextStepCards
+          id="admin-next"
+          title={
+            <>
+              After the <em>lookup</em>
+            </>
+          }
+          line="Check signals, work the report queue or read what other admins changed."
+          cards={[
+            {
+              href: "/admin/review",
+              emblem: "trophy-silver",
+              title: "Account review",
+              line: "Accounts with unusual sessions, posting or reports.",
+            },
+            {
+              href: "/admin/reports",
+              emblem: "strip-content",
+              title: "Content reports",
+              line: "Builds, comps and comments players flagged.",
+            },
+            {
+              href: "/admin/audit",
+              emblem: "team-calendar",
+              title: "Audit trail",
+              line: "Every gift, ban and session change with its reason.",
+            },
+          ]}
+        />
+      }
+    >
+      <section className="panel" aria-labelledby="admin-accounts">
+        <PanelHead
+          id="admin-accounts"
+          title={
+            <>
+              Matching <em>accounts</em>
+            </>
+          }
+          line={`${data.total.toLocaleString("en-GB")} found, 20 to a page.`}
+        />
+        <form className="admin-search" method="get" role="search">
+          <label htmlFor="admin-search" className="admin-search-field">
+            <Search size={16} aria-hidden="true" />
             <span className="sr-only">Search users</span>
+            <input
+              id="admin-search"
+              name="q"
+              defaultValue={data.query.q}
+              maxLength={80}
+              placeholder="Name, Discord ID or account ID"
+            />
           </label>
-          <input
-            id="admin-search"
-            name="q"
-            defaultValue={data.query.q}
-            maxLength={80}
-            placeholder="Name, Discord ID or account ID"
-          />
           <input type="hidden" name="filter" value={data.query.filter} />
           <button className="button secondary">Search</button>
         </form>
-        <nav className="admin-tabs" aria-label="User filters">
-          {[
-            ["all", "All accounts"],
-            ["supporters", "Supporters"],
-            ["review", "Needs review"],
-            ["banned", "Banned"],
-          ].map(([key, label]) => (
+        <nav className="admin-seg" aria-label="User filters">
+          {filters.map(([key, label]) => (
             <Link
               key={key}
-              href={url(1, key as typeof data.query.filter)}
+              href={url(1, key)}
               aria-current={data.query.filter === key ? "page" : undefined}
             >
               {label}
             </Link>
           ))}
         </nav>
-        <div className="admin-section-head">
-          <p>{data.total.toLocaleString()} matching accounts</p>
-          <p>20 per page</p>
-        </div>
         {data.query.filter === "review" && (
-          <p className="admin-notice">
-            These accounts have open reports on their content. Reports are allegations to review,
-            not proof of abuse.
+          <p className="admin-note well">
+            These accounts have open reports on their content. Reports are claims to check, not
+            proof of abuse.
           </p>
         )}
-        <div className="admin-table-scroll">
-          <table className="admin-users-table">
-            <caption className="sr-only">Outpost accounts</caption>
-            <thead>
-              <tr>
-                <th>Account</th>
-                <th>Access</th>
-                <th>Content</th>
-                <th>Joined</th>
-                <th>
-                  <span className="sr-only">Details</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.rows.map((u) => (
-                <tr key={u.id}>
-                  <th scope="row">
-                    <Link href={`/admin/users/${u.id}`} className="admin-user-name">
-                      {u.name || "Unnamed account"}
-                    </Link>
-                    <code>{u.accounts[0]?.providerAccountId || "No Discord link"}</code>
-                  </th>
-                  <td>
-                    <span
-                      className={`admin-status ${accountBanned(u) ? "is-danger" : isSupporter(u) ? "is-supporter" : ""}`}
-                    >
-                      {accountBanned(u) ? "Banned" : isSupporter(u) ? "Supporter" : "Free"}
-                    </span>
-                    {u.role !== "USER" && <small>{u.role.toLowerCase()}</small>}
-                  </td>
-                  <td>
-                    {u._count.builds} builds · {u._count.compositions} comps
-                    <small>{u._count.comments} comments</small>
-                  </td>
-                  <td>{new Date(u.createdAt).toLocaleDateString("en-GB", { timeZone: "UTC" })}</td>
-                  <td>
-                    <Link
-                      href={`/admin/users/${u.id}`}
-                      aria-label={`Manage ${u.name || "account"}`}
-                      className="admin-open"
-                    >
-                      <ArrowUpRight size={19} />
-                    </Link>
-                  </td>
+        {data.rows.length ? (
+          <div className="tool-table-scroll" tabIndex={0} role="region" aria-label="Accounts">
+            <table className="tool-table admin-table admin-users-table">
+              <caption className="sr-only">Outpost accounts</caption>
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Access</th>
+                  <th>Builds</th>
+                  <th>Comps</th>
+                  <th>Comments</th>
+                  <th>Joined</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {!data.rows.length && (
-          <div className="admin-empty">
-            <h2>No matching accounts</h2>
-            <p>Try a name or the full numeric Discord ID.</p>
+              </thead>
+              <tbody>
+                {data.rows.map((u) => (
+                  <tr key={u.id}>
+                    <th scope="row">
+                      <Link href={`/admin/users/${u.id}`} className="admin-user-name">
+                        {u.name || "Unnamed account"}
+                      </Link>
+                      <code>{u.accounts[0]?.providerAccountId || "No Discord link"}</code>
+                    </th>
+                    <td className="admin-chips">
+                      <AdminChip
+                        tone={accountBanned(u) ? "danger" : isSupporter(u) ? "accent" : "default"}
+                      >
+                        {accountBanned(u) ? "Banned" : isSupporter(u) ? "Supporter" : "Free"}
+                      </AdminChip>
+                      {u.role !== "USER" && <AdminChip tone="warn">{roleLabel(u.role)}</AdminChip>}
+                    </td>
+                    <td data-label="Builds">{u._count.builds}</td>
+                    <td data-label="Comps">{u._count.compositions}</td>
+                    <td data-label="Comments">{u._count.comments}</td>
+                    <td data-label="Joined">{date(u.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        ) : (
+          <EmptyWell
+            emblem="team-roles"
+            title="No matching accounts"
+            line="Try a name or the full numeric Discord ID."
+            action={
+              <Link href="/admin/users" className="pill-link">
+                Clear search and filter
+              </Link>
+            }
+          />
         )}
-        <nav className="admin-pagination" aria-label="User pages">
-          {data.query.page > 1 ? (
-            <Link href={url(data.query.page - 1)}>Previous</Link>
-          ) : (
-            <span>Previous</span>
-          )}
-          <span>Page {data.query.page}</span>
-          {data.query.page * 20 < data.total ? (
-            <Link href={url(data.query.page + 1)}>Next</Link>
-          ) : (
-            <span>Next</span>
-          )}
-        </nav>
+        {data.total > 20 && (
+          <nav className="admin-pagination" aria-label="User pages">
+            {data.query.page > 1 ? (
+              <Link href={url(data.query.page - 1)} className="pill-link">
+                Previous
+              </Link>
+            ) : (
+              <span className="pill-link" aria-disabled="true">
+                Previous
+              </span>
+            )}
+            <span>Page {data.query.page}</span>
+            {data.query.page * 20 < data.total ? (
+              <Link href={url(data.query.page + 1)} className="pill-link">
+                Next
+              </Link>
+            ) : (
+              <span className="pill-link" aria-disabled="true">
+                Next
+              </span>
+            )}
+          </nav>
+        )}
       </section>
-    </>
+    </AdminFrame>
   );
 }
