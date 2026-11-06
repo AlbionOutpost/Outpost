@@ -1,7 +1,7 @@
 /* The shared calculator layout: numbered input panels → result → full-width details. See
    DESIGN.md "Shared building blocks". Wide: every step side by side, result last. Tablet: inputs
    stacked beside a sticky result. Phone: one step at a time behind a switcher, each input step
-   ending in a bar pinned to the bottom of the screen (next action + headline figure). */
+   ending in a bar with its next action and headline figure. */
 :global(.app.outpost) .shell.shell {
   display: grid;
   gap: var(--space-4);
@@ -274,18 +274,15 @@
   :global(.app.outpost) .panel.panel :is(input, select) {
     scroll-margin-bottom: 96px;
   }
+  /* At the end of the step, not pinned over it: a pinned bar covered whichever field sat at
+     the bottom of the screen */
   :global(.app.outpost) .bar.bar {
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
     display: flex;
     align-items: center;
     gap: var(--space-3);
     margin: 0 -8px -8px;
-    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+    padding: 12px 8px 8px;
     border-top: 1px solid var(--well-border);
-    background: var(--surface-raised);
-    box-shadow: 0 -12px 24px -12px #000c;
   }
   :global(.app.outpost) .bar.bar > :global(.button) {
     flex: 1 1 auto;
