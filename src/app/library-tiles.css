@@ -1,24 +1,15 @@
-/* Build library grid cards composed to the site sheet's "Builds" page: the weapon over the
-   build scene, the title, orange activity chip, author, then the real armor and ability row. */
+/* Library windows: the grid itself lives with the window (build-window.css); the library
+   keeps three across beside its rail. */
 .app.outpost .ecosystem-library-page.view-grid .ecosystem-build-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  /* Room between frames so neighbouring gems never touch */
-  gap: 26px;
-}
-.app.outpost .ecosystem-library-page.view-grid .library-save-button {
-  top: 12px;
-  right: 12px;
 }
 @media (max-width: 1100px) {
   .app.outpost .ecosystem-library-page.view-grid .ecosystem-build-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 600px) {
-  /* Phones keep the painted header but lay the weapon beside the copy so a card stays under
-     190px and a screen shows four at a time. */
+@media (max-width: 700px) {
   .app.outpost .ecosystem-library-page.view-grid .ecosystem-build-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

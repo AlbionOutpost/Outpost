@@ -64,11 +64,11 @@ test("catalog release persists, filters, paginates and exposes honest provenance
       .getByLabel("Search item name or identifier", { exact: true })
       .fill("Original metadata fixture");
     await page.getByRole("button", { name: "Main hand", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(1);
+    await expect(page.locator(".item-catalog-row")).toHaveCount(1);
     await page.getByRole("button", { name: "Cape", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(0);
+    await expect(page.locator(".item-catalog-row")).toHaveCount(0);
     await page.getByRole("button", { name: "Main hand", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toContainText(id);
+    await expect(page.locator(".item-catalog-row")).toContainText(id);
     const r = await page.request.get("/api/items?search=CATALOG_TEST&tier=4&enchantment=0");
     expect(r.status()).toBe(200);
     expect((await r.json()).total).toBe(1);
@@ -118,12 +118,13 @@ test("item detail loads city prices on arrival and links the item's variants", a
     }),
   );
   await page.goto("/items/T4_MAIN_AXE?region=europe");
-  const prices = page.getByRole("region", { name: "City price observations" });
+  // The item page uses Market Explorer's figures and City orders table.
+  const prices = page.getByRole("region", { name: "Scrollable market observations" });
   await expect(prices).toContainText("Lymhurst");
   await expectResultText(prices, "2,699");
-  await expect(prices).toContainText("stale");
-  await expect(page.locator(".item-price-summary")).toContainText("Lowest sell order");
-  await expect(page.locator(".item-price-summary")).toContainText("Unavailable");
+  await expect(prices).toContainText("Stale");
+  await expect(page.locator(".market-quote-summary")).toContainText("Lowest sell order");
+  await expect(page.locator(".market-quote-summary")).toContainText("No buy order seen");
   const variants = page.getByRole("region", { name: "Item variants" });
   await expect(variants.locator(".item-variant-link.is-current")).toHaveCount(1);
   await variants.getByRole("link", { name: /^800/ }).first().click();

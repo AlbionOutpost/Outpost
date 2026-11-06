@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { requestBudget, secureResponse } from "../cloudflare/web/request-budget";
+import { addressBucket } from "../src/lib/client-address";
 
 const req = (path = "/", address = "203.0.113.1", extra: Record<string, string> = {}) =>
   new Request(`https://albionoutpost.com${path}`, {
@@ -27,6 +28,18 @@ describe("trusted edge request budgets", () => {
       ).toBeNull();
     expect((await requestBudget(req(), binding))?.status).toBe(429);
     expect(await requestBudget(req("/", "203.0.113.2"), binding)).toBeNull();
+  });
+  it("counts an IPv6 caller per /64 so rotating addresses does not renew the budget", async () => {
+    const binding = budgets();
+    for (let i = 0; i < 240; i++)
+      expect(
+        await requestBudget(req("/", `2001:db8:a:b:${i.toString(16)}::${i + 1}`), binding),
+      ).toBeNull();
+    expect((await requestBudget(req("/", "2001:0db8:000a:000b::ffff"), binding))?.status).toBe(429);
+    expect(await requestBudget(req("/", "2001:db8:a:c::1"), binding)).toBeNull();
+    expect(addressBucket("::ffff:203.0.113.7")).toBe("::ffff:203.0.113.7");
+    expect(addressBucket("203.0.113.7")).toBe("203.0.113.7");
+    expect(addressBucket("2001:db8::")).toBe("2001:db8:0:0::/64");
   });
   it("reserves regional market capacity from a single caller across every price endpoint", async () => {
     const binding = budgets();
@@ -124,6 +137,18 @@ describe("trusted edge request budgets", () => {
     expect(cached.headers.get("strict-transport-security")).toBe("max-age=31536000");
     expect(cached.headers.get("x-outpost-search")).toBe("hit");
     expect(cached.headers.get("set-cookie")).toBeNull();
+    expect(cached.headers.get("content-security-policy")).toBe(
+      "default-src 'none'; frame-ancestors 'none'",
+    );
+    // NextAuth's HTML endpoints and pages keep the policy the app proxy sets.
+    expect(
+      secureResponse(new Response("ok"), req("/api/auth/error")).headers.get(
+        "content-security-policy",
+      ),
+    ).toBeNull();
+    expect(
+      secureResponse(new Response("ok"), req("/builds")).headers.get("content-security-policy"),
+    ).toBeNull();
     expect(
       secureResponse(new Response(null, { status: 403 }), req("/invitations/token")).headers.get(
         "referrer-policy",

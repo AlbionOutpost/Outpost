@@ -2,6 +2,8 @@
 import { EditorDialog } from "./editor-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Field } from "./group-parts";
+import styles from "./teams.module.css";
 export function GroupEventEditor({
   groupId,
   event,
@@ -35,6 +37,7 @@ export function GroupEventEditor({
       </button>
       <EditorDialog open={open} title="Edit team event" onClose={() => setOpen(false)}>
         <form
+          className={styles.form}
           onSubmit={async (e) => {
             e.preventDefault();
             const f = new FormData(e.currentTarget);
@@ -68,41 +71,50 @@ export function GroupEventEditor({
             }
           }}
         >
-          <label>
-            Edit event title
-            <input name="title" required minLength={3} maxLength={100} defaultValue={event.title} />
-          </label>
-          <label>
-            Edit event description
-            <textarea name="description" maxLength={4000} defaultValue={event.description} />
-          </label>
-          <label>
-            Edit event start (your device local time)
-            <input name="startsAt" type="datetime-local" required defaultValue={local} />
-          </label>
-          <label>
-            Edit event display timezone
-            <input name="timezone" required defaultValue={event.timezone} />
-          </label>
-          <label>
-            Edit event participant count
-            <input
-              name="expectedParticipants"
-              type="number"
-              min={1}
-              max={400}
-              defaultValue={event.expectedParticipants}
-            />
-          </label>
-          <label>
-            Edit event voice information
-            <input name="voiceInfo" maxLength={200} defaultValue={event.voiceInfo} />
-          </label>
-          <button className="button secondary" disabled={busy}>
-            Save event revision
-          </button>
+          <div className={styles.formGrid}>
+            <Field label="Edit event title" wide>
+              <input
+                name="title"
+                required
+                minLength={3}
+                maxLength={100}
+                defaultValue={event.title}
+              />
+            </Field>
+            <Field label="Edit event start (your device local time)">
+              <input name="startsAt" type="datetime-local" required defaultValue={local} />
+            </Field>
+            <Field label="Edit event display timezone">
+              <input name="timezone" required defaultValue={event.timezone} />
+            </Field>
+            <Field label="Edit event participant count">
+              <input
+                name="expectedParticipants"
+                type="number"
+                min={1}
+                max={400}
+                defaultValue={event.expectedParticipants}
+              />
+            </Field>
+            <Field label="Edit event voice information">
+              <input name="voiceInfo" maxLength={200} defaultValue={event.voiceInfo} />
+            </Field>
+            <Field label="Edit event description" wide>
+              <textarea name="description" maxLength={4000} defaultValue={event.description} />
+            </Field>
+          </div>
+          <div className={styles.formActions}>
+            <button type="button" className="button secondary" onClick={() => setOpen(false)}>
+              Not now
+            </button>
+            <button className="button primary" disabled={busy}>
+              Save event revision
+            </button>
+          </div>
+          <p role="status" className={message ? styles.saved : "sr-only"}>
+            {message}
+          </p>
         </form>
-        <p role="status">{message}</p>
       </EditorDialog>
     </>
   );

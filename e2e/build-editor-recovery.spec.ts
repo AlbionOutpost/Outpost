@@ -121,6 +121,7 @@ test("editor keeps a failed draft for retry and exports a stale revision without
       "Unsaved conflicting draft",
     );
     page.once("dialog", (dialog) => dialog.dismiss());
+    await page.locator(".editor-more-menu > summary").click();
     await page.getByRole("link", { name: "Add saved build to comp", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/builds/${buildId}/edit$`));
     await page.getByText("Import & export", { exact: true }).click();

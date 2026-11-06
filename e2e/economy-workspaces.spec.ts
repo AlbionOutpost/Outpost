@@ -10,15 +10,17 @@ test("production prerequisites, genuine sensitivity and three-column composition
     if (request.url().includes("/api/economy/prices")) requests++;
   });
   await page.goto("/tools/crafting?region=europe");
-  await expect(page.getByRole("heading", { name: "Configuration", exact: true })).toBeVisible();
-  const readiness = page.locator("#production-results .calculation-readiness");
+  await expect(
+    page.getByRole("heading", { name: "Step 1: Recipe and run", exact: true }),
+  ).toBeVisible();
+  const readiness = page.locator("[data-result=readiness]");
   await expect(readiness).toContainText("Steel Bar unit price");
   await expect(readiness).toContainText("Pine Planks unit price");
   await expect(readiness).toContainText("T4 Battleaxe sale price");
   expect(requests).toBe(0);
-  const bounds = await page.locator(".production-workspace").evaluate((e) =>
-    [".calculator-inputs", ".production-materials", "#production-results"].map((s) => {
-      const r = e.querySelector(s)!.getBoundingClientRect();
+  const bounds = await page.locator("#production-setup").evaluate((e) =>
+    ["#production-setup", "#production-materials", "#production-results"].map((s) => {
+      const r = e.ownerDocument.querySelector(s)!.getBoundingClientRect();
       return { x: r.x, y: r.y, width: r.width };
     }),
   );
@@ -47,7 +49,9 @@ test("production prerequisites, genuine sensitivity and three-column composition
   await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
   await expect(page.locator("#production-results")).toBeVisible();
   await expect(page.locator("#production-results")).toBeFocused();
-  const progressBounds = await page.locator(".production-steps").boundingBox();
+  const progressBounds = await page
+    .getByRole("navigation", { name: "Crafting workflow" })
+    .boundingBox();
   const resultBounds = await page.locator("#production-results").boundingBox();
   expect(resultBounds!.y).toBeGreaterThan(progressBounds!.y + progressBounds!.height);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -57,17 +61,17 @@ test("manual trade requires prices, accepts explicit zero, and shows negative ou
   page,
 }) => {
   await page.goto("/tools/flipping?region=asia");
-  const result = page.locator(".manual-trade-workspace .result");
-  await expect(result).toContainText("Add your trade prices");
+  const result = page.locator('[data-result="trade-profit"]');
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
   await expect(page.getByLabel("Purchase price per item", { exact: true })).toHaveValue("");
   await page.getByLabel("Purchase price per item", { exact: true }).fill("100");
   await page.getByLabel("Sale price per item", { exact: true }).fill("50");
-  await expectResultText(result.locator(":scope > strong"), "-50 silver", { exact: true });
+  await expectResultText(result, "-50", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("0");
-  await expectResultText(result.locator(":scope > strong"), "-100 silver", { exact: true });
+  await expectResultText(result, "-100", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("");
-  await expect(result).toContainText("Add your trade prices");
-  await expect(result.locator(":scope > strong")).toHaveText("— silver");
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Sale price per item");
+  await expect(result).toHaveText("—Unavailable");
 });
 
 test("item filters recover from no results and item back links retain server", async ({ page }) => {
@@ -75,21 +79,19 @@ test("item filters recover from no results and item back links retain server", a
   await page
     .getByLabel("Search item name or identifier", { exact: true })
     .fill("zzznomatchingitemzzz");
-  await expect(page.getByRole("heading", { name: "No items match these filters" })).toBeVisible();
-  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
-  await expect(page.getByText("7,510 matching items", { exact: true })).toBeVisible();
+  await expect(page.getByText("No items match these filters", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Clear filters", exact: true }).first().click();
+  await expect(page.getByText("7,510 items", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Grid", exact: true }).click();
-  await expect(page.locator(".item-catalog-grid article")).toHaveCount(30);
+  await expect(page.locator(".item-catalog-grid .item-catalog-row")).toHaveCount(30);
   await page.getByRole("button", { name: "List", exact: true }).click();
-  await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(30);
+  await expect(page.locator(".item-catalog-row")).toHaveCount(30);
   await page.goto("/items/T4_MAIN_AXE?region=asia");
   await expect(page.locator(".masthead-back")).toHaveAttribute("href", "/items?region=asia");
   await expect(page.getByRole("heading", { name: "Recipe", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Calculate this recipe", exact: true }).click();
   await expect(page).toHaveURL(/\/tools\/crafting\?.*recipe=/);
-  await expect(page.locator(".reference-recipe-identity")).toContainText(
-    "Adept's Battleaxe · T4.0",
-  );
+  await expect(page.locator("[data-recipe-identity]")).toContainText("Adept's Battleaxe · T4.0");
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   await expect(page.getByRole("combobox", { name: "Albion region", exact: true })).toContainText(
     "Asia",
@@ -102,18 +104,17 @@ test("gold history has distinct loading, empty and error recovery", async ({ pag
     await route.fulfill({ json: { data: [] } });
   });
   await page.goto("/tools/gold?region=europe");
-  await expect(page.getByRole("heading", { name: "Loading price history…" })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "No observations for this selection" }),
-  ).toBeVisible();
+  const state = page.locator(".gold-research-workspace .history-state");
+  await expect(state.getByRole("status")).toHaveText("Loading history…");
+  await expect(state.getByRole("status")).toContainText("No gold observations for this server yet");
   await page.route("**/api/history?*", (route) =>
     route.fulfill({ status: 503, json: { error: "History source unavailable" } }),
   );
   await page.getByRole("button", { name: "Refresh history", exact: true }).click();
-  await expect(page.locator(".gold-research-workspace").getByRole("alert")).toContainText(
-    "History source unavailable",
-  );
-  await expect(page.getByRole("heading", { name: "History is unavailable" })).toBeVisible();
+  // The failure is said once, in one well, with a retry.
+  await expect(state.getByRole("status")).toHaveText("History could not load right now.");
+  await expect(state.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+  await expect(page.locator(".gold-research-workspace").getByRole("alert")).toHaveCount(0);
 });
 
 for (const [route, label] of [
@@ -123,13 +124,13 @@ for (const [route, label] of [
   test(`${route} keeps its own recipe identity and historical status`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/tools/${route}?region=europe`);
-    await expect(page.locator(".reference-recipe-identity")).toContainText(label);
-    await expect(page.locator(".recipe-historical-status")).toBeVisible();
-    await expect(page.locator(".recipe-historical-status")).toContainText("Historical recipe");
+    await expect(page.locator("[data-recipe-identity]")).toContainText(label);
+    await expect(page.locator("[data-recipe-status]")).toBeVisible();
+    await expect(page.locator("[data-recipe-status]")).toContainText("Historical recipe");
     // This movement is a post-hydration layout effect; wait for its visible outcome.
     await expect
       .poll(async () =>
-        page.locator(".production-mode-nav").evaluate((navigation) => {
+        page.getByRole("navigation", { name: "Production calculators" }).evaluate((navigation) => {
           const rail = navigation.getBoundingClientRect();
           const tab = navigation.querySelector('[aria-current="page"]')!.getBoundingClientRect();
           return tab.left >= rail.left - 1 && tab.right <= rail.right + 1;
@@ -152,36 +153,39 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByLabel("Sales tax (%)", { exact: true }).fill("10");
   await page.getByText("Fees & extra costs", { exact: true }).click();
   // 150 - 100 - 15 sales tax = 35; collapsing must not reset the fee.
-  await expectResultText(page.locator(".manual-trade-workspace .result > strong"), "35 silver", {
-    exact: true,
-  });
-  await expect(page.locator(".economy-assumption-readout")).toContainText("10% tax");
+  await expectResultText(page.locator('[data-result="trade-profit"]'), "35", { exact: true });
+  await expect(page.locator("#trade-inputs [data-assumptions]")).toContainText("10% tax");
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
 
   await page.goto("/tools/transporting?region=europe");
   await expect(page.getByLabel("Cost per trip", { exact: true })).toBeHidden();
+  // Phones show one step at a time: prices are step 2, trip costs step 1.
+  const transportSteps = page.getByRole("navigation", { name: "Transport workflow" });
+  await transportSteps.getByRole("button", { name: /Price cargo/ }).click();
   await page.getByLabel("Transport purchase unit price", { exact: true }).fill("100");
   await page.getByLabel("Transport sale unit price", { exact: true }).fill("150");
+  await transportSteps.getByRole("button", { name: /Route & cargo/ }).click();
   await page.getByText("Trip costs, risk & fees", { exact: true }).click();
   await page.getByLabel("Cost per trip", { exact: true }).fill("10");
   await page.getByText("Trip costs, risk & fees", { exact: true }).click();
   // The validated transport model requires at least one trip: 150-100-10=40.
-  await expectResultText(page.locator(".transport-workspace .result > strong"), "40", {
-    exact: true,
-  });
-  await expect(page.locator(".economy-assumption-readout")).toContainText("10 silver/trip");
+  await expectResultText(page.locator('[data-result="transport-profit"]'), "40", { exact: true });
+  await expect(page.locator("#transport-route [data-assumptions]")).toContainText("10 silver/trip");
   await expect(page.getByLabel("Transport plan title", { exact: true })).toBeHidden();
 
   await page.goto("/tools/farming?region=europe");
   await expect(page.getByLabel("Unwatered seed yield (%)", { exact: true })).toBeHidden();
   await page.getByLabel("Harvest per plant", { exact: true }).fill("8");
+  const farmingSteps = page.getByRole("navigation", { name: "Farming workflow" });
+  await farmingSteps.getByRole("button", { name: /Price it/ }).click();
   await page.getByLabel("Seed unit price · silver", { exact: true }).fill("2000");
   await page.getByLabel("Produce unit price · silver", { exact: true }).fill("100");
+  await farmingSteps.getByRole("button", { name: /Plan harvest/ }).click();
   await page.getByText("Seed returns & fees", { exact: true }).click();
   await page.getByLabel("Unwatered seed yield (%)", { exact: true }).fill("50");
   await page.getByText("Seed returns & fees", { exact: true }).click();
   // Nine plants: 7200 revenue-18000 seeds+9000 retained seed credit=-1800.
   await expectResultText(page.locator('[data-result="farm-profit"]'), "-1,800", { exact: true });
-  await expect(page.locator(".economy-assumption-readout")).toContainText("50% unwatered");
+  await expect(page.locator("#farming-plan [data-assumptions]")).toContainText("50% unwatered");
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
 });

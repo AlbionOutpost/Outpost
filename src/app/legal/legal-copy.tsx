@@ -28,7 +28,7 @@ export function legalCopy(
 
 function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalCopy {
   return {
-    title: "Rechtliches bei Outpost.",
+    title: "Rechtliches bei Outpost",
     description:
       "Wer hinter dem Projekt steht, welche Daten verarbeitet werden und was für die Nutzung gilt.",
     updated: "Dokumentstand: 4. November 2026 · Deutsche Fassung",
@@ -675,7 +675,7 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
 
 function englishCopy(operator: LegalOperator, configuredBilling: boolean): LegalCopy {
   return {
-    title: "Legal information at Outpost.",
+    title: "Legal information at Outpost",
     description:
       "Who runs the project, how data is processed and which rules apply when you use it.",
     updated: "Document updated: 4 November 2026 · English version",

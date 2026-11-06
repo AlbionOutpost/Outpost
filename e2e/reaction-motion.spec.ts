@@ -11,6 +11,27 @@ test("account likes acknowledge confirmed responses, lock pending clicks and pre
     posts = 0,
     fail = false;
   let release: (() => void) | undefined;
+  // The page reads every chip's likes in one batched request; answer it with the same state.
+  await page.route("**/api/library-likes?items=*", async (route) => {
+    const items = new URL(route.request().url()).searchParams.get("items")!.split(",");
+    await route.fulfill({
+      json: {
+        signedIn: true,
+        items: Object.fromEntries(
+          items.map((key) => [
+            key,
+            {
+              found: true,
+              archivedCount: 209,
+              outpostCount: Number(liked),
+              count: 209 + Number(liked),
+              liked,
+            },
+          ]),
+        ),
+      },
+    });
+  });
   await page.route("**/api/library-likes/**", async (route) => {
     if (route.request().method() === "POST") {
       posts++;
@@ -134,7 +155,7 @@ test("community favorite and vote confirmations animate only after server succes
     ]);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto(`/builds/${build.id}`);
-    const panel = page.getByRole("heading", { name: "Community discussion" }).locator("..");
+    const panel = page.getByRole("region", { name: "Community discussion" });
     for (const label of [/Add favorite/, /Upvote build/]) {
       const control = panel
         .locator(".actions > button")
@@ -152,7 +173,7 @@ test("community favorite and vote confirmations animate only after server succes
     );
     await expect(panel.locator("[data-feedback]")).toHaveCount(0);
     await page.goto(`/builds?q=${encodeURIComponent(build.title)}`);
-    const save = page.locator(".build-preview-card .build-card-save").first();
+    const save = page.locator(".community-build-card .build-favorite-heart").first();
     await expect(save).toHaveAttribute("aria-pressed", "true");
     await expect(save.locator("[data-feedback]")).toHaveCount(0);
     await save.click();

@@ -2,11 +2,23 @@
 import { AnimatedNumber } from "./animated-number";
 import { Silver } from "@/components/silver";
 import { ProductionSensitivity } from "./production-sensitivity";
-import { CalculationReadiness } from "./calculation-readiness";
-import "@/app/production-workspace.css";
+import { productionSensitivity } from "@/lib/albion/production-sensitivity";
 import { EditorDialog } from "./editor-dialog";
 import { ProductionProfile } from "./production-profile";
-import { ArrowRight, CircleCheck, Calculator } from "lucide-react";
+import { ArrowDown, ArrowRight, CircleCheck, RefreshCw } from "lucide-react";
+import {
+  CalculatorShell,
+  ResultFigure,
+  ResultPair,
+  ResultRows,
+  useCalculatorStep,
+} from "./calculator-shell";
+import { Disclosure } from "./disclosure";
+import { PanelHead } from "./panel-head";
+import { StatusLine, Unavailable } from "./status-line";
+import { WellSelect } from "./well-select";
+import shell from "./calculator-shell.module.css";
+import own from "@/app/production-calculator.module.css";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/components/link";
@@ -31,6 +43,7 @@ import {
   type ProductionInput,
 } from "@/lib/albion/production";
 import { ItemIcon } from "./item-icon";
+import { Missing, PRICE_ERROR } from "./calculator-figures";
 import { sourceAge } from "@/lib/albion/source-age";
 import { ScenarioControls } from "./scenario-controls";
 import { prepareProductionRestore } from "@/lib/albion/recipe-restore";
@@ -39,6 +52,8 @@ import {
   productionPriceQuery,
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
+// The shared calculator wells, plus the crafting family's own rules.
+const s = { ...shell, ...own };
 export function ProductionCalculator({
   kind,
   category,
@@ -137,7 +152,11 @@ export function ProductionCalculator({
       window.removeEventListener("resize", revealCurrentMode);
     };
   }, [category, kind]);
-  const [step, setStep] = useState(1);
+  const [step, goToStep] = useCalculatorStep([
+    "production-setup",
+    "production-materials",
+    "production-results",
+  ]);
   const [showScenarios, setShowScenarios] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
@@ -170,7 +189,7 @@ export function ProductionCalculator({
     setPendingKey(requestKey);
     setAttemptedKey(requestKey);
     setError("");
-    let failureMessage = "Market observations are temporarily unavailable. Please retry shortly.";
+    let failureMessage = PRICE_ERROR;
     try {
       const response = await fetch(`/api/economy/prices?${requestKey}`, {
         signal: controller.signal,
@@ -196,17 +215,20 @@ export function ProductionCalculator({
   });
   if (!recipeKnown || incompatibleRecipe)
     return (
-      <div className="production-journey premium-production">
-        <section className="panel" role={recipeMissing || incompatibleRecipe ? "alert" : "status"}>
+      <div className={s.journey}>
+        <section
+          className={`panel ${s.gate}`}
+          role={recipeMissing || incompatibleRecipe ? "alert" : "status"}
+        >
           {recipeMissing || incompatibleRecipe ? (
             <>
               <h2>
                 {incompatibleRecipe ? "Recipe unavailable in this calculator" : "Recipe not found"}
               </h2>
-              <p className="muted">
+              <p>
                 {incompatibleRecipe
-                  ? "This recipe belongs to a different production calculator. Start with a supported recipe here."
-                  : "This link or saved scenario names a recipe that is not in the game data."}
+                  ? "This recipe belongs to another production calculator. Start with a recipe that works here."
+                  : "This link or saved run names a recipe that is not in the game data."}
               </p>
               <Link
                 className="button secondary"
@@ -221,7 +243,7 @@ export function ProductionCalculator({
               </Link>
             </>
           ) : (
-            <p>Loading recipe…</p>
+            <StatusLine>Loading recipe…</StatusLine>
           )}
         </section>
       </div>
@@ -275,11 +297,8 @@ export function ProductionCalculator({
     v === null || v === undefined
       ? "Unavailable"
       : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
-  /** Gain / loss / even class for a figure; the text beside it always says which. */
-  const tone = (v: number | null | undefined) =>
-    v === null || v === undefined || v === 0 ? "is-even" : v < 0 ? "is-loss" : "is-gain";
   const coin = (v: number | null | undefined) =>
-    v === null || v === undefined ? "Unavailable" : <Silver value={v} digits={2} />;
+    v === null || v === undefined ? <Unavailable /> : <Silver value={v} digits={2} />;
   const current = (id: string, quality: number, city = draft.materialCity) => {
     const p = draft.prices[id];
     return p &&
@@ -298,59 +317,74 @@ export function ProductionCalculator({
         : `${recipe.ingredients.find((i) => i.id === id)?.name || id} unit price`,
     ) || [];
   const attempted = attemptedKey === requestKey;
-  function goToStep(next: number) {
-    setStep(next);
-    requestAnimationFrame(() => {
-      const panel = document.getElementById(
-        next === 1
-          ? "production-setup"
-          : next === 2
-            ? "production-materials"
-            : "production-results",
-      );
-      panel?.focus({ preventScroll: true });
-      if (matchMedia("(max-width: 780px)").matches) panel?.scrollIntoView({ block: "start" });
-    });
-  }
+  const outputs = recipe.outputCount * draft.batches;
+  const rowFor = (id: string) => result?.rows.find((row) => row.id === id);
+  const kindLabel =
+    category === "cooking"
+      ? "Cooking recipe"
+      : category === "alchemy"
+        ? "Alchemy recipe"
+        : kind === "crafting"
+          ? "Crafting recipe"
+          : kind === "refining"
+            ? "Refining recipe"
+            : "Enchantment upgrade";
+  const profitTone = (v: number | null | undefined) =>
+    v == null || v === 0 ? "even" : v < 0 ? "loss" : "gain";
+  const outputPrice = current(recipe.output, outputQuality, draft.outputCity);
+  const sourceNote = (p: ReturnType<typeof current>, city?: string) =>
+    p?.manual ? (
+      <span className={s.chip}>Manual</span>
+    ) : p?.observedAt ? (
+      <>
+        {city && `${city} · `}
+        <Observed at={p.observedAt} />
+      </>
+    ) : attempted ? (
+      <Unavailable />
+    ) : (
+      "Loading price…"
+    );
   const recipeBrowser = (
-    <aside className="production-recipe-browser" aria-label="Recipe browser">
-      <div className="recipe-browser-title">
-        <h2>{kind === "enchanting" ? "Equipment" : "Recipe library"}</h2>
-        <span>
+    <div className={s.browser} aria-label="Recipe browser" role="group">
+      <div className={s.browserHead}>
+        <label className={s.browserSearch}>
+          <span>{kind === "enchanting" ? "Find equipment" : "Find a recipe"}</span>
+          <input
+            type="search"
+            aria-label="Search crafting recipes"
+            placeholder="Search by item name…"
+            value={recipeSearch}
+            onChange={(e) => setRecipeSearch(e.target.value)}
+          />
+        </label>
+        <span className={s.browserCount}>
           {kind === "enchanting"
-            ? enchantable.length
-            : (searchResults?.total ?? browseRecipes.length).toLocaleString()}
+            ? `${enchantable.length} item families`
+            : `${(searchResults?.total ?? browseRecipes.length).toLocaleString()} recipes`}
         </span>
       </div>
-      <label className="recipe-browser-search">
-        {kind === "enchanting" ? "Find equipment" : "Find a recipe"}
-        <input
-          type="search"
-          aria-label="Search crafting recipes"
-          placeholder="Search by item name…"
-          value={recipeSearch}
-          onChange={(e) => setRecipeSearch(e.target.value)}
-        />
-      </label>
       {kind !== "enchanting" && (
-        <>
-          <div className="recipe-tier-options" role="group" aria-label="Recipe tier">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((tier) => (
-              <button
-                type="button"
-                key={tier}
-                aria-label={`Browse T${tier} recipes`}
-                aria-pressed={!recipeSearch && searchTier === tier}
-                onClick={() => {
-                  setRecipeSearch("");
-                  setSearchTier(tier);
-                }}
-              >
-                T{tier}
-              </button>
-            ))}
-          </div>
-          <div className="recipe-browser-list">
+        <div className={s.tiers} role="group" aria-label="Recipe tier">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((tier) => (
+            <button
+              type="button"
+              key={tier}
+              aria-label={`Browse T${tier} recipes`}
+              aria-pressed={!recipeSearch && searchTier === tier}
+              onClick={() => {
+                setRecipeSearch("");
+                setSearchTier(tier);
+              }}
+            >
+              T{tier}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className={s.browserList}>
+        {kind !== "enchanting" ? (
+          <>
             {browseRecipes.map((r) => (
               <button
                 type="button"
@@ -361,7 +395,7 @@ export function ProductionCalculator({
                   setRecipePickerOpen(false);
                 }}
               >
-                <ItemIcon id={r.output} size={38} />
+                <ItemIcon id={r.output} size={40} />
                 <span>
                   <strong>{r.name.replace(/ · T\d\.\d.*$/, "").replace(/^T\d /, "")}</strong>
                   <small>
@@ -370,26 +404,23 @@ export function ProductionCalculator({
                     {r.ingredients.length} materials
                   </small>
                 </span>
-                {r.id === draft.recipeId && <CircleCheck size={15} aria-hidden="true" />}
+                {r.id === draft.recipeId && <CircleCheck size={16} aria-hidden="true" />}
               </button>
             ))}
-            {!searchResults && !searchError && <p role="status">Loading recipes…</p>}
+            {!searchResults && !searchError && <StatusLine>Loading recipes…</StatusLine>}
             {searchResults && !searchResults.recipes.length && (
-              <p role="status">No recipe matches. Try another item name.</p>
+              <StatusLine>No recipe matches. Try another item name.</StatusLine>
             )}
-            {searchError && <p role="alert">{searchError}</p>}
+            {searchError && <StatusLine tone="error">{searchError}</StatusLine>}
             {searchResults && searchResults.total > searchResults.recipes.length && (
-              <p className="muted">
+              <StatusLine>
                 Showing {searchResults.recipes.length} of {searchResults.total.toLocaleString()}.
                 Search to narrow the list.
-              </p>
+              </StatusLine>
             )}
-          </div>
-        </>
-      )}
-      {kind === "enchanting" && (
-        <div className="recipe-browser-list">
-          {enchantable
+          </>
+        ) : (
+          enchantable
             .filter((f) => f.name.toLowerCase().includes(recipeSearch.toLowerCase()))
             .map((f) => (
               <button
@@ -405,931 +436,821 @@ export function ProductionCalculator({
                   <strong>{f.name}</strong>
                   <small>{f.slot}</small>
                 </span>
+                {draft.enchantFamily === f.code && <CircleCheck size={16} aria-hidden="true" />}
               </button>
-            ))}
+            ))
+        )}
+      </div>
+      <p className={s.browserNote}>
+        Every crafting, refining, cooking and alchemy recipe in the game data, including enchanted
+        and artifact versions.
+      </p>
+    </div>
+  );
+  const setup = (
+    <>
+      <div className={s.identity} data-recipe-identity="">
+        <ItemIcon id={recipe.output} quality={outputQuality} size={64} />
+        <div>
+          <h3>{recipe.name}</h3>
+          <p>
+            {kindLabel} · {recipe.outputCount} output per craft
+          </p>
+          <small data-recipe-status="" className={recipe.historical ? s.historical : undefined}>
+            {recipe.historical
+              ? "Historical recipe · Confirm ingredients and station settings in game."
+              : "Check the recipe and your station settings in game."}
+          </small>
+        </div>
+        <button
+          type="button"
+          className="button secondary"
+          onClick={() => setRecipePickerOpen(true)}
+        >
+          Change recipe
+        </button>
+      </div>
+      {kind === "enchanting" && (
+        <div className={s.fields}>
+          <label>
+            Equipment family
+            <WellSelect
+              aria-label="Enchantment equipment"
+              value={draft.enchantFamily}
+              onChange={(e) => update("enchantFamily", e.target.value)}
+            >
+              {enchantable.map((f) => (
+                <option key={f.code} value={f.code}>
+                  {f.name}
+                </option>
+              ))}
+            </WellSelect>
+          </label>
+          <label>
+            Tier
+            <WellSelect
+              aria-label="Enchantment tier"
+              value={draft.tier}
+              onChange={(e) => update("tier", Number(e.target.value))}
+            >
+              {(enchantFamily?.tiers ?? [4, 5, 6, 7, 8]).map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </WellSelect>
+          </label>
+          <label>
+            From enchantment
+            <WellSelect
+              aria-label="From enchantment"
+              value={draft.fromEnchant}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  fromEnchant: Number(e.target.value),
+                  toEnchant: Math.max(draft.toEnchant, Number(e.target.value) + 1),
+                })
+              }
+            >
+              {[0, 1, 2].map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </WellSelect>
+          </label>
+          <label>
+            To enchantment
+            <WellSelect
+              aria-label="To enchantment"
+              value={draft.toEnchant}
+              onChange={(e) => update("toEnchant", Number(e.target.value))}
+            >
+              {[1, 2, 3]
+                .filter((t) => t > draft.fromEnchant)
+                .map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+            </WellSelect>
+          </label>
         </div>
       )}
-      <p className="recipe-browser-footnote">
-        Every crafting, refining, cooking and alchemy recipe in the game data (captured 27 Oct
-        2026), including enchanted and artifact versions.
-      </p>
-    </aside>
-  );
-  return (
-    <div className="production-journey premium-production" data-step={step}>
-      <nav ref={modeNavigation} className="production-mode-nav" aria-label="Production calculators">
-        {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
-          <Link
-            key={mode}
-            href={`/tools/${mode}?region=${region}`}
-            aria-current={(category || kind) === mode ? "page" : undefined}
+      <div className={s.fields}>
+        <label>
+          Buy materials in
+          <WellSelect
+            aria-label="Material purchase market"
+            value={draft.materialCity}
+            onChange={(e) =>
+              update("materialCity", e.target.value as ProductionInput["materialCity"])
+            }
           >
-            {mode.charAt(0).toUpperCase() + mode.slice(1)}
-          </Link>
-        ))}
-        <a className="production-plan-jump" href="#production-plan-title">
-          Production plan ↓
-        </a>
-      </nav>
-      <nav className="task-progress production-steps" aria-label="Crafting workflow">
-        {[
-          [1, "Choose recipe"],
-          [2, "Price materials"],
-          [3, "Review profit"],
-        ].map(([n, label]) => (
+            {cities
+              .filter((c) => c !== "Black Market" || draft.materialCity === c)
+              .map((c) => (
+                <option key={c} disabled={c === "Black Market"}>
+                  {c}
+                </option>
+              ))}
+          </WellSelect>
+        </label>
+        <label>
+          Sell in
+          <WellSelect
+            aria-label="Output sale market"
+            value={draft.outputCity}
+            onChange={(e) => update("outputCity", e.target.value as ProductionInput["outputCity"])}
+          >
+            {cities.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </WellSelect>
+        </label>
+        <label>
+          Crafts / upgrades
+          <input
+            type="number"
+            min={1}
+            max={100000}
+            value={draft.batches}
+            onChange={(e) => update("batches", Number(e.target.value))}
+          />
+        </label>
+        <label>
+          Output quality
+          <WellSelect
+            aria-label="Output quality assumption"
+            value={outputQuality}
+            disabled={kind === "refining" || !!recipe.category}
+            onChange={(e) => update("quality", Number(e.target.value))}
+          >
+            {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
+              <option key={q} value={i + 1}>
+                {q}
+              </option>
+            ))}
+          </WellSelect>
+        </label>
+      </div>
+      <div className={s.quick} role="group" aria-label="Batch quantity shortcuts">
+        {[1, 10, 100].map((n) => (
           <button
             type="button"
             key={n}
-            aria-current={step === n ? "step" : undefined}
-            onClick={() => goToStep(Number(n))}
+            aria-label={`Set ${n} batches`}
+            aria-pressed={draft.batches === n}
+            onClick={() => update("batches", n)}
           >
-            <span>{n}</span>
-            {label}
+            {n.toLocaleString()}×
           </button>
         ))}
-      </nav>
-      <div className={`calculator-grid production-workspace production-${kind}`}>
-        {recipePickerOpen ? (
-          <EditorDialog
-            open
-            title="Choose recipe"
-            drawer
-            onClose={() => setRecipePickerOpen(false)}
-          >
-            {recipeBrowser}
-          </EditorDialog>
-        ) : (
-          <div className="production-desktop-browser">{recipeBrowser}</div>
-        )}
-
-        <div className="calculator-inputs">
-          <h2 className="production-configuration-title">
-            <span className="workspace-step" aria-hidden="true">
-              1
-            </span>
-            Configuration
-          </h2>
-          <section className="panel" id="production-setup" tabIndex={-1}>
-            <h2 className="production-inputs-heading">
-              <span className="workspace-step" aria-hidden="true">
-                1
-              </span>
-              Selected recipe
-            </h2>
-            {kind === "enchanting" && (
-              <div className="input-grid">
-                <label>
-                  Equipment family
-                  <select
-                    aria-label="Enchantment equipment"
-                    value={draft.enchantFamily}
-                    onChange={(e) => update("enchantFamily", e.target.value)}
-                  >
-                    {enchantable.map((f) => (
-                      <option key={f.code} value={f.code}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Tier
-                  <select
-                    aria-label="Enchantment tier"
-                    value={draft.tier}
-                    onChange={(e) => update("tier", Number(e.target.value))}
-                  >
-                    {(enchantFamily?.tiers ?? [4, 5, 6, 7, 8]).map((t) => (
-                      <option key={t}>{t}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  From enchantment
-                  <select
-                    aria-label="From enchantment"
-                    value={draft.fromEnchant}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        fromEnchant: Number(e.target.value),
-                        toEnchant: Math.max(draft.toEnchant, Number(e.target.value) + 1),
-                      })
-                    }
-                  >
-                    {[0, 1, 2].map((t) => (
-                      <option key={t}>{t}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  To enchantment
-                  <select
-                    aria-label="To enchantment"
-                    value={draft.toEnchant}
-                    onChange={(e) => update("toEnchant", Number(e.target.value))}
-                  >
-                    {[1, 2, 3]
-                      .filter((t) => t > draft.fromEnchant)
-                      .map((t) => (
-                        <option key={t}>{t}</option>
-                      ))}
-                  </select>
-                </label>
-              </div>
-            )}
-            <div className="reference-recipe-identity">
-              <ItemIcon id={recipe.output} quality={outputQuality} size={80} />
-              <div>
-                <h3>{recipe.name}</h3>
-                <p>
-                  {category === "cooking"
-                    ? "Cooking recipe"
-                    : category === "alchemy"
-                      ? "Alchemy recipe"
-                      : kind === "crafting"
-                        ? "Crafting recipe"
-                        : kind === "refining"
-                          ? "Refining recipe"
-                          : "Enchantment upgrade"}{" "}
-                  · {recipe.outputCount} output per craft
-                </p>
-                <small className={recipe.historical ? "recipe-historical-status" : undefined}>
-                  {recipe.historical
-                    ? "Historical recipe · Confirm ingredients and station settings in game."
-                    : "Check the recipe and your station settings in game."}
-                </small>
-              </div>
-            </div>
+      </div>
+      {confirmLegacyFees && (
+        <div className={s.notice} role="alert">
+          <p>
+            This saved run predates automatic recipe silver costs. Its recorded fee is{" "}
+            {money(draft.stationFee)} silver per craft; the recipe requires{" "}
+            {money(recipe.silver ?? 0)}. Confirm what the recorded fee includes.
+          </p>
+          <div className={s.noticeActions}>
             <button
               type="button"
-              className="button secondary production-change-recipe"
-              onClick={() => setRecipePickerOpen(true)}
+              className="button secondary"
+              onClick={() => update("recipeSilverAccounting", "separate")}
             >
-              Change recipe
+              Treat recorded fee as additional
             </button>
-          </section>
-          <section className="panel reference-assumptions">
-            <h2>
-              <span className="workspace-step" aria-hidden="true">
-                2
-              </span>
-              City & assumptions
-            </h2>
-            <div className="input-grid production-city-choices">
-              {" "}
+            <button
+              type="button"
+              className="button secondary"
+              disabled={draft.stationFee < (recipe.silver ?? 0)}
+              onClick={() => update("stationFee", draft.stationFee - (recipe.silver ?? 0))}
+            >
+              Recorded fee includes recipe silver
+            </button>
+          </div>
+          {draft.stationFee < (recipe.silver ?? 0) && (
+            <p>
+              The recorded fee is below the recipe requirement. Confirm it as additional or edit the
+              additional station fee.
+            </p>
+          )}
+        </div>
+      )}
+      <Disclosure summary="Station settings, focus & sources">
+        <div className={s.stack}>
+          <Disclosure summary="Markets & transaction fees">
+            <div className={s.fields}>
+              <label className={s.wide}>
+                Additional station / upgrade fee per craft
+                <input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={draft.stationFee}
+                  onChange={(e) => update("stationFee", Number(e.target.value))}
+                />
+              </label>
+              <p className={s.help}>
+                {recipe.silver === undefined
+                  ? "No fixed recipe silver charge is recorded for this recipe. Confirm charges in game and enter them above."
+                  : `The recipe's own ${money(recipe.silver)} silver per craft is already included. Enter only extra station charges.`}
+              </p>
               <label>
-                Material purchase market
-                <select
-                  aria-label="Material purchase market"
-                  value={draft.materialCity}
-                  onChange={(e) =>
-                    update("materialCity", e.target.value as ProductionInput["materialCity"])
-                  }
-                >
-                  {cities
-                    .filter((c) => c !== "Black Market" || draft.materialCity === c)
-                    .map((c) => (
-                      <option key={c} disabled={c === "Black Market"}>
-                        {c}
-                      </option>
-                    ))}
-                </select>
+                Sales tax (%)
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step="any"
+                  value={draft.tax}
+                  onChange={(e) => update("tax", Number(e.target.value))}
+                />
               </label>
               <label>
-                Output sale market
-                <select
-                  aria-label="Output sale market"
-                  value={draft.outputCity}
-                  onChange={(e) =>
-                    update("outputCity", e.target.value as ProductionInput["outputCity"])
-                  }
-                >
-                  {cities.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
+                Sell order setup fee (%)
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step="any"
+                  value={draft.setupFee}
+                  onChange={(e) => update("setupFee", Number(e.target.value))}
+                />
               </label>
-            </div>
-            {confirmLegacyFees && (
-              <div className="task-state" role="alert">
-                <p>
-                  This saved run predates automatic recipe silver costs. Its recorded fee is{" "}
-                  {money(draft.stationFee)} silver per craft; the recipe requires{" "}
-                  {money(recipe.silver ?? 0)}. Confirm what the recorded fee includes.
+              {productionSellsInstantly(draft) && (
+                <p className={s.help}>
+                  The Black Market buys instantly at its highest buy order, so only sales tax
+                  applies; the setup fee is not charged.
                 </p>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() => update("recipeSilverAccounting", "separate")}
-                >
-                  Treat recorded fee as additional
-                </button>
-                <button
-                  type="button"
-                  className="button secondary"
-                  disabled={draft.stationFee < (recipe.silver ?? 0)}
-                  onClick={() => update("stationFee", draft.stationFee - (recipe.silver ?? 0))}
-                >
-                  Recorded fee includes recipe silver
-                </button>
-                {draft.stationFee < (recipe.silver ?? 0) && (
-                  <p>
-                    The recorded fee is below the recipe requirement. Confirm it as additional or
-                    edit the additional station fee.
-                  </p>
-                )}
-              </div>
-            )}
-            <details className="reference-advanced-assumptions">
-              <summary>Station settings, focus & sources</summary>
-              <details className="production-fees">
-                <summary>Markets & transaction fees</summary>
-                <div className="input-grid">
-                  <label>
-                    Additional station / upgrade fee per craft
-                    <input
-                      type="number"
-                      min={0}
-                      step="any"
-                      value={draft.stationFee}
-                      onChange={(e) => update("stationFee", Number(e.target.value))}
-                    />
-                  </label>
-                  <p className="muted">
-                    {recipe.silver === undefined
-                      ? "No fixed recipe silver charge is recorded for this recipe. Confirm applicable charges in game and enter them above."
-                      : `Recorded recipe silver requirement: ${money(recipe.silver)} per craft, included automatically. Enter only additional station charges above. Confirm the recorded requirement in game.`}
-                  </p>
-                  <label>
-                    Sales tax (%)
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      step="any"
-                      value={draft.tax}
-                      onChange={(e) => update("tax", Number(e.target.value))}
-                    />
-                  </label>
-                  <label>
-                    Sell order setup fee (%)
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      step="any"
-                      value={draft.setupFee}
-                      onChange={(e) => update("setupFee", Number(e.target.value))}
-                    />
-                  </label>
-                  {productionSellsInstantly(draft) && (
-                    <p className="muted">
-                      The Black Market buys instantly at its highest buy order, so only sales tax
-                      applies; the setup fee is not charged.
-                    </p>
-                  )}
-                </div>
-              </details>
-              {kind !== "enchanting" && (
-                <details
-                  className="production-returns"
-                  open={draft.returnRate > 0 || draft.useFocus}
-                >
-                  <summary>Returns & focus</summary>
-                  <p className="muted">
-                    Enter the return rates and focus cost shown by your station. Select eligible
-                    ingredients below. Retained resources are valued at purchase cost; per-craft
-                    rounding is outside this estimate.
-                  </p>
-                  <div className="input-grid">
+              )}
+            </div>
+          </Disclosure>
+          {kind !== "enchanting" && (
+            <Disclosure
+              summary="Returns & focus"
+              defaultOpen={draft.returnRate > 0 || draft.useFocus}
+            >
+              <div className={s.fields}>
+                <p className={s.help}>
+                  Enter the return rates and focus cost your station shows, then tick the materials
+                  that return. Returned materials are valued at what you paid for them.
+                </p>
+                <label>
+                  Return rate without focus (%)
+                  <input
+                    type="number"
+                    min={0}
+                    max={99.9}
+                    step="any"
+                    value={draft.returnRate}
+                    onChange={(e) => update("returnRate", Number(e.target.value))}
+                  />
+                </label>
+                <label>
+                  Focus
+                  <WellSelect
+                    aria-label="Use focus assumptions"
+                    value={draft.useFocus ? "yes" : "no"}
+                    onChange={(e) => update("useFocus", e.target.value === "yes")}
+                  >
+                    <option value="no">No focus</option>
+                    <option value="yes">Use entered focus values</option>
+                  </WellSelect>
+                </label>
+                {draft.useFocus && (
+                  <>
                     <label>
-                      Return rate without focus (%)
+                      Return rate with focus (%)
                       <input
                         type="number"
                         min={0}
                         max={99.9}
                         step="any"
-                        value={draft.returnRate}
-                        onChange={(e) => update("returnRate", Number(e.target.value))}
+                        value={draft.focusReturnRate}
+                        onChange={(e) => update("focusReturnRate", Number(e.target.value))}
                       />
                     </label>
                     <label>
-                      Use focus assumptions
-                      <select
-                        aria-label="Use focus assumptions"
-                        value={draft.useFocus ? "yes" : "no"}
-                        onChange={(e) => update("useFocus", e.target.value === "yes")}
-                      >
-                        <option value="no">No focus</option>
-                        <option value="yes">Use entered focus values</option>
-                      </select>
-                    </label>
-                    {draft.useFocus && (
-                      <>
-                        <label>
-                          Return rate with focus (%)
-                          <input
-                            type="number"
-                            min={0}
-                            max={99.9}
-                            step="any"
-                            value={draft.focusReturnRate}
-                            onChange={(e) => update("focusReturnRate", Number(e.target.value))}
-                          />
-                        </label>
-                        <label>
-                          Total focus used
-                          <input
-                            type="number"
-                            min={1}
-                            value={draft.focusUsed}
-                            onChange={(e) => update("focusUsed", Number(e.target.value))}
-                          />
-                        </label>
-                      </>
-                    )}
-                  </div>
-                  <details>
-                    <summary>Convert a station production bonus to return rate</summary>
-                    <label>
-                      Production bonus (%)
+                      Total focus used
                       <input
                         type="number"
-                        min={0}
-                        max={1000}
-                        value={bonus}
-                        onChange={(e) => setBonus(Number(e.target.value))}
+                        min={1}
+                        value={draft.focusUsed}
+                        onChange={(e) => update("focusUsed", Number(e.target.value))}
                       />
                     </label>
-                    <p>
-                      {bonus >= 0 && bonus <= 1000
-                        ? (returnRateFromBonus(bonus) * 100).toFixed(3)
-                        : "Invalid"}
-                      % = 100 × (1 − 1 / (1 + bonus / 100)). Apply this rate manually above after
-                      verifying your station.
-                    </p>
-                  </details>
-                </details>
-              )}
-              <p className="production-coverage">
-                {kind === "enchanting"
-                  ? `Rune, soul and relic upgrades for ${enchantable.length} item families, .0 to .3.`
-                  : "Recipes from game item data captured 27 Oct 2026, with every alternative."}{" "}
-                Confirm quantities after a patch and enter your own station and market assumptions.
-              </p>
-              {kind !== "enchanting" && (
-                <ProductionProfile
-                  kind={kind}
-                  output={recipe.output}
-                  recipeId={recipe.id}
-                  onFocus={(total) =>
-                    setDraft((d) => ({ ...d, useFocus: true, focusUsed: Math.max(1, total) }))
-                  }
-                  baseFocus={recipe.baseFocus}
-                  batches={draft.batches}
-                  saved={draft.mechanicsProfile}
-                  onApply={(profile, rates) =>
-                    setDraft((d) => ({
-                      ...d,
-                      mechanicsProfile: profile,
-                      returnRate: rates.returnRate,
-                      focusReturnRate: rates.focusReturnRate,
-                      returns: Object.fromEntries(
-                        recipe.ingredients.map((i) => [i.id, i.returnable !== false]),
-                      ),
-                    }))
-                  }
-                />
-              )}
-              <details className="production-model-notes">
-                <summary>Model notes & recipe source</summary>{" "}
-                <p className="muted">
-                  Tax/fees and output quality are assumptions, not verified current game defaults or
-                  random-quality probabilities.
-                </p>
-                {recipe.source.startsWith("https://") &&
-                !/albiononlinegrind|albionutil/i.test(recipe.source) ? (
-                  <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                    Recipe reference
-                  </a>
-                ) : (
-                  <p className="muted">
-                    Recipe source:{" "}
-                    {recipe.source.startsWith("https://") ? "archived game data" : recipe.source}.{" "}
-                    <Link className="text-link" href="/guides">
-                      Recipe & planning guides →
-                    </Link>
-                  </p>
+                  </>
                 )}
-              </details>
-            </details>
-          </section>
-          <section className="panel reference-quantity">
-            <h2>
-              <span className="workspace-step" aria-hidden="true">
-                3
-              </span>
-              Quantity & quality
-            </h2>
-            <p className="muted">
-              Set the size of your run. Focus and return assumptions are available in the adjacent
-              settings.
-            </p>{" "}
-            <div className="input-grid">
-              <label>
-                Crafts / upgrades
-                <input
-                  type="number"
-                  min={1}
-                  max={100000}
-                  value={draft.batches}
-                  onChange={(e) => update("batches", Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Output quality assumption
-                <select
-                  aria-label="Output quality assumption"
-                  value={outputQuality}
-                  disabled={kind === "refining" || !!recipe.category}
-                  onChange={(e) => update("quality", Number(e.target.value))}
-                >
-                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, i) => (
-                    <option key={q} value={i + 1}>
-                      {q}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="production-batch-actions" aria-label="Batch quantity shortcuts">
-              {[1, 10, 100].map((n) => (
-                <button
-                  type="button"
-                  key={n}
-                  aria-label={`Set ${n} batches`}
-                  aria-pressed={draft.batches === n}
-                  onClick={() => update("batches", n)}
-                >
-                  {n.toLocaleString()}×
-                </button>
-              ))}
-            </div>
-            <button
-              className="button primary production-next"
-              type="button"
-              onClick={() => goToStep(2)}
-            >
-              Next: price materials <ArrowRight size={16} aria-hidden="true" />
-            </button>
-          </section>
-        </div>
-        <section
-          className="panel section production-materials"
-          id="production-materials"
-          tabIndex={-1}
-        >
-          <div className="section-heading">
-            <h2>
-              <span className="workspace-step" aria-hidden="true">
-                2
-              </span>
-              Material costs
-            </h2>
-            <button className="button secondary" disabled={busy} onClick={load}>
-              {busy ? "Fetching observations…" : "Refresh market observations"}
-            </button>
-          </div>
-          <p className="production-price-help">
-            Observed prices for {draft.materialCity} load with each change; edit any price by hand.{" "}
-            {productionSellsInstantly(draft)
-              ? "Output sells instantly to the Black Market's highest buy order."
-              : `Output sells in ${draft.outputCity}.`}
-          </p>
-          {attempted && !busy && !error && !result?.complete && (
-            <p className="task-state" role="status">
-              Some prices were not observed for this recipe, market or quality. Enter the missing
-              unit prices to finish. Existing observations keep their source times.
-            </p>
-          )}
-          <label>
-            Replace manual overrides when refreshing
-            <select
-              aria-label="Replace manual overrides"
-              value={overwrite ? "yes" : "no"}
-              onChange={(e) => setOverwrite(e.target.value === "yes")}
-            >
-              <option value="no">Keep manual prices</option>
-              <option value="yes">Replace all from source</option>
-            </select>
-          </label>
-          {error && (
-            <p role="alert" className="error">
-              {error}
-            </p>
-          )}
-          <div className="production-price-list">
-            <div
-              className="table-scroll"
-              tabIndex={0}
-              role="region"
-              aria-label="Material requirements and pricing"
-            >
-              <table className="reference-material-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Resource</th>
-                    <th scope="col" className="numeric">
-                      <abbr title="Recipe quantity before returned materials">Gross qty</abbr>
-                    </th>
-                    <th scope="col">Unit price · silver</th>
-                    <th scope="col" className="numeric">
-                      Total · silver
-                    </th>
-                    <th scope="col">Price source / returns</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recipe.ingredients.map((i) => {
-                    const q = i.quality === "selected" ? draft.quality : 1;
-                    const p = current(i.id, q);
-                    return (
-                      <tr key={i.id}>
-                        <th scope="row">
-                          <span className="material-item-heading">
-                            <ItemIcon id={i.id} size={36} />
-                            <strong>{i.name}</strong>
-                            <small className="material-row-total">
-                              {result?.rows.find((row) => row.id === i.id)?.gross == null
-                                ? "Total: —"
-                                : `Total: ${money(result?.rows.find((row) => row.id === i.id)?.gross)} silver`}
-                            </small>
-                          </span>
-                        </th>
-                        <td className="numeric" title={`${i.quantity} per craft`}>
-                          {i.quantity * draft.batches}
-                        </td>
-                        <td>
-                          <input
-                            aria-label={`${i.name} unit price`}
-                            type="number"
-                            min={0}
-                            step="any"
-                            placeholder="Enter price"
-                            value={p?.value ?? ""}
-                            onChange={(e) => price(i.id, q, e.target.value)}
-                          />
-                        </td>
-                        <td className="numeric">
-                          {money(result?.rows.find((row) => row.id === i.id)?.gross).replace(
-                            "Unavailable",
-                            "pending",
-                          )}
-                        </td>
-                        <td>
-                          <small className="muted production-price-source">
-                            {p?.manual ? (
-                              <span className="production-chip">Manual</span>
-                            ) : p?.observedAt ? (
-                              <Observed at={p.observedAt} />
-                            ) : attempted ? (
-                              "No source observation"
-                            ) : (
-                              "Enter or load a price"
-                            )}
-                          </small>
-                          {kind !== "enchanting" && (
-                            <label className="material-return-choice">
-                              <input
-                                type="checkbox"
-                                aria-label={`Apply returns to ${i.name}`}
-                                disabled={i.returnable === false}
-                                checked={!!draft.returns[i.id] && i.returnable !== false}
-                                onChange={(e) =>
-                                  update("returns", { ...draft.returns, [i.id]: e.target.checked })
-                                }
-                              />
-                              {i.returnable === false ? "Never returned" : "Apply returns"}
-                            </label>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <section className="production-output-price">
-              <div className="material-item-heading">
-                <ItemIcon id={recipe.output} quality={outputQuality} size={42} />
-                <strong>Output sale price</strong>
-                <span className="numeric">×{recipe.outputCount * draft.batches}</span>
               </div>
-              <label>
-                Unit sale price
+              <Disclosure summary="Convert a station production bonus to return rate">
+                <div className={s.fields}>
+                  <label>
+                    Production bonus (%)
+                    <input
+                      type="number"
+                      min={0}
+                      max={1000}
+                      value={bonus}
+                      onChange={(e) => setBonus(Number(e.target.value))}
+                    />
+                  </label>
+                  <p className={s.help}>
+                    Return rate{" "}
+                    <strong>
+                      {bonus >= 0 && bonus <= 1000
+                        ? `${(returnRateFromBonus(bonus) * 100).toFixed(3)}%`
+                        : "Invalid"}
+                    </strong>{" "}
+                    = 100 × (1 − 1 / (1 + bonus / 100)). Check your station, then enter it above.
+                  </p>
+                </div>
+              </Disclosure>
+            </Disclosure>
+          )}
+          {kind !== "enchanting" && (
+            <ProductionProfile
+              kind={kind}
+              output={recipe.output}
+              recipeId={recipe.id}
+              onFocus={(total) =>
+                setDraft((d) => ({ ...d, useFocus: true, focusUsed: Math.max(1, total) }))
+              }
+              baseFocus={recipe.baseFocus}
+              batches={draft.batches}
+              saved={draft.mechanicsProfile}
+              onApply={(profile, rates) =>
+                setDraft((d) => ({
+                  ...d,
+                  mechanicsProfile: profile,
+                  returnRate: rates.returnRate,
+                  focusReturnRate: rates.focusReturnRate,
+                  returns: Object.fromEntries(
+                    recipe.ingredients.map((i) => [i.id, i.returnable !== false]),
+                  ),
+                }))
+              }
+            />
+          )}
+          <Disclosure summary="Model notes & recipe source">
+            <div className={s.stack}>
+              <p className={s.help}>
+                {kind === "enchanting"
+                  ? `Rune, soul and relic upgrades for ${enchantable.length} item families, .0 to .3, from game data captured 27 Oct 2026.`
+                  : "Recipes come from game item data captured 27 Oct 2026, with every alternative."}{" "}
+                Confirm quantities after a patch. Tax, fees and output quality are your assumptions,
+                not verified game defaults or quality odds.
+              </p>
+              {recipe.source.startsWith("https://") &&
+              !/albiononlinegrind|albionutil/i.test(recipe.source) ? (
+                <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                  Recipe reference
+                </a>
+              ) : (
+                <p className={s.help}>
+                  Recipe source:{" "}
+                  {recipe.source.startsWith("https://") ? "archived game data" : recipe.source}.{" "}
+                  <Link className="text-link" href="/guides">
+                    Recipe & planning guides →
+                  </Link>
+                </p>
+              )}
+            </div>
+          </Disclosure>
+        </div>
+      </Disclosure>
+    </>
+  );
+  const materials = (
+    <>
+      {busy ? (
+        <StatusLine>Loading prices from {draft.materialCity}…</StatusLine>
+      ) : error ? (
+        <div className={s.errorLine}>
+          <StatusLine tone="error">{error}</StatusLine>
+          <button type="button" onClick={load}>
+            Retry
+          </button>
+        </div>
+      ) : attempted && !result?.complete ? (
+        <StatusLine tone="stale">
+          Some prices weren’t observed for this market or quality. Type the missing ones; observed
+          prices keep their times.
+        </StatusLine>
+      ) : null}
+      <div className={s.materials} role="region" aria-label="Material requirements and pricing">
+        <div className={s.matHead} aria-hidden="true">
+          <span>Material</span>
+          <span>Unit price</span>
+          <span>Total</span>
+        </div>
+        <ul>
+          {recipe.ingredients.map((i) => {
+            const q = i.quality === "selected" ? draft.quality : 1;
+            const p = current(i.id, q);
+            const gross = rowFor(i.id)?.gross;
+            return (
+              <li key={i.id} className={s.mat}>
+                <ItemIcon id={i.id} size={40} />
+                <span className={s.matName}>
+                  <strong>{i.name}</strong>
+                  <small>
+                    {draft.batches > 1
+                      ? `${(i.quantity * draft.batches).toLocaleString()} needed · ${i.quantity} per craft`
+                      : `${i.quantity} per craft`}
+                  </small>
+                  <small>{sourceNote(p)}</small>
+                  {kind !== "enchanting" && (
+                    <label className={s.returns}>
+                      <input
+                        type="checkbox"
+                        aria-label={`Apply returns to ${i.name}`}
+                        disabled={i.returnable === false}
+                        checked={!!draft.returns[i.id] && i.returnable !== false}
+                        onChange={(e) =>
+                          update("returns", { ...draft.returns, [i.id]: e.target.checked })
+                        }
+                      />
+                      {i.returnable === false ? "Never returned" : "Apply returns"}
+                    </label>
+                  )}
+                </span>
                 <input
-                  aria-label="Output unit sale price"
+                  className={s.matInput}
+                  aria-label={`${i.name} unit price`}
                   type="number"
                   min={0}
                   step="any"
-                  placeholder="Enter price"
-                  value={current(recipe.output, outputQuality, draft.outputCity)?.value ?? ""}
-                  onChange={(e) => price(recipe.output, outputQuality, e.target.value)}
+                  placeholder="Price"
+                  value={p?.value ?? ""}
+                  onChange={(e) => price(i.id, q, e.target.value)}
                 />
-              </label>
-
-              <small className="muted production-price-source">
-                {current(recipe.output, outputQuality, draft.outputCity)?.manual ? (
-                  <span className="production-chip">Manual</span>
-                ) : current(recipe.output, outputQuality, draft.outputCity)?.observedAt ? (
-                  <>
-                    {draft.outputCity} ·{" "}
-                    <Observed
-                      at={current(recipe.output, outputQuality, draft.outputCity)!.observedAt!}
-                    />
-                  </>
-                ) : attempted ? (
-                  "No output quote returned. Enter your sale price."
-                ) : (
-                  "Observations are loading; you can enter your expected sale price instead."
-                )}
-              </small>
-            </section>
-          </div>
-          <button
-            className="button primary production-next"
-            type="button"
-            onClick={() => goToStep(3)}
-          >
-            Review profit <ArrowRight size={16} aria-hidden="true" />
-          </button>
-        </section>
-        <section className="panel result" id="production-results" tabIndex={-1}>
-          <div className="production-result-item">
-            <ItemIcon id={recipe.output} quality={outputQuality} size={56} />
-            <div>
-              <h2>
-                <span className="workspace-step" aria-hidden="true">
-                  3
+                <span className={s.matTotal}>
+                  <span className="sr-only">Total </span>
+                  {gross == null ? <Missing /> : <Silver value={gross} digits={2} />}
                 </span>
-                Results summary
-              </h2>
-              <span>
-                {recipe.name} · {recipe.outputCount * draft.batches} output
-                {recipe.outputCount * draft.batches === 1 ? "" : "s"}
-              </span>
-            </div>
-          </div>
-          <p className="muted">
-            Estimated costs and profit in silver, based on your selected prices and assumptions.
-          </p>
-          {!result?.complete ? (
-            <div className="production-result-start" role="status">
-              <Calculator size={32} aria-hidden="true" />
-              <h3>
-                {busy
-                  ? "Loading observed prices…"
-                  : error
-                    ? "Prices could not be loaded"
-                    : attempted
-                      ? "Finish pricing your run"
-                      : "Price this run to see your profit"}
-              </h3>
-              <p>
-                {busy
-                  ? "Checking material and output prices for your selected markets."
-                  : error
-                    ? "Your recipe and manual prices are kept. Retry loading observations or enter prices yourself."
-                    : attempted
-                      ? `${recipe.name} is selected. Some prices were not observed in your selected cities; enter the missing material or output prices to finish.`
-                      : `${recipe.name} is selected. Observations for your selected cities are loading; enter any missing prices to finish.`}
-              </p>
-              <button className="button secondary" type="button" onClick={() => goToStep(2)}>
-                Add material prices <ArrowRight size={16} aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
-          {result?.stale && (
-            <p className="error">
-              Stale or undated source observations included. Refresh before acting.
-            </p>
-          )}
-          {validation && (
-            <p role="alert" className="error">
-              {validation}
-            </p>
-          )}
-          {result && !result.complete && (
-            <CalculationReadiness
-              title={`${missingPrices.length} required prices remaining`}
-              missing={missingPrices}
-            >
-              Profit stays unavailable until every required price matches this run.
-            </CalculationReadiness>
-          )}
-          {result?.complete && (
-            <>
-              <div className={`production-profit-hero ${tone(result.profit)}`} aria-live="polite">
-                <span>Total profit</span>
-                <output aria-label="Estimated total profit" data-result="total-profit">
-                  {coin(result.profit)}
-                </output>
-                <small>
-                  {result.profit === null
-                    ? "Unavailable"
-                    : result.profit > 0
-                      ? "Gain"
-                      : result.profit < 0
-                        ? "Loss"
-                        : "Break-even"}{" "}
-                  · silver for {(recipe.outputCount * draft.batches).toLocaleString()}{" "}
-                  {recipe.outputCount * draft.batches === 1 ? "output" : "outputs"}
-                </small>
-              </div>
-              <dl className="production-figures">
-                <div className={tone(result.profitPerItem)}>
-                  <dt>Profit per output</dt>
-                  <dd>{coin(result.profitPerItem)}</dd>
-                </div>
-                <div>
-                  <dt>Cost per output</dt>
-                  <dd>
-                    {coin(
-                      result.cost === null
-                        ? null
-                        : result.cost / (recipe.outputCount * draft.batches),
-                    )}
-                  </dd>
-                </div>
-                <div className={tone(result.margin)}>
-                  <dt>Profit margin</dt>
-                  <dd>
-                    {result.margin === null ? (
-                      "Unavailable"
-                    ) : (
-                      <AnimatedNumber
-                        value={result.margin}
-                        digits={2}
-                        minimumDigits={0}
-                        suffix="%"
-                      />
-                    )}
-                  </dd>
-                </div>
-              </dl>
-              <dl className="production-cash-summary">
-                <div>
-                  <dt>Upfront silver</dt>
-                  <dd>{coin(result.upfront)}</dd>
-                </div>
-                <div>
-                  <dt>Net cash profit</dt>
-                  <dd>{coin(result.cashProfit)}</dd>
-                </div>
-                <div>
-                  <dt>Retained return value</dt>
-                  <dd>{coin(result.returnCredit)}</dd>
-                </div>
-                {draft.useFocus && (
-                  <div>
-                    <dt>Profit / focus</dt>
-                    <dd>
-                      {result.profitPerFocus == null ? (
-                        "Unavailable"
-                      ) : (
-                        <AnimatedNumber
-                          value={result.profitPerFocus}
-                          digits={2}
-                          minimumDigits={0}
-                        />
-                      )}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-              <p className="production-result-note">
-                <CircleCheck size={16} aria-hidden="true" />
-                {Object.values(draft.prices).some((p) => p.manual)
-                  ? "Includes manual prices. "
-                  : "Source observations with recorded timestamps. "}
-                Fees, returns and taxes use your assumptions; retained returns are valued separately
-                from cash profit.
-              </p>
-              <details className="reference-accounting production-disclosure">
-                <summary>Detailed accounting · entire run</summary>
-                <dl>
-                  {[
-                    ["Total material cost", result?.grossMaterials],
-                    ["Recipe silver requirements", result?.recipeCost],
-                    ["Station / upgrade fees", result?.stationCost],
-                    ["Upfront silver requirement", result?.upfront],
-                    ["Expected returned material value", result?.returnCredit],
-                    ["Effective production cost", result?.cost],
-                    ["Gross output revenue", result?.revenue],
-                    ["Taxes and setup fees", result?.fees],
-                    ["Cash profit before valuing retained returns", result?.cashProfit],
-                    ["Profit margin (%)", result?.margin],
-                    ["ROI on effective cost (%)", result?.roi],
-                    ["Profit per output", result?.profitPerItem],
-                    ...(draft.useFocus
-                      ? [
-                          ["Profit per focus", result?.profitPerFocus],
-                          ["Additional material value per focus", result?.incrementalPerFocus],
-                        ]
-                      : []),
-                  ].map(([label, value]) => (
-                    <div key={String(label)}>
-                      <dt>{label}</dt>
-                      <dd>
-                        {value == null ? (
-                          "Unavailable"
-                        ) : (
-                          <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </details>
-              <details className="production-assumptions-details production-disclosure">
-                <summary>Your assumptions</summary>
-                <dl>
-                  <div>
-                    <dt>Crafts / upgrades</dt>
-                    <dd>{draft.batches.toLocaleString()}</dd>
-                  </div>
-                  <div>
-                    <dt>Material market</dt>
-                    <dd>{draft.materialCity}</dd>
-                  </div>
-                  <div>
-                    <dt>Sale market</dt>
-                    <dd>{draft.outputCity}</dd>
-                  </div>
-                  <div>
-                    <dt>Recipe silver / craft</dt>
-                    <dd>{money(recipe.silver ?? 0)} silver</dd>
-                  </div>
-                  <div>
-                    <dt>Station fee / craft</dt>
-                    <dd>{money(draft.stationFee)} silver</dd>
-                  </div>
-                  <div>
-                    <dt>Sales tax</dt>
-                    <dd>{draft.tax}%</dd>
-                  </div>
-                  <div>
-                    <dt>Setup fee</dt>
-                    <dd>
-                      {productionSellsInstantly(draft)
-                        ? "Not charged (instant Black Market sale)"
-                        : `${draft.setupFee}%`}
-                    </dd>
-                  </div>
-                </dl>
-                <p className="muted">
-                  These inputs define your estimate. Confirm fees and return assumptions at your
-                  station before crafting.
-                </p>
-                <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                  Recipe source & limitations
-                </a>
-              </details>
-            </>
-          )}
-        </section>
+              </li>
+            );
+          })}
+          <li className={`${s.mat} ${s.matOutput}`}>
+            <ItemIcon id={recipe.output} quality={outputQuality} size={40} />
+            <span className={s.matName}>
+              <strong>Sells for</strong>
+              <small>
+                {outputs.toLocaleString()} output{outputs === 1 ? "" : "s"} ·{" "}
+                {productionSellsInstantly(draft) ? "Black Market buy order" : draft.outputCity}
+              </small>
+              <small>{sourceNote(outputPrice)}</small>
+            </span>
+            <input
+              className={s.matInput}
+              aria-label="Output unit sale price"
+              type="number"
+              min={0}
+              step="any"
+              placeholder="Price"
+              value={outputPrice?.value ?? ""}
+              onChange={(e) => price(recipe.output, outputQuality, e.target.value)}
+            />
+            <span className={s.matTotal}>
+              <span className="sr-only">Total </span>
+              {result?.revenue == null ? <Missing /> : <Silver value={result.revenue} digits={2} />}
+            </span>
+          </li>
+        </ul>
       </div>
-      <ProductionSensitivity configuration={configuration} />
+      <label className={s.overwrite}>
+        When refreshing
+        <WellSelect
+          aria-label="Replace manual overrides"
+          value={overwrite ? "yes" : "no"}
+          onChange={(e) => setOverwrite(e.target.value === "yes")}
+        >
+          <option value="no">Keep prices I typed</option>
+          <option value="yes">Replace all from source</option>
+        </WellSelect>
+      </label>
+    </>
+  );
+  const sensitivity = productionSensitivity(configuration);
+  const results = (
+    <>
+      <div className={s.resultItem}>
+        <ItemIcon id={recipe.output} quality={outputQuality} size={52} />
+        <span>
+          <strong>{recipe.name}</strong>
+          <small>
+            {outputs.toLocaleString()} output{outputs === 1 ? "" : "s"} · buy in{" "}
+            {draft.materialCity} · sell in {draft.outputCity}
+          </small>
+        </span>
+      </div>
+      {validation && (
+        <p role="alert" className={s.alert}>
+          {validation}
+        </p>
+      )}
+      {result?.complete ? (
+        <ResultFigure
+          label="Total profit"
+          tone={profitTone(result.profit)}
+          value={
+            <output aria-label="Estimated total profit" data-result="total-profit">
+              {coin(result.profit)}
+            </output>
+          }
+          note={`${
+            result.profit === null
+              ? "Unavailable"
+              : result.profit > 0
+                ? "Gain"
+                : result.profit < 0
+                  ? "Loss"
+                  : "Break-even"
+          } for ${outputs.toLocaleString()} ${outputs === 1 ? "output" : "outputs"}`}
+          aside={{
+            label: "Margin",
+            value:
+              result.margin === null ? (
+                <Missing />
+              ) : (
+                <AnimatedNumber value={result.margin} digits={1} minimumDigits={0} suffix="%" />
+              ),
+          }}
+        />
+      ) : (
+        <ResultFigure
+          label="Total profit"
+          value={<Missing />}
+          note={
+            busy
+              ? "Loading prices…"
+              : error
+                ? "Prices are missing; type them in step 2"
+                : attempted
+                  ? "Finish pricing your run"
+                  : "Price this run to see your profit"
+          }
+          aside={{ label: "Margin", value: <Missing /> }}
+        />
+      )}
+      <ResultPair
+        result="cash-summary"
+        items={[
+          {
+            label: "Upfront silver",
+            value: result?.complete ? (
+              coin(result.upfront)
+            ) : (
+              <span className={s.na}>
+                <Unavailable />
+              </span>
+            ),
+          },
+          {
+            label: `Sells for (${outputs.toLocaleString()})`,
+            value: result?.complete ? (
+              coin(result.revenue)
+            ) : (
+              <span className={s.na}>
+                <Unavailable />
+              </span>
+            ),
+          },
+        ]}
+      />
+      {result && !result.complete && (
+        <div className={s.readiness} data-result="readiness" role="status">
+          <strong>
+            {missingPrices.length} {missingPrices.length === 1 ? "price" : "prices"} to go
+          </strong>
+          <ul>
+            {missingPrices.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+          <button type="button" className="button secondary" onClick={() => goToStep(2)}>
+            Add prices <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+      {result?.stale && (
+        <StatusLine tone="stale">
+          Stale or undated source observations included. Refresh before acting.
+        </StatusLine>
+      )}
+      {result?.complete && (
+        <>
+          <ResultRows
+            items={[
+              {
+                label: "Profit per output",
+                value: coin(result.profitPerItem),
+                tone: profitTone(result.profitPerItem),
+              },
+              {
+                label: "Cost per output",
+                value: coin(result.cost === null ? null : result.cost / outputs),
+              },
+              { label: "Net cash profit", value: coin(result.cashProfit) },
+              { label: "Retained return value", value: coin(result.returnCredit) },
+              ...(draft.useFocus
+                ? [
+                    {
+                      label: "Profit per focus",
+                      value:
+                        result.profitPerFocus == null ? (
+                          <Unavailable />
+                        ) : (
+                          <AnimatedNumber
+                            value={result.profitPerFocus}
+                            digits={2}
+                            minimumDigits={0}
+                          />
+                        ),
+                    },
+                  ]
+                : []),
+            ]}
+          />
+          <p className={s.resultNote}>
+            {Object.values(draft.prices).some((p) => p.manual)
+              ? "Includes prices you typed. "
+              : "From observed prices with their times. "}
+            Fees, returns and tax are your assumptions; returned materials are counted apart from
+            cash.
+          </p>
+        </>
+      )}
+    </>
+  );
+  const details = result?.complete ? (
+    <section className={`panel ${s.details}`} aria-labelledby="production-details-title">
+      <PanelHead
+        id="production-details-title"
+        title="Run details"
+        line="How the profit moves with the sale price, the full accounting and what you assumed."
+      />
+      <div className={s.detailsGrid}>
+        {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
+        <div className={s.detailsCol}>
+          <Disclosure summary="Detailed accounting · entire run">
+            <ResultRows
+              items={[
+                ["Total material cost", result.grossMaterials],
+                ["Recipe silver requirements", result.recipeCost],
+                ["Station / upgrade fees", result.stationCost],
+                ["Upfront silver requirement", result.upfront],
+                ["Expected returned material value", result.returnCredit],
+                ["Effective production cost", result.cost],
+                ["Gross output revenue", result.revenue],
+                ["Taxes and setup fees", result.fees],
+                ["Cash profit before valuing retained returns", result.cashProfit],
+                ["Profit margin (%)", result.margin],
+                ["ROI on effective cost (%)", result.roi],
+                ["Profit per output", result.profitPerItem],
+                ...(draft.useFocus
+                  ? [
+                      ["Profit per focus", result.profitPerFocus],
+                      ["Additional material value per focus", result.incrementalPerFocus],
+                    ]
+                  : []),
+              ].map(([label, value]) => ({
+                label: String(label),
+                value:
+                  value == null ? (
+                    <Unavailable />
+                  ) : (
+                    <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
+                  ),
+              }))}
+            />
+          </Disclosure>
+          <Disclosure summary="Your assumptions">
+            <ResultRows
+              items={[
+                { label: "Crafts / upgrades", value: draft.batches.toLocaleString() },
+                { label: "Material market", value: draft.materialCity },
+                { label: "Sale market", value: draft.outputCity },
+                { label: "Recipe silver / craft", value: `${money(recipe.silver ?? 0)} silver` },
+                { label: "Station fee / craft", value: `${money(draft.stationFee)} silver` },
+                { label: "Sales tax", value: `${draft.tax}%` },
+                {
+                  label: "Setup fee",
+                  value: productionSellsInstantly(draft)
+                    ? "Not charged (instant sale)"
+                    : `${draft.setupFee}%`,
+                },
+              ]}
+            />
+            <p className={s.help}>
+              Confirm fees and returns at your station before crafting.{" "}
+              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                Recipe source & limitations
+              </a>
+            </p>
+          </Disclosure>
+        </div>
+      </div>
+    </section>
+  ) : null;
+  return (
+    <div className={s.journey}>
+      <div className={s.modeBar}>
+        <nav ref={modeNavigation} className={s.modes} aria-label="Production calculators">
+          {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
+            <Link
+              key={mode}
+              href={`/tools/${mode}?region=${region}`}
+              aria-current={(category || kind) === mode ? "page" : undefined}
+            >
+              {mode.charAt(0).toUpperCase() + mode.slice(1)}
+            </Link>
+          ))}
+        </nav>
+        <a className="pill-link" href="#production-plan-title">
+          Production plan <ArrowDown size={15} aria-hidden="true" />
+        </a>
+      </div>
+      {recipePickerOpen && (
+        <EditorDialog open title="Choose recipe" drawer onClose={() => setRecipePickerOpen(false)}>
+          {recipeBrowser}
+        </EditorDialog>
+      )}
+      <CalculatorShell
+        label="Crafting workflow"
+        details={details}
+        step={step}
+        onStep={goToStep}
+        summary={{
+          label: "Total profit",
+          tone: result?.complete ? profitTone(result.profit) : "even",
+          value: result?.complete ? (
+            coin(result.profit)
+          ) : (
+            <span className={s.summaryPending}>
+              {missingPrices.length
+                ? `${missingPrices.length} ${missingPrices.length === 1 ? "price" : "prices"} to go`
+                : "Unavailable"}
+            </span>
+          ),
+        }}
+        steps={[
+          {
+            id: "production-setup",
+            label: "Choose recipe",
+            title: kind === "enchanting" ? "Item and upgrade" : "Recipe and run",
+            line: "What you make, where you trade and how many.",
+            children: setup,
+          },
+          {
+            id: "production-materials",
+            label: "Price materials",
+            title: "Prices",
+            line: `Buy in ${draft.materialCity} · ${
+              productionSellsInstantly(draft)
+                ? "sell instantly to the Black Market"
+                : `sell in ${draft.outputCity}`
+            }. Type any price to override it.`,
+            actions: (
+              <button
+                type="button"
+                className={`button secondary ${s.refresh}`}
+                aria-label="Refresh market observations"
+                aria-busy={busy}
+                onClick={load}
+              >
+                <RefreshCw size={15} aria-hidden="true" />
+                {busy ? "Updating…" : "Refresh"}
+              </button>
+            ),
+            children: materials,
+          },
+          {
+            id: "production-results",
+            label: "Review profit",
+            title: "Profit",
+            children: results,
+          },
+        ]}
+      />
       <ProductionPlan
         current={configuration}
         onEdit={(run) => {
           request.current?.abort();
           setDraft(run);
-          setStep(1);
-          document.getElementById("production-setup")?.focus();
+          goToStep(1);
         }}
-      />
-      <section className="panel production-saved-panel" aria-labelledby="production-saved-title">
-        <div className="production-saved-head">
-          <div>
-            <h2 id="production-saved-title">Keep this run</h2>
-            <p className="muted">Save it to your account, load an earlier run or share a link.</p>
-          </div>
+        runAction={
           <button
             type="button"
-            className="pill-link is-small production-scenarios-toggle"
+            className="button secondary"
             aria-expanded={showScenarios}
             aria-controls="production-scenarios"
             onClick={() => setShowScenarios(!showScenarios)}
           >
             Saved runs & sharing
           </button>
-        </div>
-        <div
-          id="production-scenarios"
-          className={`production-scenarios${showScenarios ? " is-open" : ""}`}
-        >
+        }
+      >
+        <div id="production-scenarios" className={s.scenarios} hidden={!showScenarios}>
           <ScenarioControls
             prepare={prepareProductionRestore}
             schema={productionSchema}
@@ -1348,6 +1269,23 @@ export function ProductionCalculator({
             }}
           />
         </div>
+      </ProductionPlan>
+      <section className={`raised has-scene ${s.cta}`} data-scene="city">
+        <h2>
+          Buying for more than one <em>craft</em>?
+        </h2>
+        <p>
+          Add each run to the production plan, then send its materials to the Crafting Planner and
+          tick them off as you buy.
+        </p>
+        <div className={s.ctaActions}>
+          <Link className="button primary" href={`/shopping-list?region=${region}`}>
+            Open the Crafting Planner <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <Link className="button secondary" href={`/tools?region=${region}`}>
+            All tools
+          </Link>
+        </div>
       </section>
     </div>
   );
@@ -1363,7 +1301,7 @@ function Observed({ at }: { at: string }) {
         {age.label}
         <span className="sr-only"> ({exact})</span>
       </time>
-      {age.stale && <span className="production-chip is-stale">Stale</span>}
+      {age.stale && <span className={`${s.chip} ${s.stale}`}>Stale</span>}
     </>
   );
 }

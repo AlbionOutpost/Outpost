@@ -138,7 +138,6 @@ test("community favorites, votes, comments and moderation enforce independent-ac
     ).toBe(403);
     const admin = await contexts[3].newPage();
     await admin.goto("/admin/reports");
-    await admin.getByRole("button", { name: "Load moderation queue", exact: true }).click();
     await admin.getByLabel("Review rationale (required)", { exact: true }).fill(review.note);
     const card = admin.locator("article").filter({
       has: admin.getByRole("heading", { name: "Community verified build", exact: true }),
@@ -203,7 +202,7 @@ test("community favorites, votes, comments and moderation enforce independent-ac
       privatePage.getByRole("heading", { name: "Private favorite guild", exact: true }),
     ).toHaveCount(0);
     await expect(
-      privatePage.getByRole("heading", { name: "Page not found.", exact: true }),
+      privatePage.getByRole("heading", { name: "Page not found", exact: true }),
     ).toBeVisible();
     const composition = await db.composition.create({
       data: {

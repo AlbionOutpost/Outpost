@@ -1,8 +1,10 @@
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
 import Link from "@/components/build-region-link";
-import { queryLibraryBuilds } from "@/lib/grind-library";
+import { featuredLibraryBuilds, queryLibraryBuilds } from "@/lib/grind-library";
+import { SectionHeading } from "@/components/section-heading";
 import { activityName } from "@/lib/grind-library-types";
 import { LibraryBuildCard } from "@/components/library-build-card";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
@@ -11,7 +13,9 @@ import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { BuildWeaponRail } from "@/components/build-weapon-rail";
 import { buildDiscovery } from "@/lib/build-discovery";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
-import { LayoutGrid, List, Search, Swords, X } from "lucide-react";
+import { LayoutGrid, List, Search, X } from "lucide-react";
+import { BuildSortSelect } from "@/components/build-sort-select";
+import { EmptyWell } from "@/components/empty-well";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/builds/library", await searchParams);
 }
@@ -42,6 +46,8 @@ export default async function Library({
     page: Number.parseInt(str("page")) || 1,
   });
   const query = { q, category, family, weapon, tag, sort, view };
+  // An empty search still hands the player something to open.
+  const picks = rows.length ? [] : (await featuredLibraryBuilds()).slice(0, 3);
   const href = (patch: Record<string, string>) =>
     `/builds/library?${new URLSearchParams({ ...query, ...patch })}`;
   const active = [
@@ -55,7 +61,8 @@ export default async function Library({
     <div className={`builds-ecosystem library-page ecosystem-library-page view-${view}`}>
       <BuildDiscoveryHeader
         active={view === "saved" ? "saved" : "browse"}
-        title="Build Library"
+        title="Build library"
+        accent="library"
         description="Find a loadout by weapon, activity or author. Copy it and make it yours."
       />
       {view === "saved" ? (
@@ -71,7 +78,7 @@ export default async function Library({
             />
             <label className="ecosystem-sort-label">
               Sort
-              <select
+              <BuildSortSelect
                 key={sort}
                 name="sort"
                 form="library-discovery-query"
@@ -81,14 +88,8 @@ export default async function Library({
                 <option value="">Library order</option>
                 <option value="newest">Recently updated</option>
                 <option value="title">Build title</option>
-              </select>
+              </BuildSortSelect>
             </label>
-            <button
-              form="library-discovery-query"
-              className="button secondary ecosystem-apply-sort"
-            >
-              Apply
-            </button>
             <div className="ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
@@ -180,7 +181,7 @@ export default async function Library({
                     <Search size={15} />
                     Find builds
                   </button>
-                  <Link className="text-link" href="/builds/library">
+                  <Link className="pill-link is-small" href="/builds/library">
                     Reset filters
                   </Link>
                 </div>
@@ -190,8 +191,10 @@ export default async function Library({
           <section className="ecosystem-results" aria-label="Matching library builds">
             <div className="ecosystem-results-subline" aria-live="polite" aria-atomic="true">
               <p>
-                <strong>{matched.toLocaleString("en-GB")}</strong> library builds ·{" "}
-                {rows.length ? `${(page - 1) * 24 + 1}–${Math.min(page * 24, matched)}` : "0"} shown
+                <strong>{matched.toLocaleString("en-GB")}</strong>{" "}
+                {matched === 1 ? "library build" : "library builds"}
+                {rows.length > 0 &&
+                  ` · ${(page - 1) * 24 + 1}–${Math.min(page * 24, matched)} shown`}
               </p>
               <SaveBuildFilter path="/builds/library" query={query} />
             </div>
@@ -200,6 +203,7 @@ export default async function Library({
                 {active.map(([key, label]) => (
                   <Link
                     key={key}
+                    className="landing-chip"
                     href={href({ [key]: "", page: "1" })}
                     aria-label={`Remove ${label} filter`}
                   >
@@ -207,7 +211,9 @@ export default async function Library({
                     <X size={12} />
                   </Link>
                 ))}
-                <Link href="/builds/library">Clear all</Link>
+                <Link className="pill-link is-small" href="/builds/library">
+                  Clear all
+                </Link>
               </nav>
             )}
             <div className="library-build-grid ecosystem-build-grid">
@@ -216,38 +222,70 @@ export default async function Library({
               ))}
             </div>
             {!rows.length && (
-              <div className="ecosystem-empty">
-                <Swords size={30} />
-                <h2>No loadouts match that search</h2>
-                <p>Try another weapon, activity or playstyle. You can also clear a filter above.</p>
-                <Link href="/builds/library" className="button secondary">
-                  Clear filters
-                </Link>
-              </div>
+              <EmptyWell
+                emblem="strip-builds"
+                title="No loadouts match that search"
+                line="Try another weapon, activity or playstyle, or remove a filter above."
+                action={
+                  <Link href="/builds/library" className="button secondary">
+                    Clear filters
+                  </Link>
+                }
+              />
             )}
-            <AdSlot placement="hub" />
-            <nav className="library-pagination" aria-label="Library pages">
-              {page > 1 ? (
-                <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                  Previous page
-                </Link>
-              ) : (
-                <span />
-              )}
-              <span>
-                Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
-              </span>
-              {page < pages ? (
-                <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                  Next page
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
+            {picks.length > 0 && (
+              <section className="build-library-picks" aria-labelledby="library-picks-heading">
+                <SectionHeading
+                  id="library-picks-heading"
+                  title={
+                    <>
+                      Start from <em>these</em>
+                    </>
+                  }
+                  line="Featured library builds, while you change the search."
+                  link={{ href: "/builds/library", label: "All library builds" }}
+                />
+                <div className="ecosystem-build-grid">
+                  {picks.map((build) => (
+                    <LibraryBuildCard key={build.id} build={build} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {rows.length > 0 && <AdSlot placement="hub" />}
+            {pages > 1 && (
+              <nav className="library-pagination" aria-label="Library pages">
+                {page > 1 ? (
+                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
+                    Previous page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span>
+                  Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
+                </span>
+                {page < pages ? (
+                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
+                    Next page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            )}
           </section>
         </div>
       )}
+      <BuildsNextStep
+        title={
+          <>
+            Make <em>your</em> version
+          </>
+        }
+        line="Start from any of these loadouts, swap the pieces you want and keep it on your account."
+        secondary={{ href: "/builds", label: "Community builds" }}
+      />
     </div>
   );
 }

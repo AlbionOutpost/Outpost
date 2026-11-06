@@ -142,14 +142,6 @@
 .loadout-ability-chip [data-albion-spell] {
   vertical-align: middle;
 }
-.spell-icon-unavailable {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-}
 @media (min-width: 901px) {
   .app.outpost .gear-studio.build-gear-studio .character-slots {
     gap: 8px;

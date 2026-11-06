@@ -1,0 +1,227 @@
+/* Crafting, refining, enchanting, cooking and alchemy: what only they need on top of the
+   shared calculator wells in calculator-shell.module.css. */
+:global(.app.outpost) .quick.quick {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: calc(var(--space-2) * -1);
+}
+:global(.app.outpost) .quick.quick button {
+  min-width: 56px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 12px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .quick.quick button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .notice.notice {
+  display: grid;
+  gap: var(--space-3);
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 8%, var(--well));
+  font-size: 13px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .notice.notice p {
+  margin: 0;
+}
+:global(.app.outpost) .noticeActions.noticeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .overwrite.overwrite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .overwrite.overwrite > span {
+  flex: 1 1 200px;
+  max-width: 260px;
+}
+:global(.app.outpost) .missing.missing {
+  color: var(--warning);
+}
+:global(.app.outpost) .sensitivity.sensitivity {
+  display: grid;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .sensitivity.sensitivity h3 {
+  margin: 0;
+  color: var(--secondary);
+  font: 600 13px/1.2 var(--font-ui);
+}
+:global(.app.outpost) .sensitivity.sensitivity p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+:global(.app.outpost) .tableScroll.tableScroll {
+  overflow-x: auto;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .tableScroll.tableScroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .tableScroll.tableScroll :is(th, td) {
+  height: 32px;
+  padding: 0 10px;
+  border-top: 1px solid var(--well-border);
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+:global(.app.outpost) .tableScroll.tableScroll thead th {
+  border-top: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+:global(.app.outpost) .tableScroll.tableScroll :is(th:first-child) {
+  text-align: left;
+}
+:global(.app.outpost) .tableScroll.tableScroll td {
+  font-family: var(--font-data);
+}
+:global(.app.outpost) .tableScroll.tableScroll tr[data-current] {
+  background: var(--accent-wash);
+}
+:global(.app.outpost) .tableScroll.tableScroll tr[data-current] th {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .tableScroll.tableScroll td:global(.is-gain) {
+  color: var(--killer);
+}
+:global(.app.outpost) .tableScroll.tableScroll td:global(.is-loss) {
+  color: var(--victim);
+}
+
+/* Unknown recipe, saved runs */
+:global(.app.outpost) .gate.gate {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  max-width: 640px;
+}
+:global(.app.outpost) .gate.gate h2 {
+  margin: 0;
+  font: 800 24px/1.1 var(--font-display);
+}
+:global(.app.outpost) .gate.gate p {
+  margin: 0;
+  color: var(--secondary);
+}
+:global(.app.outpost) .scenarios.scenarios {
+  margin-top: var(--space-4);
+}
+:global(.app.outpost) .scenarios.scenarios[hidden] {
+  display: none;
+}
+:global(.app.outpost) .tiers.tiers {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+}
+:global(.app.outpost) .tiers.tiers button {
+  min-height: 40px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  color: var(--secondary);
+  font: 700 13px/1 var(--font-display);
+  cursor: pointer;
+}
+:global(.app.outpost) .tiers.tiers button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .browserNote.browserNote {
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--well-border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* City & specialization profile (inside the station settings disclosure) */
+:global(.app.outpost) .profile.profile {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .profile.profile p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .profile.profile > :global(.button) {
+  justify-self: start;
+}
+:global(.app.outpost) .specs.specs {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-3) 0 0;
+  border: 0;
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .specs.specs legend {
+  padding: var(--space-3) 0 0;
+  color: var(--text);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .specs.specs small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+:global(.app.outpost) .profile.profile .figureLine {
+  color: var(--secondary);
+  font-family: var(--font-data);
+}
+
+/* Run details: sensitivity beside the accounting, full width under the steps */
+:global(.app.outpost) .details.details {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+:global(.app.outpost) .details.details > * {
+  margin: 0;
+}
+:global(.app.outpost) .detailsGrid.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+:global(.app.outpost) .detailsCol.detailsCol {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+@media (max-width: 980px) {
+  :global(.app.outpost) .detailsGrid.detailsGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

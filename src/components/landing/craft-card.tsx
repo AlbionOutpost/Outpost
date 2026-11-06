@@ -1,29 +1,20 @@
 "use client";
 import { AnimatedNumber } from "@/components/animated-number";
-import { resizeCraftQuote, type LandingCraftQuote } from "@/lib/landing-craft-quote";
+import { resizeCraftQuote } from "@/lib/landing-craft-quote";
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
-import { useOutpostRegion } from "@/components/region-context";
+import { useLandingPart } from "./landing-data";
 import { Silver } from "./silver";
-import { useLoad } from "./use-load";
 
 /**
- * The most worthwhile multi-material showcase craft, as `/api/landing/craft` picks it: materials with unit and
+ * The most worthwhile multi-material showcase craft, as `/api/landing` picks it: materials with unit and
  * total, cost against sale price, profit and margin, then the same recipe in every city with a
  * complete price set. The stepper recalculates from the same loaded observations. A loss shows as a loss.
  */
 export function CraftCard() {
-  const region = useOutpostRegion();
   const [batches, setBatches] = useState(1);
-  const data = useLoad(region, async (signal) => {
-    const r = await fetch(`/api/landing/craft?${new URLSearchParams({ region, batches: "1" })}`, {
-      signal,
-    });
-    const body = await r.json();
-    if (!r.ok) throw new Error(body.error || "Market observations unavailable.");
-    return body as LandingCraftQuote;
-  });
+  const data = useLandingPart("craft");
   const quote = data?.value ? resizeCraftQuote(data.value, batches) : undefined;
   const p = quote?.best;
   const cost = p?.upfront != null && p.fees != null ? p.upfront + p.fees : null;

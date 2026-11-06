@@ -73,6 +73,8 @@ export {AbuseBudget,KillBoard};
 export class OutpostDatabase extends Database {
  async fixtureFault(id,action){if(!/^atlas-test-[a-f0-9]{32}$/.test(id)||![null,'update','delete'].includes(action))throw Error('Invalid isolated fixture');const key='qa-fault:'+id;if(action)await this.ctx.storage.put(key,action);else await this.ctx.storage.delete(key);return true;}
  async query(queries){for(const q of queries){if(q.model==='user'&&['update','delete'].includes(q.operation)&&typeof q.args?.where?.id==='string'&&(await this.ctx.storage.get('qa-fault:'+q.args.where.id))===q.operation)return {ok:false,error:{kind:'unavailable'}};}return super.query(queries);}
+ // Account deletion runs as a named service, so its fault must be injected here too.
+ async service(name,args){if(name==='deleteAccountRecord'&&typeof args?.[0]==='string'&&(await this.ctx.storage.get('qa-fault:'+args[0]))==='delete')return {ok:false,error:{kind:'unavailable'}};return super.service(name,args);}
 }
 export default class LocalData extends Data {
  async fixtureQuery(queries){

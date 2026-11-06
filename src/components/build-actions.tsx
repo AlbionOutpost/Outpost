@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "./build-region-link";
 import { useOutpostRegion } from "./region-context";
+import { PanelHead } from "./panel-head";
+import { WellSelect } from "./well-select";
 export function BuildActions({
   id,
   version,
@@ -22,6 +24,8 @@ export function BuildActions({
   const [revision, setRevision] = useState(String(revisions[0] || 1));
   const [busy, setBusy] = useState(false);
   const [needsAuth, setNeedsAuth] = useState(false);
+  const older = revisions.filter((n) => n !== version);
+  const effective = older.includes(Number(revision)) ? revision : String(older[0] ?? revision);
   async function run(action: "duplicate" | "restore") {
     if (busy) return;
     setBusy(true);
@@ -33,7 +37,7 @@ export function BuildActions({
         headers: { "Content-Type": "application/json" },
         body:
           action === "restore"
-            ? JSON.stringify({ revision: Number(revision), version })
+            ? JSON.stringify({ revision: Number(effective), version })
             : undefined,
       });
       const body = await response
@@ -68,26 +72,35 @@ export function BuildActions({
       </div>
     );
   return (
-    <section className="panel section">
-      <div className="actions">
+    <section className="panel build-revisions-panel" aria-labelledby="build-revisions-heading">
+      <PanelHead
+        id="build-revisions-heading"
+        title={owner ? "Revisions" : "Make a copy"}
+        line={
+          owner
+            ? `Revision ${version} is current. Restoring an older one saves it as a new revision.`
+            : "Copy this build to your account and change it in the editor."
+        }
+      />
+      <div className="build-revisions-actions">
         <button className="button secondary" disabled={busy} onClick={() => run("duplicate")}>
           Duplicate build
         </button>
-        {owner && (
+        {owner && older.length > 0 && (
           <>
             <label>
-              Revision to restore
-              <select
+              <span>Revision to restore</span>
+              <WellSelect
                 aria-label="Revision to restore"
-                value={revision}
+                value={effective}
                 onChange={(e) => setRevision(e.target.value)}
               >
-                {revisions.map((n) => (
+                {older.map((n) => (
                   <option key={n} value={n}>
                     Revision {n}
                   </option>
                 ))}
-              </select>
+              </WellSelect>
             </label>
             <button
               className="button secondary"
@@ -105,8 +118,11 @@ export function BuildActions({
             </button>
           </>
         )}
+        {owner && !older.length && <p className="detail-muted">No older revision yet.</p>}
       </div>
-      <p role="status">{message}</p>
+      <p role="status" className="build-revisions-status">
+        {message} {needsAuth && message && <Link href="/signin">Sign in</Link>}
+      </p>
     </section>
   );
 }

@@ -6,7 +6,7 @@ const sections = [
   ["build-equipment", "Equipment"],
   ["build-abilities", "Abilities"],
   ["build-alternatives", "Alternatives"],
-  ["build-stats", "Stats & calculations"],
+  ["build-stats", "Build facts"],
   ["build-discussion", "Comments"],
 ] as const;
 

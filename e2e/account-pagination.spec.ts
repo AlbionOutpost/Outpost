@@ -185,7 +185,8 @@ test("older timers and scenarios remain reachable with tied dates, deletions and
       ],
     ] as const) {
       await page.goto(url);
-      if (open) await page.locator("summary").filter({ hasText: open }).click();
+      if (open)
+        await page.locator("summary, button[aria-expanded]").filter({ hasText: open }).click();
       if (url === "/tools/crafting")
         await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
       await page.getByRole("button", { name: load, exact: true }).click();

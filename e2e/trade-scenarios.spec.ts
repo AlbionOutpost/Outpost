@@ -42,15 +42,13 @@ test("manual trade thresholds persist privately and remain available beyond othe
       ["Total transport / risk cost", "50"],
     ])
       await page.getByLabel(label, { exact: true }).fill(value);
-    await expectResultText(page.locator(".panel.result > strong"), "292.5");
+    await expectResultText(page.locator('[data-result="trade-profit"]'), "292.5");
     await expectResultText(
-      page.locator(".panel.result dl > div").filter({ hasText: "Break-even sale per item" }),
+      page.locator("#trade-result dl > div").filter({ hasText: "Break-even sale per item" }),
       "117.32",
     );
     await expectResultText(
-      page
-        .locator(".panel.result dl > div")
-        .filter({ hasText: "Minimum profitable whole-silver sale" }),
+      page.locator("#trade-result dl > div").filter({ hasText: "Lowest sale price that profits" }),
       "118",
     );
     await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
@@ -81,7 +79,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore QA saved manual trade", exact: true }).click();
     await expect(page.getByLabel("Quantity", { exact: true })).toHaveValue("10");
-    await expectResultText(page.locator(".panel.result > strong"), "292.5");
+    await expectResultText(page.locator('[data-result="trade-profit"]'), "292.5");
     const guest = await browser.newContext();
     try {
       expect((await guest.request.get("/api/scenarios?kind=flipping")).status()).toBe(401);
@@ -154,19 +152,18 @@ test("manual trade thresholds persist privately and remain available beyond othe
         true,
       );
     }
-    if (!(await page.getByLabel("Purchase order setup fee (%)", { exact: true }).isVisible()))
-      await page.getByText("Fees & extra costs", { exact: true }).click();
+    await page.setViewportSize({ width: 1440, height: 900 });
+    // The purchase order fee only shows once you choose a buy order.
+    await expect(page.getByLabel("Purchase order setup fee (%)", { exact: true })).toHaveCount(0);
     await page.getByLabel("Purchase execution", { exact: true }).selectOption("buy-order");
     await page.getByLabel("Purchase order setup fee (%)", { exact: true }).fill("2.5");
-    await expectResultText(page.locator(".panel.result > strong"), "267.5");
+    await expectResultText(page.locator('[data-result="trade-profit"]'), "267.5");
     await expectResultText(
-      page.locator(".panel.result dl > div").filter({ hasText: "Purchase order setup cost" }),
+      page.locator("#trade-result dl > div").filter({ hasText: "Purchase order setup cost" }),
       "25",
     );
     await expectResultText(
-      page
-        .locator(".panel.result dl > div")
-        .filter({ hasText: "Minimum profitable whole-silver sale" }),
+      page.locator("#trade-result dl > div").filter({ hasText: "Lowest sale price that profits" }),
       "121",
     );
     await page.getByLabel("Scenario title", { exact: true }).fill("QA purchase order trade");
@@ -179,13 +176,12 @@ test("manual trade thresholds persist privately and remain available beyond othe
       .getByRole("button", { name: "Restore QA purchase order trade", exact: true })
       .click();
     await expect(page.getByLabel("Purchase execution", { exact: true })).toHaveValue("buy-order");
-    await page.getByText("Fees & extra costs", { exact: true }).click();
     await expect(page.getByLabel("Purchase order setup fee (%)", { exact: true })).toHaveValue(
       "2.5",
     );
-    await expectResultText(page.locator(".panel.result > strong"), "267.5");
+    await expectResultText(page.locator('[data-result="trade-profit"]'), "267.5");
     await expectResultText(
-      page.locator(".panel.result dl > div").filter({ hasText: "Purchase order setup cost" }),
+      page.locator("#trade-result dl > div").filter({ hasText: "Purchase order setup cost" }),
       "25",
     );
     for (const width of [1440, 390, 320]) {
@@ -202,6 +198,8 @@ test("manual trade thresholds persist privately and remain available beyond othe
         true,
       );
     }
+    // Saved plans sit with the result; wide screens show every step at once.
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/tools/transporting");
     await page.getByText("Saved transport plans", { exact: true }).click();
     await page.getByRole("button", { name: "Load transport plans", exact: true }).click();

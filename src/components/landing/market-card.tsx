@@ -4,8 +4,9 @@ import { ItemIcon } from "@/components/item-icon";
 import { useOutpostRegion } from "@/components/region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
+import { LANDING_HISTORY_FALLBACK_CITY } from "@/lib/landing-showcase";
+import { useLandingPart } from "./landing-data";
 import { compact, Silver } from "./silver";
-import { useLoad } from "./use-load";
 
 type Price = {
   city: string;
@@ -23,34 +24,28 @@ export function MarketCard({ item }: { item: { id: string; name: string; kind: s
   const region = useOutpostRegion();
   const [range, setRange] = useState<7 | 30>(30);
   const [selection, setSelection] = useState<{ scope: string; index: number } | null>(null);
-  const quotes = useLoad(`${region}:${item.id}`, async (signal) => {
-    const r = await fetch(
-      `/api/market?${new URLSearchParams({ region, item: item.id, quality: "1" })}`,
-      { signal },
-    );
-    const body = await r.json();
-    if (!r.ok) throw new Error(body.error || "Market observations unavailable.");
-    return {
-      rows: ((body.prices ?? []) as Price[])
-        .filter((p) => p.city !== "Black Market" && p.sell_price_min > 0)
-        .toSorted((a, b) => a.sell_price_min - b.sell_price_min),
-      at: Date.now(),
-    };
-  });
+  // Quotes and the cheapest city's history arrive together in the homepage's one request.
+  const market = useLandingPart("market");
+  const history = useLandingPart("history");
+  const quotes = market && {
+    error: market.error,
+    value:
+      market.value?.item === item.id
+        ? {
+            rows: (market.value.prices as Price[])
+              .filter((p) => p.city !== "Black Market" && p.sell_price_min > 0)
+              .toSorted((a, b) => a.sell_price_min - b.sell_price_min),
+            at: market.at,
+          }
+        : undefined,
+  };
   const rows = quotes?.value?.rows ?? [];
-  const city = rows[0]?.city ?? "Bridgewatch";
-  const history = useLoad(`${region}:${item.id}:${city}`, async (signal) => {
-    const r = await fetch(
-      `/api/history?${new URLSearchParams({ kind: "history", region, item: item.id, city, quality: "1" })}`,
-      { signal },
-    );
-    const body = await r.json();
-    if (!r.ok) throw new Error(body.error || "History unavailable.");
-    return ((body.data?.[0]?.data ?? []) as { avg_price: number; timestamp: string }[]).map(
-      (d) => ({ v: d.avg_price, t: d.timestamp }),
-    );
-  });
-  const observations = (history?.value ?? [])
+  const city = history?.value?.city ?? rows[0]?.city ?? LANDING_HISTORY_FALLBACK_CITY;
+  const observations = (
+    history?.value?.item === item.id
+      ? history.value.data.map((d) => ({ v: d.avg_price, t: d.timestamp }))
+      : []
+  )
     .filter((p) => Number.isFinite(p.v) && p.v > 0 && Number.isFinite(sourceTimestamp(p.t)))
     .toSorted((a, b) => sourceTimestamp(a.t) - sourceTimestamp(b.t));
   const lastTime = observations.length ? sourceTimestamp(observations.at(-1)!.t) : 0;

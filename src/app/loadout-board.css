@@ -42,6 +42,7 @@
   grid-template-rows: var(--cell);
 }
 .app.outpost .loadout-board-cell {
+  position: relative;
   display: grid;
   place-items: center;
   width: var(--cell);
@@ -98,4 +99,58 @@
 }
 .app.outpost .loadout-board-shadow img {
   opacity: 0.5;
+}
+
+/* A recorded swap: a small render on the piece's corner, as the detail page shows it */
+.app.outpost .loadout-board-swap {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  z-index: 2;
+  display: grid;
+  width: calc(var(--cell) / 3);
+  height: calc(var(--cell) / 3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.app.outpost .loadout-board-cell .loadout-board-swap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Editing (the build editor): every slot is a button; the selected one carries the ember edge */
+.app.outpost .loadout-board.is-interactive .loadout-board-slot {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  cursor: pointer;
+  scale: none;
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-slot:focus-visible {
+  outline: none;
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-slot:focus-visible .loadout-board-cell {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .app.outpost .loadout-board.is-interactive .loadout-board-slot:hover .loadout-board-cell {
+    border-color: var(--accent-ink);
+  }
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-slot.is-selected .loadout-board-cell {
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--well));
+  box-shadow: inset 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-slot.is-flagged .loadout-board-cell {
+  border: 2px solid var(--error);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 30%, transparent);
 }

@@ -7,12 +7,34 @@ import { findLibraryGuide, libraryJournal, libraryFishing } from "@/lib/grind-li
 import { FishingCalculator } from "@/components/fishing-calculator";
 import { JournalChecklist } from "@/components/journal-checklist";
 import { GuideArticleContent } from "@/components/guide-article-content";
-import { guideArtwork } from "@/components/grind-guide-directory";
 import { GuideReadingTools } from "@/components/guide-reading-tools";
-import { ItemIcon } from "@/components/item-icon";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { readingMinutes } from "@/components/guide-cover-card";
-import { ArrowLeft } from "lucide-react";
+import { guideDate, readingMinutes } from "@/components/guide-cover-card";
+import { Disclosure } from "@/components/disclosure";
+import { SectionHeading } from "@/components/section-heading";
+import { NextStepCards } from "@/components/next-step-cards";
+import { brandCopy } from "@/lib/brand-copy";
+import { ArrowLeft, ArrowUp } from "lucide-react";
+import { JsonLd } from "@/components/json-ld";
+import { articleLd, breadcrumbList } from "@/lib/structured-data";
+import styles from "./article.module.css";
+const guideLd = (guide: {
+  title: string;
+  slug: string;
+  summary: string;
+  author: string;
+  updatedAt: string;
+}) => {
+  const path = `/guides/${encodeURIComponent(guide.slug)}`;
+  return [
+    articleLd({ ...guide, description: guide.summary, path }),
+    breadcrumbList([
+      { name: "Home", path: "/" },
+      { name: "Guides", path: "/guides" },
+      { name: guide.title, path },
+    ]),
+  ];
+};
 export async function generateMetadata({
   params,
   searchParams,
@@ -22,99 +44,155 @@ export async function generateMetadata({
 }) {
   return archiveShareMetadata("guide", (await params).slug, await searchParams);
 }
+/** The summary's first sentence: the article itself opens with the full summary. */
+const lede = (summary: string) => summary.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? summary;
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const guide = await findLibraryGuide((await params).slug);
   if (!guide) notFound();
-  if (guide.slug === "albion-journal-guide")
-    return (
-      <div className="journal-guide-page support-guide-article">
-        <WorkspaceHeading
-          glyph="reference"
-          scene="guides"
-          cover={guide.cover?.src}
-          titleId="guide-title"
-          title={guide.title}
-          description="Pick an objective for your next run. Keep track as you explore."
-        >
-          <Link className="pill-link is-small masthead-back" href="/guides">
-            All guides <ArrowLeft size={14} />
-          </Link>
-        </WorkspaceHeading>
-        <details className="journal-source-details">
-          <summary>About your journal progress</summary>
-          <p>
-            By {guide.author} · Progress is entered manually for this browser and region.
-            Game-account progress and current-patch completeness are not inferred.
-          </p>
-        </details>
-        <JournalChecklist entries={await libraryJournal()} />
-      </div>
-    );
+  const date = guideDate(guide.updatedAt);
+  const journal = guide.slug === "albion-journal-guide";
   return (
-    <div className="grind-guide-article support-guide-article">
+    <div className={`${styles.page}${journal ? ` ${styles.journal}` : ""}`}>
+      {guideLd(guide).map((data, i) => (
+        <JsonLd data={data} key={i} />
+      ))}
       <WorkspaceHeading
         scene="guides"
         cover={guide.cover?.src}
         titleId="guide-title"
-        emblem={<ItemIcon id={guideArtwork[guide.slug] || "T4_BAG"} size={56} />}
         title={guide.title}
-        description={`${guide.category} · By ${guide.author} · ${guide.updatedAt ? `Updated ${guide.updatedAt}` : "Original date unavailable"} · ${readingMinutes(guide.content)} min read`}
+        accent={journal ? "Journal" : undefined}
+        description={
+          journal
+            ? "Every journal objective in one list. Tick them off as you go; progress stays in this browser, per server."
+            : lede(brandCopy(guide.summary))
+        }
       >
-        <Link className="pill-link is-small masthead-back" href="/guides">
-          All guides <ArrowLeft size={14} />
-        </Link>
-      </WorkspaceHeading>
-      <GuideReadingTools />
-      <details className="guide-mobile-toc">
-        <summary>In this guide</summary>
-        <nav aria-label="Guide contents">
-          {guide.toc.map((item, i) => (
-            <a href={`#${item.id}`} key={i}>
-              {item.title}
-            </a>
-          ))}
-        </nav>
-      </details>
-      <div className="guide-reading-layout">
-        <aside className="raised guide-reading-nav">
-          <h2>In this guide</h2>
-          <nav aria-label="Guide contents">
-            {guide.toc.map((item, i) => (
-              <a href={`#${item.id}`} key={i}>
-                {item.title}
-              </a>
-            ))}
-          </nav>
-          <div>
-            <p>Make it your next run.</p>
-            <Link className="text-link" href="/builds/library">
-              Find a loadout →
-            </Link>
-            <Link className="text-link" href="/tools">
-              Open your tools →
-            </Link>
-          </div>
-        </aside>
-        <div className="guide-reading-body">
-          <div className="raised library-provenance">
-            Game balance changes. Check current requirements, yields and costs in game.
-            {guide.slug === "fishing-leveling-guide" &&
-              " The rebuilt fame calculator is below the article."}
-          </div>
-          <article className="guide-prose">
-            <GuideArticleContent nodes={guide.content} />
-          </article>
-          {guide.slug === "fishing-leveling-guide" && (
-            <FishingCalculator fish={await libraryFishing()} initialMode="leveling" compact />
+        <ul className={`landing-chips ${styles.chips}`} aria-label="About this guide">
+          <li className="landing-chip">{guide.category}</li>
+          {!journal && (
+            <li className="landing-chip is-muted">{readingMinutes(guide.content)} min read</li>
           )}
-          <footer>
-            <Link href="/guides" className="text-link">
-              Back to the field guide →
-            </Link>
-          </footer>
-          <AdSlot placement="article" />
+          <li className="landing-chip is-muted">By {guide.author}</li>
+          <li className="landing-chip is-muted">{date ? `Updated ${date}` : "Date unavailable"}</li>
+        </ul>
+        <div className={styles.mastheadActions}>
+          <Link className="pill-link is-small masthead-back" href="/guides">
+            <ArrowLeft size={14} aria-hidden="true" /> All guides
+          </Link>
+          {!journal && <GuideReadingTools />}
         </div>
-      </div>
+      </WorkspaceHeading>
+      {journal ? (
+        <JournalChecklist entries={await libraryJournal()} />
+      ) : (
+        <>
+          <div className={styles.layout}>
+            <aside className={`raised ${styles.rail}`} aria-labelledby="guide-contents">
+              <h2 id="guide-contents">In this guide</h2>
+              {guide.toc.length > 0 && <Contents toc={guide.toc} />}
+              <p className={styles.railNote}>
+                Game balance changes between patches. Check requirements, yields and costs in game.
+              </p>
+              <a className="pill-link is-small" href="#guide-title">
+                <ArrowUp size={14} aria-hidden="true" /> Back to top
+              </a>
+            </aside>
+            <div className={styles.body}>
+              <div className={`raised ${styles.doc}`}>
+                {guide.toc.length > 0 && (
+                  <div className={styles.mobileToc}>
+                    <Disclosure summary="In this guide" meta={`${guide.toc.length} sections`}>
+                      <Contents toc={guide.toc} />
+                    </Disclosure>
+                  </div>
+                )}
+                <article className={`guide-prose ${styles.prose}`}>
+                  <GuideArticleContent nodes={guide.content} />
+                </article>
+              </div>
+              {guide.slug === "fishing-leveling-guide" && (
+                <section className={styles.tool} aria-labelledby="guide-tool">
+                  <SectionHeading
+                    id="guide-tool"
+                    title={
+                      <>
+                        Fishing fame <em>calculator</em>
+                      </>
+                    }
+                    line="How many fish your next level takes, at your own prices."
+                  />
+                  <FishingCalculator fish={await libraryFishing()} initialMode="leveling" compact />
+                </section>
+              )}
+              <AdSlot placement="article" />
+            </div>
+          </div>
+        </>
+      )}
+      <NextStepCards
+        id="guide-next"
+        title={
+          journal ? (
+            <>
+              Plan the next <em>objective</em>
+            </>
+          ) : (
+            <>
+              Make it your next <em>run</em>
+            </>
+          )
+        }
+        line={
+          journal
+            ? "Find a loadout for the content, or read up before you go."
+            : "Pick a loadout for it, track your journal, or plan the party."
+        }
+        link={{ href: "/guides", label: "All guides" }}
+        cards={[
+          {
+            href: "/builds/activities",
+            emblem: "strip-builds",
+            title: "Builds by activity",
+            line: "Loadouts players run for each kind of content.",
+            scene: "build",
+          },
+          journal
+            ? {
+                href: "/guides",
+                emblem: "tool-craft",
+                title: "Every guide",
+                line: "Progression, gathering, PvE, trading and crafting.",
+                scene: "economy",
+              }
+            : {
+                href: "/guides/albion-journal-guide",
+                emblem: "tool-planner",
+                title: "Journal tracker",
+                line: "Every journal objective in one list, ticked off as you go.",
+                scene: "city",
+              },
+          {
+            href: "/compositions",
+            emblem: "strip-comps",
+            title: "Comps",
+            line: "Plan the party: roles, loadouts and swaps for every slot.",
+            scene: "composition",
+          },
+        ]}
+      />
     </div>
+  );
+}
+
+function Contents({ toc }: { toc: { id: string; title: string }[] }) {
+  return (
+    <nav className={styles.contents} aria-label="Guide contents">
+      {toc.map((item, i) => (
+        <a href={`#${item.id}`} key={i}>
+          {item.title}
+        </a>
+      ))}
+    </nav>
   );
 }

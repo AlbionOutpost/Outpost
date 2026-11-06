@@ -1,7 +1,8 @@
 name: Visual baselines
-# Regenerates the reviewed screenshot baselines on the same runner image that checks them,
-# so font rasterization never produces a false failure. Dispatch it on a branch after a
-# deliberate visual change, review the committed images in the pull request, then merge.
+# Regenerates the reviewed screenshot baselines on the same runner image and Cloudflare runtime
+# that check them (full-suite.yml), so neither fonts nor the runtime produce a false failure.
+# Dispatch it on a branch after a deliberate visual change, review the committed images in the
+# pull request, then merge.
 on:
   workflow_dispatch:
 permissions:
@@ -16,6 +17,10 @@ jobs:
     timeout-minutes: 30
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_SEND_ERROR_REPORTS: "false"
+      CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
+      XDG_CONFIG_HOME: ${{ github.workspace }}/.qa/wrangler-config
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,15 +32,15 @@ jobs:
       - run: npm ci
       - name: Configure isolated local services
         run: node scripts/ci-local-services.mjs
+      - name: Generate and verify the SQLite runtime
+        run: node scripts/qa-cloudflare-runtime.mjs
       - run: npx playwright install --with-deps chromium
       - name: Verify the pinned browser sandbox
         run: node scripts/qa-browser-sandbox.mjs
-      - name: Build the standalone server
-        run: npm run build
-      - name: Regenerate the reviewed baselines
-        run: npx playwright test e2e/premium-visual.spec.ts --update-snapshots=all --reporter=line
-        env:
-          E2E_PRODUCTION: "1"
+      - name: Build Cloudflare and regenerate the reviewed baselines
+        run: |
+          node scripts/cloudflare-build.mjs
+          E2E_CLOUDFLARE=1 E2E_PRODUCTION=1 npx playwright test e2e/premium-visual.spec.ts --update-snapshots=all --reporter=line
       - name: Commit refreshed baselines
         run: |
           git config user.name "oNxZero"

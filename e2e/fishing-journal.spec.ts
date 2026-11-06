@@ -55,9 +55,7 @@ test("journal progress survives reload, stays regional, filters completed entrie
   await page
     .getByRole("searchbox", { name: "Search objectives or rewards", exact: true })
     .fill("not-a-journal-objective");
-  await expect(
-    page.getByRole("heading", { name: "No objectives match.", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("No objectives match.", { exact: true })).toBeVisible();
 });
 
 test("fish accounting preserves manual zero and refresh overrides while excluding stale, missing and other-city prices", async ({
@@ -97,13 +95,13 @@ test("fish accounting preserves manual zero and refresh overrides while excludin
   await expect(page.locator('[data-result="fish-chop-profit"]')).toContainText("—");
   await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("100");
-  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "350 silver", {
+  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "350", {
     exact: true,
   });
   await page.getByLabel("Raw fish purchase price", { exact: true }).fill("0");
   await page.getByRole("button", { name: "Refresh fish observations", exact: true }).click();
   await expect(page.getByLabel("Raw fish purchase price", { exact: true })).toHaveValue("0");
-  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "1,350 silver", {
+  await expectResultText(page.locator('[data-result="fish-chop-profit"]'), "1,350", {
     exact: true,
   });
   await page.getByLabel("Fishing market city", { exact: true }).selectOption("Lymhurst");
@@ -131,11 +129,11 @@ test("fishing fame uses entered assumptions and whole-fish quantities", async ({
   await expectResultText(page.locator('[data-result="fishing-fish-needed"]'), "48", {
     exact: true,
   });
-  await expectResultText(page.locator('[data-result="fishing-target-cost"]'), "49,200 silver", {
+  await expectResultText(page.locator('[data-result="fishing-target-cost"]'), "49,200", {
     exact: true,
   });
   await page.getByLabel("Fame per consumed fish", { exact: true }).fill("0");
-  await expect(page.locator('[data-result="fishing-fish-needed"]')).toHaveText("—");
+  await expect(page.locator('[data-result="fishing-fish-needed"]')).toHaveText("—Unavailable");
 });
 
 test("journal and fish workspaces reflow with usable controls at six widths", async ({ page }) => {

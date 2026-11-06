@@ -76,10 +76,13 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
     expect((await db.user.findUniqueOrThrow({ where: { id } })).role).toBe("USER");
     await page.goto(`/builds/${saved.id}`);
     await expect(page.getByRole("heading", { name: input.title })).toBeVisible();
-    // Only the renderer's icons and the site's own static slot marks may be images here.
+    // Only the renderer's icons and the site's own static art (slot marks, the silver coin
+    // beside a priced cost) may be images here; the stored <img src=x> must stay text.
     expect(
       await page
-        .locator("main script, main img:not([data-albion-icon]):not([data-slot-mark])")
+        .locator(
+          'main script, main img:not([data-albion-icon]):not([data-slot-mark]):not([src^="/albion/"])',
+        )
         .count(),
     ).toBe(0);
     expect(
@@ -120,11 +123,11 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
       })),
     });
     await page.goto(`/builds?q=${tag}`);
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(24);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(24);
     await page.getByRole("link", { name: "Next page" }).click();
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(1);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(1);
     await page.goBack();
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(24);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(24);
     const csrf = await (await context.request.get("/api/auth/csrf")).json();
     await context.request.post("/api/auth/signout", {
       form: { csrfToken: csrf.csrfToken, callbackUrl: "/", json: "true" },
@@ -132,6 +135,40 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
     expect((await context.request.get("/api/account/export")).status()).toBe(401);
     expect(await db.session.count({ where: { userId: id } })).toBe(0);
     expect(await db.build.count({ where: { authorId: id } })).toBe(26);
+  } finally {
+    await db.user.delete({ where: { id } });
+  }
+});
+test("player profiles only exist for public contributors or the account itself", async ({
+  page,
+  context,
+}) => {
+  const id = `atlas-test-${randomUUID()}`,
+    token = randomUUID(),
+    name = `Quiet ${randomUUID().slice(0, 8)}`;
+  await db.user.create({
+    data: {
+      id,
+      name,
+      sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+    },
+  });
+  try {
+    await page.goto(`/players/${id}`);
+    await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+    await expect(page.getByText(name)).toHaveCount(0);
+    await context.addCookies([
+      {
+        name: "next-auth.session-token",
+        value: token,
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+    ]);
+    await page.goto(`/players/${id}`);
+    await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
   } finally {
     await db.user.delete({ where: { id } });
   }

@@ -39,28 +39,28 @@ export function MarketResearch({
       <div className="mx-list-head">
         <h3>Research multiple items{items.length ? ` (${items.length}/12)` : ""}</h3>
         <p className="muted">
-          A temporary shortlist: add the selected item, then refresh every quote at once. Quality
-          stays with each item; quotes use {region}.
+          Shortlist up to 12 items and refresh all their prices at once. Each keeps its own quality.
         </p>
       </div>
       <div className="actions">
         <button type="button" className="button secondary" onClick={add}>
           Add selected to research
         </button>
-        <button
-          type="button"
-          className="button secondary"
-          disabled={!items.length || busy}
-          onClick={() => void refresh(items)}
-        >
-          {busy ? "Refreshing research…" : "Refresh research quotes"}
-        </button>
+        {items.length > 0 && (
+          <button
+            type="button"
+            className="button secondary"
+            disabled={busy}
+            onClick={() => void refresh(items)}
+          >
+            {busy ? "Refreshing research…" : "Refresh research quotes"}
+          </button>
+        )}
       </div>
       {message && <p role="status">{message}</p>}
       {!items.length && (
         <p className="mx-list-empty">
-          Nothing on the shortlist yet. Pick an item above and add it — up to 12 item and quality
-          selections.
+          Nothing on the shortlist yet. Add the item you are looking at to start one.
         </p>
       )}
       <ul className="watchlist-items research-items">

@@ -27,6 +27,24 @@ describe("edge cache for signed-out public answers", () => {
     );
     expect(key("/api/combat-events/top?region=europe&region=asia")).toBeNull();
   });
+  it("keys the combined homepage answer by validated server only", () => {
+    expect(key("/api/landing?region=europe")).toBe(
+      "https://albionoutpost.com/api/landing?region=europe",
+    );
+    expect(key("/api/landing?utm=x&region=asia")).toBe(
+      "https://albionoutpost.com/api/landing?region=asia",
+    );
+    expect(edgeCacheEntry(req("/api/landing?region=americas"))!.ttl).toBe(120);
+    expect(key("/api/landing")).toBeNull();
+    expect(key("/api/landing?region=mars")).toBeNull();
+    expect(key("/api/landing?region=europe&region=asia")).toBeNull();
+    const cookie = { headers: { Cookie: "next-auth.session-token=abc" } };
+    expect(key("/api/landing?region=europe", cookie)).toBeNull();
+  });
+  it("never caches per-account likes", () => {
+    expect(key("/api/library-likes?items=build:axe")).toBeNull();
+    expect(key("/api/library-likes/build/axe")).toBeNull();
+  });
   it("never caches signed-in visitors, writes or other routes", () => {
     const cookie = { headers: { Cookie: "__Secure-next-auth.session-token=abc" } };
     expect(key("/api/search?q=bag", cookie)).toBeNull();

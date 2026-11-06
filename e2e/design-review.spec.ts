@@ -149,16 +149,24 @@ test("design review covers application pages, equipment, guilds and reduced moti
           if (route === "/compositions/new") {
             await page.getByRole("button", { name: "20 players", exact: true }).click();
             if (width >= 1440) {
-              const row = page.locator(".party-roster .roster-row").first();
+              const row = page
+                .getByRole("list", { name: "Comp roster", exact: true })
+                .getByRole("listitem")
+                .first();
               await row.evaluate((el) =>
                 el.scrollIntoView({ block: "center", behavior: "instant" }),
               );
-              await row.locator(".member-select").hover();
+              const select = row.getByRole("button", { name: /^Configure member 1\b/ });
+              await select.hover();
               await expect
                 .poll(async () => {
-                  const member = (await row.locator(".member-select").boundingBox())!;
-                  const drag = (await row.locator(".drag-handle").boundingBox())!;
-                  const move = (await row.locator(".roster-move").boundingBox())!;
+                  const member = (await select.boundingBox())!;
+                  const drag = (await row
+                    .getByRole("button", { name: "Drag member 1", exact: true })
+                    .boundingBox())!;
+                  const move = (await row
+                    .getByRole("button", { name: "Move member 1 up", exact: true })
+                    .boundingBox())!;
                   return (
                     member.x >= drag.x + drag.width - 1 && member.x + member.width <= move.x + 1
                   );

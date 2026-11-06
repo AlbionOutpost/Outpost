@@ -50,10 +50,10 @@ test("published combat feed retains server boundaries, source delay, equipment a
   });
   await page.goto("/tools/kill-feed?region=europe");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Global kill feed");
-  const event = page.locator(".combat-event-summary").first();
-  await expect(event).toContainText("Combat fixture attacker");
+  const event = page.locator(".combat-event").first();
+  await expect(event.locator(".kill-side").first()).toContainText("Combat fixture attacker");
   await expect(event).toContainText("Delayed source event");
-  await event.click();
+  await event.getByRole("button", { name: "Item details", exact: true }).click();
   await expect(page.locator(".combat-event-details")).toContainText("Combat fixture victim");
   await expect(
     page
@@ -63,9 +63,7 @@ test("published combat feed retains server boundaries, source delay, equipment a
   await page
     .getByRole("textbox", { name: "Filter this feed page by player or guild" })
     .fill("no-result");
-  await expect(
-    page.getByRole("heading", { name: "No events match these page filters" }),
-  ).toBeVisible();
+  await expect(page.getByText("No events match these page filters", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Clear filter", exact: true }).click();
   fail = true;
   await page.getByRole("button", { name: "Refresh feed", exact: true }).click();
@@ -78,7 +76,9 @@ test("published combat feed retains server boundaries, source delay, equipment a
   await expect(page.locator(".combat-feed-page").getByRole("alert")).toHaveCount(0);
   await page.getByRole("link", { name: "Death feed", exact: true }).click();
   await expect(page).toHaveURL(/kill-feed\?view=deaths&region=europe$/);
-  await expect(page.locator(".combat-identity")).toContainText("Combat fixture victim");
+  await expect(page.locator(".combat-event .kill-side.is-victim")).toContainText(
+    "Combat fixture victim",
+  );
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

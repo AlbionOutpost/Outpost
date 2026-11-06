@@ -23,9 +23,7 @@ for (const [calculator, recipe] of [
     await expect(
       page.getByRole("heading", { name: "Recipe unavailable in this calculator", exact: true }),
     ).toBeVisible();
-    await expect(
-      page.getByText("This page is temporarily unavailable.", { exact: true }),
-    ).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "This page didn’t load" })).toHaveCount(0);
     await page.getByRole("link", { name: "Start with the default recipe", exact: true }).click();
     await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
     await expect(
@@ -208,18 +206,24 @@ test("laborer execution changes never reuse listing observations after a failed 
   await page.goto("/tools/laborers?region=europe");
   const execution = page.locator("label").filter({ hasText: "Sell loot by" }).locator("select");
   await execution.selectOption("listing");
-  await expectResultText(page.locator(".tool-main-result"), "15,294 silver", { exact: true });
-  await expect(page.getByText("All prices in place", { exact: true })).toBeVisible();
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,294", {
+    exact: true,
+  });
+  // Every price is in: no checklist of missing prices.
+  await expect(page.locator('[data-result="readiness"]')).toHaveCount(0);
   await execution.selectOption("instant");
-  await expect(page.getByText("Fixture: buy orders unavailable", { exact: true })).toBeVisible();
-  await expect(page.getByText("All prices in place", { exact: true })).toHaveCount(0);
-  await expectResultText(page.locator(".tool-main-result"), "15,724", { not: true });
-  await expect(page.getByLabel("T4_METALBAR unit price", { exact: true })).toHaveValue("");
-  await expect(page.getByText("Estimate is incomplete", { exact: true })).toBeVisible();
-  await page.getByLabel("T4_METALBAR unit price", { exact: true }).fill("900");
+  await expect(
+    page.getByText("Prices couldn’t be loaded. Your inputs were kept.", { exact: true }),
+  ).toBeVisible();
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,724", { not: true });
+  await expect(page.getByLabel("Metalbar · T4.0 unit price", { exact: true })).toHaveValue("");
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Loot prices");
+  await page.getByLabel("Metalbar · T4.0 unit price", { exact: true }).fill("900");
   await page.getByRole("button", { name: "Refresh market prices", exact: true }).click();
-  await expect(page.getByText("Fixture: buy orders unavailable", { exact: true })).toBeVisible();
-  await expect(page.getByLabel("T4_METALBAR unit price", { exact: true })).toHaveValue("900");
+  await expect(
+    page.getByText("Prices couldn’t be loaded. Your inputs were kept.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Metalbar · T4.0 unit price", { exact: true })).toHaveValue("900");
 });
 
 test("production calculations save, reload, share and enforce scenario ownership", async ({
@@ -342,12 +346,12 @@ for (const failure of [
   {
     status: 503,
     body: "<html>Proxy unavailable</html>",
-    message: "Market observations are temporarily unavailable. Please retry shortly.",
+    message: "Prices couldn’t be loaded. Your inputs were kept.",
   },
   {
     status: 200,
     body: "malformed upstream document",
-    message: "Market observations are temporarily unavailable. Please retry shortly.",
+    message: "Prices couldn’t be loaded. Your inputs were kept.",
   },
 ]) {
   test(`production keeps edits and recovers from a non-JSON ${failure.status} price response`, async ({
@@ -398,3 +402,37 @@ for (const failure of [
     await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("7");
   });
 }
+
+test("the sticky result never covers the details under a calculator", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 700 });
+  // Typed prices complete the run without touching the market.
+  await page.route("**/api/economy/prices?**", (route) => route.fulfill({ json: { prices: {} } }));
+  await page.goto("/tools/crafting?region=europe");
+  await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
+  await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
+  await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
+  for (const name of ["Detailed accounting · entire run", "Your assumptions"]) {
+    const toggle = page.getByRole("button", { name, exact: true });
+    // A real click: it fails while anything, such as the sticky result, sits on the toggle.
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  }
+  // Scrolled to the end, the sticky result stays above the details.
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  const result = await page.locator("#production-results").boundingBox();
+  const details = await page
+    .getByRole("heading", { name: "Run details", exact: true })
+    .boundingBox();
+  expect(result!.y + result!.height).toBeLessThanOrEqual(details!.y);
+  for (const [url, name] of [
+    ["/tools/transporting?region=europe", "Saved transport plans"],
+    ["/tools/farming?region=europe", "Saved harvest scenarios & sharing"],
+    ["/tools/flipping?region=europe", "Saved trade scenarios & sharing"],
+  ] as const) {
+    await page.goto(url);
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    const toggle = page.getByRole("button", { name, exact: true });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  }
+});

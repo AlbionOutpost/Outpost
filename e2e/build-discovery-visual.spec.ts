@@ -69,17 +69,17 @@ test("equipment discovery preserves filters, private boundaries and saved favori
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
       await page.goto(`/builds?q=${encodeURIComponent(label)}`);
-      await expect(page.locator(".build-preview-card")).toHaveCount(6);
-      await expect(page.locator(".build-preview-card").first()).toBeVisible();
+      await expect(page.locator(".community-build-card")).toHaveCount(6);
+      await expect(page.locator(".community-build-card").first()).toBeVisible();
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       await expect(page.locator("main")).not.toContainText("hidden private plan");
       await page.evaluate(() => document.fonts.ready);
-      for (const card of await page.locator(".build-preview-card").all())
+      for (const card of await page.locator(".community-build-card").all())
         await card.scrollIntoViewIfNeeded();
       await page
         .waitForFunction(
           () =>
-            [...document.querySelectorAll<HTMLImageElement>(".build-preview-card img")].every(
+            [...document.querySelectorAll<HTMLImageElement>(".community-build-card img")].every(
               (img) => img.complete,
             ),
           null,
@@ -96,9 +96,9 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       await page.getByRole("button", { name: "Filter builds", exact: true }).click();
       await page.getByLabel("Filter build weapon", { exact: true }).selectOption("MAIN_AXE");
       await page.getByRole("button", { name: "Search builds", exact: true }).click();
-      await expect(page.locator(".build-preview-card")).toHaveCount(2);
+      await expect(page.locator(".community-build-card")).toHaveCount(2);
       const card = page
-        .locator(".build-preview-card")
+        .locator(".community-build-card")
         .filter({ hasText: `${label} Battleaxe expedition` });
       const favoriteUrl = `/api/community/build/${ids[0]}`;
       await page.route(favoriteUrl, (route) =>
@@ -116,41 +116,47 @@ test("equipment discovery preserves filters, private boundaries and saved favori
         .getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true })
         .click();
       await expect(
-        card.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
+        card.getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        }),
       ).toHaveAttribute("aria-pressed", "true");
       await page.reload();
       await expect(
-        page.getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true }),
+        page.getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        }),
       ).toHaveAttribute("aria-pressed", "true");
       expect(await db.buildFavorite.count({ where: { userId: id, buildId: ids[0] } })).toBe(1);
       await page
-        .getByRole("button", { name: `Unsave ${label} Battleaxe expedition`, exact: true })
+        .getByRole("button", {
+          name: `Unsave ${label} Battleaxe expedition · 1 favorite`,
+          exact: true,
+        })
         .click();
       await expect(
         page.getByRole("button", { name: `Save ${label} Battleaxe expedition`, exact: true }),
       ).toHaveAttribute("aria-pressed", "false");
       await page.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
-      await expect(page.locator(".build-preview-card")).toHaveCount(7);
+      await expect(page.locator(".community-build-card")).toHaveCount(7);
       await page
         .getByRole("navigation", { name: "Weapon shortcuts" })
         .getByRole("link", { name: /Battleaxe/ })
         .click();
       await expect(page).toHaveURL(/mine=1/);
       await expect(page.getByLabel("Search build titles")).toHaveValue(`${label}`);
-      await expect(page.locator(".build-preview-card")).toHaveCount(3);
+      await expect(page.locator(".community-build-card")).toHaveCount(3);
       await page.goto("/builds?q=not-a-qa-discovery-948");
-      await expect(
-        page.getByRole("heading", { name: "No matching loadouts", exact: true }),
-      ).toBeVisible();
+      await expect(page.getByText("No matching loadouts", { exact: true })).toBeVisible();
       await page.screenshot({ path: `${folder}/empty-320.png`, fullPage: true });
       const anonymous = await browser.newContext();
       try {
         const guest = await anonymous.newPage();
         await guest.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
-        await expect(
-          guest.getByRole("heading", { name: "No matching loadouts", exact: true }),
-        ).toBeVisible();
-        await expect(guest.locator(".build-preview-card")).toHaveCount(0);
+        // Signed out, My Builds offers sign-in instead of empty filters.
+        await expect(guest.getByText("Sign in to see your builds", { exact: true })).toBeVisible();
+        await expect(guest.locator(".community-build-card")).toHaveCount(0);
         const duplicate = await guest.request.get(
           "/builds?q=one&q=two&content=Arena&content=Roaming",
         );

@@ -8,13 +8,13 @@ test("a loadout becomes an inventory-aware list that survives reload without cro
 }) => {
   await page.goto("/builds/new?region=europe");
   await page.getByRole("button", { name: "Load example equipment", exact: true }).click();
-  await page.getByText("Market estimates & shopping list", { exact: true }).click();
   await page.getByRole("button", { name: "Shop this loadout", exact: true }).click();
   await page.getByRole("link", { name: "Open list →", exact: true }).click();
   await expect(page.getByText("10 purchase lines", { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 768, height: 1024 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   for (const input of await page.getByLabel(/owned quantity$/).all()) await input.fill("1");
+  await page.getByRole("tab", { name: "Shopping list", exact: true }).click();
   await page.getByLabel(/^Battleaxe.*required quantity$/).fill("3");
   await page.getByLabel(/^Battleaxe.*unit price$/).fill("2500");
   await expect(page.locator(".shopping-total")).toHaveText("5,000");

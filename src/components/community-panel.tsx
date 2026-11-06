@@ -1,9 +1,14 @@
 "use client";
+import { ArrowRight, Heart, ThumbsUp } from "lucide-react";
+import { Disclosure } from "./disclosure";
+import { EmptyWell } from "./empty-well";
+import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
 import { useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
-import { Heart, ThumbsUp } from "lucide-react";
 import { ReactionFeedback } from "./reaction-feedback";
 import { TurnstileChallenge } from "./turnstile-challenge";
+import styles from "./community-panel.module.css";
 type Comment = {
   id: string;
   body: string;
@@ -96,19 +101,27 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
       }
     }
   }
+  const noun = kind === "composition" ? "comp" : "build";
   return (
-    <section className="panel section">
-      <h2>Community discussion</h2>
+    <section className={`panel ${styles.panel}`} aria-labelledby={`${kind}-community`}>
+      <PanelHead
+        id={`${kind}-community`}
+        title="Community discussion"
+        line="Favourites and votes are players' picks, not combat statistics."
+        actions={
+          data?.viewerId && (
+            <Link className="pill-link is-small" href="/favorites">
+              Your favorites <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          )
+        }
+      />
       {data?.viewerId && (
         <TurnstileChallenge onToken={setTurnstileToken} attempt={verificationAttempt} />
       )}
-      <p className="muted">
-        Ratings are community votes, not verified combat statistics. Visibility rules apply to every
-        action.
-      </p>
       {data ? (
         <>
-          <div className="actions">
+          <div className={`actions ${styles.reactions}`} hidden={!data.viewerId}>
             <button
               className="button secondary"
               disabled={busy}
@@ -143,207 +156,235 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                 {data.voted ? "Remove vote" : "Upvote build"} ({data.voteCount})
               </button>
             )}
-            <Link className="text-link" href="/favorites">
-              Your favorites
-            </Link>
           </div>
-          {!data.viewerId && (
-            <p>
-              <Link className="text-link" href="/signin">
-                Sign in with Discord
-              </Link>{" "}
-              to participate.
-            </p>
-          )}
-          <form
-            className="section"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              if (
-                await act(
-                  edit
-                    ? { action: "edit-comment", commentId: edit.id, version: edit.version, body }
-                    : { action: "comment", body },
-                  edit ? "Comment updated." : "Comment posted.",
-                )
-              ) {
-                setBody("");
-                setEdit(null);
-              }
-            }}
-          >
-            <label>
-              {edit ? "Edit your comment" : "Your comment"}
-              <textarea
-                aria-label="Community comment"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                minLength={3}
-                maxLength={3000}
-                required
-              />
-            </label>
-            <div className="actions">
-              <button className="button primary" disabled={busy || !data.viewerId}>
-                {edit ? "Save comment revision" : "Post comment"}
-              </button>
-              {edit && (
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() => {
-                    setEdit(null);
-                    setBody("");
-                  }}
-                >
-                  Cancel edit
+          {data.viewerId ? (
+            <form
+              className={styles.compose}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (
+                  await act(
+                    edit
+                      ? { action: "edit-comment", commentId: edit.id, version: edit.version, body }
+                      : { action: "comment", body },
+                    edit ? "Comment updated." : "Comment posted.",
+                  )
+                ) {
+                  setBody("");
+                  setEdit(null);
+                }
+              }}
+            >
+              <label className={styles.field}>
+                {edit ? "Edit your comment" : "Your comment"}
+                <textarea
+                  aria-label="Community comment"
+                  value={body}
+                  rows={3}
+                  placeholder={`What works with this ${noun}, and what doesn't?`}
+                  onChange={(e) => setBody(e.target.value)}
+                  minLength={3}
+                  maxLength={3000}
+                  required
+                />
+              </label>
+              <div className="actions">
+                <button className="button primary" disabled={busy}>
+                  {edit ? "Save comment revision" : "Post comment"}
                 </button>
-              )}
+                {edit && (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => {
+                      setEdit(null);
+                      setBody("");
+                    }}
+                  >
+                    Cancel edit
+                  </button>
+                )}
+              </div>
+            </form>
+          ) : (
+            <div className={styles.signin}>
+              <p>Sign in to favourite this {noun}, comment or report it.</p>
+              <Link className="button secondary" href="/signin">
+                Sign in with Discord
+              </Link>
             </div>
-          </form>
-          <div className="section">
-            {data.comments.map((c) => (
-              <article className="panel section" key={c.id}>
-                <p>
-                  <Link className="text-link" href={`/players/${c.authorId}`}>
-                    {c.author.name || "Adventurer"}
-                  </Link>{" "}
-                  · <time dateTime={c.createdAt}>{new Date(c.createdAt).toLocaleString()}</time> · v
-                  {c.version}
-                </p>
-                <p className="preserve">{c.body}</p>
-                <div className="actions">
-                  {data.viewerId === c.authorId && (
-                    <>
+          )}
+          {data.comments.length ? (
+            <ul className={styles.comments}>
+              {data.comments.map((c) => (
+                <li className={styles.comment} key={c.id}>
+                  <p className={styles.byline}>
+                    <Link href={`/players/${c.authorId}`}>{c.author.name || "Adventurer"}</Link>
+                    <time dateTime={c.createdAt}>
+                      {new Date(c.createdAt).toLocaleString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </time>
+                    {c.version > 1 && <span>Edited</span>}
+                  </p>
+                  <p className="preserve">{c.body}</p>
+                  <div className={styles.commentActions}>
+                    {data.viewerId === c.authorId && (
+                      <>
+                        <button
+                          className="pill-link is-small"
+                          onClick={() => {
+                            setEdit(c);
+                            setBody(c.body);
+                          }}
+                        >
+                          Edit comment
+                        </button>
+                        <button
+                          className="pill-link is-small"
+                          disabled={busy}
+                          onClick={() => {
+                            if (window.confirm("Delete this comment from the discussion?"))
+                              act(
+                                { action: "delete-comment", commentId: c.id, version: c.version },
+                                "Comment deleted.",
+                              );
+                          }}
+                        >
+                          Delete comment
+                        </button>
+                        <button
+                          className="pill-link is-small"
+                          onClick={async () => {
+                            try {
+                              const r = await fetch(`${url}?history=${c.id}`),
+                                b = await r.json();
+                              if (!r.ok) throw new Error(b.error);
+                              setHistory(b.revisions);
+                            } catch (e) {
+                              setMessage(e instanceof Error ? e.message : "History unavailable");
+                            }
+                          }}
+                        >
+                          Comment edit history
+                        </button>
+                      </>
+                    )}
+                    {data.viewerId && (
                       <button
-                        className="button secondary"
-                        onClick={() => {
-                          setEdit(c);
-                          setBody(c.body);
-                        }}
-                      >
-                        Edit comment
-                      </button>
-                      <button
-                        className="button secondary"
+                        className="pill-link is-small"
                         disabled={busy}
                         onClick={() => {
-                          if (window.confirm("Delete this comment from the discussion?"))
+                          const reason = window.prompt(
+                            "Explain why this comment needs moderation (10–2000 characters).",
+                          );
+                          if (reason)
                             act(
-                              { action: "delete-comment", commentId: c.id, version: c.version },
-                              "Comment deleted.",
+                              { action: "report", commentId: c.id, reason },
+                              "Comment report submitted for review.",
                             );
                         }}
                       >
-                        Delete comment
+                        Report comment
                       </button>
-                      <button
-                        className="button secondary"
-                        onClick={async () => {
-                          try {
-                            const r = await fetch(`${url}?history=${c.id}`),
-                              b = await r.json();
-                            if (!r.ok) throw new Error(b.error);
-                            setHistory(b.revisions);
-                          } catch (e) {
-                            setMessage(e instanceof Error ? e.message : "History unavailable");
-                          }
-                        }}
-                      >
-                        Comment edit history
-                      </button>
-                    </>
-                  )}
-                  <button
-                    className="button secondary"
-                    disabled={busy || !data.viewerId}
-                    onClick={() => {
-                      const reason = window.prompt(
-                        "Explain why this comment needs moderation (10–2000 characters).",
-                      );
-                      if (reason)
-                        act(
-                          { action: "report", commentId: c.id, reason },
-                          "Comment report submitted for review.",
-                        );
-                    }}
-                  >
-                    Report comment
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-          {!data.comments.length && (
-            <p className="empty">No visible comments yet. Share a useful observation.</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyWell
+              emblem="team-announce"
+              title="No comments yet"
+              line={`Played this ${noun}? Say what worked and what you would change.`}
+            />
           )}
-          <div className="actions">
-            <button
-              className="button secondary"
-              disabled={data.page === 1 || busy}
-              onClick={() =>
-                refresh(data.page - 1).catch(() => setMessage("Could not load comments."))
-              }
-            >
-              Previous comments
-            </button>
-            <span>Page {data.page}</span>
-            <button
-              className="button secondary"
-              disabled={!data.hasNext || busy}
-              onClick={() =>
-                refresh(data.page + 1).catch(() => setMessage("Could not load comments."))
-              }
-            >
-              Next comments
-            </button>
-          </div>
-          <details className="section">
-            <summary>Report this {kind}</summary>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                if (await act({ action: "report", reason }, "Report submitted for review."))
-                  setReason("");
-              }}
-            >
-              <label>
-                Reason for report
-                <textarea
-                  minLength={10}
-                  maxLength={2000}
-                  required
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                />
-              </label>
-              <button className="button secondary" disabled={busy || !data.viewerId}>
-                Submit content report
+          {(data.page > 1 || data.hasNext) && (
+            <nav className={styles.pager} aria-label="Comment pages">
+              <button
+                className="pill-link is-small"
+                disabled={data.page === 1 || busy}
+                onClick={() =>
+                  refresh(data.page - 1).catch(() => setMessage("Could not load comments."))
+                }
+              >
+                Previous comments
               </button>
-            </form>
-          </details>
+              <span>Page {data.page}</span>
+              <button
+                className="pill-link is-small"
+                disabled={!data.hasNext || busy}
+                onClick={() =>
+                  refresh(data.page + 1).catch(() => setMessage("Could not load comments."))
+                }
+              >
+                Next comments
+              </button>
+            </nav>
+          )}
           {history.length > 0 && (
-            <section className="section">
-              <h3>Your comment revisions</h3>
+            <Disclosure summary="Your comment revisions" defaultOpen>
               {history.map((r) => (
                 <p className="preserve" key={r.version}>
-                  v{r.version}: {r.body}
+                  Revision {r.version}: {r.body}
                 </p>
               ))}
-            </section>
+            </Disclosure>
           )}
+          {data.viewerId && (
+            <Disclosure summary={`Report this ${noun}`}>
+              <form
+                className={styles.compose}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (await act({ action: "report", reason }, "Report submitted for review."))
+                    setReason("");
+                }}
+              >
+                <label className={styles.field}>
+                  Reason for report
+                  <textarea
+                    rows={3}
+                    minLength={10}
+                    maxLength={2000}
+                    required
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                  />
+                </label>
+                <button className="button secondary" disabled={busy}>
+                  Submit content report
+                </button>
+              </form>
+            </Disclosure>
+          )}
+          {message && <StatusLine>{message}</StatusLine>}
         </>
-      ) : (
-        <button
-          className="button secondary"
-          onClick={() =>
-            refresh().catch(() => setMessage("Discussion temporarily unavailable. Retry later."))
+      ) : message ? (
+        <EmptyWell
+          emblem="team-announce"
+          title="The discussion didn't load"
+          line="Comments and favourites are kept; try again in a moment."
+          action={
+            <button
+              className="button secondary"
+              onClick={() =>
+                refresh()
+                  .then(() => setMessage(""))
+                  .catch(() => setMessage("Discussion temporarily unavailable."))
+              }
+            >
+              Retry discussion
+            </button>
           }
-        >
-          Retry discussion
-        </button>
+        />
+      ) : (
+        <StatusLine>Loading the discussion…</StatusLine>
       )}
-      <p role="status">{message}</p>
     </section>
   );
 }

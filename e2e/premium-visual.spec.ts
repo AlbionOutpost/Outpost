@@ -126,9 +126,9 @@ for (const width of [320, 390, 768, 1440]) {
     );
     await expect(page.locator(".gear-studio")).toHaveScreenshot(`equipment-${width}.png`, options);
     await page.goto("/compositions?q=QA+Outpost+visual+roster&mine=1");
-    await expect(page.locator(".composition-preview-card")).toHaveCount(1);
+    await expect(page.locator("[data-comp-window]")).toHaveCount(1);
     await page.evaluate(() => document.fonts.ready);
-    await expect(page.locator(".composition-directory")).toHaveScreenshot(
+    await expect(page.locator("[data-comp-directory]")).toHaveScreenshot(
       `compositions-${width}.png`,
       {
         ...options,
@@ -182,29 +182,27 @@ test("mobile collection filters and catalog categories preserve the chosen scope
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/compositions?q=QA+Outpost+visual+roster");
-  const filter = page.getByRole("button", { name: "Collection filters", exact: true });
-  await expect(page.getByLabel("Comp collection")).toBeHidden();
-  await filter.click();
-  await page.getByLabel("Comp collection").selectOption("1");
+  await page.getByRole("link", { name: "My comps", exact: true }).click();
+  await expect(page).toHaveURL(/mine=1/);
+  await page.getByLabel("Search comp titles").fill("QA Outpost visual roster");
   await page.getByRole("button", { name: "Search comps", exact: true }).click();
   await expect(page).toHaveURL(/mine=1/);
-  await expect(
-    page.getByRole("button", { name: "Collection: My comps", exact: true }),
-  ).toBeVisible();
-  await expect(page.locator(".composition-preview-card")).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "My comps", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(page.locator("[data-comp-window] a:has(h3)")).toHaveAttribute(
     "href",
-    `/compositions/${visual.compositionId}`,
+    new RegExp(`^/compositions/${visual.compositionId}`),
   );
   // Masthead, tabs and filters leave the first result well inside the first screen (844px).
   expect(
-    await page
-      .locator(".composition-preview-card")
-      .evaluate((el) => el.getBoundingClientRect().top),
+    await page.locator("[data-comp-window]").evaluate((el) => el.getBoundingClientRect().top),
   ).toBeLessThan(560);
   await page.goto("/items?region=asia");
   await page.getByRole("combobox", { name: "Item category", exact: true }).selectOption("Cape");
-  await expect(page.locator(".item-reference-browser")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator(".item-reference-browser tbody tr").first()).toContainText("Cape");
+  await expect(page.locator(".item-catalog")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator(".item-catalog-row").first()).toContainText("Cape");
   await expect(page.getByRole("combobox", { name: "Enchantment", exact: true })).toHaveValue("");
 });
 

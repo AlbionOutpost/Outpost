@@ -1,5 +1,10 @@
-/* Owner correction: warm dark metal, copper and readable task-specific surfaces. */
+/* The shipped tokens: warm dark metal, copper and readable task-specific surfaces. This is the
+   only place the accent, radius and page-width tokens are defined (DESIGN.md mirrors it). */
 .app.outpost {
+  /* Hubs and reading pages share the landing's measure; dense workspaces get the wide one */
+  --page-width: 1240px;
+  --workspace-width: 1392px;
+  --page-gutter: 32px;
   --radius-control: 7px;
   --radius-panel: 8px;
   --radius-sm: 6px;
@@ -67,6 +72,7 @@
   --action: #8f3d14;
   --accent-ink: #7a3210;
   --accent-hover: #6e2c0c;
+  --accent-active: #c85a2f;
   --action-hover: #6e2c0c;
   --accent-wash: #8f3d1417;
   --focus: #25507f;
@@ -114,45 +120,6 @@
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
-.app.outpost .detail-panel-heading h2 {
-  font-size: 18px;
-}
-.app.outpost .detail-workspace-grid {
-  max-width: none;
-  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
-}
-.app.outpost .detail-inventory-panel {
-  padding: 24px;
-}
-.app.outpost .detail-summary-panel {
-  padding: 24px;
-}
-.app.outpost .detail-spell-choice {
-  border-radius: 8px;
-  background: var(--bg);
-}
-.app.outpost .detail-selected-abilities .detail-spell-choice img {
-  width: 46px;
-  height: 46px;
-}
-.app.outpost .detail-selected-abilities .detail-spell-choice > span {
-  font-size: 13px;
-}
-.app.outpost .detail-context-actions .button {
-  font-size: 14px;
-}
-.app.outpost .detail-hero {
-  padding-bottom: 24px;
-}
-.app.outpost .detail-hero-content {
-  align-items: center;
-}
-.app.outpost .detail-hero-copy {
-  max-width: 840px;
-}
-.app.outpost .detail-hero-description {
-  font-size: 14px;
-}
 .app.outpost ::selection {
   background: var(--accent);
   color: var(--bg);
@@ -160,16 +127,6 @@
 @media (max-width: 700px) {
   .app.outpost .page-title {
     font-size: 27px;
-  }
-  .app.outpost .detail-workspace-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .detail-inventory-panel,
-  .app.outpost .detail-summary-panel {
-    padding: 16px;
-  }
-  .app.outpost .detail-hero-content {
-    display: block;
   }
 }
 
@@ -189,24 +146,6 @@
 }
 .app.outpost:not(.light) .button.primary:hover {
   background: var(--action-hover);
-}
-.app.outpost:not(.light) .detail-inventory-panel {
-  background: radial-gradient(ellipse at 50% 36%, #b4864220, transparent 68%), var(--panel);
-}
-.app.outpost:not(.light) .anatomical-inventory .inventory-slot-art {
-  background: #101214;
-  border-color: #4b4a49;
-  box-shadow:
-    inset 0 1px 2px #00000070,
-    0 1px 0 #ffffff06;
-}
-.app.outpost:not(.light) .anatomical-inventory > .inventory-body-silhouette {
-  color: #d9bb8a;
-  opacity: 0.1;
-}
-
-.app.outpost.light .detail-inventory-panel {
-  background: var(--panel);
 }
 
 /* ---------------------------------------------------------------------------------------------
@@ -413,11 +352,21 @@
   background: linear-gradient(90deg, #0c0d10b8 0%, #0c0d1080 34%, #0c0d1020 62%, transparent 82%);
   mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
 }
+/* A page with a painting of its own (a guide's cover) shows it across the masthead, under the
+   same shade, and lets it dissolve into the backdrop below the copy. */
+.app.outpost .workspace-identity[data-scene="cover"]::before {
+  background:
+    linear-gradient(90deg, #0c0d10d9 0%, #0c0d10a6 38%, #0c0d1033 70%, transparent 90%),
+    linear-gradient(180deg, #0c0d1066 0%, transparent 30%),
+    var(--scene) center 35% / cover no-repeat;
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+}
 /* Mastheads sit on the painting, so like the landing hero they keep the night palette in
    both themes: light copy over a dark shade. */
-.app.outpost.light :is(.workspace-identity, .masthead)[data-scene] {
+.app.outpost.light :is(.workspace-identity[data-scene], .masthead[data-scene], .system-page) {
   --text: #f4f2ee;
   --muted: #ddd8d0;
+  --secondary: #ddd8d0;
   --accent: #ee945a;
   --accent-ink: #ffb482;
   --panel: #191d22;
@@ -481,7 +430,7 @@
   margin: 0 0 6px;
   font: 800 clamp(34px, 3.6vw, 52px) / 1 var(--font-display);
   letter-spacing: -0.01em;
-  text-transform: uppercase;
+  text-transform: none;
   text-shadow: 0 2px 14px #0008;
 }
 .app.outpost .workspace-identity h1 em {
@@ -521,6 +470,15 @@
     padding: 40px calc(50vw - 50%) 40px;
     min-height: 240px;
   }
+  /* On a phone the copy spans the width, so the shade covers it edge to edge */
+  .app.outpost :is(.workspace-identity, .masthead)[data-scene]:not([data-scene="cover"])::before {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--illustration-bg) 76%, transparent) 0%,
+      color-mix(in srgb, var(--illustration-bg) 58%, transparent) 70%,
+      color-mix(in srgb, var(--illustration-bg) 42%, transparent) 100%
+    );
+  }
 }
 @media (max-width: 700px) {
   .app.outpost .workspace-identity {
@@ -546,6 +504,8 @@
   }
   .app.outpost .workspace-identity-head {
     gap: 12px;
+    /* The emblem sits on the title's cap line, not centred on a wrapped description. */
+    align-items: flex-start;
   }
   .app.outpost .workspace-identity-actions {
     flex: 0 0 100%;
@@ -555,6 +515,98 @@
   .app.outpost .workspace-identity-actions > .button {
     width: 100%;
     min-height: 44px;
+  }
+}
+
+/* Not found, error and loading: the landing hero's language, full-bleed on the backdrop, the
+   copy centred over a soft oval shade. Always over the painting, so always the night palette. */
+.app.outpost .system-page {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  min-height: clamp(520px, calc(100svh - 160px), 760px);
+  margin: -32px 0 0 calc(50% - 50vw);
+  padding: 72px var(--page-gutter) 96px;
+  text-align: center;
+  color: var(--text);
+}
+.app.outpost .system-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 46% 58% at 50% 50%,
+    color-mix(in srgb, var(--illustration-bg) 76%, transparent) 0%,
+    color-mix(in srgb, var(--illustration-bg) 50%, transparent) 45%,
+    color-mix(in srgb, var(--illustration-bg) 14%, transparent) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.app.outpost .system-page-copy {
+  display: grid;
+  justify-items: center;
+  max-width: 640px;
+}
+.app.outpost .system-page-emblem {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 10px #000a)
+    drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+.app.outpost .system-page-eyebrow {
+  margin: 0 0 14px;
+  color: var(--accent-ink);
+  font: 700 12px/1.3 var(--font-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.app.outpost .system-page h1 {
+  margin: 0 0 16px;
+  font: 800 clamp(44px, 5.4vw, 76px) / 0.96 var(--font-display);
+  letter-spacing: -0.02em;
+  text-transform: none;
+  text-wrap: balance;
+  color: var(--text);
+  text-shadow: 0 2px 18px #000c;
+}
+.app.outpost .system-page h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.app.outpost .system-page-line {
+  max-width: 50ch;
+  margin: 0 0 28px;
+  color: var(--secondary);
+  font-size: 17px;
+  line-height: 1.55;
+  text-shadow: 0 2px 18px #000c;
+}
+.app.outpost .system-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+@media (max-width: 700px) {
+  .app.outpost {
+    --page-gutter: 16px;
+  }
+  .app.outpost .system-page {
+    margin-top: -24px;
+    padding-block: 56px 72px;
+  }
+  .app.outpost .system-page-line {
+    font-size: 15px;
+  }
+  .app.outpost .system-page-actions {
+    align-self: stretch;
+  }
+  .app.outpost .system-page-actions > * {
+    flex: 1 1 auto;
   }
 }
 
@@ -1046,22 +1098,38 @@
 .app.outpost .section-heading h2 {
   margin: 0;
   font: 800 clamp(26px, 2.6vw, 34px) / 1.05 var(--font-display);
-  letter-spacing: 0;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  text-transform: none;
 }
 .app.outpost .section-heading h2 em {
   font-style: normal;
   color: var(--accent);
 }
 .app.outpost .section-heading p {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
+}
+@media (max-width: 700px) {
+  .app.outpost .section-heading p {
+    font-size: 14px;
+  }
 }
 .app.outpost .section-heading > .pill-link {
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: end;
+}
+@media (max-width: 700px) {
+  .app.outpost .section-heading:not(.landing-section-heading) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .section-heading:not(.landing-section-heading) > .pill-link {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    margin-top: 12px;
+  }
 }
 .app.outpost .pill-link {
   display: inline-flex;
@@ -1244,6 +1312,12 @@
   }
   .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)::-webkit-scrollbar {
     display: none;
+  }
+  /* A pill cut by the edge fades out, so the row reads as one you can scroll; the extra end
+     padding lets the last pill scroll clear of the fade */
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) {
+    padding-inline-end: 40px;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
   }
 }
 
@@ -1478,11 +1552,12 @@
   color: var(--accent-ink);
 }
 .app.outpost .landing-roster-who > span {
+  overflow: hidden;
   color: var(--role, var(--muted));
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .app.outpost .landing-roster-armor {
   display: flex;
@@ -1729,83 +1804,6 @@
 .app.outpost.light .masthead-note {
   color: var(--muted);
 }
-.app.outpost .workspace-emblem .guild-monogram {
-  color: var(--metal);
-  font: 800 22px var(--font-display);
-}
-/* Button tab rows (team workspace) share the pill look */
-.app.outpost .guild-tabs {
-  display: flex;
-  gap: 8px;
-  margin: 0 0 20px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.app.outpost .guild-tabs::-webkit-scrollbar {
-  display: none;
-}
-.app.outpost .guild-tabs > button {
-  flex: none;
-  min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font: 600 13px/1 var(--font-ui);
-  white-space: nowrap;
-}
-.app.outpost .guild-tabs > button:hover {
-  color: var(--text);
-  border-color: #ffffff30;
-}
-.app.outpost .guild-tabs > button[aria-selected="true"] {
-  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
-  background: color-mix(in srgb, var(--accent) 22%, var(--well));
-  color: #fff;
-}
-.app.outpost.light .guild-tabs > button[aria-selected="true"] {
-  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
-  color: var(--accent-ink);
-}
-/* A Team feature waiting on the Supporter plan */
-.app.outpost .supporter-gate {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px;
-  margin: 0 0 20px;
-  padding: 18px 20px;
-}
-.app.outpost .supporter-gate-mark {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--well-border));
-  border-radius: 12px;
-  background: var(--well);
-  color: var(--accent-ink);
-}
-.app.outpost .supporter-gate h2 {
-  margin: 0 0 4px;
-  font: 800 18px var(--font-display);
-}
-.app.outpost .supporter-gate p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-@media (max-width: 700px) {
-  .app.outpost .supporter-gate {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .app.outpost .supporter-gate > .button {
-    grid-column: 1 / -1;
-  }
-}
-
 /* Advertising: one unit after the main content, height reserved so nothing jumps */
 .app.outpost .ad-slot {
   display: grid;
@@ -1849,4 +1847,29 @@
   align-items: center;
   gap: 4px;
   min-height: 24px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.reference-recipe-identity)
+  h2 {
+  font-family: var(--font-ui);
+  letter-spacing: -0.01em;
+}
+.app.outpost:not(.home-route) :is(.panel, .raised) :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+/* Painted cover cards retain their own scenes; working windows use their quiet surface. */
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .panel:not(.has-scene),
+    .calculator-inputs,
+    .build-command-bar,
+    .party-command-bar,
+    .editor-inventory-panel,
+    .editor-slot-panel,
+    .timer-composer
+  ) {
+  --scene: none;
 }

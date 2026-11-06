@@ -1,11 +1,24 @@
 "use client";
 import { AnimatedNumber } from "./animated-number";
-import { CalculationReadiness } from "./calculation-readiness";
 import { useRouter } from "next/navigation";
 import { ScenarioControls } from "./scenario-controls";
 import { useOutpostRegion } from "./region-context";
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { trade, tradeSchema, tradeScenarioSchema } from "@/lib/albion/calculations";
+import {
+  CalculatorShell,
+  ResultFigure,
+  ResultPair,
+  ResultRows,
+  useCalculatorStep,
+} from "./calculator-shell";
+import { coin, profitTone, profitWord, Missing } from "./calculator-figures";
+import { Disclosure } from "./disclosure";
+import { StatusLine, Unavailable } from "./status-line";
+import { WellSelect } from "./well-select";
+import s from "./calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
 const fields = [
   { key: "buy", label: "Purchase price per item" },
   { key: "sell", label: "Sale price per item" },
@@ -14,6 +27,7 @@ const fields = [
   { key: "fee", label: "Sell order setup fee (%)" },
   { key: "transport", label: "Total transport / risk cost" },
 ] as const;
+const steps = ["trade-inputs", "trade-result"];
 export function TradeCalculator() {
   const region = useOutpostRegion(),
     router = useRouter();
@@ -27,255 +41,219 @@ export function TradeCalculator() {
     fee: 0,
     transport: 0,
   });
+  const [step, goToStep] = useCalculatorStep(steps);
   const parsed = tradeSchema.safeParse(values);
   const result = parsed.success ? trade(parsed.data) : null;
   const missing = fields
     .filter((field) => Number.isNaN(values[field.key]))
     .map((field) => field.label);
   const [message, setMessage] = useState("");
-  return (
+  const input = (f: (typeof fields)[number], wide = false) => (
+    <label key={f.key} className={wide ? s.wide : undefined}>
+      {f.label}
+      <input
+        type="number"
+        min={f.key === "quantity" ? 1 : 0}
+        step={f.key === "quantity" ? 1 : "any"}
+        max={f.key === "tax" || f.key === "fee" ? 100 : undefined}
+        placeholder={f.key === "buy" || f.key === "sell" ? "Price" : undefined}
+        value={Number.isNaN(values[f.key]) ? "" : values[f.key]}
+        onChange={(e) =>
+          setValues({
+            ...values,
+            [f.key]: e.target.value === "" ? NaN : Number(e.target.value),
+          })
+        }
+      />
+    </label>
+  );
+  const number = (n: number | null, suffix = "") =>
+    n === null ? (
+      <Unavailable />
+    ) : (
+      <AnimatedNumber value={n} digits={2} minimumDigits={0} suffix={suffix} />
+    );
+  const inputs = (
     <>
-      <div className="calculator-grid manual-trade-workspace">
-        <section className="panel">
-          <h2>Trade assumptions</h2>
-          <div className="input-grid">
-            <label>
-              Purchase execution
-              <select
-                aria-label="Purchase execution"
-                value={values.buyMode}
-                onChange={(e) =>
-                  setValues({
-                    ...values,
-                    buyMode: e.target.value === "buy-order" ? "buy-order" : "instant",
-                    buyFee: e.target.value === "buy-order" ? values.buyFee : 0,
-                  })
-                }
-              >
-                <option value="instant">Instant purchase</option>
-                <option value="buy-order">Buy order</option>
-              </select>
-            </label>
-            {fields
-              .filter((f) => ["buy", "sell", "quantity"].includes(f.key))
-              .map((f) => (
-                <label key={f.key}>
-                  {f.label}
-                  <input
-                    type="number"
-                    min={f.key === "quantity" ? 1 : 0}
-                    step={f.key === "quantity" ? 1 : "any"}
-                    max={f.key === "tax" || f.key === "fee" ? 100 : undefined}
-                    value={Number.isNaN(values[f.key]) ? "" : values[f.key]}
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        [f.key]: e.target.value === "" ? NaN : Number(e.target.value),
-                      })
-                    }
-                  />
-                </label>
-              ))}
-          </div>
-          {!parsed.success && missing.length === 0 && (
-            <p className="error" role="alert">
-              Enter nonnegative prices, a positive whole quantity, and fees between 0% and 100%.
-              Scenario cost and revenue must each be at most one trillion silver.
-            </p>
-          )}
-          <p className="economy-assumption-readout">
-            Applied: {Number.isFinite(values.tax) ? values.tax : "Check"}% tax ·{" "}
-            {Number.isFinite(values.fee) ? values.fee : "Check"}% sell setup ·{" "}
-            {values.buyMode === "buy-order"
-              ? Number.isFinite(values.buyFee)
-                ? values.buyFee
-                : "Check"
-              : 0}
-            % buy setup ·{" "}
-            {Number.isFinite(values.transport) ? values.transport.toLocaleString() : "Check"} silver
-            transport/risk.
-          </p>
-          <details className="economy-assumptions">
-            <summary>Fees & extra costs</summary>
-            <div className="input-grid">
-              <label>
-                Purchase order setup fee (%)
-                <input
-                  aria-label="Purchase order setup fee (%)"
-                  type="number"
-                  min={0}
-                  max={100}
-                  step="any"
-                  disabled={values.buyMode !== "buy-order"}
-                  value={Number.isNaN(values.buyFee) ? "" : values.buyFee}
-                  onChange={(e) =>
-                    setValues({
-                      ...values,
-                      buyFee: e.target.value === "" ? NaN : Number(e.target.value),
-                    })
-                  }
-                />
-              </label>
-              {fields
-                .filter((f) => ["tax", "fee", "transport"].includes(f.key))
-                .map((f) => (
-                  <label key={f.key}>
-                    {f.label}
-                    <input
-                      type="number"
-                      min={f.key === "quantity" ? 1 : 0}
-                      step={f.key === "quantity" ? 1 : "any"}
-                      max={f.key === "tax" || f.key === "fee" ? 100 : undefined}
-                      value={Number.isNaN(values[f.key]) ? "" : values[f.key]}
-                      onChange={(e) =>
-                        setValues({
-                          ...values,
-                          [f.key]: e.target.value === "" ? NaN : Number(e.target.value),
-                        })
-                      }
-                    />
-                  </label>
-                ))}
-            </div>
-            <p className="muted">
-              Sales tax and sell setup fee apply to gross sale value. Buy-order setup applies to the
-              full purchase value once; instant purchases have no modeled purchase setup fee.
-              Transport is charged once per scenario. Repeated listing fees and unsold inventory are
-              not modeled.
-            </p>
-          </details>
-          <button
-            className="button secondary"
-            disabled={!result}
-            onClick={() => {
-              const blob = new Blob(
-                [
-                  JSON.stringify(
-                    { kind: "albion-outpost-trade", version: 1, inputs: values, result },
-                    null,
-                    2,
-                  ),
-                ],
-                { type: "application/json" },
-              );
-              const a = document.createElement("a");
-              a.href = URL.createObjectURL(blob);
-              a.download = "albion-outpost-trade.json";
-              a.click();
-              URL.revokeObjectURL(a.href);
-              setMessage("Scenario exported as JSON.");
-            }}
-          >
-            Export scenario
-          </button>
-          <p role="status">{message}</p>
-        </section>
-        <section className="panel result">
-          <h2>Estimated net profit</h2>
-          {!result && (
-            <CalculationReadiness
-              title={missing.length ? "Add your trade prices" : "Check your trade assumptions"}
-              missing={missing}
-            >
-              Enter the prices you expect to pay and receive. Fees are your configured assumptions;
-              no market prices are loaded automatically.
-            </CalculationReadiness>
-          )}
-          <strong
-            className={
-              !result || result.profit === 0
-                ? "neutral"
-                : result.profit < 0
-                  ? "negative"
-                  : "positive"
+      <div className={s.fields}>
+        <label>
+          Purchase execution
+          <WellSelect
+            aria-label="Purchase execution"
+            value={values.buyMode}
+            onChange={(e) =>
+              setValues({
+                ...values,
+                buyMode: e.target.value === "buy-order" ? "buy-order" : "instant",
+                buyFee: e.target.value === "buy-order" ? values.buyFee : 0,
+              })
             }
           >
-            {result ? <AnimatedNumber value={result.profit} digits={2} minimumDigits={0} /> : "—"}
-            <small> silver</small>
-          </strong>
-          {result && (
-            <dl>
-              <div>
-                <dt>Break-even sale per item</dt>
-                <dd>
-                  {result.breakEven === null ? (
-                    "Unavailable within model limits"
-                  ) : (
-                    <AnimatedNumber value={result.breakEven} digits={2} minimumDigits={0} />
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Minimum profitable whole-silver sale</dt>
-                <dd>
-                  {result.minimumProfitableSale === null ? (
-                    "Unavailable within model limits"
-                  ) : (
-                    <AnimatedNumber
-                      value={result.minimumProfitableSale}
-                      digits={2}
-                      minimumDigits={0}
-                    />
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Purchase + fees + transport</dt>
-                <dd>
-                  <AnimatedNumber value={result.cost} digits={2} minimumDigits={0} />
-                </dd>
-              </div>
-              {values.buyMode === "buy-order" && (
-                <div>
-                  <dt>Purchase order setup cost</dt>
-                  <dd>
-                    <AnimatedNumber value={result.purchaseFees} digits={2} minimumDigits={0} />
-                  </dd>
-                </div>
-              )}
-              <div>
-                <dt>Gross revenue</dt>
-                <dd>
-                  <AnimatedNumber value={result.revenue} digits={2} minimumDigits={0} />
-                </dd>
-              </div>
-              <div>
-                <dt>Sale taxes + sell setup fees</dt>
-                <dd>
-                  <AnimatedNumber value={result.fees} digits={2} minimumDigits={0} />
-                </dd>
-              </div>
-              <div>
-                <dt>Profit margin</dt>
-                <dd>
-                  {result.margin === null ? (
-                    "Unavailable"
-                  ) : (
-                    <AnimatedNumber value={result.margin} digits={2} suffix="%" />
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Return on investment</dt>
-                <dd>
-                  {result.roi === null ? (
-                    "Unavailable"
-                  ) : (
-                    <AnimatedNumber value={result.roi} digits={2} suffix="%" />
-                  )}
-                </dd>
-              </div>
-            </dl>
-          )}
-          <p className="muted">
-            Profit = sale proceeds − purchases − taxes − setup fees − transport. Break-even is shown
-            to two decimals; the minimum whole-silver sale must yield positive unrounded profit
-            within the model’s limits.
-          </p>
-        </section>
+            <option value="instant">Buy from a sell order</option>
+            <option value="buy-order">Place a buy order</option>
+          </WellSelect>
+        </label>
+        {input(fields[2])}
+        {input(fields[0])}
+        {input(fields[1])}
+        {values.buyMode === "buy-order" && (
+          <label>
+            Purchase order setup fee (%)
+            <input
+              aria-label="Purchase order setup fee (%)"
+              type="number"
+              min={0}
+              max={100}
+              step="any"
+              value={Number.isNaN(values.buyFee) ? "" : values.buyFee}
+              onChange={(e) =>
+                setValues({
+                  ...values,
+                  buyFee: e.target.value === "" ? NaN : Number(e.target.value),
+                })
+              }
+            />
+          </label>
+        )}
       </div>
-      <details className="panel economy-saved-scenarios">
-        <summary>Saved trade scenarios & sharing</summary>
+      {!parsed.success && missing.length === 0 && (
+        <p className={s.alert} role="alert">
+          Use prices of zero or more, a whole quantity of at least one and fees from 0% to 100%.
+        </p>
+      )}
+      <div className={s.stack}>
+        <Disclosure
+          summary="Fees & extra costs"
+          meta={
+            <span data-assumptions="">
+              {Number.isFinite(values.tax) ? values.tax : "Check"}% tax ·{" "}
+              {Number.isFinite(values.fee) ? values.fee : "Check"}% setup
+            </span>
+          }
+        >
+          <div className={s.fields}>
+            {input(fields[3])}
+            {input(fields[4])}
+            {input(fields[5], true)}
+            <p className={s.help}>
+              Tax and the sell order setup fee come off the sale. A buy order’s setup fee is paid
+              once on the purchase. Transport and risk are counted once for the whole trade.
+            </p>
+          </div>
+        </Disclosure>
+      </div>
+    </>
+  );
+  const na = (
+    <span className={s.na}>
+      <Unavailable />
+    </span>
+  );
+  const results = (
+    <>
+      <ResultFigure
+        label="Net profit"
+        tone={result ? profitTone(result.profit) : "even"}
+        value={
+          <output aria-label="Estimated net profit" data-result="trade-profit">
+            {result ? coin(result.profit) : <Missing />}
+          </output>
+        }
+        note={
+          result
+            ? `${profitWord(result.profit)} for ${values.quantity.toLocaleString()} ${values.quantity === 1 ? "item" : "items"}`
+            : "Type both prices to see your profit"
+        }
+        aside={{
+          label: "Margin",
+          value: result?.margin != null ? number(result.margin, "%") : <Missing />,
+        }}
+      />
+      <ResultPair
+        result="trade-cash"
+        items={[
+          { label: "You pay", value: result ? coin(result.cost) : na },
+          { label: "Sells for", value: result ? coin(result.revenue) : na },
+        ]}
+      />
+      {!result && missing.length > 0 && (
+        <div className={s.readiness} data-result="readiness" role="status">
+          <strong>
+            {missing.length} {missing.length === 1 ? "price" : "prices"} to go
+          </strong>
+          <ul>
+            {missing.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+          <button type="button" className="button secondary" onClick={() => goToStep(1)}>
+            Add prices <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+      {result && (
+        <ResultRows
+          result="trade-rows"
+          items={[
+            { label: "Break-even sale per item", value: number(result.breakEven) },
+            {
+              label: "Lowest sale price that profits",
+              value: number(result.minimumProfitableSale),
+            },
+            ...(values.buyMode === "buy-order"
+              ? [{ label: "Purchase order setup cost", value: coin(result.purchaseFees) }]
+              : []),
+            { label: "Tax and sell setup fees", value: coin(result.fees) },
+            {
+              label: "Return on investment",
+              value: number(result.roi, "%"),
+              tone: profitTone(result.roi),
+            },
+          ]}
+        />
+      )}
+      <div className={s.stack}>
+        <Disclosure summary="How this is calculated">
+          <div className={c.prose}>
+            <p>Profit is the sale, minus what you paid, tax, setup fees and transport.</p>
+            <p>
+              Break-even is the sale price per item where profit is zero. The lowest sale price that
+              profits is the first whole-silver price above it.
+            </p>
+            <p>Relisting fees and items that don’t sell aren’t counted.</p>
+          </div>
+        </Disclosure>
+      </div>
+      <button
+        className={`button secondary ${c.start}`}
+        disabled={!result}
+        onClick={() => {
+          const blob = new Blob(
+            [
+              JSON.stringify(
+                { kind: "albion-outpost-trade", version: 1, inputs: values, result },
+                null,
+                2,
+              ),
+            ],
+            { type: "application/json" },
+          );
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "albion-outpost-trade.json";
+          a.click();
+          URL.revokeObjectURL(a.href);
+          setMessage("Scenario exported as JSON.");
+        }}
+      >
+        Export scenario
+      </button>
+      {message && <StatusLine>{message}</StatusLine>}
+    </>
+  );
+  const details = (
+    <div className={c.saved}>
+      <Disclosure summary="Saved trade scenarios & sharing">
         <ScenarioControls
           schema={tradeScenarioSchema}
           configuration={{ ...values, kind: "flipping", region }}
@@ -289,7 +267,32 @@ export function TradeCalculator() {
             }
           }}
         />
-      </details>
-    </>
+      </Disclosure>
+    </div>
+  );
+  return (
+    <div className={s.journey}>
+      <CalculatorShell
+        label="Trade check"
+        step={step}
+        onStep={goToStep}
+        details={details}
+        steps={[
+          {
+            id: steps[0],
+            label: "Prices",
+            title: "Your trade",
+            line: "What you pay, what you sell for and how many.",
+            children: inputs,
+          },
+          {
+            id: steps[1],
+            label: "Review profit",
+            title: "Profit",
+            children: results,
+          },
+        ]}
+      />
+    </div>
   );
 }

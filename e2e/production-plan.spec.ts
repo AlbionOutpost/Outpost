@@ -42,7 +42,7 @@ test("a large restored plan stays exportable without copying a broken share link
     }),
   );
   await page.goto("/tools/alchemy?region=europe");
-  const planner = page.getByRole("region", { name: "One run. Every recipe.", exact: true });
+  const planner = page.getByRole("region", { name: "Production plan", exact: true });
   await planner.getByText("Save or restore a production plan", { exact: true }).click();
   await planner.getByRole("button", { name: "Load saved production plans", exact: true }).click();
   await planner.getByRole("button", { name: "Restore Large plan fixture", exact: true }).click();
@@ -88,7 +88,7 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
       { name: "next-auth.session-token", value: otherToken, domain: "localhost", path: "/" },
     ]);
     await page.goto("/tools/crafting?region=europe");
-    const planner = page.getByRole("region", { name: "One run. Every recipe.", exact: true });
+    const planner = page.getByRole("region", { name: "Production plan", exact: true });
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
@@ -133,7 +133,7 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     const dashboard = await context.newPage();
     await dashboard.goto("/dashboard");
     await expect(
-      dashboard.getByRole("link", { name: "Open calculator and load plans", exact: true }),
+      dashboard.getByRole("link", { name: /^Combined crafting fixture/ }),
     ).toHaveAttribute("href", "/tools/crafting?region=europe#production-plan-title");
     await dashboard.close();
     const privateList = await outsider.request.get("/api/scenarios?kind=production-plan");

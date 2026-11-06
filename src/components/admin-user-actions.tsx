@@ -2,7 +2,9 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { EditorDialog } from "./editor-dialog";
-import { ShieldBan, Gift, KeyRound } from "lucide-react";
+import { ShieldBan } from "lucide-react";
+import { PanelHead } from "./panel-head";
+import { WellSelect } from "./well-select";
 async function change(url: string, value: unknown) {
   const r = await fetch(url, {
     method: "POST",
@@ -85,6 +87,7 @@ function BanForm({
       <label>
         Discord user ID
         <input
+          className="well"
           value={id}
           onChange={(e) => {
             setId(e.target.value);
@@ -115,16 +118,23 @@ function BanForm({
           {!unban && (
             <label>
               Ban duration
-              <select name="days" defaultValue="7">
+              <WellSelect name="days" defaultValue="7">
                 <option value="7">7 days</option>
                 <option value="30">30 days</option>
                 <option value="0">Until revoked</option>
-              </select>
+              </WellSelect>
             </label>
           )}
           <label>
             Reason
-            <textarea name="reason" minLength={5} maxLength={500} required rows={3} />
+            <textarea
+              className="well"
+              name="reason"
+              minLength={5}
+              maxLength={500}
+              required
+              rows={3}
+            />
           </label>
           <label>
             Type{" "}
@@ -132,19 +142,23 @@ function BanForm({
               {word} {id}
             </code>{" "}
             to confirm
-            <input name="confirmation" required autoComplete="off" />
+            <input className="well" name="confirmation" required autoComplete="off" />
           </label>
-          <button className={`button ${unban ? "secondary" : "admin-danger"}`} disabled={busy}>
+          <button className={`button secondary${unban ? "" : " admin-danger"}`} disabled={busy}>
             {busy ? "Saving…" : unban ? "Restore Outpost access" : "Ban on Outpost"}
           </button>
         </form>
       )}
       {error && (
-        <p role="alert" className="error">
+        <p role="alert" className="admin-error well">
           {error}
         </p>
       )}
-      {done && <p role="status">Access updated.</p>}
+      {done && (
+        <p role="status" className="admin-success">
+          Access updated.
+        </p>
+      )}
     </div>
   );
 }
@@ -152,8 +166,8 @@ export function AdminDiscordBan() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button className="button secondary" onClick={() => setOpen(true)}>
-        <ShieldBan size={17} />
+      <button className="button secondary admin-danger" onClick={() => setOpen(true)}>
+        <ShieldBan size={16} aria-hidden="true" />
         Ban a Discord ID
       </button>
       <EditorDialog open={open} title="Manage Discord access" onClose={() => setOpen(false)}>
@@ -218,28 +232,36 @@ export function AdminUserActions({
   }
   return (
     <>
-      <section className="admin-surface">
-        <h2>
-          <Gift size={20} />
-          Supporter gift
-        </h2>
-        <p>
-          Grant premium benefits without creating a payment or changing Stripe. A revoked gift
-          leaves any paid subscription intact.
-        </p>
+      <section className="panel" aria-labelledby="admin-gift">
+        <PanelHead
+          id="admin-gift"
+          title={
+            <>
+              Supporter <em>gift</em>
+            </>
+          }
+          line="Gives Supporter benefits without a payment or a change in Stripe. Revoking a gift leaves a paid subscription alone."
+        />
         <form onSubmit={submit} className="admin-action-form">
           <label>
             Gift duration
-            <select name="days" defaultValue="30">
+            <WellSelect name="days" defaultValue="30">
               <option value="30">30 days</option>
               <option value="90">90 days</option>
               <option value="365">One year</option>
               <option value="0">Until revoked</option>
-            </select>
+            </WellSelect>
           </label>
           <label>
             Reason for this change
-            <textarea name="reason" required minLength={5} maxLength={500} rows={2} />
+            <textarea
+              className="well"
+              name="reason"
+              required
+              minLength={5}
+              maxLength={500}
+              rows={2}
+            />
           </label>
           <div className="admin-action-buttons">
             <button name="action" value="grant" className="button primary" disabled={busy}>
@@ -249,7 +271,7 @@ export function AdminUserActions({
               <button
                 name="action"
                 value="revoke-gift"
-                className="button secondary"
+                className="button secondary admin-danger"
                 disabled={busy}
               >
                 Revoke gift
@@ -258,32 +280,40 @@ export function AdminUserActions({
           </div>
         </form>
       </section>
-      <section className="admin-surface">
-        <h2>
-          <KeyRound size={20} />
-          Account security
-        </h2>
-        <p>
-          Close this account’s sessions, or review its Discord access. Bans retain content and are
-          recorded in the audit trail.
-        </p>
+      <section className="panel admin-danger-panel" aria-labelledby="admin-security">
+        <PanelHead
+          id="admin-security"
+          title={
+            <>
+              Account <em>security</em>
+            </>
+          }
+          line="Close this account’s sessions or restrict its Discord ID. Bans keep content and are recorded in the audit trail."
+        />
         <form onSubmit={submit} className="admin-action-form">
           <input type="hidden" name="action" value="revoke-sessions" />
           <label>
             Reason for revoking sessions
-            <textarea name="reason" required minLength={5} maxLength={500} rows={2} />
+            <textarea
+              className="well"
+              name="reason"
+              required
+              minLength={5}
+              maxLength={500}
+              rows={2}
+            />
           </label>
-          <button className="button secondary" disabled={busy || protectedAccount}>
+          <button className="button secondary admin-danger" disabled={busy || protectedAccount}>
             Revoke sessions
           </button>
         </form>
         {discordId && !protectedAccount && (
-          <button className="button admin-danger" onClick={() => setBanOpen(true)}>
-            {banActive ? "Review / remove ban" : "Ban on Outpost"}
+          <button className="button secondary admin-danger" onClick={() => setBanOpen(true)}>
+            {banActive ? "Review or remove ban" : "Ban on Outpost"}
           </button>
         )}
         {protectedAccount && (
-          <p className="muted">
+          <p className="admin-foot">
             Administrator accounts are protected from bans and session revocation here.
           </p>
         )}
@@ -295,7 +325,7 @@ export function AdminUserActions({
           </p>
         )}
         {error && (
-          <p role="alert" className="error">
+          <p role="alert" className="admin-error well">
             {error}
           </p>
         )}

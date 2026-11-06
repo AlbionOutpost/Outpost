@@ -15,6 +15,11 @@
     drop-shadow(0 16px 16px var(--activity-shadow));
 }
 .scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: transparent;
   object-fit: cover;
   clip-path: var(--activity-outline);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
@@ -99,8 +104,16 @@
 .blur > span {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   border-radius: inherit;
-  background: var(--activity-scene) center / 100% 100% no-repeat;
+}
+/* Each layer draws the scene's own srcset candidate, stretched to the card like the scene. */
+.blur > span > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .blur > span:nth-child(1) {
   filter: blur(3px);
@@ -202,12 +215,9 @@
     aspect-ratio: 1;
   }
   /* Keep the scene at its traced 6:5 crop while making room for phone labels. */
-  .compact .scene {
-    height: calc(100% / 1.2) !important;
-  }
-  .compact .blur > span {
-    background-size: 100% calc(100% / 1.2);
-    background-position: top;
+  .compact .scene,
+  .compact .blur > span > img {
+    height: calc(100% / 1.2);
   }
 }
 

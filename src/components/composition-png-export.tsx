@@ -1,6 +1,9 @@
 "use client";
 import { buildInventoryLayout } from "@/lib/build-inventory-layout";
 import { useState } from "react";
+import { WellSelect } from "./well-select";
+import { StatusLine } from "./status-line";
+import styles from "./comps.module.css";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 export type CompositionImageInput = {
   title: string;
@@ -43,7 +46,7 @@ export function CompositionPngExport({
       return;
     }
     if (size === "1080" && composition.slots.length > 20) {
-      setMessage("Use full-height export for more than20 players so equipment stays readable.");
+      setMessage("Use full-height export for more than 20 players so equipment stays readable.");
       return;
     }
     setBusy(true);
@@ -251,10 +254,10 @@ export function CompositionPngExport({
     }
   }
   return (
-    <span className="png-export">
-      <label className="png-size">
+    <div className={styles.pngExport} role="group" aria-label="Comp image">
+      <label className={styles.menuField}>
         PNG size
-        <select
+        <WellSelect
           aria-label="PNG size"
           value={size}
           disabled={busy}
@@ -262,9 +265,9 @@ export function CompositionPngExport({
         >
           <option value="full">Full height</option>
           <option value="1080" disabled={composition.slots.length > 20}>
-            1920 × 1080 · up to20 players
+            1920 × 1080 · up to 20 players
           </option>
-        </select>
+        </WellSelect>
       </label>
       <button type="button" className="button secondary" disabled={busy} onClick={() => download()}>
         {busy ? "Preparing image…" : "Export PNG"}
@@ -279,7 +282,7 @@ export function CompositionPngExport({
           Copy as image
         </button>
       )}
-      {message && <span role="status">{message}</span>}
-    </span>
+      {message && <StatusLine>{message}</StatusLine>}
+    </div>
   );
 }

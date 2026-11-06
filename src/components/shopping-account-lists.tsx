@@ -2,6 +2,8 @@
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useState } from "react";
 import Link from "@/components/link";
+import { Disclosure } from "./disclosure";
+import styles from "./shopping-workspace.module.css";
 import { savedShoppingSchema, type ShoppingList } from "@/lib/albion/shopping";
 type Saved = { id: string; title: string; configuration: unknown };
 export function ShoppingAccountLists({
@@ -33,10 +35,8 @@ export function ShoppingAccountLists({
     }
   }
   return (
-    <details className="panel shopping-account-lists">
-      <summary>Save & load account lists</summary>
-      <div>
-        <h2>Keep a list for your next session.</h2>
+    <Disclosure summary="Save & load account lists">
+      <div className={styles.accountBody}>
         <p>
           Named lists are private to your account.{" "}
           <Link href="/signin" className="text-link">
@@ -44,7 +44,7 @@ export function ShoppingAccountLists({
           </Link>{" "}
           to keep them across devices. Your current device list stays here until you replace it.
         </p>
-        <div className="market-form">
+        <div className={styles.accountForm}>
           <label>
             Shopping list title
             <input
@@ -56,7 +56,7 @@ export function ShoppingAccountLists({
           </label>
           <button
             type="button"
-            className="button primary"
+            className="button secondary"
             disabled={busy || !list.entries.length || list.entries.length > 100}
             onClick={async () => {
               setBusy(true);
@@ -98,7 +98,7 @@ export function ShoppingAccountLists({
           const parsed = savedShoppingSchema.safeParse(row.configuration);
           const compatible = parsed.success && parsed.data.region === list.region;
           return (
-            <div className="shopping-saved-list" key={row.id}>
+            <div className={styles.savedRow} key={row.id}>
               <span>
                 <strong>{row.title}</strong>
                 {parsed.success && (
@@ -152,6 +152,6 @@ export function ShoppingAccountLists({
           }}
         />
       </div>
-    </details>
+    </Disclosure>
   );
 }

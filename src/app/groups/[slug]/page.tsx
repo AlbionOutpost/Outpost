@@ -1,19 +1,25 @@
+import "@/app/build-styles";
 import { privateMetadata } from "@/lib/seo";
-import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ArrowLeft } from "lucide-react";
-import { SupporterGate } from "@/components/supporter-gate";
-import { teamManagementOpen } from "@/lib/billing/gate";
-import Link from "@/components/link";
-import { GroupProfileEditor } from "@/components/group-profile-editor";
-import { canManageMembers } from "@/lib/groups/permissions";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
+import Link from "@/components/link";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { SupporterGate } from "@/components/supporter-gate";
+import { GroupProfileEditor } from "@/components/group-profile-editor";
+import { GroupDashboard, GroupRequest } from "@/components/group-dashboard";
+import { PanelHead } from "@/components/panel-head";
+import { TeamChips, TeamMark, TeamNextSteps } from "@/components/group-parts";
+import { teamManagementOpen } from "@/lib/billing/gate";
+import { canManageMembers } from "@/lib/groups/permissions";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { groupDashboard } from "@/lib/groups/dashboard";
 import { HttpError } from "@/lib/api-errors";
-import { GroupDashboard, GroupRequest } from "@/components/group-dashboard";
+import styles from "@/components/teams.module.css";
 export const metadata = privateMetadata("Team workspace");
+/** The request's clock, read once per server render. */
+const renderedAt = () => Date.now();
 export default async function GroupPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const session = await getServerSession(authOptions);
@@ -26,44 +32,23 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
     if (e instanceof HttpError && e.status === 404) notFound();
     throw e;
   }
-  return (
-    <div className="guild-workspace-page support-team-workspace">
-      <WorkspaceHeading
-        scene="comps"
-        emblem={
-          <span className="guild-monogram">
-            {data.group.name
-              .split(/\s+/)
-              .slice(0, 2)
-              .map((s) => s[0])
-              .join("")
-              .toUpperCase()}
-          </span>
-        }
-        title={data.group.name}
-        description={data.group.description || "A team workspace on Outpost."}
-      >
-        <div className="landing-chips masthead-chips">
-          <span className="landing-chip is-muted">
-            {data.group.region.charAt(0).toUpperCase() + data.group.region.slice(1)}
-          </span>
-          <span className="landing-chip is-muted">
-            {data.group.visibility.charAt(0) + data.group.visibility.slice(1).toLowerCase()}
-          </span>
-        </div>
-        <Link className="pill-link is-small masthead-back team-back-link" href="/groups">
-          All teams <ArrowLeft size={14} />
-        </Link>
-      </WorkspaceHeading>
-      {data.membership && data.dashboard && !(await teamManagementOpen(group.id)) && (
-        <SupporterGate kind="manage" owner={data.group.ownerId === data.membership.userId} />
-      )}
-      {data.membership && data.dashboard ? (
+  const words = data.group.name.trim().split(/\s+/);
+  if (data.membership && data.dashboard)
+    return (
+      <div className={styles.page}>
         <GroupDashboard
           groupId={group.id}
           role={data.membership.role}
           userId={data.membership.userId}
           data={data.dashboard}
+          group={data.group}
+          // One clock for the server render and hydration: upcoming vs past never flips.
+          now={renderedAt()}
+          gate={
+            (await teamManagementOpen(group.id)) ? undefined : (
+              <SupporterGate kind="manage" owner={data.group.ownerId === data.membership.userId} />
+            )
+          }
           profile={
             canManageMembers(data.membership.role) ? (
               <GroupProfileEditor
@@ -72,12 +57,36 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
             ) : null
           }
         />
-      ) : (
-        <>
-          <p>This team is public. Shared resources are available only after membership approval.</p>
-          <GroupRequest groupId={group.id} />
-        </>
-      )}
+      </div>
+    );
+  return (
+    <div className={styles.page}>
+      <WorkspaceHeading
+        scene="comps"
+        emblem={<TeamMark name={data.group.name} />}
+        title={data.group.name}
+        accent={words.length > 1 ? words.at(-1) : undefined}
+        description={data.group.description || "A Team workspace on Outpost."}
+      >
+        <TeamChips
+          region={data.group.region}
+          visibility={data.group.visibility}
+          members={data.group._count.members}
+        />
+        <Link className="pill-link is-small masthead-back" href="/groups">
+          <ArrowLeft size={14} aria-hidden="true" /> All teams
+        </Link>
+      </WorkspaceHeading>
+      <section className={`panel ${styles.panel} ${styles.ask}`} aria-labelledby="team-ask">
+        <PanelHead
+          id="team-ask"
+          emblem="team-roles"
+          title="Ask to join"
+          line="This team is public. Its events, comps and loot splits open once an owner or admin approves you."
+        />
+        <GroupRequest groupId={group.id} />
+      </section>
+      <TeamNextSteps />
     </div>
   );
 }

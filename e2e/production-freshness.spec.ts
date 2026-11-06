@@ -79,10 +79,8 @@ test("a zero source-price sentinel cannot produce a complete profit estimate", a
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("100");
   await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
-  await expect(page.locator(".production-result-start")).toContainText("Finish pricing your run");
-  await expect(page.locator("#production-results .calculation-readiness")).toContainText(
-    "T4 Battleaxe",
-  );
+  await expect(page.locator("#production-results")).toContainText("Finish pricing your run");
+  await expect(page.locator("[data-result=readiness]")).toContainText("T4 Battleaxe");
   await page.getByLabel("Output unit sale price", { exact: true }).fill("0");
   await expectResultText(page.locator("output[data-result=total-profit]"), "-2,000", {
     exact: true,

@@ -86,7 +86,7 @@ test("recipe drawer searches real variants, returns focus and keeps accounting i
   await expectResultText(page.locator("output[data-result=total-profit]"), "1,800", {
     exact: true,
   });
-  await expectResultText(page.locator(".production-cash-summary"), "3,200");
+  await expectResultText(page.locator("[data-result=cash-summary]"), "3,200");
   expect(
     (
       await new AxeBuilder({ page })

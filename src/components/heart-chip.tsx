@@ -14,11 +14,14 @@ import { bookmarksSchema, type SavedLibraryBuild } from "@/lib/build-device-coll
 export function HeartChip({
   count,
   build,
+  text,
   className = "",
 }: {
   /** The archive's recorded upvotes; left out when the archive has none for this entry. */
   count?: number;
   build?: SavedLibraryBuild;
+  /** Shown in the pill when there is no count, e.g. "Saved" on device favourites. */
+  text?: string;
   /** Extra hook classes, e.g. the library's `library-device-save`. */
   className?: string;
 }) {
@@ -27,7 +30,7 @@ export function HeartChip({
   const [note, setNote] = useState("");
   const saved = !!build && store.bookmarks.builds.some((b) => b.id === build.id);
   const label = count == null ? "Upvotes not recorded" : `${count.toLocaleString("en-US")} upvotes`;
-  const shown = count == null ? null : count.toLocaleString("en-US");
+  const shown = count == null ? (text ?? null) : count.toLocaleString("en-US");
   if (!build)
     return (
       <span className="heart-chip" aria-label={label}>
@@ -43,7 +46,7 @@ export function HeartChip({
         type="button"
         className={`heart-chip is-button${saved ? " is-on" : ""}${className ? ` ${className}` : ""}`}
         aria-pressed={saved}
-        aria-label={`${saved ? "Remove" : "Save"} ${build.title} ${saved ? "from" : "to"} this device's favourites${count == null ? "" : ` · ${label}`}`}
+        aria-label={`${saved ? "Remove" : "Save"} ${build.title} ${saved ? "from" : "to"} this device's favourites${count == null ? (text ? ` · ${text}` : "") : ` · ${label}`}`}
         title={saved ? "Saved on this device" : "Save on this device"}
         onClick={() => {
           try {

@@ -14,6 +14,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canReadBuild } from "@/lib/builds/validation";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { BuildShareControls } from "@/components/build-share-controls";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 export async function generateMetadata({
@@ -101,35 +102,43 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           recommendedIP: build.recommendedIP,
           visibility: build.visibility,
         }}
-      />
-      <details className="raised detail-disclosure detail-secondary-notes" id="build-notes">
-        <summary>
-          <span>Strategy & version notes</span>
-          <small>From the author</small>
-        </summary>
-        <div className="detail-disclosure-content">
-          {build.description && (
-            <>
-              <h2>Build overview</h2>
-              <p className="preserve">{build.description}</p>
-            </>
-          )}
-          <h2>Author strategy</h2>
-          <p className="preserve">{build.strategy || "No strategy notes provided."}</p>
-          <h2 className="section">Patch / version notes</h2>
-          <p className="preserve">{build.patchNotes || "No patch notes provided."}</p>
-          <details>
-            <summary>Revision timestamps</summary>
-            {build.versions.map((v) => (
-              <p key={v.version}>
-                Revision {v.version} · {v.createdAt.toISOString()}
-              </p>
-            ))}
+        cost={
+          <div id="build-cost" className="raised detail-panel-frame">
+            <BuildCost id={id} />
+          </div>
+        }
+        notes={
+          <details className="detail-disclosure detail-secondary-notes" id="build-notes" open>
+            <summary>
+              <span>From the author</span>
+              <small>Strategy and patch notes</small>
+            </summary>
+            <div className="detail-disclosure-content detail-notes-grid">
+              <section className="detail-notes-panel" aria-label="Author strategy">
+                {/* The masthead shows a short description in full; a long one reads here */}
+                {build.description.length > 160 && <p className="preserve">{build.description}</p>}
+                <h3>Strategy</h3>
+                <p className="preserve">{build.strategy || "The author left no strategy notes."}</p>
+              </section>
+              <section className="detail-notes-panel" aria-label="Patch notes">
+                <h3>Patch notes</h3>
+                <p className="preserve">{build.patchNotes || "No patch notes."}</p>
+                {build.versions.length > 0 && (
+                  <p className="detail-muted">
+                    Revision {build.versions[0].version} saved{" "}
+                    <time dateTime={build.versions[0].createdAt.toISOString()}>
+                      {build.versions[0].createdAt.toISOString().slice(0, 10)}
+                    </time>
+                    .
+                  </p>
+                )}
+              </section>
+            </div>
           </details>
-        </div>
-      </details>
+        }
+      />
       <SavedEquipmentSets sets={equipmentSets.parse(build.equipmentSets)} />
-      <div id="build-actions">
+      <div id="build-actions" className="raised detail-panel-frame">
         <BuildActions
           id={id}
           version={build.version}
@@ -137,16 +146,18 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           revisions={build.versions.map((v) => v.version)}
         />
       </div>
-      <div id="build-cost">
-        <BuildCost id={id} />
-      </div>
-      <div id="build-discussion">
+      <div id="build-discussion" className="raised detail-panel-frame">
         <CommunityPanel kind="build" id={id} />
       </div>
-      <p className="muted">
-        Share this page’s URL. Unlisted links grant read access; private builds are visible only to
-        the author. Item and ability coverage is limited to the supported catalog.
-      </p>
+      <BuildsNextStep
+        title={
+          <>
+            Plan <em>around</em> it
+          </>
+        }
+        line="Put this build in a comp so your Team knows who runs what, or start one of your own."
+        secondary={{ href: "/compositions", label: "Plan a comp" }}
+      />
     </div>
   );
 }

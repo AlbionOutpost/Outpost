@@ -1,0 +1,142 @@
+/* What a build card adds to the landing's window (landing-window.css, windows.module.css):
+   a heading inside the title link, the weapon and owner's menu in the foot, a saved summary in
+   place of the board, the ♥ pill without a ring, and the grids the cards sit in. */
+.app.outpost .build-window-slot {
+  display: contents;
+}
+.app.outpost .build-window .landing-window-title {
+  flex: 1 1 auto;
+}
+.app.outpost .build-window .landing-window-title h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font: inherit;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.outpost .build-window a.landing-window-title:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.app.outpost .build-window .landing-chips {
+  flex: none;
+  max-width: 62%;
+}
+.app.outpost .build-window .landing-chips > .landing-chip {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .build-window .landing-window-body {
+  align-content: center;
+}
+.app.outpost .build-window-weapon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .build-window-weapon img {
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .build-window .landing-window-foot strong,
+.app.outpost .build-window .landing-window-foot small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.outpost .build-window-way {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.app.outpost .build-window-open {
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
+}
+.app.outpost .build-window .build-card-owner-actions > summary {
+  width: 32px;
+  min-height: 32px;
+  color: var(--secondary);
+}
+/* The ♥ pill is the landing's in every state: a filled heart says it is saved, no ring */
+.app.outpost .build-window .heart-chip.is-on {
+  border-color: color-mix(in srgb, var(--text) 14%, transparent);
+  box-shadow: none;
+}
+.app.outpost .build-window .heart-chip[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+.app.outpost .build-window .build-card-save-error {
+  position: absolute;
+  top: 56px;
+  right: 14px;
+  left: 14px;
+  z-index: 3;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--error) 50%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: var(--elevated);
+  color: var(--text);
+  font-size: 12px;
+}
+/* A saved summary with no board: the weapon large in a glowing well */
+.app.outpost .build-window-summary {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 120px;
+}
+.app.outpost .build-window-summary > span {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 70%
+    ),
+    var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--muted);
+}
+/* Window grids: the landing's 24px gap, three across, two to 1100px, one on phones */
+.app.outpost
+  :is(.builds-ecosystem, .build-detail-page)
+  :is(.ecosystem-build-grid, .account-build-grid, .device-favorites-grid) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+@media (max-width: 1100px) {
+  .app.outpost
+    :is(.builds-ecosystem, .build-detail-page)
+    :is(.ecosystem-build-grid, .account-build-grid, .device-favorites-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .app.outpost
+    :is(.builds-ecosystem, .build-detail-page)
+    :is(.ecosystem-build-grid, .account-build-grid, .device-favorites-grid) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+}
+/* No weapon recorded: the foot keeps an empty weapon well, never a glyph */
+.app.outpost .build-window-weapon:empty {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}

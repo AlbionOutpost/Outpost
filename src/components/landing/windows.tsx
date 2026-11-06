@@ -1,3 +1,4 @@
+import "@/app/landing-window.css";
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { CompRoster } from "@/components/comp-roster";

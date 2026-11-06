@@ -22,22 +22,26 @@ test("preference cookie and market request agree without a region URL", async ({
   await expect.poll(() => requested).toBe("asia");
 });
 test("changing quality or item invalidates previously loaded prices", async ({ page }) => {
+  // Like the source, the fixture only has observations for Normal quality.
   await page.route("**/api/market?**", (route) =>
     route.fulfill({
       contentType: "application/json",
       body: JSON.stringify({
         region: "europe",
-        prices: [
-          {
-            item_id: "T4_BAG",
-            city: "Lymhurst",
-            quality: 1,
-            sell_price_min: 100,
-            buy_price_max: 90,
-            sell_price_min_date: "2026-10-25T18:00:00",
-            buy_price_max_date: "2026-10-25T18:00:00",
-          },
-        ],
+        prices:
+          new URL(route.request().url()).searchParams.get("quality") !== "1"
+            ? []
+            : [
+                {
+                  item_id: "T4_BAG",
+                  city: "Lymhurst",
+                  quality: 1,
+                  sell_price_min: 100,
+                  buy_price_max: 90,
+                  sell_price_min_date: "2026-10-25T18:00:00",
+                  buy_price_max_date: "2026-10-25T18:00:00",
+                },
+              ],
       }),
     }),
   );
@@ -49,7 +53,9 @@ test("changing quality or item invalidates previously loaded prices", async ({ p
     .filter({ has: page.locator('option[value="5"]') })
     .first()
     .selectOption("2");
-  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
+  // The board keeps its city rows, but no Normal-quality price carries over to Good.
+  await expect(page.locator(".market-board tbody")).not.toContainText("100");
+  await expect(page.locator(".market-board tbody")).not.toContainText("90");
 });
 
 test("market sort and city filtering retain correct buy and sell columns", async ({ page }) => {
@@ -111,11 +117,11 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await page.goto("/tools/flipping");
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
-  const result = page.locator(".manual-trade-workspace .result");
-  await expectResultText(result.locator(":scope > strong"), "0.5");
+  const result = page.locator('[data-result="trade-profit"]');
+  await expectResultText(result, "0.5");
   await page.getByLabel("Purchase price per item").fill("");
-  await expect(result.locator(".calculation-readiness")).toContainText("Purchase price per item");
-  await expect(result.locator(":scope > strong")).toHaveText("— silver");
+  await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
+  await expect(result).toHaveText("—Unavailable");
   await expect(page.getByRole("button", { name: "Export scenario", exact: true })).toBeDisabled();
   expect(errors).toEqual([]);
 });
@@ -156,9 +162,8 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Search item name").fill("Bag");
   await page.getByLabel("Tier", { exact: true }).selectOption("4");
   await page.getByLabel("Enchantment", { exact: true }).selectOption("0");
-  await page
-    .locator('.item-reference-browser tbody a[href="/tools/market?region=europe&item=T4_BAG"]')
-    .click();
+  await page.locator('.item-catalog-row a[href="/items/T4_BAG?region=europe"]').click();
+  await page.getByRole("link", { name: "Compare market observations", exact: true }).click();
   await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator(".market-board tbody tr")).toHaveCount(2);
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
@@ -166,7 +171,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expectResultText(page.locator(".result strong"), "500");
+  await expectResultText(page.locator('[data-result="trade-profit"]'), "500");
   await page.goBack();
   await expect(page.getByRole("heading", { name: "Market Explorer" })).toBeVisible();
 });

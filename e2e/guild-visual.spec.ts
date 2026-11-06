@@ -137,15 +137,15 @@ test("guild activity and discovery remain readable with history, filters and pri
           await page.goto(`/groups/${group.slug}`);
           await expect(page.getByRole("tab", { name: "Overview", exact: true })).toBeVisible();
           await page.evaluate(() => document.fonts.ready);
-          await expect(page.locator(".guild-composition-preview")).toContainText("5 players");
-          await expect(page.locator(".guild-build-preview .strip-slot.filled")).toHaveCount(4);
+          await expect(page.locator("[data-team-comp]")).toContainText("5 players");
+          await expect(page.locator("[data-team-build] .strip-slot.filled")).toHaveCount(4);
           await page.screenshot({ path: `${folder}/workspace-${width}.png`, fullPage: true });
           expect(
             await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
           ).toBe(true);
         }
         if (iteration !== "00-baseline") {
-          await expect(page.locator(".guild-next-event")).toContainText("Next QA expedition");
+          await expect(page.locator("[data-team-next-event]")).toContainText("Next QA expedition");
           await page.getByRole("tab", { name: "Overview", exact: true }).focus();
           await page.keyboard.press("ArrowRight");
           await expect(page.getByRole("tab", { name: "Events", exact: true })).toBeFocused();
@@ -166,17 +166,15 @@ test("guild activity and discovery remain readable with history, filters and pri
       );
     }
     if (iteration !== "00-baseline") {
-      await expect(page.locator(".guild-discovery-card")).toHaveCount(3);
+      await expect(page.locator("[data-team-card]")).toHaveCount(3);
       await expect(page.locator("main")).not.toContainText("Hidden outsider guild");
       await page.getByLabel("Team region", { exact: true }).selectOption("asia", { timeout: 8000 });
       await page.getByRole("button", { name: "Find teams", exact: true }).click({ timeout: 8000 });
-      await expect(page.locator(".guild-discovery-card")).toHaveCount(1);
-      await expect(page.locator(".guild-discovery-card")).toContainText("Private");
+      await expect(page.locator("[data-team-card]")).toHaveCount(1);
+      await expect(page.locator("[data-team-card]")).toContainText("Private");
       await page.getByLabel("Search teams", { exact: true }).fill("no-matching-qa-guild-948");
       await page.getByRole("button", { name: "Find teams", exact: true }).click({ timeout: 8000 });
-      await expect(
-        page.getByRole("heading", { name: "No matching teams", exact: true }),
-      ).toBeVisible();
+      await expect(page.getByText("No matching teams", { exact: true })).toBeVisible();
       await page.screenshot({ path: `${folder}/empty-320.png`, fullPage: true });
     }
   } finally {

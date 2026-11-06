@@ -5,7 +5,7 @@ import { LayoutDashboard, Users, Flag, ScrollText, ShieldAlert, ArrowUpRight } f
 export function AdminNav({ full }: { full: boolean }) {
   const path = usePathname();
   return (
-    <aside className="admin-rail">
+    <aside className="panel admin-rail">
       <nav aria-label="Administration">
         {[
           ...(full
@@ -25,18 +25,14 @@ export function AdminNav({ full }: { full: boolean }) {
               (href === "/admin" ? path === href : path.startsWith(href)) ? "page" : undefined
             }
           >
-            <Icon size={18} />
+            <Icon size={17} aria-hidden="true" />
             {label}
           </Link>
         ))}
       </nav>
-      <p>
-        Private workspace
-        <br />
-        <span>Permissions are checked on every request.</span>
-      </p>
-      <Link href="/" className="admin-return">
-        Back to Outpost <ArrowUpRight size={15} />
+      <p>Permissions are checked on every request.</p>
+      <Link href="/" className="pill-link is-small admin-return">
+        Back to Outpost <ArrowUpRight size={15} aria-hidden="true" />
       </Link>
     </aside>
   );

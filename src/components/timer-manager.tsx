@@ -1,7 +1,16 @@
 "use client";
-import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useEffect, useState } from "react";
+import { MoreHorizontal, Pause, Play, Plus, RotateCcw } from "lucide-react";
 import { remainingTime } from "@/lib/timers/engine";
+import { AccountPageMore, appendAccountRows } from "./account-page-more";
+import { WorkspaceHeading } from "./workspace-heading";
+import { PanelHead } from "./panel-head";
+import { EmptyWell } from "./empty-well";
+import { WellSelect } from "./well-select";
+import { Field } from "./group-parts";
+import { countdown, timerCategories, timerCategory, timerStatus } from "./timer-labels";
+import styles from "./account.module.css";
+
 type Timer = {
   id: string;
   title: string;
@@ -12,6 +21,23 @@ type Timer = {
   durationMs: number;
   version: number;
 };
+const filters = [
+  ["active", "Active"],
+  ["completed", "Completed"],
+  ["all", "All"],
+] as const;
+const utc = (iso: string) =>
+  `${new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }).format(new Date(iso))} UTC`;
+
+/**
+ * The player's own countdowns: running first, then paused, each a card with a Barlow countdown
+ * in a well. Every change goes to `/api/timers`, which checks the owner and the row version.
+ */
 export function TimerManager({
   initial,
   initialCursor = null,
@@ -58,6 +84,17 @@ export function TimerManager({
       setBusy(false);
     }
   }
+  function openComposer() {
+    setComposerOpen(true);
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLInputElement>('#timer-composer input[name="title"]')?.focus(),
+    );
+  }
+  const counts = {
+    active: timers.filter((t) => t.status !== "COMPLETED").length,
+    completed: timers.filter((t) => t.status === "COMPLETED").length,
+    all: timers.length,
+  };
   const visible = timers
     .filter(
       (timer) =>
@@ -72,241 +109,275 @@ export function TimerManager({
         a.title.localeCompare(b.title)
       );
     });
+  const running = timers.filter((t) => t.status === "RUNNING").length;
   return (
-    <div className="support-timers">
-      <div className="raised support-toolbar timer-toolbar">
-        <label>
-          Show timers
-          <select
-            aria-label="Timer status"
-            value={filter}
-            onChange={(event) => setFilter(event.target.value)}
-          >
-            <option value="active">Active & paused</option>
-            <option value="completed">Completed</option>
-            <option value="all">All timers</option>
-          </select>
-        </label>
-        <span className="timer-count">
-          {visible.length} shown · {timers.filter((t) => t.status === "RUNNING").length} running
-        </span>
-        <button
-          className="button secondary timer-reload"
-          type="button"
-          disabled={busy}
-          onClick={() => refresh().catch(() => setMessage("Could not reload timers."))}
-        >
-          Reload timers
-        </button>
-        <button
-          type="button"
-          className="button primary"
-          onClick={() => {
-            setComposerOpen(true);
-            requestAnimationFrame(() =>
-              document
-                .querySelector<HTMLInputElement>('#timer-composer input[name="title"]')
-                ?.focus(),
-            );
-          }}
-        >
-          Add timer
-        </button>
-      </div>
-      <p className="timer-feedback" role="status">
-        {message}
-      </p>
-      <div className="timer-active-list" role="region" aria-label="Your timers">
-        {visible.map((t) => {
-          const left = Math.ceil(
-              remainingTime({ ...t, dueAt: t.dueAt ? new Date(t.dueAt) : null }, now ?? 0) / 1000,
-            ),
-            text = `${Math.floor(left / 3600)}h ${Math.floor((left % 3600) / 60)}m ${left % 60}s`;
-          return (
-            <article
-              id={`timer-${t.id}`}
-              className={`timer-row status-${t.status.toLowerCase()}`}
-              key={t.id}
-            >
-              <div className="timer-row-state">
-                {t.category} · {t.status}
-              </div>
-              <h2 tabIndex={-1}>{t.title}</h2>
-              <p className="timer-countdown numeric" aria-live="off">
-                {now === null ? "Updating countdown…" : left === 0 ? "Due / completed" : text}
-              </p>
-              {t.dueAt && (
-                <p className="muted">
-                  Due: <time dateTime={t.dueAt}>{t.dueAt.slice(0, 16).replace("T", " ")} UTC</time>
-                </p>
-              )}
-              <div className="actions">
-                {t.status === "RUNNING" && (
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={() => update(t, "pause")}
-                  >
-                    Pause timer
-                  </button>
-                )}
-                {t.status === "PAUSED" && (
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={() => update(t, "resume")}
-                  >
-                    Resume timer
-                  </button>
-                )}
-                <details className="timer-more-actions">
-                  <summary>More timer actions</summary>
-                  <div>
-                    {" "}
-                    <button
-                      className="button secondary"
-                      disabled={busy}
-                      onClick={() => update(t, "reset")}
-                    >
-                      Reset timer
-                    </button>
-                    {t.status !== "COMPLETED" && (
-                      <button
-                        className="button secondary"
-                        disabled={busy}
-                        onClick={() => update(t, "complete")}
-                      >
-                        Complete timer
-                      </button>
-                    )}
-                    <button
-                      className="button secondary"
-                      disabled={busy}
-                      onClick={() => {
-                        const title = window.prompt("New timer title", t.title);
-                        if (title) update(t, "rename", title);
-                      }}
-                    >
-                      Rename timer
-                    </button>
-                    <button
-                      className="button secondary negative"
-                      disabled={busy}
-                      onClick={() => {
-                        if (window.confirm("Delete this timer?")) update(t, "delete");
-                      }}
-                    >
-                      Delete timer
-                    </button>
-                  </div>
-                </details>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-      <AccountPageMore<Timer>
-        url="/api/timers"
-        cursor={nextCursor}
-        disabled={busy}
-        label="Load older timers"
-        onPage={(rows, cursor) => {
-          setTimers((current) => appendAccountRows(current, rows));
-          setNextCursor(cursor);
-        }}
-      />
-
-      {!visible.length && (
-        <section className="support-empty">
-          <h2>{timers.length ? "No timers in this view" : "Your next reminder starts here"}</h2>
-          <p>
-            {timers.length
-              ? "Choose another timer status, or add a new reminder."
-              : "Add your own duration for a run, a cooldown or a return to your island."}
-          </p>
-        </section>
-      )}
-      <details
-        id="timer-composer"
-        className="timer-composer"
-        open={composerOpen}
-        onToggle={(event) => setComposerOpen(event.currentTarget.open)}
+    <>
+      <WorkspaceHeading
+        scene="economy"
+        title="Personal timers"
+        accent="timers"
+        description="Crops, laborers, a castle chest: set the countdown and check it from any device."
+        icon="timer"
+        actions={
+          <button type="button" className="button primary" onClick={openComposer}>
+            <Plus size={17} aria-hidden="true" /> Add timer
+          </button>
+        }
       >
-        <summary>Create a manual timer</summary>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const form = e.currentTarget,
-              f = new FormData(form);
-            setBusy(true);
-            try {
-              const r = await fetch("/api/timers", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    title: f.get("title"),
-                    category: f.get("category"),
-                    durationMinutes: Number(f.get("duration")),
-                  }),
-                }),
-                b = await r.json();
-              if (!r.ok) throw new Error(b.error);
-              await refresh();
-              form.reset();
-              setComposerOpen(false);
-              setFilter("active");
-              requestAnimationFrame(() =>
-                document.getElementById(`timer-${b.id}`)?.querySelector<HTMLElement>("h2")?.focus(),
-              );
-              setMessage("Timer saved. Refreshing the page will not reset it.");
-            } catch (e) {
-              setMessage(e instanceof Error ? e.message : "Could not create timer.");
-            } finally {
-              setBusy(false);
-            }
-          }}
+        <div className={`landing-chips ${styles.chips}`}>
+          <span className="landing-chip is-muted">{running} running</span>
+          <span className="landing-chip is-muted">Saved to your account</span>
+        </div>
+      </WorkspaceHeading>
+      {composerOpen && (
+        <section
+          id="timer-composer"
+          className={`panel ${styles.panel} ${styles.composer}`}
+          aria-labelledby="timer-composer-title"
         >
-          <div className="input-grid">
-            <label>
-              Timer title
-              <input name="title" maxLength={100} required />
-            </label>
-            <label>
-              Timer category
-              <select name="category">
-                {["CUSTOM", "CROP", "ANIMAL", "LABORER", "FOCUS", "REMINDER"].map((c) => (
-                  <option key={c} value={c}>
-                    {
-                      (
-                        {
-                          CUSTOM: "Custom",
-                          CROP: "Crops",
-                          ANIMAL: "Animals",
-                          LABORER: "Laborers",
-                          FOCUS: "Focus",
-                          REMINDER: "Reminder",
-                        } as Record<string, string>
-                      )[c]
-                    }
+          <PanelHead
+            id="timer-composer-title"
+            emblem="team-calendar"
+            title={timers.length ? "Add a timer" : "Start your first timer"}
+            line="Set the minutes yourself. Countdowns tick while a page is open; Outpost sends no notifications."
+          />
+          <form
+            className={styles.timerForm}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget,
+                f = new FormData(form);
+              setBusy(true);
+              try {
+                const r = await fetch("/api/timers", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      title: f.get("title"),
+                      category: f.get("category"),
+                      durationMinutes: Number(f.get("duration")),
+                    }),
+                  }),
+                  b = await r.json();
+                if (!r.ok) throw new Error(b.error);
+                await refresh();
+                form.reset();
+                setComposerOpen(false);
+                setFilter("active");
+                requestAnimationFrame(() =>
+                  document
+                    .getElementById(`timer-${b.id}`)
+                    ?.querySelector<HTMLElement>("h2")
+                    ?.focus(),
+                );
+                setMessage("Timer saved. Refreshing the page will not reset it.");
+              } catch (e) {
+                setMessage(e instanceof Error ? e.message : "Could not create timer.");
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            <Field label="Timer title">
+              <input name="title" maxLength={100} required placeholder="Island crops" />
+            </Field>
+            <Field label="Timer category">
+              <WellSelect name="category">
+                {timerCategories.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label>
-              Manual duration (minutes)
+              </WellSelect>
+            </Field>
+            <Field label="Manual duration (minutes)">
               <input name="duration" type="number" min={1} max={30000} required />
-            </label>
+            </Field>
+            <div className={styles.timerFormActions}>
+              {timers.length > 0 && (
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => setComposerOpen(false)}
+                >
+                  Not now
+                </button>
+              )}
+              <button className="button primary" disabled={busy}>
+                Create timer
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+      <p role="status" className={message ? styles.saved : "sr-only"}>
+        {message}
+      </p>
+      {timers.length > 0 && (
+        <section className={styles.timerSection} aria-labelledby="timer-list-title">
+          <div className={styles.timerBar}>
+            <h2 id="timer-list-title" className="sr-only">
+              Your timers
+            </h2>
+            <div className={styles.segments} role="group" aria-label="Timer status">
+              {filters.map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={filter === value}
+                  onClick={() => setFilter(value)}
+                >
+                  {label} <span>{counts[value]}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              className="pill-link is-small"
+              type="button"
+              disabled={busy}
+              onClick={() => refresh().catch(() => setMessage("Could not reload timers."))}
+            >
+              <RotateCcw size={14} aria-hidden="true" /> Reload timers
+            </button>
           </div>
-          <button className="button primary" disabled={busy}>
-            Create timer
-          </button>
-        </form>
-        <p className="muted">
-          Set the duration yourself; categories do not calculate crop, laborer or focus recovery
-          times. Your timers are saved between visits. Countdowns run on this page while it is open;
-          background notifications and shared timers are not available.
+          {visible.length ? (
+            <ul className={styles.timerGrid} aria-label="Your timers">
+              {visible.map((t) => (
+                <li key={t.id}>
+                  <TimerCard timer={t} now={now} busy={busy} update={update} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyWell
+              emblem="team-calendar"
+              title={filter === "completed" ? "No finished timers" : "No timers running"}
+              line="Switch the filter above, or start a new countdown."
+              action={
+                <button type="button" className="button secondary" onClick={openComposer}>
+                  Add timer
+                </button>
+              }
+            />
+          )}
+          <AccountPageMore<Timer>
+            url="/api/timers"
+            cursor={nextCursor}
+            disabled={busy}
+            label="Load older timers"
+            onPage={(rows, cursor) => {
+              setTimers((current) => appendAccountRows(current, rows));
+              setNextCursor(cursor);
+            }}
+          />
+        </section>
+      )}
+    </>
+  );
+}
+
+function TimerCard({
+  timer: t,
+  now,
+  busy,
+  update,
+}: {
+  timer: Timer;
+  now: number | null;
+  busy: boolean;
+  update: (t: Timer, action: string, title?: string) => void;
+}) {
+  const [more, setMore] = useState(false);
+  const left = Math.ceil(
+    remainingTime({ ...t, dueAt: t.dueAt ? new Date(t.dueAt) : null }, now ?? 0) / 1000,
+  );
+  const done = left === 0;
+  return (
+    <article
+      id={`timer-${t.id}`}
+      className={`panel ${styles.panel} ${styles.timer}`}
+      data-status={t.status.toLowerCase()}
+    >
+      <div className={styles.timerHead}>
+        <span className="landing-chip is-muted">{timerCategory(t.category)}</span>
+        <span className={t.status === "RUNNING" ? "landing-chip" : "landing-chip is-muted"}>
+          {timerStatus(t.status)}
+        </span>
+      </div>
+      <h2 tabIndex={-1} className={styles.timerTitle}>
+        {t.title}
+      </h2>
+      <div className={`well ${styles.countdown}`}>
+        <p aria-live="off" data-done={now !== null && done ? "" : undefined}>
+          {now === null ? "Updating countdown…" : done ? "Due" : countdown(left)}
         </p>
-      </details>
-    </div>
+        <small>
+          {t.status === "RUNNING" && t.dueAt ? (
+            <>
+              Due <time dateTime={t.dueAt}>{utc(t.dueAt)}</time>
+            </>
+          ) : t.status === "PAUSED" ? (
+            "Paused; resume to keep counting"
+          ) : (
+            `Ran ${countdown(Math.round(t.durationMs / 1000))}`
+          )}
+        </small>
+      </div>
+      <div className={styles.timerActions}>
+        {t.status === "RUNNING" && (
+          <button className="button secondary" disabled={busy} onClick={() => update(t, "pause")}>
+            <Pause size={16} aria-hidden="true" /> Pause timer
+          </button>
+        )}
+        {t.status === "PAUSED" && (
+          <button className="button primary" disabled={busy} onClick={() => update(t, "resume")}>
+            <Play size={16} aria-hidden="true" /> Resume timer
+          </button>
+        )}
+        <button
+          type="button"
+          className={styles.moreToggle}
+          aria-expanded={more}
+          aria-controls={`timer-more-${t.id}`}
+          onClick={() => setMore((open) => !open)}
+        >
+          <MoreHorizontal size={18} aria-hidden="true" />
+          <span>More timer actions</span>
+        </button>
+      </div>
+      <div id={`timer-more-${t.id}`} className={styles.moreActions} hidden={!more}>
+        <button className="button secondary" disabled={busy} onClick={() => update(t, "reset")}>
+          Reset timer
+        </button>
+        {t.status !== "COMPLETED" && (
+          <button
+            className="button secondary"
+            disabled={busy}
+            onClick={() => update(t, "complete")}
+          >
+            Complete timer
+          </button>
+        )}
+        <button
+          className="button secondary"
+          disabled={busy}
+          onClick={() => {
+            const title = window.prompt("New timer title", t.title);
+            if (title) update(t, "rename", title);
+          }}
+        >
+          Rename timer
+        </button>
+        <button
+          className={`button secondary ${styles.lossButton}`}
+          disabled={busy}
+          onClick={() => {
+            if (window.confirm("Delete this timer?")) update(t, "delete");
+          }}
+        >
+          Delete timer
+        </button>
+      </div>
+    </article>
   );
 }

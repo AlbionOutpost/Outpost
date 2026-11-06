@@ -1,12 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { AnimatedNumber } from "@/components/animated-number";
 import { Minus, Plus } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
-import { useBatchQuotes } from "@/components/market-batch-quotes";
-import { useOutpostRegion } from "@/components/region-context";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
+import type { MarketPrice } from "@/lib/albion/market-quotes";
+import { useLandingPart } from "./landing-data";
 import { Silver } from "./silver";
 import styles from "./planner-card.module.css";
 
@@ -32,21 +32,24 @@ function readable(id: string) {
  * is an example; the prices are observations.
  */
 export function PlannerCard({ plan }: { plan: PlanLine[] }) {
-  const region = useOutpostRegion();
   const [tab, setTab] = useState<"queue" | "buy">("queue");
   const [have, setHave] = useState<Record<string, number>>({});
-  const { quotes, busy, refresh } = useBatchQuotes(region);
-  const [settled, setSettled] = useState(false);
-  const ref = useRef(refresh);
-  useEffect(() => {
-    ref.current = refresh;
-  });
+  // The plan's quotes arrive with the rest of the homepage in one request.
+  const planner = useLandingPart("planner");
   const selected = plan.map((p) => ({ slot: p.slot, itemId: p.itemId, quality: 1 }));
-  const key = selected.map((s) => s.itemId).join(",");
-  useEffect(() => {
-    void ref.current(selected).finally(() => setSettled(true));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-quote when the plan changes
-  }, [region, key]);
+  const quotes: Record<string, { prices: MarketPrice[]; error?: string }> = Object.fromEntries(
+    planner
+      ? selected.map((s) => [
+          `${s.itemId}:${s.quality}`,
+          {
+            prices: (planner.value?.prices ?? []).filter(
+              (p) => p.item_id === s.itemId && p.quality === s.quality,
+            ),
+            error: planner.error,
+          },
+        ])
+      : [],
+  );
   // Each royal city's quotes for the plan; a line is priced at its cheapest city.
   const perCity = royal.map((c) => ({
     city: c,
@@ -57,7 +60,7 @@ export function PlannerCard({ plan }: { plan: PlanLine[] }) {
       .map((c) => ({ city: c.city, price: c.rows[i]?.observation?.sell_price_min ?? null }))
       .filter((c): c is { city: string; price: number } => c.price != null && c.price > 0)
       .sort((a, b) => a.price - b.price)[0] ?? null;
-  const loading = busy || !settled;
+  const loading = !planner;
   const lines = plan.map((p, i) => ({
     ...p,
     i,

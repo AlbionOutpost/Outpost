@@ -1,0 +1,138 @@
+/* The window: the landing's teaser windows and every build card share this chrome (a title
+   bar over an ember rule, the body, a foot row over an ember rule and a darker band). Loaded by
+   `landing/windows.tsx` and `build-window.tsx`; moved here from homepage.css unchanged. */
+.app.outpost .landing-window {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  /* Clear of the frame's double line */
+  padding: 16px 16px 0;
+}
+.app.outpost .landing-window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 -16px 12px;
+  padding: 2px 22px 12px;
+  /* An ember rule under the title bar, fading at both ends like the frame's lines */
+  background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--accent) 55%, transparent) 18%,
+      color-mix(in srgb, var(--accent) 55%, transparent) 82%,
+      transparent
+    )
+    bottom / 100% 1px no-repeat;
+}
+.app.outpost .landing-window-title {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  min-width: 0;
+  overflow: hidden;
+  color: #f4f2ee;
+  font: 800 15px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px #000c;
+}
+a.landing-window-title:hover {
+  color: var(--accent-ink);
+}
+.app.outpost .landing-window-body {
+  display: grid;
+  min-width: 0;
+}
+.app.outpost .landing-window-body > .loadout-board {
+  align-self: center;
+}
+/* Lists share the board's height evenly, so no window is left with a gap */
+.app.outpost .landing-window-body > .landing-roster {
+  grid-auto-rows: 1fr;
+  height: 100%;
+}
+.app.outpost .landing-window-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .landing-window-foot {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 12px -16px 0;
+  padding: 12px 22px 16px 18px;
+  color: var(--text);
+  background:
+    linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--accent) 55%, transparent) 18%,
+        color-mix(in srgb, var(--accent) 55%, transparent) 82%,
+        transparent
+      )
+      top / 100% 1px no-repeat,
+    linear-gradient(180deg, #0000004d, #0000001a);
+}
+.app.outpost .landing-window-foot img {
+  width: 48px;
+  height: 48px;
+}
+.app.outpost .landing-window-foot strong {
+  display: block;
+  font: 800 15px/1.15 var(--font-display);
+  letter-spacing: 0.01em;
+}
+.app.outpost .landing-window-foot small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.app.outpost .landing-window-foot svg {
+  color: var(--accent-ink);
+}
+/* The board fills its window: wells sized to the width, abilities on the pieces */
+.app.outpost .landing-window[data-scene="build"] .landing-window-body {
+  container-type: inline-size;
+}
+.app.outpost .landing-window .loadout-board.is-card {
+  --gap: 12px;
+  --cell: min(84px, calc((100cqw - 2 * var(--gap)) / 3));
+  justify-content: center;
+  width: 100%;
+  margin-top: 4px;
+}
+.app.outpost .landing-window .loadout-board-slot {
+  grid-template-rows: var(--cell);
+  gap: 0;
+}
+.app.outpost .landing-window .loadout-board-abilities {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(var(--cell) / -3.2);
+  height: calc(var(--cell) / 3);
+  filter: drop-shadow(0 1px 2px #000c);
+}
+.app.outpost .landing-window .loadout-board-abilities > span {
+  width: calc(var(--cell) / 3);
+  height: calc(var(--cell) / 3);
+  border-radius: 50%;
+  border-color: #000a;
+}
+.app.outpost .landing-window .loadout-board-abilities img {
+  border-radius: 50%;
+}
+.app.outpost .landing-window .loadout-board-cell,
+.app.outpost .landing-window .loadout-board-slot.is-empty .loadout-board-cell {
+  border: 1px solid #ffffff1a;
+  background: #15181f99;
+  box-shadow: inset 0 1px 3px #0008;
+}
+.app.outpost .landing-window .loadout-board-cell img.loadout-board-mark {
+  opacity: 0.5;
+}

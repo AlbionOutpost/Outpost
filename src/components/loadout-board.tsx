@@ -14,7 +14,15 @@ const slotMarks: Partial<Record<BoardSlot, string>> = {
   Mount: "/albion/slots/mount.svg",
 };
 
-export type BoardPiece = { slot: string; itemId: string; skills?: string[] };
+export type BoardPiece = {
+  slot: string;
+  itemId: string;
+  skills?: string[];
+  /** The piece's name, for the slot's label and tooltip; the item id is used without it. */
+  name?: string;
+  /** The first recorded swap, shown as a small badge on the piece. */
+  swap?: string;
+};
 
 /** The game's inventory arrangement: three columns, mount beneath the middle one. */
 const columns: BoardSlot[][] = [
@@ -35,6 +43,9 @@ export function LoadoutBoard({
   abilities = true,
   choices = false,
   label = "Equipment",
+  selectedSlot,
+  onSelectSlot,
+  flaggedSlot,
 }: {
   pieces: BoardPiece[];
   spellNames?: Record<string, string>;
@@ -44,14 +55,24 @@ export function LoadoutBoard({
    * weapon (E is fixed per weapon), the active plus the passive on armor. */
   choices?: boolean;
   label?: string;
+  /** Editing: every slot becomes a button that selects it (the build editor). */
+  selectedSlot?: string;
+  onSelectSlot?: (slot: string) => void;
+  /** A slot that needs attention, such as a missing main hand on save. */
+  flaggedSlot?: string;
 }) {
+  const interactive = !!onSelectSlot;
   const bySlot = new Map(pieces.map((p) => [p.slot, p]));
   const icon = size === "hero" ? 72 : size === "card" ? 56 : 40;
   // A two-handed main hand fills the off hand too; the game shows it there, faded.
   const shadow = offHandShadow(bySlot.get("Main hand")?.itemId, bySlot.get("Off hand")?.itemId);
   const spell = size === "hero" ? 22 : 18;
   return (
-    <div className={`loadout-board is-${size}`} role="list" aria-label={label}>
+    <div
+      className={`loadout-board is-${size}${interactive ? " is-interactive" : ""}`}
+      role={interactive ? "group" : "list"}
+      aria-label={label}
+    >
       {columns.map((column, c) => (
         <div key={c} className="loadout-board-column">
           {column.map((slot) => {
@@ -66,21 +87,34 @@ export function LoadoutBoard({
               : choices
                 ? [...actives.slice(0, slot === "Main hand" ? 2 : 1), ...(passive ? [passive] : [])]
                 : actives.slice(0, 3);
+            const name = piece?.name ?? piece?.itemId;
+            const Slot = interactive ? "button" : "div";
             return (
-              <div
+              <Slot
                 key={slot}
-                role="listitem"
-                className={`loadout-board-slot${piece ? "" : ghost ? " is-two-handed" : " is-empty"}${slot === "Mount" ? " is-mount" : ""}`}
+                {...(interactive
+                  ? {
+                      type: "button" as const,
+                      "aria-pressed": selectedSlot === slot,
+                      "aria-label": piece
+                        ? `Inspect ${slot}: ${name}`
+                        : ghost
+                          ? `Inspect ${slot}: held by the two-handed main hand`
+                          : `Inspect ${slot} Empty`,
+                      onClick: () => onSelectSlot(slot),
+                    }
+                  : { role: "listitem" })}
+                className={`loadout-board-slot${piece ? " is-equipped" : ghost ? " is-two-handed" : " is-empty"}${slot === "Mount" ? " is-mount" : ""}${selectedSlot === slot ? " is-selected" : ""}${flaggedSlot === slot ? " is-flagged" : ""}`}
                 data-slot={slot}
               >
                 <span
                   className="loadout-board-cell"
                   title={
                     piece
-                      ? `${slot}: ${piece.itemId}`
+                      ? `${slot}: ${name}`
                       : ghost
                         ? `${slot}: held by the two-handed ${ghost}`
-                        : `${slot}: not recorded`
+                        : `${slot}: ${interactive ? "empty" : "not recorded"}`
                   }
                 >
                   {piece ? (
@@ -99,6 +133,11 @@ export function LoadoutBoard({
                       aria-hidden="true"
                     />
                   ) : null}
+                  {piece?.swap && (
+                    <span className="loadout-board-swap" aria-hidden="true">
+                      <ItemIcon id={piece.swap} size={24} />
+                    </span>
+                  )}
                 </span>
                 {abilities && (
                   <span
@@ -112,7 +151,7 @@ export function LoadoutBoard({
                     ))}
                   </span>
                 )}
-              </div>
+              </Slot>
             );
           })}
         </div>
