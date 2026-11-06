@@ -128,7 +128,7 @@ export default async function Compositions({
               </>
             )
           }
-          line={q ? `Titles with “${q}”.` : shown.length ? "Last updated first." : undefined}
+          line={!q && shown.length ? "Last updated first." : undefined}
         />
         {shown.length ? (
           <CompGrid>

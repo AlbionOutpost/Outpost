@@ -649,6 +649,9 @@
   }
 }
 @media (max-width: 700px) {
+  .section {
+    margin-top: var(--space-4);
+  }
   .rosterPanel :global(.landing-roster) {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -673,13 +676,20 @@
   :global(.app.outpost) .filters.hasSelect {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* The comp tabs wrap rather than run off the edge */
+  /* The comp tabs wrap rather than run off the edge; without their icons the three fit one
+     row at 390, so the first comp shows inside the first screen */
   :global(.app.outpost) .page :global(.masthead-tabs) {
     flex-wrap: wrap;
     margin-inline: 0;
     padding-inline: 0;
     overflow: visible;
     mask-image: none;
+  }
+  :global(.app.outpost) .page :global(.masthead-tabs) > a {
+    min-height: 40px;
+  }
+  :global(.app.outpost) .page :global(.masthead-tabs) > a > svg {
+    display: none;
   }
   .grid {
     grid-template-columns: minmax(0, 1fr);
