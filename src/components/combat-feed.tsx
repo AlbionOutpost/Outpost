@@ -4,10 +4,13 @@ import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Search, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
-import { cities, regions } from "@/lib/albion/region-config";
-import { fetchQuoteBatch, type MarketPrice } from "@/lib/albion/market-quotes";
-import { rankByGearValue, type GearValue } from "@/lib/albion/kill-value";
-import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
+import { regions } from "@/lib/albion/region-config";
+import type { GearValue } from "@/lib/albion/kill-value";
+import type { CombatEvent, CombatFeed } from "@/lib/albion/combat-events";
+/** The API prices each victim's worn gear in the same response (see pricedCombatEvents). */
+type Feed = Omit<CombatFeed, "events"> & {
+  events: (CombatEvent & { gearValue?: GearValue })[];
+};
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceAge } from "@/lib/albion/source-age";
 import { ItemIcon } from "./item-icon";
@@ -24,15 +27,6 @@ type Player = CombatEvent["killer"];
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 const utc = (value: string) =>
   new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
-const royal = cities.filter((c) => c !== "Black Market" && c !== "Brecilien");
-/** The victim's worn pieces, as the landing prices them: item and quality. */
-const worn = (event: CombatEvent) =>
-  event.victim.equipment.flatMap((p) =>
-    p.itemId ? [{ itemId: p.itemId, quality: p.quality ?? 1 }] : [],
-  );
-const priceKey = (region: string, item: { itemId: string; quality: number }) =>
-  `${region}:${item.itemId}:${item.quality}`;
-
 /** Every recorded piece by name and quality, for the item details. */
 function Gear({ player, victim }: { player: Player; victim?: boolean }) {
   return (
@@ -131,54 +125,6 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
     .toSorted((a, b) =>
       sort === "fame" ? b.fame - a.fame : Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
     );
-  // The victims' worn gear, priced once per piece and server like the landing's top kills:
-  // each piece at its cheapest royal-city sell order seen in the last week.
-  const [prices, setPrices] = useState<ReadonlyMap<string, MarketPrice[]>>(() => new Map());
-  const [pricing, setPricing] = useState<string | null>(null);
-  useEffect(() => {
-    if (!feed) return;
-    const missing = [
-      ...new Map(
-        feed.events
-          .flatMap(worn)
-          .filter((item) => !prices.has(priceKey(region, item)))
-          .map((item) => [priceKey(region, item), item]),
-      ).values(),
-    ].slice(0, 100);
-    if (!missing.length) return;
-    const active = new AbortController();
-    const frame = requestAnimationFrame(() => {
-      setPricing(key);
-      fetchQuoteBatch(region, missing, active.signal)
-        .then((rows) => {
-          const found = new Map(rows.map((row) => [priceKey(region, row), row]));
-          return missing.map((item) => {
-            const row = found.get(priceKey(region, item));
-            return [priceKey(region, item), row && !row.error ? row.prices : []];
-          });
-        })
-        // A failed batch leaves those pieces without a listing; the figure says so with "—".
-        .catch(() => missing.map((item) => [priceKey(region, item), []]))
-        .then((entries) => {
-          if (active.signal.aborted) return;
-          setPrices((current) => new Map([...current, ...(entries as [string, MarketPrice[]][])]));
-          setPricing(null);
-        });
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-      active.abort();
-    };
-  }, [feed, region, key, prices]);
-  /** Undefined while pricing; pieces past the 100-piece cap count as without a listing. */
-  const gearValue = (event: CombatEvent): GearValue | undefined => {
-    const items = worn(event);
-    if (!items.length) return null;
-    const known = items.filter((item) => prices.has(priceKey(region, item)));
-    if (known.length < items.length && pricing === key) return undefined;
-    const quotes = known.flatMap((item) => prices.get(priceKey(region, item)) ?? []);
-    return rankByGearValue([event], quotes, royal)[0].gearValue;
-  };
   const loading = pending === key || (!feed && error?.key !== key);
   const failed = error?.key === key;
   const kills = mode === "kills";
@@ -356,7 +302,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
                 key={event.id}
                 event={event}
                 at={at}
-                gearValue={gearValue(event)}
+                gearValue={event.gearValue ?? null}
                 scene={["build", "composition", "market"][i % 3]}
                 className={`combat-event ${styles.card}`}
               >
