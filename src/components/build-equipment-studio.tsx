@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowRight, Check, Plus, Search, ShieldAlert, Trash2, Undo2 } from "lucide-react";
+import { ArrowRight, Check, Plus, ShieldAlert, Trash2, Undo2 } from "lucide-react";
 import {
   equipmentFamilies,
   equipmentId,
@@ -21,6 +21,7 @@ import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
+import { SearchInput } from "./field";
 
 export type BuildStudioView = "equipment" | "abilities" | "alternatives";
 const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
@@ -551,7 +552,7 @@ export function BuildEquipmentStudio({
                       .filter((e) => !!findEquipment(equipmentId(found.family, found.tier, e)))
                       .map((e) => (
                         <option key={e} value={e}>
-                          .{e}
+                          {e ? `Enchant .${e}` : "Flat .0"}
                         </option>
                       ))}
                   </WellSelect>
@@ -734,19 +735,16 @@ export function BuildEquipmentStudio({
             <div className="studio-picker-toolbar">
               <label className="studio-picker-search">
                 <span>Search equipment</span>
-                <span className="editor-search-field">
-                  <Search size={16} aria-hidden="true" />
-                  <input
-                    ref={searchRef}
-                    type="search"
-                    value={query}
-                    placeholder="Battleaxe, Bloodmoon, Hunter…"
-                    onChange={(event) => {
-                      setQuery(event.target.value);
-                      setPage(0);
-                    }}
-                  />
-                </span>
+                <SearchInput
+                  ref={searchRef}
+                  type="search"
+                  value={query}
+                  placeholder="Battleaxe, Bloodmoon, Hunter…"
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setPage(0);
+                  }}
+                />
               </label>
               <label>
                 <span>Tier</span>
@@ -777,7 +775,7 @@ export function BuildEquipmentStudio({
                 >
                   {[0, 1, 2, 3, 4].map((e) => (
                     <option key={e} value={e}>
-                      .{e}
+                      {e ? `Enchant .${e}` : "Flat .0"}
                     </option>
                   ))}
                 </WellSelect>

@@ -1,5 +1,6 @@
 "use client";
 import { ArrowRight, ChevronDown, RotateCw, Search } from "lucide-react";
+import { WellSelect } from "./well-select";
 import "./market-explorer.css";
 import styles from "./market-workspace.module.css";
 import { History } from "./history";
@@ -263,37 +264,31 @@ export function Market() {
               <div className="mx-field-pair">
                 <label className="mx-field">
                   <span>Quality</span>
-                  <span className="mx-select">
-                    <select
-                      aria-label="Quality"
-                      ref={qualityControl}
-                      value={quality}
-                      onChange={(e) => setQuality(e.target.value)}
-                    >
-                      {qualityNames.map((x, i) => (
-                        <option value={i + 1} key={x}>
-                          {x}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown size={16} aria-hidden="true" />
-                  </span>
+                  <WellSelect
+                    aria-label="Quality"
+                    ref={qualityControl}
+                    value={quality}
+                    onChange={(e) => setQuality(e.target.value)}
+                  >
+                    {qualityNames.map((x, i) => (
+                      <option value={i + 1} key={x}>
+                        {x}
+                      </option>
+                    ))}
+                  </WellSelect>
                 </label>
                 <label className="mx-field">
                   <span>Market city</span>
-                  <span className="mx-select">
-                    <select
-                      aria-label="Market city"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                    >
-                      <option value="">All cities</option>
-                      {cities.map((c) => (
-                        <option key={c}>{c}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={16} aria-hidden="true" />
-                  </span>
+                  <WellSelect
+                    aria-label="Market city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  >
+                    <option value="">All cities</option>
+                    {cities.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </WellSelect>
                 </label>
               </div>
               <button
@@ -343,51 +338,44 @@ export function Market() {
                 <div className="mx-filter-grid">
                   <label className="mx-field">
                     <span>Item category</span>
-                    <span className="mx-select">
-                      <select
-                        aria-label="Item category"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                      >
-                        <option value="">All categories</option>
-                        {equipmentSlots.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </span>
+                    <WellSelect
+                      aria-label="Item category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      <option value="">All categories</option>
+                      {equipmentSlots.map((s) => (
+                        <option key={s}>{s}</option>
+                      ))}
+                    </WellSelect>
                   </label>
                   <label className="mx-field">
                     <span>Item tier</span>
-                    <span className="mx-select">
-                      <select
-                        aria-label="Market item tier"
-                        value={tier}
-                        onChange={(e) => setTier(e.target.value)}
-                      >
-                        <option value="">All tiers</option>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
-                          <option key={t}>{t}</option>
-                        ))}
-                      </select>
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </span>
+                    <WellSelect
+                      aria-label="Market item tier"
+                      value={tier}
+                      onChange={(e) => setTier(e.target.value)}
+                    >
+                      <option value="">All tiers</option>
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
+                        <option key={t}>{t}</option>
+                      ))}
+                    </WellSelect>
                   </label>
                   <label className="mx-field">
                     <span>Enchantment</span>
-                    <span className="mx-select">
-                      <select
-                        aria-label="Market enchantment"
-                        value={enchantment}
-                        onChange={(e) => setEnchantment(e.target.value)}
-                      >
-                        <option value="">All enchantments</option>
-                        {[0, 1, 2, 3, 4].map((t) => (
-                          <option key={t}>{t}</option>
-                        ))}
-                      </select>
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </span>
+                    <WellSelect
+                      aria-label="Market enchantment"
+                      value={enchantment}
+                      onChange={(e) => setEnchantment(e.target.value)}
+                    >
+                      <option value="">All enchantments</option>
+                      {[0, 1, 2, 3, 4].map((t) => (
+                        <option key={t} value={t}>
+                          {t ? `Enchant .${t}` : "Flat .0"}
+                        </option>
+                      ))}
+                    </WellSelect>
                   </label>
                 </div>
               </details>
@@ -486,7 +474,7 @@ export function Market() {
                 actions={
                   <>
                     {hasResult && summary.available > 0 && (
-                      <div className="mx-segment" role="radiogroup" aria-label="Sort market prices">
+                      <div className="segmented" role="radiogroup" aria-label="Sort market prices">
                         {(
                           [
                             ["city", "City"],
@@ -699,7 +687,7 @@ export function Market() {
               actions={
                 <>
                   <div
-                    className="mx-segment market-saved-tabs"
+                    className="segmented market-saved-tabs"
                     role="tablist"
                     aria-label="Saved market work"
                   >

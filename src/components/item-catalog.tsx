@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, LayoutGrid, List, RotateCw, Search } from "lucide-react";
+import { ArrowUpRight, LayoutGrid, List, RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { Pagination } from "./pagination";
 import Link from "@/components/link";
@@ -13,6 +13,7 @@ import { WellSelect } from "./well-select";
 import { catalogSearchResponse } from "@/lib/catalog/search";
 import { z } from "zod";
 import styles from "./item-catalog.module.css";
+import { SearchInput } from "./field";
 const responseSchema = catalogSearchResponse.extend({
   total: z.number().int().nonnegative(),
   page: z.number().int().positive(),
@@ -113,18 +114,15 @@ export function ItemCatalog({
         <div className={styles.fields}>
           <label className={styles.search}>
             <span>Search item name or identifier</span>
-            <span className={styles.searchWell}>
-              <Search size={16} aria-hidden="true" />
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Battleaxe, T6_MAIN_SWORD…"
-              />
-            </span>
+            <SearchInput
+              type="search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Battleaxe, T6_MAIN_SWORD…"
+            />
           </label>
           <label className={styles.categorySelect}>
             <span>Category</span>
@@ -173,7 +171,7 @@ export function ItemCatalog({
               <option value="">Any</option>
               {[0, 1, 2, 3, 4].map((t) => (
                 <option key={t} value={t}>
-                  .{t}
+                  {t ? `Enchant .${t}` : "Flat .0"}
                 </option>
               ))}
             </WellSelect>
@@ -203,7 +201,7 @@ export function ItemCatalog({
                     Clear filters
                   </button>
                 )}
-                <div className={styles.view} role="group" aria-label="Item display">
+                <div className="segmented" role="group" aria-label="Item display">
                   <button
                     type="button"
                     aria-pressed={view === "list"}

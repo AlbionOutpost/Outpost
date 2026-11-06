@@ -366,7 +366,7 @@ export function ProductionCalculator({
         </span>
       </div>
       {kind !== "enchanting" && (
-        <div className={s.tiers} role="group" aria-label="Recipe tier">
+        <div className={`segmented ${s.tiers}`} role="group" aria-label="Recipe tier">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((tier) => (
             <button
               type="button"
@@ -566,7 +566,7 @@ export function ProductionCalculator({
         </label>
         <div className={s.qty}>
           <label htmlFor="production-batches">Crafts / upgrades</label>
-          <div>
+          <div className={s.qtyWell}>
             <input
               id="production-batches"
               type="number"
@@ -575,7 +575,11 @@ export function ProductionCalculator({
               value={draft.batches}
               onChange={(e) => update("batches", Number(e.target.value))}
             />
-            <div className={s.quick} role="group" aria-label="Batch quantity shortcuts">
+            <div
+              className={`segmented ${s.quick}`}
+              role="group"
+              aria-label="Batch quantity shortcuts"
+            >
               {[1, 10, 100].map((n) => (
                 <button
                   type="button"

@@ -73,6 +73,23 @@ export function TradeCalculator() {
     ) : (
       <AnimatedNumber value={n} digits={2} minimumDigits={0} suffix={suffix} />
     );
+  const saved = (
+    <Disclosure summary="Saved trade scenarios & sharing">
+      <ScenarioControls
+        schema={tradeScenarioSchema}
+        configuration={{ ...values, kind: "flipping", region }}
+        onLoad={(value) => {
+          setValues(value);
+          if (value.region !== region) {
+            document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+            const url = new URL(location.href);
+            url.searchParams.set("region", value.region);
+            router.replace(url.pathname + url.search + url.hash, { scroll: false });
+          }
+        }}
+      />
+    </Disclosure>
+  );
   const inputs = (
     <>
       <div className={s.fields}>
@@ -141,6 +158,17 @@ export function TradeCalculator() {
             </p>
           </div>
         </Disclosure>
+        <Disclosure summary="How this is calculated">
+          <div className={c.prose}>
+            <p>Profit is the sale, minus what you paid, tax, setup fees and transport.</p>
+            <p>
+              Break-even is the sale price per item where profit is zero. The lowest sale price that
+              profits is the first whole-silver price above it.
+            </p>
+            <p>Relisting fees and items that don’t sell aren’t counted.</p>
+          </div>
+        </Disclosure>
+        {saved}
       </div>
     </>
   );
@@ -212,18 +240,6 @@ export function TradeCalculator() {
           ]}
         />
       )}
-      <div className={s.stack}>
-        <Disclosure summary="How this is calculated">
-          <div className={c.prose}>
-            <p>Profit is the sale, minus what you paid, tax, setup fees and transport.</p>
-            <p>
-              Break-even is the sale price per item where profit is zero. The lowest sale price that
-              profits is the first whole-silver price above it.
-            </p>
-            <p>Relisting fees and items that don’t sell aren’t counted.</p>
-          </div>
-        </Disclosure>
-      </div>
       <button
         className={`button secondary ${c.start}`}
         disabled={!result}
@@ -251,32 +267,12 @@ export function TradeCalculator() {
       {message && <StatusLine>{message}</StatusLine>}
     </>
   );
-  const details = (
-    <div className={c.saved}>
-      <Disclosure summary="Saved trade scenarios & sharing">
-        <ScenarioControls
-          schema={tradeScenarioSchema}
-          configuration={{ ...values, kind: "flipping", region }}
-          onLoad={(value) => {
-            setValues(value);
-            if (value.region !== region) {
-              document.cookie = `atlas-region=${value.region}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-              const url = new URL(location.href);
-              url.searchParams.set("region", value.region);
-              router.replace(url.pathname + url.search + url.hash, { scroll: false });
-            }
-          }}
-        />
-      </Disclosure>
-    </div>
-  );
   return (
     <div className={s.journey}>
       <CalculatorShell
         label="Trade check"
         step={step}
         onStep={goToStep}
-        details={details}
         steps={[
           {
             id: steps[0],
