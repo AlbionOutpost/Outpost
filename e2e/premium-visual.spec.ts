@@ -191,7 +191,7 @@ test("mobile collection filters and catalog categories preserve the chosen scope
     "aria-current",
     "page",
   );
-  await expect(page.locator("[data-comp-window] h3 a")).toHaveAttribute(
+  await expect(page.locator("[data-comp-window] a:has(h3)")).toHaveAttribute(
     "href",
     new RegExp(`^/compositions/${visual.compositionId}`),
   );
