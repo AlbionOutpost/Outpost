@@ -25,8 +25,7 @@ export function BuildWeaponRail({
   return (
     <section className="build-weapon-rail" aria-label="Weapon families">
       <div className="weapon-rail-heading">
-        <h2>Weapon</h2>
-        <span>Library totals</span>
+        <h2>Weapons</h2>
       </div>
       <label className="weapon-rail-search">
         <Search size={16} />

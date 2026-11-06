@@ -1,13 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useOutpostRegion } from "./region-context";
-import { cities, type Region } from "@/lib/albion/region-config";
+import { cities, regions, type Region } from "@/lib/albion/region-config";
 import { useBatchQuotes, BatchQuote, quoteKey } from "./market-batch-quotes";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { ItemIcon } from "./item-icon";
 import { AddToShopping } from "./add-to-shopping";
 import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
 import Link from "@/components/link";
+import { PanelHead } from "./panel-head";
+import { WellSelect } from "./well-select";
 export function LoadoutPriceCheck({
   equipment,
   region: sourceRegion,
@@ -48,52 +50,52 @@ export function LoadoutPriceCheck({
   }, [autoLoad, region, selectionKey]);
   return (
     <section className="loadout-price-check" ref={root}>
-      <div className="library-section-heading">
-        <div>
-          <h2>What will this loadout cost?</h2>
-          <p>Check one of each equipped item on {region}, at its selected quality.</p>
-        </div>
-        <div className="loadout-quote-actions">
-          <AddToShopping
-            region={region}
-            label="Shop this loadout"
-            entries={selected.map((item) => ({
-              itemId: item.itemId,
-              name: equipmentName(item.itemId),
-              city: city as (typeof cities)[number],
-              quality: item.quality,
-              quantity: 1,
-              owned: 0,
-              unitPrice: null,
-              priceKind: "manual" as const,
-              observedAt: null,
-            }))}
-          />
+      <PanelHead
+        title="What will this loadout cost?"
+        line={`One of each equipped item at its quality, bought in the city you pick on the ${regions[region].label} server.`}
+        actions={
+          <div className="loadout-quote-actions">
+            <AddToShopping
+              region={region}
+              label="Shop this loadout"
+              entries={selected.map((item) => ({
+                itemId: item.itemId,
+                name: equipmentName(item.itemId),
+                city: city as (typeof cities)[number],
+                quality: item.quality,
+                quantity: 1,
+                owned: 0,
+                unitPrice: null,
+                priceKind: "manual" as const,
+                observedAt: null,
+              }))}
+            />
 
-          <label>
-            Purchase city
-            <select
-              aria-label="Loadout purchase city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+            <label>
+              <span className="sr-only">Purchase city</span>
+              <WellSelect
+                aria-label="Loadout purchase city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              >
+                {cities
+                  .filter((c) => c !== "Black Market")
+                  .map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+              </WellSelect>
+            </label>
+            <button
+              type="button"
+              className="button secondary"
+              disabled={busy || !selected.length}
+              onClick={() => refresh(selected)}
             >
-              {cities
-                .filter((c) => c !== "Black Market")
-                .map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="button secondary"
-            disabled={busy || !selected.length}
-            onClick={() => refresh(selected)}
-          >
-            {busy ? "Checking prices…" : "Check loadout prices"}
-          </button>
-        </div>
-      </div>
+              {busy ? "Checking prices…" : "Check loadout prices"}
+            </button>
+          </div>
+        }
+      />
       <div className="loadout-price-total" aria-live="polite">
         <strong>
           {estimate.knownCost === null
@@ -108,10 +110,10 @@ export function LoadoutPriceCheck({
         </strong>
         <span>
           {estimate.checked
-            ? `${estimate.priced}/${selected.length} items priced in ${city} · ${estimate.recent} recent${estimate.stale ? ` · ${estimate.stale} need a freshness check` : ""}${estimate.knownCost === null ? " · Total outside supported range" : estimate.missing ? " · Estimate incomplete" : estimate.stale ? " · Historical / unverified cost estimate" : " · Estimated listing cost"}${estimate.failed ? " · Refresh incomplete; last scans retained" : ""}`
+            ? `${estimate.priced}/${selected.length} items priced in ${city} · ${estimate.recent} recent${estimate.stale ? ` · ${estimate.stale} need a freshness check` : ""}${estimate.knownCost === null ? " · Total outside supported range" : estimate.missing ? " · Estimate incomplete" : estimate.stale ? " · Older scans, prices may have moved" : " · Lowest sell orders"}${estimate.failed ? " · Some prices did not load; showing the last check" : ""}`
             : busy
-              ? `Checking community scans for ${city}…`
-              : "Choose a purchase city, then check community scans. A price check is not a purchase guarantee."}
+              ? `Checking prices in ${city}…`
+              : "Pick a city and check prices. Prices are player scans and can be out of date."}
         </span>
       </div>
       <details>
@@ -142,9 +144,8 @@ export function LoadoutPriceCheck({
         </div>
       </details>
       <p className="library-provenance">
-        Albion Online Data Project · crowdsourced observations, not a full order book or guaranteed
-        purchase price. Older scans remain visible with their dates; missing scans are excluded from
-        the known subtotal.{" "}
+        Prices from the Albion Online Data Project, scanned by players. Items without a price are
+        left out of the total.{" "}
         <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
           How market scans work →
         </Link>

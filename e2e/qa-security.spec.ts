@@ -120,11 +120,11 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
       })),
     });
     await page.goto(`/builds?q=${tag}`);
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(24);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(24);
     await page.getByRole("link", { name: "Next page" }).click();
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(1);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(1);
     await page.goBack();
-    await expect(page.locator(".build-discovery-grid .build-preview-card")).toHaveCount(24);
+    await expect(page.locator(".build-discovery-grid .community-build-card")).toHaveCount(24);
     const csrf = await (await context.request.get("/api/auth/csrf")).json();
     await context.request.post("/api/auth/signout", {
       form: { csrfToken: csrf.csrfToken, callbackUrl: "/", json: "true" },

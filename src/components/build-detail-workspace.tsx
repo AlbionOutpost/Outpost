@@ -6,6 +6,7 @@ import { useOutpostRegion } from "./region-context";
 import { InventoryEquipmentBoard, type InventoryEquipmentItem } from "./inventory-equipment-board";
 import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
+import { PanelHead } from "./panel-head";
 export type PresentedBuildEquipment = InventoryEquipmentItem & {
   name: string;
   qualityLabel: string;
@@ -89,12 +90,21 @@ export function BuildDetailWorkspace({
   information,
   recommendations,
   extraActions,
+  cost,
+  notes,
+  discussion,
 }: {
   equipment: PresentedBuildEquipment[];
   region?: string;
   information?: BuildDetailInformation;
   recommendations?: ReactNode;
   extraActions?: ReactNode;
+  /** The cost panel, right under the board and inspector. */
+  cost?: ReactNode;
+  /** The author's notes disclosure, first in "Build details". */
+  notes?: ReactNode;
+  /** The discussion disclosure, last in "Build details". */
+  discussion?: ReactNode;
 }) {
   const alternativePrefix = useId();
   const inspectorHeading = useRef<HTMLHeadingElement>(null);
@@ -198,8 +208,12 @@ export function BuildDetailWorkspace({
             </strong>
             <span>Equipped slots</span>
           </div>
-          <p>{spellCount} recorded ability selections</p>
-          <p>{altCount} configured alternatives</p>
+          <p>
+            {spellCount} {spellCount === 1 ? "ability" : "abilities"} recorded
+          </p>
+          <p>
+            {altCount} alternative {altCount === 1 ? "item" : "items"}
+          </p>
           {information?.recommendedIP ? <p>Author IP target: {information.recommendedIP}</p> : null}
           {!!information?.tags?.length && (
             <div className="detail-context-tags">
@@ -210,9 +224,6 @@ export function BuildDetailWorkspace({
               ))}
             </div>
           )}
-          <a className="button secondary" href="#build-cost">
-            Check loadout cost
-          </a>
         </aside>
         <section className="raised detail-inventory-panel" aria-label="Inventory loadout">
           <div className="detail-panel-heading">
@@ -297,16 +308,20 @@ export function BuildDetailWorkspace({
           </p>
         </aside>
       </div>
-      <div className="detail-secondary-sections">
-        <details
-          className="raised detail-disclosure detail-other-abilities"
-          id="build-all-abilities"
-        >
+      {cost}
+      <section className="raised detail-secondary-sections" aria-labelledby="build-details-heading">
+        <PanelHead
+          id="build-details-heading"
+          title="Build details"
+          line="Notes, abilities on every piece, swaps and the numbers behind this loadout."
+        />
+        {notes}
+        <details className="detail-disclosure detail-other-abilities" id="build-all-abilities">
           <summary>
             <span>
               <Layers size={16} /> Other equipment abilities
             </span>
-            <small>{spellCount - (selected?.spells?.length || 0)} selections</small>
+            <small>{spellCount - (selected?.spells?.length || 0)} more recorded</small>
           </summary>
           <div className="detail-disclosure-content detail-other-ability-grid">
             {ordered
@@ -328,7 +343,7 @@ export function BuildDetailWorkspace({
           </div>
         </details>
         {recommendations && (
-          <details className="raised detail-disclosure detail-recommendations">
+          <details className="detail-disclosure detail-recommendations">
             <summary>
               <span>Recommended traits</span>
               <small>Author’s recommendations</small>
@@ -336,13 +351,12 @@ export function BuildDetailWorkspace({
             <div className="detail-disclosure-content">{recommendations}</div>
           </details>
         )}
-        <details
-          className="raised detail-disclosure detail-alternatives-panel"
-          id="build-alternatives"
-        >
+        <details className="detail-disclosure detail-alternatives-panel" id="build-alternatives">
           <summary>
             <span>Alternative equipment</span>
-            <small>{altCount} configured choices</small>
+            <small>
+              {altCount} {altCount === 1 ? "item" : "items"}
+            </small>
           </summary>
           <div className="detail-disclosure-content">
             {alternatives.length ? (
@@ -434,12 +448,10 @@ export function BuildDetailWorkspace({
             )}
           </div>
         </details>
-        <details className="raised detail-disclosure detail-statistics-panel" id="build-stats">
+        <details className="detail-disclosure detail-statistics-panel" id="build-stats">
           <summary>
-            <span>Build facts & assumptions</span>
-            <small>
-              {equipment.length}/10 slots · {region}
-            </small>
+            <span>Build facts</span>
+            <small>{equipment.length}/10 slots equipped</small>
           </summary>
           <div className="detail-disclosure-content">
             <dl className="detail-statistics">
@@ -517,7 +529,8 @@ export function BuildDetailWorkspace({
             </p>
           </div>
         </details>
-      </div>
+        {discussion}
+      </section>
     </section>
   );
 }

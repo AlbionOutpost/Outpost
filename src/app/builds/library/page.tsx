@@ -1,3 +1,4 @@
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
@@ -11,7 +12,9 @@ import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { BuildWeaponRail } from "@/components/build-weapon-rail";
 import { buildDiscovery } from "@/lib/build-discovery";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
-import { LayoutGrid, List, Search, Swords, X } from "lucide-react";
+import { LayoutGrid, List, Search, X } from "lucide-react";
+import { BuildSortSelect } from "@/components/build-sort-select";
+import { EmptyWell } from "@/components/empty-well";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/builds/library", await searchParams);
 }
@@ -71,7 +74,7 @@ export default async function Library({
             />
             <label className="ecosystem-sort-label">
               Sort
-              <select
+              <BuildSortSelect
                 key={sort}
                 name="sort"
                 form="library-discovery-query"
@@ -81,14 +84,8 @@ export default async function Library({
                 <option value="">Library order</option>
                 <option value="newest">Recently updated</option>
                 <option value="title">Build title</option>
-              </select>
+              </BuildSortSelect>
             </label>
-            <button
-              form="library-discovery-query"
-              className="button secondary ecosystem-apply-sort"
-            >
-              Apply
-            </button>
             <div className="ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
@@ -190,8 +187,10 @@ export default async function Library({
           <section className="ecosystem-results" aria-label="Matching library builds">
             <div className="ecosystem-results-subline" aria-live="polite" aria-atomic="true">
               <p>
-                <strong>{matched.toLocaleString("en-GB")}</strong> library builds ·{" "}
-                {rows.length ? `${(page - 1) * 24 + 1}–${Math.min(page * 24, matched)}` : "0"} shown
+                <strong>{matched.toLocaleString("en-GB")}</strong>{" "}
+                {matched === 1 ? "library build" : "library builds"}
+                {rows.length > 0 &&
+                  ` · ${(page - 1) * 24 + 1}–${Math.min(page * 24, matched)} shown`}
               </p>
               <SaveBuildFilter path="/builds/library" query={query} />
             </div>
@@ -216,38 +215,43 @@ export default async function Library({
               ))}
             </div>
             {!rows.length && (
-              <div className="ecosystem-empty">
-                <Swords size={30} />
-                <h2>No loadouts match that search</h2>
-                <p>Try another weapon, activity or playstyle. You can also clear a filter above.</p>
-                <Link href="/builds/library" className="button secondary">
-                  Clear filters
-                </Link>
-              </div>
+              <EmptyWell
+                emblem="strip-builds"
+                title="No loadouts match that search"
+                line="Try another weapon, activity or playstyle, or remove a filter above."
+                action={
+                  <Link href="/builds/library" className="button secondary">
+                    Clear filters
+                  </Link>
+                }
+              />
             )}
-            <AdSlot placement="hub" />
-            <nav className="library-pagination" aria-label="Library pages">
-              {page > 1 ? (
-                <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                  Previous page
-                </Link>
-              ) : (
-                <span />
-              )}
-              <span>
-                Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
-              </span>
-              {page < pages ? (
-                <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                  Next page
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
+            {rows.length > 0 && <AdSlot placement="hub" />}
+            {pages > 1 && (
+              <nav className="library-pagination" aria-label="Library pages">
+                {page > 1 ? (
+                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
+                    Previous page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span>
+                  Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
+                </span>
+                {page < pages ? (
+                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
+                    Next page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            )}
           </section>
         </div>
       )}
+      <BuildsNextStep />
     </div>
   );
 }

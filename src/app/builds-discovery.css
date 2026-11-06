@@ -1,6 +1,6 @@
 /* Inventory-led build discovery. Counts, equipment and abilities come from recorded builds. */
 .app.outpost .builds-ecosystem {
-  max-width: 1488px;
+  max-width: var(--workspace-width);
   margin: 0 auto;
   min-width: 0;
 }
@@ -88,8 +88,8 @@
 }
 .ecosystem-discovery-layout {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 252px minmax(0, 1fr);
+  gap: 20px;
   align-items: start;
 }
 .ecosystem-filter-rail {
@@ -221,11 +221,6 @@
   font-size: 12px;
   min-height: 31px;
   padding: 5px 24px 5px 8px;
-}
-.app.outpost .ecosystem-apply-sort {
-  min-height: 31px;
-  font-size: 12px;
-  padding: 5px 9px;
 }
 .ecosystem-view-switch {
   display: flex;
@@ -489,37 +484,67 @@
 .device-favorites-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 26px 24px;
 }
-.device-favorite-card {
-  position: relative;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-}
-.device-favorite-card > .device-favorite-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 44px 18px 16px;
+/* Device favourites: small framed windows, title and save toggle on the bar */
+.app.outpost .device-favorite-card.raised {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
   min-width: 0;
-  height: 100%;
+  padding: 18px 18px 0;
 }
-.device-favorite-card > .device-favorite-content > span {
+.app.outpost .device-favorite-card .library-card-bar {
+  align-items: start;
+}
+.app.outpost .device-favorite-card .ecosystem-title-link {
+  flex: 1;
   min-width: 0;
+}
+.app.outpost .device-favorite-card .ecosystem-title-link::after {
+  content: none;
 }
 .app.outpost .device-favorite-card h3 {
-  font-size: 14px;
-  margin: 6px 0;
+  margin: 0;
+  font: 800 18px/1.15 var(--font-display);
   overflow-wrap: anywhere;
 }
-.app.outpost .device-favorite-card small {
-  font-size: 12px;
+.app.outpost .device-favorite-card .ecosystem-title-link:hover h3 {
   color: var(--accent-ink);
 }
+.app.outpost .device-favorite-card .library-device-save {
+  position: static;
+  flex: none;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--accent-ink);
+}
+.app.outpost .device-favorite-card > .device-favorite-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+.app.outpost .device-favorite-card .library-primary-weapon {
+  display: grid;
+}
+.app.outpost .device-favorite-card > .device-favorite-content > span:nth-child(2) {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .device-favorite-card > .device-favorite-content strong {
+  font-size: 15px;
+}
 .app.outpost .device-favorite-card > .device-favorite-content > span > span {
-  font-size: 12px;
   color: var(--muted);
+  font-size: 12px;
 }
 .saved-filter-list {
   display: flex;
@@ -747,7 +772,8 @@
 .app.outpost .builds-ecosystem .account-build-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  /* Framed windows: room between frames so neighbouring gems never touch */
+  gap: 26px 24px;
 }
 @media (max-width: 1180px) {
   .app.outpost .builds-ecosystem .account-build-grid {
@@ -757,6 +783,7 @@
 @media (max-width: 600px) {
   .app.outpost .builds-ecosystem .account-build-grid {
     grid-template-columns: 1fr;
+    gap: 22px;
   }
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
@@ -770,31 +797,20 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  min-height: 31px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  background: var(--panel);
+  min-height: 36px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  padding: 4px 12px 4px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--well);
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a:first-child {
+  padding-left: 12px;
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a[aria-current="true"] {
   border-color: var(--accent);
   color: var(--accent-ink);
-}
-.app.outpost .builds-ecosystem .build-results-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 12px;
-}
-.app.outpost .builds-ecosystem .build-results-heading h2 {
-  font-size: 15px;
-  margin: 0;
-}
-.app.outpost .builds-ecosystem .build-results-heading > span {
-  font-size: 12px;
-  color: var(--muted);
 }
 .app.outpost .builds-ecosystem.view-list .account-build-grid {
   grid-template-columns: 1fr;
@@ -808,12 +824,19 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 13px;
+  min-height: 56px;
+  padding: 12px 16px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font-size: 14px;
   font-weight: 600;
+}
+.app.outpost .favorite-compositions-list > a:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+  color: var(--accent-ink);
 }
 .favorite-compositions-list > a > span:first-of-type {
   min-width: 0;
@@ -904,7 +927,6 @@
   max-width: none;
   min-height: 38px;
 }
-.app.outpost .library-search-toolbar .ecosystem-apply-sort,
 .app.outpost .library-search-toolbar .ecosystem-view-switch > a {
   min-height: 38px;
 }
@@ -1231,7 +1253,12 @@
   height: 26px;
   border-radius: 50%;
 }
-.app.outpost .library-build-card .ecosystem-no-spells {
+.app.outpost .library-build-card .ecosystem-card-spells > .ecosystem-no-spells {
+  display: block;
+  width: auto;
+  height: auto;
+  border: 0;
+  background: none;
   color: var(--muted);
   font-size: 12px;
 }
@@ -1380,4 +1407,166 @@
 /* Stacked framed panels keep 26px between them (DESIGN.md) */
 .app.outpost .build-library-picks {
   margin-top: 26px;
+}
+
+/* The rail spans the toolbar and results rows: leftover height goes below the results, never
+   between the toolbar and the first card or empty state. */
+@media (min-width: 901px) {
+  .app.outpost .ecosystem-library-page .library-discovery-workspace {
+    grid-template-rows: auto 1fr;
+  }
+}
+.app.outpost .builds-ecosystem .weapon-rail-heading h2 {
+  font: 800 20px/1.15 var(--font-display);
+  text-shadow: 0 1px 2px #000c;
+}
+
+/* An ability whose icon did not load: a quiet rune mark in a round well, not a "?" */
+.app.outpost :is(.builds-ecosystem, .build-detail-page) .spell-icon-unavailable {
+  position: relative;
+  border-radius: 50%;
+  border-color: var(--well-border);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: transparent;
+  overflow: hidden;
+}
+.app.outpost :is(.builds-ecosystem, .build-detail-page) .spell-icon-unavailable::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  background: var(--muted);
+  opacity: 0.6;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+
+/* Player build windows: the caption carries a visibility chip and the owner's menu before the way in */
+.app.outpost .library-card-caption:has(> .build-window-caption-end) {
+  align-items: center;
+  padding-block: 8px 10px;
+}
+.app.outpost .library-card-caption > .build-window-caption-end {
+  gap: 10px;
+}
+.app.outpost .build-window-caption-end > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+}
+.app.outpost .library-card-caption:has(> .build-window-caption-end) > span {
+  white-space: nowrap;
+}
+.app.outpost .community-build-card .library-card-bar .landing-chip {
+  color: var(--secondary);
+  font-weight: 600;
+}
+.app.outpost .build-window-caption-end .build-card-owner-actions > summary {
+  min-height: 28px;
+  width: 28px;
+  color: var(--secondary);
+}
+.app.outpost .community-build-card .library-card-bar .build-card-save-error {
+  position: absolute;
+  top: 52px;
+  right: 16px;
+  left: 16px;
+  z-index: 3;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--error) 50%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: var(--elevated);
+  color: var(--text);
+  font-size: 12px;
+}
+.app.outpost .build-signin-well {
+  max-width: 760px;
+  margin: 8px 0 64px;
+}
+
+/* Favorites: three sections straight on the page, each a heading with its own chip and list */
+.app.outpost .favorites-sections,
+.app.outpost .favorites-account {
+  display: grid;
+  gap: 80px;
+}
+.app.outpost .favorites-sections {
+  margin: 40px 0 64px;
+}
+.app.outpost .favorites-group,
+.app.outpost .device-library-favorites {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.app.outpost
+  :is(.favorites-group, .device-library-favorites, .favorites-account)
+  > .section-heading {
+  margin: 0;
+}
+.app.outpost .favorites-sections .section-heading .landing-chip {
+  display: inline-flex;
+  margin-top: 4px;
+}
+.app.outpost .favorites-toolbar,
+.app.outpost .device-favorites-controls.raised {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+}
+.app.outpost .favorites-toolbar .ecosystem-search-label {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.app.outpost .favorites-toolbar .ecosystem-search-label input {
+  width: 100%;
+}
+.app.outpost .favorites-sections .library-pagination {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .app.outpost .favorites-sections,
+  .app.outpost .favorites-account {
+    gap: 56px;
+  }
+  .app.outpost .favorites-sections {
+    margin-top: 28px;
+  }
+}
+.app.outpost .device-favorites-controls.raised > label:first-child input {
+  width: 100%;
+  min-height: 42px;
+}
+.app.outpost .device-library-favorites .device-favorites-count {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Hubs (activities, favorites) use the landing's reading width; lists with a rail stay wider */
+.app.outpost .builds-ecosystem.builds-hub {
+  max-width: var(--page-width);
+}
+/* The closing step: one framed card, as the landing ends on its call band */
+.app.outpost .builds-next-step.raised {
+  margin: 96px 0 72px;
+  padding: 24px 28px;
+}
+.app.outpost .builds-next-step > * {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .app.outpost .builds-next-step.raised {
+    margin: 64px 0 48px;
+    padding: 20px 16px;
+  }
+  .app.outpost .builds-next-step .button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
 }

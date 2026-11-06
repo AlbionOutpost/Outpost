@@ -152,7 +152,7 @@ test("community favorite and vote confirmations animate only after server succes
     );
     await expect(panel.locator("[data-feedback]")).toHaveCount(0);
     await page.goto(`/builds?q=${encodeURIComponent(build.title)}`);
-    const save = page.locator(".build-preview-card .build-card-save").first();
+    const save = page.locator(".community-build-card .build-favorite-heart").first();
     await expect(save).toHaveAttribute("aria-pressed", "true");
     await expect(save.locator("[data-feedback]")).toHaveCount(0);
     await save.click();

@@ -1,4 +1,5 @@
 import "@/app/build-styles";
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import Link from "@/components/build-region-link";
@@ -7,12 +8,51 @@ import { authOptions } from "@/lib/auth";
 import { listAccountFavorites } from "@/lib/builds/discovery-service";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
 import { DeviceLibraryFavorites } from "@/components/build-device-collections";
-import { BuildPreviewCard } from "@/components/build-preview-card";
+import { CommunityBuildCard } from "@/components/community-build-card";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
-import { Layers, Cloud, LayoutGrid, List } from "lucide-react";
+import { BuildSortSelect } from "@/components/build-sort-select";
+import { EmptyWell } from "@/components/empty-well";
+import { SectionHeading } from "@/components/section-heading";
+import { ArrowRight, Layers, LayoutGrid, List } from "lucide-react";
 import { z } from "zod";
 export const dynamic = "force-dynamic";
 export const metadata = privateMetadata("Favorites");
+
+function Pages({
+  label,
+  page,
+  pages,
+  to,
+}: {
+  label: string;
+  page: number;
+  pages: number;
+  to: (page: number) => string;
+}) {
+  if (pages <= 1) return null;
+  return (
+    <nav className="library-pagination" aria-label={label}>
+      {page > 1 ? (
+        <Link className="button secondary" href={to(page - 1)}>
+          Previous page
+        </Link>
+      ) : (
+        <span />
+      )}
+      <span>
+        Page {page} / {pages}
+      </span>
+      {page < pages ? (
+        <Link className="button secondary" href={to(page + 1)}>
+          Next page
+        </Link>
+      ) : (
+        <span />
+      )}
+    </nav>
+  );
+}
+
 export default async function Favorites({
   searchParams,
 }: {
@@ -53,198 +93,211 @@ export default async function Favorites({
   } = result || {};
   return (
     <div
-      className={`builds-ecosystem ecosystem-favorites-page personal-favorites-collection view-${view}`}
+      className={`builds-ecosystem builds-hub ecosystem-favorites-page personal-favorites-collection view-${view}`}
     >
       <BuildDiscoveryHeader
         active="favorites"
-        title="Your favorite builds"
-        description="Keep the loadouts you want to return to. Library saves stay on this device; account favorites follow your sign-in."
+        title="Favorites"
+        description="The builds and comps you saved to come back to."
       />
-      <DeviceLibraryFavorites compactEmpty={!!userId} />
-      <section className="panel" aria-label="Account favorites">
-        <div className="ecosystem-section-heading">
-          <div>
-            <h2>
-              <Cloud size={19} />
-              Account favorites
-            </h2>
-            <p>
-              {userId
-                ? "Your saved player builds and compositions. Content you can no longer access is hidden."
-                : "Sign in to save player builds and compositions to your account."}
-            </p>
-          </div>
-          {!userId && (
-            <Link href="/signin" className="button secondary">
-              Sign in with Discord
-            </Link>
-          )}
-        </div>
-        {userId && (
-          <>
-            <div className="ecosystem-section-heading">
-              <h3>Player builds · {total}</h3>
-              <Link href="/builds" className="text-link">
-                Browse community builds →
-              </Link>
-            </div>
-            <form
-              id="favorite-build-query"
-              action="/favorites"
-              className="ecosystem-result-toolbar"
-            >
-              <BuildRegionInput />
-              <input type="hidden" name="view" value={view} />
-              <input type="hidden" name="compPage" value={compPage} />
-              <BuildDiscoverySearch
-                value={q}
-                formId="favorite-build-query"
-                label="Search favorite builds"
-                placeholder="Search saved build titles…"
+      <div className="favorites-sections">
+        <DeviceLibraryFavorites
+          heading={
+            <SectionHeading
+              title={
+                <>
+                  Library <em>builds</em>
+                </>
+              }
+              line={<span className="landing-chip">Saved in this browser</span>}
+            />
+          }
+        />
+        <section className="favorites-account" aria-label="Account favorites">
+          {!userId ? (
+            <div className="favorites-group">
+              <SectionHeading
+                title={
+                  <>
+                    Player builds and <em>comps</em>
+                  </>
+                }
+                line={<span className="landing-chip">Saved to your account</span>}
               />
-              <label className="ecosystem-sort-label">
-                Sort
-                <select name="sort" aria-label="Sort favorite builds" defaultValue={sort}>
-                  <option value="saved">Recently favorited</option>
-                  <option value="updated">Recently updated</option>
-                  <option value="title">Title A–Z</option>
-                </select>
-              </label>
-              <button className="button secondary" type="submit">
-                Apply
-              </button>
-              <div className="ecosystem-view-switch" aria-label="Favorite build layout">
-                <Link
-                  href={href({ view: "grid", page: String(page), compPage: String(compPage) })}
-                  aria-label="Grid view"
-                  aria-current={view === "grid" ? "true" : undefined}
-                >
-                  <LayoutGrid size={17} />
-                </Link>
-                <Link
-                  href={href({ view: "list", page: String(page), compPage: String(compPage) })}
-                  aria-label="List view"
-                  aria-current={view === "list" ? "true" : undefined}
-                >
-                  <List size={17} />
-                </Link>
-              </div>
-            </form>
-            <p className="ecosystem-results-subline">
-              {total} matching favorite builds ·{" "}
-              {builds.length ? `${(page - 1) * 24 + 1}–${Math.min(page * 24, total)}` : "0"} shown
-            </p>
-            <div className="account-build-grid" role="group" aria-label="Favorite player builds">
-              {builds.map(({ build }) => (
-                <BuildPreviewCard
-                  key={build.id}
-                  build={build}
-                  authenticated
-                  saved
-                  favoriteCount={build._count.favorites}
-                  owned={build.authorId === userId}
-                />
-              ))}
-            </div>
-            {!builds.length && (
-              <div className="collection-empty ecosystem-empty">
-                <h3>
-                  {q
-                    ? "No favorite builds match this search."
-                    : "No saved builds you can access yet."}
-                </h3>
-                <p>
-                  {q
-                    ? "Try another title or clear your search."
-                    : "Favorite a player build to keep it with your account."}
-                </p>
-                {q && (
-                  <Link className="button secondary" href={href({ q: "", page: "1" })}>
-                    Clear search
+              <EmptyWell
+                emblem="strip-comps"
+                title="Sign in to see your saved player builds and comps"
+                line="Player builds and comps you favorite are kept on your Discord account, on every device."
+                action={
+                  <Link href="/signin" className="button primary">
+                    Sign in with Discord
                   </Link>
+                }
+              />
+            </div>
+          ) : (
+            <>
+              <section className="favorites-group" aria-labelledby="favorite-builds-heading">
+                <SectionHeading
+                  id="favorite-builds-heading"
+                  title={
+                    <>
+                      Player <em>builds</em> · {total}
+                    </>
+                  }
+                  line={<span className="landing-chip">Saved to your account</span>}
+                  link={total > 0 ? { href: "/builds", label: "Community builds" } : undefined}
+                />
+                {(total > 0 || q) && (
+                  <form
+                    id="favorite-build-query"
+                    action="/favorites"
+                    className="raised ecosystem-result-toolbar favorites-toolbar"
+                  >
+                    <BuildRegionInput />
+                    <input type="hidden" name="view" value={view} />
+                    <input type="hidden" name="compPage" value={compPage} />
+                    <BuildDiscoverySearch
+                      value={q}
+                      formId="favorite-build-query"
+                      label="Search favorite builds"
+                      placeholder="Search saved build titles…"
+                      compact
+                    />
+                    <label className="ecosystem-sort-label">
+                      Sort
+                      <BuildSortSelect
+                        name="sort"
+                        aria-label="Sort favorite builds"
+                        defaultValue={sort}
+                      >
+                        <option value="saved">Recently favorited</option>
+                        <option value="updated">Recently updated</option>
+                        <option value="title">Title A–Z</option>
+                      </BuildSortSelect>
+                    </label>
+                    <div className="ecosystem-view-switch" aria-label="Favorite build layout">
+                      <Link
+                        href={href({
+                          view: "grid",
+                          page: String(page),
+                          compPage: String(compPage),
+                        })}
+                        aria-label="Grid view"
+                        aria-current={view === "grid" ? "true" : undefined}
+                      >
+                        <LayoutGrid size={17} />
+                      </Link>
+                      <Link
+                        href={href({
+                          view: "list",
+                          page: String(page),
+                          compPage: String(compPage),
+                        })}
+                        aria-label="List view"
+                        aria-current={view === "list" ? "true" : undefined}
+                      >
+                        <List size={17} />
+                      </Link>
+                    </div>
+                  </form>
                 )}
-                <Link className="button secondary" href="/builds">
-                  Browse community builds
-                </Link>
-              </div>
-            )}
-            <nav className="library-pagination" aria-label="Favorite build pages">
-              {page > 1 ? (
-                <Link
-                  className="button secondary"
-                  href={href({ page: String(page - 1), compPage: String(compPage) })}
-                >
-                  Previous page
-                </Link>
-              ) : (
-                <span />
-              )}
-              <span>
-                Page {page} / {pages}
-              </span>
-              {page < pages ? (
-                <Link
-                  className="button secondary"
-                  href={href({ page: String(page + 1), compPage: String(compPage) })}
-                >
-                  Next page
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
-            <div className="ecosystem-section-heading">
-              <h3>Compositions · {compTotal}</h3>
-              <Link href="/compositions" className="text-link">
-                Browse comps →
-              </Link>
-            </div>
-            <div className="favorite-compositions-list">
-              {compositions.map(({ composition: c }) => (
-                <Link key={c.id} href={`/compositions/${c.id}`}>
-                  <Layers size={22} />
-                  <span>{c.title}</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              ))}
-            </div>
-            {!compositions.length && (
-              <div className="collection-empty ecosystem-empty">
-                <h3>No saved comps you can access yet.</h3>
-                <p>Save a composition for your next group session.</p>
-                <Link className="button secondary" href="/compositions">
-                  Browse comps
-                </Link>
-              </div>
-            )}
-            <nav className="library-pagination" aria-label="Favorite composition pages">
-              {compPage > 1 ? (
-                <Link
-                  className="button secondary"
-                  href={href({ page: String(page), compPage: String(compPage - 1) })}
-                >
-                  Previous page
-                </Link>
-              ) : (
-                <span />
-              )}
-              <span>
-                Page {compPage} / {compPages}
-              </span>
-              {compPage < compPages ? (
-                <Link
-                  className="button secondary"
-                  href={href({ page: String(page), compPage: String(compPage + 1) })}
-                >
-                  Next page
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
-          </>
-        )}
-      </section>
+                {builds.length > 0 && (
+                  <div
+                    className="account-build-grid"
+                    role="group"
+                    aria-label="Favorite player builds"
+                  >
+                    {builds.map(({ build }) => (
+                      <CommunityBuildCard
+                        key={build.id}
+                        build={build}
+                        authenticated
+                        saved
+                        favoriteCount={build._count.favorites}
+                        owned={build.authorId === userId}
+                      />
+                    ))}
+                  </div>
+                )}
+                {!builds.length && (
+                  <EmptyWell
+                    emblem="strip-builds"
+                    title={
+                      q ? "No favorite builds match this search" : "No player builds saved yet"
+                    }
+                    line={
+                      q
+                        ? "Try another title or clear the search."
+                        : "Use the heart on a player build to keep it with your account."
+                    }
+                    action={
+                      q ? (
+                        <Link className="button secondary" href={href({ q: "", page: "1" })}>
+                          Clear search
+                        </Link>
+                      ) : (
+                        <Link className="button secondary" href="/builds">
+                          Community builds
+                        </Link>
+                      )
+                    }
+                  />
+                )}
+                <Pages
+                  label="Favorite build pages"
+                  page={page}
+                  pages={pages}
+                  to={(n) => href({ page: String(n), compPage: String(compPage) })}
+                />
+              </section>
+              <section className="favorites-group" aria-labelledby="favorite-comps-heading">
+                <SectionHeading
+                  id="favorite-comps-heading"
+                  title={
+                    <>
+                      <em>Comps</em> · {compTotal}
+                    </>
+                  }
+                  line={<span className="landing-chip">Saved to your account</span>}
+                  link={
+                    compTotal > 0 ? { href: "/compositions", label: "Browse comps" } : undefined
+                  }
+                />
+                {compositions.length > 0 ? (
+                  <div className="favorite-compositions-list">
+                    {compositions.map(({ composition: c }) => (
+                      <Link key={c.id} href={`/compositions/${c.id}`}>
+                        <Layers size={22} aria-hidden="true" />
+                        <span>{c.title}</span>
+                        <ArrowRight size={16} aria-hidden="true" />
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyWell
+                    emblem="strip-comps"
+                    title="No comps saved yet"
+                    line="Add a comp to your favorites to keep it for your next group session."
+                    action={
+                      <Link className="button secondary" href="/compositions">
+                        Browse comps
+                      </Link>
+                    }
+                  />
+                )}
+                <Pages
+                  label="Favorite composition pages"
+                  page={compPage}
+                  pages={compPages}
+                  to={(n) => href({ page: String(page), compPage: String(n) })}
+                />
+              </section>
+            </>
+          )}
+        </section>
+      </div>
+      <BuildsNextStep />
     </div>
   );
 }

@@ -43,7 +43,7 @@ test("mobile activity art loads and empty categories stay truthful", async ({ pa
     .toBeGreaterThan(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("link", { name: "Arena No builds listed yet", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "No loadouts match that search" })).toBeVisible();
+  await expect(page.getByText("No loadouts match that search", { exact: true })).toBeVisible();
   await expect(page.locator("#library-activity")).toHaveValue("ARENA");
   await page.getByRole("link", { name: "Clear filters", exact: true }).last().click();
   await expect(page.locator(".library-build-card").first()).toBeVisible();

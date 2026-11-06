@@ -23,7 +23,7 @@ test("compact library keeps real filters, sorting, page and regional identity", 
   await page
     .getByRole("combobox", { name: "Sort library builds", exact: true })
     .selectOption("title");
-  await page.getByRole("button", { name: "Apply", exact: true }).click();
+  // Choosing an order applies it; there is no separate Apply button.
   await expect(page).toHaveURL(/sort=title/);
   const firstTitle = await cards.first().locator("h2").innerText();
   await page.getByRole("link", { name: "Next page", exact: true }).click();

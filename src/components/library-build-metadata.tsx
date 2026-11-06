@@ -55,7 +55,7 @@ export function LibraryBuildVideos({ build }: { build: LibraryBuild }) {
   if (!links.length && !build.unresolvedVideoReferences) return null;
   return (
     <section className="library-build-videos">
-      <h2>Watch the creator’s recordings</h2>
+      <h3>Watch the creator’s recordings</h3>
       <div>
         {links.map((video, i) => (
           <a key={`${video.url}-${i}`} href={video.url} target="_blank" rel="noopener noreferrer">
@@ -63,7 +63,7 @@ export function LibraryBuildVideos({ build }: { build: LibraryBuild }) {
             <span>
               {video.kind === "channel"
                 ? "Creator’s YouTube channel"
-                : `Recorded build video ${i + 1}`}
+                : `Recorded build video ${i + 1}`}{" "}
               <small>Open on YouTube ↗</small>
             </span>
           </a>

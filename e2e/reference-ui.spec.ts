@@ -139,14 +139,16 @@ test("community discovery filters real equipment without exposing private builds
     await make("Solo bow", "PUBLIC", "Solo Mists", "T4_2H_BOW");
     await make("Private arena axe", "PRIVATE", "Arena", "T6_MAIN_AXE");
     await page.goto(`/builds?q=${tag}`);
-    await expect(page.locator(".build-preview-card")).toHaveCount(2);
+    await expect(page.locator(".community-build-card")).toHaveCount(2);
     await page.getByLabel("Filter build content").selectOption("Arena");
     await page.getByLabel("Filter build weapon").selectOption("MAIN_AXE");
     await page.getByRole("button", { name: "Search builds", exact: true }).click();
-    await expect(page.locator(".build-preview-card")).toHaveCount(1);
-    await expect(page.locator(".build-preview-card")).toContainText("Arena axe");
-    await expect(page.locator(".build-preview-card")).not.toContainText("Private arena");
-    await expect(page.locator(".build-preview-card img[data-albion-icon]").first()).toBeVisible();
+    await expect(page.locator(".community-build-card")).toHaveCount(1);
+    await expect(page.locator(".community-build-card")).toContainText("Arena axe");
+    await expect(page.locator(".community-build-card")).not.toContainText("Private arena");
+    await expect(
+      page.locator(".community-build-card .library-build-board img[data-albion-icon]").first(),
+    ).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-1440.png", fullPage: true });
     await page.setViewportSize({ width: 375, height: 844 });
     await expect(page.getByLabel("Filter build content")).not.toBeVisible();
@@ -156,10 +158,8 @@ test("community discovery filters real equipment without exposing private builds
     await expect(page.getByLabel("Filter build content")).toBeVisible();
     await page.getByLabel("Filter build weapon").selectOption("2H_BOW");
     await page.getByRole("button", { name: "Search builds", exact: true }).click();
-    await expect(page.locator(".build-preview-card")).toHaveCount(0);
-    await expect(
-      page.getByRole("heading", { name: "No matching loadouts", exact: true }),
-    ).toBeVisible();
+    await expect(page.locator(".community-build-card")).toHaveCount(0);
+    await expect(page.getByText("No matching loadouts", { exact: true })).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-375.png", fullPage: true });
     await page.goto("/guides");
     await page.getByLabel("Search guides").fill("return assumptions");

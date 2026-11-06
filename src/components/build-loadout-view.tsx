@@ -24,6 +24,9 @@ export function BuildLoadoutView({
   recommendations,
   qualityAssumed = false,
   extraActions,
+  cost,
+  notes,
+  discussion,
 }: {
   equipment: Gear[];
   region?: string;
@@ -31,6 +34,9 @@ export function BuildLoadoutView({
   recommendations?: ReactNode;
   qualityAssumed?: boolean;
   extraActions?: ReactNode;
+  cost?: ReactNode;
+  notes?: ReactNode;
+  discussion?: ReactNode;
 }) {
   const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
   function spells(item: Gear) {
@@ -87,6 +93,9 @@ export function BuildLoadoutView({
       information={information}
       recommendations={recommendations}
       extraActions={extraActions}
+      cost={cost}
+      notes={notes}
+      discussion={discussion}
     />
   );
 }

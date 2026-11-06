@@ -111,7 +111,7 @@ test("loadout estimates retain dated scans and never total missing or other-city
   await expect(page.locator(".loadout-price-total strong")).toHaveText("800 silver");
   await expect(page.locator(".loadout-price-total")).toContainText("8 need a freshness check");
   await expect(page.locator(".loadout-price-total")).toContainText(
-    "Historical / unverified cost estimate",
+    "Older scans, prices may have moved",
   );
   await page.getByLabel("Loadout purchase city", { exact: true }).selectOption("Lymhurst");
   await expect(page.locator(".loadout-price-total strong")).toHaveText(

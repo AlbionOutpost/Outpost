@@ -3,7 +3,7 @@
 .app.outpost .ecosystem-library-page.view-grid .ecosystem-build-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   /* Room between frames so neighbouring gems never touch */
-  gap: 26px;
+  gap: 26px 24px;
 }
 .app.outpost .ecosystem-library-page.view-grid .library-save-button {
   top: 12px;

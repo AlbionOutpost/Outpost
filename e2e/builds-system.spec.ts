@@ -95,7 +95,7 @@ test("library discovery keeps URL filters, region and device collections through
   await localFavorites
     .getByRole("searchbox", { name: "Search library favorites", exact: true })
     .fill("No matching favorite " + randomUUID());
-  await expect(localFavorites).toContainText("No favorites match your search.");
+  await expect(localFavorites).toContainText("No favorites match your search");
   await localFavorites.getByRole("button", { name: "Clear library search", exact: true }).click();
   await expect(localFavorites.locator(".device-favorite-card")).toHaveCount(24);
   // The same browser keeps each server's public collection independent.
@@ -187,7 +187,7 @@ test("My Builds management duplicates independently, handles errors and confirms
       },
     ]);
     await page.goto(`/builds?mine=1&q=${encodeURIComponent(title)}`);
-    const card = page.locator(".build-preview-card").filter({ hasText: title });
+    const card = page.locator(".community-build-card").filter({ hasText: title });
     await card.getByLabel(`Manage ${title}`, { exact: true }).click();
     await card.getByRole("button", { name: "Duplicate build", exact: true }).click();
     await expect(page).toHaveURL(/\/builds\/[^/?]+\/edit/);
@@ -205,10 +205,10 @@ test("My Builds management duplicates independently, handles errors and confirms
     expect(
       new URL((await marketLink.getAttribute("href"))!, page.url()).searchParams.get("region"),
     ).toBe("asia");
-    await expect(page.getByText("Region: asia.", { exact: false })).toBeVisible();
+    await expect(page.getByText("on the Asia server", { exact: false })).toBeVisible();
     await page.goto(`/builds?mine=1&q=${encodeURIComponent(title)}`);
     const original = page
-      .locator(".build-preview-card")
+      .locator(".community-build-card")
       .filter({ has: page.getByRole("link", { name: title, exact: true }) });
     await original.getByLabel(`Manage ${title}`, { exact: true }).click();
     await page.route(`/api/builds/${build.id}`, (route) =>
@@ -422,13 +422,11 @@ test("account favorites paginate, search and sort accessible builds independentl
     ]);
     await page.goto("/favorites?region=asia");
     const account = page.getByRole("region", { name: "Account favorites", exact: true }),
-      cards = account.locator(".build-preview-card");
+      cards = account.locator(".community-build-card");
     await expect(
       account.getByRole("heading", { name: "Player builds · 26", exact: true }),
     ).toBeVisible();
-    await expect(
-      account.getByRole("heading", { name: "Compositions · 25", exact: true }),
-    ).toBeVisible();
+    await expect(account.getByRole("heading", { name: "Comps · 25", exact: true })).toBeVisible();
     await expect(cards).toHaveCount(24);
     await expect(cards.first()).toContainText(`${marker} 25`);
     await expect(account.locator(".favorite-compositions-list > a")).toHaveCount(24);
@@ -443,10 +441,6 @@ test("account favorites paginate, search and sort accessible builds independentl
     await account.getByRole("link", { name: "List view", exact: true }).click();
     await expect(page.locator(".ecosystem-favorites-page")).toHaveClass(/view-list/);
     await page.getByLabel("Sort favorite builds", { exact: true }).selectOption("title");
-    await page
-      .locator("#favorite-build-query")
-      .getByRole("button", { name: "Apply", exact: true })
-      .click();
     await expect(cards).toHaveCount(24);
     await expect(cards.first()).toContainText(`${marker} 00`);
     expect(new URL(page.url()).searchParams.get("page")).toBeNull();

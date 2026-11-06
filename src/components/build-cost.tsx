@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useOutpostRegion } from "./region-context";
-import { cities } from "@/lib/albion/region-config";
+import { cities, regions } from "@/lib/albion/region-config";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import Link from "@/components/link";
+import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
+import { WellSelect } from "./well-select";
 type Cost = {
   region: string;
   city: string;
@@ -80,14 +83,13 @@ export function BuildCost({ id }: { id: string }) {
     return () => observer.disconnect();
   }, [id, region]);
   return (
-    <section className="panel section" ref={root}>
-      <h2>Loadout replacement cost</h2>
-      <p>
-        Lowest observed sell orders, using each item&apos;s selected quality. One of each equipped
-        item per set; no inferred consumable stack size. Region: {region}.
-      </p>
+    <section className="panel build-cost-panel" ref={root}>
+      <PanelHead
+        title="What will this loadout cost?"
+        line={`Lowest sell order for each equipped item at its quality, in the city you pick on the ${regions[region].label} server.`}
+      />
       <form
-        className="market-form"
+        className="build-cost-form"
         onSubmit={(e) => {
           e.preventDefault();
           void load();
@@ -95,16 +97,20 @@ export function BuildCost({ id }: { id: string }) {
       >
         <label>
           Purchase city
-          <select aria-label="Purchase city" value={city} onChange={(e) => setCity(e.target.value)}>
+          <WellSelect
+            aria-label="Purchase city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          >
             {cities
               .filter((c) => c !== "Black Market")
               .map((c) => (
                 <option key={c}>{c}</option>
               ))}
-          </select>
+          </WellSelect>
         </label>
         <label>
-          Replacement sets
+          Sets
           <input
             type="number"
             min={1}
@@ -115,17 +121,14 @@ export function BuildCost({ id }: { id: string }) {
           />
         </label>
         <button className="button secondary" disabled={busy}>
-          {busy ? "Fetching prices…" : "Estimate build cost"}
+          {busy ? "Checking prices…" : "Check loadout prices"}
         </button>
       </form>
-      {error?.key === requestKey && (
-        <p role="alert" className="error">
-          {error.message}
-        </p>
-      )}
+      {error?.key === requestKey && <StatusLine tone="error">{error.message}</StatusLine>}
+      {busy && !result && <StatusLine>Checking prices in {city}…</StatusLine>}
       {result && result.region === region && result.city === city && result.sets === sets && (
         <>
-          <h3>
+          <h3 className="build-cost-total">
             {result.knownCost === null
               ? "Estimate exceeds supported silver range"
               : result.total === null
@@ -133,15 +136,15 @@ export function BuildCost({ id }: { id: string }) {
                 : `${result.total.toLocaleString()} silver`}
             {result.stale ? " · Check observation dates" : ""}
           </h3>
-          <p className="muted">
+          <p className="detail-muted">
             {result.rows.filter((row) => row.price !== null).length}/{result.rows.length} items
-            priced. {result.total === null ? "The estimate is incomplete. " : ""}
-            Older scans remain estimates; no missing item counts as free.{" "}
+            priced in {city}. {result.total === null ? "Items without a price are left out. " : ""}
+            Prices are player scans and can be out of date.{" "}
             <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
               How market scans work →
             </Link>
           </p>
-          <ul className="equipment-summary">
+          <ul className="equipment-summary build-cost-rows">
             {result.rows.map((r) => (
               <li key={r.slot}>
                 <strong>
@@ -154,8 +157,8 @@ export function BuildCost({ id }: { id: string }) {
                 </span>
                 <small>
                   {r.observedAt && Number.isFinite(sourceTimestamp(r.observedAt))
-                    ? `${new Date(sourceTimestamp(r.observedAt)).toLocaleString("en-GB", { timeZone: "UTC" })} UTC${r.stale ? " · STALE" : ""}`
-                    : "No source observation"}
+                    ? `${new Date(sourceTimestamp(r.observedAt)).toLocaleString("en-GB", { timeZone: "UTC" })} UTC${r.stale ? " · Stale" : ""}`
+                    : "No scan"}
                 </small>
                 <Link
                   className="text-link"
