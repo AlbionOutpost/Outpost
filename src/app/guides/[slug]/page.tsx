@@ -52,7 +52,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const date = guideDate(guide.updatedAt);
   const journal = guide.slug === "albion-journal-guide";
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page}${journal ? ` ${styles.journal}` : ""}`}>
       {guideLd(guide).map((data, i) => (
         <JsonLd data={data} key={i} />
       ))}
@@ -67,7 +67,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             ? "Every journal objective in one list. Tick them off as you go; progress stays in this browser, per server."
             : lede(brandCopy(guide.summary))
         }
-        actions={journal ? undefined : <GuideReadingTools />}
       >
         <ul className={`landing-chips ${styles.chips}`} aria-label="About this guide">
           <li className="landing-chip">{guide.category}</li>
@@ -77,9 +76,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <li className="landing-chip is-muted">By {guide.author}</li>
           <li className="landing-chip is-muted">{date ? `Updated ${date}` : "Date unavailable"}</li>
         </ul>
-        <Link className="pill-link is-small masthead-back" href="/guides">
-          <ArrowLeft size={14} aria-hidden="true" /> All guides
-        </Link>
+        <div className={styles.mastheadActions}>
+          <Link className="pill-link is-small masthead-back" href="/guides">
+            <ArrowLeft size={14} aria-hidden="true" /> All guides
+          </Link>
+          {!journal && <GuideReadingTools />}
+        </div>
       </WorkspaceHeading>
       {journal ? (
         <JournalChecklist entries={await libraryJournal()} />
@@ -104,7 +106,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </a>
             </aside>
             <div className={styles.body}>
-              <article className={`guide-prose ${styles.prose}`}>
+              <article className={`raised guide-prose ${styles.prose}`}>
                 <GuideArticleContent nodes={guide.content} />
               </article>
               {guide.slug === "fishing-leveling-guide" && (
@@ -142,7 +144,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         line={
           journal
             ? "Find a loadout for the content, or read up before you go."
-            : "Pick a loadout for it, price the trip, or plan the party."
+            : "Pick a loadout for it, track your journal, or plan the party."
         }
         link={{ href: "/guides", label: "All guides" }}
         cards={[
@@ -153,13 +155,21 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             line: "Loadouts players run for each kind of content.",
             scene: "build",
           },
-          {
-            href: "/tools",
-            emblem: "tool-craft",
-            title: "Tools",
-            line: "Crafting, refining, transport and the market, priced in every city.",
-            scene: "economy",
-          },
+          journal
+            ? {
+                href: "/guides",
+                emblem: "tool-craft",
+                title: "Every guide",
+                line: "Progression, gathering, PvE and making silver, from players.",
+                scene: "economy",
+              }
+            : {
+                href: "/guides/albion-journal-guide",
+                emblem: "tool-planner",
+                title: "Journal tracker",
+                line: "Every journal objective in one list, ticked off as you go.",
+                scene: "city",
+              },
           {
             href: "/compositions",
             emblem: "strip-comps",

@@ -1,7 +1,6 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
 import { JsonLd } from "@/components/json-ld";
 import { itemListLd } from "@/lib/structured-data";
@@ -25,9 +24,8 @@ const notes: ToolNote[] = [
           An unavailable price is not zero.
         </p>
         <p>
-          Prices are uploaded by players to the{" "}
-          <a href="https://www.albion-online-data.com/">Albion Online Data Project</a>. A listing
-          does not prove stock, volume or that a trade will fill.
+          Prices are uploaded by players to the Albion Online Data Project. A listing does not prove
+          stock, volume or that a trade will fill.
         </p>
       </>
     ),
@@ -102,16 +100,11 @@ export default async function Guides({
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        glyph="reference"
+        emblem={<></>}
         scene="guides"
         title="Albion Online guides"
         accent="guides"
         description="Player-written guides for progression, gathering, PvE and making silver, plus short notes on how Outpost’s tools work."
-        actions={
-          <Link className="button secondary" href="/guides/albion-journal-guide">
-            Track your journal
-          </Link>
-        }
       />
       <JsonLd
         data={itemListLd(
@@ -131,9 +124,16 @@ export default async function Guides({
             Take it into your next <em>run</em>
           </>
         }
-        line="Read up, then pick a loadout, price the trip or plan the party."
+        line="Track your journal, pick a loadout for the content, or price the trip."
         link={{ href: "/tools", label: "All tools" }}
         cards={[
+          {
+            href: "/guides/albion-journal-guide",
+            emblem: "tool-planner",
+            title: "Journal tracker",
+            line: "Every journal objective in one list, ticked off as you go.",
+            scene: "city",
+          },
           {
             href: "/builds/activities",
             emblem: "strip-builds",
@@ -147,13 +147,6 @@ export default async function Guides({
             title: "Market Explorer",
             line: "Prices in every city, so you know where to buy and where to dump.",
             scene: "market",
-          },
-          {
-            href: "/compositions",
-            emblem: "strip-comps",
-            title: "Comps",
-            line: "Plan the party: roles, loadouts and swaps for every slot.",
-            scene: "composition",
           },
         ]}
       />

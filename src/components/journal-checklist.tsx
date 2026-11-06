@@ -280,11 +280,13 @@ export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
                     </span>
                   </label>
                   <span className="journal-reward">
-                    {/^T[1-8]_[A-Z0-9_]+$/.test(entry.rewardId) ? (
-                      <ItemIcon id={entry.rewardId} size={36} />
-                    ) : (
-                      <span aria-hidden="true" />
-                    )}
+                    {/* Every reward sits in the same 36px well; the icon proxy draws the
+                        neutral placeholder for anything it cannot render */}
+                    <span className="journal-reward-well" aria-hidden="true">
+                      {/^[A-Z0-9_]{3,100}(?:@[1-4])?$/.test(entry.rewardId) && (
+                        <ItemIcon id={entry.rewardId} size={36} />
+                      )}
+                    </span>
                     {entry.reward ? (
                       <span>{entry.reward}</span>
                     ) : (

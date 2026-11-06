@@ -5,7 +5,6 @@ import { brandCopy } from "@/lib/brand-copy";
 import { GuideCoverCard, readingMinutes, type GuideCover } from "./guide-cover-card";
 import { GuidesCarousel } from "./landing/guides-carousel";
 import { SectionHeading } from "./section-heading";
-import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import type { LibraryGuide } from "@/lib/grind-library-types";
 import styles from "@/app/guides/guides.module.css";
@@ -162,7 +161,7 @@ export function GrindGuideDirectory({
         )}
         {filtered && !count && (
           <EmptyWell
-            emblem="strip-content"
+            emblem="tool-planner"
             title="No guide matches that search."
             line="Try a shorter word or another topic."
             action={
@@ -174,7 +173,16 @@ export function GrindGuideDirectory({
         )}
       </section>
       {!filtered && (
-        <section className={styles.section} aria-label={notesTopic}>
+        <section className={styles.section} aria-labelledby="guides-tool-notes">
+          <SectionHeading
+            id="guides-tool-notes"
+            title={
+              <>
+                Using <em>Outpost</em>
+              </>
+            }
+            line="Short notes on reading prices, costing a craft, sharing builds and planning comps."
+          />
           <ToolNotes notes={notes} />
         </section>
       )}
@@ -182,30 +190,25 @@ export function GrindGuideDirectory({
   );
 }
 
+const noteScenes = ["market", "economy", "build", "composition"];
+
 function ToolNotes({ notes }: { notes: ToolNote[] }) {
   return (
-    <div className={`raised ${styles.notes}`}>
-      <PanelHead
-        id="guides-tool-notes"
-        emblem="strip-content"
-        title={
-          <>
-            Using <em>Outpost</em>
-          </>
-        }
-        line="Short notes on reading prices, costing a craft, sharing builds and planning comps."
-      />
-      <ul className={styles.noteList} aria-labelledby="guides-tool-notes">
-        {notes.map((note) => (
-          <li key={note.id} id={note.id} className={`guide-note ${styles.note}`}>
-            <h3>{note.title}</h3>
-            <div className={styles.noteBody}>{note.body}</div>
-            <Link className="pill-link is-small" href={note.link.href}>
-              {note.link.label} <ArrowRight size={14} aria-hidden="true" />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className={styles.noteList} aria-label={notesTopic}>
+      {notes.map((note, i) => (
+        <li
+          key={note.id}
+          id={note.id}
+          className={`raised has-scene guide-note ${styles.note}`}
+          data-scene={noteScenes[i % noteScenes.length]}
+        >
+          <h3>{note.title}</h3>
+          <div className={styles.noteBody}>{note.body}</div>
+          <Link className="pill-link is-small" href={note.link.href}>
+            {note.link.label} <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -1,6 +1,8 @@
 /* Guide reader (/guides/[slug]): the guide's own cover as the masthead, then a raised contents
-   rail beside one reading column, centred in the landing's measure, and a closing row. */
+   rail beside the guide on a framed reading page (the /legal treatment), the pair centred in the
+   landing's measure, and a closing row. */
 .page {
+  --reader-width: 1064px;
   max-width: var(--page-width);
   margin-inline: auto;
 }
@@ -12,8 +14,30 @@
 :global(.app.outpost) .page :global(.workspace-emblem) {
   display: none;
 }
-:global(.app.outpost) .page :global(.workspace-identity) {
+/* The masthead copy starts where the centred reading pair starts */
+:global(.app.outpost) .page > :global(.workspace-identity) {
   min-height: 360px;
+  padding-inline: calc(50vw - 50% + max(0px, (100% - var(--reader-width)) / 2));
+}
+:global(.app.outpost) .page :global(.workspace-identity h1) {
+  margin-bottom: 12px;
+}
+/* The landing hero's oval shade behind the copy, over the cover */
+:global(.app.outpost) .page :global(.workspace-identity-copy) {
+  isolation: isolate;
+}
+:global(.app.outpost) .page :global(.workspace-identity-copy)::before {
+  content: "";
+  position: absolute;
+  inset: -48px -120px -40px -80px;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 35% 50%,
+    color-mix(in srgb, var(--illustration-bg) 72%, transparent) 0%,
+    color-mix(in srgb, var(--illustration-bg) 40%, transparent) 45%,
+    transparent 72%
+  );
+  pointer-events: none;
 }
 :global(.app.outpost) .chips.chips {
   flex-wrap: wrap;
@@ -21,11 +45,21 @@
   padding: 0;
   list-style: none;
 }
+/* The journal tracker fills the whole measure, so its masthead starts at the page edge */
+.journal {
+  --reader-width: var(--page-width);
+}
+.mastheadActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
 .layout {
   display: grid;
-  grid-template-columns: 256px minmax(0, 700px);
+  grid-template-columns: 256px minmax(0, 776px);
+  justify-content: center;
   align-items: start;
-  gap: 64px;
+  gap: 32px;
   margin-top: 8px;
 }
 
@@ -79,11 +113,17 @@
   gap: 48px;
   min-width: 0;
 }
-.prose {
+/* The reading page: a framed document, as on /legal, with the text at about 68 characters */
+:global(.app.outpost) .prose.prose {
+  min-width: 0;
+  padding: 40px 48px 48px;
   color: var(--secondary);
   font-size: 16px;
   line-height: 1.75;
   overflow-wrap: anywhere;
+}
+.prose > * {
+  max-width: 68ch;
 }
 .prose > :first-child {
   margin-top: 0;
@@ -198,7 +238,10 @@
 @media (max-width: 1100px) {
   .layout {
     grid-template-columns: 220px minmax(0, 1fr);
-    gap: 40px;
+    gap: 28px;
+  }
+  :global(.app.outpost) .prose.prose {
+    padding: 32px 36px 40px;
   }
 }
 @media (max-width: 800px) {
@@ -220,7 +263,8 @@
   :global(.app.outpost) .page :global(.workspace-identity) {
     min-height: 0;
   }
-  .prose {
+  :global(.app.outpost) .prose.prose {
+    padding: 24px 18px 28px;
     font-size: 15px;
   }
   :global(.app.outpost) .prose h2 {
