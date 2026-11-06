@@ -7,7 +7,7 @@ test("build section navigation follows deep links, keyboard activation, history 
   const navigation = page.getByRole("navigation", { name: "Build sections", exact: true });
   const active = navigation.locator('[aria-current="location"]');
   await expect(active).toHaveCount(1);
-  await expect(active).toHaveText("Stats & calculations");
+  await expect(active).toHaveText("Build facts");
   await expect(page.locator("#build-stats")).toHaveAttribute("open", "");
 
   await navigation.getByRole("link", { name: "Abilities", exact: true }).focus();

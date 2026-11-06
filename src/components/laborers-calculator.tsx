@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Hammer } from "lucide-react";
-import { CalculationReadiness } from "./calculation-readiness";
+import { ArrowRight, CircleCheck, RefreshCw } from "lucide-react";
 import { ItemIcon } from "./item-icon";
+import { Silver } from "./silver";
+import { itemLabel } from "@/lib/albion/item-label";
 import { useOutpostRegion } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
 import {
@@ -13,16 +14,31 @@ import {
   laborerReturnFactor,
   laborers,
   laborerSchema,
-  laborerSource,
   laborerTypes,
   laborerPriceMatches,
   type LaborerInput,
 } from "@/lib/albion/laborers";
-import "@/app/tool-workspace.css";
-const money = (n: number | null | undefined, digits = 0) =>
+import { EditorDialog } from "./editor-dialog";
+import {
+  CalculatorShell,
+  ResultFigure,
+  ResultPair,
+  ResultRows,
+  useCalculatorStep,
+} from "./calculator-shell";
+import { PriceSource, profitTone, profitWord, Missing, PRICE_ERROR } from "./calculator-figures";
+import { Disclosure } from "./disclosure";
+import { StatusLine, Unavailable } from "./status-line";
+import { WellSelect } from "./well-select";
+import s from "./calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
+/** Silver in whole coins: the game never shows fractions of a silver. Display only. */
+const whole = (v: number | null | undefined) =>
+  v == null || !Number.isFinite(v) ? <Missing /> : <Silver value={Math.round(v)} />;
+const units = (n: number | null | undefined, digits = 2) =>
   n === null || n === undefined
-    ? "—"
-    : n.toLocaleString(undefined, { maximumFractionDigits: digits });
+    ? "Unavailable"
+    : n.toLocaleString("en-US", { maximumFractionDigits: digits });
 const tradeCities = cities.filter((c) => c !== "Black Market");
 const tierName = [
   "",
@@ -35,12 +51,18 @@ const tierName = [
   "Grandmaster",
   "Elder",
 ];
+const gathering = (type: string) =>
+  ["FISHING", "WOOD", "STONE", "ORE", "FIBER", "HIDE"].includes(type) ? "Gathering" : "Crafting";
+const steps = ["laborer-run", "laborer-prices", "laborer-result"];
 export function LaborersCalculator() {
   const region = useOutpostRegion();
   const [draft, setDraft] = useState(() => initialLaborers(region));
   const [names, setNames] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState("");
+  const [failure, setFailure] = useState("");
   const [busy, setBusy] = useState(false);
+  const [picker, setPicker] = useState(false);
+  const [showAllLoot, setShowAllLoot] = useState(false);
+  const [step, goToStep] = useCalculatorStep(steps);
   const request = useRef<AbortController | null>(null);
   const config = { ...draft, region };
   const loot = laborerLoot(draft.type, draft.journalTier)!;
@@ -106,7 +128,7 @@ export function LaborersCalculator() {
     request.current = active;
     const requested = config;
     setBusy(true);
-    setMessage("");
+    setFailure("");
     try {
       const q = new URLSearchParams({
         region,
@@ -141,9 +163,8 @@ export function LaborersCalculator() {
         }
         return { ...d, prices };
       });
-      setMessage("Observed prices loaded. Your manual prices were kept; missing ones show a dash.");
-    } catch (e) {
-      if (!active.signal.aborted) setMessage(e instanceof Error ? e.message : "Prices unavailable");
+    } catch {
+      if (!active.signal.aborted) setFailure(PRICE_ERROR);
     } finally {
       if (request.current === active) setBusy(false);
     }
@@ -166,334 +187,472 @@ export function LaborersCalculator() {
     draft.saleMode,
     draft.buyOrder,
   ]);
-  const priceInput = (id: string, label: string, city: string) => {
+  const title = `${tierName[draft.journalTier]} ${laborerNames[draft.type]}`;
+  const name = (id: string) => itemLabel(id, names);
+  const valid = result?.valid ? result : null;
+  const journalRow = (id: string, isFull: boolean) => {
     const p = draft.prices[id];
-    const usable = laborerPriceMatches(config, id, city, id === full);
+    const city = isFull ? draft.journalCity : draft.lootCity;
+    const usable = laborerPriceMatches(config, id, city, isFull);
+    const value = usable ? (p?.value ?? null) : null;
+    const count = isFull ? draft.journals : 1;
     return (
-      <label className="tool-price-field">
-        {label}
+      <li key={id} className={s.mat}>
+        <ItemIcon id={id} size={40} />
+        <span className={s.matName}>
+          <strong>{name(id)}</strong>
+          <small>
+            {isFull
+              ? `Full · buy ${draft.journals.toLocaleString()} in ${draft.journalCity}`
+              : `Empty · sell 1 back in ${draft.lootCity}`}
+          </small>
+          <small>
+            <PriceSource
+              manual={!!p?.manual && value !== null}
+              observedAt={usable && !p?.manual ? p?.observedAt : null}
+              pending={busy}
+            />
+          </small>
+        </span>
         <input
+          className={s.matInput}
+          aria-label={`${isFull ? "Full journal" : "Empty journal"} · ${name(id)}`}
           type="number"
           min={0}
           step="any"
-          placeholder="Unavailable"
-          value={usable ? (p.value ?? "") : ""}
+          placeholder="Price"
+          value={value ?? ""}
           onChange={(e) => setPrice(id, e.target.value)}
         />
-        <small>
-          {!usable
-            ? "No observation · enter a price"
-            : p.manual
-              ? "Manual price"
-              : `${city} · ${p.observedAt ? `${p.observedAt.replace("T", " ").slice(0, 16)} UTC` : "unknown time"}`}
-        </small>
-      </label>
+        <span className={s.matTotal}>
+          <span className="sr-only">Total </span>
+          {value === null ? <Missing /> : whole(value * count)}
+        </span>
+      </li>
     );
   };
-  const missing: string[] = [];
-  if (result?.valid) {
-    if (result.cost === null) missing.push("Full journal price");
-    if (result.emptyNet === null) missing.push("Empty journal price");
-    if (result.coverage < 0.999999)
-      missing.push(`Loot prices (${Math.round(result.coverage * 100)}% of the loot table priced)`);
-  }
-  return (
-    <div className="tool-workspace">
-      <aside className="panel tool-library" aria-label="Laborer types">
-        <h2>Laborers</h2>
-        <div className="tool-library-list">
-          {laborerTypes.map((type) => (
-            <button
-              key={type}
-              type="button"
-              aria-pressed={draft.type === type}
-              onClick={() => update("type", type)}
-            >
-              <ItemIcon id={journalId(type, draft.journalTier, true)} size={36} />
-              <span>
-                {laborerNames[type]}
-                <small>
-                  {type === "FISHING" || ["WOOD", "STONE", "ORE", "FIBER", "HIDE"].includes(type)
-                    ? "Gathering"
-                    : "Crafting"}
-                </small>
-              </span>
-            </button>
-          ))}
+  const allRows = (
+    valid ? valid.rows : loot.items.map((i) => ({ ...i, units: null, unit: null, value: null }))
+  ).toSorted((a, b) => b.share - a.share);
+  // The biggest shares first; the rare enchanted drops wait behind "Show all loot".
+  const rows = showAllLoot ? allRows : allRows.slice(0, 5);
+  const browser = (
+    <div className={s.browser} aria-label="Laborer browser" role="group">
+      <div className={s.browserHead}>
+        <span className={s.browserCount}>{laborerTypes.length} laborers</span>
+      </div>
+      <div className={s.browserList}>
+        {laborerTypes.map((type) => (
+          <button
+            key={type}
+            type="button"
+            aria-pressed={draft.type === type}
+            onClick={() => {
+              update("type", type);
+              setPicker(false);
+            }}
+          >
+            <ItemIcon id={journalId(type, draft.journalTier, true)} size={40} />
+            <span>
+              <strong>{laborerNames[type]}</strong>
+              <small>{gathering(type)}</small>
+            </span>
+            {draft.type === type && <CircleCheck size={16} aria-hidden="true" />}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+  const run = (
+    <>
+      <div className={s.identity}>
+        <ItemIcon id={full} size={64} />
+        <div>
+          <h3>{title}</h3>
+          <p>
+            {gathering(draft.type)} · {units(loot.lootAmount, 4)} base loot per journal
+          </p>
+          <small>
+            Return factor{" "}
+            {laborerReturnFactor(draft.houseTier, draft.journalTier)?.toLocaleString() ??
+              "unavailable"}{" "}
+            in a T{draft.houseTier} house
+          </small>
         </div>
-      </aside>
-      <div className="tool-inputs">
-        <section className="panel">
-          <div className="tool-identity">
-            <ItemIcon id={full} size={64} />
-            <div>
-              <p className="eyebrow">Laborer run</p>
-              <h2>
-                {tierName[draft.journalTier]} {laborerNames[draft.type]}
-              </h2>
-              <p>
-                {money(loot.lootAmount, 4)} base loot per full journal · return factor{" "}
-                {laborerReturnFactor(draft.houseTier, draft.journalTier)?.toLocaleString() ?? "—"}
-              </p>
-            </div>
-          </div>
-          <div className="input-grid">
-            <label>
-              Journal tier
-              <select
-                value={draft.journalTier}
-                onChange={(e) => update("journalTier", Number(e.target.value))}
+        <button type="button" className="button secondary" onClick={() => setPicker(true)}>
+          Change laborer
+        </button>
+      </div>
+      <div className={s.fields}>
+        <label>
+          Journal tier
+          <WellSelect
+            value={draft.journalTier}
+            onChange={(e) => update("journalTier", Number(e.target.value))}
+          >
+            {[4, 5, 6, 7, 8].map((t) => (
+              <option key={t} value={t}>
+                T{t} · {tierName[t]}
+              </option>
+            ))}
+          </WellSelect>
+        </label>
+        <label>
+          House tier
+          <WellSelect
+            value={draft.houseTier}
+            onChange={(e) => update("houseTier", Number(e.target.value))}
+          >
+            {[2, 3, 4, 5, 6, 7, 8].map((t) => (
+              <option
+                key={t}
+                value={t}
+                disabled={laborerReturnFactor(t, draft.journalTier) === null}
               >
-                {[4, 5, 6, 7, 8].map((t) => (
-                  <option key={t} value={t}>
-                    T{t} · {tierName[t]}
-                  </option>
-                ))}
-              </select>
-            </label>
+                T{t}
+                {laborerReturnFactor(t, draft.journalTier) === null
+                  ? " · too low"
+                  : ` · ${Math.round(laborerReturnFactor(t, draft.journalTier)! * 1000) / 10}%`}
+              </option>
+            ))}
+          </WellSelect>
+        </label>
+        <label>
+          Full journals
+          <input
+            type="number"
+            min={1}
+            max={10000}
+            value={draft.journals}
+            onChange={(e) => update("journals", Number(e.target.value))}
+          />
+        </label>
+        <label>
+          Buy journals in
+          <WellSelect
+            value={draft.journalCity}
+            onChange={(e) => update("journalCity", e.target.value as LaborerInput["journalCity"])}
+          >
+            {tradeCities.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </WellSelect>
+        </label>
+        <label>
+          Sell loot in
+          <WellSelect
+            value={draft.lootCity}
+            onChange={(e) => update("lootCity", e.target.value as LaborerInput["lootCity"])}
+          >
+            {tradeCities.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </WellSelect>
+        </label>
+        <label>
+          Sell loot by
+          <WellSelect
+            value={draft.saleMode}
+            onChange={(e) => update("saleMode", e.target.value as LaborerInput["saleMode"])}
+          >
+            <option value="instant">Buy orders</option>
+            <option value="listing">My sell orders</option>
+          </WellSelect>
+        </label>
+      </div>
+      <div className={s.stack}>
+        <Disclosure
+          summary="Fees & empty journals"
+          meta={`${draft.tax}% tax${draft.buyOrder || draft.saleMode === "listing" ? ` · ${draft.setupFee}% setup` : ""}`}
+        >
+          <div className={s.fields}>
             <label>
-              House tier
-              <select
-                value={draft.houseTier}
-                onChange={(e) => update("houseTier", Number(e.target.value))}
-              >
-                {[2, 3, 4, 5, 6, 7, 8].map((t) => (
-                  <option
-                    key={t}
-                    value={t}
-                    disabled={laborerReturnFactor(t, draft.journalTier) === null}
-                  >
-                    T{t}
-                    {laborerReturnFactor(t, draft.journalTier) === null
-                      ? " · not allowed"
-                      : ` · ${Math.round(laborerReturnFactor(t, draft.journalTier)! * 1000) / 10}%`}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Full journals
+              Sales tax (%)
               <input
                 type="number"
-                min={1}
-                max={10000}
-                value={draft.journals}
-                onChange={(e) => update("journals", Number(e.target.value))}
+                min={0}
+                max={100}
+                step="any"
+                value={draft.tax}
+                onChange={(e) => update("tax", Number(e.target.value))}
               />
             </label>
             <label>
-              Buy journals in
-              <select
-                value={draft.journalCity}
-                onChange={(e) =>
-                  update("journalCity", e.target.value as LaborerInput["journalCity"])
-                }
-              >
-                {tradeCities.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
+              Setup fee (%)
+              <input
+                type="number"
+                min={0}
+                max={100}
+                step="any"
+                value={draft.setupFee}
+                onChange={(e) => update("setupFee", Number(e.target.value))}
+              />
             </label>
-            <label>
-              Sell loot in
-              <select
-                value={draft.lootCity}
-                onChange={(e) => update("lootCity", e.target.value as LaborerInput["lootCity"])}
-              >
-                {tradeCities.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
+            <label className={`${s.returns} ${s.wide}`}>
+              <input
+                type="checkbox"
+                checked={draft.buyOrder}
+                onChange={(e) => update("buyOrder", e.target.checked)}
+              />
+              Buy journals with a buy order (adds the setup fee)
             </label>
-            <label>
-              Sell loot by
-              <select
-                value={draft.saleMode}
-                onChange={(e) => update("saleMode", e.target.value as LaborerInput["saleMode"])}
-              >
-                <option value="instant">Selling to buy orders</option>
-                <option value="listing">Sell orders (listing)</option>
-              </select>
+            <label className={`${s.returns} ${s.wide}`}>
+              <input
+                type="checkbox"
+                checked={draft.sellEmpty}
+                onChange={(e) => update("sellEmpty", e.target.checked)}
+              />
+              Sell one empty journal back per run
             </label>
-          </div>
-          <details className="economy-assumptions">
-            <summary>Fees & empty journals</summary>
-            <div className="input-grid">
-              <label>
-                Sales tax (%)
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step="any"
-                  value={draft.tax}
-                  onChange={(e) => update("tax", Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Setup fee (%)
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step="any"
-                  value={draft.setupFee}
-                  onChange={(e) => update("setupFee", Number(e.target.value))}
-                />
-              </label>
-              <label className="checkbox-field">
-                <input
-                  type="checkbox"
-                  checked={draft.buyOrder}
-                  onChange={(e) => update("buyOrder", e.target.checked)}
-                />
-                Buy journals with a buy order (adds the setup fee)
-              </label>
-              <label className="checkbox-field">
-                <input
-                  type="checkbox"
-                  checked={draft.sellEmpty}
-                  onChange={(e) => update("sellEmpty", e.target.checked)}
-                />
-                Count resale of one empty journal per run
-              </label>
-            </div>
-            <p className="muted">
-              Premium: 4% sales tax, otherwise 8%. Sell orders and buy orders also pay a 2.5% setup
-              fee.
+            <p className={s.help}>
+              Sales tax is 4% with Premium and 8% without. Buy and sell orders add a 2.5% setup fee.
             </p>
-          </details>
-        </section>
-        <section className="panel">
-          <div className="tool-section-heading">
-            <h2>Prices</h2>
-            <button className="button secondary" type="button" disabled={busy} onClick={load}>
-              {busy ? "Loading…" : "Refresh market prices"}
-            </button>
           </div>
-          <p role="status" className="muted">
-            {message}
-          </p>
-          <div className="input-grid">
-            {priceInput(full, `Full journal · ${names[full] ?? full}`, draft.journalCity)}
-            {draft.sellEmpty &&
-              priceInput(empty, `Empty journal · ${names[empty] ?? empty}`, draft.lootCity)}
-          </div>
-          <div
-            className="table-scroll"
-            tabIndex={0}
-            role="region"
-            aria-label="Expected laborer loot"
-          >
-            <table className="tool-table">
-              <thead>
-                <tr>
-                  <th scope="col">Loot</th>
-                  <th scope="col" className="numeric">
-                    Share
-                  </th>
-                  <th scope="col" className="numeric">
-                    Expected units
-                  </th>
-                  <th scope="col">Unit price · silver</th>
-                  <th scope="col" className="numeric">
-                    Value
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {(result?.valid
-                  ? result.rows
-                  : loot.items.map((i) => ({ ...i, units: null, unit: null, value: null }))
-                ).map((row) => {
-                  const p = draft.prices[row.id];
-                  return (
-                    <tr key={row.id}>
-                      <th scope="row">
-                        <span className="tool-item-cell">
-                          <ItemIcon id={row.id} size={32} />
-                          {names[row.id] ?? row.id}
-                        </span>
-                      </th>
-                      <td className="numeric">{(row.share * 100).toFixed(2)}%</td>
-                      <td className="numeric">
-                        {money(row.units, row.units !== null && row.units < 0.1 ? 3 : 2)}
-                      </td>
-                      <td>
-                        <input
-                          aria-label={`${names[row.id] ?? row.id} unit price`}
-                          type="number"
-                          min={0}
-                          step="any"
-                          placeholder="Unavailable"
-                          value={row.unit ?? (p?.manual ? (p.value ?? "") : "")}
-                          onChange={(e) => setPrice(row.id, e.target.value)}
-                        />
-                      </td>
-                      <td className="numeric">{money(row.value)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
+        </Disclosure>
       </div>
-      <aside className="panel tool-results" aria-labelledby="laborer-results-title">
-        <Hammer size={22} aria-hidden="true" />
-        <h2 id="laborer-results-title">Expected profit</h2>
-        {error ? (
-          <p role="alert">{error}</p>
-        ) : !result?.valid ? (
-          <p role="alert">{result?.reason}</p>
-        ) : (
-          <>
-            <output
-              className={`tool-main-result ${result.profit !== null && result.profit < 0 ? "negative" : ""}`}
-            >
-              {result.profit === null
-                ? "—"
-                : `${result.complete ? "" : "≥ "}${money(result.profit)}`}
-              <small> silver</small>
-            </output>
-            <CalculationReadiness
-              title={result.complete ? "All prices in place" : "Estimate is incomplete"}
-              missing={missing}
-            >
-              {result.stale ? "Some observations are more than an hour old." : undefined}
-            </CalculationReadiness>
-            <dl>
-              <div>
-                <dt>Loot units</dt>
-                <dd>{money(result.totalUnits, 2)}</dd>
-              </div>
-              <div>
-                <dt>Loot value after fees</dt>
-                <dd>{result.coverage > 0 ? money(result.lootNet) : "—"}</dd>
-              </div>
-              {draft.sellEmpty && (
-                <div>
-                  <dt>Empty journals after fees</dt>
-                  <dd>{money(result.emptyNet)}</dd>
-                </div>
-              )}
-              <div>
-                <dt>Full journals cost</dt>
-                <dd>{money(result.cost)}</dd>
-              </div>
-              <div>
-                <dt>Return on cost</dt>
-                <dd>{result.roi === null ? "—" : `${result.roi.toFixed(1)}%`}</dd>
-              </div>
-            </dl>
-            <p className="muted">
-              Loot is an expected value from the weighted loot table; a single run can land above or
-              below it. Unpriced loot counts as zero, so an incomplete result is a lower bound.{" "}
-              {laborerSource}.
-            </p>
-          </>
-        )}
-      </aside>
+    </>
+  );
+  const prices = (
+    <>
+      {busy ? (
+        <StatusLine>Loading prices…</StatusLine>
+      ) : failure ? (
+        <div className={s.errorLine}>
+          <StatusLine tone="error">{failure}</StatusLine>
+          <button type="button" onClick={load}>
+            Retry
+          </button>
+        </div>
+      ) : null}
+      <div className={s.materials} role="region" aria-label="Journal and loot prices">
+        <div className={s.matHead} aria-hidden="true">
+          <span>Item</span>
+          <span>Unit price</span>
+          <span>Value</span>
+        </div>
+        <ul>
+          {journalRow(full, true)}
+          {draft.sellEmpty && journalRow(empty, false)}
+          {rows.map((row) => {
+            const p = draft.prices[row.id];
+            return (
+              <li key={row.id} className={`${s.mat} ${s.matOutput}`}>
+                <ItemIcon id={row.id} size={40} />
+                <span className={s.matName}>
+                  <strong>{name(row.id)}</strong>
+                  <small>
+                    {(row.share * 100).toFixed(2)}% of loot ·{" "}
+                    {row.units === null
+                      ? "units unavailable"
+                      : `${units(row.units, row.units < 0.1 ? 3 : 2)} expected`}
+                  </small>
+                  <small>
+                    <PriceSource
+                      manual={!!p?.manual && p.value !== null}
+                      observedAt={row.unit !== null && !p?.manual ? p?.observedAt : null}
+                      pending={busy}
+                    />
+                  </small>
+                </span>
+                <input
+                  className={s.matInput}
+                  aria-label={`${name(row.id)} unit price`}
+                  type="number"
+                  min={0}
+                  step="any"
+                  placeholder="Price"
+                  value={row.unit ?? (p?.manual ? (p.value ?? "") : "")}
+                  onChange={(e) => setPrice(row.id, e.target.value)}
+                />
+                <span className={s.matTotal}>
+                  <span className="sr-only">Value </span>
+                  {row.value == null ? <Missing /> : whole(row.value)}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      {allRows.length > 5 && (
+        <button
+          type="button"
+          className={`button secondary ${c.moreLoot}`}
+          aria-expanded={showAllLoot}
+          onClick={() => setShowAllLoot((v) => !v)}
+        >
+          {showAllLoot ? "Show the main loot" : `Show all ${allRows.length} loot items`}
+        </button>
+      )}
+      <p className={s.help}>
+        Loot shares come from the game’s loot tables (27 Oct 2026). Type a price for anything the
+        market hasn’t seen.
+      </p>
+    </>
+  );
+  const missing: string[] = [];
+  if (valid) {
+    if (valid.cost === null) missing.push("Full journal price");
+    if (valid.emptyNet === null) missing.push("Empty journal price");
+    if (valid.coverage < 0.999999)
+      missing.push(`Loot prices (${Math.round(valid.coverage * 100)}% of the loot priced)`);
+  }
+  const na = (
+    <span className={s.na}>
+      <Unavailable />
+    </span>
+  );
+  const profit = valid?.profit ?? null;
+  const results = (
+    <>
+      <div className={s.resultItem}>
+        <ItemIcon id={full} size={52} />
+        <span>
+          <strong>{title}</strong>
+          <small>
+            {draft.journals.toLocaleString()} full journal{draft.journals === 1 ? "" : "s"} · sell
+            loot in {draft.lootCity}
+          </small>
+        </span>
+      </div>
+      {(error || (result && !result.valid)) && (
+        <p role="alert" className={s.alert}>
+          {error || (result && !result.valid ? result.reason : "")}
+        </p>
+      )}
+      <ResultFigure
+        label={valid && !valid.complete && profit !== null ? "Profit, at least" : "Expected profit"}
+        tone={profit === null ? "even" : profitTone(profit)}
+        value={
+          <output aria-label="Expected profit" data-result="laborer-profit">
+            {profit === null ? <Missing /> : whole(profit)}
+          </output>
+        }
+        note={
+          profit === null
+            ? busy
+              ? "Loading prices…"
+              : "Price the journals and loot to see your profit"
+            : valid!.complete
+              ? `${profitWord(profit)} for ${draft.journals.toLocaleString()} journal${draft.journals === 1 ? "" : "s"}`
+              : "Some loot isn’t priced yet; it can only add to this"
+        }
+        aside={{
+          label: "Return on cost",
+          value: valid?.roi == null ? <Missing /> : `${valid.roi.toFixed(1)}%`,
+        }}
+      />
+      <ResultPair
+        result="laborer-cash"
+        items={[
+          { label: "Journals cost", value: valid?.cost == null ? na : whole(valid.cost) },
+          {
+            label: "Loot after fees",
+            value: valid && valid.coverage > 0 ? whole(valid.lootNet) : na,
+          },
+        ]}
+      />
+      {valid && missing.length > 0 && (
+        <div className={s.readiness} data-result="readiness" role="status">
+          <strong>
+            {missing.length} {missing.length === 1 ? "price" : "prices"} to go
+          </strong>
+          <ul>
+            {missing.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+          <button type="button" className="button secondary" onClick={() => goToStep(2)}>
+            Add prices <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+      {valid?.stale && (
+        <StatusLine tone="stale">
+          Includes prices over an hour old. Refresh before you buy.
+        </StatusLine>
+      )}
+      {valid && (
+        <ResultRows
+          result="laborer-rows"
+          items={[
+            { label: "Loot units", value: units(valid.totalUnits) },
+            ...(draft.sellEmpty
+              ? [
+                  {
+                    label: "Empty journal after fees",
+                    value: valid.emptyNet == null ? <Unavailable /> : whole(valid.emptyNet),
+                  },
+                ]
+              : []),
+          ]}
+        />
+      )}
+      <p className={s.resultNote}>
+        Loot is the average of the loot table; a single run lands above or below it.
+      </p>
+    </>
+  );
+  return (
+    <div className={s.journey}>
+      {picker && (
+        <EditorDialog open title="Choose a laborer" drawer onClose={() => setPicker(false)}>
+          {browser}
+        </EditorDialog>
+      )}
+      <CalculatorShell
+        label="Laborer workflow"
+        step={step}
+        onStep={goToStep}
+        summary={{
+          label: "Expected profit",
+          tone: profit === null ? "even" : profitTone(profit),
+          value:
+            profit === null ? (
+              <span className={s.summaryPending}>
+                {missing.length
+                  ? `${missing.length} ${missing.length === 1 ? "price" : "prices"} to go`
+                  : "Unavailable"}
+              </span>
+            ) : (
+              whole(profit)
+            ),
+        }}
+        steps={[
+          {
+            id: steps[0],
+            label: "Set up run",
+            title: "Laborer and journals",
+            line: "Who works, which journals, and where you buy and sell.",
+            children: run,
+          },
+          {
+            id: steps[1],
+            label: "Price loot",
+            title: "Prices",
+            line: `Journals in ${draft.journalCity} · loot in ${draft.lootCity}. Type any price to override it.`,
+            actions: (
+              <button
+                type="button"
+                className={`button secondary ${s.refresh}`}
+                aria-label="Refresh market prices"
+                aria-busy={busy}
+                disabled={busy}
+                onClick={load}
+              >
+                <RefreshCw size={15} aria-hidden="true" />
+                {busy ? "Updating…" : "Refresh"}
+              </button>
+            ),
+            children: prices,
+          },
+          {
+            id: steps[2],
+            label: "Review profit",
+            title: "Profit",
+            children: results,
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -63,6 +63,18 @@ describe("owner public library", () => {
     expect(safeGuideHref("https://www.albion-online-data.com/")).toBe(
       "https://www.albion-online-data.com/",
     );
+    expect(safeGuideHref("/tools/transporting")).toBe("/tools/transporting");
+    expect(safeGuideHref("/items/T8_RANDOM_DUNGEON_ELITE_DRAGON_TOKEN_D4%404")).toBe(
+      "/items/T8_RANDOM_DUNGEON_ELITE_DRAGON_TOKEN_D4%404",
+    );
+    for (const href of [
+      "/admin",
+      "/tools/../admin",
+      "/tools/%2e%2e/admin",
+      "/api/auth/signout",
+      "/tools?x=1",
+    ])
+      expect(safeGuideHref(href)).toBeUndefined();
   });
 });
 describe("restored production quantities and original accounting", () => {

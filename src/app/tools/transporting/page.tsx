@@ -1,6 +1,9 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TransportCalculator } from "@/components/transport-calculator";
+import { CalculatorCta } from "@/components/calculator-cta";
+import styles from "@/components/calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/transporting", await searchParams);
 }
@@ -12,12 +15,19 @@ export default async function Page({
   const params = await searchParams;
   const value = (key: string) => (typeof params[key] === "string" ? params[key] : undefined);
   return (
-    <>
+    <div className={styles.page}>
       <WorkspaceHeading
-        glyph="transport"
+        emblem={
+          // No painted emblem for this tool yet; the neutral seal stands in (batch 4 report)
+          <span className={c.sealTile}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+            <img src="/albion/icons/fame.webp" alt="" width={44} height={44} />
+          </span>
+        }
         scene="economy"
         title="Transport calculator"
-        description="Compare city prices against cargo weight, carrying capacity, fees and your risk budget."
+        accent="Transport"
+        description="Pick your cargo and route, price both ends and see what the haul makes after trips, risk and tax."
       />
       <TransportCalculator
         initial={{
@@ -27,6 +37,15 @@ export default async function Page({
           quality: value("quality"),
         }}
       />
-    </>
+      <CalculatorCta
+        title={
+          <>
+            Looking for something worth <em>hauling</em>?
+          </>
+        }
+        line="The flipping scanner checks a whole route for items that sell for more in the other city."
+        primary={{ href: "/tools/flipping", label: "Scan a route" }}
+      />
+    </div>
   );
 }

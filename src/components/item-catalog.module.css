@@ -1,0 +1,324 @@
+/* Item database (/items): a framed filter bar, then the results panel of item wells, as on the build
+   library. Rows open the item page; the whole row is the link. */
+.catalog {
+  display: grid;
+  gap: var(--space-5);
+}
+:global(.app.outpost) .filters.filters {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+}
+
+/* Category pills */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .categories > button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .categories > button:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .categories > button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+/* Fields */
+.fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px 160px;
+  align-items: end;
+  gap: var(--space-3);
+}
+.fields > label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--secondary);
+  font: 600 12px/1.35 var(--font-ui);
+}
+.fields > label > :last-child {
+  width: 100%;
+}
+:global(.app.outpost) .categorySelect.categorySelect {
+  display: none;
+}
+.searchWell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.searchWell > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+:global(.app.outpost) .searchWell > input {
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 var(--space-3) 0 38px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1.2 var(--font-ui);
+}
+
+/* Results: a working panel with a PanelHead; each item a well row like the landing's */
+:global(.app.outpost) .results.results,
+:global(.app.outpost) .notes.notes {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+.results > div:first-child > div,
+.notes > div:first-child {
+  margin: 0;
+}
+.view {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+}
+:global(.app.outpost) .view > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 700 12px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .view > button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.catalog[aria-busy="true"] :is(.rows, .grid) {
+  opacity: 0.55;
+}
+
+/* List rows: 52px item well, name and slot, tier chip, arrow */
+.rows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .row.row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 200ms var(--ease-out-expo);
+}
+:global(.app.outpost) .row.row:hover,
+:global(.app.outpost) .cell.cell:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+:global(.app.outpost) :is(.row, .cell):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.well {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+.copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.copy strong {
+  overflow: hidden;
+  font: 600 14px/1.3 var(--font-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.copy small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.copy code {
+  font: 500 12px/1 var(--font-data);
+}
+.tier {
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 6px;
+  color: var(--accent-ink);
+  font: 800 13px/1 var(--font-display);
+}
+.open {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .more.more {
+  display: none;
+}
+
+/* Grid: item wells, as on the landing's boards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grid > li {
+  display: grid;
+}
+:global(.app.outpost) .cell.cell {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  padding: var(--space-4) var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform 420ms var(--ease-out-expo),
+    border-color 200ms var(--ease-out-expo);
+}
+.cell .well {
+  width: 80px;
+  height: 80px;
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 68%
+    ),
+    var(--surface-raised);
+}
+.cell .copy strong,
+.cell .copy small {
+  white-space: normal;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :global(.app.outpost) .cell.cell:hover {
+    transform: scale(1.022);
+  }
+  :global(.app.outpost) .cell.cell:active {
+    transform: scale(0.985);
+  }
+}
+
+/* Pages and notes */
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+}
+.noteLine {
+  margin: 0 0 var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 980px) {
+  .rows {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .search {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .filters.filters,
+  :global(.app.outpost) .results.results,
+  :global(.app.outpost) .notes.notes {
+    padding: var(--space-4);
+  }
+  :global(.app.outpost) .results.results > div:first-child > div > * {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .categories {
+    display: none;
+  }
+  :global(.app.outpost) .categorySelect.categorySelect {
+    display: grid;
+    grid-column: 1 / -1;
+  }
+  :global(.app.outpost) .row.row {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  .row .open,
+  .copy code {
+    display: none;
+  }
+  .rows:not(.expanded) > li:nth-child(n + 13),
+  .grid:not(.expanded) > li:nth-child(n + 13) {
+    display: none;
+  }
+  :global(.app.outpost) .more.more {
+    display: inline-flex;
+    justify-self: center;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

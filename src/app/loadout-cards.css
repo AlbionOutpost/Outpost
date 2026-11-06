@@ -4,11 +4,6 @@
   --card-surface-hover: #20262d;
   --card-border: #343b44;
 }
-.app.outpost.light {
-  --card-surface: #fff;
-  --card-surface-hover: #f1f4f7;
-  --card-border: #c9d1db;
-}
 .app.outpost .build-discovery-workspace {
   display: block;
 }

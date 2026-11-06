@@ -1,10 +1,14 @@
 /* Outpost UI system. Shared surfaces and task layouts follow the approved copper/charcoal references. */
+/* Spell icons render on the landing and every build view. */
+.spell-icon-unavailable {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
 .app.outpost {
-  --radius-control: 6px;
-  --radius-panel: 8px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
   --premium-border: #303943;
   --premium-shadow: 0 8px 28px #00000030;
   --motion-fast: 150ms;
@@ -21,13 +25,6 @@
   --text: #edf1f5;
   --muted: #a5b0be;
   --text-muted: #a5b0be;
-  --accent: #ff7a32;
-  --accent-hover: #ff985e;
-  --accent-active: #e96623;
-  --accent-ink: #ff9a62;
-  --accent-wash: #ff7a3212;
-  --action: #ff7a32;
-  --action-hover: #ff985e;
   --success: #64dda0;
   --error: #ff8585;
   --warning: #ffc46a;

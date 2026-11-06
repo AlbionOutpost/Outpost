@@ -1,12 +1,22 @@
 import { privateMetadata } from "@/lib/seo";
+import { ArrowRight, ArrowUpRight, Compass, Search, Shield } from "lucide-react";
+import { getServerSession } from "next-auth";
+import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
-import { Compass, Shield } from "lucide-react";
-import Link from "@/components/link";
-import { getServerSession } from "next-auth";
+import { SectionHeading } from "@/components/section-heading";
+import { EmptyWell } from "@/components/empty-well";
+import { WellSelect } from "@/components/well-select";
+import { SupporterBand } from "@/components/supporter-band";
+import { TeamMark, plural, regionLabel, visibilityLabel } from "@/components/group-parts";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
+import { billingEnabled } from "@/lib/billing/stripe";
+import { userIsSupporter } from "@/lib/billing/gate";
+import "@/app/landing-window.css";
+import windows from "@/components/landing/windows.module.css";
+import styles from "@/components/teams.module.css";
 export const metadata = privateMetadata("Teams");
 export default async function Groups({
   searchParams,
@@ -55,19 +65,53 @@ export default async function Groups({
       members: { where: { userId: userId || "" }, select: { role: true }, take: 1 },
     },
   });
+  // Events and comps are member-only, so they are read only for the viewer's own teams.
+  const own = rows.filter((g) => g.members.length).map((g) => g.id);
+  const [events, comps] = own.length
+    ? await Promise.all([
+        db.groupEvent.findMany({
+          where: { groupId: { in: own }, cancelled: false, startsAt: { gt: new Date() } },
+          select: { groupId: true, title: true },
+          orderBy: [{ startsAt: "asc" }, { id: "asc" }],
+          take: 200,
+        }),
+        db.composition.findMany({
+          where: { groupId: { in: own }, visibility: "GROUP", hiddenAt: null },
+          select: { groupId: true },
+          take: 2000,
+        }),
+      ])
+    : [[], []];
+  const nextEvent = new Map<string, string>();
+  for (const e of events) if (!nextEvent.has(e.groupId)) nextEvent.set(e.groupId, e.title);
+  const compCount = new Map<string, number>();
+  for (const c of comps)
+    if (c.groupId) compCount.set(c.groupId, (compCount.get(c.groupId) ?? 0) + 1);
+  // Creating a team needs the Supporter plan only once billing is switched on.
+  const locked = billingEnabled() && !(userId && (await userIsSupporter(userId)));
+  const filtered = Boolean(q || region || visibility);
+  const shown = rows.slice(0, 25);
   const url = (next: number) =>
     `/groups?${new URLSearchParams({ q, region, visibility, mine: mine ? "1" : "0", page: String(next) })}`;
   return (
-    <div className="guild-discovery-page support-team-directory">
+    <div className={styles.page}>
       <WorkspaceHeading
         glyph="guild"
         scene="comps"
-        title="Teams"
-        description="Find a team workspace or return to your own team’s events, builds and comps."
+        title={mine ? "Your teams" : "Find a team"}
+        accent={mine ? "teams" : "team"}
+        description={
+          mine
+            ? "The teams you belong to, with their events, comps and loot splits."
+            : "Public teams and your own. Private teams stay hidden from everyone who is not a member."
+        }
         actions={
-          <Link href="/groups/new" className="button primary">
-            Create workspace
-          </Link>
+          <span className={styles.createAction}>
+            <Link href="/groups/new" className="button primary">
+              Create a team
+            </Link>
+            {locked && <span className="landing-chip">Supporter</span>}
+          </span>
         }
       >
         <MastheadTabs
@@ -90,127 +134,231 @@ export default async function Groups({
       </WorkspaceHeading>
       <form
         action="/groups"
-        className="raised guild-discovery-filters"
+        className={`raised ${styles.filters}`}
+        role="search"
         aria-label="Team discovery filters"
       >
         <input type="hidden" name="mine" value={mine ? "1" : "0"} />
-        <label>
-          Search teams
-          <input
-            name="q"
-            defaultValue={q}
-            maxLength={80}
-            type="search"
-            placeholder="Team name or description"
-          />
+        <label className={styles.filterSearch}>
+          <span className={styles.fieldLabel}>Search teams</span>
+          <span className={styles.search}>
+            <Search size={16} aria-hidden="true" />
+            <input
+              name="q"
+              defaultValue={q}
+              maxLength={80}
+              type="search"
+              aria-label="Search teams"
+              placeholder="Team name or description"
+            />
+          </span>
         </label>
-        <label>
-          Team region
-          <select aria-label="Team region" name="region" defaultValue={region}>
+        <label className={styles.filterField}>
+          <span className={styles.fieldLabel}>Region</span>
+          <WellSelect aria-label="Team region" name="region" defaultValue={region}>
             <option value="">All regions</option>
             {Object.entries(regions).map(([value, r]) => (
               <option key={value} value={value}>
                 {r.label}
               </option>
             ))}
-          </select>
+          </WellSelect>
         </label>
-        <label>
-          Team visibility
-          <select aria-label="Team visibility" name="visibility" defaultValue={visibility}>
+        <label className={styles.filterField}>
+          <span className={styles.fieldLabel}>Visibility</span>
+          <WellSelect aria-label="Team visibility" name="visibility" defaultValue={visibility}>
             <option value="">All teams</option>
             <option value="PUBLIC">Public</option>
             <option value="PRIVATE">Private</option>
-          </select>
+          </WellSelect>
         </label>
         <button className="button secondary" type="submit">
           Find teams
         </button>
       </form>
-      <p className="guild-discovery-context">
-        {mine
-          ? "Your current memberships. Private workspaces remain member-only."
-          : "Public teams and your memberships. Private workspaces stay visible only to their members."}
-      </p>
-      <div className="guild-discovery-list">
-        {rows.slice(0, 25).map((g) => (
-          <article
-            className="raised has-scene guild-discovery-card"
-            data-scene="composition"
-            key={g.id}
-          >
-            <div className="guild-discovery-card-heading">
-              <span className="guild-directory-mark" aria-hidden="true">
-                {g.name
-                  .split(/\s+/)
-                  .slice(0, 2)
-                  .map((s) => s[0])
-                  .join("")
-                  .toUpperCase()}
-              </span>
-              <div>
-                <span className="eyebrow">
-                  {regions[g.region as keyof typeof regions]?.label || g.region}
-                </span>
-                <h2>
-                  <Link href={`/groups/${g.slug}`}>{g.name}</Link>
-                </h2>
-              </div>
-              <span className="guild-visibility">
-                {g.visibility === "PUBLIC" ? "Public" : "Private"}
-              </span>
-            </div>
-            <p>{g.description || "No team description has been added."}</p>
-            <footer>
-              <span>
-                {g._count.members.toLocaleString()} {g._count.members === 1 ? "member" : "members"}
-                {g.members.length ? " · Your team" : ""}
-              </span>
-              <Link className="text-link" href={`/groups/${g.slug}`}>
-                {g.members.length ? "Open workspace" : "View team"} →
+      <section className={styles.section} aria-labelledby="team-results">
+        <SectionHeading
+          id="team-results"
+          title={
+            shown.length ? (
+              mine ? (
+                <>
+                  Your <em>teams</em>
+                </>
+              ) : filtered ? (
+                <>
+                  Matching <em>teams</em>
+                </>
+              ) : (
+                <>
+                  Recently active <em>teams</em>
+                </>
+              )
+            ) : mine ? (
+              <>
+                Your <em>teams</em>
+              </>
+            ) : (
+              <>
+                Matching <em>teams</em>
+              </>
+            )
+          }
+          line={
+            shown.length
+              ? `${plural(shown.length, "team")}${rows.length > 25 ? " on this page" : ""}, last active first.`
+              : undefined
+          }
+        />
+        {shown.length ? (
+          <ul className={`${windows.windows} ${styles.teamGrid}`}>
+            {shown.map((g) => (
+              <li key={g.id}>
+                <article
+                  className={`raised has-scene landing-window ${windows.window} ${styles.teamWindow}`}
+                  data-scene="composition"
+                  data-team-card=""
+                >
+                  <div className={`landing-window-bar ${windows.bar}`}>
+                    <Link
+                      href={`/groups/${g.slug}`}
+                      className="landing-window-title"
+                      title={g.name}
+                    >
+                      <h3 className={styles.windowTitle}>{g.name}</h3>
+                    </Link>
+                    <span className="landing-chips">
+                      {g.members.length > 0 && <span className="landing-chip">Your team</span>}
+                      <span className="landing-chip is-muted">{visibilityLabel(g.visibility)}</span>
+                    </span>
+                  </div>
+                  <div className={`landing-window-body ${windows.body} ${styles.teamBody}`}>
+                    <p className={g.description ? styles.teamLine : styles.teamLineMuted}>
+                      {g.description || "No description yet."}
+                    </p>
+                    <ul className={styles.teamFacts}>
+                      <li className="well">
+                        <span>Members</span>
+                        <span>{g._count.members.toLocaleString("en")}</span>
+                      </li>
+                      {g.members.length ? (
+                        <>
+                          <li className="well">
+                            <span>Next event</span>
+                            <span>{nextEvent.get(g.id) ?? "None scheduled"}</span>
+                          </li>
+                          <li className="well">
+                            <span>Shared comps</span>
+                            <span>{(compCount.get(g.id) ?? 0).toLocaleString("en")}</span>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="well">
+                            <span>Region</span>
+                            <span>{regionLabel(g.region)}</span>
+                          </li>
+                          <li className="well">
+                            <span>Joining</span>
+                            <span>
+                              {g.visibility === "PUBLIC" ? "Ask to join" : "By invitation"}
+                            </span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                  <Link
+                    href={`/groups/${g.slug}`}
+                    className={`landing-window-foot ${windows.foot} ${styles.teamFoot}`}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  >
+                    <TeamMark name={g.name} size="small" />
+                    <span>
+                      <strong>{g.members.length ? "Open workspace" : "View team"}</strong>
+                      <small>
+                        {regionLabel(g.region)} · {visibilityLabel(g.visibility)}
+                      </small>
+                    </span>
+                    <ArrowUpRight size={20} aria-hidden="true" />
+                  </Link>
+                </article>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptyWell
+            emblem="team-roles"
+            title={
+              mine && !userId
+                ? "Sign in to see your teams"
+                : filtered
+                  ? "No matching teams"
+                  : mine
+                    ? "You are not in a team yet"
+                    : "No public teams yet"
+            }
+            line={
+              mine && !userId
+                ? "Teams you belong to show up here once you sign in with Discord."
+                : "Private teams only appear after you join through an invitation or an approved request."
+            }
+            action={
+              mine && !userId ? (
+                <Link className="button secondary" href="/signin?callbackUrl=%2Fgroups%3Fmine%3D1">
+                  Sign in to see your teams
+                </Link>
+              ) : filtered ? (
+                <Link className="button secondary" href={mine ? "/groups?mine=1" : "/groups"}>
+                  Clear filters
+                </Link>
+              ) : mine ? (
+                <Link className="button secondary" href="/groups">
+                  Discover teams
+                </Link>
+              ) : (
+                <Link className="button secondary" href="/supporter">
+                  About the Supporter plan
+                </Link>
+              )
+            }
+          />
+        )}
+        {(page > 1 || rows.length > 25) && (
+          <nav className={styles.pager} aria-label="Team result pages">
+            {page > 1 && (
+              <Link className="pill-link is-small" href={url(page - 1)}>
+                Previous
               </Link>
-            </footer>
-          </article>
-        ))}
-      </div>
-      {!rows.length && (
-        <section className="raised guild-discovery-empty">
-          <span className="eyebrow">Team discovery</span>
-          <h2>{mine ? "No teams in this view" : "No matching teams"}</h2>
-          {mine && !userId && (
-            <Link className="button primary" href="/signin?callbackUrl=%2Fgroups%3Fmine%3D1">
-              Sign in to see your teams
-            </Link>
-          )}
-          <p>
-            Try another name or region. Private teams appear after you join through an invitation or
-            an approved request.
-          </p>
-          <div className="button-row">
-            <Link className="button secondary" href="/groups">
-              Clear filters
-            </Link>
-            <Link className="text-link" href="/groups/new">
-              Create a workspace →
-            </Link>
-          </div>
-        </section>
-      )}
-      {(page > 1 || rows.length > 25) && (
-        <nav className="guild-discovery-pagination" aria-label="Team result pages">
-          {page > 1 && (
-            <Link className="button secondary" href={url(page - 1)}>
-              Previous
-            </Link>
-          )}
-          <span>Page {page}</span>
-          {rows.length > 25 && page < 100 && (
-            <Link className="button secondary" href={url(page + 1)}>
-              Next
-            </Link>
-          )}
-        </nav>
-      )}
+            )}
+            <span>Page {page}</span>
+            {rows.length > 25 && page < 100 && (
+              <Link className="pill-link is-small" href={url(page + 1)}>
+                Next
+              </Link>
+            )}
+          </nav>
+        )}
+      </section>
+      <SupporterBand
+        id="teams-supporter"
+        title={
+          <>
+            Run your guild&apos;s <em>Team</em>
+          </>
+        }
+        line={
+          locked
+            ? "Mass-ups with RSVPs, shared comps and builds, loot splits and roles in one private workspace. Creating and running one is a Supporter feature; joining is free."
+            : "Mass-ups with RSVPs, shared comps and builds, loot splits and roles in one private workspace for your guild."
+        }
+        actions={
+          <Link href="/supporter" className="button primary">
+            About the Supporter plan <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        }
+      />
     </div>
   );
 }

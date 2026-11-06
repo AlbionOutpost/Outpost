@@ -6,6 +6,7 @@ type Glyph = ComponentProps<typeof ToolIcon>["name"];
 export type Scene = "market" | "economy" | "builds" | "comps" | "guides" | "roads";
 export function WorkspaceHeading({
   title,
+  accent,
   description,
   icon = "calculator",
   glyph,
@@ -17,6 +18,8 @@ export function WorkspaceHeading({
   actions,
 }: {
   title: string;
+  /** One word of the title to set in ember, as the landing does ("Market *Explorer*"). */
+  accent?: string;
   description: string;
   icon?: "calculator" | "account" | "timer";
   /** Original task emblem from the tool directory; overrides `icon`. */
@@ -56,7 +59,7 @@ export function WorkspaceHeading({
           </span>
           <div>
             <h1 id={titleId} className="page-title display-title">
-              {title}
+              {accentedTitle(title, accent)}
             </h1>
             <p className="intro">{description}</p>
           </div>
@@ -65,5 +68,20 @@ export function WorkspaceHeading({
       </div>
       {actions && <div className="workspace-identity-actions">{actions}</div>}
     </header>
+  );
+}
+
+/** Sets the first whole-word match of `accent` in ember; the title reads the same without it. */
+function accentedTitle(title: string, accent?: string) {
+  const at = accent
+    ? title.search(new RegExp(`\\b${accent.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`))
+    : -1;
+  if (!accent || at < 0) return title;
+  return (
+    <>
+      {title.slice(0, at)}
+      <em>{title.slice(at, at + accent.length)}</em>
+      {title.slice(at + accent.length)}
+    </>
   );
 }

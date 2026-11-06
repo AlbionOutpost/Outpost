@@ -1,9 +1,14 @@
 import Link from "@/components/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { adminPageActor } from "@/lib/admin/page-access";
 import { adminUserDetail } from "@/lib/admin/queries";
 import { AdminUserActions } from "@/components/admin-user-actions";
 import { AdminAuditRows } from "@/components/admin-audit";
+import { AdminFrame } from "@/components/admin-frame";
+import { AdminChip, roleLabel } from "@/components/admin-chip";
+import { PanelHead } from "@/components/panel-head";
+import { AdminNextSteps } from "@/components/admin-next";
 import { isSupporter } from "@/lib/billing/plan";
 import { accountBanned, giftedSupporter } from "@/lib/admin/policy";
 import { HttpError } from "@/lib/http-error";
@@ -19,6 +24,8 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
   const { user, ban, openReports, audit } = detail;
   const protectedAccount = user.role === "ADMIN" || user.id === actor;
   const discordId = user.accounts[0]?.providerAccountId;
+  const day = (d: Date | string) =>
+    new Date(d).toLocaleDateString("en-GB", { timeZone: "UTC", dateStyle: "medium" });
   const signals = [
     ...(openReports
       ? [`${openReports} open content ${openReports === 1 ? "report" : "reports"}`]
@@ -29,49 +36,89 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
       ? [`${user._count.comments} comments from an account created within 24 hours`]
       : []),
   ];
+  const name = user.name || "Unnamed account";
+  const words = name.trim().split(/\s+/);
+  const accent = words.length > 1 ? words[words.length - 1] : undefined;
+  const banned = accountBanned(user);
   return (
-    <>
-      <Link href="/admin/users" className="admin-text-link">
-        ← All accounts
-      </Link>
-      <header className="admin-heading">
-        <div>
-          <h1>{user.name || "Unnamed account"}</h1>
-          <p>
-            <code>{discordId || user.id}</code>
-          </p>
+    <AdminFrame
+      title={name}
+      accent={accent}
+      description={`${discordId ? `Discord ID ${discordId}` : `Account ID ${user.id}`}. Joined ${day(user.createdAt)}.`}
+      emblem="team-roles"
+      actions={
+        <Link href="/admin/users" className="pill-link">
+          <ArrowLeft size={15} aria-hidden="true" /> All accounts
+        </Link>
+      }
+      titleChips={
+        <div className="admin-chips">
+          <AdminChip tone={banned ? "danger" : isSupporter(user) ? "accent" : "default"}>
+            {banned ? "Banned" : isSupporter(user) ? "Supporter" : "Free"}
+          </AdminChip>
+          {user.role !== "USER" && <AdminChip tone="warn">{roleLabel(user.role)}</AdminChip>}
         </div>
-        <span className={`admin-status ${accountBanned(user) ? "is-danger" : ""}`}>
-          {accountBanned(user)
-            ? "Banned"
-            : user.role === "ADMIN"
-              ? "Administrator"
-              : "Active account"}
-        </span>
-      </header>
+      }
+      closing={
+        <AdminNextSteps
+          id="admin-next"
+          title={
+            <>
+              Back to the <em>queue</em>
+            </>
+          }
+          line="Done with this account? Pick the next one to look at."
+          cards={[
+            {
+              href: "/admin/users",
+              title: "All accounts",
+              line: "Search by name, Discord ID or account ID.",
+            },
+            {
+              href: "/admin/review",
+              title: "Account review",
+              line: "Other accounts with unusual activity.",
+            },
+            {
+              href: "/admin/audit",
+              title: "Audit trail",
+              line: "Confirm your change was recorded.",
+            },
+          ]}
+        />
+      }
+    >
       <div className="admin-user-grid">
         <div>
-          <section className="admin-surface">
-            <h2>Account details</h2>
-            <dl className="admin-detail-list">
+          <section className="panel" aria-labelledby="admin-details">
+            <PanelHead
+              id="admin-details"
+              title={
+                <>
+                  Account <em>details</em>
+                </>
+              }
+              line="What Outpost has recorded for this account."
+            />
+            <dl className="admin-facts well">
               {[
                 ["Email", user.email || "Not provided"],
-                [
-                  "Joined",
-                  new Date(user.createdAt).toLocaleDateString("en-GB", { timeZone: "UTC" }),
-                ],
+                ["Joined", day(user.createdAt)],
                 ["Plan", isSupporter(user) ? "Supporter" : "Free"],
                 [
                   "Gift",
                   giftedSupporter(user)
                     ? user.supporterGiftPermanent
                       ? "Until revoked"
-                      : `Until ${new Date(user.supporterGiftUntil!).toLocaleDateString("en-GB", { timeZone: "UTC" })}`
+                      : `Until ${day(user.supporterGiftUntil!)}`
                     : "None active",
                 ],
-                ["Subscription", user.planStatus || "No subscription recorded"],
-                ["Builds / comps", `${user._count.builds} / ${user._count.compositions}`],
+                ["Subscription", user.planStatus || "None recorded"],
+                ["Builds", String(user._count.builds)],
+                ["Comps", String(user._count.compositions)],
                 ["Unexpired sessions", String(user._count.sessions)],
+                ["Review signals", signals.length ? signals.join("; ") : "None"],
+                ...(banned && ban ? [["Ban reason", ban.reason]] : []),
               ].map(([label, value]) => (
                 <div key={label}>
                   <dt>{label}</dt>
@@ -80,36 +127,39 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
               ))}
             </dl>
           </section>
-          <section className="admin-surface">
-            <h2>Review signals</h2>
-            {signals.length ? (
-              <>
-                <ul className="admin-signals">
-                  {signals.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
-                <p>
-                  Signals provide context for a manual review. They do not prove abuse or trigger an
-                  automatic ban.
-                </p>
-                <Link href="/admin/reports" className="admin-text-link">
-                  Open content reports →
-                </Link>
-              </>
-            ) : (
-              <p>
-                No review signals from open reports, session counts or new-account posting volume.
-              </p>
-            )}
-            {accountBanned(user) && ban && (
-              <p>
-                <strong>Ban reason:</strong> {ban.reason}
-              </p>
-            )}
-          </section>
-          <section className="admin-surface">
-            <h2>Account audit trail</h2>
+          {signals.length > 0 && (
+            <section className="panel" aria-labelledby="admin-signals">
+              <PanelHead
+                id="admin-signals"
+                title={
+                  <>
+                    Review <em>signals</em>
+                  </>
+                }
+                line="Context for a manual review. They do not prove abuse or trigger a ban."
+              />
+              <ul className="admin-chips">
+                {signals.map((s) => (
+                  <li key={s}>
+                    <AdminChip tone="warn">{s}</AdminChip>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/admin/reports" className="pill-link">
+                Open content reports <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </section>
+          )}
+          <section className="panel" aria-labelledby="admin-user-audit">
+            <PanelHead
+              id="admin-user-audit"
+              title={
+                <>
+                  Account <em>history</em>
+                </>
+              }
+              line="The latest admin changes that involve this account."
+            />
             <AdminAuditRows rows={audit} />
           </section>
         </div>
@@ -129,6 +179,6 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
           />
         </div>
       </div>
-    </>
+    </AdminFrame>
   );
 }

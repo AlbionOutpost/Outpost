@@ -101,8 +101,8 @@ test("team membership scope, event deep links and roster filtering preserve priv
       },
     ]);
     await page.goto(`/groups?mine=1&q=${tag}`);
-    await expect(page.locator(".guild-discovery-card")).toHaveCount(1);
-    await expect(page.locator(".guild-discovery-card")).toContainText(owned.name);
+    await expect(page.locator("[data-team-card]")).toHaveCount(1);
+    await expect(page.locator("[data-team-card]")).toContainText(owned.name);
     await expect(page.locator("main")).not.toContainText(foreign.name);
     await page.goto(`/groups/${owned.slug}#team-events`);
     await expect(page.getByRole("tab", { name: "Events", exact: true })).toHaveAttribute(

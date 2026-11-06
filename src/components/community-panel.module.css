@@ -1,0 +1,134 @@
+/* Community discussion under a build or comp: a working panel with the reactions, the comment
+   box as a well, comments as wells, a compact pager and the report form folded away. */
+:global(.app.outpost) .panel.panel {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: 26px;
+  padding: var(--space-6);
+}
+.panel > div:first-child {
+  margin: 0;
+}
+.reactions {
+  margin: 0;
+}
+:global(.app.outpost) .reactions[hidden] {
+  display: none;
+}
+.compose {
+  display: grid;
+  gap: var(--space-3);
+}
+.compose :global(.actions) {
+  margin: 0;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  color: var(--secondary);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .field > textarea {
+  width: 100%;
+  min-height: 88px;
+  margin: 0;
+  padding: 10px var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1.5 var(--font-ui);
+  resize: vertical;
+}
+:global(.app.outpost) .field > textarea:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+}
+.signin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.signin > p {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 14px;
+}
+@media (max-width: 700px) {
+  .signin > :global(.button) {
+    flex: 1 1 100%;
+  }
+}
+.comments {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.comment {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.comment > p {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.comment > p.byline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.byline a {
+  color: var(--text);
+  font-weight: 700;
+}
+.byline a:hover {
+  color: var(--accent-ink);
+}
+.commentActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.commentActions:empty {
+  display: none;
+}
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: 6px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font-size: 13px;
+  justify-self: center;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .panel.panel {
+    padding: var(--space-4);
+  }
+}

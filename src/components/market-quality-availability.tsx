@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import type { z } from "zod";
 import { qualityAvailabilityResponse } from "@/lib/albion/market-availability";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
-import Link from "@/components/link";
 
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 type Availability = z.infer<typeof qualityAvailabilityResponse>;
@@ -80,15 +79,9 @@ export function MarketQualityAvailability({
       aria-label="Item quality coverage"
       aria-busy={busy}
     >
-      <div className="section-heading">
-        <div>
-          <h3>Find a quality with observations</h3>
-          <p>
-            Prices belong to an exact item, city and quality. Check alternatives without changing
-            your selection.
-          </p>
-        </div>
-        <button type="button" className="button secondary" disabled={busy} onClick={check}>
+      <div className="mx-quality-row">
+        <p>Another quality may have orders. Check all five without changing your selection.</p>
+        <button type="button" className="pill-link is-small" disabled={busy} onClick={check}>
           {busy ? "Checking quality coverage…" : "Check other qualities"}
         </button>
       </div>
@@ -138,7 +131,8 @@ export function MarketQualityAvailability({
           >
             <table>
               <caption>
-                {city || "All cities"} · {region} · Silver per item
+                {city || "All cities"} · {region.charAt(0).toUpperCase() + region.slice(1)} · Silver
+                per item
               </caption>
               <thead>
                 <tr>
@@ -177,14 +171,6 @@ export function MarketQualityAvailability({
           </p>
         </>
       )}
-      <p className="muted">
-        No observation does not mean unavailable in game.{" "}
-        <Link
-          href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
-        >
-          Help fill market coverage →
-        </Link>
-      </p>
     </section>
   );
 }

@@ -1,0 +1,72 @@
+/* Opens by height inside its own card, like the landing's participant lists */
+:global(.app.outpost) .disclosure.disclosure {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+:global(.app.outpost) .toggle.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 44px;
+  padding: 10px var(--space-4);
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: var(--text);
+  font: 600 14px/1.35 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+:global(.app.outpost) .toggle.toggle:hover {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .summary.summary {
+  flex: 1;
+  min-width: 0;
+}
+:global(.app.outpost) .meta.meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+:global(.app.outpost) .chevron.chevron {
+  flex: none;
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .toggle.toggle[aria-expanded="true"] .chevron {
+  rotate: 180deg;
+}
+:global(.app.outpost) .panel.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+}
+:global(.app.outpost) .panel.panel[data-open] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+:global(.app.outpost) .body.body {
+  min-height: 0;
+  /* clip, not hidden: focusing a field while the panel opens can't scroll it under the toggle */
+  overflow: clip;
+}
+:global(.app.outpost) .inner.inner {
+  padding: 0 var(--space-4) var(--space-4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  :global(.app.outpost) .chevron.chevron {
+    transition: rotate 320ms var(--ease-spring);
+  }
+  :global(.app.outpost) .panel.panel {
+    transition:
+      grid-template-rows 420ms var(--ease-spring),
+      visibility 0s linear 420ms;
+  }
+  :global(.app.outpost) .panel.panel[data-open] {
+    transition:
+      grid-template-rows 480ms var(--ease-spring),
+      visibility 0s;
+  }
+}

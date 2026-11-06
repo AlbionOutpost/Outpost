@@ -23,11 +23,11 @@ test("market controls wait for client handlers before the first comparison", asy
     expect(calls).toBe(0);
     release();
     // Hydration loads the arrival selection once; nothing is requested before handlers exist.
-    await expect(page.locator(".task-state")).toContainText("No price observations");
+    await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
     await expect(compare).toBeEnabled();
     expect(calls).toBe(1);
     await compare.click();
-    await expect(page.locator(".task-state")).toContainText("No price observations");
+    await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
     await expect.poll(() => calls).toBe(2);
   } finally {
     release();
@@ -52,7 +52,7 @@ test("market first use separates loading, source failure and a genuine missing r
   await page.goto("/tools/market?region=europe&city=Caerleon");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");
   // The selection loads on arrival; no second click is needed to see prices.
-  await expect(page.locator(".market-first-use")).toContainText("Checking the markets…");
+  await expect(page.locator(".mx-hero-status")).toContainText("Checking the markets…");
   await expect(
     page.getByRole("button", { name: "Fetching observations…", exact: true }),
   ).toBeDisabled();
@@ -61,22 +61,23 @@ test("market first use separates loading, source failure and a genuine missing r
   await expect(page.locator(".market-quote-summary")).toHaveCount(0);
   expect(calls).toBe(1);
   release();
-  await expect(page.locator("main").getByRole("alert")).toContainText("Source did not respond");
-  await expect(page.locator(".market-first-use")).toContainText("Your selection is safe");
+  // The failure is said once, in the item hero, with a retry; the table keeps its shape.
+  await expect(page.locator(".mx-hero-status")).toContainText("Prices could not load");
+  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+  await expect(page.locator(".market-board tbody")).toContainText("Unavailable");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");
   // Changing the selection retries automatically; the failed response never shows as a quote.
   await page.getByLabel("Quality", { exact: true }).selectOption("2");
-  await expect(page.locator(".task-state")).toContainText(
-    "No price observations for this selection",
-  );
-  await expect(page.locator(".task-state")).toContainText("No last observation is known");
+  await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
+  await expect(page.locator(".mx-board")).toContainText("A gap is not a zero price");
   await expect(page.locator(".mx-inspector")).toHaveCount(0);
   await expect(page.locator(".market-selection")).toContainText("Good");
   await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
   expect(calls).toBe(2);
   // Refresh prices re-requests the same selection on demand.
   await page.getByRole("button", { name: "Refresh prices", exact: true }).click();
-  await expect(page.locator(".task-state")).toContainText("No price observations");
+  await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
   expect(calls).toBe(3);
 });
 
@@ -111,7 +112,7 @@ test("quality coverage is requested explicitly and never substitutes a different
     });
   });
   await page.goto("/tools/market?region=europe");
-  await expect(page.locator(".task-state")).toContainText("No price observations");
+  await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
   expect(coverageCalls).toBe(0);
   await page.getByRole("button", { name: "Check other qualities", exact: true }).click();
   await expectResultText(
@@ -129,6 +130,6 @@ test("quality coverage is requested explicitly and never substitutes a different
   await page.getByRole("button", { name: "Use Good", exact: true }).click();
   await expect(page.getByLabel("Quality", { exact: true })).toHaveValue("2");
   await expect(page.getByLabel("Quality", { exact: true })).toBeFocused();
-  await expect(page.locator(".task-state")).toContainText("No price observations");
+  await expect(page.locator(".mx-board")).toContainText("No orders seen for this item yet");
   await expect.poll(() => priceCalls).toBe(2);
 });

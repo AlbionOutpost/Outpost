@@ -82,10 +82,11 @@ test("private comp preserves immediate history edits, stale revisions and export
     );
     await expect(page.getByText("A newer revision exists;", { exact: false })).toBeVisible();
     await page.getByRole("button", { name: "Save comp revision", exact: true }).click();
-    await expect(page.locator(".party-editor [role=alert]")).toContainText(
+    await expect(page.locator("[data-comp-editor] [role=alert]")).toContainText(
       /conflict|changed|revision/i,
     );
     const download = page.waitForEvent("download");
+    await page.getByRole("button", { name: "More", exact: true }).click();
     await page.getByRole("button", { name: "Export JSON", exact: true }).click();
     expect((await download).suggestedFilename()).toMatch(/composition.*\.json/);
     expect(
@@ -145,7 +146,9 @@ test("private comp preserves immediate history edits, stale revisions and export
     await page.getByRole("link", { name: /Newer saved party/ }).click();
     await page.getByRole("link", { name: "Edit comp", exact: true }).click();
     await expect(page.getByLabel("Comp title", { exact: true })).toHaveValue("Newer saved party");
-    await expect(page.locator(".party-editor")).not.toContainText("Your unsaved comp was restored");
+    await expect(page.locator("[data-comp-editor]")).not.toContainText(
+      "Your unsaved comp was restored",
+    );
   } finally {
     await db.user.deleteMany({ where: { id: owner } });
   }

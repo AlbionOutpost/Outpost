@@ -13,7 +13,7 @@ test("market data guidance preserves exact lookup and offers the optional offici
   );
   await expect(page).toHaveTitle("Albion Online market data & coverage | Outpost");
   await page.goto("/market-data?region=asia&item=T8_MAIN_AXE&quality=2&city=Martlock");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Better decisions");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Market data");
   const lookup = page.getByRole("complementary", { name: "Your market selection" });
   await expect(lookup).toContainText("Asia");
   await expect(lookup).toContainText("Good quality");

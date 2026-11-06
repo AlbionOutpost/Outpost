@@ -78,8 +78,35 @@ test("landing likes require an account, persist independently and reject forged 
         liked: true,
       });
     }
+    // The batched read answers each account for itself and is never shared.
+    const batch = `/api/library-likes?items=${targets.map((t) => t.join(":")).join(",")}`;
+    const mine = await context.request.get(batch);
+    expect(mine.headers()["cache-control"]).toContain("no-store");
+    expect(await mine.json()).toMatchObject({
+      signedIn: true,
+      items: {
+        "build:battleaxe-mist-build": { found: true, liked: true },
+        "composition:hellgate-5v5-front-to-back": { found: true, liked: true },
+      },
+    });
+    expect(await (await other.request.get(batch)).json()).toMatchObject({
+      signedIn: true,
+      items: { "build:battleaxe-mist-build": { liked: false } },
+    });
+    expect(await (await anonymous.request.get(batch)).json()).toMatchObject({
+      signedIn: false,
+      items: { "composition:hellgate-5v5-front-to-back": { liked: false } },
+    });
+    const reads: string[] = [];
+    page.on("request", (r) => {
+      const { pathname } = new URL(r.url());
+      if (pathname.startsWith("/api/library-likes") && r.method() === "GET") reads.push(pathname);
+    });
     await page.goto("/");
     const hearts = page.locator(".landing-window .heart-chip");
+    await expect(hearts.nth(1)).toHaveAttribute("aria-pressed", "true");
+    // Both chips share one read.
+    expect(new Set(reads)).toEqual(new Set(["/api/library-likes"]));
     for (let i = 0; i < 2; i++) {
       const heart = hearts.nth(i);
       await expect(heart).toHaveAttribute("aria-pressed", "true");

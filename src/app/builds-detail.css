@@ -1,6 +1,6 @@
 /* Inventory-led detail workspace. All item and ability metadata comes from the authored loadout. */
 .app.outpost .build-detail-redesign {
-  max-width: 1488px;
+  max-width: var(--workspace-width);
   margin: 0 auto;
   min-width: 0;
   padding-top: 18px;
@@ -1174,33 +1174,33 @@
 /* The build's masthead on the shared band: breadcrumb, tags, weapon + title, author line */
 .app.outpost .detail-hero.masthead {
   display: block;
-  padding-bottom: 40px;
   border-bottom: 0;
   background: none;
 }
 .app.outpost .detail-hero.masthead .detail-breadcrumb {
-  color: #cfc8bf;
+  color: var(--secondary);
 }
 .app.outpost .detail-hero.masthead .detail-breadcrumb a:hover {
-  color: #fff;
+  color: var(--text);
 }
+/* Tags are the landing's quiet chips; the activity is its ember chip */
 .app.outpost .detail-hero.masthead .detail-hero-tags > span {
   padding: 2px 9px;
   border-radius: 999px;
-  background: #0f1116a6;
-  border-color: #ffffff1f;
-  color: #e9e4dc;
+  background: var(--well);
+  border-color: var(--well-border);
+  color: var(--secondary);
   font-weight: 600;
 }
 .app.outpost .detail-hero.masthead .detail-hero-tags > .detail-activity-badge {
-  background: color-mix(in srgb, var(--accent) 22%, #0f1116c0);
-  border-color: color-mix(in srgb, var(--accent) 70%, #ffffff1f);
-  color: #fff;
+  background: var(--accent-wash);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent-ink);
 }
 .app.outpost .detail-hero.masthead .detail-title-row .page-title {
   font: 800 clamp(32px, 3.4vw, 48px) / 1 var(--font-display);
   letter-spacing: -0.01em;
-  text-transform: uppercase;
+  text-transform: none;
   text-shadow: 0 2px 14px #0008;
 }
 .app.outpost .detail-hero.masthead .detail-title-row img {
@@ -1268,4 +1268,575 @@
 .app.outpost .detail-summary-panel.raised {
   border: 0;
   background: var(--surface-raised);
+}
+
+/* Detail workspace finish: panel padding, hero and ability choices in the warm metal palette. */
+.app.outpost .detail-panel-heading h2 {
+  font-size: 18px;
+}
+.app.outpost .detail-workspace-grid {
+  max-width: none;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+}
+.app.outpost .detail-inventory-panel {
+  padding: 24px;
+}
+.app.outpost .detail-summary-panel {
+  padding: 24px;
+}
+.app.outpost .detail-spell-choice {
+  border-radius: 8px;
+  background: var(--bg);
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice img {
+  width: 46px;
+  height: 46px;
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice > span {
+  font-size: 13px;
+}
+.app.outpost .detail-context-actions .button {
+  font-size: 14px;
+}
+.app.outpost .detail-hero {
+  padding-bottom: 24px;
+}
+.app.outpost .detail-hero-content {
+  align-items: center;
+}
+.app.outpost .detail-hero-copy {
+  max-width: 840px;
+}
+.app.outpost .detail-hero-description {
+  font-size: 14px;
+}
+.app.outpost:not(.light) .detail-inventory-panel {
+  background: radial-gradient(ellipse at 50% 36%, #b4864220, transparent 68%), var(--panel);
+}
+.app.outpost.light .detail-inventory-panel {
+  background: var(--panel);
+}
+@media (max-width: 700px) {
+  .app.outpost .detail-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .detail-inventory-panel,
+  .app.outpost .detail-summary-panel {
+    padding: 16px;
+  }
+  .app.outpost .detail-hero-content {
+    display: block;
+  }
+}
+
+/* Detail, in the landing's panel language: Barlow panel titles, one cost panel under the board,
+   then one "Build details" panel whose sections are wells that open in place. */
+.app.outpost .build-detail-page :is(.detail-build-context h2, .detail-panel-heading h2) {
+  font: 800 21px/1.15 var(--font-display);
+  letter-spacing: 0;
+  text-shadow: 0 1px 2px #000c;
+}
+.app.outpost .build-detail-page .detail-workspace-grid {
+  align-items: stretch;
+}
+.app.outpost .build-detail-page :is(.loadout-price-check, .build-cost-panel) {
+  margin: 0;
+  padding: 22px 24px;
+}
+.app.outpost .build-detail-page .loadout-price-check .loadout-quote-actions {
+  align-items: center;
+}
+/* Cost figures: two wells (total, items priced) in the landing's figure type, one status line */
+.app.outpost .loadout-price-total {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.app.outpost .loadout-price-total > p {
+  grid-column: 1 / -1;
+}
+.app.outpost .build-cost-figure {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-height: 76px;
+  padding: 12px 16px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .build-cost-figure > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .build-cost-figure > strong {
+  margin: 0;
+  font: 800 22px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .build-cost-figure > strong > span {
+  font: 800 22px/1.1 var(--font-display);
+}
+.app.outpost .build-cost-figure > strong > span > span:last-child {
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-weight: 500;
+}
+.app.outpost .build-detail-page :is(.loadout-price-check, .build-cost-panel) details > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  color: var(--accent-ink);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.app.outpost
+  .build-detail-page
+  :is(.loadout-price-check, .build-cost-panel)
+  details
+  > summary::-webkit-details-marker {
+  display: none;
+}
+.app.outpost .build-detail-page .library-provenance {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Player build cost: the same head as library cost, with a sets field beside the city */
+.app.outpost .build-cost-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .build-cost-sets {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.app.outpost .build-cost-form input {
+  width: 76px;
+  min-height: 42px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  font-family: var(--font-data);
+}
+.app.outpost .build-cost-rows {
+  display: grid;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .build-cost-rows > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  font-size: 13px;
+}
+.app.outpost .build-cost-rows small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* One panel holds the build's secondary sections; each opens in place as a well */
+.app.outpost .build-detail-page .detail-secondary-sections.raised {
+  gap: 8px;
+  margin-top: 26px;
+  padding: 22px 24px 24px;
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary {
+  min-height: 48px;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary:hover {
+  color: var(--accent-ink);
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 4px 4px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+}
+.app.outpost
+  .build-detail-page
+  .detail-secondary-sections
+  .detail-disclosure[open]
+  > summary::after {
+  margin-bottom: -4px;
+  transform: rotate(225deg);
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure[open] > summary {
+  border-bottom-color: var(--well-border);
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure-content {
+  padding: 16px;
+}
+.app.outpost .build-detail-page .detail-notes-panel h3 {
+  margin: 0 0 6px;
+  font: 800 17px/1.2 var(--font-display);
+}
+.app.outpost .build-detail-page .detail-notes-panel h3:not(:first-child) {
+  margin-top: 16px;
+}
+.app.outpost .build-detail-page .library-build-videos h3 {
+  margin: 0 0 8px;
+  font: 800 17px/1.2 var(--font-display);
+}
+.app.outpost .build-detail-page .detail-discussion-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.app.outpost .build-detail-page .detail-discussion-note > p {
+  margin: 0;
+}
+.app.outpost .build-detail-page .detail-related-builds {
+  margin-top: 96px;
+}
+
+/* Revisions: duplicate and restore in one framed panel */
+.app.outpost .build-revisions-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+}
+.app.outpost .build-revisions-actions label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.app.outpost .build-revisions-actions > p {
+  margin: 0;
+  align-self: center;
+}
+.app.outpost .build-revisions-status:empty {
+  display: none;
+}
+@media (max-width: 700px) {
+  .app.outpost .build-detail-page :is(.loadout-price-check, .build-cost-panel),
+  .app.outpost .build-detail-page .detail-secondary-sections.raised {
+    padding: 16px;
+  }
+  .app.outpost .build-detail-page .detail-related-builds {
+    margin-top: 64px;
+  }
+  .app.outpost .build-cost-rows > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Ability names break between words, never inside one */
+  .app.outpost .build-detail-page .detail-spell-choice > span {
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: manual;
+  }
+}
+/* The 12px floor for labels the shared sheets set smaller */
+.app.outpost
+  .build-detail-page
+  :is(
+    .detail-spell-choice small,
+    .loadout-slot-label,
+    .loadout-quote-list small,
+    .library-trait-card p,
+    .library-trait-card b,
+    .library-trait-rarity,
+    .library-build-videos small
+  ) {
+  font-size: 12px;
+}
+.app.outpost .build-detail-page .detail-secondary-sections > .detail-disclosure {
+  margin: 0;
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-notes-grid {
+  margin: 0;
+  padding-bottom: 16px;
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-notes-panel > :last-child {
+  margin-bottom: 0;
+}
+.app.outpost
+  .build-detail-page
+  :is(.loadout-price-check, .build-cost-panel)
+  details
+  > summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin: 0 0 3px 4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.app.outpost
+  .build-detail-page
+  :is(.loadout-price-check, .build-cost-panel)
+  details[open]
+  > summary::after {
+  margin-bottom: -3px;
+  transform: rotate(225deg);
+}
+@media (max-width: 700px) {
+  /* Phone masthead actions: the main action on its own row, then save and share side by side */
+  .app.outpost .build-detail-page .detail-header-actions {
+    flex-wrap: wrap;
+    max-width: none;
+  }
+  .app.outpost .build-detail-page .detail-header-actions > .button.primary,
+  .app.outpost .build-detail-page .detail-header-actions > .build-duplicate-control {
+    flex: 1 1 100%;
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .app.outpost .build-detail-page .detail-header-actions .library-save-control {
+    display: flex;
+    flex: 1 1 0;
+  }
+  .app.outpost .build-detail-page .detail-header-actions .library-device-save {
+    flex: 1;
+    width: auto;
+    height: 44px;
+    padding: 0 12px;
+  }
+  .app.outpost .build-detail-page .detail-header-actions .library-device-save > span {
+    display: inline-flex;
+  }
+  .app.outpost .build-detail-page .detail-header-actions .build-share-control summary {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  /* The cost controls wrap instead of running off the panel */
+  .app.outpost .build-detail-page .loadout-price-check :has(> .loadout-quote-actions) {
+    flex: 1 1 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+  .app.outpost .build-detail-page .loadout-quote-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .app.outpost .build-detail-page .loadout-quote-actions > * {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary {
+    flex-wrap: nowrap;
+  }
+  .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > small {
+    text-align: right;
+  }
+}
+
+/* Build details: each section's head reads as a panel title (Barlow), its meta quiet */
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > span {
+  font: 800 17px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+}
+.app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > span svg {
+  color: var(--accent-ink);
+}
+
+/* Recordings: the landing's feature rows (painted mark, title, one line, the way out) */
+.app.outpost .detail-feature-rows {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .detail-feature-rows a {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  text-decoration: none;
+}
+.app.outpost .detail-feature-rows a:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+.app.outpost .detail-feature-rows img {
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .detail-feature-rows strong {
+  display: block;
+  font-size: 14px;
+}
+.app.outpost .detail-feature-rows small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .detail-feature-rows svg {
+  color: var(--accent-ink);
+}
+
+/* The inspector's quick switch: every piece of the loadout as a small well */
+.app.outpost .detail-piece-strip {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+.app.outpost .detail-piece-strip > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.app.outpost .detail-piece-strip button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  cursor: pointer;
+}
+.app.outpost .detail-piece-strip button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 14%, var(--well));
+}
+.app.outpost .detail-piece-strip button:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+.app.outpost .build-detail-page .detail-context-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* The discussion panel is shared with Comps */
+.app.outpost .build-detail-page .detail-panel-frame > .panel > p.muted {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > small {
+    display: none;
+  }
+}
+.app.outpost .build-detail-page .detail-selected-item > .pill-link {
+  justify-self: start;
+}
+.app.outpost .build-cost-figure > strong > span > span:first-child {
+  font-size: 22px;
+}
+
+/* Cost, revisions and discussion are framed like Build details: the frame and painting are the
+   wrapper's, the panel inside stays plain */
+.app.outpost .build-detail-page .detail-panel-frame {
+  margin-top: 26px;
+  padding: 0;
+}
+.app.outpost .build-detail-page .detail-panel-frame > :is(.panel, .loadout-price-check) {
+  margin: 0;
+  padding: 22px 24px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.app.outpost .build-detail-page .detail-panel-frame > .panel > h2 {
+  margin: 0 0 4px;
+  font: 800 21px/1.15 var(--font-display);
+  text-shadow: 0 1px 2px #000c;
+}
+.app.outpost .build-detail-page .detail-build-context.raised {
+  align-self: start;
+}
+.app.outpost .build-detail-page .detail-piece-strip > div {
+  gap: 4px;
+}
+.app.outpost .build-detail-page .detail-piece-strip button {
+  width: 40px;
+  height: 40px;
+}
+.app.outpost .weapon-rail-more {
+  justify-self: start;
+  margin-top: 8px;
+}
+/* Rail actions stack, each the rail's full width */
+.app.outpost .builds-ecosystem .ecosystem-filter-rail .library-filter-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.app.outpost .builds-ecosystem .ecosystem-filter-rail .library-filter-actions > * {
+  width: 100%;
+  justify-content: center;
+}
+@media (max-width: 700px) {
+  .app.outpost .build-detail-page .detail-panel-frame > :is(.panel, .loadout-price-check) {
+    padding: 16px;
+  }
+  /* Section tabs wrap on phones, like the collection tabs */
+  .app.outpost .build-detail-page .detail-section-navigation {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding-right: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .app.outpost .build-detail-page .detail-section-navigation > a {
+    min-height: 40px;
+  }
+  /* The chevron stays at the right edge when the meta hides */
+  .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > span {
+    margin-right: auto;
+  }
+}
+@media (max-width: 420px) {
+  .app.outpost .loadout-price-total {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

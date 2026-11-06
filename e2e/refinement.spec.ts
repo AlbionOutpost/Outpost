@@ -117,7 +117,7 @@ test("populated equipment and party controls include visible names at phone, tab
       await page.goto(`/compositions/${comp.id}/edit`);
       await ready(page);
       const member = page.getByRole("button", { name: /^Edit player 1 loadout:/ });
-      await expect(member).toHaveAccessibleName(/Tank QA player 1/);
+      await expect(member).toHaveAccessibleName(/Tank (· )?QA player 1/);
       await accessible(page);
     }
   } finally {

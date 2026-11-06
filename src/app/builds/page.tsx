@@ -1,8 +1,12 @@
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { BuildRegionInput } from "@/components/build-region-link";
 import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
-import { BuildPreviewCard } from "@/components/build-preview-card";
+import { CommunityBuildCard } from "@/components/community-build-card";
+import { BuildSortSelect } from "@/components/build-sort-select";
+import { EmptyWell } from "@/components/empty-well";
+import { SectionHeading } from "@/components/section-heading";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { SaveBuildFilter } from "@/components/build-device-collections";
@@ -13,7 +17,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { z } from "zod";
-import { LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List, Search } from "lucide-react";
+import { BuildWeaponRail } from "@/components/build-weapon-rail";
 import { featuredLibraryBuilds } from "@/lib/grind-library";
 import { LibraryBuildCard } from "@/components/library-build-card";
 export const dynamic = "force-dynamic";
@@ -58,92 +63,50 @@ export default async function Builds({
     sort,
     page: requestedPage,
   });
+  const filtered = !!(q || codes.length || content);
   // A quiet community should still hand visitors something to play: the curated library.
   const libraryPicks = !builds.length && !mine ? (await featuredLibraryBuilds()).slice(0, 3) : [];
   return (
     <div
-      className={`builds-ecosystem build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
+      className={`builds-ecosystem ecosystem-library-page build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
     >
       <BuildDiscoveryHeader
         active={mine ? "mine" : "browse"}
         source="community"
-        title={mine ? "My Builds" : "Albion Online Builds"}
+        title={mine ? "My Builds" : "Community builds"}
+        accent={mine ? "Builds" : "Community"}
         description={
           mine
-            ? "Your loadouts, revisions and equipment plans. Private builds stay visible only to you."
-            : "Builds shared by Outpost players. Find a loadout or publish your own."
+            ? "Your loadouts and their revisions. Private builds stay visible only to you."
+            : "Loadouts Outpost players have published. Find one to copy or post your own."
         }
       />
-      <div className="ecosystem-discovery-layout">
-        <aside className="raised ecosystem-filter-rail" aria-label="Build filters">
-          <MobileFilterPanel>
-            <form
-              id="build-discovery-query"
-              action="/builds"
-              className="ecosystem-filter-form build-filter-form"
-            >
-              <BuildRegionInput />
-              <input type="hidden" name="view" value={view} />
-              <BuildDiscoverySearch
-                value={q}
-                formId="build-discovery-query"
-                label="Search build titles"
-                placeholder="Search loadouts…"
-              />
-              <label>
-                Collection
-                <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
-                  <option value="0">Public builds</option>
-                  <option value="1">My builds</option>
-                </select>
-              </label>
-              <label>
-                Content type
-                <select name="content" defaultValue={content} aria-label="Filter build content">
-                  <option value="">All activities</option>
-                  {contentTypes.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Weapon family
-                <select name="family" defaultValue={family} aria-label="Build weapon family">
-                  <option value="">All families</option>
-                  {buildDiscovery.families.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Specific weapon
-                <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
-                  <option value="">All weapons</option>
-                  {choices
-                    .filter((w) => !family || w.family === family)
-                    .map((w) => (
-                      <option value={w.code} key={w.code}>
-                        {w.name}
-                      </option>
-                    ))}
-                </select>
-              </label>
-              <button className="button primary" type="submit">
-                Search builds
-              </button>
-              <Link className="text-link" href={mine ? "/builds?mine=1" : "/builds"}>
-                Reset filters
+      {mine && !session?.user?.id ? (
+        <div className="build-signin-well">
+          <EmptyWell
+            emblem="strip-builds"
+            title="Sign in to see your builds"
+            line="Builds you create are kept on your Discord account. Device favourites work without signing in."
+            action={
+              <Link href="/signin" className="button primary">
+                Sign in with Discord
               </Link>
-            </form>
-          </MobileFilterPanel>
-        </aside>
-        <section className="build-discovery-results ecosystem-results" aria-label="Matching builds">
-          <div className="raised ecosystem-result-toolbar">
+            }
+          />
+        </div>
+      ) : (
+        <div className="ecosystem-discovery-layout library-discovery-workspace">
+          <div className="raised library-search-toolbar">
+            <BuildDiscoverySearch
+              value={q}
+              formId="build-discovery-query"
+              label="Search build titles"
+              placeholder="Search build titles or authors…"
+              compact
+            />
             <label className="ecosystem-sort-label">
               Sort
-              <select
+              <BuildSortSelect
                 form="build-discovery-query"
                 name="sort"
                 aria-label="Sort builds"
@@ -151,11 +114,8 @@ export default async function Builds({
               >
                 <option value="recent">Recently updated</option>
                 <option value="saved">Most saved</option>
-              </select>
+              </BuildSortSelect>
             </label>
-            <button form="build-discovery-query" className="button secondary ecosystem-apply-sort">
-              Apply
-            </button>
             <div className="ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
@@ -173,123 +133,216 @@ export default async function Builds({
               </Link>
             </div>
           </div>
-          <div className="ecosystem-results-subline">
-            <p>
-              <strong>{total.toLocaleString("en-GB")}</strong>{" "}
-              {mine ? "your matching loadouts" : "matching community builds"} ·{" "}
-              {builds.length ? `${(page - 1) * 24 + 1}–${Math.min(page * 24, total)}` : "0"} shown
-            </p>
-            <SaveBuildFilter path="/builds" query={query} />
-          </div>
-          <nav
-            className="weapon-shortcuts ecosystem-weapon-shortcuts"
-            aria-label="Weapon shortcuts"
-          >
-            <Link
-              href={href({ weapon: "", family: "", page: "1" })}
-              aria-current={!weapon ? "true" : undefined}
-            >
-              All weapons
-            </Link>
-            {[
-              ["MAIN_AXE", "Battleaxe", "T4_MAIN_AXE"],
-              ["MAIN_SWORD", "Broadsword", "T4_MAIN_SWORD"],
-              ["2H_BOW", "Bow", "T4_2H_BOW"],
-            ].map(([code, name, item]) => (
-              <Link
-                key={code}
-                href={href({ weapon: code, family: "", page: "1" })}
-                aria-current={weapon === code ? "true" : undefined}
+          <aside className="raised ecosystem-filter-rail" aria-label="Build filters">
+            <MobileFilterPanel drawer label="Filter builds">
+              <form
+                key={`${family}:${weapon}:${content}:${mine}`}
+                id="build-discovery-query"
+                action="/builds"
+                className="ecosystem-filter-form build-filter-form"
               >
-                <ItemIcon id={item} size={25} />
-                {name}
-              </Link>
-            ))}
-          </nav>
-          <div className="build-results-heading">
-            <h2>{mine ? "Your loadouts" : "Community loadouts"}</h2>
-            <span>{builds.length} on this page</span>
-          </div>
-          <div className="build-discovery-grid account-build-grid">
-            {builds.map((b) => (
-              <BuildPreviewCard
-                key={b.id}
-                build={b}
-                authenticated={!!session?.user?.id}
-                saved={b.favorites.length > 0}
-                favoriteCount={b._count.favorites}
-                owned={b.authorId === session?.user?.id}
-              />
-            ))}
-          </div>
-          {!builds.length && (
-            <section className="build-discovery-empty ecosystem-empty">
-              <h2>No matching loadouts</h2>
-              <p>
-                {mine
-                  ? !session?.user?.id
-                    ? "Sign in to see your account builds. Device favorites are available without signing in."
-                    : "Your saved builds appear here. Adjust the filters or create your first private loadout."
-                  : total === 0 && !q && !codes.length && !content
-                    ? "No one has published a community build yet. Start from the Build Library and publish your own version."
-                    : "Try another weapon or activity. Public builds appear when their authors publish them."}
-              </p>
-              <div className="button-row">
-                {!mine && (
-                  <Link href="/builds/library" className="button primary">
-                    Browse the Build Library
+                <BuildRegionInput />
+                <input type="hidden" name="view" value={view} />
+                <BuildWeaponRail
+                  path="/builds"
+                  limit={8}
+                  selected={family}
+                  families={buildDiscovery.families}
+                  weapons={buildDiscovery.weapons.filter((w) => w.count > 0)}
+                  query={query}
+                />
+                <label>
+                  Collection
+                  <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
+                    <option value="0">Public builds</option>
+                    <option value="1">My builds</option>
+                  </select>
+                </label>
+                <label>
+                  Content type
+                  <select name="content" defaultValue={content} aria-label="Filter build content">
+                    <option value="">All activities</option>
+                    {contentTypes.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Specific weapon
+                  <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
+                    <option value="">All weapons</option>
+                    {choices
+                      .filter((w) => !family || w.family === family)
+                      .map((w) => (
+                        <option value={w.code} key={w.code}>
+                          {w.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <div className="library-filter-actions">
+                  <button className="button primary" type="submit">
+                    <Search size={15} aria-hidden="true" />
+                    Search builds
+                  </button>
+                  <Link className="pill-link is-small" href={mine ? "/builds?mine=1" : "/builds"}>
+                    Reset filters
                   </Link>
-                )}
-                <Link href={mine ? "/builds?mine=1" : "/builds"} className="button secondary">
-                  Clear filters
-                </Link>
+                </div>
+              </form>
+            </MobileFilterPanel>
+          </aside>
+          <section
+            className="build-discovery-results ecosystem-results"
+            aria-label="Matching builds"
+          >
+            <div className="ecosystem-results-subline">
+              <p>
+                <strong>{total.toLocaleString("en-GB")}</strong>{" "}
+                {mine
+                  ? "of your builds match"
+                  : total === 1
+                    ? "community build"
+                    : "community builds"}
+                {builds.length > 0 &&
+                  ` · ${(page - 1) * 24 + 1}–${Math.min(page * 24, total)} shown`}
+              </p>
+              <SaveBuildFilter path="/builds" query={query} />
+            </div>
+            <nav
+              className="weapon-shortcuts ecosystem-weapon-shortcuts"
+              aria-label="Weapon shortcuts"
+            >
+              <Link
+                href={href({ weapon: "", family: "", page: "1" })}
+                aria-current={!weapon ? "true" : undefined}
+              >
+                All weapons
+              </Link>
+              {[
+                ["MAIN_AXE", "Battleaxe", "T4_MAIN_AXE"],
+                ["MAIN_SWORD", "Broadsword", "T4_MAIN_SWORD"],
+                ["2H_BOW", "Bow", "T4_2H_BOW"],
+              ].map(([code, name, item]) => (
                 <Link
-                  href={mine && !session?.user?.id ? "/signin" : "/builds/new"}
-                  className="text-link"
+                  key={code}
+                  href={href({ weapon: code, family: "", page: "1" })}
+                  aria-current={weapon === code ? "true" : undefined}
                 >
-                  {mine && !session?.user?.id ? "Sign in with Discord" : "Create a build →"}
+                  <ItemIcon id={item} size={25} />
+                  {name}
                 </Link>
-              </div>
-            </section>
-          )}
-          {libraryPicks.length > 0 && (
-            <section className="build-library-picks" aria-labelledby="build-library-picks-heading">
-              <div className="build-results-heading">
-                <h2 id="build-library-picks-heading">From the Build Library</h2>
-                <Link className="text-link" href="/builds/library">
-                  All library builds →
-                </Link>
-              </div>
-              <div className="build-discovery-grid account-build-grid">
-                {libraryPicks.map((build) => (
-                  <LibraryBuildCard key={build.id} build={build} />
-                ))}
-              </div>
-            </section>
-          )}
-          {pages > 1 && (
-            <nav className="library-pagination" aria-label="Community build pages">
-              {page > 1 ? (
-                <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                  Previous page
-                </Link>
-              ) : (
-                <span />
-              )}
-              <span>
-                Page {page} / {pages}
-              </span>
-              {page < pages ? (
-                <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                  Next page
-                </Link>
-              ) : (
-                <span />
-              )}
+              ))}
             </nav>
-          )}
-        </section>
-      </div>
+            <div className="build-discovery-grid account-build-grid">
+              {builds.map((b) => (
+                <CommunityBuildCard
+                  key={b.id}
+                  build={b}
+                  authenticated={!!session?.user?.id}
+                  saved={b.favorites.length > 0}
+                  favoriteCount={b._count.favorites}
+                  owned={b.authorId === session?.user?.id}
+                />
+              ))}
+            </div>
+            {!builds.length && (
+              <EmptyWell
+                emblem="strip-builds"
+                title={
+                  filtered
+                    ? "No matching loadouts"
+                    : mine
+                      ? "You have no builds yet"
+                      : "No community builds yet"
+                }
+                line={
+                  filtered
+                    ? "Try another weapon or activity, or clear the filters."
+                    : mine
+                      ? "Start from a library build or an empty board."
+                      : "Players have not published a build yet. Start from the library below."
+                }
+                action={
+                  filtered ? (
+                    <Link href={mine ? "/builds?mine=1" : "/builds"} className="button secondary">
+                      Clear filters
+                    </Link>
+                  ) : (
+                    <Link href="/builds/new" className="button secondary">
+                      Create a build
+                    </Link>
+                  )
+                }
+              />
+            )}
+            {libraryPicks.length > 0 && (
+              <section
+                className="build-library-picks"
+                aria-labelledby="build-library-picks-heading"
+              >
+                <SectionHeading
+                  id="build-library-picks-heading"
+                  title={
+                    <>
+                      From the <em>library</em>
+                    </>
+                  }
+                  line="Builds from the Outpost library you can open and copy."
+                  link={{ href: "/builds/library", label: "All library builds" }}
+                />
+                <div className="build-discovery-grid account-build-grid">
+                  {libraryPicks.map((build) => (
+                    <LibraryBuildCard key={build.id} build={build} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {pages > 1 && (
+              <nav className="library-pagination" aria-label="Community build pages">
+                {page > 1 ? (
+                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
+                    Previous page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span>
+                  Page {page} / {pages}
+                </span>
+                {page < pages ? (
+                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
+                    Next page
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            )}
+          </section>
+        </div>
+      )}
+      {mine ? (
+        <BuildsNextStep
+          title={
+            <>
+              Plan the <em>next</em> one
+            </>
+          }
+          line="Start from an empty board or a library build, then put it in a comp for your Team."
+          secondary={{ href: "/compositions", label: "Plan a comp" }}
+        />
+      ) : (
+        <BuildsNextStep
+          title={
+            <>
+              Publish <em>your</em> build
+            </>
+          }
+          line="Set a build to Public in the editor and it shows here for every player on your server."
+          secondary={{ href: "/builds/library", label: "Build library" }}
+        />
+      )}
     </div>
   );
 }

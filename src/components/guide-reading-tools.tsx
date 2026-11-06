@@ -1,16 +1,12 @@
 "use client";
-import { Printer, ArrowUp } from "lucide-react";
+import { Printer } from "lucide-react";
+
+/** The guide's one reading action, beside "All guides" in the masthead: print it. */
 export function GuideReadingTools() {
   return (
-    <div className="guide-reading-tools">
-      <button type="button" className="button secondary" onClick={() => window.print()}>
-        <Printer size={15} />
-        Print guide
-      </button>
-      <a className="text-link" href="#guide-title">
-        <ArrowUp size={15} />
-        Back to title
-      </a>
-    </div>
+    <button type="button" className="pill-link is-small" onClick={() => window.print()}>
+      <Printer size={14} aria-hidden="true" />
+      Print guide
+    </button>
   );
 }

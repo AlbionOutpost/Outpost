@@ -21,7 +21,12 @@ import { BuildCompositionLink } from "@/components/build-composition-link";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
 import { LibraryBuildCard } from "@/components/library-build-card";
 import { BuildShareControls } from "@/components/build-share-controls";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList } from "@/lib/structured-data";
 import { brandCopy } from "@/lib/brand-copy";
+import { SectionHeading } from "@/components/section-heading";
+import { BuildsNextStep } from "@/components/builds-next-step";
+import { ArrowRight } from "lucide-react";
 export async function generateMetadata({
   params,
   searchParams,
@@ -78,6 +83,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     : [];
   return (
     <div className="build-detail-page library-build-detail build-detail-redesign">
+      <JsonLd
+        data={breadcrumbList([
+          { name: "Home", path: "/" },
+          { name: "Build library", path: "/builds/library" },
+          { name: build.title, path: `/builds/library/${encodeURIComponent(build.slug)}` },
+        ])}
+      />
       <BuildDetailHeader
         title={build.title}
         description={brandCopy(build.description)}
@@ -121,56 +133,64 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <LibraryBuildTraits ids={build.recommendedTraits} traits={await libraryTraits()} />
           ) : undefined
         }
+        cost={
+          <div id="build-cost" className="raised detail-panel-frame">
+            <LoadoutPriceCheck equipment={equipment} autoLoad />
+          </div>
+        }
+        notes={
+          <details className="detail-disclosure detail-secondary-notes" id="build-notes" open>
+            <summary>
+              <span>From the author</span>
+              <small>Strategy and recordings</small>
+            </summary>
+            <div className="detail-disclosure-content detail-notes-grid">
+              <section className="detail-notes-panel" aria-label="Author notes">
+                <p className="preserve">
+                  {brandCopy(build.description) || "The author left no strategy notes."}
+                </p>
+                <p className="detail-muted">
+                  Check ability unlocks and current balance in game. Price checks use Normal
+                  quality.
+                </p>
+              </section>
+              <LibraryBuildVideos build={build} />
+            </div>
+          </details>
+        }
+        discussion={
+          <details className="detail-disclosure" id="build-discussion">
+            <summary>
+              <span>Comments</span>
+              <small>On player builds</small>
+            </summary>
+            <div className="detail-disclosure-content detail-discussion-note">
+              <p className="detail-muted">
+                Library builds are archived and closed to comments. Make this build yours to change
+                it, or talk it through on a player build.
+              </p>
+              <Link className="pill-link" href="/builds">
+                Community builds <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </div>
+          </details>
+        }
       />
-      <details className="raised detail-disclosure detail-secondary-notes" id="build-notes" open>
-        <summary>
-          <span>Strategy & creator recordings</span>
-          <small>From the author</small>
-        </summary>
-        <div className="detail-disclosure-content detail-notes-grid">
-          <section className="detail-notes-panel">
-            <h2>From the author</h2>
-            <p className="preserve">
-              {brandCopy(build.description) || "No additional strategy notes provided."}
-            </p>
-            <p className="detail-muted">
-              Check ability unlocks and current balance in game. Price checks start with Normal
-              quality.
-            </p>
-          </section>
-          <LibraryBuildVideos build={build} />
-        </div>
-      </details>
-      <div id="build-cost">
-        <LoadoutPriceCheck equipment={equipment} autoLoad />
-      </div>
-      <details className="raised detail-disclosure detail-secondary-notes" id="build-discussion">
-        <summary>
-          <span>Build discussion</span>
-          <small>Community options</small>
-        </summary>
-        <div className="detail-disclosure-content">
-          <p className="detail-muted">
-            Community builds support comments and shared feedback. Make a personal copy to adjust
-            this loadout, or explore player builds.
-          </p>
-          <Link className="button secondary" href="/builds">
-            Browse community builds →
-          </Link>
-        </div>
-      </details>
       <AdSlot placement="article" />
       {!!related.length && (
         <section className="detail-related-builds" aria-label="Related builds">
-          <div className="ecosystem-section-heading">
-            <h2>More {build.weaponName} builds</h2>
-            <Link
-              href={`/builds/library?${new URLSearchParams({ q: build.weaponName })}`}
-              className="text-link"
-            >
-              Explore this weapon →
-            </Link>
-          </div>
+          <SectionHeading
+            title={
+              <>
+                More <em>{build.weaponName}</em> builds
+              </>
+            }
+            line="Other loadouts in the library built around the same weapon."
+            link={{
+              href: `/builds/library?${new URLSearchParams({ q: build.weaponName })}`,
+              label: "All of them",
+            }}
+          />
           <div className="ecosystem-build-grid">
             {related.map((candidate) => (
               <LibraryBuildCard key={candidate.id} build={candidate} />
@@ -178,6 +198,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </div>
         </section>
       )}
+      <BuildsNextStep
+        title={
+          <>
+            Run it <em>your</em> way
+          </>
+        }
+        line="Start a build of your own from an empty board, or browse every loadout in the library."
+        secondary={{ href: "/builds/library", label: "Build library" }}
+      />
     </div>
   );
 }

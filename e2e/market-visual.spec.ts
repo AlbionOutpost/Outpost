@@ -78,6 +78,8 @@ test("market source fixtures retain table, chart and filtering at review widths"
     await expect(page.locator(".market-inline-time").first()).toBeVisible();
   }
   await writeFile(`${folder}/measurements.json`, JSON.stringify(measures, null, 2));
+  // Phones fold the search rail into one "Change item" bar; open it to filter.
+  await page.getByRole("button", { name: /^Change item/ }).click();
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
   await expect(page.locator(".market-board tbody tr")).toContainText("Caerleon");

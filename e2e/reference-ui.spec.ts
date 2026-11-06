@@ -36,7 +36,7 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     await page.goto("/compositions/new");
     await page.getByLabel("Comp title", { exact: true }).fill("Five-player reference review");
     await page.getByRole("button", { name: "5 players", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Visual party loadouts" })).toBeVisible();
+    await expect(page.getByRole("list", { name: "Visual party loadouts" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Edit player \d loadout/ })).toHaveCount(5);
     await page.getByRole("button", { name: /^Edit player 1 loadout\b/ }).click();
     await page.getByLabel("Player name", { exact: true }).fill("First caller");
@@ -45,8 +45,9 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     await page.getByRole("button", { name: /^Equip Battleaxe\b/ }).click();
     await page.getByLabel("Main hand E", { exact: true }).selectOption("Blood Bandit");
     await page.getByRole("button", { name: "Done editing member", exact: true }).click();
-    await expect(page.getByRole("button", { name: /^Edit player 1 loadout\b/ })).toContainText(
-      "First caller",
+    await expect(page.getByRole("button", { name: /^Edit player 1 loadout\b/ })).toHaveAttribute(
+      "aria-label",
+      /First caller/,
     );
     await page.getByRole("button", { name: "Save comp", exact: true }).click();
     await expect(
@@ -57,15 +58,16 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     expect(savedUrl.searchParams.get("region")).toBe("europe");
     compositionId = savedUrl.pathname.split("/").pop()!;
     await page.reload();
-    await expect(page.getByRole("region", { name: "Visual party loadouts" })).toContainText(
-      "First caller",
-    );
+    await expect(
+      page.getByRole("list", { name: "Five-player reference review members" }),
+    ).toContainText("First caller");
     await mkdir(".qa/reference-review", { recursive: true });
     await page.locator("main h1").click();
     await page.screenshot({
       path: ".qa/reference-review/five-player-board-1440.png",
       fullPage: true,
     });
+    await page.getByRole("button", { name: "More actions", exact: true }).click();
     const downloadPromise = page.waitForEvent("download");
     await page.getByRole("button", { name: "Export PNG", exact: true }).click();
     const download = await downloadPromise;
@@ -139,14 +141,16 @@ test("community discovery filters real equipment without exposing private builds
     await make("Solo bow", "PUBLIC", "Solo Mists", "T4_2H_BOW");
     await make("Private arena axe", "PRIVATE", "Arena", "T6_MAIN_AXE");
     await page.goto(`/builds?q=${tag}`);
-    await expect(page.locator(".build-preview-card")).toHaveCount(2);
+    await expect(page.locator(".community-build-card")).toHaveCount(2);
     await page.getByLabel("Filter build content").selectOption("Arena");
     await page.getByLabel("Filter build weapon").selectOption("MAIN_AXE");
     await page.getByRole("button", { name: "Search builds", exact: true }).click();
-    await expect(page.locator(".build-preview-card")).toHaveCount(1);
-    await expect(page.locator(".build-preview-card")).toContainText("Arena axe");
-    await expect(page.locator(".build-preview-card")).not.toContainText("Private arena");
-    await expect(page.locator(".build-preview-card img[data-albion-icon]").first()).toBeVisible();
+    await expect(page.locator(".community-build-card")).toHaveCount(1);
+    await expect(page.locator(".community-build-card")).toContainText("Arena axe");
+    await expect(page.locator(".community-build-card")).not.toContainText("Private arena");
+    await expect(
+      page.locator(".community-build-card .loadout-board img[data-albion-icon]").first(),
+    ).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-1440.png", fullPage: true });
     await page.setViewportSize({ width: 375, height: 844 });
     await expect(page.getByLabel("Filter build content")).not.toBeVisible();
@@ -156,18 +160,17 @@ test("community discovery filters real equipment without exposing private builds
     await expect(page.getByLabel("Filter build content")).toBeVisible();
     await page.getByLabel("Filter build weapon").selectOption("2H_BOW");
     await page.getByRole("button", { name: "Search builds", exact: true }).click();
-    await expect(page.locator(".build-preview-card")).toHaveCount(0);
-    await expect(
-      page.getByRole("heading", { name: "No matching loadouts", exact: true }),
-    ).toBeVisible();
+    await expect(page.locator(".community-build-card")).toHaveCount(0);
+    await expect(page.getByText("No matching loadouts", { exact: true })).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-375.png", fullPage: true });
     await page.goto("/guides");
-    await page.getByLabel("Search guides").fill("return assumptions");
-    await expect(page.locator(".guide-discovery-card")).toHaveCount(1);
-    await page.getByText("Read guide", { exact: true }).click();
-    await expect(page.locator(".guide-body")).toContainText("Production tools");
+    await page.getByLabel("Search guides").fill("whole cost");
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await expect(page.locator(".grind-guide-card")).toHaveCount(1);
+    await expect(page.locator(".grind-guide-card")).toContainText("Count the whole cost");
     await page.getByLabel("Search guides").fill("unmatched topic xyz");
-    await expect(page.getByText("No guide matches this search. Try another topic.")).toBeVisible();
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await expect(page.getByText("No guide matches that search.", { exact: true })).toBeVisible();
   } finally {
     await db.user.deleteMany({ where: { id } });
   }

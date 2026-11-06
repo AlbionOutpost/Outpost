@@ -1,0 +1,78 @@
+/* Placeholders sit in wells on the backdrop and breathe slowly; no shimmer sweep */
+.loading {
+  display: block;
+}
+.emblem,
+.title,
+.line,
+.block {
+  display: block;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.emblem {
+  width: 64px;
+  height: 64px;
+}
+.copy {
+  display: grid;
+  flex: 1;
+  gap: 12px;
+}
+.title {
+  width: min(420px, 70%);
+  height: 44px;
+}
+.line {
+  width: min(560px, 90%);
+  height: 18px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.block {
+  height: 220px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .emblem,
+  .title,
+  .line,
+  .block {
+    animation: loading-breathe 1600ms var(--ease-out-expo) infinite alternate;
+  }
+}
+@keyframes loading-breathe {
+  to {
+    background: color-mix(in srgb, var(--well) 70%, var(--elevated));
+  }
+}
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .block:nth-child(3) {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  .emblem {
+    width: 48px;
+    height: 48px;
+  }
+  .title {
+    height: 32px;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .block {
+    height: 160px;
+  }
+  .block:nth-child(2) {
+    display: none;
+  }
+}

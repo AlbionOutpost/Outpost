@@ -18,6 +18,13 @@ data/catalog
 # Vendored third-party skills retain their pinned upstream bytes.
 .claude/skills/impeccable
 .claude/skills/vercel-react-best-practices
+.claude/skills/workers-best-practices
+.claude/skills/durable-objects
+.claude/skills/wrangler
+.claude/skills/better-typography
+.claude/skills/reverse-engineer-anything
+.claude/skills/stop-slop
+.claude/skills/humanizer
 
 # Downloaded reference-site evidence retains upstream bytes.
 Scrape

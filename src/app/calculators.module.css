@@ -1,0 +1,754 @@
+/* Transport, farming, fishing, flipping, laborers and mastery: additions to the shared calculator
+   (CalculatorShell and its module), scoped to those pages. */
+
+/* Saved plans: one disclosure under the steps */
+:global(.app.outpost) .saved.saved {
+  min-width: 0;
+}
+:global(.app.outpost) .savedBody.savedBody {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .savedTitle.savedTitle {
+  display: grid;
+  gap: 6px;
+  max-width: 420px;
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .savedTitle.savedTitle input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+}
+:global(.app.outpost) .savedActions.savedActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .savedList.savedList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .savedList.savedList li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+:global(.app.outpost) .savedList.savedList li > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .savedList.savedList :global(.button) {
+  flex: none;
+  min-height: 36px;
+}
+
+:global(.app.outpost) .prose.prose {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+:global(.app.outpost) .prose.prose p {
+  margin: 0;
+}
+:global(.app.outpost) .prose.prose :global(.pill-link) {
+  justify-self: start;
+}
+
+:global(.app.outpost) .start.start {
+  justify-self: start;
+}
+:global(.app.outpost) .alignEnd.alignEnd {
+  align-self: end;
+  padding-bottom: 4px;
+}
+
+/* A calculator embedded in a reading column: panels stacked, no step switcher */
+:global(.app.outpost) .stacked.stacked > :global(.panel) {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+:global(.app.outpost) .stacked.stacked > :global(.panel) > * {
+  margin: 0;
+}
+
+/* A list to pick from beside the steps on wide screens; a select once the rail sits on top */
+:global(.app.outpost) .rail.rail {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+}
+:global(.app.outpost) .rail.rail > * {
+  margin: 0;
+}
+:global(.app.outpost) .railPick.railPick {
+  display: none;
+  gap: 6px;
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .railList.railList {
+  display: grid;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  list-style: none;
+}
+:global(.app.outpost) .railList.railList button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: 600 14px/1.25 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+:global(.app.outpost) .railList.railList button:hover {
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+:global(.app.outpost) .railList.railList button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .railList.railList button > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+:global(.app.outpost) .railList.railList small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+:global(.app.outpost) .railList.railList img {
+  flex: none;
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 1180px) {
+  :global(.app.outpost) .railPick.railPick {
+    display: grid;
+  }
+  :global(.app.outpost) .railList.railList {
+    display: none;
+  }
+}
+
+/* Specialization: one disclosure per category, spec rows in a well */
+:global(.app.outpost) .categories.categories {
+  display: grid;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .categoryName.categoryName {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+:global(.app.outpost) .categoryName.categoryName img {
+  flex: none;
+  border-radius: var(--radius-sm);
+}
+:global(.app.outpost) .specs.specs {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .specs.specs ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .specs.specs li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 10px;
+  align-items: center;
+  min-height: 48px;
+  padding: 6px 6px 6px 8px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+:global(.app.outpost) .specs.specs li img {
+  border-radius: var(--radius-sm);
+}
+:global(.app.outpost) .specs.specs label {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .specs.specs input {
+  min-height: 36px;
+  padding: 0 8px;
+  text-align: right;
+}
+:global(.app.outpost) .chip.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Focus check results, as rows with the figure on the right */
+:global(.app.outpost) .searchField.searchField {
+  display: grid;
+  gap: 6px;
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .focusList.focusList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  list-style: none;
+}
+:global(.app.outpost) .focusList.focusList li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+}
+:global(.app.outpost) .focusList.focusList li + li {
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .focusList.focusList li > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+:global(.app.outpost) .focusList.focusList strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .focusList.focusList small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+:global(.app.outpost) .unit.unit {
+  color: var(--muted);
+  font: 500 12px/1 var(--font-ui);
+}
+:global(.app.outpost) .focusList.focusList b {
+  flex: none;
+  font: 800 20px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Roads of Avalon: three panels of one height on wide screens */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .equalPanels.equalPanels section:global(.panel) {
+    align-self: stretch;
+  }
+}
+:global(.app.outpost) .portalForm.portalForm {
+  display: grid;
+  gap: var(--space-4);
+}
+:global(.app.outpost) .equalPanels.equalPanels input:not([type]) {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1 var(--font-ui);
+}
+:global(.app.outpost) .portals.portals {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .portals.portals li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 40px;
+  gap: 10px;
+  align-items: center;
+  min-height: 56px;
+  padding: 8px 6px 8px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .portals.portals li[data-closed] {
+  opacity: 0.55;
+}
+:global(.app.outpost) .portals.portals li > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+:global(.app.outpost) .portals.portals strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .portals.portals small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .portalMeta.portalMeta {
+  justify-items: end;
+}
+:global(.app.outpost) .portalMeta.portalMeta b {
+  font: 800 17px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .iconButton.iconButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+:global(.app.outpost) .iconButton.iconButton:hover {
+  border-color: var(--well-border);
+  color: var(--error);
+}
+:global(.app.outpost) .iconButton.iconButton:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:global(.app.outpost) .portalActions.portalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .route.route {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: hop;
+}
+:global(.app.outpost) .route.route li {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  padding: 0 0 16px 34px;
+  counter-increment: hop;
+}
+:global(.app.outpost) .route.route li::before {
+  content: counter(hop);
+  position: absolute;
+  top: -2px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent-ink);
+  font: 800 13px/1 var(--font-display);
+}
+:global(.app.outpost) .route.route li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 2px;
+  left: 12px;
+  border-left: 1px dashed var(--well-border);
+}
+:global(.app.outpost) .route.route strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+:global(.app.outpost) .route.route small {
+  color: var(--muted);
+  font-size: 12px;
+}
+:global(.app.outpost) .route.route small.soon {
+  color: var(--accent-ink);
+}
+/* Zone suggestions: the native list arrow would look like a select that isn't one */
+:global(.app.outpost) .equalPanels.equalPanels input::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+
+/* Flip scanner: one framed tool panel, route and items on top, results as rows in a well */
+:global(.app.outpost) .scanner.scanner {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+}
+:global(.app.outpost) .scanner.scanner > * {
+  margin: 0;
+}
+:global(.app.outpost) .scanSetup.scanSetup {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+:global(.app.outpost) .routeFields.routeFields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+:global(.app.outpost) .scanItems.scanItems {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+:global(.app.outpost) .chips.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .chips.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 2px 2px 2px 6px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  font-size: 13px;
+  font-weight: 600;
+}
+:global(.app.outpost) .chips.chips li > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .chips.chips li img {
+  flex: none;
+  border-radius: 999px;
+}
+:global(.app.outpost) .chips.chips button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+:global(.app.outpost) .chips.chips button:hover {
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  color: var(--text);
+}
+:global(.app.outpost) .pasteForm.pasteForm {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .pasteForm.pasteForm label {
+  display: grid;
+  gap: 6px;
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .pasteForm.pasteForm textarea {
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: 500 13px/1.4 var(--font-data);
+  resize: vertical;
+}
+:global(.app.outpost) .flips.flips {
+  container-type: inline-size;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .flips.flips ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .flipHead.flipHead,
+:global(.app.outpost) .flip.flip {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1.6fr) repeat(2, minmax(0, 1fr)) minmax(0, 0.9fr) 72px 120px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+}
+:global(.app.outpost) .flipHead.flipHead {
+  padding-block: 9px;
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+}
+:global(.app.outpost) .flipHead.flipHead span:first-child {
+  grid-column: 1 / 3;
+}
+:global(.app.outpost) .flipHead.flipHead span:not(:first-child) {
+  text-align: right;
+}
+:global(.app.outpost) .flip.flip {
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .flip.flip > img {
+  border-radius: var(--radius-sm);
+}
+:global(.app.outpost) .flipName.flipName,
+:global(.app.outpost) .flipPrice.flipPrice {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+:global(.app.outpost) .flipName.flipName strong {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .flip.flip small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  color: var(--muted);
+  font: 500 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .flipPrice.flipPrice {
+  justify-items: end;
+  font: 600 13px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+:global(.app.outpost) .flipPrice.flipPrice small {
+  justify-content: flex-end;
+}
+:global(.app.outpost) .flipNet.flipNet {
+  font: 800 18px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+:global(.app.outpost) .flipNet.flipNet :global(.silver),
+:global(.app.outpost) .flipPrice.flipPrice :global(.silver) {
+  justify-content: flex-end;
+}
+:global(.app.outpost) .flip.flip[data-outcome="positive"] .flipNet {
+  color: var(--killer);
+}
+:global(.app.outpost) .flip.flip[data-outcome="negative"] .flipNet {
+  color: var(--victim);
+}
+:global(.app.outpost) .flipMargin.flipMargin {
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-data);
+  text-align: right;
+}
+:global(.app.outpost) .flipAction.flipAction {
+  justify-self: end;
+}
+:global(.app.outpost) .flipAction.flipAction[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+:global(.app.outpost) .moreLoot.moreLoot {
+  justify-self: start;
+}
+/* Column names for a price; only seen once the header row is gone */
+:global(.app.outpost) .flipLabel.flipLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+:global(.app.outpost) .flipNa.flipNa {
+  font: 500 12px/1.3 var(--font-ui);
+}
+@container (max-width: 760px) {
+  :global(.app.outpost) .flipHead.flipHead {
+    display: none;
+  }
+  :global(.app.outpost) .flipLabel.flipLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    clip-path: none;
+    color: var(--muted);
+    font: 500 12px/1.3 var(--font-ui);
+    text-overflow: ellipsis;
+  }
+  :global(.app.outpost) .flip.flip {
+    grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon name name net"
+      "icon buy sell margin"
+      "icon action action action";
+    row-gap: 8px;
+  }
+  :global(.app.outpost) .flip.flip > img {
+    grid-area: icon;
+    align-self: start;
+  }
+  :global(.app.outpost) .flipName.flipName {
+    grid-area: name;
+  }
+  :global(.app.outpost) .flip.flip > .flipPrice:nth-of-type(2) {
+    grid-area: buy;
+    justify-items: start;
+    text-align: left;
+  }
+  :global(.app.outpost) .flip.flip > .flipPrice:nth-of-type(3) {
+    grid-area: sell;
+    justify-items: start;
+    text-align: left;
+  }
+  :global(.app.outpost) .flipPrice.flipPrice small {
+    justify-content: flex-start;
+  }
+  :global(.app.outpost) .flipPrice.flipPrice :global(.silver) {
+    justify-content: flex-start;
+  }
+  :global(.app.outpost) .flipNet.flipNet {
+    grid-area: net;
+  }
+  :global(.app.outpost) .flipMargin.flipMargin {
+    grid-area: margin;
+    align-self: start;
+  }
+  :global(.app.outpost) .flipAction.flipAction {
+    grid-area: action;
+    justify-self: start;
+  }
+}
+/* Narrow phones: buy and sell on their own lines so the figures never touch */
+@container (max-width: 400px) {
+  :global(.app.outpost) .flip.flip {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon name net"
+      "icon buy margin"
+      "icon sell sell"
+      "icon action action";
+  }
+}
+@media (max-width: 980px) {
+  :global(.app.outpost) .scanSetup.scanSetup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .routeFields.routeFields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Flipping: the scanner, then the hand check under its own heading */
+:global(.app.outpost) .flipping.flipping {
+  display: grid;
+  gap: 26px;
+}
+:global(.app.outpost) .handCheck.handCheck {
+  display: grid;
+  gap: 28px;
+  margin-top: 70px;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .handCheck.handCheck {
+    margin-top: 38px;
+  }
+}
+
+/* An empty well in a narrow panel: emblem, words and action stacked and centred */
+:global(.app.outpost) .columnEmpty.columnEmpty > div {
+  flex-direction: column;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+/* The neutral seal stands in for missing tool art, framed as a tile like the painted emblems */
+:global(.app.outpost) .sealTile.sealTile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 2px solid color-mix(in srgb, var(--accent) 70%, #000);
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 35%, #2a2018, #120e0b 70%);
+  box-shadow:
+    inset 0 0 0 2px #0008,
+    inset 0 2px 6px #0009,
+    0 4px 10px #000a,
+    0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+:global(.app.outpost) .sealTile.sealTile img {
+  width: 44px;
+  height: 44px;
+}

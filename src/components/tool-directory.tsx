@@ -2,13 +2,14 @@
 import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
-import { Search, ArrowUpRight, X, Pin } from "lucide-react";
+import { Search, ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
-import { ToolIcon } from "./tool-icon";
-import { toolEmblem } from "@/lib/search-emblems";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
+import { SectionHeading } from "./section-heading";
+
+type Tool = (typeof tools)[number];
 // Each tool crops one of the five paintings so the directory reads as places, not a list.
 const scenes: Record<string, { scene: string; at: string }> = {
   "/tools/market": { scene: "market", at: "30% 40%" },
@@ -35,6 +36,102 @@ const scenes: Record<string, { scene: string; at: string }> = {
   "/timers": { scene: "economy", at: "10% 30%" },
   "/tools/kill-feed": { scene: "build", at: "15% 70%" },
 };
+/** Tools with a painted emblem of their own; the rest show their line glyph in a medallion. */
+const paintings: Record<string, string> = {
+  "/tools/market": "tool-market",
+  "/tools/crafting": "tool-craft",
+  "/shopping-list": "tool-planner",
+  "/tools/kill-feed": "kill-skull",
+  "/builds/new": "strip-builds",
+  "/compositions/new": "strip-comps",
+  "/groups": "team-roles",
+  "/timers": "team-calendar",
+};
+/** Tools reading live observations get the ember chip; the rest stay muted. */
+const live = new Set([
+  "/tools/market",
+  "/tools/gold",
+  "/tools/transporting",
+  "/tools/laborers",
+  "/tools/kill-feed",
+]);
+/** Sections of the directory, each inside one category filter; 3, 4 or 6 tools fill whole rows. */
+const sections: {
+  id: string;
+  title: React.ReactNode;
+  line: string;
+  link?: { href: string; label: string };
+  hrefs: string[];
+}[] = [
+  {
+    id: "tools-trade",
+    title: (
+      <>
+        Trade and <em>travel</em>
+      </>
+    ),
+    line: "City prices, trade margins, cargo, gold, the Roads of Avalon and game tables.",
+    link: { href: "/tools/market", label: "Open Market Explorer" },
+    hrefs: [
+      "/tools/market",
+      "/tools/flipping",
+      "/tools/transporting",
+      "/tools/gold",
+      "/tools/avalon-mapper",
+      "/tools/reference",
+    ],
+  },
+  {
+    id: "tools-production",
+    title: (
+      <>
+        Crafting and <em>production</em>
+      </>
+    ),
+    line: "Costs, returns and the shopping list for what you make.",
+    link: { href: "/shopping-list", label: "Open the Crafting Planner" },
+    hrefs: [
+      "/tools/crafting",
+      "/shopping-list",
+      "/tools/refining",
+      "/tools/enchanting",
+      "/tools/cooking",
+      "/tools/alchemy",
+    ],
+  },
+  {
+    id: "tools-gathering",
+    title: (
+      <>
+        Gathering and <em>focus</em>
+      </>
+    ),
+    line: "Farms, fishing, laborers and the specs that cut your focus cost.",
+    hrefs: ["/tools/farming", "/tools/fishing", "/tools/laborers", "/tools/mastery"],
+  },
+  {
+    id: "tools-builds",
+    title: (
+      <>
+        Builds and <em>comps</em>
+      </>
+    ),
+    line: "Make a loadout, plan a party, look up an item.",
+    link: { href: "/builds/library", label: "Build library" },
+    hrefs: ["/builds/new", "/compositions/new", "/items"],
+  },
+  {
+    id: "tools-teams",
+    title: (
+      <>
+        Teams and <em>community</em>
+      </>
+    ),
+    line: "Recent fights, published builds, your Team and your own timers.",
+    link: { href: "/groups", label: "Your Teams" },
+    hrefs: ["/tools/kill-feed", "/builds", "/groups", "/timers"],
+  },
+];
 function subscribeToolShortcuts(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener("outpost:tool-shortcuts", callback);
@@ -49,6 +146,14 @@ function readToolShortcuts() {
   } catch {
     return "[]";
   }
+}
+/** The tool's own painted emblem; tools without one let their card's scene carry them. */
+function ToolMark({ tool, size }: { tool: Tool; size: number }) {
+  const painting = paintings[tool.href];
+  return painting ? (
+    // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
+    <img src={`/albion/icons/${painting}.webp`} alt="" width={size} height={size} />
+  ) : null;
 }
 export function ToolDirectory() {
   const region = useOutpostRegion();
@@ -86,76 +191,94 @@ export function ToolDirectory() {
       <WorkspaceHeading
         glyph="craft"
         scene="economy"
-        title="Tools"
-        description="Everything you need to make better decisions in Albion Online: prices, profit, gear and your team."
+        title="All tools"
+        accent="tools"
+        description="Every tool for prices, crafting, gear and your Team. Pin the ones you use most to this device."
       />
-      {!!pins.length && !query && category === "All tools" && (
-        <section className="tool-shortcuts" aria-label="Tool shortcuts on this device">
-          <div className="section-heading support-section-heading">
-            <h2>{pins.length ? "Your shortcuts" : "Start with a task"}</h2>
-            <p>{pins.length ? "Pinned on this device" : "Pin up to six tools for next time"}</p>
-          </div>
-          <div>
-            {(pins.length
-              ? tools.filter((tool) => pins.includes(tool.href))
-              : tools.filter((tool) =>
-                  ["/tools/market", "/tools/crafting", "/builds/new"].includes(tool.href),
-                )
-            ).map((tool) => (
-              <Link key={tool.href} href={`${tool.href}?region=${region}`}>
-                <ToolIcon name={tool.icon} size={22} />
-                <strong>{tool.title}</strong>
-                <ArrowUpRight size={15} />
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-      <p className="tool-pin-feedback" role="status">
-        {pinMessage}
-      </p>
       <div className="directory-toolbar">
         <label className="directory-search">
-          <Search size={18} />
+          <Search size={18} aria-hidden="true" />
           <span className="sr-only">Find a tool</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search markets, crafting, builds…"
+            placeholder="Search tools…"
           />
           {query && (
-            <button aria-label="Clear tool search" onClick={() => setQuery("")}>
+            <button type="button" aria-label="Clear tool search" onClick={() => setQuery("")}>
               <X size={16} />
             </button>
           )}
         </label>
-        <span role="status">{matches.length} tools</span>
+        <nav className="directory-categories" aria-label="Tool categories">
+          {["All tools", ...toolGroups].map((group) => (
+            <button
+              type="button"
+              key={group}
+              aria-pressed={category === group}
+              onClick={() => setCategory(group)}
+            >
+              {group}
+            </button>
+          ))}
+        </nav>
+        <span className="directory-count" role="status">
+          {matches.length} {matches.length === 1 ? "tool" : "tools"}
+        </span>
       </div>
-      <nav className="product-tabs" aria-label="Tool categories">
-        {["All tools", ...toolGroups].map((group) => (
-          <button key={group} aria-pressed={category === group} onClick={() => setCategory(group)}>
-            {group}
-          </button>
-        ))}
-      </nav>
-      {!pins.length && !query && (
-        <p className="tool-pin-help">Pin up to six shortcuts on this device for your next visit.</p>
+      {pins.length > 0 && !query && category === "All tools" ? (
+        <section className="tool-shortcuts" aria-label="Tool shortcuts on this device">
+          <h2>Pinned on this device</h2>
+          <div>
+            {tools
+              .filter((tool) => pins.includes(tool.href))
+              .map((tool) => (
+                <Link key={tool.href} href={`${tool.href}?region=${region}`}>
+                  <ToolMark tool={tool} size={28} />
+                  <strong>{tool.title}</strong>
+                  <ArrowUpRight size={15} aria-hidden="true" />
+                </Link>
+              ))}
+          </div>
+        </section>
+      ) : (
+        !pins.length &&
+        !query && (
+          <p className="tool-pin-help">
+            <Pin size={14} aria-hidden="true" /> Pin up to six shortcuts on this device.
+          </p>
+        )
+      )}
+      {pinMessage && (
+        <p className="tool-pin-feedback" role="status">
+          {pinMessage}
+        </p>
       )}
       <div className="directory-groups">
-        {toolGroups.map((group) => {
-          const rows = matches.filter((t) => t.group === group);
+        {sections.map((section) => {
+          const rows = section.hrefs
+            .map((href) => matches.find((t) => t.href === href))
+            .filter((t): t is Tool => !!t);
           return rows.length ? (
             <section
-              className={`directory-group ${group === "Economy" ? "directory-economy" : ""}`}
-              key={group}
+              className="directory-group"
+              key={section.id}
+              aria-labelledby={`${section.id}-title`}
             >
-              <div className="section-heading directory-group-heading">
-                <h2>{group}</h2>
-                <p>
-                  {rows.length} {rows.length === 1 ? "tool" : "tools"}
-                </p>
-              </div>
+              <SectionHeading
+                id={`${section.id}-title`}
+                title={section.title}
+                line={
+                  <>
+                    <span className="directory-chip">
+                      {rows.length} {rows.length === 1 ? "tool" : "tools"}
+                    </span>
+                    {section.line}
+                  </>
+                }
+                link={section.link}
+              />
               <div className="directory-entries">
                 {rows.map((t) => (
                   <article
@@ -163,22 +286,27 @@ export function ToolDirectory() {
                     key={t.href}
                     data-scene={scenes[t.href]?.scene ?? "economy"}
                   >
-                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
-                      <span className="tool-symbol" aria-hidden="true">
-                        {/* eslint-disable-next-line @next/next/no-img-element -- existing owner-supplied task emblem */}
-                        <img
-                          src={`/albion/icons/${toolEmblem(t.icon)}.webp`}
-                          alt=""
-                          width={56}
-                          height={56}
-                        />
-                      </span>
-                      <div>
+                    <Link
+                      className="directory-entry-link"
+                      data-emblem={paintings[t.href] ? "" : undefined}
+                      href={`${t.href}?region=${region}`}
+                    >
+                      {paintings[t.href] && (
+                        <span className="tool-symbol" aria-hidden="true">
+                          <ToolMark tool={t} size={56} />
+                        </span>
+                      )}
+                      <span className="directory-entry-copy">
                         <h3>{t.title}</h3>
                         <p>{t.description}</p>
-                        <span className="tool-availability">{t.state}</span>
-                      </div>
-                      <ArrowUpRight className="directory-arrow" size={17} />
+                        <span
+                          className="tool-availability"
+                          data-live={live.has(t.href) ? "" : undefined}
+                        >
+                          {t.state}
+                        </span>
+                      </span>
+                      <ArrowUpRight className="directory-arrow" size={18} aria-hidden="true" />
                     </Link>
                     <button
                       type="button"
@@ -187,7 +315,7 @@ export function ToolDirectory() {
                       aria-label={`${pins.includes(t.href) ? "Unpin" : "Pin"} ${t.title} on this device`}
                       onClick={() => togglePin(t.href)}
                     >
-                      <Pin size={16} />
+                      <Pin size={16} aria-hidden="true" />
                     </button>
                   </article>
                 ))}
@@ -197,11 +325,11 @@ export function ToolDirectory() {
         })}
       </div>
       {!matches.length && (
-        <section className="product-empty">
-          <Search size={28} />
+        <div className="directory-empty">
           <h2>No tools match “{query}”</h2>
           <p>Try a task such as prices, equipment or events.</p>
           <button
+            type="button"
             className="button secondary"
             onClick={() => {
               setQuery("");
@@ -210,13 +338,26 @@ export function ToolDirectory() {
           >
             Reset search
           </button>
-        </section>
+        </div>
       )}
-      <p className="directory-footnote">
-        Crafting, refining and enchanting cover supported starter data. Full recipe and
-        current-patch verification remain incomplete. Sources can be unavailable; manual planning
-        stays available where supported.
-      </p>
+      <section className="raised has-scene directory-cta" data-scene="city">
+        <h2>
+          Plan a <em>crafting</em> session
+        </h2>
+        <p>List what you want to make, tick off what you already own and buy the rest.</p>
+        <div className="directory-cta-actions">
+          <Link className="button primary" href={`/shopping-list?region=${region}`}>
+            Open the Crafting Planner <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <Link className="button secondary" href={`/tools/crafting?region=${region}`}>
+            Price a craft
+          </Link>
+        </div>
+        <p className="directory-footnote">
+          Recipes and game tables come from game data captured 27 Oct 2026. Prices come from the
+          Albion Online Data Project and can be missing; you can always type your own.
+        </p>
+      </section>
     </div>
   );
 }

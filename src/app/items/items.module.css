@@ -1,0 +1,15 @@
+/* Item database: a reading page on the landing measure */
+.page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+}
+/* Phones: the two-line description would centre the emblem below the title; pin it to the
+   title's cap line instead */
+@media (max-width: 700px) {
+  .page :global(.workspace-identity-head) {
+    align-items: flex-start;
+  }
+  .page :global(.workspace-emblem) {
+    margin-top: 2px;
+  }
+}

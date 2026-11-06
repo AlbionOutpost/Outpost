@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./teams.module.css";
+
+/** Accepts a team invitation; the server checks the link and the signed-in account again. */
 export function AcceptInvite({ token }: { token: string }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const router = useRouter();
   return (
     <>
+      {message && (
+        <p role="alert" className={`${styles.alert} ${styles.fullRow}`}>
+          {message}
+        </p>
+      )}
       <button
         className="button primary"
         disabled={busy}
@@ -25,9 +33,8 @@ export function AcceptInvite({ token }: { token: string }) {
           }
         }}
       >
-        Accept invitation
+        {busy ? "Joining…" : "Accept invitation"}
       </button>
-      {message && <p role="alert">{message}</p>}
     </>
   );
 }

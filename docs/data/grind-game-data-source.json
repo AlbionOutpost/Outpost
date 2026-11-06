@@ -71,8 +71,8 @@
       "content": "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), enchanted variants .1\u2013.4, focus, silver, output count and non-returnable flags"
     },
     "src/lib/albion/game/reference-tables.json": {
-      "sha256": "9d9c409c26db94a922cfd5a7d4cd1fdd316dd666333b91d1cb0c3c6dcd2692d1",
-      "bytes": 13049,
+      "sha256": "f0b1b49d1b9735536268f09575a8fd1bc1d29d349b8e969a7fc95c5c786abee9",
+      "bytes": 13066,
       "rows": 13,
       "content": "Thirteen reference tables as displayed on the archived table pages"
     },
@@ -89,6 +89,20 @@
     "inGameManuallyVerified": false,
     "currentPatchVerified": false
   },
-  "corrections": ["island-upgrade-cost table 1 row 2: 520,00 \u2192 520,000"],
+  "corrections": [
+    "island-upgrade-cost table 1 row 2: 520,00 \u2192 520,000",
+    "island-farming-bonuses table 1 row 2 column 2: Crenellated \u00b7 Burdock \u2192 Crenellated Burdock (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 2 column 3: Dragon \u00b7 Teasel \u2192 Dragon Teasel (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 2 column 4: Elusive \u00b7 Foxglove \u2192 Elusive Foxglove (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 2 column 5: Arcane \u00b7 Agaric \u00b7 Firetouched \u00b7 Mullein \u2192 Arcane Agaric \u00b7 Firetouched Mullein (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 2 column 6: Ghoul \u00b7 Yarrow \u2192 Ghoul Yarrow (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 2 column 7: Brightleaf \u00b7 Comfrey \u00b7 Dragon \u00b7 Teasel \u00b7 Firetouched \u00b7 Mullein \u2192 Brightleaf Comfrey \u00b7 Dragon Teasel \u00b7 Firetouched Mullein (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 1: Animal \u00b7 (butchering & \u00b7 produce) \u2192 Animal (butchering & produce) (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 2: Raw \u00b7 Goose \u00b7 Goose \u00b7 Eggs \u2192 Raw Goose \u00b7 Goose Eggs (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 3: Raw \u00b7 Goat \u00b7 Goat's \u00b7 Milk \u2192 Raw Goat \u00b7 Goat's Milk (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 4: Raw \u00b7 Beef \u00b7 Cow's \u00b7 Milk \u2192 Raw Beef \u00b7 Cow's Milk (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 5: Raw \u00b7 Pork \u2192 Raw Pork (text nodes rejoined: catalog name or one phrase)",
+    "island-farming-bonuses table 1 row 3 column 6: Raw \u00b7 Chicken \u00b7 Hen \u00b7 Eggs \u00b7 Raw \u00b7 Mutton \u00b7 Sheep's \u00b7 Milk \u2192 Raw Chicken \u00b7 Hen Eggs \u00b7 Raw Mutton \u00b7 Sheep's Milk (text nodes rejoined: catalog name or one phrase)"
+  ],
   "rightsBoundary": "Owner identifies the archived site as theirs. Factual game fields only; captured code is never executed or shipped."
 }

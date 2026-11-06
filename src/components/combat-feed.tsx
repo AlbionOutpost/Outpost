@@ -2,68 +2,62 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  Search,
-  Shield,
-  Skull,
-  Swords,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Search, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
-import type { CombatEvent, CombatFeed as Feed } from "@/lib/albion/combat-events";
-import { ItemIcon } from "./item-icon";
-import { offHandShadow } from "@/lib/albion/two-handed";
+import type { GearValue } from "@/lib/albion/kill-value";
+import type { CombatEvent, CombatFeed } from "@/lib/albion/combat-events";
+/** The API prices each victim's worn gear in the same response (see pricedCombatEvents). */
+type Feed = Omit<CombatFeed, "events"> & {
+  events: (CombatEvent & { gearValue?: GearValue })[];
+};
 import { equipmentName } from "@/lib/albion/equipment-catalog";
-function timestamp(value: string) {
-  return new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
-}
-function Gear({ player }: { player: CombatEvent["killer"] }) {
-  // A two-handed main hand fills the off hand too; the game shows it there, faded.
-  const shadow = offHandShadow(
-    player.equipment.find((item) => item.slot === "Main hand")?.itemId,
-    player.equipment.find((item) => item.slot === "Off hand")?.itemId,
-  );
+import { sourceAge } from "@/lib/albion/source-age";
+import { ItemIcon } from "./item-icon";
+import { KillCard } from "./kill-card";
+import { LoadoutBoard } from "./loadout-board";
+import { WellSelect } from "./well-select";
+import { EmptyWell } from "./empty-well";
+import { Disclosure } from "./disclosure";
+import { StatusLine } from "./status-line";
+import { NextStepCards } from "./next-step-cards";
+import styles from "./combat-feed.module.css";
+
+type Player = CombatEvent["killer"];
+const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
+const utc = (value: string) =>
+  new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
+/** Every recorded piece by name and quality, for the item details. */
+function Gear({ player, victim }: { player: Player; victim?: boolean }) {
   return (
-    <div className="combat-player-gear">
-      <div>
-        <strong>{player.name}</strong>
-        <span>{player.guild || "No guild reported"}</span>
-      </div>
-      <div className="combat-gear-strip">
-        {player.equipment.map((item) => (
-          <span
-            key={item.slot}
-            role="img"
-            title={
-              item.itemId
-                ? `${item.slot}: ${equipmentName(item.itemId)} · ${item.quality ? ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][item.quality - 1] : "Quality not reported"}`
-                : `${item.slot}: empty or not reported`
-            }
-            aria-label={
-              item.itemId
-                ? `${item.slot}: ${equipmentName(item.itemId)}`
-                : `${item.slot}: not reported`
-            }
-          >
-            {item.itemId ? (
-              <ItemIcon id={item.itemId} quality={item.quality || 1} size={42} />
-            ) : item.slot === "Off hand" && shadow ? (
-              <span className="combat-gear-shadow" aria-hidden="true">
-                <ItemIcon id={shadow} size={42} />
+    <div className={styles.gear}>
+      <strong className={victim ? styles.victimName : styles.killerName}>{player.name}</strong>
+      <ul>
+        {player.equipment.map((item) =>
+          item.itemId ? (
+            <li key={item.slot}>
+              <span
+                role="img"
+                aria-label={`${item.slot}: ${equipmentName(item.itemId)}`}
+                title={`${item.slot}: ${equipmentName(item.itemId)}`}
+              >
+                <ItemIcon id={item.itemId} quality={item.quality || 1} size={36} />
               </span>
-            ) : (
-              <Shield size={19} aria-hidden="true" />
-            )}
-          </span>
-        ))}
-      </div>
+              <span>
+                <b>{equipmentName(item.itemId)}</b>
+                <small>
+                  {item.slot} ·{" "}
+                  {item.quality ? qualities[item.quality - 1] : "quality not reported"}
+                </small>
+              </span>
+            </li>
+          ) : null,
+        )}
+      </ul>
     </div>
   );
 }
+
 export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const region = useOutpostRegion();
   const [offset, setOffset] = useState(0),
@@ -74,7 +68,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const [result, setResult] = useState<{ key: string; feed: Feed } | null>(null),
     [error, setError] = useState<{ key: string; message: string } | null>(null),
     [pending, setPending] = useState<string | null>(null);
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<Set<number>>(() => new Set());
   const controller = useRef<AbortController | null>(null);
   const key = `${region}:${offset}`;
   const refresh = useCallback(async () => {
@@ -120,6 +114,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   }, [automatic, refresh]);
   const feed = result?.key === key ? result.feed : null;
   const needle = query.trim().toLowerCase();
+  const filtered = Boolean(query || minimumFame !== "0");
   const events = (feed?.events || [])
     .filter((event) =>
       [event.killer.name, event.killer.guild, event.victim.name, event.victim.guild].some((value) =>
@@ -131,13 +126,21 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
       sort === "fame" ? b.fame - a.fame : Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
     );
   const loading = pending === key || (!feed && error?.key !== key);
+  const failed = error?.key === key;
+  const kills = mode === "kills";
+  const noun = kills ? "kills" : "deaths";
+  const turn = (to: number) => {
+    setOffset(to);
+    setOpen(new Set());
+  };
   return (
-    <div className="combat-feed-page support-combat-feed">
+    <div className={`combat-feed-page ${styles.page}`}>
       <WorkspaceHeading
         glyph="combat"
         scene="builds"
-        title={mode === "kills" ? "Global kill feed" : "Global death feed"}
-        description={`Recent published PvP events on ${regions[region].label}. Inspect the players and the equipment recorded in each fight.`}
+        title={kills ? "Global kill feed" : "Global death feed"}
+        accent={kills ? "kill" : "death"}
+        description={`The latest PvP ${noun} on ${regions[region].label}, with both loadouts as the game recorded them.`}
       >
         <MastheadTabs
           label="Combat feed"
@@ -146,20 +149,20 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
               href: "/tools/kill-feed",
               label: "Kill feed",
               icon: <Swords size={16} />,
-              current: mode === "kills",
+              current: kills,
             },
             {
               href: "/tools/kill-feed?view=deaths",
               label: "Death feed",
               icon: <Skull size={16} />,
-              current: mode === "deaths",
+              current: !kills,
             },
           ]}
         />
       </WorkspaceHeading>
-      <div className="raised combat-toolbar">
-        <label className="combat-search">
-          <Search size={17} aria-hidden="true" />
+      <section className={`raised ${styles.toolbar}`} aria-label="Feed filters">
+        <label className={styles.search}>
+          <Search size={16} aria-hidden="true" />
           <span className="sr-only">Filter this feed page by player or guild</span>
           <input
             placeholder="Filter this page by player or guild…"
@@ -168,16 +171,16 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
-        <label>
-          Sort this page
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="latest">Latest event</option>
+        <label className={styles.field}>
+          <span>Sort</span>
+          <WellSelect value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="latest">Latest first</option>
             <option value="fame">Highest kill fame</option>
-          </select>
+          </WellSelect>
         </label>
-        <label>
-          Minimum fame
-          <select
+        <label className={styles.field}>
+          <span>Kill fame</span>
+          <WellSelect
             aria-label="Minimum kill fame"
             value={minimumFame}
             onChange={(event) => setMinimumFame(event.target.value)}
@@ -186,173 +189,242 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             <option value="10000">10,000+</option>
             <option value="100000">100,000+</option>
             <option value="1000000">1,000,000+</option>
-          </select>
+          </WellSelect>
         </label>
-        <label className="combat-auto">
-          <input
-            type="checkbox"
-            checked={automatic}
-            onChange={(e) => setAutomatic(e.target.checked)}
-          />{" "}
-          Update every minute
-        </label>
-        <button
-          type="button"
-          className="button secondary"
-          onClick={() => void refresh()}
-          disabled={loading}
-        >
-          <RefreshCw size={15} className={loading ? "refreshing" : undefined} />
-          {loading ? "Updating…" : "Refresh feed"}
-        </button>
-      </div>
-      <div className="combat-source">
-        <span>
-          {feed
-            ? `${events.length} events shown · page ${offset / 20 + 1}`
-            : "Latest published events"}
-        </span>
-        <span>{feed ? `Checked ${timestamp(feed.fetchedAt)}` : "Albion Online Game Info"}</span>
-      </div>
-      {error?.key === key && (
-        <div className="task-state combat-error" role="alert">
-          <h2>Combat feed unavailable</h2>
-          <p>{error.message}</p>
-          <button className="button secondary" onClick={() => void refresh()} disabled={loading}>
-            Retry feed
+        <div className={styles.actions}>
+          <label className={styles.toggle}>
+            <input
+              type="checkbox"
+              checked={automatic}
+              onChange={(e) => setAutomatic(e.target.checked)}
+            />
+            Update every minute
+          </label>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => void refresh()}
+            disabled={loading}
+          >
+            <RefreshCw
+              size={15}
+              className={loading ? "refreshing" : undefined}
+              aria-hidden="true"
+            />
+            {loading ? "Updating…" : "Refresh feed"}
           </button>
-          {feed && <p>The last loaded page remains visible below.</p>}
+        </div>
+        <p className={styles.source}>
+          {feed
+            ? `${events.length} ${noun} shown · page ${offset / 20 + 1} · checked ${sourceAge(feed.fetchedAt).label}`
+            : "From Albion Online’s published PvP events."}
+        </p>
+      </section>
+      {failed && (
+        <div className={styles.error} role="alert">
+          <div>
+            <p className={styles.errorTitle}>The {kills ? "kill" : "death"} feed did not load.</p>
+            <p className={styles.errorLine}>
+              {error.message}
+              {feed ? " The last page that loaded stays below." : ""}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="pill-link"
+            onClick={() => void refresh()}
+            disabled={loading}
+          >
+            <RefreshCw size={15} aria-hidden="true" /> Retry feed
+          </button>
         </div>
       )}
-      {!feed && loading ? (
-        <div className="combat-skeleton" role="status" aria-label="Loading combat events">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i}>
-              <span />
-              <span />
-              <span />
+      {!feed ? (
+        loading ? (
+          <div className={`kill-grid ${styles.grid}`} aria-busy="true">
+            <div className={styles.loading}>
+              <StatusLine>Loading the {kills ? "kill" : "death"} feed…</StatusLine>
             </div>
-          ))}
-        </div>
-      ) : feed && !events.length ? (
-        <div className="task-state">
-          <h2>
-            {query || minimumFame !== "0"
-              ? "No events match these page filters"
-              : "No combat events returned"}
-          </h2>
-          <p>
-            {query || minimumFame !== "0"
-              ? "Clear the page filters or browse another page of published events."
-              : "The source returned no events for this page. Try the latest page or refresh later."}
-          </p>
-          <button
-            className="button secondary"
-            onClick={() => {
-              if (query || minimumFame !== "0") {
-                setQuery("");
-                setMinimumFame("0");
-              } else setOffset(0);
-            }}
-          >
-            {query || minimumFame !== "0" ? "Clear filter" : "Latest events"}
-          </button>
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className={`raised has-scene kill-card ${styles.card} ${styles.skeleton}`}
+                data-scene={["build", "composition", "market"][i]}
+                aria-hidden="true"
+              >
+                <div className="kill-boards">
+                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+                  <div className="kill-mid" />
+                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null
+      ) : !events.length ? (
+        <div className={styles.empty}>
+          <EmptyWell
+            emblem="kill-skull"
+            title={filtered ? "No events match these page filters" : `No ${noun} on this page`}
+            line={
+              filtered
+                ? "Clear the filters, or look at another page of the feed."
+                : "The game published nothing for this page yet. Refresh in a minute."
+            }
+            action={
+              filtered || offset > 0 ? (
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => {
+                    if (filtered) {
+                      setQuery("");
+                      setMinimumFame("0");
+                    } else turn(0);
+                  }}
+                >
+                  {filtered ? "Clear filter" : "Latest events"}
+                </button>
+              ) : undefined
+            }
+          />
         </div>
       ) : (
-        <div className="raised combat-event-list" aria-label="Published combat events">
-          {events.map((event) => {
-            const highlighted = mode === "kills" ? event.killer : event.victim;
-            const other = mode === "kills" ? event.victim : event.killer;
-            const weapon = highlighted.equipment.find((item) => item.slot === "Main hand");
-            const old = Date.parse(feed!.fetchedAt) - Date.parse(event.occurredAt) > 15 * 60000;
-            const future = Date.parse(event.occurredAt) > Date.parse(feed!.fetchedAt) + 60000;
+        <section className={`kill-grid ${styles.grid}`} aria-label={`Published ${noun}`}>
+          {events.map((event, i) => {
+            const at = Date.parse(feed.fetchedAt);
+            // The game publishes most fights minutes late; flag only the ones an hour behind.
+            const old = at - Date.parse(event.occurredAt) > 60 * 60000;
+            const future = Date.parse(event.occurredAt) > at + 60000;
+            const isOpen = open.has(event.id);
             return (
-              <article
-                className={`combat-event${open === event.id ? " is-open" : ""}`}
+              <KillCard
                 key={event.id}
+                event={event}
+                at={at}
+                gearValue={event.gearValue ?? null}
+                scene={["build", "composition", "market"][i % 3]}
+                className={`combat-event ${styles.card}`}
               >
-                <button
-                  className="combat-event-summary"
-                  aria-expanded={open === event.id}
-                  aria-controls={`combat-event-${event.id}`}
-                  onClick={() => setOpen(open === event.id ? null : event.id)}
-                >
-                  <span className="combat-weapon">
-                    {weapon?.itemId ? (
-                      <ItemIcon id={weapon.itemId} quality={weapon.quality || 1} size={56} />
-                    ) : (
-                      <Swords aria-hidden="true" />
-                    )}
-                  </span>
-                  <span className="combat-identity">
-                    <strong>{highlighted.name}</strong>
-                    <small>{highlighted.guild || "No guild reported"}</small>
-                  </span>
-                  <span className="combat-opponent">
-                    <span>{mode === "kills" ? "defeated" : "defeated by"}</span>
-                    <strong>{other.name}</strong>
-                    <small>{other.guild || "No guild reported"}</small>
-                  </span>
-                  <span className="combat-fame">
-                    <strong>{event.fame.toLocaleString()}</strong>
-                    <small>kill fame</small>
-                  </span>
-                  <span className="combat-when">
-                    <time dateTime={event.occurredAt}>{timestamp(event.occurredAt)}</time>
-                    {(old || future) && (
-                      <small>{future ? "Source time is ahead" : "Delayed source event"}</small>
-                    )}
-                  </span>
-                  <ChevronRight size={17} aria-hidden="true" />
-                </button>
-                {open === event.id && (
-                  <div id={`combat-event-${event.id}`} className="combat-event-details">
-                    <Gear player={event.killer} />
-                    <ArrowRight aria-hidden="true" />
-                    <Gear player={event.victim} />
-                    <p>
-                      Event #{event.id}
+                <div className={styles.foot}>
+                  <span className={styles.footMeta}>
+                    <span>
                       {event.participants !== null
-                        ? ` · ${event.participants} reported participants`
-                        : ""}
-                      . Equipment reflects the event record; absent items and unreported quality
-                      stay unknown.
+                        ? `${event.participants} ${event.participants === 1 ? "participant" : "participants"}`
+                        : "Participants not reported"}
+                    </span>
+                    {(old || future) && (
+                      <span className={styles.delayed} title={utc(event.occurredAt)}>
+                        {future ? "Source time is ahead" : "Delayed source event"}
+                      </span>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.detailsToggle}
+                    aria-expanded={isOpen}
+                    aria-controls={`combat-event-${event.id}`}
+                    onClick={() => {
+                      const next = new Set(open);
+                      if (isOpen) next.delete(event.id);
+                      else next.add(event.id);
+                      setOpen(next);
+                    }}
+                  >
+                    Item details <ChevronDown size={14} aria-hidden="true" />
+                  </button>
+                </div>
+                <div
+                  id={`combat-event-${event.id}`}
+                  className={`combat-event-details ${styles.details}`}
+                  data-open={isOpen || undefined}
+                  inert={!isOpen}
+                >
+                  <div>
+                    <Gear player={event.killer} />
+                    <Gear player={event.victim} victim />
+                    <p>
+                      Event #{event.id} · {utc(event.occurredAt)}. Slots the game did not report
+                      stay empty.
                     </p>
                   </div>
-                )}
-              </article>
+                </div>
+              </KillCard>
             );
           })}
-        </div>
+        </section>
       )}
-      <nav className="combat-pagination" aria-label="Combat feed pages">
-        <button
-          className="button secondary"
-          disabled={offset === 0 || loading}
-          onClick={() => {
-            setOffset(Math.max(0, offset - 20));
-            setOpen(null);
-          }}
-        >
-          <ChevronLeft size={15} /> Newer events
-        </button>
-        <span>Page {offset / 20 + 1} of at most 11</span>
-        <button
-          className="button secondary"
-          disabled={loading || !feed || feed.events.length < 20 || offset >= 200}
-          onClick={() => {
-            setOffset(offset + 20);
-            setOpen(null);
-          }}
-        >
-          Older events <ChevronRight size={15} />
-        </button>
-      </nav>
-      <p className="combat-footnote">
-        Kills and deaths are two views of the same published PvP events. Source publication can be
-        delayed; refreshing does not imply a newer fight. Item power and equipment are reported by
-        the game service, not simulated combat statistics.
-      </p>
+      {feed && (offset > 0 || feed.events.length >= 20) && (
+        <nav className={styles.pager} aria-label="Combat feed pages">
+          <button
+            type="button"
+            className="pill-link is-small"
+            disabled={offset === 0 || loading}
+            onClick={() => turn(Math.max(0, offset - 20))}
+          >
+            <ArrowLeft size={14} aria-hidden="true" /> Newer {noun}
+          </button>
+          <span>Page {offset / 20 + 1}</span>
+          <button
+            type="button"
+            className="pill-link is-small"
+            disabled={loading || !feed || feed.events.length < 20 || offset >= 200}
+            onClick={() => turn(offset + 20)}
+          >
+            Older {noun} <ArrowRight size={14} aria-hidden="true" />
+          </button>
+        </nav>
+      )}
+      <div className={styles.about}>
+        <Disclosure summary="About this feed">
+          <p className={styles.aboutText}>
+            Kills and deaths are the same fights seen from each side. The game publishes them with a
+            delay, so a refresh can show nothing new. Gear and IP are what the game recorded for the
+            fight; a slot it did not report stays empty.
+          </p>
+        </Disclosure>
+      </div>
+      <NextStepCards
+        id="combat-next"
+        title={
+          <>
+            Gear up for the next <em>fight</em>
+          </>
+        }
+        line="Find a PvP loadout, plan your party, or see the same fights from the other side."
+        link={{ href: "/builds", label: "All builds" }}
+        cards={[
+          {
+            href: "/builds/activities",
+            emblem: "strip-builds",
+            title: "Builds by activity",
+            line: "Loadouts players run for small scale, ganking, Hellgates and more.",
+            scene: "build",
+          },
+          {
+            href: "/compositions",
+            emblem: "strip-comps",
+            title: "Comps",
+            line: "Plan the party: roles, loadouts and swaps for every slot.",
+            scene: "composition",
+          },
+          kills
+            ? {
+                href: "/tools/kill-feed?view=deaths",
+                emblem: "fame",
+                title: "Death feed",
+                line: "The same fights, from the side that lost them.",
+                scene: "city",
+              }
+            : {
+                href: "/tools/kill-feed",
+                emblem: "trophy-gold",
+                title: "Kill feed",
+                line: "The same fights, from the side that won them.",
+                scene: "city",
+              },
+        ]}
+      />
     </div>
   );
 }

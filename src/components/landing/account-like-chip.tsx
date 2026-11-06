@@ -11,6 +11,56 @@ type Likes = {
   liked: boolean;
   signedIn: boolean;
 };
+
+/**
+ * Chips that read in the same tick share one `GET /api/library-likes?items=…` request: the
+ * homepage's build and comp chips cost one read on load and one on a focus refresh, not two.
+ * The answer is per account and never cached.
+ */
+let queue: { key: string; resolve: (likes: Likes) => void; reject: (error: Error) => void }[] = [];
+function readLikes(kind: string, slug: string) {
+  return new Promise<Likes>((resolve, reject) => {
+    if (!queue.length) setTimeout(flush, 0);
+    queue.push({ key: `${kind}:${slug}`, resolve, reject });
+  });
+}
+async function flush() {
+  const batch = queue;
+  queue = [];
+  const keys = [...new Set(batch.map((entry) => entry.key))];
+  const failed = () => Error("Likes are unavailable. Please try again later.");
+  for (let i = 0; i < keys.length; i += 10) {
+    const chunk = keys.slice(i, i + 10);
+    const waiting = batch.filter((entry) => chunk.includes(entry.key));
+    try {
+      const r = await fetch(
+        `/api/library-likes?${new URLSearchParams({ items: chunk.join(",") })}`,
+        {
+          cache: "no-store",
+        },
+      );
+      if (!r.ok) throw failed();
+      const body = (await r.json()) as {
+        signedIn: boolean;
+        items: Record<string, (Omit<Likes, "signedIn"> & { found: true }) | { found: false }>;
+      };
+      for (const entry of waiting) {
+        const item = body.items?.[entry.key];
+        if (item?.found)
+          entry.resolve({
+            count: item.count,
+            archivedCount: item.archivedCount,
+            outpostCount: item.outpostCount,
+            liked: item.liked,
+            signedIn: !!body.signedIn,
+          });
+        else entry.reject(failed());
+      }
+    } catch {
+      for (const entry of waiting) entry.reject(failed());
+    }
+  }
+}
 export function AccountLikeChip({
   kind,
   slug,
@@ -38,10 +88,8 @@ export function AccountLikeChip({
       lastRead = Date.now();
       const version = ++generation.current.version;
       try {
-        const r = await fetch(url, { signal: controller.signal, cache: "no-store" });
-        if (!r.ok) throw Error("Likes are unavailable. Please try again later.");
-        const body = await r.json();
-        if (version === generation.current.version) setValue(body);
+        const body = await readLikes(kind, slug);
+        if (!controller.signal.aborted && version === generation.current.version) setValue(body);
       } catch (e) {
         if (!controller.signal.aborted && version === generation.current.version)
           setNote(e instanceof Error ? e.message : "Likes unavailable.");
@@ -59,7 +107,7 @@ export function AccountLikeChip({
       controller.abort();
       window.removeEventListener("focus", refresh);
     };
-  }, [url]);
+  }, [kind, slug]);
   const label = !value?.signedIn
     ? `Sign in to like ${title}`
     : `${value.liked ? "Unlike" : "Like"} ${title}`;

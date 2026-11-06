@@ -22,7 +22,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
       { name: "next-auth.session-token", value: token, domain: "localhost", path: "/" },
     ]);
     await page.goto("/tools/farming?region=europe");
-    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("Not calculated");
+    await expect(page.locator('[data-result="farm-profit"]')).toHaveText("—Unavailable");
     await page.getByLabel("Seeds to plant", { exact: true }).fill("10");
     await page.getByLabel("Plants to water", { exact: true }).fill("5");
     await page.getByLabel("Harvest per plant", { exact: true }).fill("8");
@@ -34,7 +34,7 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
     await page.getByLabel("Produce sales tax + setup (%)", { exact: true }).fill("10");
     await page.getByLabel("Other costs per harvest · silver", { exact: true }).fill("100");
     await expectResultText(page.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
-    await expectResultText(page.locator(".farming-results"), "-13,100");
+    await expectResultText(page.locator("#farming-result"), "-13,100");
     await page.route("**/api/market/batch?*", (route) =>
       route.fulfill({
         json: {
@@ -46,7 +46,9 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
       }),
     );
     await page.getByRole("button", { name: "Refresh market observations", exact: true }).click();
-    await expect(page.getByRole("status").first()).toContainText("Manual prices kept");
+    await expect(
+      page.getByRole("status").filter({ hasText: "Manual prices kept" }).first(),
+    ).toBeVisible();
     await expectResultText(page.locator('[data-result="farm-profit"]'), "6,900", { exact: true });
     await page.getByText("Saved harvest scenarios & sharing", { exact: true }).click();
     await page.getByLabel("Scenario title", { exact: true }).fill("Harvest fixture");
@@ -75,9 +77,10 @@ test("farming estimates a supplied harvest, keeps manual prices and saves privat
       "aria-invalid",
       "true",
     );
-    await expect(shared.locator(".farming-inputs [role=alert]")).toContainText(
+    await expect(shared.locator("#farming-plan [role=alert]")).toContainText(
       "Check planted and watered quantities",
     );
+    await shared.getByRole("button", { name: "Change crop", exact: true }).click();
     await shared.getByRole("button", { name: "Arcane Agaric T2 · herb", exact: true }).click();
     await expect(shared.getByLabel("Unwatered seed yield (%)", { exact: true })).toHaveValue("33");
     await expect(shared.getByLabel("Seed unit price · silver", { exact: true })).toHaveValue("");

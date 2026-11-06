@@ -46,7 +46,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await page.getByLabel("Team name").fill("Verified guild workflows");
     await page.getByLabel("Workspace address").fill(slug);
     await page.getByLabel("Workspace visibility").selectOption("PUBLIC");
-    await page.getByRole("button", { name: "Create workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Create team", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Verified guild workflows", exact: true }),
     ).toBeVisible();
@@ -128,7 +128,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     expect((await action(0, { action: "role", userId: ids[1], role: "ADMIN" })).status()).toBe(200);
     const memberPage = await clients[3].newPage();
     await memberPage.goto(`/groups/${slug}`);
-    await memberPage.getByLabel("Message to group leaders").fill("I would like to join the roster");
+    await memberPage.getByLabel("Message to team leaders").fill("I would like to join the roster");
     await memberPage.getByRole("button", { name: "Request membership" }).click();
     await expect(memberPage.getByRole("status")).toContainText("Membership request saved");
     await page.reload();
@@ -178,6 +178,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     expect((await action(3, { action: "share-build", buildId: sourceBuild.id })).status()).toBe(
       403,
     );
+    await officerPage.getByRole("tab", { name: "Events", exact: true }).click();
     await officerPage.getByRole("button", { name: "New event", exact: true }).click();
     await officerPage.getByLabel("Event title").fill("Guild training operation");
     const tomorrowLocal = await officerPage.evaluate(() => {
@@ -197,7 +198,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await memberPage.getByLabel("Your role", { exact: true }).fill("Healer");
     await memberPage.getByRole("button", { name: "Save RSVP" }).click();
     await expect(
-      memberPage.getByText("Guild tester 3: MAYBE · Healer", { exact: true }),
+      memberPage.getByText("Guild tester 3 · Maybe · Healer", { exact: true }),
     ).toBeVisible();
     expect(
       await db.eventRSVP.count({ where: { userId: ids[3], status: "MAYBE", role: "Healer" } }),

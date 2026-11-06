@@ -1,15 +1,16 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { MastheadTabs } from "@/components/masthead-tabs";
-import { BookOpen, Coins, Swords } from "lucide-react";
-import { GuideDirectory } from "@/components/guide-directory";
-import Link from "@/components/build-region-link";
 import { libraryGuides } from "@/lib/grind-library";
+import { JsonLd } from "@/components/json-ld";
+import { itemListLd } from "@/lib/structured-data";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
+import { NextStepCards } from "@/components/next-step-cards";
+import styles from "./guides.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/guides", await searchParams);
 }
+
 export default async function Guides({
   searchParams,
 }: {
@@ -18,138 +19,57 @@ export default async function Guides({
   const params = await searchParams;
   const query = typeof params.q === "string" ? params.q.slice(0, 100) : "";
   const category = typeof params.category === "string" ? params.category.slice(0, 100) : "";
+  const guides = await libraryGuides();
   return (
-    <div className="guide-discovery-page support-guides">
+    <div className={styles.page}>
       <WorkspaceHeading
-        glyph="reference"
+        emblem={<></>}
         scene="guides"
-        title="Guides & resources"
-        description="Find your footing, plan your next run, or learn a new way to earn."
-      >
-        <MastheadTabs
-          label="Guide shortcuts"
-          tabs={[
-            {
-              href: "/guides/albion-journal-guide",
-              label: "Track your journal",
-              icon: <BookOpen size={16} />,
-            },
-            {
-              href: "/guides?category=Economy",
-              label: "Learn the economy",
-              icon: <Coins size={16} />,
-            },
-            { href: "/builds/library", label: "Find a loadout", icon: <Swords size={16} /> },
-          ]}
-        />
-      </WorkspaceHeading>
-      <GrindGuideDirectory guides={await libraryGuides()} query={query} category={category} />
+        title="Albion Online guides"
+        accent="guides"
+        description="Guides for progression, gathering, PvE, trading and crafting, and for using Outpost’s tools."
+      />
+      <JsonLd
+        data={itemListLd(
+          "Albion Online guides",
+          guides.map((g) => ({
+            name: g.title,
+            path: `/guides/${encodeURIComponent(g.slug)}`,
+          })),
+        )}
+      />
+      <GrindGuideDirectory guides={guides} query={query} category={category} />
       <AdSlot placement="hub" />
-      <div className="section-heading outpost-guide-heading">
-        <h2>
-          Getting comfortable <em>with Outpost</em>
-        </h2>
-        <p>Short notes for the tools you use here.</p>
-      </div>
-      <GuideDirectory
-        guides={[
+      <NextStepCards
+        id="guides-next"
+        title={
+          <>
+            Take it into your next <em>run</em>
+          </>
+        }
+        line="Track your journal, pick a loadout for the content, or price the trip."
+        link={{ href: "/tools", label: "All tools" }}
+        cards={[
           {
-            id: "market-quotes",
-            title: "Read a market quote",
-            category: "Economy",
-            summary: "Read prices, recognize stale observations and compare city quotes.",
-            content: (
-              <>
-                <p>
-                  The lowest sell order is an observed listing from a seller. The highest buy order
-                  is an observed offer from a buyer. Select your server, item and quality before
-                  comparing cities. Check each observation’s timestamp: stale prices can no longer
-                  represent the market, and an unavailable value is not a price of zero.
-                </p>
-                <p>
-                  Outpost uses community contributions from the{" "}
-                  <a className="text-link" href="https://www.albion-online-data.com/">
-                    Albion Online Data Project
-                  </a>
-                  . An observation does not prove inventory, volume or that a trade will execute.
-                </p>
-                <Link className="text-link" href="/tools/market">
-                  Compare market observations →
-                </Link>
-              </>
-            ),
+            href: "/guides/albion-journal-guide",
+            emblem: "tool-planner",
+            title: "Journal tracker",
+            line: "Every journal objective in one list, ticked off as you go.",
+            scene: "city",
           },
           {
-            id: "profit",
-            title: "Count the whole cost",
-            category: "Economy",
-            summary: "Account for materials, taxes, return assumptions and transport.",
-            content: (
-              <>
-                <p>
-                  Enter your purchase price, sale price and quantity. Add the tax, listing fees and
-                  transport assumptions for your own scenario. The trade calculator separates gross
-                  revenue, expenses and net profit; margin and return on investment use different
-                  denominators. Its example inputs do not establish current game fees.
-                </p>
-                <p>
-                  Production tools cover a starter recipe subset. Review the linked recipe sources,
-                  choose which materials qualify for returns and keep manual prices distinct from
-                  loaded observations. Missing inputs keep a complete estimate unavailable.
-                </p>
-                <Link className="text-link" href="/tools/flipping">
-                  Plan a trade →
-                </Link>
-              </>
-            ),
+            href: "/builds/activities",
+            emblem: "strip-builds",
+            title: "Builds by activity",
+            line: "Loadouts players run for each kind of content.",
+            scene: "build",
           },
           {
-            id: "loadouts",
-            title: "Build with a purpose",
-            category: "Equipment",
-            summary: "Choose gear, configure abilities and share the right revision.",
-            content: (
-              <>
-                <p>
-                  Start with a content type and a clear equipment plan. The supported equipment
-                  picker checks starter-family abilities; the exact-ID fields preserve a manual
-                  route for other items. Author-entered item power and ability notes remain
-                  estimates or notes, rather than verified combat statistics.
-                </p>
-                <p>
-                  Save a private build while planning. Choose public or unlisted visibility
-                  deliberately when sharing. Saved revisions let you preserve earlier plans; copying
-                  a build into a comp creates an independent snapshot.
-                </p>
-                <Link className="text-link" href="/builds/new">
-                  Create a loadout →
-                </Link>
-              </>
-            ),
-          },
-          {
-            id: "parties",
-            title: "Put every role in place",
-            category: "Group play",
-            summary: "Plan roles, assign players and keep equipment swaps visible.",
-            content: (
-              <>
-                <p>
-                  Choose a party size, assign players and roles, then configure each member’s
-                  loadout. Drag the handle to reorder or use the move buttons with a keyboard or
-                  touch. Record substitutes and requirements so the plan remains useful when
-                  attendance changes.
-                </p>
-                <p>
-                  Team workspaces bring shared comps, announcements, events and RSVP rosters
-                  together. Private resources require current membership. Saving a plan does not
-                  publish it to Discord or send an external notification.
-                </p>
-                <Link className="text-link" href="/compositions/new">
-                  Plan a comp →
-                </Link>
-              </>
-            ),
+            href: "/tools/market",
+            emblem: "tool-market",
+            title: "Market Explorer",
+            line: "Prices in every city, so you know where to buy and where to dump.",
+            scene: "market",
           },
         ]}
       />

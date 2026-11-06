@@ -1,4 +1,6 @@
+import { RotateCw } from "lucide-react";
 import { ItemIcon } from "./item-icon";
+import { StatusLine } from "./status-line";
 import { Silver } from "./silver";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
@@ -25,6 +27,8 @@ export function MarketQuoteHero({
   summary,
   newest,
   status,
+  failed = false,
+  onRetry,
   now,
 }: {
   item: string;
@@ -37,6 +41,9 @@ export function MarketQuoteHero({
   newest: { city: string; date: string } | null;
   /** Shown instead of the figures while loading, after a failure or without data. */
   status: string;
+  /** The request failed: the status is the page's one error, with a retry beside it. */
+  failed?: boolean;
+  onRetry?: () => void;
   now: number;
 }) {
   const tier = tierLabel(item);
@@ -96,9 +103,15 @@ export function MarketQuoteHero({
           </div>
         </dl>
       ) : (
-        <p className="mx-hero-status" role="status">
-          {status}
-        </p>
+        <div className="mx-hero-status">
+          <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
+          {failed && onRetry && (
+            <button type="button" className="pill-link is-small" onClick={onRetry}>
+              <RotateCw size={14} aria-hidden="true" />
+              Try again
+            </button>
+          )}
+        </div>
       )}
     </section>
   );

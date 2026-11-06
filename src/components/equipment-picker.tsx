@@ -8,10 +8,12 @@ export function EquipmentPicker(props: {
   variant?: "build" | "embedded";
   view?: BuildStudioView;
   captureUndo?: () => () => void;
+  boardEmpty?: React.ReactNode;
+  flaggedSlot?: string;
 }) {
   return props.variant === "build" ? (
     <BuildEquipmentStudio {...props} />
   ) : (
-    <EquipmentWorkbench {...props} />
+    <EquipmentWorkbench value={props.value} onChange={props.onChange} variant={props.variant} />
   );
 }

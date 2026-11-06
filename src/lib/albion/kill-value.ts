@@ -18,7 +18,8 @@ type Rankable = {
   victim: { equipment: { itemId: string | null; quality?: number | null }[] };
 };
 
-export function rankByGearValue<K extends Rankable>(
+/** Each kill with its victim's estimated gear value, in the order given. */
+export function withGearValue<K extends Rankable>(
   kills: K[],
   prices: MarketPrice[],
   cities: readonly string[],
@@ -34,21 +35,30 @@ export function rankByGearValue<K extends Rankable>(
       const key = `${p.item_id}:${p.quality}`;
       lowest.set(key, Math.min(lowest.get(key) ?? Infinity, p.sell_price_min));
     }
-  return kills
-    .map((kill) => {
-      let total = 0,
-        priced = 0,
-        missing = 0;
-      for (const piece of kill.victim.equipment) {
-        if (!piece.itemId) continue;
-        const best = lowest.get(`${piece.itemId}:${piece.quality ?? 1}`);
-        if (best === undefined) missing++;
-        else {
-          total += best;
-          priced++;
-        }
+  return kills.map((kill) => {
+    let total = 0,
+      priced = 0,
+      missing = 0;
+    for (const piece of kill.victim.equipment) {
+      if (!piece.itemId) continue;
+      const best = lowest.get(`${piece.itemId}:${piece.quality ?? 1}`);
+      if (best === undefined) missing++;
+      else {
+        total += best;
+        priced++;
       }
-      return { ...kill, gearValue: priced ? { total, priced, missing } : null };
-    })
-    .sort((a, b) => (b.gearValue?.total ?? -1) - (a.gearValue?.total ?? -1) || b.fame - a.fame);
+    }
+    return { ...kill, gearValue: priced ? { total, priced, missing } : null };
+  });
+}
+
+export function rankByGearValue<K extends Rankable>(
+  kills: K[],
+  prices: MarketPrice[],
+  cities: readonly string[],
+  now = Date.now(),
+): (K & { gearValue: GearValue })[] {
+  return withGearValue(kills, prices, cities, now).sort(
+    (a, b) => (b.gearValue?.total ?? -1) - (a.gearValue?.total ?? -1) || b.fame - a.fame,
+  );
 }

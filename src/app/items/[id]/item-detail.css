@@ -1,0 +1,380 @@
+/* Item page (/items/[id]): one framed panel per section (prices, abilities, recipe, tiers,
+   used in), wells inside them, builds as a section with the landing heading. Route sheet. */
+
+.app.outpost .item-reference-page.item-reference-page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+}
+.app.outpost .item-metadata-detail.item-metadata-detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 26px;
+  overflow-wrap: break-word;
+}
+/* Recipe and "used in" share a row; everything else spans it (or a lone one does) */
+.app.outpost .item-metadata-detail > :not(.item-supported-recipe, .item-used-in),
+.app.outpost .item-metadata-detail > .item-supported-recipe:not(:has(+ .item-used-in)),
+.app.outpost .item-metadata-detail > .item-used-in:not(.item-supported-recipe + .item-used-in) {
+  grid-column: 1 / -1;
+}
+.app.outpost .item-panel {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-6);
+}
+.app.outpost .item-panel > div:first-child {
+  margin-bottom: 0;
+}
+
+/* Shared wells */
+.app.outpost
+  .item-reference-page
+  :is(
+    .item-ability-column,
+    .item-recipe-option li,
+    .item-variant-well,
+    .item-used-in-list li,
+    .item-variant-picker ul li > *
+  ) {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .item-reference-page :is(.item-row-well, .item-spell-well) {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+.app.outpost .item-reference-page .item-spell-well {
+  overflow: hidden;
+  border-radius: 999px;
+}
+.app.outpost .item-reference-page .item-spell-well img {
+  border-radius: 999px;
+}
+
+/* Prices: Market Explorer's figures and City orders table, inside the panel. The item itself
+   is the masthead, so the hero keeps only its figures. */
+.app.outpost .item-price-panel.mx.is-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: stretch;
+}
+.app.outpost .item-price-panel.is-item.mx .mx-hero {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.app.outpost .item-price-panel.is-item.mx .mx-hero::before,
+.app.outpost .item-price-panel.is-item.mx .mx-hero::after,
+.app.outpost .item-price-panel.is-item.mx .mx-identity {
+  display: none;
+}
+.app.outpost .item-price-panel.is-item.mx .mx-source {
+  margin: 0;
+}
+
+/* Masthead: back link, the item ID chip and the market action share one row */
+.app.outpost .item-masthead-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 16px;
+}
+.app.outpost .item-masthead-row .masthead-back {
+  margin: 0;
+}
+.app.outpost .item-masthead-row > :last-child {
+  margin-left: auto;
+}
+.app.outpost .item-id-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 600 12px/1 var(--font-data);
+}
+
+/* Abilities: one column per slot, each ability a round spell well and its name */
+.app.outpost .item-ability-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+  gap: var(--space-3);
+}
+.app.outpost .item-ability-column {
+  min-width: 0;
+  padding: var(--space-3);
+}
+.app.outpost .item-ability-column h3 {
+  margin: 0 0 var(--space-3);
+}
+.app.outpost .item-slot-key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  min-height: 26px;
+  padding: 0 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 800 14px/1 var(--font-display);
+}
+.app.outpost .item-ability-column ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .item-ability-column li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  font: 600 14px/1.3 var(--font-ui);
+}
+.app.outpost .item-ability-column li small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font: 400 12px/1.35 var(--font-ui);
+}
+
+/* Recipe and used in: item rows */
+.app.outpost .item-recipe-option {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+.app.outpost .item-recipe-option + .item-recipe-option {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .item-recipe-option h3 {
+  margin: 0;
+  font: 650 14px/1.3 var(--font-ui);
+}
+.app.outpost :is(.item-recipe-option ul, .item-used-in-list) {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost :is(.item-recipe-option li, .item-used-in-list li) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+}
+.app.outpost .item-recipe-option li > :is(.item-inline-link, .item-inline-name),
+.app.outpost .item-used-in-name {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+  font: 600 14px/1.3 var(--font-ui);
+}
+.app.outpost .item-reference-page :is(.item-recipe-option, .item-used-in-list) small {
+  color: var(--muted);
+  font: 400 12px/1.3 var(--font-ui);
+}
+.app.outpost .item-recipe-option li strong {
+  flex: none;
+  font: 800 18px/1 var(--font-display);
+}
+.app.outpost .item-inline-link {
+  color: var(--text);
+  text-decoration: none;
+}
+.app.outpost .item-inline-link:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+}
+.app.outpost .item-used-in-list {
+  max-height: 520px;
+  overflow: auto;
+}
+.app.outpost .item-used-in-list li > .pill-link {
+  flex: none;
+}
+
+/* Tiers and enchantments */
+.app.outpost .item-variant-well {
+  overflow-x: auto;
+}
+.app.outpost .item-variant-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 6px;
+}
+.app.outpost .item-variant-table.item-variant-table :is(th, td) {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 700 12px/1.2 var(--font-ui);
+  text-align: center;
+}
+.app.outpost .item-variant-table.item-variant-table thead {
+  background: none;
+}
+.app.outpost .item-variant-table.item-variant-table th[scope="row"] {
+  width: 40px;
+  color: var(--secondary);
+  font: 800 15px/1 var(--font-display);
+}
+.app.outpost .item-variant-link {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text);
+  text-decoration: none;
+}
+.app.outpost .item-variant-link .numeric {
+  font: 600 12px/1.2 var(--font-data);
+}
+.app.outpost .item-variant-link small {
+  margin-left: 3px;
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+}
+.app.outpost .item-variant-link:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.app.outpost .item-variant-link.is-current {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.app.outpost .item-variant-picker {
+  display: none;
+}
+
+/* Builds that use the weapon */
+.app.outpost .item-builds {
+  margin-top: 46px;
+}
+.app.outpost .item-build-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .app.outpost .item-build-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 980px) {
+  .app.outpost .item-metadata-detail.item-metadata-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .app.outpost .item-metadata-detail.item-metadata-detail {
+    gap: 22px;
+  }
+  .app.outpost .item-panel {
+    padding: var(--space-4);
+  }
+  .app.outpost .item-ability-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  .app.outpost .item-ability-column {
+    padding: var(--space-2);
+  }
+  .app.outpost .item-ability-column li {
+    gap: var(--space-2);
+    font-size: 13px;
+  }
+  .app.outpost .item-reference-page .item-spell-well {
+    width: 36px;
+    height: 36px;
+  }
+  .app.outpost .item-masthead-row > :last-child {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .app.outpost .item-reference-page .masthead-tabs {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+    mask-image: none;
+  }
+  .app.outpost .item-panel.item-panel > :first-child > * {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .app.outpost .item-build-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+  /* Phones pick a tier, then see its five enchantments in a row */
+  .app.outpost .item-variant-well {
+    display: none;
+  }
+  .app.outpost .item-variant-picker {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .app.outpost .item-variant-picker label {
+    display: grid;
+    gap: 6px;
+    color: var(--secondary);
+    font: 600 12px/1.35 var(--font-ui);
+  }
+  .app.outpost .item-variant-picker label > :last-child {
+    width: 100%;
+  }
+  .app.outpost .item-variant-picker ul {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .app.outpost .item-variant-cell {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 4px;
+    min-height: 64px;
+    color: var(--muted);
+    font: 700 12px/1 var(--font-ui);
+    text-decoration: none;
+  }
+  .app.outpost .item-variant-cell.is-current {
+    border-color: var(--accent);
+    background: var(--accent-wash);
+    color: var(--accent-ink);
+  }
+}

@@ -16,6 +16,13 @@ const rules: Record<string, Rule> = {
       return q.length >= 2 && q.length <= 100 ? `q=${encodeURIComponent(q)}` : null;
     },
   },
+  "/api/landing": {
+    ttl: 120,
+    key: (params) => {
+      const region = params.get("region") || "";
+      return regions.has(region) ? `region=${region}` : null;
+    },
+  },
   "/api/landing/craft": {
     ttl: 120,
     key: (params) => {

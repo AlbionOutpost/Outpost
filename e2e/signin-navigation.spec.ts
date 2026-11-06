@@ -63,7 +63,7 @@ test("OAuth callback errors stay actionable and forged callbacks do not authenti
 }) => {
   await page.goto("/signin?error=OAuthCallback");
   await expect(
-    page.locator(".signin-page [role=alert]").filter({ hasText: "Discord could not finish" }),
+    page.locator("[data-signin] [role=alert]").filter({ hasText: "Discord could not finish" }),
   ).toBeVisible();
   const denied = await request.get(
     "/api/auth/callback/discord?code=invalid-local-fixture&state=invalid-local-state",
@@ -79,7 +79,9 @@ test("OAuth callback errors stay actionable and forged callbacks do not authenti
   await page.goto("/signin?error=%3Cscript%3Eprivate-provider-error%3C%2Fscript%3E");
   await expect(page.locator("main")).not.toContainText("private-provider-error");
   await expect(
-    page.locator(".signin-page [role=alert]").filter({ hasText: "Sign-in could not be completed" }),
+    page
+      .locator("[data-signin] [role=alert]")
+      .filter({ hasText: "Sign-in could not be completed" }),
   ).toBeVisible();
 });
 

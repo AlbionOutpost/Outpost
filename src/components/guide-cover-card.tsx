@@ -3,6 +3,7 @@ import { Clock } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import type { GuideNode } from "@/lib/grind-library-types";
+import styles from "./guide-cover-card.module.css";
 
 export type GuideCover = {
   slug: string;
@@ -29,7 +30,16 @@ export function guideWords(nodes: GuideNode[]): number {
 export const readingMinutes = (nodes: GuideNode[]) =>
   Math.max(1, Math.round(guideWords(nodes) / 230));
 
-/** A guide as a cover card: the artwork fills it, the reading time sits in the corner. */
+/** "26 Oct 2026", or null when the source gave no usable date. */
+export function guideDate(value: string) {
+  const date = new Date(value);
+  return value && !Number.isNaN(date.getTime())
+    ? date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    : null;
+}
+
+/** A guide as a cover card, like the landing's side stories: the artwork fills it, topic and
+ * reading time sit in the corner, the title and two lines of summary on a scrim at the foot. */
 export function GuideCoverCard({
   guide,
   suffix = "",
@@ -39,8 +49,9 @@ export function GuideCoverCard({
   suffix?: string;
   className?: string;
 }) {
+  const date = guideDate(guide.updatedAt);
   return (
-    <article className={`guide-card${className ? ` ${className}` : ""}`}>
+    <article className={`guide-card ${styles.card}${className ? ` ${className}` : ""}`}>
       <Link href={`/guides/${guide.slug}${suffix}`}>
         {guide.cover ? (
           <Image
@@ -55,20 +66,19 @@ export function GuideCoverCard({
             <ItemIcon id={guide.itemId || "T4_BAG"} size={96} />
           </span>
         )}
-        <span className="guide-card-time">
-          <Clock size={13} aria-hidden="true" />
-          {guide.minutes} min read
+        <span className={styles.meta}>
+          <span className={styles.category}>{guide.category}</span>
+          <span className={styles.time}>
+            <Clock size={13} aria-hidden="true" />
+            {guide.minutes} min read
+          </span>
         </span>
-        <span className="guide-card-copy">
-          <small>{guide.category}</small>
-          <h3>{guide.title}</h3>
+        <span className={`guide-card-copy ${styles.copy}`}>
+          <h3 title={guide.title}>{guide.title}</h3>
           <span>{guide.summary}</span>
           <em>
-            By {guide.author} · Updated{" "}
-            {new Date(guide.updatedAt).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "short",
-            })}
+            By {guide.author}
+            {date ? ` · Updated ${date}` : ""}
           </em>
         </span>
       </Link>

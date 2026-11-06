@@ -6,7 +6,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/?region=asia");
   await expect(page).toHaveTitle(/Outpost/);
-  await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
+  await expect(page.locator("h1")).toHaveText("Your Albion advantage.");
   await expect(page.locator(".top-brand")).toHaveAccessibleName("Outpost home");
   await expect(page.locator(".product-sidebar")).toHaveCount(0);
   await expect(page.locator(".site-header .desktop-navigation")).toBeVisible();
@@ -36,7 +36,9 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(browse).toHaveAttribute("href", "/builds/activities?region=asia");
   await browse.click();
   await expect(page).toHaveURL(/\/builds\/activities\?region=asia$/);
-  const create = page.getByRole("link", { name: "Create a build", exact: true });
+  const create = page
+    .locator(".workspace-identity")
+    .getByRole("link", { name: "Create a build", exact: true });
   await expect(create).toHaveAttribute("href", "/builds/new?region=asia");
   await create.click();
   await expect(page).toHaveURL(/\/builds\/new\?region=asia$/);

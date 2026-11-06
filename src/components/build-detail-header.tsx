@@ -47,7 +47,7 @@ export function BuildDetailHeader({
                 {tag}
               </span>
             ))}
-            {visibility && <span>{visibility.toLowerCase()}</span>}
+            {visibility && <span>{visibility.charAt(0) + visibility.slice(1).toLowerCase()}</span>}
           </div>
           <div className="detail-title-row">
             {itemId && <ItemIcon id={itemId} size={56} />}

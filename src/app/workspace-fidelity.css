@@ -190,16 +190,11 @@
   font-size: 12px;
 }
 .app.outpost .build-command-bar {
-  grid-template-columns: minmax(0, 1fr) 160px auto auto;
   padding: 16px 0;
   border: 0;
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
-}
-.app.outpost .build-command-bar > label:first-child input {
-  font-size: 20px;
-  font-weight: 600;
 }
 .app.outpost .party-command-bar {
   grid-template-columns: minmax(0, 1fr) 220px auto;

@@ -1,4 +1,25 @@
-/* Focused equipment workspace. Editor state and validation stay in the existing models. */
+/* Build editor (/builds/new, /builds/[id]/edit), in the build detail's panel language: one
+   command panel holding Save and Preview (they dock to the bottom once it scrolls away), pill
+   tabs, the shared loadout board beside the slot inspector, the detail page's ability tiles and
+   cost panel, a quiet delete row and the closing band. */
+.app.outpost .build-editor-page {
+  max-width: var(--workspace-width);
+  margin: 0 auto;
+  min-width: 0;
+}
+.app.outpost .build-editor-page .editor-backline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.app.outpost .focused-build-editor {
+  /* The landing's inset well, in tokens */
+  --editor-inset: inset 0 1px 3px color-mix(in srgb, var(--bg) 85%, transparent);
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
 .focused-build-editor > .editor-ready-guard {
   display: contents;
   border: 0;
@@ -6,506 +27,961 @@
   margin: 0;
   min-width: 0;
 }
-.focused-build-editor > .editor-ready-guard > .section {
-  margin-top: 0;
-}
 .app.outpost .focused-build-editor [hidden] {
   display: none !important;
 }
-.app.outpost .build-editor-page {
-  max-width: 1400px;
-}
-.app.outpost .build-editor-page > .page-title {
-  font-size: 30px;
-  margin: 0 0 12px;
-}
-.editor-backline {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.editor-backline a {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.editor-backline > a:last-child {
-  margin-left: auto;
-}
-.app.outpost .focused-build-editor .build-command-bar {
-  top: 72px;
-  z-index: 12;
-  align-items: end;
-  padding: 12px 14px;
-  gap: 12px;
-  border-radius: 8px;
-}
-.app.outpost .focused-build-editor .build-command-bar > label {
-  min-width: 120px;
-  font-size: 12px;
-}
-.app.outpost .focused-build-editor .build-command-bar > label:first-child {
-  min-width: 180px;
-}
-.app.outpost .focused-build-editor .build-command-bar > label:first-child input {
-  font-size: 20px;
-  font-weight: 650;
-}
-.app.outpost .focused-build-editor .build-save-action {
-  display: block;
-  flex-shrink: 0;
-}
-.app.outpost .focused-build-editor .build-command-bar > .button {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-.app.outpost .focused-build-editor .build-file-tools {
-  position: relative;
-  flex-shrink: 0;
-  padding: 10px 0;
-  font-size: 12px;
-}
-.focused-build-editor .build-file-tools > div {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 14px);
-  z-index: 20;
-  display: grid;
-  gap: 12px;
-  min-width: 290px;
-  max-width: min(360px, 90vw);
-  padding: 18px;
-  background: var(--panel-face);
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  box-shadow: 0 12px 30px #0004;
-}
-.focused-build-editor .build-file-tools input {
-  max-width: 100%;
-  font-size: 12px;
-}
-.editor-save-status {
-  margin: 8px 0 12px;
+.app.outpost .focused-build-editor :is(.editor-muted, .editor-game-note) {
+  margin: 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
 }
-.editor-workspace-tabs {
+.app.outpost
+  .focused-build-editor
+  :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Fields: one label row, 12px muted, every control a 44px well */
+.app.outpost .focused-build-editor :where(label:has(> span:first-child)) {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted);
+  font: 500 12px/1.4 var(--font-ui);
+}
+.app.outpost
+  .focused-build-editor
+  :is(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--editor-inset);
+  color: var(--text);
+  font: 500 14px/1.4 var(--font-ui);
+}
+.app.outpost .focused-build-editor select {
+  min-height: 44px;
+}
+.app.outpost .focused-build-editor label > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .focused-build-editor textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+.app.outpost .focused-build-editor input[type="number"] {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost
+  .focused-build-editor
+  :is(input:not([type="checkbox"], [type="radio"], [type="file"]), textarea):is(
+    :hover,
+    :focus-visible
+  ) {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+
+/* Command panel: name, activity and visibility; then status, menus and the save actions */
+.app.outpost .editor-command.raised {
+  display: grid;
+  gap: var(--space-4);
+  padding: 20px 24px;
+}
+.app.outpost .editor-command-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px) minmax(140px, 180px);
+  align-items: start;
+  gap: var(--space-4);
+}
+.app.outpost .editor-command-fields:not(:has(> label:nth-child(3))) {
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);
+}
+.app.outpost .focused-build-editor .editor-title-field input {
+  font: 800 20px/1.1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+.app.outpost .editor-command-foot {
   display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--border);
-  margin: 12px 0 0;
-  overflow: auto;
-  scrollbar-width: thin;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .editor-file-menu {
+  position: relative;
+}
+.app.outpost .editor-file-menu > summary {
+  min-height: 40px;
+  list-style: none;
+  cursor: pointer;
+}
+.app.outpost .editor-file-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.app.outpost .editor-file-menu > summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin: 0 2px 3px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+}
+.app.outpost .editor-file-menu[open] > summary::after {
+  margin-bottom: -3px;
+  transform: rotate(225deg);
+}
+.app.outpost .editor-file-menu > div {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  gap: var(--space-2);
+  width: 260px;
+  padding: var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+.app.outpost .editor-file-menu > div > .button {
+  justify-content: flex-start;
+  width: 100%;
+}
+.app.outpost .editor-file-menu > div > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .focused-build-editor label.editor-import {
+  display: inline-flex;
+  color: var(--text);
+  font: 600 14px/1.25 var(--font-ui);
+  cursor: pointer;
+}
+.app.outpost .editor-import:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.app.outpost .editor-messages {
+  display: grid;
+  gap: var(--space-2);
+}
+.app.outpost .editor-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--error) 55%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--error) 10%, var(--well));
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.app.outpost .editor-error > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--error);
+}
+
+/* Save and Preview: at rest in the command panel; docked, a framed bar inside the gutter */
+.app.outpost .editor-save-slot {
+  min-height: 44px;
+  margin-left: auto;
+}
+.app.outpost .editor-save-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.app.outpost .editor-save-bar > .button {
+  flex: none;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.app.outpost .editor-save-summary {
+  display: none;
+}
+.app.outpost .editor-save-bar.is-docked {
+  position: fixed;
+  z-index: 30;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  inset-inline: max(16px, calc((100% - var(--workspace-width)) / 2));
+  gap: var(--space-3);
+  padding: 10px 12px 10px 20px;
+  border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+.app.outpost .editor-save-bar.is-docked > .editor-save-summary {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.app.outpost .editor-save-summary strong {
+  overflow: hidden;
+  font: 800 17px/1.2 var(--font-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .editor-save-summary small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+html:has(.focused-build-editor) {
+  scroll-padding-bottom: 104px;
+}
+/* The page ends above the docked bar: the footer is never under it */
+body:has(.editor-save-bar.is-docked) {
+  padding-bottom: 92px;
+}
+
+/* Workspace tabs: the detail page's pill navigation */
+.app.outpost .editor-workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
 }
 .app.outpost .editor-workspace-tabs > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 20px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  background: none;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
   color: var(--muted);
-  font: 600 14px var(--font-ui);
+  font: 600 14px/1 var(--font-ui);
   white-space: nowrap;
-  min-height: 48px;
-}
-.app.outpost .editor-workspace-tabs > button[aria-selected="true"] {
-  color: var(--accent-ink);
-  border-bottom-color: var(--accent);
-  background: var(--accent-wash);
-}
-.editor-workspace-tabs > button > span {
-  padding: 1px 5px;
-  border: 1px solid var(--border);
-  font-size: 11px;
-  border-radius: 3px;
-}
-.app.outpost .focused-build-editor .build-editor-context {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  margin: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-.app.outpost .focused-build-editor .inventory-editor-studio {
-  display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  gap: 20px;
-  align-items: start;
-}
-.inventory-editor-studio > .studio-notice {
-  grid-column: 1/-1;
-}
-.app.outpost .editor-inventory-panel,
-.app.outpost .editor-slot-panel.studio-loadout-list {
-  padding: 18px;
-  min-width: 0;
-  background: var(--panel-face);
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
   box-shadow: none;
 }
-.editor-inventory-panel {
-  position: sticky;
-  top: 164px;
+.app.outpost .editor-workspace-tabs > button:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
 }
-.editor-inventory-panel > header {
+.app.outpost .editor-workspace-tabs > button[aria-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 22%, var(--well));
+  color: var(--text);
+}
+.app.outpost .editor-workspace-tabs > button > svg {
+  color: var(--accent-ink);
+}
+.app.outpost .editor-tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: 12px;
+}
+
+/* Notices: one line in a well, with its action */
+.app.outpost .focused-build-editor .editor-notice {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  align-items: start;
-  gap: 14px;
-  margin: 0 0 16px;
-}
-.app.outpost .editor-inventory-panel h2 {
+  gap: var(--space-2) var(--space-4);
   margin: 0;
-  font: 650 18px var(--font-ui);
-}
-.editor-inventory-panel > header p {
-  margin: 7px 0 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-.editor-inventory-panel > header > span {
-  color: var(--muted);
-  font: 12px var(--font-mono);
-}
-.editor-inventory-note {
-  border-top: 1px solid var(--border);
-  margin: 20px 0 0;
-  padding-top: 14px;
-  font-size: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--secondary);
+  font-size: 13px;
   line-height: 1.5;
-  color: var(--muted);
 }
-.editor-slot-panel {
-  scroll-margin-top: 90px;
+
+/* Equipment workspace: the board panel beside the slot inspector */
+.app.outpost .focused-build-editor .inventory-editor-studio {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+  align-items: stretch;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
 }
-.editor-slot-heading {
+.app.outpost .inventory-editor-studio > .editor-notice {
+  grid-column: 1 / -1;
+}
+.app.outpost .focused-build-editor :is(.editor-inventory-panel, .editor-slot-panel).raised {
+  min-width: 0;
+  padding: 24px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+.app.outpost .focused-build-editor .editor-inventory-panel {
   display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: var(--space-4);
 }
-.editor-slot-heading span {
-  font-size: 12px;
+.app.outpost .editor-piece-strip {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .editor-piece-strip > small {
   color: var(--muted);
+  font-size: 12px;
 }
-.app.outpost .editor-slot-heading h2 {
-  font: 650 24px var(--font-ui);
-  margin: 5px 0 0;
-}
-.editor-slot-switcher {
+.app.outpost .editor-piece-strip > div {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 12px 0 14px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 16px;
+}
+.app.outpost .editor-piece-strip button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+  box-shadow: none;
+}
+.app.outpost .editor-piece-strip button[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.app.outpost .editor-piece-strip img {
+  border-radius: 5px;
+}
+.app.outpost .focused-build-editor .editor-inventory-panel > :first-child {
+  margin-bottom: 0;
+}
+.app.outpost:not(.light) .focused-build-editor .editor-inventory-panel.raised {
+  background:
+    radial-gradient(
+      ellipse at 50% 46%,
+      color-mix(in srgb, var(--frame-rule) 14%, transparent),
+      transparent 68%
+    ),
+    var(--surface-raised);
+}
+/* The board: the landing window's board at panel size, abilities round on the pieces */
+.app.outpost .editor-inventory-panel .loadout-board {
+  --cell: 76px;
+  --gap: 16px;
+  padding: 4px 0 8px;
+}
+.app.outpost .editor-inventory-panel .loadout-board-slot {
+  grid-template-rows: var(--cell);
+  gap: 0;
+}
+.app.outpost .editor-inventory-panel .loadout-board-abilities {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(var(--cell) / -3.2);
+  height: calc(var(--cell) / 3);
+  pointer-events: none;
+}
+.app.outpost .editor-inventory-panel .loadout-board-abilities > span {
+  width: calc(var(--cell) / 3);
+  height: calc(var(--cell) / 3);
+  border-radius: 50%;
+  border-color: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+.app.outpost .editor-inventory-panel .loadout-board-abilities img {
+  border-radius: 50%;
+}
+.app.outpost .editor-inventory-panel .loadout-board-cell,
+.app.outpost .editor-inventory-panel .loadout-board-slot.is-empty .loadout-board-cell {
+  border: 1px solid var(--well-border);
+  background: var(--well);
+  box-shadow: var(--editor-inset);
+}
+.app.outpost .editor-slot-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  scroll-margin-top: 90px;
+}
+.app.outpost .editor-slot-panel > :first-child {
+  margin-bottom: 0;
+}
+.app.outpost .editor-slot-panel > .editor-game-note {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+/* Beside the board the slot chips would repeat it; they return once the board is above */
+.app.outpost .editor-slot-switcher {
+  display: none;
+  gap: 6px;
 }
 .app.outpost .editor-slot-switcher > button {
-  padding: 6px 9px;
-  min-height: 30px;
-  font-size: 12px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
   color: var(--muted);
+  font: 600 13px/1 var(--font-ui);
+  box-shadow: none;
+}
+.app.outpost .editor-slot-switcher > button:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
 }
 .app.outpost .editor-slot-switcher > button[aria-pressed="true"] {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-  background: var(--accent-wash);
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 22%, var(--well));
+  color: var(--text);
 }
-.editor-selected-item {
+
+/* The selected piece: a landing item row (render, name, tier and quality once, actions) */
+.app.outpost .editor-selected-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--editor-inset);
 }
-.editor-selected-item > img {
-  width: 76px;
-  height: 76px;
-  flex-shrink: 0;
+.app.outpost .editor-selected-item > img {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: calc(var(--radius-md) - 2px);
 }
-.editor-selected-item > div {
+.app.outpost .editor-empty-art {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px dashed var(--border);
+  border-radius: calc(var(--radius-md) - 2px);
+  color: var(--muted);
+}
+.app.outpost .editor-selected-item > div:not(.editor-item-actions) {
+  display: grid;
+  gap: 3px;
   flex: 1;
   min-width: 0;
 }
-.editor-selected-item small {
+.app.outpost .editor-selected-item strong {
+  overflow: hidden;
+  color: var(--text);
+  font: 800 19px/1.2 var(--font-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .editor-selected-item small {
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .editor-selected-item h3 {
-  margin: 5px 0 0;
-  font: 650 19px/1.35 var(--font-ui);
-  overflow-wrap: anywhere;
+.app.outpost .editor-item-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
 }
-.editor-selected-item > .button {
-  flex-shrink: 0;
-  font-size: 12px;
+/* One destructive style everywhere: a loss-tinted ghost button */
+.app.outpost .focused-build-editor .button.editor-remove-item {
+  border-color: color-mix(in srgb, var(--error) 40%, var(--well-border));
+  background: transparent;
+  color: var(--error);
 }
-.editor-empty-art {
-  display: grid;
-  place-items: center;
-  width: 76px;
-  height: 76px;
-  color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 6px;
+.app.outpost .focused-build-editor .button.editor-remove-item:hover {
+  border-color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
 }
-.app.outpost .editor-item-variants.gear-options {
+.app.outpost .focused-build-editor .button.editor-remove-item {
+  white-space: nowrap;
+}
+.app.outpost .focused-build-editor .button.editor-remove-item.is-icon {
+  width: 40px;
+  padding: 0;
+  justify-content: center;
+}
+.app.outpost .editor-item-variants {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--space-3);
+}
+.app.outpost :is(.editor-current-abilities, .editor-current-alternatives, .editor-starters) {
+  display: grid;
+  gap: var(--space-3);
+}
+.app.outpost :is(.editor-current-abilities, .editor-current-alternatives, .editor-starters) h3 {
+  margin: 0;
+  color: var(--text);
+  font: 650 14px/1.3 var(--font-ui);
+}
+.app.outpost .editor-subhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Ability tiles: the detail page's Q / W / E / Passive tiles, each one opens its choice */
+.app.outpost .focused-build-editor .editor-spell-tiles {
+  margin: 0;
   padding: 0;
-  margin: 0 0 18px;
-  border: 0;
   background: none;
 }
-.editor-item-variants label {
+.app.outpost .focused-build-editor label.editor-spell-tile {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  max-width: none;
+  min-height: 108px;
+  margin: 0;
+  padding: 12px 8px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--text);
+  font: 500 13px/1.35 var(--font-ui);
+  text-align: center;
+  cursor: pointer;
+}
+.app.outpost .editor-spell-tile:hover,
+.app.outpost .editor-spell-tile:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
+}
+.app.outpost .editor-spell-tile:has(select:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.app.outpost .editor-spell-tile.is-chosen {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--well-border));
+}
+.app.outpost .editor-spell-tile > small {
+  color: var(--muted);
   font-size: 12px;
 }
-.editor-item-variants select {
-  width: 100%;
-  min-width: 0;
+.app.outpost .editor-spell-tile > img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
 }
-.app.outpost .editor-current-abilities > h3,
-.app.outpost .editor-current-alternatives h3 {
-  font: 650 15px var(--font-ui);
-  margin: 0 0 12px;
+.app.outpost .editor-spell-tile > span {
+  overflow-wrap: normal;
 }
-.app.outpost .editor-ability-choices.studio-spell-choices {
+.app.outpost .editor-spell-tile:not(.is-chosen) > span:last-of-type {
+  color: var(--muted);
+}
+.app.outpost .editor-spell-empty {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 18px;
-  padding: 0;
-  margin: 0;
-  background: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px dashed var(--border);
+  border-radius: 50%;
+  color: var(--muted);
 }
-.editor-ability-choice {
+/* The native select covers the tile: the tile is its face, the picker stays the platform's */
+.app.outpost .focused-build-editor select.editor-spell-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.app.outpost .editor-ability-pieces {
+  display: grid;
+  gap: var(--space-3);
+}
+.app.outpost .editor-ability-piece {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.32fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .editor-ability-piece:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.app.outpost .editor-ability-piece.is-selected .editor-ability-piece-head strong {
+  color: var(--accent-ink);
+}
+/* Four columns, so every piece's Q / W / E / Passive line up and the weapon fills the row */
+.app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.app.outpost .editor-ability-piece-head {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
 }
-.editor-ability-choice > span:last-child {
+.app.outpost .editor-ability-piece-head > img {
+  flex: none;
+  border-radius: 6px;
+}
+.app.outpost .editor-ability-piece-head > div {
   display: grid;
-  gap: 5px;
   min-width: 0;
-  flex: 1;
 }
-.editor-ability-choice small {
+.app.outpost .editor-ability-piece-head small {
   color: var(--muted);
   font-size: 12px;
 }
-.editor-ability-choice select {
+.app.outpost .editor-ability-piece-head strong {
+  overflow: hidden;
+  font: 650 14px/1.3 var(--font-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Starter pieces and catalog rows: the landing's item rows, 52px renders */
+.app.outpost .editor-starter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.app.outpost
+  .focused-build-editor
+  :is(.editor-starter, .editor-catalog-drawer .studio-picker-item) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
   min-width: 0;
-  width: 100%;
-  min-height: 36px;
-  padding: 7px;
-  font-size: 12px;
-}
-.editor-ability-art {
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  color: var(--muted);
-  font: 600 15px var(--font-ui);
-}
-.editor-ability-art > img {
-  width: 42px;
-  height: 42px;
-}
-.editor-exact-equipment,
-.editor-game-note {
-  margin-top: 22px;
-  font-size: 12px;
-  color: var(--muted);
-}
-.editor-exact-equipment > label {
-  margin-top: 12px;
-}
-.editor-game-note p {
-  line-height: 1.65;
-}
-.editor-remove-item {
-  margin-top: 18px;
-  font-size: 12px;
-}
-.editor-empty-slot {
-  display: grid;
-  justify-items: center;
-  text-align: center;
-  gap: 14px;
-  padding: 35px 10px;
-  color: var(--muted);
-}
-.app.outpost .editor-empty-slot h3 {
+  min-height: 60px;
+  padding: 3px 12px 3px 3px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: none;
   color: var(--text);
-  margin: 0;
+  text-align: left;
 }
-.editor-empty-slot p {
-  max-width: 40ch;
-  margin: 0;
+/* Rows fill their column: they light their edge instead of growing past the drawer */
+.app.outpost
+  .focused-build-editor
+  :is(.editor-starter, .editor-catalog-drawer .studio-picker-item):is(:hover, :active) {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
 }
-.editor-current-alternatives .section-heading {
-  gap: 16px;
-  align-items: start;
+:root
+  .app.outpost[data-motion-enabled]
+  .focused-build-editor
+  :is(.editor-starter, .studio-picker-item):hover:not(:disabled) {
+  transform: none;
 }
-.editor-current-alternatives .section-heading p {
-  margin: 0;
-  font-size: 12px;
+.app.outpost .focused-build-editor :is(.editor-starter, .studio-picker-item) > img {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+}
+.app.outpost .focused-build-editor :is(.editor-starter, .studio-picker-item) > span {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+.app.outpost .focused-build-editor :is(.editor-starter, .studio-picker-item) :is(strong, small) {
+  justify-self: start;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .focused-build-editor :is(.editor-starter, .studio-picker-item) strong {
+  font: 650 14px/1.3 var(--font-ui);
+}
+.app.outpost .focused-build-editor :is(.editor-starter, .studio-picker-item) small {
   color: var(--muted);
-  max-width: 45ch;
+  font: 500 12px/1.3 var(--font-ui);
 }
-.editor-current-alternatives .section-heading .button {
-  flex-shrink: 0;
-  font-size: 12px;
-}
-.editor-swap-row {
+
+/* Swaps */
+.app.outpost .editor-swap-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
 }
-.editor-swap-row > img {
-  flex-shrink: 0;
-}
-.editor-swap-row > label {
-  flex: 1;
-  min-width: 0;
-  font-size: 12px;
-}
-.editor-swap-row select {
-  min-width: 0;
-  width: 100%;
-}
-.editor-swap-actions {
-  display: flex;
-  flex-shrink: 0;
-  gap: 6px;
-}
-@media (max-width: 600px) {
-  .editor-swap-row {
-    flex-wrap: wrap;
-  }
-  .editor-swap-row > label {
-    flex-basis: calc(100% - 64px);
-  }
-  .editor-swap-actions {
-    margin-left: 64px;
-  }
-}
-.editor-no-swaps {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.65;
-  padding: 20px 0;
-}
-.editor-template-workspace {
-  margin-top: 20px;
-}
-.editor-template-browser {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 20px 0;
-}
-.editor-template-browser > article {
-  padding: 18px;
-  border: 1px solid var(--border);
+.app.outpost .editor-swap-row > img {
+  flex: none;
   border-radius: 6px;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  align-items: start;
 }
-.editor-template-art {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.app.outpost .editor-template-browser h3 {
-  margin: 16px 0 8px;
-  font: 650 15px var(--font-ui);
-}
-.editor-template-browser p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
+.app.outpost .focused-build-editor .editor-swap-row > label {
   flex: 1;
 }
-.editor-template-browser .button {
-  margin-top: 12px;
-  font-size: 12px;
-  white-space: normal;
-  text-align: left;
+.app.outpost .editor-swap-actions {
+  display: flex;
+  flex: none;
+  gap: var(--space-2);
 }
-.editor-notes-workspace {
+.app.outpost .focused-build-editor label.editor-exact-equipment {
+  max-width: 420px;
+}
+
+/* Starting sets (Equipment) and spare sets (Alternatives) */
+.app.outpost .equipment-set-tools.is-expanded {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-.app.outpost .focused-build-editor .editor-notes-workspace > details {
-  margin: 0;
-  min-width: 0;
-  padding: 22px;
-  background: var(--panel-face);
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-}
-.editor-notes-workspace .advanced-build {
-  grid-column: 1/-1;
-  order: 3;
-}
-.editor-notes-workspace details > label,
-.editor-notes-workspace details > .input-grid {
-  margin-top: 18px;
-}
-.editor-notes-workspace textarea {
-  width: 100%;
-  min-width: 0;
-  resize: vertical;
-}
-.editor-price-workspace {
-  margin-top: 20px;
-  padding: 18px 22px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  background: var(--panel-face);
-  border-radius: 8px;
-}
-.editor-price-workspace > summary {
-  font-weight: 600;
-  font-size: 14px;
-}
-.editor-price-workspace .loadout-price-check {
-  margin-top: 20px;
+  margin: 26px 0 0;
   padding: 0;
   border: 0;
   background: none;
 }
+.app.outpost .editor-sets-panel.raised {
+  display: grid;
+  gap: var(--space-4);
+  padding: 24px;
+  border: 0;
+  background: var(--surface-raised);
+}
+.app.outpost .editor-sets-panel > :first-child {
+  margin-bottom: 0;
+}
+.app.outpost .editor-template-browser {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .editor-template-browser > article {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--editor-inset);
+}
+.app.outpost .editor-template-art {
+  display: flex;
+  gap: 6px;
+}
+.app.outpost .editor-template-art > img {
+  border-radius: 6px;
+}
+.app.outpost .editor-template-browser h3 {
+  margin: 6px 0 0;
+  overflow: hidden;
+  font: 800 17px/1.2 var(--font-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .editor-template-browser p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app.outpost .editor-template-browser .button {
+  justify-self: start;
+  margin-top: var(--space-2);
+}
+.app.outpost .is-expanded .set-template-controls {
+  display: flex;
+  align-items: end;
+  gap: var(--space-3);
+  margin: 0;
+}
+.app.outpost .is-expanded .set-template-controls > label {
+  flex: 1;
+}
+.app.outpost .is-expanded .saved-equipment-sets {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+/* A spare set is one full-width row: name and slots, the strip, then its actions */
+.app.outpost .is-expanded .saved-equipment-sets > article {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.6fr) minmax(0, 1fr) auto;
+  grid-template-areas: "name strip actions" "meta strip actions";
+  align-items: center;
+  gap: 4px var(--space-4);
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .is-expanded .saved-equipment-sets .section-heading {
+  display: contents;
+}
+.app.outpost .is-expanded .saved-equipment-sets h3 {
+  grid-area: name;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font: 800 17px/1.2 var(--font-display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.outpost .is-expanded .saved-equipment-sets .actions {
+  display: flex;
+  grid-area: actions;
+  gap: var(--space-2);
+  margin: 0;
+}
+.app.outpost .is-expanded .saved-equipment-sets .equipment-strip {
+  grid-area: strip;
+}
+.app.outpost .is-expanded .saved-equipment-sets small {
+  grid-area: meta;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Notes: settings beside strategy; exact item IDs fold inside the strategy panel */
+.app.outpost .editor-notes-workspace {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 26px;
+}
+.app.outpost .editor-notes-panel.raised {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: 24px;
+  border: 0;
+  background: var(--surface-raised);
+}
+.app.outpost .editor-notes-panel > :first-child {
+  margin-bottom: 0;
+}
+.app.outpost .editor-field-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-3);
+}
+.app.outpost .editor-id-rows {
+  display: grid;
+  gap: var(--space-3);
+}
+.app.outpost .editor-id-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--well-border);
+}
+.app.outpost .editor-id-row > :is(label:nth-child(4), label:nth-child(5)) {
+  grid-column: 1 / -1;
+}
+.app.outpost .editor-id-row > button,
+.app.outpost .editor-add-row {
+  justify-self: start;
+}
+
+/* Cost: the detail page's panel; delete: one quiet row */
+.app.outpost .build-detail-page.editor-price-workspace {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.app.outpost .editor-price-workspace > .detail-panel-frame {
+  margin: 0;
+}
+.app.outpost .editor-danger-zone {
+  margin: 0;
+  padding: 0 4px;
+}
+.app.outpost .editor-danger-zone > :only-child {
+  margin: 0;
+}
+.app.outpost .editor-danger-zone h2 {
+  font: 650 15px/1.3 var(--font-ui);
+}
+.app.outpost .focused-build-editor > .builds-next-step.raised {
+  margin: 70px 0 72px;
+}
+
+/* Preview: the build window as the lists show it beside its cost, then the detail view */
+.app.outpost .focused-build-editor dialog.wide > .editor-dialog-heading h2 {
+  margin: 0;
+  font: 800 24px/1.1 var(--font-display);
+}
+.app.outpost .editor-preview {
+  display: grid;
+  gap: 26px;
+}
+.app.outpost .editor-preview-top {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  align-items: start;
+  gap: 26px;
+}
+.app.outpost .editor-preview-card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.app.outpost .editor-preview-card > .editor-muted {
+  text-align: center;
+}
+.app.outpost .build-detail-page .editor-preview-cost {
+  margin: 0;
+  scroll-margin-top: 24px;
+}
+/* The cost head stacks its actions under the title so the line keeps its measure */
+.app.outpost .editor-preview-cost .loadout-price-check > :first-child {
+  flex-wrap: wrap;
+}
+.app.outpost .editor-preview-cost .loadout-price-check > :first-child > :last-child {
+  flex-basis: 100%;
+  margin-left: 0;
+}
+
+/* Catalog drawer: a framed sheet from the right */
 .app.outpost
   .focused-build-editor
   dialog.editor-dialog.contextual-drawer:has(.editor-catalog-drawer) {
@@ -513,16 +989,15 @@
   height: 100dvh;
   min-height: 100dvh;
   max-height: 100dvh;
-  block-size: 100dvh;
-  max-block-size: 100dvh;
   max-width: 100%;
   inset: 0 0 0 auto;
   margin: 0;
   padding: 0;
+  border: 0 solid transparent;
+  border-image: var(--frame) 25 / 25px / 10px stretch;
   border-radius: 0;
-  border: 0;
-  border-left: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
   overflow: hidden;
 }
 .app.outpost
@@ -536,10 +1011,23 @@
   dialog.contextual-drawer:has(.editor-catalog-drawer)
   > .editor-dialog-heading {
   position: static;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
-  padding: 16px 22px;
   margin: 0;
-  background: var(--panel);
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--well-border);
+  background: none;
+}
+.app.outpost
+  .focused-build-editor
+  dialog.contextual-drawer:has(.editor-catalog-drawer)
+  > .editor-dialog-heading
+  h2 {
+  margin: 0;
+  color: var(--muted);
+  font: 600 13px/1.3 var(--font-ui);
 }
 @media (prefers-reduced-motion: no-preference) {
   :root
@@ -550,548 +1038,264 @@
     clip-path: none;
   }
 }
-.editor-catalog-drawer {
-  min-height: 0;
+.app.outpost .focused-build-editor .editor-catalog-drawer {
   display: flex;
+  flex: 1;
   flex-direction: column;
+  min-height: 0;
+  padding: 0;
   overflow: hidden;
 }
 .app.outpost .editor-catalog-drawer .studio-picker-heading {
-  padding: 20px 22px 12px;
+  margin: 0;
+  padding: 18px 22px 12px;
 }
 .app.outpost .editor-catalog-drawer .studio-picker-heading h3 {
   margin: 0;
-  font: 650 20px var(--font-ui);
+  font: 800 24px/1.1 var(--font-display);
 }
-.editor-catalog-drawer .studio-picker-heading p {
+.app.outpost .editor-catalog-drawer .studio-picker-heading p {
+  margin: 4px 0 0;
   color: var(--muted);
-  font-size: 12px;
-  margin: 7px 0 0;
+  font-size: 13px;
 }
 .app.outpost .editor-catalog-drawer .studio-picker-toolbar {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 22px 18px;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0 22px 16px;
+  border: 0;
+  background: none;
 }
-.editor-catalog-drawer .studio-picker-search {
-  grid-column: 1/-1;
+.app.outpost .editor-catalog-drawer .studio-picker-search {
+  grid-column: 1 / -1;
 }
-.editor-catalog-drawer .studio-picker-toolbar label {
-  font-size: 12px;
-  min-width: 0;
+.app.outpost .editor-search-field {
+  position: relative;
+  display: block;
 }
-.editor-catalog-drawer .studio-picker-toolbar select {
-  min-width: 0;
-  width: 100%;
+.app.outpost .editor-search-field > svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.app.outpost .focused-build-editor .editor-search-field > input {
+  padding-left: 38px;
 }
 .app.outpost .editor-catalog-drawer .studio-picker-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
-  overflow: auto;
-  min-height: 0;
-  padding: 0 22px 22px;
   align-content: start;
+  gap: 6px;
+  min-height: 0;
+  margin: 0;
+  padding: 2px 22px 22px;
+  overflow: auto;
 }
-.app.outpost .editor-catalog-drawer .studio-picker-item {
+.app.outpost .editor-catalog-drawer .studio-picker-item > svg {
+  flex: none;
+  color: var(--accent-ink);
+}
+.app.outpost .focused-build-editor .editor-catalog-drawer .studio-picker-item.selected {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
+  background: color-mix(in srgb, var(--accent) 14%, var(--well));
+}
+.app.outpost .editor-catalog-drawer .studio-picker-pagination {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  text-align: left;
-  padding: 12px;
-  min-height: 84px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-.app.outpost .editor-catalog-drawer .studio-picker-item > img {
-  width: 58px;
-  height: 58px;
   flex-shrink: 0;
-}
-.editor-catalog-drawer .studio-picker-item > span {
-  display: grid;
-  gap: 5px;
-  flex: 1;
-  min-width: 0;
-}
-.editor-catalog-drawer .studio-picker-item small {
-  display: block;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 12px 22px;
+  border-top: 1px solid var(--well-border);
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .focused-build-editor .editor-catalog-drawer .studio-picker-item :is(strong, small) {
-  text-align: left;
-  justify-self: start;
-}
-.app.outpost .focused-build-editor .editor-catalog-drawer .studio-picker-item strong {
-  font-size: 14px;
-}
-.app.outpost .editor-catalog-drawer .studio-picker-item.selected {
-  border-color: var(--accent);
-  background: var(--accent-wash);
-}
-.editor-catalog-drawer .studio-picker-pagination {
-  padding: 12px 22px;
-  border-top: 1px solid var(--border);
-  font-size: 12px;
-}
+
 @media (max-width: 1180px) {
-  .app.outpost .focused-build-editor .build-command-bar {
-    flex-wrap: wrap;
-  }
-  .app.outpost .focused-build-editor .build-command-bar > label:first-child {
-    flex-basis: calc(100% - 430px);
-  }
-  .app.outpost .focused-build-editor .inventory-editor-studio {
-    grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
-    gap: 16px;
-  }
-  .app.outpost .editor-ability-choices.studio-spell-choices {
-    grid-template-columns: 1fr;
+  .app.outpost .is-expanded .saved-equipment-sets > article {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "name actions" "strip strip" "meta meta";
   }
 }
 @media (max-width: 980px) {
-  .app.outpost .focused-build-editor .inventory-editor-studio {
+  .app.outpost .focused-build-editor .inventory-editor-studio,
+  .app.outpost .editor-notes-workspace,
+  .app.outpost .editor-preview-top {
     grid-template-columns: minmax(0, 1fr);
   }
-  .editor-inventory-panel {
-    position: static;
+  .app.outpost .editor-template-browser {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .editor-inventory-panel > .inventory-equipment-board {
-    max-width: 330px;
-    margin-inline: auto;
-  }
-  .editor-notes-workspace {
-    grid-template-columns: 1fr;
-  }
-  .editor-template-browser {
-    grid-template-columns: 1fr;
-  }
-  .editor-template-browser > article {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: 16px;
-    align-items: start;
-  }
-  .editor-template-browser h3 {
-    margin: 0;
-  }
-  .editor-template-browser p {
-    grid-column: 2;
-  }
-  .editor-template-browser .button {
-    grid-column: 2;
-    justify-self: start;
-  }
-  .editor-template-art {
-    width: 92px;
-    grid-row: 1/4;
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost .focused-build-editor {
-    padding-bottom: 84px;
-  }
-  .editor-backline {
-    font-size: 11px;
-    gap: 9px;
-  }
-  .editor-backline > span {
-    display: none;
-  }
-  .app.outpost .focused-build-editor .build-command-bar {
-    position: static;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 10px;
-    gap: 8px;
-  }
-  .app.outpost .focused-build-editor .build-command-bar > label,
-  .app.outpost .focused-build-editor .build-command-bar > label:first-child {
-    min-width: 0;
-    grid-column: auto;
-  }
-  .app.outpost .focused-build-editor .build-command-bar > label:first-child {
-    grid-column: 1/-1;
-  }
-  .app.outpost .focused-build-editor .build-command-bar > label:first-child input {
-    font-size: 18px;
-  }
-  .app.outpost .focused-build-editor .editor-persistent-save {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 30;
-    padding: 12px 50% calc(12px + env(safe-area-inset-bottom)) 16px;
-    background: var(--panel);
-    border-top: 1px solid var(--border);
-  }
-  .app.outpost .focused-build-editor .editor-persistent-save > button {
-    width: 100%;
-    font-size: 12px;
-    padding-inline: 9px;
-    min-height: 40px;
-  }
-  .app.outpost .focused-build-editor [data-editor-action="preview"] {
-    position: fixed;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    right: 16px;
-    width: calc(50% - 28px);
-    min-height: 40px;
-    z-index: 31;
-    font-size: 12px;
-  }
-  .app.outpost .focused-build-editor .build-file-tools {
-    grid-column: 1/-1;
-    justify-self: start;
-    padding: 2px 0;
-  }
-  .focused-build-editor .build-file-tools > div {
-    right: auto;
-    left: 0;
-    min-width: 260px;
-    max-width: calc(100vw - 64px);
-  }
-  .app.outpost .editor-workspace-tabs > button {
-    padding: 12px 13px;
-    gap: 6px;
-    font-size: 12px;
-    min-height: 44px;
-  }
-  .editor-workspace-tabs > button > svg {
-    display: none;
-  }
-  .app.outpost .focused-build-editor .build-editor-context {
-    flex-wrap: wrap;
-    gap: 5px;
-    padding: 10px 0;
-  }
-  .app.outpost .editor-inventory-panel,
-  .app.outpost .editor-slot-panel.studio-loadout-list {
-    padding: 16px;
-  }
-  .editor-inventory-panel > header {
-    margin-bottom: 16px;
-  }
-  .editor-selected-item {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .editor-selected-item > img,
-  .editor-empty-art {
-    width: 64px;
-    height: 64px;
-  }
-  .editor-selected-item > .button {
-    width: 100%;
-    justify-content: center;
-  }
-  .app.outpost .editor-item-variants.gear-options {
-    gap: 8px;
-  }
-  .app.outpost .editor-slot-heading h2 {
-    font-size: 21px;
-  }
-  .editor-slot-heading > span {
-    display: none;
-  }
-  .editor-current-alternatives .section-heading {
-    flex-direction: column;
-  }
-  .editor-template-browser > article {
-    grid-template-columns: 1fr;
-  }
-  .editor-template-art {
-    width: auto;
-    grid-row: auto;
-  }
-  .editor-template-browser p,
-  .editor-template-browser .button {
-    grid-column: auto;
-  }
-  .app.outpost .focused-build-editor .editor-notes-workspace > details {
-    padding: 16px;
-  }
-}
-.app.outpost .focused-build-editor .editor-inventory-panel > header,
-.app.outpost .focused-build-editor .editor-slot-heading {
-  background: none;
-  padding: 0;
-  border: 0;
-  box-shadow: none;
-}
-@media (max-width: 600px) {
-  .app.outpost .focused-build-editor .build-file-tools {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: end;
-    margin-bottom: 12px;
-    justify-self: end;
-  }
-  .focused-build-editor .build-file-tools > div {
-    right: 0;
-    left: auto;
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost .focused-build-editor .build-command-bar {
-    padding: 8px;
-    gap: 6px;
-  }
-  .app.outpost .focused-build-editor .build-command-bar > label {
-    gap: 4px;
-    line-height: 15px;
-  }
-  .app.outpost .focused-build-editor .build-command-bar :is(input, select) {
-    height: 40px;
-    min-height: 40px;
-    padding: 8px;
-    line-height: 22px;
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost
-    .focused-build-editor
-    .build-command-bar:has([aria-label="Build visibility"])
-    .build-file-tools {
-    grid-row: 3;
-    grid-column: 2;
-  }
-  .app.outpost
-    .focused-build-editor
-    .build-command-bar
-    > .button:not([data-editor-action="preview"]) {
-    grid-row: 3;
-    grid-column: 1;
-    font-size: 12px;
-  }
-}
-.app.outpost .focused-build-editor .editor-slot-panel.studio-loadout-list {
-  display: block;
-}
-.app.outpost .focused-build-editor .editor-inventory-panel > header,
-.app.outpost .focused-build-editor .editor-slot-heading {
-  height: auto;
-  min-height: 0;
-  position: static;
-}
-.editor-exact-equipment,
-.editor-game-note {
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-}
-.editor-ability-choice {
-  padding: 6px 0;
-}
-.editor-ability-choice > span:last-child {
-  gap: 3px;
-}
-.editor-ability-choice small {
-  line-height: 15px;
-}
-.editor-ability-choice select {
-  height: 34px;
-  min-height: 34px;
-  line-height: 20px;
-  padding: 6px;
-}
-@media (max-width: 600px) {
-  .editor-ability-choice select {
-    height: 40px;
-    min-height: 40px;
-    padding: 8px;
-  }
-}
-@media (max-width: 374px) {
+  /* The tabs stay in reach while the inspector scrolls under them */
   .app.outpost .editor-workspace-tabs {
-    gap: 0;
-  }
-  .app.outpost .editor-workspace-tabs > button {
-    padding: 11px 8px;
-    gap: 4px;
-  }
-  .editor-workspace-tabs > button > span {
-    display: none;
-  }
-}
-.app.outpost .focused-build-editor .editor-catalog-drawer {
-  padding: 0;
-  flex: 1;
-}
-.app.outpost .focused-build-editor .editor-catalog-drawer .studio-picker-item {
-  flex-direction: row;
-  justify-content: flex-start;
-}
-.editor-catalog-drawer .studio-picker-toolbar {
-  margin-bottom: 0;
-}
-.editor-catalog-drawer .studio-picker-pagination {
-  margin-top: 0;
-  flex-shrink: 0;
-}
-@media (max-width: 980px) {
-  .editor-workspace-tabs {
     position: sticky;
     top: 0;
     z-index: 11;
-    background: var(--bg);
+    padding: 8px 0;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
   }
-  .editor-slot-panel {
+  .app.outpost .editor-slot-panel {
     scroll-margin-top: 64px;
   }
+  .app.outpost .editor-slot-switcher {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
-
-/* Inner-page pass (landing quality): the editor opens on the builds masthead; its back pill
-   and draft status sit on one line, the guest start is a dashed well, slot switches are pills
-   and every control is a well. Framed panels stay dark in both themes. */
-.app.outpost .build-editor .editor-backline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  margin: 0 0 var(--space-4);
-}
-.app.outpost .build-editor .editor-backline .editor-back {
-  gap: 6px;
-  padding-left: 12px;
-}
-.app.outpost .build-editor .editor-draft-label {
-  display: inline-flex;
-  align-items: center;
-  min-height: 26px;
-  margin-left: auto;
-  padding: 0 10px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font: 600 12px/1 var(--font-ui);
-}
-.app.outpost .build-editor .build-editor-context {
-  padding: 0;
-  margin: 0 0 var(--space-4);
-  border: 0;
-  background: none;
-  box-shadow: none;
-}
-.app.outpost .build-editor .guest-build-notice {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3) var(--space-4);
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
-  border-image: none;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-scrim) 82%, transparent);
-  box-shadow: none;
-}
-.app.outpost .build-editor .guest-build-notice p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-.app.outpost .build-editor .guest-build-notice strong {
-  color: var(--text);
-}
-.app.outpost .build-editor .editor-slot-switcher {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.app.outpost .build-editor .editor-slot-switcher > button {
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font: 600 12px/1 var(--font-ui);
-}
-.app.outpost .build-editor .editor-slot-switcher > button:hover {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
-}
-.app.outpost
-  .build-editor
-  .editor-slot-switcher
-  > button:is([aria-pressed="true"], [aria-current="true"], .active, .is-active) {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-.app.outpost .build-editor select:not([multiple]):not([size]) {
-  min-height: 42px;
-  padding: 0 36px 0 var(--space-3);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
-      no-repeat,
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
-      no-repeat,
-    var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-  appearance: none;
-  cursor: pointer;
-}
-.app.outpost .build-editor select:not([multiple]):not([size]) option {
-  background: var(--surface-raised);
-  color: var(--text);
-}
-.app.outpost .build-editor input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-.app.outpost .build-editor textarea {
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-}
-.app.outpost
-  .build-editor
-  :is(select, input:not([type="checkbox"]):not([type="radio"]), textarea):is(
-    :hover,
-    :focus-visible
-  ) {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
-}
-.app.outpost .build-editor .editor-danger-zone {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 26px;
-}
-.app.outpost .build-editor .editor-price-workspace {
-  margin-top: 26px;
-  padding: 0;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-scrim) 88%, transparent);
-  box-shadow: inset 0 1px 3px #0009;
-}
-.app.outpost .build-editor .editor-price-workspace > summary {
-  min-height: 48px;
-  padding: 0 var(--space-4);
-  color: var(--text);
-  font: 650 15px/48px var(--font-ui);
-  cursor: pointer;
-}
-.app.outpost .build-editor .editor-price-workspace[open] > :not(summary) {
-  margin: 0 var(--space-4) var(--space-4);
-}
-@media (max-width: 600px) {
-  .app.outpost .build-editor .editor-item-variants.gear-options {
+@media (max-width: 700px) {
+  .app.outpost .focused-build-editor {
+    gap: 16px;
+  }
+  .app.outpost .editor-ability-piece {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .build-editor-page .editor-backline {
+    margin-top: var(--space-3);
+  }
+  .app.outpost .editor-command.raised,
+  .app.outpost .focused-build-editor :is(.editor-inventory-panel, .editor-slot-panel).raised,
+  .app.outpost .editor-sets-panel.raised,
+  .app.outpost .editor-notes-panel.raised {
+    padding: 16px;
+  }
+  .app.outpost .editor-command-fields,
+  .app.outpost .editor-command-fields:not(:has(> label:nth-child(3))) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+  .app.outpost .editor-command-fields > .editor-title-field {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .editor-command-foot > .editor-draft-label {
+    flex-basis: 100%;
+    justify-content: flex-start;
+    margin-right: 0;
+    border: 0;
+    background: none;
+    padding: 0;
+  }
+  .app.outpost .editor-save-slot {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+  .app.outpost .editor-save-bar > .button {
+    flex: 1 1 0;
+    justify-content: center;
+    padding-inline: 10px;
+  }
+  .app.outpost .editor-save-bar.is-docked {
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    inset-inline: 16px;
+    padding: 8px;
+  }
+  .app.outpost .editor-save-bar.is-docked > .editor-save-summary {
+    display: none;
+  }
+  .app.outpost .editor-file-menu > div {
+    width: min(260px, calc(100vw - 64px));
+  }
+  .app.outpost .editor-more-menu + .editor-file-menu > div {
+    right: 0;
+    left: auto;
+  }
+  .app.outpost .focused-build-editor .inventory-editor-studio {
+    gap: 16px;
+  }
+  .app.outpost .editor-inventory-panel .loadout-board {
+    --cell: 68px;
+    --gap: 14px;
+  }
+  .app.outpost .editor-selected-item {
+    flex-wrap: wrap;
+  }
+  .app.outpost .editor-selected-item > div:not(.editor-item-actions) {
+    flex-basis: calc(100% - 80px);
+  }
+  .app.outpost .editor-item-actions {
+    flex-basis: 100%;
+  }
+  .app.outpost .editor-item-actions > .button {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+  .app.outpost .editor-item-variants {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .app.outpost .build-editor .editor-item-variants > label:last-child {
+  .app.outpost .editor-item-variants > label:last-child {
     grid-column: 1 / -1;
+  }
+  .app.outpost .editor-swap-row {
+    flex-wrap: wrap;
+  }
+  .app.outpost .focused-build-editor .editor-swap-row > label {
+    flex-basis: calc(100% - 64px);
+  }
+  .app.outpost .editor-swap-actions {
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
+  .app.outpost .editor-subhead {
+    flex-wrap: wrap;
+  }
+  .app.outpost .editor-field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .editor-field-grid > label:last-child {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .is-expanded .set-template-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .is-expanded .set-template-controls > .button {
+    justify-content: center;
+  }
+  .app.outpost .focused-build-editor > .builds-next-step.raised {
+    margin: 48px 0 48px;
+  }
+}
+/* Narrow phones: tabs as a 2 × 2 grid, one suggestion per row, tiles two across */
+@media (max-width: 480px) {
+  .app.outpost .editor-workspace-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .editor-workspace-tabs > button {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+  /* Two rows of tabs stay above the inspector when a tab jumps to it */
+  .app.outpost .editor-slot-panel {
+    scroll-margin-top: 112px;
+  }
+}
+@media (max-width: 420px) {
+  .app.outpost .editor-starter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 360px) {
+  .app.outpost .editor-inventory-panel .loadout-board {
+    --cell: 60px;
+    --gap: 12px;
+  }
+  .app.outpost .editor-save-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .app.outpost .editor-save-bar > .button {
+    flex: none;
   }
 }

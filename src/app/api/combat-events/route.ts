@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { regionSchema } from "@/lib/albion/region-config";
-import { getCombatEvents } from "@/lib/albion/combat-events";
+import { pricedCombatEvents } from "@/lib/albion/priced-top-kills";
 const query = z
   .object({
     region: regionSchema,
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (!parsed.success)
     return NextResponse.json({ error: "Choose a valid server and feed page." }, { status: 400 });
   try {
-    const data = await getCombatEvents(parsed.data.region, parsed.data.offset);
+    const data = await pricedCombatEvents(parsed.data.region, parsed.data.offset);
     return NextResponse.json(data, { headers: { "Cache-Control": "public, max-age=15" } });
   } catch {
     return NextResponse.json(

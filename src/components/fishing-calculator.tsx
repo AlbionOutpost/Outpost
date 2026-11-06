@@ -1,20 +1,39 @@
 "use client";
 import { AnimatedNumber } from "./animated-number";
-import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useId, useRef, useState } from "react";
-import { Fish, RefreshCw, Search } from "lucide-react";
+import { ArrowRight, CircleCheck, RefreshCw } from "lucide-react";
 import { fishConversion, fishFame, type FishReference } from "@/lib/albion/fishing";
 import { cities } from "@/lib/albion/region-config";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 import { useBatchQuotes, quoteKey } from "./market-batch-quotes";
 import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
+import { EditorDialog } from "./editor-dialog";
+import {
+  CalculatorShell,
+  ResultFigure,
+  ResultPair,
+  ResultRows,
+  useCalculatorStep,
+} from "./calculator-shell";
+import { coin, PriceSource, profitTone, Missing, PRICE_ERROR } from "./calculator-figures";
+import { Disclosure } from "./disclosure";
+import { PanelHead } from "./panel-head";
+import { StatusLine, Unavailable } from "./status-line";
+import { WellSelect } from "./well-select";
+import s from "./calculator-shell.module.css";
+import c from "@/app/calculators.module.css";
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined ? (
-    "—"
+    <Unavailable />
   ) : (
     <AnimatedNumber value={value} digits={2} minimumDigits={0} />
   );
+const steps = ["fishing-catch", "fishing-prices", "fishing-result"];
+const modes = [
+  ["chopping", "Chop or sell"],
+  ["leveling", "Fishing fame"],
+] as const;
 export function FishingCalculator({
   fish,
   initialMode = "chopping",
@@ -22,6 +41,7 @@ export function FishingCalculator({
 }: {
   fish: FishReference[];
   initialMode?: "chopping" | "leveling";
+  /** Inside a guide's reading column: one mode, the three panels stacked. */
   compact?: boolean;
 }) {
   const region = useOutpostRegion();
@@ -32,6 +52,7 @@ export function FishingCalculator({
   const [mode, setMode] = useState(initialMode);
   const [city, setCity] = useState("Fort Sterling");
   const [query, setQuery] = useState("");
+  const [picker, setPicker] = useState(false);
   const [quantity, setQuantity] = useState(100);
   const [target, setTarget] = useState(100000);
   const [purchaseFee, setPurchaseFee] = useState("0");
@@ -39,6 +60,7 @@ export function FishingCalculator({
   const [processingCost, setProcessingCost] = useState("0");
   const [saleBasis, setSaleBasis] = useState<"bid" | "ask">("bid");
   const [manual, setManual] = useState<Record<string, string>>({});
+  const [step, goToStep] = useCalculatorStep(steps);
   const { quotes, busy, refresh } = useBatchQuotes(region);
   // One batch covers every fish and chops across cities, so it loads once per server.
   const refreshAll = () =>
@@ -115,227 +137,188 @@ export function FishingCalculator({
         purchaseFee: Number(purchaseFee),
       });
   } catch {
-    error =
-      "Check quantities, prices, fees and your yield/fame assumptions. Keep totals under one trillion silver.";
+    error = "Check quantities, prices, fees, your yield and fame. Keep totals under a trillion.";
   }
-  function priceField(key: string, label: string, id: string, side: "bid" | "ask") {
+  const sideLabel = saleBasis === "bid" ? "Best buy order" : "Lowest sell order";
+  function priceRow(
+    key: string,
+    label: string,
+    id: string,
+    side: "bid" | "ask",
+    name: string,
+    note: string,
+    count: number | null,
+    output = false,
+  ) {
     const manualValue = Object.hasOwn(manual, fieldKey(key)),
-      source = sourcePrice(id, side);
+      source = sourcePrice(id, side),
+      raw = priceValue(key, id, side),
+      value = number(raw),
+      total = value === null || count === null ? null : value * count;
     return (
-      <label className="fishing-price-field">
-        {label}
+      <li key={key} className={`${s.mat} ${output ? s.matOutput : ""}`}>
+        <ItemIcon id={id} size={40} />
+        <span className={s.matName}>
+          <strong>{name}</strong>
+          <small>{note}</small>
+          <small id={`${instance}-${key}-source`}>
+            <PriceSource
+              manual={manualValue}
+              observedAt={source.date}
+              pending={busy && !source.date}
+            />
+          </small>
+        </span>
         <input
+          className={s.matInput}
           type="number"
           aria-label={label}
           aria-describedby={`${instance}-${key}-source`}
           min={0}
           max={1e12}
           step="any"
-          value={priceValue(key, id, side)}
-          placeholder="Enter silver or load prices"
+          value={raw}
+          placeholder="Price"
           onChange={(event) => edit(key, event.target.value)}
         />
-        <small id={`${instance}-${key}-source`}>
-          {manualValue
-            ? "Manual price · retained on refresh"
-            : source.date
-              ? `${source.stale ? "Stale · enter a price" : "AODP observation"} · ${new Date(sourceTimestamp(source.date)).toLocaleString("en-GB", { timeZone: "UTC" })} UTC`
-              : "No usable observation loaded"}
-        </small>
-      </label>
+        <span className={s.matTotal}>
+          <span className="sr-only">Total </span>
+          {total === null ? <Missing /> : coin(total)}
+        </span>
+      </li>
     );
   }
   const matches = fish.filter((f) =>
     `${f.name} ${f.id}`.toLowerCase().includes(query.toLowerCase()),
   );
-  return (
-    <section
-      className={`fishing-workspace${compact ? " compact" : ""}`}
-      aria-label="Fishing calculator"
-    >
-      {!compact && (
-        <aside className="fishing-browser">
-          <h2>Choose your catch</h2>
-          <label>
-            <span>
-              <Search size={14} /> Find a fish
-            </span>
-            <input
-              type="search"
-              value={query}
-              maxLength={100}
-              placeholder="Perch, eel, sturgeon…"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </label>
-          <div>
-            {matches.map((f) => (
-              <button
-                type="button"
-                key={f.id}
-                aria-pressed={selected.id === f.id}
-                onClick={() => setSelectedId(f.id)}
-              >
-                <ItemIcon id={f.id} size={40} />
-                <span>
-                  {f.name}
-                  <small>
-                    T{f.tier} · {f.choppedPerFish} chopped fish
-                  </small>
-                </span>
-              </button>
-            ))}
-          </div>
-          {!matches.length && <p>No fish matches that search.</p>}
-        </aside>
-      )}
-      <div className="fishing-main">
-        <nav className="fishing-use" aria-label="Use your catch">
+  const chops = Number(yieldValue) > 0 ? Number(yieldValue) * quantity : null;
+  const browser = (
+    <div className={s.browser} aria-label="Fish browser" role="group">
+      <div className={s.browserHead}>
+        <label className={s.browserSearch}>
+          <span>Find a fish</span>
+          <input
+            type="search"
+            value={query}
+            maxLength={100}
+            placeholder="Perch, eel, sturgeon…"
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
+        <span className={s.browserCount}>{fish.length} fish</span>
+      </div>
+      <div className={s.browserList}>
+        {matches.map((f) => (
           <button
             type="button"
-            aria-pressed={mode === "chopping"}
-            onClick={() => setMode("chopping")}
+            key={f.id}
+            aria-pressed={selected.id === f.id}
+            onClick={() => {
+              setSelectedId(f.id);
+              setPicker(false);
+            }}
           >
-            Chop or sell
-          </button>
-          <button
-            type="button"
-            aria-pressed={mode === "leveling"}
-            onClick={() => setMode("leveling")}
-          >
-            Fishing fame
-          </button>
-        </nav>
-        <div className="fishing-selected">
-          <ItemIcon id={selected.id} size={96} />
-          <div>
-            <h2>{selected.name}</h2>
+            <ItemIcon id={f.id} size={40} />
             <span>
-              T{selected.tier} · {region} · Normal quality
+              <strong>{f.name}</strong>
+              <small>
+                T{f.tier} · {f.choppedPerFish} chopped fish each
+              </small>
             </span>
+            {selected.id === f.id && <CircleCheck size={16} aria-hidden="true" />}
+          </button>
+        ))}
+        {!matches.length && <StatusLine>No fish matches. Try another name.</StatusLine>}
+      </div>
+    </div>
+  );
+  const catchPanel = (
+    <>
+      <div className={s.identity}>
+        <ItemIcon id={selected.id} size={64} />
+        <div>
+          <h3>{selected.name}</h3>
+          <p>T{selected.tier} · Normal quality</p>
+          <small>{selected.choppedPerFish} chopped fish each. Confirm your yield in game.</small>
+        </div>
+        <button type="button" className="button secondary" onClick={() => setPicker(true)}>
+          Change fish
+        </button>
+      </div>
+      <div className={s.fields}>
+        <label>
+          Market
+          <WellSelect
+            aria-label="Fishing market city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          >
+            {cities
+              .filter((c) => c !== "Black Market")
+              .map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+          </WellSelect>
+        </label>
+        {mode === "chopping" ? (
+          <>
             <label>
-              Selected fish
-              <select
-                aria-label="Selected fish"
-                value={selected.id}
-                onChange={(e) => setSelectedId(e.target.value)}
-              >
-                {fish.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name}
-                  </option>
-                ))}
-              </select>
+              Fish quantity
+              <input
+                type="number"
+                min={1}
+                max={1000000}
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+              />
             </label>
-          </div>
-        </div>
-        <div className="fishing-source-toolbar">
-          <label>
-            Market city
-            <select
-              aria-label="Fishing market city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            >
-              {cities
-                .filter((c) => c !== "Black Market")
-                .map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="button secondary"
-            disabled={busy}
-            onClick={() => void refreshAll()}
-          >
-            <RefreshCw size={14} />
-            {busy ? "Checking markets…" : "Refresh fish observations"}
-          </button>
-        </div>
-        {selectedQuote?.error && (
-          <p role="status" className="fishing-source-message">
-            {selectedQuote.error} Last observations keep their original dates.
-          </p>
+            <label>
+              Chopped fish per raw fish
+              <input
+                type="number"
+                aria-label="Chopped fish per raw fish"
+                min={1}
+                max={10000}
+                value={yieldValue}
+                onChange={(e) => edit("yield", e.target.value)}
+              />
+            </label>
+          </>
+        ) : (
+          <>
+            <label>
+              Target fishing fame
+              <input
+                type="number"
+                min={1}
+                max={1e12}
+                value={target}
+                onChange={(e) => setTarget(Number(e.target.value))}
+              />
+            </label>
+            <label>
+              Fame per consumed fish
+              <input
+                type="number"
+                min={0}
+                max={1e9}
+                step="any"
+                aria-label="Fame per consumed fish"
+                aria-describedby={`${instance}-fame-help`}
+                value={fameValue}
+                placeholder="Your fame"
+                onChange={(e) => edit("fame", e.target.value)}
+              />
+            </label>
+            <p id={`${instance}-fame-help`} className={s.help}>
+              The starting fame is an older Premium value. Type what you get in game.
+            </p>
+          </>
         )}
-        <div className="fishing-inputs">
-          {priceField("purchase", "Raw fish purchase price", selected.id, "ask")}
-          {mode === "chopping" ? (
-            <>
-              {priceField("raw-sale", "Raw fish sale price", selected.id, saleBasis)}
-              {priceField("chop-sale", "Chopped fish sale price", "T1_FISHCHOPS", saleBasis)}
-              <label>
-                Fish quantity
-                <input
-                  type="number"
-                  min={1}
-                  max={1000000}
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Chopped fish per raw fish
-                <input
-                  type="number"
-                  aria-label="Chopped fish per raw fish"
-                  min={1}
-                  max={10000}
-                  value={yieldValue}
-                  onChange={(e) => edit("yield", e.target.value)}
-                />
-                <small>
-                  Chops per fish: {selected.choppedPerFish}. Confirm your yield in game.
-                </small>
-              </label>
-              <label>
-                Total sale fees (%)
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  step="any"
-                  value={saleFee}
-                  placeholder="Enter your tax + listing fees"
-                  onChange={(e) => setSaleFee(e.target.value)}
-                />
-              </label>
-            </>
-          ) : (
-            <>
-              <label>
-                Target fishing fame
-                <input
-                  type="number"
-                  min={1}
-                  max={1e12}
-                  value={target}
-                  onChange={(e) => setTarget(Number(e.target.value))}
-                />
-              </label>
-              <label>
-                Fame per consumed fish
-                <input
-                  type="number"
-                  min={0}
-                  max={1e9}
-                  step="any"
-                  aria-label="Fame per consumed fish"
-                  value={fameValue}
-                  placeholder="Enter your actual fame"
-                  onChange={(e) => edit("fame", e.target.value)}
-                />
-                <small>
-                  Starting value is historical Premium fame. Use your actual in-game value.
-                </small>
-              </label>
-            </>
-          )}
-        </div>
-        <details className="fishing-fee-settings">
-          <summary>Price basis & extra costs</summary>
-          <div>
+      </div>
+      <div className={s.stack}>
+        <Disclosure summary="Price basis & extra costs">
+          <div className={s.fields}>
             <label>
               Purchase order fee (%)
               <input
@@ -360,21 +343,21 @@ export function FishingCalculator({
                     onChange={(e) => setProcessingCost(e.target.value)}
                   />
                 </label>
-                <label>
-                  Observed sale-price side
-                  <select
+                <label className={s.wide}>
+                  Sell at
+                  <WellSelect
                     value={saleBasis}
                     onChange={(e) => setSaleBasis(e.target.value as "bid" | "ask")}
                   >
-                    <option value="bid">Highest buy order · instant sale</option>
-                    <option value="ask">Lowest sell listing · planned sell order</option>
-                  </select>
+                    <option value="bid">The best buy order (sell now)</option>
+                    <option value="ask">The lowest sell order (list and wait)</option>
+                  </WellSelect>
                 </label>
               </>
             )}
             <button
               type="button"
-              className="text-link"
+              className={`button secondary ${s.wide} ${c.start}`}
               onClick={() =>
                 setManual((previous) =>
                   Object.fromEntries(
@@ -383,145 +366,357 @@ export function FishingCalculator({
                 )
               }
             >
-              Clear this fish’s manual overrides
+              Clear prices I typed for this fish
             </button>
           </div>
-          <p>
-            Fees and extra costs are your assumptions. Observations do not guarantee available stock
-            or trade execution.
-          </p>
-        </details>
-        {error && (
-          <p role="alert" className="error">
-            {error}
-          </p>
-        )}
-        <div className="fishing-results" aria-live="polite">
-          {((mode === "chopping" &&
-            (saleFee === "" || purchase === null || rawSale === null || choppedSale === null)) ||
-            (mode === "leveling" && (purchase === null || fameValue === ""))) && (
-            <CalculationReadiness
-              title={
-                mode === "chopping"
-                  ? "Complete the chop-or-sell comparison"
-                  : "Price your fame target"
-              }
-              missing={[
-                ...(purchase === null ? ["Fish purchase price"] : []),
-                ...(mode === "chopping" && rawSale === null ? ["Whole fish sale price"] : []),
-                ...(mode === "chopping" && choppedSale === null ? ["Chopped fish sale price"] : []),
-                ...(mode === "chopping" && saleFee === "" ? ["Sale fees (%)"] : []),
-                ...(mode === "leveling" && fameValue === "" ? ["Fame per consumed fish"] : []),
-              ]}
-            >
-              Use your own prices, or load observations for the selected server and city.
-            </CalculationReadiness>
-          )}
-
-          {mode === "chopping" ? (
-            <>
-              <div className="fishing-result-heading">
-                <Fish size={20} />
-                <div>
-                  <h3>Is it worth chopping?</h3>
-                  <p>
-                    {saleFee === ""
-                      ? "Enter your sale fees to compare the net returns."
-                      : "Compare processing with selling the same catch whole."}
-                  </p>
-                </div>
-              </div>
-              {conversion && (
-                <dl>
-                  <div>
-                    <dt>Chopped output</dt>
-                    <dd>
-                      {amount(conversion?.quantity)} <small>chopped fish</small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Buy-and-chop cash profit</dt>
-                    <dd data-result="fish-chop-profit">
-                      {amount(conversion?.choppedProfit)} <small>silver</small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Buy-and-sell raw profit</dt>
-                    <dd>
-                      {amount(conversion?.rawProfit)} <small>silver</small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Chopping advantage vs raw sale</dt>
-                    <dd
-                      data-result="fish-chop-advantage"
-                      className={
-                        conversion?.advantage === null || conversion?.advantage === undefined
-                          ? ""
-                          : conversion.advantage >= 0
-                            ? "positive"
-                            : "negative"
-                      }
-                    >
-                      {amount(conversion?.advantage)} <small>silver</small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Upfront cash, including processing</dt>
-                    <dd>
-                      {amount(conversion?.upfront)} <small>silver</small>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Break-even chopped sale price</dt>
-                    <dd>
-                      {amount(conversion?.breakEven)} <small>silver / chopped fish</small>
-                    </dd>
-                  </div>
-                </dl>
-              )}
-            </>
-          ) : (
-            <>
-              <div className="fishing-result-heading">
-                <Fish size={20} />
-                <div>
-                  <h3>Put your catch toward fishing fame.</h3>
-                  <p>
-                    Whole fish rounded up to meet your entered target. Learning Points and level
-                    thresholds are excluded.
-                  </p>
-                </div>
-              </div>
-              <dl>
-                <div>
-                  <dt>Fish needed</dt>
-                  <dd data-result="fishing-fish-needed">{amount(leveling?.needed)}</dd>
-                </div>
-                <div>
-                  <dt>Purchase cost for your target</dt>
-                  <dd data-result="fishing-target-cost">
-                    {amount(leveling?.cost)} <small>silver</small>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Silver per 1,000 fame</dt>
-                  <dd>{amount(leveling?.silverPerThousand)}</dd>
-                </div>
-                <div>
-                  <dt>Fame from those whole fish</dt>
-                  <dd>{amount(leveling?.actualFame)}</dd>
-                </div>
-              </dl>
-            </>
-          )}
-        </div>
-        <p className="fishing-source-note">
-          Check yields and fame against your in-game setup. Prices: Albion Online Data Project, on
-          request. Only recent matching-region/city observations enter results; manual overrides
-          stay manual. Current game coefficients remain subject to in-game confirmation.
-        </p>
+        </Disclosure>
       </div>
-    </section>
+    </>
+  );
+  const pricesPanel = (
+    <>
+      {busy ? (
+        <StatusLine>Loading prices in {city}…</StatusLine>
+      ) : selectedQuote?.error ? (
+        <div className={s.errorLine}>
+          <StatusLine tone="error">{PRICE_ERROR}</StatusLine>
+          <button type="button" onClick={() => void refreshAll()}>
+            Retry
+          </button>
+        </div>
+      ) : null}
+      <div className={s.materials} role="region" aria-label="Fish prices">
+        <div className={s.matHead} aria-hidden="true">
+          <span>Item</span>
+          <span>Unit price</span>
+          <span>Total</span>
+        </div>
+        <ul>
+          {priceRow(
+            "purchase",
+            "Raw fish purchase price",
+            selected.id,
+            "ask",
+            `Buy ${selected.name}`,
+            `Lowest sell order · ${mode === "chopping" ? quantity.toLocaleString() : (leveling?.needed?.toLocaleString() ?? "how many")} fish`,
+            mode === "chopping" ? quantity : (leveling?.needed ?? null),
+          )}
+          {mode === "chopping" &&
+            priceRow(
+              "raw-sale",
+              "Raw fish sale price",
+              selected.id,
+              saleBasis,
+              "Sell whole",
+              `${sideLabel} · ${quantity.toLocaleString()} fish`,
+              quantity,
+              true,
+            )}
+          {mode === "chopping" &&
+            priceRow(
+              "chop-sale",
+              "Chopped fish sale price",
+              "T1_FISHCHOPS",
+              saleBasis,
+              "Sell chopped",
+              `${sideLabel} · ${chops === null ? "" : `${chops.toLocaleString()} `}chopped fish`,
+              chops,
+              true,
+            )}
+        </ul>
+      </div>
+      {mode === "chopping" && (
+        <div className={s.fields}>
+          <label>
+            Total sale fees (%)
+            <input
+              type="number"
+              min={0}
+              max={100}
+              step="any"
+              value={saleFee}
+              placeholder="Tax + listing"
+              onChange={(e) => setSaleFee(e.target.value)}
+            />
+          </label>
+          <p className={`${s.help} ${c.alignEnd}`}>
+            Your sales tax plus any listing fee. Premium players pay less tax.
+          </p>
+        </div>
+      )}
+    </>
+  );
+  const missing = [
+    ...(purchase === null ? ["Fish purchase price"] : []),
+    ...(mode === "chopping" && rawSale === null ? ["Whole fish sale price"] : []),
+    ...(mode === "chopping" && choppedSale === null ? ["Chopped fish sale price"] : []),
+    ...(mode === "chopping" && saleFee === "" ? ["Sale fees (%)"] : []),
+    ...(mode === "leveling" && fameValue === "" ? ["Fame per consumed fish"] : []),
+  ];
+  const na = (
+    <span className={s.na}>
+      <Unavailable />
+    </span>
+  );
+  const advantage = conversion?.advantage ?? null;
+  const results = (
+    <>
+      <div className={s.resultItem}>
+        <ItemIcon id={selected.id} size={52} />
+        <span>
+          <strong>{selected.name}</strong>
+          <small>
+            {mode === "chopping"
+              ? `${quantity.toLocaleString()} fish · ${city}`
+              : `${target.toLocaleString()} fame · ${city}`}
+          </small>
+        </span>
+      </div>
+      {error && (
+        <p role="alert" className={s.alert}>
+          {error}
+        </p>
+      )}
+      {mode === "chopping" ? (
+        <>
+          <ResultFigure
+            label="Chopping instead of selling whole"
+            tone={advantage === null ? "even" : profitTone(advantage)}
+            value={
+              <span data-result="fish-chop-advantage">
+                {advantage === null ? <Missing /> : coin(advantage)}
+              </span>
+            }
+            note={
+              advantage === null
+                ? "Price the catch to compare"
+                : advantage > 0
+                  ? "Chop them: more silver than selling whole"
+                  : advantage < 0
+                    ? "Sell them whole: chopping loses silver"
+                    : "No difference either way"
+            }
+          />
+          <ResultPair
+            result="fish-profits"
+            items={[
+              {
+                label: "Buy, chop and sell",
+                value: (
+                  <span data-result="fish-chop-profit">
+                    {conversion?.choppedProfit == null ? na : coin(conversion.choppedProfit)}
+                  </span>
+                ),
+              },
+              {
+                label: "Buy and sell whole",
+                value: conversion?.rawProfit == null ? na : coin(conversion.rawProfit),
+              },
+            ]}
+          />
+        </>
+      ) : (
+        <>
+          <ResultFigure
+            label="Cost of your fame target"
+            value={
+              <span data-result="fishing-target-cost">
+                {leveling?.cost == null ? <Missing /> : coin(leveling.cost)}
+              </span>
+            }
+            note={
+              leveling?.needed == null
+                ? "Set the fame per fish and the price"
+                : `${leveling.needed.toLocaleString()} whole fish, rounded up`
+            }
+          />
+          <ResultPair
+            result="fish-fame"
+            items={[
+              {
+                label: "Fish needed",
+                value: (
+                  <span data-result="fishing-fish-needed">
+                    {leveling?.needed == null ? na : amount(leveling.needed)}
+                  </span>
+                ),
+              },
+              {
+                label: "Silver per 1,000 fame",
+                value: leveling?.silverPerThousand == null ? na : coin(leveling.silverPerThousand),
+              },
+            ]}
+          />
+        </>
+      )}
+      {missing.length > 0 && (
+        <div className={s.readiness} data-result="readiness" role="status">
+          <strong>
+            {missing.length} {missing.length === 1 ? "input" : "inputs"} to go
+          </strong>
+          <ul>
+            {missing.map((label) => (
+              <li key={label}>{label}</li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => goToStep(mode === "leveling" && fameValue === "" ? 1 : 2)}
+          >
+            {mode === "leveling" && fameValue === "" ? "Set your fame" : "Add prices"}{" "}
+            <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
+      {mode === "chopping" && conversion && (
+        <ResultRows
+          result="fish-rows"
+          items={[
+            { label: "Chopped fish made", value: amount(conversion.quantity) },
+            { label: "Upfront silver, with chopping", value: coin(conversion.upfront) },
+            {
+              label: "Break-even chopped price",
+              value: conversion.breakEven == null ? <Unavailable /> : coin(conversion.breakEven),
+            },
+          ]}
+        />
+      )}
+      {mode === "leveling" && leveling?.actualFame != null && (
+        <ResultRows
+          result="fish-fame-rows"
+          items={[{ label: "Fame from those fish", value: amount(leveling.actualFame) }]}
+        />
+      )}
+      <p className={s.resultNote}>
+        {mode === "chopping"
+          ? "Both routes start from buying the catch. Fees and chopping cost are your assumptions; prices over an hour old aren’t used."
+          : "Whole fish, rounded up to reach your target. Learning points and level thresholds aren’t counted."}
+      </p>
+    </>
+  );
+  const stepList = [
+    {
+      id: steps[0],
+      label: "Choose catch",
+      title: "Your catch",
+      line:
+        mode === "chopping"
+          ? "Which fish, where you trade it and how many."
+          : "Which fish you eat and how much fame you want.",
+      children: catchPanel,
+    },
+    {
+      id: steps[1],
+      label: "Price it",
+      title: "Prices",
+      line: `${city} market. Type any price to override it.`,
+      actions: (
+        <button
+          type="button"
+          className={`button secondary ${s.refresh}`}
+          aria-label="Refresh fish observations"
+          aria-busy={busy}
+          disabled={busy}
+          onClick={() => void refreshAll()}
+        >
+          <RefreshCw size={15} aria-hidden="true" />
+          {busy ? "Updating…" : "Refresh"}
+        </button>
+      ),
+      children: pricesPanel,
+    },
+    {
+      id: steps[2],
+      label: mode === "chopping" ? "Chop or sell" : "Fame cost",
+      title: mode === "chopping" ? "Chop or sell?" : "Fame cost",
+      children: results,
+    },
+  ];
+  const dialog = picker && (
+    <EditorDialog open title="Choose a fish" drawer onClose={() => setPicker(false)}>
+      {browser}
+    </EditorDialog>
+  );
+  if (compact)
+    return (
+      <div className={`${s.journey} ${c.stacked}`}>
+        {dialog}
+        {stepList.map((item, i) => (
+          <section key={item.id} className="panel" aria-labelledby={`${item.id}-title`}>
+            <PanelHead
+              id={`${item.id}-title`}
+              as="h3"
+              step={i + 1}
+              title={item.title}
+              line={item.line}
+              actions={item.actions}
+            />
+            {item.children}
+          </section>
+        ))}
+      </div>
+    );
+  return (
+    <div className={s.journey}>
+      {dialog}
+      <div className={s.modeBar}>
+        <nav className={s.modes} aria-label="Use your catch">
+          {modes.map(([key, label]) => (
+            <a
+              key={key}
+              href={key === "leveling" ? "?mode=leveling" : "?"}
+              aria-current={mode === key ? "page" : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                setMode(key);
+                const url = new URL(window.location.href);
+                if (key === "leveling") url.searchParams.set("mode", "leveling");
+                else url.searchParams.delete("mode");
+                history.replaceState(history.state, "", url);
+              }}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
+      <CalculatorShell
+        label="Fishing workflow"
+        step={step}
+        onStep={goToStep}
+        summary={
+          mode === "chopping"
+            ? {
+                label: "Chopping vs whole",
+                tone: advantage === null ? "even" : profitTone(advantage),
+                value:
+                  advantage === null ? (
+                    <span className={s.summaryPending}>
+                      {missing.length
+                        ? `${missing.length} ${missing.length === 1 ? "input" : "inputs"} to go`
+                        : "Unavailable"}
+                    </span>
+                  ) : (
+                    coin(advantage)
+                  ),
+              }
+            : {
+                label: "Fame target cost",
+                value:
+                  leveling?.cost == null ? (
+                    <span className={s.summaryPending}>
+                      {missing.length
+                        ? `${missing.length} ${missing.length === 1 ? "input" : "inputs"} to go`
+                        : "Unavailable"}
+                    </span>
+                  ) : (
+                    coin(leveling.cost)
+                  ),
+              }
+        }
+        steps={stepList}
+      />
+    </div>
   );
 }

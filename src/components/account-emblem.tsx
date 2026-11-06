@@ -1,15 +1,9 @@
-/** The signed-in player's Discord picture as a page emblem; the gear emblem when there is none. */
+/** The signed-in player's Discord picture as a page emblem; the neutral seal when there is none. */
 export function AccountEmblem({ image }: { image?: string | null }) {
   if (!image)
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
-        className="painted-emblem"
-        src="/albion/icons/team-roles.webp"
-        alt=""
-        width={64}
-        height={64}
-      />
+      <img className="painted-emblem" src="/albion/icons/fame.webp" alt="" width={64} height={64} />
     );
   return (
     // Discord profile imagery belongs to the signed-in user; never a synthetic avatar.

@@ -10,6 +10,10 @@ The main desktop/mobile Builds navigation and homepage Browse Builds action lead
 
 The 32 display derivatives total 2,513,902 bytes. Upper silhouettes use image-derived polygon coordinates in `src/lib/activity-outlines.json` aligned to a 6:5 cover projection; interior dark pixels are retained. No external image service, generated replacement art, raster modification, dependency or runtime/database migration was added.
 
+## Responsive widths — 5 November 2026
+
+`node scripts/activity-image-variants.mjs` writes 400px and 600px WebP copies of each 800px display derivative (same sharp derivation, quality 82, width only; `--check` verifies them): 750,216 and 1,307,092 bytes for all 32. `ActivityArtworkCard` draws the sharp scene and its three blur layers as images with one `srcset` (400w/600w/800w) and the grid's `sizes`, so every layer uses the same candidate and the artwork downloads once at the width the screen draws (before, the blur layers were CSS backgrounds that fetched the 800px file eagerly). Measured rendered widths: homepage cards 377px at 1440 and 168px at 390; library cards 329px at 1440 and 366px at 390. Homepage artwork: 353,878 → 111,996 bytes at 1x desktop and 2x/1x phones, 187,600 at 3x phones, unchanged at 2x desktop (the 800px file still serves it, so the sharp layer is not softer). `/builds/activities`: 2,513,902 → 750,216 bytes at 1x; 2x keeps the originals.
+
 ## Verification and release evidence
 
 The new browser journeys cover Library → Activities → Solo Mists with Americas, mobile image decoding and Arena empty-state recovery, and homepage main Builds → Activities → Hellgates with Asia. They are included in the existing core release suite. The existing homepage journey now checks the category scene instead of the intentionally removed fanned decorative weapon strip, while retaining recorded count and most-liked destination assertions.

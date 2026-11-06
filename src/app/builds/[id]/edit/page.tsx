@@ -1,10 +1,12 @@
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { buildInput } from "@/lib/builds/validation";
 import { BuildEditor } from "@/components/build-editor";
+import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 export const metadata = privateMetadata("Edit build");
 export default async function EditBuild({ params }: { params: Promise<{ id: string }> }) {
@@ -21,9 +23,19 @@ export default async function EditBuild({ params }: { params: Promise<{ id: stri
       <WorkspaceHeading
         glyph="builds"
         scene="builds"
-        title="Edit build"
-        description={build.title}
-      />
+        title="Edit your build"
+        accent="build"
+        description={`${build.title}. Each save adds a revision, so you can always go back.`}
+      >
+        <div className="editor-backline">
+          <Link className="pill-link is-small" href="/builds">
+            <ArrowLeft size={14} aria-hidden="true" /> Builds
+          </Link>
+          <Link className="pill-link is-small" href={`/builds/${build.id}`}>
+            View build
+          </Link>
+        </div>
+      </WorkspaceHeading>
       <BuildEditor
         key={`${session.user.id}:${build.id}`}
         initial={buildInput.parse(build)}

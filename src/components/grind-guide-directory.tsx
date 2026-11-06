@@ -1,7 +1,12 @@
+import { ArrowRight, Search } from "lucide-react";
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
-import { GuideCoverCard, readingMinutes } from "./guide-cover-card";
+import { GuideCoverCard, readingMinutes, type GuideCover } from "./guide-cover-card";
+import { GuidesCarousel } from "./landing/guides-carousel";
+import { SectionHeading } from "./section-heading";
+import { EmptyWell } from "./empty-well";
 import type { LibraryGuide } from "@/lib/grind-library-types";
+import styles from "@/app/guides/guides.module.css";
 
 export const guideArtwork: Record<string, string> = {
   "market-flipping-guide": "T4_BAG",
@@ -12,7 +17,32 @@ export const guideArtwork: Record<string, string> = {
   "ancient-lands": "T8_2H_SHAPESHIFTER_MORGANA",
   "albion-journal-guide": "T4_JOURNAL_WARRIOR_EMPTY",
   achievements: "T8_CAPE",
+  "first-silver": "T3_2H_TOOL_PICK",
+  "focus-and-resource-return-rate": "T4_PLANKS",
+  "haul-between-cities": "T5_MOUNT_OX",
+  "first-solo-pve-build": "T4_MAIN_SWORD",
+  "read-a-market-quote": "T4_BAG",
+  "count-the-whole-cost": "T4_METALBAR",
+  "build-with-a-purpose": "T4_ARMOR_LEATHER_SET1",
+  "put-every-role-in-place": "T4_2H_HAMMER",
 };
+
+const cover = (guide: LibraryGuide): GuideCover => ({
+  slug: guide.slug,
+  title: guide.title,
+  category: guide.category,
+  author: guide.author,
+  updatedAt: guide.updatedAt,
+  summary: brandCopy(guide.summary),
+  minutes: readingMinutes(guide.content),
+  cover: guide.cover,
+  itemId: guideArtwork[guide.slug],
+});
+
+/**
+ * The guides hub: the three newest guides as the landing's lead story and two side stories,
+ * one search with topic pills, and every other guide as a cover card three across.
+ */
 export function GrindGuideDirectory({
   guides,
   query,
@@ -22,70 +52,111 @@ export function GrindGuideDirectory({
   query: string;
   category: string;
 }) {
-  const categories = [...new Set(guides.map((g) => g.category))].sort();
+  const needle = query.toLowerCase();
+  const topics = [...new Set(guides.map((g) => g.category))].sort();
+  const filtered = Boolean(query || category);
   const matches = guides.filter(
     (g) =>
       (!category || g.category === category) &&
-      `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(query.toLowerCase()),
+      `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
   );
+  const newest = guides.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
+  const listed = filtered ? matches : guides.filter((g) => !newest.includes(g));
+  const topicHref = (topic: string) => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (topic) params.set("category", topic);
+    const search = params.toString();
+    return `/guides${search ? `?${search}` : ""}`;
+  };
+  const count = matches.length;
   return (
-    <section className="grind-guide-library support-guide-library">
-      <form action="/guides" className="raised library-filter-bar">
-        <BuildRegionInput />
-        <label>
-          Search the library
-          <input
-            type="search"
-            name="q"
-            defaultValue={query}
-            maxLength={100}
-            placeholder="Fishing, gathering, market flipping…"
+    <>
+      {!filtered && newest.length > 0 && (
+        <section className={styles.section} aria-labelledby="guides-newest">
+          <SectionHeading
+            id="guides-newest"
+            title={
+              <>
+                Newest <em>guides</em>
+              </>
+            }
+            line="The three most recently updated guides."
           />
-        </label>
-        <label>
-          Topic
-          <select name="category" defaultValue={category}>
-            <option value="">Every topic</option>
-            {categories.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-        <button className="button secondary">Find guides</button>
-      </form>
-      <div className="section-heading library-section-heading">
-        <h2>
-          The Outpost <em>field guide</em>
-        </h2>
-        <p>{matches.length} guides to explore</p>
-      </div>
-      <div className="grind-guide-grid guide-editorial-list">
-        {matches.map((guide) => (
-          <GuideCoverCard
-            key={guide.slug}
-            className="grind-guide-card"
-            guide={{
-              slug: guide.slug,
-              title: guide.title,
-              category: guide.category,
-              author: guide.author,
-              updatedAt: guide.updatedAt,
-              summary: brandCopy(guide.summary),
-              minutes: readingMinutes(guide.content),
-              cover: guide.cover,
-              itemId: guideArtwork[guide.slug],
-            }}
-          />
-        ))}
-      </div>
-      {!matches.length && (
-        <p className="panel empty">
-          No guide matches that search.{" "}
-          <Link className="text-link" href="/guides">
-            Show every guide
-          </Link>
-        </p>
+          <div className={styles.carousel}>
+            <GuidesCarousel guides={newest.map(cover)} suffix="" />
+          </div>
+        </section>
       )}
-    </section>
+      <section className={`grind-guide-library ${styles.section}`} aria-labelledby="guides-library">
+        <SectionHeading
+          id="guides-library"
+          title={
+            filtered ? (
+              <>
+                Matching <em>guides</em>
+              </>
+            ) : (
+              <>
+                Every <em>guide</em>
+              </>
+            )
+          }
+          line={
+            filtered
+              ? `${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`
+              : `${guides.length} guides on progression, gathering, PvE, trading and crafting.`
+          }
+        />
+        <form action="/guides" className={`raised ${styles.filters}`} role="search">
+          <BuildRegionInput />
+          {category && <input type="hidden" name="category" value={category} />}
+          <nav className={styles.topics} aria-label="Guide topics">
+            {["", ...topics].map((topic) => (
+              <Link
+                key={topic}
+                href={topicHref(topic)}
+                aria-current={category === topic ? "page" : undefined}
+              >
+                {topic || "Every topic"}
+              </Link>
+            ))}
+          </nav>
+          <div className={styles.searchRow}>
+            <label className={styles.search}>
+              <span className="sr-only">Search guides</span>
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                name="q"
+                defaultValue={query}
+                maxLength={100}
+                placeholder="Fishing, gathering, market flipping…"
+              />
+            </label>
+            <button className="button secondary">Search</button>
+          </div>
+        </form>
+        {listed.length > 0 && (
+          <div className={`grind-guide-grid ${styles.grid}`}>
+            {listed.map((guide) => (
+              <GuideCoverCard key={guide.slug} className="grind-guide-card" guide={cover(guide)} />
+            ))}
+          </div>
+        )}
+        {filtered && !count && (
+          <EmptyWell
+            emblem="tool-planner"
+            title="No guide matches that search."
+            line="Try a shorter word or another topic."
+            action={
+              <Link className="pill-link" href="/guides">
+                Show every guide <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            }
+          />
+        )}
+      </section>
+    </>
   );
 }

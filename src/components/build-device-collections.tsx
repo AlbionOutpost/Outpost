@@ -1,12 +1,16 @@
 "use client";
 import { useId, useMemo, useState, useSyncExternalStore } from "react";
+import { EmptyWell } from "./empty-well";
+import { BuildWindow } from "./build-window";
+import { HeartChip } from "./heart-chip";
+import { SectionHeading } from "./section-heading";
 import {
   Bookmark,
   BookmarkCheck,
   Trash2,
   SlidersHorizontal,
   Plus,
-  Grid2X2,
+  LayoutGrid,
   List,
 } from "lucide-react";
 import { ReactionFeedback } from "./reaction-feedback";
@@ -130,29 +134,35 @@ export function LibrarySaveButton({
     </span>
   );
 }
+/** A device favourite in the same build window as every other build. The browser keeps only a
+ * summary, so the weapon stands where the board would be. */
 function DeviceFavoriteCard({ build }: { build: SavedLibraryBuild }) {
   const titleId = useId();
   return (
-    <article className="device-favorite-card">
-      <div className="device-favorite-content">
-        {build.itemId ? <ItemIcon id={build.itemId} size={56} /> : <Bookmark size={36} />}
-        <span>
-          <small>{activityName(build.category)}</small>
-          <Link
-            href={`/builds/library/${encodeURIComponent(build.slug)}`}
-            aria-labelledby={titleId}
-            className="ecosystem-title-link"
-          >
-            <h3 id={titleId}>{build.title}</h3>
-          </Link>
-          <span>By {build.author}</span>
+    <BuildWindow
+      className="device-favorite-card"
+      titleId={titleId}
+      href={`/builds/library/${encodeURIComponent(build.slug)}`}
+      title={build.title}
+      category={build.category}
+      activity={activityName(build.category) || "Other"}
+      weaponName={build.weaponName}
+      weaponItemId={build.itemId || undefined}
+      author={build.author}
+      updatedAt={build.updatedAt}
+      heart={<HeartChip build={build} text="Saved" className="library-device-save" />}
+    >
+      <div className="build-window-summary">
+        <span aria-hidden="true">
+          {build.itemId ? <ItemIcon id={build.itemId} size={72} /> : null}
         </span>
+        <small className="detail-muted">Open the build for its full loadout</small>
       </div>
-      <LibrarySaveButton build={build} />
-    </article>
+    </BuildWindow>
   );
 }
-export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?: boolean }) {
+/** Library builds saved in this browser. `heading` is the section's heading, from the page. */
+export function DeviceLibraryFavorites() {
   const { bookmarks, error } = useCollection("bookmarks");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("saved");
@@ -171,40 +181,37 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
   const page = Math.min(requestedPage, pages);
   const visible = matching.slice((page - 1) * 24, page * 24);
   return (
-    <section
-      className="panel device-library-favorites"
-      aria-label="Library favorites on this device"
-    >
-      <div className="ecosystem-section-heading">
-        <div>
-          <h2>Library favorites</h2>
-          <p>
-            Saved on this device · {bookmarks.region} · {bookmarks.builds.length}/100
-          </p>
-        </div>
-        <Link href="/builds/library" className="text-link">
-          Browse builds →
-        </Link>
-      </div>
+    <section className="device-library-favorites" aria-label="Library favorites on this device">
+      <SectionHeading
+        title={
+          <>
+            Library <em>builds</em>
+          </>
+        }
+        line={`${bookmarks.builds.length} of 100 saved in this browser${query.trim() ? ` · ${matching.length} match` : ""}`}
+        link={{ href: "/builds/library", label: "Build library" }}
+      />
       {!error && bookmarks.builds.length > 0 && (
-        <div className="device-favorites-controls">
-          <label>
-            Search library favorites
+        <div className="raised ecosystem-result-toolbar favorites-toolbar">
+          <label className="ecosystem-search-label">
+            <span className="sr-only">Search library favorites</span>
             <input
               type="search"
               value={query}
               maxLength={100}
-              placeholder="Title, weapon or author"
+              placeholder="Search saved titles, weapons or authors…"
+              aria-label="Search library favorites"
               onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
               }}
             />
           </label>
-          <label>
-            Sort library favorites
+          <label className="ecosystem-sort-label">
+            Sort
             <select
               value={sort}
+              aria-label="Sort library favorites"
               onChange={(event) => {
                 setSort(event.target.value);
                 setPage(1);
@@ -214,24 +221,24 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
               <option value="title">Title A–Z</option>
             </select>
           </label>
-          <div className="actions" role="group" aria-label="Library favorite display">
+          <div className="ecosystem-view-switch" role="group" aria-label="Library favorite display">
             <button
               type="button"
-              className="button secondary"
               aria-label="Library favorites grid"
               aria-pressed={view === "grid"}
+              aria-current={view === "grid" ? "true" : undefined}
               onClick={() => setView("grid")}
             >
-              <Grid2X2 size={16} />
+              <LayoutGrid size={17} />
             </button>
             <button
               type="button"
-              className="button secondary"
               aria-label="Library favorites list"
               aria-pressed={view === "list"}
+              aria-current={view === "list" ? "true" : undefined}
               onClick={() => setView("list")}
             >
-              <List size={16} />
+              <List size={17} />
             </button>
           </div>
         </div>
@@ -240,10 +247,12 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
         <p role="alert">{error}</p>
       ) : bookmarks.builds.length ? (
         <>
-          <p className="device-favorites-count" role="status">
-            {matching.length} matching favorites · {matching.length ? (page - 1) * 24 + 1 : 0}–
-            {Math.min(page * 24, matching.length)} shown
-          </p>
+          {matching.length > 24 && (
+            <p className="device-favorites-count" role="status">
+              {(page - 1) * 24 + 1}–{Math.min(page * 24, matching.length)} of {matching.length}{" "}
+              shown
+            </p>
+          )}
           {visible.length ? (
             <div className={`device-favorites-grid${view === "list" ? " is-list" : ""}`}>
               {visible.map((build) => (
@@ -251,19 +260,21 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
               ))}
             </div>
           ) : (
-            <div className="ecosystem-empty">
-              <h3>No favorites match your search.</h3>
-              <button
-                type="button"
-                className="button secondary"
-                onClick={() => {
-                  setQuery("");
-                  setPage(1);
-                }}
-              >
-                Clear library search
-              </button>
-            </div>
+            <EmptyWell
+              title="No favorites match your search"
+              action={
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(1);
+                  }}
+                >
+                  Clear library search
+                </button>
+              }
+            />
           )}
           {pages > 1 && (
             <nav className="device-favorites-pagination" aria-label="Library favorite pages">
@@ -291,19 +302,17 @@ export function DeviceLibraryFavorites({ compactEmpty = false }: { compactEmpty?
             </nav>
           )}
         </>
-      ) : compactEmpty ? (
-        <p className="device-favorites-empty-note">
-          No library favorites yet. Save a build from the library to keep it on this device.
-        </p>
       ) : (
-        <div className="ecosystem-empty">
-          <Bookmark size={28} />
-          <h3>Keep your next loadout close.</h3>
-          <p>Save a build from the library. Your choices stay in this browser.</p>
-          <Link className="button secondary" href="/builds/library">
-            Explore the library
-          </Link>
-        </div>
+        <EmptyWell
+          emblem="strip-builds"
+          title="No library builds saved yet"
+          line="Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
+          action={
+            <Link className="button secondary" href="/builds/library">
+              Open the library
+            </Link>
+          }
+        />
       )}
     </section>
   );

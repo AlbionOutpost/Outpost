@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Plus, ClipboardList, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import { PanelHead } from "./panel-head";
+import { Disclosure } from "./disclosure";
 import {
   productionPlan,
   productionPlanSchema,
@@ -28,9 +30,15 @@ const silver = (value: number | null) =>
 export function ProductionPlan({
   current,
   onEdit,
+  runAction,
+  children,
 }: {
   current: ProductionInput;
   onEdit: (run: ProductionInput) => void;
+  /** A second head action for the single run (saving and sharing it). */
+  runAction?: React.ReactNode;
+  /** Content for that action, under the head. */
+  children?: React.ReactNode;
 }) {
   const [plan, setPlan] = useState<ProductionPlanInput>({
     kind: "production-plan",
@@ -142,27 +150,31 @@ export function ProductionPlan({
     URL.revokeObjectURL(url);
     setMessage("Plan exported with static assumptions and original price timestamps.");
   }
+  const addButton = (
+    <button
+      className="button secondary"
+      type="button"
+      onClick={add}
+      disabled={busy || !valid || !sameServer || plan.runs.length >= 30}
+    >
+      <Plus size={16} aria-hidden="true" /> Add current recipe
+    </button>
+  );
   return (
     <section className="production-plan panel" aria-labelledby="production-plan-title">
-      <div className="production-plan-heading">
-        <div>
-          <p className="eyebrow">
-            <ClipboardList size={16} aria-hidden="true" /> Production planner
-          </p>
-          <h2 id="production-plan-title">One run. Every recipe.</h2>
-          <p>
-            Combine recipes into a shopping list. Prices and assumptions stay attached to each run.
-          </p>
-        </div>
-        <button
-          className="button primary"
-          type="button"
-          onClick={add}
-          disabled={busy || !valid || !sameServer || plan.runs.length >= 30}
-        >
-          <Plus size={16} aria-hidden="true" /> Add current recipe
-        </button>
-      </div>
+      <PanelHead
+        id="production-plan-title"
+        emblem="tool-planner"
+        title="Production plan"
+        line="Add several runs to one plan and get a single shopping list. Each run keeps its own prices and settings."
+        actions={
+          <>
+            {runAction}
+            {plan.runs.length > 0 && addButton}
+          </>
+        }
+      />
+      {children}
       {!sameServer && (
         <p className="notice">
           This plan belongs to {plan.region}. Switch back to that server to add recipes, or remove
@@ -170,10 +182,10 @@ export function ProductionPlan({
         </p>
       )}
       {!plan.runs.length && (
-        <p className="production-plan-empty">
-          Set quantities and prices above, then add your first recipe. You can plan with missing
-          prices; profit will remain incomplete.
-        </p>
+        <div className="production-plan-empty">
+          <p>No runs yet. Set one up above and add it; missing prices are fine.</p>
+          {addButton}
+        </div>
       )}
       {error && <p role="alert">{error}</p>}
       {legacyFees.map(({ configuration, recipe, index }) => (
@@ -361,7 +373,7 @@ export function ProductionPlan({
               <strong>{result.margin === null ? "Incomplete" : `${silver(result.margin)}%`}</strong>
             </div>
           </div>
-          <div className="section-heading">
+          <div className="production-plan-subhead">
             <h3>Shopping list</h3>
             <AddToShopping
               region={plan.region}
@@ -369,7 +381,7 @@ export function ProductionPlan({
               entries={shoppingFromProduction(result.materials)}
             />
           </div>
-          <p>
+          <p className="production-plan-note">
             Gross materials required before crafting. Returned resources are valued as a credit;
             they are not deducted from your shopping quantities. Different markets and qualities
             stay separate.
@@ -415,8 +427,7 @@ export function ProductionPlan({
               </tbody>
             </table>
           </div>
-          <details>
-            <summary>Detailed accounting & assumptions</summary>
+          <Disclosure summary="Detailed accounting & assumptions">
             <dl className="production-plan-accounting">
               {(
                 [
@@ -442,7 +453,7 @@ export function ProductionPlan({
               journals, weight or station rounding are included. Editing a focused recipe requires
               confirming its actual focus cost.
             </p>
-          </details>
+          </Disclosure>
           <div className="production-plan-actions">
             <button className="button secondary" disabled={busy} onClick={refreshPrices}>
               {busy ? "Refreshing plan prices…" : "Refresh plan observations"}
@@ -453,8 +464,7 @@ export function ProductionPlan({
           </div>
         </>
       )}
-      <details>
-        <summary>Save or restore a production plan</summary>
+      <Disclosure summary="Save or restore a production plan">
         <ScenarioControls
           prepare={prepareProductionRestore}
           schema={productionPlanSchema}
@@ -465,8 +475,12 @@ export function ProductionPlan({
             setEditing(null);
           }}
         />
-      </details>
-      <p role="status">{message}</p>
+      </Disclosure>
+      {message && (
+        <p className="production-plan-message" role="status">
+          {message}
+        </p>
+      )}
     </section>
   );
 }
