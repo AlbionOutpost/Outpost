@@ -1,6 +1,7 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
+import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
@@ -37,7 +38,6 @@ export function GroupSettings({
         <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
           <PanelHead
             id="team-invites"
-            emblem="team-roles"
             title="Invite a member"
             line="A single-use link that joins one player as a Member. Outpost sends nothing for you; share it yourself."
           />
@@ -163,8 +163,14 @@ export function GroupSettings({
             </ul>
           ) : (
             <EmptyWell
+              emblem="team-roles"
               title="No pending requests"
-              line="New requests from public players show up here."
+              line="New requests from players outside the team show up here."
+              action={
+                <Link className="button secondary" href="/groups">
+                  See the directory
+                </Link>
+              }
             />
           )}
         </section>

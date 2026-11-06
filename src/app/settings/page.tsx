@@ -119,7 +119,6 @@ export default async function Settings({
           >
             <PanelHead
               id="plan-title"
-              emblem="team-roles"
               title="Supporter plan"
               line={
                 supporter
@@ -190,11 +189,11 @@ export default async function Settings({
         line="Everything you saved, one click away."
         cards={[
           {
-            href: "/dashboard",
-            emblem: "strip-builds",
-            title: "Dashboard",
-            line: "Recent builds, comps, timers and teams.",
-            scene: "build",
+            href: "/groups?mine=1",
+            emblem: "team-roles",
+            title: "Your teams",
+            line: "Events, comps and loot splits.",
+            scene: "composition",
           },
           {
             href: "/timers",
@@ -205,7 +204,7 @@ export default async function Settings({
           },
           {
             href: "/favorites",
-            emblem: "strip-comps",
+            emblem: "strip-builds",
             title: "Favorites",
             line: "Builds and comps you saved.",
             scene: "composition",

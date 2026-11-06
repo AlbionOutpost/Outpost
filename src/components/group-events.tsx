@@ -113,6 +113,7 @@ export function GroupEvents({
         </ul>
       ) : (
         <EmptyWell
+          emblem="team-calendar"
           title={filter === "upcoming" ? "No event scheduled" : "No events in this view"}
           line={
             filter === "upcoming"

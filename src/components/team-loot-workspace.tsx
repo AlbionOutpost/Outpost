@@ -11,6 +11,9 @@ import { Disclosure } from "./disclosure";
 import { Field } from "./group-parts";
 import styles from "./teams.module.css";
 
+/** Fired by the workspace masthead's New split button. */
+export const newLootSplitEvent = "outpost:team-loot-new";
+
 type Saved = {
   id: string;
   title: string;
@@ -112,6 +115,11 @@ export function TeamLootWorkspace({
       window.removeEventListener(accountLogoutEvent, logout);
     };
   }, [dirty]);
+  useEffect(() => {
+    const start = () => open(null);
+    window.addEventListener(newLootSplitEvent, start);
+    return () => window.removeEventListener(newLootSplitEvent, start);
+  });
   function open(row: Saved | null) {
     if (dirty && !confirm("Replace your unsaved loot split? Export JSON first to keep it.")) return;
     const value = row
@@ -192,16 +200,10 @@ export function TeamLootWorkspace({
         <aside className={`panel ${styles.panel}`} aria-labelledby="team-loot-saved">
           <PanelHead
             id="team-loot-saved"
-            emblem="team-loot"
             title="Saved splits"
             line="The latest 50, for current members."
           />
           <div className={styles.rowActions}>
-            {editable && (
-              <button type="button" className="button secondary" onClick={() => open(null)}>
-                <Plus size={16} aria-hidden="true" /> New split
-              </button>
-            )}
             <button
               type="button"
               className="pill-link is-small"
@@ -236,11 +238,19 @@ export function TeamLootWorkspace({
           {!loaded && !error && active && <StatusLine>Loading saved splits…</StatusLine>}
           {loaded && !saved.length && (
             <EmptyWell
+              emblem="team-loot"
               title="No saved splits yet"
               line={
                 editable
                   ? "Fill in the split and save it to keep a record."
                   : "Officers save splits here."
+              }
+              action={
+                editable ? (
+                  <button type="button" className="button secondary" onClick={() => open(null)}>
+                    New split
+                  </button>
+                ) : undefined
               }
             />
           )}

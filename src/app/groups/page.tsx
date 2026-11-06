@@ -65,6 +65,28 @@ export default async function Groups({
       members: { where: { userId: userId || "" }, select: { role: true }, take: 1 },
     },
   });
+  // Events and comps are member-only, so they are read only for the viewer's own teams.
+  const own = rows.filter((g) => g.members.length).map((g) => g.id);
+  const [events, comps] = own.length
+    ? await Promise.all([
+        db.groupEvent.findMany({
+          where: { groupId: { in: own }, cancelled: false, startsAt: { gt: new Date() } },
+          select: { groupId: true, title: true },
+          orderBy: [{ startsAt: "asc" }, { id: "asc" }],
+          take: 200,
+        }),
+        db.composition.findMany({
+          where: { groupId: { in: own }, visibility: "GROUP", hiddenAt: null },
+          select: { groupId: true },
+          take: 2000,
+        }),
+      ])
+    : [[], []];
+  const nextEvent = new Map<string, string>();
+  for (const e of events) if (!nextEvent.has(e.groupId)) nextEvent.set(e.groupId, e.title);
+  const compCount = new Map<string, number>();
+  for (const c of comps)
+    if (c.groupId) compCount.set(c.groupId, (compCount.get(c.groupId) ?? 0) + 1);
   // Creating a team needs the Supporter plan only once billing is switched on.
   const locked = billingEnabled() && !(userId && (await userIsSupporter(userId)));
   const filtered = Boolean(q || region || visibility);
@@ -174,11 +196,11 @@ export default async function Groups({
               )
             ) : mine ? (
               <>
-                No teams in this <em>view</em>
+                Your <em>teams</em>
               </>
             ) : (
               <>
-                No matching <em>teams</em>
+                Matching <em>teams</em>
               </>
             )
           }
@@ -214,6 +236,37 @@ export default async function Groups({
                     <p className={g.description ? styles.teamLine : styles.teamLineMuted}>
                       {g.description || "No description yet."}
                     </p>
+                    <ul className={styles.teamFacts}>
+                      <li className="well">
+                        <span>Members</span>
+                        <span>{g._count.members.toLocaleString("en")}</span>
+                      </li>
+                      {g.members.length ? (
+                        <>
+                          <li className="well">
+                            <span>Next event</span>
+                            <span>{nextEvent.get(g.id) ?? "None scheduled"}</span>
+                          </li>
+                          <li className="well">
+                            <span>Shared comps</span>
+                            <span>{(compCount.get(g.id) ?? 0).toLocaleString("en")}</span>
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="well">
+                            <span>Region</span>
+                            <span>{regionLabel(g.region)}</span>
+                          </li>
+                          <li className="well">
+                            <span>Joining</span>
+                            <span>
+                              {g.visibility === "PUBLIC" ? "Ask to join" : "By invitation"}
+                            </span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
                   </div>
                   <Link
                     href={`/groups/${g.slug}`}
@@ -223,10 +276,9 @@ export default async function Groups({
                   >
                     <TeamMark name={g.name} size="small" />
                     <span>
-                      <strong>{plural(g._count.members, "member")}</strong>
+                      <strong>{g.members.length ? "Open workspace" : "View team"}</strong>
                       <small>
-                        {regionLabel(g.region)} ·{" "}
-                        {g.members.length ? "Open workspace" : "View team"}
+                        {regionLabel(g.region)} · {visibilityLabel(g.visibility)}
                       </small>
                     </span>
                     <ArrowUpRight size={20} aria-hidden="true" />
@@ -242,7 +294,7 @@ export default async function Groups({
               mine && !userId
                 ? "Sign in to see your teams"
                 : filtered
-                  ? "Nothing matches these filters"
+                  ? "No matching teams"
                   : mine
                     ? "You are not in a team yet"
                     : "No public teams yet"
@@ -261,9 +313,13 @@ export default async function Groups({
                 <Link className="button secondary" href={mine ? "/groups?mine=1" : "/groups"}>
                   Clear filters
                 </Link>
+              ) : mine ? (
+                <Link className="button secondary" href="/groups">
+                  Discover teams
+                </Link>
               ) : (
-                <Link className="button secondary" href="/groups/new">
-                  Create a team
+                <Link className="button secondary" href="/supporter">
+                  About the Supporter plan
                 </Link>
               )
             }
@@ -298,14 +354,9 @@ export default async function Groups({
             : "Mass-ups with RSVPs, shared comps and builds, loot splits and roles in one private workspace for your guild."
         }
         actions={
-          <>
-            <Link href="/groups/new" className="button primary">
-              Create a team <ArrowRight size={17} aria-hidden="true" />
-            </Link>
-            <Link href="/supporter" className="button secondary">
-              About the Supporter plan
-            </Link>
-          </>
+          <Link href="/supporter" className="button primary">
+            About the Supporter plan <ArrowRight size={17} aria-hidden="true" />
+          </Link>
         }
       />
     </div>

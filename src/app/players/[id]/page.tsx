@@ -13,7 +13,7 @@ import { CompGrid, CompWindow } from "@/components/comp-window";
 import { RosterRows } from "@/components/comp-roster";
 import { readStoredComposition } from "@/lib/compositions/stored";
 import { slotRosterMember } from "@/lib/compositions/roster";
-import { plural } from "@/components/group-parts";
+import { TeamMark, plural } from "@/components/group-parts";
 import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Player profile");
 
@@ -84,18 +84,13 @@ export default async function Profile({ params }: { params: Promise<{ id: string
   if (!u || (!u.builds.length && !u.compositions.length && !u.comments.length && viewer !== id))
     notFound();
   const name = u.name || "Adventurer";
-  const words = name.trim().split(/\s+/);
   return (
     <div className={styles.page}>
       <WorkspaceHeading
         scene="builds"
-        emblem={
-          <span className={styles.initial} aria-hidden="true">
-            {name.slice(0, 1).toUpperCase()}
-          </span>
-        }
-        title={name}
-        accent={words.length > 1 ? words.at(-1) : undefined}
+        emblem={<TeamMark name={name} />}
+        title={`${name}'s profile`}
+        accent="profile"
         description={`Builds and comps ${name} has published on Outpost.`}
       >
         <div className={`landing-chips ${styles.chips}`}>
@@ -206,24 +201,24 @@ export default async function Profile({ params }: { params: Promise<{ id: string
         line="Copy a loadout into the editor, or start a comp around it."
         cards={[
           {
-            href: "/builds/new",
-            emblem: "tool-craft",
-            title: "Create a build",
-            line: "Full set, spells and swaps.",
+            href: "/builds/library",
+            emblem: "strip-builds",
+            title: "Build library",
+            line: "Recorded builds by activity.",
             scene: "build",
           },
           {
-            href: "/compositions/new",
-            emblem: "team-comps",
-            title: "Plan a comp",
-            line: "Roles and sets for the party.",
+            href: "/compositions/library",
+            emblem: "strip-comps",
+            title: "Group Builds",
+            line: "Recorded comps for every party size.",
             scene: "composition",
           },
           {
-            href: "/builds/library",
-            emblem: "strip-content",
-            title: "Build library",
-            line: "Hundreds of recorded builds by activity.",
+            href: "/tools/crafting",
+            emblem: "tool-craft",
+            title: "Crafting Calculator",
+            line: "Cost a set before you copy it.",
             scene: "city",
           },
         ]}

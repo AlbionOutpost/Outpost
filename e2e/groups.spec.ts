@@ -46,7 +46,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await page.getByLabel("Team name").fill("Verified guild workflows");
     await page.getByLabel("Workspace address").fill(slug);
     await page.getByLabel("Workspace visibility").selectOption("PUBLIC");
-    await page.getByRole("button", { name: "Create workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Create team", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Verified guild workflows", exact: true }),
     ).toBeVisible();
@@ -178,6 +178,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     expect((await action(3, { action: "share-build", buildId: sourceBuild.id })).status()).toBe(
       403,
     );
+    await officerPage.getByRole("tab", { name: "Events", exact: true }).click();
     await officerPage.getByRole("button", { name: "New event", exact: true }).click();
     await officerPage.getByLabel("Event title").fill("Guild training operation");
     const tomorrowLocal = await officerPage.evaluate(() => {

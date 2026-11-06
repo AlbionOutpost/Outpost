@@ -9,42 +9,51 @@
 }
 
 /* ---------- Identity ---------- */
+/* The team's letters on a tile framed like the painted emblems (an ember bevel on dark
+   enamel), until a team can upload a crest. */
 :global(.app.outpost) .mark.mark {
   display: inline-grid;
   flex: none;
   place-items: center;
   width: 64px;
   height: 64px;
-  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
-  border-radius: 14px;
+  border: 2px solid color-mix(in srgb, var(--accent) 82%, var(--illustration-bg));
+  border-radius: 12px;
   background:
     radial-gradient(
       120% 90% at 30% 15%,
-      color-mix(in srgb, var(--accent) 28%, transparent),
+      color-mix(in srgb, var(--accent) 30%, transparent),
       transparent 70%
     ),
     var(--illustration-bg);
   box-shadow:
-    inset 0 1px 0 #ffffff1a,
-    0 6px 18px #0009;
+    inset 0 0 0 2px color-mix(in srgb, var(--illustration-bg) 70%, transparent),
+    inset 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 4px 10px #000a,
+    0 0 12px color-mix(in srgb, var(--accent) 35%, transparent);
   color: var(--accent-ink);
   font: 800 26px/1 var(--font-display);
   letter-spacing: 0.02em;
   text-shadow: 0 1px 2px #000c;
 }
-/* In the masthead the emblem box is the frame; the mark fills it */
-:global(.app.outpost .workspace-emblem) .mark.mark {
-  width: 100%;
-  height: 100%;
+/* In the masthead the tile stands on its own, like a painted emblem: no second box */
+:global(.app.outpost .workspace-emblem):has(> .mark) {
   border: 0;
-  border-radius: inherit;
+  background: none;
   box-shadow: none;
 }
 :global(.app.outpost) .mark.mark[data-size="small"] {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  font-size: 17px;
+  border-radius: 9px;
+  font-size: 16px;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost .workspace-emblem) > .mark.mark {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
 }
 :global(.app.outpost) .chips.chips {
   flex-wrap: wrap;
@@ -52,11 +61,39 @@
 }
 
 /* ---------- Workspace tabs, in the masthead ---------- */
+/* One control row: the way back, then the tabs */
+:global(.app.outpost) .tabRow.tabRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
 :global(.app.outpost) .tabs.tabs {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: var(--space-4);
+}
+:global(.app.outpost) .backTab.backTab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px 0 10px;
+  border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));
+  border-radius: 999px;
+  background: var(--surface-raised);
+  color: var(--text);
+  font: 600 13px/1 var(--font-ui);
+  white-space: nowrap;
+  text-decoration: none;
+}
+:global(.app.outpost) .backTab.backTab svg {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .backTab.backTab:hover {
+  border-color: var(--accent);
 }
 :global(.app.outpost) .tabs.tabs > button {
   min-height: 36px;
@@ -215,7 +252,13 @@
 :global(.app.outpost) .weapons.weapons {
   display: flex;
   flex: none;
+  flex-wrap: wrap;
   gap: 4px;
+  margin-top: 4px;
+}
+:global(.app.outpost) .rowCopy.rowCopy > :is(strong, h3).wrapTitle {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 :global(.app.outpost) .weapons.weapons > span {
   display: inline-grid;
@@ -650,20 +693,29 @@
 }
 :global(.app.outpost) .settings.settings {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  gap: 26px 24px;
-}
-:global(.app.outpost) .settings.settings > .danger {
-  grid-column: 1 / -1;
+  gap: 26px;
 }
 
 /* ---------- Loot splits: saved rail, the haul, the payout ---------- */
+/* The haul on the left; the payout, then the saved splits, stacked beside it to the same height */
 :global(.app.outpost) .lootColumns.lootColumns {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "haul payout"
+    "haul saved";
+  align-items: stretch;
   gap: 26px 24px;
+}
+:global(.app.outpost) .lootColumns.lootColumns > aside {
+  grid-area: saved;
+}
+:global(.app.outpost) .lootColumns.lootColumns > fieldset {
+  grid-area: haul;
+}
+:global(.app.outpost) .lootColumns.lootColumns > section {
+  grid-area: payout;
 }
 :global(.app.outpost) fieldset.panel.panel {
   min-inline-size: 0;
@@ -724,28 +776,36 @@
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1100px) {
-  :global(.app.outpost) .overview.overview,
-  :global(.app.outpost) .lootColumns.lootColumns {
+  :global(.app.outpost) .overview.overview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  :global(.app.outpost) .lootColumns.lootColumns > :first-child {
-    grid-column: 1 / -1;
   }
 }
 @media (max-width: 700px) {
-  :global(.app.outpost) .tabs.tabs {
+  /* The control row scrolls sideways; a pill cut by the edge fades out */
+  :global(.app.outpost) .tabRow.tabRow {
     flex-wrap: nowrap;
     overflow-x: auto;
     margin-inline: -16px;
-    padding-inline: 16px 40px;
+    padding-inline: 16px 64px;
     scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
   }
-  :global(.app.outpost) .tabs.tabs > button {
+  :global(.app.outpost) .tabRow.tabRow::-webkit-scrollbar {
+    display: none;
+  }
+  :global(.app.outpost) .tabs.tabs {
+    flex-wrap: nowrap;
+  }
+  :global(.app.outpost) .tabs.tabs > button,
+  :global(.app.outpost) .backTab.backTab {
     min-height: 40px;
   }
   :global(.app.outpost) .overview.overview,
-  :global(.app.outpost) .lootColumns.lootColumns,
+  :global(.app.outpost) .lootColumns.lootColumns {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "haul" "payout" "saved";
+  }
   :global(.app.outpost) .split.split,
   :global(.app.outpost) .settings.settings,
   :global(.app.outpost) .formGrid.formGrid {
@@ -956,7 +1016,7 @@
 :global(.app.outpost) .createLayout.createLayout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  align-items: start;
+  align-items: stretch;
   gap: 26px 24px;
 }
 :global(.app.outpost) .createLayout.createLayout[data-locked] {
@@ -1015,4 +1075,84 @@
 :global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea)::placeholder {
   color: var(--muted);
   opacity: 0.75;
+}
+
+/* An empty well in a narrow panel: its action drops under the copy instead of squeezing it */
+:global(.app.outpost) .emptyStack.emptyStack > div {
+  flex-wrap: wrap;
+}
+:global(.app.outpost) .emptyStack.emptyStack > div > div:last-child:not(:nth-child(2)) {
+  flex: 1 1 100%;
+}
+/* Team windows in the directory: the facts sit in wells under the line */
+:global(.app.outpost) .teamFacts.teamFacts {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .teamFacts.teamFacts > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+:global(.app.outpost) .teamFacts.teamFacts > li > span:first-child {
+  color: var(--muted);
+}
+:global(.app.outpost) .teamFacts.teamFacts > li > :last-child {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* The invitation card stands centred on the page */
+:global(.app.outpost) .centred.centred {
+  margin-inline: auto;
+}
+/* Row menu: the secondary member actions behind one button */
+:global(.app.outpost) .rowMenu.rowMenu {
+  position: relative;
+}
+:global(.app.outpost) .rowMenu.rowMenu > [role="menu"] {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 5;
+  display: grid;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-raised);
+}
+:global(.app.outpost) .rowMenu.rowMenu > [role="menu"] > button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--text);
+  font: 600 14px/1 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+:global(.app.outpost) .rowMenu.rowMenu > [role="menu"] > button:hover {
+  background: var(--well);
+}
+:global(.app.outpost) .weapons.weapons :global(.equipment-strip) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  background: none;
 }

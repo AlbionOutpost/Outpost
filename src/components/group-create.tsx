@@ -107,7 +107,7 @@ export function GroupCreate() {
       )}
       <div className={styles.formActions}>
         <button className="button primary" disabled={busy}>
-          {busy ? "Creating…" : "Create workspace"}
+          {busy ? "Creating…" : "Create team"}
         </button>
       </div>
     </form>

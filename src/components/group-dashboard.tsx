@@ -1,7 +1,7 @@
 "use client";
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CalendarPlus } from "lucide-react";
+import { ArrowLeft, CalendarPlus, Plus, UserPlus } from "lucide-react";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { canEditShared, canManageMembers } from "@/lib/groups/permissions";
@@ -13,7 +13,7 @@ import { GroupMembers } from "./group-members";
 import { GroupComps, GroupBuilds } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
 import { GroupSettings } from "./group-settings";
-import { TeamLootWorkspace } from "./team-loot-workspace";
+import { TeamLootWorkspace, newLootSplitEvent } from "./team-loot-workspace";
 import styles from "./teams.module.css";
 
 export type TeamTab =
@@ -98,6 +98,10 @@ export function GroupDashboard({
   const [eventFilter, setEventFilter] = useState("upcoming");
   const hash = useSyncExternalStore(subscribeTeamHash, teamHash, () => "");
   const tab = tabs.find((name) => tabHash(name) === hash) || "Overview";
+  // On phones the tab row scrolls; keep the open tab in view
+  useEffect(() => {
+    document.getElementById(tabId(tab))?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [tab]);
   function setTab(name: TeamTab) {
     const target = tabHash(name);
     if (window.location.hash === target) return;
@@ -154,6 +158,33 @@ export function GroupDashboard({
     setTab,
     newEvent: () => setEventOpen(true),
   };
+  // One primary action, the one that fits the open tab
+  const primary = !editor ? undefined : tab === "Overview" || tab === "Events" ? (
+    <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
+      <CalendarPlus size={17} aria-hidden="true" /> New event
+    </button>
+  ) : tab === "Loot splits" ? (
+    <button
+      type="button"
+      className="button primary"
+      onClick={() => window.dispatchEvent(new Event(newLootSplitEvent))}
+    >
+      <Plus size={17} aria-hidden="true" /> New split
+    </button>
+  ) : tab === "Members" ? (
+    <button
+      type="button"
+      className="button primary"
+      onClick={() => {
+        setTab("Settings");
+        requestAnimationFrame(() =>
+          document.getElementById("team-invites")?.scrollIntoView({ block: "center" }),
+        );
+      }}
+    >
+      <UserPlus size={17} aria-hidden="true" /> Invite
+    </button>
+  ) : undefined;
   return (
     <>
       <WorkspaceHeading
@@ -166,44 +197,40 @@ export function GroupDashboard({
             : undefined
         }
         description={group.description || "A Team workspace on Outpost."}
-        actions={
-          editor ? (
-            <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
-              <CalendarPlus size={17} aria-hidden="true" /> New event
-            </button>
-          ) : undefined
-        }
+        actions={primary}
       >
         <TeamChips region={group.region} visibility={group.visibility} members={data.memberCount}>
           <span className="landing-chip is-muted">Your role: {roleLabel(role)}</span>
         </TeamChips>
-        <nav className={styles.tabs} role="tablist" aria-label="Team workspace">
-          {tabs.map((name, i) => (
-            <button
-              type="button"
-              role="tab"
-              id={tabId(name)}
-              aria-controls="guild-tab-panel"
-              aria-selected={tab === name}
-              tabIndex={tab === name ? 0 : -1}
-              key={name}
-              onClick={() => setTab(name)}
-              onKeyDown={(e) => {
-                if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-                e.preventDefault();
-                const next =
-                  tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
-                setTab(next);
-                document.getElementById(tabId(next))?.focus();
-              }}
-            >
-              {name}
-            </button>
-          ))}
-        </nav>
-        <Link className="pill-link is-small masthead-back" href="/groups">
-          <ArrowLeft size={14} aria-hidden="true" /> All teams
-        </Link>
+        <div className={styles.tabRow}>
+          <Link className={styles.backTab} href="/groups">
+            <ArrowLeft size={14} aria-hidden="true" /> All teams
+          </Link>
+          <nav className={styles.tabs} role="tablist" aria-label="Team workspace">
+            {tabs.map((name, i) => (
+              <button
+                type="button"
+                role="tab"
+                id={tabId(name)}
+                aria-controls="guild-tab-panel"
+                aria-selected={tab === name}
+                tabIndex={tab === name ? 0 : -1}
+                key={name}
+                onClick={() => setTab(name)}
+                onKeyDown={(e) => {
+                  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+                  e.preventDefault();
+                  const next =
+                    tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+                  setTab(next);
+                  document.getElementById(tabId(next))?.focus();
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </nav>
+        </div>
       </WorkspaceHeading>
       {gate}
       {error && (

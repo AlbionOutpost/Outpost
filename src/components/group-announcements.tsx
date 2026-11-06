@@ -82,9 +82,19 @@ export function GroupAnnouncements({ ctx }: { ctx: TeamContext }) {
           </ul>
         ) : (
           <EmptyWell
+            emblem="team-announce"
             title="No announcements yet"
             line={
               editor ? "Post the first one with the form." : "Officers post news for the team here."
+            }
+            action={
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => ctx.setTab("Events")}
+              >
+                See the events
+              </button>
             }
           />
         )}

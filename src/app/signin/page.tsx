@@ -1,10 +1,10 @@
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, RotateCcw } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { LoginButton } from "@/components/login-button";
-import { SignInError } from "@/components/sign-in-error";
+import { signInErrorMessage } from "@/lib/sign-in-error";
 import { PanelHead } from "@/components/panel-head";
 import { safeSignInPageReturn } from "@/lib/sign-in-return";
 import Link from "@/components/link";
@@ -40,6 +40,8 @@ export default async function Signin({
           ? "your team workspace"
           : "your dashboard";
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
+  const error = signInErrorMessage(params.error);
+  const retry = `/signin?${new URLSearchParams({ callbackUrl })}`;
   return (
     <div className={styles.signin} data-signin="">
       <div className={styles.signinCopy}>
@@ -72,15 +74,21 @@ export default async function Signin({
           title="Continue with Discord"
           line={`After sign-in you go straight to ${destination}.`}
         />
-        <SignInError error={params.error} />
-        {configured ? (
-          <LoginButton callbackUrl={callbackUrl} />
-        ) : (
-          <div className={`well ${styles.unavailable}`} role="status">
-            <strong>Sign-in is unavailable right now</strong>
-            <p>Public tools and device drafts still work. Try again later.</p>
+        {/* Said once: the failed attempt if there was one, otherwise that sign-in is off */}
+        {error || !configured ? (
+          <div
+            className={`well ${styles.unavailable}`}
+            role={error ? "alert" : "status"}
+            data-tone="error"
+          >
+            <strong>{error ? "Sign-in did not finish" : "Sign-in is unavailable right now"}</strong>
+            <p>{error ?? "Public tools and device drafts still work. Try again later."}</p>
+            <Link className="pill-link is-small" href={retry}>
+              <RotateCcw size={14} aria-hidden="true" /> Retry
+            </Link>
           </div>
-        )}
+        ) : null}
+        {configured && <LoginButton callbackUrl={callbackUrl} />}
         <p className={styles.signinNote}>
           Outpost asks Discord for your name, picture and email only: no server permissions, no
           messages. It does not check your Albion character.
@@ -120,7 +128,7 @@ export default async function Signin({
             },
             {
               href: "/builds/library",
-              emblem: "strip-content",
+              emblem: "strip-builds",
               title: "Build library",
               line: "Recorded builds by activity.",
               scene: "city",

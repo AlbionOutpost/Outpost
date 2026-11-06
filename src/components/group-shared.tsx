@@ -19,18 +19,20 @@ type SharedBuild = GroupDashboardData["builds"][number];
 export function CompRow({ comp }: { comp: CompPreview }) {
   return (
     <Link className={`well ${styles.wellRow}`} data-team-comp="" href={`/compositions/${comp.id}`}>
-      <span className={styles.weapons} aria-label="Primary weapons">
-        {comp.weapons.map((w, i) => (
-          <span key={i} title={`${w.role}: ${equipmentName(w.itemId)}`}>
-            <ItemIcon id={w.itemId} quality={w.quality} size={34} />
-          </span>
-        ))}
-      </span>
       <span className={styles.rowCopy}>
-        <strong>{comp.title}</strong>
+        <strong className={styles.wrapTitle}>{comp.title}</strong>
         <small>
           {comp.playerCount === null ? "Roster unavailable" : plural(comp.playerCount, "player")}
         </small>
+        {comp.weapons.length > 0 && (
+          <span className={styles.weapons} aria-label="Primary weapons">
+            {comp.weapons.map((w, i) => (
+              <span key={i} title={`${w.role}: ${equipmentName(w.itemId)}`}>
+                <ItemIcon id={w.itemId} quality={w.quality} size={32} />
+              </span>
+            ))}
+          </span>
+        )}
       </span>
       <ArrowUpRight className={styles.rowArrow} size={18} aria-hidden="true" />
     </Link>
@@ -53,14 +55,16 @@ export function BuildRow({
   const Title = heading;
   const body = (
     <>
-      <EquipmentStrip
-        equipment={build.equipment}
-        size={34}
-        slots={["Main hand", "Helmet", "Chest", "Boots"]}
-      />
       <span className={styles.rowCopy}>
-        <Title>{build.title}</Title>
+        <Title className={styles.wrapTitle}>{build.title}</Title>
         <small>{main ? equipmentName(main.itemId) : "No main hand recorded"}</small>
+        <span className={styles.weapons}>
+          <EquipmentStrip
+            equipment={build.equipment}
+            size={32}
+            slots={["Main hand", "Helmet", "Chest", "Boots"]}
+          />
+        </span>
       </span>
     </>
   );
@@ -117,8 +121,14 @@ export function GroupComps({ ctx }: { ctx: TeamContext }) {
         </ul>
       ) : (
         <EmptyWell
+          emblem="team-comps"
           title="No shared comps yet"
           line="Create a comp and set its visibility to this team; it shows up here for every member."
+          action={
+            <Link className="button secondary" href="/compositions/new">
+              Plan a comp
+            </Link>
+          }
         />
       )}
     </section>
@@ -181,11 +191,17 @@ export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
         </ul>
       ) : (
         <EmptyWell
+          emblem="strip-builds"
           title="No shared builds yet"
           line={
             editor
               ? "Pick a build above to give every member the same set."
               : "Officers can share builds here for the whole team."
+          }
+          action={
+            <Link className="button secondary" href="/builds/library">
+              Browse the build library
+            </Link>
           }
         />
       )}

@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { MoreHorizontal, Search } from "lucide-react";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
@@ -12,8 +12,16 @@ import styles from "./teams.module.css";
 
 type Member = GroupDashboardData["members"][number];
 
-/** A member as a well row: initial, name and role chip; actions on the right when allowed. */
-export function MemberRow({ member, children }: { member: Member; children?: React.ReactNode }) {
+/** A member as a well row: initial, name and role; the role control replaces the chip when allowed. */
+export function MemberRow({
+  member,
+  editable = false,
+  children,
+}: {
+  member: Member;
+  editable?: boolean;
+  children?: React.ReactNode;
+}) {
   return (
     <div className={`well ${styles.wellRow}`} data-team-member="">
       <span className={styles.initial} aria-hidden="true">
@@ -22,10 +30,13 @@ export function MemberRow({ member, children }: { member: Member; children?: Rea
       <span className={styles.rowCopy}>
         <strong>{member.name}</strong>
       </span>
-      <span className="landing-chip is-muted" data-role={member.role}>
-        {roleLabel(member.role)}
-      </span>
-      {children && <span className={styles.rowTools}>{children}</span>}
+      {editable ? (
+        <span className={styles.rowTools}>{children}</span>
+      ) : (
+        <span className="landing-chip is-muted" data-role={member.role}>
+          {roleLabel(member.role)}
+        </span>
+      )}
     </div>
   );
 }
@@ -74,7 +85,12 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         <ul className={styles.list}>
           {rows.map((m) => (
             <li key={m.userId}>
-              <MemberRow member={m}>
+              <MemberRow
+                member={m}
+                editable={
+                  m.role !== "OWNER" && (role === "OWNER" || (manager && m.userId !== userId))
+                }
+              >
                 {role === "OWNER" && m.role !== "OWNER" && (
                   <>
                     <WellSelect
@@ -91,22 +107,24 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
                         </option>
                       ))}
                     </WellSelect>
-                    <button
-                      type="button"
-                      className="button secondary"
-                      disabled={busy}
-                      aria-label={`Transfer ownership to ${m.name}`}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Transfer ownership to ${m.name}? You will become an admin.`,
+                    <RowMenu label={`More actions for ${m.name}`}>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        disabled={busy}
+                        aria-label={`Transfer ownership to ${m.name}`}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Transfer ownership to ${m.name}? You will become an admin.`,
+                            )
                           )
-                        )
-                          run({ action: "transfer", userId: m.userId });
-                      }}
-                    >
-                      Make owner
-                    </button>
+                            run({ action: "transfer", userId: m.userId });
+                        }}
+                      >
+                        Make owner
+                      </button>
+                    </RowMenu>
                   </>
                 )}
                 {manager && m.role !== "OWNER" && m.userId !== userId && (
@@ -126,6 +144,7 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         </ul>
       ) : (
         <EmptyWell
+          emblem="team-roles"
           title="No loaded members match that search."
           line="Search by name or by role, such as officer."
           action={
@@ -159,5 +178,47 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         </nav>
       )}
     </section>
+  );
+}
+
+/** A ⋯ button with the row's less common actions; Escape or a click elsewhere closes it. */
+function RowMenu({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: Event) => {
+      if (
+        event instanceof KeyboardEvent
+          ? event.key === "Escape"
+          : !ref.current?.contains(event.target as Node)
+      )
+        setOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
+  return (
+    <span className={styles.rowMenu} ref={ref}>
+      <button
+        type="button"
+        className={styles.iconButton}
+        aria-label={label}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <MoreHorizontal size={18} aria-hidden="true" />
+      </button>
+      {open && (
+        <span role="menu" onClick={() => setOpen(false)}>
+          {children}
+        </span>
+      )}
+    </span>
   );
 }

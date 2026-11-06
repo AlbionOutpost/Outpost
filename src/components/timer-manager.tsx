@@ -125,9 +125,7 @@ export function TimerManager({
         }
       >
         <div className={`landing-chips ${styles.chips}`}>
-          <span className={running ? "landing-chip" : "landing-chip is-muted"}>
-            {running} running
-          </span>
+          <span className="landing-chip is-muted">{running} running</span>
           <span className="landing-chip is-muted">Saved to your account</span>
         </div>
       </WorkspaceHeading>

@@ -41,6 +41,7 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
       },
     },
   });
+  const session = await getServerSession(authOptions);
   if (
     !invitation ||
     invitation.acceptedAt ||
@@ -48,28 +49,38 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
     invitation.expiresAt < new Date()
   )
     return (
-      <SystemPage
-        emblem="team-roles"
-        eyebrow="Team invitation"
-        title={
-          <>
-            Invitation <em>unavailable</em>
-          </>
-        }
-        line="The link expired, was revoked or has already been used. Ask a team officer for a new one."
-        actions={
-          <>
-            <Link className="button primary" href="/groups">
-              Find a team
-            </Link>
-            <Link className="button secondary" href="/dashboard">
-              Your dashboard
-            </Link>
-          </>
-        }
-      />
+      <>
+        <SystemPage
+          emblem="team-roles"
+          eyebrow="Team invitation"
+          title={
+            <>
+              Invitation <em>unavailable</em>
+            </>
+          }
+          line="The link expired, was revoked or has already been used. Ask a team officer for a new one."
+          actions={
+            <>
+              <Link className="button primary" href="/groups">
+                Find a team
+              </Link>
+              {session ? (
+                <Link className="button secondary" href="/dashboard">
+                  Your dashboard
+                </Link>
+              ) : (
+                <Link className="button secondary" href="/signin">
+                  Sign in
+                </Link>
+              )}
+            </>
+          }
+        />
+        <div className={styles.page}>
+          <TeamNextSteps />
+        </div>
+      </>
     );
-  const session = await getServerSession(authOptions);
   const { group } = invitation;
   const words = group.name.trim().split(/\s+/);
   const expires = invitation.expiresAt;
@@ -90,7 +101,10 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
           members={group._count.members}
         />
       </WorkspaceHeading>
-      <section className={`panel ${styles.panel} ${styles.ask}`} aria-labelledby="invite-title">
+      <section
+        className={`panel ${styles.panel} ${styles.ask} ${styles.centred}`}
+        aria-labelledby="invite-title"
+      >
         <PanelHead
           id="invite-title"
           emblem="team-roles"

@@ -6,6 +6,7 @@ import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
 import { EquipmentStrip } from "@/components/equipment-strip";
+import { ItemIcon } from "@/components/item-icon";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
 import { NextStepCards } from "@/components/next-step-cards";
@@ -18,6 +19,21 @@ import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Dashboard");
 
 const renderedAt = () => Date.now();
+/** Up to three main-hand weapons from a stored comp's slots, as strip pieces. */
+function mainHands(slots: unknown) {
+  if (!Array.isArray(slots)) return [];
+  return slots
+    .flatMap((slot) => {
+      const piece = (slot as { equipment?: unknown })?.equipment;
+      const main = Array.isArray(piece)
+        ? piece.find((e) => e && typeof e === "object" && e.slot === "Main hand")
+        : null;
+      return main && typeof main.itemId === "string"
+        ? [{ slot: "Main hand", itemId: main.itemId as string, quality: Number(main.quality) || 1 }]
+        : [];
+    })
+    .slice(0, 3);
+}
 const day = (d: Date) =>
   new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(d);
 
@@ -42,7 +58,7 @@ export default async function Dashboard() {
         orderBy: { updatedAt: "desc" },
       },
       compositions: {
-        select: { id: true, title: true, updatedAt: true },
+        select: { id: true, title: true, updatedAt: true, slots: true },
         take: 8,
         orderBy: { updatedAt: "desc" },
       },
@@ -72,7 +88,8 @@ export default async function Dashboard() {
       type: "Comp",
       href: `/compositions/${comp.id}`,
       updatedAt: comp.updatedAt,
-      equipment: [],
+      // The comp's first main hands, read loosely: a stored comp that fails validation still lists
+      equipment: mainHands(comp.slots),
     })),
   ]
     .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
@@ -143,7 +160,7 @@ export default async function Dashboard() {
       </nav>
       <div className={styles.grid}>
         <section
-          className={`panel ${styles.panel} ${styles.wide}`}
+          className={`panel ${styles.panel} ${last ? styles.wide : styles.full}`}
           aria-labelledby="recent-work-title"
         >
           <PanelHead
@@ -172,14 +189,18 @@ export default async function Dashboard() {
                     Last edited · {last.type} · {day(last.updatedAt)}
                   </small>
                   <strong>{last.title}</strong>
-                  <span className={styles.continueGo}>
+                  <span className="pill-link is-small">
                     Continue <ArrowRight size={15} aria-hidden="true" />
                   </span>
                 </span>
                 {last.equipment.length > 0 && (
                   <EquipmentStrip
                     equipment={last.equipment}
-                    slots={["Main hand", "Helmet", "Chest", "Boots"]}
+                    slots={
+                      last.type === "Comp"
+                        ? ["Main hand"]
+                        : ["Main hand", "Helmet", "Chest", "Boots"]
+                    }
                     hideEmpty
                     size={48}
                   />
@@ -194,16 +215,17 @@ export default async function Dashboard() {
                         href={item.href}
                         data-dashboard-work=""
                       >
-                        <span className={styles.kind}>
-                          {item.equipment.some((e) => e.slot === "Main hand") ? (
+                        <span className={styles.pieces}>
+                          {item.type === "Comp" && item.equipment.length ? (
+                            item.equipment.map((e, i) => (
+                              <ItemIcon key={i} id={e.itemId} quality={e.quality} size={36} />
+                            ))
+                          ) : (
                             <EquipmentStrip
                               equipment={item.equipment}
                               slots={["Main hand"]}
-                              hideEmpty
                               size={36}
                             />
-                          ) : (
-                            item.type
                           )}
                         </span>
                         <span className={styles.rowCopy}>
@@ -232,17 +254,19 @@ export default async function Dashboard() {
             />
           )}
         </section>
-        <div className={styles.side}>
+        <div className={last ? styles.side : `${styles.side} ${styles.sideRow}`}>
           <section className={`panel ${styles.panel}`} aria-labelledby="dash-timers">
             <PanelHead
               id="dash-timers"
               emblem="team-calendar"
               title="Timers"
+              line={u.timers.length ? "Running first" : "Countdowns you set yourself"}
               actions={
-                <Link href="/timers" className="pill-link is-small">
-                  {u.timers.length ? "Manage" : "Add a timer"}{" "}
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                u.timers.length ? (
+                  <Link href="/timers" className="pill-link is-small">
+                    Manage <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                ) : undefined
               }
             />
             {u.timers.length ? (
@@ -266,10 +290,18 @@ export default async function Dashboard() {
                 ))}
               </ul>
             ) : (
-              <EmptyWell
-                title="No timers running"
-                line="Crops, laborers or a raid start: set a countdown you can check from here."
-              />
+              <div className={styles.emptyStack}>
+                <EmptyWell
+                  emblem="team-calendar"
+                  title="No timers running"
+                  line="Crops, laborers or a raid start: set a countdown you can check from here."
+                  action={
+                    <Link className="button secondary" href="/timers">
+                      Add a timer
+                    </Link>
+                  }
+                />
+              </div>
             )}
           </section>
           <section className={`panel ${styles.panel}`} aria-labelledby="dash-teams">
@@ -277,14 +309,13 @@ export default async function Dashboard() {
               id="dash-teams"
               emblem="team-roles"
               title="Your teams"
+              line={u.memberships.length ? "Your role in each" : "Guild workspaces you belong to"}
               actions={
-                <Link
-                  href={u.memberships.length ? "/groups?mine=1" : "/groups"}
-                  className="pill-link is-small"
-                >
-                  {u.memberships.length ? "All teams" : "Find a team"}{" "}
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                u.memberships.length ? (
+                  <Link href="/groups?mine=1" className="pill-link is-small">
+                    All teams <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                ) : undefined
               }
             />
             {u.memberships.length ? (
@@ -302,10 +333,18 @@ export default async function Dashboard() {
                 ))}
               </ul>
             ) : (
-              <EmptyWell
-                title="Not in a team yet"
-                line="Join through an invitation link, or find a public team."
-              />
+              <div className={styles.emptyStack}>
+                <EmptyWell
+                  emblem="team-roles"
+                  title="Not in a team yet"
+                  line="Join through an invitation link, or find a public team."
+                  action={
+                    <Link className="button secondary" href="/groups">
+                      Find a team
+                    </Link>
+                  }
+                />
+              </div>
             )}
           </section>
         </div>
@@ -343,6 +382,7 @@ export default async function Dashboard() {
             </ul>
           ) : (
             <EmptyWell
+              emblem="tool-craft"
               title="No saved plans"
               line="Save a production run in a calculator to come back to it here."
               action={
@@ -379,7 +419,7 @@ export default async function Dashboard() {
           },
           {
             href: "/guides",
-            emblem: "strip-content",
+            emblem: "fame",
             title: "Guides",
             line: "Progression, gathering and PvE from players.",
             scene: "economy",

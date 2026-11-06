@@ -174,9 +174,7 @@ test("guild activity and discovery remain readable with history, filters and pri
       await expect(page.locator("[data-team-card]")).toContainText("Private");
       await page.getByLabel("Search teams", { exact: true }).fill("no-matching-qa-guild-948");
       await page.getByRole("button", { name: "Find teams", exact: true }).click({ timeout: 8000 });
-      await expect(
-        page.getByRole("heading", { name: "No matching teams", exact: true }),
-      ).toBeVisible();
+      await expect(page.getByText("No matching teams", { exact: true })).toBeVisible();
       await page.screenshot({ path: `${folder}/empty-320.png`, fullPage: true });
     }
   } finally {

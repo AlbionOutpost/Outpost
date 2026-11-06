@@ -1,5 +1,6 @@
 "use client";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import type { TeamContext } from "./group-dashboard";
@@ -36,7 +37,9 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           line={
             upcoming.length > 1
               ? `${plural(upcoming.length - 1, "more event")} after this one`
-              : undefined
+              : next
+                ? "The only event coming up"
+                : "Mass-ups, raids and gathering trips"
           }
           actions={next ? more("All events", "Events") : undefined}
         />
@@ -89,6 +92,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           </div>
         ) : (
           <EmptyWell
+            emblem="team-calendar"
             title="No event scheduled"
             line="Set a time, the comp and the voice channel; members answer with their RSVP."
             action={
@@ -106,13 +110,8 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           id="team-latest-news"
           emblem="team-announce"
           title="Announcements"
-          actions={
-            data.announcements.length
-              ? more("View all", "Announcements")
-              : editor
-                ? more("Write one", "Announcements")
-                : undefined
-          }
+          line={data.announcements.length ? "Newest first" : "News from the officers"}
+          actions={data.announcements.length ? more("View all", "Announcements") : undefined}
         />
         {data.announcements.length ? (
           <ul className={styles.list}>
@@ -124,10 +123,24 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             ))}
           </ul>
         ) : (
-          <EmptyWell
-            title="No announcements yet"
-            line="Officers post here; every member reads it."
-          />
+          <div className={styles.emptyStack}>
+            <EmptyWell
+              emblem="team-announce"
+              title="No announcements yet"
+              line="Officers post here; every member reads it."
+              action={
+                editor ? (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setTab("Announcements")}
+                  >
+                    Write one
+                  </button>
+                ) : undefined
+              }
+            />
+          </div>
         )}
       </section>
       <section className={`panel ${styles.panel}`} aria-labelledby="team-comps">
@@ -135,14 +148,12 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           id="team-comps"
           emblem="team-comps"
           title="Shared comps"
-          line={data.compositions.length ? plural(data.compositions.length, "comp") : undefined}
-          actions={
+          line={
             data.compositions.length
-              ? more("Open comps", "Comps")
-              : editor
-                ? more("Share a comp", "Comps")
-                : undefined
+              ? plural(data.compositions.length, "comp")
+              : "Rosters every member can open"
           }
+          actions={data.compositions.length ? more("Open comps", "Comps") : undefined}
         />
         {data.compositionPreviews.length ? (
           <ul className={styles.list}>
@@ -153,10 +164,20 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             ))}
           </ul>
         ) : (
-          <EmptyWell
-            title="No shared comps yet"
-            line="Save a comp to this team so every member sees the same roster."
-          />
+          <div className={styles.emptyStack}>
+            <EmptyWell
+              emblem="team-comps"
+              title="No shared comps yet"
+              line="Save a comp to this team so every member sees the same roster."
+              action={
+                editor ? (
+                  <Link className="button secondary" href="/compositions/new">
+                    Plan a comp
+                  </Link>
+                ) : undefined
+              }
+            />
+          </div>
         )}
       </section>
       <section className={`panel ${styles.panel}`} aria-labelledby="team-builds">
@@ -164,14 +185,10 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           id="team-builds"
           emblem="strip-builds"
           title="Shared builds"
-          line={data.builds.length ? plural(data.builds.length, "build") : undefined}
-          actions={
-            data.builds.length
-              ? more("Open builds", "Builds")
-              : editor
-                ? more("Share a build", "Builds")
-                : undefined
+          line={
+            data.builds.length ? plural(data.builds.length, "build") : "Sets every member gears"
           }
+          actions={data.builds.length ? more("Open builds", "Builds") : undefined}
         />
         {data.builds.length ? (
           <ul className={styles.list}>
@@ -182,10 +199,24 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             ))}
           </ul>
         ) : (
-          <EmptyWell
-            title="No shared builds yet"
-            line="Copy a build into the team so members gear the same set."
-          />
+          <div className={styles.emptyStack}>
+            <EmptyWell
+              emblem="strip-builds"
+              title="No shared builds yet"
+              line="Copy a build into the team so members gear the same set."
+              action={
+                editor ? (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setTab("Builds")}
+                  >
+                    Share a build
+                  </button>
+                ) : undefined
+              }
+            />
+          </div>
         )}
       </section>
       <section className={`panel ${styles.panel}`} aria-labelledby="team-roster">

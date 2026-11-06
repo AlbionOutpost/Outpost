@@ -196,6 +196,8 @@ export default async function Supporter({
               ))}
             </ol>
             <Link href={`/groups${suffix}`} className={`landing-window-foot ${windows.foot}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+              <img src="/albion/icons/team-roles.webp" alt="" width={40} height={40} />
               <span>
                 <strong>Members join free</strong>
                 <small>Only the owner needs the plan</small>
@@ -207,6 +209,7 @@ export default async function Supporter({
             <PanelHead
               id="supporter-ads"
               as="h3"
+              emblem="fame"
               title="No advertising"
               line="Ad slots disappear from every page for the account that holds the plan."
             />
@@ -219,6 +222,7 @@ export default async function Supporter({
             <PanelHead
               id="supporter-free"
               as="h3"
+              emblem="tool-market"
               title="Nothing else is held back"
               line="Market data, Workers and storage cost money each month; Supporters cover it."
             />

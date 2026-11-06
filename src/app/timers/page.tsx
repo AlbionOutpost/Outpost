@@ -34,14 +34,14 @@ export default async function Page() {
         cards={[
           {
             href: "/tools/farming",
-            emblem: "tool-craft",
+            emblem: "fame",
             title: "Farming",
             line: "Seeds, yields and what a plot earns.",
             scene: "economy",
           },
           {
             href: "/tools/laborers",
-            emblem: "tool-planner",
+            emblem: "fame",
             title: "Laborers",
             line: "What a full journal brings back.",
             scene: "city",
