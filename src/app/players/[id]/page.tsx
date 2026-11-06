@@ -2,6 +2,8 @@ import { privateMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import Link from "@/components/build-region-link";
 import { ArrowUpRight } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 export const metadata = privateMetadata("Player profile");
 export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
@@ -23,9 +25,30 @@ export default async function Profile({ params }: { params: Promise<{ id: string
         take: 25,
         orderBy: { updatedAt: "desc" },
       },
+      comments: {
+        where: {
+          hiddenAt: null,
+          deletedAt: null,
+          OR: [
+            { build: { visibility: "PUBLIC", hiddenAt: null } },
+            { composition: { visibility: "PUBLIC", hiddenAt: null } },
+          ],
+        },
+        select: { id: true },
+        take: 1,
+      },
     },
   });
-  if (!u) notFound();
+  // A profile exists only for someone who already shows their name in public (a public build or
+  // comp, or a visible comment on one) or for its own account. Other account IDs reveal nothing.
+  if (
+    !u ||
+    (!u.builds.length &&
+      !u.compositions.length &&
+      !u.comments.length &&
+      (await getServerSession(authOptions))?.user?.id !== id)
+  )
+    notFound();
   return (
     <div className="support-player-profile">
       <header className="profile-identity">

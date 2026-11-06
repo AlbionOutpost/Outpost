@@ -4,12 +4,13 @@ import { rateLimit } from "@/lib/redis";
 import { NextRequest, NextResponse } from "next/server";
 import { readBoundedBody } from "@/lib/request-body";
 import { HttpError } from "@/lib/http-error";
+import { addressBucket } from "@/lib/client-address";
 const handler = NextAuth(authOptions);
 /** Only Cloudflare's overwritten address header is trusted; Node keeps the larger backstop. */
 function clientKey(request: Request) {
   const ip =
     process.env.OUTPOST_RUNTIME === "cloudflare" && request.headers.get("cf-connecting-ip");
-  return ip ? `oauth:${ip}` : null;
+  return ip ? `oauth:${addressBucket(ip)}` : null;
 }
 async function limited(...args: Parameters<typeof handler>) {
   const request = args[0] as Request;

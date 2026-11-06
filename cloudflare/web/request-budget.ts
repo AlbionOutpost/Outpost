@@ -1,4 +1,5 @@
 import type { OutpostDatabaseBinding } from "../database/web-driver";
+import { addressBucket } from "../../src/lib/client-address";
 
 const marketRoutes = new Set([
   "/api/market",
@@ -22,7 +23,8 @@ function denied(request: Request, message: string, status: number, retry = false
     : new Response(message, { status, headers });
 }
 
-/** Cloudflare overwrites this address header. Routing cookies and forwarded headers are not identity. */
+/** Cloudflare overwrites this address header. Routing cookies and forwarded headers are not identity.
+ * IPv6 clients are counted per /64 so rotating through one allocation does not reset the budget. */
 export async function requestBudget(
   request: Request,
   binding: Pick<OutpostDatabaseBinding, "rateLimit">,
@@ -30,8 +32,9 @@ export async function requestBudget(
   const address = request.headers.get("cf-connecting-ip");
   if (!address || !/^[0-9a-f:.]{3,45}$/i.test(address))
     return denied(request, "Trusted client address unavailable", 503);
+  const client = addressBucket(address);
   try {
-    if (!(await binding.rateLimit(`edge:requests:${address}`, 240, 60)))
+    if (!(await binding.rateLimit(`edge:requests:${client}`, 240, 60)))
       return denied(request, "Too many requests. Please wait a minute, then retry.", 429, true);
     const url = new URL(request.url);
     if (url.searchParams.getAll("region").length > 1)
@@ -45,7 +48,7 @@ export async function requestBudget(
     if (marketRoutes.has(pathname) || /^\/api\/builds\/[^/]+\/cost$/.test(pathname)) {
       const asked = url.searchParams.get("region") || "europe";
       const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
-      if (!(await binding.rateLimit(`edge:market:${region}:${address}`, 20, 60)))
+      if (!(await binding.rateLimit(`edge:market:${region}:${client}`, 20, 60)))
         return denied(
           request,
           "Too many market requests. Please wait a minute, then refresh.",

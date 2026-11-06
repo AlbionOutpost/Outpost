@@ -136,4 +136,38 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
     await db.user.delete({ where: { id } });
   }
 });
+test("player profiles only exist for public contributors or the account itself", async ({
+  page,
+  context,
+}) => {
+  const id = `atlas-test-${randomUUID()}`,
+    token = randomUUID(),
+    name = `Quiet ${randomUUID().slice(0, 8)}`;
+  await db.user.create({
+    data: {
+      id,
+      name,
+      sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+    },
+  });
+  try {
+    await page.goto(`/players/${id}`);
+    await expect(page.getByRole("heading", { name: "Page not found." })).toBeVisible();
+    await expect(page.getByText(name)).toHaveCount(0);
+    await context.addCookies([
+      {
+        name: "next-auth.session-token",
+        value: token,
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+    ]);
+    await page.goto(`/players/${id}`);
+    await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
+  } finally {
+    await db.user.delete({ where: { id } });
+  }
+});
 test.afterAll(() => db.$disconnect());

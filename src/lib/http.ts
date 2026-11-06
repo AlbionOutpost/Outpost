@@ -11,7 +11,12 @@ export async function mutationUser(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id)
     return { error: NextResponse.json({ error: "Sign in to save content" }, { status: 401 }) };
-  if (!(await rateLimit(`content:${session.user.id}`, 30, 60)))
+  // The daily cap bounds what one account can add to the shared private store (a comp save can
+  // carry 1 MiB plus its version snapshot); the minute budget alone allowed gigabytes a day.
+  if (
+    !(await rateLimit(`content:${session.user.id}`, 30, 60)) ||
+    !(await rateLimit(`content-day:${session.user.id}`, 600, 86400))
+  )
     return {
       error: NextResponse.json({ error: "Too many changes. Please retry later." }, { status: 429 }),
     };
