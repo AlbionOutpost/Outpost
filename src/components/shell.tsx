@@ -307,13 +307,18 @@ export function Shell({
                         href={href(url)}
                         onClick={navigate}
                         aria-current={path === url ? "page" : undefined}
+                        // The entry is named by its label; its line describes it
+                        aria-label={label}
+                        aria-describedby={`more-line${url.replaceAll("/", "-")}`}
                       >
                         <span className="dropdown-tool-icon">
                           <Icon size={19} aria-hidden="true" />
                         </span>
                         <span>
                           <strong>{label}</strong>
-                          <small>{moreItems[url].line}</small>
+                          <small id={`more-line${url.replaceAll("/", "-")}`}>
+                            {moreItems[url].line}
+                          </small>
                         </span>
                         <ArrowUpRight size={15} />
                       </Link>
