@@ -79,9 +79,7 @@
     transform: scale(0.96);
     transition-duration: 90ms;
   }
-  :root
-    .app.outpost[data-motion-enabled]
-    :is(.region-picker-panel, details[open] > .dropdown-panel, dialog[open], .mobile-navigation) {
+  :root .app.outpost[data-motion-enabled] :is(.menu-panel, dialog[open], .mobile-navigation) {
     animation: outpost-surface-open 180ms var(--motion-ease) both;
   }
   :root
@@ -164,9 +162,7 @@
     ):active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.96);
   }
-  :root
-    .app.outpost[data-motion-enabled]
-    :is(.button > svg, .tool-symbol > svg, .dropdown-tool-icon > svg, .task-glyph) {
+  :root .app.outpost[data-motion-enabled] :is(.button > svg, .tool-symbol > svg, .task-glyph) {
     transform: none;
     rotate: none;
     scale: none;

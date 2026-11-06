@@ -12,6 +12,7 @@ import {
   MoonStar,
   ChevronDown,
   ArrowUp,
+  LogOut,
   ArrowUpRight,
   Grid2X2,
   Heart,
@@ -26,6 +27,7 @@ import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
 import { Wordmark } from "./wordmark";
+import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
@@ -82,23 +84,16 @@ const footerLinks = [
   ["/guides", "Guides"],
   ["/market-data", "Market data"],
 ] as const;
-/** The More menu, grouped, each entry with its glyph and one line (the drawer lists the same links). */
-const moreGroups = ["Your account", "Planning"] as const;
-const moreItems: Record<
-  string,
-  { group: (typeof moreGroups)[number]; icon: typeof LayoutDashboard; line: string }
-> = {
-  "/dashboard": {
-    group: "Your account",
-    icon: LayoutDashboard,
-    line: "Your builds, comps, Teams and plans",
-  },
-  "/favorites": { group: "Your account", icon: Heart, line: "Builds and comps you saved" },
-  "/settings": { group: "Your account", icon: Settings, line: "Account, server and your data" },
-  "/admin": { group: "Your account", icon: ShieldCheck, line: "Users, reports and the audit log" },
-  "/admin/reports": { group: "Your account", icon: ShieldCheck, line: "The report queue" },
-  "/timers": { group: "Planning", icon: Timer, line: "Crops, laborers and chests" },
-  "/shopping-list": { group: "Planning", icon: ListChecks, line: "What to buy, city by city" },
+/** Header menu entries, grouped, each with its glyph. Signed in, the account menu holds
+ * "Your account" and More keeps only Planning, so no link shows twice (the drawer lists all). */
+const menuItems: Record<string, { group: "Your account" | "Planning"; icon: typeof Timer }> = {
+  "/dashboard": { group: "Your account", icon: LayoutDashboard },
+  "/favorites": { group: "Your account", icon: Heart },
+  "/settings": { group: "Your account", icon: Settings },
+  "/admin": { group: "Your account", icon: ShieldCheck },
+  "/admin/reports": { group: "Your account", icon: ShieldCheck },
+  "/timers": { group: "Planning", icon: Timer },
+  "/shopping-list": { group: "Planning", icon: ListChecks },
 };
 const accountLinks = [
   ["/dashboard", "My dashboard"],
@@ -239,6 +234,26 @@ export function Shell({
     setOpen(false);
     header.current?.querySelectorAll("details[open]").forEach((d) => d.removeAttribute("open"));
   };
+  const menuGroup = (group: string) =>
+    currentAccountLinks
+      .filter(([url]) => menuItems[url]?.group === group)
+      .map(([url, label]) => {
+        const Icon = menuItems[url].icon;
+        return (
+          <Link
+            key={url}
+            className="menu-item"
+            href={href(url)}
+            onClick={navigate}
+            aria-current={path === url ? "page" : undefined}
+          >
+            <span className="tool-menu-mark" aria-hidden="true">
+              <Icon size={17} />
+            </span>
+            {label}
+          </Link>
+        );
+      });
   const primaryNavigation = (
     <nav className="desktop-navigation" aria-label="Main navigation">
       {sections.slice(0, 3).map(([url, label]) => (
@@ -261,18 +276,19 @@ export function Shell({
         <summary>
           <Grid2X2 size={17} /> Tools <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel tools-menu-panel">
+        <div className="menu-panel tools-menu-panel">
           <div className="tools-menu-columns">
             {toolColumns.map((column, i) => (
               <div key={i} className="tools-menu-column">
                 {column.map((group) => (
                   <div key={group.title} role="group" aria-label={group.title}>
-                    <p className="tools-menu-group" aria-hidden="true">
+                    <p className="menu-label" aria-hidden="true">
                       {group.title}
                     </p>
                     {group.tools.map((tool) => (
                       <Link
                         key={tool.href}
+                        className="menu-item"
                         href={href(tool.href)}
                         onClick={navigate}
                         aria-current={path === tool.href ? "page" : undefined}
@@ -286,9 +302,14 @@ export function Shell({
               </div>
             ))}
           </div>
-          <Link className="tools-menu-all" href={href("/tools")} onClick={navigate}>
-            All tools <ArrowUpRight size={16} />
-          </Link>
+          <div className="menu-group">
+            <Link className="menu-item" href={href("/tools")} onClick={navigate}>
+              <span className="tool-menu-mark" aria-hidden="true">
+                <Grid2X2 size={17} />
+              </span>
+              All tools
+            </Link>
+          </div>
         </div>
       </details>
       {sections.slice(3).map(([url, label]) => (
@@ -307,44 +328,17 @@ export function Shell({
         <summary>
           More <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel tools-dropdown-panel more-dropdown-panel">
-          {moreGroups.map((group) => {
-            const links = currentAccountLinks.filter(([url]) => moreItems[url]?.group === group);
-            return links.length ? (
-              <div key={group} className="more-menu-group" role="group" aria-label={group}>
-                <p className="more-menu-heading" aria-hidden="true">
+        <div className="menu-panel">
+          {(authenticated ? (["Planning"] as const) : (["Your account", "Planning"] as const)).map(
+            (group) => (
+              <div key={group} className="menu-group" role="group" aria-label={group}>
+                <p className="menu-label" aria-hidden="true">
                   {group}
                 </p>
-                <div className="tools-menu-grid">
-                  {links.map(([url, label]) => {
-                    const Icon = moreItems[url].icon;
-                    return (
-                      <Link
-                        key={url}
-                        href={href(url)}
-                        onClick={navigate}
-                        aria-current={path === url ? "page" : undefined}
-                        // The entry is named by its label; its line describes it
-                        aria-label={label}
-                        aria-describedby={`more-line${url.replaceAll("/", "-")}`}
-                      >
-                        <span className="dropdown-tool-icon">
-                          <Icon size={19} aria-hidden="true" />
-                        </span>
-                        <span>
-                          <strong>{label}</strong>
-                          <small id={`more-line${url.replaceAll("/", "-")}`}>
-                            {moreItems[url].line}
-                          </small>
-                        </span>
-                        <ArrowUpRight size={15} />
-                      </Link>
-                    );
-                  })}
-                </div>
+                {menuGroup(group)}
               </div>
-            ) : null;
-          })}
+            ),
+          )}
         </div>
       </details>
     </nav>
@@ -402,9 +396,7 @@ export function Shell({
               }}
             >
               <div className="drawer-heading">
-                <Link href={href("/")} onClick={navigate} aria-label="Outpost home">
-                  <Wordmark priority light={light} />
-                </Link>
+                <BrandLockup size="sm" onClick={navigate} />
                 <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
                   <X size={20} />
                 </button>
@@ -499,9 +491,7 @@ export function Shell({
                 }
               }}
             >
-              <Link className="top-brand" href={href("/")} aria-label="Outpost home">
-                <Wordmark light={light} />
-              </Link>
+              <BrandLockup className="top-brand" />
               {primaryNavigation}
               <div className="header-actions">
                 <RegionPicker
@@ -566,20 +556,18 @@ export function Shell({
                       ) : null}
                       <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
                     </summary>
-                    <div className="dropdown-panel">
-                      {currentAccountLinks
-                        .filter(([url]) => !authenticated || url !== "/signin")
-                        .map(([url, label]) => (
-                          <Link
-                            key={url}
-                            href={href(url)}
-                            onClick={navigate}
-                            aria-current={path === url ? "page" : undefined}
-                          >
-                            {label}
-                          </Link>
-                        ))}
-                      <LogoutButton />
+                    <div className="menu-panel">
+                      <div className="menu-group" role="group" aria-label="Your account">
+                        {menuGroup("Your account")}
+                      </div>
+                      <div className="menu-group">
+                        <LogoutButton className="menu-item">
+                          <span className="tool-menu-mark" aria-hidden="true">
+                            <LogOut size={17} />
+                          </span>
+                          Sign out
+                        </LogoutButton>
+                      </div>
                     </div>
                   </details>
                 )}

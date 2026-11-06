@@ -1248,34 +1248,6 @@ kbd {
 .nav-dropdown summary svg {
   transition: transform var(--motion-fast);
 }
-.dropdown-panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: -16px;
-  min-width: 224px;
-  padding: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--brand-accent);
-  box-shadow: var(--shadow);
-  animation: menu-arrive 180ms var(--ease-out);
-}
-.dropdown-panel > a {
-  display: block;
-  padding: 10px 12px;
-  color: var(--muted);
-  font-size: var(--text-base);
-  min-height: 40px;
-}
-.dropdown-panel > a:hover,
-.dropdown-panel > a[aria-current="page"] {
-  color: var(--text);
-  background: var(--elevated);
-}
-.account-dropdown .dropdown-panel {
-  right: 0;
-  left: auto;
-}
 .account-dropdown > summary {
   border: 1px solid var(--border);
   padding: 8px 12px;

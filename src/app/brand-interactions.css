@@ -30,9 +30,6 @@
   justify-content: start;
   min-height: 60px;
 }
-.app.outpost .top-brand .outpost-wordmark {
-  width: 148px;
-}
 .app.outpost.product-route .site-header {
   height: 80px;
   gap: 24px;
@@ -140,65 +137,6 @@
 }
 .app.outpost .nav-dropdown[open] > summary > svg:last-child {
   transform: rotate(180deg);
-}
-.app.outpost .dropdown-panel {
-  padding: 9px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 12px;
-  border-top: 1px solid var(--border);
-  background: var(--panel-face);
-  box-shadow: 0 14px 32px #0004;
-  top: calc(100% + 12px);
-  animation: none;
-}
-.app.outpost .tools-dropdown-panel {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  min-width: 410px;
-  gap: 4px;
-  left: -4px;
-}
-.app.outpost .dropdown-panel > a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 43px;
-  padding: 8px 11px;
-  border-radius: 7px;
-  font-size: 13px;
-}
-.app.outpost .dropdown-panel > a:hover {
-  background: var(--accent-wash);
-  transform: translateX(2px);
-}
-.dropdown-tool-icon {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-  border-radius: 6px;
-}
-.app.outpost .nav-dropdown::details-content {
-  opacity: 0;
-  transform: translateY(-6px) scale(0.98);
-  transform-origin: top left;
-  transition:
-    opacity 160ms var(--interaction-ease),
-    transform 160ms var(--interaction-ease),
-    content-visibility 160ms allow-discrete;
-}
-.app.outpost .nav-dropdown[open]::details-content {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-@starting-style {
-  .app.outpost .nav-dropdown[open]::details-content {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.98);
-  }
 }
 /* Color state changes remain instantaneous to preserve contrast during transitions. */
 .app.outpost .button,
@@ -331,9 +269,6 @@
   }
 }
 @media (max-width: 600px) {
-  .app.outpost .top-brand .outpost-wordmark {
-    width: 112px;
-  }
   .app.outpost.product-route .site-header {
     height: 66px;
     gap: 8px;
@@ -383,9 +318,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
-  .app.outpost .nav-dropdown::details-content {
-    transition: none;
-  }
 }
 .app.outpost.light {
   --metal: #80582e;
@@ -419,8 +351,7 @@
   border-color: #e6bc9a;
 }
 /* The wordmark image always fills its box; the box alone sets the size at each breakpoint */
-.app.outpost .outpost-wordmark .outpost-logo,
-.app.outpost .top-brand .outpost-wordmark .outpost-logo {
+.app.outpost .outpost-wordmark .outpost-logo {
   width: 100%;
   min-width: 0;
   height: auto;
