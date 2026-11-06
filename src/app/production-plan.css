@@ -1,201 +1,225 @@
+/* Production plan: several calculator runs combined into one shopping list. Wells inside one
+   working panel, as on the landing's Crafting Planner. */
 .app.outpost .production-plan {
-  margin-top: 32px;
-  padding: 24px;
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+.app.outpost .production-plan > * {
+  margin: 0;
 }
 #production-plan-title {
   scroll-margin-top: 100px;
 }
-.production-plan-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-.production-plan-heading .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.production-plan-heading h2 {
-  margin: 8px 0;
-}
-.production-plan-heading p,
-.production-plan > p {
-  color: var(--muted);
-  max-width: 84ch;
-}
-.production-plan-heading button {
-  flex-shrink: 0;
-}
-.production-plan-empty {
-  padding: 24px 0;
-}
-.production-plan-status {
+.app.outpost .production-plan-status {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  padding: 20px 0 12px;
+  gap: 4px 16px;
   font-size: 13px;
 }
-.production-plan-status span {
+.app.outpost .production-plan-status span,
+.app.outpost .production-plan-note,
+.app.outpost .production-plan-message {
   color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
-.production-plan-run {
+.app.outpost .production-plan-runs {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .production-plan-run {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 0;
-  border-top: 1px solid var(--border, #262d36);
+  gap: var(--space-3);
+  padding: 10px 12px;
 }
-.production-plan-identity {
+.app.outpost .production-plan-run + .production-plan-run {
+  border-top: 1px solid var(--well-border);
+}
+.app.outpost .production-plan-identity {
   flex: 1;
   min-width: 0;
 }
-.production-plan-identity h3 {
-  font-size: 15px;
-  margin: 0 0 4px;
+.app.outpost .production-plan-identity h3 {
+  margin: 0 0 3px;
+  font: 800 16px/1.2 var(--font-display);
 }
-.production-plan-identity p {
+.app.outpost .production-plan-identity p {
+  margin: 0 0 2px;
+  color: var(--secondary);
   font-size: 13px;
-  margin: 0 0 4px;
 }
-.production-plan-run small,
-.production-plan-run label {
-  font-size: 12px;
+.app.outpost .production-plan-run small,
+.app.outpost .production-plan-run label {
   color: var(--muted);
+  font-size: 12px;
 }
-.production-plan-run label {
+.app.outpost .production-plan-run label {
   display: grid;
   gap: 4px;
 }
 .app.outpost .production-plan-run input {
   width: 88px;
   min-height: 40px;
+  font-family: var(--font-data);
 }
-.production-plan-profit {
-  text-align: right;
-  min-width: 120px;
+.app.outpost .production-plan-profit {
   display: grid;
   gap: 4px;
+  min-width: 120px;
+  text-align: right;
 }
-.production-plan-profit strong,
-.production-plan-stats strong,
-.production-plan-accounting dd {
+.app.outpost .production-plan-profit strong,
+.app.outpost .production-plan-stats strong {
+  font: 800 18px/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
-}
-.production-plan-stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
-  padding: 24px 0;
-  margin: 8px 0 24px;
-  border-block: 1px solid var(--border, #262d36);
-}
-.production-plan-stats small {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--muted);
-}
-.production-plan-stats strong {
-  font-size: clamp(20px, 2vw, 28px);
   overflow-wrap: anywhere;
 }
-.production-plan-table {
-  overflow-x: auto;
-  margin: 20px 0;
+.app.outpost .production-plan-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
 }
-.production-plan-table table {
+.app.outpost .production-plan-stats > div {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+}
+.app.outpost .production-plan-stats > div + div {
+  border-left: 1px solid var(--well-border);
+}
+.app.outpost .production-plan-stats small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.app.outpost .production-plan-stats strong {
+  font-size: 22px;
+}
+.app.outpost .production-plan-subhead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.app.outpost .production-plan-subhead h3 {
+  margin: 0;
+  font: 800 19px/1.15 var(--font-display);
+}
+.app.outpost .production-plan-table {
+  overflow-x: auto;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .production-plan-table table {
   width: 100%;
   border-collapse: collapse;
 }
-.production-plan-table th,
-.production-plan-table td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border, #262d36);
+.app.outpost .production-plan-table th,
+.app.outpost .production-plan-table td {
+  padding: 8px 12px;
+  border-top: 1px solid var(--well-border);
   font-size: 13px;
   text-align: left;
   vertical-align: middle;
 }
-.production-plan-table thead th {
+.app.outpost .production-plan-table thead th {
+  border-top: 0;
   color: var(--muted);
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
 }
-.production-plan-table :is(th, td):nth-child(n + 2):nth-child(-n + 4) {
-  text-align: right;
+.app.outpost .production-plan-table :is(th, td):nth-child(n + 2):nth-child(-n + 4) {
+  font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
-.production-plan-table small {
+.app.outpost .production-plan-table small {
   display: block;
-  font-weight: 400;
   color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
 }
-.production-plan-material {
+.app.outpost .production-plan-material {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 160px;
 }
-.production-plan-edit {
+.app.outpost .production-plan-edit,
+.app.outpost .production-plan-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
   align-items: center;
-  padding: 16px 0;
+  gap: var(--space-3);
 }
-.production-plan-accounting {
+.app.outpost .production-plan-edit p {
+  margin: 0;
+  font-size: 13px;
+}
+.app.outpost .production-plan-accounting {
   display: grid;
-  gap: 12px;
-  max-width: 640px;
+  gap: 8px;
+  margin: 0 0 var(--space-3);
 }
-.production-plan-accounting > div {
+.app.outpost .production-plan-accounting > div {
   display: flex;
   justify-content: space-between;
   gap: 16px;
+  font-size: 13px;
 }
-.production-plan-accounting dd {
+.app.outpost .production-plan-accounting dd {
   margin: 0;
+  font-family: var(--font-data);
   text-align: right;
 }
-.production-plan-actions {
-  margin: 24px 0;
-}
-.app.outpost .production-plan > .panel {
-  border: 0;
-  padding: 24px 0 0;
-  border-top: 1px solid var(--border, #262d36);
-  margin: 24px 0 0;
-  background: transparent;
+.app.outpost .production-plan .task-state {
+  display: grid;
+  gap: var(--space-2);
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
+  border-radius: var(--radius-md);
+  font-size: 13px;
 }
 @media (max-width: 900px) {
-  .production-plan-run {
+  .app.outpost .production-plan-run {
     flex-wrap: wrap;
   }
-  .production-plan-identity {
+  .app.outpost .production-plan-identity {
     flex-basis: calc(100% - 60px);
   }
-  .production-plan-profit {
+  .app.outpost .production-plan-profit {
     flex: 1;
   }
-  .production-plan-stats {
+  .app.outpost .production-plan-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .app.outpost .production-plan-stats > div + div {
+    border-left: 0;
+  }
+  .app.outpost .production-plan-stats > div:nth-child(n + 3) {
+    border-top: 1px solid var(--well-border);
+  }
+  .app.outpost .production-plan-stats > div:nth-child(even) {
+    border-left: 1px solid var(--well-border);
+  }
 }
-@media (max-width: 600px) {
-  .app.outpost .production-plan {
-    padding: 16px;
-  }
-  .production-plan-heading {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .production-plan-stats {
-    gap: 20px 12px;
-  }
-  .production-plan-run > .button {
-    min-height: 40px;
-  }
-  .production-plan-accounting {
-    font-size: 13px;
-  }
+.app.outpost .production-plan-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+}
+.app.outpost .production-plan-head > :first-child {
+  flex: 1 1 320px;
+  margin: 0;
 }

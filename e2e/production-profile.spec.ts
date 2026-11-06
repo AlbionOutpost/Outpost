@@ -28,11 +28,8 @@ test("refining city and specialization profile derives returns and estimates foc
     ]);
     await page.goto("/tools/refining?region=europe");
     await page.getByText("Station settings, focus & sources", { exact: true }).click();
-    const profile = page
-      .locator("details")
-      .filter({ has: page.locator("summary", { hasText: "City & specialization profile" }) })
-      .last();
-    await profile.locator("summary").first().click();
+    await page.getByRole("button", { name: "City & specialization profile", exact: true }).click();
+    const profile = page.locator("[data-production-profile]");
     await page.getByLabel("Production city", { exact: true }).selectOption("Thetford");
     for (const tier of [4, 5, 6, 7, 8])
       await page.getByLabel(`T${tier} specialization`, { exact: true }).fill("100");
@@ -90,7 +87,7 @@ test("refining city and specialization profile derives returns and estimates foc
       .getByRole("button", { name: "Restore Refining profile fixture", exact: true })
       .click();
     await page.getByText("Station settings, focus & sources", { exact: true }).click();
-    await profile.locator("summary").first().click();
+    await page.getByRole("button", { name: "City & specialization profile", exact: true }).click();
     await expect(page.getByLabel("Production city", { exact: true })).toHaveValue("Thetford");
     await expect(page.getByLabel("T8 specialization", { exact: true })).toHaveValue("100");
   } finally {

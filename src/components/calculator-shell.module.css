@@ -1,0 +1,324 @@
+/* The shared calculator layout: numbered input panels → result. See DESIGN.md "Shared building
+   blocks". Wide: every step side by side, result last. Tablet: inputs stacked beside a sticky
+   result. Phone: one step at a time behind a switcher, the headline figure pinned below. */
+:global(.app.outpost) .shell.shell {
+  display: grid;
+  gap: var(--space-4);
+}
+:global(.app.outpost) .grid.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--inputs), minmax(0, 1fr)) minmax(340px, 0.86fr);
+  gap: 24px;
+  align-items: start;
+}
+:global(.app.outpost) .shell[data-rail] .grid.grid {
+  grid-template-columns: minmax(240px, 280px) repeat(var(--inputs), minmax(0, 1fr)) minmax(
+      320px,
+      0.86fr
+    );
+}
+:global(.app.outpost) .panel.panel {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  scroll-margin-top: 88px;
+}
+:global(.app.outpost) .panel.panel > * {
+  margin: 0;
+}
+:global(.app.outpost) .head.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .head.head > :first-child {
+  flex: 1 1 220px;
+  margin: 0;
+}
+:global(.app.outpost) .panel.panel:focus {
+  outline: none;
+}
+:global(.app.outpost) .panel.panel:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+:global(.app.outpost) .result.result {
+  position: sticky;
+  top: 88px;
+}
+:global(.app.outpost) .rail.rail {
+  position: sticky;
+  top: 88px;
+  min-width: 0;
+}
+:global(.app.outpost) .switcher.switcher,
+:global(.app.outpost) .next.next,
+:global(.app.outpost) .summary.summary {
+  display: none;
+}
+
+/* Result figures, in the landing Crafting card's language */
+:global(.app.outpost) .figure.figure {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 76px;
+  padding: 12px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .figure.figure > span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+:global(.app.outpost) .figure.figure small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+:global(.app.outpost) .figure.figure b {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 800 30px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .aside.aside {
+  text-align: right;
+}
+:global(.app.outpost) .aside.aside b {
+  justify-content: flex-end;
+  font-size: 20px;
+}
+:global(.app.outpost) .figure.figure[data-tone="gain"] {
+  border-color: color-mix(in srgb, var(--killer) 35%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--killer) 12%, transparent),
+    var(--well)
+  );
+}
+:global(.app.outpost) .figure.figure[data-tone="loss"] {
+  border-color: color-mix(in srgb, var(--victim) 35%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--victim) 10%, transparent),
+    var(--well)
+  );
+}
+:global(.app.outpost) :is(.figure, .summary)[data-tone="gain"] b,
+:global(.app.outpost) .rows.rows [data-tone="gain"] dd {
+  color: var(--killer);
+}
+:global(.app.outpost) :is(.figure, .summary)[data-tone="loss"] b,
+:global(.app.outpost) .rows.rows [data-tone="loss"] dd {
+  color: var(--victim);
+}
+:global(.app.outpost) .pair.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .pair.pair > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px 14px;
+}
+:global(.app.outpost) .pair.pair > div + div {
+  border-left: 1px solid var(--well-border);
+}
+:global(.app.outpost) .pair.pair dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+:global(.app.outpost) .pair.pair dd {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin: 0;
+  font: 800 19px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .rows.rows {
+  display: grid;
+  margin: 0;
+  padding: 4px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .rows.rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 8px 0;
+  font-size: 13px;
+}
+:global(.app.outpost) .rows.rows > div + div {
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .rows.rows dt {
+  color: var(--secondary);
+}
+:global(.app.outpost) .rows.rows dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Tablet: inputs stack in the first column, the result stays in view beside them */
+@media (max-width: 1180px) {
+  :global(.app.outpost) .grid.grid,
+  :global(.app.outpost) .shell[data-rail] .grid.grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  }
+  :global(.app.outpost) .rail.rail {
+    position: static;
+    grid-column: 1 / -1;
+  }
+  :global(.app.outpost) .panel.panel:not(.result) {
+    grid-column: 1;
+  }
+  :global(.app.outpost) .result.result {
+    grid-column: 2;
+    grid-row: 1 / span var(--inputs);
+  }
+  :global(.app.outpost) .shell[data-rail] .result.result {
+    grid-row: 2 / span var(--inputs);
+  }
+}
+
+/* Phone: one step at a time; the headline figure follows you */
+@media (max-width: 780px) {
+  :global(.app.outpost) .grid.grid,
+  :global(.app.outpost) .shell[data-rail] .grid.grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+  :global(.app.outpost) .panel.panel:not([data-active]) {
+    display: none;
+  }
+  :global(.app.outpost) .result.result,
+  :global(.app.outpost) .shell[data-rail] .result.result {
+    position: static;
+    grid-column: 1;
+    grid-row: auto;
+  }
+  :global(.app.outpost) .switcher.switcher {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--well-border);
+    border-radius: var(--radius-lg);
+    background: var(--well);
+    box-shadow: inset 0 1px 3px #0009;
+    scroll-margin-top: 80px;
+  }
+  :global(.app.outpost) .switcher.switcher button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 56px;
+    padding: 6px 4px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--muted);
+    font: 600 12px/1.2 var(--font-ui);
+    text-align: center;
+    cursor: pointer;
+  }
+  :global(.app.outpost) .switcher.switcher button > span {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--well-border);
+    border-radius: 999px;
+    font: 800 13px/1 var(--font-display);
+  }
+  :global(.app.outpost) .switcher.switcher button[aria-current="step"] {
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    background: var(--accent-wash);
+    color: var(--accent-ink);
+  }
+  :global(.app.outpost) .switcher.switcher button[aria-current="step"] > span {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+  }
+  :global(.app.outpost) .next.next {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+  }
+  :global(.app.outpost) .summary.summary {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: 0 -4px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--well-border));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: var(--surface-raised);
+    box-shadow: 0 -10px 28px #0009;
+  }
+  :global(.app.outpost) .summary.summary > span {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+  :global(.app.outpost) .summary.summary small {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  :global(.app.outpost) .summary.summary b {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font: 800 22px/1 var(--font-display);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  :global(.app.outpost) .summary.summary .button {
+    flex: none;
+    min-height: 44px;
+  }
+  :global(.app.outpost) .figure.figure b {
+    font-size: 26px;
+  }
+}
+@media (max-width: 360px) {
+  :global(.app.outpost) .pair.pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .pair.pair > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--well-border);
+  }
+}

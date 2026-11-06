@@ -10,15 +10,17 @@ test("production prerequisites, genuine sensitivity and three-column composition
     if (request.url().includes("/api/economy/prices")) requests++;
   });
   await page.goto("/tools/crafting?region=europe");
-  await expect(page.getByRole("heading", { name: "Configuration", exact: true })).toBeVisible();
-  const readiness = page.locator("#production-results .calculation-readiness");
+  await expect(
+    page.getByRole("heading", { name: "Step 1: Recipe and run", exact: true }),
+  ).toBeVisible();
+  const readiness = page.locator("[data-result=readiness]");
   await expect(readiness).toContainText("Steel Bar unit price");
   await expect(readiness).toContainText("Pine Planks unit price");
   await expect(readiness).toContainText("T4 Battleaxe sale price");
   expect(requests).toBe(0);
-  const bounds = await page.locator(".production-workspace").evaluate((e) =>
-    [".calculator-inputs", ".production-materials", "#production-results"].map((s) => {
-      const r = e.querySelector(s)!.getBoundingClientRect();
+  const bounds = await page.locator("#production-setup").evaluate((e) =>
+    ["#production-setup", "#production-materials", "#production-results"].map((s) => {
+      const r = e.ownerDocument.querySelector(s)!.getBoundingClientRect();
       return { x: r.x, y: r.y, width: r.width };
     }),
   );
@@ -47,7 +49,9 @@ test("production prerequisites, genuine sensitivity and three-column composition
   await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
   await expect(page.locator("#production-results")).toBeVisible();
   await expect(page.locator("#production-results")).toBeFocused();
-  const progressBounds = await page.locator(".production-steps").boundingBox();
+  const progressBounds = await page
+    .getByRole("navigation", { name: "Crafting workflow" })
+    .boundingBox();
   const resultBounds = await page.locator("#production-results").boundingBox();
   expect(resultBounds!.y).toBeGreaterThan(progressBounds!.y + progressBounds!.height);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -87,9 +91,7 @@ test("item filters recover from no results and item back links retain server", a
   await expect(page.getByRole("heading", { name: "Recipe", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Calculate this recipe", exact: true }).click();
   await expect(page).toHaveURL(/\/tools\/crafting\?.*recipe=/);
-  await expect(page.locator(".reference-recipe-identity")).toContainText(
-    "Adept's Battleaxe · T4.0",
-  );
+  await expect(page.locator("[data-recipe-identity]")).toContainText("Adept's Battleaxe · T4.0");
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   await expect(page.getByRole("combobox", { name: "Albion region", exact: true })).toContainText(
     "Asia",
@@ -122,13 +124,13 @@ for (const [route, label] of [
   test(`${route} keeps its own recipe identity and historical status`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/tools/${route}?region=europe`);
-    await expect(page.locator(".reference-recipe-identity")).toContainText(label);
-    await expect(page.locator(".recipe-historical-status")).toBeVisible();
-    await expect(page.locator(".recipe-historical-status")).toContainText("Historical recipe");
+    await expect(page.locator("[data-recipe-identity]")).toContainText(label);
+    await expect(page.locator("[data-recipe-status]")).toBeVisible();
+    await expect(page.locator("[data-recipe-status]")).toContainText("Historical recipe");
     // This movement is a post-hydration layout effect; wait for its visible outcome.
     await expect
       .poll(async () =>
-        page.locator(".production-mode-nav").evaluate((navigation) => {
+        page.getByRole("navigation", { name: "Production calculators" }).evaluate((navigation) => {
           const rail = navigation.getBoundingClientRect();
           const tab = navigation.querySelector('[aria-current="page"]')!.getBoundingClientRect();
           return tab.left >= rail.left - 1 && tab.right <= rail.right + 1;
