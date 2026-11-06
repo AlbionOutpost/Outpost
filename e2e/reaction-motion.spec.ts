@@ -11,6 +11,27 @@ test("account likes acknowledge confirmed responses, lock pending clicks and pre
     posts = 0,
     fail = false;
   let release: (() => void) | undefined;
+  // The page reads every chip's likes in one batched request; answer it with the same state.
+  await page.route("**/api/library-likes?items=*", async (route) => {
+    const items = new URL(route.request().url()).searchParams.get("items")!.split(",");
+    await route.fulfill({
+      json: {
+        signedIn: true,
+        items: Object.fromEntries(
+          items.map((key) => [
+            key,
+            {
+              found: true,
+              archivedCount: 209,
+              outpostCount: Number(liked),
+              count: 209 + Number(liked),
+              liked,
+            },
+          ]),
+        ),
+      },
+    });
+  });
   await page.route("**/api/library-likes/**", async (route) => {
     if (route.request().method() === "POST") {
       posts++;
