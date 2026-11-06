@@ -104,6 +104,12 @@ export function Shell({
     router = useRouter();
   const region = regionSchema.catch("europe").parse(urlRegion || savedRegion);
   const active = (href: string) => path === href || (href !== "/" && path.startsWith(`${href}/`));
+  /* Pages that live in the account menu but belong to a section the player is browsing:
+   * favorites sit under Builds and the shopping list is the Crafting Planner tool. */
+  const homeSection: Record<string, string> = {
+    "/favorites": "/builds",
+    "/shopping-list": "/tools",
+  };
   const href = (url: string) =>
     `${url === "/builds" ? "/builds/activities" : url === "/compositions" ? "/compositions/library" : url}?region=${region}`;
   const productShell = true;
@@ -190,13 +196,17 @@ export function Shell({
           key={url}
           href={href(url)}
           onClick={navigate}
-          aria-current={(url === "/tools/market" ? path === url : active(url)) ? "page" : undefined}
+          aria-current={
+            (url === "/tools/market" ? path === url : active(url) || homeSection[path] === url)
+              ? "page"
+              : undefined
+          }
         >
           {label}
         </Link>
       ))}
       <details
-        className={`nav-dropdown${(active("/tools") && path !== "/tools/market") || active("/items") ? " is-active" : ""}`}
+        className={`nav-dropdown${(active("/tools") && path !== "/tools/market") || active("/items") || homeSection[path] === "/tools" ? " is-active" : ""}`}
       >
         <summary>
           <Grid2X2 size={17} /> Tools <ChevronDown size={13} />
@@ -252,7 +262,7 @@ export function Shell({
         </Link>
       ))}
       <details
-        className={`nav-dropdown more-dropdown${currentAccountLinks.some(([url]) => url !== "/signin" && active(url)) ? " is-active" : ""}`}
+        className={`nav-dropdown more-dropdown${!homeSection[path] && currentAccountLinks.some(([url]) => url !== "/signin" && active(url)) ? " is-active" : ""}`}
       >
         <summary>
           More <ChevronDown size={13} />
