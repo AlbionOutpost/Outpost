@@ -934,14 +934,6 @@
   }
 }
 @media (max-width: 700px) {
-  /* Three short tabs wrap instead of scrolling out of view */
-  .app.outpost .market-explorer-page .masthead-tabs {
-    flex-wrap: wrap;
-    overflow: visible;
-    margin-inline: 0;
-    padding-inline: 0;
-    mask-image: none;
-  }
   /* Panel heads stack their controls under the title and line, like the section heading */
   .app.outpost .mx :is(.mx-board, .mx-history, .mx-saved) > :first-child > * {
     flex: 1 1 100%;

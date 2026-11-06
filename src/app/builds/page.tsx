@@ -1,4 +1,5 @@
 import { BuildsNextStep } from "@/components/builds-next-step";
+import { WellSelect } from "@/components/well-select";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { BuildRegionInput } from "@/components/build-region-link";
 import { ItemIcon } from "@/components/item-icon";
@@ -154,23 +155,31 @@ export default async function Builds({
                 />
                 <label>
                   Collection
-                  <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
+                  <WellSelect
+                    name="mine"
+                    defaultValue={mine ? "1" : "0"}
+                    aria-label="Build collection"
+                  >
                     <option value="0">Public builds</option>
                     <option value="1">My builds</option>
-                  </select>
+                  </WellSelect>
                 </label>
                 <label>
                   Content type
-                  <select name="content" defaultValue={content} aria-label="Filter build content">
+                  <WellSelect
+                    name="content"
+                    defaultValue={content}
+                    aria-label="Filter build content"
+                  >
                     <option value="">All activities</option>
                     {contentTypes.map((c) => (
                       <option key={c}>{c}</option>
                     ))}
-                  </select>
+                  </WellSelect>
                 </label>
                 <label>
                   Specific weapon
-                  <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
+                  <WellSelect name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
                     <option value="">All weapons</option>
                     {choices
                       .filter((w) => !family || w.family === family)
@@ -179,7 +188,7 @@ export default async function Builds({
                           {w.name}
                         </option>
                       ))}
-                  </select>
+                  </WellSelect>
                 </label>
                 <div className="library-filter-actions">
                   <button className="button primary" type="submit">

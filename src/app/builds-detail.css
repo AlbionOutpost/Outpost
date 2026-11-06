@@ -90,11 +90,11 @@
 }
 .detail-header-actions {
   display: flex;
+  flex: none;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  max-width: 430px;
 }
 .app.outpost .detail-header-actions .library-device-save {
   position: static;
@@ -114,38 +114,6 @@
   top: calc(100% + 6px);
   right: 0;
   z-index: 30;
-}
-.app.outpost .detail-section-navigation {
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-  margin: 0 0 18px;
-  padding: 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-.detail-section-navigation > a {
-  flex: none;
-  display: block;
-  padding: 14px 16px;
-  color: var(--muted);
-  font-size: 12px;
-  border-bottom: 2px solid transparent;
-}
-.detail-section-navigation > a:hover,
-.detail-section-navigation > a:focus-visible {
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  background: var(--accent-wash);
-}
-.app.outpost .detail-section-navigation > a[aria-current="location"] {
-  color: var(--accent-ink);
-  border-bottom-color: var(--accent);
-  background: var(--accent-wash);
 }
 .app.outpost .build-detail-redesign .build-loadout-view,
 .app.outpost .guest-build-preview .build-loadout-view {
@@ -580,6 +548,7 @@
 }
 .detail-spell-choice {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   align-content: start;
   gap: 6px;
@@ -744,7 +713,7 @@
     [id^="build-gear-"],
     [id^="build-alternatives-"]
   ) {
-  scroll-margin-top: 70px;
+  scroll-margin-top: 24px;
 }
 @media (max-width: 1100px) {
   .detail-workspace-grid {
@@ -810,10 +779,6 @@
   }
   .detail-hero-tags {
     margin-bottom: 8px;
-  }
-  .detail-section-navigation > a {
-    padding: 12px;
-    font-size: 12px;
   }
   .detail-workspace-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -899,8 +864,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .inventory-equipment-slot,
-  .detail-section-navigation a {
+  .inventory-equipment-slot {
     transition: none;
   }
 }
@@ -953,9 +917,6 @@
 }
 
 /* Single ability keys may be compact; the names remain readable. */
-.detail-spell-choice > small {
-  font-size: 10px;
-}
 
 .inventory-equipment-cell {
   position: relative;
@@ -1228,35 +1189,13 @@
   color: var(--text);
 }
 .app.outpost .detail-section-navigation {
-  gap: 6px;
-  padding: 10px 0;
-  background: color-mix(in srgb, var(--canvas-top) 88%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--well-border);
+  margin-block: 0 20px;
 }
-.app.outpost .detail-section-navigation > a {
-  min-height: 34px;
-  padding: 7px 13px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font-weight: 600;
-}
-.app.outpost .detail-section-navigation > a:hover,
-.app.outpost .detail-section-navigation > a:focus-visible {
-  color: var(--text);
-  border-color: #ffffff30;
-  background: var(--well);
-}
+/* The section in view reads as the current pill, as on the masthead tabs */
 .app.outpost .detail-section-navigation > a[aria-current="location"] {
   border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
-  border-bottom-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
   background: color-mix(in srgb, var(--accent) 22%, var(--well));
   color: #fff;
-}
-.app.outpost.light .detail-section-navigation {
-  background: color-mix(in srgb, var(--canvas-mid) 90%, transparent);
 }
 .app.outpost.light .detail-section-navigation > a[aria-current="location"] {
   background: color-mix(in srgb, var(--accent) 10%, var(--panel));
@@ -1560,11 +1499,41 @@
   .app.outpost .build-cost-rows > li {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* Ability names break between words, never inside one */
+  /* Phones: ability tiles go two to a row, icon beside key and name, so long names
+     ("Sylvian Transformation") wrap between words instead of being cut */
+  .app.outpost .build-detail-page .detail-spell-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .build-detail-page .detail-spell-grid > .detail-spell-choice {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "icon key" "icon name";
+    justify-items: start;
+    align-items: center;
+    gap: 2px 8px;
+    min-width: 0;
+    max-width: none;
+    padding: 8px 10px;
+    text-align: start;
+  }
+  .app.outpost .build-detail-page .detail-spell-choice > small {
+    grid-area: key;
+  }
+  .app.outpost .build-detail-page .detail-spell-choice > :is(img, svg) {
+    grid-area: icon;
+    width: 34px;
+    height: 34px;
+  }
   .app.outpost .build-detail-page .detail-spell-choice > span {
-    overflow-wrap: normal;
-    word-break: normal;
-    hyphens: manual;
+    grid-area: name;
+    max-width: 100%;
+    font-size: 12px;
+    overflow-wrap: break-word;
+  }
+}
+@media (max-width: 380px) {
+  .app.outpost .build-detail-page .detail-spell-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 /* The 12px floor for labels the shared sheets set smaller */
@@ -1791,8 +1760,16 @@
   font: 800 21px/1.15 var(--font-display);
   text-shadow: 0 1px 2px #000c;
 }
-.app.outpost .build-detail-page .detail-build-context.raised {
-  align-self: start;
+/* Build information matches its neighbours' height: facts at the top, the counts settle at the foot */
+@media (min-width: 1320px) {
+  .app.outpost .build-detail-page .detail-build-context.raised {
+    position: static;
+    display: flex;
+    flex-direction: column;
+  }
+  .app.outpost .build-detail-page .detail-build-context .detail-context-completeness {
+    margin-top: auto;
+  }
 }
 .app.outpost .build-detail-page .detail-piece-strip > div {
   gap: 4px;
@@ -1818,17 +1795,6 @@
 @media (max-width: 700px) {
   .app.outpost .build-detail-page .detail-panel-frame > :is(.panel, .loadout-price-check) {
     padding: 16px;
-  }
-  /* Section tabs wrap on phones, like the collection tabs */
-  .app.outpost .build-detail-page .detail-section-navigation {
-    flex-wrap: wrap;
-    overflow: visible;
-    padding-right: 0;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .app.outpost .build-detail-page .detail-section-navigation > a {
-    min-height: 40px;
   }
   /* The chevron stays at the right edge when the meta hides */
   .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary > span {

@@ -179,6 +179,18 @@ export function Market() {
   };
   const filtersActive =
     extraCities.length > 0 || city || tier || category || enchantment || quality !== "1";
+  const historyOpen = researchOpen ?? hasResult;
+  // Closed, the toggle is the panel's action; open, it joins Refresh on the history controls row.
+  const historyToggle = (
+    <button
+      type="button"
+      className="pill-link is-small"
+      aria-expanded={historyOpen}
+      onClick={() => setResearchOpen(!historyOpen)}
+    >
+      {historyOpen ? "Hide price history" : "Research price history"}
+    </button>
+  );
   return (
     <>
       <div
@@ -636,8 +648,9 @@ export function Market() {
                 />
               )}
               <p className="market-source-note mx-source">
-                Albion Online Data Project · sell orders are listings, buy orders are offers · older
-                than an hour is marked stale · times in UTC
+                Albion Online Data Project · sell orders are listings, buy orders are offers ·
+                spread is sell minus buy, as a share of buy · older than an hour is marked stale ·
+                times in UTC
               </p>
             </section>
           </div>
@@ -655,20 +668,9 @@ export function Market() {
                   trades
                 </>
               }
-              actions={
-                <>
-                  <button
-                    type="button"
-                    className="pill-link is-small"
-                    aria-expanded={researchOpen ?? hasResult}
-                    onClick={() => setResearchOpen(!(researchOpen ?? hasResult))}
-                  >
-                    {(researchOpen ?? hasResult) ? "Hide price history" : "Research price history"}
-                  </button>
-                </>
-              }
+              actions={!historyOpen && historyToggle}
             />
-            {(researchOpen ?? hasResult) ? (
+            {historyOpen ? (
               <History
                 item={item}
                 quality={Number(quality)}
@@ -676,6 +678,7 @@ export function Market() {
                 embedded
                 city={historyCity}
                 onCityChange={setHistoryCity}
+                actions={historyToggle}
               />
             ) : (
               <p className="mx-collapsed-note">

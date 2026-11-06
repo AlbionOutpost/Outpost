@@ -70,7 +70,7 @@ export function BuildDetailNavigation() {
     };
   }, []);
   return (
-    <nav className="detail-section-navigation" aria-label="Build sections">
+    <nav className="masthead-tabs detail-section-navigation" aria-label="Build sections">
       {sections.map(([id, name]) => (
         <a
           key={id}

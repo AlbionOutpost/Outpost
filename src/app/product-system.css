@@ -1321,11 +1321,14 @@
   .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)::-webkit-scrollbar {
     display: none;
   }
-  /* A pill cut by the edge fades out, so the row reads as one you can scroll; the extra end
-     padding lets the last pill scroll clear of the fade */
+  /* A pill cut by either edge fades out, so the row reads as one you can scroll; the start fade
+     sits over the side padding, and the extra end padding lets the last pill scroll clear */
   .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) {
     padding-inline-end: 40px;
-    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 40px), transparent);
+  }
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) > a {
+    min-height: 40px;
   }
 }
 

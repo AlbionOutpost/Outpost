@@ -1,6 +1,6 @@
 "use client";
 import "./history.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -19,6 +19,7 @@ export function History({
   embedded = false,
   city: controlledCity,
   onCityChange,
+  actions,
 }: {
   kind?: "history" | "gold";
   item?: string;
@@ -30,6 +31,8 @@ export function History({
   /** History city owned by the host (the market page follows the selected city row). */
   city?: string;
   onCityChange?: (city: string) => void;
+  /** Host controls that sit at the end of the controls row, beside Refresh. */
+  actions?: ReactNode;
 }) {
   const region = useOutpostRegion();
   const [ownCity, setOwnCity] = useState("Lymhurst");
@@ -201,6 +204,7 @@ export function History({
             </div>
           )}
           {refresh}
+          {actions}
         </form>
       )}
       {!visible.length && kind === "gold" && (
