@@ -42,8 +42,6 @@ export default async function Supporter({
 }: {
   searchParams: Promise<{ region?: string; checkout?: string }>;
 }) {
-  // Everything is free while billing is off (owner, 6 Nov 2026): the plan page does not exist.
-  if (!billingEnabled()) notFound();
   const params = await searchParams;
   const region = regionSchema
     .catch("europe")
@@ -54,6 +52,9 @@ export default async function Supporter({
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
   const supporter = isSupporter(profile);
   const gifted = giftedSupporter(profile);
+  // Everything is free while billing is off (owner, 6 Nov 2026): the plan page exists only for
+  // accounts an admin gifted the plan to, so they can still see it.
+  if (!billingEnabled() && !supporter) notFound();
   const price = await supporterPrice();
   const renews = profile?.planRenewsAt
     ? profile.planRenewsAt.toLocaleDateString("en-GB", {
