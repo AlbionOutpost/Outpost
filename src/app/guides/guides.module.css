@@ -1,5 +1,5 @@
-/* Guides hub (/guides): the landing's guide stories, one search with topic pills, cover cards
-   three across and a closing row, at the landing's measure. */
+/* Guides hub (/guides): one search with topic pills, every guide as a cover card and a closing
+   row, at the landing's measure. */
 .page {
   max-width: var(--page-width);
   margin-inline: auto;
@@ -15,11 +15,6 @@
 }
 .section:first-of-type {
   margin-top: 8px;
-}
-/* The landing's guide stories, with the topic chip in mixed case like every inner page */
-.carousel :global(.guides-carousel) small {
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 /* Search: topic pills over one search well, in a framed bar like the item database */
@@ -91,10 +86,11 @@
   min-height: 44px;
 }
 
-/* Cover cards, three across like the landing's card rows */
+/* Cover cards: four across on wide screens, two on tablets, one on phones, so a full library
+   (16 guides) never leaves a card alone on its row */
 :global(.app.outpost) .grid.grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
 

@@ -221,21 +221,19 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </p>
       </section>
       {failed && (
-        <div className={styles.error} role="alert">
-          <div>
-            <p className={styles.errorTitle}>The {kills ? "kill" : "death"} feed did not load.</p>
-            <p className={styles.errorLine}>
-              {error.message}
-              {feed ? " The last page that loaded stays below." : ""}
-            </p>
-          </div>
+        // Said once, in a well, with the way back beside it (as Market says a failed quote)
+        <div className={`well ${styles.error}`}>
+          <StatusLine tone="error">
+            {error.message}
+            {feed ? " The last page that loaded stays below." : ""}
+          </StatusLine>
           <button
             type="button"
-            className="pill-link"
+            className="pill-link is-small"
             onClick={() => void refresh()}
             disabled={loading}
           >
-            <RefreshCw size={15} aria-hidden="true" /> Retry feed
+            <RefreshCw size={14} aria-hidden="true" /> Retry feed
           </button>
         </div>
       )}

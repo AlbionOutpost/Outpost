@@ -2,7 +2,6 @@ import { ArrowRight, Search } from "lucide-react";
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
 import { GuideCoverCard, readingMinutes, type GuideCover } from "./guide-cover-card";
-import { GuidesCarousel } from "./landing/guides-carousel";
 import { SectionHeading } from "./section-heading";
 import { EmptyWell } from "./empty-well";
 import type { LibraryGuide } from "@/lib/grind-library-types";
@@ -40,8 +39,8 @@ const cover = (guide: LibraryGuide): GuideCover => ({
 });
 
 /**
- * The guides hub: the three newest guides as the landing's lead story and two side stories,
- * one search with topic pills, and every other guide as a cover card three across.
+ * The guides hub: one search with topic pills over every guide as a cover card, newest first,
+ * four across on wide screens so the 16 guides fill their rows.
  */
 export function GrindGuideDirectory({
   guides,
@@ -60,8 +59,8 @@ export function GrindGuideDirectory({
       (!category || g.category === category) &&
       `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
   );
-  const newest = guides.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
-  const listed = filtered ? matches : guides.filter((g) => !newest.includes(g));
+  // One grid, newest first; the topic pills and the search narrow it
+  const listed = matches.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   const topicHref = (topic: string) => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
@@ -72,22 +71,6 @@ export function GrindGuideDirectory({
   const count = matches.length;
   return (
     <>
-      {!filtered && newest.length > 0 && (
-        <section className={styles.section} aria-labelledby="guides-newest">
-          <SectionHeading
-            id="guides-newest"
-            title={
-              <>
-                Newest <em>guides</em>
-              </>
-            }
-            line="The three most recently updated guides."
-          />
-          <div className={styles.carousel}>
-            <GuidesCarousel guides={newest.map(cover)} suffix="" />
-          </div>
-        </section>
-      )}
       <section className={`grind-guide-library ${styles.section}`} aria-labelledby="guides-library">
         <SectionHeading
           id="guides-library"
