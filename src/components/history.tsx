@@ -136,8 +136,8 @@ export function History({
         ? { notation: "compact", maximumFractionDigits: max - min < max * 0.05 ? 2 : 1 }
         : { maximumFractionDigits: 0 },
     );
-  // Hourly series (gold) label the time of day; daily series label the date.
-  const hourly = kind === "gold" || end - start < 2 * 86_400_000;
+  // A series inside two days labels the time of day; anything longer labels the date.
+  const hourly = end - start < 2 * 86_400_000;
   const day = (t: string) =>
     hourly
       ? `${new Date(sourceTimestamp(t)).toISOString().slice(11, 16)} UTC`

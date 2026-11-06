@@ -403,11 +403,13 @@ body:has(.editor-save-bar.is-docked) {
   justify-content: center;
 }
 /* Abilities lists every piece, so it runs long: the board stays in view beside it instead of
-   stretching into an empty panel */
-.app.outpost .inventory-editor-studio:has(.editor-ability-pieces) > .editor-inventory-panel {
-  position: sticky;
-  top: 88px;
-  align-self: start;
+   stretching into an empty panel. Only while the columns sit side by side (above 980px). */
+@media (min-width: 981px) {
+  .app.outpost .inventory-editor-studio:has(.editor-ability-pieces) > .editor-inventory-panel {
+    position: sticky;
+    top: 88px;
+    align-self: start;
+  }
 }
 /* The board: the landing window's board at panel size, abilities round on the pieces */
 .app.outpost .editor-inventory-panel .loadout-board {
