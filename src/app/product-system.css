@@ -319,6 +319,14 @@
 .app.outpost.home-route :is(.page-frame, .product-frame) {
   max-width: none;
 }
+/* Here, not in homepage.css: the header must sit in the same place while the landing streams
+   in, or the whole page jumps when that sheet arrives */
+.app.outpost.home-route .main > .site-header {
+  position: relative;
+}
+.app.outpost.home-route .main main {
+  padding: 0;
+}
 
 /* Masthead: full-bleed painting under the page title, dissolving into the canvas; the first
    panels ride up into the fade. Working panels never get art of their own. */
@@ -1813,9 +1821,13 @@
 .app.outpost .ad-slot.is-article {
   margin: 40px 0 0;
 }
+.app.outpost .ad-slot-label {
+  color: var(--muted);
+  font-size: 12px;
+}
 .app.outpost .ad-slot-unit {
   display: block;
-  min-height: 120px;
+  min-height: 250px;
   border-radius: var(--radius-md);
   background: var(--well);
 }

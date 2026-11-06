@@ -26,7 +26,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 
-describe("advertising is closed without a real consent/revocation integration", () => {
+describe("advertising stays closed until the imprint is complete", () => {
   it("configured ownership renders passive metadata, never an advertising loader", () => {
     const html = renderToStaticMarkup(AdsenseLoader());
     expect(html).toContain('<meta name="google-adsense-account"');
@@ -109,7 +109,7 @@ describe("advertising is closed without a real consent/revocation integration", 
   });
 });
 
-describe("security policy and seller declaration remain independent of ad activation", () => {
+describe("security policy and seller declaration without active ads", () => {
   it.each(["production", "development"] as const)(
     "configured publisher does not add advertising origins to %s CSP; nonce/Turnstile remain",
     (mode) => {
@@ -149,5 +149,61 @@ describe("security policy and seller declaration remain independent of ad activa
     expect(await sellerDeclaration().text()).toBe(
       "# No advertising seller is configured for this site.\n",
     );
+  });
+});
+
+describe("active advertising (publisher id, unit ids and a complete imprint)", () => {
+  beforeEach(() => {
+    vi.stubEnv("OPERATOR_NAME", "Example Operator");
+    vi.stubEnv("OPERATOR_ADDRESS", "Example Street 1, 12345 Example");
+    vi.stubEnv("OPERATOR_EMAIL", "operator@example.org");
+  });
+
+  it("loads Google's ad and consent script with the request nonce, never for Supporters", () => {
+    const html = renderToStaticMarkup(AdsenseLoader({ nonce: "n0nce" }));
+    expect(html).toContain('<meta name="google-adsense-account"');
+    expect(html).toContain(
+      `src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisher}"`,
+    );
+    expect(html).toContain('nonce="n0nce"');
+    expect(renderToStaticMarkup(AdsenseLoader({ supporter: true }))).not.toMatch(/<script\b/);
+  });
+
+  it("a missing imprint field keeps ads off", () => {
+    vi.stubEnv("OPERATOR_ADDRESS", " ");
+    expect(renderToStaticMarkup(AdsenseLoader({ nonce: "n0nce" }))).not.toMatch(/<script\b/);
+  });
+
+  it.each([
+    ["hub", "1234567890"],
+    ["article", "9876543210"],
+  ] as const)("the %s placement renders its labelled unit", async (placement, slot) => {
+    const html = renderToStaticMarkup(await AdSlot({ placement }));
+    expect(html).toContain('aria-label="Advertisement"');
+    expect(html).toContain(`data-ad-client="${publisher}"`);
+    expect(html).toContain(`data-ad-slot="${slot}"`);
+  });
+
+  it("Supporters get no unit, checked against the server record", async () => {
+    state.session.mockResolvedValue({ user: { id: "server-supporter" } });
+    state.user.mockResolvedValue({ plan: "SUPPORTER" });
+    expect(await AdSlot({ placement: "hub" })).toBeNull();
+  });
+
+  it("a malformed unit id renders nothing", async () => {
+    vi.stubEnv("NEXT_PUBLIC_ADSENSE_SLOT_HUB", '1"><script>');
+    expect(await AdSlot({ placement: "hub" })).toBeNull();
+  });
+
+  it("the CSP opens Google's ad and consent origins and keeps the nonce and strict-dynamic", () => {
+    const csp = proxy(new NextRequest("https://outpost.example/")).headers.get(
+      "Content-Security-Policy",
+    )!;
+    expect(csp).toMatch(/frame-src [^;]*https:\/\/\*\.googlesyndication\.com/);
+    expect(csp).toMatch(/frame-src [^;]*https:\/\/fundingchoicesmessages\.google\.com/);
+    expect(csp).toMatch(/connect-src [^;]*https:\/\/\*\.doubleclick\.net/);
+    expect(csp).toMatch(/script-src 'self' 'nonce-[^']+' 'strict-dynamic'/);
+    expect(csp).not.toMatch(/script-src[^;]*'unsafe-inline'/);
+    expect(csp).toContain("object-src 'none'");
   });
 });

@@ -1,5 +1,6 @@
 import { rootMetadata } from "@/lib/seo";
 import { AdsenseLoader } from "@/components/adsense-loader";
+import { isSupporter } from "@/lib/billing/plan";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
 import { getServerSession } from "next-auth";
@@ -36,7 +37,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const user = session?.user?.id
     ? await db.user.findUnique({
         where: { id: session.user.id },
-        select: { region: true, name: true, image: true, role: true },
+        select: {
+          region: true,
+          name: true,
+          image: true,
+          role: true,
+          plan: true,
+          supporterGiftUntil: true,
+          supporterGiftPermanent: true,
+        },
       })
     : null;
   const path = (await headers()).get("x-outpost-path") ?? "";
@@ -50,7 +59,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <html lang="en">
       <head>
-        <AdsenseLoader />
+        <AdsenseLoader
+          nonce={(await headers()).get("x-nonce") ?? undefined}
+          supporter={isSupporter(user)}
+        />
       </head>
       <body
         className={`${inter.variable} ${barlowCondensed.variable} ${barlowDisplay.variable} ${geistMono.variable}`}

@@ -211,6 +211,14 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
                     <td>Durch entsprechende Nutzerauswahl gesetzt; im Browser löschbar</td>
                   </tr>
                   <tr>
+                    <td>FCCDCF und FCNEC (Google): Ihre Einwilligungsentscheidung zu Werbung</td>
+                    <td>Bis zu 390 Tage</td>
+                    <td>
+                      Nur wenn Werbung aktiv ist; über „Privacy and cookie settings“ änderbar.
+                      Werbecookies von Google und Partnern nur nach Ihrer Einwilligung.
+                    </td>
+                  </tr>
+                  <tr>
                     <td>
                       localStorage: Gast-Builds, Sammlungen, Filter, Einkaufslisten,
                       Spezialisierungen, Checklisten, Karten und Werkzeug-Verknüpfungen
@@ -230,28 +238,31 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
               Präferenzen. Es löscht weder automatisch das Serverkonto noch ein Abonnement. Browser
               können gespeicherte Daten außerdem selbstständig entfernen.
             </p>
-            <h3>Werbung derzeit deaktiviert</h3>
+            <h3>Werbung mit Google AdSense</h3>
             <p>
-              In diesem Stand werden keine AdSense-Anzeigenskripte, Anzeigenplätze oder
-              Anzeigenanfragen eingebunden. Das gilt auch dann, wenn eine Publisher-Kennung
-              hinterlegt ist. Ein gegebenenfalls ausgegebenes Google-Kontoverifizierungs-Metatag
-              enthält nur die Publisher-Zuordnung und lädt selbst kein Google-Skript. Es ist weder
-              ein Einwilligungsnachweis noch eine Freigabe für Tracking.
+              Outpost finanziert sich über Werbung von Google AdSense (Google Ireland Limited,
+              Gordon House, Barrow Street, Dublin 4, Irland). Anzeigen erscheinen höchstens einmal
+              pro Seite, nach der Liste einer Übersichtsseite oder nach einem Guide beziehungsweise
+              einem Bibliotheks-Build, nie in Rechnern, Editoren, Team-Bereichen oder Kontoseiten.
+              Supporter sehen keine Werbung; das Werbeskript wird für sie nicht geladen.
             </p>
             <p>
-              Ein vollständiger Einwilligungsmanager mit Widerrufsmöglichkeit ist derzeit nicht
-              eingerichtet. Deshalb bleibt die Anzeigenintegration deaktiviert. Vor einer späteren
-              Aktivierung müssen erforderliche Einwilligungen und ihr Widerruf,
-              Anbieter-/Partnerangaben, Datenübermittlungen sowie das Verhalten für Supporter
-              technisch und rechtlich geprüft werden. Eine konfigurierte Kennung oder die bloße
-              Nutzung der Website wird nicht als Zustimmung behandelt.
+              Besucher aus dem EWR, dem Vereinigten Königreich und der Schweiz sehen vor jeder
+              Anzeigenanfrage das von Google zertifizierte Einwilligungsfenster (IAB TCF). Sie
+              können zustimmen, ablehnen oder einzelne Zwecke und Partner wählen; Ablehnen ist so
+              einfach wie Zustimmen. Ohne Einwilligung zeigt Google höchstens eingeschränkte, nicht
+              personalisierte Anzeigen. Ihre Wahl speichert Google in den Cookies FCCDCF und FCNEC;
+              über den Link „Privacy and cookie settings“ unten auf der Seite können Sie sie
+              jederzeit ändern oder widerrufen. Besucher aus US-Bundesstaaten mit eigenem
+              Datenschutzrecht erhalten Googles Link „Do Not Sell or Share My Personal Information“.
             </p>
             <p>
-              Bei einem späteren freigegebenen Werbeeinsatz können Google und gegebenenfalls
-              Werbepartner Cookies, Gerätekennungen und Besuchsdaten für Auslieferung, Messung und –
-              bei entsprechender Einwilligung – Personalisierung verarbeiten. Die dann tatsächlich
-              beteiligten Empfänger und Speicherfristen müssten vorab ergänzt werden. Diese Seite
-              holt selbst keine Werbeeinwilligung ein.
+              Mit Ihrer Einwilligung verarbeiten Google und die angezeigten Werbepartner Cookies,
+              Gerätekennungen, IP-Adresse und Besuchsdaten für Auslieferung, Messung, Betrugsabwehr
+              und – soweit gewählt – personalisierte Werbung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs.
+              1 TDDDG). Dabei können Daten in die USA übermittelt werden; Google ist nach dem EU-US
+              Data Privacy Framework zertifiziert. Die jeweils beteiligten Partner und ihre
+              Speicherdauern nennt das Einwilligungsfenster unter „Manage options“.
             </p>
             <p>
               Google erläutert die{" "}
@@ -263,11 +274,10 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
               <a href="https://support.google.com/adsense/answer/1348695?hl=de">
                 Cookies für Anzeigen
               </a>
-              . Eine spätere Einwilligung muss freiwillig, informiert und widerrufbar sein;
-              Ablehnung darf nicht durch eine bloße Weiterbenutzung ersetzt werden. Zusätzliche
-              Analyseprodukte wie Google Analytics werden im geprüften Anwendungscode nicht
-              eingebunden; mögliche Einstellungen außerhalb des Repositorys sind nicht damit
-              geprüft.
+              . Eine Einwilligung muss freiwillig, informiert und widerrufbar sein; Ablehnung darf
+              nicht durch eine bloße Weiterbenutzung ersetzt werden. Zusätzliche Analyseprodukte wie
+              Google Analytics werden im geprüften Anwendungscode nicht eingebunden; mögliche
+              Einstellungen außerhalb des Repositorys sind nicht damit geprüft.
             </p>
           </>
         ),
@@ -495,9 +505,8 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
               vorgesehen. Dazu gehören laut Produktdarstellung werbefreie Anzeigenplätze und die
               Möglichkeit, einen Team-Arbeitsbereich zu betreiben; Mitglieder können kostenlos
               beitreten. Aktuelle Eigenschaften und Verfügbarkeit sind auf der{" "}
-              <Link href="/supporter">Supporter-Seite</Link> beschrieben. Derzeit sind Anzeigen für
-              alle Nutzer deaktiviert; ein künftiger Werbeeinsatz ist ein gesonderter, oben
-              beschriebener Freigabepunkt.
+              <Link href="/supporter">Supporter-Seite</Link> beschrieben. Supporter sehen keine
+              Werbung (siehe Abschnitt zu Cookies und Werbung).
             </p>
             <p>
               Bei aktivierter Abrechnung werden Sie zum gehosteten Stripe Checkout weitergeleitet.
@@ -852,6 +861,15 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
                     <td>Set through the corresponding user selection; removable in the browser</td>
                   </tr>
                   <tr>
+                    <td>FCCDCF and FCNEC (Google): your advertising consent choice</td>
+                    <td>Up to 390 days</td>
+                    <td>
+                      Only while advertising is active; change it under “Privacy and cookie
+                      settings”. Advertising cookies from Google and partners only with your
+                      consent.
+                    </td>
+                  </tr>
+                  <tr>
                     <td>
                       localStorage: guest builds, collections, filters, shopping lists,
                       specialisations, checklists, maps and tool shortcuts
@@ -870,27 +888,31 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
               not automatically delete the server account or a subscription. Browsers may also
               remove stored data themselves.
             </p>
-            <h3>Advertising is currently disabled</h3>
+            <h3>Advertising with Google AdSense</h3>
             <p>
-              This version does not embed AdSense advertising scripts, ad placements or ad requests.
-              This also applies when a publisher ID has been configured. A Google
-              account-verification meta tag, if output, only identifies the publisher association
-              and does not itself load a Google script. It is neither evidence of consent nor
-              permission for tracking.
+              Outpost is funded by advertising from Google AdSense (Google Ireland Limited, Gordon
+              House, Barrow Street, Dublin 4, Ireland). Ads appear at most once per page, after the
+              list on an overview page or after a guide or library build, never in calculators,
+              editors, Team areas or account pages. Supporters see no ads; the ad script is not
+              loaded for them.
             </p>
             <p>
-              A complete consent manager with withdrawal controls has not yet been established.
-              Advertising therefore remains disabled. Before any future activation, the required
-              consent and its withdrawal, provider/partner information, data transfers and the
-              behaviour for Supporters must be technically and legally reviewed. A configured ID or
-              merely using the website is not treated as consent.
+              Visitors from the EEA, the United Kingdom and Switzerland see Google&apos;s certified
+              consent message (IAB TCF) before any ad request. You can consent, decline, or choose
+              individual purposes and partners; declining is as easy as consenting. Without consent,
+              Google shows at most limited, non-personalised ads. Google stores your choice in the
+              FCCDCF and FCNEC cookies; you can change or withdraw it at any time through the
+              “Privacy and cookie settings” link at the bottom of the page. Visitors from US states
+              with their own privacy laws get Google&apos;s “Do Not Sell or Share My Personal
+              Information” link.
             </p>
             <p>
-              If advertising is subsequently approved, Google and, where applicable, advertising
-              partners may process cookies, device identifiers and visit data for delivery,
-              measurement and, with the corresponding consent, personalisation. The actual
-              recipients and retention periods would need to be added beforehand. This page does not
-              itself obtain advertising consent.
+              With your consent, Google and the listed advertising partners process cookies, device
+              identifiers, IP address and visit data for delivery, measurement, fraud prevention
+              and, where chosen, personalised advertising (Art. 6(1)(a) GDPR, Section 25(1) TDDDG).
+              Data may be transferred to the USA; Google is certified under the EU-US Data Privacy
+              Framework. The consent message lists the partners involved and their retention periods
+              under “Manage options”.
             </p>
             <p>
               Google explains its{" "}
@@ -901,10 +923,10 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
               <a href="https://support.google.com/adsense/answer/1348695?hl=de">
                 advertising cookies
               </a>
-              . Any future consent must be freely given, informed and withdrawable; rejection cannot
-              be replaced by mere continued use. Additional analytics products such as Google
-              Analytics are not embedded in the reviewed application code; this does not verify
-              possible settings outside the repository.
+              . Consent must be freely given, informed and withdrawable; rejection cannot be
+              replaced by mere continued use. Additional analytics products such as Google Analytics
+              are not embedded in the reviewed application code; this does not verify possible
+              settings outside the repository.
             </p>
           </>
         ),
@@ -1120,9 +1142,8 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
               The existing integration is intended for a recurring Supporter subscription. According
               to the product description, this includes ad-free placements and the ability to run a
               Team workspace; members can join for free. Current features and availability are
-              described on the <Link href="/supporter">Supporter page</Link>. Advertising is
-              currently disabled for everyone; any future advertising use is a separate approval
-              point described above.
+              described on the <Link href="/supporter">Supporter page</Link>. Supporters see no ads
+              (see the section on cookies and advertising).
             </p>
             <p>
               When billing is activated, you are redirected to hosted Stripe Checkout. Outpost sends

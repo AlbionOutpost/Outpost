@@ -79,7 +79,7 @@ describe("faithful bilingual legal draft", () => {
       const body = section(locale, "cookies").body;
       const flat = nodes(body);
       expect(flat.filter((node) => node.type === "tbody")).toHaveLength(1);
-      expect(flat.filter((node) => node.type === "tr")).toHaveLength(6);
+      expect(flat.filter((node) => node.type === "tr")).toHaveLength(7);
       expect(flat.some((node) => node.props.role === "region" && node.props.tabIndex === 0)).toBe(
         true,
       );
@@ -88,6 +88,7 @@ describe("faithful bilingual legal draft", () => {
         "NextAuth",
         "PKCE",
         "outpost-route",
+        "FCCDCF",
         "atlas-theme",
         "atlas-region",
         "localStorage",
@@ -159,8 +160,8 @@ describe("faithful bilingual legal draft", () => {
     expect(enOn).toContain("does not establish legal approval");
     expect(deOff).toContain("Stripe-Abrechnung ist nicht vollständig konfiguriert");
     expect(deOn).toContain("belegt keine rechtliche Freigabe");
-    expect(enOn).toContain("Advertising is currently disabled for everyone");
-    expect(deOn).toContain("Anzeigen für alle Nutzer deaktiviert");
+    expect(enOn).toContain("Supporters see no ads");
+    expect(deOn).toContain("Supporter sehen keine Werbung");
   });
   it("states that both documents remain drafts without creating compliance proof", () => {
     expect(copy("en").draftBody).toContain("does not confirm legal compliance");
