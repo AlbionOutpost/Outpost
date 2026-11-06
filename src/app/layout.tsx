@@ -42,7 +42,6 @@ import "./product-system.css";
 import "./product-research.css";
 import "./product-support.css";
 import "./editor-workspaces.css";
-import "./workspace-refresh.css";
 export const metadata: Metadata = rootMetadata();
 export const viewport: Viewport = { themeColor: "#101014", colorScheme: "dark light" };
 export default async function Layout({ children }: { children: React.ReactNode }) {

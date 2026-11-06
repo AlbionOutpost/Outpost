@@ -1774,3 +1774,86 @@
     margin-bottom: 0;
   }
 }
+
+/* Support pages: quiet, readable task surfaces. */
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .guild-discovery-page,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard
+  )
+  > .panel {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  backdrop-filter: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .guild-discovery-page,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard
+  )
+  :is(.panel, .raised) {
+  background-color: color-mix(in srgb, var(--surface) 97%, transparent);
+  background-image: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(
+    .production-journey,
+    .guild-discovery-page,
+    .support-settings,
+    .support-dashboard,
+    .support-timers,
+    .player-dashboard
+  )
+  :is(.panel, .raised)::before {
+  background-image: none;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  :is(.guild-discovery-filters) {
+  padding: 20px;
+  gap: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .account-settings-navigation {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 18px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .account-settings-content {
+  gap: 28px;
+}
+.app.outpost:not(.home-route)
+  main:not(:has(.gear-studio, .composition-directory))
+  .settings-data-section {
+  align-items: center;
+  gap: 24px;
+}
+@media (max-width: 760px) {
+  .app.outpost:not(.home-route)
+    main:not(:has(.gear-studio, .composition-directory))
+    .settings-data-section {
+    align-items: stretch;
+    gap: 18px;
+  }
+}
+
+/* A relative sidebar must not retain the desktop sticky top offset. */
+@media (max-width: 900px) {
+  .app.outpost .support-settings nav.account-settings-navigation.panel {
+    top: auto;
+    margin-bottom: 0;
+  }
+}

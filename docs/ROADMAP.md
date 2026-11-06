@@ -16,7 +16,7 @@ A full review of the last ~40 PRs. Fixed:
 - **Security:** Discord OAuth tokens are no longer stored, and tokens stored earlier are cleared by private-store schema step 8 on the next data Worker deploy (Postgres: migration `20261105220000_clear_oauth_tokens`); signed-out search is cached for two minutes (was ten).
 - **Cleanup:** removed dead components, `home-fidelity.css`, the header-search CSS and dead `workspace-refresh.css` rules; deleted the generated root status reports; restored spaces dropped around numbers in the docs.
 
-Still open from the review: require an owner approval before merges to `main` deploy; get the weekly visual suite green and regenerate baselines on CI; fold the rest of `workspace-refresh.css` into the owning sheets; per-user caps and expired-row cleanup for private data.
+Still open from the review: get the weekly visual suite green and regenerate baselines on CI; per-user caps and expired-row cleanup for private data.
 
 ## Homepage and navigation — 4 November 2026
 
