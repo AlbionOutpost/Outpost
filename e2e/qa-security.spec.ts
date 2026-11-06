@@ -76,10 +76,13 @@ test("literal hostile text, concurrent edits, pagination and secure logout", asy
     expect((await db.user.findUniqueOrThrow({ where: { id } })).role).toBe("USER");
     await page.goto(`/builds/${saved.id}`);
     await expect(page.getByRole("heading", { name: input.title })).toBeVisible();
-    // Only the renderer's icons and the site's own static slot marks may be images here.
+    // Only the renderer's icons and the site's own static art (slot marks, the silver coin
+    // beside a priced cost) may be images here; the stored <img src=x> must stay text.
     expect(
       await page
-        .locator("main script, main img:not([data-albion-icon]):not([data-slot-mark])")
+        .locator(
+          'main script, main img:not([data-albion-icon]):not([data-slot-mark]):not([src^="/albion/"])',
+        )
         .count(),
     ).toBe(0);
     expect(
