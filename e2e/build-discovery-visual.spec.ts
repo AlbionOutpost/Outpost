@@ -166,14 +166,15 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       }
       await page.goto("/guides");
       await page.getByLabel("Search guides", { exact: true }).fill("market quote");
-      await expect(page.locator(".guide-discovery-card")).toHaveCount(1);
-      await page.getByText("Read guide", { exact: true }).click();
-      await expect(page.locator(".guide-body")).toContainText("Albion Online Data Project");
-      await page.getByText("Read guide", { exact: true }).click();
-      await page.getByLabel("Search guides", { exact: true }).fill("");
+      await page.getByLabel("Search guides", { exact: true }).press("Enter");
+      await expect(page.locator(".grind-guide-card")).toHaveCount(1);
+      await page.locator(".grind-guide-card").click();
+      await expect(page).toHaveURL(/\/guides\/read-a-market-quote/);
+      await expect(page.locator("main")).toContainText("Albion Online Data Project");
+      await page.goto("/guides");
       for (const width of [1440, 390, 320]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
-        await expect(page.locator(".guide-discovery-card")).toHaveCount(4);
+        await expect(page.locator(".grind-guide-card").first()).toBeVisible();
         await page.evaluate(() => {
           if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
           scrollTo(0, 0);

@@ -128,9 +128,8 @@ test("design review covers application pages, equipment, guilds and reduced moti
             await expect(
               page.getByRole("button", { name: "Caerleon market details", exact: true }),
             ).toBeVisible();
-            await expect(
-              page.getByRole("button", { name: "Refresh prices", exact: true }),
-            ).toBeEnabled();
+            // Phones fold the search rail away, so find the button even while it is hidden.
+            await expect(page.locator(".mx-refresh")).toBeEnabled();
             await expect
               .poll(() =>
                 page
