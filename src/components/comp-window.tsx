@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/build-region-link";
 import "@/app/landing-window.css";
 import windows from "./landing/windows.module.css";
@@ -66,41 +66,4 @@ export function CompWindow({
 /** The list comp windows sit in: three across, two on tablets, one on phones. */
 export function CompGrid({ children }: { children: ReactNode }) {
   return <ul className={`${windows.windows} ${styles.grid}`}>{children}</ul>;
-}
-
-/** Page links under a list of comps: previous, where you are, next. */
-export function CompPages({
-  page,
-  pages,
-  next,
-  href,
-  label,
-}: {
-  page: number;
-  /** Total pages, when the list knows it. */
-  pages?: number;
-  next: boolean;
-  href: (page: number) => string;
-  label: string;
-}) {
-  if (page <= 1 && !next) return null;
-  return (
-    <nav className={styles.pages} aria-label={label}>
-      {page > 1 ? (
-        <Link className="pill-link is-small" href={href(page - 1)}>
-          <ArrowLeft size={14} aria-hidden="true" /> Previous
-        </Link>
-      ) : (
-        <span />
-      )}
-      <span>{pages ? `Page ${page} of ${pages}` : `Page ${page}`}</span>
-      {next ? (
-        <Link className="pill-link is-small" href={href(page + 1)}>
-          Next <ArrowRight size={14} aria-hidden="true" />
-        </Link>
-      ) : (
-        <span />
-      )}
-    </nav>
-  );
 }

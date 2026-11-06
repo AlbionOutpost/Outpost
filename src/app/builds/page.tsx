@@ -6,6 +6,7 @@ import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { CommunityBuildCard } from "@/components/community-build-card";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { EmptyWell } from "@/components/empty-well";
+import { Pagination } from "@/components/pagination";
 import { SectionHeading } from "@/components/section-heading";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
@@ -298,27 +299,12 @@ export default async function Builds({
                 </div>
               </section>
             )}
-            {pages > 1 && (
-              <nav className="library-pagination" aria-label="Community build pages">
-                {page > 1 ? (
-                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                    Previous page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-                <span>
-                  Page {page} / {pages}
-                </span>
-                {page < pages ? (
-                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                    Next page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-              </nav>
-            )}
+            <Pagination
+              label="Community build pages"
+              page={page}
+              pages={pages}
+              href={(n) => href({ page: String(n) })}
+            />
           </section>
         </div>
       )}

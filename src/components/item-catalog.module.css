@@ -250,15 +250,6 @@
 }
 
 /* Pages and notes */
-.pages {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  color: var(--muted);
-  font-size: 13px;
-}
 .noteLine {
   margin: 0 0 var(--space-3);
   color: var(--muted);

@@ -8,7 +8,8 @@ import { activityName } from "@/lib/grind-library-types";
 import { CompRoster } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompWindow } from "@/components/comp-window";
+import { Pagination } from "@/components/pagination";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
@@ -143,13 +144,7 @@ export default async function Page({
             }
           />
         )}
-        <CompPages
-          page={page}
-          pages={pages}
-          next={page < pages}
-          href={href}
-          label="Group Build pages"
-        />
+        <Pagination page={page} pages={pages} href={href} label="Group Build pages" />
       </section>
       <AdSlot placement="hub" />
       <CompNextSteps

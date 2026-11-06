@@ -16,6 +16,7 @@ import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { LayoutGrid, List, Search, X } from "lucide-react";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { EmptyWell } from "@/components/empty-well";
+import { Pagination } from "@/components/pagination";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/builds/library", await searchParams);
 }
@@ -253,27 +254,12 @@ export default async function Library({
               </section>
             )}
             {rows.length > 0 && <AdSlot placement="hub" />}
-            {pages > 1 && (
-              <nav className="library-pagination" aria-label="Library pages">
-                {page > 1 ? (
-                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                    Previous page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-                <span>
-                  Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
-                </span>
-                {page < pages ? (
-                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                    Next page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-              </nav>
-            )}
+            <Pagination
+              label="Library pages"
+              page={page}
+              pages={pages}
+              href={(n) => href({ page: String(n) })}
+            />
           </section>
         </div>
       )}

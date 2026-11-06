@@ -1,15 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  LayoutGrid,
-  List,
-  RotateCw,
-  Search,
-} from "lucide-react";
+import { ArrowUpRight, LayoutGrid, List, RotateCw, Search } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
+import { Pagination } from "./pagination";
 import Link from "@/components/link";
 import { items } from "@/lib/albion/item-database";
 import { ItemIcon } from "./item-icon";
@@ -300,37 +293,17 @@ export function ItemCatalog({
           </>
         )}
         {!error && pages > 1 && (
-          <nav className={styles.pages} aria-label="Item pages">
-            <button
-              type="button"
-              className="pill-link is-small"
-              aria-label="Previous items"
-              disabled={page === 1 || busy}
-              onClick={() => {
-                setPage(page - 1);
-                setMore(false);
-              }}
-            >
-              <ArrowLeft size={14} aria-hidden="true" />
-              Previous
-            </button>
-            <span>
-              Page {page} of {pages.toLocaleString()}
-            </span>
-            <button
-              type="button"
-              className="pill-link is-small"
-              aria-label="Next items"
-              disabled={busy || page * 30 >= result.total}
-              onClick={() => {
-                setPage(page + 1);
-                setMore(false);
-              }}
-            >
-              Next
-              <ArrowRight size={14} aria-hidden="true" />
-            </button>
-          </nav>
+          <Pagination
+            label="Item pages"
+            page={page}
+            pages={pages}
+            next={page * 30 < result.total}
+            busy={busy}
+            onPage={(to) => {
+              setPage(to);
+              setMore(false);
+            }}
+          />
         )}
       </section>
       <section className={`raised ${styles.notes}`} aria-labelledby="item-notes-title">

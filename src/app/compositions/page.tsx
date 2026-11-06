@@ -11,7 +11,8 @@ import { readStoredComposition } from "@/lib/compositions/stored";
 import { slotRosterMember } from "@/lib/compositions/roster";
 import { RosterRows } from "@/components/comp-roster";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompWindow } from "@/components/comp-window";
+import { Pagination } from "@/components/pagination";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
@@ -209,7 +210,7 @@ export default async function Compositions({
             }
           />
         )}
-        <CompPages page={page} next={rows.length > 24} href={href} label="Comp pages" />
+        <Pagination page={page} next={rows.length > 24} href={href} label="Comp pages" />
       </section>
       <CompNextSteps
         show={["library", "create", "teams"]}
