@@ -138,7 +138,6 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
         emblem={<ItemIcon id={id} size={56} />}
         title={item.name}
         description={`${item.slot} · T${item.tier}.${item.enchantment} · Base item power ${item.itemPower ?? "not verified"} · ${weight === null ? "Weight unavailable" : `${weight} kg`}`}
-        actions={<ItemMarketLink id={id} />}
       >
         <MastheadTabs
           label="Item sections"
@@ -157,15 +156,16 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
               : []),
           ]}
         />
-        <p className="masthead-note">
-          <code>{id}</code> · Values can change with a game update; check in game before you commit.
-        </p>
-        <BackLink className="pill-link is-small masthead-back" href="/items">
-          Item database <ArrowLeft size={14} />
-        </BackLink>
+        <div className="item-masthead-row">
+          <BackLink className="pill-link is-small masthead-back" href="/items">
+            <ArrowLeft size={14} aria-hidden="true" /> Item database
+          </BackLink>
+          <code className="item-id-chip">{id}</code>
+          <ItemMarketLink id={id} />
+        </div>
       </WorkspaceHeading>
       <div className="item-metadata-detail">
-        <ItemPricePanel id={id} />
+        <ItemPricePanel id={id} name={item.name} />
         <section
           className="raised item-panel item-abilities"
           aria-labelledby="item-abilities-heading"
@@ -297,7 +297,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
             <PanelHead
               id="item-variants-heading"
               title="Tiers & enchantments"
-              line="Every version of this item in the catalog, with its base IP at normal quality."
+              line="Every version in the catalog, with its base IP at normal quality. Values can change with a game update."
             />
             <div
               className="table-scroll item-variant-well"

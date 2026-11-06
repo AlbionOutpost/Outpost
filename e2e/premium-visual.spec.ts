@@ -204,7 +204,7 @@ test("mobile collection filters and catalog categories preserve the chosen scope
   await page.goto("/items?region=asia");
   await page.getByRole("combobox", { name: "Item category", exact: true }).selectOption("Cape");
   await expect(page.locator(".item-catalog")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator(".item-catalog tbody tr").first()).toContainText("Cape");
+  await expect(page.locator(".item-catalog-row").first()).toContainText("Cape");
   await expect(page.getByRole("combobox", { name: "Enchantment", exact: true })).toHaveValue("");
 });
 

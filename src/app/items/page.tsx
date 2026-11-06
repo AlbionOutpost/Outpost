@@ -25,13 +25,22 @@ export default async function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        glyph="catalog"
+        glyph="builds"
         scene="market"
         title="Item database"
+        accent="database"
         description="Find any item by name, tier or enchantment, then open it for prices, abilities and its recipe."
       />
       <ItemCatalog metadata={metadata} total={total} categories={slots.map((i) => i.slot).sort()} />
-      <MarketNextSteps show={["market", "crafting", "planner"]} />
+      <MarketNextSteps
+        show={["market", "crafting", "planner"]}
+        title={
+          <>
+            Found what you <em>need</em>?
+          </>
+        }
+        line="Price it in every city, see if crafting it pays, or add it to a shopping list."
+      />
     </div>
   );
 }

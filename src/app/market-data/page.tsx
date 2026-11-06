@@ -79,6 +79,7 @@ export default async function MarketDataPage({
         glyph="market"
         scene="market"
         title="Market data"
+        accent="data"
         description="Where Outpost's prices come from, why one can be missing, and how you can fill it in. Sharing is optional; every tool works without it."
         actions={
           <a className="button primary" href={client} target="_blank" rel="noopener noreferrer">
@@ -235,7 +236,7 @@ export default async function MarketDataPage({
 
       <footer className={`raised ${styles.source}`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-        <img src="/albion/icons/tool-market.webp" alt="" width={48} height={48} />
+        <img src="/albion/icons/strip-content.webp" alt="" width={48} height={48} />
         <div>
           <strong>Powered by player observations</strong>
           <p>
@@ -252,7 +253,15 @@ export default async function MarketDataPage({
           About the Data Project <ArrowUpRight size={16} aria-hidden="true" />
         </a>
       </footer>
-      <MarketNextSteps show={["market", "flipping", "crafting"]} />
+      <MarketNextSteps
+        show={["market", "crafting", "planner"]}
+        title={
+          <>
+            Use the <em>prices</em>
+          </>
+        }
+        line="Once the orders are in, these tools turn them into a purchase, a craft or a shopping list."
+      />
     </article>
   );
 }

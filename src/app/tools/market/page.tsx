@@ -18,6 +18,7 @@ export default async function Page({
         glyph="market"
         scene="market"
         title="Market Explorer"
+        accent="Explorer"
         description="Every city's buy and sell orders for one item, each with the time it was seen."
       >
         <MastheadTabs

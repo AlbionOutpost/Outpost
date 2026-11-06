@@ -156,7 +156,7 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Search item name").fill("Bag");
   await page.getByLabel("Tier", { exact: true }).selectOption("4");
   await page.getByLabel("Enchantment", { exact: true }).selectOption("0");
-  await page.locator('.item-catalog tbody a[href="/items/T4_BAG?region=europe"]').click();
+  await page.locator('.item-catalog-row a[href="/items/T4_BAG?region=europe"]').click();
   await page.getByRole("link", { name: "Compare market observations", exact: true }).click();
   await page.getByRole("button", { name: "Refresh prices" }).click();
   await expect(page.locator(".market-board tbody tr")).toHaveCount(2);

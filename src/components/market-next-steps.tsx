@@ -34,17 +34,26 @@ const tools = {
  * The closing row of the market pages: three framed tool cards that take the price the player
  * just checked somewhere useful. Region follows the player's server.
  */
-export function MarketNextSteps({ show }: { show: (keyof typeof tools)[] }) {
+export function MarketNextSteps({
+  show,
+  title = (
+    <>
+      Put the price to <em>work</em>
+    </>
+  ),
+  line = "Take what you just checked into a trade or a craft.",
+}: {
+  show: (keyof typeof tools)[];
+  /** The section heading, with one word in <em>; each page says what fits it. */
+  title?: React.ReactNode;
+  line?: string;
+}) {
   return (
     <section className={styles.section} aria-labelledby="market-next-steps">
       <SectionHeading
         id="market-next-steps"
-        title={
-          <>
-            Put the price to <em>work</em>
-          </>
-        }
-        line="Take what you just checked into a trade or a craft."
+        title={title}
+        line={line}
         link={{ href: "/tools", label: "All tools" }}
       />
       <ul className={styles.grid}>

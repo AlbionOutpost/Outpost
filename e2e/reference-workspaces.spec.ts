@@ -50,7 +50,9 @@ test("market city comparison selects details, removes city chips and invalidates
   await page.getByRole("button", { name: "Hide price history", exact: true }).click();
   await expect(page.locator(".reference-market-history .history-panel")).toHaveCount(0);
   await chooseRegion(page, "asia");
-  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
+  // The other region's prices never carry over: the table keeps its rows with no price in them.
+  await expect(page.locator(".market-board tbody")).not.toContainText("1,300");
+  await expect(page.locator(".market-board tbody .silver")).toHaveCount(0);
   await expect(page.locator(".reference-city-summary")).toHaveCount(0);
 });
 

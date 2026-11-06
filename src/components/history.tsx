@@ -6,6 +6,7 @@ import { useOutpostRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { cities, regions } from "@/lib/albion/region-config";
 import { Disclosure } from "./disclosure";
+import { Silver } from "./silver";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
@@ -155,7 +156,7 @@ export function History({
   const status = busy
     ? "Loading history…"
     : failed
-      ? "History could not load. Refresh to try again."
+      ? "History could not load right now."
       : loaded && !visible.length
         ? kind === "gold"
           ? "No gold observations for this server yet. A gap is not a zero price."
@@ -202,7 +203,18 @@ export function History({
           {refresh}
         </form>
       )}
-      {kind === "gold" && (
+      {!visible.length && (
+        <div className="history-state">
+          <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
+          {failed && (
+            <button type="button" className="pill-link is-small" onClick={() => void load()}>
+              <RotateCw size={14} aria-hidden="true" />
+              Try again
+            </button>
+          )}
+        </div>
+      )}
+      {kind === "gold" && visible.length > 0 && (
         <dl className="history-figures">
           {(
             [
@@ -215,7 +227,7 @@ export function History({
               <dt>{label}</dt>
               <dd>
                 <b className="numeric">
-                  {point ? point.price.toLocaleString("en-US") : <Unavailable />}
+                  {point ? <Silver value={point.price} /> : <Unavailable />}
                 </b>
                 {point && <small>{stamp(point.timestamp)}</small>}
               </dd>
@@ -223,94 +235,86 @@ export function History({
           ))}
         </dl>
       )}
-      <div className="history-chart">
-        <div className="history-chart-head">
-          <span className="history-series-key">
-            {kind === "gold"
-              ? `Silver per gold · ${regions[region].label}`
-              : `Daily sell-order average · ${city}`}
-          </span>
-          {last && kind === "history" && (
-            <span className="history-last">
-              <b className="numeric">{last.price.toLocaleString("en-US")}</b>
-              <small>{day(last.timestamp)}</small>
+      {visible.length > 0 && (
+        <div className="history-chart">
+          <div className="history-chart-head">
+            <span className="history-series-key">
+              {kind === "gold"
+                ? `Silver per gold · ${regions[region].label}`
+                : `Daily sell-order average · ${city}`}
             </span>
-          )}
-        </div>
-        <div className="reference-price-figure">
-          <div className="reference-price-axis" aria-hidden="true">
-            {(visible.length ? [max, (min + max) / 2, min] : [0, 1, 2]).map((price, i) => (
-              <span key={i} title={visible.length ? `${price} silver` : undefined}>
-                {visible.length ? compact(price) : "—"}
+            {last && kind === "history" && (
+              <span className="history-last">
+                <b className="numeric">{last.price.toLocaleString("en-US")}</b>
+                <small>{day(last.timestamp)}</small>
               </span>
-            ))}
-          </div>
-          <div className="history-plot">
-            <svg
-              role="img"
-              aria-label={
-                visible.length
-                  ? `${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in the observations list.`
-                  : `${kind} price chart, no observations shown`
-              }
-              viewBox="0 0 700 210"
-              preserveAspectRatio="none"
-              className="price-chart"
-            >
-              <defs>
-                <linearGradient id={gradient} x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0" stopColor="currentColor" stopOpacity=".32" />
-                  <stop offset="1" stopColor="currentColor" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              {[0, 0.5, 1].map((fraction) => (
-                <line
-                  key={fraction}
-                  x1="0"
-                  x2="700"
-                  y1={Y1 - fraction * (Y1 - Y0)}
-                  y2={Y1 - fraction * (Y1 - Y0)}
-                  className="history-grid"
-                />
-              ))}
-              {coords.length > 1 && <path d={area} fill={`url(#${gradient})`} />}
-              {coords.length > 0 && (
-                <polyline
-                  points={xy}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  vectorEffect="non-scaling-stroke"
-                />
-              )}
-              {visible.map((p, i) => (
-                <circle key={i} cx={coords[i].x} cy={coords[i].y} r="3">
-                  <title>
-                    {p.timestamp} UTC: {p.price} silver
-                  </title>
-                </circle>
-              ))}
-            </svg>
-            {status && (
-              <div className="history-status">
-                <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
-              </div>
             )}
           </div>
-        </div>
-        <div className="chart-range" aria-hidden="true">
-          {visible.length ? (
-            (visible.length > 4 ? [0, 0.25, 0.5, 0.75, 1] : [0, 1])
+          <div className="reference-price-figure">
+            <div className="reference-price-axis" aria-hidden="true">
+              {[max, (min + max) / 2, min].map((price, i) => (
+                <span key={i} title={`${price} silver`}>
+                  {compact(price)}
+                </span>
+              ))}
+            </div>
+            <div className="history-plot">
+              <svg
+                role="img"
+                aria-label={
+                  visible.length
+                    ? `${kind} observed price chart, minimum ${min}, maximum ${max} silver. Full values in the observations list.`
+                    : `${kind} price chart, no observations shown`
+                }
+                viewBox="0 0 700 210"
+                preserveAspectRatio="none"
+                className="price-chart"
+              >
+                <defs>
+                  <linearGradient id={gradient} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stopColor="currentColor" stopOpacity=".32" />
+                    <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {[0, 0.5, 1].map((fraction) => (
+                  <line
+                    key={fraction}
+                    x1="0"
+                    x2="700"
+                    y1={Y1 - fraction * (Y1 - Y0)}
+                    y2={Y1 - fraction * (Y1 - Y0)}
+                    className="history-grid"
+                  />
+                ))}
+                {coords.length > 1 && <path d={area} fill={`url(#${gradient})`} />}
+                {coords.length > 0 && (
+                  <polyline
+                    points={xy}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                )}
+                {visible.map((p, i) => (
+                  <circle key={i} cx={coords[i].x} cy={coords[i].y} r="3">
+                    <title>
+                      {p.timestamp} UTC: {p.price} silver
+                    </title>
+                  </circle>
+                ))}
+              </svg>
+            </div>
+          </div>
+          <div className="chart-range" aria-hidden="true">
+            {(visible.length > 4 ? [0, 0.25, 0.5, 0.75, 1] : [0, 1])
               .map((f) => visible[Math.round(f * (visible.length - 1))])
-              .map((p, i) => <span key={i}>{day(p.timestamp)}</span>)
-          ) : (
-            <>
-              <span>—</span>
-              <span>—</span>
-            </>
-          )}
+              .map((p, i) => (
+                <span key={i}>{day(p.timestamp)}</span>
+              ))}
+          </div>
         </div>
-      </div>
+      )}
       {visible.length > 0 && (
         <Disclosure summary={`View ${visible.length} source observations`}>
           <div

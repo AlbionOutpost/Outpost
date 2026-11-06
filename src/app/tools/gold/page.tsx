@@ -13,10 +13,19 @@ export default function Page() {
         glyph="history"
         scene="market"
         title="Gold price"
+        accent="price"
         description="What gold costs in silver on your server, and how it moved over the last week."
       />
       <History kind="gold" autoLoad />
-      <MarketNextSteps show={["market", "flipping", "crafting"]} />
+      <MarketNextSteps
+        show={["market", "crafting", "planner"]}
+        title={
+          <>
+            Put the silver to <em>work</em>
+          </>
+        }
+        line="See what your silver buys in each city, or whether a craft pays, before you trade gold for it."
+      />
     </div>
   );
 }
