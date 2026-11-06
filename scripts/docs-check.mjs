@@ -14,6 +14,8 @@ const vendored = [
   "wrangler",
   "better-typography",
   "reverse-engineer-anything",
+  "stop-slop",
+  "humanizer",
 ].map((n) => `.claude/skills/${n}/`);
 const files = execFileSync(
   "git",

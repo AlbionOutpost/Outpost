@@ -23,6 +23,8 @@ data/catalog
 .claude/skills/wrangler
 .claude/skills/better-typography
 .claude/skills/reverse-engineer-anything
+.claude/skills/stop-slop
+.claude/skills/humanizer
 
 # Downloaded reference-site evidence retains upstream bytes.
 Scrape
