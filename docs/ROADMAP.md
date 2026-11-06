@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Dashboard, settings and admin redesign — 6 November 2026
+
+- Dashboard: compact well rows for your builds (loadout strip), comps (party weapons), running timers (running first), Teams and saved plans, builds and comps beside the side lists. An empty list is its panel head with one action; a new account sees one "first build" band instead of five empty lists. The quick-start tiles and closing cards are gone.
+- Settings: one column of groups (name and line left, controls right): profile, sign-in and export, staff tools for admins and moderators, then closing the account under a rule. The section rail, masthead chips, floating admin button and closing cards are gone.
+- Admin overview: "Needs attention" first (open reports, flagged accounts with their signals), totals in one strip, the last 30 days as daily bars beside the newest accounts, then recent access changes. Account search and "Ban a Discord ID" sit in the masthead. The admin pages' closing cards (`AdminNextSteps`) are deleted; the rail is the one set of section links.
+
 ## 30 guides, all Outpost's own — 6 November 2026
 
 - The 8 archive guides have new titles, structure and text, written by Outpost; slugs stay, section anchors changed. Facts that still hold were kept and updated for Rogue Frontier, Abyssal Depths, Realm Divided, Radiant Wilds and Dragonfire.

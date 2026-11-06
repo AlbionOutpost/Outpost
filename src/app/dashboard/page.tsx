@@ -1,63 +1,86 @@
-import "@/app/build-styles";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { ArrowRight, ArrowUpRight, Settings, ShieldCheck } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, ArrowUpRight, Plus, ShieldCheck } from "lucide-react";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
 import { PanelHead } from "@/components/panel-head";
-import { EmptyWell } from "@/components/empty-well";
-import { SectionHeading } from "@/components/section-heading";
-import { NextStepCards } from "@/components/next-step-cards";
-import { CommunityBuildCard } from "@/components/community-build-card";
-import { CompGrid, CompWindow } from "@/components/comp-window";
-import { RosterRows, type RosterMember } from "@/components/comp-roster";
+import { EquipmentStrip } from "@/components/equipment-strip";
+import { ItemIcon } from "@/components/item-icon";
 import { TeamMark, roleLabel } from "@/components/group-parts";
 import { timerCategory, timerStatus, timerLeft } from "@/components/timer-labels";
-import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
-import account from "@/components/account.module.css";
 import styles from "./dashboard.module.css";
 export const metadata = privateMetadata("Dashboard");
 
 const renderedAt = () => Date.now();
-/** A stored comp's members as roster rows, read loosely: a comp that fails validation still lists. */
-function rosterOf(slots: unknown): { total: number; members: RosterMember[] } {
-  if (!Array.isArray(slots)) return { total: 0, members: [] };
-  const members = slots.slice(0, 5).map((slot, i): RosterMember => {
-    const s = (slot ?? {}) as { role?: unknown; customRole?: unknown; equipment?: unknown };
-    const role =
-      s.role === "Custom" && typeof s.customRole === "string"
-        ? s.customRole
-        : typeof s.role === "string"
-          ? s.role
-          : "Open slot";
-    const main = Array.isArray(s.equipment)
-      ? s.equipment.find((e) => e && typeof e === "object" && e.slot === "Main hand")
+const visibility: Record<string, string> = { PRIVATE: "Private", UNLISTED: "Unlisted" };
+/** A stored comp's main hands and size, read loosely: a comp that fails validation still lists. */
+function rosterOf(slots: unknown) {
+  if (!Array.isArray(slots)) return { total: 0, weapons: [] };
+  const weapons = slots.slice(0, 5).flatMap((slot) => {
+    const equipment = (slot as { equipment?: unknown } | null)?.equipment;
+    const main = Array.isArray(equipment)
+      ? equipment.find((e) => e && typeof e === "object" && e.slot === "Main hand")
       : null;
-    const itemId = main && typeof main.itemId === "string" ? (main.itemId as string) : null;
-    return {
-      key: `${i}`,
-      weapon: itemId ? { itemId, quality: Number(main.quality) || 1 } : undefined,
-      name: itemId ? equipmentName(itemId) : "No weapon chosen",
-      role,
-      tone: role,
-      armor: [],
-    };
+    return main && typeof main.itemId === "string"
+      ? [{ itemId: main.itemId as string, quality: Number(main.quality) || 1 }]
+      : [];
   });
-  return { total: slots.length, members };
+  return { total: slots.length, weapons };
 }
 const day = (d: Date) =>
   new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(d);
 
+/** One working list: a panel head with its "All" link, then rows, or one line saying it's empty. */
+function Shelf({
+  id,
+  title,
+  line,
+  all,
+  empty,
+  children,
+}: {
+  id: string;
+  title: ReactNode;
+  line: string;
+  all?: { href: string; label: string };
+  /** Shown in place of the rows: one sentence and the action that fills the list. */
+  empty?: { line: string; href: string; label: string };
+  children?: ReactNode;
+}) {
+  return (
+    <section className={`panel ${styles.shelf}`} aria-labelledby={id}>
+      <PanelHead
+        id={id}
+        title={title}
+        line={empty ? empty.line : line}
+        actions={
+          empty ? (
+            <Link href={empty.href} className="pill-link is-small">
+              {empty.label} <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          ) : all ? (
+            <Link href={all.href} className="pill-link is-small">
+              {all.label} <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          ) : undefined
+        }
+      />
+      {!empty && <ul className={styles.rows}>{children}</ul>}
+    </section>
+  );
+}
+
 /**
- * The signed-in hub, in the landing's language: your latest builds and comps as the same windows
- * the rest of the site uses, then your Teams, timers and saved calculator plans side by side,
- * each with one way in and its own empty state.
+ * The signed-in home: what you were working on, as compact rows. Builds and comps in the main
+ * column; running timers, Teams and saved calculator plans beside them. An empty list is one
+ * line with its action; a brand-new account sees one first step instead of five empty lists.
  */
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
@@ -71,7 +94,7 @@ export default async function Dashboard() {
         role: true,
         compositions: {
           select: { id: true, title: true, updatedAt: true, slots: true },
-          take: 3,
+          take: 4,
           orderBy: { updatedAt: "desc" },
         },
         memberships: { include: { group: { select: { name: true, slug: true } } }, take: 5 },
@@ -82,7 +105,7 @@ export default async function Dashboard() {
         },
         savedScenarios: {
           select: { id: true, title: true, kind: true, configuration: true, updatedAt: true },
-          take: 5,
+          take: 4,
           orderBy: { updatedAt: "desc" },
         },
       },
@@ -98,217 +121,181 @@ export default async function Dashboard() {
   ]);
   if (!u) redirect("/signin");
   const now = renderedAt();
-  const builds = mine.builds.slice(0, 3);
-  // A short shelf of each sits side by side instead of one card in a wide empty row
-  const paired = builds.length < 3 && u.compositions.length < 3;
-  const quick = [
-    { title: "New build", href: "/builds/new", emblem: "strip-builds", scene: "build" },
-    {
-      title: "New comp",
-      href: "/compositions/new",
-      emblem: "strip-comps",
-      scene: "composition",
-    },
-    { title: "Craft", href: "/tools/crafting", emblem: "tool-craft", scene: "economy" },
-    { title: "Market", href: "/tools/market", emblem: "tool-market", scene: "market" },
-    { title: "Your Teams", href: "/groups?mine=1", emblem: "team-roles", scene: "city" },
-  ];
+  const builds = mine.builds.slice(0, 5);
+  const timers = u.timers.toSorted(
+    (a, b) => Number(b.status === "RUNNING") - Number(a.status === "RUNNING"),
+  );
+  const fresh =
+    !builds.length &&
+    !u.compositions.length &&
+    !u.memberships.length &&
+    !u.timers.length &&
+    !u.savedScenarios.length;
+  const staff = ["ADMIN", "MODERATOR"].includes(u.role) && (
+    <Link className="button secondary" href={u.role === "ADMIN" ? "/admin" : "/admin/reports"}>
+      <ShieldCheck size={16} aria-hidden="true" /> {u.role === "ADMIN" ? "Admin" : "Moderation"}
+    </Link>
+  );
   return (
-    <div className={account.page}>
+    <div className={styles.page}>
       <WorkspaceHeading
         icon="account"
         emblem={<AccountEmblem image={u.image} fallback="trophy-gold" />}
         scene="guides"
         title={`Welcome, ${u.name || "Adventurer"}.`}
         accent="Welcome"
-        description="Your builds, comps, Teams, timers and plans in one place."
+        description={
+          fresh
+            ? "Builds, comps, Teams, timers and saved plans you make collect here."
+            : "Pick up where you left off."
+        }
         actions={
-          <span className={account.headActions}>
-            {["ADMIN", "MODERATOR"].includes(u.role) && (
-              <Link className="button secondary" href="/admin/reports">
-                <ShieldCheck size={16} aria-hidden="true" /> Moderation queue
-              </Link>
+          <span className={styles.headActions}>
+            {staff}
+            {!fresh && (
+              <>
+                <Link className="button secondary" href="/compositions/new">
+                  <Plus size={16} aria-hidden="true" /> New comp
+                </Link>
+                <Link className="button primary" href="/builds/new">
+                  <Plus size={16} aria-hidden="true" /> New build
+                </Link>
+              </>
             )}
-            <Link className="button secondary" href="/settings">
-              <Settings size={16} aria-hidden="true" /> Settings &amp; data
-            </Link>
           </span>
         }
       />
-      <nav className={styles.quick} aria-label="Start something">
-        {quick.map((q) => (
-          <Link
-            key={q.href}
-            className={`raised has-scene dashboard-quick-card ${styles.quickCard}`}
-            data-scene={q.scene}
-            href={q.href}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-            <img src={`/albion/icons/${q.emblem}.webp`} alt="" width={40} height={40} />
-            <strong>{q.title}</strong>
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </Link>
-        ))}
-      </nav>
-      <div className={paired ? styles.pair : undefined}>
-        <section className={styles.section} aria-labelledby="dash-builds">
-          <SectionHeading
-            id="dash-builds"
-            title={
-              <>
-                Your <em>builds</em>
-              </>
-            }
-            line={
-              mine.total
-                ? `${mine.total.toLocaleString("en-GB")} saved, last edited first.`
-                : "Loadouts you make or copy are kept on your account."
-            }
-            link={mine.total ? { href: "/builds?mine=1", label: "All your builds" } : undefined}
-          />
-          {builds.length ? (
-            <ul className={styles.windows}>
-              {builds.map((b) => (
-                <li key={b.id} data-dashboard-work="">
-                  <CommunityBuildCard
-                    build={b}
-                    authenticated
-                    saved={b.favorites.length > 0}
-                    favoriteCount={b._count.favorites}
-                    owned
-                  />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyWell
-              emblem="strip-builds"
-              title="No builds yet"
-              line="Start from an empty board, or copy one from the library and change the pieces."
-              action={
-                <Link className="button secondary" href="/builds/new">
-                  Create a build
-                </Link>
-              }
-            />
-          )}
+      {fresh ? (
+        <section className={`raised has-scene ${styles.first}`} data-scene="build">
+          {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+          <img src="/albion/icons/strip-builds.webp" alt="" width={96} height={96} />
+          <div className={styles.firstCopy}>
+            <h2>
+              Start with your first <em>build</em>
+            </h2>
+            <p>
+              Pick a weapon, armor and abilities on the board, then save it to your account. Copy
+              one from the library if you&apos;d rather change someone else&apos;s.
+            </p>
+            <div className={styles.firstActions}>
+              <Link className="button primary" href="/builds/new">
+                Create a build
+              </Link>
+              <Link className="pill-link" href="/builds">
+                Browse builds <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
         </section>
-        <section className={styles.section} aria-labelledby="dash-comps">
-          <SectionHeading
-            id="dash-comps"
-            title={
-              <>
-                Your <em>comps</em>
-              </>
-            }
-            line={
-              u.compositions.length
-                ? "Party plans you made, last edited first."
-                : "Plan who plays what, then share it with your Team."
-            }
-            link={
-              u.compositions.length
-                ? { href: "/compositions?mine=1", label: "All your comps" }
-                : undefined
-            }
-          />
-          {u.compositions.length ? (
-            <CompGrid>
+      ) : (
+        <div className={styles.grid}>
+          <div className={styles.column}>
+            <Shelf
+              id="dash-builds"
+              title={
+                <>
+                  Your <em>builds</em>
+                </>
+              }
+              line={`${mine.total.toLocaleString("en-GB")} saved, last edited first.`}
+              all={
+                mine.total > builds.length ? { href: "/builds?mine=1", label: "All" } : undefined
+              }
+              empty={
+                builds.length
+                  ? undefined
+                  : { line: "No builds yet.", href: "/builds/new", label: "Create a build" }
+              }
+            >
+              {builds.map((b) => {
+                return (
+                  <li key={b.id} data-dashboard-work="">
+                    <Link href={`/builds/${b.id}`} className={`well ${styles.row}`}>
+                      <EquipmentStrip
+                        equipment={b.equipment}
+                        size={32}
+                        slots={["Main hand", "Off hand", "Helmet", "Chest", "Boots", "Cape"]}
+                      />
+                      <span className={styles.rowCopy}>
+                        <strong>{b.title}</strong>
+                        <small>
+                          {[
+                            b.contentType || "Other",
+                            visibility[b.visibility],
+                            `Edited ${day(b.updatedAt)}`,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </small>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </Shelf>
+            <Shelf
+              id="dash-comps"
+              title={
+                <>
+                  Your <em>comps</em>
+                </>
+              }
+              line="Party plans you made, last edited first."
+              all={
+                u.compositions.length ? { href: "/compositions?mine=1", label: "All" } : undefined
+              }
+              empty={
+                u.compositions.length
+                  ? undefined
+                  : {
+                      line: "No comps yet. Give each slot a role and a loadout.",
+                      href: "/compositions/new",
+                      label: "Plan a comp",
+                    }
+              }
+            >
               {u.compositions.map((c) => {
                 const roster = rosterOf(c.slots);
                 return (
                   <li key={c.id} data-dashboard-work="">
-                    <CompWindow
-                      title={c.title}
-                      href={`/compositions/${c.id}`}
-                      total={roster.total}
-                      noun="member"
-                      byline={`Edited ${day(c.updatedAt)}`}
-                    >
-                      {roster.members.length ? (
-                        <RosterRows members={roster.members} label={`${c.title} roster`} />
-                      ) : (
-                        <p className="landing-window-empty">No members planned yet.</p>
-                      )}
-                    </CompWindow>
+                    <Link href={`/compositions/${c.id}`} className={`well ${styles.row}`}>
+                      <span className={styles.party} aria-hidden="true">
+                        {roster.weapons.length ? (
+                          roster.weapons.map((w, i) => (
+                            <ItemIcon key={i} id={w.itemId} quality={w.quality} size={32} />
+                          ))
+                        ) : (
+                          <span className={styles.partyEmpty}>No weapons yet</span>
+                        )}
+                      </span>
+                      <span className={styles.rowCopy}>
+                        <strong>{c.title}</strong>
+                        <small>
+                          {roster.total} {roster.total === 1 ? "member" : "members"} · Edited{" "}
+                          {day(c.updatedAt)}
+                        </small>
+                      </span>
+                    </Link>
                   </li>
                 );
               })}
-            </CompGrid>
-          ) : (
-            <EmptyWell
-              emblem="strip-comps"
-              title="No comps yet"
-              line="Give each slot a role and a loadout, or copy a Group Build."
-              action={
-                <Link className="button secondary" href="/compositions/new">
-                  Plan a comp
-                </Link>
+            </Shelf>
+          </div>
+          <div className={styles.column}>
+            <Shelf
+              id="dash-timers"
+              title="Timers"
+              line="Running first."
+              all={u.timers.length ? { href: "/timers", label: "Manage" } : undefined}
+              empty={
+                u.timers.length
+                  ? undefined
+                  : { line: "No timers running.", href: "/timers", label: "Add a timer" }
               }
-            />
-          )}
-        </section>
-      </div>
-      <div className={styles.trio}>
-        <section className={`panel ${account.panel}`} aria-labelledby="dash-teams">
-          <PanelHead
-            id="dash-teams"
-            emblem="team-roles"
-            title="Your Teams"
-            line={u.memberships.length ? "Your role in each" : "Guild workspaces you belong to"}
-            actions={
-              u.memberships.length ? (
-                <Link href="/groups?mine=1" className="pill-link is-small">
-                  All <ArrowRight size={14} aria-hidden="true" />
-                </Link>
-              ) : undefined
-            }
-          />
-          {u.memberships.length ? (
-            <ul className={account.list}>
-              {u.memberships.map((member) => (
-                <li key={member.groupId}>
-                  <Link className={`well ${account.row}`} href={`/groups/${member.group.slug}`}>
-                    <TeamMark name={member.group.name} size="small" />
-                    <span className={account.rowCopy}>
-                      <strong>{member.group.name}</strong>
-                    </span>
-                    <span className="landing-chip is-muted">{roleLabel(member.role)}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyWell
-              title="Not in a Team yet"
-              line="Join through an invitation link, or find a public Team."
-              action={
-                <Link className="button secondary" href="/groups">
-                  Find a Team
-                </Link>
-              }
-            />
-          )}
-        </section>
-        <section className={`panel ${account.panel}`} aria-labelledby="dash-timers">
-          <PanelHead
-            id="dash-timers"
-            emblem="team-calendar"
-            title="Timers"
-            line={u.timers.length ? "Running first" : "Countdowns you set yourself"}
-            actions={
-              u.timers.length ? (
-                <Link href="/timers" className="pill-link is-small">
-                  Manage <ArrowRight size={14} aria-hidden="true" />
-                </Link>
-              ) : undefined
-            }
-          />
-          {u.timers.length ? (
-            <ul className={account.list}>
-              {u.timers.map((timer) => (
-                <li key={timer.id} className={`well ${account.row}`} data-dashboard-timer="">
-                  <span className={account.rowCopy}>
+            >
+              {timers.map((timer) => (
+                <li key={timer.id} className={`well ${styles.row}`} data-dashboard-timer="">
+                  <span className={styles.rowCopy}>
                     <strong>{timer.title}</strong>
                     <small>
                       {timerCategory(timer.category)} · {timerLeft(timer, now)}
@@ -323,28 +310,44 @@ export default async function Dashboard() {
                   </span>
                 </li>
               ))}
-            </ul>
-          ) : (
-            <EmptyWell
-              title="No timers running"
-              line="Crops, laborers or a raid start: set a countdown and check it here."
-              action={
-                <Link className="button secondary" href="/timers">
-                  Add a timer
-                </Link>
+            </Shelf>
+            <Shelf
+              id="dash-teams"
+              title="Your Teams"
+              line="Your role in each."
+              all={u.memberships.length ? { href: "/groups?mine=1", label: "All" } : undefined}
+              empty={
+                u.memberships.length
+                  ? undefined
+                  : { line: "Not in a Team yet.", href: "/groups", label: "Find a Team" }
               }
-            />
-          )}
-        </section>
-        <section className={`panel ${account.panel}`} aria-labelledby="dash-plans">
-          <PanelHead
-            id="dash-plans"
-            emblem="tool-craft"
-            title="Calculator plans"
-            line={u.savedScenarios.length ? "Open one to load it" : "Production runs you save"}
-          />
-          {u.savedScenarios.length ? (
-            <ul className={account.list}>
+            >
+              {u.memberships.map((member) => (
+                <li key={member.groupId}>
+                  <Link className={`well ${styles.row}`} href={`/groups/${member.group.slug}`}>
+                    <TeamMark name={member.group.name} size="small" />
+                    <span className={styles.rowCopy}>
+                      <strong>{member.group.name}</strong>
+                    </span>
+                    <span className="landing-chip is-muted">{roleLabel(member.role)}</span>
+                  </Link>
+                </li>
+              ))}
+            </Shelf>
+            <Shelf
+              id="dash-plans"
+              title="Saved plans"
+              line="Open one to load it in its calculator."
+              empty={
+                u.savedScenarios.length
+                  ? undefined
+                  : {
+                      line: "Save a production run in a calculator to find it here.",
+                      href: "/tools/crafting",
+                      label: "Crafting",
+                    }
+              }
+            >
               {u.savedScenarios.map((plan) => {
                 const parsed =
                   plan.kind === "production-plan"
@@ -355,62 +358,20 @@ export default async function Dashboard() {
                   : `/tools/${plan.kind === "production-plan" ? "crafting" : plan.kind}`;
                 return (
                   <li key={plan.id}>
-                    <Link href={href} className={`well ${account.row}`}>
-                      <span className={account.rowCopy}>
+                    <Link href={href} className={`well ${styles.row}`}>
+                      <span className={styles.rowCopy}>
                         <strong>{plan.title}</strong>
                         <small>Saved {day(plan.updatedAt)}</small>
                       </span>
-                      <ArrowUpRight className={account.arrow} size={16} aria-hidden="true" />
+                      <ArrowUpRight className={styles.arrow} size={16} aria-hidden="true" />
                     </Link>
                   </li>
                 );
               })}
-            </ul>
-          ) : (
-            <EmptyWell
-              title="No saved plans"
-              line="Save a production run in a calculator to come back to it here."
-              action={
-                <Link className="button secondary" href="/tools/crafting">
-                  Open crafting
-                </Link>
-              }
-            />
-          )}
-        </section>
-      </div>
-      <NextStepCards
-        id="dash-next"
-        title={
-          <>
-            Plan the next <em>run</em>
-          </>
-        }
-        line="Cost the craft, list what to buy and read up before you leave town."
-        cards={[
-          {
-            href: "/tools/market",
-            emblem: "tool-market",
-            title: "Market Explorer",
-            line: "Every city, buy and sell orders.",
-            scene: "market",
-          },
-          {
-            href: "/shopping-list",
-            emblem: "tool-planner",
-            title: "Crafting Planner",
-            line: "Tick off what you have, buy the rest.",
-            scene: "city",
-          },
-          {
-            href: "/guides",
-            emblem: "strip-content",
-            title: "Guides",
-            line: "Progression, gathering and PvE from players.",
-            scene: "economy",
-          },
-        ]}
-      />
+            </Shelf>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

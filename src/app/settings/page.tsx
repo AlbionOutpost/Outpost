@@ -1,7 +1,8 @@
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Download, ShieldCheck } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, Download } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
@@ -9,11 +10,47 @@ import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { AccountEmblem } from "@/components/account-emblem";
-import { PanelHead } from "@/components/panel-head";
-import { NextStepCards } from "@/components/next-step-cards";
-import { regionLabel } from "@/components/group-parts";
-import styles from "@/components/account.module.css";
+import account from "@/components/account.module.css";
+import styles from "./settings.module.css";
 export const metadata = privateMetadata("Settings");
+
+/** One settings group: its name and a line on the left, the controls in a panel on the right. */
+function Group({
+  id,
+  title,
+  line,
+  danger,
+  children,
+}: {
+  id: string;
+  title: string;
+  line: string;
+  danger?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <section className={styles.group} aria-labelledby={id} data-danger={danger || undefined}>
+      <div className={styles.groupHead}>
+        <h2 id={id}>{title}</h2>
+        <p>{line}</p>
+      </div>
+      <div className={`panel ${styles.groupBody}`}>{children}</div>
+    </section>
+  );
+}
+
+/** One line of a settings panel: what it is on the left, its one control on the right. */
+function Line({ title, line, action }: { title: string; line: string; action: ReactNode }) {
+  return (
+    <div className={styles.line}>
+      <div>
+        <strong>{title}</strong>
+        <p>{line}</p>
+      </div>
+      {action}
+    </div>
+  );
+}
 
 export default async function Settings({
   searchParams,
@@ -25,12 +62,8 @@ export default async function Settings({
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect("/signin");
   const query = await searchParams;
-  const sections = [
-    ["profile-preferences", "Profile & preferences"],
-    ["account-data", "Export your data"],
-    ["account-session", "Current session"],
-    ["account-delete", "Close account"],
-  ] as const;
+  const name = user.name || "Adventurer";
+  const staff = ["ADMIN", "MODERATOR"].includes(user.role);
   return (
     <div className={styles.page}>
       <WorkspaceHeading
@@ -40,137 +73,84 @@ export default async function Settings({
         description="Your name, your server and the data Outpost keeps for you."
         icon="account"
         emblem={<AccountEmblem image={user.image} />}
-        actions={
-          ["ADMIN", "MODERATOR"].includes(user.role) ? (
-            <Link
-              className="button secondary"
-              href={user.role === "ADMIN" ? "/admin" : "/admin/reports"}
-            >
-              <ShieldCheck size={16} aria-hidden="true" />
-              {user.role === "ADMIN" ? "Admin dashboard" : "Moderation dashboard"}
-            </Link>
-          ) : undefined
-        }
-      >
-        <div className={`landing-chips ${styles.chips}`}>
-          <span className="landing-chip is-muted">{regionLabel(user.region)}</span>
-          <span className="landing-chip is-muted">Signed in with Discord</span>
-        </div>
-      </WorkspaceHeading>
-      <div className={styles.settings}>
-        <nav className={`raised ${styles.rail}`} aria-label="Settings sections">
-          {sections.map(([id, label]) => (
-            <a key={id} href={`#${id}`} data-danger={id === "account-delete" ? "" : undefined}>
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div className={styles.settingsBody}>
-          <section
-            className={`panel ${styles.panel}`}
-            id="profile-preferences"
-            aria-labelledby="pref-title"
+      />
+      <div className={styles.groups}>
+        <Group
+          id="pref-title"
+          title="Profile & preferences"
+          line="How you appear to other players and which server tools open on."
+        >
+          {query.saved && (
+            <p role="status" className={account.saved}>
+              Preferences saved.
+            </p>
+          )}
+          {query.error && (
+            <p role="alert" className={account.alert}>
+              {query.error === "ownership"
+                ? "Transfer team ownership or delete owned teams before deleting this account."
+                : query.error === "rate"
+                  ? "Too many requests. Please try again later."
+                  : "Check the entered values and try again."}
+            </p>
+          )}
+          <PreferencesForm
+            initial={{ name, region: user.region, characterName: user.characterName || "" }}
+          />
+        </Group>
+        <Group
+          id="account-title"
+          title="Sign-in & data"
+          line="Outpost signs you in with Discord and keeps no password."
+        >
+          <Line
+            title="This browser"
+            line={`Signed in as ${name} through Discord.`}
+            action={<LogoutButton />}
+          />
+          <Line
+            title="Export your data"
+            line="One JSON file with your profile, builds, comps, timers and saved plans."
+            action={
+              <a className="button secondary" href="/api/account/export">
+                <Download size={16} aria-hidden="true" /> Export data
+              </a>
+            }
+          />
+        </Group>
+        {staff && (
+          <Group
+            id="staff-title"
+            title="Staff tools"
+            line={`Your account is ${user.role === "ADMIN" ? "an administrator" : "a moderator"}.`}
           >
-            <PanelHead id="pref-title" title="Profile & preferences" />
-            {query.saved && (
-              <p role="status" className={styles.saved}>
-                Preferences saved.
-              </p>
-            )}
-            {query.error && (
-              <p role="alert" className={styles.alert}>
-                {query.error === "ownership"
-                  ? "Transfer team ownership or delete owned teams before deleting this account."
-                  : query.error === "rate"
-                    ? "Too many requests. Please try again later."
-                    : "Check the entered values and try again."}
-              </p>
-            )}
-            <PreferencesForm
-              initial={{
-                name: user.name || "Adventurer",
-                region: user.region,
-                characterName: user.characterName || "",
-              }}
-            />
-          </section>
-          <section
-            className={`panel ${styles.panel}`}
-            id="account-data"
-            aria-labelledby="data-title"
-          >
-            <PanelHead
-              id="data-title"
-              title="Export your data"
-              line="One JSON file with your profile, builds, comps, timers and saved plans."
-              actions={
-                <a className="button secondary" href="/api/account/export">
-                  <Download size={16} aria-hidden="true" /> Export personal data
-                </a>
+            <Line
+              title={user.role === "ADMIN" ? "Admin console" : "Community reports"}
+              line={
+                user.role === "ADMIN"
+                  ? "Reports, flagged accounts, access changes and the audit trail."
+                  : "Review what players reported and resolve it with a reason."
+              }
+              action={
+                <Link
+                  className="pill-link"
+                  href={user.role === "ADMIN" ? "/admin" : "/admin/reports"}
+                >
+                  Open <ArrowRight size={15} aria-hidden="true" />
+                </Link>
               }
             />
-          </section>
-          <section
-            className={`panel ${styles.panel}`}
-            id="account-session"
-            aria-labelledby="session-title"
-          >
-            <PanelHead
-              id="session-title"
-              title="Current session"
-              line={`Signed in as ${user.name || "Adventurer"} through Discord on this browser.`}
-              actions={<LogoutButton />}
-            />
-          </section>
-          <section
-            className={`panel ${styles.panel} ${styles.danger}`}
-            id="account-delete"
-            aria-labelledby="delete-title"
-          >
-            <PanelHead
-              id="delete-title"
-              title="Close your account"
-              line="Deletes your account, its sign-in records and sessions for good."
-            />
-            <ul className={styles.checklist}>
-              <li>Hand over or delete the teams you own first.</li>
-            </ul>
-            <DeleteAccountForm />
-          </section>
-        </div>
+          </Group>
+        )}
+        <Group
+          id="delete-title"
+          title="Close your account"
+          line="Deletes your account, its sign-in records and sessions for good. Hand over or delete the Teams you own first."
+          danger
+        >
+          <DeleteAccountForm />
+        </Group>
       </div>
-      <NextStepCards
-        id="settings-next"
-        title={
-          <>
-            Back to your <em>plans</em>
-          </>
-        }
-        line="Everything you saved, one click away."
-        cards={[
-          {
-            href: "/groups?mine=1",
-            emblem: "team-roles",
-            title: "Your teams",
-            line: "Events, comps and loot splits.",
-            scene: "composition",
-          },
-          {
-            href: "/timers",
-            emblem: "team-calendar",
-            title: "Timers",
-            line: "Crops, laborers and reminders.",
-            scene: "economy",
-          },
-          {
-            href: "/favorites",
-            emblem: "strip-builds",
-            title: "Favorites",
-            line: "Builds and comps you saved.",
-            scene: "composition",
-          },
-        ]}
-      />
     </div>
   );
 }

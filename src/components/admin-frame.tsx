@@ -23,7 +23,6 @@ export async function AdminFrame({
   emblem,
   actions,
   titleChips,
-  closing,
   children,
 }: {
   title: string;
@@ -34,8 +33,6 @@ export async function AdminFrame({
   actions?: ReactNode;
   /** Status chips set beside the title (an account's plan and role). */
   titleChips?: ReactNode;
-  /** The closing band, full width under the rail and panels. */
-  closing?: ReactNode;
   children: ReactNode;
 }) {
   const role = await adminRole();
@@ -88,7 +85,6 @@ export async function AdminFrame({
         <AdminNav full={role === "ADMIN"} />
         <div className="admin-main">{children}</div>
       </div>
-      {closing}
     </>
   );
 }

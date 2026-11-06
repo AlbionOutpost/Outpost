@@ -84,9 +84,10 @@ test("admin overview and user controls enforce roles, CSRF and immutable billing
     const p = await f.contexts[0].newPage();
     await p.goto("/admin");
     await expect(p.getByRole("heading", { name: "Admin overview", exact: true })).toBeVisible();
-    await p.getByRole("slider", { name: "Inspect a day" }).press("ArrowLeft");
     await p.getByRole("button", { name: "New builds", exact: true }).click();
     await expect(p.getByRole("img", { name: /New builds:/ })).toBeVisible();
+    await p.getByRole("button", { name: "Daily values" }).click();
+    await expect(p.getByRole("table", { name: /New builds per day/ })).toBeVisible();
     await p.getByRole("link", { name: "Users & access", exact: true }).click();
     await p.getByRole("textbox", { name: "Search users" }).fill(f.ids[1]);
     await p.getByRole("button", { name: "Search", exact: true }).click();

@@ -7,7 +7,6 @@ import { AdminChip } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
 import { Disclosure } from "@/components/disclosure";
-import { AdminNextSteps } from "@/components/admin-next";
 export default async function AdminReviewPage() {
   const data = await adminReview(await adminPageActor());
   return (
@@ -16,34 +15,6 @@ export default async function AdminReviewPage() {
       accent="review"
       description="Look at unusual activity before you make an access decision."
       emblem="trophy-silver"
-      closing={
-        <AdminNextSteps
-          id="admin-next"
-          title={
-            <>
-              Decide with <em>context</em>
-            </>
-          }
-          line="A signal starts a look at the account. It does not settle anything."
-          cards={[
-            {
-              href: "/admin/users",
-              title: "Users & access",
-              line: "Search for an account the signals missed.",
-            },
-            {
-              href: "/admin/reports",
-              title: "Content reports",
-              line: "Read the reports behind a flagged account.",
-            },
-            {
-              href: "/admin/audit",
-              title: "Audit trail",
-              line: "See what other admins already did.",
-            },
-          ]}
-        />
-      }
     >
       <section className="panel" aria-labelledby="admin-review-list">
         <PanelHead
@@ -54,11 +25,6 @@ export default async function AdminReviewPage() {
             </>
           }
           line={`${data.users.length} ${data.users.length === 1 ? "account shows" : "accounts show"} a signal.`}
-          actions={
-            <Link href="/admin/reports" className="pill-link">
-              Content reports <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          }
         />
         {data.limited && (
           <p className="admin-note well">
