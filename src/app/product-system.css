@@ -829,7 +829,12 @@
         transparent 62%
       )
       0 0 / 100% 100% no-repeat,
-    linear-gradient(180deg, var(--surface-2) 0%, var(--surface-scrim) 55%, var(--surface-scrim) 100%);
+    linear-gradient(
+      180deg,
+      var(--surface-2) 0%,
+      var(--surface-scrim) 55%,
+      var(--surface-scrim) 100%
+    );
 }
 /* Framed cards are game panels. In light mode they turn to the dark leather of Albion's
    inventory slots on the parchment page, so everything inside reads the same in both themes. */

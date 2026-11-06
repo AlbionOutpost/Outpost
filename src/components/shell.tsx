@@ -26,8 +26,6 @@ import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
-import Image from "next/image";
-import { Wordmark } from "./wordmark";
 import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
@@ -645,11 +643,7 @@ export function Shell({
             <footer className="site-footer">
               <div className="site-footer-inner">
                 <div className="site-footer-brand">
-                  {/* The painted banner mark beside the name, as one lockup */}
-                  <Link href={href("/")} className="site-footer-lockup" aria-label="Outpost home">
-                    <Image src="/brand/outpost-mark.png" width={44} height={44} alt="" />
-                    <span>Outpost</span>
-                  </Link>
+                  <BrandLockup size="sm" className="site-footer-lockup" />
                   <p className="site-footer-line">
                     Markets, builds, comps and crafting for Albion Online, in one place.
                   </p>

@@ -100,27 +100,7 @@
 }
 /* The lockup: the painted banner mark beside OUTPOST in the display face */
 .app.outpost .site-footer-lockup {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
   margin-bottom: 4px;
-  color: var(--text);
-  text-decoration: none;
-}
-.app.outpost .site-footer-lockup > img {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-}
-.app.outpost .site-footer-lockup > span {
-  font: 800 26px/1 var(--font-display);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.app.outpost .site-footer-lockup:hover > span {
-  color: var(--accent-ink);
 }
 .app.outpost .site-footer-line {
   max-width: 34ch;
