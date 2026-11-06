@@ -172,7 +172,7 @@
   border-radius: var(--radius-sm);
   background: var(--well);
   color: var(--secondary);
-  font: 600 13px/1 var(--font-data);
+  font: 600 12px/1 var(--font-ui);
   cursor: pointer;
 }
 :global(.app.outpost) .quick.quick button[aria-pressed="true"] {
@@ -470,10 +470,10 @@
 :global(.app.outpost) .tableScroll.tableScroll tr[data-current] th {
   color: var(--accent-ink);
 }
-:global(.app.outpost) .tableScroll.tableScroll td[data-tone="gain"] {
+:global(.app.outpost) .tableScroll.tableScroll td:global(.is-gain) {
   color: var(--killer);
 }
-:global(.app.outpost) .tableScroll.tableScroll td[data-tone="loss"] {
+:global(.app.outpost) .tableScroll.tableScroll td:global(.is-loss) {
   color: var(--victim);
 }
 :global(.app.outpost) .summaryPending.summaryPending {
@@ -495,9 +495,6 @@
 :global(.app.outpost) .gate.gate p {
   margin: 0;
   color: var(--secondary);
-}
-:global(.app.outpost) .saved.saved > :first-child {
-  margin: 0;
 }
 :global(.app.outpost) .scenarios.scenarios {
   margin-top: var(--space-4);
@@ -649,34 +646,66 @@
   color: var(--secondary);
   font-family: var(--font-data);
 }
-:global(.app.outpost) .headRow.headRow {
+:global(.app.outpost) .errorLine.errorLine {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3) var(--space-4);
-}
-:global(.app.outpost) .headRow.headRow > :first-child {
-  flex: 1 1 320px;
-  margin: 0;
-}
-:global(.app.outpost) .errorLine.errorLine {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
+  gap: var(--space-2) var(--space-3);
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--error) 35%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
 }
 :global(.app.outpost) .errorLine.errorLine > button {
-  min-height: 24px;
-  padding: 0;
-  border: 0;
-  background: none;
+  flex: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
   color: var(--accent-ink);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  font: 700 12px/1 var(--font-ui);
   cursor: pointer;
+}
+:global(.app.outpost) .alert.alert {
+  margin: 0;
+  color: var(--error);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Missing figures read as text, not as a squeezed display number */
+:global(.app.outpost) .na.na {
+  color: var(--muted);
+  font: 500 14px/1.2 var(--font-ui);
+}
+
+/* Run details: sensitivity beside the accounting, full width under the steps */
+:global(.app.outpost) .details.details {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+:global(.app.outpost) .details.details > * {
+  margin: 0;
+}
+:global(.app.outpost) .detailsGrid.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+:global(.app.outpost) .detailsCol.detailsCol {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+@media (max-width: 980px) {
+  :global(.app.outpost) .detailsGrid.detailsGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* Closing band, as on the landing */
@@ -713,10 +742,4 @@
   :global(.app.outpost) .ctaActions.ctaActions :global(.button) {
     flex: 1 1 auto;
   }
-}
-:global(.app.outpost) .alert.alert {
-  margin: 0;
-  color: var(--error);
-  font-size: 12px;
-  line-height: 1.5;
 }

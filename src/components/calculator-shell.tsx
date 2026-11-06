@@ -42,11 +42,12 @@ export function useCalculatorStep(ids: string[]) {
 }
 
 /**
- * The one calculator layout: numbered input panels, then the result. Wide screens show every
- * step side by side with the result last; tablets stack the inputs beside a sticky result; phones
- * show one step at a time behind a switcher, with the headline figure (`summary`) pinned to the
- * bottom of the screen until the result step is open. An optional `rail` (a list to pick from)
- * sits first on wide screens and above the steps elsewhere.
+ * The one calculator layout: numbered input panels, then the result, then optional full-width
+ * `details` (accounting, scenarios) under all of them. Wide screens show every step side by side;
+ * tablets stack the inputs beside a sticky result; phones show one step at a time behind a
+ * switcher, each input step ending in a bar pinned to the bottom of the screen with the next
+ * action and, from the second step, the headline figure (`summary`). An optional `rail` (a list
+ * to pick from) sits first on wide screens and above the steps elsewhere.
  */
 export function CalculatorShell({
   label,
@@ -54,6 +55,7 @@ export function CalculatorShell({
   step,
   onStep,
   summary,
+  details,
   rail,
 }: {
   /** Names the step switcher, e.g. "Crafting workflow". */
@@ -62,8 +64,10 @@ export function CalculatorShell({
   steps: CalculatorStep[];
   step: number;
   onStep: (step: number) => void;
-  /** The headline result for the phone summary bar: a label and a figure. */
+  /** The headline result for the phone action bar: a label and a figure. */
   summary?: { label: string; value: ReactNode; tone?: "gain" | "loss" | "even" };
+  /** Secondary detail for the result, full width under the steps (with the result on phones). */
+  details?: ReactNode;
   rail?: ReactNode;
 }) {
   const last = steps.length;
@@ -92,38 +96,42 @@ export function CalculatorShell({
             className={`panel ${styles.panel} ${i + 1 === last ? styles.result : ""}`}
             data-active={step === i + 1 ? "" : undefined}
           >
-            <div className={styles.head}>
-              <PanelHead id={`${s.id}-title`} step={i + 1} title={s.title} line={s.line} />
-              {s.actions}
-            </div>
+            <PanelHead
+              id={`${s.id}-title`}
+              step={i + 1}
+              title={s.title}
+              line={s.line}
+              actions={s.actions}
+            />
             {s.children}
             {i + 1 < last && (
-              <button
-                type="button"
-                className={`button primary ${styles.next}`}
-                onClick={() => onStep(i + 2)}
+              <div
+                className={styles.bar}
+                data-tone={summary?.tone}
+                data-summary={summary && i > 0 ? "" : undefined}
               >
-                {i + 2 === last
-                  ? steps[last - 1].label
-                  : `Next: ${steps[i + 1].label.toLowerCase()}`}
-                <ArrowRight size={16} aria-hidden="true" />
-              </button>
+                {summary && i > 0 && (
+                  <span className={styles.barFigure}>
+                    <small>{summary.label}</small>
+                    <b>{summary.value}</b>
+                  </span>
+                )}
+                <button type="button" className="button primary" onClick={() => onStep(i + 2)}>
+                  {i + 2 === last
+                    ? steps[last - 1].label
+                    : `Next: ${steps[i + 1].label.toLowerCase()}`}
+                  <ArrowRight size={16} aria-hidden="true" />
+                </button>
+              </div>
             )}
           </section>
         ))}
+        {details && (
+          <div className={styles.details} data-active={step === last ? "" : undefined}>
+            {details}
+          </div>
+        )}
       </div>
-      {summary && step !== last && (
-        <div className={styles.summary} data-tone={summary.tone}>
-          <span>
-            <small>{summary.label}</small>
-            <b>{summary.value}</b>
-          </span>
-          <button type="button" className="button secondary" onClick={() => onStep(last)}>
-            See result
-            <ArrowRight size={16} aria-hidden="true" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

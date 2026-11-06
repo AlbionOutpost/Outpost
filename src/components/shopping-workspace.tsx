@@ -51,7 +51,7 @@ export function ShoppingWorkspace() {
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const [undo, setUndo] = useState<ShoppingList | null>(null);
-  const [tab, setTab] = useState<"buy" | "queue">("buy");
+  const [tab, setTab] = useState<"buy" | "queue">("queue");
   const [compare, setCompare] = useState<{
     state: "idle" | "loading" | "ready" | "error";
     quotes: { itemId: string; quality: number; prices: MarketPrice[] }[];
@@ -269,6 +269,9 @@ export function ShoppingWorkspace() {
             </Link>
           </div>
           {message && <StatusLine>{message}</StatusLine>}
+          <div className={styles.emptyFoot}>
+            <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
+          </div>
         </section>
       ) : (
         <div className={styles.layout}>
@@ -283,20 +286,20 @@ export function ShoppingWorkspace() {
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={tab === "buy"}
-                  aria-controls="shopping-view"
-                  onClick={() => setTab("buy")}
-                >
-                  Shopping list
-                </button>
-                <button
-                  type="button"
-                  role="tab"
                   aria-selected={tab === "queue"}
                   aria-controls="shopping-view"
                   onClick={() => setTab("queue")}
                 >
                   Crafting queue ({list.entries.length})
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === "buy"}
+                  aria-controls="shopping-view"
+                  onClick={() => setTab("buy")}
+                >
+                  Shopping list
                 </button>
               </div>
             </div>
@@ -485,7 +488,14 @@ export function ShoppingWorkspace() {
                           >
                             <Minus size={14} aria-hidden="true" />
                           </button>
-                          <output>{owned}</output>
+                          <input
+                            aria-label={`${row.name} owned quantity`}
+                            type="number"
+                            min={0}
+                            max={1000000}
+                            value={row.owned}
+                            onChange={(e) => update(key, { owned: Number(e.target.value) })}
+                          />
                           <button
                             type="button"
                             aria-label={`Own one more ${row.name}`}
@@ -539,15 +549,24 @@ export function ShoppingWorkspace() {
               </button>
             </div>
             {message && <StatusLine>{message}</StatusLine>}
+            <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
           </section>
           <aside className={`panel ${styles.summary}`} aria-labelledby="shopping-summary-title">
             <PanelHead id="shopping-summary-title" emblem="silver" title="Still to buy" />
             <div className={styles.figure} data-complete={result.total !== null ? "" : undefined}>
               <small>Purchase estimate</small>
               <strong className="shopping-total">
-                {result.total === null ? "Incomplete" : money(result.total)}
+                {result.total !== null
+                  ? money(result.total)
+                  : result.knownCost > 0
+                    ? `${money(result.knownCost)}+`
+                    : "No prices"}
               </strong>
-              <small>silver after what you own</small>
+              <small>
+                {result.total !== null
+                  ? "silver after what you own"
+                  : `silver so far · ${result.missing} ${result.missing === 1 ? "line" : "lines"} without a price`}
+              </small>
             </div>
             <dl className={styles.stats}>
               <div>
@@ -561,8 +580,10 @@ export function ShoppingWorkspace() {
                 <dd>{result.remainingItems.toLocaleString()}</dd>
               </div>
               <div>
-                <dt>Priced so far</dt>
-                <dd>{money(result.knownCost)}</dd>
+                <dt>Lines ready</dt>
+                <dd>
+                  {result.ready} / {list.entries.length}
+                </dd>
               </div>
             </dl>
             {result.missing > 0 && (
@@ -620,7 +641,7 @@ export function ShoppingWorkspace() {
                       </i>
                       <span className={styles.cityValue}>
                         <Silver value={c.total} animate={false} />
-                        {c.missing ? <small> +{c.missing} unpriced</small> : null}
+                        {c.missing ? <em className={styles.chip}>+{c.missing} unpriced</em> : null}
                       </span>
                     </li>
                   ))}
@@ -636,7 +657,6 @@ export function ShoppingWorkspace() {
           </aside>
         </div>
       )}
-      {!blocked && loaded && <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />}
       <section className={`raised has-scene ${styles.cta}`} data-scene="economy">
         <h2>
           Find something worth <em>crafting</em>

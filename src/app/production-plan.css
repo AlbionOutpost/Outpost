@@ -212,14 +212,20 @@
     border-left: 1px solid var(--well-border);
   }
 }
-.app.outpost .production-plan-head {
+.app.outpost .production-plan-empty {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3) var(--space-4);
+  gap: var(--space-3);
+  padding: 12px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
 }
-.app.outpost .production-plan-head > :first-child {
-  flex: 1 1 320px;
+.app.outpost .production-plan-empty p {
   margin: 0;
+  color: var(--secondary);
+  font-size: 14px;
 }

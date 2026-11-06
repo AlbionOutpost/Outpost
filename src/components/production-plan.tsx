@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { PanelHead } from "./panel-head";
-import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
 import {
   productionPlan,
@@ -31,9 +30,15 @@ const silver = (value: number | null) =>
 export function ProductionPlan({
   current,
   onEdit,
+  runAction,
+  children,
 }: {
   current: ProductionInput;
   onEdit: (run: ProductionInput) => void;
+  /** A second head action for the single run (saving and sharing it). */
+  runAction?: React.ReactNode;
+  /** Content for that action, under the head. */
+  children?: React.ReactNode;
 }) {
   const [plan, setPlan] = useState<ProductionPlanInput>({
     kind: "production-plan",
@@ -145,24 +150,31 @@ export function ProductionPlan({
     URL.revokeObjectURL(url);
     setMessage("Plan exported with static assumptions and original price timestamps.");
   }
+  const addButton = (
+    <button
+      className="button secondary"
+      type="button"
+      onClick={add}
+      disabled={busy || !valid || !sameServer || plan.runs.length >= 30}
+    >
+      <Plus size={16} aria-hidden="true" /> Add current recipe
+    </button>
+  );
   return (
     <section className="production-plan panel" aria-labelledby="production-plan-title">
-      <div className="production-plan-head">
-        <PanelHead
-          id="production-plan-title"
-          emblem="tool-planner"
-          title="Production plan"
-          line="Add several runs to one plan and get a single shopping list. Each run keeps its own prices and settings."
-        />
-        <button
-          className="button secondary"
-          type="button"
-          onClick={add}
-          disabled={busy || !valid || !sameServer || plan.runs.length >= 30}
-        >
-          <Plus size={16} aria-hidden="true" /> Add current recipe
-        </button>
-      </div>
+      <PanelHead
+        id="production-plan-title"
+        emblem="tool-planner"
+        title="Production plan"
+        line="Add several runs to one plan and get a single shopping list. Each run keeps its own prices and settings."
+        actions={
+          <>
+            {runAction}
+            {plan.runs.length > 0 && addButton}
+          </>
+        }
+      />
+      {children}
       {!sameServer && (
         <p className="notice">
           This plan belongs to {plan.region}. Switch back to that server to add recipes, or remove
@@ -170,10 +182,10 @@ export function ProductionPlan({
         </p>
       )}
       {!plan.runs.length && (
-        <EmptyWell
-          title="No runs in the plan yet"
-          line="Set up a run above, then add it here. Missing prices are fine; the totals stay incomplete until you fill them."
-        />
+        <div className="production-plan-empty">
+          <p>No runs yet. Set one up above and add it; missing prices are fine.</p>
+          {addButton}
+        </div>
       )}
       {error && <p role="alert">{error}</p>}
       {legacyFees.map(({ configuration, recipe, index }) => (

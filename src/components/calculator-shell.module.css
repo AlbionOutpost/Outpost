@@ -1,6 +1,7 @@
-/* The shared calculator layout: numbered input panels → result. See DESIGN.md "Shared building
-   blocks". Wide: every step side by side, result last. Tablet: inputs stacked beside a sticky
-   result. Phone: one step at a time behind a switcher, the headline figure pinned below. */
+/* The shared calculator layout: numbered input panels → result → full-width details. See
+   DESIGN.md "Shared building blocks". Wide: every step side by side, result last. Tablet: inputs
+   stacked beside a sticky result. Phone: one step at a time behind a switcher, each input step
+   ending in a bar pinned to the bottom of the screen (next action + headline figure). */
 :global(.app.outpost) .shell.shell {
   display: grid;
   gap: var(--space-4);
@@ -28,16 +29,9 @@
 :global(.app.outpost) .panel.panel > * {
   margin: 0;
 }
-:global(.app.outpost) .head.head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-:global(.app.outpost) .head.head > :first-child {
-  flex: 1 1 220px;
-  margin: 0;
+:global(.app.outpost) .details.details {
+  grid-column: 1 / -1;
+  min-width: 0;
 }
 :global(.app.outpost) .panel.panel:focus {
   outline: none;
@@ -56,8 +50,7 @@
   min-width: 0;
 }
 :global(.app.outpost) .switcher.switcher,
-:global(.app.outpost) .next.next,
-:global(.app.outpost) .summary.summary {
+:global(.app.outpost) .bar.bar {
   display: none;
 }
 
@@ -115,11 +108,11 @@
     var(--well)
   );
 }
-:global(.app.outpost) :is(.figure, .summary)[data-tone="gain"] b,
+:global(.app.outpost) :is(.figure, .bar)[data-tone="gain"] b,
 :global(.app.outpost) .rows.rows [data-tone="gain"] dd {
   color: var(--killer);
 }
-:global(.app.outpost) :is(.figure, .summary)[data-tone="loss"] b,
+:global(.app.outpost) :is(.figure, .bar)[data-tone="loss"] b,
 :global(.app.outpost) .rows.rows [data-tone="loss"] dd {
   color: var(--victim);
 }
@@ -267,47 +260,56 @@
     background: var(--accent);
     color: var(--bg);
   }
-  :global(.app.outpost) .next.next {
-    display: inline-flex;
-    justify-content: center;
-    width: 100%;
-    min-height: 48px;
+  /* The step badge is already in the switcher */
+  :global(.app.outpost) .panel.panel > :first-child > span[aria-hidden]:first-child {
+    display: none;
   }
-  :global(.app.outpost) .summary.summary {
+  :global(.app.outpost) .details.details:not([data-active]) {
+    display: none;
+  }
+  /* Each input step ends in its primary action, pinned to the bottom while the step scrolls;
+     fields scroll clear of it */
+  :global(.app.outpost) .panel.panel :is(input, select) {
+    scroll-margin-bottom: 96px;
+  }
+  :global(.app.outpost) .bar.bar {
     position: sticky;
     bottom: 0;
     z-index: 5;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-3);
-    margin: 0 -4px;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--well-border));
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin: 0 -8px -8px;
+    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--well-border);
     background: var(--surface-raised);
-    box-shadow: 0 -10px 28px #0009;
+    box-shadow: 0 -12px 24px -12px #000c;
   }
-  :global(.app.outpost) .summary.summary > span {
+  :global(.app.outpost) .bar.bar > :global(.button) {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 48px;
+  }
+  :global(.app.outpost) .bar.bar[data-summary] > :global(.button) {
+    flex: none;
+  }
+  :global(.app.outpost) .barFigure.barFigure {
     display: grid;
+    flex: 1;
     gap: 3px;
     min-width: 0;
   }
-  :global(.app.outpost) .summary.summary small {
+  :global(.app.outpost) .barFigure.barFigure small {
     color: var(--muted);
     font-size: 12px;
   }
-  :global(.app.outpost) .summary.summary b {
+  :global(.app.outpost) .barFigure.barFigure b {
     display: inline-flex;
     align-items: center;
     gap: 3px;
     font: 800 22px/1 var(--font-display);
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
-  }
-  :global(.app.outpost) .summary.summary .button {
-    flex: none;
-    min-height: 44px;
   }
   :global(.app.outpost) .figure.figure b {
     font-size: 26px;

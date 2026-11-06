@@ -4,7 +4,6 @@ import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
 import { Search, ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
 import { tools, toolGroups } from "@/lib/tool-directory";
-import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
@@ -48,19 +47,12 @@ const paintings: Record<string, string> = {
   "/groups": "team-roles",
   "/timers": "team-calendar",
 };
-/** Glyphs for tools whose directory icon is shared with another tool. */
-const ownGlyphs: Record<string, string[]> = {
-  "/tools/cooking": [
-    "M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-3Z",
-    "M2 11h20M9 7c0-2 2-2 2-4m3 4c0-2 2-2 2-4",
-  ],
-  "/tools/alchemy": ["M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3", "M7.5 15h9"],
-};
 /** Sections of the directory, each inside one category filter; 3, 4 or 6 tools fill whole rows. */
 const sections: {
   id: string;
   title: React.ReactNode;
   line: string;
+  link?: { href: string; label: string };
   hrefs: string[];
 }[] = [
   {
@@ -71,6 +63,7 @@ const sections: {
       </>
     ),
     line: "City prices, trade margins, cargo, gold, the Roads of Avalon and game tables.",
+    link: { href: "/tools/market", label: "Open Market Explorer" },
     hrefs: [
       "/tools/market",
       "/tools/flipping",
@@ -88,6 +81,7 @@ const sections: {
       </>
     ),
     line: "Costs, returns and the shopping list for what you make.",
+    link: { href: "/shopping-list", label: "Open the Crafting Planner" },
     hrefs: [
       "/tools/crafting",
       "/shopping-list",
@@ -115,6 +109,7 @@ const sections: {
       </>
     ),
     line: "Make a loadout, plan a party, look up an item.",
+    link: { href: "/builds/library", label: "Build library" },
     hrefs: ["/builds/new", "/compositions/new", "/items"],
   },
   {
@@ -125,6 +120,7 @@ const sections: {
       </>
     ),
     line: "Recent fights, published builds, your Team and your own timers.",
+    link: { href: "/groups", label: "Your Teams" },
     hrefs: ["/tools/kill-feed", "/builds", "/groups", "/timers"],
   },
 ];
@@ -143,38 +139,13 @@ function readToolShortcuts() {
     return "[]";
   }
 }
+/** The tool's own painted emblem; tools without one let their card's scene carry them. */
 function ToolMark({ tool, size }: { tool: Tool; size: number }) {
   const painting = paintings[tool.href];
-  if (painting)
-    return (
-      // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
-      <img src={`/albion/icons/${painting}.webp`} alt="" width={size} height={size} />
-    );
-  const own = ownGlyphs[tool.href];
-  return (
-    <span className="tool-medallion">
-      {own ? (
-        <svg
-          className="task-glyph"
-          width={size / 2}
-          height={size / 2}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.65"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          {own.map((d) => (
-            <path key={d} d={d} />
-          ))}
-        </svg>
-      ) : (
-        <ToolIcon name={tool.icon} size={size / 2} />
-      )}
-    </span>
-  );
+  return painting ? (
+    // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
+    <img src={`/albion/icons/${painting}.webp`} alt="" width={size} height={size} />
+  ) : null;
 }
 export function ToolDirectory() {
   const region = useOutpostRegion();
@@ -212,8 +183,8 @@ export function ToolDirectory() {
       <WorkspaceHeading
         glyph="craft"
         scene="economy"
-        title="Tools"
-        accent="Tools"
+        title="All tools"
+        accent="tools"
         description="Every tool for prices, crafting, gear and your Team. Pin the ones you use most to this device."
       />
       <div className="directory-toolbar">
@@ -224,7 +195,7 @@ export function ToolDirectory() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search markets, crafting, builds…"
+            placeholder="Search tools…"
           />
           {query && (
             <button type="button" aria-label="Clear tool search" onClick={() => setQuery("")}>
@@ -298,18 +269,25 @@ export function ToolDirectory() {
                     {section.line}
                   </>
                 }
+                link={section.link}
               />
-              <div className="directory-entries" data-count={rows.length}>
+              <div className="directory-entries">
                 {rows.map((t) => (
                   <article
                     className="raised has-scene directory-entry"
                     key={t.href}
                     data-scene={scenes[t.href]?.scene ?? "economy"}
                   >
-                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
-                      <span className="tool-symbol" aria-hidden="true">
-                        <ToolMark tool={t} size={56} />
-                      </span>
+                    <Link
+                      className="directory-entry-link"
+                      data-emblem={paintings[t.href] ? "" : undefined}
+                      href={`${t.href}?region=${region}`}
+                    >
+                      {paintings[t.href] && (
+                        <span className="tool-symbol" aria-hidden="true">
+                          <ToolMark tool={t} size={56} />
+                        </span>
+                      )}
                       <span className="directory-entry-copy">
                         <h3>{t.title}</h3>
                         <p>{t.description}</p>

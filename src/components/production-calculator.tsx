@@ -337,7 +337,7 @@ export function ProductionCalculator({
         <Observed at={p.observedAt} />
       </>
     ) : attempted ? (
-      <span className={s.missing}>No price observed</span>
+      <Unavailable />
     ) : (
       "Loading price…"
     );
@@ -1000,11 +1000,23 @@ export function ProductionCalculator({
         items={[
           {
             label: "Upfront silver",
-            value: result?.complete ? coin(result.upfront) : <Unavailable />,
+            value: result?.complete ? (
+              coin(result.upfront)
+            ) : (
+              <span className={s.na}>
+                <Unavailable />
+              </span>
+            ),
           },
           {
             label: `Sells for (${outputs.toLocaleString()})`,
-            value: result?.complete ? coin(result.revenue) : <Unavailable />,
+            value: result?.complete ? (
+              coin(result.revenue)
+            ) : (
+              <span className={s.na}>
+                <Unavailable />
+              </span>
+            ),
           },
         ]}
       />
@@ -1069,7 +1081,20 @@ export function ProductionCalculator({
             Fees, returns and tax are your assumptions; returned materials are counted apart from
             cash.
           </p>
-          {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
+        </>
+      )}
+    </>
+  );
+  const details = result?.complete ? (
+    <section className={`panel ${s.details}`} aria-labelledby="production-details-title">
+      <PanelHead
+        id="production-details-title"
+        title="Run details"
+        line="How the profit moves with the sale price, the full accounting and what you assumed."
+      />
+      <div className={s.detailsGrid}>
+        {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
+        <div className={s.detailsCol}>
           <Disclosure summary="Detailed accounting · entire run">
             <ResultRows
               items={[
@@ -1126,10 +1151,10 @@ export function ProductionCalculator({
               </a>
             </p>
           </Disclosure>
-        </>
-      )}
-    </>
-  );
+        </div>
+      </div>
+    </section>
+  ) : null;
   return (
     <div className={s.journey}>
       <div className={s.modeBar}>
@@ -1155,6 +1180,7 @@ export function ProductionCalculator({
       )}
       <CalculatorShell
         label="Crafting workflow"
+        details={details}
         step={step}
         onStep={goToStep}
         summary={{
@@ -1216,14 +1242,7 @@ export function ProductionCalculator({
           setDraft(run);
           goToStep(1);
         }}
-      />
-      <section className={`panel ${s.saved}`} aria-labelledby="production-saved-title">
-        <div className={s.headRow}>
-          <PanelHead
-            id="production-saved-title"
-            title="Keep this run"
-            line="Save it to your account, load an earlier run or share a link."
-          />
+        runAction={
           <button
             type="button"
             className="button secondary"
@@ -1233,7 +1252,8 @@ export function ProductionCalculator({
           >
             Saved runs & sharing
           </button>
-        </div>
+        }
+      >
         <div id="production-scenarios" className={s.scenarios} hidden={!showScenarios}>
           <ScenarioControls
             prepare={prepareProductionRestore}
@@ -1253,7 +1273,7 @@ export function ProductionCalculator({
             }}
           />
         </div>
-      </section>
+      </ProductionPlan>
       <section className={`raised has-scene ${s.cta}`} data-scene="city">
         <h2>
           Buying for more than one <em>craft</em>?

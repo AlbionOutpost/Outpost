@@ -9,6 +9,10 @@ export function ProductionSensitivity({
 }) {
   const money = (value: number | null) =>
     value === null ? "—" : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const signed = (value: number | null) =>
+    value === null ? "—" : `${value > 0 ? "+" : value < 0 ? "−" : ""}${money(Math.abs(value))}`;
+  // Cash profit only differs from profit when returned materials are valued.
+  const cash = rows.some((row) => row.cashProfit !== row.profit);
   return (
     <div className={s.sensitivity}>
       <h3 id="production-sensitivity-title">If the sale price moves</h3>
@@ -24,7 +28,7 @@ export function ProductionSensitivity({
               <th scope="col">Sale price</th>
               <th scope="col">Unit</th>
               <th scope="col">Profit</th>
-              <th scope="col">Cash profit</th>
+              {cash && <th scope="col">Cash profit</th>}
             </tr>
           </thead>
           <tbody>
@@ -36,10 +40,14 @@ export function ProductionSensitivity({
                     : `${row.percent - 100 > 0 ? "+" : "−"}${Math.abs(row.percent - 100)}%`}
                 </th>
                 <td>{money(row.price)}</td>
-                <td data-tone={row.profit === null ? undefined : row.profit < 0 ? "loss" : "gain"}>
-                  {money(row.profit)}
+                <td
+                  className={
+                    row.profit === null ? undefined : row.profit < 0 ? "is-loss" : "is-gain"
+                  }
+                >
+                  {signed(row.profit)}
                 </td>
-                <td>{money(row.cashProfit)}</td>
+                {cash && <td>{signed(row.cashProfit)}</td>}
               </tr>
             ))}
           </tbody>
