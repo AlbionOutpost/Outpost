@@ -186,18 +186,16 @@ test("build-to-comp copies public and own private loadouts independently while o
       (await context.request.get(`/api/compositions/loadout?id=${privateSource.id}`)).status(),
     ).toBe(404);
     await page.goto(`/compositions/new?fromBuild=${privateSource.id}&region=asia`);
-    await expect(page.locator(".composition-editor-page [role=alert]")).toContainText(
-      "Build not found",
-    );
+    await expect(page.locator("main [role=alert]")).toContainText("Build not found");
     await expect(page.locator("body")).not.toContainText(privateSource.title);
     await expect(page.getByRole("link", { name: "Browse builds", exact: true })).toHaveAttribute(
       "href",
       "/builds/library?region=asia",
     );
     await expect(
-      page.getByRole("link", { name: "Start an empty composition", exact: true }),
+      page.getByRole("link", { name: "Start an empty comp", exact: true }),
     ).toHaveAttribute("href", "/compositions/new?region=asia");
-    await page.getByRole("link", { name: "Start an empty composition", exact: true }).click();
+    await page.getByRole("link", { name: "Start an empty comp", exact: true }).click();
     await expect(page).toHaveURL(/\/compositions\/new\?region=asia$/);
     await page.getByText("Sharing, region & description", { exact: true }).click();
     await expect(page.getByLabel("Comp region", { exact: true })).toHaveValue("asia");
@@ -226,7 +224,7 @@ test("build-to-comp copies public and own private loadouts independently while o
     );
     await db.build.update({ where: { id: revoked.id }, data: { visibility: "PRIVATE" } });
     await page.getByRole("button", { name: "Save comp", exact: true }).click();
-    await expect(page.locator(".party-editor").getByRole("alert")).toContainText(
+    await expect(page.locator("[data-comp-editor]").getByRole("alert")).toContainText(
       "attached build is not accessible",
     );
     expect(await db.composition.count({ where: { authorId: reader } })).toBe(beforeCount + 1);
@@ -260,9 +258,7 @@ test("library Add to comp preserves sign-in return, explicit role and an unattac
     const serverHtml = await serverResponse.text();
     // Actual rendered server HTML must prevent a native submit before client
     // handlers attach. The original immediate browser Save below stays intact.
-    expect(serverHtml).toMatch(
-      /<form\b(?=[^>]*class="[^"]*party-editor)(?=[^>]*method="post")[^>]*>/,
-    );
+    expect(serverHtml).toMatch(/<form\b(?=[^>]*data-comp-editor)(?=[^>]*method="post")[^>]*>/);
     expect(serverHtml).toMatch(
       /<fieldset\b(?=[^>]*class="[^"]*composition-ready-guard)(?=[^>]*\bdisabled)[^>]*>/,
     );

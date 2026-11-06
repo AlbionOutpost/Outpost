@@ -69,13 +69,14 @@ test("populated five and twenty player fixtures remain editable and export a wid
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
         if (count === 5) {
           await page.goto(`/compositions/${comp.id}`);
-          await expect(page.locator(".party-loadout-card")).toHaveCount(5);
-          const contained = await page.locator(".party-loadout-card").evaluateAll((cards) =>
+          await expect(page.locator("[data-comp-member]")).toHaveCount(5);
+          // Every drawn board cell stays inside its member's window.
+          const contained = await page.locator("[data-comp-member]").evaluateAll((cards) =>
             cards.every((card) => {
               const box = card.getBoundingClientRect();
-              return [...card.querySelectorAll(".party-gear-cell")].every((cell) => {
+              return [...card.querySelectorAll(".loadout-board-cell")].every((cell) => {
                 const gear = cell.getBoundingClientRect();
-                return gear.left >= box.left && gear.right <= box.right;
+                return !gear.width || (gear.left >= box.left && gear.right <= box.right);
               });
             }),
           );
@@ -83,7 +84,7 @@ test("populated five and twenty player fixtures remain editable and export a wid
           if (width <= 390) {
             expect(
               await page
-                .locator(".party-loadout-card")
+                .locator("[data-comp-member]")
                 .first()
                 .evaluate((el) => el.getBoundingClientRect().top),
             ).toBeLessThan(900);
@@ -92,63 +93,61 @@ test("populated five and twenty player fixtures remain editable and export a wid
         await page.goto(`/compositions/${comp.id}/edit`);
         if (count === 5 && width === 1440) {
           await page.getByRole("button", { name: "7 players", exact: true }).click();
-          await expect(page.locator(".party-loadout-card")).toHaveCount(7);
+          await expect(page.locator("[data-party-card]")).toHaveCount(7);
           await page.getByRole("button", { name: "Undo roster change", exact: true }).click();
-          await expect(page.locator(".party-loadout-card")).toHaveCount(5);
-          await expect(page.locator(".party-loadout-card").first()).toContainText("QA player 1");
+          await expect(page.locator("[data-party-card]")).toHaveCount(5);
+          await expect(page.locator("[data-party-card]").first()).toContainText("QA player 1");
         }
         if (count === 5 && width <= 390) {
-          const card = page.locator(".party-loadout-card").first();
+          const card = page.getByRole("button", { name: /^Edit player 1 loadout\b/ });
           await expect(card).toBeVisible();
           const cardBounds = await card.boundingBox();
-          const headingBounds = await card.locator(".party-card-heading").boundingBox();
           expect(cardBounds!.height).toBeLessThan(600);
-          expect(headingBounds!.width).toBeGreaterThan(120);
+          expect(cardBounds!.width).toBeGreaterThan(120);
         }
         await expect(page.getByLabel("Comp title", { exact: true })).toBeVisible();
         await expect(page.getByLabel("Comp title", { exact: true })).toHaveValue(
           `${count} player visual QA fixture`,
         );
         await page.evaluate(() => document.fonts.ready);
+        const board = page.getByRole("list", { name: "Visual party loadouts", exact: true });
         if (count <= 7) {
           await expect(page.getByRole("button", { name: /Edit player \d loadout/ })).toHaveCount(
             count,
           );
-          await page.locator(".party-board").scrollIntoViewIfNeeded();
-          await expect(
-            page.locator(".party-loadout-card").first().locator(".party-gear-cell:visible"),
-          ).toHaveCount(10);
-          const bag = page.locator(".party-loadout-card").first().locator('[data-slot="Bag"]');
-          const helmet = page
-            .locator(".party-loadout-card")
-            .first()
-            .locator('[data-slot="Helmet"]');
-          const mount = page.locator(".party-loadout-card").first().locator('[data-slot="Mount"]');
-          const [bagBox, helmetBox, mountBox] = await Promise.all([
-            bag.boundingBox(),
-            helmet.boundingBox(),
-            mount.boundingBox(),
-          ]);
-          expect(bagBox!.x).toBeLessThan(helmetBox!.x);
-          expect(Math.abs(bagBox!.y - helmetBox!.y)).toBeLessThan(2);
-          expect(mountBox!.y).toBeGreaterThan(helmetBox!.y);
-
+          await board.scrollIntoViewIfNeeded();
+          if (width === 1440) {
+            const first = page.locator("[data-party-card]").first();
+            await expect(first.locator(".loadout-board-cell:visible")).toHaveCount(10);
+            const bag = first.locator('[data-slot="Bag"]');
+            const helmet = first.locator('[data-slot="Helmet"]');
+            const mount = first.locator('[data-slot="Mount"]');
+            const [bagBox, helmetBox, mountBox] = await Promise.all([
+              bag.boundingBox(),
+              helmet.boundingBox(),
+              mount.boundingBox(),
+            ]);
+            expect(bagBox!.x).toBeLessThan(helmetBox!.x);
+            expect(Math.abs(bagBox!.y - helmetBox!.y)).toBeLessThan(2);
+            expect(mountBox!.y).toBeGreaterThan(helmetBox!.y);
+          }
           await page
             .waitForFunction(
               () =>
-                [...document.querySelectorAll<HTMLImageElement>(".party-board img")].every(
-                  (i) => i.complete,
-                ),
+                [
+                  ...document.querySelectorAll<HTMLImageElement>(
+                    '[aria-label="Visual party loadouts"] img',
+                  ),
+                ].every((i) => i.complete),
               null,
               { timeout: 8000 },
             )
             .catch(() => undefined);
-          await page
-            .locator(".party-board")
-            .screenshot({ path: `${folder}/board-${count}-${width}.png` });
+          await board.screenshot({ path: `${folder}/board-${count}-${width}.png` });
         } else {
-          await expect(page.locator(".party-roster")).toBeVisible();
-          await expect(page.locator(".party-roster [role=listitem]")).toHaveCount(20);
+          const roster = page.getByRole("list", { name: "Comp roster", exact: true });
+          await expect(roster).toBeVisible();
+          await expect(roster.getByRole("listitem")).toHaveCount(20);
         }
         await page.evaluate(() => scrollTo(0, 0));
         await page.screenshot({ path: `${folder}/${count}-players-${width}.png`, fullPage: true });
@@ -157,9 +156,11 @@ test("populated five and twenty player fixtures remain editable and export a wid
         );
       }
       if (count === 5) {
-        await page.getByLabel("Comp layout", { exact: true }).selectOption("roster");
-        await expect(page.locator(".party-roster [role=listitem]")).toHaveCount(5);
-        await page.getByLabel("Comp layout", { exact: true }).selectOption("auto");
+        await page.getByRole("button", { name: "Rows", exact: true }).click();
+        await expect(
+          page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),
+        ).toHaveCount(5);
+        await page.getByRole("button", { name: "Board", exact: true }).click();
         await page.getByRole("button", { name: /^Edit player 1 loadout\b/ }).click();
         await page.getByLabel("Player name", { exact: true }).fill("QA caller changed");
         await page.getByRole("button", { name: "Done editing member", exact: true }).click();
@@ -170,10 +171,11 @@ test("populated five and twenty player fixtures remain editable and export a wid
             url.searchParams.get("region") === "europe",
         );
         await page.reload();
-        await expect(page.getByRole("region", { name: "Visual party loadouts" })).toContainText(
-          "QA caller changed",
-        );
+        await expect(
+          page.getByRole("list", { name: "5 player visual QA fixture members" }),
+        ).toContainText("QA caller changed");
       } else if (count === 20) {
+        await page.getByRole("button", { name: "More", exact: true }).click();
         await page.getByLabel("PNG size", { exact: true }).selectOption("1080");
         const download = page.waitForEvent("download");
         await page.getByRole("button", { name: "Export PNG", exact: true }).click();

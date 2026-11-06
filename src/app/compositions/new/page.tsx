@@ -3,7 +3,11 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
+import { ArrowLeft } from "lucide-react";
+import { EmptyWell } from "@/components/empty-well";
+import { CompNextSteps } from "@/components/comp-next-steps";
+import styles from "@/components/comps.module.css";
 import { authOptions } from "@/lib/auth";
 import { editorOptions } from "@/lib/compositions/repository";
 import { CompositionEditor } from "@/components/composition-editor";
@@ -17,7 +21,7 @@ import { findLibraryComposition, findLibraryBuilds, librarySpellNames } from "@/
 import { copyLibraryGroup } from "@/lib/compositions/library-group";
 export const dynamic = "force-dynamic";
 // Editors are not search results; keep crawlers from spending the request budget here.
-export const metadata = privateMetadata("Create a composition");
+export const metadata = privateMetadata("Create a comp");
 export default async function NewComposition({
   searchParams,
 }: {
@@ -88,23 +92,35 @@ export default async function NewComposition({
     }
   }
   return (
-    <div className="composition-editor-page">
+    <div className={styles.workspace}>
       <WorkspaceHeading
         glyph="composition"
         scene="comps"
         title="Create a comp"
+        accent="comp"
         description="Set the party size, give every slot a role and a loadout, then share it with your Team."
-      />
+      >
+        <Link className="pill-link is-small masthead-back" href="/compositions">
+          <ArrowLeft size={14} aria-hidden="true" /> Back to comps
+        </Link>
+      </WorkspaceHeading>
       {error ? (
-        <section className="panel" role="alert">
-          <h2>This loadout cannot be added</h2>
-          <p>{error}</p>
-          <Link href={`/builds/library${recoveryQuery}`} className="button secondary">
-            Browse builds
-          </Link>
-          <Link href={`/compositions/new${recoveryQuery}`} className="text-link">
-            Start an empty composition
-          </Link>
+        <section className={`panel ${styles.panel}`} role="alert" aria-label="Comp could not start">
+          <EmptyWell
+            emblem="team-comps"
+            title="That loadout can’t start a comp"
+            line={error}
+            action={
+              <span className={styles.wellActions}>
+                <Link href={`/compositions/new${recoveryQuery}`} className="button primary">
+                  Start an empty comp
+                </Link>
+                <Link href={`/builds/library${recoveryQuery}`} className="pill-link is-small">
+                  Browse builds
+                </Link>
+              </span>
+            }
+          />
         </section>
       ) : (
         <CompositionEditor
@@ -116,6 +132,15 @@ export default async function NewComposition({
           initialNotice={notice}
         />
       )}
+      <CompNextSteps
+        show={["builds", "library", "teams"]}
+        title={
+          <>
+            Missing a <em>build</em>?
+          </>
+        }
+        line="Find a loadout for an open slot, borrow from a recorded comp, or share the plan with your Team."
+      />
     </div>
   );
 }

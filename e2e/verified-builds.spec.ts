@@ -97,7 +97,7 @@ test("verified equipment and ability choices persist, copy into comps and restor
     await page.getByRole("button", { name: "Done editing member", exact: true }).click();
     await page.getByRole("button", { name: "Save comp", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Build snapshot test comp" })).toBeVisible();
-    await page.getByLabel("Comp display").selectOption("detailed");
+    await page.getByRole("button", { name: "Details", exact: true }).click();
     await expect(page.getByText(/E: Blood Bandit/)).toBeVisible();
     const bad = await context.request.post("/api/builds", {
       headers: { origin: "http://localhost:3000" },

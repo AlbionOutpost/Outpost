@@ -1,6 +1,6 @@
 "use client";
-import { weaponRole } from "@/lib/compositions/weapon-roles";
 import { useState } from "react";
+import { Link2 } from "lucide-react";
 import Link from "@/components/build-region-link";
 import { useOutpostRegion } from "./region-context";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
@@ -10,18 +10,29 @@ import { ItemIcon } from "./item-icon";
 import { LoadoutBoard } from "./loadout-board";
 import { SpellIcon } from "./spell-icon";
 import { CompositionPngExport, type CompositionImageInput } from "./composition-png-export";
+import { libraryRosterMember } from "./comp-roster";
+import { CompMembers, type CompMemberCard } from "./comp-members";
+import { CompMenu } from "./comp-menu";
+import { SectionHeading } from "./section-heading";
+import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
+import { Disclosure } from "./disclosure";
+import styles from "./comps.module.css";
 
 export function LibraryGroupWorkspace({
   composition,
   builds,
   spellNames,
+  notes,
 }: {
   composition: LibraryComposition;
   builds: LibraryBuild[];
   spellNames: Record<string, string>;
+  /** The author's notes when they are too long for the masthead. */
+  notes?: string;
 }) {
   const region = useOutpostRegion(),
-    [equipment, setEquipment] = useState(true),
+    [view, setView] = useState<"equipment" | "abilities">("equipment"),
     [alternatives, setAlternatives] = useState(true),
     [mounts, setMounts] = useState(true),
     [message, setMessage] = useState("");
@@ -61,188 +72,199 @@ export function LibraryGroupWorkspace({
       if (!navigator.clipboard?.writeText)
         throw new Error("Copy this page’s address from your browser.");
       await navigator.clipboard.writeText(location.href);
-      setMessage("Group build link copied.");
+      setMessage("Link copied.");
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Link copying is unavailable.");
+      setMessage(e instanceof Error ? e.message : "Copy this page’s address from your browser.");
     }
   }
+  const cards: CompMemberCard[] = composition.members.map((id, index) => {
+    const build = byId.get(id);
+    const optional = composition.optional.includes(id) ? (
+      <span className="landing-chip is-muted">Optional</span>
+    ) : null;
+    if (!build)
+      return {
+        member: {
+          key: `${id}-${index}`,
+          name: "Loadout unavailable",
+          role: "Open slot",
+          armor: [],
+        },
+        title: "Loadout unavailable",
+        badges: optional,
+        body: (
+          <p className={styles.memberNote}>
+            This slot’s build is no longer in the library. Pick another when you plan the comp.
+          </p>
+        ),
+      };
+    const rows = build.equipment.filter((row) => mounts || row.slot !== "Mount");
+    const swaps = rows.flatMap((row) =>
+      row.alternatives.map((alt, i) => ({ row, alt, key: `${row.slot}-${alt}-${i}` })),
+    );
+    return {
+      member: libraryRosterMember(build, index),
+      title: <Link href={`/builds/library/${encodeURIComponent(build.slug)}`}>{build.title}</Link>,
+      badges: optional,
+      body: (
+        <>
+          {view === "equipment" ? (
+            <div className={styles.memberBoard}>
+              <LoadoutBoard
+                pieces={rows}
+                size="mini"
+                abilities={false}
+                label={`Slot ${index + 1} equipment`}
+              />
+            </div>
+          ) : (
+            <ul className={styles.abilities} aria-label={`Slot ${index + 1} recorded abilities`}>
+              {rows.map((row) => (
+                <li key={row.slot}>
+                  <span className={styles.abilitySlot}>{row.slot}</span>
+                  {row.skills.length ? (
+                    <span className={styles.abilityIcons}>
+                      {row.skills.map((spell, i) => (
+                        <span key={`${spell}-${i}`} title={spellNames[spell] || spell}>
+                          <SpellIcon id={spell} name={spellNames[spell] || spell} size={28} />
+                          <span className="sr-only">{spellNames[spell] || spell}</span>
+                        </span>
+                      ))}
+                    </span>
+                  ) : (
+                    <span className={styles.muted}>None recorded</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {alternatives && (
+            <div
+              className={styles.swaps}
+              aria-label={`Slot ${index + 1} equipment alternatives`}
+              role="group"
+            >
+              <span className={styles.swapsLabel}>Swaps</span>
+              {swaps.length ? (
+                <span className={styles.swapIcons}>
+                  {swaps.map(({ row, alt, key }) => (
+                    <span key={key} title={`${row.slot}: ${equipmentName(alt)}`}>
+                      <ItemIcon id={alt} size={32} />
+                      <span className="sr-only">
+                        {row.slot}: {equipmentName(alt)}
+                      </span>
+                      {view === "abilities" &&
+                        (row.alternativeSkills[alt] || []).map((spell, j) => (
+                          <span key={`${spell}-${j}`} title={spellNames[spell] || spell}>
+                            <SpellIcon id={spell} name={spellNames[spell] || spell} size={24} />
+                            <span className="sr-only">{spellNames[spell] || spell}</span>
+                          </span>
+                        ))}
+                    </span>
+                  ))}
+                </span>
+              ) : (
+                <span className={styles.muted}>None recorded</span>
+              )}
+            </div>
+          )}
+        </>
+      ),
+    };
+  });
   return (
     <>
-      <section className="raised group-build-detail-tools" aria-label="Group build controls">
-        <div className="button-row">
-          <button type="button" className="button secondary" onClick={copyLink}>
-            Copy link
-          </button>
-          <Link
-            className="button primary"
-            rel="nofollow"
-            href={`/compositions/new?${new URLSearchParams({ fromComposition: composition.slug, region })}`}
-          >
-            Clone group build
-          </Link>
-        </div>
-        <div className="group-build-view-options">
-          <label>
-            <input
-              type="checkbox"
-              checked={equipment}
-              onChange={(e) => setEquipment(e.target.checked)}
-            />
-            Show equipment instead of abilities
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={alternatives}
-              onChange={(e) => setAlternatives(e.target.checked)}
-            />
-            Show equipment alternatives
-          </label>
-          <label>
-            <input type="checkbox" checked={mounts} onChange={(e) => setMounts(e.target.checked)} />
-            Include recorded mount requirements
-          </label>
-        </div>
-        <CompositionPngExport
-          composition={image}
-          view={equipment ? "equipment" : "abilities"}
-          showAlternatives={alternatives}
-          includeMounts={mounts}
-          allowCopy
+      <section className={styles.section} aria-labelledby="comp-party">
+        <SectionHeading
+          id="comp-party"
+          title={
+            <>
+              The <em>party</em>
+            </>
+          }
+          line={`${composition.members.length} members. Roles are read from each weapon; open a member for the full build.`}
         />
-        {message && <p role="status">{message}</p>}
-      </section>
-      <div className="section-heading">
-        <h2>Builds in this group ({composition.members.length})</h2>
-      </div>
-      <div className="library-comp-members">
-        {composition.members.map((id, index) => {
-          const build = byId.get(id);
-          return (
-            <section
-              key={`${id}-${index}`}
-              className="raised has-scene group-loadout-card"
-              data-scene="composition"
-              data-role={build ? weaponRole(build.weaponName) : undefined}
+        {notes && (
+          <div className={styles.notes}>
+            <Disclosure summary="Author’s notes">
+              <p className="preserve">{notes}</p>
+            </Disclosure>
+          </div>
+        )}
+        <div className={styles.toolbar}>
+          <div className={styles.show} role="group" aria-label="Show on each member">
+            <span className={styles.showLabel}>Show</span>
+            <span className={styles.segment}>
+              <button
+                type="button"
+                aria-pressed={view === "equipment"}
+                onClick={() => setView("equipment")}
+              >
+                Loadout
+              </button>
+              <button
+                type="button"
+                aria-pressed={view === "abilities"}
+                onClick={() => setView("abilities")}
+              >
+                Abilities
+              </button>
+            </span>
+            <button
+              type="button"
+              className={styles.toggle}
+              aria-pressed={alternatives}
+              onClick={() => setAlternatives((on) => !on)}
             >
-              <div className="library-member-label">
-                <span className="landing-roster-n">{index + 1}</span>
-                {build && (
-                  <span className="library-member-role">{weaponRole(build.weaponName)}</span>
-                )}
-                {composition.optional.includes(id) && (
-                  <span className="landing-chip is-muted">Optional</span>
-                )}
-              </div>
-              {build ? (
-                <>
-                  <h2>
-                    <Link href={`/builds/library/${encodeURIComponent(build.slug)}`}>
-                      {build.title}
-                    </Link>
-                  </h2>
-                  {equipment ? (
-                    // The member's kit on the game's board, read top to bottom like the
-                    // inventory, rather than as one long row
-                    <div className="group-loadout-board">
-                      <LoadoutBoard
-                        pieces={build.equipment.filter((row) => mounts || row.slot !== "Mount")}
-                        size="mini"
-                        abilities={false}
-                        label={`Slot ${index + 1} equipment`}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className="group-loadout-abilities"
-                      aria-label={`Slot ${index + 1} recorded abilities`}
-                    >
-                      {build.equipment
-                        .filter((row) => mounts || row.slot !== "Mount")
-                        .map((row) => (
-                          <div key={row.slot}>
-                            <small>{row.slot}</small>
-                            {row.skills.length ? (
-                              row.skills.map((id, i) => (
-                                <span key={`${id}-${i}`} title={spellNames[id] || id}>
-                                  <SpellIcon id={id} name={spellNames[id] || id} size={28} />
-                                  <span className="sr-only">{spellNames[id] || id}</span>
-                                </span>
-                              ))
-                            ) : (
-                              <span className="muted">No recorded abilities</span>
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                  )}
-                  {alternatives && (
-                    <div
-                      className="group-loadout-alternatives"
-                      aria-label={`Slot ${index + 1} equipment alternatives`}
-                    >
-                      {build.equipment
-                        .filter((row) => mounts || row.slot !== "Mount")
-                        .flatMap((row) =>
-                          row.alternatives.map((id, i) => (
-                            <span
-                              key={`${row.slot}-${id}-${i}`}
-                              title={`${row.slot}: ${equipmentName(id)}`}
-                            >
-                              <ItemIcon id={id} size={32} />
-                              <span className="sr-only">
-                                {row.slot}: {equipmentName(id)}
-                              </span>
-                              {!equipment &&
-                                (row.alternativeSkills[id] || []).map((spell, j) => (
-                                  <span key={`${spell}-${j}`} title={spellNames[spell] || spell}>
-                                    <SpellIcon
-                                      id={spell}
-                                      name={spellNames[spell] || spell}
-                                      size={24}
-                                    />
-                                    <span className="sr-only">{spellNames[spell] || spell}</span>
-                                  </span>
-                                ))}
-                            </span>
-                          )),
-                        )}
-                      {!build.equipment.some((row) => row.alternatives.length) && (
-                        <span>No recorded equipment swaps</span>
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  <h2>Loadout unavailable</h2>
-                  <p>
-                    This member’s position is retained. Choose another build when planning your
-                    composition.
-                  </p>
-                </>
-              )}
-            </section>
-          );
-        })}
-      </div>
+              Swaps
+            </button>
+            <button
+              type="button"
+              className={styles.toggle}
+              aria-pressed={mounts}
+              onClick={() => setMounts((on) => !on)}
+            >
+              Mounts
+            </button>
+          </div>
+          <CompMenu label="Share">
+            {() => (
+              <>
+                <button type="button" className="button secondary" onClick={copyLink}>
+                  <Link2 size={16} aria-hidden="true" /> Copy link
+                </button>
+                {message && <StatusLine>{message}</StatusLine>}
+                <CompositionPngExport
+                  composition={image}
+                  view={view}
+                  showAlternatives={alternatives}
+                  includeMounts={mounts}
+                  allowCopy
+                />
+              </>
+            )}
+          </CompMenu>
+        </div>
+        <CompMembers cards={cards} label={`${composition.title} members`} />
+      </section>
       {mounts && (
-        <section className="raised group-recorded-mounts">
-          <h2>Recorded mount requirements</h2>
+        <section className={`panel ${styles.panel}`} aria-labelledby="comp-mounts">
+          <PanelHead
+            id="comp-mounts"
+            title="Recorded mounts"
+            line="What the members’ builds ride. Agree on mounts before you set out."
+          />
           {recordedMounts.length ? (
-            <ul>
+            <ul className={styles.mounts}>
               {recordedMounts.map((id) => (
                 <li key={id}>
                   <ItemIcon id={id} size={48} />
-                  {equipmentName(id)}
+                  <span>{equipmentName(id)}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>
-              No mount items were recorded for this group build. Confirm your party’s mount
-              requirement before setting out.
-            </p>
+            <StatusLine>No member’s build records a mount.</StatusLine>
           )}
         </section>
       )}

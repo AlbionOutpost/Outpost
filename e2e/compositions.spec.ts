@@ -215,7 +215,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     expect(stored.slots[1].playerName).toBe("Caller One");
     expect(stored.slots[1].equipment[0].abilities.E).toBe("Blood Bandit");
     await page.reload();
-    await expect(page.locator(".composition-card")).toHaveCount(20);
+    await expect(page.locator("[data-comp-member]")).toHaveCount(20);
     expect((await clients[3].request.get(`/api/compositions/${id}`)).status()).toBe(404);
     await page.getByRole("link", { name: "Edit comp", exact: true }).click();
     await page.getByText("Sharing, region & description", { exact: true }).click();
@@ -280,7 +280,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     expect((await clients[1].request.get(`/api/compositions/${id}`)).status()).toBe(404);
     await page.setViewportSize({ width: 320, height: 844 });
     await page.getByText("More actions", { exact: true }).click();
-    const menu = await page.locator(".comp-more-actions-panel").boundingBox();
+    const menu = await page.locator("[data-comp-menu]").boundingBox();
     expect(menu!.x).toBeGreaterThanOrEqual(0);
     expect(menu!.x + menu!.width).toBeLessThanOrEqual(320);
     await mkdir(".qa/player-polish", { recursive: true });

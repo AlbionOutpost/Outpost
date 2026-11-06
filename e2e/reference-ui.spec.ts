@@ -36,7 +36,7 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     await page.goto("/compositions/new");
     await page.getByLabel("Comp title", { exact: true }).fill("Five-player reference review");
     await page.getByRole("button", { name: "5 players", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Visual party loadouts" })).toBeVisible();
+    await expect(page.getByRole("list", { name: "Visual party loadouts" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Edit player \d loadout/ })).toHaveCount(5);
     await page.getByRole("button", { name: /^Edit player 1 loadout\b/ }).click();
     await page.getByLabel("Player name", { exact: true }).fill("First caller");
@@ -57,15 +57,16 @@ test("five-player board edits, persists, reloads and exports a real PNG", async 
     expect(savedUrl.searchParams.get("region")).toBe("europe");
     compositionId = savedUrl.pathname.split("/").pop()!;
     await page.reload();
-    await expect(page.getByRole("region", { name: "Visual party loadouts" })).toContainText(
-      "First caller",
-    );
+    await expect(
+      page.getByRole("list", { name: "Five-player reference review members" }),
+    ).toContainText("First caller");
     await mkdir(".qa/reference-review", { recursive: true });
     await page.locator("main h1").click();
     await page.screenshot({
       path: ".qa/reference-review/five-player-board-1440.png",
       fullPage: true,
     });
+    await page.getByRole("button", { name: "More actions", exact: true }).click();
     const downloadPromise = page.waitForEvent("download");
     await page.getByRole("button", { name: "Export PNG", exact: true }).click();
     const download = await downloadPromise;

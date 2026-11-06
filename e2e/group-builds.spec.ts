@@ -9,27 +9,23 @@ test("group builds are discoverable and retain every member while presentation c
   await page.getByRole("link", { name: "Group Builds", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Group Builds", exact: true })).toBeVisible();
   await page.goto("/compositions/library/dreamteam?region=asia");
-  await expect(page.locator(".library-comp-members > section")).toHaveCount(17);
-  await expect(
-    page.getByRole("heading", { name: "Builds in this group (17)", exact: true }),
-  ).toBeVisible();
-  await page.getByLabel("Show equipment instead of abilities", { exact: true }).uncheck();
+  await expect(page.locator("[data-comp-member]")).toHaveCount(17);
+  await expect(page.getByRole("heading", { name: "The party", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Abilities", exact: true }).click();
   await expect(page.getByLabel("Slot 1 recorded abilities", { exact: true })).toBeVisible();
-  await page.getByLabel("Show equipment alternatives", { exact: true }).uncheck();
+  await page.getByRole("button", { name: "Swaps", exact: true }).click();
   await expect(page.getByLabel("Slot 1 equipment alternatives", { exact: true })).toHaveCount(0);
-  await page.getByLabel("Include recorded mount requirements", { exact: true }).uncheck();
+  await page.getByRole("button", { name: "Mounts", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Recorded mounts", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Mounts", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Recorded mount requirements", exact: true }),
-  ).toHaveCount(0);
-  await page.getByLabel("Include recorded mount requirements", { exact: true }).check();
-  await expect(
-    page.getByText("No mount items were recorded for this group build.", { exact: false }),
+    page.getByText("No member’s build records a mount.", { exact: false }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Clone group build", exact: true })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Copy to my comps", exact: true })).toHaveAttribute(
     "href",
     /fromComposition=dreamteam/,
   );
-  await page.getByRole("link", { name: "Clone group build", exact: true }).click();
+  await page.getByRole("link", { name: "Copy to my comps", exact: true }).click();
   await expect(page).toHaveURL(/\/signin\?/);
   expect(new URL(page.url()).searchParams.get("callbackUrl")).toContain(
     "fromComposition=dreamteam",
@@ -62,7 +58,7 @@ test("cloning a public group build saves all positions privately without changin
       },
     ]);
     await page.goto("/compositions/library/dreamteam?region=asia");
-    await page.getByRole("link", { name: "Clone group build", exact: true }).click();
+    await page.getByRole("link", { name: "Copy to my comps", exact: true }).click();
     await expect(
       page.getByRole("list", { name: "Comp roster", exact: true }).getByRole("listitem"),
     ).toHaveCount(17);
@@ -80,7 +76,7 @@ test("cloning a public group build saves all positions privately without changin
     expect(slots.filter((slot) => !slot.mandatory)).toHaveLength(10);
     expect((await outsider.request.get(`/api/compositions/${savedId}`)).status()).toBe(404);
     await page.goto("/compositions/library/dreamteam");
-    await expect(page.locator(".library-comp-members > section")).toHaveCount(17);
+    await expect(page.locator("[data-comp-member]")).toHaveCount(17);
   } finally {
     await outsider.close();
     await db.user.deleteMany({ where: { id } });

@@ -1,13 +1,19 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { Search } from "lucide-react";
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
 import { queryLibraryCompositions, findLibraryBuilds } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { CompRoster } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
-import { MastheadTabs } from "@/components/masthead-tabs";
-import { ArrowUpRight, Layers, Users, Swords } from "lucide-react";
+import { CompTabs } from "@/components/comp-tabs";
+import { CompPages, CompWindow } from "@/components/comp-window";
+import { CompNextSteps } from "@/components/comp-next-steps";
+import { SectionHeading } from "@/components/section-heading";
+import { EmptyWell } from "@/components/empty-well";
+import { WellSelect } from "@/components/well-select";
+import styles from "@/components/comps.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions/library", await searchParams);
 }
@@ -30,124 +36,130 @@ export default async function Page({
   const memberBuilds = new Map(builds.map((build) => [build.id, build]));
   const href = (n: number) =>
     `/compositions/library?${new URLSearchParams({ q, category, page: String(n) })}`;
+  const filtered = !!(q || category);
   return (
-    <div className="library-page group-build-library">
+    <div className={styles.page}>
       <WorkspaceHeading
         glyph="composition"
         scene="comps"
         title="Group Builds"
-        description={`${total} group builds. Find complete loadouts for your party and make a plan together.`}
+        accent="Builds"
+        description={`${total.toLocaleString()} comps recorded by players, each with every member’s loadout. Copy one to plan your own party around it.`}
         actions={
           <Link href="/compositions/new" className="button primary">
             Create a comp
           </Link>
         }
       >
-        <MastheadTabs
-          label="Composition collections"
-          tabs={[
-            {
-              href: "/compositions/library",
-              label: "Group Builds",
-              icon: <Layers size={16} />,
-              current: true,
-            },
-            { href: "/compositions", label: "Player comps", icon: <Users size={16} /> },
-            { href: "/builds/library", label: "Build library", icon: <Swords size={16} /> },
-          ]}
-        />
+        <CompTabs current="library" />
       </WorkspaceHeading>
-      <form className="raised library-filter-bar" action="/compositions/library">
+      <form
+        className={`raised ${styles.filters} ${styles.hasSelect}`}
+        action="/compositions/library"
+        role="search"
+        aria-label="Find Group Builds"
+      >
         <label>
-          Search compositions
-          <input
-            type="search"
-            name="q"
-            maxLength={100}
-            defaultValue={q}
-            placeholder="Party name or author"
-          />
+          Search comps
+          <span className={styles.searchWell}>
+            <Search size={16} aria-hidden="true" />
+            <input
+              type="search"
+              name="q"
+              maxLength={100}
+              defaultValue={q}
+              placeholder="Comp name or author"
+            />
+          </span>
         </label>
         <label>
           Activity
-          <select name="category" defaultValue={category}>
+          <WellSelect name="category" defaultValue={category}>
             <option value="">All activities</option>
             {categories.map((c) => (
               <option key={c} value={c}>
                 {activityName(c)}
               </option>
             ))}
-          </select>
+          </WellSelect>
         </label>
-        <button className="button secondary">Find compositions</button>
+        <button className="button secondary">Find comps</button>
       </form>
-      <div className="section-heading library-section-heading">
-        <h2>{matched} compositions</h2>
-        <span>
-          Page {page} / {pages}
-        </span>
-      </div>
-      <div className="library-comp-grid">
-        {rows.map((comp) => {
-          const members = comp.members.flatMap((id) => {
-            const b = memberBuilds.get(id);
-            return b ? [b] : [];
-          });
-          const href = `/compositions/library/${encodeURIComponent(comp.slug)}`;
-          return (
-            <article
-              className="raised has-scene library-comp-card"
-              data-scene="composition"
-              key={comp.slug}
-            >
-              <div className="library-card-bar">
-                <Link href={href} className="ecosystem-title-link">
-                  <h2>{comp.title}</h2>
-                </Link>
-                <span className="landing-chips">
-                  <span className="landing-chip">{activityName(comp.category)}</span>
-                  {comp.upvotes != null && <HeartChip count={comp.upvotes} />}
-                </span>
-              </div>
-              {members.length ? (
-                <CompRoster members={members} linked={false} />
-              ) : (
-                <p className="library-comp-empty">Member loadouts unavailable.</p>
-              )}
-              <Link href={href} className="library-card-caption" tabIndex={-1} aria-hidden="true">
-                <span>
-                  {comp.members.length} slots · by {comp.author}
-                  {comp.members.length > 5 ? ` · +${comp.members.length - 5} more` : ""}
-                </span>
-                <span>
-                  Open comp <ArrowUpRight size={13} aria-hidden="true" />
-                </span>
+      <section className={styles.section} aria-labelledby="library-comps">
+        <SectionHeading
+          id="library-comps"
+          title={
+            <>
+              {matched.toLocaleString()} <em>{matched === 1 ? "comp" : "comps"}</em>
+            </>
+          }
+          line={
+            filtered
+              ? `Matching ${[q && `“${q}”`, category && activityName(category)].filter(Boolean).join(" in ")}, most liked first.`
+              : "Most liked first. Each window shows the first five members by weapon type."
+          }
+        />
+        {rows.length ? (
+          <ul className={styles.grid}>
+            {rows.map((comp) => {
+              const members = comp.members.flatMap((id) => {
+                const b = memberBuilds.get(id);
+                return b ? [b] : [];
+              });
+              const more = comp.members.length - 5;
+              return (
+                <li key={comp.slug}>
+                  <CompWindow
+                    title={comp.title}
+                    href={`/compositions/library/${encodeURIComponent(comp.slug)}`}
+                    chips={
+                      <>
+                        <span className="landing-chip">{activityName(comp.category)}</span>
+                        {comp.upvotes != null && <HeartChip count={comp.upvotes} />}
+                      </>
+                    }
+                    caption={`${comp.members.length} members · by ${comp.author}${more > 0 ? ` · +${more} more` : ""}`}
+                  >
+                    {members.length ? (
+                      <CompRoster members={members} linked={false} />
+                    ) : (
+                      <p className={styles.memberNote}>Member loadouts unavailable.</p>
+                    )}
+                  </CompWindow>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <EmptyWell
+            emblem="team-comps"
+            title="No comp matches those filters"
+            line="Try another name, or look across every activity."
+            action={
+              <Link className="button secondary" href="/compositions/library">
+                Clear filters
               </Link>
-            </article>
-          );
-        })}
-      </div>
-      {!rows.length && <p className="empty">No composition matches those filters.</p>}
+            }
+          />
+        )}
+        <CompPages
+          page={page}
+          pages={pages}
+          next={page < pages}
+          href={href}
+          label="Group Build pages"
+        />
+      </section>
       <AdSlot placement="hub" />
-      <nav className="library-pagination" aria-label="Composition library pages">
-        {page > 1 ? (
-          <Link className="button secondary" href={href(page - 1)}>
-            Previous page
-          </Link>
-        ) : (
-          <span />
-        )}
-        <span>
-          Page {page} / {pages}
-        </span>
-        {page < pages ? (
-          <Link className="button secondary" href={href(page + 1)}>
-            Next page
-          </Link>
-        ) : (
-          <span />
-        )}
-      </nav>
+      <CompNextSteps
+        show={["create", "player", "builds"]}
+        title={
+          <>
+            Plan your <em>own</em>
+          </>
+        }
+        line="Start from a blank party, or see what other players have shared."
+      />
     </div>
   );
 }

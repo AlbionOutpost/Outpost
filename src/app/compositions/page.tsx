@@ -1,18 +1,21 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { MastheadTabs } from "@/components/masthead-tabs";
-import { Layers, Users, UserRound } from "lucide-react";
+import { Search } from "lucide-react";
 import { libraryCounts } from "@/lib/grind-library";
-import Link from "@/components/link";
+import Link from "@/components/build-region-link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { memberSlot } from "@/lib/compositions/validation";
-import { MobileFilterPanel } from "@/components/mobile-filter-panel";
-import { ItemIcon } from "@/components/item-icon";
-import { EquipmentGlyph } from "@/components/equipment-overview";
-import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { readStoredComposition } from "@/lib/compositions/stored";
+import { slotRosterMember } from "@/lib/compositions/roster";
+import { RosterRows } from "@/components/comp-roster";
+import { CompTabs } from "@/components/comp-tabs";
+import { CompPages, CompWindow } from "@/components/comp-window";
+import { CompNextSteps } from "@/components/comp-next-steps";
+import { SectionHeading } from "@/components/section-heading";
+import { EmptyWell } from "@/components/empty-well";
+import styles from "@/components/comps.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions", await searchParams);
 }
@@ -54,154 +57,174 @@ export default async function Compositions({
       description: true,
       visibility: true,
       contentType: true,
+      region: true,
+      notes: true,
+      groupId: true,
       version: true,
       updatedAt: true,
       slots: true,
       author: { select: { name: true } },
     },
   });
+  const mine = p.mine === "1";
+  const shown = rows.slice(0, 24);
+  const visibility = { PUBLIC: "Public", PRIVATE: "Private", GROUP: "Team only" } as const;
+  const href = (n: number) =>
+    `/compositions?${new URLSearchParams({ ...(q ? { q } : {}), ...(mine ? { mine: "1" } : {}), page: String(n) })}`;
   return (
-    <div className="composition-directory composition-collection-page">
+    <div className={styles.page} data-comp-directory="">
       <WorkspaceHeading
         glyph="composition"
         scene="comps"
-        title="Comps"
-        description="Plan roles, assign players and share your party’s gear."
+        title={mine ? "My comps" : "Player comps"}
+        accent="comps"
+        description={
+          mine
+            ? "Comps you made, and the ones your Teams share with you."
+            : "Comps players have shared, and the ones your Teams keep."
+        }
         actions={
           <Link className="button primary" href="/compositions/new">
-            Create comp
+            Create a comp
           </Link>
         }
       >
-        <MastheadTabs
-          label="Composition collections"
-          tabs={[
-            { href: "/compositions/library", label: "Group Builds", icon: <Layers size={16} /> },
-            {
-              href: "/compositions",
-              label: "Player comps",
-              icon: <Users size={16} />,
-              current: p.mine !== "1",
-            },
-            {
-              href: "/compositions?mine=1",
-              label: "My comps",
-              icon: <UserRound size={16} />,
-              current: p.mine === "1",
-            },
-          ]}
-        />
+        <CompTabs current={mine ? "mine" : "player"} />
       </WorkspaceHeading>
-      <form className="panel composition-filters">
+      <form className={`raised ${styles.filters}`} role="search" aria-label="Find comps">
+        {mine && <input type="hidden" name="mine" value="1" />}
         <label>
           Search comp titles
-          <input name="q" defaultValue={q} maxLength={100} />
+          <span className={styles.searchWell}>
+            <Search size={16} aria-hidden="true" />
+            <input
+              type="search"
+              name="q"
+              defaultValue={q}
+              maxLength={100}
+              placeholder="Roads roam, Hellgate 5v5…"
+            />
+          </span>
         </label>
-        <MobileFilterPanel label={p.mine === "1" ? "Collection: My comps" : "Collection filters"}>
-          <label>
-            Collection
-            <select aria-label="Comp collection" name="mine" defaultValue={p.mine || "0"}>
-              <option value="0">Available comps</option>
-              <option value="1">My comps</option>
-            </select>
-          </label>
-        </MobileFilterPanel>
         <button className="button secondary" aria-label="Search comps">
           Search
         </button>
       </form>
-      <section className="tool-grid section composition-results" aria-label="Matching comps">
-        {rows.slice(0, 24).map((r) => {
-          const slots = Array.isArray(r.slots) ? r.slots : null;
-          const preview = (slots || []).slice(0, 10).flatMap((value) => {
-            const parsed = memberSlot.safeParse(value);
-            if (!parsed.success) return [];
-            const main = parsed.data.equipment.find((e) => e.slot === "Main hand");
-            return [{ main, memberId: parsed.data.id, role: parsed.data.role }];
-          });
-          return (
-            <Link
-              className="tool-card composition-preview-card"
-              href={`/compositions/${r.id}`}
-              key={r.id}
-            >
-              <div className="loadout-card-heading">
-                <h2>{r.title}</h2>
-                <span className="loadout-activity">
-                  {r.contentType} ·{" "}
-                  {{ PUBLIC: "Public", PRIVATE: "Private", GROUP: "Team only" }[r.visibility]}
-                </span>
-              </div>
-              <span className="composition-roster-preview" aria-label="Recorded roster preview">
-                {slots ? (
-                  <strong>
-                    {slots.length} {slots.length === 1 ? "player" : "players"}
-                  </strong>
-                ) : (
-                  <span>Roster unavailable</span>
-                )}
-                {preview.map((item) => (
-                  <span
-                    className="comp-preview-player"
-                    key={item.memberId}
-                    title={`${item.role} · ${item.main ? equipmentName(item.main.itemId) : "No weapon assigned"}`}
+      <section className={styles.section} aria-labelledby="player-comps">
+        <SectionHeading
+          id="player-comps"
+          title={
+            q ? (
+              <>
+                Matching <em>comps</em>
+              </>
+            ) : mine ? (
+              <>
+                Your <em>comps</em>
+              </>
+            ) : (
+              <>
+                Shared <em>comps</em>
+              </>
+            )
+          }
+          line={
+            q
+              ? `Titles with “${q}”.`
+              : shown.length
+                ? "Last updated first, five members per window."
+                : undefined
+          }
+        />
+        {shown.length ? (
+          <ul className={styles.grid}>
+            {shown.map((r) => {
+              const { composition } = readStoredComposition(r);
+              const players = composition.slots.length;
+              const more = players - 5;
+              return (
+                <li key={r.id}>
+                  <CompWindow
+                    title={r.title}
+                    href={`/compositions/${r.id}`}
+                    chips={
+                      <>
+                        <span className="landing-chip">{r.contentType}</span>
+                        <span className="landing-chip is-muted">{visibility[r.visibility]}</span>
+                      </>
+                    }
+                    caption={`${players} ${players === 1 ? "player" : "players"} · by ${r.author.name || "Adventurer"}${more > 0 ? ` · +${more} more` : ""}`}
                   >
-                    {item.main ? (
-                      <ItemIcon id={item.main.itemId} quality={item.main.quality} size={44} />
+                    {players ? (
+                      <RosterRows
+                        members={composition.slots.map((slot) => slotRosterMember(slot))}
+                        label={`${r.title} roster`}
+                      />
                     ) : (
-                      <EquipmentGlyph slot="Main hand" />
+                      <p className={styles.memberNote}>Roster unavailable.</p>
                     )}
-                    <small>{item.role}</small>
-                  </span>
-                ))}
-                {slots && slots.length > 10 && (
-                  <span className="comp-preview-more">+{slots.length - 10} players</span>
-                )}
-              </span>
-              <p>{r.description.slice(0, 200)}</p>
-              <div className="card-footer">
-                {r.author.name || "Adventurer"} · Revision {r.version}
-              </div>
-            </Link>
-          );
-        })}
+                  </CompWindow>
+                </li>
+              );
+            })}
+          </ul>
+        ) : q ? (
+          <EmptyWell
+            emblem="team-comps"
+            title={`No comp title matches “${q}”`}
+            line="Check the spelling, or clear the search to see every comp."
+            action={
+              <Link
+                className="button secondary"
+                href={mine ? "/compositions?mine=1" : "/compositions"}
+              >
+                Clear search
+              </Link>
+            }
+          />
+        ) : mine ? (
+          <EmptyWell
+            emblem="team-comps"
+            title={userId ? "No comps of your own yet" : "Sign in to see your comps"}
+            line={
+              userId
+                ? "Comps you create, or that a Team shares with you, show up here."
+                : "Comps you save, and the ones your Teams share, show up here once you sign in."
+            }
+            action={
+              <Link
+                className="button secondary"
+                href={
+                  userId ? "/compositions/new" : "/signin?callbackUrl=%2Fcompositions%3Fmine%3D1"
+                }
+              >
+                {userId ? "Create a comp" : "Sign in"}
+              </Link>
+            }
+          />
+        ) : (
+          <EmptyWell
+            emblem="team-comps"
+            title="No player has shared a comp yet"
+            line={`Start from one of the ${(await libraryCounts()).compositions.toLocaleString()} Group Builds, or plan your own and share it.`}
+            action={
+              <Link className="button secondary" href="/compositions/library">
+                Browse Group Builds
+              </Link>
+            }
+          />
+        )}
+        <CompPages page={page} next={rows.length > 24} href={href} label="Comp pages" />
       </section>
-      {!rows.length && (
-        <section className="build-discovery-empty ecosystem-empty">
-          <h2>{p.mine === "1" ? "No comps of your own yet" : "No shared player comps yet"}</h2>
-          <p>
-            {p.mine === "1"
-              ? "Comps you create or that a team shares with you appear here."
-              : `Start from one of the ${(await libraryCounts()).compositions.toLocaleString()} Group Builds in the library, or build your own roster and share it with your team.`}
-          </p>
-          <div className="button-row">
-            <Link href="/compositions/library" className="button primary">
-              Browse Group Builds
-            </Link>
-            <Link href="/compositions/new" className="text-link">
-              Create a comp →
-            </Link>
-          </div>
-        </section>
-      )}
-      <div className="actions section">
-        {page > 1 && (
-          <Link
-            className="button secondary"
-            href={`/compositions?q=${encodeURIComponent(q)}&mine=${p.mine || 0}&page=${page - 1}`}
-          >
-            Previous page
-          </Link>
-        )}
-        {rows.length > 24 && (
-          <Link
-            className="button secondary"
-            href={`/compositions?q=${encodeURIComponent(q)}&mine=${p.mine || 0}&page=${page + 1}`}
-          >
-            Next page
-          </Link>
-        )}
-      </div>
+      <CompNextSteps
+        show={["library", "create", "teams"]}
+        title={
+          <>
+            Get your party <em>ready</em>
+          </>
+        }
+        line="Borrow a recorded comp, plan your own, or share one with your guild."
+      />
     </div>
   );
 }
