@@ -358,7 +358,7 @@ export function BuildEquipmentStudio({
               selectSlot(target as EquipmentSlot);
           }}
         />
-        {!value.length && boardEmpty}
+        {!value.length && boardEmpty && <div className="editor-board-empty">{boardEmpty}</div>}
         {!!ordered.length && (
           <div className="editor-piece-strip">
             <small>Every piece</small>

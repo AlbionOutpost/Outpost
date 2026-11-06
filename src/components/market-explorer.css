@@ -216,9 +216,12 @@
   background: none;
   color: var(--accent-ink);
   font: 600 12px/1 var(--font-ui);
+  text-decoration: none;
+  cursor: pointer;
+}
+.app.outpost .mx-reset:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
-  cursor: pointer;
 }
 .app.outpost .mx-active-filters {
   display: flex;
@@ -934,6 +937,10 @@
   }
 }
 @media (max-width: 700px) {
+  /* Quick picks and filter chips are touch targets on phones */
+  .app.outpost :is(.mx-pill, .mx-reset) {
+    min-height: 40px;
+  }
   /* Panel heads stack their controls under the title and line, like the section heading */
   .app.outpost .mx :is(.mx-board, .mx-history, .mx-saved) > :first-child > * {
     flex: 1 1 100%;
