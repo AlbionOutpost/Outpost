@@ -24,6 +24,20 @@ export const guideArtwork: Record<string, string> = {
   "count-the-whole-cost": "T4_METALBAR",
   "build-with-a-purpose": "T4_ARMOR_LEATHER_SET1",
   "put-every-role-in-place": "T4_2H_HAMMER",
+  "hellgates-guide": "T4_2H_CLAYMORE",
+  "abyssal-depths-guide": "T4_2H_AXE",
+  "mists-guide": "T4_CAPEITEM_FW_BRECILIEN",
+  "roads-of-avalon-guide": "T4_SHOES_LEATHER_AVALON",
+  "faction-warfare-guide": "T4_CAPEITEM_FW_LYMHURST",
+  "zones-and-death-loss": "T8_POTION_CLEANSE",
+  "tracking-guide": "T4_2H_TOOL_TRACKING",
+  "crystal-arena-guide": "T4_MAIN_1HCROSSBOW",
+  "group-dungeons-guide": "T4_MAIN_HOLYSTAFF",
+  "islands-and-farming-guide": "T4_2H_TOOL_SICKLE",
+  "gathering-progression-guide": "T4_HEAD_GATHERER_FIBER",
+  "destiny-board-guide": "T4_OFF_BOOK",
+  "enchanting-guide": "T4_MAIN_SWORD@1",
+  "zvz-guide": "T8_2H_HAMMER",
 };
 
 const cover = (guide: LibraryGuide): GuideCover => ({
@@ -40,7 +54,7 @@ const cover = (guide: LibraryGuide): GuideCover => ({
 
 /**
  * The guides hub: one search with topic pills over every guide as a cover card, newest first,
- * four across on wide screens so the 16 guides fill their rows.
+ * three across on wide screens so the 30 guides fill their rows.
  */
 export function GrindGuideDirectory({
   guides,
@@ -88,7 +102,7 @@ export function GrindGuideDirectory({
           line={
             filtered
               ? `${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`
-              : `${guides.length} guides on progression, gathering, PvE, trading and crafting.`
+              : `${guides.length} guides on progression, gathering, PvE, PvP, trading and crafting.`
           }
         />
         <form action="/guides" className={`raised ${styles.filters}`} role="search">

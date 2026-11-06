@@ -4,12 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
-## Guides in Outpost's own words — 6 November 2026
+## 30 guides, all Outpost's own — 6 November 2026
 
-- The 8 archive guides are reworded throughout with the same facts, numbers, slugs and section anchors; their links now point at Outpost pages (tools, item pages, library builds) instead of the old site.
-- 8 new guides by Outpost: first silver, focus and RRR, hauling between cities, a first solo PvE build, and the four "Using Outpost" notes (market quotes, whole cost, builds, comps) as full guides. The notes section on `/guides` is gone.
-- Guide links may now be Outpost paths under `/tools`, `/guides`, `/builds`, `/compositions` and `/items`.
-- Not done: albiononlinegrind.com was unreachable from the build session, so any guides it has beyond these 8 are not imported yet.
+- The 8 archive guides have new titles, structure and text, written by Outpost; slugs stay, section anchors changed. Facts that still hold were kept and updated for Rogue Frontier, Abyssal Depths, Realm Divided, Radiant Wilds and Dragonfire.
+- The 8 Outpost guides got search-style titles and fixes (Brecilien crafting bonuses, the Dragonfire sibling focus split, the fishing calculator's real inputs).
+- 14 new guides: Hellgates, the Depths, the Mists, Roads of Avalon, Faction Warfare, zones and death loss, tracking, arenas, group dungeons, islands and farming, gathering T4 to T8, the Destiny Board, enchanting and ZvZ for new guild members. A new PvP category holds the PvP ones.
+- `/guides` shows three cards across on wide screens so 30 guides fill every row. Sources per guide: `docs/data/guides-source.json`.
+- Not done: wiki.albiononline.com, albiononline.com and the forum blocked direct fetches, so mechanics were checked through search-indexed copies; figures that could not be confirmed for the current patch are left out.
 
 ## Redesign batch 0: foundation — 6 November 2026
 

@@ -86,11 +86,11 @@
   min-height: 44px;
 }
 
-/* Cover cards: four across on wide screens, two on tablets, one on phones, so a full library
-   (16 guides) never leaves a card alone on its row */
+/* Cover cards: three across on wide screens, two on tablets, one on phones, so the full library
+   (30 guides) fills every row */
 :global(.app.outpost) .grid.grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
 

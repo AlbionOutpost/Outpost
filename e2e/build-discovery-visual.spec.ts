@@ -165,7 +165,7 @@ test("equipment discovery preserves filters, private boundaries and saved favori
         await anonymous.close();
       }
       await page.goto("/guides");
-      await page.getByLabel("Search guides", { exact: true }).fill("market quote");
+      await page.getByLabel("Search guides", { exact: true }).fill("price age");
       await page.getByLabel("Search guides", { exact: true }).press("Enter");
       await expect(page.locator(".grind-guide-card")).toHaveCount(1);
       await page.locator(".grind-guide-card").click();

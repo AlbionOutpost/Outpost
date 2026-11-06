@@ -49,7 +49,10 @@ test("Outpost branding, landing actions and navigation retain working destinatio
     .click();
   await expect(page.locator(".desktop-navigation a[aria-current=page]")).toHaveText("Guides");
   await expect(
-    page.getByRole("heading", { name: "Read a market quote", exact: true }),
+    page.getByRole("heading", {
+      name: "How to Read Market Prices: Buy Orders, Sell Orders and Price Age",
+      exact: true,
+    }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/signin/);

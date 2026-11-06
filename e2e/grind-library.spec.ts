@@ -57,15 +57,22 @@ test("restored guides are readable documents and compositions retain every membe
   await expect(page.locator(".grind-guide-card")).toHaveCount(1);
   await page
     .getByRole("link")
-    .filter({ has: page.getByRole("heading", { name: "Fishing Leveling Guide", exact: true }) })
+    .filter({
+      has: page.getByRole("heading", {
+        name: "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
+        exact: true,
+      }),
+    })
     .click();
-  await expect(page.locator("h1")).toHaveText("Fishing Leveling Guide");
-  await expect(page.locator("article")).toContainText("Fisherman Mastery");
+  await expect(page.locator("h1")).toHaveText(
+    "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
+  );
+  await expect(page.locator("article")).toContainText("Fishing Specialist");
   expect(
     await page.locator("article script, article iframe, article input, article select").count(),
   ).toBe(0);
-  await page.getByRole("link", { name: "Leveling Fishing in Albion Online", exact: true }).click();
-  await expect(page).toHaveURL(/#section-leveling-fishing-in-albion-online$/);
+  await page.getByRole("link", { name: "The two lines", exact: true }).click();
+  await expect(page).toHaveURL(/#section-the-two-lines$/);
   await page.goto("/compositions/library/dreamteam");
   await expect(page.getByRole("list", { name: /roster$/ }).getByRole("listitem")).toHaveCount(17);
   for (const width of [320, 375, 390, 768, 1440, 1920]) {
