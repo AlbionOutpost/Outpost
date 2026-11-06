@@ -693,7 +693,9 @@ test("membership callout precedes activity discovery and the footer keeps its na
   const footer = page.locator("footer.site-footer");
   const footerNavigation = footer.getByRole("navigation", { name: "Footer", exact: true });
   await expect(footerNavigation).toBeVisible();
-  await expect(footerNavigation.getByRole("link")).toHaveCount(6);
+  // Everything is free for now: the footer no longer links the Supporter plan
+  await expect(footerNavigation.getByRole("link")).toHaveCount(5);
+  await expect(footerNavigation.getByRole("link", { name: "Supporter" })).toHaveCount(0);
   await expect(
     footer.getByRole("link", { name: "Builds by activity", exact: true }),
   ).toHaveAttribute("href", "/builds/activities?region=asia");

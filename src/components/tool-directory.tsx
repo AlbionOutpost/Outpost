@@ -2,12 +2,14 @@
 import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
-import { Search, ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
-import { tools, toolGroups } from "@/lib/tool-directory";
+import { ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
+import { tools, toolGroups, toolPaintings, toolSections } from "@/lib/tool-directory";
+import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
 import { useOutpostRegion } from "./region-context";
 import { WorkspaceHeading } from "./workspace-heading";
 import { SectionHeading } from "./section-heading";
+import { SearchInput } from "./field";
 
 type Tool = (typeof tools)[number];
 // Each tool crops one of the five paintings so the directory reads as places, not a list.
@@ -36,102 +38,6 @@ const scenes: Record<string, { scene: string; at: string }> = {
   "/timers": { scene: "economy", at: "10% 30%" },
   "/tools/kill-feed": { scene: "build", at: "15% 70%" },
 };
-/** Tools with a painted emblem of their own; the rest show their line glyph in a medallion. */
-const paintings: Record<string, string> = {
-  "/tools/market": "tool-market",
-  "/tools/crafting": "tool-craft",
-  "/shopping-list": "tool-planner",
-  "/tools/kill-feed": "kill-skull",
-  "/builds/new": "strip-builds",
-  "/compositions/new": "strip-comps",
-  "/groups": "team-roles",
-  "/timers": "team-calendar",
-};
-/** Tools reading live observations get the ember chip; the rest stay muted. */
-const live = new Set([
-  "/tools/market",
-  "/tools/gold",
-  "/tools/transporting",
-  "/tools/laborers",
-  "/tools/kill-feed",
-]);
-/** Sections of the directory, each inside one category filter; 3, 4 or 6 tools fill whole rows. */
-const sections: {
-  id: string;
-  title: React.ReactNode;
-  line: string;
-  link?: { href: string; label: string };
-  hrefs: string[];
-}[] = [
-  {
-    id: "tools-trade",
-    title: (
-      <>
-        Trade and <em>travel</em>
-      </>
-    ),
-    line: "City prices, trade margins, cargo, gold, the Roads of Avalon and game tables.",
-    link: { href: "/tools/market", label: "Open Market Explorer" },
-    hrefs: [
-      "/tools/market",
-      "/tools/flipping",
-      "/tools/transporting",
-      "/tools/gold",
-      "/tools/avalon-mapper",
-      "/tools/reference",
-    ],
-  },
-  {
-    id: "tools-production",
-    title: (
-      <>
-        Crafting and <em>production</em>
-      </>
-    ),
-    line: "Costs, returns and the shopping list for what you make.",
-    link: { href: "/shopping-list", label: "Open the Crafting Planner" },
-    hrefs: [
-      "/tools/crafting",
-      "/shopping-list",
-      "/tools/refining",
-      "/tools/enchanting",
-      "/tools/cooking",
-      "/tools/alchemy",
-    ],
-  },
-  {
-    id: "tools-gathering",
-    title: (
-      <>
-        Gathering and <em>focus</em>
-      </>
-    ),
-    line: "Farms, fishing, laborers and the specs that cut your focus cost.",
-    hrefs: ["/tools/farming", "/tools/fishing", "/tools/laborers", "/tools/mastery"],
-  },
-  {
-    id: "tools-builds",
-    title: (
-      <>
-        Builds and <em>comps</em>
-      </>
-    ),
-    line: "Make a loadout, plan a party, look up an item.",
-    link: { href: "/builds/library", label: "Build library" },
-    hrefs: ["/builds/new", "/compositions/new", "/items"],
-  },
-  {
-    id: "tools-teams",
-    title: (
-      <>
-        Teams and <em>community</em>
-      </>
-    ),
-    line: "Recent fights, published builds, your Team and your own timers.",
-    link: { href: "/groups", label: "Your Teams" },
-    hrefs: ["/tools/kill-feed", "/builds", "/groups", "/timers"],
-  },
-];
 function subscribeToolShortcuts(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener("outpost:tool-shortcuts", callback);
@@ -147,13 +53,17 @@ function readToolShortcuts() {
     return "[]";
   }
 }
-/** The tool's own painted emblem; tools without one let their card's scene carry them. */
+/** The tool's own painted emblem, else its line glyph in a small well of the same size. */
 function ToolMark({ tool, size }: { tool: Tool; size: number }) {
-  const painting = paintings[tool.href];
+  const painting = toolPaintings[tool.href];
   return painting ? (
     // eslint-disable-next-line @next/next/no-img-element -- owner-supplied task emblem
     <img src={`/albion/icons/${painting}.webp`} alt="" width={size} height={size} />
-  ) : null;
+  ) : (
+    <span className="tool-mark well">
+      <ToolIcon name={tool.icon} size={Math.round(size * 0.46)} />
+    </span>
+  );
 }
 export function ToolDirectory() {
   const region = useOutpostRegion();
@@ -197,9 +107,8 @@ export function ToolDirectory() {
       />
       <div className="directory-toolbar">
         <label className="directory-search">
-          <Search size={18} aria-hidden="true" />
           <span className="sr-only">Find a tool</span>
-          <input
+          <SearchInput
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -256,7 +165,7 @@ export function ToolDirectory() {
         </p>
       )}
       <div className="directory-groups">
-        {sections.map((section) => {
+        {toolSections.map((section) => {
           const rows = section.hrefs
             .map((href) => matches.find((t) => t.href === href))
             .filter((t): t is Tool => !!t);
@@ -268,7 +177,12 @@ export function ToolDirectory() {
             >
               <SectionHeading
                 id={`${section.id}-title`}
-                title={section.title}
+                title={
+                  <>
+                    {section.title.slice(0, -section.accent.length)}
+                    <em>{section.accent}</em>
+                  </>
+                }
                 line={
                   <>
                     <span className="directory-chip">
@@ -286,25 +200,13 @@ export function ToolDirectory() {
                     key={t.href}
                     data-scene={scenes[t.href]?.scene ?? "economy"}
                   >
-                    <Link
-                      className="directory-entry-link"
-                      data-emblem={paintings[t.href] ? "" : undefined}
-                      href={`${t.href}?region=${region}`}
-                    >
-                      {paintings[t.href] && (
-                        <span className="tool-symbol" aria-hidden="true">
-                          <ToolMark tool={t} size={56} />
-                        </span>
-                      )}
+                    <Link className="directory-entry-link" href={`${t.href}?region=${region}`}>
+                      <span className="tool-symbol" aria-hidden="true">
+                        <ToolMark tool={t} size={56} />
+                      </span>
                       <span className="directory-entry-copy">
                         <h3>{t.title}</h3>
                         <p>{t.description}</p>
-                        <span
-                          className="tool-availability"
-                          data-live={live.has(t.href) ? "" : undefined}
-                        >
-                          {t.state}
-                        </span>
                       </span>
                       <ArrowUpRight className="directory-arrow" size={18} aria-hidden="true" />
                     </Link>

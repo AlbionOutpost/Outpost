@@ -1,0 +1,136 @@
+{
+  "scope": "public/library/grind-guides.json: 30 guides written by Outpost (author \"Outpost\"). The 8 archive slugs keep their URLs and the facts that still hold; text, titles and structure are new. No creator script, video or third-party guide text was copied.",
+  "checkedAt": "2026-11-06",
+  "method": "Mechanics were checked against the official wiki, albiononline.com news/changelogs and forum patch notes. Direct fetches of those hosts were blocked by a bot challenge, so the checks used search-indexed extracts of the pages listed below. Figures that could not be confirmed for the current patch are described without numbers or left out. Topic choice followed popular YouTube guide titles (titles and descriptions only).",
+  "topicResearch": [
+    "https://www.youtube.com/watch?v=e3P1sj-A50w",
+    "https://www.youtube.com/watch?v=bZqAeMfrUTI",
+    "https://www.youtube.com/watch?v=PIa8w_oZjfk",
+    "https://www.youtube.com/watch?v=Wc9b9Yv0DQc",
+    "https://www.youtube.com/watch?v=DT-SNiJZemI",
+    "https://www.youtube.com/watch?v=8CTNiFo8fbU"
+  ],
+  "sources": {
+    "first-silver": [
+      "https://wiki.albiononline.com/wiki/Marketplace",
+      "https://wiki.albiononline.com/wiki/Premium"
+    ],
+    "focus-and-resource-return-rate": [
+      "docs/CALCULATORS.md (return profile, focus formula)",
+      "https://wiki.albiononline.com/wiki/Local_Production_Bonus",
+      "https://wiki.albiononline.com/wiki/Brecilien",
+      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/"
+    ],
+    "haul-between-cities": [
+      "https://wiki.albiononline.com/wiki/Types_of_Regions",
+      "https://wiki.albiononline.com/wiki/Marketplace"
+    ],
+    "first-solo-pve-build": ["https://wiki.albiononline.com/wiki/Destiny_Board"],
+    "ancient-lands": [
+      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/",
+      "https://forum.albiononline.com/index.php/Thread/224642-8-September-2026-Dragonfire-Patch-1/",
+      "Owner's archive guide (facts kept: islands, Keystones, Drakes, Bleedout, rewards)"
+    ],
+    "corrupted-dungeon-ratting": [
+      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
+      "Owner's archive guide (facts kept: entry, boss bar points, IP soft caps)"
+    ],
+    "black-zone-gathering-guide": [
+      "https://forum.albiononline.com/index.php/Thread/207949-03-February-2025-Rogue-Frontier-Update/",
+      "https://wiki.albiononline.com/wiki/Outlands",
+      "Owner's archive guide (facts kept: journals, mounts, biomes, escape sequence)"
+    ],
+    "dragonfire-items": [
+      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/",
+      "src/lib/albion/game/recipes.json (recipes)"
+    ],
+    "market-flipping-guide": ["https://wiki.albiononline.com/wiki/Marketplace"],
+    "fishing-leveling-guide": [
+      "docs/data/archived-fishing-source.json",
+      "https://wiki.albiononline.com/wiki/Learning_Points"
+    ],
+    "albion-journal-guide": ["docs/data/archived-journal-source.json"],
+    "achievements": [
+      "Owner's archive achievement list",
+      "https://albiononline.com/news/final-clc-coming",
+      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/"
+    ],
+    "read-a-market-quote": [
+      "https://www.albion-online-data.com/",
+      "https://wiki.albiononline.com/wiki/Marketplace"
+    ],
+    "count-the-whole-cost": [
+      "https://wiki.albiononline.com/wiki/Marketplace",
+      "docs/CALCULATORS.md"
+    ],
+    "build-with-a-purpose": ["Outpost build editor"],
+    "put-every-role-in-place": ["Outpost comp editor"],
+    "hellgates-guide": [
+      "https://wiki.albiononline.com/wiki/Hellgate",
+      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
+      "https://wiki.albiononline.com/wiki/Antiquarian's_Den"
+    ],
+    "abyssal-depths-guide": [
+      "https://albiononline.com/news/dev-talk-the-depths",
+      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
+      "https://forum.albiononline.com/index.php/Thread/214527-23-July-2025-Abyssal-Depths-Patch-2/"
+    ],
+    "mists-guide": [
+      "https://wiki.albiononline.com/wiki/Mists",
+      "https://wiki.albiononline.com/wiki/Brecilien",
+      "https://forum.albiononline.com/index.php/Thread/215607-26-August-2025-Abyssal-Depths-Patch-4/"
+    ],
+    "roads-of-avalon-guide": [
+      "https://wiki.albiononline.com/wiki/Roads_of_Avalon",
+      "https://wiki.albiononline.com/wiki/Hideout",
+      "https://wiki.albiononline.com/wiki/Avalonian_Dungeons"
+    ],
+    "faction-warfare-guide": [
+      "https://forum.albiononline.com/index.php/Thread/218869-24-November-2025-Realm-Divided-Update/",
+      "https://forum.albiononline.com/index.php/Thread/220739-23-February-2026-Realm-Divided-Part-II/",
+      "https://wiki.albiononline.com/wiki/Faction_Warfare"
+    ],
+    "zones-and-death-loss": [
+      "https://wiki.albiononline.com/wiki/Types_of_Regions",
+      "https://wiki.albiononline.com/wiki/Flagging",
+      "https://wiki.albiononline.com/wiki/Open_World"
+    ],
+    "tracking-guide": [
+      "https://wiki.albiononline.com/wiki/Tracking",
+      "https://albiononline.com/news/guide-tracking",
+      "https://wiki.albiononline.com/wiki/Rare_Animal_Remains"
+    ],
+    "crystal-arena-guide": [
+      "https://wiki.albiononline.com/wiki/Crystal_Arena",
+      "https://wiki.albiononline.com/wiki/Arena",
+      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/"
+    ],
+    "group-dungeons-guide": [
+      "https://wiki.albiononline.com/wiki/Randomized_Dungeons",
+      "https://wiki.albiononline.com/wiki/Static_Dungeons",
+      "https://wiki.albiononline.com/wiki/Avalonian_Dungeons"
+    ],
+    "islands-and-farming-guide": [
+      "https://wiki.albiononline.com/wiki/Island_Farms",
+      "https://wiki.albiononline.com/wiki/Player_Island",
+      "https://albiononline.com/news/guide-farming"
+    ],
+    "gathering-progression-guide": [
+      "https://wiki.albiononline.com/wiki/Gathering_Gear",
+      "https://albiononline.com/news/gatherer-gear-explained"
+    ],
+    "destiny-board-guide": [
+      "https://wiki.albiononline.com/wiki/Destiny_Board",
+      "https://wiki.albiononline.com/wiki/Learning_Points",
+      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/"
+    ],
+    "enchanting-guide": [
+      "https://wiki.albiononline.com/wiki/Enchanting",
+      "src/lib/albion/game/upgrades.json (material counts)"
+    ],
+    "zvz-guide": [
+      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/",
+      "https://forum.albiononline.com/index.php/Thread/207949-03-February-2025-Rogue-Frontier-Update/"
+    ]
+  }
+}

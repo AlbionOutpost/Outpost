@@ -12,46 +12,13 @@ import { CommunityBuildCard } from "@/components/community-build-card";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { EmptyWell } from "@/components/empty-well";
+import { Pagination } from "@/components/pagination";
 import { SectionHeading } from "@/components/section-heading";
 import { ArrowRight, Layers, LayoutGrid, List } from "lucide-react";
 import { z } from "zod";
+import styles from "./favorites.module.css";
 export const dynamic = "force-dynamic";
 export const metadata = privateMetadata("Favorites");
-
-function Pages({
-  label,
-  page,
-  pages,
-  to,
-}: {
-  label: string;
-  page: number;
-  pages: number;
-  to: (page: number) => string;
-}) {
-  if (pages <= 1) return null;
-  return (
-    <nav className="library-pagination" aria-label={label}>
-      {page > 1 ? (
-        <Link className="button secondary" href={to(page - 1)}>
-          Previous page
-        </Link>
-      ) : (
-        <span />
-      )}
-      <span>
-        Page {page} / {pages}
-      </span>
-      {page < pages ? (
-        <Link className="button secondary" href={to(page + 1)}>
-          Next page
-        </Link>
-      ) : (
-        <span />
-      )}
-    </nav>
-  );
-}
 
 export default async function Favorites({
   searchParams,
@@ -93,7 +60,7 @@ export default async function Favorites({
   } = result || {};
   return (
     <div
-      className={`builds-ecosystem builds-hub ecosystem-favorites-page personal-favorites-collection view-${view}`}
+      className={`builds-ecosystem ecosystem-favorites-page personal-favorites-collection view-${view}`}
     >
       <BuildDiscoveryHeader
         active="favorites"
@@ -103,7 +70,7 @@ export default async function Favorites({
       />
       <div className="favorites-sections">
         <DeviceLibraryFavorites />
-        <section className="favorites-account" aria-label="Account favorites">
+        <section className={`favorites-account ${styles.account}`} aria-label="Account favorites">
           {!userId ? (
             <div className="favorites-group">
               <SectionHeading
@@ -166,7 +133,10 @@ export default async function Favorites({
                         <option value="title">Title A–Z</option>
                       </BuildSortSelect>
                     </label>
-                    <div className="ecosystem-view-switch" aria-label="Favorite build layout">
+                    <div
+                      className="segmented ecosystem-view-switch"
+                      aria-label="Favorite build layout"
+                    >
                       <Link
                         href={href({
                           view: "grid",
@@ -234,11 +204,11 @@ export default async function Favorites({
                     }
                   />
                 )}
-                <Pages
+                <Pagination
                   label="Favorite build pages"
                   page={page}
                   pages={pages}
-                  to={(n) => href({ page: String(n), compPage: String(compPage) })}
+                  href={(n) => href({ page: String(n), compPage: String(compPage) })}
                 />
               </section>
               <section className="favorites-group" aria-labelledby="favorite-comps-heading">
@@ -276,11 +246,11 @@ export default async function Favorites({
                     }
                   />
                 )}
-                <Pages
+                <Pagination
                   label="Favorite composition pages"
                   page={compPage}
                   pages={compPages}
-                  to={(n) => href({ page: String(page), compPage: String(n) })}
+                  href={(n) => href({ page: String(page), compPage: String(n) })}
                 />
               </section>
             </>

@@ -12,6 +12,7 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
+  RetryLine,
 } from "./calculator-shell";
 import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
@@ -365,7 +366,7 @@ export function ProductionCalculator({
         </span>
       </div>
       {kind !== "enchanting" && (
-        <div className={s.tiers} role="group" aria-label="Recipe tier">
+        <div className={`segmented ${s.tiers}`} role="group" aria-label="Recipe tier">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((tier) => (
             <button
               type="button"
@@ -563,16 +564,36 @@ export function ProductionCalculator({
             ))}
           </WellSelect>
         </label>
-        <label>
-          Crafts / upgrades
-          <input
-            type="number"
-            min={1}
-            max={100000}
-            value={draft.batches}
-            onChange={(e) => update("batches", Number(e.target.value))}
-          />
-        </label>
+        <div className={s.qty}>
+          <label htmlFor="production-batches">Crafts / upgrades</label>
+          <div className={s.qtyWell}>
+            <input
+              id="production-batches"
+              type="number"
+              min={1}
+              max={100000}
+              value={draft.batches}
+              onChange={(e) => update("batches", Number(e.target.value))}
+            />
+            <div
+              className={`segmented ${s.quick}`}
+              role="group"
+              aria-label="Batch quantity shortcuts"
+            >
+              {[1, 10, 100].map((n) => (
+                <button
+                  type="button"
+                  key={n}
+                  aria-label={`Set ${n} batches`}
+                  aria-pressed={draft.batches === n}
+                  onClick={() => update("batches", n)}
+                >
+                  {n.toLocaleString()}×
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
         <label>
           Output quality
           <WellSelect
@@ -588,19 +609,6 @@ export function ProductionCalculator({
             ))}
           </WellSelect>
         </label>
-      </div>
-      <div className={s.quick} role="group" aria-label="Batch quantity shortcuts">
-        {[1, 10, 100].map((n) => (
-          <button
-            type="button"
-            key={n}
-            aria-label={`Set ${n} batches`}
-            aria-pressed={draft.batches === n}
-            onClick={() => update("batches", n)}
-          >
-            {n.toLocaleString()}×
-          </button>
-        ))}
       </div>
       {confirmLegacyFees && (
         <div className={s.notice} role="alert">
@@ -823,12 +831,7 @@ export function ProductionCalculator({
       {busy ? (
         <StatusLine>Loading prices from {draft.materialCity}…</StatusLine>
       ) : error ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{error}</StatusLine>
-          <button type="button" onClick={load}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={load}>{error}</RetryLine>
       ) : attempted && !result?.complete ? (
         <StatusLine tone="stale">
           Some prices weren’t observed for this market or quality. Type the missing ones; observed

@@ -1,25 +1,59 @@
 /* Crafting, refining, enchanting, cooking and alchemy: what only they need on top of the
    shared calculator wells in calculator-shell.module.css. */
-:global(.app.outpost) .quick.quick {
+/* Crafts: the number with its 1×, 10× and 100× shortcuts inside the same well, as one control */
+:global(.app.outpost) .qty.qty {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 6px;
+  min-width: 0;
+}
+:global(.app.outpost) .qtyWell.qtyWell {
   display: flex;
-  gap: var(--space-2);
-  margin-top: calc(var(--space-2) * -1);
-}
-:global(.app.outpost) .quick.quick button {
-  min-width: 56px;
-  min-height: 36px;
-  padding: 0 12px;
+  align-items: center;
+  min-width: 0;
+  min-height: 42px;
+  padding-right: 3px;
   border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--well);
-  color: var(--secondary);
-  font: 600 12px/1 var(--font-ui);
-  cursor: pointer;
+  box-shadow: var(--well-inset);
 }
-:global(.app.outpost) .quick.quick button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
+:global(.app.outpost) .qtyWell.qtyWell:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .qtyWell.qtyWell:has(input:focus-visible) {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:global(.app.outpost) .qtyWell.qtyWell > input {
+  flex: 1 1 4ch;
+  min-width: 6ch;
+  min-height: 40px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  outline: none;
+}
+:global(.app.outpost) .qtyWell.qtyWell > .quick {
+  flex: none;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+:global(.app.outpost) .qtyWell.qtyWell > .quick > button {
+  padding: 0 9px;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+/* Phones: the quantity takes the whole row so the number keeps its room */
+@media (max-width: 700px) {
+  :global(.app.outpost) .qty.qty {
+    grid-column: 1 / -1;
+  }
 }
 :global(.app.outpost) .notice.notice {
   display: grid;
@@ -137,21 +171,9 @@
 :global(.app.outpost) .tiers.tiers {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 4px;
 }
-:global(.app.outpost) .tiers.tiers button {
-  min-height: 40px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  color: var(--secondary);
-  font: 700 13px/1 var(--font-display);
-  cursor: pointer;
-}
-:global(.app.outpost) .tiers.tiers button[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
+:global(.app.outpost) .tiers.tiers > button {
+  padding: 0;
 }
 :global(.app.outpost) .browserNote.browserNote {
   margin: 0;

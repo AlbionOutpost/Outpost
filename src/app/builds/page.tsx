@@ -1,11 +1,12 @@
 import { BuildsNextStep } from "@/components/builds-next-step";
+import { WellSelect } from "@/components/well-select";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { BuildRegionInput } from "@/components/build-region-link";
-import { ItemIcon } from "@/components/item-icon";
 import { MobileFilterPanel } from "@/components/mobile-filter-panel";
 import { CommunityBuildCard } from "@/components/community-build-card";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { EmptyWell } from "@/components/empty-well";
+import { Pagination } from "@/components/pagination";
 import { SectionHeading } from "@/components/section-heading";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
 import { BuildDiscoverySearch } from "@/components/build-discovery-search";
@@ -116,7 +117,7 @@ export default async function Builds({
                 <option value="saved">Most saved</option>
               </BuildSortSelect>
             </label>
-            <div className="ecosystem-view-switch" aria-label="Build layout">
+            <div className="segmented ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
                 aria-label="Grid view"
@@ -153,23 +154,31 @@ export default async function Builds({
                 />
                 <label>
                   Collection
-                  <select name="mine" defaultValue={mine ? "1" : "0"} aria-label="Build collection">
+                  <WellSelect
+                    name="mine"
+                    defaultValue={mine ? "1" : "0"}
+                    aria-label="Build collection"
+                  >
                     <option value="0">Public builds</option>
                     <option value="1">My builds</option>
-                  </select>
+                  </WellSelect>
                 </label>
                 <label>
                   Content type
-                  <select name="content" defaultValue={content} aria-label="Filter build content">
+                  <WellSelect
+                    name="content"
+                    defaultValue={content}
+                    aria-label="Filter build content"
+                  >
                     <option value="">All activities</option>
                     {contentTypes.map((c) => (
                       <option key={c}>{c}</option>
                     ))}
-                  </select>
+                  </WellSelect>
                 </label>
                 <label>
                   Specific weapon
-                  <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
+                  <WellSelect name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
                     <option value="">All weapons</option>
                     {choices
                       .filter((w) => !family || w.family === family)
@@ -178,7 +187,7 @@ export default async function Builds({
                           {w.name}
                         </option>
                       ))}
-                  </select>
+                  </WellSelect>
                 </label>
                 <div className="library-filter-actions">
                   <button className="button primary" type="submit">
@@ -209,31 +218,6 @@ export default async function Builds({
               </p>
               <SaveBuildFilter path="/builds" query={query} />
             </div>
-            <nav
-              className="weapon-shortcuts ecosystem-weapon-shortcuts"
-              aria-label="Weapon shortcuts"
-            >
-              <Link
-                href={href({ weapon: "", family: "", page: "1" })}
-                aria-current={!weapon ? "true" : undefined}
-              >
-                All weapons
-              </Link>
-              {[
-                ["MAIN_AXE", "Battleaxe", "T4_MAIN_AXE"],
-                ["MAIN_SWORD", "Broadsword", "T4_MAIN_SWORD"],
-                ["2H_BOW", "Bow", "T4_2H_BOW"],
-              ].map(([code, name, item]) => (
-                <Link
-                  key={code}
-                  href={href({ weapon: code, family: "", page: "1" })}
-                  aria-current={weapon === code ? "true" : undefined}
-                >
-                  <ItemIcon id={item} size={25} />
-                  {name}
-                </Link>
-              ))}
-            </nav>
             <div className="build-discovery-grid account-build-grid">
               {builds.map((b) => (
                 <CommunityBuildCard
@@ -298,27 +282,12 @@ export default async function Builds({
                 </div>
               </section>
             )}
-            {pages > 1 && (
-              <nav className="library-pagination" aria-label="Community build pages">
-                {page > 1 ? (
-                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                    Previous page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-                <span>
-                  Page {page} / {pages}
-                </span>
-                {page < pages ? (
-                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                    Next page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-              </nav>
-            )}
+            <Pagination
+              label="Community build pages"
+              page={page}
+              pages={pages}
+              href={(n) => href({ page: String(n) })}
+            />
           </section>
         </div>
       )}

@@ -1,6 +1,6 @@
 "use client";
 import "./history.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -19,6 +19,7 @@ export function History({
   embedded = false,
   city: controlledCity,
   onCityChange,
+  actions,
 }: {
   kind?: "history" | "gold";
   item?: string;
@@ -30,6 +31,8 @@ export function History({
   /** History city owned by the host (the market page follows the selected city row). */
   city?: string;
   onCityChange?: (city: string) => void;
+  /** Host controls that sit at the end of the controls row, beside Refresh. */
+  actions?: ReactNode;
 }) {
   const region = useOutpostRegion();
   const [ownCity, setOwnCity] = useState("Lymhurst");
@@ -133,8 +136,8 @@ export function History({
         ? { notation: "compact", maximumFractionDigits: max - min < max * 0.05 ? 2 : 1 }
         : { maximumFractionDigits: 0 },
     );
-  // Hourly series (gold) label the time of day; daily series label the date.
-  const hourly = kind === "gold" || end - start < 2 * 86_400_000;
+  // A series inside two days labels the time of day; anything longer labels the date.
+  const hourly = end - start < 2 * 86_400_000;
   const day = (t: string) =>
     hourly
       ? `${new Date(sourceTimestamp(t)).toISOString().slice(11, 16)} UTC`
@@ -201,10 +204,40 @@ export function History({
             </div>
           )}
           {refresh}
+          {actions}
         </form>
       )}
+      {!visible.length && kind === "gold" && (
+        // The figures and chart keep their places while there is nothing to show
+        <dl className="history-figures">
+          {["Latest", "Lowest", "Highest"].map((label) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>
+                <b className="numeric">
+                  <Unavailable />
+                </b>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       {!visible.length && (
-        <div className="history-state">
+        <div className={`history-state${kind === "gold" ? " is-chart" : ""}`}>
+          {kind === "gold" && (
+            <svg viewBox="0 0 700 210" preserveAspectRatio="none" aria-hidden="true">
+              {[0, 0.5, 1].map((fraction) => (
+                <line
+                  key={fraction}
+                  x1="0"
+                  x2="700"
+                  y1={Y1 - fraction * (Y1 - Y0)}
+                  y2={Y1 - fraction * (Y1 - Y0)}
+                  className="history-grid"
+                />
+              ))}
+            </svg>
+          )}
           <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
           {failed && (
             <button type="button" className="pill-link is-small" onClick={() => void load()}>

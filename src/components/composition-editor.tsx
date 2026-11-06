@@ -13,7 +13,6 @@ import {
   Download,
   GripVertical,
   Plus,
-  Search,
   Trash2,
   Undo2,
   Upload,
@@ -37,6 +36,7 @@ import { StatusLine } from "./status-line";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
 import styles from "./comps.module.css";
+import { SearchInput } from "./field";
 function member(): MemberSlot {
   return {
     id: crypto.randomUUID(),
@@ -376,17 +376,18 @@ export function CompositionEditor({
   }
   const sizePills = (
     <div className={styles.sizePills} role="group" aria-label="Party size">
-      {sizes.map((n) => (
-        <button
-          type="button"
-          className={styles.sizePill}
-          aria-pressed={n === draft.slots.length}
-          key={n}
-          onClick={() => resize(n)}
-        >
-          {n === 1 ? "Solo" : `${n} players`}
-        </button>
-      ))}
+      <span className="segmented">
+        {sizes.map((n) => (
+          <button
+            type="button"
+            aria-pressed={n === draft.slots.length}
+            key={n}
+            onClick={() => resize(n)}
+          >
+            {n === 1 ? "Solo" : `${n} players`}
+          </button>
+        ))}
+      </span>
       <label className={styles.sizeCustom}>
         <span>Other</span>
         <input
@@ -499,20 +500,23 @@ export function CompositionEditor({
             </label>
             <label className={styles.field}>
               Activity
-              <input
-                list="composition-activity-options"
+              <WellSelect
                 aria-label="Content type"
                 required
-                maxLength={80}
                 value={draft.contentType}
                 onChange={(event) => update("contentType", event.target.value)}
-              />
+              >
+                {/* A comp saved with an activity outside the list keeps it */}
+                {[
+                  ...(contentTypes.some((activity) => activity === draft.contentType)
+                    ? []
+                    : [draft.contentType]),
+                  ...contentTypes,
+                ].map((activity) => (
+                  <option key={activity}>{activity}</option>
+                ))}
+              </WellSelect>
             </label>
-            <datalist id="composition-activity-options">
-              {contentTypes.map((activity) => (
-                <option key={activity} value={activity} />
-              ))}
-            </datalist>
           </div>
           {draft.slots.length > 0 && (
             <div className={styles.sizeRow}>
@@ -628,7 +632,7 @@ export function CompositionEditor({
                       </button>
                     )}
                     <span
-                      className={`${styles.segment} ${styles.wideOnly}`}
+                      className={`segmented ${styles.wideOnly}`}
                       role="group"
                       aria-label="Comp layout"
                     >
@@ -878,15 +882,12 @@ export function CompositionEditor({
               <>
                 <label className={styles.field}>
                   Search saved builds
-                  <span className={styles.searchWell}>
-                    <Search size={16} aria-hidden="true" />
-                    <input
-                      type="search"
-                      value={buildQuery}
-                      onChange={(e) => setBuildQuery(e.target.value)}
-                      placeholder="Find a loadout…"
-                    />
-                  </span>
+                  <SearchInput
+                    type="search"
+                    value={buildQuery}
+                    onChange={(e) => setBuildQuery(e.target.value)}
+                    placeholder="Find a loadout…"
+                  />
                 </label>
                 {draft.slots.length > 0 && (
                   <label className={styles.field}>

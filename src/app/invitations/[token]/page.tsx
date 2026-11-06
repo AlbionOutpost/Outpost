@@ -82,7 +82,6 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
       </>
     );
   const { group } = invitation;
-  const words = group.name.trim().split(/\s+/);
   const expires = invitation.expiresAt;
   return (
     <div className={styles.page}>
@@ -90,7 +89,8 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
         scene="comps"
         emblem={<TeamMark name={group.name} />}
         title={`Join ${group.name}`}
-        accent={words.at(-1)}
+        // The ember word stays on our word, never on the team's own name
+        accent="Join"
         description={
           group.description || "You have been invited to this team's workspace on Outpost."
         }

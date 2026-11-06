@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { MoreHorizontal, Search } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { StatusLine } from "./status-line";
+import { Pagination } from "./pagination";
 import { WellSelect } from "./well-select";
+import { SearchInput } from "./field";
 import type { TeamContext } from "./group-dashboard";
 import { plural, roleLabel } from "./group-parts";
 import styles from "./teams.module.css";
@@ -60,10 +62,9 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         title="Members"
         line={`${plural(data.memberCount, "member")} · owners and admins manage roles`}
       />
-      <label className={styles.search}>
+      <label>
         <span className="sr-only">Find a member</span>
-        <Search size={16} aria-hidden="true" />
-        <input
+        <SearchInput
           type="search"
           aria-label="Find a member"
           value={query}
@@ -82,7 +83,7 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         </StatusLine>
       )}
       {roster.length ? (
-        <ul className={styles.list}>
+        <ul className={`${styles.list} ${styles.memberGrid}`}>
           {rows.map((m) => (
             <li key={m.userId}>
               <MemberRow
@@ -92,52 +93,54 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
                 }
               >
                 {role === "OWNER" && m.role !== "OWNER" && (
-                  <>
-                    <WellSelect
-                      aria-label={`Role for ${m.name}`}
-                      value={m.role}
-                      disabled={busy}
-                      onChange={(e) =>
-                        run({ action: "role", userId: m.userId, role: e.target.value })
-                      }
-                    >
-                      {["ADMIN", "OFFICER", "MEMBER"].map((r) => (
-                        <option key={r} value={r}>
-                          {roleLabel(r)}
-                        </option>
-                      ))}
-                    </WellSelect>
-                    <RowMenu label={`More actions for ${m.name}`}>
-                      <button
-                        type="button"
-                        role="menuitem"
-                        disabled={busy}
-                        aria-label={`Transfer ownership to ${m.name}`}
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              `Transfer ownership to ${m.name}? You will become an admin.`,
-                            )
-                          )
-                            run({ action: "transfer", userId: m.userId });
-                        }}
-                      >
-                        Make owner
-                      </button>
-                    </RowMenu>
-                  </>
-                )}
-                {manager && m.role !== "OWNER" && m.userId !== userId && (
-                  <button
-                    type="button"
-                    className={`button secondary ${styles.lossButton}`}
+                  <WellSelect
+                    aria-label={`Role for ${m.name}`}
+                    value={m.role}
                     disabled={busy}
-                    aria-label={`Remove ${m.name}`}
-                    onClick={() => run({ action: "remove", userId: m.userId })}
+                    onChange={(e) =>
+                      run({ action: "role", userId: m.userId, role: e.target.value })
+                    }
                   >
-                    Remove
-                  </button>
+                    {["ADMIN", "OFFICER", "MEMBER"].map((r) => (
+                      <option key={r} value={r}>
+                        {roleLabel(r)}
+                      </option>
+                    ))}
+                  </WellSelect>
                 )}
+                {/* The rare and destructive actions wait behind the row's menu */}
+                <RowMenu label={`More actions for ${m.name}`}>
+                  {role === "OWNER" && m.role !== "OWNER" && (
+                    <button
+                      type="button"
+                      role="menuitem"
+                      disabled={busy}
+                      aria-label={`Transfer ownership to ${m.name}`}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Transfer ownership to ${m.name}? You will become an admin.`,
+                          )
+                        )
+                          run({ action: "transfer", userId: m.userId });
+                      }}
+                    >
+                      Make owner
+                    </button>
+                  )}
+                  {manager && m.role !== "OWNER" && m.userId !== userId && (
+                    <button
+                      type="button"
+                      role="menuitem"
+                      data-tone="loss"
+                      disabled={busy}
+                      aria-label={`Remove ${m.name}`}
+                      onClick={() => run({ action: "remove", userId: m.userId })}
+                    >
+                      Remove from team
+                    </button>
+                  )}
+                </RowMenu>
               </MemberRow>
             </li>
           ))}
@@ -154,29 +157,7 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
           }
         />
       )}
-      {pages > 1 && (
-        <nav className={styles.pager} aria-label="Member pages">
-          <button
-            type="button"
-            className="pill-link is-small"
-            disabled={current === 1}
-            onClick={() => setPage(current - 1)}
-          >
-            Previous
-          </button>
-          <span>
-            {current} of {pages}
-          </span>
-          <button
-            type="button"
-            className="pill-link is-small"
-            disabled={current === pages}
-            onClick={() => setPage(current + 1)}
-          >
-            Next
-          </button>
-        </nav>
-      )}
+      <Pagination label="Member pages" page={current} pages={pages} onPage={setPage} />
     </section>
   );
 }

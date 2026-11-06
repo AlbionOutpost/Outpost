@@ -1,6 +1,7 @@
 /* Nothing here yet: an inset well (as on the landing) with one line and the one thing to do next */
 :global(.app.outpost) .well.well {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-5) var(--space-6);
@@ -15,8 +16,9 @@
   height: 48px;
   filter: drop-shadow(0 3px 8px #0009);
 }
+/* In a narrow panel the action drops under the copy instead of squeezing it */
 :global(.app.outpost) .copy.copy {
-  flex: 1;
+  flex: 1 1 260px;
   min-width: 0;
 }
 :global(.app.outpost) .title.title {

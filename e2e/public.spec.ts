@@ -209,17 +209,20 @@ test("theme and region survive reload, and desktop tool navigation supports Esca
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: /^Market explorer Compare city quotes/ })
+    .getByRole("link", { name: "Market explorer", exact: true })
     .click();
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   const tools = page.locator(".desktop-navigation summary").filter({ hasText: "Tools" });
   await tools.click();
-  await page.getByRole("link", { name: /^Crafting Plan equipment batches/ }).focus();
+  await page
+    .getByRole("navigation", { name: "Main navigation", exact: true })
+    .getByRole("link", { name: "Crafting", exact: true })
+    .focus();
   await page.keyboard.press("Escape");
   await expect(tools).toBeFocused();
-  await expect(
-    page.locator(".desktop-navigation details").filter({ hasText: "Markets & calculators" }),
-  ).not.toHaveAttribute("open");
+  await expect(page.locator(".desktop-navigation details.tools-dropdown")).not.toHaveAttribute(
+    "open",
+  );
   const more = page.locator(".more-dropdown > summary");
   await more.click();
   await expect(page.getByRole("link", { name: "My dashboard", exact: true })).toBeVisible();

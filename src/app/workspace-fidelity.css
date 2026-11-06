@@ -202,10 +202,6 @@
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
-.app.outpost .party-command-bar > label:first-child input {
-  font-size: 20px;
-  font-weight: 600;
-}
 @media (max-width: 1199px) {
   .crafting-proof-points {
     display: none;

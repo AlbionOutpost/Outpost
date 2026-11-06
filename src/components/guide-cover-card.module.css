@@ -44,13 +44,17 @@
   gap: 8px;
   padding: 96px 20px 20px;
 }
+/* Guide titles are full search-style titles, so they get two lines (reserved on every card so
+   the summaries line up) before clamping */
 :global(.app.outpost) .copy.copy h3 {
+  display: -webkit-box;
   overflow: hidden;
+  min-height: 2.2em;
   font-size: 24px;
   line-height: 1.1;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   text-shadow: 0 1px 2px #000c;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 :global(.app.outpost) .card.card > a:focus-visible {
   outline: 3px solid var(--accent);

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { apiHandler } from "@/lib/api-errors";
-import { tools } from "@/lib/tool-directory";
+import { toolPaintings, tools } from "@/lib/tool-directory";
 import { queryLibraryBuilds, queryLibraryCompositions, libraryGuides } from "@/lib/grind-library";
 import { activityName } from "@/lib/grind-library-types";
 import { familyName, familyScore, matchScore, terms } from "@/lib/search-rank";
@@ -138,7 +138,7 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
     title: t.title,
     subtitle: t.description,
     url: t.href,
-    emblem: toolEmblem(t.icon),
+    emblem: toolPaintings[t.href] ?? toolEmblem(t.icon),
   }));
   // Rank archive matches by title and weapon so an author name alone does not win.
   const libraryRows: Row[] = best(

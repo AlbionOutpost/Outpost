@@ -33,10 +33,6 @@
   font-size: 14px;
   min-width: 0;
 }
-.app.outpost .support-toolbar label select {
-  min-height: 42px;
-  font-size: 14px;
-}
 /* The dashboard is a return-to-work list with a separate day plan, rather than summary tiles. */
 /* Four ways in, as framed cards like the landing's, then the work panels */
 /* Timers prioritize the user's running reminders, with creation and maintenance secondary. */
@@ -276,10 +272,6 @@
 }
 .app.outpost .support-combat-feed .combat-toolbar > label {
   font-size: 14px;
-}
-.app.outpost .support-combat-feed .combat-toolbar select {
-  font-size: 14px;
-  min-height: 42px;
 }
 .app.outpost .support-combat-feed .combat-event-list {
   display: grid;
@@ -601,9 +593,6 @@
   font-size: 14px;
   margin: 20px 0;
 }
-.app.outpost .moderation-review-layout textarea {
-  min-height: 120px;
-}
 .app.outpost .support-legal {
   display: grid;
   grid-template-columns: 210px minmax(0, 78ch);
@@ -875,25 +864,6 @@
 
 /* Timers (inner-page pass): one framed toolbar — filter, count chip, reload and add on a
    single row — and an empty state that is a dashed well. */
-.app.outpost
-  .support-timers
-  :is(.timer-toolbar, .timer-composer)
-  select:not([multiple]):not([size]) {
-  min-height: 42px;
-  padding: 0 36px 0 var(--space-3);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
-      no-repeat,
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
-      no-repeat,
-    var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-  appearance: none;
-}
 
 /* Support pages: quiet, readable task surfaces. */
 .app.outpost:not(.home-route)

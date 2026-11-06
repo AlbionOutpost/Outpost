@@ -1,4 +1,4 @@
-/* Reference tables: a sticky index beside one table per row; a jump select on phones */
+/* Reference tables: a sticky index beside the one table it shows; a select on phones */
 :global(.app.outpost) .layout.layout {
   display: grid;
   grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
@@ -19,8 +19,6 @@
 :global(.app.outpost) .jump.jump {
   display: none;
   gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .index.index {
   display: grid;
@@ -44,6 +42,11 @@
   line-height: 1.3;
   text-decoration: none;
 }
+:global(.app.outpost) .index.index a[aria-current] {
+  background: var(--accent-wash);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent-ink);
+}
 :global(.app.outpost) .index.index a:hover {
   background: color-mix(in srgb, var(--text) 5%, transparent);
   color: var(--text);
@@ -59,6 +62,11 @@
 }
 :global(.app.outpost) .sections.sections > p {
   margin: 0;
+}
+/* One table at a time: the one the address names, else the first */
+:global(.app.outpost) .sections.sections:has(> .section:target) > .section:not(:target),
+:global(.app.outpost) .sections.sections:not(:has(> .section:target)) > .section ~ .section {
+  display: none;
 }
 :global(.app.outpost) .section.section {
   display: grid;
@@ -77,6 +85,18 @@
   display: grid;
   gap: var(--space-2);
   min-width: 0;
+}
+/* Two short tables in one section sit side by side */
+@media (min-width: 981px) {
+  :global(.app.outpost) .section.section:has(> .block[data-narrow] ~ .block[data-narrow]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  :global(.app.outpost)
+    .section.section:has(> .block[data-narrow] ~ .block[data-narrow])
+    > :first-child {
+    grid-column: 1 / -1;
+  }
 }
 :global(.app.outpost) .block.block h3 {
   margin: 0;
@@ -140,6 +160,26 @@
 }
 :global(.app.outpost) .table.table tbody tr:hover :is(th, td) {
   background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+:global(.app.outpost) .item.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+:global(.app.outpost) .noArt.noArt {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+}
+:global(.app.outpost) .item.item img {
+  flex: none;
+  border-radius: var(--radius-sm);
+}
+:global(.app.outpost) .table.table tr:has(.item) > :is(th, td) {
+  padding-block: 6px;
+  vertical-align: middle;
 }
 :global(.app.outpost) .city.city {
   white-space: nowrap;

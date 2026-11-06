@@ -164,10 +164,10 @@ test("community discovery filters real equipment without exposing private builds
     await expect(page.getByText("No matching loadouts", { exact: true })).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-375.png", fullPage: true });
     await page.goto("/guides");
-    await page.getByLabel("Search guides").fill("whole cost");
+    await page.getByLabel("Search guides").fill("real profit");
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect(page.locator(".grind-guide-card")).toHaveCount(1);
-    await expect(page.locator(".grind-guide-card")).toContainText("Count the whole cost");
+    await expect(page.locator(".grind-guide-card")).toContainText("How to Calculate Real Profit");
     await page.getByLabel("Search guides").fill("unmatched topic xyz");
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect(page.getByText("No guide matches that search.", { exact: true })).toBeVisible();

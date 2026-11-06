@@ -25,9 +25,7 @@ test("a loadout becomes an inventory-aware list that survives reload without cro
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(page.locator(".shopping-total")).toHaveText("5,000");
   await page.goto("/shopping-list?region=asia");
-  await expect(
-    page.getByRole("heading", { name: "Start with a loadout or a crafting plan." }),
-  ).toBeVisible();
+  await expect(page.getByText("Nothing on the list yet", { exact: true })).toBeVisible();
   await page.goto("/shopping-list?region=europe");
   await expect(page.locator(".shopping-total")).toHaveText("5,000");
 });

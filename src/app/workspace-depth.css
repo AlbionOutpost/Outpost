@@ -25,10 +25,6 @@
 .app.outpost .recipe-browser-search {
   font-size: 12px;
 }
-.app.outpost .recipe-browser-search input {
-  min-height: 38px;
-  margin-top: 8px;
-}
 .recipe-tier-options {
   display: flex;
   gap: 4px;
@@ -110,9 +106,6 @@
   margin-top: 16px;
 }
 .recipe-exact-selection summary {
-  font-size: 12px;
-}
-.recipe-exact-selection select {
   font-size: 12px;
 }
 .production-result-item {

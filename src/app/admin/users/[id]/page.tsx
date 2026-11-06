@@ -37,13 +37,10 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
       : []),
   ];
   const name = user.name || "Unnamed account";
-  const words = name.trim().split(/\s+/);
-  const accent = words.length > 1 ? words[words.length - 1] : undefined;
   const banned = accountBanned(user);
   return (
     <AdminFrame
       title={name}
-      accent={accent}
       description={`${discordId ? `Discord ID ${discordId}` : `Account ID ${user.id}`}. Joined ${day(user.createdAt)}.`}
       emblem="team-roles"
       actions={

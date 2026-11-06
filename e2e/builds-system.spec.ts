@@ -439,7 +439,7 @@ test("account favorites paginate, search and sort accessible builds independentl
     });
     await buildPages.getByRole("link", { name: "Next page", exact: true }).click();
     await expect(cards).toHaveCount(2);
-    await expect(buildPages).toContainText("Page 2 / 2");
+    await expect(buildPages).toContainText("Page 2 of 2");
     expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
     await account.getByRole("link", { name: "List view", exact: true }).click();
     await expect(page.locator(".ecosystem-favorites-page")).toHaveClass(/view-list/);
@@ -469,7 +469,7 @@ test("account favorites paginate, search and sort accessible builds independentl
     expect(new URL(page.url()).searchParams.get("q")).toBe(`${marker} 25`);
     await page.goto("/favorites?page=9999&compPage=9999&region=asia");
     await expect(cards).toHaveCount(2);
-    await expect(buildPages).toContainText("Page 2 / 2");
+    await expect(buildPages).toContainText("Page 2 of 2");
     await expect(account.locator(".favorite-compositions-list > a")).toHaveCount(1);
     await expect(account).not.toContainText(`${marker} 26`);
     await expect(account).not.toContainText(`${marker} 27`);

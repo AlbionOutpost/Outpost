@@ -55,28 +55,7 @@ export function TeamChips({
   );
 }
 
-/** A labelled input cut into the panel as a well; the hint sits under it, outside the label. */
-export function Field({
-  label,
-  hint,
-  wide,
-  children,
-}: {
-  label: string;
-  hint?: ReactNode;
-  wide?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div className={styles.field} data-wide={wide ? "" : undefined}>
-      <label>
-        <span className={styles.fieldLabel}>{label}</span>
-        {children}
-      </label>
-      {hint && <p className={styles.fieldHint}>{hint}</p>}
-    </div>
-  );
-}
+export { Field } from "./field";
 
 /** The closing row of a team's pages: where a team goes to get its sets ready. */
 export function TeamNextSteps() {

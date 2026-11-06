@@ -1,0 +1,40 @@
+/* Field: label above, control, hint and error below (DESIGN.md "Forms") */
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.field[data-wide] {
+  grid-column: 1 / -1;
+}
+.hint,
+.error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.hint {
+  color: var(--muted);
+}
+.error {
+  color: var(--negative);
+  font-weight: 500;
+}
+
+/* Search: the glyph sits inside the well's leading edge */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+.search > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.search > input {
+  padding-left: 38px;
+}

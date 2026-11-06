@@ -97,6 +97,28 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
       })
     : null;
   const tiers = [...new Set(variants.map((variant) => variant.tier))];
+  // Tiers without enchanted versions (usually T1–T3) sit above the grid instead of padding it with dashes
+  const enchantedTiers = tiers.filter((tier) =>
+    variants.some((variant) => variant.tier === tier && variant.enchantment > 0),
+  );
+  const plainTiers = enchantedTiers.length ? tiers.filter((t) => !enchantedTiers.includes(t)) : [];
+  const gridTiers = enchantedTiers.length ? enchantedTiers : tiers;
+  const variantLink = (variant: (typeof variants)[number]) => {
+    const current = variant.id === id;
+    return (
+      <Link
+        className={`item-variant-link${current ? " is-current" : ""}`}
+        href={`/items/${variant.id}`}
+        aria-current={current ? "page" : undefined}
+      >
+        <ItemIcon id={variant.id} size={32} />
+        <span className="numeric">
+          {variant.itemPower ?? "—"}
+          <small>IP</small>
+        </span>
+      </Link>
+    );
+  };
   // Only equipment has a catalog page; resources and ingredients are named without a link.
   const linkable = new Set(
     (
@@ -160,7 +182,6 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           <BackLink className="pill-link is-small masthead-back" href="/items">
             <ArrowLeft size={14} aria-hidden="true" /> Item database
           </BackLink>
-          <code className="item-id-chip">{id}</code>
           <ItemMarketLink id={id} />
         </div>
       </WorkspaceHeading>
@@ -299,6 +320,26 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
               title="Tiers & enchantments"
               line="Every version in the catalog, with its base IP at normal quality. Values can change with a game update."
             />
+            {plainTiers.length > 0 && (
+              <div className="item-variant-plain">
+                <p>
+                  T{plainTiers[0]}
+                  {plainTiers.length > 1 ? `–T${plainTiers[plainTiers.length - 1]}` : ""} have no
+                  enchanted versions.
+                </p>
+                <ul>
+                  {plainTiers.map((tier) => {
+                    const variant = variants.find((v) => v.tier === tier && v.enchantment === 0);
+                    return variant ? (
+                      <li key={tier}>
+                        <span>T{tier}</span>
+                        {variantLink(variant)}
+                      </li>
+                    ) : null;
+                  })}
+                </ul>
+              </div>
+            )}
             <div
               className="table-scroll item-variant-well"
               role="region"
@@ -317,7 +358,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                   </tr>
                 </thead>
                 <tbody>
-                  {tiers.map((tier) => (
+                  {gridTiers.map((tier) => (
                     <tr key={tier}>
                       <th scope="row">T{tier}</th>
                       {[0, 1, 2, 3, 4].map((enchantment) => {
@@ -331,22 +372,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                               —
                             </td>
                           );
-                        const current = variant.id === id;
-                        return (
-                          <td key={enchantment}>
-                            <Link
-                              className={`item-variant-link${current ? " is-current" : ""}`}
-                              href={`/items/${variant.id}`}
-                              aria-current={current ? "page" : undefined}
-                            >
-                              <ItemIcon id={variant.id} size={32} />
-                              <span className="numeric">
-                                {variant.itemPower ?? "—"}
-                                <small>IP</small>
-                              </span>
-                            </Link>
-                          </td>
-                        );
+                        return <td key={enchantment}>{variantLink(variant)}</td>;
                       })}
                     </tr>
                   ))}

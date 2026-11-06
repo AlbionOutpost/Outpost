@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useState, type ReactNode } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, RotateCw } from "lucide-react";
 import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
 import styles from "./calculator-shell.module.css";
 
 export type CalculatorStep = {
@@ -43,8 +44,8 @@ export function useCalculatorStep(ids: string[]) {
 
 /**
  * The one calculator layout: numbered input panels, then the result, then optional full-width
- * `details` (accounting, scenarios) under all of them. Wide screens show every step side by side;
- * tablets stack the inputs beside a sticky result; phones show one step at a time behind a
+ * `details` (accounting, scenarios) under all of them. Wide screens and tablets stack the inputs
+ * in a main column beside a sticky result; phones show one step at a time behind a
  * switcher, each input step ending in a bar pinned to the bottom of the screen with the next
  * action and, from the second step, the headline figure (`summary`). An optional `rail` (a list
  * to pick from) sits first on wide screens and above the steps elsewhere.
@@ -133,6 +134,19 @@ export function CalculatorShell({
           {details}
         </div>
       )}
+    </div>
+  );
+}
+
+/** Prices or a scan failed: the error, said once, in a well with a pill Retry (as on Market). */
+export function RetryLine({ children, onRetry }: { children: ReactNode; onRetry: () => void }) {
+  return (
+    <div className={styles.errorLine}>
+      <StatusLine tone="error">{children}</StatusLine>
+      <button type="button" className="pill-link is-small" onClick={onRetry}>
+        <RotateCw size={14} aria-hidden="true" />
+        Retry
+      </button>
     </div>
   );
 }

@@ -43,8 +43,6 @@
     .mx-table-well,
     .mx-inspector,
     .mx-disclosure,
-    .mx-select,
-    .mx-field > input,
     .market-quality-availability,
     .watchlist-items > li,
     .mx-list-empty,
@@ -90,55 +88,12 @@
   gap: var(--space-4);
 }
 .app.outpost .mx-field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
   margin: 0;
-  color: var(--text);
-  font: 600 12px/1.35 var(--font-ui);
 }
 .app.outpost .mx-field-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
-}
-.app.outpost .mx-select {
-  position: relative;
-  display: block;
-}
-.app.outpost .mx-select select,
-.app.outpost .mx-field > input {
-  width: 100%;
-  min-height: 42px;
-  margin: 0;
-  padding: 0 34px 0 var(--space-3);
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-  appearance: none;
-  box-shadow: none;
-}
-.app.outpost .mx-field > input {
-  padding-right: var(--space-3);
-  font-family: var(--font-data);
-}
-.app.outpost .mx-select select option {
-  background: var(--surface-raised);
-  color: var(--text);
-}
-.app.outpost .mx-select > svg {
-  position: absolute;
-  top: 50%;
-  right: var(--space-3);
-  color: var(--muted);
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.app.outpost .mx-select:hover,
-.app.outpost .mx-select:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
 }
 .app.outpost .mx .catalog-item-picker,
 .app.outpost .mx .catalog-item-picker label {
@@ -216,9 +171,12 @@
   background: none;
   color: var(--accent-ink);
   font: 600 12px/1 var(--font-ui);
+  text-decoration: none;
+  cursor: pointer;
+}
+.app.outpost .mx-reset:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
-  cursor: pointer;
 }
 .app.outpost .mx-active-filters {
   display: flex;
@@ -274,10 +232,6 @@
 }
 .app.outpost .mx-disclosure[open] > :not(summary) {
   margin: 0 var(--space-3) var(--space-3);
-}
-.app.outpost .mx-disclosure .mx-field > input,
-.app.outpost .mx-disclosure .mx-select {
-  background: color-mix(in srgb, var(--edge-light) 55%, transparent);
 }
 .app.outpost .mx-filter-grid {
   display: grid;
@@ -477,38 +431,6 @@
 }
 
 /* Sort and range segments */
-.app.outpost .mx-segment {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-}
-.app.outpost .mx-segment > button {
-  min-height: 30px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font: 700 12px/1 var(--font-ui);
-  cursor: pointer;
-  transition:
-    color var(--motion-fast) var(--ease-out),
-    background var(--motion-fast) var(--ease-out);
-}
-.app.outpost .mx-segment > button:hover {
-  color: var(--text);
-}
-.app.outpost
-  .mx
-  :is(.mx-segment > button[aria-checked="true"], .mx-segment > button[aria-selected="true"]) {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-
 /* City orders table */
 .app.outpost .mx-table-well {
   overflow-x: auto;
@@ -540,11 +462,6 @@
   letter-spacing: 0;
   text-transform: none;
 }
-.app.outpost .mx-table abbr {
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
-  cursor: help;
-}
 .app.outpost .mx-table :is(th, td):first-child {
   width: 99%;
   text-align: left;
@@ -573,12 +490,20 @@
 }
 .app.outpost .mx-table .market-inline-time {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
   margin-top: 5px;
   color: var(--muted);
   font: 500 12px/1.2 var(--font-ui);
+}
+/* The age and Stale chip keep one line beside each other; only the Lowest/Highest tag
+   moves above them when the column is narrow */
+@media (min-width: 981px) {
+  .app.outpost .mx-table td.numeric:not(.mx-spread-col) {
+    min-width: 148px;
+  }
 }
 .app.outpost .mx-table .market-price-missing {
   color: var(--muted);
@@ -934,13 +859,9 @@
   }
 }
 @media (max-width: 700px) {
-  /* Three short tabs wrap instead of scrolling out of view */
-  .app.outpost .market-explorer-page .masthead-tabs {
-    flex-wrap: wrap;
-    overflow: visible;
-    margin-inline: 0;
-    padding-inline: 0;
-    mask-image: none;
+  /* Quick picks and filter chips are touch targets on phones */
+  .app.outpost :is(.mx-pill, .mx-reset) {
+    min-height: 40px;
   }
   /* Panel heads stack their controls under the title and line, like the section heading */
   .app.outpost .mx :is(.mx-board, .mx-history, .mx-saved) > :first-child > * {

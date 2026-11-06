@@ -1,7 +1,7 @@
 import { expectResultText } from "./support/result-text";
 import { test, expect } from "@playwright/test";
 
-test("production prerequisites, genuine sensitivity and three-column composition", async ({
+test("production prerequisites, genuine sensitivity and the steps beside their result", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -21,12 +21,15 @@ test("production prerequisites, genuine sensitivity and three-column composition
   const bounds = await page.locator("#production-setup").evaluate((e) =>
     ["#production-setup", "#production-materials", "#production-results"].map((s) => {
       const r = e.ownerDocument.querySelector(s)!.getBoundingClientRect();
-      return { x: r.x, y: r.y, width: r.width };
+      return { x: r.x, y: r.y, width: r.width, height: r.height };
     }),
   );
-  expect(Math.max(...bounds.map((b) => b.y)) - Math.min(...bounds.map((b) => b.y))).toBeLessThan(2);
-  expect(bounds[0].x + bounds[0].width).toBeLessThan(bounds[1].x);
-  expect(bounds[1].x + bounds[1].width).toBeLessThan(bounds[2].x);
+  // The input steps stack in one column; the result starts level with the first, beside them.
+  const [setup, materials, results] = bounds;
+  expect(Math.abs(setup.y - results.y)).toBeLessThan(2);
+  expect(Math.abs(setup.x - materials.x)).toBeLessThan(2);
+  expect(materials.y).toBeGreaterThan(setup.y + setup.height);
+  expect(setup.x + setup.width).toBeLessThan(results.x);
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);

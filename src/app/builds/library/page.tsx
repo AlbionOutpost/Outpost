@@ -1,4 +1,5 @@
 import { BuildsNextStep } from "@/components/builds-next-step";
+import { WellSelect } from "@/components/well-select";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
@@ -16,6 +17,7 @@ import { BuildDiscoverySearch } from "@/components/build-discovery-search";
 import { LayoutGrid, List, Search, X } from "lucide-react";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { EmptyWell } from "@/components/empty-well";
+import { Pagination } from "@/components/pagination";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/builds/library", await searchParams);
 }
@@ -90,7 +92,7 @@ export default async function Library({
                 <option value="title">Build title</option>
               </BuildSortSelect>
             </label>
-            <div className="ecosystem-view-switch" aria-label="Build layout">
+            <div className="segmented ecosystem-view-switch" aria-label="Build layout">
               <Link
                 href={href({ view: "grid" })}
                 aria-label="Grid view"
@@ -129,7 +131,7 @@ export default async function Library({
                 />
                 <label>
                   Specific weapon
-                  <select
+                  <WellSelect
                     name="weapon"
                     defaultValue={selectedWeapon?.name || weapon}
                     aria-label="Library weapon"
@@ -142,14 +144,14 @@ export default async function Library({
                           {w.name}
                         </option>
                       ))}
-                  </select>
+                  </WellSelect>
                 </label>
                 <fieldset>
                   <legend>Content type</legend>
                   <label className="sr-only" htmlFor="library-activity">
                     Activity
                   </label>
-                  <select id="library-activity" name="category" defaultValue={category}>
+                  <WellSelect id="library-activity" name="category" defaultValue={category}>
                     <option value="">All activities</option>
                     {category && !categories.includes(category) && (
                       <option value={category}>{activityName(category)} (0)</option>
@@ -160,21 +162,21 @@ export default async function Library({
                         {buildDiscovery.activities.find((a) => a.id === c)?.count || 0})
                       </option>
                     ))}
-                  </select>
+                  </WellSelect>
                 </fieldset>
                 <fieldset>
                   <legend>Playstyle tag</legend>
                   <label className="sr-only" htmlFor="library-playstyle">
                     Playstyle tag
                   </label>
-                  <select id="library-playstyle" name="tag" defaultValue={tag}>
+                  <WellSelect id="library-playstyle" name="tag" defaultValue={tag}>
                     <option value="">All playstyles</option>
                     {buildDiscovery.tags.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.name} ({t.count})
                       </option>
                     ))}
-                  </select>
+                  </WellSelect>
                 </fieldset>
                 <div className="library-filter-actions">
                   <button className="button primary" type="submit">
@@ -253,27 +255,12 @@ export default async function Library({
               </section>
             )}
             {rows.length > 0 && <AdSlot placement="hub" />}
-            {pages > 1 && (
-              <nav className="library-pagination" aria-label="Library pages">
-                {page > 1 ? (
-                  <Link className="button secondary" href={href({ page: String(page - 1) })}>
-                    Previous page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-                <span>
-                  Page {page.toLocaleString("en-GB")} / {pages.toLocaleString("en-GB")}
-                </span>
-                {page < pages ? (
-                  <Link className="button secondary" href={href({ page: String(page + 1) })}>
-                    Next page
-                  </Link>
-                ) : (
-                  <span />
-                )}
-              </nav>
-            )}
+            <Pagination
+              label="Library pages"
+              page={page}
+              pages={pages}
+              href={(n) => href({ page: String(n) })}
+            />
           </section>
         </div>
       )}

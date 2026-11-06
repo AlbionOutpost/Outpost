@@ -62,18 +62,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   border-radius: 6px;
   box-shadow: none;
 }
-.workspace-route input,
-.workspace-route select,
-.workspace-route textarea {
-  background-color: var(--bg);
-  border-color: var(--border);
-  border-radius: 4px;
-}
-.workspace-route input:focus,
-.workspace-route select:focus,
-.workspace-route textarea:focus {
-  border-color: var(--accent-ink);
-}
 .workspace-route .button {
   min-height: var(--control-height);
   border-radius: 4px;

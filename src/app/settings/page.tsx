@@ -1,5 +1,3 @@
-import { isSupporter } from "@/lib/billing/plan";
-import { giftedSupporter } from "@/lib/admin/policy";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -17,14 +15,6 @@ import { regionLabel } from "@/components/group-parts";
 import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Settings");
 
-const date = (d: Date) =>
-  d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-
 export default async function Settings({
   searchParams,
 }: {
@@ -35,15 +25,8 @@ export default async function Settings({
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect("/signin");
   const query = await searchParams;
-  const supporter = isSupporter(user);
-  const plan = supporter
-    ? giftedSupporter(user)
-      ? `Supporter gift${user.supporterGiftUntil && !user.supporterGiftPermanent ? ` until ${date(user.supporterGiftUntil)}` : ", no end date"}`
-      : `Supporter${user.planRenewsAt ? ` · renews ${date(user.planRenewsAt)}` : ""}`
-    : "Free";
   const sections = [
     ["profile-preferences", "Profile & preferences"],
-    ["account-billing", "Supporter plan"],
     ["account-data", "Export your data"],
     ["account-session", "Current session"],
     ["account-delete", "Close account"],
@@ -70,7 +53,6 @@ export default async function Settings({
         }
       >
         <div className={`landing-chips ${styles.chips}`}>
-          <span className={supporter ? "landing-chip" : "landing-chip is-muted"}>{plan}</span>
           <span className="landing-chip is-muted">{regionLabel(user.region)}</span>
           <span className="landing-chip is-muted">Signed in with Discord</span>
         </div>
@@ -114,26 +96,6 @@ export default async function Settings({
           </section>
           <section
             className={`panel ${styles.panel}`}
-            id="account-billing"
-            aria-labelledby="plan-title"
-          >
-            <PanelHead
-              id="plan-title"
-              title="Supporter plan"
-              line={
-                supporter
-                  ? `${plan}${user.planStatus === "past_due" ? " · last payment failed" : ""}. No advertising and your own Team workspace.`
-                  : "Free. Supporters see no advertising and can run a Team workspace."
-              }
-              actions={
-                <Link className="button secondary" href="/supporter">
-                  {supporter ? "View Supporter benefits" : "See the Supporter plan"}
-                </Link>
-              }
-            />
-          </section>
-          <section
-            className={`panel ${styles.panel}`}
             id="account-data"
             aria-labelledby="data-title"
           >
@@ -172,8 +134,6 @@ export default async function Settings({
             />
             <ul className={styles.checklist}>
               <li>Hand over or delete the teams you own first.</li>
-              <li>Cancel a Supporter subscription and let it end before you delete.</li>
-              <li>We check billing before deleting and close any open checkout links.</li>
             </ul>
             <DeleteAccountForm />
           </section>

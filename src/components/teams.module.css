@@ -366,56 +366,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
-:global(.app.outpost) .field.field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-:global(.app.outpost) .field.field[data-wide] {
-  grid-column: 1 / -1;
-}
-:global(.app.outpost) .field.field > label {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-:global(.app.outpost) .fieldLabel.fieldLabel {
-  color: var(--muted);
-  font: 600 12px/1.3 var(--font-ui);
-}
-:global(.app.outpost) .fieldHint.fieldHint {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea) {
-  width: 100%;
-  min-height: 42px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1.4 var(--font-ui);
-}
-:global(.app.outpost) :is(.field, .requestForm) textarea {
-  min-height: 112px;
-  padding: 10px 12px;
-  resize: vertical;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea):focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
-}
-:global(.app.outpost) .field.field :global(select) {
-  width: 100%;
-}
-:global(.app.outpost) .field.field > label > span:has(> select) {
-  display: flex;
-}
 :global(.app.outpost) .formActions.formActions {
   display: flex;
   flex-wrap: wrap;
@@ -433,21 +383,6 @@
   display: inline-flex;
   margin: 0;
 }
-:global(.app.outpost) .search.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 0;
-}
-:global(.app.outpost) .search.search > svg {
-  position: absolute;
-  left: 12px;
-  color: var(--accent-ink);
-  pointer-events: none;
-}
-:global(.app.outpost) .search.search input {
-  padding-left: 38px;
-}
 :global(.app.outpost) .requestForm.requestForm {
   display: grid;
   gap: var(--space-4);
@@ -463,14 +398,28 @@
   margin-top: 22px;
 }
 
-/* ---------- Overview: three columns, the next event spanning two ---------- */
+/* ---------- Overview: a wide column and a side column, each panel at its own height ---------- */
 :global(.app.outpost) .overview.overview {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px 24px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
 }
-:global(.app.outpost) .wide.wide {
-  grid-column: span 2;
+:global(.app.outpost) .overviewColumn.overviewColumn {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+:global(.app.outpost) .overviewPair.overviewPair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .overviewPair.overviewPair {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 :global(.app.outpost) .nextEvent.nextEvent {
   display: grid;
@@ -501,7 +450,7 @@
 :global(.app.outpost) .later.later {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--space-2);
   margin: 0;
   padding: 0;
@@ -622,17 +571,27 @@
 :global(.app.outpost) .toggle.toggle[aria-expanded="true"] svg {
   rotate: 180deg;
 }
+/* Open event: what, who and the links on the left; your answer in its own well on the right */
 :global(.app.outpost) .eventBody.eventBody {
   display: grid;
-  gap: var(--space-4);
-  padding: var(--space-2) var(--space-4) var(--space-4);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  align-items: start;
+  gap: var(--space-5);
+  padding: var(--space-4);
   border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .eventMain.eventMain {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
 }
 :global(.app.outpost) .eventBody.eventBody[hidden] {
   display: none;
 }
-:global(.app.outpost) .eventBody.eventBody > p {
-  margin: var(--space-2) 0 0;
+:global(.app.outpost) .eventMain.eventMain > p {
+  margin: 0;
+  max-width: 68ch;
   color: var(--secondary);
   font-size: 14px;
   line-height: 1.55;
@@ -678,10 +637,16 @@
 }
 :global(.app.outpost) .rsvpForm.rsvpForm {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  align-items: end;
   gap: var(--space-3);
   margin: 0;
+  padding: var(--space-4);
+}
+:global(.app.outpost) .rsvpForm.rsvpForm > :global(.button) {
+  justify-content: center;
+}
+:global(.app.outpost) .rsvpTitle.rsvpTitle {
+  margin: 0;
+  font: 800 17px/1.2 var(--font-display);
 }
 
 /* ---------- Announcements, settings ---------- */
@@ -693,7 +658,13 @@
 }
 :global(.app.outpost) .settings.settings {
   display: grid;
-  gap: 26px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+/* Leaving or deleting closes the page, full width under the rest */
+:global(.app.outpost) .settings.settings > .danger {
+  grid-column: 1 / -1;
 }
 
 /* ---------- Loot splits: saved rail, the haul, the payout ---------- */
@@ -775,9 +746,10 @@
 }
 
 /* ---------- Tablet and phone ---------- */
-@media (max-width: 1100px) {
-  :global(.app.outpost) .overview.overview {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 1000px) {
+  :global(.app.outpost) .overview.overview,
+  :global(.app.outpost) .settings.settings {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 700px) {
@@ -810,9 +782,6 @@
   :global(.app.outpost) .settings.settings,
   :global(.app.outpost) .formGrid.formGrid {
     grid-template-columns: minmax(0, 1fr);
-  }
-  :global(.app.outpost) .wide.wide {
-    grid-column: auto;
   }
   :global(.app.outpost) .panel.panel {
     padding: var(--space-5) var(--space-4);
@@ -848,7 +817,7 @@
     flex-basis: 100%;
     flex-wrap: wrap;
   }
-  :global(.app.outpost) .rsvpForm.rsvpForm,
+  :global(.app.outpost) .eventBody.eventBody,
   :global(.app.outpost) .inlineForm.inlineForm,
   :global(.app.outpost) .inviteLink.inviteLink {
     grid-template-columns: minmax(0, 1fr);
@@ -927,18 +896,6 @@
   gap: var(--space-4);
   margin: 0 0 56px;
   padding: var(--space-5) var(--space-6);
-}
-:global(.app.outpost) :is(.filterSearch, .filterField) {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  margin: 0;
-}
-:global(.app.outpost) .filterField :global(select) {
-  width: 100%;
-}
-:global(.app.outpost) .filterField > span:has(> select) {
-  display: flex;
 }
 :global(.app.outpost) .section.section {
   margin: 0;
@@ -1049,7 +1006,7 @@
   font: 500 14px/1 var(--font-ui);
   white-space: nowrap;
 }
-:global(.app.outpost) .field .prefixed.prefixed > input {
+:global(.app.outpost) .prefixed.prefixed > input {
   flex: 1;
   min-width: 0;
   padding-left: 0;
@@ -1071,10 +1028,6 @@
   order: -1;
   flex-basis: 100%;
   margin: 0;
-}
-:global(.app.outpost) :is(.field, .search, .requestForm) :is(input, textarea)::placeholder {
-  color: var(--muted);
-  opacity: 0.75;
 }
 
 /* An empty well in a narrow panel: its action drops under the copy instead of squeezing it */
@@ -1155,4 +1108,81 @@
   margin: 0;
   padding: 0;
   background: none;
+}
+
+/* ---------- Comps and Builds tabs: the landing's windows, three across ---------- */
+:global(.app.outpost) .shareBar.shareBar {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) auto;
+  align-items: end;
+  justify-content: start;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-4) var(--space-5);
+}
+:global(.app.outpost) .buildGrid.buildGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .buildGrid.buildGrid > li {
+  display: grid;
+  min-width: 0;
+}
+:global(.app.outpost) .buildWindow .buildFoot.buildFoot {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  min-height: 0;
+}
+:global(.app.outpost) .buildFoot.buildFoot strong,
+:global(.app.outpost) .buildFoot.buildFoot small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  :global(.app.outpost) .buildGrid.buildGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .buildGrid.buildGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .shareBar.shareBar {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+}
+:global(.app.outpost) .rowMenu.rowMenu > [role="menu"] > button[data-tone="loss"] {
+  color: var(--error);
+}
+/* The roster reads in two columns on wide screens */
+:global(.app.outpost) .memberGrid.memberGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
+}
+@media (max-width: 900px) {
+  :global(.app.outpost) .memberGrid.memberGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+:global(.app.outpost) .buildWindow .windowTitle.windowTitle {
+  font: 800 15px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
+}
+:global(.app.outpost) .overviewColumn.overviewColumn:empty {
+  display: none;
+}
+/* Phones keep a member's role and menu on the name's line; only the narrowest wrap them */
+@media (min-width: 361px) and (max-width: 700px) {
+  :global(.app.outpost) .memberGrid .wellRow.wellRow:has(.rowTools) {
+    flex-wrap: nowrap;
+  }
+  :global(.app.outpost) .memberGrid .rowTools.rowTools {
+    flex-basis: auto;
+    flex-wrap: nowrap;
+  }
 }

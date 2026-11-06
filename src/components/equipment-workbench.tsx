@@ -2,7 +2,7 @@
 import { abilitiesFor, archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { SpellIcon } from "./spell-icon";
 import { useEffect, useId, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import {
   equipmentFamilies,
   equipmentSlots,
@@ -15,6 +15,8 @@ import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { ItemIcon } from "./item-icon";
 import { EditorDialog } from "./editor-dialog";
 import { EquipmentGlyph } from "./equipment-overview";
+import { SearchInput } from "./field";
+import { WellSelect } from "./well-select";
 export function EquipmentWorkbench({
   value,
   onChange,
@@ -163,8 +165,7 @@ export function EquipmentWorkbench({
       <label className="gear-search">
         <span>Search equipment</span>
         <div>
-          <Search size={17} />
-          <input
+          <SearchInput
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search item names…"
@@ -179,7 +180,7 @@ export function EquipmentWorkbench({
       </label>
       <label className="gear-category-select">
         Equipment category
-        <select
+        <WellSelect
           aria-label="Equipment category"
           value={slot}
           onChange={(e) => {
@@ -189,7 +190,7 @@ export function EquipmentWorkbench({
           {equipmentSlots.map((s) => (
             <option key={s}>{s}</option>
           ))}
-        </select>
+        </WellSelect>
       </label>
       <nav className="gear-category-nav" aria-label="Equipment slot categories">
         {equipmentSlots.map((category) => (
@@ -209,7 +210,7 @@ export function EquipmentWorkbench({
       <div className="gear-browser-filters">
         <label>
           Tier
-          <select
+          <WellSelect
             aria-label="Browse tier"
             value={tier}
             onChange={(e) => setTier(Number(e.target.value))}
@@ -219,21 +220,21 @@ export function EquipmentWorkbench({
                 T{t}
               </option>
             ))}
-          </select>
+          </WellSelect>
         </label>
         <label>
           Enchantment
-          <select
+          <WellSelect
             aria-label="Browse enchantment"
             value={enchant}
             onChange={(e) => setEnchant(Number(e.target.value))}
           >
             {[0, 1, 2, 3, 4].map((t) => (
               <option key={t} value={t}>
-                .{t}
+                {t ? `@${t}` : "Flat"}
               </option>
             ))}
-          </select>
+          </WellSelect>
         </label>
       </div>
       <div className="item-browser-grid">
@@ -389,7 +390,7 @@ export function EquipmentWorkbench({
                           ) : (
                             <EquipmentGlyph slot={s} />
                           )}
-                          <select
+                          <WellSelect
                             aria-label={`Recommended ${s}`}
                             disabled={twoHanded}
                             value={info?.family.code || ""}
@@ -419,7 +420,7 @@ export function EquipmentWorkbench({
                                 {c.family.tierNames?.[findEquipment(c.id)!.tier] || c.family.name}
                               </option>
                             ))}
-                          </select>
+                          </WellSelect>
                         </span>
                       </label>
                       {equipped && (
@@ -446,7 +447,7 @@ export function EquipmentWorkbench({
                         ) : (
                           <span className="build-empty-alternative">+</span>
                         )}
-                        <select
+                        <WellSelect
                           aria-label={`Alternative ${s}`}
                           disabled={!equipped || twoHanded}
                           value={equipped?.alternatives[0] || ""}
@@ -480,7 +481,7 @@ export function EquipmentWorkbench({
                                 {equipmentName(id)}
                               </option>
                             ))}
-                        </select>
+                        </WellSelect>
                       </span>
                     </label>
                   </div>
@@ -606,7 +607,7 @@ export function EquipmentWorkbench({
         )}
         <label>
           {slot} equipment
-          <select
+          <WellSelect
             aria-label={`${slot} equipment`}
             value={found?.family.code || ""}
             onChange={(e) => choose(e.target.value)}
@@ -619,14 +620,14 @@ export function EquipmentWorkbench({
                   {f.name}
                 </option>
               ))}
-          </select>
+          </WellSelect>
         </label>
         {current && found ? (
           <>
             <div className="gear-options">
               <label>
                 Tier
-                <select
+                <WellSelect
                   aria-label={`${slot} tier`}
                   value={found.tier}
                   onChange={(e) =>
@@ -641,11 +642,11 @@ export function EquipmentWorkbench({
                     .map((t) => (
                       <option key={t}>{t}</option>
                     ))}
-                </select>
+                </WellSelect>
               </label>
               <label>
                 Enchant
-                <select
+                <WellSelect
                   aria-label={`${slot} enchantment`}
                   value={found.enchantment}
                   onChange={(e) =>
@@ -660,11 +661,11 @@ export function EquipmentWorkbench({
                     .map((t) => (
                       <option key={t}>{t}</option>
                     ))}
-                </select>
+                </WellSelect>
               </label>
               <label>
                 Quality
-                <select
+                <WellSelect
                   aria-label={`${slot} quality`}
                   value={current.quality}
                   onChange={(e) => change({ ...current, quality: Number(e.target.value) })}
@@ -674,7 +675,7 @@ export function EquipmentWorkbench({
                       {q}
                     </option>
                   ))}
-                </select>
+                </WellSelect>
               </label>
             </div>
             <h3 className="ability-heading">Abilities & passives</h3>
@@ -708,7 +709,7 @@ export function EquipmentWorkbench({
                 </span>
                 <span>
                   {key === "Passive" ? "Passive" : `${key} ability`}
-                  <select
+                  <WellSelect
                     aria-label={`${slot} ${key}`}
                     value={current.abilities[key] || ""}
                     onChange={(e) => {
@@ -722,7 +723,7 @@ export function EquipmentWorkbench({
                     {choices.map((a) => (
                       <option key={a}>{a}</option>
                     ))}
-                  </select>
+                  </WellSelect>
                 </span>
               </label>
             ))}
@@ -757,7 +758,7 @@ export function EquipmentWorkbench({
                 (alternative, index) => (
                   <label key={index}>
                     {index === 0 ? "Alternative equipment" : `Alternative ${index + 1}`}
-                    <select
+                    <WellSelect
                       aria-label={`${slot} alternative${index ? ` ${index + 1}` : ""}`}
                       value={alternative}
                       onChange={(e) => {
@@ -778,14 +779,14 @@ export function EquipmentWorkbench({
                           {equipmentName(id)}
                         </option>
                       ))}
-                    </select>
+                    </WellSelect>
                   </label>
                 ),
               )}
               {current.alternatives.length > 0 && current.alternatives.length < 4 && (
                 <label>
                   Add a swap
-                  <select
+                  <WellSelect
                     aria-label={`${slot} add alternative`}
                     value=""
                     onChange={(e) => {
@@ -810,7 +811,7 @@ export function EquipmentWorkbench({
                           {equipmentName(id)}
                         </option>
                       ))}
-                  </select>
+                  </WellSelect>
                 </label>
               )}
             </div>

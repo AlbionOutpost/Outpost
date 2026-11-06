@@ -68,9 +68,6 @@
 .app.outpost .production-cash-summary small {
   line-height: 1.6;
 }
-.app.outpost .production-calculator-page .reference-material-table input {
-  min-height: 42px;
-}
 .app.outpost .manual-trade-workspace {
   grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
   gap: 20px;
@@ -685,9 +682,6 @@
   cursor: pointer;
   color: var(--accent-ink);
   font-size: 14px;
-}
-.flip-scanner-manual textarea {
-  min-height: 72px;
 }
 .flip-scanner-route {
   grid-template-columns: repeat(6, minmax(0, 1fr));

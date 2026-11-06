@@ -1,6 +1,6 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { Search } from "lucide-react";
+
 import { libraryCounts } from "@/lib/grind-library";
 import Link from "@/components/build-region-link";
 import { getServerSession } from "next-auth";
@@ -11,11 +11,13 @@ import { readStoredComposition } from "@/lib/compositions/stored";
 import { slotRosterMember } from "@/lib/compositions/roster";
 import { RosterRows } from "@/components/comp-roster";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompWindow } from "@/components/comp-window";
+import { Pagination } from "@/components/pagination";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import styles from "@/components/comps.module.css";
+import { SearchInput } from "@/components/field";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions", await searchParams);
 }
@@ -95,16 +97,13 @@ export default async function Compositions({
         {mine && <input type="hidden" name="mine" value="1" />}
         <label>
           Search comp titles
-          <span className={styles.searchWell}>
-            <Search size={16} aria-hidden="true" />
-            <input
-              type="search"
-              name="q"
-              defaultValue={q}
-              maxLength={100}
-              placeholder="Roads roam, Hellgate 5v5…"
-            />
-          </span>
+          <SearchInput
+            type="search"
+            name="q"
+            defaultValue={q}
+            maxLength={100}
+            placeholder="Roads roam, Hellgate 5v5…"
+          />
         </label>
         <button className="button secondary" aria-label="Search comps">
           Search
@@ -209,7 +208,7 @@ export default async function Compositions({
             }
           />
         )}
-        <CompPages page={page} next={rows.length > 24} href={href} label="Comp pages" />
+        <Pagination page={page} next={rows.length > 24} href={href} label="Comp pages" />
       </section>
       <CompNextSteps
         show={["library", "create", "teams"]}

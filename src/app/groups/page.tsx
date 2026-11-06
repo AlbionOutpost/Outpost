@@ -1,5 +1,5 @@
 import { privateMetadata } from "@/lib/seo";
-import { ArrowRight, ArrowUpRight, Compass, Search, Shield } from "lucide-react";
+import { ArrowUpRight, Compass, Shield } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
@@ -7,13 +7,18 @@ import { MastheadTabs } from "@/components/masthead-tabs";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import { WellSelect } from "@/components/well-select";
-import { SupporterBand } from "@/components/supporter-band";
-import { TeamMark, plural, regionLabel, visibilityLabel } from "@/components/group-parts";
+import { SearchInput } from "@/components/field";
+import {
+  TeamMark,
+  TeamNextSteps,
+  plural,
+  regionLabel,
+  visibilityLabel,
+} from "@/components/group-parts";
+import { Pagination } from "@/components/pagination";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
-import { billingEnabled } from "@/lib/billing/stripe";
-import { userIsSupporter } from "@/lib/billing/gate";
 import "@/app/landing-window.css";
 import windows from "@/components/landing/windows.module.css";
 import styles from "@/components/teams.module.css";
@@ -87,8 +92,6 @@ export default async function Groups({
   const compCount = new Map<string, number>();
   for (const c of comps)
     if (c.groupId) compCount.set(c.groupId, (compCount.get(c.groupId) ?? 0) + 1);
-  // Creating a team needs the Supporter plan only once billing is switched on.
-  const locked = billingEnabled() && !(userId && (await userIsSupporter(userId)));
   const filtered = Boolean(q || region || visibility);
   const shown = rows.slice(0, 25);
   const url = (next: number) =>
@@ -106,12 +109,9 @@ export default async function Groups({
             : "Public teams and your own. Private teams stay hidden from everyone who is not a member."
         }
         actions={
-          <span className={styles.createAction}>
-            <Link href="/groups/new" className="button primary">
-              Create a team
-            </Link>
-            {locked && <span className="landing-chip">Supporter</span>}
-          </span>
+          <Link href="/groups/new" className="button primary">
+            Create a team
+          </Link>
         }
       >
         <MastheadTabs
@@ -140,21 +140,18 @@ export default async function Groups({
       >
         <input type="hidden" name="mine" value={mine ? "1" : "0"} />
         <label className={styles.filterSearch}>
-          <span className={styles.fieldLabel}>Search teams</span>
-          <span className={styles.search}>
-            <Search size={16} aria-hidden="true" />
-            <input
-              name="q"
-              defaultValue={q}
-              maxLength={80}
-              type="search"
-              aria-label="Search teams"
-              placeholder="Team name or description"
-            />
-          </span>
+          <span>Search teams</span>
+          <SearchInput
+            name="q"
+            defaultValue={q}
+            maxLength={80}
+            type="search"
+            aria-label="Search teams"
+            placeholder="Team name or description"
+          />
         </label>
-        <label className={styles.filterField}>
-          <span className={styles.fieldLabel}>Region</span>
+        <label>
+          <span>Region</span>
           <WellSelect aria-label="Team region" name="region" defaultValue={region}>
             <option value="">All regions</option>
             {Object.entries(regions).map(([value, r]) => (
@@ -164,8 +161,8 @@ export default async function Groups({
             ))}
           </WellSelect>
         </label>
-        <label className={styles.filterField}>
-          <span className={styles.fieldLabel}>Visibility</span>
+        <label>
+          <span>Visibility</span>
           <WellSelect aria-label="Team visibility" name="visibility" defaultValue={visibility}>
             <option value="">All teams</option>
             <option value="PUBLIC">Public</option>
@@ -318,47 +315,21 @@ export default async function Groups({
                   Discover teams
                 </Link>
               ) : (
-                <Link className="button secondary" href="/supporter">
-                  About the Supporter plan
+                <Link className="button secondary" href="/groups/new">
+                  Create a team
                 </Link>
               )
             }
           />
         )}
-        {(page > 1 || rows.length > 25) && (
-          <nav className={styles.pager} aria-label="Team result pages">
-            {page > 1 && (
-              <Link className="pill-link is-small" href={url(page - 1)}>
-                Previous
-              </Link>
-            )}
-            <span>Page {page}</span>
-            {rows.length > 25 && page < 100 && (
-              <Link className="pill-link is-small" href={url(page + 1)}>
-                Next
-              </Link>
-            )}
-          </nav>
-        )}
+        <Pagination
+          label="Team result pages"
+          page={page}
+          next={rows.length > 25 && page < 100}
+          href={url}
+        />
       </section>
-      <SupporterBand
-        id="teams-supporter"
-        title={
-          <>
-            Run your guild&apos;s <em>Team</em>
-          </>
-        }
-        line={
-          locked
-            ? "Mass-ups with RSVPs, shared comps and builds, loot splits and roles in one private workspace. Creating and running one is a Supporter feature; joining is free."
-            : "Mass-ups with RSVPs, shared comps and builds, loot splits and roles in one private workspace for your guild."
-        }
-        actions={
-          <Link href="/supporter" className="button primary">
-            About the Supporter plan <ArrowRight size={17} aria-hidden="true" />
-          </Link>
-        }
-      />
+      <TeamNextSteps />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
+  RetryLine,
 } from "./calculator-shell";
 import { coin, PriceSource, profitTone, Missing, PRICE_ERROR } from "./calculator-figures";
 import { Disclosure } from "./disclosure";
@@ -378,12 +379,7 @@ export function FishingCalculator({
       {busy ? (
         <StatusLine>Loading prices in {city}…</StatusLine>
       ) : selectedQuote?.error ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{PRICE_ERROR}</StatusLine>
-          <button type="button" onClick={() => void refreshAll()}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={() => void refreshAll()}>{PRICE_ERROR}</RetryLine>
       ) : null}
       <div className={s.materials} role="region" aria-label="Fish prices">
         <div className={s.matHead} aria-hidden="true">

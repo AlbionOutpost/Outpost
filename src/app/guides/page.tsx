@@ -27,7 +27,7 @@ export default async function Guides({
         scene="guides"
         title="Albion Online guides"
         accent="guides"
-        description="Guides for progression, gathering, PvE, trading and crafting, and for using Outpost’s tools."
+        description={`${guides.length} guides for progression, gathering, PvE, PvP, trading and crafting, and for using Outpost’s tools.`}
       />
       <JsonLd
         data={itemListLd(

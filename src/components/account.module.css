@@ -309,14 +309,22 @@
   background: var(--well);
   color: var(--text);
 }
-/* Closing the account reads as the destructive one: a loss-tinted ghost, apart from the rest */
+/* Closing the account is the destructive one: set apart under a rule, in loss text, never boxed
+   (a boxed row read as the selected section) */
 :global(.app.outpost) .rail.rail > a[data-danger] {
-  margin-top: var(--space-2);
-  border: 1px solid color-mix(in srgb, var(--error) 55%, var(--border));
+  position: relative;
+  margin-top: var(--space-3);
   color: var(--error);
 }
+:global(.app.outpost) .rail.rail > a[data-danger]::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--space-2) - 1px);
+  right: var(--space-3);
+  left: var(--space-3);
+  border-top: 1px solid var(--well-border);
+}
 :global(.app.outpost) .rail.rail > a[data-danger]:hover {
-  border-color: var(--error);
   background: color-mix(in srgb, var(--error) 12%, transparent);
   color: var(--error);
 }
@@ -427,37 +435,9 @@
   gap: var(--space-3);
 }
 /* Segmented filter: one well, the chosen segment lit */
-:global(.app.outpost) .segments.segments {
-  display: inline-flex;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .segments.segments > button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: none;
-  color: var(--secondary);
-  font: 600 13px/1 var(--font-ui);
-  white-space: nowrap;
-  cursor: pointer;
-}
 :global(.app.outpost) .segments.segments > button > span {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-}
-:global(.app.outpost) .segments.segments > button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
 }
 :global(.app.outpost) .timerGrid.timerGrid {
   display: grid;
@@ -569,9 +549,6 @@
     width: 100%;
   }
   :global(.app.outpost) .segments.segments > button {
-    flex: 1 1 auto;
-    justify-content: center;
-    min-height: 40px;
     padding: 0 10px;
   }
   :global(.app.outpost) .countdown.countdown p {

@@ -1,7 +1,7 @@
 "use client";
 import "@/app/landing-window.css";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "@/components/build-region-link";
 import { ItemIcon } from "./item-icon";
 import { RosterRowCells, type RosterMember } from "./comp-roster";
@@ -16,7 +16,7 @@ export type CompMemberCard = {
   href?: string;
   /** Chips after the role on the window bar (Optional…). */
   badges?: ReactNode;
-  /** The foot's second line under the weapon name. */
+  /** The planner foot's second line under the weapon name. */
   line?: string;
   body: ReactNode;
 };
@@ -42,7 +42,6 @@ export function CompMemberWindow({
       data-scene={framed ? "composition" : undefined}
       aria-label={`Member ${n}`}
     >
-      <span className={styles.memberEdge} aria-hidden="true" />
       <div className={`landing-window-bar ${windows.bar}`}>
         <span className={`landing-window-title ${styles.memberTitle}`} title={card.title}>
           <span className={styles.memberN}>{n}</span>
@@ -54,21 +53,19 @@ export function CompMemberWindow({
         </span>
       </div>
       <div className={`landing-window-body ${windows.body} ${styles.memberBody}`}>{card.body}</div>
-      <div className={`landing-window-foot ${windows.foot} ${styles.memberFoot}`}>
-        <span className={styles.footWeapon} aria-hidden="true">
-          {weapon ? <ItemIcon id={weapon.itemId} quality={weapon.quality} size={40} /> : null}
-        </span>
-        <span>
-          <strong>{card.member.name}</strong>
-          <small>{card.line ?? card.member.role}</small>
-        </span>
-        {action ??
-          (card.href ? (
-            <Link href={card.href} className={styles.footGo} aria-label={`Open ${card.title}`}>
-              <ArrowUpRight size={20} aria-hidden="true" />
-            </Link>
-          ) : null)}
-      </div>
+      {/* The planner's foot carries the Edit control; read-only windows end with the board */}
+      {action && (
+        <div className={`landing-window-foot ${windows.foot} ${styles.memberFoot}`}>
+          <span className={styles.footWeapon} aria-hidden="true">
+            {weapon ? <ItemIcon id={weapon.itemId} quality={weapon.quality} size={40} /> : null}
+          </span>
+          <span>
+            <strong>{card.member.name}</strong>
+            <small>{card.line ?? card.member.role}</small>
+          </span>
+          {action}
+        </div>
+      )}
     </article>
   );
 }

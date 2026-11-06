@@ -11,6 +11,7 @@ import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "./item-icon";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
+import { WellSelect } from "./well-select";
 export function EquipmentSets({
   equipment,
   sets,
@@ -175,13 +176,13 @@ export function EquipmentSets({
         <div className="set-template-controls">
           <label>
             Starting template
-            <select value={template} onChange={(e) => setTemplate(e.target.value)}>
+            <WellSelect value={template} onChange={(e) => setTemplate(e.target.value)}>
               {loadoutTemplates.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.name}
                 </option>
               ))}
-            </select>
+            </WellSelect>
           </label>
           <button
             type="button"

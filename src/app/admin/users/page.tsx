@@ -1,5 +1,5 @@
 import Link from "@/components/link";
-import { Search } from "lucide-react";
+
 import { adminPageActor } from "@/lib/admin/page-access";
 import { adminUsers } from "@/lib/admin/queries";
 import { isSupporter } from "@/lib/billing/plan";
@@ -10,6 +10,7 @@ import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
 import { AdminNextSteps } from "@/components/admin-next";
+import { SearchInput } from "@/components/field";
 const filters = [
   ["all", "All accounts"],
   ["supporters", "Supporters"],
@@ -79,9 +80,8 @@ export default async function AdminUsersPage({
         />
         <form className="admin-search" method="get" role="search">
           <label htmlFor="admin-search" className="admin-search-field">
-            <Search size={16} aria-hidden="true" />
             <span className="sr-only">Search users</span>
-            <input
+            <SearchInput
               id="admin-search"
               className="well"
               name="q"
@@ -93,7 +93,7 @@ export default async function AdminUsersPage({
           <input type="hidden" name="filter" value={data.query.filter} />
           <button className="button secondary">Search</button>
         </form>
-        <nav className="admin-seg" aria-label="User filters">
+        <nav className="segmented admin-seg" aria-label="User filters">
           {filters.map(([key, label]) => (
             <Link
               key={key}

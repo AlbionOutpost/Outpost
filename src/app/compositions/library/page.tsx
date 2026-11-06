@@ -1,5 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
-import { Search } from "lucide-react";
+
 import { AdSlot } from "@/components/ad-slot";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/build-region-link";
@@ -8,12 +8,14 @@ import { activityName } from "@/lib/grind-library-types";
 import { CompRoster } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
 import { CompTabs } from "@/components/comp-tabs";
-import { CompGrid, CompPages, CompWindow } from "@/components/comp-window";
+import { CompGrid, CompWindow } from "@/components/comp-window";
+import { Pagination } from "@/components/pagination";
 import { CompNextSteps } from "@/components/comp-next-steps";
 import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import { WellSelect } from "@/components/well-select";
 import styles from "@/components/comps.module.css";
+import { SearchInput } from "@/components/field";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/compositions/library", await searchParams);
 }
@@ -44,7 +46,7 @@ export default async function Page({
         scene="comps"
         title="Group Builds"
         accent="Builds"
-        description={`${total.toLocaleString()} comps recorded by players, each with every member’s loadout. Copy one to plan your own party around it.`}
+        description={`Group Builds are whole comps: a party’s roles with every member’s loadout. ${total.toLocaleString()} recorded by players; copy one to plan your own party around it.`}
         actions={
           <Link href="/compositions/new" className="button primary">
             Create a comp
@@ -61,16 +63,13 @@ export default async function Page({
       >
         <label>
           Search comps
-          <span className={styles.searchWell}>
-            <Search size={16} aria-hidden="true" />
-            <input
-              type="search"
-              name="q"
-              maxLength={100}
-              defaultValue={q}
-              placeholder="Comp name or author"
-            />
-          </span>
+          <SearchInput
+            type="search"
+            name="q"
+            maxLength={100}
+            defaultValue={q}
+            placeholder="Comp name or author"
+          />
         </label>
         <label>
           Activity
@@ -143,13 +142,7 @@ export default async function Page({
             }
           />
         )}
-        <CompPages
-          page={page}
-          pages={pages}
-          next={page < pages}
-          href={href}
-          label="Group Build pages"
-        />
+        <Pagination page={page} pages={pages} href={href} label="Group Build pages" />
       </section>
       <AdSlot placement="hub" />
       <CompNextSteps

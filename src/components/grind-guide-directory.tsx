@@ -1,12 +1,12 @@
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
 import { GuideCoverCard, readingMinutes, type GuideCover } from "./guide-cover-card";
-import { GuidesCarousel } from "./landing/guides-carousel";
 import { SectionHeading } from "./section-heading";
 import { EmptyWell } from "./empty-well";
 import type { LibraryGuide } from "@/lib/grind-library-types";
 import styles from "@/app/guides/guides.module.css";
+import { SearchInput } from "./field";
 
 export const guideArtwork: Record<string, string> = {
   "market-flipping-guide": "T4_BAG",
@@ -25,6 +25,20 @@ export const guideArtwork: Record<string, string> = {
   "count-the-whole-cost": "T4_METALBAR",
   "build-with-a-purpose": "T4_ARMOR_LEATHER_SET1",
   "put-every-role-in-place": "T4_2H_HAMMER",
+  "hellgates-guide": "T4_2H_CLAYMORE",
+  "abyssal-depths-guide": "T4_2H_AXE",
+  "mists-guide": "T4_CAPEITEM_FW_BRECILIEN",
+  "roads-of-avalon-guide": "T4_SHOES_LEATHER_AVALON",
+  "faction-warfare-guide": "T4_CAPEITEM_FW_LYMHURST",
+  "zones-and-death-loss": "T8_POTION_CLEANSE",
+  "tracking-guide": "T4_2H_TOOL_TRACKING",
+  "crystal-arena-guide": "T4_MAIN_1HCROSSBOW",
+  "group-dungeons-guide": "T4_MAIN_HOLYSTAFF",
+  "islands-and-farming-guide": "T4_2H_TOOL_SICKLE",
+  "gathering-progression-guide": "T4_HEAD_GATHERER_FIBER",
+  "destiny-board-guide": "T4_OFF_BOOK",
+  "enchanting-guide": "T4_MAIN_SWORD@1",
+  "zvz-guide": "T8_2H_HAMMER",
 };
 
 const cover = (guide: LibraryGuide): GuideCover => ({
@@ -40,8 +54,8 @@ const cover = (guide: LibraryGuide): GuideCover => ({
 });
 
 /**
- * The guides hub: the three newest guides as the landing's lead story and two side stories,
- * one search with topic pills, and every other guide as a cover card three across.
+ * The guides hub: one search with topic pills over every guide as a cover card, newest first,
+ * three across on wide screens so the 30 guides fill their rows.
  */
 export function GrindGuideDirectory({
   guides,
@@ -60,8 +74,8 @@ export function GrindGuideDirectory({
       (!category || g.category === category) &&
       `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
   );
-  const newest = guides.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
-  const listed = filtered ? matches : guides.filter((g) => !newest.includes(g));
+  // One grid, newest first; the topic pills and the search narrow it
+  const listed = matches.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   const topicHref = (topic: string) => {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
@@ -72,42 +86,22 @@ export function GrindGuideDirectory({
   const count = matches.length;
   return (
     <>
-      {!filtered && newest.length > 0 && (
-        <section className={styles.section} aria-labelledby="guides-newest">
+      <section
+        className={`grind-guide-library ${styles.section}`}
+        {...(filtered ? { "aria-labelledby": "guides-library" } : { "aria-label": "Every guide" })}
+      >
+        {/* Unfiltered, the masthead already names the list; a search gets its own heading */}
+        {filtered && (
           <SectionHeading
-            id="guides-newest"
+            id="guides-library"
             title={
-              <>
-                Newest <em>guides</em>
-              </>
-            }
-            line="The three most recently updated guides."
-          />
-          <div className={styles.carousel}>
-            <GuidesCarousel guides={newest.map(cover)} suffix="" />
-          </div>
-        </section>
-      )}
-      <section className={`grind-guide-library ${styles.section}`} aria-labelledby="guides-library">
-        <SectionHeading
-          id="guides-library"
-          title={
-            filtered ? (
               <>
                 Matching <em>guides</em>
               </>
-            ) : (
-              <>
-                Every <em>guide</em>
-              </>
-            )
-          }
-          line={
-            filtered
-              ? `${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`
-              : `${guides.length} guides on progression, gathering, PvE, trading and crafting.`
-          }
-        />
+            }
+            line={`${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`}
+          />
+        )}
         <form action="/guides" className={`raised ${styles.filters}`} role="search">
           <BuildRegionInput />
           {category && <input type="hidden" name="category" value={category} />}
@@ -125,8 +119,7 @@ export function GrindGuideDirectory({
           <div className={styles.searchRow}>
             <label className={styles.search}>
               <span className="sr-only">Search guides</span>
-              <Search size={16} aria-hidden="true" />
-              <input
+              <SearchInput
                 type="search"
                 name="q"
                 defaultValue={query}

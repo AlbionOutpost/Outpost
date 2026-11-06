@@ -2,7 +2,7 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Search, Skull, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { GearValue } from "@/lib/albion/kill-value";
@@ -22,6 +22,7 @@ import { Disclosure } from "./disclosure";
 import { StatusLine } from "./status-line";
 import { NextStepCards } from "./next-step-cards";
 import styles from "./combat-feed.module.css";
+import { SearchInput } from "./field";
 
 type Player = CombatEvent["killer"];
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
@@ -162,9 +163,8 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
       </WorkspaceHeading>
       <section className={`raised ${styles.toolbar}`} aria-label="Feed filters">
         <label className={styles.search}>
-          <Search size={16} aria-hidden="true" />
           <span className="sr-only">Filter this feed page by player or guild</span>
-          <input
+          <SearchInput
             placeholder="Filter this page by player or guild…"
             value={query}
             maxLength={100}
@@ -221,21 +221,19 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </p>
       </section>
       {failed && (
-        <div className={styles.error} role="alert">
-          <div>
-            <p className={styles.errorTitle}>The {kills ? "kill" : "death"} feed did not load.</p>
-            <p className={styles.errorLine}>
-              {error.message}
-              {feed ? " The last page that loaded stays below." : ""}
-            </p>
-          </div>
+        // Said once, in a well, with the way back beside it (as Market says a failed quote)
+        <div className={`well ${styles.error}`}>
+          <StatusLine tone="error">
+            {error.message}
+            {feed ? " The last page that loaded stays below." : ""}
+          </StatusLine>
           <button
             type="button"
-            className="pill-link"
+            className="pill-link is-small"
             onClick={() => void refresh()}
             disabled={loading}
           >
-            <RefreshCw size={15} aria-hidden="true" /> Retry feed
+            <RefreshCw size={14} aria-hidden="true" /> Retry feed
           </button>
         </div>
       )}
@@ -411,7 +409,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           kills
             ? {
                 href: "/tools/kill-feed?view=deaths",
-                emblem: "fame",
+                emblem: "kill-skull",
                 title: "Death feed",
                 line: "The same fights, from the side that lost them.",
                 scene: "city",
