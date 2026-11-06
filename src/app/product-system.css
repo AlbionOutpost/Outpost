@@ -504,6 +504,8 @@
   }
   .app.outpost .workspace-identity-head {
     gap: 12px;
+    /* The emblem sits on the title's cap line, not centred on a wrapped description. */
+    align-items: flex-start;
   }
   .app.outpost .workspace-identity-actions {
     flex: 0 0 100%;
