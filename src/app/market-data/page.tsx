@@ -5,20 +5,17 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "@/components/link";
 import { ItemIcon } from "@/components/item-icon";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  Check,
-  Clock3,
-  Download,
-  Globe2,
-  Radio,
-  Search,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check } from "lucide-react";
 import { cities, regions, regionSchema } from "@/lib/albion/region-config";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { SectionHeading } from "@/components/section-heading";
+import { PanelHead } from "@/components/panel-head";
+import { Unavailable } from "@/components/status-line";
+import { MarketNextSteps } from "@/components/market-next-steps";
 import styles from "./page.module.css";
+
+const client = "https://www.albion-online-data.com/client/";
 
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/market-data", await searchParams);
@@ -51,212 +48,211 @@ export default async function MarketDataPage({
   const quality = /^[1-5]$/.test(input.quality ?? "") ? Number(input.quality) : 1;
   const city = cities.find((city) => city === input.city);
   const market = `/tools/market?${new URLSearchParams({ region, item, quality: String(quality), ...(city ? { city } : {}) })}`;
+  const steps = [
+    {
+      title: "Run the client",
+      line: "Download the Albion Online Data Project client from its official page and follow its setup for your computer.",
+      action: (
+        <a href={client} target="_blank" rel="noopener noreferrer" className="pill-link is-small">
+          Client download <ArrowUpRight size={14} aria-hidden="true" />
+        </a>
+      ),
+    },
+    {
+      title: "Open the exact orders",
+      line: "In game, go to the city market and search the item. Match its tier, enchantment and quality, then open the buy or sell orders.",
+      action: <span className={styles.stepNote}>Only orders you open are shared.</span>,
+    },
+    {
+      title: "Check the time it was seen",
+      line: "Come back and load the prices again. Give it a few minutes, then look for the new time next to the price.",
+      action: (
+        <Link href={market} className="pill-link is-small">
+          Back to your item <ArrowUpRight size={14} aria-hidden="true" />
+        </Link>
+      ),
+    },
+  ];
   return (
     <article className={styles.page}>
-      <Link className={styles.back} href={market}>
-        <ArrowLeft size={16} /> Back to your market
-      </Link>
-      <header className={styles.hero}>
-        <div>
-          <span className="eyebrow">COMMUNITY MARKET DATA</span>
-          <h1>
-            Better decisions start with <span>better observations.</span>
-          </h1>
-          <p>
-            Every market price begins with a player. Find the right observation, understand its age,
-            and help fill the gaps.
-          </p>
-          <div className={styles.heroActions}>
-            <a
-              className="button primary"
-              href="https://www.albion-online-data.com/client/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Download size={17} /> Get the data client <ArrowUpRight size={16} />
-            </a>
-            <a className="button secondary" href="#missing-prices">
-              Find a missing price
-            </a>
-          </div>
-          <div className={styles.optional}>
-            <ShieldCheck size={16} /> Optional to contribute. You can use Outpost without it.
-          </div>
-        </div>
-        <aside className={styles.context} aria-label="Your market selection">
-          <div className={styles.contextTop}>
-            <Radio size={18} />
-            <span>{input.item ? "Your market lookup" : "Try a market lookup"}</span>
-          </div>
-          <div className={styles.item}>
-            <ItemIcon id={item} quality={quality} size={72} />
-            <div>
-              <strong>{equipmentName(item)}</strong>
-              <span>
-                {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][quality - 1]} quality
-              </span>
-            </div>
-          </div>
-          <dl>
-            <div>
-              <dt>Game server</dt>
-              <dd>{regions[region].label}</dd>
-            </div>
-            <div>
-              <dt>City</dt>
-              <dd>{city ?? "Compare all cities"}</dd>
-            </div>
-            <div>
-              <dt>Source</dt>
-              <dd>Albion Data Project</dd>
-            </div>
-          </dl>
-          <Link href={market} className="button secondary">
-            Compare this item <ArrowUpRight size={16} />
-          </Link>
-        </aside>
-      </header>
-      <section className={styles.workflow} id="missing-prices" aria-labelledby="workflow-title">
-        <div className={styles.sectionHeading}>
-          <span className="eyebrow">FILL IN THE GAPS</span>
-          <h2 id="workflow-title">Scan. Share. Check.</h2>
-          <p>
-            The optional client shares orders your game actually loads. Opening a website alone
-            cannot refresh an in-game market.
-          </p>
-        </div>
+      <WorkspaceHeading
+        glyph="market"
+        scene="market"
+        title="Market data"
+        description="Where Outpost's prices come from, why one can be missing, and how you can fill it in. Sharing is optional; every tool works without it."
+        actions={
+          <a className="button primary" href={client} target="_blank" rel="noopener noreferrer">
+            Get the data client <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+        }
+      >
+        <Link className="pill-link is-small masthead-back" href={market}>
+          <ArrowLeft size={14} aria-hidden="true" /> Back to your market
+        </Link>
+      </WorkspaceHeading>
+
+      <section className={styles.section} id="missing-prices" aria-labelledby="workflow-title">
+        <SectionHeading
+          id="workflow-title"
+          title={
+            <>
+              Fill a missing <em>price</em>
+            </>
+          }
+          line="The client shares the orders your game loads. A website can't refresh an in-game market on its own."
+        />
         <ol className={styles.steps}>
-          <li>
-            <span className={styles.stepNumber}>01</span>
-            <Download size={23} />
-            <h3>Run the client</h3>
-            <p>
-              Get the Albion Data Project client from its official download page, then follow its
-              setup instructions for your computer.
-            </p>
-            <a
-              href="https://www.albion-online-data.com/client/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open client guide <ArrowUpRight size={14} />
-            </a>
-          </li>
-          <li>
-            <span className={styles.stepNumber}>02</span>
-            <Search size={23} />
-            <h3>Open the exact orders</h3>
-            <p>
-              In Albion, visit the city and search the item. Check its tier, enchantment and
-              quality, then load the buy or sell orders you need.
-            </p>
-            <span className={styles.stepNote}>Only orders you open can be shared.</span>
-          </li>
-          <li>
-            <span className={styles.stepNumber}>03</span>
-            <Radio size={23} />
-            <h3>Check the source time</h3>
-            <p>
-              Return to Outpost and check prices again. Allow a few minutes for cached responses to
-              catch up; compare the observation timestamp.
-            </p>
-            <Link href={market}>
-              Return to your item <ArrowUpRight size={14} />
-            </Link>
-          </li>
+          {steps.map((step, index) => (
+            <li key={step.title} className={`raised has-scene ${styles.step}`} data-scene="market">
+              <PanelHead step={index + 1} title={step.title} as="h3" />
+              <p>{step.line}</p>
+              <div className={styles.stepAction}>{step.action}</div>
+            </li>
+          ))}
         </ol>
       </section>
-      <div className={styles.details}>
-        <section className={styles.checklist} aria-labelledby="checks-title">
-          <span className="eyebrow">BEFORE YOU RETRY</span>
-          <h2 id="checks-title">The right item. The right market.</h2>
-          <ul>
-            <li>
-              <Check size={17} />
+
+      <section className={styles.section} aria-labelledby="read-title">
+        <SectionHeading
+          id="read-title"
+          title={
+            <>
+              Before you <em>trust</em> a price
+            </>
+          }
+          line="What a price belongs to, what to check, and what each state means."
+        />
+        <div className={styles.reading}>
+          <aside className={`raised ${styles.panel}`} aria-label="Your market selection">
+            <PanelHead
+              title={input.item ? "Your lookup" : "Try a lookup"}
+              line="The exact selection a price belongs to."
+              as="h3"
+            />
+            <div className={styles.item}>
+              <span className={styles.itemWell}>
+                <ItemIcon id={item} quality={quality} size={64} />
+              </span>
               <div>
-                <strong>Match your game server</strong>
-                <p>
-                  Americas, Europe and Asia have separate markets. An observation on another server
-                  does not price your item.
-                </p>
+                <strong>{equipmentName(item)}</strong>
+                <span>
+                  {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"][quality - 1]}{" "}
+                  quality
+                </span>
               </div>
-            </li>
-            <li>
-              <Check size={17} />
+            </div>
+            <dl className={styles.facts}>
               <div>
-                <strong>Check quality and enchantment</strong>
-                <p>
-                  A T8.0 Normal item and a T8.1 Excellent item are different price lookups. Compare
-                  other qualities explicitly in Market Explorer.
-                </p>
+                <dt>Server</dt>
+                <dd>{regions[region].label}</dd>
               </div>
-            </li>
-            <li>
-              <Check size={17} />
               <div>
-                <strong>Separate buying from selling</strong>
-                <p>
-                  Sell listings are purchase estimates; buy orders are sale estimates. The Black
-                  Market buys eligible equipment from players.
-                </p>
+                <dt>City</dt>
+                <dd>{city ?? "Every city"}</dd>
               </div>
-            </li>
-          </ul>
-        </section>
-        <section className={styles.states} aria-labelledby="states-title">
-          <span className="eyebrow">READ THE SIGNAL</span>
-          <h2 id="states-title">Know what a price means.</h2>
-          <dl>
-            <div>
-              <dt>
-                <span className={styles.recent} /> Recent observation
-              </dt>
-              <dd>
-                Observed within the past hour. Check the game before committing; orders can change.
-              </dd>
-            </div>
-            <div>
-              <dt>
-                <Clock3 size={14} /> Older observation
-              </dt>
-              <dd>
-                A dated reference for planning. It stays labelled as historical rather than becoming
-                a fresh quote.
-              </dd>
-            </div>
-            <div>
-              <dt>
-                <Search size={14} /> No observation
-              </dt>
-              <dd>
-                No usable price for this exact selection. Try another city or quality, scan it, or
-                enter your own price in a calculator.
-              </dd>
-            </div>
-            <div>
-              <dt>
-                <Globe2 size={14} /> Service unavailable
-              </dt>
-              <dd>
-                The lookup failed. Retry later; a service error does not mean the item has no
-                market.
-              </dd>
-            </div>
-          </dl>
-        </section>
-      </div>
-      <footer className={styles.source}>
+              <div>
+                <dt>Source</dt>
+                <dd>Albion Online Data Project</dd>
+              </div>
+            </dl>
+            <Link href={market} className="button secondary">
+              Compare this item <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
+          </aside>
+          <section className={`raised ${styles.panel}`} aria-labelledby="checks-title">
+            <PanelHead id="checks-title" title="Before you retry" as="h3" />
+            <ul className={styles.checks}>
+              <li>
+                <Check size={17} aria-hidden="true" />
+                <div>
+                  <strong>Match your server</strong>
+                  <p>
+                    Americas, Europe and Asia are separate markets. A price from another server does
+                    not price your item.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <Check size={17} aria-hidden="true" />
+                <div>
+                  <strong>Match quality and enchantment</strong>
+                  <p>
+                    A T8.0 Normal and a T8.1 Excellent are two different lookups. Market Explorer
+                    shows the other qualities.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <Check size={17} aria-hidden="true" />
+                <div>
+                  <strong>Buy order or sell order</strong>
+                  <p>
+                    You pay the sell order to buy now and get the buy order to sell now. The Black
+                    Market only buys.
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </section>
+          <section className={`raised ${styles.panel}`} aria-labelledby="states-title">
+            <PanelHead id="states-title" title="What you'll see" as="h3" />
+            <dl className={styles.states}>
+              <div>
+                <dt>
+                  <span className={styles.recent} aria-hidden="true" /> Recent
+                </dt>
+                <dd>
+                  Seen in the last hour. Orders still move, so check in game before you commit.
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  <span className={styles.stale}>Stale</span>
+                </dt>
+                <dd>
+                  Older than an hour. Fine for planning; it keeps its date and never looks fresh.
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  <Unavailable />
+                </dt>
+                <dd>
+                  Nobody has shared this exact order yet. Try another city or quality, scan it, or
+                  type your own price into a calculator.
+                </dd>
+              </div>
+              <div>
+                <dt className={styles.failed}>Could not load</dt>
+                <dd>
+                  The lookup failed. Try again later; it does not mean the item has no market.
+                </dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+      </section>
+
+      <footer className={`raised ${styles.source}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+        <img src="/albion/icons/tool-market.webp" alt="" width={48} height={48} />
         <div>
-          <strong>Powered by player observations.</strong>
+          <strong>Powered by player observations</strong>
           <p>
-            Outpost uses the Albion Online Data Project public API. The client and shared feed are
-            maintained by that independent community project.
+            Outpost reads the Albion Online Data Project&apos;s public API. The client and the
+            shared feed belong to that independent community project.
           </p>
         </div>
-        <a href="https://www.albion-online-data.com/" target="_blank" rel="noopener noreferrer">
-          About the Data Project <ArrowUpRight size={16} />
+        <a
+          className="button secondary"
+          href="https://www.albion-online-data.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          About the Data Project <ArrowUpRight size={16} aria-hidden="true" />
         </a>
       </footer>
+      <MarketNextSteps show={["market", "flipping", "crafting"]} />
     </article>
   );
 }

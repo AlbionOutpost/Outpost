@@ -64,11 +64,11 @@ test("catalog release persists, filters, paginates and exposes honest provenance
       .getByLabel("Search item name or identifier", { exact: true })
       .fill("Original metadata fixture");
     await page.getByRole("button", { name: "Main hand", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(1);
+    await expect(page.locator(".item-catalog tbody tr")).toHaveCount(1);
     await page.getByRole("button", { name: "Cape", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(0);
+    await expect(page.locator(".item-catalog tbody tr")).toHaveCount(0);
     await page.getByRole("button", { name: "Main hand", exact: true }).click();
-    await expect(page.locator(".item-reference-browser tbody tr")).toContainText(id);
+    await expect(page.locator(".item-catalog tbody tr")).toContainText(id);
     const r = await page.request.get("/api/items?search=CATALOG_TEST&tier=4&enchantment=0");
     expect(r.status()).toBe(200);
     expect((await r.json()).total).toBe(1);

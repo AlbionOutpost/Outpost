@@ -4,7 +4,7 @@ import type { SeoQuery } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import BackLink from "@/components/build-region-link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ItemMarketLink } from "@/components/item-market-link";
 import { ItemPricePanel } from "@/components/item-price-panel";
 import { BuildPreviewCard } from "@/components/build-preview-card";
@@ -23,7 +23,13 @@ import { findEquipment } from "@/lib/albion/equipment-catalog";
 import { buildDiscovery } from "@/lib/build-discovery";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import Link from "@/components/build-region-link";
-import "@/components/economy-workspaces.css";
+import "./item-detail.css";
+import { PanelHead } from "@/components/panel-head";
+import { SectionHeading } from "@/components/section-heading";
+import { EmptyWell } from "@/components/empty-well";
+import { SpellIcon } from "@/components/spell-icon";
+import { ItemVariantPicker } from "@/components/item-variant-picker";
+import { MarketNextSteps } from "@/components/market-next-steps";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbList } from "@/lib/structured-data";
 
@@ -131,7 +137,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
         scene="market"
         emblem={<ItemIcon id={id} size={56} />}
         title={item.name}
-        description={`${item.slot} · T${item.tier}.${item.enchantment} · Base item power ${item.itemPower ?? "not verified"} · Weight ${weight === null ? "unavailable" : `${weight} kg`}`}
+        description={`${item.slot} · T${item.tier}.${item.enchantment} · Base item power ${item.itemPower ?? "not verified"} · ${weight === null ? "Weight unavailable" : `${weight} kg`}`}
         actions={<ItemMarketLink id={id} />}
       >
         <MastheadTabs
@@ -152,62 +158,83 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           ]}
         />
         <p className="masthead-note">
-          <code>{id}</code> · Item values and unlocks may change with game updates. Confirm your
-          setup in game.
+          <code>{id}</code> · Values can change with a game update; check in game before you commit.
         </p>
         <BackLink className="pill-link is-small masthead-back" href="/items">
           Item database <ArrowLeft size={14} />
         </BackLink>
       </WorkspaceHeading>
-      <section className="panel item-metadata-detail">
+      <div className="item-metadata-detail">
         <ItemPricePanel id={id} />
-        <section className="item-abilities" aria-labelledby="item-abilities-heading">
-          <h2 id="item-abilities-heading">Abilities</h2>
-          <p className="muted">
-            Available ability choices. Unlock requirements are shown when known.
-          </p>
-          <div className="item-ability-groups">
-            {[...new Set(metadata.abilities.map((ability) => ability.slot))].map((slot) => (
-              <section key={slot} className="item-ability-group" aria-label={`${slot} abilities`}>
-                <h3>{slot}</h3>
-                <ul>
-                  {metadata.abilities
-                    .filter((ability) => ability.slot === slot)
-                    .map((ability) => (
-                      <li key={ability.id}>
-                        <span>{ability.name}</span>
-                        {ability.unlock && <small>Unlock: {ability.unlock}</small>}
-                      </li>
-                    ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-          {!metadata.abilities.length && <p>Ability details are unavailable for this item.</p>}
+        <section
+          className="raised item-panel item-abilities"
+          aria-labelledby="item-abilities-heading"
+        >
+          <PanelHead
+            id="item-abilities-heading"
+            title="Abilities"
+            line="Every ability you can pick for each slot. Unlock requirements show when known."
+          />
+          {metadata.abilities.length ? (
+            <div className="item-ability-columns">
+              {[...new Set(metadata.abilities.map((ability) => ability.slot))].map((slot) => (
+                <section
+                  key={slot}
+                  className="item-ability-column"
+                  aria-label={`${slot} abilities`}
+                >
+                  <h3>
+                    <span className="item-slot-key">{slot}</span>
+                  </h3>
+                  <ul>
+                    {metadata.abilities
+                      .filter((ability) => ability.slot === slot)
+                      .map((ability) => (
+                        <li key={ability.id}>
+                          <span className="item-spell-well">
+                            <SpellIcon id={ability.id} name={ability.name} size={36} />
+                          </span>
+                          <span>
+                            {ability.name}
+                            {ability.unlock && <small>Unlock: {ability.unlock}</small>}
+                          </span>
+                        </li>
+                      ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <EmptyWell
+              title="No ability list for this item"
+              line="Check the item's spells in game; they have not been recorded here yet."
+            />
+          )}
         </section>
         {recipe && (
-          <section className="item-supported-recipe" aria-labelledby="item-recipe-heading">
-            <h2 id="item-recipe-heading">
-              {itemRecipes.length > 1 ? `Recipes (${itemRecipes.length} options)` : "Recipe"}
-            </h2>
-            <p>
-              {recipe.outputCount} output per craft
-              {recipe.baseFocus ? ` · ${recipe.baseFocus.toLocaleString("en-US")} base focus` : ""}
-              {recipe.silver ? ` · ${recipe.silver.toLocaleString("en-US")} silver` : ""}. From game
-              item data captured 27 Oct 2026; confirm in game after a patch.
-            </p>
+          <section
+            className="raised item-panel item-supported-recipe"
+            aria-labelledby="item-recipe-heading"
+          >
+            <PanelHead
+              id="item-recipe-heading"
+              title={itemRecipes.length > 1 ? `Recipes (${itemRecipes.length} options)` : "Recipe"}
+              line={`${recipe.outputCount} per craft${recipe.baseFocus ? ` · ${recipe.baseFocus.toLocaleString("en-US")} base focus` : ""}${recipe.silver ? ` · ${recipe.silver.toLocaleString("en-US")} silver` : ""} · game data from 27 Oct 2026`}
+            />
             {itemRecipes.map((option) => (
               <div key={option.id} className="item-recipe-option">
                 {itemRecipes.length > 1 && <h3>Option {option.alternative}</h3>}
                 <ul>
                   {option.ingredients.map((ingredient) => (
                     <li key={ingredient.id}>
-                      <ItemIcon id={ingredient.id} size={36} />
+                      <span className="item-row-well">
+                        <ItemIcon id={ingredient.id} size={36} />
+                      </span>
                       <ItemName id={ingredient.id}>
                         {ingredient.name}
-                        {ingredient.returnable === false && <small> · not returned</small>}
+                        {ingredient.returnable === false && <small>Not returned</small>}
                       </ItemName>
-                      <strong>× {ingredient.quantity}</strong>
+                      <strong className="numeric">× {ingredient.quantity}</strong>
                     </li>
                   ))}
                 </ul>
@@ -222,14 +249,62 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
             ))}
           </section>
         )}
+        {usedIn.total > 0 && (
+          <section
+            className="raised item-panel item-used-in"
+            aria-labelledby="item-used-in-heading"
+          >
+            <PanelHead
+              id="item-used-in-heading"
+              title={`Used in ${usedIn.total} recipes`}
+              line={
+                usedIn.total > usedIn.recipes.length
+                  ? `Crafts that use this item. The first ${usedIn.recipes.length} are shown.`
+                  : "Crafts that use this item."
+              }
+            />
+            <ul className="item-used-in-list">
+              {usedIn.recipes.map((option) => {
+                const quantity =
+                  option.ingredients.find((ingredient) => ingredient.id === id)?.quantity ?? 0;
+                return (
+                  <li key={option.id}>
+                    <span className="item-row-well">
+                      <ItemIcon id={option.output} size={36} />
+                    </span>
+                    <span className="item-used-in-name">
+                      <ItemName id={option.output}>{option.name}</ItemName>
+                      <small>× {quantity} per craft</small>
+                    </span>
+                    <Link
+                      className="pill-link is-small"
+                      href={`/tools/${option.category || option.kind}?recipe=${encodeURIComponent(option.id)}`}
+                      aria-label={`Calculate ${option.name}`}
+                    >
+                      Calculate <ArrowRight size={14} aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
         {variants.length > 1 && (
-          <section className="item-variants" aria-labelledby="item-variants-heading">
-            <h2 id="item-variants-heading">Tiers &amp; enchantments</h2>
-            <p className="muted">
-              Every version of this item in the catalog. Base IP is the unenchanted, normal-quality
-              value.
-            </p>
-            <div className="table-scroll" role="region" aria-label="Item variants" tabIndex={0}>
+          <section
+            className="raised item-panel item-variants"
+            aria-labelledby="item-variants-heading"
+          >
+            <PanelHead
+              id="item-variants-heading"
+              title="Tiers & enchantments"
+              line="Every version of this item in the catalog, with its base IP at normal quality."
+            />
+            <div
+              className="table-scroll item-variant-well"
+              role="region"
+              aria-label="Item variants"
+              tabIndex={0}
+            >
               <table className="item-variant-table">
                 <thead>
                   <tr>
@@ -278,52 +353,22 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                 </tbody>
               </table>
             </div>
-          </section>
-        )}
-        {usedIn.total > 0 && (
-          <section className="item-used-in" aria-labelledby="item-used-in-heading">
-            <h2 id="item-used-in-heading">Used in {usedIn.total} recipes</h2>
-            <p className="muted">
-              Crafts that consume this item.{" "}
-              {usedIn.total > usedIn.recipes.length
-                ? `Showing the first ${usedIn.recipes.length}.`
-                : ""}
-            </p>
-            <ul className="item-used-in-list">
-              {usedIn.recipes.map((option) => {
-                const quantity =
-                  option.ingredients.find((ingredient) => ingredient.id === id)?.quantity ?? 0;
-                return (
-                  <li key={option.id}>
-                    <ItemIcon id={option.output} size={36} />
-                    <ItemName id={option.output}>{option.name}</ItemName>
-                    <span className="muted">× {quantity} per craft</span>
-                    <Link
-                      className="text-link"
-                      href={`/tools/${option.category || option.kind}?recipe=${encodeURIComponent(option.id)}`}
-                    >
-                      Calculate →
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <ItemVariantPicker variants={variants} current={id} />
           </section>
         )}
         {builds && builds.total > 0 && (
           <section className="item-builds" aria-labelledby="item-builds-heading">
-            <div className="item-price-heading">
-              <div>
-                <h2 id="item-builds-heading">
-                  {builds.total} public {builds.total === 1 ? "build uses" : "builds use"} this
-                  weapon
-                </h2>
-                <p className="muted">Most saved first, any tier or enchantment.</p>
-              </div>
-              <Link className="button secondary" href={`/builds?weapon=${weaponCode}`}>
-                See all builds
-              </Link>
-            </div>
+            <SectionHeading
+              id="item-builds-heading"
+              title={
+                <>
+                  {builds.total} public <em>{builds.total === 1 ? "build" : "builds"}</em>{" "}
+                  {builds.total === 1 ? "uses" : "use"} this weapon
+                </>
+              }
+              line="Most saved first, any tier or enchantment."
+              link={{ href: `/builds?weapon=${weaponCode}`, label: "See all builds" }}
+            />
             <div className="build-grid item-build-grid">
               {builds.builds.slice(0, 3).map((build) => (
                 <BuildPreviewCard
@@ -338,7 +383,8 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
             </div>
           </section>
         )}
-      </section>
+      </div>
+      <MarketNextSteps show={["flipping", "crafting", "planner"]} />
     </div>
   );
 }

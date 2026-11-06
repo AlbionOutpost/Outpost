@@ -1,0 +1,5 @@
+/* Item database: a reading page on the landing measure */
+.page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+}

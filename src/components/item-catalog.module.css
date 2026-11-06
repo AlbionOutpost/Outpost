@@ -1,0 +1,361 @@
+/* Item database (/items): a framed filter bar, then the results in a well, as on the build
+   library. Rows open the item page; the whole row is the link. */
+.catalog {
+  display: grid;
+  gap: var(--space-5);
+}
+:global(.app.outpost) .filters.filters {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+}
+
+/* Category pills */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .categories > button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .categories > button:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .categories > button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+/* Fields */
+.fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px 160px;
+  align-items: end;
+  gap: var(--space-3);
+}
+.fields > label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--secondary);
+  font: 600 12px/1.35 var(--font-ui);
+}
+.fields > label > :last-child {
+  width: 100%;
+}
+:global(.app.outpost) .categorySelect.categorySelect {
+  display: none;
+}
+.searchWell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.searchWell > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+:global(.app.outpost) .searchWell > input {
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 var(--space-3) 0 38px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--text);
+  font: 500 14px/1.2 var(--font-ui);
+}
+
+/* Result bar */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .count.count {
+  margin: 0 auto 0 0;
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  font: 500 13px/1.4 var(--font-ui);
+}
+.view {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+}
+:global(.app.outpost) .view > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 700 12px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .view > button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.catalog[aria-busy="true"] :is(.tableWell, .grid) {
+  opacity: 0.55;
+}
+
+/* List: a well, no frame */
+.tableWell {
+  overflow-x: auto;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .table.table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+:global(.app.outpost) .table.table th {
+  padding: 10px var(--space-4);
+  border-bottom: 1px solid var(--well-border);
+  background: none;
+  color: var(--muted);
+  font: 700 12px/1.2 var(--font-ui);
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+:global(.app.outpost) .table.table td {
+  padding: 10px var(--space-4);
+  border-bottom: 1px solid var(--well-border);
+  background: none;
+  color: var(--secondary);
+  font: 400 13px/1.4 var(--font-ui);
+  vertical-align: middle;
+}
+:global(.app.outpost) .table.table tbody tr {
+  position: relative;
+  transition: background 200ms var(--ease-out-expo);
+}
+:global(.app.outpost) .table.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+:global(.app.outpost) .table.table tbody tr:hover,
+:global(.app.outpost) .table.table tbody tr:focus-within {
+  background: var(--accent-wash);
+}
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.identity > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.identity small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.rowWell,
+.well {
+  display: grid;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+.rowWell {
+  width: 48px;
+  height: 48px;
+}
+:global(.app.outpost) .rowLink.rowLink {
+  color: var(--text);
+  font: 650 14px/1.3 var(--font-ui);
+  text-decoration: none;
+}
+/* The whole row is the link */
+.rowLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+:global(.app.outpost) .rowLink.rowLink:focus-visible {
+  outline: none;
+}
+:global(.app.outpost) .table.table tbody tr:has(.rowLink:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+:global(.app.outpost) .table.table tbody tr:hover .rowLink {
+  color: var(--accent-ink);
+}
+.idCol code {
+  color: var(--muted);
+  font: 500 12px/1.3 var(--font-data);
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .table.table .open {
+  width: 1%;
+  color: var(--accent-ink);
+  text-align: right;
+}
+
+/* Grid: item wells, as on the landing's item rows */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grid > li {
+  display: grid;
+}
+.cell {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  padding: var(--space-4) var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  text-align: center;
+  transition: border-color 200ms var(--ease-out-expo);
+}
+.cell:hover,
+.cell:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.well {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 4px;
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 68%
+    ),
+    var(--surface-raised);
+}
+:global(.app.outpost) .cell h2 {
+  margin: 0;
+  font: 650 14px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .cell h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+.cell h2 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+:global(.app.outpost) .cell h2 a:focus-visible {
+  outline: none;
+}
+.cell:has(a:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.cell p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Pages and notes */
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+}
+.notes {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.noteLine {
+  margin: 0 0 var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 980px) {
+  .fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .search {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .filters.filters {
+    padding: var(--space-4);
+  }
+  .categories {
+    display: none;
+  }
+  :global(.app.outpost) .categorySelect.categorySelect {
+    display: grid;
+    grid-column: 1 / -1;
+  }
+  .categoryCol,
+  .idCol {
+    display: none;
+  }
+  :global(.app.outpost) .table.table th:not(:first-child, :last-child),
+  :global(.app.outpost) .table.table td:is(.categoryCol, .idCol) {
+    display: none;
+  }
+  :global(.app.outpost) .table.table :is(th, td) {
+    padding-inline: var(--space-3);
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

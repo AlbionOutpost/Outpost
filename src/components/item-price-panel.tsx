@@ -2,17 +2,20 @@
 import { Silver } from "@/components/silver";
 import Link from "@/components/link";
 import { useEffect, useState } from "react";
+import { ArrowRight, RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
+import { sourceAge } from "@/lib/albion/source-age";
+import { cities, regions } from "@/lib/albion/region-config";
+import { PanelHead } from "./panel-head";
+import { StatusLine, Unavailable } from "./status-line";
 
 type State =
   | { status: "loading"; key: string }
-  | { status: "error"; key: string; message: string }
-  | { status: "ready"; key: string; rows: MarketPrice[] };
-
-const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
+  | { status: "error"; key: string }
+  | { status: "ready"; key: string; rows: MarketPrice[]; at: number };
 
 function stamp(value: string) {
   const time = sourceTimestamp(value);
@@ -23,12 +26,14 @@ function stamp(value: string) {
 
 /**
  * Normal-quality city observations for one item, loaded on arrival so the item page answers
- * "what does it cost" without a detour. Each quote keeps its city, source time and freshness.
+ * "what does it cost" without a detour. Each quote keeps its city, source time and freshness;
+ * the table keeps its shape while there is nothing to show, and the reason is said once.
  */
 export function ItemPricePanel({ id }: { id: string }) {
   const region = useOutpostRegion();
   const quality = 1;
-  const key = `${region}:${id}:${quality}`;
+  const [attempt, setAttempt] = useState(0);
+  const key = `${region}:${id}:${quality}:${attempt}`;
   const [settled, setSettled] = useState<State | null>(null);
   // A stale key means a new selection is in flight; the old answer is never shown for it.
   const state: State = settled && settled.key === key ? settled : { status: "loading", key };
@@ -41,170 +46,188 @@ export function ItemPricePanel({ id }: { id: string }) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Could not load prices");
         if (data.region !== region) throw new Error("Source region mismatch");
-        setSettled({ status: "ready", key, rows: data.prices as MarketPrice[] });
+        setSettled({ status: "ready", key, rows: data.prices as MarketPrice[], at: Date.now() });
       })
-      .catch((error: unknown) => {
+      .catch(() => {
         if (controller.signal.aborted) return;
-        setSettled({
-          status: "error",
-          key,
-          message: error instanceof Error ? error.message : "Could not load prices",
-        });
+        setSettled({ status: "error", key });
       });
     return () => controller.abort();
   }, [region, id, key]);
-  const explorer = `/tools/market?${new URLSearchParams({ item: id, region })}`;
   const rows = state.status === "ready" ? state.rows : [];
   const summary = summarizeQuotes(rows);
   const observed = rows
     .filter((row) => row.sell_price_min > 0 || row.buy_price_max > 0)
     .toSorted((a, b) => a.city.localeCompare(b.city));
+  const tableRows = observed.length ? observed : null;
+  const label = regions[region as keyof typeof regions]?.label ?? region;
+  const now = state.status === "ready" ? state.at : 0;
+  const newest = observed
+    .flatMap((r) => [
+      ...(r.sell_price_min ? [{ city: r.city, date: r.sell_price_min_date }] : []),
+      ...(r.buy_price_max ? [{ city: r.city, date: r.buy_price_max_date }] : []),
+    ])
+    .filter((o) => Number.isFinite(sourceTimestamp(o.date)))
+    .reduce<{ city: string; date: string } | null>(
+      (best, o) => (!best || sourceTimestamp(o.date) > sourceTimestamp(best.date) ? o : best),
+      null,
+    );
+  const status =
+    state.status === "loading"
+      ? "Loading city prices…"
+      : state.status === "error"
+        ? "Prices could not load right now."
+        : !summary.available
+          ? `No orders seen for this item on ${label} yet. A gap is not a zero price.`
+          : "";
+  const figure = (
+    label: string,
+    row: MarketPrice | null,
+    value: number | undefined,
+    date: string | undefined,
+  ) => (
+    <div>
+      <dt>{label}</dt>
+      <dd>
+        {row && value ? (
+          <>
+            <strong className="numeric">
+              <Silver value={value} />
+            </strong>
+            <small>
+              <span className="city-dot" data-city={row.city} aria-hidden="true" />
+              {row.city} · {stamp(date ?? "")} UTC
+              {isStale(date ?? "") ? " · stale" : ""}
+            </small>
+          </>
+        ) : (
+          <strong>
+            <Unavailable label={state.status === "loading" ? "Loading" : "Unavailable"} />
+          </strong>
+        )}
+      </dd>
+    </div>
+  );
   return (
     <section
-      className="item-price-panel"
+      className="raised item-panel item-price-panel"
       aria-labelledby="item-prices-heading"
       aria-busy={state.status === "loading"}
     >
-      <div className="item-price-heading">
+      <PanelHead
+        id="item-prices-heading"
+        title="Market prices"
+        line={`Normal quality · ${label} · the newest order seen in each city`}
+      />
+      <dl className="item-price-summary">
+        {figure(
+          "Lowest sell order",
+          summary.ask,
+          summary.ask?.sell_price_min,
+          summary.ask?.sell_price_min_date,
+        )}
+        {figure(
+          "Highest buy order",
+          summary.bid,
+          summary.bid?.buy_price_max,
+          summary.bid?.buy_price_max_date,
+        )}
         <div>
-          <h2 id="item-prices-heading">Market prices</h2>
-          <p className="muted">
-            {qualityNames[quality - 1]} quality · {region} · last player observations per city.
-          </p>
+          <dt>Newest observation</dt>
+          <dd>
+            {newest ? (
+              <>
+                <strong>{sourceAge(newest.date, now).label}</strong>
+                <small>
+                  <span className="city-dot" data-city={newest.city} aria-hidden="true" />
+                  {newest.city} · {stamp(newest.date)} UTC
+                </small>
+              </>
+            ) : (
+              <strong>
+                <Unavailable label={state.status === "loading" ? "Loading" : "Unavailable"} />
+              </strong>
+            )}
+          </dd>
         </div>
-        <Link className="button secondary" href={explorer}>
-          Open in Market Explorer
-        </Link>
-      </div>
-      {state.status === "loading" && (
-        <p className="item-price-state" role="status">
-          Loading city observations…
-        </p>
+      </dl>
+      {status && (
+        <div className="item-price-status">
+          <StatusLine tone={state.status === "error" ? "error" : "default"}>{status}</StatusLine>
+          {state.status === "error" && (
+            <button
+              type="button"
+              className="pill-link is-small"
+              onClick={() => setAttempt((n) => n + 1)}
+            >
+              <RotateCw size={14} aria-hidden="true" />
+              Try again
+            </button>
+          )}
+          {state.status === "ready" && !summary.available && (
+            <Link
+              className="pill-link is-small"
+              href={`/market-data?${new URLSearchParams({ region, item: id })}`}
+            >
+              Fill a missing price <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          )}
+        </div>
       )}
-      {state.status === "error" && (
-        <p className="item-price-state error" role="alert">
-          {state.message}. No previous observation is shown in its place.
-        </p>
-      )}
-      {state.status === "ready" && !summary.available && (
-        <p className="item-price-state" role="status">
-          No price observations for this item in {region}. Missing data is not a zero price.{" "}
-          <Link
-            className="text-link"
-            href={`/market-data?${new URLSearchParams({ region, item: id })}`}
-          >
-            How coverage works →
-          </Link>
-        </p>
-      )}
-      {state.status === "ready" && summary.available > 0 && (
-        <>
-          <dl className="item-price-summary">
-            <div>
-              <dt>Lowest sell order</dt>
-              <dd>
-                {summary.ask ? (
-                  <>
-                    <strong className="numeric">
-                      <Silver value={summary.ask.sell_price_min} />
-                    </strong>
-                    <small>
-                      {summary.ask.city} · {stamp(summary.ask.sell_price_min_date)} UTC
-                      {isStale(summary.ask.sell_price_min_date) ? " · stale" : ""}
-                    </small>
-                  </>
-                ) : (
-                  <>
-                    <strong>—</strong>
-                    <small>Unavailable</small>
-                  </>
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Highest buy order</dt>
-              <dd>
-                {summary.bid ? (
-                  <>
-                    <strong className="numeric">
-                      <Silver value={summary.bid.buy_price_max} />
-                    </strong>
-                    <small>
-                      {summary.bid.city} · {stamp(summary.bid.buy_price_max_date)} UTC
-                      {isStale(summary.bid.buy_price_max_date) ? " · stale" : ""}
-                    </small>
-                  </>
-                ) : (
-                  <>
-                    <strong>—</strong>
-                    <small>Unavailable</small>
-                  </>
-                )}
-              </dd>
-            </div>
-          </dl>
-          <div
-            className="table-scroll"
-            role="region"
-            aria-label="City price observations"
-            tabIndex={0}
-          >
-            <table className="item-price-table">
-              <thead>
-                <tr>
-                  <th scope="col">City</th>
-                  <th scope="col" className="numeric">
-                    Sell order
-                  </th>
-                  <th scope="col" className="numeric">
-                    Buy order
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {observed.map((row) => (
-                  <tr key={row.city}>
-                    <th scope="row">
-                      <span className="city-dot" data-city={row.city} aria-hidden="true" />
-                      {row.city}
-                    </th>
-                    <td className="numeric">
-                      {row.sell_price_min > 0 ? (
-                        <>
-                          <Silver value={row.sell_price_min} />
-                          <small>
-                            {stamp(row.sell_price_min_date)}
-                            {isStale(row.sell_price_min_date) ? " · stale" : ""}
-                          </small>
-                        </>
-                      ) : (
-                        <span className="muted">—</span>
-                      )}
-                    </td>
-                    <td className="numeric">
-                      {row.buy_price_max > 0 ? (
-                        <>
-                          <Silver value={row.buy_price_max} />
-                          <small>
-                            {stamp(row.buy_price_max_date)}
-                            {isStale(row.buy_price_max_date) ? " · stale" : ""}
-                          </small>
-                        </>
-                      ) : (
-                        <span className="muted">—</span>
-                      )}
-                    </td>
-                  </tr>
+      <div
+        className="table-scroll item-price-well"
+        role="region"
+        aria-label="City price observations"
+        tabIndex={0}
+      >
+        <table className="item-price-table">
+          <thead>
+            <tr>
+              <th scope="col">City</th>
+              <th scope="col" className="numeric">
+                Sell order
+              </th>
+              <th scope="col" className="numeric">
+                Buy order
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {(tableRows ?? cities.map((city) => ({ city }) as Partial<MarketPrice>)).map((row) => (
+              <tr key={row.city}>
+                <th scope="row">
+                  <span className="city-dot" data-city={row.city} aria-hidden="true" />
+                  {row.city}
+                </th>
+                {(
+                  [
+                    [row.sell_price_min, row.sell_price_min_date],
+                    [row.buy_price_max, row.buy_price_max_date],
+                  ] as const
+                ).map(([value, date], index) => (
+                  <td className="numeric" key={index}>
+                    {value && date ? (
+                      <>
+                        <Silver value={value} />
+                        <small>
+                          {stamp(date)}
+                          {isStale(date) ? " · stale" : ""}
+                        </small>
+                      </>
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
+                  </td>
                 ))}
-              </tbody>
-            </table>
-          </div>
-          <small className="muted">
-            Albion Online Data Project · source times in UTC · observations older than one hour are
-            marked stale. Other qualities and price history are in the Market Explorer.
-          </small>
-        </>
-      )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="item-price-source">
+        Albion Online Data Project · times in UTC · older than an hour is marked stale. Other
+        qualities and price history are in Market Explorer.
+      </p>
     </section>
   );
 }

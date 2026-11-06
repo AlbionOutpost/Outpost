@@ -1,16 +1,24 @@
 "use client";
-import "./economy-workspaces.css";
 import { useEffect, useState } from "react";
+import { ArrowUpRight, LayoutGrid, List, RotateCw, Search } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import Link from "@/components/link";
 import { items } from "@/lib/albion/item-database";
 import { ItemIcon } from "./item-icon";
+import { Disclosure } from "./disclosure";
+import { EmptyWell } from "./empty-well";
+import { WellSelect } from "./well-select";
 import { catalogSearchResponse } from "@/lib/catalog/search";
 import { z } from "zod";
+import styles from "./item-catalog.module.css";
 const responseSchema = catalogSearchResponse.extend({
   total: z.number().int().nonnegative(),
   page: z.number().int().positive(),
 });
+const tierLabel = (id: string) => {
+  const match = /^T(\d)_[^@]*(?:@(\d))?$/.exec(id);
+  return match ? `T${match[1]}.${match[2] ?? 0}` : "No tier";
+};
 export function ItemCatalog({
   metadata = [],
   total: initialTotal = 0,
@@ -31,29 +39,28 @@ export function ItemCatalog({
     total: initialTotal,
     key: "search=&page=1",
   });
-  const [error, setError] = useState("");
+  const [errorKey, setErrorKey] = useState("");
   const [retry, setRetry] = useState(0);
   const params = new URLSearchParams({ search, page: String(page) });
   if (category) params.set("slot", category);
   if (tier) params.set("tier", tier);
   if (enchantment) params.set("enchantment", enchantment);
   const requestKey = params.toString();
-  const busy = requestKey !== result.key;
+  // A failed refresh of the page the server already rendered keeps showing those rows.
+  const error = errorKey === `${requestKey}#${retry}` && requestKey !== result.key;
+  const busy = requestKey !== result.key && !error;
   useEffect(() => {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
         const response = await fetch(`/api/items?${requestKey}`, { signal: controller.signal });
-        if (!response.ok)
-          throw new Error("Item catalog unavailable. Retry to load this selection.");
+        if (!response.ok) throw new Error("Item catalog unavailable");
         const data = responseSchema.parse(await response.json());
         if (!controller.signal.aborted) {
           setResult({ ...data, key: requestKey });
-          setError("");
         }
-      } catch (error) {
-        if (!controller.signal.aborted)
-          setError(error instanceof Error ? error.message : "Item catalog unavailable");
+      } catch {
+        if (!controller.signal.aborted) setErrorKey(`${requestKey}#${retry}`);
       }
     }, 200);
     return () => {
@@ -69,198 +76,208 @@ export function ItemCatalog({
       (!enchantment || i.enchantment === Number(enchantment)) &&
       !category,
   );
+  const filtered = !!(search || tier || enchantment || category);
+  const clear = () => {
+    setSearch("");
+    setTier("");
+    setEnchantment("");
+    setCategory("");
+    setPage(1);
+  };
+  const pages = Math.max(1, Math.ceil(result.total / 30));
+  const shown = result.items;
+  const itemHref = (id: string) => `/items/${id}?region=${region}`;
   return (
-    <section className="panel item-reference-browser" aria-busy={busy && !error}>
-      <nav className="item-category-nav" aria-label="Item categories">
-        {["", ...categories].map((value) => (
-          <button
-            type="button"
-            key={value}
-            aria-pressed={category === value}
-            onClick={() => {
-              setCategory(value);
-              setPage(1);
-            }}
-          >
-            {value || "All items"}
-          </button>
-        ))}
-      </nav>
-      <label className="item-category-select">
-        Category
-        <select
-          aria-label="Item category"
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">All items</option>
-          {categories.map((value) => (
-            <option key={value}>{value}</option>
+    <div className={`item-catalog ${styles.catalog}`} aria-busy={busy}>
+      <section className={`raised ${styles.filters}`} aria-label="Find an item">
+        <nav className={styles.categories} aria-label="Item categories">
+          {["", ...categories].map((value) => (
+            <button
+              type="button"
+              key={value}
+              aria-pressed={category === value}
+              onClick={() => {
+                setCategory(value);
+                setPage(1);
+              }}
+            >
+              {value || "All items"}
+            </button>
           ))}
-        </select>
-      </label>
-      <div className="market-form">
-        <label>
-          Search item name or identifier
-          <input
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Try Battleaxe"
-          />
-        </label>
-        <label>
-          Tier
-          <select
-            aria-label="Tier"
-            value={tier}
-            onChange={(e) => {
-              setTier(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">All tiers</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Enchantment
-          <select
-            aria-label="Enchantment"
-            value={enchantment}
-            onChange={(e) => {
-              setEnchantment(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">Any</option>
-            {[0, 1, 2, 3, 4].map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <div className="item-catalog-result-bar">
-        <div className="item-catalog-view" role="group" aria-label="Item display">
-          <button
-            type="button"
-            className="button secondary"
-            aria-pressed={view === "list"}
-            onClick={() => setView("list")}
-          >
-            List
-          </button>
-          <button
-            type="button"
-            className="button secondary"
-            aria-pressed={view === "grid"}
-            onClick={() => setView("grid")}
-          >
-            Grid
-          </button>
+        </nav>
+        <div className={styles.fields}>
+          <label className={styles.search}>
+            <span>Search item name or identifier</span>
+            <span className={styles.searchWell}>
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Battleaxe, T6_MAIN_SWORD…"
+              />
+            </span>
+          </label>
+          <label className={styles.categorySelect}>
+            <span>Category</span>
+            <WellSelect
+              aria-label="Item category"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">All items</option>
+              {categories.map((value) => (
+                <option key={value}>{value}</option>
+              ))}
+            </WellSelect>
+          </label>
+          <label>
+            <span>Tier</span>
+            <WellSelect
+              aria-label="Tier"
+              value={tier}
+              onChange={(e) => {
+                setTier(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">All tiers</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
+                <option key={t} value={t}>
+                  T{t}
+                </option>
+              ))}
+            </WellSelect>
+          </label>
+          <label>
+            <span>Enchantment</span>
+            <WellSelect
+              aria-label="Enchantment"
+              value={enchantment}
+              onChange={(e) => {
+                setEnchantment(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Any</option>
+              {[0, 1, 2, 3, 4].map((t) => (
+                <option key={t} value={t}>
+                  .{t}
+                </option>
+              ))}
+            </WellSelect>
+          </label>
         </div>
-        <p role="status">
-          {error
-            ? "Selection could not be loaded"
-            : busy
-              ? "Loading selection…"
-              : `${result.total.toLocaleString()} matching items`}
+      </section>
+      <div className={styles.bar}>
+        <p role="status" className={styles.count}>
+          {error ? "" : busy ? "Loading items…" : `${result.total.toLocaleString()} matching items`}
         </p>
-        {(search || tier || enchantment || category) && (
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => {
-              setSearch("");
-              setTier("");
-              setEnchantment("");
-              setCategory("");
-              setPage(1);
-            }}
-          >
+        {filtered && shown.length > 0 && (
+          <button type="button" className="pill-link is-small" onClick={clear}>
             Clear filters
           </button>
         )}
-      </div>
-      {error && (
-        <p role="alert">
-          {error}{" "}
-          <button type="button" onClick={() => setRetry((n) => n + 1)}>
-            Retry catalog
+        <div className={styles.view} role="group" aria-label="Item display">
+          <button type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>
+            <List size={15} aria-hidden="true" />
+            List
           </button>
-        </p>
-      )}
-      {view === "grid" ? (
-        <div className="item-catalog-grid">
-          {(!busy ? result.items : []).map((item) => (
-            <article key={item.id}>
-              <ItemIcon id={item.id} size={64} />
-              <div>
+          <button type="button" aria-pressed={view === "grid"} onClick={() => setView("grid")}>
+            <LayoutGrid size={15} aria-hidden="true" />
+            Grid
+          </button>
+        </div>
+      </div>
+      {error ? (
+        <EmptyWell
+          title="The item list could not load"
+          line="Your search and filters are kept."
+          action={
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => setRetry((n) => n + 1)}
+            >
+              <RotateCw size={15} aria-hidden="true" />
+              Try again
+            </button>
+          }
+        />
+      ) : !busy && !shown.length ? (
+        <EmptyWell
+          title="No items match these filters"
+          line="Try a shorter name or an exact item ID like T6_MAIN_SWORD."
+          action={
+            <button type="button" className="button secondary" onClick={clear}>
+              Clear filters
+            </button>
+          }
+        />
+      ) : view === "grid" ? (
+        <ul className={`item-catalog-grid ${styles.grid}`}>
+          {shown.map((item) => (
+            <li key={item.id}>
+              <article className={styles.cell}>
+                <span className={styles.well}>
+                  <ItemIcon id={item.id} size={64} />
+                </span>
                 <h2>
-                  <Link href={`/items/${item.id}?region=${region}`}>{item.name}</Link>
+                  <Link href={itemHref(item.id)}>{item.name}</Link>
                 </h2>
                 <p>
-                  {item.slot} · T{item.tier}.{item.enchantment}
+                  {tierLabel(item.id)} · {item.slot}
                 </p>
-                <code>{item.id}</code>
-              </div>
-              <Link
-                className="text-link"
-                href={`/tools/market?region=${region}&item=${encodeURIComponent(item.id)}`}
-              >
-                Compare prices →
-              </Link>
-            </article>
+              </article>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <div className="table-scroll">
-          <table>
+        <div className={`table-scroll ${styles.tableWell}`}>
+          <table className={styles.table}>
+            <caption className="sr-only">Items in the catalog; open a row for its prices</caption>
             <thead>
               <tr>
-                <th>Item</th>
-                <th>Category</th>
-                <th>Identifier</th>
-                <th>Market</th>
+                <th scope="col">Item</th>
+                <th scope="col" className={styles.categoryCol}>
+                  Category
+                </th>
+                <th scope="col" className={styles.idCol}>
+                  Identifier
+                </th>
+                <th scope="col">
+                  <span className="sr-only">Open</span>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {(!busy ? result.items : []).map((i) => (
+              {shown.map((i) => (
                 <tr key={i.id}>
                   <td>
-                    <div className="catalog-item-identity">
-                      <ItemIcon id={i.id} />
+                    <div className={styles.identity}>
+                      <span className={styles.rowWell}>
+                        <ItemIcon id={i.id} size={40} />
+                      </span>
                       <div>
-                        <Link className="text-link" href={`/items/${i.id}?region=${region}`}>
+                        <Link className={styles.rowLink} href={itemHref(i.id)}>
                           {i.name}
                         </Link>
-                        <small>
-                          {/^T(\d)_[^@]*(?:@(\d))?$/.test(i.id)
-                            ? i.id.replace(
-                                /^T(\d)_[^@]*(?:@(\d))?$/,
-                                (_, t, e) => `Tier ${t}.${e ?? 0}`,
-                              )
-                            : "No tier"}
-                        </small>
+                        <small>{tierLabel(i.id)}</small>
                       </div>
                     </div>
                   </td>
-                  <td className="catalog-category">{i.slot}</td>
-                  <td className="catalog-id">{i.id}</td>
-                  <td>
-                    <Link
-                      className="pill-link is-small catalog-compare"
-                      href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
-                    >
-                      Compare prices →
-                    </Link>
+                  <td className={styles.categoryCol}>{i.slot}</td>
+                  <td className={styles.idCol}>
+                    <code>{i.id}</code>
+                  </td>
+                  <td className={styles.open}>
+                    <ArrowUpRight size={18} aria-hidden="true" />
                   </td>
                 </tr>
               ))}
@@ -268,54 +285,54 @@ export function ItemCatalog({
           </table>
         </div>
       )}
-      <div className="actions">
-        <button
-          className="button secondary"
-          disabled={page === 1 || busy}
-          onClick={() => setPage(page - 1)}
-        >
-          Previous items
-        </button>
-        <span>
-          Page {page} of {Math.max(1, Math.ceil(result.total / 30))}
-        </span>
-        <button
-          className="button secondary"
-          disabled={busy || page * 30 >= result.total}
-          onClick={() => setPage(page + 1)}
-        >
-          Next items
-        </button>
+      {!error && pages > 1 && (
+        <nav className={styles.pages} aria-label="Item pages">
+          <button
+            type="button"
+            className="button secondary"
+            disabled={page === 1 || busy}
+            onClick={() => setPage(page - 1)}
+          >
+            Previous items
+          </button>
+          <span>
+            Page {page} of {pages}
+          </span>
+          <button
+            type="button"
+            className="button secondary"
+            disabled={busy || page * 30 >= result.total}
+            onClick={() => setPage(page + 1)}
+          >
+            Next items
+          </button>
+        </nav>
+      )}
+      <div className={styles.notes}>
+        {!!shortcuts.length && (
+          <Disclosure summary="Quick market picks" meta={`${shortcuts.length} items`}>
+            <p className={styles.noteLine}>Open one straight in Market Explorer.</p>
+            <ul className={styles.picks}>
+              {shortcuts.map((i) => (
+                <li key={i.id}>
+                  <Link
+                    className="pill-link is-small"
+                    href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
+                  >
+                    {i.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Disclosure>
+        )}
+        <Disclosure summary="Item data and patch coverage">
+          <p className={styles.noteLine}>
+            The item index does not cover every game item, and the current patch is not verified
+            yet. Confirm item values and unlocks in game.
+          </p>
+        </Disclosure>
       </div>
-      {!busy && !result.items.length && (
-        <div className="empty">
-          <h2>No items match these filters</h2>
-          <p>Try a shorter name, an exact item ID, or clear your filters to browse again.</p>
-        </div>
-      )}
-      <details className="item-data-coverage">
-        <summary>Item data & patch coverage</summary>
-        <p className="muted">
-          The item index does not cover every game item. Current-patch verification is pending;
-          confirm item values and unlocks in game.
-        </p>
-      </details>
-      {!!shortcuts.length && (
-        <details>
-          <summary>Quick market picks ({shortcuts.length})</summary>
-          <p className="muted">Quick picks for your next loadout.</p>
-          {shortcuts.map((i) => (
-            <p key={i.id}>
-              <Link
-                className="text-link"
-                href={`/tools/market?region=${region}&item=${encodeURIComponent(i.id)}`}
-              >
-                {i.name}
-              </Link>
-            </p>
-          ))}
-        </details>
-      )}
-    </section>
+    </div>
   );
 }
