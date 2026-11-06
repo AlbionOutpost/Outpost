@@ -109,9 +109,11 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
         title="Community discussion"
         line="Favourites and votes are players' picks, not combat statistics."
         actions={
-          <Link className="pill-link is-small" href="/favorites">
-            Your favorites <ArrowRight size={14} aria-hidden="true" />
-          </Link>
+          data?.viewerId && (
+            <Link className="pill-link is-small" href="/favorites">
+              Your favorites <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          )
         }
       />
       {data?.viewerId && (
@@ -205,12 +207,12 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
               </div>
             </form>
           ) : (
-            <p className={styles.signin}>
-              <Link className="pill-link is-small" href="/signin">
+            <div className={styles.signin}>
+              <p>Sign in to favourite this {noun}, comment or report it.</p>
+              <Link className="button secondary" href="/signin">
                 Sign in with Discord
               </Link>
-              <span>to favourite, comment or report.</span>
-            </p>
+            </div>
           )}
           {data.comments.length ? (
             <ul className={styles.comments}>

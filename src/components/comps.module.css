@@ -96,11 +96,12 @@
 :global(.app.outpost) .windowTitle.windowTitle {
   flex: 1 1 auto;
 }
-.windowTitle h3 {
+:global(.app.outpost) .windowTitle.windowTitle h3 {
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  font: inherit;
+  font: 800 15px/1.2 var(--font-display);
+  letter-spacing: 0.01em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -119,10 +120,16 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-:global(.app.outpost) .windowBody :global(.landing-roster) {
+/* Rows keep their natural height; a short comp leaves room above the foot, which stays at
+   the bottom of the window */
+:global(.app.outpost) .windowBody.windowBody :global(.landing-roster) {
   grid-template-rows: none;
-  grid-auto-rows: minmax(54px, 1fr);
-  height: 100%;
+  grid-auto-rows: minmax(54px, auto);
+  align-content: start;
+  height: auto;
+}
+:global(.app.outpost) .windowBody.windowBody {
+  align-content: start;
 }
 :global(.app.outpost) .windowBody :global(.landing-roster-who) > span,
 :global(.app.outpost) .memberToggle :global(.landing-roster-who) > span,
@@ -679,10 +686,6 @@
     gap: 26px;
   }
   /* Phones: windows as tall as their rows, the first three members, "+N more" in the foot */
-  :global(.app.outpost) .windowBody :global(.landing-roster) {
-    grid-auto-rows: minmax(54px, auto);
-    height: auto;
-  }
   .windowBody :global(.landing-roster) > li:nth-child(n + 4) {
     display: none;
   }
@@ -1030,6 +1033,23 @@
   display: grid;
   min-width: 0;
 }
+/* Inside the "Your party" panel a member is a well, not a second frame */
+:global(.app.outpost) .unframed.unframed {
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+}
+:global(.app.outpost) .unframed.unframed :global(.landing-window-foot) {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+.partyCard:hover .unframed,
+.partyCard:focus-within .unframed {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+.partyCard[data-active] .unframed {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+}
 .partyEdit {
   display: inline-flex;
   align-items: center;
@@ -1160,9 +1180,6 @@
 :global(.app.outpost) .rowMove > button:disabled {
   opacity: 0.4;
   cursor: default;
-}
-.layoutToggle {
-  margin-left: auto;
 }
 .planFoot {
   display: flex;

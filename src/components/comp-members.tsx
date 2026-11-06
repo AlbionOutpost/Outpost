@@ -26,17 +26,20 @@ export function CompMemberWindow({
   card,
   n,
   action,
+  framed = true,
 }: {
   card: CompMemberCard;
   n: number;
+  /** False inside a framed panel: the window is a well, with no second frame and gems. */
+  framed?: boolean;
   /** A control that covers the whole window (the planner's Edit button). */
   action?: ReactNode;
 }) {
   const weapon = card.member.weapon;
   return (
     <article
-      className={`raised has-scene landing-window ${windows.window} ${styles.memberWindow}`}
-      data-scene="composition"
+      className={`${framed ? "raised has-scene " : `${styles.unframed} `}landing-window ${windows.window} ${styles.memberWindow}`}
+      data-scene={framed ? "composition" : undefined}
       aria-label={`Member ${n}`}
     >
       <span className={styles.memberEdge} aria-hidden="true" />

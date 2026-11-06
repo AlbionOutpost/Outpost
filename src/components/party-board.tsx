@@ -41,6 +41,7 @@ export function PartyBoard({
               </button>
               <div className={styles.partyCard} data-active={active === i ? "" : undefined}>
                 <CompMemberWindow
+                  framed={false}
                   n={i + 1}
                   card={{
                     member: row,

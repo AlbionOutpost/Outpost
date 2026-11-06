@@ -225,7 +225,9 @@ export function CompositionView({
   /** Stored members that could not be read (see readStoredComposition). */
   dropped?: number;
 }) {
-  const [mode, setMode] = useState<"loadouts" | "details" | "roster">("loadouts");
+  const [mode, setMode] = useState<"loadouts" | "details" | "roster">(
+    composition.slots.length >= 10 ? "roster" : "loadouts",
+  );
   const slots = composition.slots;
   return (
     <>
