@@ -47,6 +47,14 @@ const paintings: Record<string, string> = {
   "/groups": "team-roles",
   "/timers": "team-calendar",
 };
+/** Tools reading live observations get the ember chip; the rest stay muted. */
+const live = new Set([
+  "/tools/market",
+  "/tools/gold",
+  "/tools/transporting",
+  "/tools/laborers",
+  "/tools/kill-feed",
+]);
 /** Sections of the directory, each inside one category filter; 3, 4 or 6 tools fill whole rows. */
 const sections: {
   id: string;
@@ -291,7 +299,12 @@ export function ToolDirectory() {
                       <span className="directory-entry-copy">
                         <h3>{t.title}</h3>
                         <p>{t.description}</p>
-                        <span className="tool-availability">{t.state}</span>
+                        <span
+                          className="tool-availability"
+                          data-live={live.has(t.href) ? "" : undefined}
+                        >
+                          {t.state}
+                        </span>
                       </span>
                       <ArrowUpRight className="directory-arrow" size={18} aria-hidden="true" />
                     </Link>

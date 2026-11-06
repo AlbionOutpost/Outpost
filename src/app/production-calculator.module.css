@@ -43,7 +43,8 @@
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
-  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent);
 }
 :global(.app.outpost) .modes.modes::-webkit-scrollbar {
   display: none;
@@ -70,7 +71,7 @@
   color: var(--accent-ink);
 }
 :global(.app.outpost) .modes.modes a:last-child {
-  margin-right: 28px;
+  margin-right: 56px;
 }
 :global(.app.outpost) .modeBar.modeBar > :global(.pill-link) {
   flex: none;

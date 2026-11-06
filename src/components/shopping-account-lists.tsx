@@ -35,7 +35,7 @@ export function ShoppingAccountLists({
     }
   }
   return (
-    <Disclosure summary="Save & load account lists" meta="Private to your account">
+    <Disclosure summary="Save & load account lists">
       <div className={styles.accountBody}>
         <p>
           Named lists are private to your account.{" "}

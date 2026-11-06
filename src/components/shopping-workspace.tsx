@@ -548,6 +548,53 @@ export function ShoppingWorkspace() {
                 Export list
               </button>
             </div>
+            <div className={styles.cities}>
+              <div className={styles.citiesHead}>
+                <span>Cheapest city to buy the rest</span>
+                {toBuy.length > 0 && (
+                  <button
+                    type="button"
+                    className="pill-link is-small"
+                    disabled={compare.state === "loading"}
+                    onClick={compareCities}
+                  >
+                    {compare.state === "ready" ? "Check again" : "Compare cities"}
+                  </button>
+                )}
+              </div>
+              {toBuy.length === 0 ? (
+                <StatusLine>Nothing left to buy.</StatusLine>
+              ) : compare.state === "loading" ? (
+                <StatusLine>Checking the royal cities…</StatusLine>
+              ) : compare.state === "error" ? (
+                <StatusLine tone="error">
+                  City prices could not be loaded. Try again shortly.
+                </StatusLine>
+              ) : compare.state === "idle" ? (
+                <StatusLine>Compare recent sell orders in the six royal cities.</StatusLine>
+              ) : byCity.length ? (
+                <ol>
+                  {byCity.map((c, i) => (
+                    <li key={c.city}>
+                      <span>
+                        <span className="city-dot" data-city={c.city} />
+                        {c.city}
+                        {i === 0 && !c.missing && <em>Cheapest</em>}
+                      </span>
+                      <i aria-hidden="true">
+                        <b style={{ width: `${(c.total / top) * 100}%` }} />
+                      </i>
+                      <span className={styles.cityValue}>
+                        <Silver value={c.total} animate={false} />
+                        {c.missing ? <em className={styles.chip}>+{c.missing} unpriced</em> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <StatusLine>No royal city has a recent sell order for these items.</StatusLine>
+              )}
+            </div>
             {message && <StatusLine>{message}</StatusLine>}
             <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
           </section>
@@ -603,53 +650,6 @@ export function ShoppingWorkspace() {
                 </ul>
               </div>
             )}
-            <div className={styles.cities}>
-              <div className={styles.citiesHead}>
-                <span>Cheapest city to buy the rest</span>
-                {toBuy.length > 0 && (
-                  <button
-                    type="button"
-                    className="pill-link is-small"
-                    disabled={compare.state === "loading"}
-                    onClick={compareCities}
-                  >
-                    {compare.state === "ready" ? "Check again" : "Compare cities"}
-                  </button>
-                )}
-              </div>
-              {toBuy.length === 0 ? (
-                <StatusLine>Nothing left to buy.</StatusLine>
-              ) : compare.state === "loading" ? (
-                <StatusLine>Checking the royal cities…</StatusLine>
-              ) : compare.state === "error" ? (
-                <StatusLine tone="error">
-                  City prices could not be loaded. Try again shortly.
-                </StatusLine>
-              ) : compare.state === "idle" ? (
-                <StatusLine>Compare recent sell orders in the six royal cities.</StatusLine>
-              ) : byCity.length ? (
-                <ol>
-                  {byCity.map((c, i) => (
-                    <li key={c.city}>
-                      <span>
-                        <span className="city-dot" data-city={c.city} />
-                        {c.city}
-                        {i === 0 && !c.missing && <em>Cheapest</em>}
-                      </span>
-                      <i aria-hidden="true">
-                        <b style={{ width: `${(c.total / top) * 100}%` }} />
-                      </i>
-                      <span className={styles.cityValue}>
-                        <Silver value={c.total} animate={false} />
-                        {c.missing ? <em className={styles.chip}>+{c.missing} unpriced</em> : null}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <StatusLine>No royal city has a recent sell order for these items.</StatusLine>
-              )}
-            </div>
             <p className={styles.fine}>
               Prices are recent sell orders or your own. Order fees and transport are separate;
               check listings before you buy.
