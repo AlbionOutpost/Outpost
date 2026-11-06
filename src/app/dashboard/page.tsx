@@ -351,7 +351,6 @@ export default async function Dashboard() {
         <section className={`panel ${styles.panel} ${styles.full}`} aria-labelledby="dash-plans">
           <PanelHead
             id="dash-plans"
-            emblem="tool-craft"
             title="Calculator plans"
             line={
               u.savedScenarios.length ? "Saved production runs; open one to load it." : undefined
