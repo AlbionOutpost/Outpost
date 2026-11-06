@@ -187,6 +187,13 @@ model Group {
  description String @db.Text
  region String
  visibility String @default("PRIVATE")
+ /// Crest: an Albion item render on a palette colour (src/lib/groups/crest.ts); null = monogram.
+ crestItem String?
+ crestColor String?
+ /// What the team plays: build activity names, stored ",ZvZ,Ganking," so a filter can match whole names.
+ activities String @default("")
+ /// Public teams take join requests only while recruiting.
+ recruiting Boolean @default(true)
  ownerId String
  owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)
  createdAt DateTime @default(now())

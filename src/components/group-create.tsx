@@ -5,6 +5,7 @@ import { useOutpostRegion } from "./region-context";
 import { PanelHead } from "./panel-head";
 import { WellSelect } from "./well-select";
 import { Field } from "./group-parts";
+import { TeamIdentityFields, identityFromForm } from "./team-identity-fields";
 import styles from "./teams.module.css";
 
 /** Name, address, region and visibility; the creator becomes the owner. */
@@ -13,13 +14,22 @@ export function GroupCreate() {
   const region = useOutpostRegion();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [name, setName] = useState("");
   return (
     <form
       className={`panel ${styles.panel}`}
       aria-labelledby="team-create"
       onSubmit={async (e) => {
         e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.currentTarget));
+        const f = new FormData(e.currentTarget);
+        const data = {
+          name: f.get("name"),
+          slug: f.get("slug"),
+          description: f.get("description"),
+          region: f.get("region"),
+          visibility: f.get("visibility"),
+          ...identityFromForm(f),
+        };
         setBusy(true);
         setError("");
         try {
@@ -51,6 +61,8 @@ export function GroupCreate() {
             required
             minLength={3}
             maxLength={80}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Ironbound Company"
           />
         </Field>
@@ -98,6 +110,7 @@ export function GroupCreate() {
             <option value="PUBLIC">Public</option>
           </WellSelect>
         </Field>
+        <TeamIdentityFields name={name} />
       </div>
       {error && (
         <p role="alert" className={styles.alert}>

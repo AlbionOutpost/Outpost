@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type Request = { status: string; message: string };
-const groups = new Map<string, { id: string; ownerId: string; visibility: string }>();
+const groups = new Map<
+  string,
+  { id: string; ownerId: string; visibility: string; recruiting: boolean }
+>();
 const members = new Set<string>();
 const requests = new Map<string, Request>();
 const key = (w: { groupId_userId: { groupId: string; userId: string } }) =>
@@ -47,8 +50,8 @@ describe("team membership requests", () => {
     groups.clear();
     members.clear();
     requests.clear();
-    groups.set("pub", { id: "pub", ownerId: "owner", visibility: "PUBLIC" });
-    groups.set("priv", { id: "priv", ownerId: "owner", visibility: "PRIVATE" });
+    groups.set("pub", { id: "pub", ownerId: "owner", visibility: "PUBLIC", recruiting: true });
+    groups.set("priv", { id: "priv", ownerId: "owner", visibility: "PRIVATE", recruiting: true });
   });
 
   it("queues a request for a public team", async () => {
@@ -63,6 +66,19 @@ describe("team membership requests", () => {
     const missing = mutateGroup("nope", "u1", { action: "request", message: "hi" });
     await expect(priv).rejects.toMatchObject({ status: 404, message: "Group not found" });
     await expect(missing).rejects.toMatchObject({ status: 404, message: "Group not found" });
+    expect(requests.size).toBe(0);
+  });
+
+  it("refuses a public team that is not recruiting and queues nothing", async () => {
+    groups.set("closed", {
+      id: "closed",
+      ownerId: "owner",
+      visibility: "PUBLIC",
+      recruiting: false,
+    });
+    await expect(
+      mutateGroup("closed", "u1", { action: "request", message: "hi" }),
+    ).rejects.toMatchObject({ status: 409 });
     expect(requests.size).toBe(0);
   });
 

@@ -70,7 +70,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 ## Schemas and migrations
 
 - **Source of truth:** `prisma/schema.prisma` (Postgres): 33 models, 3 enums (historical migrations plus additive follow-ups) in `prisma/migrations`.
-- **Generated SQLite schema:** `npm run cloudflare:d1:schema` writes `cloudflare/d1/schema.prisma`, `0001_schema_candidate.sql` (30 tables, 41 indexes) and `manifest.json`. `scripts/cloudflare-domain-constraints.mjs` generates `0003_domain_invariants.sql` (44 triggers mirroring Postgres CHECKs). `0002` adds the D1 owned-library tables; `0004` adds team loot splits.
+- **Generated SQLite schema:** `npm run cloudflare:d1:schema` writes `cloudflare/d1/schema.prisma`, `0001_schema_candidate.sql` (30 tables, 41 indexes) and `manifest.json`. `scripts/cloudflare-domain-constraints.mjs` generates `0003_domain_invariants.sql` (44 triggers mirroring Postgres CHECKs). `0002` adds the D1 owned-library tables; `0004` adds team loot splits. `0010` adds the Team crest, activities and recruiting columns (private-store schema step 9; Postgres `20261106230000_team_crest`).
 - Any schema change needs: a Prisma migration, regenerated SQLite schema + constraints, a new numbered `cloudflare/d1/migrations` file, and a matching upgrade step in the `OutpostDatabase` constructor (`cloudflare/database/worker.ts`). See the `outpost-deploy` skill.
 
 ## Local runtime
@@ -96,7 +96,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 
 **Profiles.** `/players/[id]` renders only for an account with a public build or comp, or a visible comment on one (or for the signed-in account itself); any other ID is a 404, so an account ID never reveals a name or join date.
 
-**Authorization** is checked inside the transaction against current rows: ownership for builds/scenarios/timers; visibility (public/unlisted/private/group) for reads and lists; Team roles `OWNER/ADMIN/OFFICER/MEMBER` — `canEditShared` = owner/admin/officer, `canManageMembers` = owner/admin; moderation requires a current `ADMIN`/`MODERATOR` user role. Private Teams return 404 to outsiders.
+**Authorization** is checked inside the transaction against current rows: ownership for builds/scenarios/timers; visibility (public/unlisted/private/group) for reads and lists; Team roles `OWNER/ADMIN/OFFICER/MEMBER` — `canEditShared` = owner/admin/officer, `canManageMembers` = owner/admin; moderation requires a current `ADMIN`/`MODERATOR` user role. Private Teams return 404 to outsiders. Team profile changes, the crest included, are owner/admin only and validated against fixed allow-lists (item ids, palette colours, activities); a crest is never an uploaded image.
 
 **Billing.** Supporter entitlement is reconciled only from signed webhooks and the complete customer subscription history for the configured price, then written against the account revision captured before provider reads. A canceled old subscription cannot replace an active matching one. Checkout first records a durable idempotent operation; account deletion verifies provider cancellation/checkout completion and rechecks the account in the deletion transaction. No active subscription is canceled implicitly. See [billing security](BILLING_SECURITY.md) for operation recovery, additive migrations, tests and provider-verification limits. Gates stay open while billing is not configured; ads are hidden for Supporters on the server.
 

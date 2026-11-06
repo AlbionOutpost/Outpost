@@ -69,6 +69,28 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     await page.getByRole("button", { name: "Save team profile", exact: true }).click();
     await expect(page.getByRole("heading", { name: profile.name, exact: true })).toBeVisible();
     expect((await action(0, profile)).status()).toBe(409);
+    // Crest: a member cannot set one, an owner cannot set an unlisted item or colour; nothing changes.
+    const fresh = await db.group.findUniqueOrThrow({ where: { id: groupId } });
+    const crest = {
+      ...profile,
+      expectedUpdatedAt: fresh.updatedAt.toISOString(),
+      crestItem: "T8_2H_CLAYMORE",
+      crestColor: "crimson",
+    };
+    expect((await action(1, crest)).status()).toBe(403);
+    expect((await action(2, crest)).status()).toBe(404);
+    expect((await action(0, { ...crest, crestItem: "T8_UNLISTED_ITEM" })).status()).toBe(400);
+    expect((await action(0, { ...crest, crestColor: "#ff0000" })).status()).toBe(400);
+    expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
+      crestItem: fresh.crestItem,
+      crestColor: fresh.crestColor,
+      updatedAt: fresh.updatedAt,
+    });
+    expect((await action(0, crest)).status()).toBe(200);
+    expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
+      crestItem: "T8_2H_CLAYMORE",
+      crestColor: "crimson",
+    });
     const eventInput = {
       action: "event",
       title: "Original group event",

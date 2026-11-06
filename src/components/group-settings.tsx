@@ -33,9 +33,9 @@ export function GroupSettings({
   return (
     <div className={styles.settings}>
       <h2 className="sr-only">Team settings</h2>
-      {/* Two stacks, each panel at its own height: who the team is and who wants in; invitations */}
+      {/* The profile full width, then two stacks at their own heights: who wants in; invitations */}
+      {profile && <div className={styles.settingsWide}>{profile}</div>}
       <div className={styles.overviewColumn}>
-        {profile}
         {manager && (
           <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
             <PanelHead

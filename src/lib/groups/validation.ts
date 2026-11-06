@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { regionSchema } from "../albion/region-config";
+import { teamIdentity } from "./crest";
 const eventFields = {
   title: z.string().trim().min(3).max(100),
   description: z.string().trim().max(4000),
@@ -27,6 +28,7 @@ export const groupAction = z.discriminatedUnion("action", [
     description: z.string().trim().max(4000),
     region: regionSchema,
     visibility: z.enum(["PUBLIC", "PRIVATE"]),
+    ...teamIdentity,
   }),
   z.object({
     action: z.literal("edit-event"),

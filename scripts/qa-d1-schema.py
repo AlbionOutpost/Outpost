@@ -208,6 +208,13 @@ def clear_oauth_tokens():
     assert db.execute('SELECT access_token, refresh_token, id_token, providerAccountId FROM "Account" WHERE id=?', ("acct-tokens",)).fetchone() == (None, None, None, "303585687460904970")
 check("provider tokens are cleared while the account link is kept", clear_oauth_tokens)
 
+def team_crest_upgrade():
+    db.execute('INSERT INTO "Group"(id,name,slug,description,region,visibility,ownerId,updatedAt) VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)', ("qa-crest-team", "Crest team", "crest-team", "", "europe", "PUBLIC", "qa-d1-owner"))
+    db.executescript((root / "cloudflare/d1/migrations/0010_team_crest.sql").read_text())
+    assert db.execute('SELECT name, crestItem, crestColor, activities, recruiting FROM "Group" WHERE id=?', ("qa-crest-team",)).fetchone() == ("Crest team", None, None, "", 1)
+    db.execute('DELETE FROM "Group" WHERE id=?', ("qa-crest-team",))
+check("team crest upgrade keeps teams, leaves crests unset and keeps them recruiting", team_crest_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

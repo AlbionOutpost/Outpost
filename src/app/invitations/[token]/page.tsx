@@ -9,7 +9,7 @@ import { AcceptInvite } from "@/components/accept-invite";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { SystemPage } from "@/components/system-page";
 import { PanelHead } from "@/components/panel-head";
-import { TeamChips, TeamMark, TeamNextSteps } from "@/components/group-parts";
+import { TeamChips, TeamMark } from "@/components/group-parts";
 import styles from "@/components/teams.module.css";
 export const metadata = privateMetadata("Team invitation");
 
@@ -36,6 +36,8 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
           description: true,
           region: true,
           visibility: true,
+          crestItem: true,
+          crestColor: true,
           _count: { select: { members: true } },
         },
       },
@@ -76,9 +78,6 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
             </>
           }
         />
-        <div className={styles.page}>
-          <TeamNextSteps />
-        </div>
       </>
     );
   const { group } = invitation;
@@ -87,7 +86,9 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
     <div className={styles.page}>
       <WorkspaceHeading
         scene="comps"
-        emblem={<TeamMark name={group.name} />}
+        emblem={
+          <TeamMark name={group.name} crestItem={group.crestItem} crestColor={group.crestColor} />
+        }
         title={`Join ${group.name}`}
         // The ember word stays on our word, never on the team's own name
         accent="Join"
@@ -148,7 +149,6 @@ export default async function Invitation({ params }: { params: Promise<{ token: 
           )}
         </div>
       </section>
-      <TeamNextSteps />
     </div>
   );
 }

@@ -126,6 +126,11 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
       ).status(),
     ).toBe(200);
     expect((await action(0, { action: "role", userId: ids[1], role: "ADMIN" })).status()).toBe(200);
+    // A public team that has closed its roster refuses new requests and queues nothing.
+    await db.group.update({ where: { id: groupId }, data: { recruiting: false } });
+    expect((await action(3, { action: "request", message: "Closed roster" })).status()).toBe(409);
+    expect(await db.groupMembershipRequest.count({ where: { groupId } })).toBe(0);
+    await db.group.update({ where: { id: groupId }, data: { recruiting: true } });
     const memberPage = await clients[3].newPage();
     await memberPage.goto(`/groups/${slug}`);
     await memberPage.getByLabel("Message to team leaders").fill("I would like to join the roster");
