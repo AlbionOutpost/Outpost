@@ -995,9 +995,6 @@
   flex: 1 1 260px;
   min-width: 0;
 }
-.app.outpost .favorites-sections .library-pagination {
-  margin: 0;
-}
 @media (max-width: 700px) {
   .app.outpost .favorites-sections,
   .app.outpost .favorites-account {
