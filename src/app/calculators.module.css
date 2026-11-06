@@ -10,20 +10,7 @@
   gap: var(--space-3);
 }
 :global(.app.outpost) .savedTitle.savedTitle {
-  display: grid;
-  gap: 6px;
   max-width: 420px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
-}
-:global(.app.outpost) .savedTitle.savedTitle input {
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
 }
 :global(.app.outpost) .savedActions.savedActions {
   display: flex;
@@ -106,8 +93,6 @@
 :global(.app.outpost) .railPick.railPick {
   display: none;
   gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .railList.railList {
   display: grid;
@@ -186,7 +171,7 @@
 }
 :global(.app.outpost) .specs.specs ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
   gap: 6px;
   margin: 0;
   padding: 0;
@@ -215,8 +200,6 @@
   white-space: nowrap;
 }
 :global(.app.outpost) .specs.specs input {
-  min-height: 36px;
-  padding: 0 8px;
   text-align: right;
 }
 :global(.app.outpost) .chip.chip {
@@ -234,12 +217,6 @@
 }
 
 /* Focus check results, as rows with the figure on the right */
-:global(.app.outpost) .searchField.searchField {
-  display: grid;
-  gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
-}
 :global(.app.outpost) .focusList.focusList {
   display: grid;
   margin: 0;
@@ -288,26 +265,27 @@
   white-space: nowrap;
 }
 
-/* Roads of Avalon: three panels of one height on wide screens */
-@media (min-width: 1181px) {
-  :global(.app.outpost) .equalPanels.equalPanels section:global(.panel) {
-    align-self: stretch;
+/* Roads of Avalon: the two zones side by side, then the portal's size and time left */
+:global(.app.outpost) .portalFields.portalFields.portalFields {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+:global(.app.outpost) .portalFields.portalFields > label {
+  grid-column: span 2;
+}
+:global(.app.outpost) .portalFields.portalFields > label:nth-of-type(-n + 2) {
+  grid-column: span 3;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .portalFields.portalFields > label {
+    grid-column: span 3;
+  }
+  :global(.app.outpost) .portalFields.portalFields > label:nth-of-type(-n + 3) {
+    grid-column: 1 / -1;
   }
 }
 :global(.app.outpost) .portalForm.portalForm {
   display: grid;
   gap: var(--space-4);
-}
-:global(.app.outpost) .equalPanels.equalPanels input:not([type]) {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
 }
 :global(.app.outpost) .portals.portals {
   display: grid;
@@ -443,19 +421,30 @@
 :global(.app.outpost) .scanner.scanner > * {
   margin: 0;
 }
+/* Route and items in one four-up field grid, as in crafting's first step: the four route
+   choices fill the first row; tax (and the setup fee) start the second and the item search
+   takes the rest of it */
 :global(.app.outpost) .scanSetup.scanSetup {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: var(--space-5);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
   align-items: start;
 }
 :global(.app.outpost) .routeFields.routeFields {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: contents;
+}
+:global(.app.outpost) .routeFields.routeFields > label {
+  grid-row: auto;
+  grid-template-rows: none;
 }
 :global(.app.outpost) .scanItems.scanItems {
   display: grid;
+  grid-column: span 3;
   gap: var(--space-3);
   min-width: 0;
+}
+:global(.app.outpost) .scanSetup:has(.routeFields > label:nth-child(6)) .scanItems.scanItems {
+  grid-column: span 2;
 }
 :global(.app.outpost) .chips.chips {
   display: flex;
@@ -508,21 +497,9 @@
   display: grid;
   gap: var(--space-3);
 }
-:global(.app.outpost) .pasteForm.pasteForm label {
-  display: grid;
-  gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
-}
 :global(.app.outpost) .pasteForm.pasteForm textarea {
   min-height: 72px;
-  padding: 10px 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font: 500 13px/1.4 var(--font-data);
-  resize: vertical;
+  font-family: var(--font-data);
 }
 :global(.app.outpost) .flips.flips {
   container-type: inline-size;
@@ -702,12 +679,10 @@
 }
 @media (max-width: 980px) {
   :global(.app.outpost) .scanSetup.scanSetup {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 700px) {
-  :global(.app.outpost) .routeFields.routeFields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :global(.app.outpost) .scanSetup.scanSetup .scanItems.scanItems {
+    grid-column: 1 / -1;
   }
 }
 /* Flipping: the scanner, then the hand check under its own heading */
@@ -731,24 +706,4 @@
   flex-direction: column;
   padding: var(--space-6) var(--space-4);
   text-align: center;
-}
-
-/* The neutral seal stands in for missing tool art, framed as a tile like the painted emblems */
-:global(.app.outpost) .sealTile.sealTile {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border: 2px solid color-mix(in srgb, var(--accent) 70%, #000);
-  border-radius: 12px;
-  background: radial-gradient(circle at 50% 35%, #2a2018, #120e0b 70%);
-  box-shadow:
-    inset 0 0 0 2px #0008,
-    inset 0 2px 6px #0009,
-    0 4px 10px #000a,
-    0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
-}
-:global(.app.outpost) .sealTile.sealTile img {
-  width: 44px;
-  height: 44px;
 }

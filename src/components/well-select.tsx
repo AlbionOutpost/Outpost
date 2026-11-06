@@ -9,7 +9,7 @@ import styles from "./well-select.module.css";
 export function WellSelect({ className, ...props }: ComponentProps<"select">) {
   return (
     <span className={`${styles.wrap}${className ? ` ${className}` : ""}`}>
-      <select {...props} className={styles.select} />
+      <select {...props} />
       <ChevronDown className={styles.chevron} size={16} aria-hidden="true" />
     </span>
   );

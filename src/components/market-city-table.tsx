@@ -55,9 +55,7 @@ export function MarketCityTable({
               Buy order
             </th>
             <th scope="col" className="numeric mx-spread-col">
-              <abbr title="Sell order minus buy order in the same city, as a share of the buy order">
-                Spread
-              </abbr>
+              Spread
             </th>
           </tr>
         </thead>

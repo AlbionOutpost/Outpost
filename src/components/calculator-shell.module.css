@@ -8,15 +8,18 @@
 }
 :global(.app.outpost) .grid.grid {
   display: grid;
-  grid-template-columns: repeat(var(--inputs), minmax(0, 1fr)) minmax(340px, 0.86fr);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
   gap: 24px;
   align-items: start;
 }
 :global(.app.outpost) .shell[data-rail] .grid.grid {
-  grid-template-columns: minmax(240px, 280px) repeat(var(--inputs), minmax(0, 1fr)) minmax(
-      320px,
-      0.86fr
-    );
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(320px, 380px);
+}
+:global(.app.outpost) .rail.rail {
+  position: sticky;
+  top: 88px;
+  grid-row: 1 / span var(--inputs);
+  min-width: 0;
 }
 :global(.app.outpost) .panel.panel {
   display: grid;
@@ -28,6 +31,11 @@
 }
 :global(.app.outpost) .panel.panel > * {
   margin: 0;
+}
+/* Input steps stack in the main column; the result rides beside them */
+:global(.app.outpost) .panel.panel:not(.result) {
+  grid-column: -3;
+  container-type: inline-size;
 }
 /* Details sit after the step grid (not in it): the sticky result is confined to the grid and
    can't ride over them. The extra margin keeps the grid's 24px rhythm. */
@@ -45,11 +53,8 @@
 :global(.app.outpost) .result.result {
   position: sticky;
   top: 88px;
-}
-:global(.app.outpost) .rail.rail {
-  position: sticky;
-  top: 88px;
-  min-width: 0;
+  grid-column: -2;
+  grid-row: 1 / span var(--inputs);
 }
 :global(.app.outpost) .switcher.switcher,
 :global(.app.outpost) .bar.bar {
@@ -58,10 +63,10 @@
 
 /* Result figures, in the landing Crafting card's language */
 :global(.app.outpost) .figure.figure {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: 5px var(--space-3);
   min-height: 76px;
   padding: 12px 14px;
   border: 1px solid var(--well-border);
@@ -71,8 +76,14 @@
 }
 :global(.app.outpost) .figure.figure > span {
   display: grid;
-  gap: 5px;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  align-items: baseline;
   min-width: 0;
+}
+/* Label, figure and note sit on rows shared with the margin beside them */
+:global(.app.outpost) .figure.figure:not(:has(> span > small + b + small)) > span {
+  grid-row: span 2;
 }
 :global(.app.outpost) .figure.figure small {
   color: var(--muted);
@@ -87,7 +98,14 @@
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
-:global(.app.outpost) .aside.aside {
+/* A missing figure is a line of text, so it takes a text line's height */
+:global(.app.outpost) .figure.figure b:has(> .na) {
+  font-size: 14px;
+  line-height: 1.2;
+}
+:global(.app.outpost) .figure.figure > .aside.aside {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   text-align: right;
 }
 :global(.app.outpost) .aside.aside b {
@@ -159,7 +177,7 @@
 }
 :global(.app.outpost) .rows.rows > div {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   padding: 8px 0;
@@ -178,22 +196,16 @@
   text-align: right;
 }
 
-/* Tablet: inputs stack in the first column, the result stays in view beside them */
+/* Tablet: the list to pick from moves above the steps */
 @media (max-width: 1180px) {
   :global(.app.outpost) .grid.grid,
   :global(.app.outpost) .shell[data-rail] .grid.grid {
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   }
   :global(.app.outpost) .rail.rail {
     position: static;
     grid-column: 1 / -1;
-  }
-  :global(.app.outpost) .panel.panel:not(.result) {
-    grid-column: 1;
-  }
-  :global(.app.outpost) .result.result {
-    grid-column: 2;
-    grid-row: 1 / span var(--inputs);
+    grid-row: auto;
   }
   :global(.app.outpost) .shell[data-rail] .result.result {
     grid-row: 2 / span var(--inputs);
@@ -210,6 +222,7 @@
   :global(.app.outpost) .panel.panel:not([data-active]) {
     display: none;
   }
+  :global(.app.outpost) .panel.panel:not(.result),
   :global(.app.outpost) .result.result,
   :global(.app.outpost) .shell[data-rail] .result.result {
     position: static;
@@ -337,20 +350,7 @@
   gap: 26px;
   min-width: 0;
 }
-:global(.app.outpost) .journey.journey :is(input[type="number"], input[type="search"]) {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-}
 :global(.app.outpost) .journey.journey input[type="number"] {
-  font-family: var(--font-data);
-  font-variant-numeric: tabular-nums;
   appearance: textfield;
 }
 :global(.app.outpost) .journey.journey input[type="number"]::-webkit-inner-spin-button,
@@ -358,7 +358,7 @@
   margin: 0;
   appearance: none;
 }
-:global(.app.outpost) .journey.journey :is(input, button, a, select):focus-visible {
+:global(.app.outpost) .journey.journey :is(button, a):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -454,13 +454,30 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
+  /* A field with a hint under it never stretches its neighbours' controls */
+  align-items: start;
 }
-:global(.app.outpost) .fields.fields > label {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
+/* A label and its control share rows with the fields beside them, so a label that wraps to two
+   lines never drops its control below its neighbours' (the production quantity does the same) */
+:global(.app.outpost) .fields.fields > label:not(:has(> * + *)) {
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 6px;
+  align-items: start;
+}
+/* In the wide main column, fields run up to four across (fewer fill the row) and the
+   identity's button sits beside it */
+@container (min-width: 720px) {
+  :global(.app.outpost) .fields.fields {
+    grid-template-columns: repeat(auto-fit, minmax(max(160px, 22%), 1fr));
+  }
+  :global(.app.outpost) .identity.identity {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+  }
+  :global(.app.outpost) .identity.identity > :global(.button) {
+    grid-column: auto;
+    padding-inline: 20px;
+  }
 }
 :global(.app.outpost) .fields.fields > .wide,
 :global(.app.outpost) .fields.fields > .help {
@@ -557,20 +574,7 @@
   line-height: 1.35;
 }
 :global(.app.outpost) .returns.returns {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   width: fit-content;
-  min-height: 24px;
-  color: var(--secondary);
-  font-size: 12px;
-  cursor: pointer;
-}
-:global(.app.outpost) .returns.returns input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--accent);
 }
 :global(.app.outpost) .matTotal.matTotal {
   font: 600 13px/1.2 var(--font-data);
@@ -586,12 +590,32 @@
   height: 13px;
 }
 :global(.app.outpost) .journey.journey .matInput.matInput {
-  min-height: 38px;
-  padding: 0 8px;
   text-align: right;
 }
 :global(.app.outpost) .dash.dash {
   color: var(--muted);
+}
+/* A wide price well: each row's facts run on one line under the name, so rows stay compact */
+@container (min-width: 560px) {
+  :global(.app.outpost) .matHead.matHead,
+  :global(.app.outpost) .mat.mat {
+    grid-template-columns: 40px minmax(0, 1fr) 132px 120px;
+    gap: 14px;
+    padding-inline: 14px;
+  }
+  :global(.app.outpost) .matName.matName {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px 12px;
+  }
+  :global(.app.outpost) .matName.matName strong {
+    flex-basis: 100%;
+  }
+  :global(.app.outpost) .matName.matName small + small::before {
+    content: "·";
+    margin-right: 8px;
+  }
 }
 @container (max-width: 380px) {
   :global(.app.outpost) .matHead.matHead {
@@ -719,8 +743,6 @@
 :global(.app.outpost) .browserSearch.browserSearch {
   display: grid;
   gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .browserCount.browserCount {
   color: var(--muted);
@@ -786,30 +808,24 @@
 }
 :global(.app.outpost) .errorLine.errorLine {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-3);
-  padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--error) 35%, var(--well-border));
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: inset 0 1px 3px #0009;
 }
-:global(.app.outpost) .errorLine.errorLine > :first-child {
-  flex: 1;
+:global(.app.outpost) .errorLine.errorLine > p {
+  flex: 1 1 16ch;
   min-width: 0;
+  font-size: 14px;
 }
-:global(.app.outpost) .errorLine.errorLine > button {
+:global(.app.outpost) .errorLine.errorLine > :global(.pill-link) {
   flex: none;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font: 700 12px/1 var(--font-ui);
-  cursor: pointer;
 }
 :global(.app.outpost) .alert.alert {
   margin: 0;

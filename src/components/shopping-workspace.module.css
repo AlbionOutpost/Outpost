@@ -9,20 +9,11 @@
 :global(.app.outpost) .page.page > :global(.workspace-identity) {
   margin-bottom: 0;
 }
-:global(.app.outpost) .page.page input[type="number"],
-:global(.app.outpost) .page.page input:not([type]) {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 10px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
+/* The one masthead action sits level with the title block, not below its two-line description */
+:global(.app.outpost) .page.page :global(.workspace-identity-actions) {
+  align-self: center;
 }
 :global(.app.outpost) .page.page input[type="number"] {
-  font-family: var(--font-data);
   text-align: right;
 }
 :global(.app.outpost) .layout.layout {
@@ -256,13 +247,15 @@
 :global(.app.outpost) .queue.queue li[data-ready] .progress b {
   background: var(--killer);
 }
+/* Stepper: − number + in one field well */
 :global(.app.outpost) .stepper.stepper {
   display: inline-grid;
   grid-auto-flow: column;
   align-items: center;
   border: 1px solid var(--well-border);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .stepper.stepper button {
   display: grid;
@@ -275,8 +268,8 @@
   cursor: pointer;
 }
 :global(.app.outpost) .stepper.stepper button:disabled {
-  opacity: 0.35;
-  cursor: default;
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 :global(.app.outpost) .page.page .stepper.stepper input {
   width: 56px;
@@ -326,6 +319,9 @@
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
+:global(.app.outpost) .figure.figure strong > span {
+  font: 500 14px/1.4 var(--font-ui);
+}
 :global(.app.outpost) .figure.figure:not([data-complete]) strong {
   color: var(--secondary);
 }
@@ -356,21 +352,6 @@
   font: 800 17px/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
-}
-:global(.app.outpost) .readiness.readiness {
-  display: grid;
-  gap: 6px;
-  padding: 12px 14px;
-  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
-  border-radius: var(--radius-md);
-  font-size: 13px;
-}
-:global(.app.outpost) .readiness.readiness ul {
-  display: grid;
-  gap: 3px;
-  margin: 0;
-  padding-left: 18px;
-  color: var(--secondary);
 }
 :global(.app.outpost) .cities.cities {
   display: grid;
@@ -469,24 +450,18 @@
 /* Empty, blocked, loading */
 :global(.app.outpost) .empty.empty {
   display: grid;
-  justify-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
-  padding: 40px 24px;
-  text-align: center;
 }
-:global(.app.outpost) .empty.empty > img {
-  filter: drop-shadow(0 4px 10px #000a);
+:global(.app.outpost) .empty.empty > * {
+  margin: 0;
 }
-:global(.app.outpost) .empty.empty h2,
+:global(.app.outpost) .empty.empty .emptyActions {
+  justify-content: start;
+}
 :global(.app.outpost) .gate.gate h2 {
   margin: 0;
   font: 800 clamp(24px, 2.4vw, 30px) / 1.1 var(--font-display);
-}
-:global(.app.outpost) .empty.empty p {
-  max-width: 58ch;
-  margin: 0;
-  color: var(--secondary);
 }
 :global(.app.outpost) .emptyActions.emptyActions {
   display: flex;
@@ -520,11 +495,7 @@
   gap: var(--space-2);
 }
 :global(.app.outpost) .accountForm.accountForm label {
-  display: grid;
   flex: 1 1 240px;
-  gap: 6px;
-  color: var(--secondary);
-  font: 600 13px/1.3 var(--font-ui);
 }
 :global(.app.outpost) .savedRow.savedRow {
   display: flex;
@@ -692,12 +663,6 @@
   font-size: 16px;
 }
 
-:global(.app.outpost) .emptyFoot.emptyFoot {
-  width: 100%;
-  max-width: 720px;
-  margin-top: var(--space-4);
-  text-align: left;
-}
 @media (max-width: 420px) {
   :global(.app.outpost) .queue.queue li {
     grid-template-columns: 40px minmax(0, 1fr);

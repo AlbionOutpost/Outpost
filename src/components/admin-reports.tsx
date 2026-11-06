@@ -119,7 +119,7 @@ export function AdminReports() {
           </button>
         }
       />
-      <div className="admin-seg" role="group" aria-label="Report status">
+      <div className="segmented admin-seg" role="group" aria-label="Report status">
         {statuses.map(([key, label]) => (
           <button
             key={key}

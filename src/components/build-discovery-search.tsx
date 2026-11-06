@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { SearchInput } from "./field";
 export function BuildDiscoverySearch({
   value,
   formId,
@@ -60,7 +61,7 @@ export function BuildDiscoverySearch({
   return (
     <label className="ecosystem-search-label">
       <span className={compact ? "sr-only" : undefined}>{label}</span>
-      <input
+      <SearchInput
         form={formId}
         type="search"
         name="q"

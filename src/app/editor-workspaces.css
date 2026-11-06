@@ -24,10 +24,6 @@
   min-width: 0;
   font-size: 13px;
 }
-.app.outpost .object-party-editor .party-command-bar > label:first-child input {
-  font-size: 19px;
-  font-weight: 650;
-}
 .app.outpost .object-party-editor .party-command-bar input {
   width: 100%;
   min-width: 0;
@@ -378,9 +374,6 @@
   .app.outpost .object-party-editor .party-command-bar > label:first-child {
     grid-column: 1 / -1;
   }
-  .app.outpost .object-party-editor .party-command-bar > label:first-child input {
-    font-size: 17px;
-  }
   .app.outpost .object-party-editor .party-primary-save {
     position: fixed;
     bottom: 12px;
@@ -611,43 +604,6 @@
   border-color: color-mix(in srgb, var(--accent) 65%, transparent);
   background: var(--accent-wash);
   color: var(--accent-ink);
-}
-.app.outpost .party-editor select:not([multiple]):not([size]) {
-  min-height: 42px;
-  padding: 0 36px 0 var(--space-3);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 18px) 50% / 6px 6px
-      no-repeat,
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%) calc(100% - 12px) 50% / 6px 6px
-      no-repeat,
-    var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1 var(--font-ui);
-  appearance: none;
-  cursor: pointer;
-}
-.app.outpost .party-editor select:not([multiple]):not([size]) option {
-  background: var(--surface-raised);
-  color: var(--text);
-}
-.app.outpost .party-editor input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-.app.outpost .party-editor textarea {
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-}
-.app.outpost
-  .party-editor
-  :is(select, input:not([type="checkbox"]):not([type="radio"]), textarea):is(
-    :hover,
-    :focus-visible
-  ) {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
 }
 .app.outpost .party-editor :is(.party-settings, .party-notes) > summary {
   min-height: 40px;

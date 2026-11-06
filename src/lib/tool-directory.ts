@@ -21,8 +21,8 @@ export const tools = [
   },
   {
     href: "/shopping-list",
-    title: "Shopping list",
-    short: "Shopping list",
+    title: "Crafting Planner",
+    short: "Crafting Planner",
     group: "Economy",
     icon: "transport",
     description: "Combine equipment and materials, count owned stock and price your purchases.",
@@ -175,8 +175,8 @@ export const tools = [
   },
   {
     href: "/items",
-    title: "Item reference",
-    short: "Item reference",
+    title: "Item database",
+    short: "Item database",
     group: "Builds & comps",
     icon: "catalog",
     description: "Search the available catalog and inspect sourced metadata.",
@@ -210,3 +210,84 @@ export const tools = [
     state: "Sign-in required",
   },
 ] as const;
+
+/**
+ * Tools with a painted emblem of their own (public/albion/icons). The directory, the header's
+ * Tools menu and the drawer show these; every other tool gets its line glyph in a small mark.
+ */
+export const toolPaintings: Record<string, string> = {
+  "/tools/market": "tool-market",
+  "/tools/flipping": "silver",
+  "/tools/crafting": "tool-craft",
+  "/shopping-list": "tool-planner",
+  "/tools/laborers": "team-loot",
+  "/tools/kill-feed": "kill-skull",
+  "/builds/new": "strip-builds",
+  "/compositions/new": "strip-comps",
+  "/groups": "team-roles",
+  "/timers": "team-calendar",
+};
+
+/** The directory's sections, in order; the header's Tools menu groups by the same ones. */
+export const toolSections: {
+  id: string;
+  title: string;
+  accent: string;
+  line: string;
+  link?: { href: string; label: string };
+  hrefs: string[];
+}[] = [
+  {
+    id: "tools-trade",
+    title: "Trade and travel",
+    accent: "travel",
+    line: "City prices, trade margins, cargo, gold, the Roads of Avalon and game tables.",
+    link: { href: "/tools/market", label: "Open Market Explorer" },
+    hrefs: [
+      "/tools/market",
+      "/tools/flipping",
+      "/tools/transporting",
+      "/tools/gold",
+      "/tools/avalon-mapper",
+      "/tools/reference",
+    ],
+  },
+  {
+    id: "tools-production",
+    title: "Crafting and production",
+    accent: "production",
+    line: "Costs, returns and the Crafting Planner for what you make.",
+    link: { href: "/shopping-list", label: "Open the Crafting Planner" },
+    hrefs: [
+      "/tools/crafting",
+      "/shopping-list",
+      "/tools/refining",
+      "/tools/enchanting",
+      "/tools/cooking",
+      "/tools/alchemy",
+    ],
+  },
+  {
+    id: "tools-gathering",
+    title: "Gathering and focus",
+    accent: "focus",
+    line: "Farms, fishing, laborers and the specs that cut your focus cost.",
+    hrefs: ["/tools/farming", "/tools/fishing", "/tools/laborers", "/tools/mastery"],
+  },
+  {
+    id: "tools-builds",
+    title: "Builds and comps",
+    accent: "comps",
+    line: "Make a loadout, plan a party, look up an item.",
+    link: { href: "/builds/library", label: "Build library" },
+    hrefs: ["/builds/new", "/compositions/new", "/items"],
+  },
+  {
+    id: "tools-teams",
+    title: "Teams and community",
+    accent: "community",
+    line: "Recent fights, published builds, your Team and your own timers.",
+    link: { href: "/groups", label: "Your Teams" },
+    hrefs: ["/tools/kill-feed", "/builds", "/groups", "/timers"],
+  },
+];

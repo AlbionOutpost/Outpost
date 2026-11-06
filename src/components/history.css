@@ -3,6 +3,7 @@
 
 .app.outpost .history-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   margin: 0;
 }
@@ -15,6 +16,9 @@
 .app.outpost .history-panel > form > div {
   margin: 0;
 }
+.app.outpost .history-panel > * {
+  min-width: 0;
+}
 
 /* Controls: city well, range segment, refresh */
 .app.outpost .history-panel .history-controls {
@@ -26,14 +30,13 @@
 }
 .app.outpost .history-panel .history-city {
   display: grid;
+  flex: 1 1 180px;
   gap: 6px;
-  min-width: 180px;
+  min-width: 0;
+  max-width: 260px;
   margin: 0;
   color: var(--secondary);
   font: 600 12px/1.35 var(--font-ui);
-}
-.app.outpost .history-panel .history-refresh {
-  margin-left: auto;
 }
 .app.outpost .history-panel .history-range {
   display: inline-flex;
@@ -203,6 +206,25 @@
 .app.outpost .history-panel .history-state > p {
   font-size: 14px;
 }
+/* Gold with nothing to draw: the chart's frame and grid stay, the state sits in its middle */
+.app.outpost .history-panel .history-state.is-chart {
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 252px;
+  border-style: solid;
+  box-shadow: inset 0 1px 3px #0009;
+}
+.app.outpost .history-panel .history-state.is-chart > svg {
+  position: absolute;
+  inset: var(--space-4);
+  width: calc(100% - 2 * var(--space-4));
+  height: calc(100% - 2 * var(--space-4));
+}
+.app.outpost .history-panel .history-state.is-chart > :not(svg) {
+  position: relative;
+  text-align: center;
+}
 .app.outpost .history-panel .chart-range {
   display: flex;
   justify-content: space-between;
@@ -230,9 +252,6 @@
 @media (max-width: 700px) {
   .app.outpost .history-panel:not(.is-embedded) {
     padding: var(--space-4);
-  }
-  .app.outpost .history-panel .history-refresh {
-    margin-left: 0;
   }
   /* Phone: two tiles, the latest across the top, as in Market Explorer */
   .app.outpost .history-panel .history-figures {

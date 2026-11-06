@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useId, useRef, useState } from "react";
-import { Search } from "lucide-react";
+
 import { items } from "@/lib/albion/item-database";
 import { ItemIcon } from "./item-icon";
 import {
@@ -8,6 +8,7 @@ import {
   mergeCatalogOptions,
   type CatalogOption,
 } from "@/lib/catalog/search";
+import { SearchInput } from "./field";
 export type { CatalogOption } from "@/lib/catalog/search";
 export function CatalogItemPicker({
   onSelect,
@@ -98,45 +99,40 @@ export function CatalogItemPicker({
   return (
     <div className="catalog-picker" ref={box}>
       <label htmlFor={`${id}-input`}>{label}</label>
-      <div className="catalog-search-field">
-        <Search size={19} aria-hidden="true" />
-        <input
-          id={`${id}-input`}
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={`${id}-list`}
-          aria-autocomplete="list"
-          aria-activedescendant={open && rows[active] ? `${id}-option-${active}` : undefined}
-          value={query}
-          maxLength={100}
-          placeholder="Search Battleaxe, Bag, Mercenary…"
-          onFocus={() => setOpen(true)}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setActive(0);
+      <SearchInput
+        id={`${id}-input`}
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={`${id}-list`}
+        aria-autocomplete="list"
+        aria-activedescendant={open && rows[active] ? `${id}-option-${active}` : undefined}
+        value={query}
+        maxLength={100}
+        placeholder="Search Battleaxe, Bag, Mercenary…"
+        onFocus={() => setOpen(true)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setActive(0);
+          setOpen(true);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            setOpen(false);
+          }
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
             setOpen(true);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              e.preventDefault();
-              setOpen(false);
-            }
-            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-              e.preventDefault();
-              setOpen(true);
-              setActive((n) =>
-                rows.length
-                  ? (n + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length
-                  : 0,
-              );
-            }
-            if (e.key === "Enter" && open) {
-              e.preventDefault();
-              if (rows[active]) select(rows[active]);
-            }
-          }}
-        />
-      </div>
+            setActive((n) =>
+              rows.length ? (n + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length : 0,
+            );
+          }
+          if (e.key === "Enter" && open) {
+            e.preventDefault();
+            if (rows[active]) select(rows[active]);
+          }
+        }}
+      />
       {open && (
         <div className="catalog-results">
           <div role="listbox" id={`${id}-list`} aria-label="Matching market items">

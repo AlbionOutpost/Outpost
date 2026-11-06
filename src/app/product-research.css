@@ -18,23 +18,7 @@
   color: var(--muted);
 }
 .app.outpost .weapon-rail-search {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 0 10px;
-  background: var(--bg);
   margin-bottom: 12px;
-}
-.app.outpost .weapon-rail-search input {
-  padding: 0;
-  border: 0;
-  box-shadow: none;
-  width: 100%;
-  min-width: 0;
-  font-size: 13px;
 }
 .build-weapon-rail nav {
   display: grid;
@@ -206,18 +190,6 @@
   object-fit: contain;
 }
 
-.app.outpost .ecosystem-library-page .ecosystem-filter-form .weapon-rail-search {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-.app.outpost .ecosystem-library-page .ecosystem-filter-form .weapon-rail-search input {
-  border: 0;
-  box-shadow: none;
-  padding: 0;
-  width: 100%;
-}
 .app.outpost .build-preview-card .equipment-strip {
   justify-content: flex-start;
 }

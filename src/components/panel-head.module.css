@@ -14,6 +14,9 @@
 :global(.app.outpost) .step.step {
   display: inline-grid;
   flex: none;
+  /* On the title's line, however many lines the copy runs to */
+  align-self: flex-start;
+  margin-top: -3px;
   place-items: center;
   width: 30px;
   height: 30px;

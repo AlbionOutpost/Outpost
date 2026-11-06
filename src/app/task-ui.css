@@ -9,22 +9,8 @@
   --space-6: 24px;
   --space-8: 32px;
 }
-.app.outpost
-  :is(
-    input,
-    select,
-    textarea,
-    .button,
-    .desktop-navigation > a,
-    .desktop-navigation summary,
-    .header-region
-  ) {
+.app.outpost :is(.button, .desktop-navigation > a, .desktop-navigation summary, .header-region) {
   border-radius: var(--radius-control);
-}
-.app.outpost :is(input, select, textarea) {
-  background-color: var(--bg);
-  color: var(--text);
-  border-color: var(--border);
 }
 .app.outpost :is(.button, button) {
   transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -96,9 +82,6 @@
 }
 .app.outpost .production-workspace :is(label, summary) {
   font-size: 14px;
-}
-.app.outpost .production-workspace input {
-  min-height: 44px;
 }
 .production-steps button {
   padding: 4px 0;
@@ -186,9 +169,6 @@
   }
   .production-calculator-page .calculator-inputs .input-grid {
     gap: 12px;
-  }
-  .app.outpost .production-workspace input:not([type="checkbox"]) {
-    font-size: 16px;
   }
   .production-journey > .scenario-controls {
     margin-top: 20px;

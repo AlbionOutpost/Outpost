@@ -22,6 +22,7 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
+  RetryLine,
 } from "./calculator-shell";
 import {
   coin,
@@ -376,12 +377,7 @@ export function FarmingCalculator() {
       {busy ? (
         <StatusLine>Loading prices…</StatusLine>
       ) : message?.error ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{message.text}</StatusLine>
-          <button type="button" onClick={refresh}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={refresh}>{message.text}</RetryLine>
       ) : message ? (
         <StatusLine>{message.text}</StatusLine>
       ) : null}

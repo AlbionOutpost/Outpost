@@ -43,19 +43,6 @@
 .app.outpost :is(button, a, summary, input, select, textarea) {
   -webkit-tap-highlight-color: transparent;
 }
-.app.outpost :is(input, select, textarea) {
-  box-shadow: inset 0 1px 2px #00000020;
-}
-.app.outpost :is(input, select, textarea):focus-visible {
-  outline: 2px solid var(--accent-ink);
-  outline-offset: 2px;
-  border-color: var(--accent-ink);
-}
-.app.outpost input[type="checkbox"] {
-  accent-color: var(--action);
-  width: 16px;
-  height: 16px;
-}
 .app.outpost .button {
   border-radius: var(--radius-control);
   min-height: 40px;
@@ -82,7 +69,6 @@
   outline: 2px solid var(--accent-ink);
   outline-offset: 3px;
 }
-.app.outpost :is(input, select, textarea):disabled,
 .app.outpost .button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -175,16 +161,6 @@
 .app.outpost .build-command-bar > label:first-child {
   flex: 1;
   min-width: 220px;
-}
-.app.outpost .build-command-bar > label:first-child input {
-  font-size: 18px;
-  font-weight: 650;
-  background: transparent;
-  padding-left: 10px;
-}
-.app.outpost .build-command-bar :is(input, select) {
-  min-height: 40px;
-  margin: 0;
 }
 .app.outpost .build-file-tools {
   margin: 0;
@@ -623,13 +599,6 @@
 .shopping-item strong {
   color: var(--text);
   font-size: 13px;
-}
-.app.outpost .shopping-item select {
-  min-height: 28px;
-  padding: 2px 6px;
-  width: 150px;
-  color: var(--muted);
-  font-size: 11px;
 }
 .shopping-table-panel input {
   width: 80px;

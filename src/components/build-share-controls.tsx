@@ -1,16 +1,19 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Share2, Link2, Download, Image as ImageIcon, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Share2, Link2, Download, Image as ImageIcon, ChevronDown, Ellipsis } from "lucide-react";
 import type { BuildImageEquipment } from "@/lib/build-image-export";
 
 export function BuildShareControls({
   title,
   equipment,
   privateBuild = false,
+  more,
 }: {
   title: string;
   equipment: BuildImageEquipment[];
   privateBuild?: boolean;
+  /** Further actions: the control becomes a ⋯ menu holding them under the share actions. */
+  more?: ReactNode;
 }) {
   const menu = useRef<HTMLDetailsElement>(null),
     [busy, setBusy] = useState(false),
@@ -98,11 +101,17 @@ export function BuildShareControls({
           }
         }}
       >
-        <summary className="button secondary">
-          <Share2 size={15} />
-          Share
-          <ChevronDown size={13} />
-        </summary>
+        {more ? (
+          <summary className="button secondary build-more-summary" aria-label="More actions">
+            <Ellipsis size={18} aria-hidden="true" />
+          </summary>
+        ) : (
+          <summary className="button secondary">
+            <Share2 size={15} />
+            Share
+            <ChevronDown size={13} />
+          </summary>
+        )}
         <div className="build-share-menu">
           <button type="button" disabled={busy} onClick={() => run("link")}>
             <Link2 size={15} />
@@ -116,6 +125,7 @@ export function BuildShareControls({
             <Download size={15} />
             Download PNG
           </button>
+          {more}
         </div>
       </details>
       <span className="build-share-status" role="status">

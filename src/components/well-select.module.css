@@ -1,32 +1,9 @@
-/* A native select cut into the surface as a well, with a drawn chevron */
+/* A native select with a drawn chevron; the well itself is the shared field style
+   (product-system.css "Form controls") */
 .wrap {
   position: relative;
   display: inline-flex;
   min-width: 0;
-}
-:global(.app.outpost) .wrap.wrap > select.select.select {
-  width: 100%;
-  min-height: 42px;
-  padding: 0 38px 0 var(--space-3);
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-  font: 500 14px/1.2 var(--font-ui);
-  appearance: none;
-  cursor: pointer;
-}
-:global(.app.outpost) .wrap.wrap > select.select.select:hover {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
-}
-:global(.app.outpost) .wrap.wrap > select.select.select:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-:global(.app.outpost) .wrap.wrap > select.select.select option {
-  background: var(--surface-raised);
-  color: var(--text);
 }
 .chevron {
   position: absolute;
@@ -35,4 +12,7 @@
   translate: 0 -50%;
   color: var(--accent-ink);
   pointer-events: none;
+}
+.wrap:has(select:disabled) .chevron {
+  opacity: 0.55;
 }

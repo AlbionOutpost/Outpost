@@ -31,9 +31,6 @@
   background: var(--accent);
   color: #0b0e12;
 }
-.app.outpost :is(input, textarea) {
-  caret-color: var(--accent);
-}
 .app.outpost :is(.table-scroll, .item-browser-grid, .gear-pane) {
   scrollbar-color: var(--border) var(--panel);
   scrollbar-width: thin;
@@ -98,22 +95,7 @@
   border-color: var(--error);
   background: transparent;
 }
-.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
-  min-height: 42px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  font: 400 14px/1.5 var(--font-ui);
-  background-color: var(--bg);
-  color: var(--text);
-}
-.app.outpost :is(input, textarea)::placeholder {
-  color: var(--muted);
-  opacity: 1;
-}
-.app.outpost input:is([type="checkbox"], [type="radio"]) {
-  accent-color: var(--accent);
-}
-.app.outpost :is(button, a, input, select, textarea, summary):focus-visible {
+.app.outpost :is(button, a, summary):focus-visible {
   outline: 2px solid var(--accent-hover);
   outline-offset: 3px;
 }
@@ -183,13 +165,6 @@
   background: transparent;
   border: none;
   box-shadow: none;
-}
-.app.outpost .region select {
-  min-height: 36px;
-  height: 36px;
-  font-size: 12px;
-  background: transparent;
-  border: 0;
 }
 .app.outpost .theme-toggle {
   background: transparent;
@@ -1044,16 +1019,6 @@
 .app.outpost .contextual-drawer .item-browser-grid {
   max-height: none;
 }
-.app.outpost .gear-studio .gear-search > div {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
-}
-.app.outpost .gear-studio .gear-search input {
-  border: 0;
-  background: transparent;
-  min-width: 0;
-}
 .app.outpost .build-gear-studio {
   align-items: start;
   border-radius: 8px;
@@ -1162,10 +1127,6 @@
 }
 .app.outpost .reference-material-table th:nth-child(5) {
   width: 23%;
-}
-.app.outpost .reference-material-table input[type="number"] {
-  min-width: 0;
-  padding-inline: 8px;
 }
 @media (min-width: 781px) {
   .app.outpost .production-workspace .reference-quantity .input-grid {

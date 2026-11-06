@@ -36,7 +36,7 @@ export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; li
         }
       />
       <div className="admin-controls">
-        <div className="admin-seg" role="group" aria-label="Chart series">
+        <div className="segmented admin-seg" role="group" aria-label="Chart series">
           {Object.entries(series).map(([key, label]) => (
             <button
               key={key}

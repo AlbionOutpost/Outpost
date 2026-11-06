@@ -9,7 +9,7 @@ import { ItemIcon } from "./item-icon";
 import { LoadoutBoard } from "./loadout-board";
 import { SpellIcon } from "./spell-icon";
 import { CompositionPngExport, type CompositionImageInput } from "./composition-png-export";
-import { libraryRosterMember } from "./comp-roster";
+import { libraryRosterMember, RosterRows } from "./comp-roster";
 import { CompMembers, type CompMemberCard } from "./comp-members";
 import { CompMenu } from "./comp-menu";
 import { SectionHeading } from "./section-heading";
@@ -31,7 +31,8 @@ export function LibraryGroupWorkspace({
   notes?: string;
 }) {
   const region = useOutpostRegion(),
-    [view, setView] = useState<"equipment" | "abilities">("equipment"),
+    // Starts as roster rows: a 25-member comp as 25 boards is a 6,000px page.
+    [view, setView] = useState<"roster" | "equipment" | "abilities">("roster"),
     [alternatives, setAlternatives] = useState(true),
     [mounts, setMounts] = useState(true),
     [message, setMessage] = useState("");
@@ -98,20 +99,19 @@ export function LibraryGroupWorkspace({
         ),
       };
     const rows = build.equipment.filter((row) => mounts || row.slot !== "Mount");
-    const swaps = rows.flatMap((row) =>
-      row.alternatives.map((alt, i) => ({ row, alt, key: `${row.slot}-${alt}-${i}` })),
-    );
     return {
       member: libraryRosterMember(build, index),
       title: build.title,
       href: `/builds/library/${encodeURIComponent(build.slug)}`,
-      line: `Slot ${index + 1}${optional ? " · Optional" : ""} · role by weapon type`,
       badges: optional,
       body: (
         <>
           {view === "equipment" ? (
             <LoadoutBoard
-              pieces={rows}
+              pieces={rows.map((row) => ({
+                ...row,
+                swap: alternatives ? row.alternatives[0] : undefined,
+              }))}
               spellNames={spellNames}
               size="card"
               choices
@@ -137,36 +137,6 @@ export function LibraryGroupWorkspace({
                 </li>
               ))}
             </ul>
-          )}
-          {alternatives && (
-            <div
-              className={styles.swaps}
-              aria-label={`Slot ${index + 1} equipment alternatives`}
-              role="group"
-            >
-              <span className={styles.swapsLabel}>Swaps</span>
-              {swaps.length ? (
-                <span className={styles.swapIcons}>
-                  {swaps.map(({ row, alt, key }) => (
-                    <span key={key} title={`${row.slot}: ${equipmentName(alt)}`}>
-                      <ItemIcon id={alt} size={32} />
-                      <span className="sr-only">
-                        {row.slot}: {equipmentName(alt)}
-                      </span>
-                      {view === "abilities" &&
-                        (row.alternativeSkills[alt] || []).map((spell, j) => (
-                          <span key={`${spell}-${j}`} title={spellNames[spell] || spell}>
-                            <SpellIcon id={spell} name={spellNames[spell] || spell} size={24} />
-                            <span className="sr-only">{spellNames[spell] || spell}</span>
-                          </span>
-                        ))}
-                    </span>
-                  ))}
-                </span>
-              ) : (
-                <span className={styles.muted}>None recorded</span>
-              )}
-            </div>
           )}
         </>
       ),
@@ -194,7 +164,14 @@ export function LibraryGroupWorkspace({
         <div className={styles.toolbar}>
           <div className={styles.show} role="group" aria-label="Show on each member">
             <span className={styles.showLabel}>Show</span>
-            <span className={styles.segment}>
+            <span className="segmented">
+              <button
+                type="button"
+                aria-pressed={view === "roster"}
+                onClick={() => setView("roster")}
+              >
+                Roster
+              </button>
               <button
                 type="button"
                 aria-pressed={view === "equipment"}
@@ -210,14 +187,16 @@ export function LibraryGroupWorkspace({
                 Abilities
               </button>
             </span>
-            <button
-              type="button"
-              className={styles.toggle}
-              aria-pressed={alternatives}
-              onClick={() => setAlternatives((on) => !on)}
-            >
-              Swaps
-            </button>
+            {view !== "roster" && (
+              <button
+                type="button"
+                className={styles.toggle}
+                aria-pressed={alternatives}
+                onClick={() => setAlternatives((on) => !on)}
+              >
+                Swaps
+              </button>
+            )}
             <button
               type="button"
               className={styles.toggle}
@@ -238,7 +217,7 @@ export function LibraryGroupWorkspace({
                 {message && <StatusLine>{message}</StatusLine>}
                 <CompositionPngExport
                   composition={image}
-                  view={view}
+                  view={view === "roster" ? "equipment" : view}
                   showAlternatives={alternatives}
                   includeMounts={mounts}
                   allowCopy
@@ -247,7 +226,21 @@ export function LibraryGroupWorkspace({
             )}
           </CompMenu>
         </div>
-        <CompMembers cards={cards} label={`${composition.title} members`} title="Party roster" />
+        {view === "roster" ? (
+          <div className={`raised ${styles.rosterPanel}`}>
+            <RosterRows
+              members={cards.map((card) => ({
+                ...card.member,
+                href: card.href,
+                title: card.title,
+              }))}
+              limit={cards.length}
+              label={`${composition.title} roster`}
+            />
+          </div>
+        ) : (
+          <CompMembers cards={cards} label={`${composition.title} members`} title="Party roster" />
+        )}
       </section>
       {mounts && recordedMounts.length > 0 && (
         <section className={`panel ${styles.panel}`} aria-labelledby="comp-mounts">

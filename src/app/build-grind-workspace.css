@@ -9,11 +9,6 @@
   position: static;
   flex-wrap: wrap;
 }
-.app.outpost .build-import-label input {
-  width: 100%;
-  font-size: 12px;
-  padding: 6px;
-}
 .app.outpost .gear-studio.build-gear-studio {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
@@ -107,13 +102,6 @@
 .build-empty-alternative {
   text-align: center;
   font-size: 16px;
-}
-.app.outpost .build-gear-choice-control select {
-  width: 100%;
-  min-width: 0;
-  height: 40px;
-  padding: 0 8px;
-  font-size: 13px;
 }
 .build-alternative-choice {
   padding-top: 25px;

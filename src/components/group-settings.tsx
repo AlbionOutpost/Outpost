@@ -33,148 +33,153 @@ export function GroupSettings({
   return (
     <div className={styles.settings}>
       <h2 className="sr-only">Team settings</h2>
-      {profile}
-      {editor && (
-        <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
-          <PanelHead
-            id="team-invites"
-            title="Invite a member"
-            line="A single-use link that joins one player as a Member. Outpost sends nothing for you; share it yourself."
-          />
-          <form
-            className={styles.inlineForm}
-            onSubmit={(e) => {
-              e.preventDefault();
-              const f = new FormData(e.currentTarget);
-              setCopied(false);
-              run({ action: "invite", hours: Number(f.get("hours")) });
-            }}
-          >
-            <Field label="Invitation expires in">
-              <WellSelect name="hours" aria-label="Invitation expires in" defaultValue="24">
-                <option value="1">1 hour</option>
-                <option value="24">24 hours</option>
-                <option value="168">7 days</option>
-              </WellSelect>
-            </Field>
-            <button className="button primary" disabled={busy}>
-              Create invitation
-            </button>
-          </form>
-          {inviteLink && (
-            <div className={styles.inviteLink}>
-              <Field label="New single-use invitation link" hint="Shown once. Copy it now.">
-                <input aria-label="New invitation link" readOnly value={inviteLink} />
-              </Field>
-              <button
-                type="button"
-                className="button secondary"
-                onClick={() =>
-                  navigator.clipboard?.writeText(inviteLink).then(
-                    () => setCopied(true),
-                    () => setCopied(false),
-                  )
-                }
-              >
-                {copied ? (
-                  <Check size={16} aria-hidden="true" />
-                ) : (
-                  <Copy size={16} aria-hidden="true" />
-                )}
-                {copied ? "Copied" : "Copy link"}
-              </button>
-            </div>
-          )}
-          {data.invitations.length > 0 && (
-            <ul className={styles.list} aria-label="Invitations">
-              {data.invitations.map((i) => {
-                const state = i.revokedAt ? "Revoked" : i.acceptedAt ? "Used" : "Open";
-                return (
-                  <li key={i.id} className={`well ${styles.wellRow}`}>
-                    <span className={styles.rowCopy}>
-                      <strong>Invitation link</strong>
-                      <small>
-                        Expires <time dateTime={i.expiresAt}>{utc(i.expiresAt)}</time>
-                      </small>
-                    </span>
-                    <span className={state === "Open" ? "landing-chip" : "landing-chip is-muted"}>
-                      {state}
-                    </span>
-                    {state === "Open" && (
-                      <span className={styles.rowTools}>
-                        <button
-                          type="button"
-                          className={`button secondary ${styles.lossButton}`}
-                          disabled={busy}
-                          aria-label={`Revoke invitation ${i.id}`}
-                          onClick={() => run({ action: "revoke", invitationId: i.id })}
-                        >
-                          Revoke
-                        </button>
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-      )}
-      {manager && (
-        <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
-          <PanelHead
-            id="team-requests"
-            title="Membership requests"
-            line="Players who asked to join this public team."
-          />
-          {data.requests.length ? (
-            <ul className={styles.list}>
-              {data.requests.map((r) => (
-                <li key={r.userId} className={`well ${styles.wellRow}`}>
-                  <span className={styles.initial} aria-hidden="true">
-                    {r.name.slice(0, 1).toUpperCase()}
-                  </span>
-                  <span className={styles.rowCopy}>
-                    <strong>{r.name}</strong>
-                    {r.message && <small className={styles.wrap}>{r.message}</small>}
-                  </span>
-                  <span className={styles.rowTools}>
-                    <button
-                      type="button"
-                      className="button primary"
-                      disabled={busy}
-                      aria-label={`Approve ${r.name}`}
-                      onClick={() => run({ action: "decide", userId: r.userId, approve: true })}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      type="button"
-                      className="button secondary"
-                      disabled={busy}
-                      aria-label={`Reject ${r.name}`}
-                      onClick={() => run({ action: "decide", userId: r.userId, approve: false })}
-                    >
-                      Reject
-                    </button>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyWell
-              emblem="team-roles"
-              title="No pending requests"
-              line="New requests from players outside the team show up here."
-              action={
-                <Link className="button secondary" href="/groups">
-                  See the directory
-                </Link>
-              }
+      {/* Two stacks, each panel at its own height: who the team is and who wants in; invitations */}
+      <div className={styles.overviewColumn}>
+        {profile}
+        {manager && (
+          <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
+            <PanelHead
+              id="team-requests"
+              title="Membership requests"
+              line="Players who asked to join this public team."
             />
-          )}
-        </section>
-      )}
+            {data.requests.length ? (
+              <ul className={styles.list}>
+                {data.requests.map((r) => (
+                  <li key={r.userId} className={`well ${styles.wellRow}`}>
+                    <span className={styles.initial} aria-hidden="true">
+                      {r.name.slice(0, 1).toUpperCase()}
+                    </span>
+                    <span className={styles.rowCopy}>
+                      <strong>{r.name}</strong>
+                      {r.message && <small className={styles.wrap}>{r.message}</small>}
+                    </span>
+                    <span className={styles.rowTools}>
+                      <button
+                        type="button"
+                        className="button primary"
+                        disabled={busy}
+                        aria-label={`Approve ${r.name}`}
+                        onClick={() => run({ action: "decide", userId: r.userId, approve: true })}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        className="button secondary"
+                        disabled={busy}
+                        aria-label={`Reject ${r.name}`}
+                        onClick={() => run({ action: "decide", userId: r.userId, approve: false })}
+                      >
+                        Reject
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyWell
+                emblem="team-roles"
+                title="No pending requests"
+                line="New requests from players outside the team show up here."
+                action={
+                  <Link className="button secondary" href="/groups">
+                    See the directory
+                  </Link>
+                }
+              />
+            )}
+          </section>
+        )}
+      </div>
+      <div className={styles.overviewColumn}>
+        {editor && (
+          <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
+            <PanelHead
+              id="team-invites"
+              title="Invite a member"
+              line="A single-use link that joins one player as a Member. Outpost sends nothing for you; share it yourself."
+            />
+            <form
+              className={styles.inlineForm}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const f = new FormData(e.currentTarget);
+                setCopied(false);
+                run({ action: "invite", hours: Number(f.get("hours")) });
+              }}
+            >
+              <Field label="Invitation expires in">
+                <WellSelect name="hours" aria-label="Invitation expires in" defaultValue="24">
+                  <option value="1">1 hour</option>
+                  <option value="24">24 hours</option>
+                  <option value="168">7 days</option>
+                </WellSelect>
+              </Field>
+              <button className="button primary" disabled={busy}>
+                Create invitation
+              </button>
+            </form>
+            {inviteLink && (
+              <div className={styles.inviteLink}>
+                <Field label="New single-use invitation link" hint="Shown once. Copy it now.">
+                  <input aria-label="New invitation link" readOnly value={inviteLink} />
+                </Field>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() =>
+                    navigator.clipboard?.writeText(inviteLink).then(
+                      () => setCopied(true),
+                      () => setCopied(false),
+                    )
+                  }
+                >
+                  {copied ? (
+                    <Check size={16} aria-hidden="true" />
+                  ) : (
+                    <Copy size={16} aria-hidden="true" />
+                  )}
+                  {copied ? "Copied" : "Copy link"}
+                </button>
+              </div>
+            )}
+            {data.invitations.length > 0 && (
+              <ul className={styles.list} aria-label="Invitations">
+                {data.invitations.map((i) => {
+                  const state = i.revokedAt ? "Revoked" : i.acceptedAt ? "Used" : "Open";
+                  return (
+                    <li key={i.id} className={`well ${styles.wellRow}`}>
+                      <span className={styles.rowCopy}>
+                        <strong>Invitation link</strong>
+                        <small>
+                          Expires <time dateTime={i.expiresAt}>{utc(i.expiresAt)}</time>
+                        </small>
+                      </span>
+                      <span className={state === "Open" ? "landing-chip" : "landing-chip is-muted"}>
+                        {state}
+                      </span>
+                      {state === "Open" && (
+                        <span className={styles.rowTools}>
+                          <button
+                            type="button"
+                            className={`button secondary ${styles.lossButton}`}
+                            disabled={busy}
+                            aria-label={`Revoke invitation ${i.id}`}
+                            onClick={() => run({ action: "revoke", invitationId: i.id })}
+                          >
+                            Revoke
+                          </button>
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        )}
+      </div>
       <section className={`panel ${styles.panel} ${styles.danger}`} aria-labelledby="team-leave">
         <PanelHead
           id="team-leave"

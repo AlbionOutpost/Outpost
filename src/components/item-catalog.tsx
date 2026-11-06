@@ -1,15 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  LayoutGrid,
-  List,
-  RotateCw,
-  Search,
-} from "lucide-react";
+import { ArrowUpRight, LayoutGrid, List, RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
+import { Pagination } from "./pagination";
 import Link from "@/components/link";
 import { items } from "@/lib/albion/item-database";
 import { ItemIcon } from "./item-icon";
@@ -20,6 +13,7 @@ import { WellSelect } from "./well-select";
 import { catalogSearchResponse } from "@/lib/catalog/search";
 import { z } from "zod";
 import styles from "./item-catalog.module.css";
+import { SearchInput } from "./field";
 const responseSchema = catalogSearchResponse.extend({
   total: z.number().int().nonnegative(),
   page: z.number().int().positive(),
@@ -120,18 +114,15 @@ export function ItemCatalog({
         <div className={styles.fields}>
           <label className={styles.search}>
             <span>Search item name or identifier</span>
-            <span className={styles.searchWell}>
-              <Search size={16} aria-hidden="true" />
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Battleaxe, T6_MAIN_SWORD…"
-              />
-            </span>
+            <SearchInput
+              type="search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Battleaxe, T6_MAIN_SWORD…"
+            />
           </label>
           <label className={styles.categorySelect}>
             <span>Category</span>
@@ -180,7 +171,7 @@ export function ItemCatalog({
               <option value="">Any</option>
               {[0, 1, 2, 3, 4].map((t) => (
                 <option key={t} value={t}>
-                  .{t}
+                  {t ? `@${t}` : "Flat"}
                 </option>
               ))}
             </WellSelect>
@@ -210,7 +201,7 @@ export function ItemCatalog({
                     Clear filters
                   </button>
                 )}
-                <div className={styles.view} role="group" aria-label="Item display">
+                <div className="segmented" role="group" aria-label="Item display">
                   <button
                     type="button"
                     aria-pressed={view === "list"}
@@ -300,37 +291,17 @@ export function ItemCatalog({
           </>
         )}
         {!error && pages > 1 && (
-          <nav className={styles.pages} aria-label="Item pages">
-            <button
-              type="button"
-              className="pill-link is-small"
-              aria-label="Previous items"
-              disabled={page === 1 || busy}
-              onClick={() => {
-                setPage(page - 1);
-                setMore(false);
-              }}
-            >
-              <ArrowLeft size={14} aria-hidden="true" />
-              Previous
-            </button>
-            <span>
-              Page {page} of {pages.toLocaleString()}
-            </span>
-            <button
-              type="button"
-              className="pill-link is-small"
-              aria-label="Next items"
-              disabled={busy || page * 30 >= result.total}
-              onClick={() => {
-                setPage(page + 1);
-                setMore(false);
-              }}
-            >
-              Next
-              <ArrowRight size={14} aria-hidden="true" />
-            </button>
-          </nav>
+          <Pagination
+            label="Item pages"
+            page={page}
+            pages={pages}
+            next={page * 30 < result.total}
+            busy={busy}
+            onPage={(to) => {
+              setPage(to);
+              setMore(false);
+            }}
+          />
         )}
       </section>
       <section className={`raised ${styles.notes}`} aria-labelledby="item-notes-title">

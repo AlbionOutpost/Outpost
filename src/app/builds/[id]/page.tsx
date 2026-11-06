@@ -88,7 +88,7 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
           </>
         }
       />
-      <BuildDetailNavigation />
+      <BuildDetailNavigation links={false} />
       <BuildLoadoutView
         equipment={build.equipment}
         region={build.region}

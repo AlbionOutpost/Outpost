@@ -1,11 +1,16 @@
 "use client";
-import { ArrowUpRight, Plus } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { EquipmentStrip } from "./equipment-strip";
 import { ItemIcon } from "./item-icon";
-import { PanelHead } from "./panel-head";
+import { LoadoutBoard } from "./loadout-board";
+import { RosterRows } from "./comp-roster";
+import { CompGrid, CompWindow } from "./comp-window";
+import { SectionHeading } from "./section-heading";
+import windows from "./landing/windows.module.css";
 import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
 import type { TeamContext } from "./group-dashboard";
@@ -81,44 +86,70 @@ export function BuildRow({
   );
 }
 
+/** A team comp as the landing's comp window: its first members by weapon, the size, the way in. */
+function TeamCompWindow({ comp }: { comp: CompPreview }) {
+  return (
+    <CompWindow
+      title={comp.title}
+      href={`/compositions/${comp.id}`}
+      total={comp.playerCount ?? 0}
+      noun="player"
+      byline={comp.playerCount === null ? "Roster unavailable" : "Shared with the team"}
+    >
+      {comp.weapons.length ? (
+        <RosterRows
+          label={`${comp.title} members by weapon`}
+          members={comp.weapons.map((w, i) => ({
+            key: `${w.itemId}-${i}`,
+            weapon: { itemId: w.itemId, quality: w.quality },
+            name: equipmentName(w.itemId),
+            role: w.role,
+            tone: w.role,
+            armor: [],
+          }))}
+        />
+      ) : (
+        <p className="landing-window-empty">Open the comp to see its roster.</p>
+      )}
+    </CompWindow>
+  );
+}
+
 export function GroupComps({ ctx }: { ctx: TeamContext }) {
   const { data, editor } = ctx;
   const previews = new Map(data.compositionPreviews.map((c) => [c.id, c]));
   return (
-    <section
-      className={`panel ${styles.panel}`}
-      id="guild-compositions"
-      aria-labelledby="team-comps-all"
-    >
-      <PanelHead
+    <section className={styles.section} id="guild-compositions" aria-labelledby="team-comps-all">
+      <SectionHeading
         id="team-comps-all"
-        emblem="team-comps"
-        title="Shared comps"
+        title={
+          <>
+            Shared <em>comps</em>
+          </>
+        }
         line={
           data.compositions.length
-            ? `${plural(data.compositions.length, "comp")} · visible to members only`
+            ? `${plural(data.compositions.length, "comp")}, visible to members only.`
             : "Comps saved to this team are visible to members only."
         }
-        actions={
-          editor ? (
-            <Link className="button secondary" href="/compositions/new">
-              <Plus size={16} aria-hidden="true" /> Create comp
-            </Link>
-          ) : undefined
+        link={
+          editor && data.compositions.length
+            ? { href: "/compositions/new", label: "Create comp" }
+            : undefined
         }
       />
       {data.compositions.length ? (
-        <ul className={styles.list}>
+        <CompGrid>
           {data.compositions.map((c) => (
-            <li key={c.id}>
-              <CompRow
+            <li key={c.id} data-team-comp="">
+              <TeamCompWindow
                 comp={
                   previews.get(c.id) ?? { id: c.id, title: c.title, playerCount: null, weapons: [] }
                 }
               />
             </li>
           ))}
-        </ul>
+        </CompGrid>
       ) : (
         <EmptyWell
           emblem="team-comps"
@@ -135,19 +166,65 @@ export function GroupComps({ ctx }: { ctx: TeamContext }) {
   );
 }
 
+/** A shared build snapshot as the landing's build window: the loadout board and its main hand. */
+function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: ReactNode }) {
+  const main = build.equipment.find((e) => e.slot === "Main hand");
+  return (
+    <article
+      className={`raised has-scene landing-window ${windows.window} ${styles.buildWindow}`}
+      data-scene="build"
+      data-team-build=""
+    >
+      <div className={`landing-window-bar ${windows.bar}`}>
+        <h3 className={`landing-window-title ${styles.windowTitle}`} title={build.title}>
+          {build.title}
+        </h3>
+        <span className="landing-chips">
+          <span className="landing-chip is-muted">Snapshot</span>
+        </span>
+      </div>
+      <div className={`landing-window-body ${windows.body}`}>
+        {build.equipment.length ? (
+          <LoadoutBoard
+            pieces={build.equipment}
+            size="card"
+            abilities={false}
+            label={`${build.title} loadout`}
+          />
+        ) : (
+          <p className="landing-window-empty">No equipment recorded for this build.</p>
+        )}
+      </div>
+      <div className={`landing-window-foot ${windows.foot} ${styles.buildFoot}`}>
+        <span aria-hidden="true">
+          {main ? <ItemIcon id={main.itemId} quality={main.quality} size={40} /> : null}
+        </span>
+        <span>
+          <strong>{main ? equipmentName(main.itemId) : "No main hand recorded"}</strong>
+          <small>Copied when it was shared</small>
+        </span>
+        {children}
+      </div>
+    </article>
+  );
+}
+
 export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
   const { data, editor, busy, run } = ctx;
   return (
-    <section className={`panel ${styles.panel}`} aria-labelledby="team-builds-all">
-      <PanelHead
+    <section className={styles.section} aria-labelledby="team-builds-all">
+      <SectionHeading
         id="team-builds-all"
-        emblem="strip-builds"
-        title="Shared builds"
-        line="A copy of the build at the moment it was shared; later edits to the original stay out."
+        title={
+          <>
+            Shared <em>builds</em>
+          </>
+        }
+        line="A copy of each build as it was when shared; later edits to the original stay out."
       />
       {editor && (
         <form
-          className={styles.inlineForm}
+          className={`raised ${styles.shareBar}`}
           onSubmit={(e) => {
             e.preventDefault();
             const f = new FormData(e.currentTarget);
@@ -170,14 +247,14 @@ export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
         </form>
       )}
       {data.builds.length ? (
-        <ul className={styles.list}>
+        <ul className={`${windows.windows} ${styles.buildGrid}`}>
           {data.builds.map((b) => (
             <li key={b.id}>
-              <BuildRow build={b} heading="h3">
+              <TeamBuildWindow build={b}>
                 {editor && (
                   <button
                     type="button"
-                    className={`button secondary ${styles.lossButton}`}
+                    className={`pill-link is-small ${styles.lossButton}`}
                     disabled={busy}
                     aria-label={`Remove build snapshot ${b.title}`}
                     onClick={() => run({ action: "remove-build", id: b.id })}
@@ -185,7 +262,7 @@ export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
                     Remove
                   </button>
                 )}
-              </BuildRow>
+              </TeamBuildWindow>
             </li>
           ))}
         </ul>

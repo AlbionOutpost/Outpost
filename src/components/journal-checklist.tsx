@@ -1,7 +1,7 @@
 "use client";
 import "@/app/journal-workspace.css";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download } from "lucide-react";
 import { parseJournalProgress, type JournalEntry } from "@/lib/journal-progress";
 import { regions } from "@/lib/albion/region-config";
 import { useOutpostRegion } from "./region-context";
@@ -11,6 +11,7 @@ import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
 import { Unavailable } from "./status-line";
+import { SearchInput } from "./field";
 
 const perPage = 25;
 
@@ -209,8 +210,7 @@ export function JournalChecklist({ entries }: { entries: JournalEntry[] }) {
         <div className="journal-toolbar">
           <label className="journal-search">
             <span className="sr-only">Search objectives or rewards</span>
-            <Search size={16} aria-hidden="true" />
-            <input
+            <SearchInput
               type="search"
               value={query}
               maxLength={100}

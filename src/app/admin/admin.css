@@ -241,42 +241,9 @@
 
 /* Segmented filters: users, chart series, report status */
 .app.outpost .admin-seg {
-  display: flex;
   flex-wrap: wrap;
-  gap: 6px;
   margin: 0 0 16px;
 }
-.app.outpost .admin-seg > :is(a, button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0 14px;
-  border: 1px solid var(--well-border);
-  border-radius: 8px;
-  background: var(--well);
-  color: var(--secondary);
-  font: 600 13px/1 var(--font-ui);
-  cursor: pointer;
-  transition:
-    border-color 160ms,
-    color 160ms,
-    background 160ms;
-}
-.app.outpost .admin-seg > :is(a, button):hover:not(:disabled) {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
-}
-.app.outpost .admin-seg > :is([aria-current], [aria-pressed="true"]) {
-  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-.app.outpost .admin-seg > button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
 /* Chips */
 .app.outpost .admin-chips {
   display: flex;
@@ -330,18 +297,6 @@
   flex: 1;
   min-width: 0;
   color: var(--muted);
-}
-.app.outpost .admin-search-field svg {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  translate: 0 -50%;
-  pointer-events: none;
-}
-.app.outpost .admin-search-field input {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 14px 0 40px;
 }
 /* Tables: the landing's .tool-table with text columns left-aligned */
 .app.outpost .tool-table.admin-table :is(th, td) {
@@ -660,12 +615,6 @@
   color: var(--secondary);
   font: 600 12px/1.35 var(--font-ui);
 }
-.app.outpost .admin-action-form :is(input, textarea, select) {
-  width: 100%;
-  min-width: 0;
-  padding: 10px 12px;
-  resize: vertical;
-}
 .app.outpost .admin-action-form input[readonly] {
   color: var(--muted);
 }
@@ -789,12 +738,6 @@
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
-}
-.app.outpost .admin-field textarea {
-  width: 100%;
-  min-width: 0;
-  padding: 10px 12px;
-  resize: vertical;
 }
 
 /* Loading */

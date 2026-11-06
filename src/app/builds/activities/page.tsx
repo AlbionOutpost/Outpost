@@ -43,7 +43,7 @@ export default function Activities() {
     </ul>
   );
   return (
-    <div className="builds-ecosystem builds-hub">
+    <div className="builds-ecosystem">
       <BuildDiscoveryHeader
         active="activities"
         title="Choose your activity"

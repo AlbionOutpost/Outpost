@@ -25,6 +25,7 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
+  RetryLine,
 } from "./calculator-shell";
 import { PriceSource, profitTone, profitWord, Missing, PRICE_ERROR } from "./calculator-figures";
 import { Disclosure } from "./disclosure";
@@ -417,12 +418,7 @@ export function LaborersCalculator() {
       {busy ? (
         <StatusLine>Loading prices…</StatusLine>
       ) : failure ? (
-        <div className={s.errorLine}>
-          <StatusLine tone="error">{failure}</StatusLine>
-          <button type="button" onClick={load}>
-            Retry
-          </button>
-        </div>
+        <RetryLine onRetry={load}>{failure}</RetryLine>
       ) : null}
       <div className={s.materials} role="region" aria-label="Journal and loot prices">
         <div className={s.matHead} aria-hidden="true">

@@ -1,0 +1,30 @@
+.pages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.where {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pages > :is([aria-disabled="true"], :disabled) {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+@media (max-width: 700px) {
+  .pages {
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  /* Phone touch targets: the pills grow back to 40px */
+  :global(.app.outpost) .pages > :global(.pill-link.is-small) {
+    height: 40px;
+  }
+}

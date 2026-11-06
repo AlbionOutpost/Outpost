@@ -7,7 +7,8 @@ import { ShoppingAccountLists } from "./shopping-account-lists";
 import { useOutpostRegion } from "./region-context";
 import { ItemIcon } from "./item-icon";
 import { PanelHead } from "./panel-head";
-import { StatusLine } from "./status-line";
+import { StatusLine, Unavailable } from "./status-line";
+import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
 import { Silver } from "./silver";
 import { cities } from "@/lib/albion/region-config";
@@ -211,7 +212,7 @@ export function ShoppingWorkspace() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        glyph="transport"
+        glyph="catalog"
         scene="market"
         title="Crafting Planner"
         accent="Planner"
@@ -245,33 +246,36 @@ export function ShoppingWorkspace() {
           <StatusLine>Opening your shopping list…</StatusLine>
         </section>
       ) : !list.entries.length ? (
-        <section className={`panel ${styles.empty}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-          <img src="/albion/icons/tool-planner.webp" alt="" width={64} height={64} />
-          <h2>Start with a loadout or a crafting plan.</h2>
-          <p>
-            Shop a build from its page, or send a production plan’s materials here. The same items
-            add up; what you own is counted separately. Or try a small example first.
-          </p>
+        <section className={`panel ${styles.empty}`} aria-labelledby="shopping-empty-title">
+          <PanelHead
+            id="shopping-empty-title"
+            title="Your list"
+            line="Shop a build from its page, or send a production plan’s materials here. The same items add up; what you own is counted separately."
+          />
+          <EmptyWell
+            emblem="tool-craft"
+            title="Nothing on the list yet"
+            line="Try a small example plan to see how it works."
+            action={
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => commit({ ...list, entries: examplePlan() }, false)}
+              >
+                Try the example plan
+              </button>
+            }
+          />
           <div className={styles.emptyActions}>
-            <button
-              type="button"
-              className="button primary"
-              onClick={() => commit({ ...list, entries: examplePlan() }, false)}
-            >
-              Try the example plan
-            </button>
-            <Link href={`/builds/new?region=${region}`} className="button secondary">
-              Create a build
+            <Link href={`/builds/new?region=${region}`} className="pill-link">
+              Create a build <ArrowRight size={15} aria-hidden="true" />
             </Link>
-            <Link href={`/tools/crafting?region=${region}`} className="button secondary">
-              Plan a craft
+            <Link href={`/tools/crafting?region=${region}`} className="pill-link">
+              Plan a craft <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
           {message && <StatusLine>{message}</StatusLine>}
-          <div className={styles.emptyFoot}>
-            <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
-          </div>
+          <ShoppingAccountLists list={list} onLoad={(saved) => commit(saved)} />
         </section>
       ) : (
         <div className={styles.layout}>
@@ -603,17 +607,21 @@ export function ShoppingWorkspace() {
             <div className={styles.figure} data-complete={result.total !== null ? "" : undefined}>
               <small>Purchase estimate</small>
               <strong className="shopping-total">
-                {result.total !== null
-                  ? money(result.total)
-                  : result.knownCost > 0
-                    ? `${money(result.knownCost)}+`
-                    : "No prices"}
+                {result.total !== null ? (
+                  money(result.total)
+                ) : result.knownCost > 0 ? (
+                  `${money(result.knownCost)}+`
+                ) : (
+                  <Unavailable />
+                )}
               </strong>
-              <small>
-                {result.total !== null
-                  ? "silver after what you own"
-                  : `silver so far · ${result.missing} ${result.missing === 1 ? "line" : "lines"} without a price`}
-              </small>
+              {(result.total !== null || result.knownCost > 0) && (
+                <small>
+                  {result.total !== null
+                    ? "silver after what you own"
+                    : "silver so far, for the lines with a price"}
+                </small>
+              )}
             </div>
             <dl className={styles.stats}>
               <div>
@@ -634,21 +642,15 @@ export function ShoppingWorkspace() {
               </div>
             </dl>
             {result.missing > 0 && (
-              <div className={styles.readiness} role="status">
-                <strong>
-                  {result.missing} {result.missing === 1 ? "line needs" : "lines need"} a price
-                </strong>
-                <ul>
-                  {result.rows
-                    .filter((row) => row.buy > 0 && row.cost === null)
-                    .slice(0, 5)
-                    .map((row) => (
-                      <li key={shoppingKey(row)}>
-                        {row.name} · {row.city}
-                      </li>
-                    ))}
-                </ul>
-              </div>
+              <StatusLine tone="stale">
+                {result.missing} {result.missing === 1 ? "line needs" : "lines need"} a price:{" "}
+                {result.rows
+                  .filter((row) => row.buy > 0 && row.cost === null)
+                  .slice(0, 5)
+                  .map((row) => `${row.name} in ${row.city}`)
+                  .join(", ")}
+                {result.missing > 5 ? " and more" : ""}. Type your own price or refresh.
+              </StatusLine>
             )}
             <p className={styles.fine}>
               Prices are recent sell orders or your own. Order fees and transport are separate;
@@ -659,17 +661,18 @@ export function ShoppingWorkspace() {
       )}
       <section className={`raised has-scene ${styles.cta}`} data-scene="economy">
         <h2>
-          Find something worth <em>crafting</em>
+          Buy it in the right <em>city</em>
         </h2>
         <p>
-          See what a recipe makes before you buy the materials, or start from a published build.
+          Compare every city’s sell orders before you set out, or work out what the haul between
+          cities costs.
         </p>
         <div className={styles.emptyActions}>
-          <Link className="button primary" href={`/tools/crafting?region=${region}`}>
-            Price a craft <ArrowRight size={16} aria-hidden="true" />
+          <Link className="button primary" href={`/tools/market?region=${region}`}>
+            Check market prices <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link className="button secondary" href={`/builds?region=${region}`}>
-            Browse builds
+          <Link className="button secondary" href={`/tools/transport?region=${region}`}>
+            Plan the haul
           </Link>
         </div>
       </section>

@@ -63,8 +63,6 @@
 }
 .app.outpost .production-plan-run input {
   width: 88px;
-  min-height: 40px;
-  font-family: var(--font-data);
 }
 .app.outpost .production-plan-profit {
   display: grid;

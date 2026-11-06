@@ -89,17 +89,16 @@ export function GroupCreate() {
             <option value="asia">Asia</option>
           </WellSelect>
         </Field>
-        <Field label="Workspace visibility">
+        <Field
+          label="Workspace visibility"
+          hint="Public teams are listed and take join requests; plans stay members-only either way."
+        >
           <WellSelect name="visibility" aria-label="Workspace visibility">
             <option value="PRIVATE">Private</option>
             <option value="PUBLIC">Public</option>
           </WellSelect>
         </Field>
       </div>
-      <p className={styles.subline}>
-        Private teams are invisible to anyone outside them. A public team lists its name and
-        description and takes join requests; its plans stay members-only either way.
-      </p>
       {error && (
         <p role="alert" className={styles.alert}>
           {error}

@@ -153,3 +153,20 @@
     grid-column: 1 / -1;
   }
 }
+
+/* Wide screens use the width: the quote and city orders lead the main column, price history
+   and saved research sit beside them, so the answer and the city comparison share the first
+   screen. Below this the sections stack in reading order. */
+@media (min-width: 1280px) {
+  .workspace.workspace :global(.mx-main) {
+    grid-template-columns: minmax(0, 1.6fr) minmax(360px, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+  .workspace.workspace :global(.mx-main) > .marketDesk {
+    grid-row: span 2;
+  }
+  .workspace.workspace :global(.mx-main) > :global(.mx-saved) {
+    grid-column: 2;
+  }
+}

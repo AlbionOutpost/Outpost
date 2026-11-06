@@ -125,11 +125,6 @@ test("build details use a complete spatial inventory with synchronized equipment
     "#build-stats",
     "#build-discussion",
   ]) {
-    await expect(
-      page
-        .getByRole("navigation", { name: "Build sections", exact: true })
-        .locator(`a[href="${href}"]`),
-    ).toHaveCount(1);
     await expect(page.locator(href)).toHaveCount(1);
   }
 });

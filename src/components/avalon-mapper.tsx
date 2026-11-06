@@ -21,7 +21,7 @@ import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 const KEY = "outpost:avalon-map-v1";
 /** No painted Roads art yet; the neutral seal stands in (see the batch 4 report). */
-const EMBLEM = "fame";
+const EMBLEM = "tool-planner";
 const ICON_LABEL: Record<string, string> = {
   GREEN: "green chest",
   BLUE: "blue chest",
@@ -116,8 +116,8 @@ export function AvalonMapper() {
           <option key={z} value={z} />
         ))}
       </datalist>
-      <div className={s.fields}>
-        <label className={s.wide}>
+      <div className={`${s.fields} ${c.portalFields}`}>
+        <label>
           From
           <input
             id="avalon-from"
@@ -129,7 +129,7 @@ export function AvalonMapper() {
             required
           />
         </label>
-        <label className={s.wide}>
+        <label>
           To
           <input
             list="avalon-zones"
@@ -140,7 +140,7 @@ export function AvalonMapper() {
             required
           />
         </label>
-        <label className={s.wide}>
+        <label>
           Portal size
           <WellSelect
             value={form.size}

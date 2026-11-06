@@ -32,7 +32,7 @@ export function GroupEventEditor({
     .slice(0, 16);
   return (
     <>
-      <button type="button" className="button secondary" onClick={() => setOpen(true)}>
+      <button type="button" className="pill-link is-small" onClick={() => setOpen(true)}>
         Edit event
       </button>
       <EditorDialog open={open} title="Edit team event" onClose={() => setOpen(false)}>

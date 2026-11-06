@@ -10,7 +10,7 @@ test("tool discovery filters tasks, retains region and exposes honest starter sc
     page
       .locator(".directory-entry")
       .filter({ has: page.getByRole("heading", { name: "Crafting", exact: true }) }),
-  ).toContainText("Production planning");
+  ).toContainText("Plan equipment batches, material purchases and resource returns.");
   await page.getByRole("searchbox", { name: "Find a tool" }).fill("not-a-supported-tool");
   await expect(page.getByRole("heading", { name: /No tools match/ })).toBeVisible();
   await page.getByRole("button", { name: "Reset search", exact: true }).click();
