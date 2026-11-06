@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { ArrowRight, Search } from "lucide-react";
 import Link, { BuildRegionInput } from "@/components/build-region-link";
 import { brandCopy } from "@/lib/brand-copy";
@@ -18,18 +17,15 @@ export const guideArtwork: Record<string, string> = {
   "ancient-lands": "T8_2H_SHAPESHIFTER_MORGANA",
   "albion-journal-guide": "T4_JOURNAL_WARRIOR_EMPTY",
   achievements: "T8_CAPE",
+  "first-silver": "T3_2H_TOOL_PICK",
+  "focus-and-resource-return-rate": "T4_PLANKS",
+  "haul-between-cities": "T5_MOUNT_OX",
+  "first-solo-pve-build": "T4_MAIN_SWORD",
+  "read-a-market-quote": "T4_BAG",
+  "count-the-whole-cost": "T4_METALBAR",
+  "build-with-a-purpose": "T4_ARMOR_LEATHER_SET1",
+  "put-every-role-in-place": "T4_2H_HAMMER",
 };
-
-/** Short notes on how Outpost's own tools work; the hub's search and topics cover them too. */
-export type ToolNote = {
-  id: string;
-  title: string;
-  body: ReactNode;
-  /** Plain text the search matches, since `body` may hold links. */
-  text: string;
-  link: { href: string; label: string };
-};
-export const notesTopic = "Using Outpost";
 
 const cover = (guide: LibraryGuide): GuideCover => ({
   slug: guide.slug,
@@ -45,17 +41,14 @@ const cover = (guide: LibraryGuide): GuideCover => ({
 
 /**
  * The guides hub: the three newest guides as the landing's lead story and two side stories,
- * one search with topic pills, every other guide as a cover card three across, and the notes on
- * Outpost's tools as a topic of their own.
+ * one search with topic pills, and every other guide as a cover card three across.
  */
 export function GrindGuideDirectory({
   guides,
-  notes,
   query,
   category,
 }: {
   guides: LibraryGuide[];
-  notes: ToolNote[];
   query: string;
   category: string;
 }) {
@@ -67,11 +60,6 @@ export function GrindGuideDirectory({
       (!category || g.category === category) &&
       `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
   );
-  const noteMatches = notes.filter(
-    (n) =>
-      (!category || category === notesTopic) &&
-      `${n.title} ${n.text}`.toLowerCase().includes(needle),
-  );
   const newest = guides.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
   const listed = filtered ? matches : guides.filter((g) => !newest.includes(g));
   const topicHref = (topic: string) => {
@@ -81,7 +69,7 @@ export function GrindGuideDirectory({
     const search = params.toString();
     return `/guides${search ? `?${search}` : ""}`;
   };
-  const count = matches.length + noteMatches.length;
+  const count = matches.length;
   return (
     <>
       {!filtered && newest.length > 0 && (
@@ -90,7 +78,7 @@ export function GrindGuideDirectory({
             id="guides-newest"
             title={
               <>
-                New from <em>players</em>
+                Newest <em>guides</em>
               </>
             }
             line="The three most recently updated guides."
@@ -117,14 +105,14 @@ export function GrindGuideDirectory({
           line={
             filtered
               ? `${count} ${count === 1 ? "result" : "results"}${query ? ` for “${query}”` : ""}${category ? ` in ${category}` : ""}.`
-              : `${guides.length} guides on progression, gathering, PvE and making silver.`
+              : `${guides.length} guides on progression, gathering, PvE, trading and crafting.`
           }
         />
         <form action="/guides" className={`raised ${styles.filters}`} role="search">
           <BuildRegionInput />
           {category && <input type="hidden" name="category" value={category} />}
           <nav className={styles.topics} aria-label="Guide topics">
-            {["", ...topics, notesTopic].map((topic) => (
+            {["", ...topics].map((topic) => (
               <Link
                 key={topic}
                 href={topicHref(topic)}
@@ -156,9 +144,6 @@ export function GrindGuideDirectory({
             ))}
           </div>
         )}
-        {noteMatches.length > 0 && (filtered || category === notesTopic) && (
-          <ToolNotes notes={noteMatches} />
-        )}
         {filtered && !count && (
           <EmptyWell
             emblem="tool-planner"
@@ -172,43 +157,6 @@ export function GrindGuideDirectory({
           />
         )}
       </section>
-      {!filtered && (
-        <section className={styles.section} aria-labelledby="guides-tool-notes">
-          <SectionHeading
-            id="guides-tool-notes"
-            title={
-              <>
-                Using <em>Outpost</em>
-              </>
-            }
-            line="Short notes on reading prices, costing a craft, sharing builds and planning comps."
-          />
-          <ToolNotes notes={notes} />
-        </section>
-      )}
     </>
-  );
-}
-
-const noteScenes = ["market", "economy", "build", "composition"];
-
-function ToolNotes({ notes }: { notes: ToolNote[] }) {
-  return (
-    <ul className={styles.noteList} aria-label={notesTopic}>
-      {notes.map((note, i) => (
-        <li
-          key={note.id}
-          id={note.id}
-          className={`raised has-scene guide-note ${styles.note}`}
-          data-scene={noteScenes[i % noteScenes.length]}
-        >
-          <h3>{note.title}</h3>
-          <div className={styles.noteBody}>{note.body}</div>
-          <Link className="pill-link is-small" href={note.link.href}>
-            {note.link.label} <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-        </li>
-      ))}
-    </ul>
   );
 }

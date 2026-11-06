@@ -162,7 +162,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 href: "/guides",
                 emblem: "tool-craft",
                 title: "Every guide",
-                line: "Progression, gathering, PvE and making silver, from players.",
+                line: "Progression, gathering, PvE, trading and crafting.",
                 scene: "economy",
               }
             : {

@@ -1,5 +1,5 @@
 /* Guides hub (/guides): the landing's guide stories, one search with topic pills, cover cards
-   three across, the tool notes as framed cards and a closing row, at the landing's measure. */
+   three across and a closing row, at the landing's measure. */
 .page {
   max-width: var(--page-width);
   margin-inline: auto;
@@ -98,41 +98,6 @@
   gap: 24px;
 }
 
-/* Notes on Outpost's tools: framed cards like the landing's tool cards, two across */
-.noteList {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 26px 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-:global(.app.outpost) .note.note {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  justify-items: start;
-  gap: 12px;
-  min-width: 0;
-  padding: 24px;
-  scroll-margin-top: 100px;
-}
-:global(.app.outpost) .note h3 {
-  margin: 0;
-  font: 800 22px/1.15 var(--font-display);
-  text-shadow: 0 1px 2px #000c;
-}
-.noteBody {
-  display: grid;
-  align-content: start;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-.noteBody p {
-  margin: 0;
-}
-
 @media (max-width: 1100px) {
   :global(.app.outpost) .grid.grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -160,12 +125,8 @@
   :global(.app.outpost) .topics > a {
     min-height: 40px;
   }
-  :global(.app.outpost) .grid.grid,
-  .noteList {
+  :global(.app.outpost) .grid.grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 26px;
-  }
-  :global(.app.outpost) .note.note {
-    padding: 20px;
   }
 }

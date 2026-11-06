@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Guides in Outpost's own words — 6 November 2026
+
+- The 8 archive guides are reworded throughout with the same facts, numbers, slugs and section anchors; their links now point at Outpost pages (tools, item pages, library builds) instead of the old site.
+- 8 new guides by Outpost: first silver, focus and RRR, hauling between cities, a first solo PvE build, and the four "Using Outpost" notes (market quotes, whole cost, builds, comps) as full guides. The notes section on `/guides` is gone.
+- Guide links may now be Outpost paths under `/tools`, `/guides`, `/builds`, `/compositions` and `/items`.
+- Not done: albiononlinegrind.com was unreachable from the build session, so any guides it has beyond these 8 are not imported yet.
+
 ## Redesign batch 0: foundation — 6 November 2026
 
 - Inner-page mastheads are open again: the rule that boxed every `WorkspaceHeading` is deleted, so ~35 routes now open on the painted backdrop like the landing. Guide readers show their cover across the masthead; the dashboard and settings show the player's Discord picture. Phone mastheads shade the copy edge to edge, and tab rows that overflow fade on the cut edge.

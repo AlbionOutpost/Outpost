@@ -31,6 +31,9 @@ const allowed = new Set([
 export function safeGuideHref(value?: string) {
   if (!value) return undefined;
   if (/^#[a-zA-Z0-9_-]+$/.test(value)) return value;
+  // Outpost's own pages: tools, guides, builds, comps and item pages (item ids may hold %40).
+  if (/^\/(?:tools|guides|builds|compositions|items)(?:\/(?:[A-Za-z0-9_-]|%40)+)*$/.test(value))
+    return value;
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password) return undefined;

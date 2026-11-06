@@ -262,11 +262,11 @@ export default async function Home({
         <section className="landing-wrap landing-guides" aria-labelledby="home-guides-title">
           <div className="section-heading landing-section-heading">
             <h2 id="home-guides-title">
-              Learn from <em>players</em>.
+              Learn the <em>game</em>.
             </h2>
             <p>
-              {library.guides} guides from players who know their stuff: progression, gathering, PvE
-              and making silver.
+              {library.guides} guides on progression, gathering, PvE, trading and crafting, from
+              players and from Outpost.
             </p>
             <Link className="pill-link" href={`/guides${suffix}`}>
               All guides <ArrowRight size={15} />
