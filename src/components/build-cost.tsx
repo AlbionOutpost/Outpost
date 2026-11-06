@@ -6,7 +6,7 @@ import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
-import { StatusLine } from "./status-line";
+import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 type Cost = {
   region: string;
@@ -34,6 +34,12 @@ export function BuildCost({ id }: { id: string }) {
   const controller = useRef<AbortController | null>(null);
   const requestKey = `${id}:${region}:${city}:${sets}`;
   const busy = pendingKey === requestKey;
+  const failed = error?.key === requestKey;
+  // A result only stands for the market it was asked for.
+  const shown =
+    result && result.region === region && result.city === city && result.sets === sets
+      ? result
+      : null;
   useEffect(() => () => controller.current?.abort(), [requestKey]);
   async function load() {
     controller.current?.abort();
@@ -87,73 +93,100 @@ export function BuildCost({ id }: { id: string }) {
       <PanelHead
         title="What will this loadout cost?"
         line={`Lowest sell order for each equipped item at its quality, in the city you pick on the ${regions[region].label} server.`}
-      />
-      <form
-        className="build-cost-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void load();
-        }}
-      >
-        <label>
-          Purchase city
-          <WellSelect
-            aria-label="Purchase city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+        actions={
+          <form
+            className="loadout-quote-actions build-cost-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void load();
+            }}
           >
-            {cities
-              .filter((c) => c !== "Black Market")
-              .map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-          </WellSelect>
-        </label>
-        <label>
-          Sets
-          <input
-            type="number"
-            min={1}
-            max={1000}
-            required
-            value={sets}
-            onChange={(e) => setSets(Number(e.target.value))}
-          />
-        </label>
-        <button className="button secondary" disabled={busy}>
-          {busy ? "Checking prices…" : "Check loadout prices"}
-        </button>
-      </form>
-      {error?.key === requestKey && <StatusLine tone="error">{error.message}</StatusLine>}
-      {busy && !result && <StatusLine>Checking prices in {city}…</StatusLine>}
-      {result && result.region === region && result.city === city && result.sets === sets && (
-        <>
-          <h3 className="build-cost-total">
-            {result.knownCost === null
-              ? "Estimate exceeds supported silver range"
-              : result.total === null
-                ? `Known subtotal · ${result.knownCost.toLocaleString()} silver`
-                : `${result.total.toLocaleString()} silver`}
-            {result.stale ? " · Check observation dates" : ""}
-          </h3>
-          <p className="detail-muted">
-            {result.rows.filter((row) => row.price !== null).length}/{result.rows.length} items
-            priced in {city}. {result.total === null ? "Items without a price are left out. " : ""}
-            Prices are player scans and can be out of date.{" "}
-            <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
-              How market scans work →
-            </Link>
-          </p>
-          <ul className="equipment-summary build-cost-rows">
-            {result.rows.map((r) => (
+            <label>
+              <span className="sr-only">Purchase city</span>
+              <WellSelect
+                aria-label="Purchase city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              >
+                {cities
+                  .filter((c) => c !== "Black Market")
+                  .map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+              </WellSelect>
+            </label>
+            <label className="build-cost-sets">
+              <span>Sets</span>
+              <input
+                type="number"
+                min={1}
+                max={1000}
+                required
+                value={sets}
+                aria-label="Sets"
+                onChange={(e) => setSets(Number(e.target.value))}
+              />
+            </label>
+            <button className="button secondary" disabled={busy}>
+              {busy ? "Checking prices…" : "Check loadout prices"}
+            </button>
+          </form>
+        }
+      />
+      <div className="loadout-price-total" aria-live="polite">
+        <div className="build-cost-figure">
+          <small>
+            {sets === 1 ? "Loadout" : `${sets} loadouts`} in {city}
+          </small>
+          <strong className="build-cost-total">
+            {!shown ? (
+              <Unavailable
+                label={failed ? "Unavailable" : busy ? "Checking…" : "Not checked yet"}
+              />
+            ) : shown.knownCost === null ? (
+              <Unavailable label="Estimate exceeds supported silver range" />
+            ) : shown.total === null ? (
+              `${shown.knownCost.toLocaleString()} silver known`
+            ) : (
+              `${shown.total.toLocaleString()} silver`
+            )}
+          </strong>
+        </div>
+        <div className="build-cost-figure">
+          <small>Items priced</small>
+          <strong>
+            {shown ? (
+              `${shown.rows.filter((row) => row.price !== null).length}/${shown.rows.length}`
+            ) : (
+              <Unavailable />
+            )}
+          </strong>
+        </div>
+        <StatusLine tone={shown?.stale ? "stale" : "default"}>
+          {failed
+            ? "Prices could not load right now. Try the check again in a moment."
+            : busy
+              ? `Checking prices in ${city}…`
+              : shown
+                ? `${shown.total === null ? "Items without a price are left out. " : ""}${shown.stale ? "Some scans are old; check their dates. " : ""}Prices are player scans and can be out of date.`
+                : "Pick a city and check prices. Prices are player scans and can be out of date."}
+        </StatusLine>
+      </div>
+      {shown && (
+        <details>
+          <summary>Individual item observations</summary>
+          <ul className="build-cost-rows">
+            {shown.rows.map((r) => (
               <li key={r.slot}>
                 <strong>
                   {r.slot}: {equipmentName(r.itemId)}
                 </strong>
                 <span>
-                  {r.price === null
-                    ? `No sell listing observed in ${city}`
-                    : `${r.price.toLocaleString()} per item`}
+                  {r.price === null ? (
+                    <Unavailable label={`No sell order in ${city}`} />
+                  ) : (
+                    `${r.price.toLocaleString()} per item`
+                  )}
                 </span>
                 <small>
                   {r.observedAt && Number.isFinite(sourceTimestamp(r.observedAt))
@@ -161,16 +194,23 @@ export function BuildCost({ id }: { id: string }) {
                     : "No scan"}
                 </small>
                 <Link
-                  className="text-link"
+                  className="pill-link is-small"
                   href={`/tools/market?${new URLSearchParams({ region, item: r.itemId, quality: String(r.quality) })}`}
                 >
-                  Compare cities & qualities →
+                  Compare cities
                 </Link>
               </li>
             ))}
           </ul>
-        </>
+        </details>
       )}
+      <p className="library-provenance">
+        Prices from the Albion Online Data Project, scanned by players. Items without a price are
+        left out of the total.{" "}
+        <Link href={`/market-data?${new URLSearchParams({ region, city })}`}>
+          How market scans work →
+        </Link>
+      </p>
     </section>
   );
 }

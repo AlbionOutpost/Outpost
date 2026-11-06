@@ -1,24 +1,17 @@
 "use client";
-import {
-  useId,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
-import { activityBackgroundFor } from "@/lib/activity-backgrounds";
+import { useId, useMemo, useState, useSyncExternalStore } from "react";
 import { EmptyWell } from "./empty-well";
-import { WellSelect } from "./well-select";
+import { BuildWindow } from "./build-window";
+import { HeartChip } from "./heart-chip";
+import { SectionHeading } from "./section-heading";
 import {
   Bookmark,
   BookmarkCheck,
   Trash2,
   SlidersHorizontal,
   Plus,
-  Grid2X2,
+  LayoutGrid,
   List,
-  ArrowUpRight,
 } from "lucide-react";
 import { ReactionFeedback } from "./reaction-feedback";
 import { useOutpostRegion } from "./region-context";
@@ -141,46 +134,35 @@ export function LibrarySaveButton({
     </span>
   );
 }
-/** A device favourite as a small window: title and the save toggle on the bar, the weapon,
- * author and activity, then the date and the way in. */
+/** A device favourite in the same build window as every other build. The browser keeps only a
+ * summary, so the weapon stands where the board would be. */
 function DeviceFavoriteCard({ build }: { build: SavedLibraryBuild }) {
   const titleId = useId();
-  const href = `/builds/library/${encodeURIComponent(build.slug)}`;
-  const art = activityBackgroundFor(build.category);
-  const date = build.updatedAt.slice(0, 10);
   return (
-    <article
-      className="raised has-scene device-favorite-card"
-      data-scene="build"
-      style={art ? ({ "--scene": `url("${art.src}")` } as CSSProperties) : undefined}
+    <BuildWindow
+      className="device-favorite-card"
+      titleId={titleId}
+      href={`/builds/library/${encodeURIComponent(build.slug)}`}
+      title={build.title}
+      category={build.category}
+      activity={activityName(build.category) || "Other"}
+      weaponName={build.weaponName}
+      weaponItemId={build.itemId || undefined}
+      author={build.author}
+      updatedAt={build.updatedAt}
+      heart={<HeartChip build={build} className="library-device-save" />}
     >
-      <div className="library-card-bar">
-        <Link href={href} aria-labelledby={titleId} className="ecosystem-title-link">
-          <h3 id={titleId}>{build.title}</h3>
-        </Link>
-        <LibrarySaveButton build={build} />
-      </div>
-      <div className="device-favorite-content">
-        <span className="library-primary-weapon" aria-hidden="true">
-          {build.itemId ? <ItemIcon id={build.itemId} size={48} /> : <Bookmark size={22} />}
-        </span>
+      <div className="build-window-summary">
         <span>
-          <strong>{build.weaponName || "Equipment plan"}</strong>
-          <span>By {build.author}</span>
+          {build.itemId ? <ItemIcon id={build.itemId} size={72} /> : <Bookmark size={28} />}
         </span>
-        <span className="landing-chip">{activityName(build.category) || "Other"}</span>
+        <small className="detail-muted">Saved in this browser · full loadout on the build</small>
       </div>
-      <Link href={href} className="library-card-caption" aria-hidden="true" tabIndex={-1}>
-        <span>{date ? `Updated ${date}` : "Update date unavailable"}</span>
-        <span>
-          View build <ArrowUpRight size={13} aria-hidden="true" />
-        </span>
-      </Link>
-    </article>
+    </BuildWindow>
   );
 }
 /** Library builds saved in this browser. `heading` is the section's heading, from the page. */
-export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
+export function DeviceLibraryFavorites() {
   const { bookmarks, error } = useCollection("bookmarks");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("saved");
@@ -200,26 +182,36 @@ export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
   const visible = matching.slice((page - 1) * 24, page * 24);
   return (
     <section className="device-library-favorites" aria-label="Library favorites on this device">
-      {heading}
+      <SectionHeading
+        title={
+          <>
+            Library <em>builds</em>
+          </>
+        }
+        line={`${bookmarks.builds.length} of 100 saved in this browser${query.trim() ? ` · ${matching.length} match` : ""}`}
+        link={{ href: "/builds/library", label: "Build library" }}
+      />
       {!error && bookmarks.builds.length > 0 && (
-        <div className="raised device-favorites-controls">
-          <label>
+        <div className="raised ecosystem-result-toolbar favorites-toolbar">
+          <label className="ecosystem-search-label">
             <span className="sr-only">Search library favorites</span>
             <input
               type="search"
               value={query}
               maxLength={100}
-              placeholder="Title, weapon or author"
+              placeholder="Search saved titles, weapons or authors…"
+              aria-label="Search library favorites"
               onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
               }}
             />
           </label>
-          <label>
-            <span className="sr-only">Sort library favorites</span>
-            <WellSelect
+          <label className="ecosystem-sort-label">
+            Sort
+            <select
               value={sort}
+              aria-label="Sort library favorites"
               onChange={(event) => {
                 setSort(event.target.value);
                 setPage(1);
@@ -227,26 +219,26 @@ export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
             >
               <option value="saved">Recently saved</option>
               <option value="title">Title A–Z</option>
-            </WellSelect>
+            </select>
           </label>
-          <div className="actions" role="group" aria-label="Library favorite display">
+          <div className="ecosystem-view-switch" role="group" aria-label="Library favorite display">
             <button
               type="button"
-              className="button secondary"
               aria-label="Library favorites grid"
               aria-pressed={view === "grid"}
+              aria-current={view === "grid" ? "true" : undefined}
               onClick={() => setView("grid")}
             >
-              <Grid2X2 size={16} />
+              <LayoutGrid size={17} />
             </button>
             <button
               type="button"
-              className="button secondary"
               aria-label="Library favorites list"
               aria-pressed={view === "list"}
+              aria-current={view === "list" ? "true" : undefined}
               onClick={() => setView("list")}
             >
-              <List size={16} />
+              <List size={17} />
             </button>
           </div>
         </div>
@@ -255,12 +247,12 @@ export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
         <p role="alert">{error}</p>
       ) : bookmarks.builds.length ? (
         <>
-          <p className="device-favorites-count" role="status">
-            {bookmarks.builds.length} of 100 saved
-            {query.trim() && ` · ${matching.length} match`}
-            {matching.length > 24 &&
-              ` · ${(page - 1) * 24 + 1}–${Math.min(page * 24, matching.length)} shown`}
-          </p>
+          {matching.length > 24 && (
+            <p className="device-favorites-count" role="status">
+              {(page - 1) * 24 + 1}–{Math.min(page * 24, matching.length)} of {matching.length}{" "}
+              shown
+            </p>
+          )}
           {visible.length ? (
             <div className={`device-favorites-grid${view === "list" ? " is-list" : ""}`}>
               {visible.map((build) => (
@@ -312,6 +304,7 @@ export function DeviceLibraryFavorites({ heading }: { heading: ReactNode }) {
         </>
       ) : (
         <EmptyWell
+          emblem="strip-builds"
           title="No library builds saved yet"
           line="Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
           action={

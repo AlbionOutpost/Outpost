@@ -17,7 +17,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { z } from "zod";
-import { LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List, Search } from "lucide-react";
+import { BuildWeaponRail } from "@/components/build-weapon-rail";
 import { featuredLibraryBuilds } from "@/lib/grind-library";
 import { LibraryBuildCard } from "@/components/library-build-card";
 export const dynamic = "force-dynamic";
@@ -67,7 +68,7 @@ export default async function Builds({
   const libraryPicks = !builds.length && !mine ? (await featuredLibraryBuilds()).slice(0, 3) : [];
   return (
     <div
-      className={`builds-ecosystem build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
+      className={`builds-ecosystem ecosystem-library-page build-discovery-page ${mine ? "personal-build-collection" : "community-build-collection"} view-${view}`}
     >
       <BuildDiscoveryHeader
         active={mine ? "mine" : "browse"}
@@ -83,6 +84,7 @@ export default async function Builds({
       {mine && !session?.user?.id ? (
         <div className="build-signin-well">
           <EmptyWell
+            emblem="strip-builds"
             title="Sign in to see your builds"
             line="Builds you create are kept on your Discord account. Device favourites work without signing in."
             action={
@@ -93,21 +95,60 @@ export default async function Builds({
           />
         </div>
       ) : (
-        <div className="ecosystem-discovery-layout">
+        <div className="ecosystem-discovery-layout library-discovery-workspace">
+          <div className="raised library-search-toolbar">
+            <BuildDiscoverySearch
+              value={q}
+              formId="build-discovery-query"
+              label="Search build titles"
+              placeholder="Search build titles or authors…"
+              compact
+            />
+            <label className="ecosystem-sort-label">
+              Sort
+              <BuildSortSelect
+                form="build-discovery-query"
+                name="sort"
+                aria-label="Sort builds"
+                defaultValue={sort}
+              >
+                <option value="recent">Recently updated</option>
+                <option value="saved">Most saved</option>
+              </BuildSortSelect>
+            </label>
+            <div className="ecosystem-view-switch" aria-label="Build layout">
+              <Link
+                href={href({ view: "grid" })}
+                aria-label="Grid view"
+                aria-current={view === "grid" ? "true" : undefined}
+              >
+                <LayoutGrid size={17} />
+              </Link>
+              <Link
+                href={href({ view: "list" })}
+                aria-label="List view"
+                aria-current={view === "list" ? "true" : undefined}
+              >
+                <List size={17} />
+              </Link>
+            </div>
+          </div>
           <aside className="raised ecosystem-filter-rail" aria-label="Build filters">
-            <MobileFilterPanel>
+            <MobileFilterPanel drawer label="Filter builds">
               <form
+                key={`${family}:${weapon}:${content}:${mine}`}
                 id="build-discovery-query"
                 action="/builds"
                 className="ecosystem-filter-form build-filter-form"
               >
                 <BuildRegionInput />
                 <input type="hidden" name="view" value={view} />
-                <BuildDiscoverySearch
-                  value={q}
-                  formId="build-discovery-query"
-                  label="Search build titles"
-                  placeholder="Search loadouts…"
+                <BuildWeaponRail
+                  path="/builds"
+                  selected={family}
+                  families={buildDiscovery.families}
+                  weapons={buildDiscovery.weapons.filter((w) => w.count > 0)}
+                  query={query}
                 />
                 <label>
                   Collection
@@ -126,17 +167,6 @@ export default async function Builds({
                   </select>
                 </label>
                 <label>
-                  Weapon family
-                  <select name="family" defaultValue={family} aria-label="Build weapon family">
-                    <option value="">All families</option>
-                    {buildDiscovery.families.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
                   Specific weapon
                   <select name="weapon" defaultValue={weapon} aria-label="Filter build weapon">
                     <option value="">All weapons</option>
@@ -149,12 +179,15 @@ export default async function Builds({
                       ))}
                   </select>
                 </label>
-                <button className="button primary" type="submit">
-                  Search builds
-                </button>
-                <Link className="text-link" href={mine ? "/builds?mine=1" : "/builds"}>
-                  Reset filters
-                </Link>
+                <div className="library-filter-actions">
+                  <button className="button primary" type="submit">
+                    <Search size={15} aria-hidden="true" />
+                    Search builds
+                  </button>
+                  <Link className="pill-link is-small" href={mine ? "/builds?mine=1" : "/builds"}>
+                    Reset filters
+                  </Link>
+                </div>
               </form>
             </MobileFilterPanel>
           </aside>
@@ -162,36 +195,6 @@ export default async function Builds({
             className="build-discovery-results ecosystem-results"
             aria-label="Matching builds"
           >
-            <div className="raised ecosystem-result-toolbar">
-              <label className="ecosystem-sort-label">
-                Sort
-                <BuildSortSelect
-                  form="build-discovery-query"
-                  name="sort"
-                  aria-label="Sort builds"
-                  defaultValue={sort}
-                >
-                  <option value="recent">Recently updated</option>
-                  <option value="saved">Most saved</option>
-                </BuildSortSelect>
-              </label>
-              <div className="ecosystem-view-switch" aria-label="Build layout">
-                <Link
-                  href={href({ view: "grid" })}
-                  aria-label="Grid view"
-                  aria-current={view === "grid" ? "true" : undefined}
-                >
-                  <LayoutGrid size={17} />
-                </Link>
-                <Link
-                  href={href({ view: "list" })}
-                  aria-label="List view"
-                  aria-current={view === "list" ? "true" : undefined}
-                >
-                  <List size={17} />
-                </Link>
-              </div>
-            </div>
             <div className="ecosystem-results-subline">
               <p>
                 <strong>{total.toLocaleString("en-GB")}</strong>{" "}
@@ -244,6 +247,7 @@ export default async function Builds({
             </div>
             {!builds.length && (
               <EmptyWell
+                emblem="strip-builds"
                 title={
                   filtered
                     ? "No matching loadouts"

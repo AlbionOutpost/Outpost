@@ -19,7 +19,8 @@ test("activity cards open the matching library category and preserve region", as
     .click();
   await expect(page.getByRole("heading", { name: "Choose your activity" })).toBeVisible();
   const activities = page.getByRole("region", { name: "Build activities" });
-  await expect(activities.locator("h3")).toHaveCount(32);
+  // Every activity is listed once: a card when it has builds, a name in the open row if not.
+  await expect(activities.locator("h3, ul:not(:has(h3)) a")).toHaveCount(32);
   const mists = activities.getByRole("link", { name: /Solo Mists/ });
   await expect(mists).toHaveAttribute("href", /category=MISTS_SOLO.*region=americas/);
   await mists.click();
@@ -42,7 +43,7 @@ test("mobile activity art loads and empty categories stay truthful", async ({ pa
     )
     .toBeGreaterThan(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.getByRole("link", { name: "Arena No builds listed yet", exact: true }).click();
+  await page.getByRole("link", { name: "Arena", exact: true }).click();
   await expect(page.getByText("No loadouts match that search", { exact: true })).toBeVisible();
   await expect(page.locator("#library-activity")).toHaveValue("ARENA");
   await page.getByRole("link", { name: "Clear filters", exact: true }).last().click();

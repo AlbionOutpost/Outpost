@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { ArrowUpRight, CircleHelp, Layers, Swords } from "lucide-react";
+import { ArrowUp, ArrowUpRight, CircleHelp, Layers, Swords } from "lucide-react";
 import Link from "./link";
 import { useOutpostRegion } from "./region-context";
 import { InventoryEquipmentBoard, type InventoryEquipmentItem } from "./inventory-equipment-board";
@@ -256,10 +256,10 @@ export function BuildDetailWorkspace({
                 <h3>{selected.name}</h3>
                 <p className="detail-muted">{selected.qualityLabel}</p>
                 <Link
-                  className="text-link"
+                  className="pill-link is-small"
                   href={`/tools/market?${new URLSearchParams({ region, item: selected.itemId, quality: String(selected.quality) })}`}
                 >
-                  Compare prices <ArrowUpRight size={14} />
+                  Compare prices <ArrowUpRight size={14} aria-hidden="true" />
                 </Link>
               </>
             ) : (
@@ -294,9 +294,28 @@ export function BuildDetailWorkspace({
               ))}
             </div>
           )}
+          <div className="detail-piece-strip">
+            <span className="detail-muted">Every piece</span>
+            <div role="group" aria-label="Pieces in this loadout">
+              {ordered.map((item) => (
+                <button
+                  type="button"
+                  key={item.slot}
+                  aria-pressed={item.slot === selectedSlot}
+                  title={`${item.slot}: ${item.name}`}
+                  onClick={() => setSelectedSlot(item.slot)}
+                >
+                  <ItemIcon id={item.itemId} quality={item.quality} size={36} />
+                  <span className="sr-only">
+                    Inspect {item.slot}: {item.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="detail-context-actions">
-            <a className="text-link detail-inventory-return" href="#build-equipment">
-              Back to equipment ↑
+            <a className="pill-link is-small detail-inventory-return" href="#build-equipment">
+              Back to equipment <ArrowUp size={14} aria-hidden="true" />
             </a>
             <a className="button secondary" href="#build-cost">
               Check loadout cost <ArrowUpRight size={14} />
@@ -418,7 +437,7 @@ export function BuildDetailWorkspace({
                             <ItemIcon id={alt.id} size={52} />
                             <h3>{alt.name}</h3>
                             <Link
-                              className="text-link"
+                              className="pill-link is-small"
                               href={`/tools/market?${new URLSearchParams({ region, item: alt.id, quality: "1" })}`}
                             >
                               Compare prices · Normal

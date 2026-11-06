@@ -102,18 +102,7 @@ export default async function Favorites({
         description="The builds and comps you saved to come back to."
       />
       <div className="favorites-sections">
-        <DeviceLibraryFavorites
-          heading={
-            <SectionHeading
-              title={
-                <>
-                  Library <em>builds</em>
-                </>
-              }
-              line={<span className="landing-chip">Saved in this browser</span>}
-            />
-          }
-        />
+        <DeviceLibraryFavorites />
         <section className="favorites-account" aria-label="Account favorites">
           {!userId ? (
             <div className="favorites-group">
@@ -123,7 +112,7 @@ export default async function Favorites({
                     Player builds and <em>comps</em>
                   </>
                 }
-                line={<span className="landing-chip">Saved to your account</span>}
+                line="Kept on your Discord account, on every device."
               />
               <EmptyWell
                 emblem="strip-comps"
@@ -143,10 +132,10 @@ export default async function Favorites({
                   id="favorite-builds-heading"
                   title={
                     <>
-                      Player <em>builds</em> · {total}
+                      Player <em>builds</em>
                     </>
                   }
-                  line={<span className="landing-chip">Saved to your account</span>}
+                  line={`${total.toLocaleString("en-US")} saved to your account`}
                   link={total > 0 ? { href: "/builds", label: "Community builds" } : undefined}
                 />
                 {(total > 0 || q) && (
@@ -223,6 +212,7 @@ export default async function Favorites({
                 )}
                 {!builds.length && (
                   <EmptyWell
+                    emblem="team-roles"
                     title={
                       q ? "No favorite builds match this search" : "No player builds saved yet"
                     }
@@ -256,10 +246,10 @@ export default async function Favorites({
                   id="favorite-comps-heading"
                   title={
                     <>
-                      <em>Comps</em> · {compTotal}
+                      Saved <em>comps</em>
                     </>
                   }
-                  line={<span className="landing-chip">Saved to your account</span>}
+                  line={`${compTotal.toLocaleString("en-US")} saved to your account`}
                   link={
                     compTotal > 0 ? { href: "/compositions", label: "Browse comps" } : undefined
                   }
@@ -276,6 +266,7 @@ export default async function Favorites({
                   </div>
                 ) : (
                   <EmptyWell
+                    emblem="strip-comps"
                     title="No comps saved yet"
                     line="Add a comp to your favorites to keep it for your next group session."
                     action={

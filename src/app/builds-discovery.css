@@ -228,7 +228,7 @@
   border-left: 1px solid var(--border);
   padding-left: 8px;
 }
-.app.outpost .ecosystem-view-switch > a {
+.app.outpost .ecosystem-view-switch > :is(a, button) {
   display: grid;
   place-items: center;
   width: 31px;
@@ -237,7 +237,7 @@
   border-radius: 4px;
   color: var(--muted);
 }
-.app.outpost .ecosystem-view-switch > a[aria-current="true"] {
+.app.outpost .ecosystem-view-switch > :is(a, button)[aria-current="true"] {
   color: var(--accent-ink);
   border-color: var(--accent);
   background: var(--accent-wash);
@@ -263,21 +263,12 @@
   gap: 6px;
   margin-bottom: 12px;
 }
-.app.outpost .ecosystem-active-filters > a {
-  display: flex;
+.app.outpost .ecosystem-active-filters {
   align-items: center;
-  gap: 6px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--panel);
-  padding: 5px 8px;
-  font-size: 12px;
-  color: var(--muted);
 }
-.app.outpost .ecosystem-build-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.app.outpost .ecosystem-active-filters > a.landing-chip {
+  gap: 6px;
+  min-height: 28px;
 }
 .app.outpost .ecosystem-build-card {
   position: relative;
@@ -481,11 +472,6 @@
   color: var(--muted);
   font-size: 12px;
 }
-.device-favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px 24px;
-}
 /* Device favourites: small framed windows, title and save toggle on the bar */
 .app.outpost .device-favorite-card.raised {
   display: grid;
@@ -575,15 +561,9 @@
   overflow-wrap: anywhere;
 }
 @media (max-width: 1180px) {
-  .app.outpost .ecosystem-build-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .ecosystem-discovery-layout {
     grid-template-columns: 195px minmax(0, 1fr);
     gap: 14px;
-  }
-  .device-favorites-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 900px) {
@@ -669,10 +649,6 @@
   .ecosystem-view-switch {
     padding-left: 5px;
   }
-  .app.outpost .ecosystem-build-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
   .app.outpost .ecosystem-build-card > .ecosystem-card-main {
     padding: 14px;
   }
@@ -681,9 +657,6 @@
   }
   .app.outpost .view-list .ecosystem-card-main {
     display: flex;
-  }
-  .device-favorites-grid {
-    grid-template-columns: 1fr;
   }
   .saved-filter-list > article {
     flex-wrap: wrap;
@@ -769,47 +742,42 @@
   font-size: 12px;
   color: var(--muted);
 }
-.app.outpost .builds-ecosystem .account-build-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  /* Framed windows: room between frames so neighbouring gems never touch */
-  gap: 26px 24px;
-}
-@media (max-width: 1180px) {
-  .app.outpost .builds-ecosystem .account-build-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost .builds-ecosystem .account-build-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-}
+/* Weapon shortcuts: one well segment, the current weapon lit like a selected tab */
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
-  display: flex;
-  gap: 7px;
+  display: inline-flex;
   flex-wrap: wrap;
-  margin: 0 0 14px;
-  padding: 0;
-}
-.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 36px;
+  gap: 4px;
+  max-width: 100%;
+  margin: 0 0 20px;
+  padding: 4px;
   border: 1px solid var(--well-border);
   border-radius: 999px;
-  padding: 4px 12px 4px 6px;
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  overflow: visible;
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 14px 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--secondary);
   font-size: 13px;
   font-weight: 600;
-  background: var(--well);
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a:first-child {
-  padding-left: 12px;
+  padding-left: 14px;
+}
+.app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a:hover {
+  background: none;
+  color: var(--text);
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a[aria-current="true"] {
-  border-color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: var(--accent-wash);
   color: var(--accent-ink);
 }
 .app.outpost .builds-ecosystem.view-list .account-build-grid {
@@ -927,7 +895,7 @@
   max-width: none;
   min-height: 38px;
 }
-.app.outpost .library-search-toolbar .ecosystem-view-switch > a {
+.app.outpost .library-search-toolbar .ecosystem-view-switch > :is(a, button) {
   min-height: 38px;
 }
 .app.outpost .library-search-toolbar .ecosystem-view-switch {
@@ -1048,9 +1016,6 @@
   .app.outpost .library-search-toolbar .ecosystem-view-switch > a {
     width: 30px;
   }
-  .app.outpost .ecosystem-library-page .ecosystem-build-grid {
-    gap: 8px;
-  }
 }
 .app.outpost .ecosystem-library-page .builds-heading-copy {
   min-height: 0;
@@ -1126,239 +1091,6 @@
   opacity: 1;
 }
 
-/* Library build windows: a title bar with the heart, the loadout board leading on the left
-   (gear first) beside the weapon, author, activity, recorded abilities and the author's notes,
-   then a caption line in. Phones swap the board for the weapon well and a four-piece armor
-   preview. Framed like every card that leads somewhere (product-system.css). */
-.app.outpost .library-build-card.raised {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: var(--space-3);
-  padding: 18px 18px 0;
-}
-.app.outpost .library-build-card .library-card-bar {
-  align-items: start;
-}
-.app.outpost .library-build-card .ecosystem-title-link {
-  min-width: 0;
-  flex: 1;
-}
-/* The window has its own ways in (title, caption); no stretched link over the heart */
-.app.outpost .library-build-card .ecosystem-title-link::after {
-  content: none;
-}
-.app.outpost .library-build-card .ecosystem-title-link:focus-visible {
-  outline: 2px solid var(--accent-ink);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-.app.outpost .library-build-card .ecosystem-title-link h2 {
-  display: -webkit-box;
-  margin: 0;
-  overflow: hidden;
-  font: 800 18px/1.15 var(--font-display);
-  letter-spacing: 0.01em;
-  overflow-wrap: anywhere;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.app.outpost .library-build-card .ecosystem-title-link:hover h2 {
-  color: var(--accent-ink);
-}
-.app.outpost .library-build-card .landing-chips {
-  flex: none;
-}
-.app.outpost .library-build-card > .ecosystem-card-main {
-  display: grid;
-  grid-template-areas: "board copy";
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  gap: var(--space-4);
-  padding: 0;
-  background: none;
-}
-.app.outpost .library-build-card .library-build-identity {
-  grid-area: copy;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  min-width: 0;
-}
-.app.outpost .library-primary-weapon {
-  display: none;
-  place-items: center;
-  flex: none;
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background:
-    radial-gradient(
-      circle at 50% 55%,
-      color-mix(in srgb, var(--accent) 26%, transparent),
-      transparent 70%
-    ),
-    var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-.app.outpost .library-primary-weapon img {
-  width: 42px;
-  height: 42px;
-}
-.app.outpost .library-build-copy {
-  display: grid;
-  justify-items: start;
-  align-content: start;
-  gap: 6px;
-  min-width: 0;
-}
-.app.outpost .library-build-classification {
-  max-width: 100%;
-  margin: 0;
-  overflow: hidden;
-  font-size: 15px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.app.outpost .library-build-copy > small {
-  display: block;
-  margin-top: -4px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .library-mobile-date {
-  display: none;
-}
-.app.outpost .library-build-card .ecosystem-activity {
-  min-height: 24px;
-  margin-top: 2px;
-}
-.app.outpost .library-build-card .ecosystem-card-spells {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 2px 0 0;
-}
-.app.outpost .library-build-card .ecosystem-card-spells > span {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--well-border);
-  border-radius: 50%;
-  background: var(--well);
-}
-.app.outpost .library-build-card .ecosystem-card-spells img {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-}
-.app.outpost .library-build-card .ecosystem-card-spells > .ecosystem-no-spells {
-  display: block;
-  width: auto;
-  height: auto;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .library-build-equipment {
-  display: none;
-  gap: 4px;
-}
-.app.outpost .library-build-equipment > span {
-  display: inline-grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-}
-.app.outpost .library-build-equipment img {
-  width: 30px;
-  height: 30px;
-}
-.app.outpost .library-build-board {
-  grid-area: board;
-  display: grid;
-  place-items: start;
-}
-.app.outpost .library-build-board .loadout-board.is-mini {
-  --cell: 36px;
-  --gap: 4px;
-}
-.app.outpost .library-build-board .loadout-board-cell,
-.app.outpost .library-build-board .loadout-board-slot.is-empty .loadout-board-cell {
-  border-color: var(--well-border);
-  background: var(--well);
-}
-.app.outpost .library-card-description {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  margin: 2px 0 0;
-  overflow: hidden;
-  color: color-mix(in srgb, var(--text) 78%, transparent);
-  font-size: 13px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-@media (max-width: 700px) {
-  .app.outpost .library-build-card.raised {
-    gap: var(--space-2);
-    padding: 10px 12px 0;
-  }
-  .app.outpost .library-build-card > .ecosystem-card-main {
-    grid-template-areas: "copy";
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .library-build-board,
-  .app.outpost .library-build-card .ecosystem-card-spells,
-  .app.outpost .library-card-description {
-    display: none;
-  }
-  .app.outpost .library-build-card .library-build-identity {
-    grid-template-columns: 48px minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-2) var(--space-3);
-  }
-  .app.outpost .library-primary-weapon {
-    display: grid;
-  }
-  .app.outpost .library-build-copy {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 2px var(--space-2);
-  }
-  .app.outpost .library-build-classification,
-  .app.outpost .library-build-copy > small {
-    grid-column: 1;
-    margin: 0;
-  }
-  .app.outpost .library-build-card .ecosystem-activity {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    margin: 0;
-  }
-  .app.outpost .library-build-equipment {
-    display: flex;
-    grid-column: 1 / -1;
-  }
-  .app.outpost .library-build-card .library-card-caption {
-    justify-content: flex-end;
-    margin-inline: -12px;
-    padding: 6px 12px;
-  }
-  /* The date already sits beside the author on phones */
-  .app.outpost .library-build-card .library-card-caption > span:first-child {
-    display: none;
-  }
-  .app.outpost .library-mobile-date {
-    display: inline;
-  }
-}
-
 /* Library and Community controls: selects are wells with a drawn chevron, not the browser's control */
 .app.outpost
   :is(
@@ -1404,11 +1136,6 @@
   color: var(--text);
 }
 
-/* Stacked framed panels keep 26px between them (DESIGN.md) */
-.app.outpost .build-library-picks {
-  margin-top: 26px;
-}
-
 /* The rail spans the toolbar and results rows: leftover height goes below the results, never
    between the toolbar and the first card or empty state. */
 @media (min-width: 901px) {
@@ -1440,45 +1167,6 @@
   clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
 }
 
-/* Player build windows: the caption carries a visibility chip and the owner's menu before the way in */
-.app.outpost .library-card-caption:has(> .build-window-caption-end) {
-  align-items: center;
-  padding-block: 8px 10px;
-}
-.app.outpost .library-card-caption > .build-window-caption-end {
-  gap: 10px;
-}
-.app.outpost .build-window-caption-end > a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: inherit;
-}
-.app.outpost .library-card-caption:has(> .build-window-caption-end) > span {
-  white-space: nowrap;
-}
-.app.outpost .community-build-card .library-card-bar .landing-chip {
-  color: var(--secondary);
-  font-weight: 600;
-}
-.app.outpost .build-window-caption-end .build-card-owner-actions > summary {
-  min-height: 28px;
-  width: 28px;
-  color: var(--secondary);
-}
-.app.outpost .community-build-card .library-card-bar .build-card-save-error {
-  position: absolute;
-  top: 52px;
-  right: 16px;
-  left: 16px;
-  z-index: 3;
-  padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--error) 50%, var(--well-border));
-  border-radius: var(--radius-md);
-  background: var(--elevated);
-  color: var(--text);
-  font-size: 12px;
-}
 .app.outpost .build-signin-well {
   max-width: 760px;
   margin: 8px 0 64px;
@@ -1552,26 +1240,90 @@
 .app.outpost .builds-ecosystem.builds-hub {
   max-width: var(--page-width);
 }
-/* The closing step: one framed card, as the landing ends on its call band */
+/* The closing band: one framed card, centred like the landing's call band */
 .app.outpost .builds-next-step.raised {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
   margin: 96px 0 72px;
-  padding: 24px 28px;
+  padding: 48px 32px 44px;
+  text-align: center;
 }
-.app.outpost .builds-next-step > * {
+.app.outpost .builds-next-step h2 {
   margin: 0;
+  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 14px #0008;
+}
+.app.outpost .builds-next-step h2 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.app.outpost .builds-next-step p {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.app.outpost .builds-next-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
 }
 @media (max-width: 700px) {
   .app.outpost .builds-next-step.raised {
     margin: 64px 0 48px;
-    padding: 20px 16px;
+    padding: 32px 18px;
   }
-  /* Actions stack under the copy, full width */
-  .app.outpost .builds-next-step :has(> .button.primary) {
+  .app.outpost .builds-next-step p {
+    font-size: 14px;
+  }
+  .app.outpost .builds-next-step-actions {
+    align-self: stretch;
+  }
+  .app.outpost .builds-next-step-actions .button {
     flex: 1 1 100%;
-    margin-left: 0;
-  }
-  .app.outpost .builds-next-step .button {
-    flex: 1 1 auto;
     justify-content: center;
   }
+}
+
+/* Rail counts are figures in the UI font, not table data */
+.app.outpost .builds-ecosystem .build-weapon-rail a small {
+  font: 500 12px/1.4 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .build-library-picks {
+  display: grid;
+  gap: 0;
+  margin-top: 64px;
+}
+
+/* Phones: the six collection tabs wrap onto two rows instead of running off the edge */
+@media (max-width: 700px) {
+  .app.outpost .builds-ecosystem .workspace-identity .masthead-tabs {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .app.outpost .builds-ecosystem .workspace-identity .masthead-tabs > a {
+    min-height: 40px;
+  }
+}
+.app.outpost .ecosystem-view-switch > button {
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+.app.outpost .favorites-toolbar .ecosystem-sort-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
 }

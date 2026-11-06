@@ -3,7 +3,8 @@ import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
 import { BuildRegionInput } from "@/components/build-region-link";
 import Link from "@/components/build-region-link";
-import { queryLibraryBuilds } from "@/lib/grind-library";
+import { featuredLibraryBuilds, queryLibraryBuilds } from "@/lib/grind-library";
+import { SectionHeading } from "@/components/section-heading";
 import { activityName } from "@/lib/grind-library-types";
 import { LibraryBuildCard } from "@/components/library-build-card";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
@@ -45,6 +46,8 @@ export default async function Library({
     page: Number.parseInt(str("page")) || 1,
   });
   const query = { q, category, family, weapon, tag, sort, view };
+  // An empty search still hands the player something to open.
+  const picks = rows.length ? [] : (await featuredLibraryBuilds()).slice(0, 3);
   const href = (patch: Record<string, string>) =>
     `/builds/library?${new URLSearchParams({ ...query, ...patch })}`;
   const active = [
@@ -58,8 +61,8 @@ export default async function Library({
     <div className={`builds-ecosystem library-page ecosystem-library-page view-${view}`}>
       <BuildDiscoveryHeader
         active={view === "saved" ? "saved" : "browse"}
-        title="Build Library"
-        accent="Library"
+        title="Build library"
+        accent="library"
         description="Find a loadout by weapon, activity or author. Copy it and make it yours."
       />
       {view === "saved" ? (
@@ -178,7 +181,7 @@ export default async function Library({
                     <Search size={15} />
                     Find builds
                   </button>
-                  <Link className="text-link" href="/builds/library">
+                  <Link className="pill-link is-small" href="/builds/library">
                     Reset filters
                   </Link>
                 </div>
@@ -200,6 +203,7 @@ export default async function Library({
                 {active.map(([key, label]) => (
                   <Link
                     key={key}
+                    className="landing-chip"
                     href={href({ [key]: "", page: "1" })}
                     aria-label={`Remove ${label} filter`}
                   >
@@ -207,7 +211,9 @@ export default async function Library({
                     <X size={12} />
                   </Link>
                 ))}
-                <Link href="/builds/library">Clear all</Link>
+                <Link className="pill-link is-small" href="/builds/library">
+                  Clear all
+                </Link>
               </nav>
             )}
             <div className="library-build-grid ecosystem-build-grid">
@@ -217,6 +223,7 @@ export default async function Library({
             </div>
             {!rows.length && (
               <EmptyWell
+                emblem="strip-builds"
                 title="No loadouts match that search"
                 line="Try another weapon, activity or playstyle, or remove a filter above."
                 action={
@@ -225,6 +232,25 @@ export default async function Library({
                   </Link>
                 }
               />
+            )}
+            {picks.length > 0 && (
+              <section className="build-library-picks" aria-labelledby="library-picks-heading">
+                <SectionHeading
+                  id="library-picks-heading"
+                  title={
+                    <>
+                      Start from <em>these</em>
+                    </>
+                  }
+                  line="Featured library builds, while you change the search."
+                  link={{ href: "/builds/library", label: "All library builds" }}
+                />
+                <div className="ecosystem-build-grid">
+                  {picks.map((build) => (
+                    <LibraryBuildCard key={build.id} build={build} />
+                  ))}
+                </div>
+              </section>
             )}
             {rows.length > 0 && <AdSlot placement="hub" />}
             {pages > 1 && (

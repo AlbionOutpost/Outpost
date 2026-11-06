@@ -37,9 +37,7 @@ export function FavoriteBuildButton({
     heart && count > 0
       ? ` · ${count.toLocaleString("en-US")} ${count === 1 ? "favorite" : "favorites"}`
       : "";
-  const className = heart
-    ? `heart-chip is-button build-favorite-heart${saved ? " is-on" : ""}`
-    : "build-card-save";
+  const className = heart ? "heart-chip is-button build-favorite-heart" : "build-card-save";
   if (!authenticated)
     return (
       <Link

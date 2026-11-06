@@ -9,6 +9,7 @@ import { AddToShopping } from "./add-to-shopping";
 import { summarizeLoadoutQuotes } from "@/lib/albion/loadout-quotes";
 import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
+import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 export function LoadoutPriceCheck({
   equipment,
@@ -97,24 +98,52 @@ export function LoadoutPriceCheck({
         }
       />
       <div className="loadout-price-total" aria-live="polite">
-        <strong>
-          {estimate.knownCost === null
-            ? "Estimate exceeds supported silver range"
-            : estimate.total !== null
-              ? `${estimate.total.toLocaleString()} silver`
-              : estimate.priced
-                ? `${estimate.knownCost.toLocaleString()} silver known`
-                : estimate.checked
-                  ? "No purchase prices observed"
-                  : "Prices not checked"}
-        </strong>
-        <span>
+        <div className="build-cost-figure">
+          <small>Loadout total in {city}</small>
+          <strong className="build-cost-total">
+            {estimate.knownCost === null ? (
+              <Unavailable label="Estimate exceeds supported silver range" />
+            ) : estimate.total !== null ? (
+              `${estimate.total.toLocaleString()} silver`
+            ) : estimate.priced ? (
+              `${estimate.knownCost.toLocaleString()} silver known`
+            ) : (
+              <Unavailable
+                label={estimate.checked ? "No purchase prices observed" : "Not checked yet"}
+              />
+            )}
+          </strong>
+        </div>
+        <div className="build-cost-figure">
+          <small>Items priced</small>
+          <strong>
+            {estimate.checked ? (
+              `${estimate.priced}/${selected.length}`
+            ) : (
+              <Unavailable label="Not checked yet" />
+            )}
+          </strong>
+        </div>
+        <StatusLine tone={estimate.stale ? "stale" : "default"}>
           {estimate.checked
-            ? `${estimate.priced}/${selected.length} items priced in ${city} · ${estimate.recent} recent${estimate.stale ? ` · ${estimate.stale} need a freshness check` : ""}${estimate.knownCost === null ? " · Total outside supported range" : estimate.missing ? " · Estimate incomplete" : estimate.stale ? " · Older scans, prices may have moved" : " · Lowest sell orders"}${estimate.failed ? " · Some prices did not load; showing the last check" : ""}`
+            ? [
+                `${estimate.recent} recent`,
+                estimate.stale ? `${estimate.stale} need a freshness check` : "",
+                estimate.knownCost === null
+                  ? "Total outside supported range"
+                  : estimate.missing
+                    ? "Estimate incomplete"
+                    : estimate.stale
+                      ? "Older scans, prices may have moved"
+                      : "Lowest sell orders",
+                estimate.failed ? "Some prices did not load; showing the last check" : "",
+              ]
+                .filter(Boolean)
+                .join(" · ")
             : busy
               ? `Checking prices in ${city}…`
               : "Pick a city and check prices. Prices are player scans and can be out of date."}
-        </span>
+        </StatusLine>
       </div>
       <details>
         <summary>Individual item observations</summary>

@@ -1,7 +1,9 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { ActivityArtworkCard } from "@/components/activity-artwork-card";
 import { BuildDiscoveryHeader } from "@/components/build-discovery-header";
-import { SectionHeading } from "@/components/section-heading";
+import { BuildsNextStep } from "@/components/builds-next-step";
+import Link from "@/components/build-region-link";
+import { ArrowRight } from "lucide-react";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import { buildDiscovery } from "@/lib/build-discovery";
 import styles from "./page.module.css";
@@ -27,7 +29,7 @@ export default function Activities() {
   const grid = (items: typeof activities) => (
     <ul className={styles.grid}>
       {items.map((a) => (
-        <li key={a.id} data-empty={a.builds ? undefined : "true"}>
+        <li key={a.id}>
           <ActivityArtworkCard
             category={a.id}
             name={a.name}
@@ -46,38 +48,43 @@ export default function Activities() {
         active="activities"
         title="Choose your activity"
         accent="activity"
-        description="Pick the content you play and open the builds players use for it."
+        description={`${total.toLocaleString("en-US")} builds across ${listed.length} activities. Open one to see the loadouts players run there.`}
       />
       <section aria-label="Build activities" className={styles.sections}>
-        <section aria-labelledby="activities-listed">
-          <SectionHeading
-            id="activities-listed"
-            title={
-              <>
-                A build for <em>every</em> activity
-              </>
-            }
-            line={`${total.toLocaleString("en-US")} builds across ${listed.length} activities. Each card opens the library on that content.`}
-            link={{ href: "/builds/library", label: "All builds" }}
-          />
-          {grid(listed)}
-        </section>
+        {grid(listed)}
         {open.length > 0 && (
-          <section aria-labelledby="activities-open">
-            <SectionHeading
-              id="activities-open"
-              title={
-                <>
-                  No builds <em>yet</em>
-                </>
-              }
-              line="Nobody has listed a build for these activities. Post the one you run."
-              link={{ href: "/builds/new", label: "Create a build" }}
-            />
-            {grid(open)}
+          <section className={`well ${styles.open}`} aria-labelledby="activities-open">
+            <p id="activities-open" className={styles.openTitle}>
+              No builds yet
+            </p>
+            <ul className={styles.openList}>
+              {open.map((a) => (
+                <li key={a.id}>
+                  <Link
+                    className="landing-chip"
+                    href={`/builds/library?category=${encodeURIComponent(a.id)}`}
+                    prefetch={false}
+                  >
+                    {a.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Link className="pill-link is-small" href="/builds/new">
+              Create a build <ArrowRight size={14} aria-hidden="true" />
+            </Link>
           </section>
         )}
       </section>
+      <BuildsNextStep
+        title={
+          <>
+            Not sure <em>where</em> to start?
+          </>
+        }
+        line="Search the whole library by weapon or author, or build a loadout for the content you run."
+        secondary={{ href: "/builds/library", label: "Build library" }}
+      />
     </div>
   );
 }

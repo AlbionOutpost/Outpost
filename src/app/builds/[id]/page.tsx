@@ -14,6 +14,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canReadBuild } from "@/lib/builds/validation";
 import { BuildDetailHeader, BuildDetailNavigation } from "@/components/build-detail-header";
+import { BuildsNextStep } from "@/components/builds-next-step";
 import { BuildShareControls } from "@/components/build-share-controls";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 export async function generateMetadata({
@@ -148,6 +149,15 @@ export default async function BuildPage({ params }: { params: Promise<{ id: stri
       <div id="build-discussion">
         <CommunityPanel kind="build" id={id} />
       </div>
+      <BuildsNextStep
+        title={
+          <>
+            Plan <em>around</em> it
+          </>
+        }
+        line="Put this build in a comp so your Team knows who runs what, or start one of your own."
+        secondary={{ href: "/compositions", label: "Plan a comp" }}
+      />
     </div>
   );
 }

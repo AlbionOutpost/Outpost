@@ -48,7 +48,9 @@ test("library discovery keeps URL filters, region and device collections through
   await expect(page.locator(".device-library-favorites")).toContainText(title);
   await page.reload();
   await expect(page.locator(".device-library-favorites")).toContainText(title);
-  await page.getByRole("button", { name: `Unsave ${title} on this device`, exact: true }).click();
+  await page
+    .getByRole("button", { name: `Remove ${title} from this device's favourites`, exact: true })
+    .click();
   await expect(page.locator(".device-library-favorites")).not.toContainText(title);
   // Exercise the actual 24-card boundary using genuine owned public records.
   const originals = JSON.parse(
@@ -87,7 +89,7 @@ test("library discovery keeps URL filters, region and device collections through
     .getByRole("combobox", { name: "Sort library favorites", exact: true })
     .selectOption("title");
   await expect(localFavorites.locator(".device-favorite-card")).toHaveCount(24);
-  await expect(localFavorites.locator(".device-favorite-card h3").first()).toHaveText(
+  await expect(localFavorites.locator(".device-favorite-card h2").first()).toHaveText(
     [...savedBuilds].sort((a, b) => a.title.localeCompare(b.title))[0].title,
   );
   await localFavorites.getByRole("button", { name: "Library favorites list", exact: true }).click();
@@ -131,7 +133,7 @@ test("mobile library filters use a keyboard drawer and retain real paginated res
     .getByRole("searchbox", { name: "Search", exact: true })
     .fill("no-outpost-build-948321");
   await expect(page).toHaveURL(/q=no-outpost-build-948321/);
-  await expect(page.locator(".library-build-card")).toHaveCount(0);
+  await expect(page.locator(".library-build-grid .library-build-card")).toHaveCount(0);
   await expect(page.locator("main")).toContainText(/No loadouts/);
 });
 
@@ -423,10 +425,8 @@ test("account favorites paginate, search and sort accessible builds independentl
     await page.goto("/favorites?region=asia");
     const account = page.getByRole("region", { name: "Account favorites", exact: true }),
       cards = account.locator(".community-build-card");
-    await expect(
-      account.getByRole("heading", { name: "Player builds · 26", exact: true }),
-    ).toBeVisible();
-    await expect(account.getByRole("heading", { name: "Comps · 25", exact: true })).toBeVisible();
+    await expect(account.getByText("26 saved to your account", { exact: true })).toBeVisible();
+    await expect(account.getByText("25 saved to your account", { exact: true })).toBeVisible();
     await expect(cards).toHaveCount(24);
     await expect(cards.first()).toContainText(`${marker} 25`);
     await expect(account.locator(".favorite-compositions-list > a")).toHaveCount(24);
@@ -449,9 +449,7 @@ test("account favorites paginate, search and sort accessible builds independentl
       .fill(`${marker} 25`);
     await expect(cards).toHaveCount(1);
     await expect(cards.first()).toContainText(`${marker} 25`);
-    await expect(
-      account.getByRole("heading", { name: "Player builds · 1", exact: true }),
-    ).toBeVisible();
+    await expect(account.getByText("1 saved to your account", { exact: true })).toBeVisible();
     const query = new URL(page.url()).searchParams;
     expect(query.get("q")).toBe(`${marker} 25`);
     expect(query.get("sort")).toBe("title");

@@ -1,4 +1,6 @@
 "use client";
+import { Disclosure } from "./disclosure";
+import { StatusLine } from "./status-line";
 import { useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
 import { Heart, ThumbsUp } from "lucide-react";
@@ -143,7 +145,7 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                 {data.voted ? "Remove vote" : "Upvote build"} ({data.voteCount})
               </button>
             )}
-            <Link className="text-link" href="/favorites">
+            <Link className="pill-link is-small" href="/favorites">
               Your favorites
             </Link>
           </div>
@@ -275,31 +277,32 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
             ))}
           </div>
           {!data.comments.length && (
-            <p className="empty">No visible comments yet. Share a useful observation.</p>
+            <StatusLine>No comments yet. Share something useful about this {kind}.</StatusLine>
           )}
-          <div className="actions">
-            <button
-              className="button secondary"
-              disabled={data.page === 1 || busy}
-              onClick={() =>
-                refresh(data.page - 1).catch(() => setMessage("Could not load comments."))
-              }
-            >
-              Previous comments
-            </button>
-            <span>Page {data.page}</span>
-            <button
-              className="button secondary"
-              disabled={!data.hasNext || busy}
-              onClick={() =>
-                refresh(data.page + 1).catch(() => setMessage("Could not load comments."))
-              }
-            >
-              Next comments
-            </button>
-          </div>
-          <details className="section">
-            <summary>Report this {kind}</summary>
+          {(data.page > 1 || data.hasNext) && (
+            <div className="actions">
+              <button
+                className="button secondary"
+                disabled={data.page === 1 || busy}
+                onClick={() =>
+                  refresh(data.page - 1).catch(() => setMessage("Could not load comments."))
+                }
+              >
+                Previous comments
+              </button>
+              <span>Page {data.page}</span>
+              <button
+                className="button secondary"
+                disabled={!data.hasNext || busy}
+                onClick={() =>
+                  refresh(data.page + 1).catch(() => setMessage("Could not load comments."))
+                }
+              >
+                Next comments
+              </button>
+            </div>
+          )}
+          <Disclosure summary={`Report this ${kind}`}>
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -321,7 +324,7 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
                 Submit content report
               </button>
             </form>
-          </details>
+          </Disclosure>
           {history.length > 0 && (
             <section className="section">
               <h3>Your comment revisions</h3>

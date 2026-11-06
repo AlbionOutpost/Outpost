@@ -1,4 +1,4 @@
-import { Play, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import type { AwakeningTrait, LibraryBuild } from "@/lib/grind-library-types";
 
 export function safeYouTubeLink(value: string) {
@@ -56,19 +56,25 @@ export function LibraryBuildVideos({ build }: { build: LibraryBuild }) {
   return (
     <section className="library-build-videos">
       <h3>Watch the creator’s recordings</h3>
-      <div>
+      <ul className="detail-feature-rows">
         {links.map((video, i) => (
-          <a key={`${video.url}-${i}`} href={video.url} target="_blank" rel="noopener noreferrer">
-            <Play size={18} />
-            <span>
-              {video.kind === "channel"
-                ? "Creator’s YouTube channel"
-                : `Recorded build video ${i + 1}`}{" "}
-              <small>Open on YouTube ↗</small>
-            </span>
-          </a>
+          <li key={`${video.url}-${i}`}>
+            <a href={video.url} target="_blank" rel="noopener noreferrer">
+              {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+              <img src="/albion/icons/strip-content.webp" alt="" width={40} height={40} />
+              <span>
+                <strong>
+                  {video.kind === "channel"
+                    ? "Creator’s YouTube channel"
+                    : `Recorded build video ${i + 1}`}
+                </strong>
+                <small>Opens on YouTube in a new tab</small>
+              </span>
+              <ArrowUpRight size={18} aria-hidden="true" />
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
       {!!build.unresolvedVideoReferences && (
         <p>Some original video references were incomplete and could not be linked.</p>
       )}

@@ -1,9 +1,8 @@
 /* Activity cards on the landing's grid: three across, two on tablets and phones, one under 361px. */
 .sections {
   display: grid;
-  gap: 96px;
+  gap: 40px;
   margin-top: 40px;
-  padding-bottom: 64px;
 }
 .grid {
   display: grid;
@@ -13,9 +12,27 @@
   padding: 0;
   list-style: none;
 }
-/* Activities nobody has posted a build for yet: their painting is muted, the label stays sharp. */
-.grid > li[data-empty] :global(.activity-artwork-link) img {
-  filter: saturate(0.35) brightness(0.72);
+/* Activities nobody has posted a build for yet: one quiet row of names */
+.open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 14px 18px;
+}
+.openTitle {
+  margin: 0;
+  color: var(--secondary);
+  font: 800 17px/1.2 var(--font-display);
+}
+.openList {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 @media (max-width: 1100px) {
   .grid {
@@ -24,7 +41,7 @@
 }
 @media (max-width: 700px) {
   .sections {
-    gap: 64px;
+    gap: 28px;
     margin-top: 28px;
   }
 }

@@ -8,7 +8,9 @@ test("recovered builds keep author, spells and swaps, and become independent val
   // link to it), with everything it recorded.
   await page.goto("/builds/library?q=Battleaxe+Mist+Build");
   await expect(
-    page.getByRole("heading", { name: "Battleaxe Mist Build", exact: true }),
+    page
+      .locator(".library-build-grid")
+      .getByRole("heading", { name: "Battleaxe Mist Build", exact: true }),
   ).toHaveCount(0);
   await page.goto("/builds/library/battleaxe-mist-build");
   await expect(page.locator("h1")).toHaveText("Battleaxe Mist Build");
@@ -105,16 +107,16 @@ test("loadout estimates retain dated scans and never total missing or other-city
   });
   await page.goto("/builds/library/battleaxe-mist-build");
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
-  await expect(page.locator(".loadout-price-total strong")).toHaveText("800 silver");
+  await expect(page.locator(".loadout-price-total .build-cost-total")).toHaveText("800 silver");
   older = true;
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
-  await expect(page.locator(".loadout-price-total strong")).toHaveText("800 silver");
+  await expect(page.locator(".loadout-price-total .build-cost-total")).toHaveText("800 silver");
   await expect(page.locator(".loadout-price-total")).toContainText("8 need a freshness check");
   await expect(page.locator(".loadout-price-total")).toContainText(
     "Older scans, prices may have moved",
   );
   await page.getByLabel("Loadout purchase city", { exact: true }).selectOption("Lymhurst");
-  await expect(page.locator(".loadout-price-total strong")).toHaveText(
+  await expect(page.locator(".loadout-price-total .build-cost-total")).toContainText(
     "No purchase prices observed",
   );
   await page.getByText("Individual item observations", { exact: true }).click();
@@ -125,11 +127,13 @@ test("loadout estimates retain dated scans and never total missing or other-city
   omit = true;
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
   await expect(page.locator(".loadout-price-total")).toContainText("Estimate incomplete");
-  await expect(page.locator(".loadout-price-total strong")).toContainText("silver known");
+  await expect(page.locator(".loadout-price-total .build-cost-total")).toContainText(
+    "silver known",
+  );
   omit = false;
   extreme = true;
   await page.getByRole("button", { name: "Check loadout prices", exact: true }).click();
-  await expect(page.locator(".loadout-price-total strong")).toHaveText(
+  await expect(page.locator(".loadout-price-total .build-cost-total")).toContainText(
     "Estimate exceeds supported silver range",
   );
   await expect(page.locator(".loadout-quote-list")).toContainText(

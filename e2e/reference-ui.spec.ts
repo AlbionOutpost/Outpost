@@ -147,7 +147,7 @@ test("community discovery filters real equipment without exposing private builds
     await expect(page.locator(".community-build-card")).toContainText("Arena axe");
     await expect(page.locator(".community-build-card")).not.toContainText("Private arena");
     await expect(
-      page.locator(".community-build-card .library-build-board img[data-albion-icon]").first(),
+      page.locator(".community-build-card .loadout-board img[data-albion-icon]").first(),
     ).toBeVisible();
     await page.screenshot({ path: ".qa/reference-review/build-browser-1440.png", fullPage: true });
     await page.setViewportSize({ width: 375, height: 844 });
