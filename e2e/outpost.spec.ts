@@ -6,7 +6,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/?region=asia");
   await expect(page).toHaveTitle(/Outpost/);
-  await expect(page.locator("h1")).toHaveText("Your Albionadvantage.");
+  await expect(page.locator("h1")).toHaveText("Your Albion advantage.");
   await expect(page.locator(".top-brand")).toHaveAccessibleName("Outpost home");
   await expect(page.locator(".product-sidebar")).toHaveCount(0);
   await expect(page.locator(".site-header .desktop-navigation")).toBeVisible();
