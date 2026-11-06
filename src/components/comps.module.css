@@ -121,8 +121,9 @@
   white-space: nowrap;
 }
 /* Rows keep their natural height; a short comp leaves room above the foot, which stays at
-   the bottom of the window */
-:global(.app.outpost) .windowBody.windowBody :global(.landing-roster) {
+   the bottom of the window. One class heavier than the landing window's stretching rows, so the
+   order the sheets load in (dev and production differ) never decides it. */
+:global(.app.outpost) .windowBody.windowBody.windowBody :global(.landing-roster) {
   grid-template-rows: none;
   grid-auto-rows: minmax(54px, auto);
   align-content: start;
