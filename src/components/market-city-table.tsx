@@ -22,9 +22,12 @@ export function MarketCityTable({
   bid,
   selectedCity,
   onSelect,
+  missingLabel,
   now,
 }: {
   rows: MarketPrice[];
+  /** Placeholder rows (nothing loaded): every price says this instead of "No sell order". */
+  missingLabel?: string;
   ask: MarketPrice | null;
   bid: MarketPrice | null;
   selectedCity: string;
@@ -73,6 +76,7 @@ export function MarketCityTable({
                     type="button"
                     className="market-row-select"
                     aria-pressed={selected}
+                    disabled={!!missingLabel}
                     onClick={() => onSelect(selected ? "" : r.city)}
                   >
                     <span className="city-dot" data-city={r.city} aria-hidden="true" />
@@ -91,7 +95,7 @@ export function MarketCityTable({
                       value={r.sell_price_min}
                       date={r.sell_price_min_date}
                       best={ask === r ? "Lowest" : null}
-                      missing="No sell order"
+                      missing={missingLabel ?? "No sell order"}
                       now={now}
                     />
                   )}
@@ -101,7 +105,7 @@ export function MarketCityTable({
                     value={r.buy_price_max}
                     date={r.buy_price_max_date}
                     best={bid === r ? "Highest" : null}
-                    missing="No buy order"
+                    missing={missingLabel ?? "No buy order"}
                     now={now}
                   />
                 </td>

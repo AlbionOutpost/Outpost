@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import type { z } from "zod";
 import { qualityAvailabilityResponse } from "@/lib/albion/market-availability";
 import { isStale, sourceTimestamp } from "@/lib/albion/freshness";
-import Link from "@/components/link";
 
 const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 type Availability = z.infer<typeof qualityAvailabilityResponse>;
@@ -177,14 +176,6 @@ export function MarketQualityAvailability({
           </p>
         </>
       )}
-      <p className="muted">
-        No observation does not mean unavailable in game.{" "}
-        <Link
-          href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
-        >
-          Help fill market coverage →
-        </Link>
-      </p>
     </section>
   );
 }

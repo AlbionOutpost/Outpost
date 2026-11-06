@@ -3,7 +3,6 @@ import { ChartNoAxesCombined, History, Star } from "lucide-react";
 import { Market } from "@/components/market";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import styles from "@/components/market-workspace.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/market", await searchParams);
 }
@@ -14,12 +13,12 @@ export default async function Page({
 }) {
   const p = await searchParams;
   return (
-    <div className={`market-explorer-page ${styles.page}`}>
+    <div className="market-explorer-page">
       <WorkspaceHeading
         glyph="market"
         scene="market"
         title="Market Explorer"
-        description="Find your item. Compare city orders. Choose your next trade."
+        description="Every city's buy and sell orders for one item, each with the time it was seen."
       >
         <MastheadTabs
           label="Market tools"

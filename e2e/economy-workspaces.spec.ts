@@ -75,13 +75,13 @@ test("item filters recover from no results and item back links retain server", a
   await page
     .getByLabel("Search item name or identifier", { exact: true })
     .fill("zzznomatchingitemzzz");
-  await expect(page.getByRole("heading", { name: "No items match these filters" })).toBeVisible();
-  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
+  await expect(page.getByText("No items match these filters", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Clear filters", exact: true }).first().click();
   await expect(page.getByText("7,510 matching items", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Grid", exact: true }).click();
   await expect(page.locator(".item-catalog-grid article")).toHaveCount(30);
   await page.getByRole("button", { name: "List", exact: true }).click();
-  await expect(page.locator(".item-reference-browser tbody tr")).toHaveCount(30);
+  await expect(page.locator(".item-catalog tbody tr")).toHaveCount(30);
   await page.goto("/items/T4_MAIN_AXE?region=asia");
   await expect(page.locator(".masthead-back")).toHaveAttribute("href", "/items?region=asia");
   await expect(page.getByRole("heading", { name: "Recipe", exact: true })).toBeVisible();
@@ -102,18 +102,19 @@ test("gold history has distinct loading, empty and error recovery", async ({ pag
     await route.fulfill({ json: { data: [] } });
   });
   await page.goto("/tools/gold?region=europe");
-  await expect(page.getByRole("heading", { name: "Loading price history…" })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "No observations for this selection" }),
-  ).toBeVisible();
+  const chart = page.locator(".gold-research-workspace .history-chart");
+  await expect(chart.getByRole("status")).toHaveText("Loading history…");
+  await expect(chart.getByRole("status")).toContainText("No gold observations for this server yet");
   await page.route("**/api/history?*", (route) =>
     route.fulfill({ status: 503, json: { error: "History source unavailable" } }),
   );
   await page.getByRole("button", { name: "Refresh history", exact: true }).click();
-  await expect(page.locator(".gold-research-workspace").getByRole("alert")).toContainText(
-    "History source unavailable",
+  // The failure is said once, inside the chart, which keeps its axes.
+  await expect(chart.getByRole("status")).toHaveText(
+    "History could not load. Refresh to try again.",
   );
-  await expect(page.getByRole("heading", { name: "History is unavailable" })).toBeVisible();
+  await expect(page.locator(".gold-research-workspace").getByRole("alert")).toHaveCount(0);
+  await expect(page.locator(".gold-research-workspace .reference-price-axis")).toBeVisible();
 });
 
 for (const [route, label] of [

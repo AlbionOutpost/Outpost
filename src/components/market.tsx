@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRight, ChevronDown, Database, RotateCw, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, ChevronDown, RotateCw, Search } from "lucide-react";
 import "./market-explorer.css";
 import styles from "./market-workspace.module.css";
 import { History } from "./history";
@@ -10,6 +10,9 @@ import { MarketQuoteHero, qualityNames } from "./market-quote-hero";
 import { MarketResearch } from "./market-research";
 import { MarketWatchlist } from "./market-watchlist";
 import { MarketQualityAvailability } from "./market-quality-availability";
+import { EmptyWell } from "./empty-well";
+import { PanelHead } from "./panel-head";
+import { MarketNextSteps } from "./market-next-steps";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect, useLayoutEffect, useId, useSyncExternalStore } from "react";
@@ -56,6 +59,8 @@ export function Market() {
   ]);
   const [sort, setSort] = useState("city");
   const [savedTab, setSavedTab] = useState<"research" | "watchlist">("research");
+  // Phones: the search rail folds into one "Change item" bar so the answer comes first.
+  const [railOpen, setRailOpen] = useState(false);
   const tabId = useId();
   const hydrated = useSyncExternalStore(
     () => () => {},
@@ -162,7 +167,7 @@ export function Market() {
   const heroStatus = loading
     ? "Checking the markets…"
     : hasError
-      ? "Prices could not load. Your selection is kept."
+      ? "Prices could not load right now. Your selection is kept."
       : hasResult
         ? "No orders observed for this selection yet."
         : validSelection
@@ -179,8 +184,28 @@ export function Market() {
       className={`mx ${styles.workspace}${hasResult ? " has-results" : " is-setup"}`}
       aria-busy={loading}
     >
-      <aside className="raised mx-rail" aria-label="Market search and filters">
-        <fieldset className="market-hydration-guard" disabled={!hydrated}>
+      <aside
+        className="raised mx-rail"
+        aria-label="Market search and filters"
+        data-open={railOpen ? "" : undefined}
+      >
+        <button
+          type="button"
+          className="mx-rail-toggle"
+          aria-expanded={railOpen}
+          aria-controls={`${tabId}-rail`}
+          onClick={() => setRailOpen(!railOpen)}
+        >
+          <Search size={18} aria-hidden="true" />
+          <span>
+            Change item
+            <small>
+              {qualityNames[Number(quality) - 1]} · {marketLabel}
+            </small>
+          </span>
+          <ChevronDown size={18} aria-hidden="true" />
+        </button>
+        <fieldset id={`${tabId}-rail`} className="market-hydration-guard" disabled={!hydrated}>
           <legend className="sr-only">Choose an item, quality and city</legend>
           <form id="market-compare-query" className="mx-form" method="post" onSubmit={submit}>
             <CatalogItemPicker
@@ -190,6 +215,7 @@ export function Market() {
               onSelect={(i) => {
                 setItem(i.id);
                 setSelectedName(i.name);
+                setRailOpen(false);
               }}
             />
             <div className="market-start-examples mx-picks" aria-label="Suggested market items">
@@ -210,6 +236,7 @@ export function Market() {
                     onClick={() => {
                       setItem(preset.id);
                       setSelectedName(preset.name);
+                      setRailOpen(false);
                     }}
                   >
                     {preset.name}
@@ -396,11 +423,6 @@ export function Market() {
               </button>
             </div>
           )}
-          {error?.key === current && (
-            <p role="alert" className="error mx-note is-error">
-              {error.message}
-            </p>
-          )}
           {result && result.key !== current && (
             <p role="status" className="mx-note">
               {result.region !== region ? "Region changed." : "Selection changed."} Request new
@@ -418,52 +440,58 @@ export function Market() {
             region={region}
             scope={marketLabel}
             summary={
-              hasResult && visibleSummary.available > 0
-                ? { ask: visibleSummary.ask, bid: visibleSummary.bid }
-                : null
+              // Once observations are in, the figures stay (an em dash where none was seen).
+              hasResult ? { ask: visibleSummary.ask, bid: visibleSummary.bid } : null
             }
             newest={newest}
             status={heroStatus}
+            failed={hasError && !loading}
+            onRetry={() => void load()}
             now={now}
           />
           <section className="raised market-board mx-board" aria-labelledby="market-board-title">
-            <header className="mx-section-head">
-              <div>
-                <h2 id="market-board-title">City orders</h2>
-                <p>
-                  {hasResult
+            <PanelHead
+              id="market-board-title"
+              title="City orders"
+              line={
+                <>
+                  {hasResult && summary.available > 0
                     ? `${visible.length} ${visible.length === 1 ? "city" : "cities"} · ${summary.stale} of ${summary.available} orders older than an hour`
                     : loading
                       ? "Requesting observations"
-                      : hasError
-                        ? "Request failed · selection kept"
+                      : hasError || hasResult
+                        ? marketLabel
                         : validSelection
                           ? `${marketLabel} · ready to compare`
                           : "Choose an item to continue"}
-                </p>
-              </div>
-              {hasResult && summary.available > 0 && (
-                <div className="mx-segment" role="radiogroup" aria-label="Sort market prices">
-                  {(
-                    [
-                      ["city", "City"],
-                      ["sell", "Lowest sell"],
-                      ["buy", "Highest buy"],
-                    ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      type="button"
-                      role="radio"
-                      aria-checked={sort === value}
-                      key={value}
-                      onClick={() => setSort(value)}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </header>
+                </>
+              }
+              actions={
+                <>
+                  {hasResult && summary.available > 0 && (
+                    <div className="mx-segment" role="radiogroup" aria-label="Sort market prices">
+                      {(
+                        [
+                          ["city", "City"],
+                          ["sell", "Lowest sell"],
+                          ["buy", "Highest buy"],
+                        ] as const
+                      ).map(([value, label]) => (
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={sort === value}
+                          key={value}
+                          onClick={() => setSort(value)}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              }
+            />
             {hasResult && summary.available > 0 && (
               <>
                 <MarketCityTable
@@ -475,9 +503,22 @@ export function Market() {
                   now={now}
                 />
                 {!visible.length && (
-                  <div className="empty market-empty mx-empty" role="status">
-                    No city matches these filters. Reset filters to see the scanned markets.
-                  </div>
+                  <EmptyWell
+                    title="No city matches these filters"
+                    line="The item has orders in other cities."
+                    action={
+                      <button
+                        type="button"
+                        className="button secondary"
+                        onClick={() => {
+                          setCity("");
+                          setExtraCities([]);
+                        }}
+                      >
+                        Show every city
+                      </button>
+                    }
+                  />
                 )}
               </>
             )}
@@ -536,56 +577,46 @@ export function Market() {
                 </div>
               </aside>
             )}
-            {!hasResult && (
-              <div className="market-first-use mx-state" role="status">
-                <Database size={24} aria-hidden="true" />
-                <div>
-                  <h3>
-                    {loading
-                      ? "Checking the markets…"
-                      : hasError
-                        ? "Your selection is safe"
-                        : validSelection
-                          ? "Loading city prices"
-                          : "Choose a valid item"}
-                  </h3>
-                  <p>
-                    {loading
-                      ? "Fetching player observations from the Albion Online Data Project. Each order keeps its own source time."
-                      : hasError
-                        ? "Refresh prices to retry, or change the selection. No failed or previous observation is shown as a current quote."
-                        : validSelection
-                          ? "Sell and buy orders load for every selection as soon as you make it."
-                          : "Search for an item, choose a quick pick, or enter its item identifier."}
-                  </p>
+            {!hasResult &&
+              (loading ? (
+                <div className="mx-skeleton" aria-hidden="true">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <span key={i} />
+                  ))}
                 </div>
-              </div>
-            )}
-            {loading && !hasResult && (
-              <div className="mx-skeleton" aria-hidden="true">
-                {Array.from({ length: 6 }, (_, i) => (
-                  <span key={i} />
-                ))}
-              </div>
-            )}
+              ) : (
+                // The table keeps its shape while there is nothing to show; the hero says why.
+                <MarketCityTable
+                  rows={cities.map((name) => ({
+                    item_id: item,
+                    city: name,
+                    quality: Number(quality),
+                    sell_price_min: 0,
+                    sell_price_min_date: "",
+                    buy_price_max: 0,
+                    buy_price_max_date: "",
+                  }))}
+                  ask={null}
+                  bid={null}
+                  selectedCity=""
+                  onSelect={() => {}}
+                  missingLabel="Unavailable"
+                  now={0}
+                />
+              ))}
             {hasResult && !summary.available && (
-              <div className="task-state mx-state" role="status">
-                <Database size={24} aria-hidden="true" />
-                <div>
-                  <h3>No price observations for this selection</h3>
-                  <p>
-                    No last observation is known for this selection. The Albion Online Data Project
-                    collects prices when players running its client open markets in game. A missing
-                    observation is not a zero price or proof that the item is unavailable.
-                  </p>
+              <EmptyWell
+                title="No orders seen for this item yet"
+                line="Prices appear once a player running the Albion Online Data Project client opens this market. A gap is not a zero price."
+                action={
                   <Link
                     className="pill-link is-small"
                     href={`/market-data?${new URLSearchParams({ region, item, quality, ...(city ? { city } : {}) })}`}
                   >
-                    See how to get market coverage <ArrowRight size={15} aria-hidden="true" />
+                    Fill a missing price <ArrowRight size={15} aria-hidden="true" />
                   </Link>
-                </div>
-              </div>
+                }
+              />
             )}
             {hasResult && (
               <MarketQualityAvailability
@@ -601,8 +632,7 @@ export function Market() {
             )}
             <p className="market-source-note mx-source">
               Albion Online Data Project · sell orders are listings, buy orders are offers · older
-              than an hour is marked stale · times in UTC · an observation is not a guaranteed
-              trade.
+              than an hour is marked stale · times in UTC
             </p>
           </section>
         </div>
@@ -611,23 +641,28 @@ export function Market() {
           id="market-history-research"
           aria-labelledby="market-history-title"
         >
-          <header className="mx-section-head">
-            <div>
-              <h2 id="market-history-title">Price history</h2>
-              <p>
+          <PanelHead
+            id="market-history-title"
+            title="Price history"
+            line={
+              <>
                 Daily sell-order averages · {qualityNames[Number(quality) - 1]} · not confirmed
                 trades
-              </p>
-            </div>
-            <button
-              type="button"
-              className="pill-link is-small"
-              aria-expanded={researchOpen ?? hasResult}
-              onClick={() => setResearchOpen(!(researchOpen ?? hasResult))}
-            >
-              {(researchOpen ?? hasResult) ? "Hide price history" : "Research price history"}
-            </button>
-          </header>
+              </>
+            }
+            actions={
+              <>
+                <button
+                  type="button"
+                  className="pill-link is-small"
+                  aria-expanded={researchOpen ?? hasResult}
+                  onClick={() => setResearchOpen(!(researchOpen ?? hasResult))}
+                >
+                  {(researchOpen ?? hasResult) ? "Hide price history" : "Research price history"}
+                </button>
+              </>
+            }
+          />
           {(researchOpen ?? hasResult) ? (
             <History
               item={item}
@@ -649,57 +684,58 @@ export function Market() {
           className="raised mx-saved"
           aria-labelledby="market-saved-title"
         >
-          <header className="mx-section-head">
-            <div>
-              <h2 id="market-saved-title">
-                <SlidersHorizontal size={18} aria-hidden="true" /> Keep researching
-              </h2>
-              <p>Shortlist several items, or save them to your watchlist</p>
-            </div>
-            <div
-              className="mx-segment market-saved-tabs"
-              role="tablist"
-              aria-label="Saved market work"
-            >
-              {(
-                [
-                  ["research", "Research list"],
-                  ["watchlist", "Watchlist"],
-                ] as const
-              ).map(([key, label], index) => (
-                <button
-                  type="button"
-                  role="tab"
-                  id={`${tabId}-${key}-tab`}
-                  aria-controls={`${tabId}-${key}-panel`}
-                  aria-selected={savedTab === key}
-                  tabIndex={savedTab === key ? 0 : -1}
-                  key={key}
-                  onClick={() => setSavedTab(key)}
-                  onKeyDown={(e) => {
-                    const next =
-                      e.key === "ArrowRight" || e.key === "ArrowLeft"
-                        ? 1 - index
-                        : e.key === "Home"
-                          ? 0
-                          : e.key === "End"
-                            ? 1
-                            : null;
-                    if (next === null) return;
-                    e.preventDefault();
-                    const tabs =
-                      e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
-                        '[role="tab"]',
-                      );
-                    tabs?.[next]?.click();
-                    tabs?.[next]?.focus();
-                  }}
+          <PanelHead
+            id="market-saved-title"
+            title="Keep researching"
+            line={<>Shortlist several items, or save them to your watchlist</>}
+            actions={
+              <>
+                <div
+                  className="mx-segment market-saved-tabs"
+                  role="tablist"
+                  aria-label="Saved market work"
                 >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </header>
+                  {(
+                    [
+                      ["research", "Research list"],
+                      ["watchlist", "Watchlist"],
+                    ] as const
+                  ).map(([key, label], index) => (
+                    <button
+                      type="button"
+                      role="tab"
+                      id={`${tabId}-${key}-tab`}
+                      aria-controls={`${tabId}-${key}-panel`}
+                      aria-selected={savedTab === key}
+                      tabIndex={savedTab === key ? 0 : -1}
+                      key={key}
+                      onClick={() => setSavedTab(key)}
+                      onKeyDown={(e) => {
+                        const next =
+                          e.key === "ArrowRight" || e.key === "ArrowLeft"
+                            ? 1 - index
+                            : e.key === "Home"
+                              ? 0
+                              : e.key === "End"
+                                ? 1
+                                : null;
+                        if (next === null) return;
+                        e.preventDefault();
+                        const tabs =
+                          e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                            '[role="tab"]',
+                          );
+                        tabs?.[next]?.click();
+                        tabs?.[next]?.focus();
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            }
+          />
           <div
             role="tabpanel"
             id={`${tabId}-research-panel`}
@@ -717,21 +753,7 @@ export function Market() {
             <MarketWatchlist region={region} itemId={item} quality={Number(quality)} />
           </div>
         </section>
-        <nav className={styles.related} aria-label="Related market tools">
-          <h2>Take the next step</h2>
-          <Link href={`/tools/flipping?region=${region}`}>
-            Flipping calculator <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-          <Link href={`/tools/crafting?region=${region}`}>
-            Crafting calculator <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-          <Link href={`/tools/refining?region=${region}`}>
-            Refining calculator <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-          <Link href={`/guides?region=${region}`}>
-            Player guides <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-        </nav>
+        <MarketNextSteps show={["flipping", "crafting", "planner"]} />
       </div>
     </div>
   );

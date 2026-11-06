@@ -18,8 +18,10 @@ test("market failure never substitutes prices", async ({ page }) => {
   );
   await page.goto("/tools/market");
   await page.getByRole("button", { name: "Refresh prices" }).click();
-  await expect(page.locator("p[role=alert]")).toContainText("unavailable");
-  await expect(page.locator(".market-board tbody tr")).toHaveCount(0);
+  // Said once, in the item hero; the table keeps its rows but no price is shown in them.
+  await expect(page.locator(".mx-hero-status")).toContainText("could not load");
+  await expect(page.locator(".market-board tbody")).toContainText("Unavailable");
+  await expect(page.locator(".market-board tbody .silver")).toHaveCount(0);
 });
 test("regional market request and region invalidation", async ({ page }) => {
   let releaseAsia!: () => void;
@@ -189,6 +191,8 @@ test("mobile navigation works without horizontal overflow", async ({ page }) => 
     .getByRole("link", { name: "Market explorer", exact: true })
     .click();
   await expect(page).toHaveURL(/tools\/market/);
+  // Phones fold the search rail behind one bar so the item and its prices come first.
+  await page.getByRole("button", { name: /^Change item/ }).click();
   await expect(page.getByRole("combobox", { name: "Search market items" })).toBeVisible();
 });
 

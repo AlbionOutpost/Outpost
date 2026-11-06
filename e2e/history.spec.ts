@@ -70,7 +70,9 @@ test("named item search preserves selected item and region", async ({ page }) =>
   await page.getByLabel("Tier", { exact: true }).selectOption("6");
   await page.getByLabel("Enchantment", { exact: true }).selectOption("1");
   await expect(page.locator("tbody tr")).toHaveCount(1);
-  await page.getByRole("link", { name: "Compare prices →" }).click();
+  // The whole row opens the item; its page links to the market with the same id and server.
+  await page.locator(".item-catalog tbody tr").getByRole("link").click();
+  await page.getByRole("link", { name: "Compare market observations", exact: true }).click();
   await page.getByText("Advanced item identifier", { exact: true }).click();
   await expect(page.getByLabel("Item identifier")).toHaveValue("T6_MAIN_AXE@1");
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
