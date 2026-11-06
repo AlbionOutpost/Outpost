@@ -422,3 +422,48 @@
   height: 44px !important;
   min-height: 44px !important;
 }
+
+/* The More menu: the Tools menu's raised panel, one column, grouped, each entry with its glyph
+   and one line. 12px muted lines, 48px rows. */
+.app.outpost .more-dropdown .more-dropdown-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 340px;
+  min-width: 0;
+  gap: 0;
+  right: -4px;
+  left: auto;
+  padding: 6px 0;
+}
+.app.outpost .more-dropdown-panel .more-menu-group + .more-menu-group {
+  border-top: 1px solid var(--border);
+}
+.app.outpost .more-dropdown-panel .more-menu-heading {
+  margin: 0;
+  padding: 12px 20px 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.app.outpost .more-dropdown-panel .tools-menu-grid {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 6px 10px 8px;
+  gap: 2px;
+}
+.app.outpost .more-dropdown-panel .tools-menu-grid > a {
+  min-height: 48px;
+  padding: 6px 9px;
+}
+/* Both header menus keep their one-line descriptions at the 12px floor */
+.app.outpost .site-header .tools-menu-grid small {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.app.outpost .more-dropdown-panel .dropdown-tool-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+}
+.app.outpost .more-dropdown-panel a[aria-current="page"] strong {
+  color: var(--accent-ink);
+}

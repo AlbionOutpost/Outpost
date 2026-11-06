@@ -14,6 +14,12 @@ import {
   ArrowUp,
   ArrowUpRight,
   Grid2X2,
+  Heart,
+  LayoutDashboard,
+  ListChecks,
+  Settings,
+  ShieldCheck,
+  Timer,
 } from "lucide-react";
 import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
@@ -47,9 +53,26 @@ const footerLinks = [
   ["/builds/activities", "Builds by activity"],
   ["/compositions/library", "Comps"],
   ["/guides", "Guides"],
-  ["/supporter", "Supporter"],
   ["/market-data", "Market data"],
 ] as const;
+/** The More menu, grouped, each entry with its glyph and one line (the drawer lists the same links). */
+const moreGroups = ["Your account", "Planning"] as const;
+const moreItems: Record<
+  string,
+  { group: (typeof moreGroups)[number]; icon: typeof LayoutDashboard; line: string }
+> = {
+  "/dashboard": {
+    group: "Your account",
+    icon: LayoutDashboard,
+    line: "Your builds, comps, Teams and plans",
+  },
+  "/favorites": { group: "Your account", icon: Heart, line: "Builds and comps you saved" },
+  "/settings": { group: "Your account", icon: Settings, line: "Account, server and your data" },
+  "/admin": { group: "Your account", icon: ShieldCheck, line: "Users, reports and the audit log" },
+  "/admin/reports": { group: "Your account", icon: ShieldCheck, line: "The report queue" },
+  "/timers": { group: "Planning", icon: Timer, line: "Crops, laborers and chests" },
+  "/shopping-list": { group: "Planning", icon: ListChecks, line: "What to buy, city by city" },
+};
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
@@ -267,19 +290,39 @@ export function Shell({
         <summary>
           More <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel">
-          {currentAccountLinks
-            .filter(([url]) => url !== "/signin")
-            .map(([url, label]) => (
-              <Link
-                key={url}
-                href={href(url)}
-                onClick={navigate}
-                aria-current={path === url ? "page" : undefined}
-              >
-                {label}
-              </Link>
-            ))}
+        <div className="dropdown-panel tools-dropdown-panel more-dropdown-panel">
+          {moreGroups.map((group) => {
+            const links = currentAccountLinks.filter(([url]) => moreItems[url]?.group === group);
+            return links.length ? (
+              <div key={group} className="more-menu-group" role="group" aria-label={group}>
+                <p className="more-menu-heading" aria-hidden="true">
+                  {group}
+                </p>
+                <div className="tools-menu-grid">
+                  {links.map(([url, label]) => {
+                    const Icon = moreItems[url].icon;
+                    return (
+                      <Link
+                        key={url}
+                        href={href(url)}
+                        onClick={navigate}
+                        aria-current={path === url ? "page" : undefined}
+                      >
+                        <span className="dropdown-tool-icon">
+                          <Icon size={19} aria-hidden="true" />
+                        </span>
+                        <span>
+                          <strong>{label}</strong>
+                          <small>{moreItems[url].line}</small>
+                        </span>
+                        <ArrowUpRight size={15} />
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null;
+          })}
         </div>
       </details>
     </nav>
