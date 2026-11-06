@@ -5,8 +5,33 @@ import { EquipmentSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowLeft, Eye, Package, NotebookPen, Sparkles, Repeat2 } from "lucide-react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import {
+  ArrowDown,
+  ArrowRight,
+  Download,
+  Eye,
+  FileJson,
+  History,
+  Link2,
+  LogIn,
+  NotebookPen,
+  Package,
+  Plus,
+  Repeat2,
+  Sparkles,
+  Trash2,
+  Upload,
+  UsersRound,
+} from "lucide-react";
+import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
+import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { BuildWindow } from "./build-window";
+import { Disclosure } from "./disclosure";
+import { EmptyWell } from "./empty-well";
+import { PanelHead } from "./panel-head";
+import { StatusLine } from "./status-line";
+import { WellSelect } from "./well-select";
 import { BuildCompositionLink } from "./build-composition-link";
 import { templateEquipment } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "./build-loadout-view";
@@ -100,6 +125,7 @@ export function BuildEditor({
     baseVersion?: number;
     dirty: boolean;
   } | null>(null);
+  const titleId = useId();
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
@@ -282,7 +308,7 @@ export function BuildEditor({
           setShareMessage("Draft saved on this device.");
         } else
           setShareMessage(
-            "Automatic save is unavailable. Keep device drafts under64KB or export JSON for a backup.",
+            "Automatic save is unavailable. Keep device drafts under 64 KB or export JSON for a backup.",
           );
       } catch {
         setShareMessage("Automatic save is unavailable. Export your build to keep a backup.");
@@ -347,7 +373,7 @@ export function BuildEditor({
         if (saved.status !== "saved") {
           setError(
             saved.status === "oversized"
-              ? "Device drafts must stay under64KB. Export JSON to keep this larger build."
+              ? "Device drafts must stay under 64 KB. Export JSON to keep this larger build."
               : "Your browser could not save this draft. Export JSON to keep a backup.",
           );
           return;
@@ -387,224 +413,232 @@ export function BuildEditor({
       setSaving(false);
     }
   }
+  const status = saving
+    ? "Saving your build…"
+    : guest
+      ? dirty || !deviceSaved
+        ? "Device draft · not saved yet"
+        : "Saved on this device"
+      : id
+        ? dirty
+          ? `Unsaved changes · revision ${baseVersion ?? version ?? 1}`
+          : `Saved revision ${baseVersion ?? version ?? 1}`
+        : "Unsaved private draft";
+  const equipped = draft.equipment.filter((row) => row.itemId);
+  const spellNames: Record<string, string> = {};
+  const pieces = equipped.map((row) => {
+    const options = archivedSpellOptions(row.itemId);
+    const skills = Object.entries(row.abilitySelections).flatMap(([key, name]) => {
+      const spell = options.find((option) => option.key === key && option.name === name);
+      if (spell) spellNames[spell.id] = spell.name;
+      return spell ? [spell.id] : [];
+    });
+    return { slot: row.slot, itemId: row.itemId, skills };
+  });
+  const mainHand = equipped.find((row) => row.slot === "Main hand");
   return (
     <form
       onSubmit={save}
-      className="build-editor focused-build-editor object-editor-workspace"
+      className="focused-build-editor build-editor-workspace"
       aria-busy={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
     >
       <fieldset
         className="editor-ready-guard"
         disabled={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
       >
-        <div className="editor-backline">
-          <Link className="pill-link is-small editor-back" href="/builds">
-            <ArrowLeft size={14} aria-hidden="true" /> Builds
-          </Link>
-          <span className="editor-draft-label" aria-live="polite">
-            {saving
-              ? "Saving your build…"
-              : guest
-                ? dirty || !deviceSaved
-                  ? "Device draft · not saved yet"
-                  : "Saved on this device"
-                : id
-                  ? dirty
-                    ? `Unsaved changes · revision ${baseVersion ?? version ?? 1}`
-                    : `Saved revision ${baseVersion ?? version ?? 1}`
-                  : "Unsaved private draft"}
-          </span>
-          {id && (
-            <Link className="editor-history-link text-link" href={`/builds/${id}#build-actions`}>
-              Revision history
-            </Link>
-          )}
-          {id && !guest && (
-            <BuildCompositionLink
-              fromBuild={id}
-              label="Add saved build to comp"
-              className="text-link"
-            />
-          )}
-        </div>
-        <div className="build-command-bar">
-          <label>
-            Build title
-            <input
-              required
-              minLength={3}
-              maxLength={100}
-              value={draft.title}
-              placeholder="Name your loadout"
-              onChange={(e) => update("title", e.target.value)}
-            />
-          </label>
-          <label>
-            Activity
-            <select
-              aria-label="Content type"
-              value={draft.contentType}
-              onChange={(e) => update("contentType", e.target.value as BuildInput["contentType"])}
-            >
-              {contentTypes.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-
-          {!guest && (
-            <label>
-              Build visibility
-              <select
-                aria-label="Build visibility"
-                value={draft.visibility}
-                onChange={(e) => update("visibility", e.target.value as BuildInput["visibility"])}
-              >
-                <option value="PRIVATE">Private</option>
-                <option value="UNLISTED">Unlisted</option>
-                <option value="PUBLIC">Public</option>
-              </select>
+        <section className="raised editor-command" aria-label="Build details">
+          <div className="editor-command-fields">
+            <label className="editor-title-field">
+              <span>Build title</span>
+              <input
+                required
+                minLength={3}
+                maxLength={100}
+                value={draft.title}
+                placeholder="Name your loadout"
+                onChange={(e) => update("title", e.target.value)}
+              />
             </label>
-          )}
-          <div className="build-save-action editor-persistent-save">
-            <button className="button primary" disabled={saving}>
-              {saving
-                ? "Saving…"
-                : guest
-                  ? "Save on this device"
-                  : id
-                    ? "Save new revision"
-                    : "Save build"}
-            </button>
+            <label>
+              <span>Activity</span>
+              <WellSelect
+                aria-label="Content type"
+                value={draft.contentType}
+                onChange={(e) => update("contentType", e.target.value as BuildInput["contentType"])}
+              >
+                {contentTypes.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </WellSelect>
+            </label>
+            {!guest && (
+              <label>
+                <span>Visibility</span>
+                <WellSelect
+                  aria-label="Build visibility"
+                  value={draft.visibility}
+                  onChange={(e) => update("visibility", e.target.value as BuildInput["visibility"])}
+                >
+                  <option value="PRIVATE">Private</option>
+                  <option value="UNLISTED">Unlisted</option>
+                  <option value="PUBLIC">Public</option>
+                </WellSelect>
+              </label>
+            )}
           </div>
-          {!guest && id && (
-            <button
-              type="button"
-              className="button secondary"
-              disabled={!id}
-              title={
-                id
-                  ? "Copy a link to the saved build; access follows its visibility"
-                  : "Save the build to get a share link"
-              }
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(`${location.origin}/builds/${id}`);
-                  setShareMessage("Saved build link copied. Access follows build visibility.");
-                } catch {
-                  setShareMessage("Open the saved build to copy its address.");
-                }
-              }}
-            >
-              Copy saved link
-            </button>
-          )}
-          <button
-            type="button"
-            className="button secondary"
-            disabled={!supportedEquipment.length}
-            data-editor-action="preview"
-            onClick={() => setPreview(true)}
-          >
-            <Eye size={15} /> Preview build
-          </button>
-          <details className="build-file-tools">
-            <summary>Import & export</summary>
-            <div>
+          <div className="editor-command-foot">
+            <span className="landing-chip is-muted editor-draft-label" aria-live="polite">
+              {status}
+            </span>
+            {id && (
+              <Link className="pill-link is-small" href={`/builds/${id}#build-actions`}>
+                <History size={14} aria-hidden="true" /> Revision history
+              </Link>
+            )}
+            {id && !guest && (
+              <BuildCompositionLink
+                fromBuild={id}
+                label="Add saved build to comp"
+                className="pill-link is-small editor-comp-link"
+              />
+            )}
+            {id && !guest && (
               <button
                 type="button"
-                className="button secondary"
-                onClick={() => {
-                  const parsed = buildInput.safeParse(draft);
-                  if (!parsed.success) {
-                    setError("Add a title and valid equipment before exporting.");
-                    return;
+                className="pill-link is-small"
+                title="Access follows the build's visibility"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(`${location.origin}/builds/${id}`);
+                    setShareMessage("Saved build link copied. Access follows build visibility.");
+                  } catch {
+                    setShareMessage("Open the saved build to copy its address.");
                   }
-                  const url = URL.createObjectURL(
-                    new Blob([JSON.stringify(parsed.data, null, 2)], { type: "application/json" }),
-                  );
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.download = "outpost-build.json";
-                  link.click();
-                  URL.revokeObjectURL(url);
-                  setShareMessage(
-                    "Build JSON exported with your equipment, abilities, swaps and spare sets.",
-                  );
                 }}
               >
-                Export build JSON
+                <Link2 size={14} aria-hidden="true" /> Copy saved link
               </button>
-              <label className="build-import-label">
-                Import build JSON
-                <input
-                  type="file"
-                  accept="application/json,.json"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    e.target.value = "";
-                    if (!file) return;
-                    try {
-                      if (file.size > 65536) throw new Error();
-                      const parsed = buildInput.parse(JSON.parse(await file.text()));
-                      setDraft(parsed);
-                      setError("");
-                      setShareMessage("Build imported. Review it before saving.");
-                    } catch {
-                      setError(
-                        "Choose a valid Outpost build JSON file under64KB. Your current build was kept.",
-                      );
+            )}
+            <details className="editor-file-menu">
+              <summary className="pill-link is-small">
+                <FileJson size={14} aria-hidden="true" /> Import & export
+              </summary>
+              <div>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={(event) => {
+                    event.currentTarget.closest("details")?.removeAttribute("open");
+                    const parsed = buildInput.safeParse(draft);
+                    if (!parsed.success) {
+                      setError("Add a title and valid equipment before exporting.");
+                      return;
                     }
+                    const url = URL.createObjectURL(
+                      new Blob([JSON.stringify(parsed.data, null, 2)], {
+                        type: "application/json",
+                      }),
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = "outpost-build.json";
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    setShareMessage(
+                      "Build JSON exported with your equipment, abilities, swaps and spare sets.",
+                    );
                   }}
-                />
-              </label>
+                >
+                  <Download size={15} aria-hidden="true" /> Export build JSON
+                </button>
+                <label className="button secondary editor-import">
+                  <Upload size={15} aria-hidden="true" /> Import build JSON
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={async (e) => {
+                      e.target.closest("details")?.removeAttribute("open");
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      try {
+                        if (file.size > 65536) throw new Error();
+                        const parsed = buildInput.parse(JSON.parse(await file.text()));
+                        setDraft(parsed);
+                        setError("");
+                        setShareMessage("Build imported. Review it before saving.");
+                      } catch {
+                        setError(
+                          "Choose a valid Outpost build JSON file under 64 KB. Your current build was kept.",
+                        );
+                      }
+                    }}
+                  />
+                </label>
+                <small>Keeps equipment, abilities, swaps and spare sets.</small>
+              </div>
+            </details>
+          </div>
+          {(recoveryMessage || shareMessage || (!guest && dirty && ownerId) || error) && (
+            <div className="editor-messages">
+              {recoveryMessage && <StatusLine>{recoveryMessage}</StatusLine>}
+              {!guest && dirty && !recoveryMessage && ownerId && (
+                <p className="editor-muted">
+                  Unsaved changes stay in this tab while you browse, until you sign out or reload.
+                </p>
+              )}
+              {shareMessage && <StatusLine>{shareMessage}</StatusLine>}
+              {error && (
+                <p className="editor-error" role="alert">
+                  {error}
+                  {/kept/.test(error) ? "" : " Your draft has been kept."}
+                </p>
+              )}
             </div>
-          </details>
-        </div>
-        {recoveryMessage && (
-          <p className="editor-save-status" role="status">
-            {recoveryMessage}
-          </p>
-        )}
-        {!guest && dirty && !recoveryMessage && ownerId && (
-          <p className="editor-save-status">
-            Unsaved edits stay in this tab for up to 30 minutes across navigation. Recovery keeps
-            your eight most recent drafts and ends on sign out or reload. Save or export JSON to
-            keep a permanent copy.
-          </p>
-        )}
-        {shareMessage && (
-          <p className="editor-save-status" role="status">
-            {shareMessage}
-          </p>
-        )}
-        {error && (
-          <p className="error" role="alert">
-            {error} Your draft has been kept. Use Import & export to keep a JSON backup before
-            reloading.
-          </p>
-        )}
+          )}
+        </section>
         {preview && (
           <EditorDialog open wide title="Build preview" onClose={() => setPreview(false)}>
-            <div className="guest-build-preview">
-              <h2>{draft.title || "Untitled build"}</h2>
-              <p>
-                {draft.contentType} · {guest ? "Guest draft" : "Unsaved preview"}
-              </p>
-              <BuildLoadoutView
-                region={draft.region}
-                equipment={draft.equipment.filter((row) => row.itemId)}
-              />
-              <section
-                id="build-cost"
-                className="editor-preview-cost"
-                aria-label="Preview loadout cost"
-              >
-                <LoadoutPriceCheck
-                  region={draft.region}
-                  equipment={draft.equipment.filter((row) => row.itemId)}
-                />
-              </section>
+            <div className="guest-build-preview build-detail-page editor-preview">
+              <div className="editor-preview-top">
+                <div className="editor-preview-card">
+                  <BuildWindow
+                    titleId={`${titleId}-preview`}
+                    href={id ? `/builds/${id}` : "/builds/new"}
+                    title={draft.title || "Untitled build"}
+                    category={draft.contentType}
+                    activity={draft.contentType}
+                    weaponName={mainHand ? equipmentName(mainHand.itemId) : ""}
+                    weaponItemId={mainHand?.itemId}
+                    author="you"
+                    updatedAt={new Date()}
+                    pieces={pieces}
+                    spellNames={spellNames}
+                    heart={null}
+                  />
+                  <p className="editor-muted">How the build shows in the builds list.</p>
+                </div>
+                <div className="editor-preview-side">
+                  <div className="editor-preview-head">
+                    <p>
+                      {guest ? "Guest draft" : "Unsaved preview"} · how other players will see the
+                      build, with its cost
+                    </p>
+                    <a className="pill-link is-small" href="#build-cost">
+                      Check loadout cost <ArrowDown size={14} aria-hidden="true" />
+                    </a>
+                  </div>
+                  <section
+                    id="build-cost"
+                    className="raised detail-panel-frame editor-preview-cost"
+                    aria-label="Preview loadout cost"
+                  >
+                    <LoadoutPriceCheck region={draft.region} equipment={equipped} />
+                  </section>
+                </div>
+              </div>
+              <BuildLoadoutView region={draft.region} equipment={equipped} />
             </div>
           </EditorDialog>
         )}
@@ -656,53 +690,48 @@ export function BuildEditor({
                   [next]?.focus();
               }}
             >
-              <Icon size={16} /> {label}
+              <Icon size={16} aria-hidden="true" /> {label}
               {key === "alternatives" && !!draft.equipmentSets.length && (
-                <span aria-hidden="true">{draft.equipmentSets.length}</span>
+                <span className="editor-tab-count" aria-hidden="true">
+                  {draft.equipmentSets.length}
+                </span>
               )}
             </button>
           ))}
         </div>
-        {guest && !initial && !supportedEquipment.length && (
-          <div className="build-editor-context">
-            <div className="guest-build-notice">
-              <p>
-                <strong>Starting from scratch?</strong> Load a complete Battleaxe set to see how a
-                build fits together, then swap pieces.
-              </p>
+        {!initial && !supportedEquipment.length && section !== "notes" && (
+          <EmptyWell
+            emblem="strip-builds"
+            title="Nothing equipped yet"
+            line="Start from a complete Battleaxe set to see how a build fits together, then swap pieces."
+            action={
               <button
                 type="button"
                 className="button secondary"
                 onClick={() => {
-                  if (
-                    supportedEquipment.length &&
-                    !window.confirm(
-                      "Replace your current equipment with the example set? Save your draft first to keep it.",
-                    )
-                  )
-                    return;
                   updateEquipment(templateEquipment("battleaxe"));
                   if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
                 }}
               >
                 Load example equipment
               </button>
-            </div>
-          </div>
+            }
+          />
         )}
         {draft.equipment.some((row) => row.itemId && !findEquipment(row.itemId)) && (
-          <p className="studio-notice">
-            This build includes exact item IDs outside the visual picker. They are kept in your
-            draft; use{" "}
+          <div className="editor-notice">
+            <span>
+              This build has item IDs the picker doesn’t list. They stay in your draft; edit them
+              under Notes.
+            </span>
             <a
-              className="text-link"
+              className="pill-link is-small"
               href="#advanced-build-items"
               onClick={() => setSection("notes")}
             >
-              Advanced item IDs & notes
-            </a>{" "}
-            to edit them.
-          </p>
+              Edit item IDs
+            </a>
+          </div>
         )}
         <div
           hidden={section === "notes"}
@@ -737,12 +766,16 @@ export function BuildEditor({
           aria-labelledby="editor-tab-notes"
           className="editor-notes-workspace"
         >
-          <details className="build-settings panel" open>
-            <summary>Build settings & description</summary>
-            <div className="input-grid">
+          <section className="raised editor-notes-panel" aria-labelledby="editor-settings-title">
+            <PanelHead
+              id="editor-settings-title"
+              title="Build settings"
+              line="Where it’s played, for how many, and what it’s about."
+            />
+            <div className="editor-field-grid">
               <label>
-                Build region
-                <select
+                <span>Build region</span>
+                <WellSelect
                   aria-label="Build region"
                   value={draft.region}
                   onChange={(e) => update("region", e.target.value as BuildInput["region"])}
@@ -750,10 +783,10 @@ export function BuildEditor({
                   <option value="europe">Europe</option>
                   <option value="americas">Americas</option>
                   <option value="asia">Asia</option>
-                </select>
+                </WellSelect>
               </label>
               <label>
-                Player count
+                <span>Player count</span>
                 <input
                   type="number"
                   min={1}
@@ -763,179 +796,287 @@ export function BuildEditor({
                 />
               </label>
               <label>
-                Recommended IP (author estimate)
+                <span>Recommended IP</span>
                 <input
                   type="number"
                   min={0}
                   max={4000}
                   value={draft.recommendedIP}
+                  aria-describedby="editor-ip-help"
                   onChange={(e) => update("recommendedIP", Number(e.target.value))}
                 />
+                <small id="editor-ip-help">Your estimate. 0 hides it.</small>
               </label>
             </div>
             <label>
-              Description
+              <span>Description</span>
               <textarea
+                rows={4}
                 maxLength={4000}
                 value={draft.description}
+                placeholder="What the build is for, in a sentence or two."
                 onChange={(e) => update("description", e.target.value)}
               />
             </label>
-          </details>
-          <details className="advanced-build panel" id="advanced-build-items">
-            <summary>Advanced item IDs & notes</summary>
-            <p className="muted">
-              Use exact IDs for items outside the supported picker. Author-entered ability notes are
-              not validated spell selections.
-            </p>
-            {draft.equipment.map((row, i) => (
-              <div key={i} className="equipment-row">
-                <div className="input-grid">
-                  <label>
-                    Equipment slot {i + 1}
-                    <select
-                      aria-label={`Equipment slot ${i + 1}`}
-                      value={row.slot}
-                      onChange={(e) => equip(i, "slot", e.target.value)}
-                    >
-                      {slots.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    Item ID {i + 1}
-                    <input
-                      pattern="[A-Z0-9_@]+"
-                      maxLength={100}
-                      value={row.itemId}
-                      onChange={(e) => equip(i, "itemId", e.target.value.toUpperCase())}
-                    />
-                  </label>
-                  <label>
-                    Quality {i + 1}
-                    <select
-                      aria-label={`Quality ${i + 1}`}
-                      value={row.quality}
-                      onChange={(e) => equip(i, "quality", Number(e.target.value))}
-                    >
-                      {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map((q, j) => (
-                        <option key={q} value={j + 1}>
-                          {q}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    Abilities / passives {i + 1}
-                    <input
-                      maxLength={1000}
-                      value={row.abilities}
-                      onChange={(e) => equip(i, "abilities", e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Alternatives / swaps {i + 1}
-                    <input
-                      maxLength={1000}
-                      value={row.alternatives}
-                      onChange={(e) => equip(i, "alternatives", e.target.value)}
-                    />
-                  </label>
-                </div>
-                <button
-                  className="button secondary"
-                  type="button"
-                  onClick={() =>
-                    update(
-                      "equipment",
-                      draft.equipment.filter((_, j) => j !== i),
-                    )
-                  }
-                >
-                  Remove {row.slot}
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              className="button secondary"
-              disabled={draft.equipment.length >= 10}
-              onClick={() => {
-                const slot = slots.find((s) => !draft.equipment.some((r) => r.slot === s));
-                if (slot)
-                  update("equipment", [
-                    ...draft.equipment,
-                    {
-                      slot,
-                      itemId: "",
-                      quality: 1,
-                      abilities: "",
-                      alternatives: "",
-                      abilitySelections: {},
-                      alternativeItemIds: [],
-                    },
-                  ]);
-              }}
-            >
-              Add equipment slot
-            </button>
-          </details>
-          <details className="build-notes panel" open>
-            <summary>Strategy & revision notes</summary>
+          </section>
+          <section className="raised editor-notes-panel" aria-labelledby="editor-strategy-title">
+            <PanelHead
+              id="editor-strategy-title"
+              title="Strategy & patch notes"
+              line="How to play it, what it beats, and what changed."
+            />
             <label>
-              Strategy, advantages, weaknesses and matchup notes
+              <span>Strategy, strengths, weaknesses and matchups</span>
               <textarea
-                rows={8}
+                rows={7}
                 maxLength={12000}
                 value={draft.strategy}
                 onChange={(e) => update("strategy", e.target.value)}
               />
             </label>
-            <label className="section">
-              Patch / version notes
+            <label>
+              <span>Patch notes</span>
               <textarea
+                rows={3}
                 maxLength={2000}
                 value={draft.patchNotes}
+                placeholder="Which patch this was made for, or what changed in this revision."
                 onChange={(e) => update("patchNotes", e.target.value)}
               />
             </label>
-          </details>
-        </div>
-        {supportedEquipment.length > 0 && (
-          <details className="editor-price-workspace">
-            <summary>Market estimates & shopping list</summary>
-            <LoadoutPriceCheck
-              region={draft.region}
-              equipment={draft.equipment.filter((row) => row.itemId)}
+          </section>
+          <section
+            className="raised editor-notes-panel editor-advanced"
+            id="advanced-build-items"
+            aria-labelledby="editor-advanced-title"
+          >
+            <PanelHead
+              id="editor-advanced-title"
+              title="Exact item IDs"
+              line="For items the picker doesn’t list. Ability and swap notes here are free text."
             />
-          </details>
-        )}
-        {id && (
-          <div className="actions section editor-danger-zone">
-            <button
-              type="button"
-              className="button secondary negative"
-              onClick={async () => {
-                if (!window.confirm("Permanently delete this build and all revisions?")) return;
-                setSaving(true);
-                try {
-                  const response = await fetch(`/api/builds/${id}`, { method: "DELETE" });
-                  if (!response.ok) throw new Error("Could not delete build");
-                  router.push("/builds");
-                  router.refresh();
-                } catch (e) {
-                  setError(e instanceof Error ? e.message : "Could not delete build");
-                } finally {
-                  setSaving(false);
-                }
-              }}
+            <Disclosure
+              summary="Advanced item IDs & notes"
+              meta={`${draft.equipment.length} ${draft.equipment.length === 1 ? "slot" : "slots"}`}
             >
-              Delete build
-            </button>
+              <div className="editor-id-rows">
+                {draft.equipment.map((row, i) => (
+                  <div key={i} className="editor-id-row">
+                    <label>
+                      <span>Equipment slot {i + 1}</span>
+                      <WellSelect
+                        aria-label={`Equipment slot ${i + 1}`}
+                        value={row.slot}
+                        onChange={(e) => equip(i, "slot", e.target.value)}
+                      >
+                        {slots.map((s) => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </WellSelect>
+                    </label>
+                    <label>
+                      <span>Item ID {i + 1}</span>
+                      <input
+                        pattern="[A-Z0-9_@]+"
+                        maxLength={100}
+                        value={row.itemId}
+                        onChange={(e) => equip(i, "itemId", e.target.value.toUpperCase())}
+                      />
+                    </label>
+                    <label>
+                      <span>Quality {i + 1}</span>
+                      <WellSelect
+                        aria-label={`Quality ${i + 1}`}
+                        value={row.quality}
+                        onChange={(e) => equip(i, "quality", Number(e.target.value))}
+                      >
+                        {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map(
+                          (q, j) => (
+                            <option key={q} value={j + 1}>
+                              {q}
+                            </option>
+                          ),
+                        )}
+                      </WellSelect>
+                    </label>
+                    <label>
+                      <span>Abilities / passives {i + 1}</span>
+                      <input
+                        maxLength={1000}
+                        value={row.abilities}
+                        onChange={(e) => equip(i, "abilities", e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      <span>Alternatives / swaps {i + 1}</span>
+                      <input
+                        maxLength={1000}
+                        value={row.alternatives}
+                        onChange={(e) => equip(i, "alternatives", e.target.value)}
+                      />
+                    </label>
+                    <button
+                      className="button secondary editor-remove-item"
+                      type="button"
+                      onClick={() =>
+                        update(
+                          "equipment",
+                          draft.equipment.filter((_, j) => j !== i),
+                        )
+                      }
+                    >
+                      <Trash2 size={15} aria-hidden="true" /> Remove {row.slot}
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="button secondary editor-add-row"
+                  disabled={draft.equipment.length >= 10}
+                  onClick={() => {
+                    const slot = slots.find((s) => !draft.equipment.some((r) => r.slot === s));
+                    if (slot)
+                      update("equipment", [
+                        ...draft.equipment,
+                        {
+                          slot,
+                          itemId: "",
+                          quality: 1,
+                          abilities: "",
+                          alternatives: "",
+                          abilitySelections: {},
+                          alternativeItemIds: [],
+                        },
+                      ]);
+                  }}
+                >
+                  <Plus size={15} aria-hidden="true" /> Add equipment slot
+                </button>
+              </div>
+            </Disclosure>
+          </section>
+        </div>
+        {/* The detail page's cost panel, as it is there */}
+        <div className="build-detail-page editor-price-workspace">
+          <div className="raised detail-panel-frame">
+            <LoadoutPriceCheck region={draft.region} equipment={equipped} />
           </div>
+        </div>
+        {id && (
+          <section className="raised editor-danger-zone" aria-labelledby="editor-delete-title">
+            <PanelHead
+              id="editor-delete-title"
+              title="Delete this build"
+              line="Removes the build and every revision for good."
+              actions={
+                <button
+                  type="button"
+                  className="button secondary editor-remove-item"
+                  onClick={async () => {
+                    if (!window.confirm("Permanently delete this build and all revisions?")) return;
+                    setSaving(true);
+                    try {
+                      const response = await fetch(`/api/builds/${id}`, { method: "DELETE" });
+                      if (!response.ok) throw new Error("Could not delete build");
+                      router.push("/builds");
+                      router.refresh();
+                    } catch (e) {
+                      setError(e instanceof Error ? e.message : "Could not delete build");
+                    } finally {
+                      setSaving(false);
+                    }
+                  }}
+                >
+                  <Trash2 size={15} aria-hidden="true" /> Delete build
+                </button>
+              }
+            />
+          </section>
         )}
+        <div className="editor-save-bar">
+          <span className="editor-save-summary" aria-hidden="true">
+            <strong>{draft.title || "Untitled build"}</strong>
+            <small>
+              {equipped.length}/10 equipped · {status}
+            </small>
+          </span>
+          <button
+            type="button"
+            className="button secondary"
+            disabled={!supportedEquipment.length}
+            data-editor-action="preview"
+            onClick={() => setPreview(true)}
+          >
+            <Eye size={15} aria-hidden="true" /> Preview build
+          </button>
+          <button className="button primary editor-persistent-save" disabled={saving}>
+            {saving
+              ? "Saving…"
+              : guest
+                ? "Save on this device"
+                : id
+                  ? "Save new revision"
+                  : "Save build"}
+          </button>
+        </div>
       </fieldset>
+      <section
+        className="raised has-scene builds-next-step"
+        data-scene="build"
+        aria-labelledby="editor-next-step"
+      >
+        {guest ? (
+          <>
+            <h2 id="editor-next-step">
+              Keep it on your <em>account</em>
+            </h2>
+            <p>
+              Sign in with Discord to publish the build, share a link and put it in your Team’s
+              comps.
+            </p>
+            <div className="builds-next-step-actions">
+              <Link className="button primary" href="/signin">
+                <LogIn size={16} aria-hidden="true" /> Sign in
+              </Link>
+              <Link className="button secondary" href="/builds/library">
+                Browse the library <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            </div>
+          </>
+        ) : id ? (
+          <>
+            <h2 id="editor-next-step">
+              Take it to your <em>Team</em>
+            </h2>
+            <p>Put the saved build in a comp so everyone knows who runs what.</p>
+            <div className="builds-next-step-actions">
+              <BuildCompositionLink
+                fromBuild={id}
+                label="Add to a comp"
+                className="button primary"
+              />
+              <Link className="button secondary" href={`/builds/${id}`}>
+                View build <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 id="editor-next-step">
+              Plan <em>around</em> it
+            </h2>
+            <p>Once it’s saved, put the build in a comp so your Team knows who runs what.</p>
+            <div className="builds-next-step-actions">
+              <Link className="button primary" href="/compositions/new">
+                <UsersRound size={16} aria-hidden="true" /> Plan a comp
+              </Link>
+              <Link className="button secondary" href="/builds">
+                Community builds <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            </div>
+          </>
+        )}
+      </section>
     </form>
   );
 }

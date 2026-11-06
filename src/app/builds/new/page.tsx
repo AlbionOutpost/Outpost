@@ -1,5 +1,6 @@
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
+import { ArrowLeft } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { BuildEditor } from "@/components/build-editor";
 import { findLibraryBuild, libraryBuildDraft } from "@/lib/grind-library";
@@ -24,17 +25,26 @@ export default async function NewBuild({
         glyph="builds"
         scene="builds"
         title="Create a build"
-        description="Pick each piece on the board, choose its abilities, then save or share your loadout."
+        accent="build"
+        description={
+          source
+            ? `A copy of ${source.title} by ${source.author}. Change any piece, then save it as your own.`
+            : "Pick each piece on the board, choose its abilities, then save the loadout or share it."
+        }
       >
-        {source && (
-          <p className="library-provenance">
-            Adapted from{" "}
-            <Link className="text-link" href={`/builds/library/${encodeURIComponent(source.slug)}`}>
-              {source.title}
-            </Link>{" "}
-            · {source.author}
-          </p>
-        )}
+        <div className="editor-backline">
+          <Link className="pill-link is-small" href="/builds">
+            <ArrowLeft size={14} aria-hidden="true" /> Builds
+          </Link>
+          {source && (
+            <Link
+              className="pill-link is-small"
+              href={`/builds/library/${encodeURIComponent(source.slug)}`}
+            >
+              Original build
+            </Link>
+          )}
+        </div>
       </WorkspaceHeading>
       <BuildEditor
         key={`${session?.user?.id || "guest"}:${source?.slug || "blank"}:${initial?.region || "preferred"}`}
