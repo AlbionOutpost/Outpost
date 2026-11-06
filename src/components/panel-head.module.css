@@ -63,4 +63,12 @@
   :global(.app.outpost) .title.title {
     font-size: 19px;
   }
+  /* Actions drop under the copy instead of squeezing the title, like the landing section heads. */
+  :global(.app.outpost) .copy.copy {
+    flex-basis: calc(100% - 50px);
+  }
+  :global(.app.outpost) .actions.actions {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
 }
