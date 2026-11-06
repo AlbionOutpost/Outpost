@@ -152,7 +152,7 @@ test("player profiles only exist for public contributors or the account itself",
   });
   try {
     await page.goto(`/players/${id}`);
-    await expect(page.getByRole("heading", { name: "Page not found." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
     await expect(page.getByText(name)).toHaveCount(0);
     await context.addCookies([
       {

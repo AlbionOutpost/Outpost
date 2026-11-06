@@ -1,0 +1,66 @@
+/* A working panel's head, in the landing tool card's type: Barlow title, one muted line */
+:global(.app.outpost) .head.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 var(--space-4);
+}
+:global(.app.outpost) .emblem.emblem {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  filter: drop-shadow(0 3px 8px #0009);
+}
+:global(.app.outpost) .step.step {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 800 15px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .copy.copy {
+  flex: 1;
+  min-width: 0;
+}
+:global(.app.outpost) .title.title {
+  margin: 0;
+  font: 800 21px/1.15 var(--font-display);
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+:global(.app.outpost) .title.title em {
+  font-style: normal;
+  color: var(--accent);
+}
+:global(.app.outpost) .line.line {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+:global(.app.outpost) .actions.actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .head.head {
+    flex-wrap: wrap;
+  }
+  :global(.app.outpost) .emblem.emblem {
+    width: 36px;
+    height: 36px;
+  }
+  :global(.app.outpost) .title.title {
+    font-size: 19px;
+  }
+}

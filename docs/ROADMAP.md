@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Redesign batch 0: foundation — 6 November 2026
+
+- Inner-page mastheads are open again: the rule that boxed every `WorkspaceHeading` is deleted, so ~35 routes now open on the painted backdrop like the landing. Guide readers show their cover across the masthead; the dashboard and settings show the player's Discord picture. Phone mastheads shade the copy edge to edge, and tab rows that overflow fade on the cut edge.
+- One set of accent, radius and page-width tokens, defined at the top of `product-system.css` (`--page-width` 1240px, `--workspace-width` 1392px, `--radius-md` 10px); the shadowed `--accent-*`, `--action*` and `--radius-*` definitions in seven older sheets are gone. DESIGN.md's frontmatter now lists what ships.
+- Shared components for the page batches: `SectionHeading`, `PanelHead`, `EmptyWell`, `StatusLine` / `Unavailable`, `Disclosure`, `WellSelect` and `SystemPage` (see DESIGN.md › Shared building blocks). Section headings are mixed case with one accent word, as on the landing.
+- The 404 and error pages use the landing hero's language, `global-error.tsx` covers a failing root layout, and the root loading state is neutral instead of calculator-shaped.
+- Next: page batches 1–9 move routes onto these pieces and onto `--page-width` / `--workspace-width`.
+
 ## Route-scoped stylesheets — 6 November 2026
 
 - The root layout imports 16 global stylesheets (was 32). The 13 build, composition, Team build and guide sheets load from `src/app/build-styles.ts` in the `builds`, `compositions` and `guides` layouts and the favorites, Team and item pages; `fishing-workspace.css` and `journal-workspace.css` load with their calculators. CSS on the homepage in a production build: 513 KB → 347 KB (84 KB → 60 KB gzip) with Turbopack, 519 KB → 352 KB with webpack (the Cloudflare build).

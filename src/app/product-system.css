@@ -1,5 +1,10 @@
-/* Owner correction: warm dark metal, copper and readable task-specific surfaces. */
+/* The shipped tokens: warm dark metal, copper and readable task-specific surfaces. This is the
+   only place the accent, radius and page-width tokens are defined (DESIGN.md mirrors it). */
 .app.outpost {
+  /* Hubs and reading pages share the landing's measure; dense workspaces get the wide one */
+  --page-width: 1240px;
+  --workspace-width: 1392px;
+  --page-gutter: 32px;
   --radius-control: 7px;
   --radius-panel: 8px;
   --radius-sm: 6px;
@@ -67,6 +72,7 @@
   --action: #8f3d14;
   --accent-ink: #7a3210;
   --accent-hover: #6e2c0c;
+  --accent-active: #c85a2f;
   --action-hover: #6e2c0c;
   --accent-wash: #8f3d1417;
   --focus: #25507f;
@@ -346,11 +352,21 @@
   background: linear-gradient(90deg, #0c0d10b8 0%, #0c0d1080 34%, #0c0d1020 62%, transparent 82%);
   mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
 }
+/* A page with a painting of its own (a guide's cover) shows it across the masthead, under the
+   same shade, and lets it dissolve into the backdrop below the copy. */
+.app.outpost .workspace-identity[data-scene="cover"]::before {
+  background:
+    linear-gradient(90deg, #0c0d10d9 0%, #0c0d10a6 38%, #0c0d1033 70%, transparent 90%),
+    linear-gradient(180deg, #0c0d1066 0%, transparent 30%),
+    var(--scene) center 35% / cover no-repeat;
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+}
 /* Mastheads sit on the painting, so like the landing hero they keep the night palette in
    both themes: light copy over a dark shade. */
-.app.outpost.light :is(.workspace-identity, .masthead)[data-scene] {
+.app.outpost.light :is(.workspace-identity[data-scene], .masthead[data-scene], .system-page) {
   --text: #f4f2ee;
   --muted: #ddd8d0;
+  --secondary: #ddd8d0;
   --accent: #ee945a;
   --accent-ink: #ffb482;
   --panel: #191d22;
@@ -454,6 +470,15 @@
     padding: 40px calc(50vw - 50%) 40px;
     min-height: 240px;
   }
+  /* On a phone the copy spans the width, so the shade covers it edge to edge */
+  .app.outpost :is(.workspace-identity, .masthead)[data-scene]:not([data-scene="cover"])::before {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--illustration-bg) 76%, transparent) 0%,
+      color-mix(in srgb, var(--illustration-bg) 58%, transparent) 70%,
+      color-mix(in srgb, var(--illustration-bg) 42%, transparent) 100%
+    );
+  }
 }
 @media (max-width: 700px) {
   .app.outpost .workspace-identity {
@@ -488,6 +513,98 @@
   .app.outpost .workspace-identity-actions > .button {
     width: 100%;
     min-height: 44px;
+  }
+}
+
+/* Not found, error and loading: the landing hero's language, full-bleed on the backdrop, the
+   copy centred over a soft oval shade. Always over the painting, so always the night palette. */
+.app.outpost .system-page {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  min-height: clamp(520px, calc(100svh - 160px), 760px);
+  margin: -32px 0 0 calc(50% - 50vw);
+  padding: 72px var(--page-gutter) 96px;
+  text-align: center;
+  color: var(--text);
+}
+.app.outpost .system-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse 46% 58% at 50% 50%,
+    color-mix(in srgb, var(--illustration-bg) 76%, transparent) 0%,
+    color-mix(in srgb, var(--illustration-bg) 50%, transparent) 45%,
+    color-mix(in srgb, var(--illustration-bg) 14%, transparent) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.app.outpost .system-page-copy {
+  display: grid;
+  justify-items: center;
+  max-width: 640px;
+}
+.app.outpost .system-page-emblem {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 10px #000a)
+    drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+.app.outpost .system-page-eyebrow {
+  margin: 0 0 14px;
+  color: var(--accent-ink);
+  font: 700 12px/1.3 var(--font-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.app.outpost .system-page h1 {
+  margin: 0 0 16px;
+  font: 800 clamp(44px, 5.4vw, 76px) / 0.96 var(--font-display);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--text);
+  text-shadow: 0 2px 18px #000c;
+}
+.app.outpost .system-page h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.app.outpost .system-page-line {
+  max-width: 50ch;
+  margin: 0 0 28px;
+  color: var(--secondary);
+  font-size: 17px;
+  line-height: 1.55;
+  text-shadow: 0 2px 18px #000c;
+}
+.app.outpost .system-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+@media (max-width: 700px) {
+  .app.outpost {
+    --page-gutter: 16px;
+  }
+  .app.outpost .system-page {
+    margin-top: -24px;
+    padding-block: 56px 72px;
+  }
+  .app.outpost .system-page-line {
+    font-size: 15px;
+  }
+  .app.outpost .system-page-actions {
+    align-self: stretch;
+  }
+  .app.outpost .system-page-actions > * {
+    flex: 1 1 auto;
   }
 }
 
@@ -979,8 +1096,8 @@
 .app.outpost .section-heading h2 {
   margin: 0;
   font: 800 clamp(26px, 2.6vw, 34px) / 1.05 var(--font-display);
-  letter-spacing: 0;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  text-transform: none;
 }
 .app.outpost .section-heading h2 em {
   font-style: normal;
@@ -995,6 +1112,17 @@
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: end;
+}
+@media (max-width: 700px) {
+  .app.outpost .section-heading:not(.landing-section-heading) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .section-heading:not(.landing-section-heading) > .pill-link {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+    margin-top: 12px;
+  }
 }
 .app.outpost .pill-link {
   display: inline-flex;
@@ -1177,6 +1305,12 @@
   }
   .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs)::-webkit-scrollbar {
     display: none;
+  }
+  /* A pill cut by the edge fades out, so the row reads as one you can scroll; the extra end
+     padding lets the last pill scroll clear of the fade */
+  .app.outpost :is(.masthead-tabs, .production-mode-nav, .discovery-tabs) {
+    padding-inline-end: 40px;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
   }
 }
 
@@ -1783,80 +1917,6 @@
   gap: 4px;
   min-height: 24px;
 }
-
-/* Working-page mastheads inherit the landing's type and copper on a quiet, readable surface. */
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity[data-scene] {
-  min-height: 0;
-  width: 100%;
-  --text: inherit;
-  --muted: inherit;
-  --accent: inherit;
-  --accent-ink: inherit;
-  --panel: inherit;
-  --elevated: inherit;
-  --border: inherit;
-  --bg: inherit;
-  color: var(--text);
-  padding: 28px;
-  margin: 0 0 28px;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: none;
-  gap: 28px;
-  align-items: center;
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity[data-scene]::before,
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity[data-scene]::after {
-  display: none;
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity
-  .page-title {
-  font: 800 clamp(30px, 3.4vw, 46px)/1.08 var(--font-display);
-  text-transform: none;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-  text-shadow: none;
-  color: var(--text);
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity
-  .intro {
-  max-width: 66ch;
-  margin-top: 9px;
-  font-size: 14px;
-  line-height: 1.65;
-  color: var(--secondary);
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-emblem {
-  width: 58px;
-  height: 64px;
-  flex: 0 0 58px;
-  filter: drop-shadow(0 4px 5px #0004);
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-emblem
-  .painted-emblem {
-  width: 58px;
-  height: 58px;
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity-head {
-  gap: 18px;
-}
 .app.outpost:not(.home-route)
   main:not(:has(.gear-studio, .composition-directory))
   :is(.reference-recipe-identity)
@@ -1864,60 +1924,9 @@
   font-family: var(--font-ui);
   letter-spacing: -0.01em;
 }
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  .workspace-identity
-  .masthead-tabs {
-  margin-top: 18px;
-}
-.app.outpost:not(.home-route)
-  main:not(:has(.gear-studio, .composition-directory))
-  :is(.panel, .raised)
-  :is(input, select, textarea):focus-visible {
+.app.outpost:not(.home-route) :is(.panel, .raised) :is(input, select, textarea):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-}
-@media (max-width: 760px) {
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-identity[data-scene] {
-    padding: 20px;
-    margin-bottom: 20px;
-    gap: 18px;
-  }
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-identity-head {
-    gap: 12px;
-    align-items: start;
-  }
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-emblem {
-    width: 44px;
-    flex-basis: 44px;
-    height: 48px;
-  }
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-emblem
-    .painted-emblem {
-    width: 44px;
-    height: 44px;
-  }
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-identity
-    .intro {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .app.outpost:not(.home-route)
-    main:not(:has(.gear-studio, .composition-directory))
-    .workspace-identity
-    .page-title {
-    font-size: 32px;
-  }
 }
 /* Painted cover cards retain their own scenes; working windows use their quiet surface. */
 .app.outpost:not(.home-route)

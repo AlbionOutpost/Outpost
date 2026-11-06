@@ -1,14 +1,8 @@
 /* The five supplied October 27 references are the active visual authority.
    Legacy route styles remain scoped; these tokens and shared primitives own the shell. */
 .app.outpost {
-  --radius-control: 6px;
-  --radius-panel: 8px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
   --space-12: 48px;
   --space-16: 64px;
-  --accent-active: #c85a2f;
   --accent-soft: #f0b498;
   --warning: #f59e0b;
   --info: #3b82f6;
@@ -25,24 +19,12 @@
   --text: #f1f5f9;
   --muted: #a3acb8;
   --text-muted: #8793a0;
-  --accent: #f9733a;
-  --accent-hover: #ff975e;
-  --accent-ink: #ff975e;
-  --accent-wash: #f9733a14;
-  --action: #f9733a;
-  --action-hover: #ff975e;
   --success: #4ade80;
   --error: #f87171;
   --shadow: 0 8px 24px #0003;
   background: var(--bg);
 }
 .app.outpost.light {
-  --action: #ad3c0d;
-  --action-hover: #8c300a;
-  --accent: #ad3c0d;
-  --accent-ink: #a53b12;
-  --accent-hover: #8c300a;
-  --accent-wash: #ad3c0d0d;
   --surface-3: #e1e6ec;
 }
 .app.outpost ::selection {

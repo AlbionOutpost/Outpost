@@ -23,9 +23,7 @@ for (const [calculator, recipe] of [
     await expect(
       page.getByRole("heading", { name: "Recipe unavailable in this calculator", exact: true }),
     ).toBeVisible();
-    await expect(
-      page.getByText("This page is temporarily unavailable.", { exact: true }),
-    ).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "This page didn’t load" })).toHaveCount(0);
     await page.getByRole("link", { name: "Start with the default recipe", exact: true }).click();
     await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
     await expect(
