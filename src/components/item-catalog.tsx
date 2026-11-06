@@ -304,6 +304,7 @@ export function ItemCatalog({
             <button
               type="button"
               className="pill-link is-small"
+              aria-label="Previous items"
               disabled={page === 1 || busy}
               onClick={() => {
                 setPage(page - 1);
@@ -311,7 +312,7 @@ export function ItemCatalog({
               }}
             >
               <ArrowLeft size={14} aria-hidden="true" />
-              Previous items
+              Previous
             </button>
             <span>
               Page {page} of {pages.toLocaleString()}
@@ -319,13 +320,14 @@ export function ItemCatalog({
             <button
               type="button"
               className="pill-link is-small"
+              aria-label="Next items"
               disabled={busy || page * 30 >= result.total}
               onClick={() => {
                 setPage(page + 1);
                 setMore(false);
               }}
             >
-              Next items
+              Next
               <ArrowRight size={14} aria-hidden="true" />
             </button>
           </nav>
