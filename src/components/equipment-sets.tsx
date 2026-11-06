@@ -17,12 +17,15 @@ export function EquipmentSets({
   onEquipment,
   onSets,
   expanded = false,
+  part,
 }: {
   equipment: EquipmentChoice[];
   sets: EquipmentSet[];
   onEquipment: (rows: EquipmentChoice[]) => void;
   onSets: (sets: EquipmentSet[]) => void;
   expanded?: boolean;
+  /** Expanded only: show the starting templates or the spare sets as their own panel. */
+  part?: "templates" | "spares";
 }) {
   const [name, setName] = useState("");
   const [template, setTemplate] = useState("battleaxe");
@@ -85,7 +88,7 @@ export function EquipmentSets({
               </button>
               <button
                 type="button"
-                className="button secondary"
+                className="button secondary editor-remove-item"
                 aria-label={`Remove ${set.name} set`}
                 onClick={() => {
                   onSets(sets.filter((s) => s.id !== set.id));
@@ -106,12 +109,9 @@ export function EquipmentSets({
   );
   // The build editor shows templates and spare sets as two working panels; the comp editor
   // keeps them folded in its member dialog.
-  if (expanded)
+  if (expanded && part === "templates")
     return (
-      <section
-        className="equipment-set-tools is-expanded"
-        aria-label="Equipment sets and templates"
-      >
+      <section className="equipment-set-tools is-expanded" aria-label="Starting sets">
         <div className="raised editor-sets-panel">
           <PanelHead
             title="Starting sets"
@@ -143,7 +143,13 @@ export function EquipmentSets({
               </article>
             ))}
           </div>
+          {message && <StatusLine>{message}</StatusLine>}
         </div>
+      </section>
+    );
+  if (expanded)
+    return (
+      <section className="equipment-set-tools is-expanded" aria-label="Spare sets">
         <div className="raised editor-sets-panel">
           <PanelHead
             title="Spare sets"

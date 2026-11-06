@@ -207,7 +207,7 @@ test("populated build editor preserves gear, choices and revisions across respon
     });
     await expect(occupiedOffHand).toBeVisible();
     await expect(occupiedOffHand).toHaveClass(/is-two-handed/);
-    await expect(occupiedOffHand.locator(".inventory-slot-shadow img")).toHaveCount(1);
+    await expect(occupiedOffHand.locator(".loadout-board-shadow img")).toHaveCount(1);
     await expect(page.getByLabel("Main hand alternative", { exact: true })).toHaveValue(
       "T6_MAIN_AXE@1",
     );

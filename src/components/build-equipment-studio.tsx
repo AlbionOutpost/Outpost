@@ -1,17 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  ArrowDown,
-  ArrowRight,
-  Check,
-  Plus,
-  Search,
-  ShieldAlert,
-  Trash2,
-  Undo2,
-  X,
-} from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowRight, Check, Plus, Search, ShieldAlert, Trash2, Undo2 } from "lucide-react";
 import {
   equipmentFamilies,
   equipmentId,
@@ -24,7 +14,7 @@ import { abilitiesFor, archivedSpellOptions } from "@/lib/albion/equipment-abili
 import { equipmentChoice } from "@/lib/albion/equipment-validation";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { EditorDialog } from "./editor-dialog";
-import { InventoryEquipmentBoard } from "./inventory-equipment-board";
+import { LoadoutBoard } from "./loadout-board";
 import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
 import { PanelHead } from "./panel-head";
@@ -40,11 +30,17 @@ export function BuildEquipmentStudio({
   onChange,
   view = "equipment",
   captureUndo,
+  boardEmpty,
+  flaggedSlot,
 }: {
   value: EquipmentChoice[];
   onChange: (value: EquipmentChoice[]) => void;
   view?: BuildStudioView;
   captureUndo?: () => () => void;
+  /** Shown in the board's panel while nothing is equipped: the one way to start. */
+  boardEmpty?: ReactNode;
+  /** A slot to mark, such as a missing main hand after a failed save. */
+  flaggedSlot?: string;
 }) {
   const [slot, setSlot] = useState<EquipmentSlot>("Main hand");
   const [picker, setPicker] = useState<"recommended" | "alternative" | null>(null);
@@ -68,7 +64,6 @@ export function BuildEquipmentStudio({
   const twoHanded = !!findEquipment(value.find((row) => row.slot === "Main hand")?.itemId || "")
     ?.family.twoHanded;
   const blocked = slot === "Off hand" && twoHanded;
-  const options = current ? abilitiesFor(current.itemId) : {};
   function selectSlot(target: EquipmentSlot) {
     setSlot(target);
     if (matchMedia("(max-width: 980px)").matches)
@@ -179,67 +174,83 @@ export function BuildEquipmentStudio({
         !!findEquipment(equipmentId(f, tier, enchant)),
     )
     .filter((f) => picker !== "alternative" || equipmentId(f, tier, enchant) !== current?.itemId);
-  const inventory = value.map((item) => {
-    const info = findEquipment(item.itemId);
+  const pieces = value.map((item) => {
     const spells = archivedSpellOptions(item.itemId);
     return {
-      ...item,
+      slot: item.slot,
+      itemId: item.itemId,
       name: equipmentName(item.itemId),
-      tierLabel: info ? `T${info.tier}.${info.enchantment}` : undefined,
-      qualityLabel: qualityNames[item.quality - 1],
-      spells: Object.entries(item.abilities).map(([key, name]) => ({
-        key,
-        name,
-        id: spells.find((spell) => spell.key === key && spell.name === name)?.id,
-      })),
-      alternativeItemId: item.alternatives[0],
+      swap: item.alternatives[0],
+      skills: Object.entries(item.abilities).flatMap(([key, name]) => {
+        const id = spells.find((spell) => spell.key === key && spell.name === name)?.id;
+        return id ? [id] : [];
+      }),
     };
   });
-  const abilityControls = current && (
-    <div
-      className="studio-spell-choices editor-ability-choices"
-      aria-label={`${slot} abilities & passives`}
-    >
-      {Object.entries(options).map(([key, choices]) => {
-        const name = current.abilities[key];
-        const spell = archivedSpellOptions(current.itemId).find(
-          (s) => s.key === key && s.name === name,
-        );
-        return (
-          <label key={key} className={`editor-ability-choice${name ? " chosen" : ""}`}>
-            <span className="editor-ability-art">
+  const spellNames = Object.fromEntries(
+    value.flatMap((item) => archivedSpellOptions(item.itemId).map((s) => [s.id, s.name])),
+  );
+  const pieceName = (itemId: string) => {
+    const info = findEquipment(itemId);
+    return info ? info.family.tierNames?.[info.tier] || info.family.name : equipmentName(itemId);
+  };
+  const pieceLine = (item: EquipmentChoice) => {
+    const info = findEquipment(item.itemId);
+    return [info && `T${info.tier}.${info.enchantment}`, qualityNames[item.quality - 1]]
+      .filter(Boolean)
+      .join(" · ");
+  };
+  /** The detail page's Q/W/E/Passive tiles; each tile is a native select so it opens the
+   * choice and keeps keyboard and phone pickers. */
+  const abilityTiles = (item: EquipmentChoice) => {
+    const allowed = abilitiesFor(item.itemId);
+    const spells = archivedSpellOptions(item.itemId);
+    if (!Object.keys(allowed).length)
+      return <p className="editor-muted">This piece has no abilities to choose.</p>;
+    return (
+      <div
+        className="studio-spell-choices detail-spell-grid editor-spell-tiles"
+        aria-label={`${item.slot} abilities & passives`}
+      >
+        {Object.entries(allowed).map(([key, choices]) => {
+          const name = item.abilities[key];
+          const spell = spells.find((s) => s.key === key && s.name === name);
+          return (
+            <label
+              key={key}
+              className={`detail-spell-choice editor-spell-tile${name ? " is-chosen" : ""}`}
+            >
+              <small>{key}</small>
               {spell ? (
-                <SpellIcon id={spell.id} name={name!} size={42} />
+                <SpellIcon id={spell.id} name={name!} size={46} />
               ) : (
-                <span>{key === "Passive" ? "P" : key === "Active" ? "A" : key}</span>
+                <span className="editor-spell-empty" aria-hidden="true">
+                  <Plus size={18} />
+                </span>
               )}
-            </span>
-            <span>
-              <small>{key === "Passive" ? "Passive" : `${key} ability`}</small>
-              <WellSelect
-                aria-label={`${slot} ${key}`}
+              <span>{name || "Choose"}</span>
+              <select
+                className="editor-spell-select"
+                aria-label={`${item.slot} ${key}`}
                 value={name || ""}
                 onChange={(event) => {
-                  const abilities = { ...current.abilities };
+                  const abilities = { ...item.abilities };
                   if (event.target.value) abilities[key] = event.target.value;
                   else delete abilities[key];
-                  change({ ...current, abilities });
+                  change({ ...item, abilities }, item.slot as EquipmentSlot);
                 }}
               >
-                <option value="">Choose {key === "Passive" ? "passive" : `${key} ability`}</option>
-                {choices.map((name) => (
-                  <option key={name}>{name}</option>
+                <option value="">No {key === "Passive" ? "passive" : `${key} ability`}</option>
+                {choices.map((choice) => (
+                  <option key={choice}>{choice}</option>
                 ))}
-              </WellSelect>
-            </span>
-          </label>
-        );
-      })}
-      {!Object.keys(options).length && (
-        <p className="editor-muted">This item has no abilities to choose.</p>
-      )}
-    </div>
-  );
+              </select>
+            </label>
+          );
+        })}
+      </div>
+    );
+  };
   // An empty slot shows the first T4 pieces for it in place, so the inspector is never blank
   const starterTier = (family: (typeof equipmentFamilies)[number]) =>
     family.tiers.includes(4) ? 4 : family.tiers[0];
@@ -248,17 +259,60 @@ export function BuildEquipmentStudio({
     : equipmentFamilies
         .filter((f) => f.slot === slot && !!findEquipment(equipmentId(f, starterTier(f), 0)))
         .slice(0, 8);
-  const slotLine = blocked
-    ? "Held by your two-handed main hand."
-    : !current
-      ? "Nothing equipped in this slot yet."
-      : view === "abilities"
-        ? "Pick the abilities this piece runs."
-        : view === "alternatives"
-          ? "Up to four swaps for this slot."
-          : found
-            ? `T${found.tier}.${found.enchantment} · ${qualityNames[current.quality - 1]}`
-            : qualityNames[current.quality - 1];
+  const ordered = equipmentSlots.flatMap((s) => value.filter((row) => row.slot === s));
+  const withAbilities = ordered.filter((row) => Object.keys(abilitiesFor(row.itemId)).length);
+  const withoutAbilities = ordered.filter((row) => !withAbilities.includes(row));
+  const removeButton = (label: string, onClick: () => void, text = "Remove") => (
+    <button
+      type="button"
+      className={`button secondary editor-remove-item${text ? "" : " is-icon"}`}
+      aria-label={label}
+      onClick={onClick}
+    >
+      <Trash2 size={15} aria-hidden="true" />
+      {text && <span>{text}</span>}
+    </button>
+  );
+  const itemRow = current ? (
+    <div className="editor-selected-item equipped">
+      <ItemIcon id={current.itemId} quality={current.quality} size={64} />
+      <div>
+        <strong>{pieceName(current.itemId)}</strong>
+        <small>{pieceLine(current)}</small>
+      </div>
+      <div className="editor-item-actions">
+        <button
+          type="button"
+          className="button secondary"
+          aria-label={`Choose ${slot} equipment: ${equipmentName(current.itemId)}. Change item`}
+          onClick={() => browse(slot)}
+        >
+          Change item <ArrowRight size={15} aria-hidden="true" />
+        </button>
+        {removeButton(`Remove ${slot}`, () => change(null))}
+      </div>
+    </div>
+  ) : (
+    <div className="editor-selected-item">
+      <span className="editor-empty-art" aria-hidden="true">
+        <Plus size={26} />
+      </span>
+      <div>
+        <strong>Choose your {slot.toLowerCase()}</strong>
+        <small>Empty slot</small>
+      </div>
+      <div className="editor-item-actions">
+        <button
+          type="button"
+          className="button primary"
+          aria-label={`Choose ${slot} equipment: Empty. Choose item`}
+          onClick={() => browse(slot)}
+        >
+          Choose item <ArrowRight size={15} aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="build-studio gear-studio inventory-editor-studio" data-studio="inventory">
@@ -284,38 +338,27 @@ export function BuildEquipmentStudio({
       <aside className="raised editor-inventory-panel" aria-label="Character equipment">
         <PanelHead
           title="Your loadout"
-          line="Select a slot to edit it."
+          line={
+            twoHanded
+              ? "Two-handed weapon: it holds the off hand too."
+              : "Select a slot to edit it."
+          }
           actions={<span className="landing-chip is-muted">{value.length}/10 equipped</span>}
         />
-        <button
-          type="button"
-          className="editor-selection-jump"
-          onClick={() => {
-            const panel = document.getElementById("editor-selected-slot");
-            panel?.focus({ preventScroll: true });
-            panel?.scrollIntoView({ block: "start", behavior: "instant" });
-          }}
-        >
-          <span>
-            <small>Editing {slot}</small>
-            <strong>{current ? equipmentName(current.itemId) : "Choose equipment"}</strong>
-          </span>
-          <ArrowDown size={16} aria-hidden="true" />
-        </button>
-        <InventoryEquipmentBoard
-          equipment={inventory}
+        <LoadoutBoard
+          pieces={pieces}
+          spellNames={spellNames}
+          size="hero"
+          choices
+          label="Editor equipment inventory"
           selectedSlot={slot}
+          flaggedSlot={flaggedSlot}
           onSelectSlot={(target) => {
             if (equipmentSlots.includes(target as EquipmentSlot))
               selectSlot(target as EquipmentSlot);
           }}
-          label="Editor equipment inventory"
         />
-        <p className="editor-inventory-note">
-          {twoHanded
-            ? "Two-handed weapon: it holds the off hand too."
-            : "Weapons, armour, consumables and your mount."}
-        </p>
+        {!value.length && boardEmpty}
       </aside>
       <section
         className="raised editor-slot-panel studio-loadout-list"
@@ -323,7 +366,25 @@ export function BuildEquipmentStudio({
         tabIndex={-1}
         aria-label="Selected equipment configuration"
       >
-        <PanelHead title={slot} line={slotLine} />
+        {view === "abilities" ? (
+          <PanelHead
+            title="Abilities"
+            line="Every piece at once. Pick a tile to choose its ability."
+          />
+        ) : (
+          <PanelHead
+            title={slot}
+            line={
+              blocked
+                ? "Held by your two-handed main hand."
+                : view === "alternatives"
+                  ? "Up to four swaps for this slot."
+                  : current
+                    ? "The piece, its tier and its abilities."
+                    : "Nothing equipped in this slot yet."
+            }
+          />
+        )}
         <div className="editor-slot-switcher" role="group" aria-label="Select equipment slot">
           {equipmentSlots.map((target) => (
             <button
@@ -336,7 +397,39 @@ export function BuildEquipmentStudio({
             </button>
           ))}
         </div>
-        {blocked ? (
+        {view === "abilities" ? (
+          withAbilities.length ? (
+            <div className="editor-ability-pieces">
+              {withAbilities.map((item) => (
+                <section
+                  key={item.slot}
+                  className={`editor-ability-piece${item.slot === slot ? " is-selected" : ""}`}
+                  aria-label={`${item.slot} abilities`}
+                >
+                  <div className="editor-ability-piece-head">
+                    <ItemIcon id={item.itemId} quality={item.quality} size={36} />
+                    <div>
+                      <small>{item.slot}</small>
+                      <strong>{pieceName(item.itemId)}</strong>
+                    </div>
+                  </div>
+                  {abilityTiles(item)}
+                </section>
+              ))}
+              {!!withoutAbilities.length && (
+                <p className="editor-muted">
+                  No abilities to choose on{" "}
+                  {withoutAbilities.map((row) => pieceName(row.itemId)).join(", ")}.
+                </p>
+              )}
+            </div>
+          ) : (
+            <EmptyWell
+              title="No abilities to choose yet"
+              line="Equip a weapon or armour piece first; its abilities show here."
+            />
+          )
+        ) : blocked ? (
           <div className="editor-selected-item is-blocked">
             <span className="editor-empty-art" aria-hidden="true">
               <ShieldAlert size={26} />
@@ -345,51 +438,19 @@ export function BuildEquipmentStudio({
               <strong>Your weapon uses both hands</strong>
               <small>Switch to a one-handed weapon to equip an off hand.</small>
             </div>
-            <button type="button" className="button secondary" onClick={() => setSlot("Main hand")}>
-              Inspect main hand <ArrowRight size={15} aria-hidden="true" />
-            </button>
+            <div className="editor-item-actions">
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => setSlot("Main hand")}
+              >
+                Inspect main hand <ArrowRight size={15} aria-hidden="true" />
+              </button>
+            </div>
           </div>
         ) : (
           <>
-            <div className={`editor-selected-item${current ? " equipped" : ""}`}>
-              {current ? (
-                <ItemIcon id={current.itemId} quality={current.quality} size={64} />
-              ) : (
-                <span className="editor-empty-art" aria-hidden="true">
-                  <Plus size={26} />
-                </span>
-              )}
-              <div>
-                <strong>
-                  {current ? equipmentName(current.itemId) : `Choose your ${slot.toLowerCase()}`}
-                </strong>
-                <small>
-                  {current && found
-                    ? `T${found.tier}.${found.enchantment} · ${qualityNames[current.quality - 1]}`
-                    : "Empty slot"}
-                </small>
-              </div>
-              <div className="editor-item-actions">
-                <button
-                  type="button"
-                  className={`button ${current ? "secondary" : "primary"}`}
-                  aria-label={`Choose ${slot} equipment: ${current ? equipmentName(current.itemId) : "Empty"}. ${current ? "Change item" : "Choose item"}`}
-                  onClick={() => browse(slot)}
-                >
-                  {current ? "Change item" : "Choose item"} <ArrowRight size={15} />
-                </button>
-                {current && (
-                  <button
-                    type="button"
-                    className="button secondary editor-remove-item"
-                    aria-label={`Remove ${slot}`}
-                    onClick={() => change(null)}
-                  >
-                    <Trash2 size={15} aria-hidden="true" /> Remove
-                  </button>
-                )}
-              </div>
-            </div>
+            {itemRow}
             {!current && !!starters.length && (
               <section className="editor-starters" aria-labelledby="editor-starters-title">
                 <div className="editor-subhead">
@@ -410,7 +471,7 @@ export function BuildEquipmentStudio({
                           change({ slot, itemId: id, quality: 1, abilities: {}, alternatives: [] })
                         }
                       >
-                        <ItemIcon id={id} size={44} />
+                        <ItemIcon id={id} size={52} />
                         <span>
                           <strong>
                             <span className="sr-only">Put on </span>
@@ -492,10 +553,10 @@ export function BuildEquipmentStudio({
                 </label>
               </div>
             )}
-            {(view === "abilities" || view === "equipment") && current && (
+            {current && view === "equipment" && (
               <section className="editor-current-abilities" aria-label={`${slot} abilities`}>
-                <h3>Abilities</h3>
-                {abilityControls}
+                <h3>Abilities & passives</h3>
+                {abilityTiles(current)}
               </section>
             )}
             {view === "alternatives" && current && (
@@ -558,19 +619,15 @@ export function BuildEquipmentStudio({
                       >
                         Equip
                       </button>
-                      <button
-                        type="button"
-                        className="button secondary editor-icon-button"
-                        aria-label={`Remove ${slot} alternative ${index + 1}`}
-                        onClick={() =>
+                      {removeButton(
+                        `Remove ${slot} alternative ${index + 1}`,
+                        () =>
                           change({
                             ...current,
                             alternatives: current.alternatives.filter((_, i) => i !== index),
-                          })
-                        }
-                      >
-                        <X size={15} aria-hidden="true" />
-                      </button>
+                          }),
+                        "",
+                      )}
                     </div>
                   </div>
                 ))}
@@ -715,7 +772,7 @@ export function BuildEquipmentStudio({
                     key={id}
                     onClick={() => choose(id)}
                   >
-                    <ItemIcon id={id} size={56} />
+                    <ItemIcon id={id} size={52} />
                     <span>
                       <strong>
                         <span className="sr-only">Equip </span>

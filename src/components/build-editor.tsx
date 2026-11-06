@@ -7,8 +7,9 @@ import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
-  ArrowDown,
   ArrowRight,
+  CircleAlert,
+  Ellipsis,
   Download,
   Eye,
   FileJson,
@@ -126,6 +127,26 @@ export function BuildEditor({
     dirty: boolean;
   } | null>(null);
   const titleId = useId();
+  const [mainFlag, setMainFlag] = useState(false);
+  const [docked, setDocked] = useState(false);
+  const commandRef = useRef<HTMLElement>(null);
+  const saveSlotRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const panel = commandRef.current;
+    if (!panel) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      const dock = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      // Keep the bar's place in the panel so nothing above the fold reflows when it docks
+      const slot = saveSlotRef.current;
+      if (slot) {
+        slot.style.minWidth = dock ? `${slot.offsetWidth}px` : "";
+        slot.style.minHeight = dock ? `${slot.offsetHeight}px` : "";
+      }
+      setDocked(dock);
+    });
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, []);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
@@ -360,6 +381,12 @@ export function BuildEditor({
   }
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (!draft.equipment.some((row) => row.slot === "Main hand" && row.itemId)) {
+      setError("Choose a main hand to save.");
+      setMainFlag(true);
+      setSection("equipment");
+      return;
+    }
     const parsed = buildInput.safeParse(draft);
     if (!parsed.success) {
       setError(buildValidationMessage(parsed.error.issues[0]));
@@ -436,6 +463,7 @@ export function BuildEditor({
     return { slot: row.slot, itemId: row.itemId, skills };
   });
   const mainHand = equipped.find((row) => row.slot === "Main hand");
+  const mainFlagged = mainFlag && !mainHand;
   return (
     <form
       onSubmit={save}
@@ -446,7 +474,7 @@ export function BuildEditor({
         className="editor-ready-guard"
         disabled={guest ? !guestRecoveryReady : !!ownerId && !!recoveryKey && !recoveryReady}
       >
-        <section className="raised editor-command" aria-label="Build details">
+        <section className="raised editor-command" aria-label="Build details" ref={commandRef}>
           <div className="editor-command-fields">
             <label className="editor-title-field">
               <span>Build title</span>
@@ -490,34 +518,39 @@ export function BuildEditor({
             <span className="landing-chip is-muted editor-draft-label" aria-live="polite">
               {status}
             </span>
-            {id && (
-              <Link className="pill-link is-small" href={`/builds/${id}#build-actions`}>
-                <History size={14} aria-hidden="true" /> Revision history
-              </Link>
-            )}
             {id && !guest && (
-              <BuildCompositionLink
-                fromBuild={id}
-                label="Add saved build to comp"
-                className="pill-link is-small editor-comp-link"
-              />
-            )}
-            {id && !guest && (
-              <button
-                type="button"
-                className="pill-link is-small"
-                title="Access follows the build's visibility"
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(`${location.origin}/builds/${id}`);
-                    setShareMessage("Saved build link copied. Access follows build visibility.");
-                  } catch {
-                    setShareMessage("Open the saved build to copy its address.");
-                  }
-                }}
-              >
-                <Link2 size={14} aria-hidden="true" /> Copy saved link
-              </button>
+              <details className="editor-file-menu editor-more-menu">
+                <summary className="pill-link is-small">
+                  <Ellipsis size={14} aria-hidden="true" /> More
+                </summary>
+                <div>
+                  <Link className="button secondary" href={`/builds/${id}#build-actions`}>
+                    <History size={15} aria-hidden="true" /> Revision history
+                  </Link>
+                  <BuildCompositionLink
+                    fromBuild={id}
+                    label="Add saved build to comp"
+                    className="button secondary"
+                  />
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={async (event) => {
+                      event.currentTarget.closest("details")?.removeAttribute("open");
+                      try {
+                        await navigator.clipboard.writeText(`${location.origin}/builds/${id}`);
+                        setShareMessage(
+                          "Saved build link copied. Access follows build visibility.",
+                        );
+                      } catch {
+                        setShareMessage("Open the saved build to copy its address.");
+                      }
+                    }}
+                  >
+                    <Link2 size={15} aria-hidden="true" /> Copy saved link
+                  </button>
+                </div>
+              </details>
             )}
             <details className="editor-file-menu">
               <summary className="pill-link is-small">
@@ -579,6 +612,35 @@ export function BuildEditor({
                 <small>Keeps equipment, abilities, swaps and spare sets.</small>
               </div>
             </details>
+            {/* Save and Preview sit here; once this panel scrolls away they dock to the bottom */}
+            <div className="editor-save-slot" ref={saveSlotRef}>
+              <div className={`editor-save-bar${docked ? " is-docked" : ""}`}>
+                <span className="editor-save-summary" aria-hidden="true">
+                  <strong>{draft.title || "Untitled build"}</strong>
+                  <small>
+                    {equipped.length}/10 equipped · {status}
+                  </small>
+                </span>
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={!supportedEquipment.length}
+                  data-editor-action="preview"
+                  onClick={() => setPreview(true)}
+                >
+                  <Eye size={15} aria-hidden="true" /> Preview build
+                </button>
+                <button className="button primary editor-persistent-save" disabled={saving}>
+                  {saving
+                    ? "Saving…"
+                    : guest
+                      ? "Save on this device"
+                      : id
+                        ? "Save new revision"
+                        : "Save build"}
+                </button>
+              </div>
+            </div>
           </div>
           {(recoveryMessage || shareMessage || (!guest && dirty && ownerId) || error) && (
             <div className="editor-messages">
@@ -591,8 +653,9 @@ export function BuildEditor({
               {shareMessage && <StatusLine>{shareMessage}</StatusLine>}
               {error && (
                 <p className="editor-error" role="alert">
+                  <CircleAlert size={16} aria-hidden="true" />
                   {error}
-                  {/kept/.test(error) ? "" : " Your draft has been kept."}
+                  {/kept|main hand to save/.test(error) ? "" : " Your draft has been kept."}
                 </p>
               )}
             </div>
@@ -617,26 +680,18 @@ export function BuildEditor({
                     spellNames={spellNames}
                     heart={null}
                   />
-                  <p className="editor-muted">How the build shows in the builds list.</p>
+                  <p className="editor-muted">
+                    How the build shows in the builds list.{" "}
+                    {guest ? "Guest draft" : "Not saved yet"}.
+                  </p>
                 </div>
-                <div className="editor-preview-side">
-                  <div className="editor-preview-head">
-                    <p>
-                      {guest ? "Guest draft" : "Unsaved preview"} · how other players will see the
-                      build, with its cost
-                    </p>
-                    <a className="pill-link is-small" href="#build-cost">
-                      Check loadout cost <ArrowDown size={14} aria-hidden="true" />
-                    </a>
-                  </div>
-                  <section
-                    id="build-cost"
-                    className="raised detail-panel-frame editor-preview-cost"
-                    aria-label="Preview loadout cost"
-                  >
-                    <LoadoutPriceCheck region={draft.region} equipment={equipped} />
-                  </section>
-                </div>
+                <section
+                  id="build-cost"
+                  className="raised detail-panel-frame editor-preview-cost"
+                  aria-label="Preview loadout cost"
+                >
+                  <LoadoutPriceCheck region={draft.region} equipment={equipped} />
+                </section>
               </div>
               <BuildLoadoutView region={draft.region} equipment={equipped} />
             </div>
@@ -699,25 +754,6 @@ export function BuildEditor({
             </button>
           ))}
         </div>
-        {!initial && !supportedEquipment.length && section !== "notes" && (
-          <EmptyWell
-            emblem="strip-builds"
-            title="Nothing equipped yet"
-            line="Start from a complete Battleaxe set to see how a build fits together, then swap pieces."
-            action={
-              <button
-                type="button"
-                className="button secondary"
-                onClick={() => {
-                  updateEquipment(templateEquipment("battleaxe"));
-                  if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
-                }}
-              >
-                Load example equipment
-              </button>
-            }
-          />
-        )}
         {draft.equipment.some((row) => row.itemId && !findEquipment(row.itemId)) && (
           <div className="editor-notice">
             <span>
@@ -744,11 +780,42 @@ export function BuildEditor({
             view={section === "notes" ? "equipment" : section}
             value={supportedEquipment}
             onChange={updateEquipment}
+            flaggedSlot={mainFlagged ? "Main hand" : undefined}
+            boardEmpty={
+              !initial && (
+                <EmptyWell
+                  title="Nothing equipped yet"
+                  line="Start from a full Battleaxe set, then swap pieces."
+                  action={
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => {
+                        updateEquipment(templateEquipment("battleaxe"));
+                        if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
+                      }}
+                    >
+                      Load example equipment
+                    </button>
+                  }
+                />
+              )
+            }
             captureUndo={() => {
               const equipment = structuredClone(draft.equipment);
               return () => setDraft((latest) => ({ ...latest, equipment }));
             }}
           />
+          <div hidden={section !== "equipment"} className="editor-template-workspace">
+            <EquipmentSets
+              equipment={supportedEquipment}
+              sets={draft.equipmentSets}
+              onEquipment={updateEquipment}
+              onSets={(sets) => update("equipmentSets", sets)}
+              expanded
+              part="templates"
+            />
+          </div>
           <div hidden={section !== "alternatives"} className="editor-template-workspace">
             <EquipmentSets
               equipment={supportedEquipment}
@@ -756,6 +823,7 @@ export function BuildEditor({
               onEquipment={updateEquipment}
               onSets={(sets) => update("equipmentSets", sets)}
               expanded
+              part="spares"
             />
           </div>
         </div>
@@ -844,116 +912,107 @@ export function BuildEditor({
                 onChange={(e) => update("patchNotes", e.target.value)}
               />
             </label>
-          </section>
-          <section
-            className="raised editor-notes-panel editor-advanced"
-            id="advanced-build-items"
-            aria-labelledby="editor-advanced-title"
-          >
-            <PanelHead
-              id="editor-advanced-title"
-              title="Exact item IDs"
-              line="For items the picker doesn’t list. Ability and swap notes here are free text."
-            />
-            <Disclosure
-              summary="Advanced item IDs & notes"
-              meta={`${draft.equipment.length} ${draft.equipment.length === 1 ? "slot" : "slots"}`}
-            >
-              <div className="editor-id-rows">
-                {draft.equipment.map((row, i) => (
-                  <div key={i} className="editor-id-row">
-                    <label>
-                      <span>Equipment slot {i + 1}</span>
-                      <WellSelect
-                        aria-label={`Equipment slot ${i + 1}`}
-                        value={row.slot}
-                        onChange={(e) => equip(i, "slot", e.target.value)}
+            <div id="advanced-build-items" className="editor-advanced">
+              <Disclosure
+                summary="Advanced item IDs & notes"
+                meta="For items the picker doesn’t list"
+              >
+                <div className="editor-id-rows">
+                  {draft.equipment.map((row, i) => (
+                    <div key={i} className="editor-id-row">
+                      <label>
+                        <span>Equipment slot {i + 1}</span>
+                        <WellSelect
+                          aria-label={`Equipment slot ${i + 1}`}
+                          value={row.slot}
+                          onChange={(e) => equip(i, "slot", e.target.value)}
+                        >
+                          {slots.map((s) => (
+                            <option key={s}>{s}</option>
+                          ))}
+                        </WellSelect>
+                      </label>
+                      <label>
+                        <span>Item ID {i + 1}</span>
+                        <input
+                          pattern="[A-Z0-9_@]+"
+                          maxLength={100}
+                          value={row.itemId}
+                          onChange={(e) => equip(i, "itemId", e.target.value.toUpperCase())}
+                        />
+                      </label>
+                      <label>
+                        <span>Quality {i + 1}</span>
+                        <WellSelect
+                          aria-label={`Quality ${i + 1}`}
+                          value={row.quality}
+                          onChange={(e) => equip(i, "quality", Number(e.target.value))}
+                        >
+                          {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map(
+                            (q, j) => (
+                              <option key={q} value={j + 1}>
+                                {q}
+                              </option>
+                            ),
+                          )}
+                        </WellSelect>
+                      </label>
+                      <label>
+                        <span>Abilities / passives {i + 1}</span>
+                        <input
+                          maxLength={1000}
+                          value={row.abilities}
+                          onChange={(e) => equip(i, "abilities", e.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <span>Alternatives / swaps {i + 1}</span>
+                        <input
+                          maxLength={1000}
+                          value={row.alternatives}
+                          onChange={(e) => equip(i, "alternatives", e.target.value)}
+                        />
+                      </label>
+                      <button
+                        className="button secondary editor-remove-item"
+                        type="button"
+                        onClick={() =>
+                          update(
+                            "equipment",
+                            draft.equipment.filter((_, j) => j !== i),
+                          )
+                        }
                       >
-                        {slots.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </WellSelect>
-                    </label>
-                    <label>
-                      <span>Item ID {i + 1}</span>
-                      <input
-                        pattern="[A-Z0-9_@]+"
-                        maxLength={100}
-                        value={row.itemId}
-                        onChange={(e) => equip(i, "itemId", e.target.value.toUpperCase())}
-                      />
-                    </label>
-                    <label>
-                      <span>Quality {i + 1}</span>
-                      <WellSelect
-                        aria-label={`Quality ${i + 1}`}
-                        value={row.quality}
-                        onChange={(e) => equip(i, "quality", Number(e.target.value))}
-                      >
-                        {["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"].map(
-                          (q, j) => (
-                            <option key={q} value={j + 1}>
-                              {q}
-                            </option>
-                          ),
-                        )}
-                      </WellSelect>
-                    </label>
-                    <label>
-                      <span>Abilities / passives {i + 1}</span>
-                      <input
-                        maxLength={1000}
-                        value={row.abilities}
-                        onChange={(e) => equip(i, "abilities", e.target.value)}
-                      />
-                    </label>
-                    <label>
-                      <span>Alternatives / swaps {i + 1}</span>
-                      <input
-                        maxLength={1000}
-                        value={row.alternatives}
-                        onChange={(e) => equip(i, "alternatives", e.target.value)}
-                      />
-                    </label>
-                    <button
-                      className="button secondary editor-remove-item"
-                      type="button"
-                      onClick={() =>
-                        update(
-                          "equipment",
-                          draft.equipment.filter((_, j) => j !== i),
-                        )
-                      }
-                    >
-                      <Trash2 size={15} aria-hidden="true" /> Remove {row.slot}
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  className="button secondary editor-add-row"
-                  disabled={draft.equipment.length >= 10}
-                  onClick={() => {
-                    const slot = slots.find((s) => !draft.equipment.some((r) => r.slot === s));
-                    if (slot)
-                      update("equipment", [
-                        ...draft.equipment,
-                        {
-                          slot,
-                          itemId: "",
-                          quality: 1,
-                          abilities: "",
-                          alternatives: "",
-                          abilitySelections: {},
-                          alternativeItemIds: [],
-                        },
-                      ]);
-                  }}
-                >
-                  <Plus size={15} aria-hidden="true" /> Add equipment slot
-                </button>
-              </div>
-            </Disclosure>
+                        <Trash2 size={15} aria-hidden="true" /> Remove {row.slot}
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="button secondary editor-add-row"
+                    disabled={draft.equipment.length >= 10}
+                    onClick={() => {
+                      const slot = slots.find((s) => !draft.equipment.some((r) => r.slot === s));
+                      if (slot)
+                        update("equipment", [
+                          ...draft.equipment,
+                          {
+                            slot,
+                            itemId: "",
+                            quality: 1,
+                            abilities: "",
+                            alternatives: "",
+                            abilitySelections: {},
+                            alternativeItemIds: [],
+                          },
+                        ]);
+                    }}
+                  >
+                    <Plus size={15} aria-hidden="true" /> Add equipment slot
+                  </button>
+                </div>
+              </Disclosure>
+            </div>
           </section>
         </div>
         {/* The detail page's cost panel, as it is there */}
@@ -963,7 +1022,7 @@ export function BuildEditor({
           </div>
         </div>
         {id && (
-          <section className="raised editor-danger-zone" aria-labelledby="editor-delete-title">
+          <section className="editor-danger-zone" aria-labelledby="editor-delete-title">
             <PanelHead
               id="editor-delete-title"
               title="Delete this build"
@@ -993,32 +1052,6 @@ export function BuildEditor({
             />
           </section>
         )}
-        <div className="editor-save-bar">
-          <span className="editor-save-summary" aria-hidden="true">
-            <strong>{draft.title || "Untitled build"}</strong>
-            <small>
-              {equipped.length}/10 equipped · {status}
-            </small>
-          </span>
-          <button
-            type="button"
-            className="button secondary"
-            disabled={!supportedEquipment.length}
-            data-editor-action="preview"
-            onClick={() => setPreview(true)}
-          >
-            <Eye size={15} aria-hidden="true" /> Preview build
-          </button>
-          <button className="button primary editor-persistent-save" disabled={saving}>
-            {saving
-              ? "Saving…"
-              : guest
-                ? "Save on this device"
-                : id
-                  ? "Save new revision"
-                  : "Save build"}
-          </button>
-        </div>
       </fieldset>
       <section
         className="raised has-scene builds-next-step"

@@ -27,17 +27,17 @@ test("source catalog supports staff and bow sets with safe two-hand changes and 
       },
     ]);
     await page.goto("/builds/new");
-    await selectEditorSlot(page, "Main hand", "Alternatives");
+    await selectEditorSlot(page, "Main hand");
     await page.getByRole("button", { name: "Use Battleaxe starting set", exact: true }).click();
-    await expect(page.locator(".inventory-equipment-slot.is-equipped")).toHaveCount(10);
+    await expect(page.locator(".loadout-board-slot.is-equipped")).toHaveCount(10);
     await selectEditorSlot(page, "Main hand");
     await page.getByText("Exact equipment selection", { exact: true }).click();
     await page.getByLabel("Main hand equipment", { exact: true }).selectOption("2H_BOW");
     await expect(page.locator(".studio-notice")).toContainText("Off hand cleared");
-    await expect(page.locator(".inventory-equipment-slot.is-equipped")).toHaveCount(9);
+    await expect(page.locator(".loadout-board-slot.is-equipped")).toHaveCount(9);
     await page.getByRole("button", { name: "Undo equipment change", exact: true }).click();
     await expect(page.getByLabel("Main hand equipment", { exact: true })).toHaveValue("MAIN_AXE");
-    await expect(page.locator(".inventory-equipment-slot.is-equipped")).toHaveCount(10);
+    await expect(page.locator(".loadout-board-slot.is-equipped")).toHaveCount(10);
     await page.getByLabel("Main hand equipment", { exact: true }).selectOption("2H_BOW");
     await page.getByLabel("Main hand Q", { exact: true }).selectOption("Multishot");
     await expect(page.getByLabel("Main hand Q", { exact: true })).toHaveValue("Multishot");
