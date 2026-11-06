@@ -22,7 +22,7 @@ export async function AdminFrame({
   description,
   emblem,
   actions,
-  chips,
+  titleChips,
   closing,
   children,
 }: {
@@ -32,7 +32,8 @@ export async function AdminFrame({
   /** File name under /albion/icons. */
   emblem: string;
   actions?: ReactNode;
-  chips?: ReactNode;
+  /** Status chips set beside the title (an account's plan and role). */
+  titleChips?: ReactNode;
   /** The closing band, full width under the rail and panels. */
   closing?: ReactNode;
   children: ReactNode;
@@ -40,29 +41,67 @@ export async function AdminFrame({
   const role = await adminRole();
   return (
     <>
-      <WorkspaceHeading
-        title={title}
-        accent={accent}
-        description={description}
-        actions={actions}
-        emblem={
-          // eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem
-          <img
-            className="painted-emblem"
-            src={`/albion/icons/${emblem}.webp`}
-            alt=""
-            width={64}
-            height={64}
-          />
-        }
-      >
-        {chips}
-      </WorkspaceHeading>
+      {titleChips ? (
+        <header className="workspace-identity" data-scene="page">
+          <div className="workspace-identity-copy">
+            <div className="workspace-identity-head">
+              <span className="workspace-emblem" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+                <img
+                  className="painted-emblem"
+                  src={`/albion/icons/${emblem}.webp`}
+                  alt=""
+                  width={64}
+                  height={64}
+                />
+              </span>
+              <div>
+                <div className="admin-title-row">
+                  <h1 className="page-title display-title">{accentedName(title, accent)}</h1>
+                  {titleChips}
+                </div>
+                <p className="intro">{description}</p>
+              </div>
+            </div>
+          </div>
+          {actions && <div className="workspace-identity-actions">{actions}</div>}
+        </header>
+      ) : (
+        <WorkspaceHeading
+          title={title}
+          accent={accent}
+          description={description}
+          actions={actions}
+          emblem={
+            // eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem
+            <img
+              className="painted-emblem"
+              src={`/albion/icons/${emblem}.webp`}
+              alt=""
+              width={64}
+              height={64}
+            />
+          }
+        />
+      )}
       <div className="admin-workspace">
         <AdminNav full={role === "ADMIN"} />
         <div className="admin-main">{children}</div>
       </div>
       {closing}
+    </>
+  );
+}
+
+/** The title with its accent word in ember, as WorkspaceHeading sets it. */
+function accentedName(title: string, accent?: string) {
+  const at = accent ? title.lastIndexOf(accent) : -1;
+  if (!accent || at < 0) return title;
+  return (
+    <>
+      {title.slice(0, at)}
+      <em>{accent}</em>
+      {title.slice(at + accent.length)}
     </>
   );
 }

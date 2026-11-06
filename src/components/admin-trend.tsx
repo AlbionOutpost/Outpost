@@ -3,11 +3,12 @@ import { AnimatedNumber } from "./animated-number";
 import { useState } from "react";
 import type { AdminOverview } from "@/lib/admin/queries";
 import { PanelHead } from "./panel-head";
-import { Disclosure } from "./disclosure";
+import { ChevronDown } from "lucide-react";
 const series = { accounts: "New accounts", builds: "New builds", comps: "New comps" } as const;
 export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; limited: boolean }) {
   const [selected, setSelected] = useState<keyof typeof series>("accounts");
   const [day, setDay] = useState(29);
+  const [values, setValues] = useState(false);
   const point = data[day];
   const peak = Math.max(0, ...data.map((d) => d[selected])),
     max = Math.max(1, peak),
@@ -29,22 +30,33 @@ export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; li
           <span className="admin-chart-total">
             <strong>
               <AnimatedNumber value={total} />
-            </strong>
+            </strong>{" "}
             <small>{series[selected].toLowerCase()}</small>
           </span>
         }
       />
-      <div className="admin-seg" role="group" aria-label="Chart series">
-        {Object.entries(series).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            aria-pressed={key === selected}
-            onClick={() => setSelected(key as keyof typeof series)}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="admin-controls">
+        <div className="admin-seg" role="group" aria-label="Chart series">
+          {Object.entries(series).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={key === selected}
+              onClick={() => setSelected(key as keyof typeof series)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="pill-link is-small"
+          aria-expanded={values}
+          aria-controls="admin-daily-values"
+          onClick={() => setValues((v) => !v)}
+        >
+          Daily values <ChevronDown size={15} aria-hidden="true" data-open={values || undefined} />
+        </button>
       </div>
       <div className="admin-chart well">
         <svg
@@ -95,24 +107,24 @@ export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; li
           <span>Peak {peak} a day</span>
           <span>{data.at(-1)?.date}</span>
         </div>
-      </div>
-      <div className="admin-chart-inspector">
-        <label htmlFor="admin-chart-day">Inspect a day</label>
-        <output htmlFor="admin-chart-day">
-          {point.date} ·{" "}
-          <strong>
-            {point[selected]} {series[selected].toLowerCase()}
-          </strong>
-        </output>
-        <input
-          id="admin-chart-day"
-          type="range"
-          min="0"
-          max="29"
-          value={day}
-          onChange={(event) => setDay(Number(event.target.value))}
-          aria-valuetext={`${point.date}: ${point[selected]} ${series[selected].toLowerCase()}`}
-        />
+        <div className="admin-chart-inspector">
+          <label htmlFor="admin-chart-day">Inspect a day</label>
+          <output htmlFor="admin-chart-day">
+            {point.date} ·{" "}
+            <strong>
+              {point[selected]} {series[selected].toLowerCase()}
+            </strong>
+          </output>
+          <input
+            id="admin-chart-day"
+            type="range"
+            min="0"
+            max="29"
+            value={day}
+            onChange={(event) => setDay(Number(event.target.value))}
+            aria-valuetext={`${point.date}: ${point[selected]} ${series[selected].toLowerCase()}`}
+          />
+        </div>
       </div>
       {limited && (
         <p className="admin-note well">
@@ -120,27 +132,29 @@ export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; li
           totals above are counted separately.
         </p>
       )}
-      <Disclosure summary="Daily values" meta="30 days">
-        <div className="tool-table-scroll" tabIndex={0} role="region" aria-label="Daily values">
-          <table className="tool-table admin-table">
-            <caption className="sr-only">{series[selected]} per day, UTC</caption>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>{series[selected]}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((d) => (
-                <tr key={d.date}>
-                  <th scope="row">{d.date}</th>
-                  <td>{d[selected]}</td>
+      {values && (
+        <div id="admin-daily-values">
+          <div className="tool-table-scroll" tabIndex={0} role="region" aria-label="Daily values">
+            <table className="tool-table admin-table">
+              <caption className="sr-only">{series[selected]} per day, UTC</caption>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>{series[selected]}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map((d) => (
+                  <tr key={d.date}>
+                    <th scope="row">{d.date}</th>
+                    <td>{d[selected]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </Disclosure>
+      )}
     </section>
   );
 }

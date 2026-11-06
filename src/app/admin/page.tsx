@@ -7,7 +7,7 @@ import { AdminTrend } from "@/components/admin-trend";
 import { AdminAuditRows } from "@/components/admin-audit";
 import { AnimatedNumber } from "@/components/animated-number";
 import { PanelHead } from "@/components/panel-head";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 export default async function AdminOverviewPage() {
   const data = await adminOverview(await adminPageActor());
   const stats = [
@@ -32,7 +32,7 @@ export default async function AdminOverviewPage() {
         </Link>
       }
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -43,19 +43,16 @@ export default async function AdminOverviewPage() {
           cards={[
             {
               href: "/admin/users",
-              emblem: "team-roles",
               title: "Users & access",
               line: "Find an account, gift Supporter or close its sessions.",
             },
             {
               href: "/admin/reports",
-              emblem: "strip-content",
               title: "Content reports",
               line: "Hide, restore or resolve what players reported.",
             },
             {
               href: "/admin/audit",
-              emblem: "team-calendar",
               title: "Audit trail",
               line: "Read who changed access and the reason they gave.",
             },

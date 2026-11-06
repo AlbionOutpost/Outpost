@@ -313,9 +313,9 @@
   background: color-mix(in srgb, var(--warning) 12%, transparent);
   color: var(--warning);
 }
-.app.outpost .workspace-identity .admin-chip {
-  --negative: #ef6969;
-  --warning: #e6b35b;
+/* In the masthead, which keeps the night palette in both themes, chips read in the light text */
+.app.outpost .workspace-identity .admin-chip:not([data-tone="accent"]) {
+  color: var(--text);
 }
 
 /* Search */
@@ -343,21 +343,6 @@
   min-height: 44px;
   padding: 0 14px 0 40px;
 }
-.app.outpost .admin-search-field input,
-.app.outpost .admin-field textarea,
-.app.outpost .admin-action-form :is(input, textarea) {
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-  color: var(--text);
-}
-.app.outpost.light .admin-search-field input,
-.app.outpost.light .admin-field textarea,
-.app.outpost.light .admin-action-form :is(input, textarea) {
-  box-shadow: inset 0 1px 2px #16203214;
-}
-
 /* Tables: the landing's .tool-table with text columns left-aligned */
 .app.outpost .tool-table.admin-table :is(th, td) {
   height: auto;
@@ -376,10 +361,10 @@
 .app.outpost .tool-table.admin-users-table thead th:first-child {
   width: auto;
 }
-.app.outpost .tool-table.admin-users-table tbody th > :is(a, code) {
+.app.outpost .tool-table.admin-users-table tbody th > :is(a, code, .admin-muted) {
   display: block;
 }
-.app.outpost .tool-table.admin-users-table tbody th > code {
+.app.outpost .tool-table.admin-users-table tbody th > :is(code, .admin-muted) {
   margin-top: 3px;
 }
 .app.outpost .tool-table.admin-users-table tbody th {
@@ -436,86 +421,196 @@
   cursor: not-allowed;
 }
 
-/* Audit rows */
+/* Audit trail: the full record is a .tool-table; the overview and account history use one wrapped line per change */
+.app.outpost .admin-table :is(th, td) {
+  font-family: var(--font-ui);
+}
+.app.outpost .admin-audit-table :is(th, td) {
+  text-align: left;
+  white-space: normal;
+  vertical-align: baseline;
+}
+.app.outpost .tool-table.admin-audit-table :is(th, td):last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+.app.outpost .tool-table.admin-audit-table td:nth-child(2) {
+  min-width: 220px;
+}
+.app.outpost .tool-table.admin-audit-table :is(th, td):is(:nth-child(3), :nth-child(4)) {
+  white-space: nowrap;
+}
+.app.outpost .admin-audit-table tbody th {
+  white-space: nowrap;
+}
+.app.outpost .admin-audit-table code {
+  color: var(--muted);
+  font: 12px var(--font-data);
+}
 .app.outpost .admin-audit-list {
-  display: grid;
-  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .app.outpost .admin-audit-list > li {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px 16px;
-  padding: 12px 14px;
+  gap: 2px 14px;
+  padding: 10px 2px;
+  border-top: 1px solid var(--well-border);
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
-.app.outpost .admin-audit-head {
-  display: contents;
+.app.outpost .admin-audit-list > li:first-child {
+  border-top: 0;
 }
-.app.outpost .admin-audit-list > li > p {
-  grid-column: 2;
-  grid-row: 1;
-}
-.app.outpost .admin-audit-head strong {
-  grid-column: 1;
-  grid-row: 1;
-}
-.app.outpost .admin-audit-head time {
-  grid-column: 3;
-  grid-row: 1;
-}
-.app.outpost .admin-audit-list > li > dl {
-  grid-column: 2 / -1;
-  grid-row: 2;
-}
-.app.outpost code {
-  padding: 0;
-  border: 0;
-  background: none;
-  text-decoration: none;
-}
-.app.outpost .admin-audit-head strong {
-  min-width: 0;
-  font-size: 14px;
-}
-.app.outpost .admin-audit-head time {
+.app.outpost .admin-audit-list strong {
   flex: none;
+  min-width: 112px;
+  font-size: 13px;
+}
+.app.outpost .admin-audit-reason {
+  flex: 1 1 240px;
+  min-width: 0;
+  color: var(--secondary);
+}
+.app.outpost .admin-audit-ids {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 6px;
+  color: var(--muted);
+}
+.app.outpost .admin-audit-ids code {
+  color: var(--muted);
+  font: 12px var(--font-data);
+}
+.app.outpost .admin-audit-ids svg {
+  align-self: center;
+}
+.app.outpost .admin-audit-list time {
+  flex: none;
+  margin-left: auto;
   color: var(--muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
-.app.outpost .admin-audit-list p {
-  margin: 0;
-  color: var(--secondary);
-  font-size: 13px;
-  line-height: 1.5;
-}
-.app.outpost .admin-audit-list dl {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 20px;
-  margin: 0;
-}
-.app.outpost .admin-audit-list dl > div {
-  padding: 0;
-  border: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  min-width: 0;
-}
-.app.outpost .admin-audit-list dt {
+.app.outpost .admin-muted {
   color: var(--muted);
   font-size: 12px;
 }
-.app.outpost .admin-audit-list dd {
-  min-width: 0;
-  margin: 0;
+
+/* Chart controls: series on the left, daily values on the right */
+.app.outpost .admin-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.app.outpost .admin-controls .pill-link svg[data-open] {
+  rotate: 180deg;
+}
+.app.outpost .admin-chart-inspector {
+  margin: 12px 0 0;
+}
+.app.outpost #admin-daily-values {
+  margin-top: 16px;
 }
 
+/* An account's recorded facts: one well, one definition list */
+.app.outpost .admin-facts {
+  margin: 0;
+  padding: 4px 16px;
+}
+.app.outpost .admin-facts > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.5fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--well-border);
+}
+.app.outpost .admin-facts > div:last-child {
+  border-bottom: 0;
+}
+.app.outpost .admin-facts dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+.app.outpost .admin-facts dd {
+  margin: 0;
+  font: 500 13px/1.45 var(--font-ui);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.app.outpost .admin-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+.app.outpost .workspace-identity .admin-title-row h1 {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Closing band: framed cards with a headline and one line */
+.app.outpost .admin-next {
+  margin-top: 8px;
+  margin-bottom: 72px;
+}
+.app.outpost .admin-next > ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .admin-next li {
+  display: grid;
+  min-width: 0;
+}
+.app.outpost .admin-next a.raised {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  min-height: 96px;
+  padding: 20px 22px;
+  color: var(--text);
+  text-decoration: none;
+}
+.app.outpost .admin-next-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.app.outpost .admin-next-title {
+  font: 800 20px/1.15 var(--font-display);
+}
+.app.outpost .admin-next-line {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app.outpost .admin-next a.raised svg {
+  color: var(--accent-ink);
+}
+@media (max-width: 1100px) {
+  .app.outpost .admin-next > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .app.outpost .admin-next > ul {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
 /* Review list */
 .app.outpost .admin-review-list {
   display: grid;
@@ -596,17 +691,16 @@
 
 /* Destructive actions are ghosts in the loss colour */
 .app.outpost .button.admin-danger,
-.app.outpost button.button.admin-danger {
+.app.outpost button.button.admin-danger,
+.app.outpost:not(.light) .button.secondary.admin-danger,
+.app.outpost .button.secondary.admin-danger {
   border: 1px solid color-mix(in srgb, var(--negative) 50%, transparent);
   background: transparent;
   color: var(--negative);
 }
-.app.outpost .button.admin-danger:hover:not(:disabled) {
+.app.outpost .button.admin-danger:hover:not(:disabled),
+.app.outpost:not(.light) .button.secondary.admin-danger:hover:not(:disabled) {
   background: color-mix(in srgb, var(--negative) 12%, transparent);
-}
-.app.outpost .workspace-identity .button.admin-danger {
-  --negative: #ff8a8a;
-  background: #0c0d10a6;
 }
 .app.outpost .admin-success {
   margin: 0;
@@ -780,14 +874,6 @@
   .app.outpost .admin-seg > :is(a, button) {
     flex: 1 1 calc(50% - 6px);
   }
-  .app.outpost .admin-audit-list > li {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .admin-audit-list > li > :is(p, dl),
-  .app.outpost .admin-audit-head :is(strong, time) {
-    grid-column: 1;
-    grid-row: auto;
-  }
   .app.outpost .admin-chart-inspector {
     grid-template-columns: 1fr;
   }
@@ -800,7 +886,7 @@
   .app.outpost .admin-error {
     flex-wrap: wrap;
   }
-  /* The account table becomes one well per account: name and chips, then the counts */
+  /* The account table becomes one card per account: name and chips, then counts and join date */
   .app.outpost .admin-users-table thead {
     position: absolute;
     width: 1px;
@@ -816,12 +902,11 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 14px;
-    padding: 12px 4px;
+    gap: 4px 0;
+    padding: 12px 2px;
     border-top: 1px solid var(--well-border);
   }
-  .app.outpost .tool-table.admin-users-table tbody td {
-    display: block;
+  .app.outpost .tool-table.admin-users-table tbody :is(th, td) {
     height: auto;
     padding: 0;
     border: 0;
@@ -829,55 +914,60 @@
   }
   .app.outpost .tool-table.admin-users-table tbody th {
     display: block;
-    flex: 1 1 100%;
-    height: auto;
+    order: 1;
+    flex: 0 0 calc(100% - 150px);
     min-width: 0;
-    padding: 0;
-    border: 0;
-    text-align: left;
+    max-width: calc(100% - 150px);
   }
   .app.outpost .tool-table.admin-users-table tbody td.admin-chips {
     display: flex;
-    flex: 1 1 100%;
+    order: 2;
+    flex: 0 0 150px;
+    justify-content: flex-end;
+    align-content: flex-start;
+    gap: 4px;
   }
-  .app.outpost .tool-table.admin-users-table tbody td[data-label] {
+  .app.outpost .tool-table.admin-users-table tbody td:not(.admin-chips) {
+    display: inline;
+    order: 3;
     color: var(--secondary);
     font-weight: 500;
   }
-  .app.outpost .admin-users-table td[data-label]::before {
-    content: attr(data-label) " ";
+  .app.outpost .tool-table.admin-users-table tbody td:nth-child(3) {
+    margin-left: 0;
+  }
+  .app.outpost .admin-users-table td[data-unit]::after {
+    content: " " attr(data-unit);
     color: var(--muted);
     font-weight: 400;
+  }
+  .app.outpost .admin-users-table td:not(.admin-chips) + td:not(.admin-chips)::before {
+    content: "·";
+    margin: 0 7px;
+    color: var(--muted);
   }
   .app.outpost .admin-user-name {
     display: inline-flex;
     align-items: center;
     min-height: 32px;
   }
-}
-
-.app.outpost .admin-user-grid .admin-audit-list > li {
-  grid-template-columns: minmax(0, 1fr) auto;
-}
-.app.outpost .admin-user-grid .admin-audit-list > li > p,
-.app.outpost .admin-user-grid .admin-audit-list > li > dl {
-  grid-column: 1 / -1;
-  grid-row: auto;
-}
-.app.outpost .admin-user-grid .admin-audit-head strong {
-  grid-column: 1;
-  grid-row: 1;
-}
-.app.outpost .admin-user-grid .admin-audit-head time {
-  grid-column: 2;
-  grid-row: 1;
-}
-@media (max-width: 700px) {
-  .app.outpost .admin-user-grid .admin-audit-list > li {
-    grid-template-columns: minmax(0, 1fr);
+  .app.outpost .admin-stats a.well {
+    padding: 12px 14px;
   }
-  .app.outpost .admin-user-grid .admin-audit-head :is(strong, time) {
-    grid-column: 1;
-    grid-row: auto;
+  .app.outpost .admin-chart-total {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .app.outpost .admin-audit-list time {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+  .app.outpost .admin-audit-list strong {
+    min-width: 0;
+  }
+  .app.outpost .admin-facts > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 }

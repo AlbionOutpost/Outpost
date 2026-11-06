@@ -7,7 +7,7 @@ import { AdminChip } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
 import { Disclosure } from "@/components/disclosure";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 export default async function AdminReviewPage() {
   const data = await adminReview(await adminPageActor());
   return (
@@ -17,7 +17,7 @@ export default async function AdminReviewPage() {
       description="Look at unusual activity before you make an access decision."
       emblem="trophy-silver"
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -28,19 +28,16 @@ export default async function AdminReviewPage() {
           cards={[
             {
               href: "/admin/users",
-              emblem: "team-roles",
               title: "Users & access",
               line: "Search for an account the signals missed.",
             },
             {
               href: "/admin/reports",
-              emblem: "strip-content",
               title: "Content reports",
               line: "Read the reports behind a flagged account.",
             },
             {
               href: "/admin/audit",
-              emblem: "team-calendar",
               title: "Audit trail",
               line: "See what other admins already did.",
             },
@@ -114,10 +111,10 @@ export default async function AdminReviewPage() {
             scores.
           </p>
         </Disclosure>
+        <p className="admin-freshness">
+          Snapshot {new Date(data.asOf).toLocaleString("en-GB", { timeZone: "UTC" })} UTC.
+        </p>
       </section>
-      <p className="admin-freshness">
-        Snapshot {new Date(data.asOf).toLocaleString("en-GB", { timeZone: "UTC" })} UTC.
-      </p>
     </AdminFrame>
   );
 }

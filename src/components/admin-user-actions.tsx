@@ -87,6 +87,7 @@ function BanForm({
       <label>
         Discord user ID
         <input
+          className="well"
           value={id}
           onChange={(e) => {
             setId(e.target.value);
@@ -126,7 +127,14 @@ function BanForm({
           )}
           <label>
             Reason
-            <textarea name="reason" minLength={5} maxLength={500} required rows={3} />
+            <textarea
+              className="well"
+              name="reason"
+              minLength={5}
+              maxLength={500}
+              required
+              rows={3}
+            />
           </label>
           <label>
             Type{" "}
@@ -134,7 +142,7 @@ function BanForm({
               {word} {id}
             </code>{" "}
             to confirm
-            <input name="confirmation" required autoComplete="off" />
+            <input className="well" name="confirmation" required autoComplete="off" />
           </label>
           <button className={`button secondary${unban ? "" : " admin-danger"}`} disabled={busy}>
             {busy ? "Saving…" : unban ? "Restore Outpost access" : "Ban on Outpost"}
@@ -246,7 +254,14 @@ export function AdminUserActions({
           </label>
           <label>
             Reason for this change
-            <textarea name="reason" required minLength={5} maxLength={500} rows={2} />
+            <textarea
+              className="well"
+              name="reason"
+              required
+              minLength={5}
+              maxLength={500}
+              rows={2}
+            />
           </label>
           <div className="admin-action-buttons">
             <button name="action" value="grant" className="button primary" disabled={busy}>
@@ -279,7 +294,14 @@ export function AdminUserActions({
           <input type="hidden" name="action" value="revoke-sessions" />
           <label>
             Reason for revoking sessions
-            <textarea name="reason" required minLength={5} maxLength={500} rows={2} />
+            <textarea
+              className="well"
+              name="reason"
+              required
+              minLength={5}
+              maxLength={500}
+              rows={2}
+            />
           </label>
           <button className="button secondary admin-danger" disabled={busy || protectedAccount}>
             Revoke sessions

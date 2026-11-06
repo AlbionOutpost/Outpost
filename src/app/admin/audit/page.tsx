@@ -4,7 +4,7 @@ import { adminAuditLog } from "@/lib/admin/queries";
 import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminFrame } from "@/components/admin-frame";
 import { PanelHead } from "@/components/panel-head";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 export default async function AdminAuditPage({
   searchParams,
 }: {
@@ -20,7 +20,7 @@ export default async function AdminAuditPage({
       description="Who changed access, what they changed and the reason they recorded."
       emblem="team-calendar"
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -31,19 +31,16 @@ export default async function AdminAuditPage({
           cards={[
             {
               href: "/admin/users",
-              emblem: "team-roles",
               title: "Users & access",
               line: "Look up the target by Discord ID or account ID.",
             },
             {
               href: "/admin/reports",
-              emblem: "strip-content",
               title: "Content reports",
               line: "Moderation actions also leave a log entry.",
             },
             {
               href: "/admin/review",
-              emblem: "trophy-silver",
               title: "Account review",
               line: "Accounts that may need a decision next.",
             },
@@ -61,7 +58,7 @@ export default async function AdminAuditPage({
           }
           line={`${data.total.toLocaleString("en-GB")} in total, newest first, 25 to a page.`}
         />
-        <AdminAuditRows rows={data.rows} />
+        <AdminAuditRows rows={data.rows} variant="table" />
         {data.total > 25 && (
           <nav className="admin-pagination" aria-label="Audit pages">
             {page > 1 ? (

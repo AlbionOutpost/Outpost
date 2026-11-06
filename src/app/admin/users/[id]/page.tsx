@@ -8,7 +8,7 @@ import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminFrame } from "@/components/admin-frame";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 import { isSupporter } from "@/lib/billing/plan";
 import { accountBanned, giftedSupporter } from "@/lib/admin/policy";
 import { HttpError } from "@/lib/http-error";
@@ -51,7 +51,7 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
           <ArrowLeft size={15} aria-hidden="true" /> All accounts
         </Link>
       }
-      chips={
+      titleChips={
         <div className="admin-chips">
           <AdminChip tone={banned ? "danger" : isSupporter(user) ? "accent" : "default"}>
             {banned ? "Banned" : isSupporter(user) ? "Supporter" : "Free"}
@@ -60,7 +60,7 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
         </div>
       }
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -71,19 +71,16 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
           cards={[
             {
               href: "/admin/users",
-              emblem: "team-roles",
               title: "All accounts",
               line: "Search by name, Discord ID or account ID.",
             },
             {
               href: "/admin/review",
-              emblem: "trophy-silver",
               title: "Account review",
               line: "Other accounts with unusual activity.",
             },
             {
               href: "/admin/audit",
-              emblem: "team-calendar",
               title: "Audit trail",
               line: "Confirm your change was recorded.",
             },
@@ -103,7 +100,7 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
               }
               line="What Outpost has recorded for this account."
             />
-            <dl className="admin-figures">
+            <dl className="admin-facts well">
               {[
                 ["Email", user.email || "Not provided"],
                 ["Joined", day(user.createdAt)],
@@ -117,53 +114,42 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
                     : "None active",
                 ],
                 ["Subscription", user.planStatus || "None recorded"],
-                [
-                  "Builds and comps",
-                  `${user._count.builds} builds, ${user._count.compositions} comps`,
-                ],
+                ["Builds", String(user._count.builds)],
+                ["Comps", String(user._count.compositions)],
                 ["Unexpired sessions", String(user._count.sessions)],
+                ["Review signals", signals.length ? signals.join("; ") : "None"],
+                ...(banned && ban ? [["Ban reason", ban.reason]] : []),
               ].map(([label, value]) => (
-                <div key={label} className="well">
+                <div key={label}>
                   <dt>{label}</dt>
                   <dd>{value}</dd>
                 </div>
               ))}
             </dl>
           </section>
-          <section className="panel" aria-labelledby="admin-signals">
-            <PanelHead
-              id="admin-signals"
-              title={
-                <>
-                  Review <em>signals</em>
-                </>
-              }
-              line="Context for a manual review. They do not prove abuse or trigger a ban."
-            />
-            {signals.length ? (
-              <>
-                <ul className="admin-chips">
-                  {signals.map((s) => (
-                    <li key={s}>
-                      <AdminChip tone="warn">{s}</AdminChip>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/admin/reports" className="pill-link">
-                  Open content reports <ArrowRight size={15} aria-hidden="true" />
-                </Link>
-              </>
-            ) : (
-              <p className="admin-foot">
-                No open reports, no unusual session count and no burst of posts from a new account.
-              </p>
-            )}
-            {banned && ban && (
-              <p className="admin-note well">
-                <strong>Ban reason:</strong> {ban.reason}
-              </p>
-            )}
-          </section>
+          {signals.length > 0 && (
+            <section className="panel" aria-labelledby="admin-signals">
+              <PanelHead
+                id="admin-signals"
+                title={
+                  <>
+                    Review <em>signals</em>
+                  </>
+                }
+                line="Context for a manual review. They do not prove abuse or trigger a ban."
+              />
+              <ul className="admin-chips">
+                {signals.map((s) => (
+                  <li key={s}>
+                    <AdminChip tone="warn">{s}</AdminChip>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/admin/reports" className="pill-link">
+                Open content reports <ArrowRight size={15} aria-hidden="true" />
+              </Link>
+            </section>
+          )}
           <section className="panel" aria-labelledby="admin-user-audit">
             <PanelHead
               id="admin-user-audit"

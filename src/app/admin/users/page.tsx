@@ -9,7 +9,7 @@ import { AdminFrame } from "@/components/admin-frame";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 const filters = [
   ["all", "All accounts"],
   ["supporters", "Supporters"],
@@ -37,9 +37,8 @@ export default async function AdminUsersPage({
       accent="access"
       description="Find an account, review its history and change access with a recorded reason."
       emblem="team-roles"
-      actions={<AdminDiscordBan />}
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -50,19 +49,16 @@ export default async function AdminUsersPage({
           cards={[
             {
               href: "/admin/review",
-              emblem: "trophy-silver",
               title: "Account review",
               line: "Accounts with unusual sessions, posting or reports.",
             },
             {
               href: "/admin/reports",
-              emblem: "strip-content",
               title: "Content reports",
               line: "Builds, comps and comments players flagged.",
             },
             {
               href: "/admin/audit",
-              emblem: "team-calendar",
               title: "Audit trail",
               line: "Every gift, ban and session change with its reason.",
             },
@@ -79,6 +75,7 @@ export default async function AdminUsersPage({
             </>
           }
           line={`${data.total.toLocaleString("en-GB")} found, 20 to a page.`}
+          actions={<AdminDiscordBan />}
         />
         <form className="admin-search" method="get" role="search">
           <label htmlFor="admin-search" className="admin-search-field">
@@ -86,6 +83,7 @@ export default async function AdminUsersPage({
             <span className="sr-only">Search users</span>
             <input
               id="admin-search"
+              className="well"
               name="q"
               defaultValue={data.query.q}
               maxLength={80}
@@ -133,7 +131,11 @@ export default async function AdminUsersPage({
                       <Link href={`/admin/users/${u.id}`} className="admin-user-name">
                         {u.name || "Unnamed account"}
                       </Link>
-                      <code>{u.accounts[0]?.providerAccountId || "No Discord link"}</code>
+                      {u.accounts[0]?.providerAccountId ? (
+                        <code>{u.accounts[0].providerAccountId}</code>
+                      ) : (
+                        <span className="admin-muted">No Discord link</span>
+                      )}
                     </th>
                     <td className="admin-chips">
                       <AdminChip
@@ -143,10 +145,16 @@ export default async function AdminUsersPage({
                       </AdminChip>
                       {u.role !== "USER" && <AdminChip tone="warn">{roleLabel(u.role)}</AdminChip>}
                     </td>
-                    <td data-label="Builds">{u._count.builds}</td>
-                    <td data-label="Comps">{u._count.compositions}</td>
-                    <td data-label="Comments">{u._count.comments}</td>
-                    <td data-label="Joined">{date(u.createdAt)}</td>
+                    <td data-unit={u._count.builds === 1 ? "build" : "builds"}>
+                      {u._count.builds}
+                    </td>
+                    <td data-unit={u._count.compositions === 1 ? "comp" : "comps"}>
+                      {u._count.compositions}
+                    </td>
+                    <td data-unit={u._count.comments === 1 ? "comment" : "comments"}>
+                      {u._count.comments}
+                    </td>
+                    <td>{date(u.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>

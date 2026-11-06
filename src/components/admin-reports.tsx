@@ -11,6 +11,7 @@ type Report = {
   status: string;
   reason: string;
   reviewNote: string;
+  createdAt?: string;
   build: { id: string; title: string; hiddenAt: string | null } | null;
   composition: { id: string; title: string; hiddenAt: string | null } | null;
   comment: { id: string; body: string; hiddenAt: string | null } | null;
@@ -28,6 +29,12 @@ const actions = [
   ["dismiss", "Dismiss report"],
 ] as const;
 const titleOf = (r: Report) => r.build?.title || r.composition?.title || "Reported comment";
+const reportedAt = (r: Report) =>
+  r.createdAt
+    ? new Date(r.createdAt).toLocaleDateString("en-GB", { dateStyle: "medium", timeZone: "UTC" })
+    : "";
+const excerpt = (r: Report) =>
+  r.comment ? r.comment.body.slice(0, 70) : r.build?.title || r.composition?.title || "";
 const kindOf = (r: Report) => (r.build ? "Build" : r.composition ? "Comp" : "Comment");
 const statusLabel = (s: string) => s.charAt(0) + s.slice(1).toLowerCase();
 const hiddenOf = (r: Report) =>
@@ -177,16 +184,19 @@ export function AdminReports() {
                   setNote("");
                 }}
               >
-                <strong>{titleOf(report)}</strong>
+                <strong>
+                  {kindOf(report)} report · {statusLabel(report.status)}
+                </strong>
+                <span>{excerpt(report)}</span>
                 <span>
-                  {kindOf(report)} · {statusLabel(report.status)}
+                  {reportedAt(report)}
                   {hiddenOf(report) ? " · Hidden" : ""}
                 </span>
               </button>
             ))}
           </nav>
           {selected && (
-            <article className="admin-report well" key={selected.id}>
+            <article className="admin-report" key={selected.id}>
               <h3>{titleOf(selected)}</h3>
               <div className="admin-chips">
                 <AdminChip>{kindOf(selected)}</AdminChip>
@@ -213,6 +223,7 @@ export function AdminReports() {
               <label className="admin-field">
                 Review rationale (required)
                 <textarea
+                  className="well"
                   minLength={10}
                   maxLength={2000}
                   rows={3}
@@ -220,6 +231,9 @@ export function AdminReports() {
                   onChange={(e) => setNote(e.target.value)}
                 />
               </label>
+              {note.trim().length < 10 && (
+                <p className="admin-foot">Write at least 10 characters to enable these actions.</p>
+              )}
               <div className="admin-action-buttons">
                 {actions.map(([action, text]) => (
                   <button

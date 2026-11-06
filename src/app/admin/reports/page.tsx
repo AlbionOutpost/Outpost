@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { requireModerator } from "@/lib/community/access";
 import { AdminFrame, adminRole } from "@/components/admin-frame";
 import { AdminReports } from "@/components/admin-reports";
-import { NextStepCards } from "@/components/next-step-cards";
+import { AdminNextSteps } from "@/components/admin-next";
 export const metadata = privateMetadata("Moderation");
 export default async function Page() {
   const s = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ export default async function Page() {
       description="Review what players reported, then hide, restore or resolve it with a recorded reason."
       emblem="strip-content"
       closing={
-        <NextStepCards
+        <AdminNextSteps
           id="admin-next"
           title={
             <>
@@ -40,19 +40,16 @@ export default async function Page() {
               ? [
                   {
                     href: "/admin/review",
-                    emblem: "trophy-silver",
                     title: "Account review",
                     line: "Accounts with open reports or unusual activity.",
                   },
                   {
                     href: "/admin/users",
-                    emblem: "team-roles",
                     title: "Users & access",
                     line: "Open an author's account and history.",
                   },
                   {
                     href: "/admin/audit",
-                    emblem: "team-calendar",
                     title: "Audit trail",
                     line: "Check an action was recorded.",
                   },
@@ -60,13 +57,11 @@ export default async function Page() {
               : [
                   {
                     href: "/builds/library",
-                    emblem: "strip-builds",
                     title: "Builds library",
                     line: "Browse builds as players see them.",
                   },
                   {
                     href: "/compositions/library",
-                    emblem: "strip-comps",
                     title: "Comps library",
                     line: "Browse shared party comps.",
                   },
