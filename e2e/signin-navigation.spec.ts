@@ -115,7 +115,7 @@ test("the shared top navigation and Outpost browser icons stay consistent across
   }
   for (const [path, mime] of [
     ["/favicon.ico", /image\/(?:x-icon|vnd\.microsoft\.icon)/],
-    ["/icon.svg", /image\/svg\+xml/],
+    ["/icon.png", /image\/png/],
     ["/apple-icon.png", /image\/png/],
   ] as const) {
     const response = await request.get(path);

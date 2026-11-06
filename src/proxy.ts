@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { adsActive } from "@/components/adsense-loader";
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const dev = process.env.NODE_ENV === "development";
+  // Google's ad and consent origins, only while ads are active; scripts still need the nonce.
+  const ads = adsActive();
+  const google =
+    " https://*.googlesyndication.com https://*.doubleclick.net https://www.google.com https://fundingchoicesmessages.google.com https://*.adtrafficquality.google";
   const policy = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com${dev ? " 'unsafe-eval'" : ""}`,
-    "frame-src https://challenges.cloudflare.com",
+    `frame-src https://challenges.cloudflare.com${ads ? google : ""}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://render.albiononline.com https://cdn.discordapp.com",
-    "font-src 'self'",
+    `img-src 'self' data: blob: https://render.albiononline.com https://cdn.discordapp.com${ads ? " https:" : ""}`,
+    `font-src 'self'${ads ? " https://fonts.gstatic.com" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    `connect-src 'self' https://challenges.cloudflare.com${dev ? " ws: wss:" : ""}`,
+    `connect-src 'self' https://challenges.cloudflare.com${ads ? `${google} https://csi.gstatic.com` : ""}${dev ? " ws: wss:" : ""}`,
   ].join("; ");
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
