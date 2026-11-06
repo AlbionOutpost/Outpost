@@ -1273,22 +1273,13 @@
   }
 }
 
-/* Desktop: the sticky filter rail never runs past the viewport. It scrolls inside, and its
-   submit stays pinned at the foot so "Find builds" is always in reach */
+/* Desktop: the sticky filter rail never runs past the viewport; it scrolls inside, so
+   "Find builds" at its foot is in reach without scrolling the whole page */
 @media (min-width: 901px) {
   .app.outpost .builds-ecosystem .ecosystem-filter-rail {
     max-height: calc(100vh - 32px);
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
-  }
-  .app.outpost .builds-ecosystem .ecosystem-filter-rail .library-filter-actions {
-    position: sticky;
-    bottom: -16px;
-    z-index: 1;
-    margin: 0 -16px -16px;
-    padding: 12px 16px 16px;
-    border-top: 1px solid var(--well-border);
-    background: var(--panel-face);
   }
 }

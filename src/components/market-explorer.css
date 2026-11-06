@@ -543,11 +543,6 @@
   letter-spacing: 0;
   text-transform: none;
 }
-.app.outpost .mx-table abbr {
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
-  cursor: help;
-}
 .app.outpost .mx-table :is(th, td):first-child {
   width: 99%;
   text-align: left;
@@ -576,12 +571,20 @@
 }
 .app.outpost .mx-table .market-inline-time {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
   margin-top: 5px;
   color: var(--muted);
   font: 500 12px/1.2 var(--font-ui);
+}
+/* The age and Stale chip keep one line beside each other; only the Lowest/Highest tag
+   moves above them when the column is narrow */
+@media (min-width: 981px) {
+  .app.outpost .mx-table td.numeric:not(.mx-spread-col) {
+    min-width: 148px;
+  }
 }
 .app.outpost .mx-table .market-price-missing {
   color: var(--muted);

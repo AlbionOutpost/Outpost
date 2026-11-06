@@ -159,7 +159,7 @@
    screen. Below this the sections stack in reading order. */
 @media (min-width: 1280px) {
   .workspace.workspace :global(.mx-main) {
-    grid-template-columns: minmax(0, 1.5fr) minmax(340px, 1fr);
+    grid-template-columns: minmax(0, 1.6fr) minmax(360px, 1fr);
     align-items: start;
     gap: 24px;
   }
