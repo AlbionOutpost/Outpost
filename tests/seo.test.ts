@@ -336,7 +336,7 @@ describe("public discovery output", () => {
         expect(url.pathname).not.toBe("/tools/death-feed");
         for (const key of url.searchParams.keys()) expect(key).toBe("category");
       }
-      expect(urls.some((url) => url.pathname === "/supporter")).toBe(true);
+      expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);
       expect(urls.some((url) => url.pathname === "/builds/library/public-builds")).toBe(true);
     } finally {

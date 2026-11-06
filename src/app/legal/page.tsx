@@ -4,6 +4,7 @@ import { ChevronDown, Info } from "lucide-react";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { resolveLegalLocale } from "@/lib/legal-language";
 import { legalCopy } from "./legal-copy";
+import { adsActive } from "@/components/adsense-loader";
 import { LegalLanguageSwitch, LegalSectionRestore } from "./legal-language-switch";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { NextStepCards } from "@/components/next-step-cards";
@@ -45,6 +46,7 @@ export default async function Legal({ searchParams }: Props) {
       email: process.env.OPERATOR_EMAIL?.trim(),
     },
     billingEnabled(),
+    !!adsActive(),
   );
   const region =
     typeof query.region === "string" && ["europe", "americas", "asia"].includes(query.region)

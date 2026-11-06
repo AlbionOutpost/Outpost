@@ -45,7 +45,7 @@ test("public metadata has route-specific canonical/social heads and a real stati
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
   const xml = await sitemap.text();
-  expect(xml).toContain("<loc>https://albionoutpost.com/supporter</loc>");
+  expect(xml).not.toContain("<loc>https://albionoutpost.com/supporter</loc>");
   expect(xml).toContain("https://albionoutpost.com/builds/library?category=MISTS_SOLO");
   for (const excluded of [
     "/legal",

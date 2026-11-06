@@ -28,9 +28,34 @@ const expectedIds = [
   "scene-artwork",
   "media",
 ];
-const copy = (locale: LegalLocale, configured = false) => legalCopy(locale, {}, configured);
+const copy = (locale: LegalLocale, configured = false, ads = false) =>
+  legalCopy(locale, {}, configured, ads);
 const section = (locale: LegalLocale, id: string, configured = false) =>
   copy(locale, configured).sections.find((part) => part.id === id)!;
+
+describe("advertising text follows whether ads run", () => {
+  it.each(["en", "de"] as const)(
+    "no ads: no consent cookie and a no-advertising note (%s)",
+    (locale) => {
+      const body = text(section(locale, "cookies").body);
+      expect(body).not.toContain("FCCDCF");
+      expect(body).toMatch(locale === "de" ? /Keine Werbung/ : /No advertising/);
+      expect(body).not.toMatch(/Google Ireland/);
+    },
+  );
+  it.each(["en", "de"] as const)(
+    "ads on: AdSense, the consent cookie and the choice (%s)",
+    (locale) => {
+      const cookies = legalCopy(locale, {}, false, true).sections.find((s) => s.id === "cookies")!;
+      const flat = nodes(cookies.body);
+      expect(flat.filter((node) => node.type === "tr")).toHaveLength(7);
+      const body = text(cookies.body);
+      expect(body).toContain("FCCDCF");
+      expect(body).toContain("Google Ireland");
+      expect(body).toContain("Privacy and cookie settings");
+    },
+  );
+});
 
 describe("faithful bilingual legal draft", () => {
   it("retains all12 topics and complete section structure in both languages", () => {
@@ -79,7 +104,7 @@ describe("faithful bilingual legal draft", () => {
       const body = section(locale, "cookies").body;
       const flat = nodes(body);
       expect(flat.filter((node) => node.type === "tbody")).toHaveLength(1);
-      expect(flat.filter((node) => node.type === "tr")).toHaveLength(7);
+      expect(flat.filter((node) => node.type === "tr")).toHaveLength(6);
       expect(flat.some((node) => node.props.role === "region" && node.props.tabIndex === 0)).toBe(
         true,
       );
@@ -88,7 +113,6 @@ describe("faithful bilingual legal draft", () => {
         "NextAuth",
         "PKCE",
         "outpost-route",
-        "FCCDCF",
         "atlas-theme",
         "atlas-region",
         "localStorage",

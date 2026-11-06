@@ -77,6 +77,8 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Supporter billing (Stripe)
 
+**Off for now (owner, 6 Nov 2026): everything is free.** With no Stripe keys, `billingEnabled()` is false: Teams are open to everyone, `/supporter` and `/premium` show the 404 page, the landing band and Teams window name no plan, and the sitemap leaves `/supporter` out (re-add it in `scripts/build-sitemap.ts` when billing returns).
+
 The Supporter plan is a monthly subscription sold through Stripe Checkout; Outpost never sees a card. To switch it on:
 
 1. In the Stripe dashboard create a product "Outpost Supporter" with one recurring monthly price; note the `price_…` id.

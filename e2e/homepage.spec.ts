@@ -138,7 +138,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
   await expect(actions.nth(1)).toHaveAttribute("href", "/signin?region=europe");
   const stats = page.getByRole("term");
-  await expect(stats).toContainText(["Accounts", "Builds", "Guides", "Tools", "Supporters"]);
+  await expect(stats).toContainText(["Accounts", "Builds", "Comps", "Guides", "Tools"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
 
   // Windows: a public build on the board with its chosen abilities on the pieces, what a Team
@@ -405,9 +405,11 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   );
   // Billing is off in this environment: nothing is priced or sold.
   await expect(cta).not.toContainText(/\$|€|per month/);
-  await expect(cta.getByRole("link", { name: /About the Supporter plan/ })).toHaveAttribute(
+  // Everything is free while billing is off: the band sells nothing and names no plan.
+  await expect(cta).not.toContainText("Supporter");
+  await expect(cta.getByRole("link", { name: /Explore tools/ })).toHaveAttribute(
     "href",
-    "/supporter?region=europe",
+    "/tools?region=europe",
   );
   const footer = page.locator("footer.site-footer");
   await expect(footer.getByRole("navigation", { name: "Footer" })).toBeVisible();
@@ -458,17 +460,13 @@ test("landing page keeps every state honest when the sources are down", async ({
   await expect(page.locator("body")).not.toContainText(/NaN|undefined/);
 });
 
-test("supporter page explains the plan without selling anything while billing is off", async ({
-  page,
-}) => {
-  await page.goto("/premium?region=europe");
-  await expect(page).toHaveURL(/\/supporter\?region=europe/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Supporter is not on sale yet");
-  await expect(page.getByRole("link", { name: /Sign in with Discord/ })).toHaveAttribute(
-    "href",
-    "/signin?region=europe",
-  );
-  await expect(page.locator("body")).not.toContainText(/\$|€|per month/);
+test("the Supporter plan pages do not exist while billing is off", async ({ page }) => {
+  for (const path of ["/supporter?region=europe", "/premium?region=europe"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
+    await expect(page.locator('meta[name="robots"][content*="noindex"]').first()).toBeAttached();
+    await expect(page.locator("main")).not.toContainText(/\$|€|per month/);
+  }
 });
 
 test("robots points crawlers at a sitemap of public pages and keeps editors out", async ({
@@ -681,9 +679,9 @@ test("membership callout precedes activity discovery and the footer keeps its na
   expect(artwork.bodyTop).toBeGreaterThan(16);
   expect(artwork.centered).toBeLessThan(2);
   expect(artwork.copyVerticalOffset).toBeLessThan(2);
-  await expect(cta.getByRole("link", { name: /Supporter plan/ })).toHaveAttribute(
+  await expect(cta.getByRole("link", { name: /Explore tools/ })).toHaveAttribute(
     "href",
-    "/supporter?region=asia",
+    "/tools?region=asia",
   );
   const before = await cta.evaluate((node) =>
     Boolean(
