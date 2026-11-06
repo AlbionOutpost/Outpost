@@ -20,13 +20,14 @@ export function legalCopy(
   locale: LegalLocale,
   operator: LegalOperator,
   configuredBilling: boolean,
+  ads = false,
 ): LegalCopy {
   return locale === "de"
-    ? germanCopy(operator, configuredBilling)
-    : englishCopy(operator, configuredBilling);
+    ? germanCopy(operator, configuredBilling, ads)
+    : englishCopy(operator, configuredBilling, ads);
 }
 
-function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalCopy {
+function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: boolean): LegalCopy {
   return {
     title: "Rechtliches bei Outpost",
     description:
@@ -210,14 +211,16 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
                     <td>Bis zu 365 Tage</td>
                     <td>Durch entsprechende Nutzerauswahl gesetzt; im Browser löschbar</td>
                   </tr>
-                  <tr>
-                    <td>FCCDCF und FCNEC (Google): Ihre Einwilligungsentscheidung zu Werbung</td>
-                    <td>Bis zu 390 Tage</td>
-                    <td>
-                      Nur wenn Werbung aktiv ist; über „Privacy and cookie settings“ änderbar.
-                      Werbecookies von Google und Partnern nur nach Ihrer Einwilligung.
-                    </td>
-                  </tr>
+                  {ads && (
+                    <tr>
+                      <td>FCCDCF und FCNEC (Google): Ihre Einwilligungsentscheidung zu Werbung</td>
+                      <td>Bis zu 390 Tage</td>
+                      <td>
+                        Nur wenn Werbung aktiv ist; über „Privacy and cookie settings“ änderbar.
+                        Werbecookies von Google und Partnern nur nach Ihrer Einwilligung.
+                      </td>
+                    </tr>
+                  )}
                   <tr>
                     <td>
                       localStorage: Gast-Builds, Sammlungen, Filter, Einkaufslisten,
@@ -238,32 +241,50 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
               Präferenzen. Es löscht weder automatisch das Serverkonto noch ein Abonnement. Browser
               können gespeicherte Daten außerdem selbstständig entfernen.
             </p>
-            <h3>Werbung mit Google AdSense</h3>
-            <p>
-              Outpost finanziert sich über Werbung von Google AdSense (Google Ireland Limited,
-              Gordon House, Barrow Street, Dublin 4, Irland). Anzeigen erscheinen höchstens einmal
-              pro Seite, nach der Liste einer Übersichtsseite oder nach einem Guide beziehungsweise
-              einem Bibliotheks-Build, nie in Rechnern, Editoren, Team-Bereichen oder Kontoseiten.
-              Supporter sehen keine Werbung; das Werbeskript wird für sie nicht geladen.
-            </p>
-            <p>
-              Besucher aus dem EWR, dem Vereinigten Königreich und der Schweiz sehen vor jeder
-              Anzeigenanfrage das von Google zertifizierte Einwilligungsfenster (IAB TCF). Sie
-              können zustimmen, ablehnen oder einzelne Zwecke und Partner wählen; Ablehnen ist so
-              einfach wie Zustimmen. Ohne Einwilligung zeigt Google höchstens eingeschränkte, nicht
-              personalisierte Anzeigen. Ihre Wahl speichert Google in den Cookies FCCDCF und FCNEC;
-              über den Link „Privacy and cookie settings“ unten auf der Seite können Sie sie
-              jederzeit ändern oder widerrufen. Besucher aus US-Bundesstaaten mit eigenem
-              Datenschutzrecht erhalten Googles Link „Do Not Sell or Share My Personal Information“.
-            </p>
-            <p>
-              Mit Ihrer Einwilligung verarbeiten Google und die angezeigten Werbepartner Cookies,
-              Gerätekennungen, IP-Adresse und Besuchsdaten für Auslieferung, Messung, Betrugsabwehr
-              und – soweit gewählt – personalisierte Werbung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs.
-              1 TDDDG). Dabei können Daten in die USA übermittelt werden; Google ist nach dem EU-US
-              Data Privacy Framework zertifiziert. Die jeweils beteiligten Partner und ihre
-              Speicherdauern nennt das Einwilligungsfenster unter „Manage options“.
-            </p>
+            {ads ? (
+              <>
+                <h3>Werbung mit Google AdSense</h3>
+                <p>
+                  Outpost finanziert sich über Werbung von Google AdSense (Google Ireland Limited,
+                  Gordon House, Barrow Street, Dublin 4, Irland). Anzeigen erscheinen höchstens
+                  einmal pro Seite, nach der Liste einer Übersichtsseite oder nach einem Guide
+                  beziehungsweise einem Bibliotheks-Build, nie in Rechnern, Editoren, Team-Bereichen
+                  oder Kontoseiten. Supporter sehen keine Werbung; das Werbeskript wird für sie
+                  nicht geladen.
+                </p>
+                <p>
+                  Besucher aus dem EWR, dem Vereinigten Königreich und der Schweiz sehen vor jeder
+                  Anzeigenanfrage das von Google zertifizierte Einwilligungsfenster (IAB TCF). Sie
+                  können zustimmen, ablehnen oder einzelne Zwecke und Partner wählen; Ablehnen ist
+                  so einfach wie Zustimmen. Ohne Einwilligung zeigt Google höchstens eingeschränkte,
+                  nicht personalisierte Anzeigen. Ihre Wahl speichert Google in den Cookies FCCDCF
+                  und FCNEC; über den Link „Privacy and cookie settings“ unten auf der Seite können
+                  Sie sie jederzeit ändern oder widerrufen. Besucher aus US-Bundesstaaten mit
+                  eigenem Datenschutzrecht erhalten Googles Link „Do Not Sell or Share My Personal
+                  Information“.
+                </p>
+                <p>
+                  Mit Ihrer Einwilligung verarbeiten Google und die angezeigten Werbepartner
+                  Cookies, Gerätekennungen, IP-Adresse und Besuchsdaten für Auslieferung, Messung,
+                  Betrugsabwehr und – soweit gewählt – personalisierte Werbung (Art. 6 Abs. 1 lit. a
+                  DSGVO, § 25 Abs. 1 TDDDG). Dabei können Daten in die USA übermittelt werden;
+                  Google ist nach dem EU-US Data Privacy Framework zertifiziert. Die jeweils
+                  beteiligten Partner und ihre Speicherdauern nennt das Einwilligungsfenster unter
+                  „Manage options“.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3>Keine Werbung</h3>
+                <p>
+                  Outpost zeigt derzeit keine Werbung und lädt keine Werbe- oder
+                  Einwilligungsskripte. Ein gegebenenfalls ausgegebenes
+                  Google-Kontoverifizierungs-Metatag enthält nur die Publisher-Zuordnung und lädt
+                  selbst kein Google-Skript. Bevor Werbung eingeschaltet wird, beschreibt dieser
+                  Abschnitt Anbieter, Zwecke, Cookies und Ihre Wahlmöglichkeiten.
+                </p>
+              </>
+            )}
             <p>
               Google erläutert die{" "}
               <a href="https://support.google.com/adsense/answer/13554116?hl=de">
@@ -682,7 +703,7 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean): LegalC
   };
 }
 
-function englishCopy(operator: LegalOperator, configuredBilling: boolean): LegalCopy {
+function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: boolean): LegalCopy {
   return {
     title: "Legal information at Outpost",
     description:
@@ -860,15 +881,17 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
                     <td>Up to 365 days</td>
                     <td>Set through the corresponding user selection; removable in the browser</td>
                   </tr>
-                  <tr>
-                    <td>FCCDCF and FCNEC (Google): your advertising consent choice</td>
-                    <td>Up to 390 days</td>
-                    <td>
-                      Only while advertising is active; change it under “Privacy and cookie
-                      settings”. Advertising cookies from Google and partners only with your
-                      consent.
-                    </td>
-                  </tr>
+                  {ads && (
+                    <tr>
+                      <td>FCCDCF and FCNEC (Google): your advertising consent choice</td>
+                      <td>Up to 390 days</td>
+                      <td>
+                        Only while advertising is active; change it under “Privacy and cookie
+                        settings”. Advertising cookies from Google and partners only with your
+                        consent.
+                      </td>
+                    </tr>
+                  )}
                   <tr>
                     <td>
                       localStorage: guest builds, collections, filters, shopping lists,
@@ -888,32 +911,47 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean): Legal
               not automatically delete the server account or a subscription. Browsers may also
               remove stored data themselves.
             </p>
-            <h3>Advertising with Google AdSense</h3>
-            <p>
-              Outpost is funded by advertising from Google AdSense (Google Ireland Limited, Gordon
-              House, Barrow Street, Dublin 4, Ireland). Ads appear at most once per page, after the
-              list on an overview page or after a guide or library build, never in calculators,
-              editors, Team areas or account pages. Supporters see no ads; the ad script is not
-              loaded for them.
-            </p>
-            <p>
-              Visitors from the EEA, the United Kingdom and Switzerland see Google&apos;s certified
-              consent message (IAB TCF) before any ad request. You can consent, decline, or choose
-              individual purposes and partners; declining is as easy as consenting. Without consent,
-              Google shows at most limited, non-personalised ads. Google stores your choice in the
-              FCCDCF and FCNEC cookies; you can change or withdraw it at any time through the
-              “Privacy and cookie settings” link at the bottom of the page. Visitors from US states
-              with their own privacy laws get Google&apos;s “Do Not Sell or Share My Personal
-              Information” link.
-            </p>
-            <p>
-              With your consent, Google and the listed advertising partners process cookies, device
-              identifiers, IP address and visit data for delivery, measurement, fraud prevention
-              and, where chosen, personalised advertising (Art. 6(1)(a) GDPR, Section 25(1) TDDDG).
-              Data may be transferred to the USA; Google is certified under the EU-US Data Privacy
-              Framework. The consent message lists the partners involved and their retention periods
-              under “Manage options”.
-            </p>
+            {ads ? (
+              <>
+                <h3>Advertising with Google AdSense</h3>
+                <p>
+                  Outpost is funded by advertising from Google AdSense (Google Ireland Limited,
+                  Gordon House, Barrow Street, Dublin 4, Ireland). Ads appear at most once per page,
+                  after the list on an overview page or after a guide or library build, never in
+                  calculators, editors, Team areas or account pages. Supporters see no ads; the ad
+                  script is not loaded for them.
+                </p>
+                <p>
+                  Visitors from the EEA, the United Kingdom and Switzerland see Google&apos;s
+                  certified consent message (IAB TCF) before any ad request. You can consent,
+                  decline, or choose individual purposes and partners; declining is as easy as
+                  consenting. Without consent, Google shows at most limited, non-personalised ads.
+                  Google stores your choice in the FCCDCF and FCNEC cookies; you can change or
+                  withdraw it at any time through the “Privacy and cookie settings” link at the
+                  bottom of the page. Visitors from US states with their own privacy laws get
+                  Google&apos;s “Do Not Sell or Share My Personal Information” link.
+                </p>
+                <p>
+                  With your consent, Google and the listed advertising partners process cookies,
+                  device identifiers, IP address and visit data for delivery, measurement, fraud
+                  prevention and, where chosen, personalised advertising (Art. 6(1)(a) GDPR, Section
+                  25(1) TDDDG). Data may be transferred to the USA; Google is certified under the
+                  EU-US Data Privacy Framework. The consent message lists the partners involved and
+                  their retention periods under “Manage options”.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3>No advertising</h3>
+                <p>
+                  Outpost shows no advertising at present and loads no advertising or consent
+                  scripts. A Google account-verification meta tag, if output, only identifies the
+                  publisher association and does not itself load a Google script. Before advertising
+                  is switched on, this section describes the provider, purposes, cookies and your
+                  choices.
+                </p>
+              </>
+            )}
             <p>
               Google explains its{" "}
               <a href="https://support.google.com/adsense/answer/13554116?hl=de">

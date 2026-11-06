@@ -14,7 +14,8 @@ import { regionSchema } from "@/lib/albion/region-config";
 import { giftedSupporter } from "@/lib/admin/policy";
 import { billingProfile, isSupporter } from "@/lib/billing/plan";
 import { supporterPrice } from "@/lib/billing/price";
-import { stripeConfig } from "@/lib/billing/stripe";
+import { billingEnabled, stripeConfig } from "@/lib/billing/stripe";
+import { notFound } from "next/navigation";
 import "@/app/landing-window.css";
 import windows from "@/components/landing/windows.module.css";
 import "@/app/supporter.css";
@@ -51,6 +52,9 @@ export default async function Supporter({
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
   const supporter = isSupporter(profile);
   const gifted = giftedSupporter(profile);
+  // Everything is free while billing is off (owner, 6 Nov 2026): the plan page exists only for
+  // accounts an admin gifted the plan to, so they can still see it.
+  if (!billingEnabled() && !supporter) notFound();
   const price = await supporterPrice();
   const renews = profile?.planRenewsAt
     ? profile.planRenewsAt.toLocaleDateString("en-GB", {

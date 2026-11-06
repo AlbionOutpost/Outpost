@@ -63,12 +63,15 @@ export function LandingWindows({
   comp,
   members,
   suffix,
+  teamsPaid = false,
 }: {
   build: LibraryBuild | null;
   spellNames: Record<string, string>;
   comp: LibraryComposition | null;
   members: LibraryBuild[];
   suffix: string;
+  /** Teams need the Supporter plan only while billing is configured. */
+  teamsPaid?: boolean;
 }) {
   const byId = new Map(members.map((b) => [b.id, b]));
   const crew = (comp?.members ?? []).flatMap((id) => {
@@ -125,13 +128,13 @@ export function LandingWindows({
         scene="market"
         emblem="strip-content"
         title="Team Management"
-        line="Mass-ups, comps and loot splits for your guild. Supporter feature."
+        line={`Mass-ups, comps and loot splits for your guild.${teamsPaid ? " Supporter feature." : ""}`}
         href={`/groups${suffix}`}
         bar={
           <>
             <span className="landing-window-title">Team Management</span>
             <span className="landing-chips">
-              <span className="landing-chip">Supporter</span>
+              <span className="landing-chip">{teamsPaid ? "Supporter" : "Free"}</span>
             </span>
           </>
         }

@@ -21,7 +21,6 @@ const entries: Entry[] = [
   { path: "/guides", changeFrequency: "weekly", priority: 0.8 },
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/supporter", changeFrequency: "monthly", priority: 0.3 },
   ...tools
     .filter(
       (tool) =>

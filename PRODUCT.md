@@ -20,6 +20,8 @@ Success means a player trusts Outpost enough to make an in-game decision from it
 
 ## Supporter plan
 
+Paused: everything is free until the owner switches billing on (see [OPERATIONS.md](docs/OPERATIONS.md#supporter-billing-stripe)).
+
 Outpost stays free: prices, builds, calculators, guides, comps and joining a Team never sit behind a plan. The **Supporter** plan (monthly, through Stripe) removes advertising and unlocks running a Team workspace — creating one and managing its events, announcements, invites, roles, shared builds and loot splits. Members take part for free. Advertising, when configured, is one unit after a page's main content (hubs and articles), never inside a tool or a workspace, and never shown to Supporters. The routes keep their technical names (`/supporter`, the old `/premium` redirects).
 
 ## Positioning
