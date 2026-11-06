@@ -11,16 +11,7 @@ import { ItemIcon } from "./item-icon";
 import { TeamMark } from "./group-parts";
 import styles from "./teams.module.css";
 
-const colourNames: Record<CrestColor, string> = {
-  ember: "Ember",
-  gold: "Gold",
-  crimson: "Crimson",
-  forest: "Forest",
-  teal: "Teal",
-  azure: "Azure",
-  violet: "Violet",
-  steel: "Steel",
-};
+const colourName = (c: string) => c.charAt(0).toUpperCase() + c.slice(1);
 const groups = [...new Set(crestItems.map(([group]) => group))];
 
 /** Read the identity fields back out of a form, in the shape the Team APIs take. */
@@ -60,11 +51,16 @@ export function TeamIdentityFields({
         <legend>Crest</legend>
         <div className={styles.crestPreview}>
           <TeamMark name={name || "Team"} crestItem={item} crestColor={color} />
-          <p>Pick a field colour and an item for your crest, or keep the team&apos;s initials.</p>
+          <p>Pick a shield and an item for your crest, or keep the team&apos;s initials.</p>
         </div>
-        <div className={styles.swatches} role="radiogroup" aria-label="Crest colour">
+        <div className={styles.swatches} role="radiogroup" aria-label="Crest shield">
           {crestColors.map((c) => (
-            <label key={c} className={styles.swatch} data-crest={c} title={colourNames[c]}>
+            <label
+              key={c}
+              className={styles.swatch}
+              title={colourName(c)}
+              style={{ "--shield": `url("/albion/crests/crest-${c}.webp")` } as React.CSSProperties}
+            >
               <input
                 type="radio"
                 name="crestColor"
@@ -72,7 +68,7 @@ export function TeamIdentityFields({
                 checked={color === c}
                 onChange={() => setColor(c)}
               />
-              <span className="sr-only">{colourNames[c]}</span>
+              <span className="sr-only">{colourName(c)}</span>
             </label>
           ))}
         </div>

@@ -17,7 +17,7 @@ export default async function AdminAuditPage({
       title="Audit trail"
       accent="trail"
       description="Who changed access, what they changed and the reason they recorded."
-      emblem="team-calendar"
+      emblem="admin-audit"
     >
       <section className="panel" aria-labelledby="admin-audit-title">
         <PanelHead

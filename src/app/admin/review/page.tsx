@@ -14,7 +14,7 @@ export default async function AdminReviewPage() {
       title="Account review"
       accent="review"
       description="Look at unusual activity before you make an access decision."
-      emblem="trophy-silver"
+      emblem="admin-review"
     >
       <section className="panel" aria-labelledby="admin-review-list">
         <PanelHead
@@ -64,7 +64,7 @@ export default async function AdminReviewPage() {
           </ul>
         ) : (
           <EmptyWell
-            emblem="trophy-silver"
+            emblem="admin-review"
             title="No accounts meet these signals"
             line="New reports or unusual activity appear here when you reload."
           />

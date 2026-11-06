@@ -37,7 +37,11 @@ export function TeamMark({
     <span
       className={styles.mark}
       data-size={size}
-      data-crest={resolveCrestColor(name, crestColor)}
+      style={
+        {
+          "--shield": `url("/albion/crests/crest-${resolveCrestColor(name, crestColor)}.webp")`,
+        } as React.CSSProperties
+      }
       data-team-crest={item ?? "monogram"}
       aria-hidden="true"
     >

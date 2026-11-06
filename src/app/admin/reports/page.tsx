@@ -19,7 +19,7 @@ export default async function Page() {
       title="Community reports"
       accent="reports"
       description="Review what players reported, then hide, restore or resolve it with a recorded reason."
-      emblem="strip-content"
+      emblem="admin-reports"
     >
       <AdminReports />
     </AdminFrame>

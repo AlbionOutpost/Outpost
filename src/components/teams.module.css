@@ -9,64 +9,32 @@
 }
 
 /* ---------- Identity ---------- */
-/* The crest: a heraldic field in the team's palette colour (each one a site token deepened toward
-   the illustration canvas), a lit rim, and the item render or the team's initials on it. */
+/* The crest: the team's painted shield with its item render or initials on it, a little above
+   centre where the shield is widest. The masthead's emblem rule sizes imgs, hence the second
+   selector. */
 :global(.app.outpost) .mark.mark {
-  --crest: var(--accent);
   display: inline-grid;
   flex: none;
   place-items: center;
-  overflow: hidden;
   width: 88px;
   height: 88px;
-  border: 2px solid color-mix(in srgb, var(--crest) 70%, var(--illustration-bg));
-  border-radius: 14px;
-  background:
-    radial-gradient(
-      110% 85% at 50% 18%,
-      color-mix(in srgb, var(--crest) 62%, var(--illustration-bg)),
-      color-mix(in srgb, var(--crest) 26%, var(--illustration-bg)) 72%
-    ),
-    var(--illustration-bg);
-  box-shadow:
-    inset 0 0 0 2px color-mix(in srgb, var(--illustration-bg) 70%, transparent),
-    inset 0 1px 0 3px color-mix(in srgb, var(--crest) 35%, transparent),
-    0 6px 14px -4px color-mix(in srgb, var(--illustration-bg) 80%, transparent);
-  color: color-mix(in srgb, var(--crest) 22%, white);
-  font: 800 32px/1 var(--font-display);
+  padding-bottom: 8%;
+  background: var(--shield) center / contain no-repeat;
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
+  color: var(--text);
+  font: 800 30px/1 var(--font-display);
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 3px var(--illustration-bg);
+  text-shadow: 0 2px 4px var(--illustration-bg);
 }
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="gold"] {
-  --crest: var(--role-tank);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="crimson"] {
-  --crest: var(--error);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="forest"] {
-  --crest: var(--success);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="teal"] {
-  --crest: var(--role-healer);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="azure"] {
-  --crest: var(--role-support);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="violet"] {
-  --crest: var(--role-dps);
-}
-:global(.app.outpost) :is(.mark, .swatch)[data-crest="steel"] {
-  --crest: var(--muted);
-}
-/* The official render is an inventory tile (frame and quality ground included), so it sits on
-   the field like a charge on a banner, the colour showing all round it. The masthead's emblem
-   rule sizes imgs, hence the second selector. */
 :global(.app.outpost) .mark.mark img,
 :global(.app.outpost .workspace-emblem) .mark.mark img {
-  width: 74%;
-  height: 74%;
+  /* The render is an inventory tile; a round cut keeps the item and drops the tile's frame,
+     tier numeral and quality dots, so it reads as a medallion on the shield. */
+  width: 70%;
+  height: auto;
+  aspect-ratio: 1;
   object-fit: contain;
-  filter: drop-shadow(0 3px 5px var(--illustration-bg));
+  clip-path: circle(31% at 50% 50%);
 }
 /* In the masthead the crest stands on its own, like a painted emblem: no second box */
 :global(.app.outpost .workspace-emblem):has(> .mark) {
@@ -79,14 +47,12 @@
 :global(.app.outpost) .mark.mark[data-size="medium"] {
   width: 60px;
   height: 60px;
-  border-radius: 12px;
-  font-size: 22px;
+  font-size: 20px;
 }
 :global(.app.outpost) .mark.mark[data-size="small"] {
   width: 40px;
   height: 40px;
-  border-radius: 9px;
-  font-size: 16px;
+  font-size: 14px;
 }
 @media (max-width: 700px) {
   :global(.app.outpost .workspace-emblem) > .mark.mark {
@@ -1345,11 +1311,10 @@
 :global(.app.outpost) .swatch.swatch {
   position: relative;
   display: grid;
-  width: 34px;
-  height: 34px;
-  border: 2px solid color-mix(in srgb, var(--crest, var(--accent)) 70%, var(--illustration-bg));
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--crest, var(--accent)) 55%, var(--illustration-bg));
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--shield) center / 80% no-repeat;
   cursor: pointer;
 }
 :global(.app.outpost) :is(.swatch, .charge, .playOption) > input:not([type="checkbox"]) {

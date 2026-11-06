@@ -23,7 +23,7 @@ export function WorkspaceHeading({
   description: string;
   icon?: "calculator" | "account" | "timer";
   /** Original task emblem from the tool directory; overrides `icon`. */
-  glyph?: Glyph;
+  glyph?: Glyph | "cook" | "alchemy";
   /** Custom emblem content (an item render, a painted mark); overrides `glyph` and `icon`. */
   emblem?: React.ReactNode;
   scene?: Scene;

@@ -38,13 +38,13 @@ describe("team crest", () => {
     const parsed = groupAction.parse({
       ...profile,
       crestItem: "T8_2H_CLAYMORE",
-      crestColor: "crimson",
+      crestColor: "red",
       activities: ["ZvZ", "Arena"],
       recruiting: false,
     });
     expect(parsed).toMatchObject({
       crestItem: "T8_2H_CLAYMORE",
-      crestColor: "crimson",
+      crestColor: "red",
       activities: ",ZvZ,Arena,",
       recruiting: false,
     });
@@ -65,7 +65,7 @@ describe("team crest", () => {
     { crestItem: "https://example.com/logo.png" },
     { crestItem: "" },
     { crestColor: "#ff0000" },
-    { crestColor: "red" },
+    { crestColor: "pink" },
     { activities: ["ZvZ", "ZvZ"] },
     { activities: ["ZvZ", "Arena", "Ganking", "Roaming"] },
     { activities: ["Other"] },

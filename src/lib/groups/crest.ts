@@ -51,16 +51,22 @@ export const crestItems = [
 export type CrestItem = (typeof crestItems)[number][1];
 const crestItemIds = crestItems.map(([, id]) => id) as [CrestItem, ...CrestItem[]];
 
-/** Field colours, each drawn from a site token (teams.module.css maps them). */
+/** Painted shield fields (public/albion/crests/crest-<colour>.webp). */
 export const crestColors = [
-  "ember",
+  "orange",
   "gold",
-  "crimson",
-  "forest",
-  "teal",
-  "azure",
+  "red",
+  "burgundy",
+  "rose",
   "violet",
-  "steel",
+  "navy",
+  "blue",
+  "frost",
+  "teal",
+  "sage",
+  "green",
+  "silver",
+  "obsidian",
 ] as const;
 export type CrestColor = (typeof crestColors)[number];
 
@@ -70,8 +76,18 @@ export function defaultCrestColor(name: string): CrestColor {
   for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
   return crestColors[hash % crestColors.length];
 }
+/** Colours saved before the painted shields, mapped to their nearest shield. */
+const legacyCrestColors: Record<string, CrestColor> = {
+  ember: "orange",
+  crimson: "red",
+  forest: "green",
+  azure: "blue",
+  steel: "silver",
+};
 export const resolveCrestColor = (name: string, color?: string | null): CrestColor =>
-  crestColors.includes(color as CrestColor) ? (color as CrestColor) : defaultCrestColor(name);
+  crestColors.includes(color as CrestColor)
+    ? (color as CrestColor)
+    : (legacyCrestColors[color ?? ""] ?? defaultCrestColor(name));
 export const crestItemName = (id?: string | null) =>
   crestItems.find(([, item]) => item === id)?.[2];
 
