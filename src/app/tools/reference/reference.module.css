@@ -88,9 +88,6 @@
   gap: var(--space-2);
   min-width: 0;
 }
-:global(.app.outpost) .block.block[data-narrow] {
-  max-width: 640px;
-}
 /* Two short tables in one section sit side by side */
 @media (min-width: 981px) {
   :global(.app.outpost) .section.section:has(> .block[data-narrow] ~ .block[data-narrow]) {

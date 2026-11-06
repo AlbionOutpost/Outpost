@@ -330,6 +330,9 @@
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
+:global(.app.outpost) .figure.figure strong > span {
+  font: 500 14px/1.4 var(--font-ui);
+}
 :global(.app.outpost) .figure.figure:not([data-complete]) strong {
   color: var(--secondary);
 }
@@ -360,21 +363,6 @@
   font: 800 17px/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
-}
-:global(.app.outpost) .readiness.readiness {
-  display: grid;
-  gap: 6px;
-  padding: 12px 14px;
-  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--well-border));
-  border-radius: var(--radius-md);
-  font-size: 13px;
-}
-:global(.app.outpost) .readiness.readiness ul {
-  display: grid;
-  gap: 3px;
-  margin: 0;
-  padding-left: 18px;
-  color: var(--secondary);
 }
 :global(.app.outpost) .cities.cities {
   display: grid;
@@ -473,21 +461,18 @@
 /* Empty, blocked, loading */
 :global(.app.outpost) .empty.empty {
   display: grid;
-  justify-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
-  padding: 40px 24px;
-  text-align: center;
 }
-:global(.app.outpost) .empty.empty h2,
+:global(.app.outpost) .empty.empty > * {
+  margin: 0;
+}
+:global(.app.outpost) .empty.empty .emptyActions {
+  justify-content: start;
+}
 :global(.app.outpost) .gate.gate h2 {
   margin: 0;
   font: 800 clamp(24px, 2.4vw, 30px) / 1.1 var(--font-display);
-}
-:global(.app.outpost) .empty.empty p {
-  max-width: 58ch;
-  margin: 0;
-  color: var(--secondary);
 }
 :global(.app.outpost) .emptyActions.emptyActions {
   display: flex;
@@ -693,12 +678,6 @@
   font-size: 16px;
 }
 
-:global(.app.outpost) .emptyFoot.emptyFoot {
-  width: 100%;
-  max-width: 720px;
-  margin-top: var(--space-4);
-  text-align: left;
-}
 @media (max-width: 420px) {
   :global(.app.outpost) .queue.queue li {
     grid-template-columns: 40px minmax(0, 1fr);
