@@ -422,6 +422,7 @@
   white-space: nowrap;
 }
 :global(.app.outpost) .cityValue.cityValue small {
+  display: block;
   color: var(--muted);
   font-size: 12px;
 }
@@ -600,6 +601,14 @@
   }
   :global(.app.outpost) .stats.stats dd {
     font-size: 15px;
+  }
+  :global(.app.outpost) .cities.cities li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 6px;
+  }
+  :global(.app.outpost) .cities.cities li > i {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }
 @media (max-width: 360px) {
