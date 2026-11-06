@@ -1813,9 +1813,13 @@
 .app.outpost .ad-slot.is-article {
   margin: 40px 0 0;
 }
+.app.outpost .ad-slot-label {
+  color: var(--muted);
+  font-size: 12px;
+}
 .app.outpost .ad-slot-unit {
   display: block;
-  min-height: 120px;
+  min-height: 250px;
   border-radius: var(--radius-md);
   background: var(--well);
 }
