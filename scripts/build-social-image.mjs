@@ -29,7 +29,12 @@ try {
     await Promise.all([...document.images].map((image) => image.decode()));
   });
   await mkdir("public/brand", { recursive: true });
-  await page.screenshot({ path: "public/brand/outpost-social.png" });
+  const shot = await page.screenshot({ type: "png" });
+  // 256-colour palette PNG: ~300 KB instead of ~800 KB with no visible banding on this card.
+  const { default: sharp } = await import("sharp");
+  await sharp(shot)
+    .png({ palette: true, quality: 90, compressionLevel: 9, effort: 10, colours: 256, dither: 0.8 })
+    .toFile("public/brand/outpost-social.png");
 } finally {
   await browser.close();
 }
