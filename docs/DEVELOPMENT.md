@@ -22,6 +22,8 @@ Outpost aims to be the best Albion Online site there is. Every change should lea
 - **Get the owner's OK first on big calls:** a new design direction or a change that contradicts DESIGN.md, deleting user data or content, changes to auth/permissions semantics, anything that costs money or touches DNS/registrar/Discord settings.
 - **Merging and deploying is delegated (owner, 6 Nov 2026).** Claude may merge its own PRs to `main` (merging **deploys to production**) once every required check is green and UI changes were inspected in a browser; it then confirms the deploy succeeded and reverts if it didn't. The big calls above still need the owner's OK first, asked in chat.
 - **Branch → PR → merge.** Work on a short-lived branch, open a PR, keep `main` deployable. Commits are authored as the repo owner; write clear imperative messages with no co-author trailers.
+- **Least code that works.** Prefer the smallest change that solves the problem; no speculative abstractions, options or files. Delete before adding.
+- **Report briefly.** Answer the owner in their language, in short plain sentences: one line per item, no jargon. Add one or two sentences only for a real security, data or money risk.
 - **Leave it better.** When you touch a page, also fix the small things in reach: a 10px label, a hard-coded colour that should be a token, a missing empty state.
 - **Update the docs in the same PR** when behaviour changes (see the table at the end).
 

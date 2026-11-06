@@ -21,6 +21,8 @@ data/catalog
 .claude/skills/workers-best-practices
 .claude/skills/durable-objects
 .claude/skills/wrangler
+.claude/skills/better-typography
+.claude/skills/reverse-engineer-anything
 
 # Downloaded reference-site evidence retains upstream bytes.
 Scrape

@@ -44,13 +44,13 @@ fresh input, so a stable prompt prefix matters more than any plugin.
 
 - Read every file of a skill, plugin or MCP before adding it; reject install scripts, hooks or
   daemons you can't justify, and anything that sends code or prompts to an unknown vendor.
-- Vendored skills keep upstream bytes and a provenance note (see `.claude/skills/CLOUDFLARE_SKILLS.md`);
+- Vendored skills keep upstream bytes and a provenance note (see `.claude/skills/VENDORED_SKILLS.md`);
   list them in `.prettierignore` and in `vendored` in `scripts/docs-check.mjs`.
 - New network hosts, API keys, paid services or Claude config hooks need the owner's OK.
 
 ## Review of suggested tools (6 Nov 2026)
 
-Kept or installed: Cloudflare `workers-best-practices`, `durable-objects`, `wrangler`; built-in
+Kept or installed: Cloudflare `workers-best-practices`, `durable-objects`, `wrangler`; `better-typography` (jakubkrehel); `reverse-engineer-anything` skill (morluto/rea, instructions only, MCP not installed); built-in
 per-agent model routing (`Explore` on Haiku); existing Playwright, impeccable, vercel skills.
 
 Optional, owner decision: Context7 (needs `mcp.context7.com` allowed and an API key; sends queries to
@@ -65,5 +65,6 @@ Hue, Hallmark themes (second design system); `nextjs-on-cloudflare` (pushes a vi
 Playwright MCP (duplicates installed Playwright, costs tokens); MarkItDown (built-in PDF reading
 suffices); off-topic: MiroFish, Harvey, DaVinci Resolve MCP, claude-ads, job-search and social skills.
 
-Unresolved (no confident match): Reverse Engineer Anything, Artemis, Cloud Hub, Generate Skill (use
-the built-in skill-creator), Better Typography, Prompt Motion, Aisa.
+Unresolved (no confident match): Artemis, Cloud Hub, Generate Skill (use the built-in
+skill-creator), Prompt Motion, Aisa. Instead of Caveman and Ponytail, DEVELOPMENT.md has two rules:
+report briefly, and least code that works.
