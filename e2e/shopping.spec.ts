@@ -111,7 +111,6 @@ test("account shopping snapshots validate inputs and retain owner-only access", 
       ).status(),
     ).toBe(400);
     await page.goto("/shopping-list?region=europe");
-    await page.getByText("Save & load account lists", { exact: true }).click();
     await page.getByRole("button", { name: "Load account lists", exact: true }).click();
     await page.getByRole("button", { name: "Restore Private regear list", exact: true }).click();
     await expect(page.locator(".shopping-total")).toHaveText("7,500");
