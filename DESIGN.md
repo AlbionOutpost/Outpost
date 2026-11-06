@@ -219,6 +219,8 @@ Surfaces sit on the canvas. Depth comes from one raised surface, not from border
 
 Shared UI lives in `src/components`. Reuse before you restyle; if two pages need the same thing, it becomes one component.
 
+**Stylesheets.** The root layout loads only what every page needs: tokens, the shell, shared surfaces, controls and motion (16 sheets, `globals.css` through `product-support.css`). Everything else loads with the route that renders it. The build, composition, Team build and guide workspaces import `src/app/build-styles.ts`, one ordered list of their 13 sheets, from the `builds`, `compositions` and `guides` layouts and the favorites, Team and item pages; a calculator or feature component imports its own sheet (`fishing-workspace.css`, `journal-workspace.css`, `farming-workspace.css`, `production-*.css`, `market-explorer.css`). Route sheets load after every global sheet, and after client-side navigation they can sit after other routes' sheets too, so a route rule must win on its own selector: never rely on a later global rule overriding it (delete the losing declaration instead), and never split one ordered group across routes.
+
 ### Buttons
 
 Primary (ember, dark text) for the one main action per view; secondary (panel + edge-strong border) for the rest; tertiary (text + arrow) for navigation links; destructive uses `loss`. Height 40px (36px compact). Hover grows to 1.045 and holds; press compresses to 0.96.

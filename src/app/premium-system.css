@@ -1,4 +1,13 @@
 /* Outpost UI system. Shared surfaces and task layouts follow the approved copper/charcoal references. */
+/* Spell icons render on the landing and every build view. */
+.spell-icon-unavailable {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
 .app.outpost {
   --radius-control: 6px;
   --radius-panel: 8px;

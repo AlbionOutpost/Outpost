@@ -1,4 +1,5 @@
 "use client";
+import "@/app/fishing-workspace.css";
 import { AnimatedNumber } from "./animated-number";
 import { CalculationReadiness } from "./calculation-readiness";
 import { useEffect, useId, useRef, useState } from "react";

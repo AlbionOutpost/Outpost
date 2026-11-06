@@ -1,9 +1,7 @@
 /* Gear-led workspaces: equipment and reading content set the hierarchy. */
 .app.outpost .build-studio {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 328px;
   align-items: start;
-  gap: 24px;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -535,20 +533,17 @@
   margin: 0;
   align-items: end;
 }
-.app.outpost .build-command-bar > label:first-child {
-  flex: 1 1 300px;
-}
-.app.outpost .build-command-bar > label:first-child input {
-  font-size: 18px;
-  font-weight: 600;
-}
 .app.outpost .build-command-bar .button {
   white-space: nowrap;
 }
+@media (max-width: 600px) {
+  /* Phones let the bar's own and save buttons wrap, as premium-system.css sets for them */
+  .app.outpost .build-command-bar > .button,
+  .app.outpost .build-save-action > .button {
+    white-space: normal;
+  }
+}
 .app.outpost .build-editor-context {
-  border-top: 1px solid var(--border);
-  padding: 14px 0;
-  margin: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1067,10 +1062,6 @@
     grid-template-columns: 200px minmax(0, 1fr);
     gap: 24px;
   }
-  .app.outpost .build-studio {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 16px;
-  }
   .studio-equipment-row {
     padding-left: 14px;
     padding-right: 14px;
@@ -1133,9 +1124,6 @@
   .loadout-price-check .library-section-heading {
     flex-direction: column;
   }
-  .app.outpost .build-studio {
-    grid-template-columns: 1fr;
-  }
   .studio-overview {
     position: static;
     grid-row: 1;
@@ -1197,14 +1185,8 @@
     gap: 10px;
     padding-bottom: 12px;
   }
-  .app.outpost .build-command-bar > label {
-    min-width: 0;
-  }
   .app.outpost .build-command-bar > label:first-child {
     grid-column: 1/-1;
-  }
-  .app.outpost .build-command-bar > label:first-child input {
-    font-size: 16px;
   }
   .app.outpost .build-file-tools {
     min-width: 0;

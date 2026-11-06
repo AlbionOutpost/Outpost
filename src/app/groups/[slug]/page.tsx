@@ -1,3 +1,4 @@
+import "@/app/build-styles";
 import { privateMetadata } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ArrowLeft } from "lucide-react";

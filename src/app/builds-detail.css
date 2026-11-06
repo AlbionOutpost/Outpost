@@ -1174,7 +1174,6 @@
 /* The build's masthead on the shared band: breadcrumb, tags, weapon + title, author line */
 .app.outpost .detail-hero.masthead {
   display: block;
-  padding-bottom: 40px;
   border-bottom: 0;
   background: none;
 }
@@ -1268,4 +1267,63 @@
 .app.outpost .detail-summary-panel.raised {
   border: 0;
   background: var(--surface-raised);
+}
+
+/* Detail workspace finish: panel padding, hero and ability choices in the warm metal palette. */
+.app.outpost .detail-panel-heading h2 {
+  font-size: 18px;
+}
+.app.outpost .detail-workspace-grid {
+  max-width: none;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+}
+.app.outpost .detail-inventory-panel {
+  padding: 24px;
+}
+.app.outpost .detail-summary-panel {
+  padding: 24px;
+}
+.app.outpost .detail-spell-choice {
+  border-radius: 8px;
+  background: var(--bg);
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice img {
+  width: 46px;
+  height: 46px;
+}
+.app.outpost .detail-selected-abilities .detail-spell-choice > span {
+  font-size: 13px;
+}
+.app.outpost .detail-context-actions .button {
+  font-size: 14px;
+}
+.app.outpost .detail-hero {
+  padding-bottom: 24px;
+}
+.app.outpost .detail-hero-content {
+  align-items: center;
+}
+.app.outpost .detail-hero-copy {
+  max-width: 840px;
+}
+.app.outpost .detail-hero-description {
+  font-size: 14px;
+}
+.app.outpost:not(.light) .detail-inventory-panel {
+  background: radial-gradient(ellipse at 50% 36%, #b4864220, transparent 68%), var(--panel);
+}
+.app.outpost.light .detail-inventory-panel {
+  background: var(--panel);
+}
+@media (max-width: 700px) {
+  .app.outpost .detail-workspace-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .detail-inventory-panel,
+  .app.outpost .detail-summary-panel {
+    padding: 16px;
+  }
+  .app.outpost .detail-hero-content {
+    display: block;
+  }
 }

@@ -1,4 +1,5 @@
 "use client";
+import "@/app/journal-workspace.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Search } from "lucide-react";
 import { parseJournalProgress, type JournalEntry } from "@/lib/journal-progress";

@@ -1,3 +1,4 @@
+import "@/app/build-styles";
 import { itemShareMetadata } from "@/lib/seo-public";
 import type { SeoQuery } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";

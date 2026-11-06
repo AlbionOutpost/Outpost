@@ -204,9 +204,6 @@
 
 /* Group Build detail: controls in a raised bar, every member a window with the role on its
    edge, the loadout as the game shows it, recorded abilities and swaps */
-.app.outpost .masthead-chips {
-  flex-wrap: wrap;
-}
 .app.outpost .masthead-back {
   margin-top: 14px;
 }

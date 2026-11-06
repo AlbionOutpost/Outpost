@@ -304,6 +304,9 @@
 }
 .app.outpost .ecosystem-build-card:hover {
   border-color: var(--accent);
+}
+/* Framed (painted) cards keep their transparent face; the frame lights instead */
+.app.outpost .ecosystem-build-card:where(:not(.raised.has-scene)):hover {
   background: var(--elevated);
 }
 .app.outpost .ecosystem-build-card > .ecosystem-card-main {
@@ -324,6 +327,13 @@
   min-height: 20px;
 }
 .app.outpost .ecosystem-activity {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Library cards render the activity as a .landing-chip, which owns its pill */
+.app.outpost .ecosystem-activity:where(:not(.landing-chip)) {
   display: inline-block;
   padding: 3px 6px;
   border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
@@ -332,10 +342,6 @@
   line-height: 1.2;
   color: var(--accent-ink);
   background: var(--accent-wash);
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .ecosystem-card-kind {
   margin-left: auto;
@@ -848,9 +854,6 @@
   inset: 0;
   z-index: 1;
   border-radius: inherit;
-}
-.app.outpost .ecosystem-title-link:focus-visible {
-  outline: 0;
 }
 .app.outpost .ecosystem-title-link:focus-visible::after {
   outline: 2px solid var(--accent-ink);

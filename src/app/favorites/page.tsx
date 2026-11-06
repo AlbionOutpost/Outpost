@@ -1,3 +1,4 @@
+import "@/app/build-styles";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import Link from "@/components/build-region-link";
