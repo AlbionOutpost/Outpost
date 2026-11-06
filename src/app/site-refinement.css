@@ -27,9 +27,6 @@
 .app.outpost .actions > :is(a, button) {
   margin: 0;
 }
-.app.outpost :is(input, textarea) {
-  caret-color: var(--accent-ink);
-}
 .app.outpost .panel > :first-child {
   margin-top: 0;
 }

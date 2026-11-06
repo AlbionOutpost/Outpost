@@ -90,22 +90,6 @@
     box-shadow 180ms ease,
     border-color 180ms ease;
 }
-.app.outpost .region select {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  padding: 9px 26px 9px 0;
-  font-size: 12px;
-  font-weight: 600;
-  min-height: 38px;
-  max-width: 112px;
-  cursor: pointer;
-}
-.app.outpost .region select:focus-visible {
-  outline-offset: -1px;
-  border-radius: 6px;
-}
 .app.outpost .region-chevron {
   position: absolute;
   right: 9px;
@@ -115,10 +99,6 @@
 .app.outpost .region:focus-within {
   border-color: var(--accent-ink);
   box-shadow: 0 3px 10px #0002;
-}
-.app.outpost select option {
-  background: var(--panel);
-  color: var(--text);
 }
 .app.outpost .discord-login {
   display: inline-flex;
@@ -371,12 +351,6 @@
   }
   .app.outpost .region-globe {
     display: none;
-  }
-  .app.outpost .region select {
-    min-height: 32px;
-    padding: 7px 24px 7px 9px;
-    font-size: 11px;
-    max-width: 100px;
   }
   .app.outpost .featured-tool {
     grid-template-columns: 48px minmax(0, 1fr);

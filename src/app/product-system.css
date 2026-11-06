@@ -99,18 +99,175 @@
   border-radius: var(--radius-control);
   font: 600 14px/1.35 var(--font-ui);
 }
-.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
-  border-radius: var(--radius-control);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
-  border-color: var(--border);
+/* Form controls: one set for the whole site (DESIGN.md "Forms"). Every text, number, search,
+   date and time input, select and textarea is the landing's well, 42px tall; labels sit above
+   in 12px muted type. These rules carry element specificity only, so a layout class can size or
+   place a control without restyling it. */
+:where(.app.outpost) label {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
 }
-.app.outpost :is(input:not([type="checkbox"]):not([type="radio"]), select) {
+:where(.app.outpost) label:where(:has(> input[type="checkbox"], > input[type="radio"])) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--secondary);
+  font: 500 14px/1.35 var(--font-ui);
+  cursor: pointer;
+}
+:where(.app.outpost)
+  :is(input, select, textarea):where(
+    :not([type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"])
+  ) {
+  width: 100%;
+  min-width: 0;
   min-height: 42px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  color: var(--text);
+  font: 500 14px/1.3 var(--font-ui);
+  caret-color: var(--accent-ink);
 }
-.app.outpost :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+:where(.app.outpost) input:where([type="number"]) {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:where(.app.outpost) select {
+  padding-right: 38px;
+  appearance: none;
+  cursor: pointer;
+}
+:where(.app.outpost) select option {
+  background: var(--surface-raised);
+  color: var(--text);
+}
+:where(.app.outpost) textarea {
+  min-height: 112px;
+  padding: 10px 12px;
+  line-height: 1.55;
+  resize: vertical;
+}
+:where(.app.outpost) :is(input, textarea)::placeholder {
+  color: var(--muted);
+  opacity: 1;
+  font-family: var(--font-ui);
+}
+:where(.app.outpost) :is(input, select, textarea):where(:hover:not(:disabled)) {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:where(.app.outpost) :is(input, select, textarea):focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:where(.app.outpost) input:where([type="checkbox"], [type="radio"]) {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+:where(.app.outpost) :is(input, select, textarea):where(:disabled) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+/* File inputs: the browser's picker button drawn as a secondary well button */
+:where(.app.outpost) input:where([type="file"]) {
+  max-width: 100%;
+  color: var(--muted);
+  font: 500 12px/1.35 var(--font-ui);
+}
+:where(.app.outpost) input:where([type="file"])::file-selector-button {
+  min-height: 36px;
+  margin-right: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--text);
+  font: 600 13px/1 var(--font-ui);
+  cursor: pointer;
+}
+/* Segmented choice: two to eight options in one well, the chosen one lit in ember. Options are
+   buttons with aria-pressed/aria-checked/aria-selected, or labels around radio inputs. */
+.app.outpost .segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  gap: 2px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+.app.outpost .segmented > :is(button, label, a) {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 34px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: none;
+  box-shadow: none;
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.app.outpost .segmented > :is(button, label, a):hover {
+  color: var(--text);
+}
+.app.outpost
+  .segmented
+  > :is(
+    [aria-pressed="true"],
+    [aria-checked="true"],
+    [aria-selected="true"],
+    [aria-current="page"],
+    [aria-current="true"],
+    :has(> input:checked)
+  ) {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.app.outpost .segmented > label > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.app.outpost .segmented > label:has(> input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+/* iOS zooms into any field set under 16px */
+@media (max-width: 700px) {
+  :where(.app.outpost) :is(input, select, textarea):where(:not([type="checkbox"], [type="radio"])) {
+    font-size: 16px;
+  }
+  .app.outpost .segmented > :is(button, label, a) {
+    min-height: 40px;
+  }
+}
+.app.outpost :is(a, button, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
 }
@@ -177,6 +334,7 @@
   --surface-scrim: #171a21;
   --well: #0f1116cc;
   --well-border: #ffffff12;
+  --well-inset: inset 0 1px 3px #0009;
   --edge-light: #ffffff14;
   --role-tank: #e0a53c;
   --role-healer: #4fb8c9;
@@ -216,6 +374,7 @@
   --surface-scrim: #cfa985;
   --well: #c4a283;
   --well-border: #5a3e2640;
+  --well-inset: inset 0 1px 2px #3a251233;
   --edge-light: #ecc9a5;
   --raised-edge: #6b4a2a55;
   --raised-edge-top: #6b4a2a40;
@@ -1869,10 +2028,6 @@
   h2 {
   font-family: var(--font-ui);
   letter-spacing: -0.01em;
-}
-.app.outpost:not(.home-route) :is(.panel, .raised) :is(input, select, textarea):focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
 }
 /* Painted cover cards retain their own scenes; working windows use their quiet surface. */
 .app.outpost:not(.home-route)
