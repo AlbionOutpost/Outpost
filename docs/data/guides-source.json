@@ -1,7 +1,7 @@
 {
   "scope": "public/library/grind-guides.json: 30 guides written by Outpost (author \"Outpost\"). The 8 archive slugs keep their URLs and the facts that still hold; text, titles and structure are new. No creator script, video or third-party guide text was copied.",
   "checkedAt": "2026-11-06",
-  "method": "Mechanics were checked against the official wiki, albiononline.com news/changelogs and forum patch notes. Direct fetches of those hosts were blocked by a bot challenge, so the checks used search-indexed extracts of the pages listed below. Figures that could not be confirmed for the current patch are described without numbers or left out. Topic choice followed popular YouTube guide titles (titles and descriptions only).",
+  "method": "Rewritten 6 Nov 2026 from Sandbox Interactive's official announcements and changelogs on Steam (store.steampowered.com events for app 761890, full text), later notes overriding earlier ones, and checked against Outpost's own item data and tool code. The wiki and forum returned a bot challenge and were not used. Figures that could not be confirmed were left out or marked as varying.",
   "topicResearch": [
     "https://www.youtube.com/watch?v=e3P1sj-A50w",
     "https://www.youtube.com/watch?v=bZqAeMfrUTI",
@@ -11,126 +11,336 @@
     "https://www.youtube.com/watch?v=8CTNiFo8fbU"
   ],
   "sources": {
-    "first-silver": [
-      "https://wiki.albiononline.com/wiki/Marketplace",
-      "https://wiki.albiononline.com/wiki/Premium"
-    ],
-    "focus-and-resource-return-rate": [
-      "docs/CALCULATORS.md (return profile, focus formula)",
-      "https://wiki.albiononline.com/wiki/Local_Production_Bonus",
-      "https://wiki.albiononline.com/wiki/Brecilien",
-      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/"
-    ],
-    "haul-between-cities": [
-      "https://wiki.albiononline.com/wiki/Types_of_Regions",
-      "https://wiki.albiononline.com/wiki/Marketplace"
-    ],
-    "first-solo-pve-build": ["https://wiki.albiononline.com/wiki/Destiny_Board"],
-    "ancient-lands": [
-      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/",
-      "https://forum.albiononline.com/index.php/Thread/224642-8-September-2026-Dragonfire-Patch-1/",
-      "Owner's archive guide (facts kept: islands, Keystones, Drakes, Bleedout, rewards)"
-    ],
-    "corrupted-dungeon-ratting": [
-      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
-      "Owner's archive guide (facts kept: entry, boss bar points, IP soft caps)"
-    ],
-    "black-zone-gathering-guide": [
-      "https://forum.albiononline.com/index.php/Thread/207949-03-February-2025-Rogue-Frontier-Update/",
-      "https://wiki.albiononline.com/wiki/Outlands",
-      "Owner's archive guide (facts kept: journals, mounts, biomes, escape sequence)"
-    ],
-    "dragonfire-items": [
-      "https://forum.albiononline.com/index.php/Thread/224393-31-August-2026-Dragonfire-Update/",
-      "src/lib/albion/game/recipes.json (recipes)"
-    ],
-    "market-flipping-guide": ["https://wiki.albiononline.com/wiki/Marketplace"],
-    "fishing-leveling-guide": [
-      "docs/data/archived-fishing-source.json",
-      "https://wiki.albiononline.com/wiki/Learning_Points"
-    ],
-    "albion-journal-guide": ["docs/data/archived-journal-source.json"],
-    "achievements": [
-      "Owner's archive achievement list",
-      "https://albiononline.com/news/final-clc-coming",
-      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/"
-    ],
-    "read-a-market-quote": [
-      "https://www.albion-online-data.com/",
-      "https://wiki.albiononline.com/wiki/Marketplace"
-    ],
-    "count-the-whole-cost": [
-      "https://wiki.albiononline.com/wiki/Marketplace",
-      "docs/CALCULATORS.md"
-    ],
-    "build-with-a-purpose": ["Outpost build editor"],
-    "put-every-role-in-place": ["Outpost comp editor"],
     "hellgates-guide": [
-      "https://wiki.albiononline.com/wiki/Hellgate",
-      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
-      "https://wiki.albiononline.com/wiki/Antiquarian's_Den"
-    ],
-    "abyssal-depths-guide": [
-      "https://albiononline.com/news/dev-talk-the-depths",
-      "https://forum.albiononline.com/index.php/Thread/213597-30-June-2025-Abyssal-Depths-Update/",
-      "https://forum.albiononline.com/index.php/Thread/214527-23-July-2025-Abyssal-Depths-Patch-2/"
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-07-08: changelog-abyssal-depths-patch-1",
+      "Steam announcement 2025-07-23: changelog-abyssal-depths-patch-2",
+      "Steam announcement 2025-03-26: changelog-rogue-frontier-patch-4",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2026-05-04: changelog-radiant-wilds-patch-1",
+      "Steam announcement 2026-09-23: changelog-dragonfire-patch-2",
+      "Steam announcement 2026-10-12: changelog-dragonfire-patch-3",
+      "Steam announcement 2026-11-02: dragonfire-patch-4",
+      "Steam announcement 2026-01-14: season-31-is-coming-the-battle-begins-january-31",
+      "Steam announcement 2025-06-02: dev-talk-the-depths-and-antiquarian-s-dens",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update"
     ],
     "mists-guide": [
-      "https://wiki.albiononline.com/wiki/Mists",
-      "https://wiki.albiononline.com/wiki/Brecilien",
-      "https://forum.albiononline.com/index.php/Thread/215607-26-August-2025-Abyssal-Depths-Patch-4/"
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-05-04: changelog-radiant-wilds-patch-1",
+      "Steam announcement 2026-05-26: changelog-radiant-wilds-patch-2",
+      "Steam announcement 2023-04-26: dev-talk-knightfall-introduction",
+      "Steam announcement 2023-05-04: dev-talk-knightfall-abbey",
+      "Steam announcement 2024-10-09: guide-farming",
+      "/workspace/Outpost/src/lib/albion/game/production-bonuses.json"
     ],
-    "roads-of-avalon-guide": [
-      "https://wiki.albiononline.com/wiki/Roads_of_Avalon",
-      "https://wiki.albiononline.com/wiki/Hideout",
-      "https://wiki.albiononline.com/wiki/Avalonian_Dungeons"
-    ],
-    "faction-warfare-guide": [
-      "https://forum.albiononline.com/index.php/Thread/218869-24-November-2025-Realm-Divided-Update/",
-      "https://forum.albiononline.com/index.php/Thread/220739-23-February-2026-Realm-Divided-Part-II/",
-      "https://wiki.albiononline.com/wiki/Faction_Warfare"
-    ],
-    "zones-and-death-loss": [
-      "https://wiki.albiononline.com/wiki/Types_of_Regions",
-      "https://wiki.albiononline.com/wiki/Flagging",
-      "https://wiki.albiononline.com/wiki/Open_World"
-    ],
-    "tracking-guide": [
-      "https://wiki.albiononline.com/wiki/Tracking",
-      "https://albiononline.com/news/guide-tracking",
-      "https://wiki.albiononline.com/wiki/Rare_Animal_Remains"
-    ],
-    "crystal-arena-guide": [
-      "https://wiki.albiononline.com/wiki/Crystal_Arena",
-      "https://wiki.albiononline.com/wiki/Arena",
-      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/"
-    ],
-    "group-dungeons-guide": [
-      "https://wiki.albiononline.com/wiki/Randomized_Dungeons",
-      "https://wiki.albiononline.com/wiki/Static_Dungeons",
-      "https://wiki.albiononline.com/wiki/Avalonian_Dungeons"
-    ],
-    "islands-and-farming-guide": [
-      "https://wiki.albiononline.com/wiki/Island_Farms",
-      "https://wiki.albiononline.com/wiki/Player_Island",
-      "https://albiononline.com/news/guide-farming"
+    "first-silver": [
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2024-10-28: changelog-horizons-update",
+      "Steam announcement 2024-10-01: dev-talk-open-world-improvements",
+      "Steam announcement 2024-10-16: learning-points-and-how-to-use-them",
+      "Steam announcement 2025-01-01: leap-into-the-frost-challenge-",
+      "Steam announcement 2024-10-09: guide-farming",
+      "/workspace/Outpost/src/lib/albion/game/production-bonuses.json",
+      "/workspace/Outpost/docs/CALCULATORS.md",
+      "/workspace/Outpost/src/lib/albion/game/items.json"
     ],
     "gathering-progression-guide": [
-      "https://wiki.albiononline.com/wiki/Gathering_Gear",
-      "https://albiononline.com/news/gatherer-gear-explained"
+      "Steam announcement 2024-10-28: changelog-horizons-update",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2025-02-26: changelog-rogue-frontier-patch-2",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-07-23: changelog-abyssal-depths-patch-2",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2024-10-16: learning-points-and-how-to-use-them",
+      "/workspace/Outpost/src/lib/albion/game/items.json"
+    ],
+    "abyssal-depths-guide": [
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-07-08: changelog-abyssal-depths-patch-1",
+      "Steam announcement 2025-07-23: changelog-abyssal-depths-patch-2",
+      "Steam announcement 2025-08-11: changelog-abyssal-depths-patch-3",
+      "Steam announcement 2025-09-03: changelog-abyssal-depths-patch-5",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-10-12: changelog-dragonfire-patch-3",
+      "Steam announcement 2025-06-02: dev-talk-the-depths-and-antiquarian-s-dens"
     ],
     "destiny-board-guide": [
-      "https://wiki.albiononline.com/wiki/Destiny_Board",
-      "https://wiki.albiononline.com/wiki/Learning_Points",
-      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/"
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2026-09-08: changelog-dragonfire-patch-1",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2025-02-26: changelog-rogue-frontier-patch-2",
+      "Steam announcement 2024-10-16: learning-points-and-how-to-use-them",
+      "Steam announcement 2025-07-14: learning-points-are-coming-to-the-albion-store",
+      "Steam announcement 2025-01-01: leap-into-the-frost-challenge-"
+    ],
+    "roads-of-avalon-guide": [
+      "Steam announcement 2024-07-22: changelog-paths-to-glory-update",
+      "Steam announcement 2024-06-28: dev-talk-paths-to-glory-introduction",
+      "Steam announcement 2023-07-21: guide-zone-types-and-flagging",
+      "Steam announcement 2023-04-26: dev-talk-knightfall-introduction",
+      "Steam announcement 2025-02-26: changelog-rogue-frontier-patch-2",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2026-03-11: changelog-realm-divided-patch-5",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-09-23: changelog-dragonfire-patch-2",
+      "Steam announcement 2025-09-03: changelog-abyssal-depths-patch-5"
+    ],
+    "faction-warfare-guide": [
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2025-12-03: changelog-realm-divided-patch-1",
+      "Steam announcement 2025-12-17: changelog-realm-divided-patch-2",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2026-02-23: changelog-realm-divided-part-ii",
+      "Steam announcement 2026-03-11: changelog-realm-divided-patch-5",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-05-26: changelog-radiant-wilds-patch-2",
+      "Steam announcement 2026-11-02: dragonfire-patch-4",
+      "Steam announcement 2023-07-21: guide-zone-types-and-flagging"
+    ],
+    "zones-and-death-loss": [
+      "Steam announcement 2023-07-21: guide-zone-types-and-flagging",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2026-09-23: changelog-dragonfire-patch-2",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update"
+    ],
+    "group-dungeons-guide": [
+      "Steam announcement 2024-10-28: changelog-horizons-update",
+      "Steam announcement 2024-07-22: changelog-paths-to-glory-update",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2026-01-26: changelog-realm-divided-patch-3",
+      "Steam announcement 2026-03-11: changelog-realm-divided-patch-5",
+      "Steam announcement 2026-05-26: changelog-radiant-wilds-patch-2",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2024-10-01: dev-talk-open-world-improvements"
+    ],
+    "crystal-arena-guide": [
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-05-04: changelog-radiant-wilds-patch-1",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2026-10-16: dev-talk-development-update-october-2026",
+      "Steam announcement 2023-08-09: guide-crafting"
+    ],
+    "tracking-guide": [
+      "Steam announcement 2023-11-01: guide-tracking",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2024-07-22: changelog-paths-to-glory-update",
+      "Steam announcement 2025-11-24: changelog-realm-divided-update",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2026-09-23: changelog-dragonfire-patch-2",
+      "Steam announcement 2024-06-28: dev-talk-paths-to-glory-introduction"
+    ],
+    "islands-and-farming-guide": [
+      "Steam announcement 2024-10-09: guide-farming",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
+      "Steam announcement 2024-07-22: changelog-paths-to-glory-update",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "/workspace/Outpost/src/lib/albion/game/production-bonuses.json",
+      "/workspace/Outpost/src/lib/albion/farming.ts"
     ],
     "enchanting-guide": [
-      "https://wiki.albiononline.com/wiki/Enchanting",
-      "src/lib/albion/game/upgrades.json (material counts)"
+      "/workspace/Outpost/src/lib/albion/game/upgrades.json",
+      "/workspace/Outpost/docs/DATA.md",
+      "/workspace/Outpost/docs/CALCULATORS.md",
+      "Steam announcement 2023-08-09: guide-crafting",
+      "Steam announcement 2025-06-30: changelog-abyssal-depths-update"
     ],
     "zvz-guide": [
-      "https://forum.albiononline.com/index.php/Thread/221737-13-April-2026-Radiant-Wilds-Update/",
-      "https://forum.albiononline.com/index.php/Thread/207949-03-February-2025-Rogue-Frontier-Update/"
+      "Steam announcement 2026-08-31: changelog-dragonfire-update",
+      "Steam announcement 2026-09-23: changelog-dragonfire-patch-2",
+      "Steam announcement 2026-10-12: changelog-dragonfire-patch-3",
+      "Steam announcement 2026-11-02: dragonfire-patch-4",
+      "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
+      "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
+      "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
+      "Steam announcement 2026-09-03: season-34-starts-soon",
+      "Steam announcement 2026-10-16: dev-talk-development-update-october-2026",
+      "Steam announcement 2026-11-07: watch-the-final-invasion-day-of-the-season"
+    ],
+    "_note": [
+      "wiki.albiononline.com and forum.albiononline.com returned 403 from this session; no wiki or forum pages were used."
+    ],
+    "first-solo-pve-build": [
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-05-26-changelog-radiant-wilds-patch-2.txt",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2026-11-02-dragonfire-patch-4.txt",
+      "guides/notes/2024-10-16-learning-points-and-how-to-use-them.txt",
+      "/workspace/Outpost/src/components/build-cost.tsx",
+      "/workspace/Outpost/src/components/build-actions.tsx",
+      "/workspace/Outpost/public/library/grind-builds.json"
+    ],
+    "corrupted-dungeon-ratting": [
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2025-07-23-changelog-abyssal-depths-patch-2.txt",
+      "guides/notes/2025-08-11-changelog-abyssal-depths-patch-3.txt",
+      "guides/notes/2026-01-26-changelog-realm-divided-patch-3.txt",
+      "guides/notes/2026-05-26-changelog-radiant-wilds-patch-2.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2025-09-12-guide-corrupted-dungeons.txt",
+      "Owner's archive guide (git 7499c55:public/library/grind-guides.json): route, boss bar points, 100,000 Infamy for Slayer"
+    ],
+    "black-zone-gathering-guide": [
+      "guides/notes/2025-02-03-changelog-rogue-frontier-update.txt",
+      "guides/notes/2025-02-26-changelog-rogue-frontier-patch-2.txt",
+      "guides/notes/2025-04-07-changelog-rogue-frontier-patch-5.txt",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2025-07-23-changelog-abyssal-depths-patch-2.txt",
+      "guides/notes/2025-11-24-changelog-realm-divided-update.txt",
+      "guides/notes/2026-01-26-changelog-realm-divided-patch-3.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-09-23-changelog-dragonfire-patch-2.txt",
+      "/workspace/Outpost/src/lib/albion/game/mounts.json (carry weights)",
+      "/workspace/Outpost/src/lib/albion/game/items.json (weights)",
+      "Owner's archive guide (escape sequence, biomes)"
+    ],
+    "ancient-lands": [
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-08-13-dev-talk-the-ancient-lands.txt",
+      "guides/notes/2026-09-08-changelog-dragonfire-patch-1.txt",
+      "guides/notes/2026-09-23-changelog-dragonfire-patch-2.txt",
+      "guides/notes/2026-10-12-changelog-dragonfire-patch-3.txt",
+      "guides/notes/2026-10-16-dev-talk-development-update-october-2026.txt",
+      "guides/notes/2026-11-02-dragonfire-patch-4.txt"
+    ],
+    "dragonfire-items": [
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-08-28-dev-talk-dragon-sanctuary-new-rewards.txt",
+      "guides/notes/2026-09-08-changelog-dragonfire-patch-1.txt",
+      "guides/notes/2026-09-23-changelog-dragonfire-patch-2.txt",
+      "guides/notes/2026-10-12-changelog-dragonfire-patch-3.txt",
+      "guides/notes/2026-11-02-dragonfire-patch-4.txt",
+      "guides/notes/2026-11-06-the-first-8-4-dragon-sanctuary-has-been-completed-.txt",
+      "/workspace/Outpost/src/lib/albion/game/recipes.json",
+      "/workspace/Outpost/src/lib/albion/game/items.json",
+      "/workspace/Outpost/src/lib/albion/game/mounts.json",
+      "/workspace/Outpost/src/lib/albion/archived-item-spells.json (ability names)"
+    ],
+    "market-flipping-guide": [
+      "/workspace/Outpost/docs/CALCULATORS.md",
+      "/workspace/Outpost/src/components/trade-calculator.tsx",
+      "/workspace/Outpost/src/components/opportunity-scanner.tsx",
+      "/workspace/Outpost/src/components/market.tsx",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "Tax 4%/8% and setup 2.5%: carried from previous guide (wiki Marketplace via search extract); not in patch notes"
+    ],
+    "fishing-leveling-guide": [
+      "/workspace/Outpost/public/library/grind-fishing.json",
+      "/workspace/Outpost/docs/data/archived-fishing-source.json",
+      "/workspace/Outpost/src/components/fishing-calculator.tsx",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2024-10-16-learning-points-and-how-to-use-them.txt",
+      "guides/notes/2026-09-23-changelog-dragonfire-patch-2.txt",
+      "/workspace/Outpost/src/lib/albion/game/items.json"
+    ],
+    "albion-journal-guide": [
+      "/workspace/Outpost/public/library/grind-journal.json",
+      "/workspace/Outpost/src/components/journal-checklist.tsx",
+      "guides/notes/2025-02-03-changelog-rogue-frontier-update.txt",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2025-08-11-changelog-abyssal-depths-patch-3.txt",
+      "guides/notes/2025-09-03-changelog-abyssal-depths-patch-5.txt",
+      "guides/notes/2025-11-24-changelog-realm-divided-update.txt",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-11-02-dragonfire-patch-4.txt"
+    ],
+    "achievements": [
+      "Owner's archive achievement list (previous guide tables)",
+      "/workspace/Outpost/public/library/grind-journal.json (matching missions and rewards)",
+      "guides/notes/2024-07-22-changelog-paths-to-glory-update.txt",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2025-12-17-changelog-realm-divided-patch-2.txt",
+      "guides/notes/2026-03-11-changelog-realm-divided-patch-5.txt",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2023-08-28-the-final-crystal-league-championship-is-coming.txt"
+    ],
+    "haul-between-cities": [
+      "/workspace/Outpost/src/lib/albion/game/mounts.json",
+      "/workspace/Outpost/src/lib/albion/game/items.json",
+      "/workspace/Outpost/src/lib/albion/game/recipes.json",
+      "/workspace/Outpost/src/lib/albion/game/production-bonuses.json",
+      "/workspace/Outpost/src/components/transport-calculator.tsx",
+      "/workspace/Outpost/src/lib/albion/transport.ts",
+      "/workspace/Outpost/docs/CALCULATORS.md",
+      "guides/notes/2025-02-03-changelog-rogue-frontier-update.txt",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
+      "guides/notes/2024-11-22-new-guide-caerleon-and-the-black-market.txt"
+    ],
+    "focus-and-resource-return-rate": [
+      "/workspace/Outpost/docs/CALCULATORS.md",
+      "/workspace/Outpost/src/lib/albion/game/production-bonuses.json",
+      "/workspace/Outpost/src/lib/albion/game/recipes.json",
+      "/workspace/Outpost/src/lib/albion/game/mastery.json",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "Premium focus 10,000/day, 30,000 cap: carried from previous guide (wiki); not in patch notes"
+    ],
+    "read-a-market-quote": [
+      "/workspace/Outpost/docs/DATA.md",
+      "/workspace/Outpost/src/components/market.tsx",
+      "/workspace/Outpost/src/components/market-city-table.tsx",
+      "/workspace/Outpost/src/components/market-quality-availability.tsx",
+      "https://www.albion-online-data.com/",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2025-02-03-changelog-rogue-frontier-update.txt",
+      "guides/notes/2024-11-22-new-guide-caerleon-and-the-black-market.txt",
+      "guides/notes/2024-01-22-guide-the-world-of-albion.txt"
+    ],
+    "count-the-whole-cost": [
+      "/workspace/Outpost/docs/CALCULATORS.md (trade and production reference cases)",
+      "/workspace/Outpost/docs/DATA.md",
+      "/workspace/Outpost/src/components/trade-calculator.tsx",
+      "/workspace/Outpost/src/components/opportunity-scanner.tsx",
+      "/workspace/Outpost/src/components/production-calculator.tsx",
+      "/workspace/Outpost/src/lib/albion/production.ts"
+    ],
+    "build-with-a-purpose": [
+      "/workspace/Outpost/src/components/build-editor.tsx",
+      "/workspace/Outpost/src/components/build-equipment-studio.tsx",
+      "/workspace/Outpost/src/components/equipment-sets.tsx",
+      "/workspace/Outpost/src/components/build-actions.tsx",
+      "/workspace/Outpost/src/components/build-cost.tsx",
+      "/workspace/Outpost/src/lib/builds/validation.ts",
+      "/workspace/Outpost/src/lib/builds/discovery-service.ts",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt"
+    ],
+    "put-every-role-in-place": [
+      "/workspace/Outpost/src/components/composition-editor.tsx",
+      "/workspace/Outpost/src/components/composition-png-export.tsx",
+      "/workspace/Outpost/src/lib/compositions/roles.ts",
+      "guides/notes/2026-01-26-changelog-realm-divided-patch-3.txt",
+      "guides/notes/2026-05-04-changelog-radiant-wilds-patch-1.txt",
+      "guides/notes/2026-04-13-changelog-radiant-wilds-update.txt",
+      "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
+      "guides/notes/2026-08-28-dev-talk-dragon-sanctuary-new-rewards.txt",
+      "guides/notes/2026-11-02-dragonfire-patch-4.txt"
     ]
   }
 }
