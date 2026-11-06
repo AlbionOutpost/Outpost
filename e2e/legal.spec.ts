@@ -4,13 +4,13 @@ import { mkdir } from "node:fs/promises";
 
 const copies = {
   en: {
-    title: "Legal information at Outpost.",
+    title: "Legal information at Outpost",
     topics: "Legal topics",
     contents: "On this page",
     cookies: "Cookies and local storage features",
   },
   de: {
-    title: "Rechtliches bei Outpost.",
+    title: "Rechtliches bei Outpost",
     topics: "Rechtliche Themen",
     contents: "Auf dieser Seite",
     cookies: "Cookies und lokale Speicherfunktionen",

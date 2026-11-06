@@ -1,76 +1,59 @@
 :global(.app.outpost main):has(> .page) {
-  max-width: 1240px;
+  max-width: calc(var(--page-width) + 2 * var(--page-gutter));
   width: 100%;
 }
+/* Legal: a masthead, then a raised contents rail beside the document panel, at the landing's
+   measure. The text itself lives in legal-copy.tsx. */
 .page {
-  max-width: 1160px;
-  margin: 24px auto 80px;
-  padding: 0 24px;
+  max-width: var(--page-width);
+  margin: 0 auto;
   color: var(--text);
 }
-.header {
-  margin-bottom: 32px;
-}
-.document {
-  min-width: 0;
-  padding: 32px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel);
-}
-.headingRow {
+.mastheadRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 14px;
+  gap: 12px;
 }
-.header h1 {
-  margin: 0;
-  font: 800 clamp(36px, 4vw, 48px)/1.05 var(--font-display);
-  text-wrap: balance;
-}
-.header > p {
-  max-width: 66ch;
-  margin: 0;
-  color: var(--muted);
-  font: 400 15px/1.65 var(--font-ui);
-}
-.header .updated {
-  margin-top: 10px;
-  font-size: 12px;
+:global(.app.outpost) .document.document {
+  min-width: 0;
+  padding: 36px 48px 48px;
 }
 .languageSwitch {
   display: inline-flex;
   flex-shrink: 0;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--illustration-bg) 70%, transparent);
 }
 .page .languageSwitch a {
   display: flex;
   align-items: center;
-  min-height: 36px;
-  padding: 0 12px;
-  border-radius: 5px;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
   color: var(--muted);
   font: 600 13px/1 var(--font-ui);
   text-decoration: none;
 }
 .page .languageSwitch a[aria-current="true"] {
-  color: var(--text);
-  background: var(--surface-2);
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
 }
 .page .languageSwitch a:hover {
   color: var(--text);
 }
 .status {
-  margin-top: 22px;
-  padding: 0;
+  margin: 0 0 32px;
+  padding: 0 18px;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--well-border));
+  border-radius: var(--radius-md);
+  background: var(--well);
   color: var(--muted);
-  border-block: 1px solid var(--border);
   font: 400 13px/1.65 var(--font-ui);
 }
 .status details {
@@ -86,7 +69,7 @@
   padding: 12px 0;
   list-style: none;
   cursor: pointer;
-  color: var(--accent-ink);
+  color: var(--warning);
 }
 .status summary strong {
   flex: 1;
@@ -113,27 +96,33 @@
 }
 .layout {
   display: grid;
-  grid-template-columns: 196px minmax(0, 1fr);
-  gap: 36px;
+  grid-template-columns: 256px minmax(0, 1fr);
+  gap: 32px;
   align-items: start;
 }
-.contents {
+:global(.app.outpost) .contents.contents {
   position: sticky;
-  top: 88px;
+  top: 96px;
   display: grid;
-  gap: 3px;
-  padding-block: 12px;
+  gap: 2px;
+  padding: 20px;
 }
 .contents strong {
   margin-bottom: 10px;
-  font: 600 13px/1.5 var(--font-ui);
+  font: 800 19px/1.15 var(--font-display);
 }
 .page .contents a,
 .page .mobileContents nav a {
-  padding: 8px 0;
-  color: var(--muted);
+  padding: 7px 10px;
+  margin-inline: -10px;
+  border-radius: var(--radius-sm);
+  color: var(--secondary);
   font: 400 13px/1.4 var(--font-ui);
   text-decoration: none;
+}
+.page .contents a:hover {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
 }
 .page a {
   color: var(--accent-ink);
@@ -150,24 +139,29 @@
 }
 .article {
   min-width: 0;
+  max-width: 76ch;
+  color: var(--secondary);
   font: 400 15px/1.75 var(--font-ui);
   overflow-wrap: anywhere;
+}
+.article :is(h2, h3, strong) {
+  color: var(--text);
 }
 .article section {
   margin: 0;
   scroll-margin-top: 100px;
 }
 .article section + section {
-  margin-top: 32px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--well-border);
 }
-.article h2 {
+:global(.app.outpost) .article h2 {
   margin: 0 0 18px;
   font: 800 30px/1.1 var(--font-display);
   text-wrap: balance;
 }
-.article h3 {
+:global(.app.outpost) .article h3 {
   margin: 24px 0 8px;
   font: 600 16px/1.4 var(--font-ui);
 }
@@ -248,29 +242,18 @@
   display: none;
 }
 @media (max-width: 850px) {
-  .page {
-    margin-top: 20px;
-    padding-inline: 16px;
-  }
-  .header {
-    margin-bottom: 24px;
-  }
-  .headingRow {
-    flex-wrap: wrap;
-    gap: 16px;
-  }
   .layout {
     grid-template-columns: minmax(0, 1fr);
   }
-  .contents {
+  :global(.app.outpost) .contents.contents {
     display: none;
   }
   .mobileContents {
     display: block;
-    margin-bottom: 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--panel);
+    margin-bottom: 24px;
+    border: 1px solid var(--well-border);
+    border-radius: var(--radius-md);
+    background: var(--well);
   }
   .mobileContents > summary {
     display: flex;
@@ -287,34 +270,29 @@
     display: grid;
     padding: 0 16px 12px;
   }
-  .document {
-    padding: 24px;
+  .page .mobileContents nav a {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  :global(.app.outpost) .document.document {
+    padding: 28px;
   }
 }
 @media (max-width: 480px) {
-  .page {
-    padding-inline: 0;
-  }
-  .header h1 {
-    font-size: 36px;
-  }
-  .header .updated {
-    font-size: 12px;
-  }
   .status {
-    margin-top: 20px;
+    margin-bottom: 24px;
   }
   .status details > p {
     margin-left: 0;
   }
-  .document {
-    padding: 20px;
+  :global(.app.outpost) .document.document {
+    padding: 20px 16px;
   }
   .article {
     font-size: 14px;
     line-height: 1.75;
   }
-  .article h2 {
+  :global(.app.outpost) .article h2 {
     font-size: 28px;
   }
   .details {
