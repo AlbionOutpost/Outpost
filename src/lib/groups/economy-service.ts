@@ -6,7 +6,6 @@ import { loadTeamAccess } from "./roles";
 import { allocateLoot, lootConfiguration } from "./loot";
 import {
   balancesFrom,
-  flipAcceptWindowMs,
   flipSide,
   flipWinner,
   gameAction,
@@ -266,23 +265,15 @@ const flipSelect = {
   headsId: true,
   tailsId: true,
   call: true,
-  stake: true,
-  status: true,
   outcome: true,
   rollId: true,
   createdAt: true,
-  settledAt: true,
 } satisfies Prisma.GroupCoinFlipSelect;
 type FlipRow = Prisma.GroupCoinFlipGetPayload<{ select: typeof flipSelect }>;
 const flipOut = (f: FlipRow) => ({
   ...f,
   winnerId: flipWinner(f),
   createdAt: f.createdAt.toISOString(),
-  settledAt: f.settledAt?.toISOString() ?? null,
-  expiresAt:
-    f.status === "PENDING"
-      ? new Date(f.createdAt.getTime() + flipAcceptWindowMs).toISOString()
-      : null,
 });
 const rollSelect = {
   id: true,
@@ -368,113 +359,25 @@ async function localTeamGames(groupId: string, userId: string, input?: unknown) 
         if (replay.createdById !== userId) throw new HttpError(409, "That flip key is taken.");
         return view({ flip: flipOut(replay) });
       }
-      if (action.action === "call") {
-        const flip = await tx.groupCoinFlip.create({
-          data: {
-            groupId,
-            key: action.key,
-            createdById: userId,
-            headsId: userId,
-            call: action.call,
-            status: "SETTLED",
-            outcome: flipSide(),
-            settledAt: now,
-          },
-          select: flipSelect,
-        });
-        return view({ flip: flipOut(flip) });
-      }
-      if (!(await currentMembers(tx, groupId, [action.headsId, action.tailsId])))
+      // A flip settles a tie or a decision: drawn now, no stake, no silver moves.
+      if (
+        action.action === "flip" &&
+        !(await currentMembers(tx, groupId, [action.headsId, action.tailsId]))
+      )
         throw new HttpError(404, "Both players must be current team members.");
-      const staked = action.stake > 0;
-      if (staked) {
-        if (userId !== action.headsId && userId !== action.tailsId)
-          throw new HttpError(403, "Only a player in the flip can stake their own silver.");
-        if ((await balanceOf(tx, groupId, userId)) < action.stake)
-          throw new HttpError(409, "Your wallet does not hold that stake.");
-      }
       const flip = await tx.groupCoinFlip.create({
         data: {
           groupId,
           key: action.key,
           createdById: userId,
-          headsId: action.headsId,
-          tailsId: action.tailsId,
-          stake: action.stake,
-          status: staked ? "PENDING" : "SETTLED",
-          outcome: staked ? null : flipSide(),
-          settledAt: staked ? null : now,
+          ...(action.action === "call"
+            ? { headsId: userId, call: action.call }
+            : { headsId: action.headsId, tailsId: action.tailsId }),
+          outcome: flipSide(),
         },
         select: flipSelect,
       });
       return view({ flip: flipOut(flip) });
-    }
-
-    if (action.action.startsWith("flip-")) {
-      const { flipId } = action as { flipId: string };
-      const flip = await tx.groupCoinFlip.findFirst({
-        where: { id: flipId, groupId },
-        select: flipSelect,
-      });
-      if (!flip) throw new HttpError(404, "Coin flip not found");
-      if (flip.status !== "PENDING") return view({ flip: flipOut(flip) });
-      const other = flip.createdById === flip.headsId ? flip.tailsId : flip.headsId;
-      if (action.action === "flip-cancel") {
-        if (userId !== flip.createdById)
-          throw new HttpError(403, "Only the member who offered the flip can withdraw it.");
-      } else if (userId !== other)
-        throw new HttpError(403, "Only the challenged member can answer this flip.");
-      const expired = now.getTime() - flip.createdAt.getTime() > flipAcceptWindowMs;
-      if (action.action !== "flip-accept" || expired) {
-        await tx.groupCoinFlip.updateMany({
-          where: { id: flip.id, status: "PENDING" },
-          data: { status: action.action === "flip-decline" ? "DECLINED" : "CANCELLED" },
-        });
-        if (expired && action.action === "flip-accept")
-          throw new HttpError(409, "This flip offer lapsed after a day. Offer a new one.");
-        const row = await tx.groupCoinFlip.findFirstOrThrow({
-          where: { id: flip.id },
-          select: flipSelect,
-        });
-        return view({ flip: flipOut(row) });
-      }
-      const players = [flip.headsId, flip.tailsId!];
-      if (!(await currentMembers(tx, groupId, players)))
-        throw new HttpError(409, "A player has left the team; this flip can no longer settle.");
-      for (const player of players)
-        if ((await balanceOf(tx, groupId, player)) < flip.stake)
-          throw new HttpError(
-            409,
-            player === userId
-              ? "Your wallet does not hold the stake."
-              : "The other player's wallet no longer holds the stake.",
-          );
-      const outcome = flipSide();
-      const settled = await tx.groupCoinFlip.updateMany({
-        where: { id: flip.id, status: "PENDING" },
-        data: { status: "SETTLED", outcome, settledAt: now },
-      });
-      if (!settled.count) throw new HttpError(409, "This flip was already answered.");
-      const winner = outcome === "heads" ? flip.headsId : flip.tailsId!;
-      const loser = winner === flip.headsId ? flip.tailsId! : flip.headsId;
-      await tx.groupWalletEntry.createMany({
-        data: [
-          { userId: winner, amount: flip.stake },
-          { userId: loser, amount: -flip.stake },
-        ].map((row) => ({
-          ...row,
-          groupId,
-          kind: "flip",
-          reason: "Coin flip stake",
-          sourceId: `flip:${flip.id}`,
-          createdById: userId,
-        })),
-      });
-      const row = await tx.groupCoinFlip.findFirstOrThrow({
-        where: { id: flip.id },
-        select: flipSelect,
-      });
-      return view({ flip: flipOut(row) });
     }
 
     if (action.action === "roll-open") {
@@ -563,10 +466,8 @@ async function localTeamGames(groupId: string, userId: string, input?: unknown) 
             createdById: userId,
             headsId: tied[0],
             tailsId: tied[1],
-            status: "SETTLED",
             outcome: tie.side,
             rollId,
-            settledAt: now,
           },
         });
       const shares = rollShares(

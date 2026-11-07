@@ -100,9 +100,23 @@ describe("server draws", () => {
     expect(gameAction.safeParse({ action: "flip", key, headsId: "a", tailsId: "a" }).success).toBe(
       false,
     );
-    expect(gameAction.parse({ action: "flip", key, headsId: "a", tailsId: "b" })).toMatchObject({
-      stake: 0,
+    expect(gameAction.parse({ action: "flip", key, headsId: "a", tailsId: "b" })).toEqual({
+      action: "flip",
+      key,
+      headsId: "a",
+      tailsId: "b",
     });
+  });
+  it("rejects any stake: a flip settles a tie or a decision and never moves silver", () => {
+    for (const body of [
+      { action: "flip", key, headsId: "a", tailsId: "b", stake: 100 },
+      { action: "flip", key, headsId: "a", tailsId: "b", stake: 0 },
+      { action: "call", key, call: "heads", stake: 5 },
+      { action: "flip-accept", flipId: "f" },
+      { action: "flip-decline", flipId: "f" },
+      { action: "flip-cancel", flipId: "f" },
+    ])
+      expect(gameAction.safeParse(body).success).toBe(false);
   });
 });
 

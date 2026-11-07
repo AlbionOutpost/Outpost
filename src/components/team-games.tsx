@@ -8,7 +8,6 @@ import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
 import { Coin3D, RollDrum, silverText } from "./economy-stage";
-import { bookkeepingLine } from "@/lib/groups/economy";
 import { operationKey, shortTime } from "./team-wallet";
 import teams from "./teams.module.css";
 import styles from "./team-economy.module.css";
@@ -56,7 +55,6 @@ export function TeamGames({
   const [mode, setMode] = useState<"duel" | "call">("duel");
   const [heads, setHeads] = useState(userId);
   const [tails, setTails] = useState("");
-  const [stake, setStake] = useState("");
   const [call, setCall] = useState<Side>("heads");
   const [flipKey, setFlipKey] = useState(operationKey);
   const [thrown, setThrown] = useState<{ side: Side; key: string; flip: Flip } | null>(null);
@@ -86,10 +84,8 @@ export function TeamGames({
       });
     return () => controller.abort();
   }, [active, attempt, loadedFor, groupId]);
-  // While a roll is open or a flip waits for an answer, look again now and then.
-  const waiting =
-    !!view &&
-    (view.rolls.some((r) => r.status === "OPEN") || view.flips.some((f) => f.status === "PENDING"));
+  // While a roll is open, look again now and then.
+  const waiting = !!view && view.rolls.some((r) => r.status === "OPEN");
   useEffect(() => {
     if (!active || !waiting) return;
     const timer = setInterval(() => {
@@ -127,23 +123,20 @@ export function TeamGames({
   }
 
   function throwCoin(flip: Flip) {
-    if (!flip.outcome) return;
     setLanded(false);
     setThrown({ side: flip.outcome as Side, key: flip.id, flip });
   }
 
   async function flip() {
-    const staked = Number(stake || 0);
     const result = await play(
       mode === "call"
         ? { action: "call", key: flipKey, call }
-        : { action: "flip", key: flipKey, headsId: heads, tailsId: tails, stake: staked },
+        : { action: "flip", key: flipKey, headsId: heads, tailsId: tails },
       "flip",
     );
     if (!result?.flip) return;
     setFlipKey(operationKey());
-    if (result.flip.status === "SETTLED") throwCoin(result.flip);
-    else setStake("");
+    throwCoin(result.flip);
   }
 
   if (!view)
@@ -168,29 +161,19 @@ export function TeamGames({
       </section>
     );
 
-  const shown = thrown?.flip ?? view.flips.find((f) => f.status === "SETTLED" && !f.rollId) ?? null;
+  const shown = thrown?.flip ?? view.flips.find((f) => !f.rollId) ?? null;
   const verdict = (f: Flip) => {
     if (f.tailsId)
       return {
         head: `${sideName[f.outcome as Side]}: ${name(f.winnerId)} ${f.winnerId === userId ? "win" : "wins"}`,
-        line: `${name(f.headsId)} (heads) against ${name(f.tailsId)} (tails)${f.stake ? ` · ${silverText(f.stake)} silver stake` : ""}`,
+        line: `${name(f.headsId)} (heads) against ${name(f.tailsId)} (tails)`,
       };
     return {
       head: `${sideName[f.outcome as Side]}: ${name(f.headsId)} ${f.winnerId ? "called it" : "lost the call"}`,
       line: `${name(f.headsId)} called ${f.call}`,
     };
   };
-  const stakeAmount = Number(stake || 0);
-  const inFlip = heads === userId || tails === userId;
-  const flipReady =
-    mode === "call" ||
-    (!!heads &&
-      !!tails &&
-      heads !== tails &&
-      (!stakeAmount || (inFlip && stakeAmount <= view.balance)));
-  const pending = view.flips.filter(
-    (f) => f.status === "PENDING" && (f.headsId === userId || f.tailsId === userId),
-  );
+  const flipReady = mode === "call" || (!!heads && !!tails && heads !== tails);
   const open = view.rolls.filter((r) => r.status === "OPEN");
   const past = view.rolls.filter((r) => r.status !== "OPEN");
   const rollWhole = /^\d*$/.test(rollSilver) ? Number(rollSilver || 0) : NaN;
@@ -344,12 +327,20 @@ export function TeamGames({
           id="coin-flip"
           emblem="trophy-silver-64w"
           title="Coin flip"
-          line="Settle a tie or a bet. The server throws the coin; everyone in the team sees the result."
+          line="Settle a tie or a decision. The server throws the coin; everyone in the team sees the result. No silver moves on a flip."
         />
         <div className={styles.arena}>
           <div className={styles.arenaStage}>
             <Coin3D
-              flip={thrown ? { side: thrown.side, key: thrown.key } : null}
+              flip={
+                thrown
+                  ? { side: thrown.side, key: thrown.key }
+                  : shown
+                    ? { side: shown.outcome as Side, key: `rest-${shown.id}` }
+                    : null
+              }
+              // The last flip rests on the side it landed; a new throw animates.
+              still={!thrown}
               onLanded={() => setLanded(true)}
             />
             <p className={styles.verdict} aria-live="polite">
@@ -430,24 +421,6 @@ export function TeamGames({
                       </WellSelect>
                     </Field>
                   </div>
-                  <Field
-                    label="Stake (optional)"
-                    hint={
-                      inFlip
-                        ? `From your wallet (${silverText(view.balance)} silver). The other player accepts first; the winner takes it.`
-                        : "Only a player in the flip can stake their own silver."
-                    }
-                  >
-                    <input
-                      aria-label="Stake"
-                      inputMode="numeric"
-                      autoComplete="off"
-                      placeholder="0"
-                      disabled={!inFlip}
-                      value={inFlip ? stake : ""}
-                      onChange={(e) => setStake(e.target.value.replace(/[^\d]/g, "").slice(0, 13))}
-                    />
-                  </Field>
                 </>
               ) : (
                 <div className="segmented" role="radiogroup" aria-label="Your call">
@@ -466,87 +439,12 @@ export function TeamGames({
               )}
               <div className={teams.formActions}>
                 <button className="button primary" disabled={!!busy || !flipReady || !landed}>
-                  {busy === "flip"
-                    ? "Throwing…"
-                    : mode === "duel" && stakeAmount > 0
-                      ? `Offer a ${silverText(stakeAmount)} silver flip`
-                      : "Flip the coin"}
+                  {busy === "flip" ? "Throwing…" : "Flip the coin"}
                 </button>
               </div>
-              {stakeAmount > 0 && <p className={styles.note}>{bookkeepingLine}</p>}
             </form>
           )}
         </div>
-        {pending.length > 0 && (
-          <>
-            <h3 className={teams.subhead}>Waiting for an answer</h3>
-            <ul className={teams.list}>
-              {pending.map((f) => {
-                const offeredByMe = f.createdById === userId;
-                const opponent = f.headsId === userId ? f.tailsId : f.headsId;
-                return (
-                  <li key={f.id} className={`well ${teams.wellRow}`}>
-                    <span className={teams.rowCopy}>
-                      <strong>
-                        {offeredByMe
-                          ? `Your ${silverText(f.stake)} silver flip against ${name(opponent)}`
-                          : `${name(f.createdById)} offers you a ${silverText(f.stake)} silver flip`}
-                      </strong>
-                      <small>
-                        You are {f.headsId === userId ? "heads" : "tails"} · lapses{" "}
-                        {f.expiresAt ? shortTime(f.expiresAt) : ""}
-                      </small>
-                    </span>
-                    {offeredByMe ? (
-                      <button
-                        type="button"
-                        className="pill-link is-small"
-                        disabled={!!busy || locked}
-                        onClick={() =>
-                          void play({ action: "flip-cancel", flipId: f.id }, `cancel-${f.id}`)
-                        }
-                      >
-                        Withdraw
-                      </button>
-                    ) : (
-                      <span className={teams.rowActions}>
-                        <button
-                          type="button"
-                          className="button primary"
-                          disabled={!!busy || locked || !landed || view.balance < f.stake}
-                          title={
-                            view.balance < f.stake
-                              ? "Your wallet does not hold the stake"
-                              : undefined
-                          }
-                          onClick={async () => {
-                            const result = await play(
-                              { action: "flip-accept", flipId: f.id },
-                              `accept-${f.id}`,
-                            );
-                            if (result?.flip?.status === "SETTLED") throwCoin(result.flip);
-                          }}
-                        >
-                          Accept and flip
-                        </button>
-                        <button
-                          type="button"
-                          className="pill-link is-small"
-                          disabled={!!busy || locked}
-                          onClick={() =>
-                            void play({ action: "flip-decline", flipId: f.id }, `decline-${f.id}`)
-                          }
-                        >
-                          Decline
-                        </button>
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
       </section>
 
       <div className={styles.columns}>
@@ -661,37 +559,26 @@ export function TeamGames({
         </section>
         <section className={`panel ${teams.panel}`} aria-labelledby="flip-history">
           <PanelHead id="flip-history" title="Flip history" line="The team's last 30 coin flips." />
-          {view.flips.some((f) => f.status !== "PENDING") ? (
+          {view.flips.length ? (
             <ul className={teams.list}>
-              {view.flips
-                .filter((f) => f.status !== "PENDING")
-                .map((f) => (
-                  <li key={f.id} className={`well ${teams.wellRow}`}>
-                    {f.outcome ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- painted charge
-                      <img
-                        src={sideArt[f.outcome as Side]}
-                        alt={sideName[f.outcome as Side]}
-                        width={28}
-                        height={28}
-                      />
-                    ) : null}
-                    <span className={teams.rowCopy}>
-                      <strong>
-                        {f.status === "SETTLED"
-                          ? verdict(f).head
-                          : `${f.status === "DECLINED" ? "Declined" : "Withdrawn"}: ${name(f.headsId)} against ${name(f.tailsId)}`}
-                      </strong>
-                      <small>
-                        {f.status === "SETTLED"
-                          ? verdict(f).line
-                          : `${silverText(f.stake)} silver stake`}
-                        {f.rollId ? " · roll tie-break" : ""} ·{" "}
-                        {shortTime(f.settledAt ?? f.createdAt)}
-                      </small>
-                    </span>
-                  </li>
-                ))}
+              {view.flips.map((f) => (
+                <li key={f.id} className={`well ${teams.wellRow}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
+                  <img
+                    src={sideArt[f.outcome as Side]}
+                    alt={sideName[f.outcome as Side]}
+                    width={28}
+                    height={28}
+                  />
+                  <span className={teams.rowCopy}>
+                    <strong>{verdict(f).head}</strong>
+                    <small>
+                      {verdict(f).line}
+                      {f.rollId ? " · roll tie-break" : ""} · {shortTime(f.createdAt)}
+                    </small>
+                  </span>
+                </li>
+              ))}
             </ul>
           ) : (
             <EmptyWell

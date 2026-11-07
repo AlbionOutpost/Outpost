@@ -1,7 +1,8 @@
 -- Additive private-store upgrade: the Team economy (Postgres 20261108090000_team_economy). A silver
 -- ledger per team (member balances and the team pot), coin flips and loot rolls decided on the
--- server. In-game silver bookkeeping only. Roles that could manage loot splits get the new
--- "Manage wallet" permission (bit 512), so nobody gains access they did not effectively have.
+-- server (flips carry no stake and never move silver). In-game silver bookkeeping only. Roles
+-- that could manage loot splits get the new "Manage wallet" permission (bit 512), so nobody
+-- gains access they did not effectively have.
 CREATE TABLE IF NOT EXISTS "GroupWalletEntry" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "groupId" TEXT NOT NULL,
@@ -24,12 +25,9 @@ CREATE TABLE IF NOT EXISTS "GroupCoinFlip" (
     "headsId" TEXT NOT NULL,
     "tailsId" TEXT,
     "call" TEXT,
-    "stake" REAL NOT NULL DEFAULT 0,
-    "status" TEXT NOT NULL,
-    "outcome" TEXT,
+    "outcome" TEXT NOT NULL,
     "rollId" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "settledAt" DATETIME,
     CONSTRAINT "GroupCoinFlip_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "GroupCoinFlip_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "GroupCoinFlip_headsId_fkey" FOREIGN KEY ("headsId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -69,17 +67,14 @@ CREATE UNIQUE INDEX IF NOT EXISTS "GroupCoinFlip_groupId_key_key" ON "GroupCoinF
 CREATE INDEX IF NOT EXISTS "GroupLootRoll_groupId_createdAt_idx" ON "GroupLootRoll"("groupId", "createdAt");
 CREATE UNIQUE INDEX IF NOT EXISTS "GroupLootRoll_groupId_key_key" ON "GroupLootRoll"("groupId", "key");
 CREATE TRIGGER IF NOT EXISTS "GroupWalletEntry_domain_insert" BEFORE INSERT ON "GroupWalletEntry"
-WHEN NOT (NEW."amount" <> 0 AND NEW."amount" = CAST(NEW."amount" AS INTEGER) AND abs(NEW."amount") <= 1000000000000 AND NEW."kind" IN ('credit','debit','payout','reset','split','roll','flip') AND length(NEW."reason") BETWEEN 1 AND 200 AND length(NEW."sourceId") BETWEEN 1 AND 120)
+WHEN NOT (NEW."amount" <> 0 AND NEW."amount" = CAST(NEW."amount" AS INTEGER) AND abs(NEW."amount") <= 1000000000000 AND NEW."kind" IN ('credit','debit','payout','reset','split','roll') AND length(NEW."reason") BETWEEN 1 AND 200 AND length(NEW."sourceId") BETWEEN 1 AND 120)
 BEGIN SELECT RAISE(ABORT, 'GroupWalletEntry_domain'); END;
 -- Ledger entries are append-only: a correction is a new entry, never an edit.
 CREATE TRIGGER IF NOT EXISTS "GroupWalletEntry_append_only" BEFORE UPDATE ON "GroupWalletEntry"
 WHEN NEW."amount" IS NOT OLD."amount" OR NEW."userId" IS NOT OLD."userId" OR NEW."groupId" IS NOT OLD."groupId" OR NEW."sourceId" IS NOT OLD."sourceId" OR NEW."kind" IS NOT OLD."kind"
 BEGIN SELECT RAISE(ABORT, 'GroupWalletEntry_append_only'); END;
 CREATE TRIGGER IF NOT EXISTS "GroupCoinFlip_domain_insert" BEFORE INSERT ON "GroupCoinFlip"
-WHEN NOT (NEW."status" IN ('PENDING','SETTLED','DECLINED','CANCELLED') AND (NEW."status" = 'SETTLED') = (NEW."outcome" IS NOT NULL) AND (NEW."outcome" IS NULL OR NEW."outcome" IN ('heads','tails')) AND length(NEW."key") BETWEEN 8 AND 64 AND (NEW."call" IS NULL OR NEW."call" IN ('heads','tails')) AND (NEW."tailsId" IS NULL) = (NEW."call" IS NOT NULL) AND (NEW."tailsId" IS NULL OR NEW."tailsId" <> NEW."headsId") AND NEW."stake" >= 0 AND NEW."stake" = CAST(NEW."stake" AS INTEGER) AND NEW."stake" <= 1000000000000 AND (NEW."stake" = 0 OR NEW."tailsId" IS NOT NULL))
-BEGIN SELECT RAISE(ABORT, 'GroupCoinFlip_domain'); END;
-CREATE TRIGGER IF NOT EXISTS "GroupCoinFlip_domain_update" BEFORE UPDATE ON "GroupCoinFlip"
-WHEN NOT (NEW."status" IN ('PENDING','SETTLED','DECLINED','CANCELLED') AND (NEW."status" = 'SETTLED') = (NEW."outcome" IS NOT NULL) AND (NEW."outcome" IS NULL OR NEW."outcome" IN ('heads','tails')) AND length(NEW."key") BETWEEN 8 AND 64 AND (NEW."call" IS NULL OR NEW."call" IN ('heads','tails')) AND (NEW."tailsId" IS NULL) = (NEW."call" IS NOT NULL) AND (NEW."tailsId" IS NULL OR NEW."tailsId" <> NEW."headsId") AND NEW."stake" >= 0 AND NEW."stake" = CAST(NEW."stake" AS INTEGER) AND NEW."stake" <= 1000000000000 AND (NEW."stake" = 0 OR NEW."tailsId" IS NOT NULL))
+WHEN NOT (NEW."outcome" IN ('heads','tails') AND length(NEW."key") BETWEEN 8 AND 64 AND (NEW."call" IS NULL OR NEW."call" IN ('heads','tails')) AND (NEW."tailsId" IS NULL) = (NEW."call" IS NOT NULL) AND (NEW."tailsId" IS NULL OR NEW."tailsId" <> NEW."headsId"))
 BEGIN SELECT RAISE(ABORT, 'GroupCoinFlip_domain'); END;
 CREATE TRIGGER IF NOT EXISTS "GroupLootRoll_domain_insert" BEFORE INSERT ON "GroupLootRoll"
 WHEN NOT (length(NEW."key") BETWEEN 8 AND 64 AND length(NEW."title") BETWEEN 1 AND 100 AND NEW."status" IN ('OPEN','CLOSED','CANCELLED') AND NEW."silver" >= 0 AND NEW."silver" = CAST(NEW."silver" AS INTEGER) AND NEW."silver" <= 1000000000000)

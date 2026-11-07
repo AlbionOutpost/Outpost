@@ -417,10 +417,10 @@ model GroupWalletEntry {
  user User? @relation("WalletHolder",fields:[userId],references:[id],onDelete:Cascade)
  /// Signed whole silver: credits are positive; debits, payouts and resets negative.
  amount Float
- /// credit | debit | payout | reset | split | roll | flip
+ /// credit | debit | payout | reset | split | roll
  kind String
  reason String
- /// What made the change (`op:<client key>`, `split:<id>`, `roll:<id>`, `flip:<id>`), so a retry never books twice.
+ /// What made the change (`op:<client key>`, `split:<id>`, `roll:<id>`), so a retry never books twice.
  sourceId String
  createdById String?
  createdBy User? @relation("WalletActor",fields:[createdById],references:[id],onDelete:SetNull)
@@ -430,7 +430,7 @@ model GroupWalletEntry {
  @@index([groupId,createdAt])
 }
 /// A coin flip decided on the server: two members (heads and tails) or one member calling a side.
-/// With a stake it waits for the other member to accept, then flips and moves the stake.
+/// It settles ties and decisions only: no stake, no silver moves.
 model GroupCoinFlip {
  id String @id @default(cuid())
  groupId String
@@ -445,15 +445,11 @@ model GroupCoinFlip {
  tails User? @relation("FlipTails",fields:[tailsId],references:[id],onDelete:Cascade)
  /// A one-member flip's call (heads | tails); null for two members.
  call String?
- stake Float @default(0)
- /// PENDING | SETTLED | DECLINED | CANCELLED
- status String
- /// heads | tails, once settled
- outcome String?
+ /// heads | tails, drawn when the flip is made
+ outcome String
  /// Set when the flip broke a two-way tie in a loot roll.
  rollId String?
  createdAt DateTime @default(now())
- settledAt DateTime?
  @@unique([groupId,key])
  @@index([groupId,createdAt])
 }

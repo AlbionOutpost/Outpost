@@ -10,7 +10,7 @@ import { z } from "zod";
 export const bookkeepingLine =
   "In-game silver bookkeeping only: Outpost holds no money, sells nothing and moves no silver in game.";
 
-/** One wallet entry or stake: whole silver, at most a trillion (far above any Albion haul). */
+/** One wallet entry: whole silver, at most a trillion (far above any Albion haul). */
 export const maxSilver = 1_000_000_000_000;
 export const silverAmount = z.number().int().min(1).max(maxSilver);
 const key = z
@@ -51,20 +51,18 @@ export const walletAction = z.discriminatedUnion("action", [
 export type WalletAction = z.infer<typeof walletAction>;
 
 export const gameAction = z.discriminatedUnion("action", [
-  /** Two members, heads and tails; with a stake the other member must accept first. */
+  /** Two members, heads and tails, to settle a tie or a decision. No stake: a flip never moves silver. */
   z
     .object({
       action: z.literal("flip"),
       key,
       headsId: id,
       tailsId: id,
-      stake: z.number().int().min(0).max(maxSilver).default(0),
     })
     .strict()
     .refine((v) => v.headsId !== v.tailsId, "Choose two different members"),
   /** One member calls a side. */
   z.object({ action: z.literal("call"), key, call: z.enum(["heads", "tails"]) }).strict(),
-  z.object({ action: z.enum(["flip-accept", "flip-decline", "flip-cancel"]), flipId: id }).strict(),
   z
     .object({
       action: z.literal("roll-open"),
@@ -77,9 +75,6 @@ export const gameAction = z.discriminatedUnion("action", [
   z.object({ action: z.enum(["roll", "roll-close", "roll-cancel"]), rollId: id }).strict(),
 ]);
 export type GameAction = z.infer<typeof gameAction>;
-
-/** A pending staked flip lapses after a day; the stake never moves without both members. */
-export const flipAcceptWindowMs = 24 * 60 * 60 * 1000;
 
 /** Balances from ledger rows: the pot under `null`, members under their id. */
 export function balancesFrom(rows: readonly { userId: string | null; amount: number }[]) {

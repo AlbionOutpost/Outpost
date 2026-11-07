@@ -117,37 +117,26 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     });
     expect(await db.groupCoinFlip.count({ where: { groupId } })).toBe(1);
 
-    // A staked flip waits for the other player, then moves the stake inside the same write.
-    const offer = await (
-      await post(2, "games", {
-        action: "flip",
-        key: key(),
-        headsId: ids[2],
-        tailsId: ids[1],
-        stake: 2000,
-      })
-    ).json();
-    expect(offer.flip.status).toBe("PENDING");
-    expect(
-      (await post(2, "games", { action: "flip-accept", flipId: offer.flip.id })).status(),
-    ).toBe(403);
-    expect(
-      (await post(1, "games", { action: "flip-accept", flipId: offer.flip.id })).status(),
-    ).toBe(409);
-    await post(0, "wallet", {
-      action: "credit",
+    // Flips carry no stake: a stake or an accept is refused and no silver moves on a flip.
+    const before = await entries();
+    const staked = await post(2, "games", {
+      action: "flip",
       key: key(),
-      target: ids[1],
-      amount: 2000,
-      reason: "Stake",
+      headsId: ids[2],
+      tailsId: ids[1],
+      stake: 2000,
     });
-    const settled = await (
-      await post(1, "games", { action: "flip-accept", flipId: offer.flip.id })
+    expect(staked.status()).toBe(400);
+    expect(
+      (await post(1, "games", { action: "flip-accept", flipId: first.flip.id })).status(),
+    ).toBe(400);
+    const duel = await (
+      await post(2, "games", { action: "flip", key: key(), headsId: ids[2], tailsId: ids[1] })
     ).json();
-    expect(settled.flip.status).toBe("SETTLED");
-    const stakes = await db.groupWalletEntry.findMany({ where: { groupId, kind: "flip" } });
-    expect(stakes.map((e) => e.amount).sort()).toEqual([-2000, 2000]);
-    expect(stakes.find((e) => e.amount > 0)?.userId).toBe(settled.flip.winnerId);
+    expect(["heads", "tails"]).toContain(duel.flip.outcome);
+    expect(duel.flip.winnerId).toBe(duel.flip.outcome === "heads" ? ids[2] : ids[1]);
+    expect(await entries()).toBe(before);
+    expect(await db.groupCoinFlip.count({ where: { groupId } })).toBe(2);
 
     // Loot rolls: a member cannot open one; everyone rolls once; the server names the winner.
     expect(
@@ -183,7 +172,16 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     // Happy path in the browser: book a credit, then flip a coin (reduced motion: instant).
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`/groups/${slug}`);
-    await page.getByRole("tab", { name: "Wallet", exact: true }).click();
+    // One Treasury tab holds loot splits, the wallet and rolls & flips; 8 tabs in all.
+    await expect(page.getByRole("tab")).toHaveCount(8);
+    await page.getByRole("tab", { name: "Treasury", exact: true }).click();
+    await expect(page).toHaveURL(/#team-treasury$/);
+    await expect(page.getByRole("heading", { name: "Saved splits" })).toBeVisible();
+    await page
+      .getByRole("navigation", { name: "Treasury" })
+      .getByRole("link", { name: "Wallet", exact: true })
+      .click();
+    await expect(page).toHaveURL(/#team-treasury-wallet$/);
     await expect(page.getByRole("heading", { name: "Balances" })).toBeVisible();
     await expect(page.getByText(/Outpost holds no money/).first()).toBeVisible();
     await page.getByRole("combobox", { name: "Wallet", exact: true }).selectOption("pot");
@@ -195,7 +193,13 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     expect(
       (await db.groupWalletEntry.findFirstOrThrow({ where: { groupId, userId: null } })).amount,
     ).toBe(75000);
-    await page.getByRole("tab", { name: "Rolls & flips", exact: true }).click();
+    await page
+      .getByRole("navigation", { name: "Treasury" })
+      .getByRole("link", { name: "Rolls & flips", exact: true })
+      .click();
+    await expect(page).toHaveURL(/#team-treasury-rolls$/);
+    await expect(page.getByText(/No silver moves on a flip/)).toBeVisible();
+    await expect(page.getByLabel("Stake")).toHaveCount(0);
     await page.getByRole("button", { name: "Call it yourself" }).click();
     await page.getByRole("radio", { name: "Tails" }).click();
     await page.getByRole("button", { name: "Flip the coin" }).click();
@@ -209,6 +213,23 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     await expect(
       page.getByText(new RegExp(`^${last.outcome === "heads" ? "Heads" : "Tails"}: You`)).first(),
     ).toBeVisible();
+
+    // Old tab links and query links land on the matching Treasury view.
+    await page.goto(`/groups/${slug}#team-wallet`);
+    await expect(page.getByRole("tab", { name: "Treasury", exact: true })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(
+      page
+        .getByRole("navigation", { name: "Treasury" })
+        .getByRole("link", { name: "Wallet", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    await page.goto(`/groups/${slug}?tab=treasury&view=rolls`);
+    await expect(page).toHaveURL(/#team-treasury-rolls$/);
+    await expect(page.getByRole("heading", { name: "Coin flip" })).toBeVisible();
+    await page.goto(`/groups/${slug}#team-loot-splits`);
+    await expect(page.getByRole("heading", { name: "Saved splits" })).toBeVisible();
 
     // A saved loot split pays into wallets once, by someone with Manage wallet.
     const split = await db.groupLootSplit.create({

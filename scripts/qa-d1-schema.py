@@ -289,22 +289,22 @@ def team_economy_upgrade():
     db.execute(entry, ("qa-eco-1", "qa-eco-team", "qa-eco-member", 1500, "credit", "Fixture", "op:qa-eco-1", "qa-eco-owner"))
     db.execute(entry, ("qa-eco-2", "qa-eco-team", None, 250, "credit", "Fixture pot", "op:qa-eco-2", "qa-eco-owner"))
     db.execute(entry, ("qa-eco-3", "qa-eco-team", "qa-eco-member", -500, "payout", "Paid", "op:qa-eco-3", "qa-eco-owner"))
-    for bad in ((0, "credit"), (1.5, "credit"), (10**13, "credit"), (5, "gift")):
+    for bad in ((0, "credit"), (1.5, "credit"), (10**13, "credit"), (5, "gift"), (5, "flip")):
         denied(entry, ("qa-eco-bad", "qa-eco-team", "qa-eco-member", bad[0], bad[1], "Bad", "op:qa-eco-bad", None))
     denied(entry, ("qa-eco-dup", "qa-eco-team", "qa-eco-member", 1, "credit", "Again", "op:qa-eco-1", None))
     denied('UPDATE "GroupWalletEntry" SET amount=? WHERE id=?', (9999, "qa-eco-1"))
     assert db.execute('SELECT sum(amount) FROM "GroupWalletEntry" WHERE groupId=? AND userId=?', ("qa-eco-team", "qa-eco-member")).fetchone()[0] == 1000
-    # Flips: settled flips carry an outcome, calls have no tails player, stakes need two players.
-    flip = 'INSERT INTO "GroupCoinFlip"(id,groupId,key,headsId,tailsId,call,stake,status,outcome) VALUES(?,?,?,?,?,?,?,?,?)'
-    db.execute(flip, ("qa-flip-1", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, 0, "SETTLED", "heads"))
-    db.execute(flip, ("qa-flip-2", "qa-eco-team", "qa-flip-key-2", "qa-eco-member", None, "tails", 0, "SETTLED", "heads"))
-    db.execute(flip, ("qa-flip-3", "qa-eco-team", "qa-flip-key-3", "qa-eco-owner", "qa-eco-member", None, 500, "PENDING", None))
-    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, 0, "SETTLED", "tails"))
-    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", None, 0, "SETTLED", None))
-    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-owner", None, 0, "SETTLED", "heads"))
-    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", None, "heads", 100, "SETTLED", "heads"))
-    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", "heads", 0, "SETTLED", "heads"))
-    denied('UPDATE "GroupCoinFlip" SET status=? WHERE id=?', ("SETTLED", "qa-flip-3"))
+    # Flips: every flip carries its drawn side, calls have no tails player, and there is no stake.
+    assert "stake" not in [r[1] for r in db.execute('PRAGMA table_info("GroupCoinFlip")')]
+    flip = 'INSERT INTO "GroupCoinFlip"(id,groupId,key,headsId,tailsId,call,outcome) VALUES(?,?,?,?,?,?,?)'
+    db.execute(flip, ("qa-flip-1", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, "heads"))
+    db.execute(flip, ("qa-flip-2", "qa-eco-team", "qa-flip-key-2", "qa-eco-member", None, "tails", "heads"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, "tails"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", None, None))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", None, "edge"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-owner", None, "heads"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", "heads", "heads"))
+    denied(entry, ("qa-eco-flip", "qa-eco-team", "qa-eco-member", 100, "flip", "Stake", "flip:qa-flip-1", None))
     # Rolls: one roll per member, 1-100.
     db.execute('INSERT INTO "GroupLootRoll"(id,groupId,key,title,silver) VALUES(?,?,?,?,?)', ("qa-roll", "qa-eco-team", "qa-roll-key-1", "Bloodletter drop", 90000))
     denied('INSERT INTO "GroupLootRoll"(id,groupId,key,title,silver) VALUES(?,?,?,?,?)', ("qa-roll-2", "qa-eco-team", "qa-roll-key-2", "Bad", -1))
@@ -323,7 +323,7 @@ def team_economy_upgrade():
     for user in ("qa-eco-owner", "qa-eco-officer", "qa-eco-out"):
         db.execute('DELETE FROM "User" WHERE id=?', (user,))
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
-check("team economy upgrade gives Manage wallet to Manage loot holders only and enforces ledger, flip and roll rules", team_economy_upgrade)
+check("team economy upgrade gives Manage wallet to Manage loot holders only and enforces ledger, stake-free flip and roll rules", team_economy_upgrade)
 
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))

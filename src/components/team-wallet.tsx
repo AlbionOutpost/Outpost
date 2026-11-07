@@ -28,7 +28,6 @@ const kindLabel: Record<string, string> = {
   reset: "Reset",
   split: "Loot split",
   roll: "Loot roll",
-  flip: "Coin flip",
 };
 export const operationKey = () => crypto.randomUUID().replaceAll("-", "");
 export const shortTime = (iso: string) =>
@@ -233,7 +232,7 @@ export function TeamWallet({
           line={
             view.canManage
               ? "Credit a member or the pot, or pay a saved loot split into wallets."
-              : "Silver an officer books for you, loot you are paid and stakes you win show here."
+              : "Silver an officer books for you, loot rolls you share in and splits you are paid show here."
           }
         />
       )}

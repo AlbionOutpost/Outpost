@@ -1,5 +1,6 @@
 -- Team economy: a silver ledger per team (member balances and the team pot), coin flips and loot
--- rolls decided on the server. In-game silver bookkeeping only; nothing here is real money.
+-- rolls decided on the server. In-game silver bookkeeping only; nothing here is real money, and
+-- coin flips carry no stake: they settle ties and decisions, never move silver.
 CREATE TABLE "GroupWalletEntry" (
     "id" TEXT NOT NULL,
     "groupId" TEXT NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE "GroupWalletEntry" (
 
     CONSTRAINT "GroupWalletEntry_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "GroupWalletEntry_amount_valid" CHECK ("amount" <> 0 AND "amount" = trunc("amount") AND abs("amount") <= 1000000000000),
-    CONSTRAINT "GroupWalletEntry_kind_valid" CHECK ("kind" IN ('credit','debit','payout','reset','split','roll','flip')),
+    CONSTRAINT "GroupWalletEntry_kind_valid" CHECK ("kind" IN ('credit','debit','payout','reset','split','roll')),
     CONSTRAINT "GroupWalletEntry_text_length" CHECK (length("reason") BETWEEN 1 AND 200 AND length("sourceId") BETWEEN 1 AND 120)
 );
 
@@ -25,17 +26,13 @@ CREATE TABLE "GroupCoinFlip" (
     "headsId" TEXT NOT NULL,
     "tailsId" TEXT,
     "call" TEXT,
-    "stake" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "status" TEXT NOT NULL,
-    "outcome" TEXT,
+    "outcome" TEXT NOT NULL,
     "rollId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "settledAt" TIMESTAMP(3),
 
     CONSTRAINT "GroupCoinFlip_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "GroupCoinFlip_state_valid" CHECK ("status" IN ('PENDING','SETTLED','DECLINED','CANCELLED') AND ("status" = 'SETTLED') = ("outcome" IS NOT NULL) AND ("outcome" IS NULL OR "outcome" IN ('heads','tails'))),
-    CONSTRAINT "GroupCoinFlip_sides_valid" CHECK (length("key") BETWEEN 8 AND 64 AND ("call" IS NULL OR "call" IN ('heads','tails')) AND ("tailsId" IS NULL) = ("call" IS NOT NULL) AND ("tailsId" IS NULL OR "tailsId" <> "headsId")),
-    CONSTRAINT "GroupCoinFlip_stake_valid" CHECK ("stake" >= 0 AND "stake" = trunc("stake") AND "stake" <= 1000000000000 AND ("stake" = 0 OR "tailsId" IS NOT NULL))
+    CONSTRAINT "GroupCoinFlip_outcome_valid" CHECK ("outcome" IN ('heads','tails')),
+    CONSTRAINT "GroupCoinFlip_sides_valid" CHECK (length("key") BETWEEN 8 AND 64 AND ("call" IS NULL OR "call" IN ('heads','tails')) AND ("tailsId" IS NULL) = ("call" IS NOT NULL) AND ("tailsId" IS NULL OR "tailsId" <> "headsId"))
 );
 
 CREATE TABLE "GroupLootRoll" (
