@@ -187,14 +187,23 @@ async function localTeamWallet(groupId: string, userId: string, input?: unknown)
       )
         throw new HttpError(409, "A participant has left the team. Edit the split before paying.");
       const payouts = result.payouts.filter((p) => p.silver > 0);
-      if (!payouts.length) throw new HttpError(409, "This split pays out no silver.");
+      if (!payouts.length && !result.guildTax)
+        throw new HttpError(409, "This split pays out no silver.");
+      // The guild tax the split took goes into the team pot, in the same booking.
+      if (result.guildTax && (await balanceOf(tx, groupId, null)) + result.guildTax > maxSilver)
+        throw new HttpError(409, "That would pass the largest balance Outpost records.");
       await tx.groupWalletEntry.createMany({
-        data: payouts.map((p) => ({
+        data: [
+          ...payouts.map((p) => ({ userId: p.userId as string | null, amount: p.silver })),
+          ...(result.guildTax ? [{ userId: null, amount: result.guildTax }] : []),
+        ].map((row) => ({
           groupId,
-          userId: p.userId,
-          amount: p.silver,
+          ...row,
           kind: "split",
-          reason: split.title.slice(0, 200),
+          reason: (result.guildTax && !row.userId
+            ? `Guild tax · ${split.title}`
+            : split.title
+          ).slice(0, 200),
           sourceId,
           createdById: userId,
         })),
@@ -202,6 +211,7 @@ async function localTeamWallet(groupId: string, userId: string, input?: unknown)
       return {
         wallet: await walletView(tx, groupId, userId, access),
         paid: payouts.map((p) => ({ userId: p.userId, silver: p.silver })),
+        guildTax: result.guildTax,
       };
     }
 

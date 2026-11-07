@@ -19,6 +19,7 @@ import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 const fields = [
   { key: "buy", label: "Purchase price per item" },
   { key: "sell", label: "Sale price per item" },
@@ -51,17 +52,17 @@ export function TradeCalculator() {
   const input = (f: (typeof fields)[number], wide = false) => (
     <label key={f.key} className={wide ? s.wide : undefined}>
       {f.label}
-      <input
-        type="number"
+      <NumberField
         min={f.key === "quantity" ? 1 : 0}
-        step={f.key === "quantity" ? 1 : "any"}
+        decimals={f.key === "quantity" ? 0 : 2}
+        silver={f.key === "buy" || f.key === "sell" || f.key === "transport"}
         max={f.key === "tax" || f.key === "fee" ? 100 : undefined}
         placeholder={f.key === "buy" || f.key === "sell" ? "Price" : undefined}
         value={Number.isNaN(values[f.key]) ? "" : values[f.key]}
-        onChange={(e) =>
+        onValueChange={(v) =>
           setValues({
             ...values,
-            [f.key]: e.target.value === "" ? NaN : Number(e.target.value),
+            [f.key]: v ?? NaN,
           })
         }
       />
@@ -116,17 +117,16 @@ export function TradeCalculator() {
         {values.buyMode === "buy-order" && (
           <label>
             Purchase order setup fee (%)
-            <input
+            <NumberField
               aria-label="Purchase order setup fee (%)"
-              type="number"
               min={0}
               max={100}
-              step="any"
+              decimals={2}
               value={Number.isNaN(values.buyFee) ? "" : values.buyFee}
-              onChange={(e) =>
+              onValueChange={(v) =>
                 setValues({
                   ...values,
-                  buyFee: e.target.value === "" ? NaN : Number(e.target.value),
+                  buyFee: v ?? NaN,
                 })
               }
             />

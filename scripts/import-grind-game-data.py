@@ -170,12 +170,35 @@ ids = [r["id"] for r in recipes]
 assert len(ids) == len(set(ids)), "duplicate recipe ids"
 used = {r["output"] for r in recipes} | {i["id"] for r in recipes for i in r["ingredients"]}
 used |= {v[0] for v in upgrades.values()}
+for r in recipes:
+    assert r["output"] == re.sub(r"~\d+$", "", r["id"]), r["id"]
+    match = re.search(r"@(\d)", r["output"])
+    assert r["enchantment"] == (int(match.group(1)) if match else 0), r["id"]
+# Compact rows keep the Worker bundle small; game/recipes.ts expands them.
 write(
     "recipes.json",
-    recipes,
+    [
+        [
+            r["id"],
+            1 if r["kind"] == "refining" else 0,
+            r.get("category") or 0,
+            r.get("craftingCategory") or 0,
+            r["tier"],
+            r["outputCount"],
+            r["focus"],
+            r["silver"],
+            [
+                [i["id"], i["count"], 0] if i.get("returnable") is False else [i["id"], i["count"]]
+                for i in r["ingredients"]
+            ],
+        ]
+        for r in recipes
+    ],
     len(recipes),
     "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), "
-    "enchanted variants .1–.4, focus, silver, output count and non-returnable flags",
+    "enchanted variants .1–.4, focus, silver, output count and non-returnable flags "
+    "(compact rows: [id, kind 0 crafting/1 refining, category, craftingCategory, tier, outputCount, focus, silver, "
+    "[[ingredient, count, 0 when not returnable]]]; output and enchantment derive from the id)",
 )
 upgrade_names = {v[0]: name_of(v[0]) for v in upgrades.values()}
 write(

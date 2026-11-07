@@ -33,6 +33,7 @@ import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 /** Silver in whole coins: the game never shows fractions of a silver. Display only. */
 const whole = (v: number | null | undefined) =>
   v == null || !Number.isFinite(v) ? <Missing /> : <Silver value={Math.round(v)} />;
@@ -215,15 +216,15 @@ export function LaborersCalculator() {
             />
           </small>
         </span>
-        <input
+        <NumberField
+          silver
           className={s.matInput}
           aria-label={`${isFull ? "Full journal" : "Empty journal"} · ${name(id)}`}
-          type="number"
           min={0}
-          step="any"
+          decimals={2}
           placeholder="Price"
           value={value ?? ""}
-          onChange={(e) => setPrice(id, e.target.value)}
+          onValueChange={(v) => setPrice(id, v == null ? "" : String(v))}
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
@@ -320,12 +321,11 @@ export function LaborersCalculator() {
         </label>
         <label>
           Full journals
-          <input
-            type="number"
+          <NumberField
             min={1}
             max={10000}
             value={draft.journals}
-            onChange={(e) => update("journals", Number(e.target.value))}
+            onValueChange={(v) => update("journals", v ?? NaN)}
           />
         </label>
         <label>
@@ -369,24 +369,22 @@ export function LaborersCalculator() {
           <div className={s.fields}>
             <label>
               Sales tax (%)
-              <input
-                type="number"
+              <NumberField
                 min={0}
                 max={100}
-                step="any"
+                decimals={2}
                 value={draft.tax}
-                onChange={(e) => update("tax", Number(e.target.value))}
+                onValueChange={(v) => update("tax", v ?? NaN)}
               />
             </label>
             <label>
               Setup fee (%)
-              <input
-                type="number"
+              <NumberField
                 min={0}
                 max={100}
-                step="any"
+                decimals={2}
                 value={draft.setupFee}
-                onChange={(e) => update("setupFee", Number(e.target.value))}
+                onValueChange={(v) => update("setupFee", v ?? NaN)}
               />
             </label>
             <label className={`${s.returns} ${s.wide}`}>
@@ -450,15 +448,15 @@ export function LaborersCalculator() {
                     />
                   </small>
                 </span>
-                <input
+                <NumberField
+                  silver
                   className={s.matInput}
                   aria-label={`${name(row.id)} unit price`}
-                  type="number"
                   min={0}
-                  step="any"
+                  decimals={2}
                   placeholder="Price"
                   value={row.unit ?? (p?.manual ? (p.value ?? "") : "")}
-                  onChange={(e) => setPrice(row.id, e.target.value)}
+                  onValueChange={(v) => setPrice(row.id, v == null ? "" : String(v))}
                 />
                 <span className={s.matTotal}>
                   <span className="sr-only">Value </span>

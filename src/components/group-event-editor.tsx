@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field } from "./group-parts";
 import styles from "./teams.module.css";
+import { NumberField } from "./number-field";
 export function GroupEventEditor({
   groupId,
   event,
@@ -93,9 +94,8 @@ export function GroupEventEditor({
               <input name="timezone" required defaultValue={event.timezone} />
             </Field>
             <Field label="Edit event participant count">
-              <input
+              <NumberField
                 name="expectedParticipants"
-                type="number"
                 min={1}
                 max={400}
                 defaultValue={event.expectedParticipants}

@@ -16,7 +16,38 @@ type GameRecipe = {
 };
 type ItemRow = [name: string, weight: number | null, value: number | null];
 const items = itemsData as unknown as Record<string, ItemRow>;
-const raw = gameRecipesData as unknown as GameRecipe[];
+/** Compact rows keep the Worker bundle small; output and enchantment come from the id. */
+type CompactRecipe = [
+  id: string,
+  kind: 0 | 1,
+  category: "cooking" | "alchemy" | 0,
+  craftingCategory: string | 0,
+  tier: number,
+  outputCount: number,
+  focus: number,
+  silver: number,
+  ingredients: ([id: string, count: number] | [id: string, count: number, returnable: 0])[],
+];
+const raw: GameRecipe[] = (gameRecipesData as unknown as CompactRecipe[]).map(
+  ([id, kind, category, craftingCategory, tier, outputCount, focus, silver, ingredients]) => {
+    const output = id.replace(/~\d+$/, "");
+    return {
+      id,
+      output,
+      kind: kind ? "refining" : "crafting",
+      ...(category ? { category } : {}),
+      craftingCategory: craftingCategory || null,
+      tier,
+      enchantment: Number(/@(\d)/.exec(output)?.[1] ?? 0),
+      outputCount,
+      focus,
+      silver,
+      ingredients: ingredients.map(([ingredient, count, returnable]) =>
+        returnable === 0 ? { id: ingredient, count, returnable: false } : { id: ingredient, count },
+      ),
+    };
+  },
+);
 export const gameDataSource = "Game item data, captured 27 Oct 2026";
 const byId = new Map(raw.map((r) => [r.id, r]));
 const byOutput = new Map<string, GameRecipe[]>();

@@ -22,6 +22,7 @@ import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
 import { decodeActivities, teamActivities } from "@/lib/groups/crest";
 import styles from "@/components/teams.module.css";
+import { LivelyCrest } from "@/components/team-crest";
 export const metadata = privateMetadata("Teams");
 const perPage = 24;
 export default async function Groups({
@@ -224,12 +225,14 @@ export default async function Groups({
                 <li key={g.id}>
                   <article className={`raised ${styles.card}`} data-team-card="">
                     <div className={styles.cardHead}>
-                      <TeamMark
-                        name={g.name}
-                        crestItem={g.crestItem}
-                        crestColor={g.crestColor}
-                        size="medium"
-                      />
+                      <LivelyCrest>
+                        <TeamMark
+                          name={g.name}
+                          crestItem={g.crestItem}
+                          crestColor={g.crestColor}
+                          size="medium"
+                        />
+                      </LivelyCrest>
                       <div className={styles.cardTitle}>
                         <h3>
                           <Link

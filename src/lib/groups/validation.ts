@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { regionSchema } from "../albion/region-config";
 import { teamIdentity } from "./crest";
+import { tenthPercent } from "./loot";
 import { maxTeamRoles, permissionKeys, roleColors } from "./permissions";
 const roleFields = {
   name: z.string().trim().min(1).max(32),
@@ -36,6 +37,8 @@ export const groupAction = z.discriminatedUnion("action", [
     region: regionSchema,
     visibility: z.enum(["PUBLIC", "PRIVATE"]),
     ...teamIdentity,
+    /** Left out, the team's rate is kept. */
+    guildTaxPercent: tenthPercent.optional(),
   }),
   z.object({
     action: z.literal("edit-event"),

@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { allocateLoot, lootConfiguration, type LootConfiguration } from "@/lib/groups/loot";
+import {
+  allocateLoot,
+  lootConfiguration,
+  type LootConfiguration,
+  type LootExpense,
+} from "@/lib/groups/loot";
 import { accountLogoutEvent } from "@/lib/account-build-drafts";
 import { Download, Plus, RotateCcw, Sparkles, X } from "lucide-react";
 import { PanelHead } from "./panel-head";
@@ -14,6 +19,7 @@ import { EditorDialog } from "./editor-dialog";
 import type { RevealPayout } from "./economy-stage";
 import { bookkeepingLine } from "@/lib/groups/economy";
 import styles from "./teams.module.css";
+import { NumberField } from "./number-field";
 
 // The chest scene loads only when a split is revealed.
 const LootChestReveal = dynamic(() => import("./economy-stage").then((m) => m.LootChestReveal), {
@@ -36,6 +42,7 @@ export function TeamLootWorkspace({
   members,
   editable,
   canPay = false,
+  guildTaxPercent = 0,
   active,
 }: {
   groupId: string;
@@ -44,16 +51,21 @@ export function TeamLootWorkspace({
   editable: boolean;
   /** Manage wallet: a saved split can be paid into the participants' wallets once. */
   canPay?: boolean;
+  /** The team's guild tax rate (Settings); 0 hides the toggle. */
+  guildTaxPercent?: number;
   active: boolean;
 }) {
+  // Empty fields with hints, not sample values: the pool reads as missing until it is entered.
   const initial: LootConfiguration = {
-    pool: 0,
+    pool: NaN,
     notes: "",
+    guildTaxPercent: 0,
     expenses: [],
     participants: [{ userId, shares: 1 }],
   };
   const [configuration, setConfiguration] = useState(initial),
-    [title, setTitle] = useState("New loot split"),
+    [title, setTitle] = useState(""),
+    [checked, setChecked] = useState(false),
     [selected, setSelected] = useState<Saved | null>(null);
   const [saved, setSaved] = useState<Saved[]>([]),
     [loaded, setLoaded] = useState(false),
@@ -67,9 +79,7 @@ export function TeamLootWorkspace({
     total: number;
     paid: boolean;
   } | null>(null);
-  const [baseline, setBaseline] = useState(
-    JSON.stringify({ title: "New loot split", configuration: initial }),
-  );
+  const [baseline, setBaseline] = useState(JSON.stringify({ title: "", configuration: initial }));
   const dirty = JSON.stringify({ title, configuration }) !== baseline;
   const parsed = lootConfiguration.safeParse(configuration),
     result = parsed.success ? allocateLoot(parsed.data) : null;
@@ -157,18 +167,45 @@ export function TeamLootWorkspace({
       setError("This saved split could not be opened. Its data has been kept.");
       return;
     }
-    const nextTitle = row?.title || "New loot split";
+    const nextTitle = row?.title || "";
     setConfiguration(value.data);
     setTitle(nextTitle);
     setSelected(row);
     setBaseline(JSON.stringify({ title: nextTitle, configuration: value.data }));
+    setChecked(false);
     setError("");
     setMessage("");
   }
+  // Each field says what it is missing, once the player tries to save.
+  const missing = {
+    title: title.trim().length < 3 ? "Name the split (3–100 characters)." : "",
+    pool: !Number.isFinite(configuration.pool) ? "Enter the loot pool." : "",
+    expenses: configuration.expenses.map((row) => ({
+      label: row.label.trim() ? "" : "Name the expense.",
+      amount:
+        (row.kind ?? "silver") === "percent"
+          ? row.percent == null || !Number.isFinite(row.percent)
+            ? "Enter the percentage."
+            : ""
+          : !Number.isFinite(row.silver)
+            ? "Enter the silver."
+            : "",
+    })),
+    shares: configuration.participants.map((row) =>
+      Number.isFinite(row.shares) ? "" : "Enter the shares.",
+    ),
+  };
+  const shown = (text: string) => (checked ? text : undefined);
+  const setExpense = (i: number, patch: Partial<LootExpense>) =>
+    setConfiguration({
+      ...configuration,
+      expenses: configuration.expenses.map((row, j) => (j === i ? { ...row, ...patch } : row)),
+    });
   async function save() {
+    setChecked(true);
     if (!parsed.success || title.trim().length < 3 || title.trim().length > 100) {
       setError(
-        "Use a 3–100 character name, whole-silver amounts, and current team participants. Expenses cannot exceed the pool.",
+        "Fill in the fields marked below. Guild tax and expenses must fit in the pool, and every participant must be in the team.",
       );
       return;
     }
@@ -242,7 +279,9 @@ export function TeamLootWorkspace({
         total: rows.reduce((t, r) => t + r.silver, 0),
         paid: true,
       });
-      setMessage("Paid into wallets. Hand the silver over in game, then record payouts in Wallet.");
+      setMessage(
+        `Paid into wallets${body.guildTax ? `, and ${silver(body.guildTax)} of guild tax into the team pot` : ""}. Hand the silver over in game, then record payouts in Wallet.`,
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not pay this split into wallets.");
     } finally {
@@ -333,81 +372,155 @@ export function TeamLootWorkspace({
             }
           />
           <div className={styles.formGrid}>
-            <Field label="Split name">
+            <Field label="Split name" error={shown(missing.title)}>
               <input
                 aria-label="Split name"
                 maxLength={100}
+                placeholder="e.g. Tuesday ZvZ haul"
+                aria-invalid={checked && !!missing.title ? true : undefined}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </Field>
-            <Field label="Total loot pool (silver)">
-              <input
+            <Field
+              label="Total loot pool (silver)"
+              hint="Type 12m, 500k or the full number."
+              error={shown(missing.pool)}
+            >
+              <NumberField
                 aria-label="Total loot pool (silver)"
-                type="number"
+                silver
+                required
                 min={0}
                 max={Number.MAX_SAFE_INTEGER}
-                step={1}
+                placeholder="e.g. 12m"
+                aria-invalid={checked && !!missing.pool ? true : undefined}
                 value={configuration.pool}
-                onChange={(e) =>
-                  setConfiguration({ ...configuration, pool: Number(e.target.value) })
-                }
+                onValueChange={(v) => setConfiguration({ ...configuration, pool: v ?? NaN })}
               />
             </Field>
           </div>
-          <h3 className={styles.subhead}>Expenses</h3>
-          <p className={styles.subline}>
-            Repairs, food and other costs, paid back before the share.
-          </p>
-          {configuration.expenses.map((expense, i) => (
-            <div className={`well ${styles.lootRow}`} key={i}>
-              <Field label={`Expense ${i + 1}`}>
-                <input
-                  aria-label={`Expense ${i + 1} description`}
-                  maxLength={100}
-                  value={expense.label}
-                  onChange={(e) =>
-                    setConfiguration({
-                      ...configuration,
-                      expenses: configuration.expenses.map((row, j) =>
-                        j === i ? { ...row, label: e.target.value } : row,
-                      ),
-                    })
-                  }
-                />
-              </Field>
-              <Field label="Silver">
-                <input
-                  aria-label={`Expense ${i + 1} silver`}
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={expense.silver}
-                  onChange={(e) =>
-                    setConfiguration({
-                      ...configuration,
-                      expenses: configuration.expenses.map((row, j) =>
-                        j === i ? { ...row, silver: Number(e.target.value) } : row,
-                      ),
-                    })
-                  }
-                />
-              </Field>
-              <button
-                type="button"
-                className={styles.iconButton}
-                aria-label={`Remove expense ${i + 1}`}
-                onClick={() =>
+          {guildTaxPercent > 0 || configuration.guildTaxPercent ? (
+            <label className={`well ${styles.taxToggle}`}>
+              <input
+                type="checkbox"
+                aria-describedby="loot-guild-tax-line"
+                checked={!!configuration.guildTaxPercent}
+                onChange={(e) =>
                   setConfiguration({
                     ...configuration,
-                    expenses: configuration.expenses.filter((_, j) => j !== i),
+                    guildTaxPercent: e.target.checked ? guildTaxPercent : 0,
                   })
                 }
-              >
-                <X size={16} aria-hidden="true" />
-              </button>
-            </div>
-          ))}
+              />
+              <span className={styles.rowCopy}>
+                <strong>Guild tax</strong>
+                <small id="loot-guild-tax-line">
+                  {configuration.guildTaxPercent &&
+                  Math.abs(configuration.guildTaxPercent - guildTaxPercent) > 1e-9
+                    ? `Saved at ${configuration.guildTaxPercent}%; the team's rate is now ${guildTaxPercent}%. Turn it off and on to use the new rate.`
+                    : `${guildTaxPercent}% of the pool goes to the team pot before the share.`}
+                </small>
+              </span>
+            </label>
+          ) : (
+            <p className={styles.subline}>
+              No guild tax is set for this team. Members with Manage team set it in Settings.
+            </p>
+          )}
+          <h3 className={styles.subhead}>Expenses</h3>
+          <p className={styles.subline}>
+            Repairs, food and other costs paid back in silver, or a percentage of the pool (a
+            caller&apos;s or scout&apos;s cut), taken before the share.
+          </p>
+          {configuration.expenses.map((expense, i) => {
+            const percent = (expense.kind ?? "silver") === "percent";
+            return (
+              <div className={`well ${styles.lootRow} ${styles.expenseRow}`} key={i}>
+                <Field label={`Expense ${i + 1}`} error={shown(missing.expenses[i]?.label)}>
+                  <input
+                    aria-label={`Expense ${i + 1} description`}
+                    maxLength={100}
+                    placeholder="e.g. Repairs"
+                    aria-invalid={checked && !!missing.expenses[i]?.label ? true : undefined}
+                    value={expense.label}
+                    onChange={(e) => setExpense(i, { label: e.target.value })}
+                  />
+                </Field>
+                <div
+                  className={`segmented ${styles.kindToggle}`}
+                  role="group"
+                  aria-label={`Expense ${i + 1} in`}
+                >
+                  {(
+                    [
+                      ["silver", "Silver"],
+                      ["percent", "%"],
+                    ] as const
+                  ).map(([kind, label]) => (
+                    <button
+                      key={kind}
+                      type="button"
+                      aria-pressed={(expense.kind ?? "silver") === kind}
+                      onClick={() =>
+                        setExpense(
+                          i,
+                          kind === "percent"
+                            ? { kind, silver: 0, percent: undefined }
+                            : { kind, silver: NaN, percent: undefined },
+                        )
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <Field
+                  label={percent ? "% of pool" : "Silver"}
+                  error={shown(missing.expenses[i]?.amount)}
+                >
+                  {percent ? (
+                    <NumberField
+                      key="percent"
+                      aria-label={`Expense ${i + 1} percent`}
+                      required
+                      min={0}
+                      max={100}
+                      decimals={1}
+                      placeholder="e.g. 5"
+                      value={expense.percent}
+                      onValueChange={(v) => setExpense(i, { percent: v ?? undefined })}
+                    />
+                  ) : (
+                    <NumberField
+                      key="silver"
+                      aria-label={`Expense ${i + 1} silver`}
+                      silver
+                      required
+                      min={0}
+                      max={Number.MAX_SAFE_INTEGER}
+                      placeholder="e.g. 250k"
+                      value={expense.silver}
+                      onValueChange={(v) => setExpense(i, { silver: v ?? NaN })}
+                    />
+                  )}
+                </Field>
+                <button
+                  type="button"
+                  className={styles.iconButton}
+                  aria-label={`Remove expense ${i + 1}`}
+                  onClick={() =>
+                    setConfiguration({
+                      ...configuration,
+                      expenses: configuration.expenses.filter((_, j) => j !== i),
+                    })
+                  }
+                >
+                  <X size={16} aria-hidden="true" />
+                </button>
+              </div>
+            );
+          })}
           <div className={styles.rowActions}>
             <button
               type="button"
@@ -416,7 +529,7 @@ export function TeamLootWorkspace({
               onClick={() =>
                 setConfiguration({
                   ...configuration,
-                  expenses: [...configuration.expenses, { label: "Expense", silver: 0 }],
+                  expenses: [...configuration.expenses, { label: "", kind: "silver", silver: NaN }],
                 })
               }
             >
@@ -432,19 +545,18 @@ export function TeamLootWorkspace({
               <span className={styles.rowCopy}>
                 <strong>{name(participant.userId)}</strong>
               </span>
-              <Field label="Shares">
-                <input
+              <Field label="Shares" error={shown(missing.shares[i])}>
+                <NumberField
+                  required
                   aria-label={`Shares for ${members.find((m) => m.userId === participant.userId)?.name || participant.userId}`}
-                  type="number"
                   min={1}
                   max={1000}
-                  step={1}
                   value={participant.shares}
-                  onChange={(e) =>
+                  onValueChange={(v) =>
                     setConfiguration({
                       ...configuration,
                       participants: configuration.participants.map((row, j) =>
-                        j === i ? { ...row, shares: Number(e.target.value) } : row,
+                        j === i ? { ...row, shares: v ?? NaN } : row,
                       ),
                     })
                   }
@@ -506,11 +618,17 @@ export function TeamLootWorkspace({
           />
           {result ? (
             <>
-              <dl className={styles.facts}>
+              <dl className={styles.facts} data-count={result.guildTax ? 4 : 3}>
                 <div>
                   <dt>Loot pool</dt>
                   <dd>{silver(result.pool)}</dd>
                 </div>
+                {result.guildTax > 0 && (
+                  <div>
+                    <dt>Guild tax · {result.guildTaxPercent}%</dt>
+                    <dd>{silver(result.guildTax)}</dd>
+                  </div>
+                )}
                 <div>
                   <dt>Expenses</dt>
                   <dd>{silver(result.expenses)}</dd>
@@ -520,6 +638,27 @@ export function TeamLootWorkspace({
                   <dd>{silver(result.net)}</dd>
                 </div>
               </dl>
+              {(result.guildTax > 0 || result.expenseRows.length > 0) && (
+                <ul className={`well ${styles.breakdown}`} aria-label="Taken before the share">
+                  {result.guildTax > 0 && (
+                    <li>
+                      <span>
+                        Guild tax <small>{result.guildTaxPercent}% · to the team pot</small>
+                      </span>
+                      <span data-number="">−{silver(result.guildTax)}</span>
+                    </li>
+                  )}
+                  {result.expenseRows.map((row, i) => (
+                    <li key={i}>
+                      <span>
+                        {row.label}
+                        {row.percent !== null && <small>{row.percent}% of the pool</small>}
+                      </span>
+                      <span data-number="">−{silver(row.silver)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <table className={`well ${styles.table}`}>
                 <thead>
                   <tr>
@@ -552,7 +691,8 @@ export function TeamLootWorkspace({
             </>
           ) : (
             <StatusLine>
-              Add at least one participant and whole-silver amounts; expenses must fit in the pool.
+              Enter the pool and each amount, and add at least one participant. Guild tax and
+              expenses must fit in the pool.
             </StatusLine>
           )}
           <div className={styles.formActions}>
@@ -578,7 +718,7 @@ export function TeamLootWorkspace({
                 onClick={() => {
                   if (
                     confirm(
-                      `Pay ${silver(result.net)} into ${result.payouts.length} wallets? A split is paid in once.`,
+                      `Pay ${silver(result.net)} into ${result.payouts.length} wallets${result.guildTax ? ` and ${silver(result.guildTax)} of guild tax into the team pot` : ""}? A split is paid in once.`,
                     )
                   )
                     void payIntoWallets();

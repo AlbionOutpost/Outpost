@@ -12,6 +12,7 @@ import { WellSelect } from "./well-select";
 import { Field } from "./field";
 import { countdown, timerCategories, timerCategory } from "./timer-labels";
 import styles from "./timer-manager.module.css";
+import { NumberField } from "./number-field";
 
 type Timer = {
   id: string;
@@ -344,7 +345,7 @@ export function TimerManager({
                 name="title"
                 maxLength={100}
                 required
-                placeholder="Island crops"
+                placeholder="e.g. Island crops"
                 value={draft.title}
                 onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               />
@@ -365,27 +366,21 @@ export function TimerManager({
             <fieldset className={styles.duration}>
               <legend>Duration</legend>
               <Field label="Hours">
-                <input
+                <NumberField
                   name="hours"
-                  type="number"
-                  inputMode="numeric"
                   min={0}
                   max={500}
-                  placeholder="0"
                   value={draft.hours}
-                  onChange={(e) => setDraft({ ...draft, hours: e.target.value })}
+                  onValueChange={(v) => setDraft({ ...draft, hours: v == null ? "" : String(v) })}
                 />
               </Field>
               <Field label="Minutes">
-                <input
+                <NumberField
                   name="minutes"
-                  type="number"
-                  inputMode="numeric"
                   min={0}
                   max={30000}
-                  placeholder="0"
                   value={draft.minutes}
-                  onChange={(e) => setDraft({ ...draft, minutes: e.target.value })}
+                  onValueChange={(v) => setDraft({ ...draft, minutes: v == null ? "" : String(v) })}
                 />
               </Field>
               <p className={styles.source}>

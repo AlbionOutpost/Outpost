@@ -13,7 +13,7 @@
 :global(.app.outpost) .page.page :global(.workspace-identity-actions) {
   align-self: center;
 }
-:global(.app.outpost) .page.page input[type="number"] {
+:global(.app.outpost) .page.page input[data-number] {
   text-align: right;
 }
 :global(.app.outpost) .layout.layout {

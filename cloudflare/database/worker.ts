@@ -23,6 +23,7 @@ import teamCrestSchema from "../d1/migrations/0010_team_crest.sql";
 import avatarFrameSchema from "../d1/migrations/0011_avatar_frame.sql";
 import teamRolesSchema from "../d1/migrations/0012_team_roles.sql";
 import teamEconomySchema from "../d1/migrations/0013_team_economy.sql";
+import teamGuildTaxSchema from "../d1/migrations/0014_team_guild_tax.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
@@ -132,7 +133,12 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
           // Team economy: wallets, coin flips and loot rolls; Manage loot holders get Manage wallet.
           this.ctx.storage.sql.exec(teamEconomySchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=12 WHERE version=11");
-        } else if (version !== 12) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 12) {
+          // Team guild tax: every team starts at 0%, so saved splits read as they were.
+          this.ctx.storage.sql.exec(teamGuildTaxSchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=13 WHERE version=12");
+        } else if (version !== 13) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);

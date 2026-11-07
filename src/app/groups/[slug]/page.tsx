@@ -24,6 +24,7 @@ import { db } from "@/lib/db";
 import { groupDashboard } from "@/lib/groups/dashboard";
 import { HttpError } from "@/lib/api-errors";
 import styles from "@/components/teams.module.css";
+import { LivelyCrest } from "@/components/team-crest";
 export const metadata = privateMetadata("Team workspace");
 /** The request's clock, read once per server render. */
 const renderedAt = () => Date.now();
@@ -78,7 +79,9 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
       <WorkspaceHeading
         scene="comps"
         emblem={
-          <TeamMark name={team.name} crestItem={team.crestItem} crestColor={team.crestColor} />
+          <LivelyCrest>
+            <TeamMark name={team.name} crestItem={team.crestItem} crestColor={team.crestColor} />
+          </LivelyCrest>
         }
         title={team.name}
         description={`${visibilityLabel(team.visibility)} team on the ${regionLabel(team.region)} server`}

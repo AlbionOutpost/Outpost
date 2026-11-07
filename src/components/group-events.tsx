@@ -11,6 +11,7 @@ import { GroupEventEditor } from "./group-event-editor";
 import type { TeamContext } from "./group-dashboard";
 import { Field, plural } from "./group-parts";
 import styles from "./teams.module.css";
+import { NumberField } from "./number-field";
 
 type TeamEvent = GroupDashboardData["events"][number];
 const rsvpLabel: Record<string, string> = {
@@ -306,27 +307,36 @@ export function GroupEventDialog({
               required
               minLength={3}
               maxLength={100}
-              placeholder="Castle defence"
+              placeholder="e.g. Castle defence"
             />
           </Field>
           <Field label="Start time (your device local time)">
             <input name="startsAt" type="datetime-local" required />
           </Field>
           <Field label="Display timezone">
-            <input name="timezone" required defaultValue="Europe/Berlin" maxLength={80} />
+            <input
+              name="timezone"
+              required
+              maxLength={80}
+              placeholder="e.g. Europe/Berlin"
+              ref={(node) => {
+                // The device's own timezone is the real default; the server checks the name.
+                if (node && !node.value)
+                  node.defaultValue = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+              }}
+            />
           </Field>
           <Field label="Expected participants">
-            <input
+            <NumberField
               name="expectedParticipants"
-              type="number"
               min={1}
               max={400}
-              defaultValue={20}
+              placeholder="e.g. 20"
               required
             />
           </Field>
           <Field label="Voice channel information">
-            <input name="voiceInfo" maxLength={200} placeholder="Discord · #mass-up" />
+            <input name="voiceInfo" maxLength={200} placeholder="e.g. Discord · #mass-up" />
           </Field>
           <Field label="Assigned comp" wide>
             <WellSelect name="compositionId" aria-label="Assigned comp">

@@ -5,6 +5,7 @@ import type { TeamGamesView } from "@/lib/groups/economy-service";
 import { AvatarFrame } from "./avatar-frame";
 import { EmptyWell } from "./empty-well";
 import { Field } from "./group-parts";
+import { NumberField } from "./number-field";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
@@ -521,16 +522,15 @@ export function TeamGames({
                       : "Needs Manage wallet."
                   }
                 >
-                  <input
+                  <NumberField
                     aria-label="Silver to share"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    placeholder="0"
+                    silver
+                    min={0}
+                    max={1e12}
+                    placeholder="None"
                     disabled={!view.canPay}
                     value={rollSilver}
-                    onChange={(e) =>
-                      setRollSilver(e.target.value.replace(/[^\d]/g, "").slice(0, 13))
-                    }
+                    onValueChange={(v) => setRollSilver(v == null ? "" : String(v))}
                   />
                 </Field>
               </div>

@@ -136,7 +136,7 @@
   font: 500 14px/1.3 var(--font-ui);
   caret-color: var(--accent-ink);
 }
-:where(.app.outpost) input:where([type="number"]) {
+:where(.app.outpost) input:where([type="number"], [data-number]) {
   font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
 }
@@ -156,9 +156,13 @@
   resize: vertical;
 }
 :where(.app.outpost) :is(input, textarea)::placeholder {
-  color: var(--muted);
+  /* A hint, not a value: a step quieter than muted text, so it never reads as typed. */
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
   opacity: 1;
   font-family: var(--font-ui);
+}
+:where(.app.outpost) :is(input, select, textarea):where([aria-invalid="true"]) {
+  border-color: color-mix(in srgb, var(--negative) 70%, var(--well-border));
 }
 :where(.app.outpost) :is(input, select, textarea):where(:hover:not(:disabled)) {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));

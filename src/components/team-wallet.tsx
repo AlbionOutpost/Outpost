@@ -5,6 +5,7 @@ import type { TeamWalletView } from "@/lib/groups/economy-service";
 import { bookkeepingLine } from "@/lib/groups/economy";
 import { AvatarFrame } from "./avatar-frame";
 import { EmptyWell } from "./empty-well";
+import { NumberField } from "./number-field";
 import { Field } from "./group-parts";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
@@ -357,15 +358,16 @@ export function TeamWallet({
                             : undefined
                       }
                     >
-                      <input
+                      <NumberField
                         id="wallet-amount"
                         aria-label="Silver"
-                        inputMode="numeric"
-                        autoComplete="off"
+                        silver
+                        min={0}
+                        max={1e12}
                         value={amount}
-                        placeholder={mode === "payout" ? "All of it" : "0"}
-                        onChange={(e) => {
-                          setAmount(e.target.value.replace(/[^\d]/g, "").slice(0, 13));
+                        placeholder={mode === "payout" ? "All of it" : "e.g. 250k or 1.2m"}
+                        onValueChange={(v) => {
+                          setAmount(v == null ? "" : String(v));
                           setKey(operationKey());
                         }}
                       />

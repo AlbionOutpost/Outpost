@@ -25,6 +25,7 @@ import {
   productionPriceQuery,
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
+import { NumberField } from "./number-field";
 
 const silver = (value: number | null) =>
   value === null ? <Unavailable /> : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -256,13 +257,12 @@ export function ProductionPlan({
                 </div>
                 <label>
                   Crafts
-                  <input
-                    type="number"
+                  <NumberField
                     min={1}
                     max={100000}
                     value={configuration.batches}
-                    onChange={(e) => {
-                      const batches = Number(e.target.value);
+                    onValueChange={(v) => {
+                      const batches = v ?? NaN;
                       if (!Number.isInteger(batches) || batches < 1 || batches > 100000) return;
                       const next = {
                         ...plan,
