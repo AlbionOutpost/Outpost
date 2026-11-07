@@ -305,7 +305,7 @@ test("production calculations save, reload, share and enforce scenario ownership
       .getByRole("button", { name: "Restore Verified crafting scenario", exact: true })
       .click();
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("100");
-    await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("3000");
+    await expect(page.getByLabel("Output unit sale price", { exact: true })).toHaveValue("3,000");
     const outsider = await browser.newContext();
     try {
       const unauthorized = await outsider.request.delete(`/api/scenarios/${saved.id}`, {

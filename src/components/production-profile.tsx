@@ -19,6 +19,7 @@ import {
   focusPerCraft,
   masteryCategories,
 } from "@/lib/albion/focus";
+import { NumberField } from "./number-field";
 // The shared calculator wells, plus the crafting family's own rules.
 const s = { ...shell, ...own };
 const specNames = new Map(
@@ -181,14 +182,12 @@ export function ProductionProfile({
                 {refiningSpecIds.map((id, index) => (
                   <label key={id}>
                     T{index + 4} specialization
-                    <input
-                      type="number"
+                    <NumberField
                       min={0}
                       max={100}
-                      step={1}
                       value={profile.refiningLevels[index]}
-                      onChange={(e) => {
-                        const value = Number(e.target.value);
+                      onValueChange={(v) => {
+                        const value = v ?? NaN;
                         change({
                           ...profile,
                           refiningLevels: profile.refiningLevels.map((old, i) =>
@@ -210,15 +209,11 @@ export function ProductionProfile({
                       {specNames.get(spec.specId) ?? spec.specId}
                       <small> · {spec.perLevel} per level</small>
                     </span>
-                    <input
-                      type="number"
+                    <NumberField
                       min={0}
                       max={100}
-                      step={1}
                       value={levels[spec.specId] ?? 0}
-                      onChange={(e) =>
-                        setLevels((l) => ({ ...l, [spec.specId]: Number(e.target.value) }))
-                      }
+                      onValueChange={(v) => setLevels((l) => ({ ...l, [spec.specId]: v ?? NaN }))}
                     />
                   </label>
                 ))}

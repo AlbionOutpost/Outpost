@@ -53,6 +53,7 @@ import {
   productionPriceQuery,
   mergeProductionObservations,
 } from "@/lib/albion/production-observations";
+import { NumberField } from "./number-field";
 // The shared calculator wells, plus the crafting family's own rules.
 const s = { ...shell, ...own };
 export function ProductionCalculator({
@@ -572,13 +573,12 @@ export function ProductionCalculator({
         <div className={s.qty}>
           <label htmlFor="production-batches">Crafts / upgrades</label>
           <div className={s.qtyWell}>
-            <input
+            <NumberField
               id="production-batches"
-              type="number"
               min={1}
               max={100000}
               value={draft.batches}
-              onChange={(e) => update("batches", Number(e.target.value))}
+              onValueChange={(v) => update("batches", v ?? NaN)}
             />
             <div
               className={`segmented ${s.quick}`}
@@ -653,12 +653,12 @@ export function ProductionCalculator({
             <div className={s.fields}>
               <label className={s.wide}>
                 Additional station / upgrade fee per craft
-                <input
-                  type="number"
+                <NumberField
+                  silver
                   min={0}
-                  step="any"
+                  decimals={2}
                   value={draft.stationFee}
-                  onChange={(e) => update("stationFee", Number(e.target.value))}
+                  onValueChange={(v) => update("stationFee", v ?? NaN)}
                 />
               </label>
               <p className={s.help}>
@@ -668,24 +668,22 @@ export function ProductionCalculator({
               </p>
               <label>
                 Sales tax (%)
-                <input
-                  type="number"
+                <NumberField
                   min={0}
                   max={100}
-                  step="any"
+                  decimals={2}
                   value={draft.tax}
-                  onChange={(e) => update("tax", Number(e.target.value))}
+                  onValueChange={(v) => update("tax", v ?? NaN)}
                 />
               </label>
               <label>
                 Sell order setup fee (%)
-                <input
-                  type="number"
+                <NumberField
                   min={0}
                   max={100}
-                  step="any"
+                  decimals={2}
                   value={draft.setupFee}
-                  onChange={(e) => update("setupFee", Number(e.target.value))}
+                  onValueChange={(v) => update("setupFee", v ?? NaN)}
                 />
               </label>
               {productionSellsInstantly(draft) && (
@@ -708,13 +706,12 @@ export function ProductionCalculator({
                 </p>
                 <label>
                   Return rate without focus (%)
-                  <input
-                    type="number"
+                  <NumberField
                     min={0}
                     max={99.9}
-                    step="any"
+                    decimals={2}
                     value={draft.returnRate}
-                    onChange={(e) => update("returnRate", Number(e.target.value))}
+                    onValueChange={(v) => update("returnRate", v ?? NaN)}
                   />
                 </label>
                 <label>
@@ -732,22 +729,20 @@ export function ProductionCalculator({
                   <>
                     <label>
                       Return rate with focus (%)
-                      <input
-                        type="number"
+                      <NumberField
                         min={0}
                         max={99.9}
-                        step="any"
+                        decimals={2}
                         value={draft.focusReturnRate}
-                        onChange={(e) => update("focusReturnRate", Number(e.target.value))}
+                        onValueChange={(v) => update("focusReturnRate", v ?? NaN)}
                       />
                     </label>
                     <label>
                       Total focus used
-                      <input
-                        type="number"
+                      <NumberField
                         min={1}
                         value={draft.focusUsed}
-                        onChange={(e) => update("focusUsed", Number(e.target.value))}
+                        onValueChange={(v) => update("focusUsed", v ?? NaN)}
                       />
                     </label>
                   </>
@@ -757,12 +752,11 @@ export function ProductionCalculator({
                 <div className={s.fields}>
                   <label>
                     Production bonus (%)
-                    <input
-                      type="number"
+                    <NumberField
                       min={0}
                       max={1000}
                       value={bonus}
-                      onChange={(e) => setBonus(Number(e.target.value))}
+                      onValueChange={(v) => setBonus(v ?? NaN)}
                     />
                   </label>
                   <p className={s.help}>
@@ -880,15 +874,15 @@ export function ProductionCalculator({
                     </label>
                   )}
                 </span>
-                <input
+                <NumberField
+                  silver
                   className={s.matInput}
                   aria-label={`${i.name} unit price`}
-                  type="number"
                   min={0}
-                  step="any"
+                  decimals={2}
                   placeholder="Price"
                   value={p?.value ?? ""}
-                  onChange={(e) => price(i.id, q, e.target.value)}
+                  onValueChange={(v) => price(i.id, q, v == null ? "" : String(v))}
                 />
                 <span className={s.matTotal}>
                   <span className="sr-only">Total </span>
@@ -907,15 +901,15 @@ export function ProductionCalculator({
               </small>
               <small>{sourceNote(outputPrice)}</small>
             </span>
-            <input
+            <NumberField
+              silver
               className={s.matInput}
               aria-label="Output unit sale price"
-              type="number"
               min={0}
-              step="any"
+              decimals={2}
               placeholder="Price"
               value={outputPrice?.value ?? ""}
-              onChange={(e) => price(recipe.output, outputQuality, e.target.value)}
+              onValueChange={(v) => price(recipe.output, outputQuality, v == null ? "" : String(v))}
             />
             <span className={s.matTotal}>
               <span className="sr-only">Total </span>

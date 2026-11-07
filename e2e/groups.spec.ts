@@ -349,6 +349,8 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
         .slice(0, 16);
     });
     await officerPage.getByLabel("Start time (your device local time)").fill(tomorrowLocal);
+    // No sample count any more: the field starts empty with a hint.
+    await officerPage.getByLabel("Expected participants").fill("20");
     await officerPage.getByRole("button", { name: "Schedule event" }).click();
     await expect(
       officerPage.getByRole("heading", { name: "Guild training operation" }),

@@ -37,6 +37,7 @@ import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 const steps = ["farming-plan", "farming-prices", "farming-result"];
 const cropLabel = (crop: (typeof crops)[number]) => `T${crop.tier} · ${crop.type}`;
 export function FarmingCalculator() {
@@ -189,19 +190,19 @@ export function FarmingCalculator() {
             />
           </small>
         </span>
-        <input
+        <NumberField
+          silver
           className={s.matInput}
           aria-label={label}
           aria-describedby={`farming-${key}-source`}
-          type="number"
           min={0}
           max={1e12}
-          step="any"
+          decimals={2}
           value={value ?? ""}
           placeholder="Price"
-          onChange={(e) =>
+          onValueChange={(v) =>
             update(key, {
-              value: e.target.value === "" ? null : Number(e.target.value),
+              value: v,
               manual: true,
               quality: 1,
               region: null,
@@ -276,50 +277,44 @@ export function FarmingCalculator() {
       <div className={s.fields}>
         <label>
           Seeds to plant
-          <input
-            type="number"
+          <NumberField
             min={1}
             max={100000}
             value={draft.plants}
-            onChange={(e) => update("plants", Number(e.target.value))}
+            onValueChange={(v) => update("plants", v ?? NaN)}
           />
         </label>
         <label>
           Plants to water
-          <input
-            type="number"
+          <NumberField
             min={0}
             max={draft.plants}
             value={draft.wateredPlants}
             aria-invalid={draft.wateredPlants > draft.plants}
-            onChange={(e) => update("wateredPlants", Number(e.target.value))}
+            onValueChange={(v) => update("wateredPlants", v ?? NaN)}
           />
         </label>
         <label>
           Harvest per plant
-          <input
+          <NumberField
             aria-label="Harvest per plant"
             aria-describedby="farming-harvest-help"
-            type="number"
             min={0}
             max={1000}
-            step="any"
+            decimals={2}
             placeholder="Your yield"
             value={draft.harvestPerPlant ?? ""}
-            onChange={(e) =>
-              update("harvestPerPlant", e.target.value === "" ? null : Number(e.target.value))
-            }
+            onValueChange={(v) => update("harvestPerPlant", v)}
           />
         </label>
         <label>
           Actual total watering focus
-          <input
-            type="number"
+          <NumberField
             min={0}
             max={1e9}
             value={draft.focus ?? ""}
             placeholder="Optional"
-            onChange={(e) => update("focus", e.target.value === "" ? null : Number(e.target.value))}
+            onValueChange={(v) => update("focus", v)}
           />
         </label>
         <p id="farming-harvest-help" className={s.help}>
@@ -353,13 +348,13 @@ export function FarmingCalculator() {
             ).map(([key, label, max]) => (
               <label key={key}>
                 {label}
-                <input
-                  type="number"
+                <NumberField
                   min={0}
                   max={max}
-                  step="any"
+                  decimals={2}
+                  silver={key === "operatingCost"}
                   value={draft[key]}
-                  onChange={(e) => update(key, Number(e.target.value))}
+                  onValueChange={(v) => update(key, v ?? NaN)}
                 />
               </label>
             ))}

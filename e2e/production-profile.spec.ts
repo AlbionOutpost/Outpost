@@ -37,9 +37,10 @@ test("refining city and specialization profile derives returns and estimates foc
     await expect(profile).toContainText("Estimated total focus: 3.375");
     await page.getByRole("button", { name: "Apply production profile", exact: true }).click();
     await expect(profile).toContainText("Production return assumptions applied");
-    await expect(page.getByLabel("Return rate without focus (%)", { exact: true })).toHaveValue(
-      String((100 * 58) / 158),
-    );
+    // The field shows two decimals; the exact applied rate is its value.
+    const applied = page.getByLabel("Return rate without focus (%)", { exact: true });
+    await expect(applied).toHaveValue("36.71");
+    await expect(applied).toHaveAttribute("aria-valuenow", String((100 * 58) / 158));
     await mkdir(".qa/product-next/production", { recursive: true });
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 900 });
