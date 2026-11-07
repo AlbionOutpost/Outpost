@@ -18,6 +18,8 @@ export const models = new Set([
   "compositionFavorite",
   "group",
   "groupMember",
+  "groupCustomRole",
+  "groupRoleAssignment",
   "groupMembershipRequest",
   "groupInvitation",
   "groupAnnouncement",

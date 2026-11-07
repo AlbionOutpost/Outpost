@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * A Team crest is a painted shield (public/albion/crests) with a painted symbol on it
  * (public/albion/charges). Both are fixed lists, so the server validates a choice without any
- * lookup. Every team starts on the default crest until an owner or admin picks another.
+ * lookup. Every team starts on the default crest until a member with Manage team picks another.
  */
 export const crestCharges = [
   "tower",

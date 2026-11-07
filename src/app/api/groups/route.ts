@@ -6,6 +6,7 @@ import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
 import { requireTeamCreation } from "@/lib/billing/gate";
 import { teamIdentity } from "@/lib/groups/crest";
+import { starterRoles } from "@/lib/groups/roles";
 const input = z.object({
   name: z.string().trim().min(3).max(80),
   slug: z
@@ -30,6 +31,8 @@ export const POST = apiHandler("group.create", async (req: NextRequest) => {
       ...data,
       ownerId: auth.userId!,
       members: { create: { userId: auth.userId!, role: "OWNER" } },
+      // One write: the team, its owner and the starter roles (Admin, Officer, default Member).
+      roles: { create: starterRoles() },
     },
     select: { id: true, slug: true },
   });

@@ -2,7 +2,17 @@ import { Prisma } from "@/lib/prisma-runtime";
 import { randomBytes, createHash } from "node:crypto";
 import { db, databaseService } from "../db";
 import { HttpError } from "../http-error";
-import { canEditShared, canManageMembers } from "./permissions";
+import {
+  can,
+  canGrant,
+  maxTeamRoles,
+  outranksMember,
+  outranksRole,
+  resolveAccess,
+  toMask,
+  type TeamPermission,
+} from "./permissions";
+import { giveDefaultRole, loadTeamAccess, memberRank, revokeStaleInvites } from "./roles";
 import { groupAction } from "./validation";
 export function inviteHash(token: string) {
   return createHash("sha256").update(token).digest("hex");
@@ -16,6 +26,9 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
         if (!group) throw new HttpError(404, "Group not found");
         const actor = await tx.groupMember.findUnique({
           where: { groupId_userId: { groupId, userId } },
+          select: {
+            roles: { select: { role: { select: { position: true, permissions: true } } } },
+          },
         });
         if (action.action === "request") {
           if (actor) throw new HttpError(409, "You are already a member");
@@ -37,13 +50,25 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
           return { requested: true };
         }
         if (!actor) throw new HttpError(404, "Group not found");
-        const manager = canManageMembers(actor.role);
-        const editor = canEditShared(actor.role);
         const owner = group.ownerId === userId;
+        // Rights from the rows as they are now, inside this transaction; never from the client.
+        const access = resolveAccess(
+          owner,
+          actor.roles.map((r) => r.role),
+        );
+        const need = (key: TeamPermission, message: string) => {
+          if (!can(access, key)) throw new HttpError(403, message);
+        };
+        const teamRole = async (roleId: string) => {
+          const role = await tx.groupCustomRole.findFirst({ where: { id: roleId, groupId } });
+          if (!role) throw new HttpError(404, "Role not found");
+          if (!outranksRole(access, role))
+            throw new HttpError(403, "You can only change roles below your highest role");
+          return role;
+        };
         switch (action.action) {
           case "profile": {
-            if (!manager)
-              throw new HttpError(403, "Group profile changes require owner or admin permission");
+            need("manageTeam", "Changing the team profile needs the Manage team permission");
             const { action: _, expectedUpdatedAt, ...fields } = action;
             void _;
             const changed = await tx.group.updateMany({
@@ -55,7 +80,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { updated: true };
           }
           case "edit-event": {
-            if (!editor) throw new HttpError(403, "Event editing requires officer permission");
+            need("manageEvents", "Editing events needs the Manage events permission");
             if (new Date(action.startsAt).getTime() < Date.now() - 60000)
               throw new HttpError(400, "Choose a future event date");
             if (
@@ -79,7 +104,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { updated: true };
           }
           case "invite": {
-            if (!editor) throw new HttpError(403, "Officers and administrators manage invitations");
+            need("inviteMembers", "Creating invitations needs the Invite members permission");
             const token = randomBytes(32).toString("hex");
             const invitation = await tx.groupInvitation.create({
               data: {
@@ -93,11 +118,16 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { ...invitation, path: `/invitations/${token}` };
           }
           case "revoke": {
-            if (!editor) throw new HttpError(403, "Invitation management denied");
             const invite = await tx.groupInvitation.findFirst({
               where: { id: action.invitationId, groupId },
             });
-            if (!invite || (!manager && invite.createdById !== userId))
+            if (
+              !invite ||
+              !(
+                can(access, "manageRequests") ||
+                (can(access, "inviteMembers") && invite.createdById === userId)
+              )
+            )
               throw new HttpError(403, "Invitation management denied");
             await tx.groupInvitation.update({
               where: { id: invite.id },
@@ -106,46 +136,143 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { revoked: true };
           }
           case "decide": {
-            if (!manager) throw new HttpError(403, "Only owners and admins review membership");
+            need("manageRequests", "Reviewing requests needs the Review requests permission");
             const changed = await tx.groupMembershipRequest.updateMany({
               where: { groupId, userId: action.userId, status: "PENDING" },
               data: { status: action.approve ? "APPROVED" : "REJECTED" },
             });
             if (!changed.count) throw new HttpError(409, "Membership request already reviewed");
-            if (action.approve)
-              await tx.groupMember.upsert({
+            if (
+              action.approve &&
+              !(await tx.groupMember.findUnique({
                 where: { groupId_userId: { groupId, userId: action.userId } },
-                create: { groupId, userId: action.userId, role: "MEMBER" },
-                update: {},
-              });
+              }))
+            ) {
+              await tx.groupMember.create({ data: { groupId, userId: action.userId } });
+              await giveDefaultRole(tx, groupId, action.userId);
+            }
             return { reviewed: true };
           }
-          case "role": {
-            if (!owner || action.userId === group.ownerId)
-              throw new HttpError(403, "Only the owner can change non-owner roles");
-            const target = await tx.groupMember.findUnique({
-              where: { groupId_userId: { groupId, userId: action.userId } },
+          case "role-create": {
+            need("manageRoles", "Creating roles needs the Manage roles permission");
+            const permissions = toMask(action.permissions);
+            if (!canGrant(access, 0, permissions))
+              throw new HttpError(403, "You can only grant permissions you have yourself");
+            const roles = await tx.groupCustomRole.findMany({
+              where: { groupId },
+              select: { position: true },
             });
-            if (!target) throw new HttpError(404, "Member not found");
-            await tx.groupMember.update({
-              where: { groupId_userId: { groupId, userId: action.userId } },
-              data: { role: action.role },
+            if (roles.length >= maxTeamRoles)
+              throw new HttpError(409, `A team can have up to ${maxTeamRoles} roles`);
+            // A new role starts at the bottom, below every role its creator outranks.
+            const position = roles.length ? Math.min(...roles.map((r) => r.position)) - 1 : 1;
+            return tx.groupCustomRole.create({
+              data: { groupId, name: action.name, color: action.color, permissions, position },
+              select: { id: true },
             });
-            if (!canEditShared(action.role))
-              await tx.groupInvitation.updateMany({
-                where: { groupId, createdById: action.userId, acceptedAt: null, revokedAt: null },
-                data: { revokedAt: new Date() },
+          }
+          case "role-update": {
+            need("manageRoles", "Editing roles needs the Manage roles permission");
+            const role = await teamRole(action.roleId);
+            const permissions = toMask(action.permissions);
+            if (!canGrant(access, role.permissions, permissions))
+              throw new HttpError(403, "You can only change permissions you have yourself");
+            await tx.groupCustomRole.update({
+              where: { id: role.id },
+              data: { name: action.name, color: action.color, permissions },
+            });
+            await revokeStaleInvites(tx, groupId);
+            return { updated: true };
+          }
+          case "role-delete": {
+            need("manageRoles", "Deleting roles needs the Manage roles permission");
+            const role = await teamRole(action.roleId);
+            if (role.isDefault)
+              throw new HttpError(409, "Pick another default role before deleting this one");
+            await tx.groupCustomRole.delete({ where: { id: role.id } });
+            await revokeStaleInvites(tx, groupId);
+            return { deleted: true };
+          }
+          case "role-move": {
+            need("manageRoles", "Ordering roles needs the Manage roles permission");
+            const role = await teamRole(action.roleId);
+            const neighbour = await tx.groupCustomRole.findFirst({
+              where:
+                action.direction === "up"
+                  ? { groupId, position: { gt: role.position } }
+                  : { groupId, position: { lt: role.position } },
+              orderBy: { position: action.direction === "up" ? "asc" : "desc" },
+            });
+            if (!neighbour) throw new HttpError(409, "That role is already at the end");
+            if (!outranksRole(access, neighbour))
+              throw new HttpError(403, "You can only move roles below your highest role");
+            await tx.groupCustomRole.update({
+              where: { id: role.id },
+              data: { position: neighbour.position },
+            });
+            await tx.groupCustomRole.update({
+              where: { id: neighbour.id },
+              data: { position: role.position },
+            });
+            return { moved: true };
+          }
+          case "role-default": {
+            need("manageRoles", "Choosing the default role needs the Manage roles permission");
+            const role = await teamRole(action.roleId);
+            await tx.groupCustomRole.updateMany({
+              where: { groupId, isDefault: true },
+              data: { isDefault: false },
+            });
+            await tx.groupCustomRole.update({ where: { id: role.id }, data: { isDefault: true } });
+            return { updated: true };
+          }
+          case "member-roles": {
+            need("manageRoles", "Assigning roles needs the Manage roles permission");
+            if (action.userId === group.ownerId)
+              throw new HttpError(403, "The owner already holds every permission");
+            const rank = await memberRank(tx, groupId, action.userId);
+            if (rank === null) throw new HttpError(404, "Member not found");
+            if (action.userId !== userId && !outranksMember(access, rank))
+              throw new HttpError(403, "You can only change roles of members below you");
+            const wanted = new Set(action.roleIds);
+            const roles = await tx.groupCustomRole.findMany({
+              where: { groupId },
+              select: { id: true, position: true },
+            });
+            if ([...wanted].some((id) => !roles.some((r) => r.id === id)))
+              throw new HttpError(404, "Role not found");
+            const held = new Set(
+              (
+                await tx.groupRoleAssignment.findMany({
+                  where: { groupId, userId: action.userId },
+                  select: { roleId: true },
+                })
+              ).map((a) => a.roleId),
+            );
+            const changed = roles.filter((r) => wanted.has(r.id) !== held.has(r.id));
+            if (changed.some((r) => !outranksRole(access, r)))
+              throw new HttpError(403, "You can only give or take roles below your highest role");
+            const removed = changed.filter((r) => held.has(r.id)).map((r) => r.id);
+            const added = changed.filter((r) => !held.has(r.id)).map((r) => r.id);
+            if (removed.length)
+              await tx.groupRoleAssignment.deleteMany({
+                where: { groupId, userId: action.userId, roleId: { in: removed } },
               });
+            if (added.length)
+              await tx.groupRoleAssignment.createMany({
+                data: added.map((roleId) => ({ groupId, userId: action.userId, roleId })),
+              });
+            await revokeStaleInvites(tx, groupId);
             return { updated: true };
           }
           case "remove": {
-            if (!manager || action.userId === group.ownerId)
+            need("removeMembers", "Removing members needs the Remove members permission");
+            if (action.userId === group.ownerId || action.userId === userId)
               throw new HttpError(403, "Cannot remove this member");
-            const target = await tx.groupMember.findUnique({
-              where: { groupId_userId: { groupId, userId: action.userId } },
-            });
-            if (!target || (!owner && target.role === "ADMIN"))
-              throw new HttpError(403, "Cannot remove this member");
+            const rank = await memberRank(tx, groupId, action.userId);
+            if (rank === null) throw new HttpError(404, "Member not found");
+            if (!outranksMember(access, rank))
+              throw new HttpError(403, "You can only remove members below your highest role");
             await tx.groupMember.delete({
               where: { groupId_userId: { groupId, userId: action.userId } },
             });
@@ -173,15 +300,21 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
               }))
             )
               throw new HttpError(404, "New owner must already be a member");
-            await tx.groupMember.update({
-              where: { groupId_userId: { groupId, userId } },
-              data: { role: "ADMIN" },
+            // The previous owner keeps a seat at the top: the team's highest role.
+            const top = await tx.groupCustomRole.findFirst({
+              where: { groupId },
+              orderBy: { position: "desc" },
+              select: { id: true },
             });
-            await tx.groupMember.update({
-              where: { groupId_userId: { groupId, userId: action.userId } },
-              data: { role: "OWNER" },
-            });
+            if (
+              top &&
+              !(await tx.groupRoleAssignment.findUnique({
+                where: { roleId_userId: { roleId: top.id, userId } },
+              }))
+            )
+              await tx.groupRoleAssignment.create({ data: { groupId, userId, roleId: top.id } });
             await tx.group.update({ where: { id: groupId }, data: { ownerId: action.userId } });
+            await revokeStaleInvites(tx, groupId);
             return { transferred: true };
           }
           case "delete": {
@@ -190,19 +323,19 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { deleted: true };
           }
           case "announcement": {
-            if (!editor) throw new HttpError(403, "Publishing requires officer permission");
+            need("manageEvents", "Posting announcements needs the Manage events permission");
             return tx.groupAnnouncement.create({
               data: { groupId, title: action.title, body: action.body, authorId: userId },
               select: { id: true },
             });
           }
           case "remove-announcement": {
-            if (!editor) throw new HttpError(403, "Publishing requires officer permission");
+            need("manageEvents", "Posting announcements needs the Manage events permission");
             await tx.groupAnnouncement.deleteMany({ where: { id: action.id, groupId } });
             return { deleted: true };
           }
           case "event": {
-            if (!editor) throw new HttpError(403, "Event scheduling requires officer permission");
+            need("manageEvents", "Scheduling events needs the Manage events permission");
             if (new Date(action.startsAt).getTime() < Date.now() - 60000)
               throw new HttpError(400, "Choose a future event date");
             if (
@@ -220,7 +353,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             });
           }
           case "cancel-event": {
-            if (!editor) throw new HttpError(403, "Event management denied");
+            need("manageEvents", "Cancelling events needs the Manage events permission");
             const changed = await tx.groupEvent.updateMany({
               where: { id: action.eventId, groupId, cancelled: false },
               data: { cancelled: true, version: { increment: 1 } },
@@ -241,7 +374,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             return { responded: true };
           }
           case "share-build": {
-            if (!editor) throw new HttpError(403, "Sharing requires officer permission");
+            need("manageBuilds", "Sharing builds needs the Share builds permission");
             const build = await tx.build.findUnique({
               where: { id: action.buildId },
               include: { equipment: true },
@@ -282,7 +415,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
             });
           }
           case "remove-build": {
-            if (!editor) throw new HttpError(403, "Sharing management denied");
+            need("manageBuilds", "Removing shared builds needs the Share builds permission");
             await tx.groupBuild.deleteMany({ where: { id: action.id, groupId } });
             return { deleted: true };
           }
@@ -307,14 +440,13 @@ async function localAcceptInvitation(token: string, userId: string) {
         });
         if (!invite || invite.revokedAt || invite.acceptedAt || invite.expiresAt <= new Date())
           throw new HttpError(410, "Invitation expired, revoked or already used");
-        // Recheck the issuer as well as the bearer. This also closes outstanding links
-        // minted before removal/demotion revocation was introduced, or before account deletion.
-        const issuer = invite.createdById
-          ? await tx.groupMember.findUnique({
-              where: { groupId_userId: { groupId: invite.groupId, userId: invite.createdById } },
-            })
-          : null;
-        if (!canEditShared(issuer?.role)) throw new HttpError(410, "Invitation unavailable");
+        // Recheck the issuer's current right to invite as well as the bearer. This also closes
+        // outstanding links minted before removal/demotion revocation, or before account deletion.
+        if (
+          !invite.createdById ||
+          !can(await loadTeamAccess(tx, invite.groupId, invite.createdById), "inviteMembers")
+        )
+          throw new HttpError(410, "Invitation unavailable");
         if (
           await tx.groupMember.findUnique({
             where: { groupId_userId: { groupId: invite.groupId, userId } },
@@ -331,7 +463,8 @@ async function localAcceptInvitation(token: string, userId: string) {
           data: { acceptedAt: new Date() },
         });
         if (!changed.count) throw new HttpError(409, "Invitation no longer available");
-        await tx.groupMember.create({ data: { groupId: invite.groupId, userId, role: "MEMBER" } });
+        await tx.groupMember.create({ data: { groupId: invite.groupId, userId } });
+        await giveDefaultRole(tx, invite.groupId, userId);
         return { slug: invite.group.slug };
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

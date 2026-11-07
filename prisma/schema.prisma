@@ -210,17 +210,48 @@ model Group {
   events GroupEvent[]
   builds GroupBuild[]
   lootSplits GroupLootSplit[]
+  roles GroupCustomRole[]
 
 }
 model GroupMember {
  groupId String
  userId String
+ /// Legacy fixed role, kept only as the source of the one-time role migration; rights come from `roles`.
  role GroupRole @default(MEMBER)
  joinedAt DateTime @default(now())
  group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ roles GroupRoleAssignment[]
  @@id([groupId,userId])
  @@index([userId])
+}
+/// A Team's own role: name, palette colour, place in the order and permission flags (src/lib/groups/permissions.ts).
+model GroupCustomRole {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ name String
+ color String @default("muted")
+ /// Higher sits above; a member acts only on roles below their own highest.
+ position Int
+ /// Bit flags in `teamPermissions` order.
+ permissions Int @default(0)
+ /// The role every new member gets (at most one per team).
+ isDefault Boolean @default(false)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ assignments GroupRoleAssignment[]
+ @@unique([id,groupId])
+ @@index([groupId,position])
+}
+model GroupRoleAssignment {
+ groupId String
+ userId String
+ roleId String
+ role GroupCustomRole @relation(fields:[roleId,groupId],references:[id,groupId],onDelete:Cascade)
+ member GroupMember @relation(fields:[groupId,userId],references:[groupId,userId],onDelete:Cascade)
+ @@id([roleId,userId])
+ @@index([groupId,userId])
 }
 model Composition {
  id String @id @default(cuid())
