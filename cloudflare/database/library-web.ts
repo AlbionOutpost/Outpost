@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { publicLibraryFind, publicLibraryPage } from "./public-assets";
+import { publicLibraryCategoryCounts, publicLibraryFind, publicLibraryPage } from "./public-assets";
 import { cache } from "react";
 import { databaseBinding } from "./web-driver";
 import { createLibraryBuildDraft } from "../../src/lib/grind-build-draft";
@@ -54,6 +54,8 @@ export const queryLibraryCompositions = async (input: LibraryQuery) =>
   (await databaseBinding()
     .archiveList("compositions", input)
     .catch(() => publicLibraryPage("compositions", input))) as LibraryPage<LibraryComposition>;
+/** Group Builds per library category (Comps by activity). */
+export const libraryCompositionCounts = cache(() => publicLibraryCategoryCounts("compositions"));
 /** Totals for the landing page: the archive manifest answers both counts in one small read. */
 export const libraryCounts = cache(async () => {
   const [totals, guides] = await Promise.all([
