@@ -1,4 +1,5 @@
-/* Hover grows once and holds; press and disclosure feedback stay separate. */
+/* Hover lifts a pixel and holds, press settles a pixel; neither changes a control's size, so wide
+   toggles, tabs and tiles never spill past their box. Press and disclosure feedback stay separate. */
 .app.outpost {
   --motion-ease: ease-out;
   --motion-control-time: 160ms;
@@ -76,7 +77,7 @@
       .landing-card-action,
       .landing-window-foot
     ):active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
+    transform: translateY(1px);
     transition-duration: 90ms;
   }
   :root .app.outpost[data-motion-enabled] :is(.menu-panel, dialog[open], .mobile-navigation) {
@@ -137,7 +138,8 @@
       .landing-card-action,
       .landing-window-foot
     ):hover:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(1.045);
+    /* A lift, not a scale: scaling grows wide controls past their box and shifts their text */
+    transform: translateY(-1px);
   }
   :root
     .app.outpost[data-motion-enabled]
@@ -160,7 +162,7 @@
       .landing-card-action,
       .landing-window-foot
     ):active:not(:disabled, [aria-disabled="true"]) {
-    transform: scale(0.96);
+    transform: translateY(1px);
   }
   :root .app.outpost[data-motion-enabled] :is(.button > svg, .tool-symbol > svg, .task-glyph) {
     transform: none;
@@ -233,7 +235,7 @@
   :root
     .app.outpost[data-motion-enabled]
     :is(.character-slot, .strip-slot, .gear-browser-item):active {
-    transform: scale(0.96);
+    transform: translateY(1px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
