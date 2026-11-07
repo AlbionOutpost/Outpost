@@ -115,7 +115,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 - **Single private DO** (`accounts-v1-eu`): every session lookup and write is serialized through one object — a throughput ceiling and single point of failure. Scaling means partitioning by tenant or moving to a paid database.
 - **No backups** of the private DO are scripted or tested yet.
 - **Two schemas** must be kept in parity by generation scripts; local tests run against Postgres, not the production SQLite path (the Cloudflare e2e run and `qa-cloudflare-database.mjs` cover that).
-- **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each.
+- **Bundle headroom:** web ≈1.98 MB / data ≈1.02 MB gzip against a 3 MiB Free limit each. Client-only heavy libraries stay out of the Worker: three.js (the Treasury coin and chest, ≈150 KB gzip in its own browser chunks) is reached only through `import()` behind `typeof window` in `src/components/economy-scene-loader.ts`, which the server build compiles away, and it is fetched only when a flip or a loot reveal plays with WebGL and motion allowed.
 - Public downloads and new composition/trade exports use `albion-outpost-*`; composition imports also accept the legacy `albion-atlas-composition` format. Historical cookies (`atlas-theme`/`atlas-region`), cache keys (`atlas:*`), database names, source version identifiers and ICS UIDs remain stable so preferences, cached budgets, provenance and existing calendar events retain their identity. Calendar producer metadata uses Albion Outpost. Archived evidence retains the name used when captured.
 
 ## Administrative controls (schema 7)

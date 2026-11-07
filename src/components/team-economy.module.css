@@ -155,7 +155,9 @@
   justify-items: center;
   gap: var(--space-3);
   min-width: 0;
-  /* Headroom for the throw, so the coin stays over its own well */
+  /* Headroom for the throw, so the coin stays over its own well; the WebGL canvas is wider
+     than a phone's well, so its sides are clipped rather than scrolling the page */
+  overflow-x: clip;
   padding: 104px var(--space-3) var(--space-4);
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
@@ -208,6 +210,26 @@
   height: calc(var(--coin) * 1.35);
   perspective: 760px;
   perspective-origin: 50% 0%;
+}
+/* The WebGL coin: a transparent canvas over the CSS coin's spot, with headroom for the throw.
+   The CSS coin stays until the canvas has drawn, and is the fallback without WebGL. */
+:global(.app.outpost) .coinHost.coinHost {
+  position: relative;
+}
+:global(.app.outpost) .coinCanvas.coinCanvas {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  max-width: none;
+  translate: -50% 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+:global(.app.outpost) .coinHost[data-gl] > .coinCanvas {
+  visibility: visible;
+}
+:global(.app.outpost) .coinHost[data-gl] > .coinStage {
+  visibility: hidden;
 }
 /* Two shadows on the well: a soft one that shrinks while the coin is high, a sharp contact one */
 :global(.app.outpost) .coinStage :is(.coinShadow, .coinContact, .coinRing) {
@@ -475,6 +497,19 @@
   gap: var(--space-4);
   min-width: 0;
   padding: var(--space-2) 0 var(--space-4);
+}
+/* The WebGL chest and its coins share one canvas over the whole reveal; the open lid needs
+   more headroom than the CSS chest */
+:global(.app.outpost) .revealScene[data-gl] > .chestStage {
+  height: 300px;
+}
+:global(.app.outpost) .revealCanvas.revealCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 :global(.app.outpost) .chestStage.chestStage {
   position: relative;
@@ -867,6 +902,9 @@
   }
   :global(.app.outpost) .chest.chest {
     scale: 0.8;
+  }
+  :global(.app.outpost) .revealScene[data-gl] > .chestStage {
+    height: 240px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

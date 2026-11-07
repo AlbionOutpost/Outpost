@@ -1,13 +1,23 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
 import { AvatarFrame } from "./avatar-frame";
+import { currentStage, loadScene, type StageMode } from "./economy-scene-loader";
+import type { CoinScene } from "./economy-scene";
 import styles from "./team-economy.module.css";
 
 /**
- * The Team economy's 3D moments, drawn with CSS 3D transforms and moved with the Web Animations
- * API: a coin flip, a d100 number drum and a loot chest that throws silver to each member.
- * Every one of them only shows a result the server already decided; with reduced motion the
- * result is simply there.
+ * The Team economy's 3D moments: a coin flip, a d100 number drum and a loot chest that throws
+ * silver to each member. The coin and the chest are WebGL models (`economy-scene.ts`, three.js
+ * loaded only when one plays); without WebGL they fall back to the CSS 3D versions here, moved
+ * with the Web Animations API. Every one of them only shows a result the server already
+ * decided; with reduced motion the result is simply there.
  */
 
 export function prefersReducedMotion() {
@@ -62,7 +72,7 @@ const touch = 0.74;
  * end over end with a little precession, catches the light as it turns, lands with a bounce, a
  * ring and a puff of dust, and settles on that side. Its shadow shrinks while it is high.
  */
-export function Coin3D({
+function CssCoin({
   flip,
   size = 132,
   still = false,
@@ -427,22 +437,65 @@ function flyingCoin() {
 /** Timings for the chest scene, in ms from mount. */
 const chestCue = { shake: 380, open: 820, burst: 1080, coin: 1050 };
 
+/** Coins thrown to each card: more each for a small party, fewer for a big one. */
+const coinsPerCard = (cards: number) =>
+  Math.max(3, Math.min(8, Math.floor(80 / Math.max(cards, 1))));
+/** A card counts from its first coin to its last. */
+const countForCard = (cards: number) => coinsPerCard(cards) * 95 + 600;
+
+/** The shared total and the member cards under either chest; each card counts once lit. */
+function RevealSummary({
+  rows,
+  total,
+  opened,
+  lit,
+}: {
+  rows: RevealPayout[];
+  total: number;
+  opened: boolean;
+  lit: Set<string>;
+}) {
+  const countFor = countForCard(rows.length);
+  const sum = useCountUp(opened ? total : 0, {
+    duration: rows.length * 120 + countFor + chestCue.coin - 200,
+    from: 0,
+  });
+  return (
+    <>
+      <p className={styles.revealTotal}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- painted silver */}
+        <img src="/albion/icons/silver-64w.webp" alt="" />
+        <data value={total} aria-hidden="true">
+          {silverText(sum)}
+        </data>
+        <small>
+          <span className="sr-only">{silverText(total)}</span> silver shared
+        </small>
+      </p>
+      <ul className={styles.payoutGrid} aria-label="Shares">
+        {rows.map((row) => (
+          <PayoutCard
+            key={row.userId ?? "pot"}
+            row={row}
+            start={lit.has(row.userId ?? "pot")}
+            duration={countFor}
+          />
+        ))}
+      </ul>
+    </>
+  );
+}
+
 /**
  * The chest scene. The chest drops in, shakes in anticipation, then its lid swings open on the
  * back hinge, a beam of light rises and silver coins burst out in 3D arcs, spinning, to land
  * in each member's card, which pulses as its share counts up. Plays once on mount.
  */
-export function LootChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
+function CssChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
   const scene = useRef<HTMLDivElement>(null);
   const [opened, setOpened] = useState(false);
   const [lit, setLit] = useState<Set<string>>(() => new Set());
-  const perCard = Math.max(3, Math.min(8, Math.floor(80 / Math.max(rows.length, 1))));
-  // A card counts from its first coin to its last.
-  const countFor = perCard * 95 + 600;
-  const sum = useCountUp(opened ? total : 0, {
-    duration: rows.length * 120 + countFor + chestCue.coin - 200,
-    from: 0,
-  });
+  const perCard = coinsPerCard(rows.length);
   useEffect(() => {
     const root = scene.current;
     if (!root) return;
@@ -670,27 +723,213 @@ export function LootChestReveal({ rows, total }: { rows: RevealPayout[]; total: 
         </div>
         <div className={styles.chestShadow} />
       </div>
-      <p className={styles.revealTotal}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- painted silver */}
-        <img src="/albion/icons/silver-64w.webp" alt="" />
-        <data value={total} aria-hidden="true">
-          {silverText(sum)}
-        </data>
-        <small>
-          <span className="sr-only">{silverText(total)}</span> silver shared
-        </small>
-      </p>
-      <ul className={styles.payoutGrid} aria-label="Shares">
-        {rows.map((row) => (
-          <PayoutCard
-            key={row.userId ?? "pot"}
-            row={row}
-            start={lit.has(row.userId ?? "pot")}
-            duration={countFor}
-          />
-        ))}
-      </ul>
+      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} />
       <div data-part="coins" className={styles.coinLayer} aria-hidden="true" />
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* WebGL stages                                                                                */
+/* ------------------------------------------------------------------------------------------ */
+
+const noSubscribe = () => () => {};
+/** How the 3D moments play here; "instant" on the server so hydration matches. */
+const useStageMode = () =>
+  useSyncExternalStore<StageMode>(noSubscribe, currentStage, () => "instant");
+
+/**
+ * A two-faced silver coin (the crown is heads, the skull tails). Give it a `flip` — the side
+ * the server landed and a key per throw — and it is tossed in an arc, tumbles end over end,
+ * bounces and settles on that side. The first throw loads the WebGL coin; until then, and
+ * wherever WebGL is missing, the CSS coin stands in. Under reduced motion it simply lands.
+ */
+export function Coin3D({
+  flip,
+  size = 132,
+  still = false,
+  onLanded,
+}: {
+  flip: { side: "heads" | "tails"; key: string } | null;
+  size?: number;
+  /** Show the landed side at rest, without a throw. */
+  still?: boolean;
+  onLanded?: () => void;
+}) {
+  const mode = useStageMode();
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const scene = useRef<CoinScene | null>(null);
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const landed = useRef(onLanded);
+  useLayoutEffect(() => {
+    landed.current = onLanded;
+  });
+  const side = flip?.side;
+  const throwKey = flip?.key;
+  // A throw goes to WebGL when it can; once the WebGL coin exists it shows every rest too.
+  const gl = ready || (mode === "webgl" && !failed && !!flip && !still);
+  const width = Math.round(size * 2.4);
+  const height = Math.round(size * 2.6);
+  useEffect(() => {
+    if (!side || !throwKey || !gl) return;
+    const land = () => landed.current?.();
+    if (scene.current) {
+      if (still) {
+        scene.current.place(side);
+        land();
+      } else scene.current.toss(side, land);
+      return;
+    }
+    let cancelled = false;
+    loadScene("webgl")!
+      .then((m) => m.createCoinScene(canvas.current!, { width, height }))
+      .then((created) => {
+        if (cancelled) return created.dispose();
+        scene.current = created;
+        setReady(true);
+        created.toss(side, land);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [side, throwKey, still, gl, width, height]);
+  useEffect(
+    () => () => {
+      scene.current?.dispose();
+      scene.current = null;
+    },
+    [],
+  );
+  return (
+    <div className={styles.coinHost} data-gl={ready ? "" : undefined}>
+      {/* While the WebGL coin loads, the CSS coin holds its last rest (no flip moves it). */}
+      <CssCoin
+        flip={gl ? null : flip}
+        size={size}
+        still={still}
+        onLanded={gl ? undefined : onLanded}
+      />
+      <canvas
+        ref={canvas}
+        className={styles.coinCanvas}
+        style={{ width, height, bottom: -size * 0.32 }}
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
+
+/** The chest scene in WebGL: the same summary and cards, the chest and coins on one canvas. */
+function GlChestReveal({
+  rows,
+  total,
+  onFail,
+}: {
+  rows: RevealPayout[];
+  total: number;
+  onFail: () => void;
+}) {
+  const root = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [opened, setOpened] = useState(false);
+  const [lit, setLit] = useState<Set<string>>(() => new Set());
+  const fail = useRef(onFail);
+  useLayoutEffect(() => {
+    fail.current = onFail;
+  });
+  useEffect(() => {
+    const scene = root.current;
+    const band = stage.current;
+    const view = canvas.current;
+    if (!scene || !band || !view) return;
+    const ids = rows.map((r) => r.userId ?? "pot");
+    const measure = () => {
+      const box = scene.getBoundingClientRect();
+      const b = band.getBoundingClientRect();
+      return {
+        width: Math.max(1, box.width),
+        height: Math.max(1, box.height),
+        stage: { top: b.top - box.top, height: b.height },
+      };
+    };
+    const card = (id: string) =>
+      scene.querySelector<HTMLElement>(`[data-userid="${CSS.escape(id)}"]`);
+    let cancelled = false;
+    let dispose = () => {};
+    let observer: ResizeObserver | undefined;
+    loadScene("webgl")!
+      .then((m) => m.createChestScene(view, measure()))
+      .then((chest) => {
+        if (cancelled) return chest.dispose();
+        dispose = () => chest.dispose();
+        observer = new ResizeObserver(() => {
+          const { width, height, stage: s } = measure();
+          chest.resize(width, height, s);
+        });
+        observer.observe(scene);
+        chest.play({
+          cards: rows.length,
+          perCard: coinsPerCard(rows.length),
+          targets: () => {
+            const box = scene.getBoundingClientRect();
+            return ids.map((id) => {
+              const r = card(id)
+                ?.querySelector(`.${styles.payoutSilver} img`)
+                ?.getBoundingClientRect();
+              return r
+                ? { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top }
+                : { x: box.width / 2, y: box.height };
+            });
+          },
+          onOpen: () => setOpened(true),
+          onCoin: (index, first) => {
+            const id = ids[index];
+            if (first) setLit((prev) => new Set(prev).add(id));
+            card(id)?.animate(
+              [
+                { transform: "scale(1.022)" },
+                { transform: "scale(1.06)", offset: 0.35 },
+                { transform: "scale(1.022)" },
+              ],
+              { duration: 240, easing: "ease-out" },
+            );
+          },
+          onDone: () => {},
+        });
+      })
+      .catch(() => {
+        if (!cancelled) fail.current();
+      });
+    return () => {
+      cancelled = true;
+      observer?.disconnect();
+      dispose();
+    };
+  }, [rows]);
+  return (
+    <div ref={root} className={styles.revealScene} data-gl="">
+      <div ref={stage} className={styles.chestStage} aria-hidden="true" />
+      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} />
+      <canvas ref={canvas} className={styles.revealCanvas} aria-hidden="true" />
+    </div>
+  );
+}
+
+/**
+ * The loot chest reveal. Plays once on mount: in WebGL when it can, else the CSS chest; under
+ * reduced motion every share is simply there.
+ */
+export function LootChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
+  const mode = useStageMode();
+  const [failed, setFailed] = useState(false);
+  return mode === "webgl" && !failed ? (
+    <GlChestReveal rows={rows} total={total} onFail={() => setFailed(true)} />
+  ) : (
+    <CssChestReveal rows={rows} total={total} />
   );
 }
