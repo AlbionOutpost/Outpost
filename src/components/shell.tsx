@@ -12,6 +12,7 @@ import {
   MoonStar,
   ChevronDown,
   ArrowUp,
+  LogOut,
   ArrowUpRight,
   Grid2X2,
   Heart,
@@ -25,10 +26,11 @@ import { DiscordMark } from "./discord-mark";
 import { LogoutButton } from "./login-button";
 import { ToolIcon } from "./tool-icon";
 import { tools, toolPaintings, toolSections } from "@/lib/tool-directory";
-import { Wordmark } from "./wordmark";
+import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
+import { AvatarFrame } from "./avatar-frame";
 import { regionSchema } from "@/lib/albion/region-config";
 
 // The header's tools menu groups by the tool directory's sections, so the two never drift apart:
@@ -75,30 +77,60 @@ const sectionEmblems: Record<string, string> = {
   "/guides": "strip-content",
   "/groups": "team-roles",
 };
-const footerLinks = [
-  ["/tools", "Tools"],
-  ["/builds/activities", "Builds by activity"],
-  ["/compositions/library", "Comps"],
-  ["/guides", "Guides"],
-  ["/market-data", "Market data"],
-] as const;
-/** The More menu, grouped, each entry with its glyph and one line (the drawer lists the same links). */
-const moreGroups = ["Your account", "Planning"] as const;
-const moreItems: Record<
-  string,
-  { group: (typeof moreGroups)[number]; icon: typeof LayoutDashboard; line: string }
-> = {
-  "/dashboard": {
-    group: "Your account",
-    icon: LayoutDashboard,
-    line: "Your builds, comps, Teams and plans",
+/** The footer directory: four labelled columns of real routes (no Supporter: everything is free). */
+const footerColumns = [
+  {
+    label: "Tools",
+    links: [
+      ["/tools/market", "Market Explorer"],
+      ["/tools/crafting", "Crafting Calculator"],
+      ["/tools/flipping", "Flipping"],
+      ["/shopping-list", "Crafting Planner"],
+      ["/items", "Item database"],
+      ["/tools", "All tools"],
+    ],
   },
-  "/favorites": { group: "Your account", icon: Heart, line: "Builds and comps you saved" },
-  "/settings": { group: "Your account", icon: Settings, line: "Account, server and your data" },
-  "/admin": { group: "Your account", icon: ShieldCheck, line: "Users, reports and the audit log" },
-  "/admin/reports": { group: "Your account", icon: ShieldCheck, line: "The report queue" },
-  "/timers": { group: "Planning", icon: Timer, line: "Crops, laborers and chests" },
-  "/shopping-list": { group: "Planning", icon: ListChecks, line: "What to buy, city by city" },
+  {
+    label: "Builds & Comps",
+    links: [
+      ["/builds/activities", "Builds by activity"],
+      ["/builds/library", "Build library"],
+      ["/builds", "Community builds"],
+      ["/compositions/library", "Group Builds"],
+      ["/compositions/new", "Plan a comp"],
+    ],
+  },
+  {
+    label: "Guides",
+    links: [
+      ["/guides", "All guides"],
+      ["/guides/first-silver", "Your first silver"],
+      ["/guides/focus-and-resource-return-rate", "Focus and RRR"],
+      ["/guides/hellgates-guide", "Hellgates"],
+      ["/guides/put-every-role-in-place", "Plan a party comp"],
+    ],
+  },
+  {
+    label: "Outpost",
+    links: [
+      ["/groups", "Teams"],
+      ["/dashboard", "Dashboard"],
+      ["/timers", "Timers"],
+      ["/market-data", "How prices work"],
+      ["/settings", "Settings"],
+    ],
+  },
+] as const;
+/** Header menu entries, grouped, each with its glyph. Signed in, the account menu holds
+ * "Your account" and More keeps only Planning, so no link shows twice (the drawer lists all). */
+const menuItems: Record<string, { group: "Your account" | "Planning"; icon: typeof Timer }> = {
+  "/dashboard": { group: "Your account", icon: LayoutDashboard },
+  "/favorites": { group: "Your account", icon: Heart },
+  "/settings": { group: "Your account", icon: Settings },
+  "/admin": { group: "Your account", icon: ShieldCheck },
+  "/admin/reports": { group: "Your account", icon: ShieldCheck },
+  "/timers": { group: "Planning", icon: Timer },
+  "/shopping-list": { group: "Planning", icon: ListChecks },
 };
 const accountLinks = [
   ["/dashboard", "My dashboard"],
@@ -129,7 +161,12 @@ export function Shell({
   initialLight?: boolean;
   initialRegion?: string;
   authenticated?: boolean;
-  account?: { name: string | null; image: string | null; role?: string } | null;
+  account?: {
+    name: string | null;
+    image: string | null;
+    avatarFrame?: string | null;
+    role?: string;
+  } | null;
 }) {
   const currentAccountLinks = [
     ...accountLinks,
@@ -239,6 +276,26 @@ export function Shell({
     setOpen(false);
     header.current?.querySelectorAll("details[open]").forEach((d) => d.removeAttribute("open"));
   };
+  const menuGroup = (group: string) =>
+    currentAccountLinks
+      .filter(([url]) => menuItems[url]?.group === group)
+      .map(([url, label]) => {
+        const Icon = menuItems[url].icon;
+        return (
+          <Link
+            key={url}
+            className="menu-item"
+            href={href(url)}
+            onClick={navigate}
+            aria-current={path === url ? "page" : undefined}
+          >
+            <span className="tool-menu-mark" aria-hidden="true">
+              <Icon size={17} />
+            </span>
+            {label}
+          </Link>
+        );
+      });
   const primaryNavigation = (
     <nav className="desktop-navigation" aria-label="Main navigation">
       {sections.slice(0, 3).map(([url, label]) => (
@@ -261,18 +318,19 @@ export function Shell({
         <summary>
           <Grid2X2 size={17} /> Tools <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel tools-menu-panel">
+        <div className="menu-panel tools-menu-panel">
           <div className="tools-menu-columns">
             {toolColumns.map((column, i) => (
               <div key={i} className="tools-menu-column">
                 {column.map((group) => (
                   <div key={group.title} role="group" aria-label={group.title}>
-                    <p className="tools-menu-group" aria-hidden="true">
+                    <p className="menu-label" aria-hidden="true">
                       {group.title}
                     </p>
                     {group.tools.map((tool) => (
                       <Link
                         key={tool.href}
+                        className="menu-item"
                         href={href(tool.href)}
                         onClick={navigate}
                         aria-current={path === tool.href ? "page" : undefined}
@@ -286,9 +344,14 @@ export function Shell({
               </div>
             ))}
           </div>
-          <Link className="tools-menu-all" href={href("/tools")} onClick={navigate}>
-            All tools <ArrowUpRight size={16} />
-          </Link>
+          <div className="menu-group">
+            <Link className="menu-item" href={href("/tools")} onClick={navigate}>
+              <span className="tool-menu-mark" aria-hidden="true">
+                <Grid2X2 size={17} />
+              </span>
+              All tools
+            </Link>
+          </div>
         </div>
       </details>
       {sections.slice(3).map(([url, label]) => (
@@ -307,44 +370,17 @@ export function Shell({
         <summary>
           More <ChevronDown size={13} />
         </summary>
-        <div className="dropdown-panel tools-dropdown-panel more-dropdown-panel">
-          {moreGroups.map((group) => {
-            const links = currentAccountLinks.filter(([url]) => moreItems[url]?.group === group);
-            return links.length ? (
-              <div key={group} className="more-menu-group" role="group" aria-label={group}>
-                <p className="more-menu-heading" aria-hidden="true">
+        <div className="menu-panel">
+          {(authenticated ? (["Planning"] as const) : (["Your account", "Planning"] as const)).map(
+            (group) => (
+              <div key={group} className="menu-group" role="group" aria-label={group}>
+                <p className="menu-label" aria-hidden="true">
                   {group}
                 </p>
-                <div className="tools-menu-grid">
-                  {links.map(([url, label]) => {
-                    const Icon = moreItems[url].icon;
-                    return (
-                      <Link
-                        key={url}
-                        href={href(url)}
-                        onClick={navigate}
-                        aria-current={path === url ? "page" : undefined}
-                        // The entry is named by its label; its line describes it
-                        aria-label={label}
-                        aria-describedby={`more-line${url.replaceAll("/", "-")}`}
-                      >
-                        <span className="dropdown-tool-icon">
-                          <Icon size={19} aria-hidden="true" />
-                        </span>
-                        <span>
-                          <strong>{label}</strong>
-                          <small id={`more-line${url.replaceAll("/", "-")}`}>
-                            {moreItems[url].line}
-                          </small>
-                        </span>
-                        <ArrowUpRight size={15} />
-                      </Link>
-                    );
-                  })}
-                </div>
+                {menuGroup(group)}
               </div>
-            ) : null;
-          })}
+            ),
+          )}
         </div>
       </details>
     </nav>
@@ -402,9 +438,7 @@ export function Shell({
               }}
             >
               <div className="drawer-heading">
-                <Link href={href("/")} onClick={navigate} aria-label="Outpost home">
-                  <Wordmark priority light={light} />
-                </Link>
+                <BrandLockup size="sm" onClick={navigate} />
                 <button ref={close} aria-label="Close navigation" onClick={() => setOpen(false)}>
                   <X size={20} />
                 </button>
@@ -499,9 +533,7 @@ export function Shell({
                 }
               }}
             >
-              <Link className="top-brand" href={href("/")} aria-label="Outpost home">
-                <Wordmark light={light} />
-              </Link>
+              <BrandLockup className="top-brand" />
               {primaryNavigation}
               <div className="header-actions">
                 <RegionPicker
@@ -552,34 +584,28 @@ export function Shell({
                 ) : (
                   <details className="nav-dropdown account-dropdown">
                     <summary>
-                      {account?.image ? (
-                        // Discord profile imagery belongs to the signed-in user; no synthetic avatar.
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          className="account-avatar"
-                          src={account.image}
-                          width={30}
-                          height={30}
-                          alt=""
-                          referrerPolicy="no-referrer"
+                      {account?.image || account?.avatarFrame ? (
+                        <AvatarFrame
+                          frame={account.avatarFrame}
+                          size={32}
+                          image={account.image}
+                          name={account.name}
                         />
                       ) : null}
                       <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />
                     </summary>
-                    <div className="dropdown-panel">
-                      {currentAccountLinks
-                        .filter(([url]) => !authenticated || url !== "/signin")
-                        .map(([url, label]) => (
-                          <Link
-                            key={url}
-                            href={href(url)}
-                            onClick={navigate}
-                            aria-current={path === url ? "page" : undefined}
-                          >
-                            {label}
-                          </Link>
-                        ))}
-                      <LogoutButton />
+                    <div className="menu-panel">
+                      <div className="menu-group" role="group" aria-label="Your account">
+                        {menuGroup("Your account")}
+                      </div>
+                      <div className="menu-group">
+                        <LogoutButton className="menu-item">
+                          <span className="tool-menu-mark" aria-hidden="true">
+                            <LogOut size={17} />
+                          </span>
+                          Sign out
+                        </LogoutButton>
+                      </div>
                     </div>
                   </details>
                 )}
@@ -619,42 +645,51 @@ export function Shell({
             <footer className="site-footer">
               <div className="site-footer-inner">
                 <div className="site-footer-brand">
-                  <Link href={href("/")} className="footer-wordmark" aria-label="Outpost home">
-                    <Wordmark light={light} />
-                  </Link>
+                  <BrandLockup size="sm" className="site-footer-lockup" />
+                  <p className="site-footer-line">
+                    Markets, builds, comps and crafting for Albion Online, in one place.
+                  </p>
                   <p className="site-footer-source">
-                    Independent Albion Online tools. Prices from the Albion Online Data Project. Not
-                    affiliated with Sandbox Interactive.
+                    Prices from the{" "}
+                    <a href="https://www.albion-online-data.com/" rel="noopener noreferrer">
+                      Albion Online Data Project
+                    </a>
+                    . Not affiliated with or endorsed by Sandbox Interactive.
                   </p>
                 </div>
-                <div className="site-footer-links">
-                  <nav className="site-footer-navigation" aria-label="Footer">
-                    {footerLinks.map(([url, label]) => (
-                      <Link key={url} href={href(url)}>
-                        {label}
-                      </Link>
-                    ))}
-                  </nav>
-                  <div className="site-footer-legal">
-                    <span>© {new Date().getFullYear()} Outpost</span>
-                    <Link href="/legal">
-                      Privacy &amp; terms <ArrowUpRight size={13} aria-hidden="true" />
-                    </Link>
-                    <button
-                      type="button"
-                      className="site-footer-top"
-                      onClick={() =>
-                        window.scrollTo({
-                          top: 0,
-                          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-                            ? "auto"
-                            : "smooth",
-                        })
-                      }
-                    >
-                      Back to top <ArrowUp size={14} aria-hidden="true" />
-                    </button>
-                  </div>
+                <nav className="site-footer-navigation" aria-label="Footer">
+                  {footerColumns.map((column, c) => (
+                    <div key={column.label} className="site-footer-column">
+                      <p className="site-footer-label" id={`footer-column-${c}`}>
+                        {column.label}
+                      </p>
+                      <ul aria-labelledby={`footer-column-${c}`}>
+                        {column.links.map(([url, label]) => (
+                          <li key={url}>
+                            <Link href={href(url)}>{label}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </nav>
+                <div className="site-footer-legal">
+                  <span>© {new Date().getFullYear()} Outpost</span>
+                  <Link href="/legal">Privacy &amp; terms</Link>
+                  <button
+                    type="button"
+                    className="site-footer-top"
+                    onClick={() =>
+                      window.scrollTo({
+                        top: 0,
+                        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                          ? "auto"
+                          : "smooth",
+                      })
+                    }
+                  >
+                    Back to top <ArrowUp size={14} aria-hidden="true" />
+                  </button>
                 </div>
               </div>
             </footer>

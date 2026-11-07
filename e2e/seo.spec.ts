@@ -63,6 +63,13 @@ test("public metadata has route-specific canonical/social heads and a real stati
   }
   const robots = await request.get("/robots.txt");
   expect(await robots.text()).toContain("Sitemap: https://albionoutpost.com/sitemap.xml");
+  const llms = await request.get("/llms.txt");
+  expect(llms.status()).toBe(200);
+  expect(llms.headers()["content-type"]).toContain("text/plain");
+  const summary = await llms.text();
+  expect(summary).toMatch(/^# Albion Outpost\n/);
+  for (const link of ["/tools", "/builds", "/compositions", "/guides", "/market-data", "/legal"])
+    expect(summary).toContain(`(https://albionoutpost.com${link})`);
 });
 
 test("social metadata never borrows owner permissions or discloses private, unlisted, hidden or Team records", async ({

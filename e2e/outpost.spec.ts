@@ -11,8 +11,10 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(page.locator(".product-sidebar")).toHaveCount(0);
   await expect(page.locator(".site-header .desktop-navigation")).toBeVisible();
   const logo = page.locator(".top-brand img");
-  await expect(logo).toHaveAttribute("alt", "Outpost");
-  await expect(logo).toHaveAttribute("src", /outpost-logo/);
+  // The painted mark is decorative; the link names Outpost and the word sits beside the mark.
+  await expect(logo).toHaveAttribute("alt", "");
+  await expect(logo).toHaveAttribute("src", /outpost-mark/);
+  await expect(page.locator(".top-brand .brand-lockup-word")).toHaveText("OUTPOST");
   await logo.evaluate((node: HTMLImageElement) => node.decode());
   expect(await logo.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator(".landing-card:first-child .landing-card-action")).toBeVisible();
@@ -50,7 +52,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   await expect(page.locator(".desktop-navigation a[aria-current=page]")).toHaveText("Guides");
   await expect(
     page.getByRole("heading", {
-      name: "How to Read Market Prices: Buy Orders, Sell Orders and Price Age",
+      name: "Reading market prices",
       exact: true,
     }),
   ).toBeVisible();

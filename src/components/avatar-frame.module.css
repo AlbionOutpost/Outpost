@@ -1,0 +1,218 @@
+/* A player's picture in their chosen frame: a round metal ring with rivets, like the portrait
+   ring in Albion's own UI. Drawn from tokens so it scales from the 32px header button to the
+   96px masthead; below 44px the rivets drop and the ring stays. `--tone` is the metal; the
+   highlight mixes toward the text colour and the shadow toward the illustration night. */
+:global(.app.outpost) .frame {
+  --ring: max(3px, calc(var(--size) * 0.12));
+  --rivet: calc(var(--size) * 0.036);
+  --hi: color-mix(in srgb, var(--tone) 52%, var(--text));
+  --lo: color-mix(in srgb, var(--tone) 42%, var(--illustration-bg));
+  --rivet-dot:
+    var(--hi) 0 calc(var(--rivet) * 0.35), var(--tone) calc(var(--rivet) * 0.7),
+    var(--lo) var(--rivet), transparent calc(var(--rivet) + 0.6px);
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--size);
+  height: var(--size);
+  padding: var(--ring);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 94% 50%, var(--rivet-dot)),
+    radial-gradient(circle at 81.1% 81.1%, var(--rivet-dot)),
+    radial-gradient(circle at 50% 94%, var(--rivet-dot)),
+    radial-gradient(circle at 18.9% 81.1%, var(--rivet-dot)),
+    radial-gradient(circle at 6% 50%, var(--rivet-dot)),
+    radial-gradient(circle at 18.9% 18.9%, var(--rivet-dot)),
+    radial-gradient(circle at 50% 6%, var(--rivet-dot)),
+    radial-gradient(circle at 81.1% 18.9%, var(--rivet-dot)),
+    conic-gradient(
+      from 215deg,
+      var(--hi),
+      var(--tone) 14%,
+      var(--lo) 30%,
+      var(--tone) 44%,
+      var(--hi) 56%,
+      var(--tone) 70%,
+      var(--lo) 86%,
+      var(--hi)
+    );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--lo) 70%, var(--illustration-bg)),
+    inset 0 1px 0 color-mix(in srgb, var(--hi) 80%, transparent),
+    0 calc(var(--size) * 0.06) calc(var(--size) * 0.16)
+      color-mix(in srgb, var(--illustration-bg) 60%, transparent);
+}
+:global(.app.outpost) .frame[data-small] {
+  --rivet-dot: transparent 0 0;
+}
+/* Groove between ring and picture, with a soft shadow falling onto the picture */
+:global(.app.outpost) .frame::after {
+  content: "";
+  position: absolute;
+  inset: var(--ring);
+  z-index: 1;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--lo) 75%, var(--illustration-bg)),
+    inset 0 calc(var(--size) * 0.04) calc(var(--size) * 0.1)
+      color-mix(in srgb, var(--illustration-bg) 70%, transparent);
+  pointer-events: none;
+}
+
+:global(.app.outpost) .frame[data-avatar-frame="bronze"] {
+  --tone: color-mix(in srgb, var(--frame-rule) 55%, var(--accent));
+}
+:global(.app.outpost) .frame[data-avatar-frame="silver"] {
+  --tone: color-mix(in srgb, var(--muted) 85%, var(--focus));
+}
+:global(.app.outpost) .frame[data-avatar-frame="gold"] {
+  --tone: var(--warning);
+}
+:global(.app.outpost) .frame[data-avatar-frame="crystal"] {
+  --tone: color-mix(in srgb, var(--focus) 70%, var(--text));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--focus) 60%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--hi) 80%, transparent),
+    0 0 calc(var(--size) * 0.18) color-mix(in srgb, var(--focus) 55%, transparent);
+}
+
+/* No frame: the plain picture with a hairline edge */
+:global(.app.outpost) .frame[data-avatar-frame="none"] {
+  padding: 0;
+  background: none;
+  box-shadow: 0 0 0 1px var(--border);
+}
+:global(.app.outpost) .frame[data-avatar-frame="none"]::after {
+  content: none;
+}
+/* An owner-supplied PNG frame replaces the drawn ring */
+:global(.app.outpost) .frame[data-art] {
+  background: none;
+  box-shadow: none;
+}
+:global(.app.outpost) .frame[data-art]::after {
+  content: none;
+}
+
+/* The workspace emblem rule sizes imgs, hence the doubled class */
+:global(.app.outpost) .frame .face.face {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--elevated);
+  color: var(--text);
+  font: 800 calc(var(--size) * 0.4) / 1 var(--font-display);
+}
+:global(.app.outpost) .frame .art.art {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* In a masthead the frame stands on its own, like a painted emblem: no second box */
+:global(.app.outpost .workspace-emblem):has(> .frame) {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  box-shadow: none;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost .workspace-emblem) > .frame {
+    --size: 64px !important;
+  }
+}
+
+/* ---------- Settings picker: a row of frames around the player's own picture ---------- */
+:global(.app.outpost) .picker.picker {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+:global(.app.outpost) .picker legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+:global(.app.outpost) .option.option {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3) var(--space-1);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  color: var(--secondary);
+  font: 600 13px/1.2 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .option.option:hover {
+  color: var(--text);
+}
+:global(.app.outpost) .option.option:has(> input:checked) {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .option.option:has(> input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:global(.app.outpost) .option > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+:global(.app.outpost) .option > span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .option > .frame {
+    --size: 44px !important;
+  }
+}
+/* Five across still fits a 320px phone: tighter tiles, 12px names */
+@media (max-width: 400px) {
+  :global(.app.outpost) .options {
+    gap: var(--space-1);
+  }
+  :global(.app.outpost) .option.option {
+    padding: var(--space-2) 0;
+    font-size: 12px;
+  }
+  :global(.app.outpost) .option > .frame {
+    --size: 40px !important;
+  }
+}

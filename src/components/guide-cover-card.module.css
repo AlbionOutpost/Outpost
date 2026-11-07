@@ -3,6 +3,23 @@
 :global(.app.outpost) .card.card > a {
   height: 340px;
 }
+/* As on the landing's guide stories: the cover's top fades into the same art blurred beneath it,
+   so cut-out art flattened onto black (the Hellgates cover) never leaves a band at the top */
+:global(.app.outpost) .card.card > a > img {
+  object-position: center bottom;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 32%);
+  mask-image: linear-gradient(180deg, transparent, #000 32%);
+}
+:global(.app.outpost) .card.card > a::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  background: var(--cover, none) center bottom / cover no-repeat;
+  filter: blur(18px);
+  transform: scale(1.4);
+  transform-origin: 50% 100%;
+}
 .meta {
   position: absolute;
   top: 14px;

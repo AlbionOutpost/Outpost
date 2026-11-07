@@ -226,6 +226,19 @@ export const toolPaintings: Record<string, string> = {
   "/compositions/new": "strip-comps",
   "/groups": "team-roles",
   "/timers": "team-calendar",
+  "/tools/cooking": "tool-cooking",
+  "/tools/alchemy": "tool-alchemy",
+  "/tools/fishing": "tool-fishing",
+  "/tools/refining": "tool-refining",
+  "/tools/enchanting": "tool-enchanting",
+  "/tools/farming": "tool-farming",
+  "/tools/transporting": "tool-transport",
+  "/tools/mastery": "tool-mastery",
+  "/tools/reference": "tool-reference",
+  "/tools/avalon-mapper": "tool-avalon",
+  "/tools/gold": "tool-gold",
+  "/items": "tool-items",
+  "/builds": "tool-builds",
 };
 
 /** The directory's sections, in order; the header's Tools menu groups by the same ones. */

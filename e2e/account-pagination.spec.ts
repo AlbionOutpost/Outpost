@@ -164,7 +164,7 @@ test("older timers and scenarios remain reachable with tied dates, deletions and
     for (const [url, open, load, more, title] of [
       [
         "/shopping-list",
-        "Save & load account lists",
+        null,
         "Load account lists",
         "Load older account lists",
         "shopping-list fixture 0",

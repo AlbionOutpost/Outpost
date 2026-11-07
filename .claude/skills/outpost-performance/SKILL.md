@@ -9,14 +9,14 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 
 ## Targets
 
-| Metric                 | Target                | Last known (lab, mobile, 29 Oct)                      |
-| ---------------------- | --------------------- | ----------------------------------------------------- |
-| LCP                    | ≤ 2.5 s               | 3.6–5.3 s on home, library, detail, market, crafting  |
-| INP                    | ≤ 200 ms              | not measured in the field                             |
-| CLS                    | ≤ 0.1                 | library once 0.06                                     |
-| Lighthouse perf / a11y | ≥ 90 / ≥ 95           | 78–89                                                 |
-| Web Worker bundle      | well under 3 MiB gzip | ≈ 1.98 MB                                             |
-| Global CSS             | as small as possible  | ≈ 350 KB on every route (homepage 347 KB, 60 KB gzip) |
+| Metric                 | Target                | Last known (lab, mobile, 29 Oct)                        |
+| ---------------------- | --------------------- | ------------------------------------------------------- |
+| LCP                    | ≤ 2.5 s               | 3.6–5.3 s on home, library, detail, market, crafting    |
+| INP                    | ≤ 200 ms              | not measured in the field                               |
+| CLS                    | ≤ 0.1                 | library once 0.06                                       |
+| Lighthouse perf / a11y | ≥ 90 / ≥ 95           | 78–89                                                   |
+| Web Worker bundle      | well under 3 MiB gzip | ≈ 1.98 MB                                               |
+| Global CSS             | as small as possible  | homepage 308 KB inlined (7 Nov, Node build; was 405 KB) |
 
 ## Measure
 
@@ -26,8 +26,9 @@ Fast on a mid-range phone on mobile data, and cheap enough to stay on Cloudflare
 
 ## Usual wins here
 
-- **Cut global CSS** — 16 stylesheets load on every route; move page styles to the route (the build/comp/guide sheets already load through `src/app/build-styles.ts`), delete dead passes (coordinate with `outpost-frontend`). A moved sheet loads after every global one, so compare the rendered cascade before and after.
+- **Cut global CSS** — 16 stylesheets load on every route; move page styles to the route (the build/comp/guide sheets already load through `src/app/build-styles.ts`), delete dead passes and rules for classes no source file uses any more (coordinate with `outpost-frontend`). Webpack's default CSS chunking also merges other routes' CSS modules into the homepage's sheets (≈ 120 KB raw on 6 Nov); `experimental.cssChunking: "strict"` would split them but reorders the cascade everywhere, so measure every route before trying it. A moved sheet loads after every global one, so compare the rendered cascade before and after.
 - Preload only the fonts used above the fold; keep `display: swap`; size the hero image correctly with explicit dimensions.
+- Large local images get width variants from `node scripts/image-variants.mjs` and a `srcset` from `variantSrcSet()` ([DATA.md](../../../docs/DATA.md)); lazy-load below the fold, eager + `fetchPriority="high"` for the LCP image only.
 - Keep data fetching on the server and parallel; avoid per-item client fetches; batch market requests (`/api/market/batch`).
 - Lazy-load heavy, below-the-fold or interaction-only code (charts, PNG export, editors' secondary panels).
 - Every page view costs Worker + session DO + data RPC + possibly `AbuseBudget` DO requests — avoid extra round trips, keep prefetch off unless measured safe.

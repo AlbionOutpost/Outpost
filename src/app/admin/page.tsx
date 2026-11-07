@@ -1,108 +1,187 @@
 import Link from "@/components/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { adminPageActor } from "@/lib/admin/page-access";
-import { adminOverview } from "@/lib/admin/queries";
+import { adminOverview, adminReview, adminUsers } from "@/lib/admin/queries";
+import { isSupporter } from "@/lib/billing/plan";
+import { accountBanned } from "@/lib/admin/policy";
 import { AdminFrame } from "@/components/admin-frame";
 import { AdminTrend } from "@/components/admin-trend";
 import { AdminAuditRows } from "@/components/admin-audit";
-import { AnimatedNumber } from "@/components/animated-number";
+import { AdminChip, roleLabel } from "@/components/admin-chip";
+import { AdminDiscordBan } from "@/components/admin-user-actions";
 import { PanelHead } from "@/components/panel-head";
-import { AdminNextSteps } from "@/components/admin-next";
+import { SearchInput } from "@/components/field";
+
+const date = (d: Date | string) =>
+  new Date(d).toLocaleDateString("en-GB", { timeZone: "UTC", day: "numeric", month: "short" });
+
+/**
+ * The operator console: what needs a decision now (open reports, flagged accounts) first, then
+ * the totals in one compact strip, the last 30 days beside the newest accounts, and the most
+ * recent access changes. The rail holds the section links, so the page repeats none of them.
+ */
 export default async function AdminOverviewPage() {
-  const data = await adminOverview(await adminPageActor());
-  const stats = [
-    { label: "Registered accounts", value: data.counts.users, href: "/admin/users" },
-    { label: "Supporters", value: data.counts.supporters, href: "/admin/users?filter=supporters" },
-    { label: "Open reports", value: data.counts.openReports, href: "/admin/reports" },
-    {
-      label: "Banned accounts",
-      value: data.counts.bannedUsers,
-      href: "/admin/users?filter=banned",
-    },
-  ];
+  const actor = await adminPageActor();
+  const [data, review, signups] = await Promise.all([
+    adminOverview(actor),
+    adminReview(actor),
+    adminUsers(actor, { q: "", page: "1", filter: "all" }),
+  ]);
+  const open = data.counts.openReports,
+    flagged = review.users.length;
+  const totals = [
+    ["Accounts", data.counts.users, "/admin/users"],
+    ["Builds", data.counts.builds],
+    ["Comps", data.counts.comps],
+    ["Teams", data.counts.teams],
+    ["Supporters", data.counts.supporters, "/admin/users?filter=supporters"],
+    ["Banned", data.counts.bannedUsers, "/admin/users?filter=banned"],
+    ["Live sessions", data.counts.sessions],
+  ] as const;
   return (
     <AdminFrame
       title="Admin overview"
       accent="overview"
-      description="Accounts, content and every access change in one place."
+      description="Reports and flagged accounts first, then how Outpost is growing."
       emblem="team-announce"
       actions={
-        <Link href="/admin/users" className="button primary">
-          Manage users <ArrowRight size={16} aria-hidden="true" />
-        </Link>
-      }
-      closing={
-        <AdminNextSteps
-          id="admin-next"
-          title={
-            <>
-              Work the <em>queues</em>
-            </>
-          }
-          line="Accounts, reports and the record of every change."
-          cards={[
-            {
-              href: "/admin/users",
-              title: "Users & access",
-              line: "Find an account, gift Supporter or close its sessions.",
-            },
-            {
-              href: "/admin/reports",
-              title: "Content reports",
-              line: "Hide, restore or resolve what players reported.",
-            },
-            {
-              href: "/admin/audit",
-              title: "Audit trail",
-              line: "Read who changed access and the reason they gave.",
-            },
-          ]}
-        />
+        <div className="admin-quick">
+          <form action="/admin/users" method="get" role="search" className="admin-quick-search">
+            <label htmlFor="admin-find" className="sr-only">
+              Find an account
+            </label>
+            <SearchInput
+              id="admin-find"
+              name="q"
+              maxLength={80}
+              placeholder="Find an account: name or Discord ID"
+            />
+          </form>
+          <AdminDiscordBan />
+        </div>
       }
     >
-      <ul className="admin-stats" aria-label="Totals">
-        {stats.map(({ label, value, href }) => (
-          <li key={label}>
-            <Link href={href} className="well">
-              <span>{label}</span>
-              <strong>
-                <AnimatedNumber value={value} />
-              </strong>
-            </Link>
-          </li>
+      <section className="panel" aria-labelledby="admin-attention">
+        <PanelHead
+          id="admin-attention"
+          title={
+            <>
+              Needs <em>attention</em>
+            </>
+          }
+          line={
+            open || flagged
+              ? "Work the reports first; flagged accounts are signals to look at, not verdicts."
+              : "Nothing is waiting for a decision."
+          }
+        />
+        <div className="admin-queues">
+          <Link href="/admin/reports" className="well" data-waiting={open > 0 || undefined}>
+            <strong>{open.toLocaleString("en-GB")}</strong>
+            <span>
+              Open {open === 1 ? "report" : "reports"}
+              <small>Builds, comps and comments players flagged</small>
+            </span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <Link href="/admin/review" className="well" data-waiting={flagged > 0 || undefined}>
+            <strong>
+              {flagged.toLocaleString("en-GB")}
+              {review.limited ? "+" : ""}
+            </strong>
+            <span>
+              Flagged {flagged === 1 ? "account" : "accounts"}
+              <small>Open reports, many sessions or a posting burst</small>
+            </span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+        {flagged > 0 ? (
+          <ul className="admin-review-list is-short">
+            {review.users.slice(0, 4).map((u) => (
+              <li key={u.id} className="well">
+                <div className="admin-review-who">
+                  <Link href={`/admin/users/${u.id}`} className="admin-user-name">
+                    {u.name || "Unnamed account"}
+                  </Link>
+                  <code>{u.accounts[0]?.providerAccountId || u.id}</code>
+                </div>
+                <div className="admin-chips">
+                  {u.openReports > 0 && (
+                    <AdminChip tone="warn">
+                      {u.openReports} open {u.openReports === 1 ? "report" : "reports"}
+                    </AdminChip>
+                  )}
+                  {u._count.sessions >= 8 && (
+                    <AdminChip tone="warn">{u._count.sessions} unexpired sessions</AdminChip>
+                  )}
+                  {Date.parse(review.asOf) - new Date(u.createdAt).getTime() < 86400000 &&
+                    u._count.comments >= 20 && (
+                      <AdminChip tone="warn">{u._count.comments} comments, new account</AdminChip>
+                    )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          !open && (
+            <p className="admin-clear well">
+              <Check size={16} aria-hidden="true" /> No open reports and no flagged accounts.
+            </p>
+          )
+        )}
+      </section>
+      <dl className="raised admin-totals" aria-label="Totals">
+        {totals.map(([label, value, href]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>
+              {href ? (
+                <Link href={href}>{value.toLocaleString("en-GB")}</Link>
+              ) : (
+                value.toLocaleString("en-GB")
+              )}
+            </dd>
+          </div>
         ))}
-      </ul>
+      </dl>
       <div className="admin-overview-grid">
         <AdminTrend data={data.trend} limited={data.chartLimited} />
-        <section className="panel" aria-labelledby="admin-across">
+        <section className="panel" aria-labelledby="admin-signups">
           <PanelHead
-            id="admin-across"
+            id="admin-signups"
             title={
               <>
-                Across <em>Outpost</em>
+                Newest <em>accounts</em>
               </>
             }
-            line="Stored records, not website visits."
+            line="Signed up most recently."
           />
-          <dl className="admin-figures">
-            {[
-              ["Player builds", data.counts.builds],
-              ["Party comps", data.counts.comps],
-              ["Team workspaces", data.counts.teams],
-              ["Unexpired sessions", data.counts.sessions],
-            ].map(([label, value]) => (
-              <div key={label} className="well">
-                <dt>{label}</dt>
-                <dd>{Number(value).toLocaleString("en-GB")}</dd>
-              </div>
+          <ul className="admin-signups">
+            {signups.rows.slice(0, 6).map((u) => (
+              <li key={u.id}>
+                <Link href={`/admin/users/${u.id}`} className="admin-user-name">
+                  {u.name || "Unnamed account"}
+                </Link>
+                {(accountBanned(u) || u.role !== "USER" || isSupporter(u)) && (
+                  <AdminChip
+                    tone={accountBanned(u) ? "danger" : u.role !== "USER" ? "warn" : "accent"}
+                  >
+                    {accountBanned(u)
+                      ? "Banned"
+                      : u.role !== "USER"
+                        ? roleLabel(u.role)
+                        : "Supporter"}
+                  </AdminChip>
+                )}
+                <small>
+                  {u._count.builds} {u._count.builds === 1 ? "build" : "builds"} ·{" "}
+                  {u._count.compositions} {u._count.compositions === 1 ? "comp" : "comps"}
+                </small>
+                <time dateTime={new Date(u.createdAt).toISOString()}>{date(u.createdAt)}</time>
+              </li>
             ))}
-          </dl>
-          <p className="admin-foot">
-            Supporters include active gifts and subscription entitlements.
-          </p>
-          <Link href="/admin/review" className="pill-link">
-            Review account signals <ArrowRight size={15} aria-hidden="true" />
-          </Link>
+          </ul>
         </section>
       </div>
       <section className="panel" aria-labelledby="admin-recent">
@@ -110,17 +189,16 @@ export default async function AdminOverviewPage() {
           id="admin-recent"
           title={
             <>
-              Recent admin <em>activity</em>
+              Recent access <em>changes</em>
             </>
           }
-          line="Every access change leaves a record."
-          actions={
-            <Link href="/admin/audit" className="pill-link">
-              Full audit trail <ArrowRight size={15} aria-hidden="true" />
-            </Link>
+          line={
+            data.audit.length
+              ? "Gifts, bans and session changes, with who made them and why."
+              : "No gifts, bans or session changes recorded yet."
           }
         />
-        <AdminAuditRows rows={data.audit} />
+        {data.audit.length > 0 && <AdminAuditRows rows={data.audit} />}
       </section>
       <p className="admin-freshness">
         Snapshot {new Date(data.asOf).toLocaleString("en-GB", { timeZone: "UTC" })} UTC. Reload the

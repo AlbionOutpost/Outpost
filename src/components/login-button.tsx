@@ -39,17 +39,24 @@ export function LoginButton({ callbackUrl = "/settings" }: { callbackUrl?: strin
     </div>
   );
 }
-export function LogoutButton() {
+export function LogoutButton({
+  className = "button secondary",
+  children = "Sign out",
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <button
-      className="button secondary"
+      type="button"
+      className={className}
       onClick={() => {
         if (!window.dispatchEvent(new Event(accountLogoutEvent, { cancelable: true }))) return;
         accountBuildDrafts.clear();
         void signOut({ callbackUrl: "/" });
       }}
     >
-      Sign out
+      {children}
     </button>
   );
 }

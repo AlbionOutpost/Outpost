@@ -6,7 +6,8 @@ import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import { canEditShared, canManageMembers } from "@/lib/groups/permissions";
 import { WorkspaceHeading } from "./workspace-heading";
-import { TeamChips, TeamMark, TeamNextSteps, roleLabel } from "./group-parts";
+import { decodeActivities } from "@/lib/groups/crest";
+import { TeamActivities, TeamChips, TeamMark, roleLabel } from "./group-parts";
 import { GroupOverview } from "./group-overview";
 import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
@@ -83,7 +84,16 @@ export function GroupDashboard({
   role: string;
   userId: string;
   data: GroupDashboardData;
-  group: { name: string; description: string; region: string; visibility: string };
+  group: {
+    name: string;
+    description: string;
+    region: string;
+    visibility: string;
+    crestItem: string | null;
+    crestColor: string | null;
+    activities: string;
+    recruiting: boolean;
+  };
   now: number;
   /** The Supporter notice when the owner's plan has lapsed. */
   gate?: ReactNode;
@@ -189,15 +199,23 @@ export function GroupDashboard({
     <>
       <WorkspaceHeading
         scene="comps"
-        emblem={<TeamMark name={group.name} />}
+        emblem={
+          <TeamMark name={group.name} crestItem={group.crestItem} crestColor={group.crestColor} />
+        }
         // A player-named title: no ember accent word on someone else's words
         title={group.name}
         description={group.description || "A Team workspace on Outpost."}
         actions={primary}
       >
-        <TeamChips region={group.region} visibility={group.visibility} members={data.memberCount}>
+        <TeamChips
+          region={group.region}
+          visibility={group.visibility}
+          members={data.memberCount}
+          recruiting={group.recruiting}
+        >
           <span className="landing-chip is-muted">Your role: {roleLabel(role)}</span>
         </TeamChips>
+        <TeamActivities list={decodeActivities(group.activities)} />
         <div className={styles.tabRow}>
           <Link className={styles.backTab} href="/groups">
             <ArrowLeft size={14} aria-hidden="true" /> All teams
@@ -260,7 +278,6 @@ export function GroupDashboard({
           <GroupSettings ctx={ctx} inviteLink={inviteLink} profile={profile} />
         )}
       </div>
-      <TeamNextSteps />
       {editor && (
         <GroupEventDialog ctx={ctx} open={eventOpen} onClose={() => setEventOpen(false)} />
       )}

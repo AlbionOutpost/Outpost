@@ -5,3 +5,25 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=31536000
+
+# Browser cache. Only files that are served from here are matched: pages and /api/* always
+# run the Worker, which marks them private, no-store. Build output is content-hashed, so a
+# changed file gets a new name and can be cached for good.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Artwork, icons and fonts keep their names when they change, so they get a month and are
+# refreshed in the background for a week after that. Library JSON (/library/*.json) is
+# rebuilt under the same names on every deploy and keeps the default revalidation.
+/albion/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/brand/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/scenes/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/library/media/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/fonts/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+/icon-*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800

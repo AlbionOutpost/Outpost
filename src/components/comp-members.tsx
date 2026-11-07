@@ -1,10 +1,9 @@
 "use client";
 import "@/app/landing-window.css";
-import { useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "@/components/build-region-link";
 import { ItemIcon } from "./item-icon";
-import { RosterRowCells, type RosterMember } from "./comp-roster";
+import type { RosterMember } from "./comp-roster";
 import windows from "./landing/windows.module.css";
 import styles from "./comps.module.css";
 
@@ -70,92 +69,57 @@ export function CompMemberWindow({
   );
 }
 
+/** How many member windows share a row on wide screens: every row full or balanced, never 5+1. */
+export function partyColumns(count: number) {
+  if (count <= 4) return Math.max(count, 1);
+  if (count === 7 || count === 8) return 4;
+  if (count <= 9) return 3;
+  return 5;
+}
+/** Small laptops: the wide layout up to four across; larger parties take four or three across,
+ * whichever leaves the fuller last row. */
+function mediumColumns(count: number) {
+  if (count <= 9) return Math.min(partyColumns(count), 4);
+  const fill = (cols: number) => (count % cols === 0 ? 1 : (count % cols) / cols);
+  return fill(4) >= fill(3) ? 4 : 3;
+}
+
 /**
- * Every member of a comp. Wide screens show each as a framed window with its loadout on the
- * landing's board, three across; phones show the comp as one window of roster rows, and a tap
- * opens that member's board under its row (25 members stay one screen of rows, not 25 boards).
+ * Every member of a comp as its own build window, laid out by party size: 5 is 3 + 2, 7 is
+ * 4 + 3, 10 is 5 + 5, a short last row centred. Three across at most on small laptops, two on
+ * tablets, one on phones.
  */
-export function CompMembers({
-  cards,
+export function CompParty({
   label,
-  title,
+  members,
 }: {
-  cards: CompMemberCard[];
   label: string;
-  /** The phone window's title. */
-  title: string;
+  members: { key: string; tone?: string; window: ReactNode }[];
 }) {
-  const [open, setOpen] = useState<Set<string>>(() => new Set());
+  const count = members.length;
   return (
-    <div className={windows.windows}>
-      <ol className={styles.members} aria-label={label}>
-        {cards.map((card, i) => (
-          <li
-            key={card.member.key}
-            className={styles.member}
-            data-role={card.member.tone}
-            data-comp-member=""
-          >
-            <CompMemberWindow card={card} n={i + 1} />
-          </li>
-        ))}
-      </ol>
-      <section
-        className={`raised has-scene landing-window ${windows.window} ${styles.phoneRoster}`}
-        data-scene="composition"
-        aria-label={`${label} by row`}
-      >
-        <div className={`landing-window-bar ${windows.bar}`}>
-          <span className="landing-window-title">{title}</span>
-          <span className="landing-chips">
-            <span className="landing-chip is-muted">
-              {cards.length} {cards.length === 1 ? "member" : "members"}
-            </span>
-          </span>
-        </div>
-        <ol className={`landing-window-body ${windows.body} ${styles.phoneRows}`}>
-          {cards.map((card, i) => {
-            const key = card.member.key;
-            const expanded = open.has(key);
-            const id = `member-row-${i + 1}`;
-            return (
-              <li key={key} className={styles.member} data-role={card.member.tone}>
-                <button
-                  type="button"
-                  className={styles.memberToggle}
-                  aria-expanded={expanded}
-                  aria-controls={id}
-                  onClick={() =>
-                    setOpen((current) => {
-                      const next = new Set(current);
-                      if (expanded) next.delete(key);
-                      else next.add(key);
-                      return next;
-                    })
-                  }
-                >
-                  <span className="sr-only">
-                    {expanded ? "Hide" : "Show"} member {i + 1}:{" "}
-                  </span>
-                  <RosterRowCells member={card.member} n={i + 1} />
-                  <ChevronDown className={styles.memberChevron} size={18} aria-hidden="true" />
-                </button>
-                <div id={id} className={styles.phoneBody} hidden={!expanded}>
-                  {expanded && (
-                    <>
-                      <p className={styles.phoneBodyTitle}>
-                        {card.href ? <Link href={card.href}>{card.title}</Link> : card.title}
-                        {card.badges}
-                      </p>
-                      {card.body}
-                    </>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-    </div>
+    <ol
+      className={styles.partyGrid}
+      aria-label={label}
+      data-count={count}
+      style={
+        {
+          "--party-cols": partyColumns(count),
+          "--party-cols-md": mediumColumns(count),
+          "--party-cols-sm": Math.min(count, 2),
+        } as CSSProperties
+      }
+    >
+      {members.map((member) => (
+        <li
+          key={member.key}
+          className={styles.partyMember}
+          data-role={member.tone}
+          data-comp-member=""
+        >
+          {member.window}
+        </li>
+      ))}
+    </ol>
   );
 }

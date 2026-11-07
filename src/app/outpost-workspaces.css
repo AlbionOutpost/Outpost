@@ -29,14 +29,6 @@
   background: var(--sidebar);
   box-shadow: none;
 }
-.app.outpost .top-brand {
-  width: 130px;
-  min-width: 130px;
-  min-height: 44px;
-}
-.app.outpost .top-brand .outpost-wordmark {
-  width: 130px;
-}
 .app.outpost .desktop-navigation {
   gap: 18px;
   align-items: stretch;
@@ -81,10 +73,6 @@
 .app.outpost .desktop-navigation > .nav-dropdown > summary > svg:first-child:not(:last-child) {
   display: none;
 }
-.app.outpost .dropdown-panel {
-  background: var(--panel);
-  border-color: var(--border);
-}
 .app.outpost .header-actions {
   gap: 10px;
 }
@@ -96,14 +84,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 90px;
-}
-.app.outpost .account-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border);
-  flex: none;
 }
 .app.outpost .button.primary {
   color: #19100a;
@@ -144,13 +124,6 @@
     padding-inline: 12px;
     gap: 8px;
   }
-  .app.outpost .top-brand {
-    width: 108px;
-    min-width: 108px;
-  }
-  .app.outpost .top-brand .outpost-wordmark {
-    width: 108px;
-  }
   .app.outpost .header-actions {
     gap: 4px;
   }
@@ -165,46 +138,9 @@
 .app.outpost .filter-drawer-backdrop {
   display: none;
 }
-.device-favorites-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.device-favorites-controls > label {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-.device-favorites-controls > label:first-child {
-  flex: 1 1 230px;
-}
-.device-favorites-controls > label:nth-child(2) {
-  flex: 0 1 190px;
-}
-.device-favorites-controls .actions {
-  margin: 0;
-}
-.device-favorites-controls button[aria-pressed="true"] {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
 .device-favorites-count {
   font-size: 12px;
   color: var(--muted);
-}
-.device-favorites-empty-note {
-  margin: 0 0 24px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.ecosystem-favorites-page .collection-empty {
-  min-height: 0;
-  padding: 20px;
 }
 .device-favorites-grid.is-list {
   grid-template-columns: minmax(0, 1fr);
@@ -345,9 +281,6 @@
 .app.outpost.light .button.primary {
   color: #fff;
 }
-.app.outpost .library-comp-members > section {
-  min-width: 0;
-}
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }
@@ -414,11 +347,6 @@
   color: var(--text);
   box-shadow: 0 8px 24px #0005;
   font: 500 13px/1.5 var(--font-ui);
-}
-.app.outpost .account-dropdown .dropdown-panel > .button {
-  justify-content: flex-start;
-  width: 100%;
-  margin-top: 5px;
 }
 .app.outpost .detail-alternative-tabs {
   display: flex;
@@ -492,9 +420,4 @@
 }
 .detail-related-builds .ecosystem-section-heading {
   align-items: center;
-}
-.app.outpost .detail-slot-list > div > .text-link {
-  display: flex;
-  align-items: center;
-  min-height: 32px;
 }

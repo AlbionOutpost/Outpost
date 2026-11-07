@@ -19,7 +19,7 @@ export default function GlobalError({ retry }: { retry: () => void }) {
               <main id="main-content">
                 <SystemPage
                   eyebrow="Outpost"
-                  emblem="tool-craft"
+                  emblem="status-error"
                   title={
                     <>
                       Outpost is <em>down</em> for a moment

@@ -105,14 +105,12 @@
   align-content: start;
 }
 :global(.app.outpost) .windowBody :global(.landing-roster-who) > span,
-:global(.app.outpost) .memberToggle :global(.landing-roster-who) > span,
 :global(.app.outpost) .rowSelect :global(.landing-roster-who) > span,
 :global(.app.outpost) .partyRow :global(.landing-roster-who) > span,
 :global(.app.outpost) .rosterPanel :global(.landing-roster-who) > span {
   display: block;
 }
 .windowBody :global(.landing-roster-player),
-.memberToggle :global(.landing-roster-player),
 .rowSelect :global(.landing-roster-player),
 .partyRow :global(.landing-roster-player),
 .rosterPanel :global(.landing-roster-player) {
@@ -262,8 +260,81 @@
   color: var(--error);
 }
 
-/* Members: the landing's windows three across with the build window's board; phones get one
-   window of roster rows instead (.phoneRoster) */
+/* Comp pages: every member as its build window (BuildWindow), laid out by party size. The
+   column count comes from CompParty (5 → 3 + 2, 7 → 4 + 3, 10 → 5 + 5); a short last row is
+   centred, and no window grows past the width of three across. */
+.partyGrid {
+  --party-gap: 24px;
+  --cols: var(--party-cols);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--party-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.partyMember {
+  display: grid;
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--party-gap)) / var(--cols));
+  min-width: 0;
+  max-width: 400px;
+  container-type: inline-size;
+}
+.partyMember[data-role="Tank"] {
+  --role: var(--role-tank);
+}
+.partyMember[data-role="Healer"] {
+  --role: var(--role-healer);
+}
+.partyMember[data-role="DPS"] {
+  --role: var(--role-dps);
+}
+.partyMember[data-role="Support"] {
+  --role: var(--role-support);
+}
+/* Four and five across: the title takes the bar's first line, the chips the second */
+@container (max-width: 300px) {
+  :global(.app.outpost) .partyMember :global(.landing-window-bar) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  :global(.app.outpost) .partyMember :global(.build-window .landing-chips) {
+    max-width: none;
+  }
+}
+@media (max-width: 1279px) {
+  .partyGrid {
+    --cols: var(--party-cols-md);
+  }
+}
+@media (max-width: 980px) {
+  .partyGrid {
+    --cols: var(--party-cols-sm);
+  }
+}
+@media (max-width: 700px) {
+  .partyGrid {
+    --cols: 1;
+    --party-gap: 20px;
+  }
+  .partyMember {
+    max-width: none;
+  }
+}
+.memberDetails {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.memberDetails :global(.saved-equipment-sets) h2 {
+  margin: 0 0 4px;
+  font: 800 15px/1.2 var(--font-display);
+}
+
+/* The planner's party board: the landing's windows three across (party-board.tsx) */
 .members {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -287,9 +358,6 @@
 }
 .member[data-role="Support"] {
   --role: var(--role-support);
-}
-:global(.app.outpost) .phoneRoster.phoneRoster {
-  display: none;
 }
 :global(.app.outpost) .memberWindow.memberWindow {
   position: relative;
@@ -615,58 +683,6 @@
     display: inline;
   }
 
-  /* Comp pages: one window of roster rows; a tap opens the member's board under its row */
-  .members {
-    display: none;
-  }
-  :global(.app.outpost) .phoneRoster.phoneRoster {
-    display: grid;
-    padding-bottom: 14px;
-  }
-  .phoneRows {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .phoneRows > .member {
-    display: grid;
-    gap: 0;
-  }
-  .phoneBody {
-    display: grid;
-    gap: 12px;
-    margin: 0 0 6px;
-    padding: 14px 10px 6px;
-    border-left: 3px solid var(--role, var(--well-border));
-    container-type: inline-size;
-  }
-  .phoneBody[hidden] {
-    display: none;
-  }
-  .phoneBodyTitle {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    font: 800 15px/1.2 var(--font-display);
-  }
-  .phoneBodyTitle a {
-    color: var(--text);
-  }
-  .phoneBody :global(.loadout-board.is-card) {
-    --gap: 10px;
-    --cell: min(76px, calc((100cqw - 2 * var(--gap)) / 3));
-    justify-content: center;
-    width: 100%;
-  }
-  .phoneBody :global(.loadout-board-cell) {
-    border: 1px solid #ffffff1a;
-    background: #15181f99;
-  }
-  :global(.app.outpost) .memberToggle.memberToggle,
   :global(.app.outpost) .partyRow.partyRow {
     display: grid;
     grid-template-columns: 12px 44px minmax(0, 1fr) auto 18px;
@@ -685,29 +701,22 @@
     text-align: left;
     cursor: pointer;
   }
-  .memberToggle:focus-visible,
   .partyRow:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-  .memberToggle :global(.landing-roster-armor),
   .partyRow :global(.landing-roster-armor) {
     gap: 3px;
   }
-  .memberToggle :global(.landing-roster-armor) img,
   .partyRow :global(.landing-roster-armor) img {
     width: 26px;
     height: 26px;
   }
-  .memberToggle :global(.landing-roster-who) strong,
   .partyRow :global(.landing-roster-who) strong {
     font-size: 13px;
   }
   .memberChevron {
     color: var(--accent-ink);
-  }
-  .memberToggle[aria-expanded="true"] .memberChevron {
-    rotate: 180deg;
   }
   .showLabel {
     position: absolute;
@@ -721,18 +730,11 @@
   }
 }
 @media (max-width: 360px) {
-  :global(.app.outpost) .memberToggle :global(.landing-roster-armor),
   :global(.app.outpost) .partyRow :global(.landing-roster-armor) {
     display: none;
   }
-  :global(.app.outpost) .memberToggle.memberToggle,
   :global(.app.outpost) .partyRow.partyRow {
     grid-template-columns: 12px 44px minmax(0, 1fr) 18px;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .memberChevron {
-    transition: rotate 320ms var(--ease-spring);
   }
 }
 

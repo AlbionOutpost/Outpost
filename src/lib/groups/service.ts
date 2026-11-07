@@ -21,6 +21,7 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
           if (actor) throw new HttpError(409, "You are already a member");
           // Private teams are invisible to outsiders: answer exactly as if the team did not exist.
           if (group.visibility !== "PUBLIC") throw new HttpError(404, "Group not found");
+          if (!group.recruiting) throw new HttpError(409, "This team is not taking requests");
           const previous = await tx.groupMembershipRequest.findUnique({
             where: { groupId_userId: { groupId, userId } },
             select: { status: true },

@@ -2,7 +2,8 @@
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useState } from "react";
 import Link from "@/components/link";
-import { Disclosure } from "./disclosure";
+import { PanelHead } from "./panel-head";
+import { Field } from "./field";
 import styles from "./shopping-workspace.module.css";
 import { savedShoppingSchema, type ShoppingList } from "@/lib/albion/shopping";
 type Saved = { id: string; title: string; configuration: unknown };
@@ -35,25 +36,23 @@ export function ShoppingAccountLists({
     }
   }
   return (
-    <Disclosure summary="Save & load account lists">
+    <section className={`panel ${styles.accountPanel}`} aria-labelledby="shopping-saved-title">
+      <PanelHead
+        id="shopping-saved-title"
+        emblem="tool-planner"
+        title="Saved lists"
+        line="Name a list to keep it on your account and open it on any device."
+      />
       <div className={styles.accountBody}>
-        <p>
-          Named lists are private to your account.{" "}
-          <Link href="/signin" className="text-link">
-            Sign in
-          </Link>{" "}
-          to keep them across devices. Your current device list stays here until you replace it.
-        </p>
         <div className={styles.accountForm}>
-          <label>
-            Shopping list title
+          <Field label="List name">
             <input
               maxLength={100}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Weekend regear"
+              placeholder="Weekend regear"
             />
-          </label>
+          </Field>
           <button
             type="button"
             className="button secondary"
@@ -86,10 +85,22 @@ export function ShoppingAccountLists({
           >
             Save account list
           </button>
-          <button type="button" className="button secondary" disabled={busy} onClick={load}>
-            Load account lists
-          </button>
         </div>
+        <button
+          type="button"
+          className={`button secondary ${styles.accountLoad}`}
+          disabled={busy}
+          onClick={load}
+        >
+          Load account lists
+        </button>
+        <p>
+          Saved lists need{" "}
+          <Link href="/signin" className="text-link">
+            sign-in
+          </Link>
+          . The list on this page stays on this device until you restore another.
+        </p>
         {list.entries.length > 100 && (
           <p>Account lists support up to 100 purchase lines. Your larger device list is kept.</p>
         )}
@@ -152,6 +163,6 @@ export function ShoppingAccountLists({
           }}
         />
       </div>
-    </Disclosure>
+    </section>
   );
 }

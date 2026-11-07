@@ -1,18 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Download, Link2, Pencil, Trash2, TriangleAlert } from "lucide-react";
 import Link from "@/components/build-region-link";
 import type { CompositionInput, MemberSlot } from "@/lib/compositions/validation";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
-import { slotRosterMember } from "@/lib/compositions/roster";
+import { roleTone, slotRosterMember } from "@/lib/compositions/roster";
 import { PartyReadiness } from "./party-readiness";
 import { SavedEquipmentSets } from "./saved-equipment-sets";
 import { CompositionPngExport } from "./composition-png-export";
 import { ItemIcon } from "./item-icon";
 import { LoadoutBoard } from "./loadout-board";
 import { RosterRows } from "./comp-roster";
-import { CompMembers, type CompMemberCard } from "./comp-members";
+import { CompParty } from "./comp-members";
+import { BuildWindow } from "./build-window";
 import { CompMenu } from "./comp-menu";
 import { SectionHeading } from "./section-heading";
 import { PanelHead } from "./panel-head";
@@ -134,33 +135,52 @@ export function CompositionActions({
   );
 }
 
-/** One member's window body: the loadout on the board, or every piece with its abilities. */
-export function memberCard(slot: MemberSlot, i: number, detailed: boolean): CompMemberCard {
-  return {
-    member: slotRosterMember(slot),
-    title: slot.playerName || `Slot ${i + 1}`,
-    line:
-      [
-        slot.playerName ? "" : "No player named yet",
-        slot.substitute ? `Substitute: ${slot.substitute}` : "",
-      ]
-        .filter(Boolean)
-        .join(" · ") || (slot.mandatory ? "Required slot" : "Optional slot"),
-    badges: (
-      <>
-        {!slot.mandatory && <span className="landing-chip is-muted">Optional</span>}
-        {slot.substitute && (
-          <span className="landing-chip is-muted" title={`Substitute: ${slot.substitute}`}>
-            Sub: {slot.substitute}
-          </span>
-        )}
-      </>
-    ),
-    body: (
-      <>
-        {detailed ? (
-          slot.equipment.length ? (
-            <ul className={styles.pieces} aria-label={`Member ${i + 1} equipment`}>
+/** One member as the build window: role on the bar, the loadout on the board (or every piece
+ * with its abilities in Details), the weapon and who plays it in the foot. */
+export function memberWindow(
+  slot: MemberSlot,
+  i: number,
+  detailed: boolean,
+  titleId: string,
+  category: string,
+) {
+  const member = slotRosterMember(slot);
+  const weapon = slot.equipment.find((e) => e.slot === "Main hand");
+  const n = i + 1;
+  return (
+    <BuildWindow
+      titleId={`${titleId}-${n}`}
+      heading="h3"
+      number={n}
+      title={slot.playerName || `Slot ${n}`}
+      category={category}
+      chips={
+        <>
+          <span className={`landing-chip ${styles.roleChip}`}>{member.role}</span>
+          {!slot.mandatory && <span className="landing-chip is-muted">Optional</span>}
+        </>
+      }
+      weaponName={member.name}
+      weaponItemId={weapon?.itemId}
+      weaponQuality={weapon?.quality}
+      line={
+        [
+          slot.playerName ? "" : "No player named yet",
+          slot.substitute ? `Sub: ${slot.substitute}` : "",
+          slot.equipmentSets.length
+            ? `${slot.equipmentSets.length} spare ${slot.equipmentSets.length === 1 ? "set" : "sets"}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" · ") || (slot.mandatory ? "Required slot" : "Optional slot")
+      }
+      pieces={slot.equipment.map((e) => ({ ...e, swap: e.alternatives[0] }))}
+      abilities={false}
+    >
+      {detailed ? (
+        <div className={styles.memberDetails}>
+          {slot.equipment.length ? (
+            <ul className={styles.pieces} aria-label={`Member ${n} equipment`}>
               {slot.equipment.map((e) => {
                 const abilities = Object.entries(e.abilities);
                 return (
@@ -183,25 +203,16 @@ export function memberCard(slot: MemberSlot, i: number, detailed: boolean): Comp
             </ul>
           ) : (
             <p className={styles.memberNote}>No equipment chosen yet.</p>
-          )
-        ) : (
-          <LoadoutBoard
-            pieces={slot.equipment.map((e) => ({ ...e, swap: e.alternatives[0] }))}
-            size="card"
-            abilities={false}
-            label={`Member ${i + 1} equipment`}
-          />
-        )}
-        {detailed && <SavedEquipmentSets sets={slot.equipmentSets} />}
-        {!detailed && slot.equipmentSets.length > 0 && (
-          <span className={styles.muted}>
-            {slot.equipmentSets.length} spare {slot.equipmentSets.length === 1 ? "set" : "sets"}
-          </span>
-        )}
-        {detailed && slot.notes && <p className={`preserve ${styles.memberNote}`}>{slot.notes}</p>}
-      </>
-    ),
-  };
+          )}
+          <SavedEquipmentSets sets={slot.equipmentSets} />
+          {slot.notes && <p className={`preserve ${styles.memberNote}`}>{slot.notes}</p>}
+        </div>
+      ) : slot.equipment.length ? undefined : (
+        // An open slot keeps the empty board, so every window in a row is the same box
+        <LoadoutBoard pieces={[]} size="card" abilities={false} label={`Member ${n} equipment`} />
+      )}
+    </BuildWindow>
+  );
 }
 
 export function CompositionView({
@@ -216,9 +227,8 @@ export function CompositionView({
   /** Stored members that could not be read (see readStoredComposition). */
   dropped?: number;
 }) {
-  const [mode, setMode] = useState<"loadouts" | "details" | "roster">(
-    composition.slots.length >= 10 ? "roster" : "loadouts",
-  );
+  const [mode, setMode] = useState<"loadouts" | "details" | "roster">("loadouts");
+  const titleId = useId();
   const slots = composition.slots;
   return (
     <>
@@ -277,10 +287,19 @@ export function CompositionView({
                 />
               </div>
             ) : (
-              <CompMembers
-                cards={slots.map((slot, i) => memberCard(slot, i, mode === "details"))}
+              <CompParty
                 label={`${composition.title} members`}
-                title="Party roster"
+                members={slots.map((slot, i) => ({
+                  key: slot.id,
+                  tone: roleTone(slot.role),
+                  window: memberWindow(
+                    slot,
+                    i,
+                    mode === "details",
+                    titleId,
+                    composition.contentType,
+                  ),
+                }))}
               />
             )}
           </>

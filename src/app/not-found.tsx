@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <SystemPage
       eyebrow="404"
-      emblem="tool-planner"
+      emblem="status-notfound"
       title={
         <>
           Page not <em>found</em>

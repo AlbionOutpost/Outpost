@@ -8,7 +8,6 @@ import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminFrame } from "@/components/admin-frame";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
-import { AdminNextSteps } from "@/components/admin-next";
 import { isSupporter } from "@/lib/billing/plan";
 import { accountBanned, giftedSupporter } from "@/lib/admin/policy";
 import { HttpError } from "@/lib/http-error";
@@ -55,34 +54,6 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
           </AdminChip>
           {user.role !== "USER" && <AdminChip tone="warn">{roleLabel(user.role)}</AdminChip>}
         </div>
-      }
-      closing={
-        <AdminNextSteps
-          id="admin-next"
-          title={
-            <>
-              Back to the <em>queue</em>
-            </>
-          }
-          line="Done with this account? Pick the next one to look at."
-          cards={[
-            {
-              href: "/admin/users",
-              title: "All accounts",
-              line: "Search by name, Discord ID or account ID.",
-            },
-            {
-              href: "/admin/review",
-              title: "Account review",
-              line: "Other accounts with unusual activity.",
-            },
-            {
-              href: "/admin/audit",
-              title: "Audit trail",
-              line: "Confirm your change was recorded.",
-            },
-          ]}
-        />
       }
     >
       <div className="admin-user-grid">

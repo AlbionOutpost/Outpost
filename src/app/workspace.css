@@ -72,89 +72,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   letter-spacing: 0.06em;
   font-size: 11px;
 }
-.product-page-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-.product-page-heading .page-title {
-  margin: 8px 0 12px;
-}
-.product-page-heading p {
-  margin: 0;
-  max-width: 64ch;
-  color: var(--muted);
-}
-.scope-note {
-  font-size: 12px;
-  color: var(--muted);
-  max-width: 24ch;
-}
-.directory-start {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 24px;
-  background: linear-gradient(115deg, var(--accent-wash), transparent 75%), var(--sidebar);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 6px;
-  margin-bottom: 32px;
-}
-.directory-start h2 {
-  font-size: 21px;
-  margin: 4px 0 6px;
-}
-.directory-start p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--muted);
-}
-.directory-start-art {
-  display: flex;
-  align-items: end;
-  flex-shrink: 0;
-}
-.directory-start-art > :last-child {
-  margin-left: -12px;
-}
-.directory-start .button {
-  margin-left: auto;
-  white-space: nowrap;
-}
-.tool-availability {
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--muted);
-  border: 1px solid var(--line-soft);
-  padding: 2px 6px;
-  border-radius: 3px;
-}
-.product-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
-  gap: 12px;
-  padding: 32px;
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  text-align: center;
-}
-.product-empty h2,
-.product-empty p {
-  margin: 0;
-}
-.product-empty > svg {
-  color: var(--accent-ink);
-}
-.product-empty p {
-  color: var(--muted);
-  max-width: 55ch;
-}
 
 @media (max-width: 1200px) {
   .workspace-frame {
@@ -162,9 +79,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   }
   .workspace-frame > main {
     padding: 24px;
-  }
-  .directory-start-art {
-    display: none;
   }
 }
 @media (max-width: 1100px) {
@@ -181,24 +95,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   }
   .workspace-route .site-header {
     padding-inline: 16px;
-  }
-  .product-page-heading {
-    display: block;
-  }
-  .scope-note {
-    display: none;
-  }
-  .directory-start {
-    padding: 20px 16px;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-  .directory-start h2 {
-    font-size: 18px;
-  }
-  .directory-start .button {
-    margin: 0;
   }
   .workspace-route footer {
     padding: 24px 16px;

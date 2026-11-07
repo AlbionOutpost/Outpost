@@ -6,6 +6,7 @@ import Link from "@/components/link";
 import { LoadoutBoard } from "@/components/loadout-board";
 import type { LibraryBuild, LibraryComposition } from "@/lib/grind-library-types";
 import { activityName } from "@/lib/grind-library-types";
+import { variantSrcSet } from "@/lib/image-variants";
 import { AccountLikeChip } from "./account-like-chip";
 import styles from "./windows.module.css";
 
@@ -33,7 +34,14 @@ function Window({
       <div className={`landing-window-body ${styles.body}`}>{children}</div>
       <Link href={href} className={`landing-window-foot ${styles.foot}`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-        <img src={`/albion/icons/${emblem}.webp`} alt="" width={48} height={48} />
+        <img
+          src={`/albion/icons/${emblem}.webp`}
+          srcSet={variantSrcSet(`/albion/icons/${emblem}.webp`)}
+          sizes="48px"
+          alt=""
+          width={48}
+          height={48}
+        />
         <span>
           <strong>{title}</strong>
           <small>{line}</small>
@@ -146,7 +154,14 @@ export function LandingWindows({
           {teamFeatures.map(([icon, name, line]) => (
             <li key={icon}>
               {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
-              <img src={`/albion/icons/${icon}.webp`} alt="" width={40} height={40} />
+              <img
+                src={`/albion/icons/${icon}.webp`}
+                srcSet={variantSrcSet(`/albion/icons/${icon}.webp`)}
+                sizes="40px"
+                alt=""
+                width={40}
+                height={40}
+              />
               <span>
                 <strong>{name}</strong>
                 <small>{line}</small>

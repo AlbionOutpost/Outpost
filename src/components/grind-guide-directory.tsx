@@ -132,8 +132,13 @@ export function GrindGuideDirectory({
         </form>
         {listed.length > 0 && (
           <div className={`grind-guide-grid ${styles.grid}`}>
-            {listed.map((guide) => (
-              <GuideCoverCard key={guide.slug} className="grind-guide-card" guide={cover(guide)} />
+            {listed.map((guide, index) => (
+              <GuideCoverCard
+                key={guide.slug}
+                className="grind-guide-card"
+                guide={cover(guide)}
+                priority={index === 0}
+              />
             ))}
           </div>
         )}
