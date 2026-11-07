@@ -46,6 +46,7 @@ export function LoadoutBoard({
   selectedSlot,
   onSelectSlot,
   flaggedSlot,
+  opensPicker,
 }: {
   pieces: BoardPiece[];
   spellNames?: Record<string, string>;
@@ -60,6 +61,8 @@ export function LoadoutBoard({
   onSelectSlot?: (slot: string) => void;
   /** A slot that needs attention, such as a missing main hand on save. */
   flaggedSlot?: string;
+  /** Editing: slots whose button opens the item picker rather than selecting the slot. */
+  opensPicker?: (slot: string) => boolean;
 }) {
   const interactive = !!onSelectSlot;
   const bySlot = new Map(pieces.map((p) => [p.slot, p]));
@@ -96,11 +99,13 @@ export function LoadoutBoard({
                   ? {
                       type: "button" as const,
                       "aria-pressed": selectedSlot === slot,
-                      "aria-label": piece
-                        ? `Inspect ${slot}: ${name}`
-                        : ghost
-                          ? `Inspect ${slot}: held by the two-handed main hand`
-                          : `Inspect ${slot} Empty`,
+                      "aria-label": opensPicker?.(slot)
+                        ? `Choose ${slot} equipment: ${piece ? name : ghost ? "held by the two-handed main hand" : "Empty"}`
+                        : piece
+                          ? `Inspect ${slot}: ${name}`
+                          : ghost
+                            ? `Inspect ${slot}: held by the two-handed main hand`
+                            : `Inspect ${slot} Empty`,
                       onClick: () => onSelectSlot(slot),
                     }
                   : { role: "listitem" })}
@@ -108,6 +113,8 @@ export function LoadoutBoard({
                 data-slot={slot}
               >
                 <span
+                  // A new piece remounts its cell, so the editor's equip animation plays
+                  key={piece?.itemId ?? "empty"}
                   className="loadout-board-cell"
                   title={
                     piece

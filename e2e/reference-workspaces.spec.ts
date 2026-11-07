@@ -85,7 +85,7 @@ test("equipment drawer contains keyboard focus and returns to the selected equip
     await selectEditorSlot(page, "Helmet");
     const trigger = page.getByRole("button", { name: "Choose Helmet equipment", exact: false });
     await trigger.click();
-    const drawer = page.getByRole("dialog", { name: "Equipment picker", exact: true });
+    const drawer = page.getByRole("dialog", { name: "Choose your helmet", exact: true });
     await expect(drawer).toBeVisible();
     await expect(page.getByLabel("Search equipment")).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

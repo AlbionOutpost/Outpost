@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowRight, Check, Plus, ShieldAlert, Trash2, Undo2 } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { ArrowRight, Plus, ShieldAlert, Trash2, Undo2 } from "lucide-react";
 import {
   equipmentFamilies,
   equipmentId,
@@ -13,7 +13,7 @@ import {
 import { abilitiesFor, archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { equipmentChoice } from "@/lib/albion/equipment-validation";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
-import { EditorDialog } from "./editor-dialog";
+import { EquipmentSlotDialog } from "./equipment-slot-dialog";
 import { LoadoutBoard } from "./loadout-board";
 import { ItemIcon } from "./item-icon";
 import { SpellIcon } from "./spell-icon";
@@ -21,7 +21,6 @@ import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
-import { SearchInput } from "./field";
 
 export type BuildStudioView = "equipment" | "abilities" | "alternatives";
 const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
@@ -38,28 +37,18 @@ export function BuildEquipmentStudio({
   onChange: (value: EquipmentChoice[]) => void;
   view?: BuildStudioView;
   captureUndo?: () => () => void;
-  /** Shown in the board's panel while nothing is equipped: the one way to start. */
+  /** Shown under the board while nothing is equipped, such as the starting sets. */
   boardEmpty?: ReactNode;
   /** A slot to mark, such as a missing main hand after a failed save. */
   flaggedSlot?: string;
 }) {
   const [slot, setSlot] = useState<EquipmentSlot>("Main hand");
   const [picker, setPicker] = useState<"recommended" | "alternative" | null>(null);
-  const [query, setQuery] = useState("");
-  const [tier, setTier] = useState(4);
-  const [enchant, setEnchant] = useState(0);
-  const [page, setPage] = useState(0);
   const [notice, setNotice] = useState("");
   const [undo, setUndo] = useState<{
     equipment: EquipmentChoice[];
     restore?: () => void;
   } | null>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (!picker) return;
-    const frame = requestAnimationFrame(() => searchRef.current?.focus());
-    return () => cancelAnimationFrame(frame);
-  }, [picker]);
   const current = value.find((row) => row.slot === slot);
   const found = current ? findEquipment(current.itemId) : null;
   const twoHanded = !!findEquipment(value.find((row) => row.slot === "Main hand")?.itemId || "")
@@ -140,16 +129,13 @@ export function BuildEquipmentStudio({
     );
   }
   function browse(target: EquipmentSlot, mode: "recommended" | "alternative" = "recommended") {
-    const item = value.find((row) => row.slot === target);
-    const info = item ? findEquipment(item.itemId) : null;
-    const family = info?.family || equipmentFamilies.find((row) => row.slot === target);
     setSlot(target);
-    setQuery("");
-    setPage(0);
-    setTier(info?.tier || (family?.tiers.includes(4) ? 4 : family?.tiers[0] || 4));
-    setEnchant(info?.enchantment || 0);
     setPicker(mode);
   }
+  /** On Equipment every slot opens the picker; elsewhere a filled slot is selected to work on. */
+  const opensPicker = (target: string) =>
+    view === "equipment" ||
+    (!value.some((row) => row.slot === target) && !(target === "Off hand" && twoHanded));
   function choose(id: string) {
     if (picker === "recommended" && current?.itemId === id) {
       setPicker(null);
@@ -167,14 +153,6 @@ export function BuildEquipmentStudio({
       });
     setPicker(null);
   }
-  const matches = equipmentFamilies
-    .filter(
-      (f) =>
-        f.slot === slot &&
-        `${f.name} ${f.code}`.toLowerCase().includes(query.toLowerCase()) &&
-        !!findEquipment(equipmentId(f, tier, enchant)),
-    )
-    .filter((f) => picker !== "alternative" || equipmentId(f, tier, enchant) !== current?.itemId);
   const pieces = value.map((item) => {
     const spells = archivedSpellOptions(item.itemId);
     return {
@@ -252,14 +230,6 @@ export function BuildEquipmentStudio({
       </div>
     );
   };
-  // An empty slot shows the first T4 pieces for it in place, so the inspector is never blank
-  const starterTier = (family: (typeof equipmentFamilies)[number]) =>
-    family.tiers.includes(4) ? 4 : family.tiers[0];
-  const starters = current
-    ? []
-    : equipmentFamilies
-        .filter((f) => f.slot === slot && !!findEquipment(equipmentId(f, starterTier(f), 0)))
-        .slice(0, 8);
   const ordered = equipmentSlots.flatMap((s) => value.filter((row) => row.slot === s));
   const withAbilities = ordered.filter((row) => Object.keys(abilitiesFor(row.itemId)).length);
   const withoutAbilities = ordered.filter((row) => !withAbilities.includes(row));
@@ -274,7 +244,7 @@ export function BuildEquipmentStudio({
       {text && <span>{text}</span>}
     </button>
   );
-  const itemRow = current ? (
+  const itemRow = current && (
     <div className="editor-selected-item equipped">
       <ItemIcon id={current.itemId} quality={current.quality} size={64} />
       <div>
@@ -285,7 +255,7 @@ export function BuildEquipmentStudio({
         <button
           type="button"
           className="button secondary"
-          aria-label={`Choose ${slot} equipment: ${equipmentName(current.itemId)}. Change item`}
+          aria-label={`Change item in ${slot}: ${equipmentName(current.itemId)}`}
           onClick={() => browse(slot)}
         >
           Change item <ArrowRight size={15} aria-hidden="true" />
@@ -293,26 +263,43 @@ export function BuildEquipmentStudio({
         {removeButton(`Remove ${slot}`, () => change(null))}
       </div>
     </div>
-  ) : (
-    <div className="editor-selected-item">
-      <span className="editor-empty-art" aria-hidden="true">
-        <Plus size={26} />
-      </span>
-      <div>
-        <strong>Choose your {slot.toLowerCase()}</strong>
-        <small>Empty slot</small>
-      </div>
-      <div className="editor-item-actions">
-        <button
-          type="button"
-          className="button primary"
-          aria-label={`Choose ${slot} equipment: Empty. Choose item`}
-          onClick={() => browse(slot)}
-        >
-          Choose item <ArrowRight size={15} aria-hidden="true" />
-        </button>
-      </div>
-    </div>
+  );
+  /** With no piece in the selected slot, the inspector lists the whole build: every slot in
+   * order, a piece to inspect or an empty slot that opens the picker. */
+  const summary = (
+    <ul className="editor-summary-list" aria-label="Every slot">
+      {equipmentSlots.map((target) => {
+        const item = value.find((row) => row.slot === target);
+        const held = !item && target === "Off hand" && twoHanded;
+        return (
+          <li key={target} className={item ? "is-equipped" : held ? "" : "is-empty"}>
+            <button
+              type="button"
+              onClick={() => (item || held ? selectSlot(target) : browse(target))}
+            >
+              {item ? (
+                <ItemIcon id={item.itemId} quality={item.quality} size={44} />
+              ) : (
+                <span className="editor-summary-empty" aria-hidden="true">
+                  {held ? <ShieldAlert size={18} /> : <Plus size={18} />}
+                </span>
+              )}
+              <span>
+                <small>{target}</small>
+                <strong>
+                  {item
+                    ? pieceName(item.itemId)
+                    : held
+                      ? "Held by your two-handed weapon"
+                      : "Empty: choose an item"}
+                </strong>
+              </span>
+              {item && <small>{pieceLine(item)}</small>}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 
   return (
@@ -354,12 +341,14 @@ export function BuildEquipmentStudio({
           label="Editor equipment inventory"
           selectedSlot={slot}
           flaggedSlot={flaggedSlot}
+          opensPicker={opensPicker}
           onSelectSlot={(target) => {
-            if (equipmentSlots.includes(target as EquipmentSlot))
-              selectSlot(target as EquipmentSlot);
+            if (!equipmentSlots.includes(target as EquipmentSlot)) return;
+            if (opensPicker(target)) browse(target as EquipmentSlot);
+            else selectSlot(target as EquipmentSlot);
           }}
         />
-        {!value.length && boardEmpty && <div className="editor-board-empty">{boardEmpty}</div>}
+        {!value.length && boardEmpty}
         {!!ordered.length && (
           <div className="editor-piece-strip">
             <small>Every piece</small>
@@ -395,15 +384,15 @@ export function BuildEquipmentStudio({
           />
         ) : (
           <PanelHead
-            title={slot}
+            title={blocked || current ? slot : "Your build"}
             line={
               blocked
                 ? "Held by your two-handed main hand."
-                : view === "alternatives"
-                  ? "Up to four swaps for this slot."
-                  : current
-                    ? "The piece, its tier and its abilities."
-                    : "Nothing equipped in this slot yet."
+                : !current
+                  ? `${value.length} of 10 slots equipped. Pick a slot to fill or inspect it.`
+                  : view === "alternatives"
+                    ? "Up to four swaps for this slot."
+                    : "The piece, its tier and its abilities."
             }
           />
         )}
@@ -470,43 +459,11 @@ export function BuildEquipmentStudio({
               </button>
             </div>
           </div>
+        ) : !current ? (
+          summary
         ) : (
           <>
             {itemRow}
-            {!current && !!starters.length && (
-              <section className="editor-starters" aria-labelledby="editor-starters-title">
-                <div className="editor-subhead">
-                  <h3 id="editor-starters-title">Start with one of these</h3>
-                  <button type="button" className="pill-link is-small" onClick={() => browse(slot)}>
-                    Every {slot.toLowerCase()} <ArrowRight size={14} aria-hidden="true" />
-                  </button>
-                </div>
-                <div className="editor-starter-grid">
-                  {starters.map((family) => {
-                    const id = equipmentId(family, starterTier(family), 0);
-                    return (
-                      <button
-                        type="button"
-                        key={id}
-                        className="editor-starter"
-                        onClick={() =>
-                          change({ slot, itemId: id, quality: 1, abilities: {}, alternatives: [] })
-                        }
-                      >
-                        <ItemIcon id={id} size={52} />
-                        <span>
-                          <strong>
-                            <span className="sr-only">Put on </span>
-                            {family.tierNames?.[starterTier(family)] || family.name}
-                          </strong>
-                          <small>T{starterTier(family)}.0</small>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
             {current && found && view === "equipment" && (
               <div className="editor-item-variants">
                 <label>
@@ -720,123 +677,21 @@ export function BuildEquipmentStudio({
         </p>
       </section>
       {picker && (
-        <EditorDialog open drawer title="Equipment picker" onClose={() => setPicker(null)}>
-          <div className="studio-picker editor-catalog-drawer">
-            <div className="studio-picker-heading">
-              <h3>
-                {picker === "alternative"
-                  ? `Swaps for your ${slot.toLowerCase()}`
-                  : `Choose your ${slot.toLowerCase()}`}
-              </h3>
-              <p>
-                {matches.length} {matches.length === 1 ? "item" : "items"} at T{tier}.{enchant}
-              </p>
-            </div>
-            <div className="studio-picker-toolbar">
-              <label className="studio-picker-search">
-                <span>Search equipment</span>
-                <SearchInput
-                  ref={searchRef}
-                  type="search"
-                  value={query}
-                  placeholder="Battleaxe, Bloodmoon, Hunter…"
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setPage(0);
-                  }}
-                />
-              </label>
-              <label>
-                <span>Tier</span>
-                <WellSelect
-                  aria-label="Browse tier"
-                  value={tier}
-                  onChange={(event) => {
-                    setTier(Number(event.target.value));
-                    setPage(0);
-                  }}
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((t) => (
-                    <option key={t} value={t}>
-                      T{t}
-                    </option>
-                  ))}
-                </WellSelect>
-              </label>
-              <label>
-                <span>Enchantment</span>
-                <WellSelect
-                  aria-label="Browse enchantment"
-                  value={enchant}
-                  onChange={(event) => {
-                    setEnchant(Number(event.target.value));
-                    setPage(0);
-                  }}
-                >
-                  {[0, 1, 2, 3, 4].map((e) => (
-                    <option key={e} value={e}>
-                      {e ? `@${e}` : "Flat"}
-                    </option>
-                  ))}
-                </WellSelect>
-              </label>
-            </div>
-            <div className="studio-picker-grid">
-              {matches.slice(page * 24, (page + 1) * 24).map((family) => {
-                const id = equipmentId(family, tier, enchant);
-                return (
-                  <button
-                    className={`studio-picker-item${current?.itemId === id ? " selected" : ""}`}
-                    type="button"
-                    key={id}
-                    onClick={() => choose(id)}
-                  >
-                    <ItemIcon id={id} size={52} />
-                    <span>
-                      <strong>
-                        <span className="sr-only">Equip </span>
-                        {family.tierNames?.[tier] || family.name}
-                      </strong>
-                      <small>
-                        T{tier}.{enchant}
-                      </small>
-                    </span>
-                    {current?.itemId === id && <Check size={16} aria-label="Equipped" />}
-                  </button>
-                );
-              })}
-              {!matches.length && (
-                <EmptyWell
-                  title="Nothing matches"
-                  line="No supported item matches this slot, search and tier/enchantment filters. Try another tier or clear the search."
-                />
-              )}
-            </div>
-            {matches.length > 24 && (
-              <div className="studio-picker-pagination">
-                <button
-                  type="button"
-                  className="button secondary"
-                  disabled={!page}
-                  onClick={() => setPage(page - 1)}
-                >
-                  Previous items
-                </button>
-                <span>
-                  {page * 24 + 1}–{Math.min((page + 1) * 24, matches.length)} of {matches.length}
-                </span>
-                <button
-                  type="button"
-                  className="button secondary"
-                  disabled={(page + 1) * 24 >= matches.length}
-                  onClick={() => setPage(page + 1)}
-                >
-                  Next items
-                </button>
-              </div>
-            )}
-          </div>
-        </EditorDialog>
+        <EquipmentSlotDialog
+          key={slot}
+          slot={slot}
+          mode={picker}
+          current={current}
+          blocked={blocked}
+          onMode={setPicker}
+          onChoose={choose}
+          onRemove={() => {
+            change(null, slot, { undoable: true, message: `${slot} taken off.` });
+            setPicker(null);
+          }}
+          onSlot={(target) => browse(target)}
+          onClose={() => setPicker(null)}
+        />
       )}
     </div>
   );
