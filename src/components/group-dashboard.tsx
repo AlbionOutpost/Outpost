@@ -15,7 +15,12 @@ import { GroupComps, GroupBuilds } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
 import { GroupSettings } from "./group-settings";
 import { TeamLootWorkspace, newLootSplitEvent } from "./team-loot-workspace";
+import dynamic from "next/dynamic";
 import styles from "./teams.module.css";
+
+// The Wallet and Rolls & flips tabs (and their 3D scenes) load when first opened.
+const TeamWallet = dynamic(() => import("./team-wallet").then((m) => m.TeamWallet));
+const TeamGames = dynamic(() => import("./team-games").then((m) => m.TeamGames));
 
 export type TeamTab =
   | "Overview"
@@ -24,6 +29,8 @@ export type TeamTab =
   | "Comps"
   | "Builds"
   | "Loot splits"
+  | "Wallet"
+  | "Rolls & flips"
   | "Announcements"
   | "Settings";
 const tabs: TeamTab[] = [
@@ -33,11 +40,14 @@ const tabs: TeamTab[] = [
   "Comps",
   "Builds",
   "Loot splits",
+  "Wallet",
+  "Rolls & flips",
   "Announcements",
   "Settings",
 ];
-const tabHash = (name: string) => `#team-${name.toLowerCase().replaceAll(" ", "-")}`;
-const tabId = (name: string) => `guild-tab-${name.replaceAll(" ", "-")}`;
+const slug = (name: string) => name.replace(" & ", " ").replaceAll(" ", "-");
+const tabHash = (name: string) => `#team-${slug(name).toLowerCase()}`;
+const tabId = (name: string) => `guild-tab-${slug(name)}`;
 
 function subscribeTeamHash(callback: () => void) {
   window.addEventListener("hashchange", callback);
@@ -273,9 +283,22 @@ export function GroupDashboard({
             userId={userId}
             members={data.members}
             editable={can("manageLoot")}
+            canPay={can("manageWallet")}
             active={tab === "Loot splits"}
           />
         </div>
+        {tab === "Wallet" && (
+          <TeamWallet groupId={groupId} members={data.members} active locked={!!gate} />
+        )}
+        {tab === "Rolls & flips" && (
+          <TeamGames
+            groupId={groupId}
+            userId={userId}
+            members={data.members}
+            active
+            locked={!!gate}
+          />
+        )}
         {tab === "Overview" && <GroupOverview ctx={ctx} />}
         {tab === "Events" && (
           <GroupEvents ctx={ctx} filter={eventFilter} onFilter={setEventFilter} />

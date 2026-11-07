@@ -1,15 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { allocateLoot, lootConfiguration, type LootConfiguration } from "@/lib/groups/loot";
 import { accountLogoutEvent } from "@/lib/account-build-drafts";
-import { Download, Plus, RotateCcw, X } from "lucide-react";
+import { Download, Plus, RotateCcw, Sparkles, X } from "lucide-react";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
 import { Disclosure } from "./disclosure";
 import { Field } from "./group-parts";
+import { EditorDialog } from "./editor-dialog";
+import type { RevealPayout } from "./economy-stage";
+import { bookkeepingLine } from "@/lib/groups/economy";
 import styles from "./teams.module.css";
+
+// The chest scene loads only when a split is revealed.
+const LootChestReveal = dynamic(() => import("./economy-stage").then((m) => m.LootChestReveal), {
+  ssr: false,
+});
 
 /** Fired by the workspace masthead's New split button. */
 export const newLootSplitEvent = "outpost:team-loot-new";
@@ -26,12 +35,15 @@ export function TeamLootWorkspace({
   userId,
   members,
   editable,
+  canPay = false,
   active,
 }: {
   groupId: string;
   userId: string;
-  members: { userId: string; name: string }[];
+  members: { userId: string; name: string; avatarFrame?: string | null }[];
   editable: boolean;
+  /** Manage wallet: a saved split can be paid into the participants' wallets once. */
+  canPay?: boolean;
   active: boolean;
 }) {
   const initial: LootConfiguration = {
@@ -49,6 +61,12 @@ export function TeamLootWorkspace({
     [error, setError] = useState(""),
     [message, setMessage] = useState("");
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const [paid, setPaid] = useState<Set<string> | null>(null);
+  const [reveal, setReveal] = useState<{
+    rows: RevealPayout[];
+    total: number;
+    paid: boolean;
+  } | null>(null);
   const [baseline, setBaseline] = useState(
     JSON.stringify({ title: "New loot split", configuration: initial }),
   );
@@ -71,6 +89,16 @@ export function TeamLootWorkspace({
       });
     return () => controller.abort();
   }, [active, loaded, groupId, loadAttempt]);
+  // Which saved splits are already in wallets, for members who can pay them in.
+  useEffect(() => {
+    if (!active || !canPay || paid) return;
+    const controller = new AbortController();
+    fetch(`/api/groups/${groupId}/wallet`, { signal: controller.signal })
+      .then(async (response) => (response.ok ? response.json() : null))
+      .then((body) => body && setPaid(new Set(body.wallet.paidSplits)))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [active, canPay, paid, groupId]);
   useEffect(() => {
     if (!dirty) return;
     const unload = (event: BeforeUnloadEvent) => {
@@ -183,6 +211,44 @@ export function TeamLootWorkspace({
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   const name = (id: string) => members.find((m) => m.userId === id)?.name || "Former team member";
+  const revealRows = (
+    payouts: { userId: string; silver: number; shares?: number }[],
+  ): RevealPayout[] =>
+    payouts.map((p) => ({
+      userId: p.userId,
+      name: name(p.userId),
+      frame: members.find((m) => m.userId === p.userId)?.avatarFrame,
+      silver: p.silver,
+      note: p.shares ? `${p.shares} ${p.shares === 1 ? "share" : "shares"}` : undefined,
+    }));
+  async function payIntoWallets() {
+    if (!selected) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch(`/api/groups/${groupId}/wallet`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "pay-split", splitId: selected.id }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error);
+      setPaid(new Set(body.wallet.paidSplits));
+      const rows = body.paid as { userId: string; silver: number }[];
+      const shares = new Map(result?.payouts.map((p) => [p.userId, p.shares]));
+      setReveal({
+        rows: revealRows(rows.map((r) => ({ ...r, shares: shares.get(r.userId) }))),
+        total: rows.reduce((t, r) => t + r.silver, 0),
+        paid: true,
+      });
+      setMessage("Paid into wallets. Hand the silver over in game, then record payouts in Wallet.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not pay this split into wallets.");
+    } finally {
+      setBusy(false);
+    }
+  }
   const silver = (n: number) => `${n.toLocaleString("en")} silver`;
   return (
     <section className={`team-loot-workspace ${styles.loot}`} aria-label="Team loot splits">
@@ -489,15 +555,62 @@ export function TeamLootWorkspace({
               Add at least one participant and whole-silver amounts; expenses must fit in the pool.
             </StatusLine>
           )}
-          {editable && (
-            <div className={styles.formActions}>
+          <div className={styles.formActions}>
+            {result && result.net > 0 && (
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() =>
+                  setReveal({ rows: revealRows(result.payouts), total: result.net, paid: false })
+                }
+              >
+                <Sparkles size={16} aria-hidden="true" /> Reveal the split
+              </button>
+            )}
+            {canPay && selected && !dirty && paid?.has(selected.id) && (
+              <span className={styles.subline}>Paid into wallets</span>
+            )}
+            {canPay && selected && !dirty && paid && !paid.has(selected.id) && result && (
+              <button
+                type="button"
+                className="button secondary"
+                disabled={busy}
+                onClick={() => {
+                  if (
+                    confirm(
+                      `Pay ${silver(result.net)} into ${result.payouts.length} wallets? A split is paid in once.`,
+                    )
+                  )
+                    void payIntoWallets();
+                }}
+              >
+                Pay into wallets
+              </button>
+            )}
+            {editable && (
               <button type="button" className="button primary" disabled={busy} onClick={save}>
                 {busy ? "Saving…" : "Save loot split"}
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       </div>
+      <EditorDialog
+        open={!!reveal}
+        wide
+        title={reveal?.paid ? "Paid into wallets" : "The split"}
+        onClose={() => setReveal(null)}
+      >
+        {reveal && (
+          <>
+            <LootChestReveal rows={reveal.rows} total={reveal.total} />
+            <p className={styles.subline}>
+              {reveal.paid ? "Each share is now in its member's Team wallet. " : ""}
+              {bookkeepingLine}
+            </p>
+          </>
+        )}
+      </EditorDialog>
     </section>
   );
 }

@@ -1,0 +1,705 @@
+/* Team economy: the Wallet and Rolls & flips tabs and their 3D moments (coin, number drums,
+   loot chest). Shared panels, wells, tables and forms come from teams.module.css; only what is
+   new lives here. Every colour is a token; the metals mix the avatar-frame silver. Motion runs
+   through the Web Animations API in economy-stage.tsx and stops under reduced motion. */
+
+/* The coin and drum metal (the silver avatar frame's tone) and the chest's wood */
+:global(.app.outpost) :is(.economy, .revealScene, .coinStage, .drum) {
+  --tone: color-mix(in srgb, var(--muted) 85%, var(--focus));
+  --hi: color-mix(in srgb, var(--tone) 52%, var(--text));
+  --lo: color-mix(in srgb, var(--tone) 42%, var(--illustration-bg));
+  --wood: color-mix(in srgb, var(--frame-rule) 72%, var(--illustration-bg));
+  --wood-dark: color-mix(in srgb, var(--frame-rule) 38%, var(--illustration-bg));
+}
+:global(.app.outpost) .economy.economy {
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
+:global(.app.outpost) .columns.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 26px 24px;
+}
+:global(.app.outpost) .stack.stack {
+  display: grid;
+  gap: 26px;
+  min-width: 0;
+}
+:global(.app.outpost) .note.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---------- Treasury: your balance and the team pot ---------- */
+:global(.app.outpost) .treasury.treasury {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+:global(.app.outpost) .purse.purse {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px var(--space-4);
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .purse.purse[data-lead] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .purse.purse > img {
+  grid-row: span 2;
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
+}
+:global(.app.outpost) .purse.purse dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+:global(.app.outpost) .purse.purse dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  text-align: left;
+  font: 800 clamp(30px, 4vw, 42px) / 1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .purse.purse[data-lead] dd {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .purse.purse dd small {
+  margin-left: 6px;
+  color: var(--muted);
+  font: 600 14px/1 var(--font-ui);
+}
+
+/* ---------- Balances and ledger ---------- */
+:global(.app.outpost) .holder.holder {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: 8px 12px;
+}
+:global(.app.outpost) .holder.holder > img {
+  width: 36px;
+  height: 36px;
+}
+:global(.app.outpost) .amount.amount {
+  font: 600 14px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+:global(.app.outpost) .amount.amount[data-sign="+"] {
+  color: var(--positive);
+}
+:global(.app.outpost) .amount.amount[data-sign="-"] {
+  color: var(--negative);
+}
+:global(.app.outpost) .kind.kind {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap table :is(th, td) {
+  font-family: var(--font-ui);
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap table td.amount {
+  font-family: var(--font-data);
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap table td:nth-child(4),
+:global(.app.outpost) .ledgerWrap.ledgerWrap table th:nth-child(4) {
+  text-align: left;
+}
+:global(.app.outpost) .ledgerWrap.ledgerWrap table td:nth-child(4) {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+  color: var(--secondary);
+}
+:global(.app.outpost) .when.when {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---------- Coin flips ---------- */
+:global(.app.outpost) .arena.arena {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+}
+:global(.app.outpost) .arenaStage.arenaStage {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-6) var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(
+      ellipse 60% 55% at 50% 72%,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent 70%
+    ),
+    var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .verdict.verdict {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-height: 52px;
+  margin: 0;
+  text-align: center;
+}
+:global(.app.outpost) .verdict.verdict strong {
+  font: 800 26px/1.05 var(--font-display);
+  letter-spacing: 0.01em;
+}
+:global(.app.outpost) .verdict.verdict span {
+  color: var(--secondary);
+  font-size: 13px;
+}
+:global(.app.outpost) .sides.sides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+:global(.app.outpost) .sideLabel.sideLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+:global(.app.outpost) .sideLabel.sideLabel img {
+  width: 20px;
+  height: 20px;
+}
+
+:global(.app.outpost) .coinStage.coinStage {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: calc(var(--coin) * 1.5);
+  height: calc(var(--coin) * 1.3);
+  perspective: 820px;
+  perspective-origin: 50% 20%;
+}
+:global(.app.outpost) .coinShadow.coinShadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(var(--coin) * 0.95);
+  height: calc(var(--coin) * 0.2);
+  margin-left: calc(var(--coin) * -0.475);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--illustration-bg) 85%, transparent),
+    transparent
+  );
+}
+:global(.app.outpost) .coinLift.coinLift,
+:global(.app.outpost) .coinTilt.coinTilt,
+:global(.app.outpost) .coin.coin {
+  transform-style: preserve-3d;
+}
+:global(.app.outpost) .coinLift.coinLift {
+  margin-bottom: calc(var(--coin) * 0.06);
+}
+/* Seen from a little above, so the coin's thickness shows at rest */
+:global(.app.outpost) .coinTilt.coinTilt {
+  rotate: x 24deg;
+}
+:global(.app.outpost) .coin.coin {
+  position: relative;
+  width: var(--coin);
+  height: var(--coin);
+}
+:global(.app.outpost) .coinFace.coinFace,
+:global(.app.outpost) .coinEdge.coinEdge {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+:global(.app.outpost) .coinFace.coinFace {
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden;
+  background:
+    radial-gradient(
+      circle,
+      transparent 60%,
+      color-mix(in srgb, var(--lo) 70%, transparent) 61% 63%,
+      transparent 64%
+    ),
+    radial-gradient(circle at 32% 24%, var(--hi), var(--tone) 46%, var(--lo) 100%);
+  box-shadow:
+    inset 0 0 0 calc(var(--coin) * 0.045) color-mix(in srgb, var(--tone) 70%, var(--hi)),
+    inset 0 0 0 calc(var(--coin) * 0.06) var(--lo),
+    inset 0 calc(var(--coin) * -0.04) calc(var(--coin) * 0.12)
+      color-mix(in srgb, var(--illustration-bg) 45%, transparent);
+}
+:global(.app.outpost) .coinFace.coinFace[data-side="heads"] {
+  transform: translateZ(calc(var(--coin) * 0.04));
+}
+:global(.app.outpost) .coinFace.coinFace[data-side="tails"] {
+  transform: rotateX(180deg) translateZ(calc(var(--coin) * 0.04));
+}
+/* The charge is struck into the metal: darkened, with a light lip below */
+:global(.app.outpost) .coinFace.coinFace img {
+  width: 54%;
+  height: 54%;
+  object-fit: contain;
+  filter: brightness(0.52) contrast(1.25) drop-shadow(0 1px 0 var(--hi));
+}
+:global(.app.outpost) .coinEdge.coinEdge {
+  background: linear-gradient(180deg, var(--hi), var(--lo) 40%, var(--tone) 70%, var(--lo));
+}
+
+/* ---------- Loot rolls ---------- */
+:global(.app.outpost) .rollCard.rollCard {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+:global(.app.outpost) .rollCard.rollCard[data-state="CLOSED"] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--well-border));
+}
+:global(.app.outpost) .rollHead.rollHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+}
+:global(.app.outpost) .rollHead.rollHead h3 {
+  margin: 0;
+  font: 800 19px/1.15 var(--font-display);
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .rollHead.rollHead p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+:global(.app.outpost) .rollBody.rollBody {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+}
+:global(.app.outpost) .rollMine.rollMine {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .rolls.rolls {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .rolls.rolls li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+:global(.app.outpost) .rolls.rolls li[data-win] {
+  background: var(--accent-wash);
+}
+:global(.app.outpost) .rolls.rolls li[data-me] strong {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .rolls.rolls li > img {
+  width: 24px;
+  height: 24px;
+}
+:global(.app.outpost) .rolls.rolls li > span:first-child {
+  color: var(--muted);
+  font: 600 12px/1 var(--font-data);
+  text-align: center;
+}
+:global(.app.outpost) .rolls.rolls li strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .rolls.rolls li data {
+  font: 700 15px/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The d100: two number drums, tens and ones, struck in the coin metal */
+:global(.app.outpost) .drum.drum {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  perspective: 420px;
+}
+:global(.app.outpost) .reel.reel {
+  --face: 60px;
+  position: relative;
+  width: 46px;
+  height: var(--face);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--lo), var(--tone) 50%, var(--lo));
+  mask-image: linear-gradient(180deg, transparent, var(--text) 22%, var(--text) 78%, transparent);
+}
+:global(.app.outpost) .reelDrum.reelDrum {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+:global(.app.outpost) .reelFace.reelFace {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden;
+  color: var(--illustration-bg);
+  font: 800 40px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 0 var(--hi);
+  transform: rotateX(calc(var(--i) * var(--angle) * -1))
+    translateZ(calc(var(--face) / 2 / tan(180deg / var(--faces))));
+}
+:global(.app.outpost) .drum.drum[data-empty] .reelFace {
+  color: transparent;
+  text-shadow: none;
+}
+
+/* ---------- Loot chest reveal ---------- */
+:global(.app.outpost) .revealScene.revealScene {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-2) 0 var(--space-4);
+}
+:global(.app.outpost) .chestStage.chestStage {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  width: 100%;
+  height: 210px;
+  perspective: 900px;
+  perspective-origin: 50% 0%;
+}
+:global(.app.outpost) .chestGlow.chestGlow {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  width: 360px;
+  height: 260px;
+  margin-left: -180px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--warning) 55%, transparent),
+    color-mix(in srgb, var(--accent) 22%, transparent) 55%,
+    transparent
+  );
+  transform: scale(0);
+  transition: transform 900ms var(--ease-out-expo);
+}
+:global(.app.outpost) .chestGlow.chestGlow[data-open] {
+  transform: scale(1);
+}
+:global(.app.outpost) .chest.chest {
+  --w: 168px;
+  --d: 100px;
+  --h: 80px;
+  --l: 36px;
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  margin-bottom: 26px;
+  transform-style: preserve-3d;
+  transform: rotateX(-16deg) rotateY(-26deg);
+}
+:global(.app.outpost) .chestBody.chestBody,
+:global(.app.outpost) .chestLid.chestLid {
+  position: absolute;
+  left: 0;
+  width: var(--w);
+  transform-style: preserve-3d;
+}
+:global(.app.outpost) .chestBody.chestBody {
+  top: 0;
+  height: var(--h);
+}
+:global(.app.outpost) .chestLid.chestLid {
+  top: calc(var(--l) * -1);
+  height: var(--l);
+  transform-origin: 50% 100% calc(var(--d) / -2);
+  transition: transform 700ms var(--ease-spring);
+}
+:global(.app.outpost) .chest.chest[data-open] .chestLid {
+  transform: rotateX(112deg);
+}
+:global(.app.outpost) .chest.chest span {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--wood-dark);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 11%,
+      var(--metal) 11% 17%,
+      transparent 17% 83%,
+      var(--metal) 83% 89%,
+      transparent 89%
+    ),
+    repeating-linear-gradient(180deg, var(--wood) 0 18px, var(--wood-dark) 18px 20px);
+}
+:global(.app.outpost) .chest.chest [data-face="front"],
+:global(.app.outpost) .chest.chest [data-face="back"] {
+  inset: 0;
+}
+:global(.app.outpost) .chest.chest [data-face="front"] {
+  transform: translateZ(calc(var(--d) / 2));
+}
+:global(.app.outpost) .chest.chest [data-face="back"] {
+  transform: rotateY(180deg) translateZ(calc(var(--d) / 2));
+}
+:global(.app.outpost) .chest.chest :is([data-face="left"], [data-face="right"]) {
+  top: 0;
+  left: calc((var(--w) - var(--d)) / 2);
+  width: var(--d);
+  height: 100%;
+}
+:global(.app.outpost) .chest.chest [data-face="left"] {
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2));
+}
+:global(.app.outpost) .chest.chest [data-face="right"] {
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+}
+:global(.app.outpost) .chest.chest :is([data-face="bottom"], [data-face="inside"]) {
+  left: 0;
+  top: calc((var(--h) - var(--d)) / 2);
+  width: var(--w);
+  height: var(--d);
+}
+:global(.app.outpost) .chest.chest [data-face="bottom"] {
+  transform: rotateX(-90deg) translateZ(calc(var(--h) / 2));
+}
+/* The open mouth: dark wood lit from inside by the silver */
+:global(.app.outpost) .chest.chest [data-face="inside"] {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--warning) 70%, var(--hi)),
+    var(--wood-dark)
+  );
+  transform: rotateX(90deg) translateZ(calc(var(--h) / 2 - 2px));
+}
+:global(.app.outpost) .chestLid.chestLid :is([data-face="left"], [data-face="right"]) {
+  height: var(--l);
+}
+:global(.app.outpost) .chestLid.chestLid [data-face="top"] {
+  left: 0;
+  top: calc((var(--l) - var(--d)) / 2);
+  width: var(--w);
+  height: var(--d);
+  transform: rotateX(90deg) translateZ(calc(var(--l) / 2));
+}
+/* The lock plate on the lid's front */
+:global(.app.outpost) .chestLid.chestLid [data-face="front"]::after {
+  content: "";
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  width: 26px;
+  height: 30px;
+  margin-left: -13px;
+  border-radius: 4px 4px 9px 9px;
+  background:
+    radial-gradient(circle at 50% 42%, var(--illustration-bg) 0 3px, transparent 3.5px),
+    linear-gradient(180deg, var(--hi), var(--metal));
+  box-shadow: 0 2px 4px color-mix(in srgb, var(--illustration-bg) 60%, transparent);
+}
+:global(.app.outpost) .revealTotal.revealTotal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font: 800 38px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .revealTotal.revealTotal img {
+  width: 40px;
+  height: 40px;
+}
+:global(.app.outpost) .revealTotal.revealTotal small {
+  color: var(--muted);
+  font: 600 14px/1 var(--font-ui);
+}
+:global(.app.outpost) .payoutGrid.payoutGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .payoutCard.payoutCard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "face name"
+    "face silver";
+  align-items: center;
+  gap: 2px var(--space-3);
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  transition:
+    transform 380ms var(--ease-out-expo),
+    border-color 380ms var(--ease-out-expo);
+}
+:global(.app.outpost) .payoutCard.payoutCard[data-lit] {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--well-border));
+  transform: scale(1.022);
+}
+:global(.app.outpost) .payoutCard.payoutCard > :first-child {
+  grid-area: face;
+}
+:global(.app.outpost) .potMark.potMark {
+  width: 48px;
+  height: 48px;
+}
+:global(.app.outpost) .payoutName.payoutName {
+  display: grid;
+  grid-area: name;
+  min-width: 0;
+}
+:global(.app.outpost) .payoutName.payoutName strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:global(.app.outpost) .payoutName.payoutName small {
+  color: var(--muted);
+  font-size: 12px;
+}
+:global(.app.outpost) .payoutSilver.payoutSilver {
+  display: inline-flex;
+  grid-area: silver;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-ink);
+  font: 700 18px/1.1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .payoutSilver.payoutSilver img {
+  width: 22px;
+  height: 22px;
+}
+:global(.app.outpost) .coinLayer.coinLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: visible;
+  pointer-events: none;
+}
+:global(.app.outpost) .flyingCoin.flyingCoin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  background: url("/albion/icons/silver-64w.webp") center / contain no-repeat;
+  filter: drop-shadow(0 4px 6px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
+  will-change: transform;
+}
+:global(.app.outpost) .revealActions.revealActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+@media (max-width: 1000px) {
+  :global(.app.outpost) .columns.columns,
+  :global(.app.outpost) .arena.arena {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .treasury.treasury {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .purse.purse {
+    padding: var(--space-3) var(--space-4);
+  }
+  :global(.app.outpost) .purse.purse > img {
+    width: 48px;
+    height: 48px;
+  }
+  :global(.app.outpost) .holder.holder {
+    gap: var(--space-2);
+    padding: 8px 10px;
+  }
+  :global(.app.outpost) .rollBody.rollBody {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  :global(.app.outpost) .rollBody.rollBody > ul {
+    justify-self: stretch;
+  }
+  :global(.app.outpost) .chestStage.chestStage {
+    height: 180px;
+  }
+  :global(.app.outpost) .chest.chest {
+    scale: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(.app.outpost) .chestLid.chestLid,
+  :global(.app.outpost) .chestGlow.chestGlow,
+  :global(.app.outpost) .payoutCard.payoutCard {
+    transition: none;
+  }
+}

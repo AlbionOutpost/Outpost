@@ -6,6 +6,10 @@ import { z } from "zod";
  * Outcomes are drawn only on the server (`economy-service.ts`), inside the write transaction.
  */
 
+/** Said wherever silver is shown: the ledger is a record, not a bank. */
+export const bookkeepingLine =
+  "In-game silver bookkeeping only: Outpost holds no money, sells nothing and moves no silver in game.";
+
 /** One wallet entry or stake: whole silver, at most a trillion (far above any Albion haul). */
 export const maxSilver = 1_000_000_000_000;
 export const silverAmount = z.number().int().min(1).max(maxSilver);
