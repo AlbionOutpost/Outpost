@@ -210,8 +210,9 @@ test("renamed guides answer their old URLs with a permanent redirect, and every 
   await expect(page.locator("h1")).toHaveText("Making silver");
   const contents = page.getByRole("navigation", { name: "Guide contents" });
   await expect(contents.locator('[aria-current="location"]')).toHaveText("Use the Journal first");
+  // offsetTop is relative to the reading page, not the document, so scroll the section itself
   await page.evaluate(() =>
-    scrollTo(0, document.getElementById("section-sell-with-orders")!.offsetTop),
+    document.getElementById("section-sell-with-orders")!.scrollIntoView({ block: "start" }),
   );
   await expect(contents.locator('[aria-current="location"]')).toHaveText("Sell with orders");
   await expect(page.locator("[data-guide-section]")).toHaveCount(9);

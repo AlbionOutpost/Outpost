@@ -72,7 +72,8 @@ export function GrindGuideDirectory({
   const matches = guides.filter(
     (g) =>
       (!category || g.category === category) &&
-      `${g.title} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
+      // The long search title holds the terms players type (e.g. "price age")
+      `${g.title} ${g.seoTitle ?? ""} ${g.summary} ${g.category}`.toLowerCase().includes(needle),
   );
   // One grid, newest first; the topic pills and the search narrow it
   const listed = matches.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt));

@@ -156,7 +156,12 @@ export const GET = apiHandler("search.global", async (req: NextRequest) => {
   }));
   const guideRows: Row[] = best(
     guides,
-    (g) => Math.max(matchScore(g.title, q), matchScore(g.summary, q) / 2),
+    (g) =>
+      Math.max(
+        matchScore(g.title, q),
+        matchScore(g.seoTitle ?? "", q),
+        matchScore(g.summary, q) / 2,
+      ),
     4,
   ).map((g) => ({
     category: "Guides",
