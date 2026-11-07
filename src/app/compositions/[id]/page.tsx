@@ -12,7 +12,6 @@ import { HttpError } from "@/lib/api-errors";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/build-region-link";
 import { CompositionActions, CompositionView } from "@/components/composition-view";
-import { CompNextSteps } from "@/components/comp-next-steps";
 import styles from "@/components/comps.module.css";
 export async function generateMetadata({
   params,
@@ -83,15 +82,6 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
       </WorkspaceHeading>
       <CompositionView id={id} composition={composition} editable={editable} dropped={dropped} />
       <CommunityPanel kind="composition" id={id} />
-      <CompNextSteps
-        show={["builds", "library", "teams"]}
-        title={
-          <>
-            Fill every <em>slot</em>
-          </>
-        }
-        line="Find a build for an open slot, compare with recorded comps, or share this one with your Team."
-      />
     </div>
   );
 }

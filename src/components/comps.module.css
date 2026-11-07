@@ -9,6 +9,13 @@
   max-width: var(--workspace-width);
   margin-inline: auto;
 }
+/* Comp pages fit one screen: the masthead keeps its painting but drops the 300px band */
+:global(.app.outpost) :is(.page, .workspace) > :global(.workspace-identity)[data-scene] {
+  min-height: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+}
 .section {
   margin-top: var(--space-6);
 }
@@ -37,6 +44,26 @@
   align-items: end;
   gap: var(--space-3);
   padding: var(--space-5) var(--space-6);
+}
+/* The comps list's one toolbar row: the source switch, then search, activity and Find */
+:global(.app.outpost) .toolbar.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-3) var(--space-4);
+}
+:global(.app.outpost) .toolbar > .filters.filters {
+  flex: 1 1 520px;
+  padding: 0;
+}
+.count {
+  margin: 0 0 var(--space-3);
+  color: var(--muted);
+  font-size: 13px;
+}
+.count strong {
+  color: var(--text);
 }
 :global(.app.outpost) .filters.hasSelect {
   grid-template-columns: minmax(0, 1fr) 220px auto;
@@ -475,8 +502,15 @@
   align-items: center;
   gap: var(--space-2);
 }
+/* The chips and the way back share one row under the title */
 :global(.app.outpost) .mastChips.mastChips {
+  display: inline-flex;
   flex-wrap: wrap;
+  margin-right: var(--space-3);
+  vertical-align: middle;
+}
+:global(.app.outpost) .mastChips + :global(.masthead-back) {
+  vertical-align: middle;
 }
 .notice {
   margin-bottom: var(--space-4);
@@ -1201,15 +1235,16 @@
   }
 }
 
-/* The list's source (All · Player comps · Group Builds · My comps) over the results; on "All"
-   each source keeps its own heading */
-.sources {
-  margin-bottom: var(--space-3);
+/* The list's source (All · Player comps · Group Builds) leads the toolbar; on "All" each source
+   keeps its own heading */
+:global(.app.outpost) .toolbar > .sources {
+  flex: none;
+  margin: 0;
 }
 .sourceGroup + .sourceGroup {
   margin-top: var(--space-8);
 }
-.sourceGroup > h3 {
+.sourceGroup > h2 {
   margin: 0 0 var(--space-3);
   color: var(--text);
   font: 600 15px/1.3 var(--font-ui);

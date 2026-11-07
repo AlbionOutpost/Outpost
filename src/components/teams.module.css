@@ -7,6 +7,13 @@
   max-width: var(--page-width);
   margin-inline: auto;
 }
+/* Fits one screen: the masthead keeps its painting but drops the 300px band */
+:global(.app.outpost) .page > :global(.workspace-identity)[data-scene] {
+  min-height: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+}
 
 /* ---------- Identity ---------- */
 /* The crest: the team's painted shield with its painted symbol on it, a little above centre
@@ -158,8 +165,48 @@
   margin: 0;
   padding: var(--space-6);
 }
-:global(.app.outpost) .panel.panel.panel > * {
+/* Not the panel's dialogs: a modal keeps the margin that centres it */
+:global(.app.outpost) .panel.panel.panel > :not(dialog) {
   margin: 0;
+}
+
+/* ---------- Dialogs (roles, member roles, events) ---------- */
+/* A centred modal on desktop: 560px, scrolling inside, its actions in a sticky footer; a bottom
+   sheet on phones. The backdrop (globals) covers the viewport. */
+:global(.app.outpost) dialog.dialog.dialog:modal {
+  inset: 0;
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(86dvh, 820px);
+  margin: auto;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+:global(.app.outpost) dialog.dialog.dialog > :global(.editor-dialog-heading) {
+  top: 0;
+  margin-bottom: var(--space-4);
+  padding: var(--space-5) 0 var(--space-4);
+}
+:global(.app.outpost) dialog.dialog.dialog form > div:last-of-type {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  margin-top: 0;
+  padding: var(--space-4) 0 var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) dialog.dialog.dialog:modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 90dvh;
+    margin: auto 0 0;
+    padding: 0 var(--space-4);
+    border-width: 1px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
 }
 :global(.app.outpost) .list.list {
   display: grid;
@@ -1441,6 +1488,9 @@
 }
 :global(.app.outpost) .chips + .plays.plays {
   margin-top: var(--space-2);
+}
+:global(.app.outpost) .chips > .plays.plays {
+  gap: inherit;
 }
 @media (max-width: 900px) {
   :global(.app.outpost) .home.home {

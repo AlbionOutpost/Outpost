@@ -1,7 +1,7 @@
 /* Build editor (/builds/new, /builds/[id]/edit), in the build detail's panel language: one
    command panel holding Save and Preview (they dock to the bottom once it scrolls away), pill
    tabs, the shared loadout board beside the slot inspector, the detail page's ability tiles and
-   cost panel, a quiet delete row and the closing band. */
+   cost panel, a quiet delete row and, for guests, the sign-in band. */
 .app.outpost .build-editor-page {
   max-width: var(--workspace-width);
   margin: 0 auto;
@@ -925,7 +925,7 @@ body:has(.editor-save-bar.is-docked) {
   font: 650 15px/1.3 var(--font-ui);
 }
 .app.outpost .focused-build-editor > .builds-next-step.raised {
-  margin: 70px 0 72px;
+  margin: var(--space-8) 0 var(--space-10);
 }
 
 /* Preview: the build window as the lists show it beside its cost, then the detail view */

@@ -232,6 +232,10 @@ export const publicPages: Record<string, [string, string]> = {
     "Albion Online builds by activity",
     "Find Albion Online builds for Solo Mists, Hellgates, Avalonian Dungeons, small scale and other activities.",
   ],
+  "/compositions/activities": [
+    "Albion Online comps by activity",
+    "Find Albion Online party comps for ZvZ, Hellgates, Avalonian Dungeons, small scale and other activities: player comps and recorded group builds.",
+  ],
   "/compositions": [
     "Albion Online team compositions",
     "Browse Albion Online party compositions: comps players shared on Outpost and archived group builds, with member loadouts, roles and equipment.",

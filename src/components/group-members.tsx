@@ -191,6 +191,7 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         open={assigning !== null}
         title={`Roles for ${assigning?.name ?? "member"}`}
         onClose={() => setAssigning(null)}
+        className={styles.dialog}
       >
         {assigning && (
           <MemberRolesEditor ctx={ctx} member={assigning} onDone={() => setAssigning(null)} />

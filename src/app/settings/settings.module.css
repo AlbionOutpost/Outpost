@@ -1,14 +1,41 @@
-/* Account settings: one column of groups, each its name and line on the left and its controls
-   in a panel on the right, on a 1040px measure. Closing the account sits last, under a rule. */
+/* Account settings fit one screen: on wide screens Profile & preferences fills the left column
+   and Sign-in & data, staff tools and closing the account stack on the right, each group its
+   name and line over its panel. Narrower, one column of groups, the name beside the panel to
+   900px. Closing the account sits last, under a rule. */
 :global(.app.outpost) .page.page {
   width: 100%;
   max-width: var(--page-width);
   margin: 0 auto 72px;
 }
+/* Fits one screen: the masthead keeps its painting but drops the 300px band */
+:global(.app.outpost) .page > :global(.workspace-identity)[data-scene] {
+  min-height: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+}
 .groups {
   display: grid;
   gap: 40px;
   max-width: 1040px;
+}
+@media (min-width: 1101px) {
+  .groups {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--space-6) var(--space-8);
+    max-width: none;
+  }
+  .groups > .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+  .groups > .group:first-child {
+    grid-row: span 3;
+  }
+  .groups > .group[data-danger] {
+    padding-top: var(--space-6);
+  }
 }
 .group {
   display: grid;

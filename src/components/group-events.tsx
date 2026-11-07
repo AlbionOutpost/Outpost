@@ -277,7 +277,7 @@ export function GroupEventDialog({
   onClose: () => void;
 }) {
   return (
-    <EditorDialog open={open} title="Create team event" onClose={onClose}>
+    <EditorDialog open={open} title="Create team event" onClose={onClose} className={styles.dialog}>
       <form
         className={styles.form}
         onSubmit={async (e) => {

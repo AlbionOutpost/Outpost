@@ -96,6 +96,7 @@ const footerColumns = [
       ["/builds/activities", "Builds by activity"],
       ["/builds", "All builds"],
       ["/builds/new", "Create a build"],
+      ["/compositions/activities", "Comps by activity"],
       ["/compositions", "All comps"],
       ["/compositions/new", "Plan a comp"],
     ],
