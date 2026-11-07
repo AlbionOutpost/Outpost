@@ -1031,6 +1031,9 @@
   .app.outpost .landing-stats > div:nth-child(4) {
     --enter: 720ms;
   }
+  .app.outpost .landing-stats > div:nth-child(5) {
+    --enter: 780ms;
+  }
   .app.outpost .landing-window {
     animation: landing-deal 1200ms var(--ease-out-expo) both;
     animation-delay: calc(560ms + var(--deal, 0) * 110ms);
