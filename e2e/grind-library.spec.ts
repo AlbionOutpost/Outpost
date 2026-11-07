@@ -59,7 +59,7 @@ test("restored guides are readable documents and compositions retain every membe
     .getByRole("link")
     .filter({
       has: page.getByRole("heading", {
-        name: "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
+        name: "Leveling fishing",
         exact: true,
       }),
     })

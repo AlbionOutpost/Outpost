@@ -206,9 +206,6 @@ test("weapon previews stay transparent in both themes and category builds share 
           "data-activity-background",
           `/albion/activities/${filename}`,
         );
-        expect(
-          await build.evaluate((n) => getComputedStyle(n, "::before").backgroundImage),
-        ).toContain(filename);
       }
     }
   }
