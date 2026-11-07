@@ -576,14 +576,6 @@
   filter: drop-shadow(0 4px 10px #000a)
     drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
 }
-.app.outpost .workspace-emblem > img.account-emblem {
-  width: 60px;
-  height: 60px;
-  border-radius: 14px;
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent),
-    0 8px 20px -6px #000c;
-}
 .app.outpost .workspace-identity-copy {
   flex: 1;
   min-width: 0;
@@ -657,7 +649,7 @@
     height: 48px;
     border-radius: 12px;
   }
-  .app.outpost .workspace-emblem > :is(img.painted-emblem, img.account-emblem) {
+  .app.outpost .workspace-emblem > img.painted-emblem {
     width: 48px;
     height: 48px;
   }
