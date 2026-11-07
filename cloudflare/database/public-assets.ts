@@ -36,6 +36,13 @@ export async function publicLibraryFind(kind: string, keys: string[]) {
   const rows = (await readPublicAsset(`${kind}-index.json`)) as Row[];
   return details(rows.filter((r) => keys.includes(r.id ?? "") || keys.includes(r.slug ?? "")));
 }
+/** Rows per category from the small public index, for activity counts without the full archive. */
+export async function publicLibraryCategoryCounts(kind: "builds" | "compositions") {
+  const rows = (await readPublicAsset(`${kind}-index.json`)) as { category: string }[];
+  const counts: Record<string, number> = {};
+  for (const row of rows) counts[row.category] = (counts[row.category] ?? 0) + 1;
+  return counts;
+}
 export async function publicLibraryPage(kind: string, input: LibraryQuery) {
   if (!["builds", "compositions"].includes(kind)) throw Error("Invalid public collection");
   const rows = (await readPublicAsset(`${kind}-index.json`)) as (Row & {
