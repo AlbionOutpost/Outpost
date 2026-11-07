@@ -96,10 +96,10 @@ test("market sort and city filtering retain correct buy and sell columns", async
   await expect(page.locator(".market-board tbody tr").first()).toContainText("Lymhurst");
   await page.getByLabel("Market city", { exact: true }).selectOption("Caerleon");
   await expect(page.locator(".market-board tbody tr")).toHaveCount(1);
-  await expectResultText(page.locator(".market-board tbody tr td.numeric > span").nth(0), "100", {
+  await expectResultText(page.locator(".market-board tbody tr td.numeric .silver").nth(0), "100", {
     exact: true,
   });
-  await expectResultText(page.locator(".market-board tbody tr td.numeric > span").nth(1), "50", {
+  await expectResultText(page.locator(".market-board tbody tr td.numeric .silver").nth(1), "50", {
     exact: true,
   });
   // Each order shows its age; the exact source time stays on the <time> element.

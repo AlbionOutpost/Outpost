@@ -12,18 +12,31 @@
   gap: 26px;
   overflow-wrap: break-word;
 }
-/* Recipe and "used in" share a row; everything else spans it (or a lone one does) */
-.app.outpost .item-metadata-detail > :not(.item-supported-recipe, .item-used-in),
-.app.outpost .item-metadata-detail > .item-supported-recipe:not(:has(+ .item-used-in)),
-.app.outpost .item-metadata-detail > .item-used-in:not(.item-supported-recipe + .item-used-in) {
+/* Prices lead the left column with abilities, the recipe and "used in" stacked beside them, so
+   the price and what the item does share the first screen; tiers and builds span the page. */
+.app.outpost .item-metadata-detail > * {
   grid-column: 1 / -1;
+}
+@media (min-width: 981px) {
+  .app.outpost .item-metadata-detail.item-metadata-detail {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-auto-flow: row dense;
+    gap: var(--space-5);
+  }
+  .app.outpost .item-metadata-detail > .item-price-panel.item-price-panel {
+    grid-row: span 3;
+    grid-column: 1;
+  }
+  .app.outpost .item-metadata-detail > :is(.item-abilities, .item-supported-recipe, .item-used-in) {
+    grid-column: 2;
+  }
 }
 .app.outpost .item-panel {
   display: grid;
   gap: var(--space-4);
   min-width: 0;
   margin: 0;
-  padding: var(--space-6);
+  padding: var(--space-5);
 }
 .app.outpost .item-panel > div:first-child {
   margin-bottom: 0;
@@ -333,6 +346,9 @@
   }
   .app.outpost .item-panel {
     padding: var(--space-4);
+  }
+  .app.outpost .item-panel.item-price-panel {
+    padding-inline: var(--space-3);
   }
   .app.outpost .item-ability-column {
     grid-template-columns: minmax(0, 1fr);

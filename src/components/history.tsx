@@ -1,5 +1,6 @@
 "use client";
 import "./history.css";
+import "./market-table.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
@@ -351,25 +352,35 @@ export function History({
       {visible.length > 0 && (
         <Disclosure summary={`View ${visible.length} source observations`}>
           <div
-            className="table-scroll history-observations"
+            className="table-scroll mx-table-well history-observations"
             tabIndex={0}
             role="region"
             aria-label="Scrollable historical observations"
           >
-            <table>
+            <table className="mx-table is-compact">
               <thead>
                 <tr>
-                  <th>Observed at (UTC)</th>
-                  <th className="numeric">Silver</th>
-                  {kind === "history" && <th className="numeric">Item count</th>}
+                  <th scope="col">Observed at (UTC)</th>
+                  <th scope="col" className="numeric">
+                    Silver
+                  </th>
+                  {kind === "history" && (
+                    <th scope="col" className="numeric">
+                      Item count
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {visible.map((p, i) => (
                   <tr key={i}>
-                    <td>{p.timestamp.replace("T", " ")}</td>
-                    <td className="numeric">{p.price.toLocaleString()}</td>
-                    {kind === "history" && <td className="numeric">{p.count?.toLocaleString()}</td>}
+                    <td className="is-text">{p.timestamp.replace("T", " ")}</td>
+                    <td className="numeric">{p.price.toLocaleString("en-US")}</td>
+                    {kind === "history" && (
+                      <td className="numeric">
+                        {p.count == null ? <Unavailable /> : p.count.toLocaleString("en-US")}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

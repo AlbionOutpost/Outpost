@@ -2,6 +2,7 @@ import "@/app/build-styles";
 import { itemShareMetadata } from "@/lib/seo-public";
 import type { SeoQuery } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import marketPage from "@/components/market-page.module.css";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import BackLink from "@/components/build-region-link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -147,7 +148,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
       <span className="item-inline-name">{children}</span>
     );
   return (
-    <div className="item-reference-page">
+    <div className={`item-reference-page ${marketPage.page}`}>
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },

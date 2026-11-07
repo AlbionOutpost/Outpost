@@ -2,6 +2,8 @@
    The chart keeps its axes when there is nothing to draw and says why inside the plot. */
 
 .app.outpost .history-panel {
+  /* The plot's height; Market Explorer ties it to the viewport */
+  --chart-h: 220px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
@@ -160,7 +162,7 @@
   flex-direction: column;
   justify-content: space-between;
   /* Matches the plot's value band (30→175 of 210) */
-  padding: calc(220px * 26 / 210) 0 calc(220px * 33 / 210);
+  padding: calc(var(--chart-h) * 26 / 210) 0 calc(var(--chart-h) * 33 / 210);
   min-width: 44px;
   color: var(--muted);
   font: 500 12px/1 var(--font-data);
@@ -173,7 +175,7 @@
 .app.outpost .history-panel .price-chart {
   display: block;
   width: 100%;
-  height: 220px;
+  height: var(--chart-h);
   max-height: none;
   margin: 0;
   color: var(--accent);
@@ -238,10 +240,6 @@
   max-height: 320px;
   overflow: auto;
 }
-.app.outpost .history-panel .history-observations table {
-  width: 100%;
-  font: 500 13px/1.3 var(--font-data);
-}
 .app.outpost .history-panel .history-source {
   margin: 0;
   color: var(--muted);
@@ -273,13 +271,10 @@
   .app.outpost .history-panel .history-figures b {
     font-size: 24px;
   }
-  .app.outpost .history-panel .price-chart {
-    height: 180px;
+  .app.outpost .history-panel {
+    --chart-h: 180px;
   }
   .app.outpost .history-panel .chart-range > span:not(:first-child, :last-child) {
     display: none;
-  }
-  .app.outpost .history-panel .reference-price-axis {
-    padding: calc(180px * 26 / 210) 0 calc(180px * 33 / 210);
   }
 }

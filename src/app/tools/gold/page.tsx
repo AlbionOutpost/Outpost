@@ -3,12 +3,13 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { History } from "@/components/history";
 import { MarketNextSteps } from "@/components/market-next-steps";
 import styles from "./gold.module.css";
+import marketPage from "@/components/market-page.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/gold", await searchParams);
 }
 export default function Page() {
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${marketPage.page}`}>
       <WorkspaceHeading
         glyph="history"
         scene="market"

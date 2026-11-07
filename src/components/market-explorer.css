@@ -3,27 +3,56 @@
    green / loss red with a sign, 12px floor. Framed panels stay dark in both themes, so the
    tokens below read the same in light mode. */
 
-/* Layout: a sticky search rail beside the research column */
+/* Layout: one screen. A sticky search rail, the desk (item hero over City orders) and, from
+   1280px, a side column with Price history over Keep researching, so the search, the answer,
+   every city and the history share the first screen at 1440×900. Below 1280 the sections
+   stack in reading order; phones fold the rail into one bar. */
 .app.outpost .mx {
   display: grid;
-  grid-template-columns: minmax(280px, 312px) minmax(0, 1fr);
-  gap: 26px;
+  grid-template-columns: 256px minmax(0, 1fr);
+  gap: var(--space-5);
   align-items: start;
 }
 .app.outpost .mx-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 26px;
+  gap: var(--space-5);
+  align-items: start;
   min-width: 0;
 }
 .app.outpost .mx-rail {
   position: sticky;
-  top: 96px;
-  padding: var(--space-5);
+  top: 88px;
+  padding: var(--space-4);
+}
+.app.outpost .mx-rail .button.primary {
+  color: var(--illustration-bg);
 }
 .app.outpost .mx :is(.mx-hero, .mx-board, .mx-history, .mx-saved) {
   min-width: 0;
-  padding: var(--space-6);
+  padding: var(--space-5);
+}
+.app.outpost .mx :is(.mx-hero, .mx-board) {
+  padding-block: var(--space-4);
+}
+@media (min-width: 1280px) {
+  .app.outpost .mx-main {
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 23vw, 420px);
+  }
+  .app.outpost .mx-main > :first-child {
+    grid-row: span 2;
+  }
+  .app.outpost .mx-main > .mx-saved {
+    grid-column: 2;
+  }
+  /* The chart grows with the screen instead of pushing the page down */
+  .app.outpost .mx-history .history-panel {
+    --chart-h: clamp(140px, calc(100vh - 740px), 300px);
+  }
+  /* A side-column chart labels its first, middle and last day */
+  .app.outpost .mx-history .chart-range > span:is(:nth-child(2), :nth-child(4)) {
+    display: none;
+  }
 }
 .app.outpost .mx .market-hydration-guard {
   display: grid;
@@ -39,8 +68,6 @@
   .mx
   :is(
     .mx-item-well,
-    .mx-figures > div,
-    .mx-table-well,
     .mx-inspector,
     .mx-disclosure,
     .market-quality-availability,
@@ -55,37 +82,10 @@
   box-shadow: inset 0 1px 3px #0009;
 }
 
-/* Section heads: one title, one muted line, controls on the right */
-.app.outpost .mx-section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-4);
-}
-.app.outpost .mx-section-head h2 {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  font: 650 18px/1.25 var(--font-ui);
-  letter-spacing: 0;
-  text-transform: none;
-}
-.app.outpost .mx-section-head h2 svg {
-  color: var(--accent-ink);
-}
-.app.outpost .mx-section-head p {
-  margin: var(--space-1) 0 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
 /* Rail: fields */
 .app.outpost .mx-form {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 .app.outpost .mx-field {
   margin: 0;
@@ -112,7 +112,7 @@
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  min-height: 44px;
+  min-height: 40px;
 }
 .app.outpost .mx-refresh[disabled] svg {
   animation: mx-spin 900ms linear infinite;
@@ -188,8 +188,8 @@
 /* Disclosures: well rows with a turning chevron */
 .app.outpost .mx-disclosures {
   display: grid;
-  gap: var(--space-2);
-  padding-top: var(--space-4);
+  gap: 6px;
+  padding-top: var(--space-3);
   border-top: 1px solid var(--well-border);
 }
 .app.outpost .mx-disclosure {
@@ -200,7 +200,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 40px;
+  min-height: 36px;
   padding: 0 var(--space-3);
   color: var(--text);
   font: 600 13px/1.2 var(--font-ui);
@@ -285,7 +285,7 @@
 .app.outpost .mx-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-3);
 }
 .app.outpost .mx-identity {
   display: flex;
@@ -297,8 +297,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   background:
     radial-gradient(
       circle at 50% 55%,
@@ -308,16 +308,16 @@
     var(--well);
 }
 .app.outpost .mx-item-well img {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
 }
 .app.outpost .mx-identity > div {
   min-width: 0;
 }
 .app.outpost .mx-identity h2 {
-  margin: 0 0 var(--space-2);
-  font: 700 24px/1.15 var(--font-ui);
-  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  font: 800 26px/1.05 var(--font-display);
+  letter-spacing: 0;
   overflow-wrap: anywhere;
 }
 .app.outpost .mx-chips {
@@ -342,18 +342,27 @@
   color: var(--accent-ink);
   font: 800 13px/1 var(--font-display);
 }
+/* Three figures in one well, split by hairlines */
 .app.outpost .mx-figures {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: 0;
   margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
 }
 .app.outpost .mx-figures > div {
   display: grid;
   align-content: start;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
-  padding: var(--space-3) var(--space-4);
+  padding: 10px var(--space-4);
+}
+.app.outpost .mx-figures > div + div {
+  border-left: 1px solid var(--well-border);
 }
 .app.outpost .mx-figures dt {
   color: var(--muted);
@@ -362,14 +371,14 @@
 .app.outpost .mx-figures dd {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 6px;
+  gap: 4px;
   margin: 0;
 }
 .app.outpost .mx-figures b {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font: 800 28px/1 var(--font-display);
+  font: 800 24px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 .app.outpost .mx-figures b .silver {
@@ -411,194 +420,16 @@
   display: none;
 }
 
-/* Freshness and best-order tags (text, never colour alone) */
-.app.outpost .mx :is(.mx-stale, .mx-best) {
+/* The Stale chip on a headline figure (text, never colour alone) */
+.app.outpost .mx .mx-stale {
   display: inline-flex;
   align-items: center;
   min-height: 20px;
   padding: 0 7px;
-  border-radius: 999px;
-  font: 700 12px/1 var(--font-ui);
-}
-.app.outpost .mx .mx-stale {
   border: 1px solid color-mix(in srgb, var(--warning) 50%, transparent);
+  border-radius: 999px;
   color: var(--warning);
-}
-.app.outpost .mx .mx-best {
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-
-/* Sort and range segments */
-/* City orders table */
-.app.outpost .mx-table-well {
-  overflow-x: auto;
-  container-type: inline-size;
-}
-.app.outpost .mx-table {
-  width: 100%;
-  margin: 0;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-variant-numeric: tabular-nums;
-}
-.app.outpost .mx-table :is(th, td) {
-  padding: 10px var(--space-4);
-  border: 0;
-  border-top: 1px solid var(--well-border);
-  background: none;
-  text-align: right;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-.app.outpost .mx-table thead th {
-  position: static;
-  height: 38px;
-  padding-block: 0;
-  border-top: 0;
-  color: var(--muted);
-  font: 600 12px/1 var(--font-ui);
-  letter-spacing: 0;
-  text-transform: none;
-}
-.app.outpost .mx-table :is(th, td):first-child {
-  width: 99%;
-  text-align: left;
-}
-.app.outpost .mx-table tbody tr {
-  transition: background var(--motion-fast) var(--ease-out);
-}
-.app.outpost .mx-table tbody tr:hover {
-  background: color-mix(in srgb, var(--edge-light) 55%, transparent);
-}
-.app.outpost .mx-table tbody tr.selected-market-row {
-  background: var(--accent-wash);
-  box-shadow: inset 3px 0 0 var(--accent);
-}
-.app.outpost .mx-table td {
-  font: 600 15px/1.2 var(--font-data);
-}
-.app.outpost .mx-table td > .silver {
-  justify-content: flex-end;
-  gap: 5px;
-  font: inherit;
-}
-.app.outpost .mx-table td > .silver img {
-  width: 14px;
-  height: 14px;
-}
-.app.outpost .mx-table .market-inline-time {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 4px 6px;
-  margin-top: 5px;
-  color: var(--muted);
-  font: 500 12px/1.2 var(--font-ui);
-}
-/* The age and Stale chip keep one line beside each other; only the Lowest/Highest tag
-   moves above them when the column is narrow */
-@media (min-width: 981px) {
-  .app.outpost .mx-table td.numeric:not(.mx-spread-col) {
-    min-width: 148px;
-  }
-}
-.app.outpost .mx-table .market-price-missing {
-  color: var(--muted);
-}
-.app.outpost .mx-table .is-gain {
-  color: var(--success);
-}
-.app.outpost .mx-table .is-loss {
-  color: var(--error);
-}
-.app.outpost .mx .market-row-select {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 36px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--text);
-  font: 600 14px/1.2 var(--font-ui);
-  text-align: left;
-  cursor: pointer;
-}
-.app.outpost .mx .market-row-select:disabled {
-  cursor: default;
-  color: var(--secondary);
-}
-.app.outpost .mx .market-row-select:hover:not(:disabled) {
-  color: var(--accent-ink);
-}
-.app.outpost .mx .market-row-select[aria-pressed="true"] {
-  color: var(--accent-ink);
-}
-/* Narrow tables (phones): each city becomes a two-line row — the city, then its sell and buy
-   orders side by side under their own labels. The spread and coins drop; headers stay for
-   assistive tech. */
-@container (max-width: 520px) {
-  .app.outpost .mx-table thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-  .app.outpost .mx-table .mx-spread-col {
-    display: none;
-  }
-  .app.outpost .mx-table tbody tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 6px var(--space-3);
-    padding: var(--space-3);
-    border-top: 1px solid var(--well-border);
-  }
-  .app.outpost .mx-table tbody tr:first-child {
-    border-top: 0;
-  }
-  .app.outpost .mx-table tbody :is(th, td) {
-    width: auto;
-    padding: 0;
-    border: 0;
-    white-space: normal;
-  }
-  .app.outpost .mx-table tbody th {
-    grid-column: 1 / -1;
-  }
-  .app.outpost .mx .market-row-select {
-    min-height: 32px;
-  }
-  .app.outpost .mx-table tbody td {
-    display: grid;
-    align-content: start;
-    gap: 4px;
-    font-size: 15px;
-  }
-  .app.outpost .mx-table tbody td:nth-child(2) {
-    justify-items: start;
-    text-align: left;
-  }
-  .app.outpost .mx-table tbody td::before {
-    content: attr(data-label);
-    color: var(--muted);
-    font: 600 12px/1.2 var(--font-ui);
-  }
-  .app.outpost .mx-table tbody td:nth-child(2) .market-inline-time {
-    justify-content: flex-start;
-  }
-  .app.outpost .mx-table .market-inline-time {
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 0;
-  }
-  .app.outpost .mx-table td > .silver img {
-    display: none;
-  }
+  font: 700 12px/1 var(--font-ui);
 }
 
 /* Selected city */
@@ -811,6 +642,11 @@
 }
 
 /* Tablet and phone */
+@media (max-width: 1100px) {
+  .app.outpost .mx {
+    grid-template-columns: 232px minmax(0, 1fr);
+  }
+}
 @media (max-width: 980px) {
   .app.outpost .mx {
     grid-template-columns: minmax(0, 1fr);
@@ -819,43 +655,77 @@
     position: static;
   }
 }
+@media (min-width: 701px) and (max-width: 980px) {
+  /* The rail spreads into two columns above the desk */
+  .app.outpost .mx-rail .market-hydration-guard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--space-5);
+  }
+  .app.outpost .mx-disclosures {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .app.outpost :is(.mx-active-filters, .mx-note) {
+    grid-column: 1 / -1;
+  }
+}
 @media (max-width: 700px) {
   .app.outpost .mx,
   .app.outpost .mx-main {
-    gap: 22px;
+    gap: var(--space-4);
   }
-  .app.outpost .mx-rail,
   .app.outpost .mx :is(.mx-hero, .mx-board, .mx-history, .mx-saved) {
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-3);
+  }
+  .app.outpost .mx-rail {
+    padding: var(--space-2) var(--space-4);
+  }
+  .app.outpost .mx-rail[data-open] {
+    padding-bottom: var(--space-4);
+  }
+  .app.outpost .mx-disclosures {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app.outpost .mx-disclosure:is(:last-child, [open]) {
+    grid-column: 1 / -1;
   }
   .app.outpost .mx-item-well {
-    width: 72px;
-    height: 72px;
+    width: 52px;
+    height: 52px;
   }
   .app.outpost .mx-item-well img {
-    width: 60px;
-    height: 60px;
+    width: 44px;
+    height: 44px;
+  }
+  .app.outpost .mx-identity {
+    gap: var(--space-3);
   }
   .app.outpost .mx-identity h2 {
+    font-size: 22px;
+  }
+  .app.outpost .mx-figures > div {
+    padding: var(--space-2) 10px;
+  }
+  .app.outpost .mx-figures b {
     font-size: 20px;
   }
+  .app.outpost .mx-figures b .silver img {
+    width: 16px;
+    height: 16px;
+  }
+  .app.outpost .mx .reference-city-summary .numeric {
+    font-size: 20px;
+  }
+}
+@media (max-width: 380px) {
   .app.outpost .mx-figures {
     grid-template-columns: 1fr 1fr;
   }
   .app.outpost .mx-figures > div:last-child {
     grid-column: 1 / -1;
-  }
-  .app.outpost .mx-figures b {
-    font-size: 24px;
-  }
-  .app.outpost .mx-figures > div {
-    padding: var(--space-3);
-  }
-  .app.outpost .mx-section-head {
-    align-items: start;
-  }
-  .app.outpost .mx .reference-city-summary .numeric {
-    font-size: 20px;
+    border-top: 1px solid var(--well-border);
+    border-left: 0;
   }
 }
 @media (max-width: 700px) {
@@ -906,10 +776,5 @@
   }
   .app.outpost .mx-rail[data-open] .market-hydration-guard {
     margin-top: var(--space-4);
-  }
-}
-@media (max-width: 380px) {
-  .app.outpost .mx-field-pair {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
