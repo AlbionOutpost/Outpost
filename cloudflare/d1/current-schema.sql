@@ -137,6 +137,7 @@ CREATE TABLE "Group" (
     "crestColor" TEXT,
     "activities" TEXT NOT NULL DEFAULT '',
     "recruiting" BOOLEAN NOT NULL DEFAULT true,
+    "guildTaxPercent" REAL NOT NULL DEFAULT 0,
     "ownerId" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,

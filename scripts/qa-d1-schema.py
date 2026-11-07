@@ -325,6 +325,23 @@ def team_economy_upgrade():
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
 check("team economy upgrade gives Manage wallet to Manage loot holders only and enforces ledger, stake-free flip and roll rules", team_economy_upgrade)
 
+def team_guild_tax_upgrade():
+    db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', ("qa-tax-owner", "Tax owner"))
+    db.execute('INSERT INTO "Group"(id,name,slug,description,region,ownerId,updatedAt) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)', ("qa-tax-team", "Tax team", "qa-tax-team", "Kept", "europe", "qa-tax-owner"))
+    db.executescript((root / "cloudflare/d1/migrations/0014_team_guild_tax.sql").read_text())
+    # Existing teams keep everything and start with no tax.
+    assert db.execute('SELECT name, description, guildTaxPercent FROM "Group" WHERE id=?', ("qa-tax-team",)).fetchone() == ("Tax team", "Kept", 0)
+    for ok in (0, 0.1, 0.7, 12.5, 99.9, 100):
+        db.execute('UPDATE "Group" SET guildTaxPercent=? WHERE id=?', (ok, "qa-tax-team"))
+    for bad in (-0.1, 100.1, 12.34, 0.05):
+        denied('UPDATE "Group" SET guildTaxPercent=? WHERE id=?', (bad, "qa-tax-team"))
+    denied('INSERT INTO "Group"(id,name,slug,description,region,ownerId,updatedAt,guildTaxPercent) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP,?)', ("qa-tax-bad", "Bad", "qa-tax-bad", "", "europe", "qa-tax-owner", 101))
+    # Other columns still update freely.
+    db.execute('UPDATE "Group" SET name=? WHERE id=?', ("Tax team renamed", "qa-tax-team"))
+    db.execute('DELETE FROM "Group" WHERE id=?', ("qa-tax-team",))
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-tax-owner",))
+check("team guild tax upgrade keeps teams at 0% and enforces 0-100 with one decimal", team_guild_tax_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

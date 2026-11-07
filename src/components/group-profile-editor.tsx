@@ -5,6 +5,7 @@ import { decodeActivities } from "@/lib/groups/crest";
 import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
 import { WellSelect } from "./well-select";
+import { NumberField } from "./number-field";
 import { Field, TeamMark, joiningLabel, regionLabel, visibilityLabel } from "./group-parts";
 import { TeamIdentityFields, identityFromForm } from "./team-identity-fields";
 import styles from "./teams.module.css";
@@ -23,6 +24,7 @@ export function GroupProfileEditor({
     crestColor: string | null;
     activities: string;
     recruiting: boolean;
+    guildTaxPercent: number;
     updatedAt: string;
   };
 }) {
@@ -52,6 +54,9 @@ export function GroupProfileEditor({
             {joiningLabel(group)}
           </small>
           <small>{plays.length ? plays.join(" · ") : "Activities not set"}</small>
+          <small>
+            {group.guildTaxPercent ? `Guild tax ${group.guildTaxPercent}%` : "No guild tax"}
+          </small>
         </span>
       </div>
       <Disclosure summary="Edit team profile">
@@ -72,6 +77,8 @@ export function GroupProfileEditor({
                     description: f.get("description"),
                     region: f.get("region"),
                     visibility: f.get("visibility"),
+                    // Empty means no tax, as the hint says.
+                    guildTaxPercent: Number(f.get("guildTaxPercent") || 0),
                     ...identityFromForm(f),
                   }),
                 }),
@@ -115,6 +122,21 @@ export function GroupProfileEditor({
                   <option value="PUBLIC">Public</option>
                   <option value="PRIVATE">Private</option>
                 </WellSelect>
+              </Field>
+              <Field
+                label="Guild tax (%)"
+                hint="Loot splits can take this share of the pool for the team pot first. 0 or empty for none."
+                wide
+              >
+                <NumberField
+                  name="guildTaxPercent"
+                  aria-label="Guild tax (%)"
+                  min={0}
+                  max={100}
+                  decimals={1}
+                  placeholder="e.g. 10"
+                  defaultValue={group.guildTaxPercent || null}
+                />
               </Field>
             </div>
             <TeamIdentityFields

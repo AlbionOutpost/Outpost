@@ -8,6 +8,7 @@ import type { TeamPermission } from "@/lib/groups/permissions";
 import { WorkspaceHeading } from "./workspace-heading";
 import { decodeActivities } from "@/lib/groups/crest";
 import { TeamActivities, TeamChips, TeamMark, topRoleName } from "./group-parts";
+import { LivelyCrest } from "./team-crest";
 import { GroupOverview } from "./group-overview";
 import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
@@ -232,7 +233,9 @@ export function GroupDashboard({
       <WorkspaceHeading
         scene="comps"
         emblem={
-          <TeamMark name={group.name} crestItem={group.crestItem} crestColor={group.crestColor} />
+          <LivelyCrest>
+            <TeamMark name={group.name} crestItem={group.crestItem} crestColor={group.crestColor} />
+          </LivelyCrest>
         }
         // A player-named title: no ember accent word on someone else's words
         title={group.name}
@@ -306,6 +309,7 @@ export function GroupDashboard({
             members={data.members}
             canLoot={can("manageLoot")}
             canPay={can("manageWallet")}
+            guildTaxPercent={data.guildTaxPercent}
             locked={!!gate}
             active={tab === "Treasury"}
           />

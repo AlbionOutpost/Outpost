@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Forms, guild tax and a lively crest — 9 November 2026
+
+- Fields no longer start with sample text or zeros: the loot split name and pool, expense names, event head count and timezone (now the device's own) start empty with "e.g." hints; placeholders are quieter so they never read as typed. Empty required numbers show as missing, never as 0.
+- Every numeric input is one `NumberField`: 1,250,000 as you type, no leading zeros, 25m / 1.2m / 500k / 2b on silver fields, decimals only where allowed, a numeric keyboard, arrow-key steps and the plain number underneath. No formula changed.
+- Loot splits: each expense is Silver or % of the pool, and a Guild tax toggle takes the team's rate for the pot first; paying the split credits the pot. Saved splits keep their kind and rate, and older splits read as before.
+- Team setting Guild tax (%) (Manage team; 0–100, one decimal; Postgres `20261109090000_team_guild_tax`, private-store step 13).
+- The team crest leans toward the pointer with a shine, lifts, strikes with sparks on click and wobbles on tap; the crest picker flips old parts away as new ones land. Reduced motion keeps it still.
+
 ## Team economy — 8 November 2026
 
 - Teams get one **Treasury** tab (8 tabs in all) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.

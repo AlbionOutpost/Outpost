@@ -204,6 +204,8 @@ model Group {
  activities String @default("")
  /// Public teams take join requests only while recruiting.
  recruiting Boolean @default(true)
+ /// Guild tax in percent (0–100, one decimal): loot splits can take it for the team pot first.
+ guildTaxPercent Float @default(0)
  ownerId String
  owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)
  createdAt DateTime @default(now())

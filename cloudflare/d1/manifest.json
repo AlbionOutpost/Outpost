@@ -1,9 +1,9 @@
 {
   "status": "STAGING_ONLY_NOT_APPLICATION_COMPATIBLE",
-  "sourceSchemaSha256": "cf87a4d0765131716503c29e4b6195ba4eb266d80c37f2a6d63bcd2e10a60e3c",
-  "schemaSha256": "8307dd34a35c84244c8827a780497996b4baac70fba73de6a29d3162fef8a24f",
+  "sourceSchemaSha256": "1b01dbda076901d6bb4a69a56aae440355e04731e8a3b6ce6755dc76417f0556",
+  "schemaSha256": "cf2e2d83c446ce1b92c9b40d383a76b3de33c88e5d7ba787a40b8483751d840f",
   "sqlSha256": "3c0b93facc14bec5364bcee18029c2f8681de220239334da55b11e931186c029",
-  "currentSchemaSqlSha256": "00e06735e0e19655f0ef7690dea88a1137aad8353540114b2cab9a2e3ff4b673",
+  "currentSchemaSqlSha256": "5d0953528a34b664c9ff6ea837da07b902e97278eae09170d458640bc0c8d94e",
   "tables": 39,
   "indexes": 57,
   "differences": [

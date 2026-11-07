@@ -39,6 +39,7 @@ export function TeamTreasury({
   members,
   canLoot,
   canPay,
+  guildTaxPercent = 0,
   locked,
   active,
 }: {
@@ -49,6 +50,8 @@ export function TeamTreasury({
   members: { userId: string; name: string; avatarFrame?: string | null }[];
   canLoot: boolean;
   canPay: boolean;
+  /** The team's guild tax rate, offered as a toggle on the split. */
+  guildTaxPercent?: number;
   locked: boolean;
   active: boolean;
 }) {
@@ -76,6 +79,7 @@ export function TeamTreasury({
           members={members}
           editable={canLoot}
           canPay={canPay}
+          guildTaxPercent={guildTaxPercent}
           active={active && view === "loot"}
         />
       </div>
