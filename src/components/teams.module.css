@@ -26,7 +26,11 @@
   /* The shield is widest a little above its middle; the symbol sits there, well inside the rim. */
   inset: 25% 29% 33%;
   background: var(--charge) center / contain no-repeat;
-  filter: drop-shadow(0 1px 2px var(--illustration-bg)) drop-shadow(0 0 1px var(--illustration-bg));
+  /* A tight contact shadow and a soft cast shadow below it, so the symbol sits raised on the
+     painted field instead of lying flat. */
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--illustration-bg) 90%, transparent))
+    drop-shadow(0 3px 4px color-mix(in srgb, var(--illustration-bg) 75%, transparent))
+    drop-shadow(0 0 6px color-mix(in srgb, var(--illustration-bg) 45%, transparent));
 }
 /* In the masthead the crest stands on its own, like a painted emblem: no second box */
 :global(.app.outpost .workspace-emblem):has(> .mark) {
