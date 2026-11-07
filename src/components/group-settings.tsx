@@ -5,9 +5,11 @@ import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
+import { StatusLine } from "./status-line";
 import type { TeamContext } from "./group-dashboard";
 import { Field } from "./group-parts";
 import { AvatarFrame } from "./avatar-frame";
+import { GroupRoles } from "./group-roles";
 import styles from "./teams.module.css";
 
 const utc = (iso: string) =>
@@ -19,7 +21,7 @@ const utc = (iso: string) =>
     timeZone: "UTC",
   }).format(new Date(iso))} UTC`;
 
-/** Profile, invitations, join requests, then leaving or deleting the team. */
+/** Profile, roles, join requests and invitations, then leaving or deleting the team. */
 export function GroupSettings({
   ctx,
   inviteLink,
@@ -29,15 +31,19 @@ export function GroupSettings({
   inviteLink: string;
   profile?: ReactNode;
 }) {
-  const { data, role, editor, manager, busy, run } = ctx;
+  const { data, access, busy, run } = ctx;
+  const owner = access.owner;
   const [copied, setCopied] = useState(false);
   return (
     <div className={styles.settings}>
       <h2 className="sr-only">Team settings</h2>
       {/* The profile full width, then two stacks at their own heights: who wants in; invitations */}
       {profile && <div className={styles.settingsWide}>{profile}</div>}
+      <div className={styles.settingsWide}>
+        <GroupRoles ctx={ctx} />
+      </div>
       <div className={styles.overviewColumn}>
-        {manager && (
+        {ctx.can("manageRequests") && (
           <section className={`panel ${styles.panel}`} aria-labelledby="team-requests">
             <PanelHead
               id="team-requests"
@@ -92,14 +98,15 @@ export function GroupSettings({
         )}
       </div>
       <div className={styles.overviewColumn}>
-        {editor && (
+        {(ctx.can("inviteMembers") || ctx.can("manageRequests")) && (
           <section className={`panel ${styles.panel}`} aria-labelledby="team-invites">
             <PanelHead
               id="team-invites"
               title="Invite a member"
-              line="A single-use link that joins one player as a Member. Outpost sends nothing for you; share it yourself."
+              line="A single-use link that joins one player with the role new members get. Outpost sends nothing for you; share it yourself."
             />
             <form
+              hidden={!ctx.can("inviteMembers")}
               className={styles.inlineForm}
               onSubmit={(e) => {
                 e.preventDefault();
@@ -119,6 +126,11 @@ export function GroupSettings({
                 Create invitation
               </button>
             </form>
+            {ctx.can("inviteMembers") ? null : (
+              <StatusLine>
+                You can revoke links here; creating them needs Invite members.
+              </StatusLine>
+            )}
             {inviteLink && (
               <div className={styles.inviteLink}>
                 <Field label="New single-use invitation link" hint="Shown once. Copy it now.">
@@ -182,14 +194,14 @@ export function GroupSettings({
       <section className={`panel ${styles.panel} ${styles.danger}`} aria-labelledby="team-leave">
         <PanelHead
           id="team-leave"
-          title={role === "OWNER" ? "Delete this team" : "Leave this team"}
+          title={owner ? "Delete this team" : "Leave this team"}
           line={
-            role === "OWNER"
+            owner
               ? "Removes its shared comps, events and announcements for everyone. Hand the team to another member first to keep it."
               : "You lose access to its events, comps and loot splits until you are invited again."
           }
           actions={
-            role === "OWNER" ? (
+            owner ? (
               <button
                 type="button"
                 className={`button secondary ${styles.lossButton}`}

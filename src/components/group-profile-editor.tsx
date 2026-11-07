@@ -9,7 +9,7 @@ import { Field, TeamMark, joiningLabel, regionLabel, visibilityLabel } from "./g
 import { TeamIdentityFields, identityFromForm } from "./team-identity-fields";
 import styles from "./teams.module.css";
 
-/** The team's public face: crest, name, description, what it plays and who can join. Owners and admins. */
+/** The team's public face: crest, name, description, what it plays and who can join. Members with Manage team. */
 export function GroupProfileEditor({
   group,
 }: {

@@ -66,7 +66,8 @@ export function GroupEvents({
   filter: string;
   onFilter: (value: string) => void;
 }) {
-  const { data, now, editor } = ctx;
+  const { data, now } = ctx;
+  const editor = ctx.can("manageEvents");
   const schedule = data.events.filter(
     (e) => filter === "all" || (filter === "upcoming" ? isUpcoming(e, now) : !isUpcoming(e, now)),
   );
@@ -143,7 +144,8 @@ function EventCard({
   open: boolean;
   onToggle: () => void;
 }) {
-  const { groupId, userId, editor, busy, run } = ctx;
+  const { groupId, userId, busy, run } = ctx;
+  const editor = ctx.can("manageEvents");
   const mine = e.rsvps.find((r) => r.userId === userId);
   const detailId = `team-event-${e.id}`;
   return (

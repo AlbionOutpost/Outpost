@@ -50,7 +50,16 @@ export const regionLabel = (region: string) =>
   regions[region as keyof typeof regions]?.label ?? region;
 export const visibilityLabel = (visibility: string) =>
   visibility === "PUBLIC" ? "Public" : "Private";
-export const roleLabel = (role: string) => role.charAt(0) + role.slice(1).toLowerCase();
+/** What a member's role chip says: the Leader, their highest role, or no role. */
+export function topRoleName(
+  owner: boolean,
+  roles: readonly { id: string; name: string }[],
+  held: readonly string[],
+) {
+  if (owner) return "Leader";
+  // Roles arrive highest first, so the first one held is the top one.
+  return roles.find((r) => held.includes(r.id))?.name ?? "No role";
+}
 export const plural = (n: number, noun: string) =>
   `${n.toLocaleString("en")} ${n === 1 ? noun : `${noun}s`}`;
 

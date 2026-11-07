@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
+import { toMask } from "../src/lib/groups/permissions";
 const db = createTestDb();
 test("private guild profiles, event revisions and calendar exports preserve permissions", async ({
   browser,
@@ -91,6 +92,29 @@ test("private guild profiles, event revisions and calendar exports preserve perm
       crestItem: "wolf",
       crestColor: "red",
     });
+    // A member given a role with Manage team can change the crest too.
+    const heralds = await db.groupCustomRole.create({
+      data: {
+        groupId,
+        name: "Herald",
+        color: "gold",
+        position: 2,
+        permissions: toMask(["manageTeam"]),
+      },
+    });
+    await db.groupRoleAssignment.create({ data: { groupId, userId: ids[1], roleId: heralds.id } });
+    const crested = await db.group.findUniqueOrThrow({ where: { id: groupId } });
+    expect(
+      (
+        await action(1, {
+          ...crest,
+          expectedUpdatedAt: crested.updatedAt.toISOString(),
+          crestItem: "eagle",
+        })
+      ).status(),
+    ).toBe(200);
+    expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).crestItem).toBe("eagle");
+    await db.groupCustomRole.delete({ where: { id: heralds.id } });
     const eventInput = {
       action: "event",
       title: "Original group event",

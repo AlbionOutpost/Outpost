@@ -172,6 +172,14 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
         { groupId, userId: ids[2], role: "MEMBER" },
       ],
     });
+    const roles = await db.groupCustomRole.findMany({ where: { groupId } });
+    const role = (name: string) => roles.find((r) => r.name === name)!.id;
+    await db.groupRoleAssignment.createMany({
+      data: [
+        { groupId, userId: ids[1], roleId: role("Officer") },
+        { groupId, userId: ids[2], roleId: role("Member") },
+      ],
+    });
     await page.goto("/compositions/new");
     await page.getByLabel("Comp title").fill("Twenty player ZvZ roster");
     await page.getByRole("button", { name: "20 players", exact: true }).click();

@@ -18,7 +18,6 @@ import {
   visibilityLabel,
 } from "@/components/group-parts";
 import { teamManagementOpen } from "@/lib/billing/gate";
-import { canManageMembers } from "@/lib/groups/permissions";
 import { decodeActivities } from "@/lib/groups/crest";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -49,7 +48,7 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
       <div className={styles.page}>
         <GroupDashboard
           groupId={group.id}
-          role={data.membership.role}
+          access={data.membership.access}
           userId={data.membership.userId}
           data={data.dashboard}
           group={data.group}
@@ -61,7 +60,8 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
             )
           }
           profile={
-            canManageMembers(data.membership.role) ? (
+            data.membership.access.owner ||
+            data.membership.access.permissions.includes("manageTeam") ? (
               <GroupProfileEditor
                 group={{ ...data.group, updatedAt: data.group.updatedAt.toISOString() }}
               />
@@ -129,7 +129,7 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
             title="Ask to join"
             line={
               team.recruiting
-                ? "An owner or admin reads your message and approves you."
+                ? "A team leader reads your message and approves you."
                 : "This team is not taking requests right now."
             }
           />

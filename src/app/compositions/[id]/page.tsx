@@ -5,8 +5,7 @@ import { CommunityPanel } from "@/components/community-panel";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { requireRead, canEdit, groupRole } from "@/lib/compositions/service";
-import { canManageMembers, canEditShared } from "@/lib/groups/permissions";
+import { requireRead, canEdit, groupAccess, canDeleteShared } from "@/lib/compositions/service";
 import { db } from "@/lib/db";
 import { readStoredComposition } from "@/lib/compositions/stored";
 import { HttpError } from "@/lib/api-errors";
@@ -38,10 +37,10 @@ export default async function CompositionPage({ params }: { params: Promise<{ id
     throw e;
   }
   const editable = !!userId && (await canEdit(row, userId));
-  const role = row.groupId ? await groupRole(db, row.groupId, userId) : null;
+  const access = row.groupId ? await groupAccess(db, row.groupId, userId) : null;
   const deletable =
     row.visibility === "GROUP"
-      ? (row.authorId === userId && canEditShared(role)) || canManageMembers(role)
+      ? canDeleteShared(access, row.authorId === userId)
       : row.authorId === userId;
   const { composition, dropped } = readStoredComposition(row);
   const updated = row.updatedAt.toLocaleDateString("en-GB", {

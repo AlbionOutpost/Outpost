@@ -116,7 +116,8 @@ function TeamCompWindow({ comp }: { comp: CompPreview }) {
 }
 
 export function GroupComps({ ctx }: { ctx: TeamContext }) {
-  const { data, editor } = ctx;
+  const { data } = ctx;
+  const editor = ctx.can("manageComps");
   const previews = new Map(data.compositionPreviews.map((c) => [c.id, c]));
   return (
     <section className={styles.section} id="guild-compositions" aria-labelledby="team-comps-all">
@@ -210,7 +211,8 @@ function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: R
 }
 
 export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
-  const { data, editor, busy, run } = ctx;
+  const { data, busy, run } = ctx;
+  const editor = ctx.can("manageBuilds");
   return (
     <section className={styles.section} aria-labelledby="team-builds-all">
       <SectionHeading
@@ -273,7 +275,7 @@ export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
           line={
             editor
               ? "Pick a build above to give every member the same set."
-              : "Officers can share builds here for the whole team."
+              : "Members with Share builds can share builds here for the whole team."
           }
           action={
             <Link className="button secondary" href="/builds?source=library">

@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Team roles — 7 November 2026
+
+- Teams have Discord-style roles: each Team keeps ordered roles with a name, a palette colour and nine permissions (manage team, manage roles, invite, review requests, remove members, events and announcements, comps, loot splits, shared builds). Members hold any number; rights are their union; the owner is the Leader with all of them. New Teams start with Admin, Officer and the default Member.
+- Hierarchy is enforced on the server inside each transaction: roles and members are managed only below your own highest role, and nobody grants a permission they lack. The crest and profile need Manage team.
+- Existing Teams were migrated to the same rights (Postgres `20261107180000_team_roles`, private-store step 11).
+- Settings has a Roles panel; the member list shows role chips and a Roles dialog.
+- Not done: a "see private content" permission; every member still sees the Team's events, comps, builds, announcements and loot splits.
+
 ## Homepage weight — 7 November 2026
 
 - Images: one variant step (`scripts/image-variants.mjs`) for activity art, emblems, every guide cover in the library JSON (`public/library/media/guides`) and the Supporter painting; guide cards, the landing guide stories, the Supporter band and the landing windows pick a width with `srcset`/`sizes`, and a cover's blurred backdrop uses its narrowest file. The first `/guides` card loads eagerly with high priority (it is the LCP). `--check` also catches a repainted source (hash) and leftover variants. Local images on `/` after a full scroll: 1,126 → 718 KB at 412px, 1,199 → 769 KB at 1350px.
