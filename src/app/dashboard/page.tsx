@@ -9,7 +9,7 @@ import { AvatarFrame } from "@/components/avatar-frame";
 import { PanelHead } from "@/components/panel-head";
 import { EquipmentStrip } from "@/components/equipment-strip";
 import { ItemIcon } from "@/components/item-icon";
-import { TeamMark, roleLabel } from "@/components/group-parts";
+import { TeamMark, topRoleName } from "@/components/group-parts";
 import { timerCategory, timerStatus, timerLeft } from "@/components/timer-labels";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -100,7 +100,13 @@ export default async function Dashboard() {
         },
         memberships: {
           include: {
-            group: { select: { name: true, slug: true, crestItem: true, crestColor: true } },
+            group: {
+              select: { name: true, slug: true, crestItem: true, crestColor: true, ownerId: true },
+            },
+            roles: {
+              select: { role: { select: { id: true, name: true } } },
+              orderBy: { role: { position: "desc" } },
+            },
           },
           take: 5,
         },
@@ -340,7 +346,13 @@ export default async function Dashboard() {
                     <span className={styles.rowCopy}>
                       <strong>{member.group.name}</strong>
                     </span>
-                    <span className="landing-chip is-muted">{roleLabel(member.role)}</span>
+                    <span className="landing-chip is-muted">
+                      {topRoleName(
+                        member.group.ownerId === member.userId,
+                        member.roles.map((r) => r.role),
+                        member.roles.map((r) => r.role.id),
+                      )}
+                    </span>
                   </Link>
                 </li>
               ))}

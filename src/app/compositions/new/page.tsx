@@ -115,7 +115,7 @@ export default async function NewComposition({
                 <Link href={`/compositions/new${recoveryQuery}`} className="button primary">
                   Start an empty comp
                 </Link>
-                <Link href={`/builds/library${recoveryQuery}`} className="pill-link is-small">
+                <Link href={`/builds${recoveryQuery}`} className="pill-link is-small">
                   Browse builds
                 </Link>
               </span>

@@ -1,6 +1,6 @@
 import { db } from "../db";
 import { HttpError } from "../api-errors";
-import { canEditShared, canManageMembers } from "./permissions";
+import { can, fromMask, ownerRank, rankOf, resolveAccess } from "./permissions";
 import { buildInput } from "../builds/validation";
 import { memberSlot } from "../compositions/validation";
 export async function groupDashboard(id: string, userId?: string) {
@@ -24,13 +24,23 @@ export async function groupDashboard(id: string, userId?: string) {
     },
   });
   if (!group) throw new HttpError(404, "Group not found");
+  const held = {
+    roles: { select: { roleId: true, role: { select: { position: true, permissions: true } } } },
+  };
   const membership = userId
-    ? await db.groupMember.findUnique({ where: { groupId_userId: { groupId: id, userId } } })
+    ? await db.groupMember.findUnique({
+        where: { groupId_userId: { groupId: id, userId } },
+        select: { userId: true, ...held },
+      })
     : null;
   if (!membership) {
     if (group.visibility !== "PUBLIC") throw new HttpError(404, "Group not found");
     return { group, membership: null };
   }
+  const access = resolveAccess(
+    group.ownerId === membership.userId,
+    membership.roles.map((r) => r.role),
+  );
   const now = new Date();
   const eventInclude = { rsvps: { include: { user: { select: { name: true } } } } } as const;
   // Reserve capacity for upcoming activities; historical events cannot crowd them out.
@@ -51,6 +61,7 @@ export async function groupDashboard(id: string, userId?: string) {
     [...future, ...recent].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()),
   );
   const [
+    roles,
     members,
     invitations,
     requests,
@@ -61,24 +72,38 @@ export async function groupDashboard(id: string, userId?: string) {
     availableBuilds,
     previews,
   ] = await Promise.all([
+    db.groupCustomRole.findMany({
+      where: { groupId: id },
+      select: {
+        id: true,
+        name: true,
+        color: true,
+        position: true,
+        permissions: true,
+        isDefault: true,
+        _count: { select: { assignments: true } },
+      },
+      orderBy: [{ position: "desc" }, { id: "asc" }],
+      take: 100,
+    }),
     db.groupMember.findMany({
       where: { groupId: id },
-      include: { user: { select: { name: true, avatarFrame: true } } },
+      include: { user: { select: { name: true, avatarFrame: true } }, ...held },
       orderBy: { joinedAt: "asc" },
       take: 500,
     }),
-    canEditShared(membership.role)
+    can(access, "inviteMembers") || can(access, "manageRequests")
       ? db.groupInvitation.findMany({
           where: {
             groupId: id,
-            ...(!canManageMembers(membership.role) ? { createdById: userId } : {}),
+            ...(!can(access, "manageRequests") ? { createdById: userId } : {}),
           },
           select: { id: true, expiresAt: true, revokedAt: true, acceptedAt: true },
           orderBy: { createdAt: "desc" },
           take: 30,
         })
       : [],
-    canManageMembers(membership.role)
+    can(access, "manageRequests")
       ? db.groupMembershipRequest.findMany({
           where: { groupId: id, status: "PENDING" },
           include: { user: { select: { name: true, avatarFrame: true } } },
@@ -97,7 +122,7 @@ export async function groupDashboard(id: string, userId?: string) {
       select: { id: true, title: true },
       take: 100,
     }),
-    canEditShared(membership.role)
+    can(access, "manageBuilds")
       ? db.build.findMany({
           where: { hiddenAt: null, OR: [{ authorId: userId }, { visibility: "PUBLIC" }] },
           select: { id: true, title: true },
@@ -114,14 +139,24 @@ export async function groupDashboard(id: string, userId?: string) {
   ]);
   return {
     group,
-    membership: { role: membership.role, userId: membership.userId },
+    membership: {
+      userId: membership.userId,
+      access: { owner: access.owner, rank: access.rank, permissions: fromMask(access.permissions) },
+    },
     dashboard: {
       memberCount: group._count.members,
+      roles: roles.map(({ _count, permissions, ...role }) => ({
+        ...role,
+        permissions: fromMask(permissions),
+        members: _count.assignments,
+      })),
       members: members.map((m) => ({
         userId: m.userId,
         name: m.user.name || "Adventurer",
         avatarFrame: m.user.avatarFrame,
-        role: m.role,
+        owner: m.userId === group.ownerId,
+        rank: m.userId === group.ownerId ? ownerRank : rankOf(m.roles.map((r) => r.role)),
+        roleIds: m.roles.map((r) => r.roleId),
       })),
       invitations: invitations.map((i) => ({
         ...i,

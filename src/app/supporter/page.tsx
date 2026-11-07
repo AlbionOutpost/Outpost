@@ -262,7 +262,7 @@ export default async function Supporter({
             scene: "build",
           },
           {
-            href: `/builds/library${suffix}`,
+            href: `/builds${suffix}&source=library`,
             emblem: "strip-builds",
             title: "Build library",
             line: "Recorded builds by activity.",

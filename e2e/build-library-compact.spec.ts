@@ -14,15 +14,15 @@ test("compact library keeps real filters, sorting, page and regional identity", 
   await rail.getByRole("link", { name: /^Filter by Bows / }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(await page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
-  await expect(page.getByRole("combobox", { name: "Library weapon", exact: true })).toHaveValue("");
+  await expect(
+    page.getByRole("combobox", { name: "Filter build weapon", exact: true }),
+  ).toHaveValue("");
   await expect(page).toHaveURL(/family=bow/);
   expect(new URL(page.url()).searchParams.get("weapon")).toBe("");
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   const cards = page.locator(".library-build-card");
   await expect(cards).toHaveCount(24);
-  await page
-    .getByRole("combobox", { name: "Sort library builds", exact: true })
-    .selectOption("title");
+  await page.getByRole("combobox", { name: "Sort builds", exact: true }).selectOption("title");
   // Choosing an order applies it; there is no separate Apply button.
   await expect(page).toHaveURL(/sort=title/);
   const firstTitle = await cards.first().locator("h2").innerText();
@@ -36,12 +36,12 @@ test("compact library keeps real filters, sorting, page and regional identity", 
   await expect(page.locator('.build-weapon-rail a[aria-current="page"]')).toContainText(
     "All weapons",
   );
-  const collections = page.getByRole("navigation", { name: "Build collections", exact: true });
-  await expect(collections.getByRole("link", { name: "Library", exact: true })).toHaveAttribute(
+  const sources = page.getByRole("navigation", { name: "Build source", exact: true });
+  await expect(sources.getByRole("link", { name: "Library", exact: true })).toHaveAttribute(
     "aria-current",
-    "page",
+    "true",
   );
-  await expect(collections.getByRole("link", { name: "Community", exact: true })).toHaveCount(1);
+  await expect(sources.getByRole("link", { name: "Community", exact: true })).toHaveCount(1);
 });
 
 test("phone library offers scannable previews, persistent search and independent save controls", async ({
@@ -59,7 +59,7 @@ test("phone library offers scannable previews, persistent search and independent
   const save = card.locator(".library-device-save");
   await save.click();
   await expect(save).toHaveAttribute("aria-pressed", "true");
-  await expect(page).toHaveURL(/\/builds\/library\?/);
+  await expect(page).toHaveURL(/\/builds\?source=library/);
   await page.reload();
   await expect(cards.first().locator(".library-device-save")).toHaveAttribute(
     "aria-pressed",

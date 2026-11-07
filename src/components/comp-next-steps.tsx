@@ -6,13 +6,13 @@ import styles from "./market-next-steps.module.css";
 
 const steps = {
   library: {
-    href: "/compositions/library",
+    href: "/compositions?source=library",
     emblem: "strip-comps",
     title: "Group Builds",
     line: "Comps other players recorded, with every member’s loadout.",
   },
   player: {
-    href: "/compositions",
+    href: "/compositions?source=player",
     emblem: "team-roles",
     title: "Player comps",
     line: "Rosters players have shared, with names in the slots.",
@@ -24,7 +24,7 @@ const steps = {
     line: "Set the party size, give each slot a role and a loadout, share it.",
   },
   builds: {
-    href: "/builds/library",
+    href: "/builds?source=library",
     emblem: "strip-builds",
     title: "Build library",
     line: "Find the loadout a slot is missing, then assign it in the planner.",

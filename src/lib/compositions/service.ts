@@ -3,16 +3,21 @@ import type { ContentVisibility } from "@prisma/client";
 import { db, databaseService } from "../db";
 import { retrySerialization } from "../serialization-retry";
 import { HttpError } from "../http-error";
-import { canEditShared, canManageMembers } from "../groups/permissions";
+import { can, type TeamAccess } from "../groups/permissions";
+import { loadTeamAccess } from "../groups/roles";
 import { compositionInput, type CompositionInput } from "./validation";
 import { readStoredComposition } from "./stored";
 type Client = Prisma.TransactionClient;
-export async function groupRole(client: Client, groupId: string, userId?: string) {
-  if (!userId) return null;
-  const member = await client.groupMember.findUnique({
-    where: { groupId_userId: { groupId, userId } },
-  });
-  return member?.role ?? null;
+/** The viewer's current rights in a comp's team (null outside it). */
+export function groupAccess(client: Client, groupId: string, userId?: string) {
+  return loadTeamAccess(client, groupId, userId);
+}
+/** Team comps: Manage comps edits any and deletes your own; Manage team also deletes anyone's. */
+export function canDeleteShared(access: TeamAccess | null, author: boolean) {
+  return (
+    (author && can(access, "manageComps")) ||
+    (can(access, "manageComps") && can(access, "manageTeam"))
+  );
 }
 export async function requireRead(id: string, userId?: string, client: Client = db) {
   const row = await client.composition.findUnique({ where: { id } });
@@ -20,7 +25,7 @@ export async function requireRead(id: string, userId?: string, client: Client = 
     throw new HttpError(404, "Composition not found");
   if (row.visibility === "PUBLIC" || (row.visibility === "PRIVATE" && row.authorId === userId))
     return row;
-  if (row.visibility === "GROUP" && row.groupId && (await groupRole(client, row.groupId, userId)))
+  if (row.visibility === "GROUP" && row.groupId && (await groupAccess(client, row.groupId, userId)))
     return row;
   throw new HttpError(404, "Composition not found");
 }
@@ -30,7 +35,7 @@ export async function canEdit(
   client: Client = db,
 ) {
   return row.visibility === "GROUP" && row.groupId
-    ? canEditShared(await groupRole(client, row.groupId, userId))
+    ? can(await groupAccess(client, row.groupId, userId), "manageComps")
     : row.authorId === userId;
 }
 async function validateDestination(
@@ -39,8 +44,8 @@ async function validateDestination(
   client: Client,
   existingSources = new Set<string>(),
 ) {
-  if (data.groupId && !canEditShared(await groupRole(client, data.groupId, userId)))
-    throw new HttpError(403, "An officer, admin or owner must save group compositions");
+  if (data.groupId && !can(await groupAccess(client, data.groupId, userId), "manageComps"))
+    throw new HttpError(403, "Saving team comps needs the Manage comps permission");
   for (const id of new Set(
     data.slots.map((s) => s.sourceBuildId).filter((id): id is string => !!id),
   )) {
@@ -128,10 +133,10 @@ async function localDuplicateComposition(id: string, userId: string) {
 async function localDeleteComposition(id: string, userId: string) {
   await db.$transaction(async (tx) => {
     const row = await requireRead(id, userId, tx);
-    const role = row.groupId ? await groupRole(tx, row.groupId, userId) : null;
+    const access = row.groupId ? await groupAccess(tx, row.groupId, userId) : null;
     const permitted =
       row.visibility === "GROUP"
-        ? (row.authorId === userId && canEditShared(role)) || canManageMembers(role)
+        ? canDeleteShared(access, row.authorId === userId)
         : row.authorId === userId;
     if (!permitted) throw new HttpError(403, "You cannot delete this composition");
     await tx.composition.delete({ where: { id } });

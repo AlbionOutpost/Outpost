@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
+import { seedTeamRoles } from "../src/lib/groups/roles";
 const db = createTestDb();
 test("team loot conserves silver and enforces current membership, officer permission and revisions", async ({
   page,
@@ -52,6 +53,8 @@ test("team loot conserves silver and enforces current membership, officer permis
         },
       });
     groupId = team.id;
+    // Map the fixture's fixed roles onto the team's roles, as the schema migration does.
+    await seedTeamRoles(db, groupId);
     const post = (actor: number, group: string, data: unknown) =>
       contexts[actor].request.post(`/api/groups/${group}/loot`, {
         headers: { origin: "http://localhost:3000" },
@@ -157,10 +160,8 @@ test("team loot conserves silver and enforces current membership, officer permis
         })
       ).status(),
     ).toBe(400);
-    await db.groupMember.update({
-      where: { groupId_userId: { groupId, userId: ids[1] } },
-      data: { role: "MEMBER" },
-    });
+    // Demoted: the officer loses the Officer role and with it Manage loot splits.
+    await db.groupRoleAssignment.deleteMany({ where: { groupId, userId: ids[1] } });
     expect((await post(1, groupId, input)).status()).toBe(403);
     await db.groupMember.delete({ where: { groupId_userId: { groupId, userId: ids[1] } } });
     expect((await contexts[1].request.get(`/api/groups/${groupId}/loot`)).status()).toBe(404);

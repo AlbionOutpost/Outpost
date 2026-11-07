@@ -222,6 +222,49 @@ def avatar_frame_upgrade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-frame-user",))
 check("avatar frame upgrade keeps players and leaves their frame unset", avatar_frame_upgrade)
 
+def team_roles_upgrade():
+    # Old fixed rights: editors (owner/admin/officer) shared content and invited; managers (owner/admin) ran the team.
+    # The upgrade must give every existing member exactly those rights through the seeded roles.
+    bits = ["manageTeam", "manageRoles", "inviteMembers", "manageRequests", "removeMembers", "manageEvents", "manageComps", "manageLoot", "manageBuilds"]
+    editor = {"inviteMembers", "manageEvents", "manageComps", "manageLoot", "manageBuilds"}
+    manager = editor | {"manageTeam", "manageRequests", "removeMembers"}
+    old = {"ADMIN": manager, "OFFICER": editor, "MEMBER": set()}
+    users = {"qa-role-owner": "OWNER", "qa-role-admin": "ADMIN", "qa-role-officer": "OFFICER", "qa-role-member": "MEMBER"}
+    for user in users:
+        db.execute('INSERT INTO "User"(id,updatedAt) VALUES(?,CURRENT_TIMESTAMP)', (user,))
+    for team in ("qa-role-team", "qa-role-other"):
+        db.execute('INSERT INTO "Group"(id,name,slug,description,region,ownerId,updatedAt) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)', (team, "Role team", team, "", "europe", "qa-role-owner"))
+    for user, role in users.items():
+        db.execute('INSERT INTO "GroupMember"(groupId,userId,role) VALUES(?,?,?)', ("qa-role-team", user, role))
+    db.executescript((root / "cloudflare/d1/migrations/0012_team_roles.sql").read_text())
+    roles = db.execute('SELECT name, position, isDefault FROM "GroupCustomRole" WHERE groupId=? ORDER BY position DESC', ("qa-role-team",)).fetchall()
+    assert roles == [("Admin", 3, 0), ("Officer", 2, 0), ("Member", 1, 1)], roles
+    assert db.execute('SELECT count(*) FROM "GroupCustomRole" WHERE groupId=?', ("qa-role-other",)).fetchone()[0] == 3
+    for user, role in users.items():
+        mask = db.execute('SELECT coalesce(sum(r.permissions),0) FROM "GroupRoleAssignment" a JOIN "GroupCustomRole" r ON r.id=a.roleId WHERE a.groupId=? AND a.userId=?', ("qa-role-team", user)).fetchone()[0]
+        held = {key for i, key in enumerate(bits) if mask & (1 << i)}
+        if role == "OWNER":
+            assert mask == 0  # the Leader holds no role rows: ownership itself grants every right
+        else:
+            assert held == old[role], (user, held)
+    # The managers' old ranking holds: admins above officers above members.
+    rank = lambda user: db.execute('SELECT max(r.position) FROM "GroupRoleAssignment" a JOIN "GroupCustomRole" r ON r.id=a.roleId WHERE a.userId=?', (user,)).fetchone()[0]
+    assert rank("qa-role-admin") > rank("qa-role-officer") > rank("qa-role-member")
+    denied('UPDATE "GroupCustomRole" SET color=? WHERE id=?', ("#ff0000", "role-admin-qa-role-team"))
+    denied('UPDATE "GroupCustomRole" SET name=? WHERE id=?', ("x" * 33, "role-admin-qa-role-team"))
+    denied('UPDATE "GroupCustomRole" SET permissions=? WHERE id=?', (512, "role-admin-qa-role-team"))
+    # A role of one team can never be held in another, and only by a member.
+    denied('INSERT INTO "GroupRoleAssignment"(groupId,userId,roleId) VALUES(?,?,?)', ("qa-role-other", "qa-role-admin", "role-admin-qa-role-team"))
+    denied('INSERT INTO "GroupRoleAssignment"(groupId,userId,roleId) VALUES(?,?,?)', ("qa-role-other", "qa-role-admin", "role-admin-qa-role-other"))
+    db.execute('DELETE FROM "GroupMember" WHERE groupId=? AND userId=?', ("qa-role-team", "qa-role-officer"))
+    assert db.execute('SELECT count(*) FROM "GroupRoleAssignment" WHERE userId=?', ("qa-role-officer",)).fetchone()[0] == 0
+    db.execute('DELETE FROM "Group" WHERE id IN (?,?)', ("qa-role-team", "qa-role-other"))
+    assert db.execute('SELECT count(*) FROM "GroupCustomRole"').fetchone()[0] == 0
+    assert db.execute('SELECT count(*) FROM "GroupRoleAssignment"').fetchone()[0] == 0
+    for user in users:
+        db.execute('DELETE FROM "User" WHERE id=?', (user,))
+check("team roles upgrade gives every existing member the same rights, keeps rank and stays inside its team", team_roles_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

@@ -123,9 +123,16 @@ describe("public metadata identity and social previews", () => {
   );
   it("retains actual category and pagination identity", () => {
     expect(
-      canonicalUrl("/builds/library", { category: "MISTS_SOLO", region: "americas", page: "2" }),
-    ).toBe("https://albionoutpost.com/builds/library?region=americas&category=MISTS_SOLO&page=2");
-    expect(metadataForPage("/builds/library", { category: "MISTS_SOLO" }).title).toBe(
+      canonicalUrl("/builds", {
+        source: "library",
+        category: "MISTS_SOLO",
+        region: "americas",
+        page: "2",
+      }),
+    ).toBe(
+      "https://albionoutpost.com/builds?region=americas&source=library&category=MISTS_SOLO&page=2",
+    );
+    expect(metadataForPage("/builds", { category: "MISTS_SOLO" }).title).toBe(
       "Solo Mists builds — Albion Online",
     );
   });
@@ -141,7 +148,7 @@ describe("public metadata identity and social previews", () => {
   it.each([{ mine: "1" }, { view: "saved" }, { q: "not-public-search-text" }])(
     "keeps personalized/search variants out of indexing",
     (query) => {
-      const metadata = metadataForPage("/builds/library", query);
+      const metadata = metadataForPage("/builds", query);
       expect(metadata.robots).toMatchObject({ index: false, nosnippet: true });
       expect(JSON.stringify(metadata)).not.toContain("not-public-search-text");
     },
@@ -334,7 +341,7 @@ describe("public discovery output", () => {
         );
         expect(url.pathname).not.toMatch(/^\/(builds|compositions)\/(new|[^/]+\/edit)(\/|$)/);
         expect(url.pathname).not.toBe("/tools/death-feed");
-        for (const key of url.searchParams.keys()) expect(key).toBe("category");
+        for (const key of url.searchParams.keys()) expect(["source", "category"]).toContain(key);
       }
       expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);

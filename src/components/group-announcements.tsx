@@ -7,7 +7,8 @@ import styles from "./teams.module.css";
 
 /** Officers post on the left; every member reads the board on the right. */
 export function GroupAnnouncements({ ctx }: { ctx: TeamContext }) {
-  const { data, editor, busy, run } = ctx;
+  const { data, busy, run } = ctx;
+  const editor = ctx.can("manageEvents");
   return (
     <div className={editor ? styles.split : undefined} id="guild-announcements">
       {editor && (
@@ -85,7 +86,9 @@ export function GroupAnnouncements({ ctx }: { ctx: TeamContext }) {
             emblem="team-announce"
             title="No announcements yet"
             line={
-              editor ? "Post the first one with the form." : "Officers post news for the team here."
+              editor
+                ? "Post the first one with the form."
+                : "Members with Manage events post news for the team here."
             }
             action={
               <button

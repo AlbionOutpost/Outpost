@@ -50,7 +50,9 @@ export function canonicalUrl(path: string, query: SeoQuery = {}) {
     if (/^[A-Z0-9_@.-]{1,150}$/.test(item)) url.searchParams.set("item", item);
     if (/^[1-5]$/.test(quality)) url.searchParams.set("quality", quality);
   }
-  if (["/builds/library", "/compositions/library"].includes(path)) {
+  if (["/builds", "/compositions"].includes(path)) {
+    const source = scalar(query, "source");
+    if (["community", "player", "library"].includes(source)) url.searchParams.set("source", source);
     const category = scalar(query, "category");
     if (activityBackgrounds.some((activity) => activity.id === category))
       url.searchParams.set("category", category);
@@ -59,16 +61,7 @@ export function canonicalUrl(path: string, query: SeoQuery = {}) {
       if (/^[\p{L}\p{N} _'’+-]{1,80}$/u.test(value)) url.searchParams.set(key, value);
     }
   }
-  if (
-    [
-      "/guides",
-      "/items",
-      "/builds",
-      "/compositions",
-      "/builds/library",
-      "/compositions/library",
-    ].includes(path)
-  ) {
+  if (["/guides", "/items", "/builds", "/compositions"].includes(path)) {
     const page = scalar(query, "page");
     if (/^[1-9]\d{0,3}$/.test(page) && Number(page) > 1) url.searchParams.set("page", page);
   }
@@ -232,24 +225,16 @@ export const publicPages: Record<string, [string, string]> = {
     "Browse Outpost's sourced Albion Online reference tables for equipment, production and planning.",
   ],
   "/builds": [
-    "Albion Online community builds",
-    "Browse public player-created Albion Online equipment builds and open loadouts to inspect gear, abilities and notes.",
+    "Albion Online builds",
+    "Browse Albion Online builds by weapon and activity: loadouts players published on Outpost and the archived build library, with gear, abilities and notes.",
   ],
   "/builds/activities": [
     "Albion Online builds by activity",
     "Find Albion Online builds for Solo Mists, Hellgates, Avalonian Dungeons, small scale and other activities.",
   ],
-  "/builds/library": [
-    "Albion Online build library",
-    "Browse the archived Albion Online build library by activity and weapon, inspect equipment and adapt a loadout.",
-  ],
   "/compositions": [
     "Albion Online team compositions",
-    "Browse public player-created Albion Online party compositions and inspect roles, equipment and planning notes.",
-  ],
-  "/compositions/library": [
-    "Albion Online group build library",
-    "Explore archived Albion Online group builds and party compositions, with member loadouts, roles and equipment.",
+    "Browse Albion Online party compositions: comps players shared on Outpost and archived group builds, with member loadouts, roles and equipment.",
   ],
   "/guides": [
     "Albion Online player guides",
@@ -276,7 +261,7 @@ export function metadataForPage(path: string, query: SeoQuery = {}) {
     (activity) => activity.id === scalar(query, "category"),
   );
   const title =
-    category && path === "/builds/library" ? `${category.name} builds — Albion Online` : page[0];
+    category && path === "/builds" ? `${category.name} builds — Albion Online` : page[0];
   const metadata = publicMetadata(title, page[1], path, query);
   if (path === "/")
     metadata.title = { absolute: "Outpost | Albion Online tools, builds & calculators" };

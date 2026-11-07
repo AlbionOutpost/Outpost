@@ -93,7 +93,7 @@ export function LandingWindows({
         emblem="strip-builds"
         title="Build planner"
         line="Put together a full set with spells and swaps, then share it."
-        href={`/builds/library${suffix}`}
+        href={`/builds${suffix}&source=library`}
         bar={
           build ? (
             <>
@@ -179,7 +179,7 @@ export function LandingWindows({
         href={
           comp
             ? `/compositions/library/${encodeURIComponent(comp.slug)}${suffix}`
-            : `/compositions/library${suffix}`
+            : `/compositions${suffix}&source=library`
         }
         bar={
           comp ? (

@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
+import { toMask } from "../src/lib/groups/permissions";
 const db = createTestDb();
 test("private guild profiles, event revisions and calendar exports preserve permissions", async ({
   browser,
@@ -74,12 +75,12 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     const crest = {
       ...profile,
       expectedUpdatedAt: fresh.updatedAt.toISOString(),
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
     };
     expect((await action(1, crest)).status()).toBe(403);
     expect((await action(2, crest)).status()).toBe(404);
-    expect((await action(0, { ...crest, crestItem: "T8_UNLISTED_ITEM" })).status()).toBe(400);
+    expect((await action(0, { ...crest, crestItem: "dragon" })).status()).toBe(400);
     expect((await action(0, { ...crest, crestColor: "#ff0000" })).status()).toBe(400);
     expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
       crestItem: fresh.crestItem,
@@ -88,9 +89,32 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     });
     expect((await action(0, crest)).status()).toBe(200);
     expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
     });
+    // A member given a role with Manage team can change the crest too.
+    const heralds = await db.groupCustomRole.create({
+      data: {
+        groupId,
+        name: "Herald",
+        color: "gold",
+        position: 2,
+        permissions: toMask(["manageTeam"]),
+      },
+    });
+    await db.groupRoleAssignment.create({ data: { groupId, userId: ids[1], roleId: heralds.id } });
+    const crested = await db.group.findUniqueOrThrow({ where: { id: groupId } });
+    expect(
+      (
+        await action(1, {
+          ...crest,
+          expectedUpdatedAt: crested.updatedAt.toISOString(),
+          crestItem: "eagle",
+        })
+      ).status(),
+    ).toBe(200);
+    expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).crestItem).toBe("eagle");
+    await db.groupCustomRole.delete({ where: { id: heralds.id } });
     const eventInput = {
       action: "event",
       title: "Original group event",

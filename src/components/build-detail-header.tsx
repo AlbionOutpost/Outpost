@@ -32,7 +32,9 @@ export function BuildDetailHeader({
   return (
     <section className="detail-hero masthead" data-scene="builds" id="build-overview">
       <div className="detail-breadcrumb">
-        <Link href={collection === "library" ? "/builds/library" : "/builds"}>
+        <Link
+          href={collection === "library" ? "/builds?source=library" : "/builds?source=community"}
+        >
           {collection === "library" ? "Build library" : "Community builds"}
         </Link>
         <ChevronRight size={13} />

@@ -86,7 +86,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },
-          { name: "Build library", path: "/builds/library" },
+          { name: "Builds", path: "/builds" },
           { name: build.title, path: `/builds/library/${encodeURIComponent(build.slug)}` },
         ])}
       />
@@ -190,7 +190,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             }
             line="Other loadouts in the library built around the same weapon."
             link={{
-              href: `/builds/library?${new URLSearchParams({ q: build.weaponName })}`,
+              href: `/builds?${new URLSearchParams({ source: "library", q: build.weaponName })}`,
               label: "All of them",
             }}
           />
@@ -208,7 +208,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </>
         }
         line="Start a build of your own from an empty board, or browse every loadout in the library."
-        secondary={{ href: "/builds/library", label: "Build library" }}
+        secondary={{ href: "/builds?source=library", label: "Build library" }}
       />
     </div>
   );

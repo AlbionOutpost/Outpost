@@ -135,7 +135,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
             title="No public builds yet"
             line="Only published, visible builds show on a profile."
             action={
-              <Link className="button secondary" href="/builds/library">
+              <Link className="button secondary" href="/builds?source=library">
                 Browse the build library
               </Link>
             }
@@ -186,7 +186,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
             title="No public comps yet"
             line="Private and team-only comps never show on a profile."
             action={
-              <Link className="button secondary" href="/compositions/library">
+              <Link className="button secondary" href="/compositions?source=library">
                 Browse Group Builds
               </Link>
             }
@@ -203,14 +203,14 @@ export default async function Profile({ params }: { params: Promise<{ id: string
         line="Copy a loadout into the editor, or start a comp around it."
         cards={[
           {
-            href: "/builds/library",
+            href: "/builds?source=library",
             emblem: "strip-builds",
             title: "Build library",
             line: "Recorded builds by activity.",
             scene: "build",
           },
           {
-            href: "/compositions/library",
+            href: "/compositions?source=library",
             emblem: "strip-comps",
             title: "Group Builds",
             line: "Recorded comps for every party size.",

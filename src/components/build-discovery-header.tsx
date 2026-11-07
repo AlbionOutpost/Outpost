@@ -1,32 +1,22 @@
 import Link from "./build-region-link";
-import {
-  Swords,
-  Compass,
-  UserRound,
-  Bookmark,
-  SlidersHorizontal,
-  Plus,
-  LayoutGrid,
-} from "lucide-react";
+import { Compass, UserRound, Bookmark, SlidersHorizontal, Plus, LayoutGrid } from "lucide-react";
 import { MastheadTabs } from "./masthead-tabs";
 import { WorkspaceHeading } from "./workspace-heading";
 
 /** The Builds masthead: title, one line, the collections as tabs and the create action. */
 export function BuildDiscoveryHeader({
   active = "browse",
-  source = "library",
   title,
   accent,
   description,
 }: {
   active?: "browse" | "activities" | "mine" | "favorites" | "saved";
-  source?: "library" | "community";
   title?: string;
   /** One word of the title in ember, as on the landing. */
   accent?: string;
   description?: string;
 }) {
-  const current = (id: string) => (active === "browse" ? source === id : active === id);
+  const current = (id: string) => active === id;
   return (
     <WorkspaceHeading
       glyph="builds"
@@ -54,16 +44,10 @@ export function BuildDiscoveryHeader({
             current: current("activities"),
           },
           {
-            href: "/builds/library",
-            label: "Library",
-            icon: <Compass size={16} />,
-            current: current("library"),
-          },
-          {
             href: "/builds",
-            label: "Community",
-            icon: <Swords size={16} />,
-            current: current("community"),
+            label: "All builds",
+            icon: <Compass size={16} />,
+            current: current("browse"),
           },
           {
             href: "/builds?mine=1",
@@ -78,7 +62,7 @@ export function BuildDiscoveryHeader({
             current: current("favorites"),
           },
           {
-            href: "/builds/library?view=saved",
+            href: "/builds?view=saved",
             label: "Saved Filters",
             icon: <SlidersHorizontal size={16} />,
             current: current("saved"),
