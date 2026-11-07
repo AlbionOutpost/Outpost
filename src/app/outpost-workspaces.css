@@ -85,14 +85,6 @@
   text-overflow: ellipsis;
   max-width: 90px;
 }
-.app.outpost .account-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border);
-  flex: none;
-}
 .app.outpost .button.primary {
   color: #19100a;
   background: var(--action);

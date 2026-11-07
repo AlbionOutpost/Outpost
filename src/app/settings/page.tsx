@@ -5,11 +5,12 @@ import type { ReactNode } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { resolveAvatarFrame } from "@/lib/avatar-frames";
 import { PreferencesForm, DeleteAccountForm } from "@/components/settings-forms";
 import { LogoutButton } from "@/components/login-button";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { AccountEmblem } from "@/components/account-emblem";
+import { AvatarFrame } from "@/components/avatar-frame";
 import account from "@/components/account.module.css";
 import styles from "./settings.module.css";
 export const metadata = privateMetadata("Settings");
@@ -72,7 +73,7 @@ export default async function Settings({
         accent="settings"
         description="Your name, your server and the data Outpost keeps for you."
         icon="account"
-        emblem={<AccountEmblem image={user.image} />}
+        emblem={<AvatarFrame frame={user.avatarFrame} size={96} image={user.image} name={name} />}
       />
       <div className={styles.groups}>
         <Group
@@ -95,7 +96,13 @@ export default async function Settings({
             </p>
           )}
           <PreferencesForm
-            initial={{ name, region: user.region, characterName: user.characterName || "" }}
+            initial={{
+              name,
+              region: user.region,
+              characterName: user.characterName || "",
+              avatarFrame: resolveAvatarFrame(user.avatarFrame) ?? "none",
+            }}
+            image={user.image}
           />
         </Group>
         <Group

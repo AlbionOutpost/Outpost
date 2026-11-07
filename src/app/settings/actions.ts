@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { logEvent } from "@/lib/logging";
 import { deleteAccountRecord, verifyDeletionBilling } from "@/lib/account-deletion";
 import { HttpError } from "@/lib/http-error";
+import { avatarFrameIds } from "@/lib/avatar-frames";
 const settings = z.object({
   name: z.string().trim().min(1).max(60),
   region: regionSchema,
@@ -19,6 +20,11 @@ const settings = z.object({
     .trim()
     .max(40)
     .regex(/^[a-zA-Z0-9 _-]*$/),
+  /** "none" or a listed frame (src/lib/avatar-frames.ts); anything else is rejected. */
+  avatarFrame: z
+    .enum(["none", ...avatarFrameIds])
+    .transform((v) => (v === "none" ? null : v))
+    .optional(),
 });
 export type SettingsActionState = { error: string };
 export async function saveSettings(
@@ -36,7 +42,9 @@ export async function saveSettings(
 
   const parsed = settings.safeParse(Object.fromEntries(form));
   if (!parsed.success)
-    return { error: "Check the display name, region and character name. Your draft is retained." };
+    return {
+      error: "Check the display name, region, character name and frame. Your draft is retained.",
+    };
   try {
     if (!(await rateLimit(`settings:${session.user.id}`, 20, 60)))
       return {

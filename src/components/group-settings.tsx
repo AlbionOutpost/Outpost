@@ -7,6 +7,7 @@ import { EmptyWell } from "./empty-well";
 import { WellSelect } from "./well-select";
 import type { TeamContext } from "./group-dashboard";
 import { Field } from "./group-parts";
+import { AvatarFrame } from "./avatar-frame";
 import styles from "./teams.module.css";
 
 const utc = (iso: string) =>
@@ -47,9 +48,7 @@ export function GroupSettings({
               <ul className={styles.list}>
                 {data.requests.map((r) => (
                   <li key={r.userId} className={`well ${styles.wellRow}`}>
-                    <span className={styles.initial} aria-hidden="true">
-                      {r.name.slice(0, 1).toUpperCase()}
-                    </span>
+                    <AvatarFrame frame={r.avatarFrame} size={36} name={r.name} />
                     <span className={styles.rowCopy}>
                       <strong>{r.name}</strong>
                       {r.message && <small className={styles.wrap}>{r.message}</small>}

@@ -215,6 +215,13 @@ def team_crest_upgrade():
     db.execute('DELETE FROM "Group" WHERE id=?', ("qa-crest-team",))
 check("team crest upgrade keeps teams, leaves crests unset and keeps them recruiting", team_crest_upgrade)
 
+def avatar_frame_upgrade():
+    db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', ("qa-frame-user", "Framed"))
+    db.executescript((root / "cloudflare/d1/migrations/0011_avatar_frame.sql").read_text())
+    assert db.execute('SELECT name, avatarFrame FROM "User" WHERE id=?', ("qa-frame-user",)).fetchone() == ("Framed", None)
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-frame-user",))
+check("avatar frame upgrade keeps players and leaves their frame unset", avatar_frame_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

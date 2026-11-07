@@ -11,6 +11,7 @@ CREATE TABLE "User" (
     "role" TEXT NOT NULL DEFAULT 'USER',
     "region" TEXT NOT NULL DEFAULT 'europe',
     "characterName" TEXT,
+    "avatarFrame" TEXT,
     "plan" TEXT NOT NULL DEFAULT 'FREE',
     "planStatus" TEXT,
     "planRenewsAt" DATETIME,

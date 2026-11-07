@@ -245,17 +245,6 @@
   align-items: center;
   gap: var(--space-2);
 }
-:global(.app.outpost) .initial.initial {
-  display: inline-grid;
-  flex: none;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--elevated);
-  color: var(--accent-ink);
-  font: 800 16px/1 var(--font-display);
-}
 :global(.app.outpost) .weapons.weapons {
   display: flex;
   flex: none;

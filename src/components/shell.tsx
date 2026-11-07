@@ -30,6 +30,7 @@ import { BrandLockup } from "./brand-lockup";
 import { PointerGlow } from "./pointer-glow";
 import { RegionContext, RegionNavigationContext } from "./region-context";
 import { RegionPicker } from "./region-picker";
+import { AvatarFrame } from "./avatar-frame";
 import { regionSchema } from "@/lib/albion/region-config";
 
 // The header's tools menu groups by the tool directory's sections, so the two never drift apart:
@@ -160,7 +161,12 @@ export function Shell({
   initialLight?: boolean;
   initialRegion?: string;
   authenticated?: boolean;
-  account?: { name: string | null; image: string | null; role?: string } | null;
+  account?: {
+    name: string | null;
+    image: string | null;
+    avatarFrame?: string | null;
+    role?: string;
+  } | null;
 }) {
   const currentAccountLinks = [
     ...accountLinks,
@@ -578,16 +584,12 @@ export function Shell({
                 ) : (
                   <details className="nav-dropdown account-dropdown">
                     <summary>
-                      {account?.image ? (
-                        // Discord profile imagery belongs to the signed-in user; no synthetic avatar.
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          className="account-avatar"
-                          src={account.image}
-                          width={30}
-                          height={30}
-                          alt=""
-                          referrerPolicy="no-referrer"
+                      {account?.image || account?.avatarFrame ? (
+                        <AvatarFrame
+                          frame={account.avatarFrame}
+                          size={32}
+                          image={account.image}
+                          name={account.name}
                         />
                       ) : null}
                       <span>{account?.name || "Your account"}</span> <ChevronDown size={13} />

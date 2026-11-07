@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { ArrowRight, ArrowUpRight, Plus, ShieldCheck } from "lucide-react";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { AccountEmblem } from "@/components/account-emblem";
+import { AvatarFrame } from "@/components/avatar-frame";
 import { PanelHead } from "@/components/panel-head";
 import { EquipmentStrip } from "@/components/equipment-strip";
 import { ItemIcon } from "@/components/item-icon";
@@ -91,6 +91,7 @@ export default async function Dashboard() {
       select: {
         name: true,
         image: true,
+        avatarFrame: true,
         role: true,
         compositions: {
           select: { id: true, title: true, updatedAt: true, slots: true },
@@ -145,7 +146,7 @@ export default async function Dashboard() {
     <div className={styles.page}>
       <WorkspaceHeading
         icon="account"
-        emblem={<AccountEmblem image={u.image} fallback="trophy-gold" />}
+        emblem={<AvatarFrame frame={u.avatarFrame} size={96} image={u.image} name={u.name} />}
         scene="guides"
         title={`Welcome, ${u.name || "Adventurer"}.`}
         accent="Welcome"

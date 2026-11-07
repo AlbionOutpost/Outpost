@@ -81,7 +81,7 @@ All routes live under `src/app/api`. JSON in and out. Mutations (`POST`/`PUT`/`P
 | `GET /api/health`                                          | pub                   | Health check                                                                |
 | `GET /ads.txt`                                             | pub                   | Authorised-seller line for the configured AdSense publisher, else a comment |
 
-Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h).
+Settings changes and account deletion are Server Actions in `src/app/settings/actions.ts` (20/min and 3/h). Preferences take `name`, `region`, `characterName` and `avatarFrame` (`none` or one id from `src/lib/avatar-frames.ts`; anything else is rejected and nothing is written), always on the signed-in player's own row; signed out, the action redirects to sign-in. The account export includes `avatarFrame`, and community comments return each author's `avatarFrame` beside their name.
 
 ## Older personal records
 

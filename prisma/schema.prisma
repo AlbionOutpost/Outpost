@@ -16,6 +16,8 @@ model User {
   role String @default("USER")
   region String @default("europe")
   characterName String?
+  /// Profile picture frame the player picked (src/lib/avatar-frames.ts); null = plain picture.
+  avatarFrame String?
   /// Supporter plan: FREE or SUPPORTER. Written only by the Stripe webhook; checked on the server.
   plan String @default("FREE")
   planStatus String?

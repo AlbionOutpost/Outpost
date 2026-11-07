@@ -70,7 +70,7 @@ Free allows 100,000 Worker requests and 100,000 Durable Object requests per day 
 ## Schemas and migrations
 
 - **Source of truth:** `prisma/schema.prisma` (Postgres): 33 models, 3 enums (historical migrations plus additive follow-ups) in `prisma/migrations`.
-- **Generated SQLite schema:** `npm run cloudflare:d1:schema` writes `cloudflare/d1/schema.prisma`, `0001_schema_candidate.sql` (30 tables, 41 indexes) and `manifest.json`. `scripts/cloudflare-domain-constraints.mjs` generates `0003_domain_invariants.sql` (44 triggers mirroring Postgres CHECKs). `0002` adds the D1 owned-library tables; `0004` adds team loot splits. `0010` adds the Team crest, activities and recruiting columns (private-store schema step 9; Postgres `20261106230000_team_crest`).
+- **Generated SQLite schema:** `npm run cloudflare:d1:schema` writes `cloudflare/d1/schema.prisma`, `0001_schema_candidate.sql` (30 tables, 41 indexes) and `manifest.json`. `scripts/cloudflare-domain-constraints.mjs` generates `0003_domain_invariants.sql` (44 triggers mirroring Postgres CHECKs). `0002` adds the D1 owned-library tables; `0004` adds team loot splits. `0010` adds the Team crest, activities and recruiting columns (private-store schema step 9; Postgres `20261106230000_team_crest`). `0011` adds the nullable `User.avatarFrame` (step 10; Postgres `20261107120000_avatar_frame`).
 - Any schema change needs: a Prisma migration, regenerated SQLite schema + constraints, a new numbered `cloudflare/d1/migrations` file, and a matching upgrade step in the `OutpostDatabase` constructor (`cloudflare/database/worker.ts`). See the `outpost-deploy` skill.
 
 ## Local runtime
