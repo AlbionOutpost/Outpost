@@ -93,9 +93,9 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       );
     }
     if (!iteration.startsWith("00-")) {
-      await page.getByRole("button", { name: "Filter builds", exact: true }).click();
-      await page.getByLabel("Filter build weapon", { exact: true }).selectOption("MAIN_AXE");
-      await page.getByRole("button", { name: "Search builds", exact: true }).click();
+      await page.getByRole("button", { name: /^Filter builds/ }).click();
+      await page.getByLabel("Filter build weapon", { exact: true }).selectOption("Battleaxe");
+      await page.getByRole("button", { name: "Find builds", exact: true }).click();
       await expect(page.locator(".community-build-card")).toHaveCount(2);
       const card = page
         .locator(".community-build-card")
@@ -140,14 +140,14 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       ).toHaveAttribute("aria-pressed", "false");
       await page.goto(`/builds?mine=1&q=${encodeURIComponent(label)}`);
       await expect(page.locator(".community-build-card")).toHaveCount(7);
-      await page.getByRole("button", { name: "Filter builds", exact: true }).click();
-      await page.getByLabel("Filter build weapon", { exact: true }).selectOption("MAIN_AXE");
-      await page.getByRole("button", { name: "Search builds", exact: true }).click();
+      await page.getByRole("button", { name: /^Filter builds/ }).click();
+      await page.getByLabel("Filter build weapon", { exact: true }).selectOption("Battleaxe");
+      await page.getByRole("button", { name: "Find builds", exact: true }).click();
       await expect(page).toHaveURL(/mine=1/);
-      await expect(page.getByLabel("Search build titles")).toHaveValue(`${label}`);
+      await expect(page.getByLabel("Search", { exact: true })).toHaveValue(`${label}`);
       await expect(page.locator(".community-build-card")).toHaveCount(3);
       await page.goto("/builds?q=not-a-qa-discovery-948");
-      await expect(page.getByText("No matching loadouts", { exact: true })).toBeVisible();
+      await expect(page.getByText("No loadouts match that search", { exact: true })).toBeVisible();
       await page.screenshot({ path: `${folder}/empty-320.png`, fullPage: true });
       const anonymous = await browser.newContext();
       try {

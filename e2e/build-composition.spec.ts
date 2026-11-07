@@ -190,7 +190,7 @@ test("build-to-comp copies public and own private loadouts independently while o
     await expect(page.locator("body")).not.toContainText(privateSource.title);
     await expect(page.getByRole("link", { name: "Browse builds", exact: true })).toHaveAttribute(
       "href",
-      "/builds/library?region=asia",
+      "/builds?region=asia",
     );
     await expect(
       page.getByRole("link", { name: "Start an empty comp", exact: true }),

@@ -276,7 +276,7 @@ export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
               : "Officers can share builds here for the whole team."
           }
           action={
-            <Link className="button secondary" href="/builds/library">
+            <Link className="button secondary" href="/builds?source=library">
               Browse the build library
             </Link>
           }

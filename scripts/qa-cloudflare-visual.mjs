@@ -51,7 +51,7 @@ const viewports = [
 ];
 try {
   for (const viewport of viewports)
-    for (const path of ["/", "/builds/new", "/builds/library", "/guides", "/signin"]) {
+    for (const path of ["/", "/builds/new", "/builds?source=library", "/guides", "/signin"]) {
       await page.setViewportSize(viewport);
       const response = await page.goto(`https://albionoutpost.com${path}`, {
         waitUntil: "domcontentloaded",

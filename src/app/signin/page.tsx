@@ -127,7 +127,7 @@ export default async function Signin({
               scene: "build",
             },
             {
-              href: "/builds/library",
+              href: "/builds?source=library",
               emblem: "strip-builds",
               title: "Build library",
               line: "Recorded builds by activity.",

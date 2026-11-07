@@ -191,7 +191,7 @@ export function DeviceLibraryFavorites() {
           </>
         }
         line={`${bookmarks.builds.length} of 100 saved in this browser${query.trim() ? ` · ${matching.length} match` : ""}`}
-        link={{ href: "/builds/library", label: "Build library" }}
+        link={{ href: "/builds?source=library", label: "Build library" }}
       />
       {!error && bookmarks.builds.length > 0 && (
         <div className="raised ecosystem-result-toolbar favorites-toolbar">
@@ -314,7 +314,7 @@ export function DeviceLibraryFavorites() {
           title="No library builds saved yet"
           line="Use the heart on a library build to keep it here. It stays in this browser, up to 100 builds."
           action={
-            <Link className="button secondary" href="/builds/library">
+            <Link className="button secondary" href="/builds?source=library">
               Open the library
             </Link>
           }
@@ -327,7 +327,7 @@ export function SaveBuildFilter({
   path,
   query,
 }: {
-  path: "/builds" | "/builds/library";
+  path: "/builds";
   query: Record<string, string>;
 }) {
   const { filters, error, key } = useCollection("filters"),
@@ -442,7 +442,7 @@ export function SavedBuildFilters() {
           <SlidersHorizontal size={28} />
           <h3>A shortcut to your playstyle.</h3>
           <p>Choose a weapon, activity or tag, then save the filters above the results.</p>
-          <Link className="button secondary" href="/builds/library">
+          <Link className="button secondary" href="/builds">
             Find a build
           </Link>
         </div>

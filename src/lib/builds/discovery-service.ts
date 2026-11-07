@@ -13,7 +13,7 @@ const discoveryInput = z
     mine: z.boolean(),
     content: z.union([z.enum(contentTypes), z.literal("")]),
     codes: z.array(z.string().refine((code) => codes.has(code))).max(200),
-    sort: z.enum(["saved", "recent"]),
+    sort: z.enum(["saved", "recent", "title"]),
     page: pageNumber,
   })
   .strict();
@@ -60,7 +60,9 @@ async function localListAccountBuilds(userId: string | null, input: DiscoveryInp
         orderBy:
           sort === "saved"
             ? [{ favorites: { _count: "desc" } }, { updatedAt: "desc" }, { id: "asc" }]
-            : [{ updatedAt: "desc" }, { id: "asc" }],
+            : sort === "title"
+              ? [{ title: "asc" }, { id: "asc" }]
+              : [{ updatedAt: "desc" }, { id: "asc" }],
         take: 24,
         skip: (page - 1) * 24,
         include: {

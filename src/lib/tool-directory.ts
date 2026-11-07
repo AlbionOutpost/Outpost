@@ -292,7 +292,7 @@ export const toolSections: {
     title: "Builds and comps",
     accent: "comps",
     line: "Make a loadout, plan a party, look up an item.",
-    link: { href: "/builds/library", label: "Build library" },
+    link: { href: "/builds", label: "All builds" },
     hrefs: ["/builds/new", "/compositions/new", "/items"],
   },
   {

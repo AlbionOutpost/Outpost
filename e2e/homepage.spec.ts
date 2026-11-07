@@ -383,7 +383,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(activities).toHaveCount(6);
   await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
     "href",
-    "/builds/library?category=CRYSTAL_CREATURES&region=europe",
+    "/builds?source=library&category=CRYSTAL_CREATURES&region=europe",
   );
   await expect(activities.first().locator(".activity-artwork-link")).toContainText(
     /Crystal Creatures\s*1 build/i,

@@ -22,6 +22,7 @@ export const bookmarksSchema = z
   .refine((v) => new Set(v.builds.map((b) => b.id)).size === v.builds.length);
 const queryKeys = new Set([
   "q",
+  "source",
   "category",
   "family",
   "weapon",
@@ -35,6 +36,7 @@ export const filterSchema = z
   .object({
     id: z.string().max(100),
     name: z.string().trim().min(1).max(40),
+    // "/builds/library" filters were saved before the lists merged; that URL redirects.
     path: z.enum(["/builds", "/builds/library"]),
     query: z
       .record(z.string().max(30), z.string().max(100))

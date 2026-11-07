@@ -62,7 +62,7 @@ export default function Activities() {
                 <li key={a.id}>
                   <Link
                     className="landing-chip"
-                    href={`/builds/library?category=${encodeURIComponent(a.id)}`}
+                    href={`/builds?source=library&category=${encodeURIComponent(a.id)}`}
                     prefetch={false}
                   >
                     {a.name}
@@ -83,7 +83,7 @@ export default function Activities() {
           </>
         }
         line="Search the whole library by weapon or author, or build a loadout for the content you run."
-        secondary={{ href: "/builds/library", label: "Build library" }}
+        secondary={{ href: "/builds?source=library", label: "Build library" }}
       />
     </div>
   );

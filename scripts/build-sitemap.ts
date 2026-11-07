@@ -14,10 +14,8 @@ const entries: Entry[] = [
   { path: "/tools", changeFrequency: "weekly", priority: 0.9 },
   { path: "/tools/market", changeFrequency: "daily", priority: 0.9 },
   { path: "/builds/activities", changeFrequency: "weekly", priority: 0.9 },
-  { path: "/builds/library", changeFrequency: "weekly", priority: 0.9 },
-  { path: "/builds", changeFrequency: "daily", priority: 0.7 },
-  { path: "/compositions/library", changeFrequency: "weekly", priority: 0.8 },
-  { path: "/compositions", changeFrequency: "daily", priority: 0.6 },
+  { path: "/builds", changeFrequency: "daily", priority: 0.9 },
+  { path: "/compositions", changeFrequency: "daily", priority: 0.8 },
   { path: "/guides", changeFrequency: "weekly", priority: 0.8 },
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },
   { path: "/market-data", changeFrequency: "monthly", priority: 0.5 },
@@ -29,7 +27,7 @@ const entries: Entry[] = [
     )
     .map((tool) => ({ path: tool.href, changeFrequency: "weekly", priority: 0.8 })),
   ...activityBackgrounds.map((activity) => ({
-    path: `/builds/library?category=${encodeURIComponent(activity.id)}`,
+    path: `/builds?source=library&category=${encodeURIComponent(activity.id)}`,
     changeFrequency: "weekly",
     priority: 0.6,
   })),

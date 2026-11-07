@@ -10,16 +10,14 @@ export function BuildWeaponRail({
   selected,
   total,
   query,
-  path = "/builds/library",
   limit,
 }: {
   families: readonly { id: string; name: string; count: number }[];
   weapons: readonly { family: string; itemId: string }[];
   selected: string;
-  /** The library's totals; player builds have no per-family count, so they show none. */
+  /** The library's totals, shown only when the list is the library: player builds have no count. */
   total?: number;
   query: Record<string, string>;
-  path?: "/builds/library" | "/builds";
   /** Show this many families until the player asks for all (the selected one always shows). */
   limit?: number;
 }) {
@@ -31,7 +29,7 @@ export function BuildWeaponRail({
   const short = !!limit && !all && !search.trim() && matching.length > limit;
   const visible = short ? matching.filter((f, i) => i < limit || f.id === selected) : matching;
   const href = (family: string) =>
-    `${path}?${new URLSearchParams({ ...query, family, weapon: "", page: "1" })}`;
+    `/builds?${new URLSearchParams({ ...query, family, weapon: "", page: "1" })}`;
   return (
     <section className="build-weapon-rail" aria-label="Weapon families">
       <div className="weapon-rail-heading">

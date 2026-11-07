@@ -53,7 +53,7 @@ export function ActivityArtworkCard({
     >
       <Link
         className={`activity-artwork-link ${styles.main}`}
-        href={`/builds/library?category=${encodeURIComponent(category)}`}
+        href={`/builds?source=library&category=${encodeURIComponent(category)}`}
         prefetch={false}
         style={
           art

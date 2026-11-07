@@ -322,9 +322,6 @@
   white-space: nowrap;
   border: 0;
 }
-.app.outpost .view-list .ecosystem-build-grid {
-  grid-template-columns: 1fr;
-}
 .app.outpost .view-list .ecosystem-card-main {
   display: grid;
   grid-template-columns: minmax(180px, 1fr) minmax(210px, 1.4fr) minmax(120px, 0.7fr);
@@ -1071,6 +1068,14 @@
   display: grid;
   gap: 0;
   margin-top: 64px;
+}
+/* The list's source (All · Community · Library) over the results; on "All" each source keeps
+   its own heading */
+.app.outpost .build-source-switch {
+  margin-bottom: var(--space-4);
+}
+.app.outpost .build-source-group + .build-source-group {
+  margin-top: var(--space-10);
 }
 
 /* Phones: the weapon shortcuts are one row that scrolls, fading at the cut edge */

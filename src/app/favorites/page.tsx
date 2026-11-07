@@ -264,7 +264,7 @@ export default async function Favorites({
           </>
         }
         line="Open a saved build, copy it into the editor and change the pieces you want."
-        secondary={{ href: "/builds/library", label: "Build library" }}
+        secondary={{ href: "/builds?source=library", label: "Build library" }}
       />
     </div>
   );
