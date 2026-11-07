@@ -161,6 +161,7 @@ export function ProductionCalculator({
   const [showScenarios, setShowScenarios] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const autoLoad = useRef<number | undefined>(undefined);
   const request = useRef<AbortController | null>(null);
   const [overwrite, setOverwrite] = useState(false);
   const [bonus, setBonus] = useState(0);
@@ -180,9 +181,13 @@ export function ProductionCalculator({
   useEffect(() => {
     if (!recipeKnown || incompatibleRecipe) return;
     const timer = window.setTimeout(() => void loadRef.current(), 400);
+    autoLoad.current = timer;
     return () => window.clearTimeout(timer);
   }, [recipeKnown, incompatibleRecipe, requestKey]);
   async function load() {
+    // Any load (a Refresh) replaces the pending automatic one: firing later, it would start from
+    // prices typed since and, with "Replace manual overrides" on, replace them.
+    window.clearTimeout(autoLoad.current);
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;

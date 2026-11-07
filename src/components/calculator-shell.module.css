@@ -194,8 +194,7 @@
 }
 :global(.app.outpost) .rows.rows dd {
   margin: 0;
-  font-family: var(--font-ui);
-  font-weight: 600;
+  font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -601,7 +600,7 @@
   width: fit-content;
 }
 :global(.app.outpost) .matTotal.matTotal {
-  font: 600 14px/1.2 var(--font-ui);
+  font: 600 13px/1.2 var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;

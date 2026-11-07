@@ -143,6 +143,7 @@
   line-height: 1.25;
 }
 :global(.app.outpost) .num.num {
+  font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;

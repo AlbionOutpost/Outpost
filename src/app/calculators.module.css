@@ -564,7 +564,7 @@
 }
 :global(.app.outpost) .flipPrice.flipPrice {
   justify-items: end;
-  font: 500 14px/1.2 var(--font-ui);
+  font: 600 13px/1.2 var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -572,7 +572,7 @@
   justify-content: flex-end;
 }
 :global(.app.outpost) .flipNet.flipNet {
-  font: 700 15px/1 var(--font-ui);
+  font: 800 18px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -588,7 +588,7 @@
 }
 :global(.app.outpost) .flipMargin.flipMargin {
   color: var(--secondary);
-  font: 500 14px/1 var(--font-ui);
+  font: 600 13px/1 var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }

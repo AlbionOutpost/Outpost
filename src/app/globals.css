@@ -369,7 +369,7 @@ h1 em {
   max-width: 100%;
 }
 /* Data tables: one design for every table (DESIGN.md › Tables). Labels and text in the UI face;
-   figures (.numeric) right-aligned in tabular numerals; a light 12px header, 44px rows with
+   figures (.numeric) in Geist Mono, right-aligned and tabular; a light 12px header, 44px rows with
    hairline dividers and a hover wash; the current row (data-current, aria-current,
    aria-selected) marked by an ember bar on its first cell. Gains and losses (.is-gain, .is-loss)
    keep their sign. data-density="compact" on a secondary table. Wrap a table in .table-scroll
@@ -442,7 +442,7 @@ h1 em {
   color: var(--accent-ink);
 }
 .app.outpost table :is(th, td).numeric {
-  font-family: var(--font-ui);
+  font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
