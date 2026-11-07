@@ -39,11 +39,33 @@
   overflow: hidden;
 }
 
+/* Some covers are cut-out art flattened onto black (the Hellgates cover), so their top edge is a
+   flat black band. The cover's top fades into the same art, blurred and grown from its foot
+   underneath, so every cover reaches the card's top edge whatever its shape. */
+.art::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background: var(--cover, none) center bottom / cover no-repeat;
+  filter: blur(18px);
+  transform: scale(1.4);
+  transform-origin: 50% 100%;
+}
+
 .art > img {
+  position: relative;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 32%);
+  mask-image: linear-gradient(180deg, transparent, #000 32%);
   transition: transform 700ms var(--ease-out-expo);
+}
+
+.lead .art > img {
+  object-position: center bottom;
 }
 
 .lead .link {

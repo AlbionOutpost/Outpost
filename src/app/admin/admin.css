@@ -74,81 +74,171 @@
   margin: 0 4px 4px;
 }
 
-/* Totals */
-.app.outpost .admin-stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+/* Overview: quick actions in the masthead, the queues first, totals in one strip */
+.app.outpost .admin-quick {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.app.outpost .admin-quick-search {
+  flex: none;
+  width: 320px;
   margin: 0;
-  padding: 0;
-  list-style: none;
 }
-.app.outpost .admin-stats > li {
-  display: grid;
-  min-width: 0;
+.app.outpost .admin-quick > .button {
+  flex: none;
 }
-.app.outpost .admin-stats a.well {
+/* On the overview a flagged account is its name and its signals */
+.app.outpost .admin-review-list.is-short > li {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.app.outpost .admin-queues {
   display: grid;
-  gap: 4px;
-  padding: 16px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.app.outpost .admin-queues > a.well {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px 18px;
   color: var(--text);
   text-decoration: none;
   transition: border-color 160ms;
 }
-.app.outpost .admin-stats a.well:hover {
+.app.outpost .admin-queues > a.well:hover {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
 }
-.app.outpost .admin-stats span:not(.animated-number) {
+.app.outpost .admin-queues strong {
+  min-width: 2ch;
   color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .admin-stats strong {
-  font: 800 34px/1.1 var(--font-display);
+  font: 600 28px/1 var(--font-data);
   font-variant-numeric: tabular-nums;
 }
-.app.outpost .admin-stats a.well:hover strong {
+.app.outpost .admin-queues > a[data-waiting] {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--well-border));
+}
+.app.outpost .admin-queues > a[data-waiting] strong {
+  color: var(--warning);
+}
+.app.outpost .admin-queues span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  font: 650 15px/1.3 var(--font-ui);
+}
+.app.outpost .admin-queues small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.app.outpost .admin-queues svg {
   color: var(--accent-ink);
 }
+.app.outpost .admin-main > .panel > .admin-queues + * {
+  margin-top: 12px;
+}
+.app.outpost .admin-clear {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--secondary);
+  font-size: 13px;
+}
+.app.outpost .admin-clear svg {
+  color: var(--positive);
+}
+.app.outpost .admin-totals {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin: 0;
+  padding: 14px 4px;
+}
+.app.outpost .admin-totals > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 16px;
+  border-left: 1px solid var(--well-border);
+}
+.app.outpost .admin-totals > div:first-child {
+  border-left: 0;
+}
+.app.outpost .admin-totals dt {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.app.outpost .admin-totals dd {
+  margin: 0;
+  color: var(--text);
+  font: 600 20px/1.2 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .admin-totals dd a {
+  color: inherit;
+  text-decoration: none;
+}
+.app.outpost .admin-totals dd a:hover {
+  color: var(--accent-ink);
+}
+.app.outpost .admin-signups {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.outpost .admin-signups > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .admin-signups .admin-user-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.outpost .admin-signups .admin-chip {
+  justify-self: end;
+}
+.app.outpost .admin-signups small,
+.app.outpost .admin-signups time {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .admin-signups time {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+.app.outpost .admin-signups li:has(.admin-chip) time {
+  grid-row: 2;
+}
+.app.outpost .admin-signups small {
+  grid-column: 1;
+}
 
-/* Overview */
 .app.outpost .admin-overview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
   gap: 24px;
   align-items: start;
 }
 .app.outpost .admin-overview-grid > .panel {
   padding: 24px;
   min-width: 0;
-}
-.app.outpost .admin-figures {
-  display: grid;
-  gap: 8px;
-  margin: 0 0 16px;
-}
-.app.outpost .admin-figures > div {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  min-width: 0;
-  padding: 11px 14px;
-  border-bottom: 0;
-}
-.app.outpost .admin-figures dt {
-  min-width: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-.app.outpost .admin-figures dd {
-  margin: 0;
-  font-family: var(--font-ui);
-  min-width: 0;
-  font-size: 14px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  overflow-wrap: anywhere;
 }
 .app.outpost .admin-foot {
   margin: 0 0 16px;
@@ -168,21 +258,6 @@
   font-size: 13px;
   line-height: 1.5;
 }
-
-/* Chart */
-.app.outpost .admin-chart-total {
-  display: grid;
-  justify-items: end;
-}
-.app.outpost .admin-chart-total strong {
-  font: 800 28px/1 var(--font-display);
-  font-variant-numeric: tabular-nums;
-}
-.app.outpost .admin-chart-total small {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 12px;
-}
 .app.outpost .admin-chart {
   margin-top: 16px;
   padding: 14px 16px 10px;
@@ -197,11 +272,19 @@
   stroke: var(--well-border);
   stroke-width: 1;
 }
-.app.outpost .admin-chart-cursor {
-  stroke: var(--accent);
-  stroke-width: 1;
-  stroke-dasharray: 3 4;
-  opacity: 0.6;
+.app.outpost .admin-grid-line.is-faint {
+  stroke-dasharray: 2 4;
+}
+.app.outpost .admin-chart-hit {
+  fill: transparent;
+}
+.app.outpost .admin-chart-bar {
+  fill: var(--accent);
+  opacity: 0.8;
+  transition: opacity 120ms;
+}
+.app.outpost .admin-chart-bar[data-active] {
+  opacity: 1;
 }
 .app.outpost .admin-chart-axis {
   display: flex;
@@ -211,32 +294,6 @@
   color: var(--muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-}
-.app.outpost .admin-chart-inspector {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: baseline;
-  gap: 8px 16px;
-  margin: 16px 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .admin-chart-inspector output {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.app.outpost .admin-chart-inspector output strong {
-  color: var(--text);
-  font-weight: 600;
-}
-.app.outpost .admin-chart-inspector input[type="range"] {
-  grid-column: 1 / -1;
-  width: 100%;
-  min-height: 24px;
-  padding: 0;
-  border: 0;
-  background: none;
-  accent-color: var(--accent);
 }
 
 /* Segmented filters: users, chart series, report status */
@@ -467,9 +524,6 @@
 .app.outpost .admin-controls .pill-link svg[data-open] {
   rotate: 180deg;
 }
-.app.outpost .admin-chart-inspector {
-  margin: 12px 0 0;
-}
 .app.outpost #admin-daily-values {
   margin-top: 16px;
 }
@@ -512,60 +566,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Closing band: framed cards with a headline and one line */
-.app.outpost .admin-next {
-  margin-top: 8px;
-  margin-bottom: 72px;
-}
-.app.outpost .admin-next > ul {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.app.outpost .admin-next li {
-  display: grid;
-  min-width: 0;
-}
-.app.outpost .admin-next a.raised {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 14px;
-  min-height: 96px;
-  padding: 20px 22px;
-  color: var(--text);
-  text-decoration: none;
-}
-.app.outpost .admin-next-copy {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-.app.outpost .admin-next-title {
-  font: 800 20px/1.15 var(--font-display);
-}
-.app.outpost .admin-next-line {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
-}
-.app.outpost .admin-next a.raised svg {
-  color: var(--accent-ink);
-}
-@media (max-width: 1100px) {
-  .app.outpost .admin-next > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 700px) {
-  .app.outpost .admin-next > ul {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
 /* Review list */
 .app.outpost .admin-review-list {
   display: grid;
@@ -756,6 +756,13 @@
 }
 
 @media (max-width: 1100px) {
+  .app.outpost .admin-totals {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+  .app.outpost .admin-totals > div:nth-child(5) {
+    border-left: 0;
+  }
   .app.outpost .admin-workspace {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -774,9 +781,6 @@
   .app.outpost .admin-user-grid {
     grid-template-columns: 1fr;
   }
-  .app.outpost .admin-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 @media (max-width: 860px) {
   .app.outpost .admin-review-layout {
@@ -791,6 +795,26 @@
   }
 }
 @media (max-width: 700px) {
+  .app.outpost .admin-quick {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .app.outpost .admin-quick-search {
+    width: 100%;
+  }
+  .app.outpost .admin-quick > .button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .app.outpost .admin-queues {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .app.outpost .admin-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .app.outpost .admin-totals > div:nth-child(odd) {
+    border-left: 0;
+  }
   .app.outpost .admin-main > .panel,
   .app.outpost .admin-user-grid .panel,
   .app.outpost .admin-overview-grid > .panel {
@@ -805,23 +829,11 @@
   .app.outpost .admin-rail .admin-return {
     display: none;
   }
-  .app.outpost .admin-stats {
-    gap: 10px;
-  }
-  .app.outpost .admin-stats strong {
-    font-size: 28px;
-  }
   .app.outpost .admin-search {
     flex-direction: column;
   }
   .app.outpost .admin-seg > :is(a, button) {
     flex: 1 1 calc(50% - 6px);
-  }
-  .app.outpost .admin-chart-inspector {
-    grid-template-columns: 1fr;
-  }
-  .app.outpost .admin-chart-inspector output {
-    text-align: left;
   }
   .app.outpost .admin-action-buttons > * {
     flex: 1 1 100%;
@@ -893,14 +905,6 @@
     display: inline-flex;
     align-items: center;
     min-height: 32px;
-  }
-  .app.outpost .admin-stats a.well {
-    padding: 12px 14px;
-  }
-  .app.outpost .admin-chart-total {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
   }
   .app.outpost .admin-audit-list time {
     margin-left: 0;

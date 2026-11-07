@@ -10,11 +10,12 @@ import { WellSelect } from "./well-select";
 import { SearchInput } from "./field";
 import type { TeamContext } from "./group-dashboard";
 import { plural, roleLabel } from "./group-parts";
+import { AvatarFrame } from "./avatar-frame";
 import styles from "./teams.module.css";
 
 type Member = GroupDashboardData["members"][number];
 
-/** A member as a well row: initial, name and role; the role control replaces the chip when allowed. */
+/** A member as a well row: framed initial, name and role; the role control replaces the chip when allowed. */
 export function MemberRow({
   member,
   editable = false,
@@ -26,9 +27,7 @@ export function MemberRow({
 }) {
   return (
     <div className={`well ${styles.wellRow}`} data-team-member="">
-      <span className={styles.initial} aria-hidden="true">
-        {member.name.slice(0, 1).toUpperCase()}
-      </span>
+      <AvatarFrame frame={member.avatarFrame} size={36} name={member.name} />
       <span className={styles.rowCopy}>
         <strong>{member.name}</strong>
       </span>

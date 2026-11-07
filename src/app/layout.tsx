@@ -41,6 +41,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           region: true,
           name: true,
           image: true,
+          avatarFrame: true,
           role: true,
           plan: true,
           supporterGiftUntil: true,
@@ -72,7 +73,16 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <Shell
           key={`${initialRegion}:${initialLight}`}
           authenticated={!!session?.user?.id}
-          account={user ? { name: user.name, image: user.image, role: user.role } : null}
+          account={
+            user
+              ? {
+                  name: user.name,
+                  image: user.image,
+                  avatarFrame: user.avatarFrame,
+                  role: user.role,
+                }
+              : null
+          }
           initialLight={initialLight}
           initialRegion={initialRegion}
         >

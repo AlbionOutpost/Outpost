@@ -9,50 +9,57 @@
 }
 
 /* ---------- Identity ---------- */
-/* The team's letters on a tile framed like the painted emblems (an ember bevel on dark
-   enamel), until a team can upload a crest. */
+/* The crest: the team's painted shield with its item render or initials on it, a little above
+   centre where the shield is widest. The masthead's emblem rule sizes imgs, hence the second
+   selector. */
 :global(.app.outpost) .mark.mark {
   display: inline-grid;
   flex: none;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  border: 2px solid color-mix(in srgb, var(--accent) 82%, var(--illustration-bg));
-  border-radius: 12px;
-  background:
-    radial-gradient(
-      120% 90% at 30% 15%,
-      color-mix(in srgb, var(--accent) 30%, transparent),
-      transparent 70%
-    ),
-    var(--illustration-bg);
-  box-shadow:
-    inset 0 0 0 2px color-mix(in srgb, var(--illustration-bg) 70%, transparent),
-    inset 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent),
-    0 4px 10px #000a,
-    0 0 12px color-mix(in srgb, var(--accent) 35%, transparent);
-  color: var(--accent-ink);
-  font: 800 26px/1 var(--font-display);
+  width: 88px;
+  height: 88px;
+  padding-bottom: 8%;
+  background: var(--shield) center / contain no-repeat;
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
+  color: var(--text);
+  font: 800 30px/1 var(--font-display);
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 2px #000c;
+  text-shadow: 0 2px 4px var(--illustration-bg);
 }
-/* In the masthead the tile stands on its own, like a painted emblem: no second box */
+:global(.app.outpost) .mark.mark img,
+:global(.app.outpost .workspace-emblem) .mark.mark img {
+  /* The render is an inventory tile; a round cut keeps the item and drops the tile's frame,
+     tier numeral and quality dots, so it reads as a medallion on the shield. */
+  width: 70%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  clip-path: circle(31% at 50% 50%);
+}
+/* In the masthead the crest stands on its own, like a painted emblem: no second box */
 :global(.app.outpost .workspace-emblem):has(> .mark) {
+  width: auto;
+  height: auto;
   border: 0;
   background: none;
   box-shadow: none;
 }
+:global(.app.outpost) .mark.mark[data-size="medium"] {
+  width: 60px;
+  height: 60px;
+  font-size: 20px;
+}
 :global(.app.outpost) .mark.mark[data-size="small"] {
   width: 40px;
   height: 40px;
-  border-radius: 9px;
-  font-size: 16px;
+  font-size: 14px;
 }
 @media (max-width: 700px) {
   :global(.app.outpost .workspace-emblem) > .mark.mark {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    font-size: 22px;
   }
 }
 :global(.app.outpost) .chips.chips {
@@ -237,17 +244,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-}
-:global(.app.outpost) .initial.initial {
-  display: inline-grid;
-  flex: none;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--elevated);
-  color: var(--accent-ink);
-  font: 800 16px/1 var(--font-display);
 }
 :global(.app.outpost) .weapons.weapons {
   display: flex;
@@ -879,27 +875,25 @@
     justify-content: center;
   }
 }
+
 :global(.app.outpost) .ask.ask {
   max-width: 820px;
 }
 
 /* ---------- Directory ---------- */
-:global(.app.outpost) .createAction.createAction {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-}
+/* One quiet search row: the text field takes the room, three selects and the button follow */
 :global(.app.outpost) .filters.filters {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--space-4);
-  margin: 0 0 56px;
-  padding: var(--space-5) var(--space-6);
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(0, 176px)) auto;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 48px;
+  padding: var(--space-4);
 }
 :global(.app.outpost) .section.section {
   margin: 0;
 }
+/* Team cards, three across; subgrid rows keep heads, lines, activities and feet aligned */
 :global(.app.outpost) .teamGrid.teamGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -910,19 +904,74 @@
 }
 :global(.app.outpost) .teamGrid.teamGrid > li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  min-width: 0;
 }
-:global(.app.outpost) .windowTitle.windowTitle {
-  overflow: hidden;
+:global(.app.outpost) .card.card {
+  position: relative;
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+}
+:global(.app.outpost) .cardHead.cardHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+:global(.app.outpost) .cardHead.cardHead > :global(.landing-chip) {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  align-self: flex-start;
+}
+:global(.app.outpost) .cardTitle.cardTitle {
+  flex: 1;
+  min-width: 0;
+}
+:global(.app.outpost) .cardTitle.cardTitle h3 {
   margin: 0;
-  font: inherit;
+  font: 800 22px/1.15 var(--font-display);
+  letter-spacing: 0.005em;
+}
+:global(.app.outpost) .cardTitle.cardTitle p {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-:global(.app.outpost) .teamBody.teamBody {
-  min-height: 66px;
+/* The name is the card's link; its hit area covers the whole card */
+:global(.app.outpost) .cardLink.cardLink {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-decoration: none;
 }
-:global(.app.outpost) :is(.teamLine, .teamLineMuted) {
+:global(.app.outpost) .cardLink.cardLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+:global(.app.outpost) .card.card:hover .cardLink {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .cardLink.cardLink:focus-visible {
+  outline: none;
+}
+:global(.app.outpost) .card.card:has(.cardLink:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:global(.app.outpost) :is(.cardLine, .cardLineMuted) {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
@@ -930,20 +979,64 @@
   font-size: 14px;
   line-height: 1.55;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 }
-:global(.app.outpost) .teamLineMuted {
+:global(.app.outpost) .cardLineMuted.cardLineMuted,
+:global(.app.outpost) .muted.muted {
   color: var(--muted);
 }
-:global(.app.outpost) .teamFoot.teamFoot {
-  grid-template-columns: 40px minmax(0, 1fr) auto;
+:global(.app.outpost) .cardPlays.cardPlays {
+  align-self: start;
+  min-height: 28px;
+  font-size: 13px;
+}
+:global(.app.outpost) .plays.plays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .cardFoot.cardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: 10px 10px 10px 14px;
+}
+:global(.app.outpost) .footState.footState {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+:global(.app.outpost) .footState.footState small {
+  color: var(--muted);
+  font-size: 12px;
+}
+:global(.app.outpost) .footState.footState strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Recruiting reads in the gain tone, with the word itself; closed teams stay neutral */
+:global(.app.outpost) .footState.footState[data-joining="open"] strong {
+  color: var(--success);
+}
+:global(.app.outpost) .cardAction.cardAction {
+  position: relative;
+  z-index: 1;
+  flex: none;
 }
 @media (max-width: 1100px) {
   :global(.app.outpost) .teamGrid.teamGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   :global(.app.outpost) .filters.filters {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
   }
   :global(.app.outpost) .filterSearch {
     grid-column: 1 / -1;
@@ -952,20 +1045,18 @@
 @media (max-width: 700px) {
   :global(.app.outpost) .teamGrid.teamGrid {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
   }
   :global(.app.outpost) .filters.filters {
-    gap: var(--space-3);
-    margin-bottom: 40px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin-bottom: 36px;
+    padding: var(--space-3);
+  }
+  :global(.app.outpost) .card.card {
     padding: var(--space-4);
   }
-  :global(.app.outpost) .filters.filters > :global(.button) {
-    grid-column: 1 / -1;
-  }
-  :global(.app.outpost) .createAction.createAction {
-    width: 100%;
-  }
-  :global(.app.outpost) .createAction.createAction > :global(.button) {
-    flex: 1;
+  :global(.app.outpost) .cardAction.cardAction {
+    min-height: 40px;
   }
 }
 
@@ -1037,35 +1128,6 @@
 :global(.app.outpost) .emptyStack.emptyStack > div > div:last-child:not(:nth-child(2)) {
   flex: 1 1 100%;
 }
-/* Team windows in the directory: the facts sit in wells under the line */
-:global(.app.outpost) .teamFacts.teamFacts {
-  display: grid;
-  gap: 6px;
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-:global(.app.outpost) .teamFacts.teamFacts > li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 40px;
-  padding: 8px 12px;
-  font-size: 13px;
-}
-:global(.app.outpost) .teamFacts.teamFacts > li > span:first-child {
-  color: var(--muted);
-}
-:global(.app.outpost) .teamFacts.teamFacts > li > :last-child {
-  overflow: hidden;
-  min-width: 0;
-  color: var(--text);
-  font-weight: 600;
-  text-align: right;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 /* The invitation card stands centred on the page */
 :global(.app.outpost) .centred.centred {
   margin-inline: auto;
@@ -1111,6 +1173,13 @@
 }
 
 /* ---------- Comps and Builds tabs: the landing's windows, three across ---------- */
+:global(.app.outpost) .windowTitle.windowTitle {
+  overflow: hidden;
+  margin: 0;
+  font: inherit;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 :global(.app.outpost) .shareBar.shareBar {
   display: grid;
   grid-template-columns: minmax(0, 420px) auto;
@@ -1184,5 +1253,276 @@
   :global(.app.outpost) .memberGrid .rowTools.rowTools {
     flex-basis: auto;
     flex-wrap: nowrap;
+  }
+}
+
+/* ---------- Team identity: crest, what the team plays, recruiting ---------- */
+:global(.app.outpost) .identity.identity {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+:global(.app.outpost) .formGrid > .identity.identity {
+  grid-column: 1 / -1;
+}
+:global(.app.outpost) .crestPicker.crestPicker,
+:global(.app.outpost) .playsPicker.playsPicker {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+:global(.app.outpost) :is(.crestPicker, .playsPicker) > legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .crestPreview.crestPreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+:global(.app.outpost) .crestPreview.crestPreview p,
+:global(.app.outpost) .pickerHint.pickerHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .swatches.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .swatch.swatch {
+  position: relative;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--shield) center / 80% no-repeat;
+  cursor: pointer;
+}
+:global(.app.outpost) :is(.swatch, .charge, .playOption) > input:not([type="checkbox"]) {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+:global(.app.outpost) .swatch.swatch:has(input:checked) {
+  box-shadow:
+    0 0 0 2px var(--surface-raised),
+    0 0 0 4px var(--accent);
+}
+:global(.app.outpost) :is(.swatch, .charge):has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+:global(.app.outpost) .charges.charges {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 6px;
+}
+:global(.app.outpost) .charge.charge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--well-border);
+  border-radius: 8px;
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  cursor: pointer;
+}
+:global(.app.outpost) .charge.charge img {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+}
+:global(.app.outpost) .charge.charge:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .charge.charge:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+:global(.app.outpost) .chargeInitials.chargeInitials {
+  color: var(--secondary);
+  font: 800 18px/1 var(--font-display);
+}
+:global(.app.outpost) .playOptions.playOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+:global(.app.outpost) .playOption.playOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 500 13px/1 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .playOption.playOption:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--text);
+}
+:global(.app.outpost) .playOption.playOption:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+:global(.app.outpost) .playOption.playOption > input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+:global(.app.outpost) .recruitToggle.recruitToggle {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+:global(.app.outpost) .recruitToggle.recruitToggle > input {
+  flex: none;
+  margin-top: 2px;
+}
+:global(.app.outpost) .recruitToggle.recruitToggle > span {
+  display: grid;
+  gap: 2px;
+}
+:global(.app.outpost) .recruitToggle.recruitToggle strong {
+  color: var(--text);
+  font-size: 14px;
+}
+:global(.app.outpost) .recruitToggle.recruitToggle small {
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .swatch.swatch {
+    width: 40px;
+    height: 40px;
+  }
+  :global(.app.outpost) .charges.charges {
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  }
+  :global(.app.outpost) .playOption.playOption {
+    min-height: 40px;
+  }
+}
+:global(.app.outpost) .profileSummary.profileSummary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+/* A public team from outside: what it is beside the way in */
+:global(.app.outpost) .home.home {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  align-items: start;
+  gap: 26px 24px;
+}
+:global(.app.outpost) :is(.about, .aboutMuted) {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.65;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .aboutMuted.aboutMuted {
+  color: var(--muted);
+}
+:global(.app.outpost) .membersOnly.membersOnly {
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+:global(.app.outpost) .home .facts.facts {
+  margin: var(--space-5) 0 0;
+}
+:global(.app.outpost) .home .facts dd[data-joining="open"] {
+  color: var(--success);
+}
+:global(.app.outpost .workspace-identity-copy) > .plays.plays {
+  margin-top: var(--space-4);
+}
+:global(.app.outpost) .chips + .plays.plays {
+  margin-top: var(--space-2);
+}
+@media (max-width: 900px) {
+  :global(.app.outpost) .home.home {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Beside the long create form the feature list stays in view */
+@media (min-width: 901px) {
+  :global(.app.outpost) .createLayout:not([data-locked]) > .includes.includes {
+    position: sticky;
+    top: calc(72px + var(--space-6));
+    align-self: start;
+  }
+}
+:global(.app.outpost) .settingsWide.settingsWide {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+/* Editing the profile: the basics beside the crest and activities */
+:global(.app.outpost) .profileForm.profileForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas: "basics crest" "plays crest" "recruit crest";
+  align-items: start;
+  gap: var(--space-5) var(--space-8);
+}
+:global(.app.outpost) .profileForm > .formGrid {
+  grid-area: basics;
+}
+:global(.app.outpost) .profileForm > .identity.identity {
+  display: contents;
+}
+:global(.app.outpost) .profileForm .crestPicker.crestPicker {
+  grid-area: crest;
+}
+:global(.app.outpost) .profileForm .playsPicker.playsPicker {
+  grid-area: plays;
+}
+:global(.app.outpost) .profileForm .recruitToggle.recruitToggle {
+  grid-area: recruit;
+}
+@media (max-width: 1000px) {
+  :global(.app.outpost) .profileForm.profileForm {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "basics" "crest" "plays" "recruit";
+  }
+}
+:global(.app.outpost) .charge.charge > * {
+  grid-area: 1 / 1;
+  margin: 0;
+}
+:global(.app.outpost) .charge.charge {
+  align-content: center;
+  justify-content: center;
+}
+/* The narrowest cards give the name the room; the foot's Next event and Open still mark your team */
+@media (max-width: 480px) {
+  :global(.app.outpost) .cardHead.cardHead > :global(.landing-chip) {
+    display: none;
   }
 }

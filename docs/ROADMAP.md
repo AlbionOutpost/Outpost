@@ -4,6 +4,20 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Homepage weight — 7 November 2026
+
+- Images: one variant step (`scripts/image-variants.mjs`) for activity art, emblems, every guide cover in the library JSON (`public/library/media/guides`) and the Supporter painting; guide cards, the landing guide stories, the Supporter band and the landing windows pick a width with `srcset`/`sizes`, and a cover's blurred backdrop uses its narrowest file. The first `/guides` card loads eagerly with high priority (it is the LCP). `--check` also catches a repainted source (hash) and leftover variants. Local images on `/` after a full scroll: 1,126 → 718 KB at 412px, 1,199 → 769 KB at 1350px.
+- Browser cache: `public/_headers` gives `/_next/static/*` a year (immutable) and artwork, icons and fonts 30 days plus a week stale-while-revalidate; before, every static file was `max-age=0`.
+- CSS: rules for classes no source file uses were deleted from the 16 root sheets and `homepage.css` (≈ 120 KB of source). No element on 45 routes (signed out and admin, 1440 and 390) carries a removed class, and computed styles are unchanged. Inline CSS on `/` 405 → 308 KB; the homepage HTML 1,260 → 968 KB (213 → 167 KB gzip).
+- `public/llms.txt` added.
+- Not done: the homepage LCP is the lede, held back by the hero's rise animation; webpack strict CSS chunking; both wait for the owner. Item icons from the official renderer are requested at 2× for every screen; Next's built-in polyfills are the 14 KB of "legacy JavaScript"; the crest shields are CSS backgrounds and get no variants.
+
+## Dashboard, settings and admin redesign — 6 November 2026
+
+- Dashboard: compact well rows for your builds (loadout strip), comps (party weapons), running timers (running first), Teams and saved plans, builds and comps beside the side lists. An empty list is its panel head with one action; a new account sees one "first build" band instead of five empty lists. The quick-start tiles and closing cards are gone.
+- Settings: one column of groups (name and line left, controls right): profile, sign-in and export, staff tools for admins and moderators, then closing the account under a rule. The section rail, masthead chips, floating admin button and closing cards are gone.
+- Admin overview: "Needs attention" first (open reports, flagged accounts with their signals), totals in one strip, the last 30 days as daily bars beside the newest accounts, then recent access changes. Account search and "Ban a Discord ID" sit in the masthead. The admin pages' closing cards (`AdminNextSteps`) are deleted; the rail is the one set of section links.
+
 ## 30 guides, all Outpost's own — 6 November 2026
 
 - The 8 archive guides have new titles, structure and text, written by Outpost; slugs stay, section anchors changed. Facts that still hold were kept and updated for Rogue Frontier, Abyssal Depths, Realm Divided, Radiant Wilds and Dragonfire.
@@ -33,6 +47,8 @@ A full review of the last ~40 PRs. Fixed:
 - **Calculators:** Black Market production output is priced from the highest buy order and charges no setup fee; laborers "Margin" is relabelled return on cost; transport trip counts use exact decimals; the landing quote uses the unrounded 18/118 return rate.
 - **Free-tier cost:** landing counts read the archive manifest instead of scanning about 11.5k D1 rows per view; expression indexes cover the library's default and newest orders (they take effect on the next `cloudflare-stage-library.mjs --apply`); the landing quote and top kills are edge-cached for signed-out visitors, and cache hits skip the rate-limit object; like chips refresh on focus at most every five minutes; the homepage loads its live previews with one `/api/landing` request (market + history + crafting + planner + top kills; one shared AODP price batch) and its like chips with one batched read, so a visit makes 2 data requests instead of 7; activity cards load a 400/600/800px WebP by rendered width (homepage artwork 354 KB → 112 KB on 1x desktop and 2x phones); the owner-promotion write runs once per user per isolate instead of on every request.
 - **Data truth:** top-kill gear value ignores listings older than the seven-day kill window.
+- **Profile frames:** players pick a picture frame (none, bronze, silver, gold, crystal) in Settings; it shows around their picture in the header, Settings and dashboard mastheads, and around their initial on their profile, comments and Team rosters.
+- **Teams:** the directory is a grid of team cards (crest, server, size, what they play, joining state, one action) with a compact search row; public Teams get a home page for outsiders; every Team can pick a crest (an item render on a palette field, set by owners and admins in Settings) and say what it plays and whether it is recruiting. Image uploads for crests are not built (they need R2 storage and moderation).
 - **Security:** Discord OAuth tokens are no longer stored, and tokens stored earlier are cleared by private-store schema step 8 on the next data Worker deploy (Postgres: migration `20261105220000_clear_oauth_tokens`); signed-out search is cached for two minutes (was ten).
 - **Cleanup:** removed dead components, `home-fidelity.css`, the header-search CSS and dead `workspace-refresh.css` rules; deleted the generated root status reports; restored spaces dropped around numbers in the docs.
 

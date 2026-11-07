@@ -24,40 +24,6 @@
   font-size: 15px;
   line-height: 1.65;
 }
-.task-progress {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  grid-column: 1 / -1;
-}
-.task-progress :is(li, button) {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font: 600 14px/1.4 var(--font-ui);
-}
-.task-progress span {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-.task-progress [aria-current="step"] {
-  color: var(--text);
-}
-.task-progress [aria-current="step"] span {
-  background: var(--action);
-  color: #fff;
-  border-color: var(--action);
-}
 .task-state {
   padding: 16px;
   background: var(--bg);
@@ -74,104 +40,9 @@
   color: var(--muted);
   margin-block: 8px 0;
 }
-.app.outpost .production-workspace .panel {
-  border-radius: var(--radius-panel);
-}
-.app.outpost .production-calculator-page .production-workspace {
-  gap: 20px;
-}
-.app.outpost .production-workspace :is(label, summary) {
-  font-size: 14px;
-}
-.production-steps button {
-  padding: 4px 0;
-  background: transparent;
-  border: 0;
-  border-radius: 4px;
-}
-.production-city-choices {
-  margin-top: 20px;
-}
-.production-price-help {
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--muted);
-}
-.production-next {
-  margin-top: 20px;
-  width: 100%;
-}
-.production-result-start {
-  display: grid;
-  gap: 16px;
-  padding-block: 16px;
-}
-.production-result-start > svg {
-  color: var(--accent-ink);
-}
-.production-result-start h3 {
-  font: 650 20px/1.35 var(--font-ui);
-  margin: 0;
-}
-.production-result-start p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
-  margin: 0;
-}
-.app.outpost .production-workspace .result > p {
-  border: 0;
-  padding-left: 0;
-  font-size: 13px;
-  line-height: 1.65;
-}
-.production-result-note {
-  display: flex;
-  gap: 8px;
-  color: var(--muted);
-}
-.production-result-note svg {
-  flex-shrink: 0;
-}
 @media (max-width: 780px) {
   .app.outpost .page-title {
     font-size: 28px;
-  }
-  .task-progress {
-    gap: 12px;
-    margin-bottom: 20px;
-    justify-content: space-between;
-  }
-  .task-progress :is(li, button) {
-    font-size: 12px;
-    gap: 6px;
-  }
-  .task-progress span {
-    width: 24px;
-    height: 24px;
-    font-size: 11px;
-  }
-  .app.outpost .production-calculator-page .production-workspace {
-    display: block;
-  }
-  .production-journey[data-step="1"] .production-workspace > :is(.production-materials, .result),
-  .production-journey[data-step="2"] .production-workspace > :is(.calculator-inputs, .result),
-  .production-journey[data-step="3"]
-    .production-workspace
-    > :is(.calculator-inputs, .production-materials) {
-    display: none;
-  }
-  .production-steps button {
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    text-align: center;
-  }
-  .production-calculator-page .calculator-inputs .input-grid {
-    gap: 12px;
-  }
-  .production-journey > .scenario-controls {
-    margin-top: 20px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -179,16 +50,7 @@
     transition: none;
   }
 }
-
-.production-scenarios-toggle {
-  display: none;
-}
 @media (max-width: 780px) {
-  .production-scenarios-toggle {
-    display: flex;
-    width: 100%;
-    margin-top: 20px;
-  }
   .production-scenarios:not(.is-open) {
     display: none;
   }

@@ -25,7 +25,7 @@ export default async function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
-        glyph="builds"
+        glyph="catalog"
         scene="market"
         title="Item database"
         accent="database"

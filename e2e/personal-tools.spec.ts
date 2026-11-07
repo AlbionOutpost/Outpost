@@ -30,8 +30,8 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
     ]);
     await page.goto("/timers");
     await page.getByLabel("Timer title", { exact: true }).fill("Manual crop reminder");
-    await page.getByLabel("Manual duration (minutes)", { exact: true }).fill("60");
-    await page.getByRole("button", { name: "Create timer", exact: true }).click();
+    await page.getByLabel("Minutes", { exact: true }).fill("60");
+    await page.getByRole("button", { name: "Start timer", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Manual crop reminder", exact: true }),
     ).toBeVisible();
@@ -135,7 +135,6 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
       ).toEqual([]);
     }
     await page.goto("/timers");
-    await page.getByRole("button", { name: "More timer actions", exact: true }).click();
     page.once("dialog", (d) => d.accept());
     await page.getByRole("button", { name: "Delete timer", exact: true }).click();
     await expect(

@@ -59,22 +59,21 @@ test("restored guides are readable documents and compositions retain every membe
     .getByRole("link")
     .filter({
       has: page.getByRole("heading", {
-        name: "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
+        name: "Leveling fishing",
         exact: true,
       }),
     })
     .click();
-  await expect(page.locator("h1")).toHaveText(
-    "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
-  );
+  await expect(page.locator("h1")).toHaveText("Leveling fishing");
   await expect(page.locator("article")).toContainText("Fishing Specialist");
   expect(
     await page.locator("article script, article iframe, article input, article select").count(),
   ).toBe(0);
-  await page.getByRole("link", { name: "The two lines", exact: true }).click();
-  await expect(page).toHaveURL(/#section-the-two-lines$/);
+  await page.getByRole("link", { name: "How much fame the two lines take", exact: true }).click();
+  await expect(page).toHaveURL(/#section-how-much-fame-the-two-lines-take$/);
   await page.goto("/compositions/library/dreamteam");
-  await expect(page.getByRole("list", { name: /roster$/ }).getByRole("listitem")).toHaveCount(17);
+  // Every member opens as its own build window
+  await expect(page.locator("[data-comp-member]")).toHaveCount(17);
   for (const width of [320, 375, 390, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

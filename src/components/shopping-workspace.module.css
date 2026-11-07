@@ -1,5 +1,5 @@
 /* Crafting Planner (/shopping-list): the landing's Planner card at full size. A list panel with
-   Shopping list / Crafting queue tabs beside a sticky "Still to buy" summary. */
+   an add row and Shopping list / Crafting queue tabs, beside "Still to buy" and saved lists. */
 :global(.app.outpost) .page.page {
   display: grid;
   gap: 26px;
@@ -34,9 +34,26 @@
   margin: 0;
 }
 :global(.app.outpost) .summary.summary {
-  position: sticky;
-  top: 88px;
   grid-template-columns: minmax(0, 1fr);
+}
+:global(.app.outpost) .side.side {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+/* Add row: item search, quantity and city in one line of wells */
+:global(.app.outpost) .add.add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px 168px;
+  align-items: end;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .addSearch.addSearch {
+  position: relative;
+  min-width: 0;
+}
+:global(.app.outpost) .addSearch.addSearch :global(.catalog-results) {
+  z-index: 5;
 }
 :global(.app.outpost) .summary.summary > * {
   min-width: 0;
@@ -168,9 +185,6 @@
 :global(.app.outpost) .num.num :global(.silver) {
   justify-content: flex-end;
 }
-:global(.app.outpost) .muted.muted {
-  color: var(--muted);
-}
 :global(.app.outpost) .rowActions.rowActions {
   white-space: nowrap;
 }
@@ -246,6 +260,11 @@
 }
 :global(.app.outpost) .queue.queue li[data-ready] .progress b {
   background: var(--killer);
+}
+:global(.app.outpost) .queueActions.queueActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 /* Stepper: − number + in one field well */
 :global(.app.outpost) .stepper.stepper {
@@ -447,28 +466,9 @@
   line-height: 1.5;
 }
 
-/* Empty, blocked, loading */
-:global(.app.outpost) .empty.empty {
-  display: grid;
-  gap: var(--space-4);
-  margin: 0;
-}
-:global(.app.outpost) .empty.empty > * {
-  margin: 0;
-}
-:global(.app.outpost) .empty.empty .emptyActions {
-  justify-content: start;
-}
 :global(.app.outpost) .gate.gate h2 {
   margin: 0;
   font: 800 clamp(24px, 2.4vw, 30px) / 1.1 var(--font-display);
-}
-:global(.app.outpost) .emptyActions.emptyActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
 }
 :global(.app.outpost) .gate.gate {
   display: grid;
@@ -477,7 +477,18 @@
   margin: 0;
 }
 
-/* Account lists */
+/* Saved lists */
+:global(.app.outpost) .accountPanel.accountPanel {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+:global(.app.outpost) .accountPanel.accountPanel > * {
+  margin: 0;
+}
+:global(.app.outpost) .accountLoad.accountLoad {
+  justify-self: start;
+}
 :global(.app.outpost) .accountBody.accountBody {
   display: grid;
   gap: var(--space-3);
@@ -494,8 +505,8 @@
   align-items: end;
   gap: var(--space-2);
 }
-:global(.app.outpost) .accountForm.accountForm label {
-  flex: 1 1 240px;
+:global(.app.outpost) .accountForm.accountForm > :first-child {
+  flex: 1 1 200px;
 }
 :global(.app.outpost) .savedRow.savedRow {
   display: flex;
@@ -519,9 +530,9 @@
   :global(.app.outpost) .layout.layout {
     grid-template-columns: minmax(0, 1fr);
   }
-  :global(.app.outpost) .summary.summary {
-    position: static;
-    grid-row: 1;
+  :global(.app.outpost) .side.side {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    align-items: start;
   }
 }
 /* Phones: each purchase line becomes a card; labels come from data-label */
@@ -632,6 +643,14 @@
     font-size: 15px;
   }
 }
+@media (max-width: 560px) {
+  :global(.app.outpost) .add.add {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+  :global(.app.outpost) .addSearch.addSearch {
+    grid-column: 1 / -1;
+  }
+}
 @media (max-width: 360px) {
   :global(.app.outpost) .stats.stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -640,29 +659,6 @@
     display: none;
   }
 }
-:global(.app.outpost) .cta.cta {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-3);
-  margin-top: 54px;
-  padding: 44px 24px 36px;
-  text-align: center;
-}
-:global(.app.outpost) .cta.cta h2 {
-  margin: 0;
-  font: 800 clamp(28px, 3vw, 40px) / 1.05 var(--font-display);
-}
-:global(.app.outpost) .cta.cta h2 em {
-  color: var(--accent);
-  font-style: normal;
-}
-:global(.app.outpost) .cta.cta p {
-  max-width: 52ch;
-  margin: 0;
-  color: var(--secondary);
-  font-size: 16px;
-}
-
 @media (max-width: 420px) {
   :global(.app.outpost) .queue.queue li {
     grid-template-columns: 40px minmax(0, 1fr);
@@ -671,7 +667,7 @@
     width: 40px;
     height: 40px;
   }
-  :global(.app.outpost) .stepper.stepper {
+  :global(.app.outpost) .queueActions.queueActions {
     grid-column: 2;
     justify-self: start;
   }

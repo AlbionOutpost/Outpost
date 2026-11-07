@@ -7,13 +7,22 @@
 .app.outpost .build-window .landing-window-title {
   flex: 1 1 auto;
 }
-.app.outpost .build-window .landing-window-title h2 {
+.app.outpost .build-window .landing-window-title :is(h2, h3) {
   min-width: 0;
   margin: 0;
   overflow: hidden;
   font: inherit;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+/* A comp member's place in the party, in the muted mono of the roster rows */
+.app.outpost .build-window-n {
+  flex: none;
+  margin-right: 8px;
+  color: var(--muted);
+  font: 700 12px/1 var(--font-mono, var(--font-ui));
+  font-variant-numeric: tabular-nums;
+  text-shadow: none;
 }
 .app.outpost .build-window a.landing-window-title:focus-visible {
   outline: 2px solid var(--accent-ink);

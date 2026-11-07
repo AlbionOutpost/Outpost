@@ -93,7 +93,7 @@ export async function archiveShareMetadata(
   const guide = await findLibraryGuide(slug);
   if (!guide) return privateMetadata("Guide not found");
   return publicMetadata(
-    guide.title,
+    guide.seoTitle ?? guide.title,
     guide.summary,
     `/guides/${encodeURIComponent(guide.slug)}`,
     query,

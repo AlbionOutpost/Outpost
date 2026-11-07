@@ -13,7 +13,12 @@ export async function groupDashboard(id: string, userId?: string) {
       description: true,
       region: true,
       visibility: true,
+      crestItem: true,
+      crestColor: true,
+      activities: true,
+      recruiting: true,
       ownerId: true,
+      createdAt: true,
       updatedAt: true,
       _count: { select: { members: true } },
     },
@@ -58,7 +63,7 @@ export async function groupDashboard(id: string, userId?: string) {
   ] = await Promise.all([
     db.groupMember.findMany({
       where: { groupId: id },
-      include: { user: { select: { name: true } } },
+      include: { user: { select: { name: true, avatarFrame: true } } },
       orderBy: { joinedAt: "asc" },
       take: 500,
     }),
@@ -76,7 +81,7 @@ export async function groupDashboard(id: string, userId?: string) {
     canManageMembers(membership.role)
       ? db.groupMembershipRequest.findMany({
           where: { groupId: id, status: "PENDING" },
-          include: { user: { select: { name: true } } },
+          include: { user: { select: { name: true, avatarFrame: true } } },
           take: 100,
         })
       : [],
@@ -115,6 +120,7 @@ export async function groupDashboard(id: string, userId?: string) {
       members: members.map((m) => ({
         userId: m.userId,
         name: m.user.name || "Adventurer",
+        avatarFrame: m.user.avatarFrame,
         role: m.role,
       })),
       invitations: invitations.map((i) => ({
@@ -126,6 +132,7 @@ export async function groupDashboard(id: string, userId?: string) {
       requests: requests.map((r) => ({
         userId: r.userId,
         name: r.user.name || "Adventurer",
+        avatarFrame: r.user.avatarFrame,
         message: r.message,
       })),
       announcements: announcements.map((a) => ({ id: a.id, title: a.title, body: a.body })),

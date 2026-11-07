@@ -1,5 +1,5 @@
 import { privateMetadata } from "@/lib/seo";
-import { ArrowUpRight, Compass, Shield } from "lucide-react";
+import { Compass, Shield } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
@@ -9,8 +9,9 @@ import { EmptyWell } from "@/components/empty-well";
 import { WellSelect } from "@/components/well-select";
 import { SearchInput } from "@/components/field";
 import {
+  TeamActivities,
   TeamMark,
-  TeamNextSteps,
+  joiningLabel,
   plural,
   regionLabel,
   visibilityLabel,
@@ -19,10 +20,10 @@ import { Pagination } from "@/components/pagination";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
-import "@/app/landing-window.css";
-import windows from "@/components/landing/windows.module.css";
+import { decodeActivities, teamActivities } from "@/lib/groups/crest";
 import styles from "@/components/teams.module.css";
 export const metadata = privateMetadata("Teams");
+const perPage = 24;
 export default async function Groups({
   searchParams,
 }: {
@@ -31,8 +32,16 @@ export default async function Groups({
   const params = await searchParams;
   const text = (key: string) => (typeof params[key] === "string" ? (params[key] as string) : "");
   const q = text("q").trim().slice(0, 80),
-    region = text("region"),
-    visibility = text("visibility"),
+    region = Object.hasOwn(regions, text("region")) ? text("region") : "",
+    activity = (teamActivities as readonly string[]).includes(text("activity"))
+      ? text("activity")
+      : "",
+    // `visibility=PRIVATE` is the older link to the same filter
+    joining = ["open", "private"].includes(text("joining"))
+      ? text("joining")
+      : text("visibility") === "PRIVATE"
+        ? "private"
+        : "",
     mine = text("mine") === "1";
   const page = Math.min(100, Math.max(1, Number.parseInt(text("page"), 10) || 1));
   const session = await getServerSession(authOptions);
@@ -52,12 +61,14 @@ export default async function Groups({
               },
             ]
           : []),
-        ...(["europe", "americas", "asia"].includes(region) ? [{ region }] : []),
-        ...(["PUBLIC", "PRIVATE"].includes(visibility) ? [{ visibility }] : []),
+        ...(region ? [{ region }] : []),
+        ...(activity ? [{ activities: { contains: `,${activity},` } }] : []),
+        ...(joining === "open" ? [{ visibility: "PUBLIC", recruiting: true }] : []),
+        ...(joining === "private" ? [{ visibility: "PRIVATE" }] : []),
       ],
     },
-    take: 26,
-    skip: (page - 1) * 25,
+    take: perPage + 1,
+    skip: (page - 1) * perPage,
     orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
     select: {
       id: true,
@@ -66,47 +77,60 @@ export default async function Groups({
       description: true,
       region: true,
       visibility: true,
+      crestItem: true,
+      crestColor: true,
+      activities: true,
+      recruiting: true,
       _count: { select: { members: true } },
       members: { where: { userId: userId || "" }, select: { role: true }, take: 1 },
     },
   });
-  // Events and comps are member-only, so they are read only for the viewer's own teams.
-  const own = rows.filter((g) => g.members.length).map((g) => g.id);
-  const [events, comps] = own.length
-    ? await Promise.all([
-        db.groupEvent.findMany({
-          where: { groupId: { in: own }, cancelled: false, startsAt: { gt: new Date() } },
-          select: { groupId: true, title: true },
-          orderBy: [{ startsAt: "asc" }, { id: "asc" }],
-          take: 200,
-        }),
-        db.composition.findMany({
-          where: { groupId: { in: own }, visibility: "GROUP", hiddenAt: null },
-          select: { groupId: true },
-          take: 2000,
-        }),
-      ])
-    : [[], []];
+  const shown = rows.slice(0, perPage);
+  // Events are member-only, so they are read only for the viewer's own teams.
+  const own = shown.filter((g) => g.members.length).map((g) => g.id);
+  const events = own.length
+    ? await db.groupEvent.findMany({
+        where: { groupId: { in: own }, cancelled: false, startsAt: { gt: new Date() } },
+        select: { groupId: true, title: true },
+        orderBy: [{ startsAt: "asc" }, { id: "asc" }],
+        take: 200,
+      })
+    : [];
   const nextEvent = new Map<string, string>();
   for (const e of events) if (!nextEvent.has(e.groupId)) nextEvent.set(e.groupId, e.title);
-  const compCount = new Map<string, number>();
-  for (const c of comps)
-    if (c.groupId) compCount.set(c.groupId, (compCount.get(c.groupId) ?? 0) + 1);
-  const filtered = Boolean(q || region || visibility);
-  const shown = rows.slice(0, 25);
-  const url = (next: number) =>
-    `/groups?${new URLSearchParams({ q, region, visibility, mine: mine ? "1" : "0", page: String(next) })}`;
+  const filtered = Boolean(q || region || activity || joining);
+  // The header's Teams link opens on the player's server; that alone is not a search
+  const narrowed = Boolean(q || activity || joining);
+  const query = (next: Record<string, string>) =>
+    `/groups?${new URLSearchParams(
+      Object.entries({ q, region, activity, joining, mine: mine ? "1" : "", ...next }).filter(
+        ([, v]) => v,
+      ),
+    )}`;
+  const heading = mine ? (
+    <>
+      Your <em>teams</em>
+    </>
+  ) : narrowed ? (
+    <>
+      Matching <em>teams</em>
+    </>
+  ) : (
+    <>
+      Recently active <em>teams</em>
+    </>
+  );
   return (
     <div className={styles.page}>
       <WorkspaceHeading
         glyph="guild"
         scene="comps"
-        title={mine ? "Your teams" : "Find a team"}
-        accent={mine ? "teams" : "team"}
+        title={mine ? "Your teams" : "Find your team"}
+        accent="team"
         description={
           mine
-            ? "The teams you belong to, with their events, comps and loot splits."
-            : "Public teams and your own. Private teams stay hidden from everyone who is not a member."
+            ? "The teams you belong to, with their next event."
+            : "Guilds and groups on your server: what they play, how big they are and whether they take new members."
         }
         actions={
           <Link href="/groups/new" className="button primary">
@@ -138,37 +162,39 @@ export default async function Groups({
         role="search"
         aria-label="Team discovery filters"
       >
-        <input type="hidden" name="mine" value={mine ? "1" : "0"} />
+        {mine && <input type="hidden" name="mine" value="1" />}
         <label className={styles.filterSearch}>
-          <span>Search teams</span>
+          <span className="sr-only">Search teams</span>
           <SearchInput
             name="q"
             defaultValue={q}
             maxLength={80}
             type="search"
             aria-label="Search teams"
-            placeholder="Team name or description"
+            placeholder="Search by team name or description"
           />
         </label>
-        <label>
-          <span>Region</span>
-          <WellSelect aria-label="Team region" name="region" defaultValue={region}>
-            <option value="">All regions</option>
-            {Object.entries(regions).map(([value, r]) => (
-              <option key={value} value={value}>
-                {r.label}
-              </option>
-            ))}
-          </WellSelect>
-        </label>
-        <label>
-          <span>Visibility</span>
-          <WellSelect aria-label="Team visibility" name="visibility" defaultValue={visibility}>
-            <option value="">All teams</option>
-            <option value="PUBLIC">Public</option>
-            <option value="PRIVATE">Private</option>
-          </WellSelect>
-        </label>
+        <WellSelect aria-label="Team region" name="region" defaultValue={region}>
+          <option value="">All servers</option>
+          {Object.entries(regions).map(([value, r]) => (
+            <option key={value} value={value}>
+              {r.label}
+            </option>
+          ))}
+        </WellSelect>
+        <WellSelect aria-label="Team activity" name="activity" defaultValue={activity}>
+          <option value="">Any activity</option>
+          {teamActivities.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </WellSelect>
+        <WellSelect aria-label="Joining" name="joining" defaultValue={joining}>
+          <option value="">Any team</option>
+          <option value="open">Recruiting now</option>
+          <option value="private">Invitation only</option>
+        </WellSelect>
         <button className="button secondary" type="submit">
           Find teams
         </button>
@@ -176,113 +202,90 @@ export default async function Groups({
       <section className={styles.section} aria-labelledby="team-results">
         <SectionHeading
           id="team-results"
-          title={
-            shown.length ? (
-              mine ? (
-                <>
-                  Your <em>teams</em>
-                </>
-              ) : filtered ? (
-                <>
-                  Matching <em>teams</em>
-                </>
-              ) : (
-                <>
-                  Recently active <em>teams</em>
-                </>
-              )
-            ) : mine ? (
-              <>
-                Your <em>teams</em>
-              </>
-            ) : (
-              <>
-                Matching <em>teams</em>
-              </>
-            )
-          }
+          title={heading}
           line={
             shown.length
-              ? `${plural(shown.length, "team")}${rows.length > 25 ? " on this page" : ""}, last active first.`
+              ? `${plural(shown.length, "team")}${region ? ` on ${regionLabel(region)}` : ""}${rows.length > perPage ? " on this page" : ""}, last active first.`
+              : undefined
+          }
+          link={
+            filtered && shown.length
+              ? { href: mine ? "/groups?mine=1" : "/groups", label: "Clear filters" }
               : undefined
           }
         />
         {shown.length ? (
-          <ul className={`${windows.windows} ${styles.teamGrid}`}>
-            {shown.map((g) => (
-              <li key={g.id}>
-                <article
-                  className={`raised has-scene landing-window ${windows.window} ${styles.teamWindow}`}
-                  data-scene="composition"
-                  data-team-card=""
-                >
-                  <div className={`landing-window-bar ${windows.bar}`}>
-                    <Link
-                      href={`/groups/${g.slug}`}
-                      className="landing-window-title"
-                      title={g.name}
-                    >
-                      <h3 className={styles.windowTitle}>{g.name}</h3>
-                    </Link>
-                    <span className="landing-chips">
-                      {g.members.length > 0 && <span className="landing-chip">Your team</span>}
-                      <span className="landing-chip is-muted">{visibilityLabel(g.visibility)}</span>
-                    </span>
-                  </div>
-                  <div className={`landing-window-body ${windows.body} ${styles.teamBody}`}>
-                    <p className={g.description ? styles.teamLine : styles.teamLineMuted}>
+          <ul className={styles.teamGrid}>
+            {shown.map((g) => {
+              const member = g.members.length > 0;
+              const plays = decodeActivities(g.activities);
+              const canAsk = !member && g.visibility === "PUBLIC" && g.recruiting;
+              return (
+                <li key={g.id}>
+                  <article className={`raised ${styles.card}`} data-team-card="">
+                    <div className={styles.cardHead}>
+                      <TeamMark
+                        name={g.name}
+                        crestItem={g.crestItem}
+                        crestColor={g.crestColor}
+                        size="medium"
+                      />
+                      <div className={styles.cardTitle}>
+                        <h3>
+                          <Link
+                            href={`/groups/${g.slug}`}
+                            className={styles.cardLink}
+                            title={g.name}
+                          >
+                            {g.name}
+                          </Link>
+                        </h3>
+                        <p>
+                          {regionLabel(g.region)} · {visibilityLabel(g.visibility)} ·{" "}
+                          {plural(g._count.members, "member")}
+                        </p>
+                      </div>
+                      {member && <span className="landing-chip">Your team</span>}
+                    </div>
+                    <p className={g.description ? styles.cardLine : styles.cardLineMuted}>
                       {g.description || "No description yet."}
                     </p>
-                    <ul className={styles.teamFacts}>
-                      <li className="well">
-                        <span>Members</span>
-                        <span>{g._count.members.toLocaleString("en")}</span>
-                      </li>
-                      {g.members.length ? (
-                        <>
-                          <li className="well">
-                            <span>Next event</span>
-                            <span>{nextEvent.get(g.id) ?? "None scheduled"}</span>
-                          </li>
-                          <li className="well">
-                            <span>Shared comps</span>
-                            <span>{(compCount.get(g.id) ?? 0).toLocaleString("en")}</span>
-                          </li>
-                        </>
+                    <div className={styles.cardPlays}>
+                      {plays.length ? (
+                        <TeamActivities list={plays} />
                       ) : (
-                        <>
-                          <li className="well">
-                            <span>Region</span>
-                            <span>{regionLabel(g.region)}</span>
-                          </li>
-                          <li className="well">
-                            <span>Joining</span>
-                            <span>
-                              {g.visibility === "PUBLIC" ? "Ask to join" : "By invitation"}
-                            </span>
-                          </li>
-                        </>
+                        <span className={styles.muted}>Activities not set</span>
                       )}
-                    </ul>
-                  </div>
-                  <Link
-                    href={`/groups/${g.slug}`}
-                    className={`landing-window-foot ${windows.foot} ${styles.teamFoot}`}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                  >
-                    <TeamMark name={g.name} size="small" />
-                    <span>
-                      <strong>{g.members.length ? "Open workspace" : "View team"}</strong>
-                      <small>
-                        {regionLabel(g.region)} · {visibilityLabel(g.visibility)}
-                      </small>
-                    </span>
-                    <ArrowUpRight size={20} aria-hidden="true" />
-                  </Link>
-                </article>
-              </li>
-            ))}
+                    </div>
+                    <div className={`well ${styles.cardFoot}`}>
+                      {member ? (
+                        <span className={styles.footState}>
+                          <small>Next event</small>
+                          <strong>{nextEvent.get(g.id) ?? "None scheduled"}</strong>
+                        </span>
+                      ) : (
+                        <span
+                          className={styles.footState}
+                          data-joining={
+                            g.visibility === "PUBLIC" && g.recruiting ? "open" : "closed"
+                          }
+                        >
+                          <small>Joining</small>
+                          <strong>{joiningLabel(g)}</strong>
+                        </span>
+                      )}
+                      <Link
+                        className={`pill-link is-small ${styles.cardAction}`}
+                        href={`/groups/${g.slug}${canAsk ? "#join" : ""}`}
+                        aria-label={`${member ? "Open" : canAsk ? "Ask to join" : "View"} ${g.name}`}
+                      >
+                        {member ? "Open" : canAsk ? "Ask to join" : "View team"}
+                      </Link>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <EmptyWell
@@ -299,12 +302,16 @@ export default async function Groups({
             line={
               mine && !userId
                 ? "Teams you belong to show up here once you sign in with Discord."
-                : "Private teams only appear after you join through an invitation or an approved request."
+                : filtered
+                  ? "Try another server or activity. Private teams only show to their members."
+                  : mine
+                    ? "Find a public team that plays what you play, or start one and invite your group."
+                    : "Start the first one: a home for your guild's events, comps and loot splits."
             }
             action={
               mine && !userId ? (
                 <Link className="button secondary" href="/signin?callbackUrl=%2Fgroups%3Fmine%3D1">
-                  Sign in to see your teams
+                  Sign in with Discord
                 </Link>
               ) : filtered ? (
                 <Link className="button secondary" href={mine ? "/groups?mine=1" : "/groups"}>
@@ -325,11 +332,10 @@ export default async function Groups({
         <Pagination
           label="Team result pages"
           page={page}
-          next={rows.length > 25 && page < 100}
-          href={url}
+          next={rows.length > perPage && page < 100}
+          href={(next) => query({ page: String(next) })}
         />
       </section>
-      <TeamNextSteps />
     </div>
   );
 }

@@ -56,7 +56,7 @@ export const GET = apiHandler("community.read", async (req: NextRequest, ctx: Co
       createdAt: true,
       updatedAt: true,
       authorId: true,
-      author: { select: { name: true } },
+      author: { select: { name: true, avatarFrame: true } },
     },
   });
   const favoriteCount =

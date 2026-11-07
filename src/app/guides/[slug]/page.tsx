@@ -20,6 +20,7 @@ import { articleLd, breadcrumbList } from "@/lib/structured-data";
 import styles from "./article.module.css";
 const guideLd = (guide: {
   title: string;
+  seoTitle?: string;
   slug: string;
   summary: string;
   author: string;
@@ -27,7 +28,7 @@ const guideLd = (guide: {
 }) => {
   const path = `/guides/${encodeURIComponent(guide.slug)}`;
   return [
-    articleLd({ ...guide, description: guide.summary, path }),
+    articleLd({ ...guide, title: guide.seoTitle ?? guide.title, description: guide.summary, path }),
     breadcrumbList([
       { name: "Home", path: "/" },
       { name: "Guides", path: "/guides" },

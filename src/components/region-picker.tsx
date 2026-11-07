@@ -154,35 +154,32 @@ export function RegionPicker({
         <ChevronDown size={13} aria-hidden="true" />
       </button>
       {open && (
-        <div className="region-picker-panel">
-          <div className="region-picker-heading">Choose your server</div>
-          <p className="region-picker-description">Prices and market data follow your region.</p>
-          <div id={id} role="listbox" aria-label="Game servers">
-            {choices.map((choice, index) => (
-              <div
-                key={choice.value}
-                id={`${id}-${index}`}
-                role="option"
-                aria-selected={choice.value === value}
-                data-active={active === index}
-                onPointerMove={() => setActive(index)}
-                onPointerDown={(event) => event.preventDefault()}
-                onClick={() => choose(index)}
-              >
-                <span className="region-option-globe">
-                  <RegionMark region={choice.value} size={32} />
-                </span>
-                <span className="region-option-text">
-                  <span>{choice.label}</span>
-                  <small>{choice.server}</small>
-                </span>
-                <span className="region-option-check" aria-hidden="true">
-                  {choice.value === value && <Check size={14} />}
-                </span>
-              </div>
-            ))}
+        <div className="menu-panel region-picker-panel">
+          <div className="menu-group">
+            <p className="menu-label">Market prices follow your server</p>
+            <div id={id} role="listbox" aria-label="Game servers">
+              {choices.map((choice, index) => (
+                <div
+                  key={choice.value}
+                  id={`${id}-${index}`}
+                  className="menu-item"
+                  role="option"
+                  aria-selected={choice.value === value}
+                  data-active={active === index}
+                  onPointerMove={() => setActive(index)}
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() => choose(index)}
+                >
+                  <RegionMark region={choice.value} size={28} />
+                  <span className="menu-item-text">
+                    <span>{choice.label}</span>
+                    <small>{choice.server}</small>
+                  </span>
+                  {choice.value === value && <Check size={16} aria-hidden="true" />}
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="region-picker-note">You can switch servers at any time.</p>
         </div>
       )}
     </div>

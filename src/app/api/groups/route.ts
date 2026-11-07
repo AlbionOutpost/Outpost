@@ -5,6 +5,7 @@ import { regionSchema } from "@/lib/albion/region-config";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
 import { requireTeamCreation } from "@/lib/billing/gate";
+import { teamIdentity } from "@/lib/groups/crest";
 const input = z.object({
   name: z.string().trim().min(3).max(80),
   slug: z
@@ -15,6 +16,7 @@ const input = z.object({
   description: z.string().trim().max(4000),
   region: regionSchema,
   visibility: z.enum(["PUBLIC", "PRIVATE"]),
+  ...teamIdentity,
 });
 export const POST = apiHandler("group.create", async (req: NextRequest) => {
   const auth = await mutationUser(req);

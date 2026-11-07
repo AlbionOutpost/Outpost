@@ -13,7 +13,8 @@ import { CompGrid, CompWindow } from "@/components/comp-window";
 import { RosterRows } from "@/components/comp-roster";
 import { readStoredComposition } from "@/lib/compositions/stored";
 import { slotRosterMember } from "@/lib/compositions/roster";
-import { TeamMark, plural } from "@/components/group-parts";
+import { plural } from "@/components/group-parts";
+import { AvatarFrame } from "@/components/avatar-frame";
 import styles from "@/components/account.module.css";
 export const metadata = privateMetadata("Player profile");
 
@@ -27,6 +28,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
     where: { id },
     select: {
       name: true,
+      avatarFrame: true,
       createdAt: true,
       builds: {
         where: { visibility: "PUBLIC", hiddenAt: null },
@@ -88,7 +90,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
     <div className={styles.page}>
       <WorkspaceHeading
         scene="builds"
-        emblem={<TeamMark name={name} />}
+        emblem={<AvatarFrame frame={u.avatarFrame} size={96} name={name} />}
         title={`${name}'s profile`}
         accent="profile"
         description={`Builds and comps ${name} has published on Outpost.`}

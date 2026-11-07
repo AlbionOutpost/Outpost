@@ -6,7 +6,7 @@ export default function ErrorPage({ retry }: { retry: () => void }) {
   return (
     <SystemPage
       eyebrow="Something went wrong"
-      emblem="tool-craft"
+      emblem="status-error"
       title={
         <>
           This page didn&rsquo;t <em>load</em>

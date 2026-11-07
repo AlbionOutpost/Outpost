@@ -175,16 +175,17 @@ test("existing timers lead the workspace and a new timer returns focus to its sa
     await expect(
       page.getByRole("heading", { name: "Paused field reminder", exact: true }),
     ).toBeInViewport();
-    await expect(page.getByLabel("Timer title", { exact: true })).not.toBeVisible();
+    // The composer sits below the list on phones, so the countdowns come first
+    await expect(page.getByLabel("Timer title", { exact: true })).not.toBeInViewport();
     await page.getByRole("button", { name: "Add timer", exact: true }).click();
     await expect(page.getByLabel("Timer title", { exact: true })).toBeFocused();
     await page.getByLabel("Timer title", { exact: true }).fill("New support reminder");
-    await page.getByLabel("Manual duration (minutes)", { exact: true }).fill("10");
-    await page.getByRole("button", { name: "Create timer", exact: true }).click();
+    await page.getByLabel("Minutes", { exact: true }).fill("10");
+    await page.getByRole("button", { name: "Start timer", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "New support reminder", exact: true }),
     ).toBeFocused();
-    await expect(page.getByLabel("Timer title", { exact: true })).not.toBeVisible();
+    await expect(page.getByLabel("Timer title", { exact: true })).toHaveValue("");
     await page.reload();
     await expect(
       page.getByRole("heading", { name: "New support reminder", exact: true }),

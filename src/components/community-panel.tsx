@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "@/components/link";
 import { ReactionFeedback } from "./reaction-feedback";
 import { TurnstileChallenge } from "./turnstile-challenge";
+import { AvatarFrame } from "./avatar-frame";
 import styles from "./community-panel.module.css";
 type Comment = {
   id: string;
@@ -16,7 +17,7 @@ type Comment = {
   createdAt: string;
   updatedAt: string;
   authorId: string;
-  author: { name: string | null };
+  author: { name: string | null; avatarFrame?: string | null };
 };
 type Activity = {
   viewerId: string | null;
@@ -219,6 +220,7 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
               {data.comments.map((c) => (
                 <li className={styles.comment} key={c.id}>
                   <p className={styles.byline}>
+                    <AvatarFrame frame={c.author.avatarFrame} size={32} name={c.author.name} />
                     <Link href={`/players/${c.authorId}`}>{c.author.name || "Adventurer"}</Link>
                     <time dateTime={c.createdAt}>
                       {new Date(c.createdAt).toLocaleString("en-GB", {

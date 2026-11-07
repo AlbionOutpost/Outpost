@@ -3,7 +3,7 @@
   "source": "Owner-supplied local card backgrounds folder",
   "provenance": "Creator, generation method and third-party licensing not independently established. Supplied for use on Outpost activity/category cards; no authentic game-scene or current-patch claim.",
   "derivation": "sharp: resize to 800px width without enlargement, WebP quality 82; no crop or retouch",
-  "responsiveVariants": "scripts/activity-image-variants.mjs: each output resized again to 400px and 600px width ({name}-400w.webp, {name}-600w.webp), WebP quality 82; no crop or retouch",
+  "responsiveVariants": "scripts/image-variants.mjs: each output resized again to 400px and 600px width ({name}-400w.webp, {name}-600w.webp), WebP quality 82; no crop or retouch",
   "assets": [
     {
       "id": "MISTS_SOLO",

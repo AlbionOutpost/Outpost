@@ -4,7 +4,6 @@ import { adminAuditLog } from "@/lib/admin/queries";
 import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminFrame } from "@/components/admin-frame";
 import { PanelHead } from "@/components/panel-head";
-import { AdminNextSteps } from "@/components/admin-next";
 export default async function AdminAuditPage({
   searchParams,
 }: {
@@ -18,35 +17,7 @@ export default async function AdminAuditPage({
       title="Audit trail"
       accent="trail"
       description="Who changed access, what they changed and the reason they recorded."
-      emblem="team-calendar"
-      closing={
-        <AdminNextSteps
-          id="admin-next"
-          title={
-            <>
-              Follow up on a <em>change</em>
-            </>
-          }
-          line="Open the account a change touched, or keep working the queues."
-          cards={[
-            {
-              href: "/admin/users",
-              title: "Users & access",
-              line: "Look up the target by Discord ID or account ID.",
-            },
-            {
-              href: "/admin/reports",
-              title: "Content reports",
-              line: "Moderation actions also leave a log entry.",
-            },
-            {
-              href: "/admin/review",
-              title: "Account review",
-              line: "Accounts that may need a decision next.",
-            },
-          ]}
-        />
-      }
+      emblem="admin-audit"
     >
       <section className="panel" aria-labelledby="admin-audit-title">
         <PanelHead

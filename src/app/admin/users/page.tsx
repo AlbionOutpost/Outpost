@@ -9,7 +9,6 @@ import { AdminFrame } from "@/components/admin-frame";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
 import { EmptyWell } from "@/components/empty-well";
-import { AdminNextSteps } from "@/components/admin-next";
 import { SearchInput } from "@/components/field";
 const filters = [
   ["all", "All accounts"],
@@ -38,34 +37,6 @@ export default async function AdminUsersPage({
       accent="access"
       description="Find an account, review its history and change access with a recorded reason."
       emblem="team-roles"
-      closing={
-        <AdminNextSteps
-          id="admin-next"
-          title={
-            <>
-              After the <em>lookup</em>
-            </>
-          }
-          line="Check signals, work the report queue or read what other admins changed."
-          cards={[
-            {
-              href: "/admin/review",
-              title: "Account review",
-              line: "Accounts with unusual sessions, posting or reports.",
-            },
-            {
-              href: "/admin/reports",
-              title: "Content reports",
-              line: "Builds, comps and comments players flagged.",
-            },
-            {
-              href: "/admin/audit",
-              title: "Audit trail",
-              line: "Every gift, ban and session change with its reason.",
-            },
-          ]}
-        />
-      }
     >
       <section className="panel" aria-labelledby="admin-accounts">
         <PanelHead

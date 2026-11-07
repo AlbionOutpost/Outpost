@@ -4,11 +4,9 @@ import Link from "@/components/build-region-link";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import activityOutlines from "@/lib/activity-outlines.json";
 import { ItemIcon } from "@/components/item-icon";
+import { variantSize, variantSrcSet } from "@/lib/image-variants";
 import styles from "./activity-artwork-card.module.css";
 
-/** The artwork is 800px wide; `scripts/activity-image-variants.mjs` writes the narrower files. */
-const srcSet = (src: string) =>
-  `${[400, 600].map((w) => `${src.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`).join(", ")}, ${src} 800w`;
 /** A full card's width on the library's activities page. */
 const librarySizes =
   "(max-width: 599px) 100vw, (max-width: 899px) 50vw, (max-width: 1199px) 33vw, 380px";
@@ -21,8 +19,9 @@ function Art({ src, sizes, scene }: { src: string; sizes: string; scene?: boolea
       className={scene ? styles.scene : undefined}
       data-activity-scene={scene ? "true" : undefined}
       src={src}
-      srcSet={srcSet(src)}
+      srcSet={variantSrcSet(src)}
       sizes={sizes}
+      {...variantSize(src)}
       alt=""
       loading="lazy"
       decoding="async"

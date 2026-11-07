@@ -56,7 +56,10 @@ export type GuideNode =
     };
 export type LibraryGuide = {
   slug: string;
+  /** Short name for cards, the page heading and menus. */
   title: string;
+  /** The longer, search-style title for the browser tab and search results. */
+  seoTitle?: string;
   author: string;
   category: string;
   updatedAt: string;

@@ -3,22 +3,33 @@ import { useActionState, useState } from "react";
 import { saveSettings, deleteAccount } from "@/app/settings/actions";
 import { WellSelect } from "./well-select";
 import { Field } from "./group-parts";
+import { AvatarFramePicker } from "./avatar-frame";
 import styles from "./account.module.css";
 
 export function PreferencesForm({
   initial,
+  image,
 }: {
-  initial: { name: string; region: string; characterName: string };
+  initial: { name: string; region: string; characterName: string; avatarFrame: string };
+  /** The player's own Discord picture, drawn inside each frame option. */
+  image: string | null;
 }) {
   const [state, action, pending] = useActionState(saveSettings, { error: "" }),
     [values, setValues] = useState(initial);
   const dirty =
     values.name !== initial.name ||
     values.region !== initial.region ||
-    values.characterName !== initial.characterName;
+    values.characterName !== initial.characterName ||
+    values.avatarFrame !== initial.avatarFrame;
   return (
     <form action={action} className={styles.form}>
       <div className={styles.formGrid}>
+        <AvatarFramePicker
+          value={values.avatarFrame}
+          onChange={(avatarFrame) => setValues({ ...values, avatarFrame })}
+          image={image}
+          name={values.name}
+        />
         <Field label="Display name" hint="Shown on your public builds, comps and comments.">
           <input
             name="name"

@@ -9,9 +9,17 @@ import { SupporterGate } from "@/components/supporter-gate";
 import { GroupProfileEditor } from "@/components/group-profile-editor";
 import { GroupDashboard, GroupRequest } from "@/components/group-dashboard";
 import { PanelHead } from "@/components/panel-head";
-import { TeamChips, TeamMark, TeamNextSteps } from "@/components/group-parts";
+import { EmptyWell } from "@/components/empty-well";
+import {
+  TeamActivities,
+  TeamMark,
+  joiningLabel,
+  regionLabel,
+  visibilityLabel,
+} from "@/components/group-parts";
 import { teamManagementOpen } from "@/lib/billing/gate";
 import { canManageMembers } from "@/lib/groups/permissions";
+import { decodeActivities } from "@/lib/groups/crest";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { groupDashboard } from "@/lib/groups/dashboard";
@@ -20,6 +28,10 @@ import styles from "@/components/teams.module.css";
 export const metadata = privateMetadata("Team workspace");
 /** The request's clock, read once per server render. */
 const renderedAt = () => Date.now();
+const founded = (date: Date) =>
+  new Intl.DateTimeFormat("en-GB", { month: "short", year: "numeric", timeZone: "UTC" }).format(
+    date,
+  );
 export default async function GroupPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const session = await getServerSession(authOptions);
@@ -58,33 +70,94 @@ export default async function GroupPage({ params }: { params: Promise<{ slug: st
         />
       </div>
     );
+  // A public team seen from outside: its profile, then the one way in.
+  const team = data.group;
+  const signIn = `/signin?${new URLSearchParams({ callbackUrl: `/groups/${slug}#join` })}`;
   return (
     <div className={styles.page}>
       <WorkspaceHeading
         scene="comps"
-        emblem={<TeamMark name={data.group.name} />}
-        title={data.group.name}
-        description={data.group.description || "A Team workspace on Outpost."}
+        emblem={
+          <TeamMark name={team.name} crestItem={team.crestItem} crestColor={team.crestColor} />
+        }
+        title={team.name}
+        description={`${visibilityLabel(team.visibility)} team on the ${regionLabel(team.region)} server`}
       >
-        <TeamChips
-          region={data.group.region}
-          visibility={data.group.visibility}
-          members={data.group._count.members}
-        />
+        <TeamActivities list={decodeActivities(team.activities)} />
         <Link className="pill-link is-small masthead-back" href="/groups">
           <ArrowLeft size={14} aria-hidden="true" /> All teams
         </Link>
       </WorkspaceHeading>
-      <section className={`panel ${styles.panel} ${styles.ask}`} aria-labelledby="team-ask">
-        <PanelHead
-          id="team-ask"
-          emblem="team-roles"
-          title="Ask to join"
-          line="This team is public. Its events, comps and loot splits open once an owner or admin approves you."
-        />
-        <GroupRequest groupId={group.id} />
-      </section>
-      <TeamNextSteps />
+      <div className={styles.home}>
+        <section className={`panel ${styles.panel}`} aria-labelledby="team-about">
+          <PanelHead id="team-about" title="About the team" />
+          {team.description ? (
+            <p className={styles.about}>{team.description}</p>
+          ) : (
+            <p className={styles.aboutMuted}>
+              The leaders haven&apos;t written a description yet. Ask in your request what they run
+              and when.
+            </p>
+          )}
+          <dl className={styles.facts}>
+            <div>
+              <dt>Members</dt>
+              <dd>{team._count.members.toLocaleString("en")}</dd>
+            </div>
+            <div>
+              <dt>Joining</dt>
+              <dd data-joining={team.recruiting ? "open" : "closed"}>{joiningLabel(team)}</dd>
+            </div>
+            <div>
+              <dt>On Outpost since</dt>
+              <dd>{founded(team.createdAt)}</dd>
+            </div>
+          </dl>
+          <p className={styles.membersOnly}>
+            Events, shared comps and builds, announcements and loot splits stay with members.
+          </p>
+        </section>
+        <section
+          id="join"
+          className={`panel ${styles.panel}`}
+          aria-labelledby="team-ask"
+          data-team-join=""
+        >
+          <PanelHead
+            id="team-ask"
+            emblem="team-roles"
+            title="Ask to join"
+            line={
+              team.recruiting
+                ? "An owner or admin reads your message and approves you."
+                : "This team is not taking requests right now."
+            }
+          />
+          {!team.recruiting ? (
+            <EmptyWell
+              title="Roster closed"
+              line="A member can still send you an invitation link."
+              action={
+                <Link className="pill-link" href="/groups?joining=open">
+                  Teams that are recruiting
+                </Link>
+              }
+            />
+          ) : session?.user?.id ? (
+            <GroupRequest groupId={group.id} />
+          ) : (
+            <EmptyWell
+              title="Sign in to ask"
+              line="Your request carries your Discord name, so the leaders know who is asking."
+              action={
+                <Link className="button primary" href={signIn}>
+                  Sign in with Discord
+                </Link>
+              }
+            />
+          )}
+        </section>
+      </div>
     </div>
   );
 }

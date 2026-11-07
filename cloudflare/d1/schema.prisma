@@ -18,6 +18,8 @@ model User {
   role String @default("USER")
   region String @default("europe")
   characterName String?
+  /// Profile picture frame the player picked (src/lib/avatar-frames.ts); null = plain picture.
+  avatarFrame String?
   /// Supporter plan: FREE or SUPPORTER. Written only by the Stripe webhook; checked on the server.
   plan String @default("FREE")
   planStatus String?
@@ -189,6 +191,13 @@ model Group {
  description String
  region String
  visibility String @default("PRIVATE")
+ /// Crest: an Albion item render on a palette colour (src/lib/groups/crest.ts); null = monogram.
+ crestItem String?
+ crestColor String?
+ /// What the team plays: build activity names, stored ",ZvZ,Ganking," so a filter can match whole names.
+ activities String @default("")
+ /// Public teams take join requests only while recruiting.
+ recruiting Boolean @default(true)
  ownerId String
  owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)
  createdAt DateTime @default(now())

@@ -13,14 +13,6 @@
   gap: 28px;
   background: var(--sidebar);
 }
-.product-route .top-brand {
-  width: 154px;
-  min-width: 154px;
-}
-.product-route .top-brand .outpost-logo {
-  width: 154px;
-  height: auto;
-}
 .product-route .desktop-navigation {
   display: flex;
   align-items: center;
@@ -94,10 +86,6 @@
     gap: 16px;
     height: 64px;
   }
-  .product-route .top-brand {
-    width: auto;
-    min-width: 0;
-  }
   .product-route .home-auth-action {
     display: none;
   }
@@ -113,15 +101,9 @@
     padding-inline: 12px;
     gap: 10px;
   }
-  .product-route .top-brand .outpost-logo {
-    width: 130px;
-  }
   .product-route .header-actions {
     gap: 6px;
   }
-}
-.product-route .production-mobile-summary > span:last-child {
-  color: var(--accent-ink);
 }
 .product-route .button.secondary:hover,
 .product-route .button.secondary:focus-visible {
@@ -423,112 +405,145 @@
   min-height: 44px !important;
 }
 
-/* The More menu: the Tools menu's raised panel, one column, grouped, each entry with its glyph
-   and one line. 12px muted lines, 48px rows. */
-.app.outpost .more-dropdown .more-dropdown-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  width: 340px;
-  min-width: 0;
-  gap: 0;
-  right: -4px;
-  left: auto;
-  padding: 6px 0;
-}
-.app.outpost .more-dropdown-panel .more-menu-group + .more-menu-group {
-  border-top: 1px solid var(--border);
-}
-.app.outpost .more-dropdown-panel .more-menu-heading {
-  margin: 0;
-  padding: 12px 20px 2px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-}
-.app.outpost .more-dropdown-panel .tools-menu-grid {
-  grid-template-columns: minmax(0, 1fr);
-  padding: 6px 10px 8px;
+/* The lockup: the painted banner and "OUTPOST" in the masthead display face, optically centred
+   on the header row. The banner art has transparent sides, pulled in so the word sits close. */
+.app.outpost .brand-lockup {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
   gap: 2px;
+  min-height: 44px;
+  color: var(--text);
+  text-decoration: none;
 }
-.app.outpost .more-dropdown-panel .tools-menu-grid > a {
-  min-height: 48px;
-  padding: 6px 9px;
+.app.outpost .brand-lockup img {
+  width: 44px;
+  height: 44px;
+  margin-inline: -7px -4px;
+  filter: drop-shadow(0 2px 4px #0008);
 }
-/* Both header menus keep their one-line descriptions at the 12px floor */
-.app.outpost .site-header .tools-menu-grid small {
-  font-size: 12px;
-  line-height: 1.4;
+.app.outpost .brand-lockup-word {
+  font: 800 28px/1 var(--font-display);
+  letter-spacing: 0.01em;
 }
-.app.outpost .more-dropdown-panel .dropdown-tool-icon {
+.app.outpost .brand-lockup[data-size="sm"] img {
   width: 36px;
   height: 36px;
-  border-radius: 9px;
+  margin-inline: -6px -3px;
 }
-.app.outpost .more-dropdown-panel a[aria-current="page"] strong {
-  color: var(--accent-ink);
+.app.outpost .brand-lockup[data-size="sm"] .brand-lockup-word {
+  font-size: 22px;
+}
+@media (max-width: 600px) {
+  .app.outpost .site-header .brand-lockup img {
+    width: 38px;
+    height: 38px;
+    margin-inline: -6px -3px;
+  }
+  .app.outpost .site-header .brand-lockup-word {
+    font-size: 23px;
+  }
+}
+@media (max-width: 359px) {
+  .app.outpost .site-header .brand-lockup img {
+    width: 34px;
+    height: 34px;
+  }
+  .app.outpost .site-header .brand-lockup-word {
+    font-size: 19px;
+  }
 }
 
-/* The Tools menu: the directory's sections in three columns, one line per tool with its painted
-   emblem (or its glyph in a small well), "All tools" pinned under them. The panel never runs
-   past the viewport; only the columns scroll. It hangs from the header (not the summary), centred,
-   so it stays on screen at every desktop width. */
-.app.outpost .desktop-navigation > .tools-dropdown {
-  position: static;
-}
-/* A transformed details box would hold the panel inside it; the panel's own arrival animates */
-.app.outpost .nav-dropdown.tools-dropdown.tools-dropdown::details-content {
-  transform: none;
-}
-.app.outpost .tools-menu-panel {
+/* Header menus: Tools, More, the server picker and the account menu share one surface, one row
+   and one set of states. Each hangs from its own trigger, 8px under the header: Tools and More
+   from their left edge, the server and account menus (at the header's right edge) from their
+   right edge; on phones the server menu spans the header's width instead. */
+.app.outpost .site-header .menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 90;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  left: max(24px, calc(50% - 380px));
-  width: min(760px, calc(100% - 48px));
-  max-height: calc(100dvh - 96px);
-  padding: 0;
-  overflow: hidden;
+  width: max-content;
+  min-width: 240px;
+  max-width: calc(100vw - 24px);
+  padding: var(--space-1);
+  border: 1px solid var(--panel-edge);
+  border-top-color: var(--panel-edge-top);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow-raised);
 }
-.app.outpost .tools-menu-columns {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-4) var(--space-3);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+.app.outpost .site-header :is(.account-dropdown, .region-picker) > .menu-panel {
+  /* These 44px triggers sit 10px above the header's foot */
+  top: calc(100% + 17px);
+  right: 0;
+  left: auto;
 }
-.app.outpost .tools-menu-column {
-  display: grid;
-  align-content: start;
-  gap: var(--space-4);
-  min-width: 0;
+@media (max-width: 600px) {
+  .app.outpost .site-header .region-picker {
+    position: static;
+  }
+  .app.outpost .site-header .region-picker > .menu-panel {
+    top: calc(100% + 8px);
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
 }
-.app.outpost .tools-menu-group {
-  margin: 0 0 4px;
-  padding: 0 8px;
+.app.outpost .site-header :is(.menu-group, .tools-menu-columns) + .menu-group {
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border);
+}
+.app.outpost .site-header .menu-label {
+  margin: 0;
+  padding: var(--space-2) 10px var(--space-1);
   color: var(--muted);
   font: 600 12px/1.4 var(--font-ui);
 }
-.app.outpost .tools-menu-column a {
+.app.outpost .site-header .menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
   min-height: 40px;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
   color: var(--text);
   font: 600 14px/1.25 var(--font-ui);
+  justify-content: flex-start;
+  text-align: left;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  cursor: pointer;
 }
-.app.outpost .tools-menu-column a:hover,
-.app.outpost .tools-menu-column a:focus-visible {
+.app.outpost .site-header .menu-item:is(:hover, :focus-visible, [data-active="true"]) {
   background: var(--elevated);
 }
-.app.outpost :is(.tools-menu-column, .drawer-list) a[aria-current="page"] {
+.app.outpost .site-header .menu-item:focus-visible,
+.app.outpost .region-picker:has(.region-picker-trigger:focus-visible) [data-active="true"] {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: -2px;
+}
+.app.outpost
+  :is(.site-header .menu-item, .drawer-list a):is([aria-current="page"], [aria-selected="true"]) {
   background: var(--accent-wash);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
   color: var(--accent-ink);
+}
+.app.outpost .site-header .menu-item > svg:last-child:not(:first-child) {
+  margin-left: auto;
+  color: var(--accent-ink);
+}
+.app.outpost .site-header .menu-item-text {
+  display: grid;
+  gap: 2px;
+}
+.app.outpost .site-header .menu-item-text small {
+  color: var(--muted);
+  font: 400 12px/1.3 var(--font-ui);
 }
 .app.outpost .tool-menu-mark {
   display: grid;
@@ -547,11 +562,31 @@
   object-fit: contain;
   filter: drop-shadow(0 2px 3px #0008);
 }
-.app.outpost .tools-menu-panel .tools-menu-all {
-  display: flex;
-  align-items: center;
-  min-height: 48px;
-  padding: 0 var(--space-6);
+
+/* The Tools menu: the directory's sections in three columns, "All tools" pinned under them.
+   It never runs past the viewport; only the columns scroll. */
+.app.outpost .site-header .tools-menu-panel {
+  grid-template-rows: minmax(0, 1fr) auto;
+  left: -12px;
+  width: min(760px, calc(100vw - 48px));
+  max-height: calc(100dvh - 96px);
+}
+.app.outpost .tools-menu-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.app.outpost .tools-menu-column {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.app.outpost .tools-menu-column .menu-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Phone drawer: the landing's raised panel, mixed-case 12px labels, the main five with their

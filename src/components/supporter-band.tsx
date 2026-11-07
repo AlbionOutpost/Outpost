@@ -1,6 +1,8 @@
 import "@/app/supporter-band.css";
 import type { ReactNode } from "react";
-import Image from "next/image";
+import { variantSrcSet } from "@/lib/image-variants";
+
+const art = "/scenes/supporter/crown-courtyard.webp";
 
 /**
  * The Supporter band: the crown over the courtyard, cut to its silhouette, with a display
@@ -30,13 +32,19 @@ export function SupporterBand({
     <section className={`landing-cta-wrap ${className}`} aria-labelledby={id}>
       <div className="landing-cta">
         <div className="landing-cta-art" aria-hidden="true">
-          <Image
-            src="/scenes/supporter/crown-courtyard.webp"
+          {/* At most 1040px wide, inside the page gutters. As a page's hero (h1) it is above the
+              fold and loads first; elsewhere it waits for the scroll. */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- static painting with its own srcset */}
+          <img
+            src={art}
+            srcSet={variantSrcSet(art)}
+            sizes="(max-width: 700px) calc(100vw - 32px), (max-width: 1104px) calc(100vw - 64px), 1040px"
             width={1374}
             height={1145}
             alt=""
-            unoptimized
-            priority={Heading === "h1"}
+            loading={Heading === "h1" ? "eager" : "lazy"}
+            fetchPriority={Heading === "h1" ? "high" : undefined}
+            decoding="async"
           />
         </div>
         <div className="landing-cta-content">

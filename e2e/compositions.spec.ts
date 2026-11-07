@@ -215,7 +215,7 @@ test("20-player comp saves, reloads, edits, shares, duplicates and enforces grou
     expect(stored.slots[1].playerName).toBe("Caller One");
     expect(stored.slots[1].equipment[0].abilities.E).toBe("Blood Bandit");
     await page.reload();
-    // Large comps open as the roster; the loadouts view still has every member.
+    // Large comps open as the members' windows too, every member included.
     await page.getByRole("button", { name: "Loadouts", exact: true }).click();
     await expect(page.locator("[data-comp-member]")).toHaveCount(20);
     expect((await clients[3].request.get(`/api/compositions/${id}`)).status()).toBe(404);
