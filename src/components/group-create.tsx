@@ -18,6 +18,7 @@ import { useOutpostRegion } from "./region-context";
 import { Field } from "./group-parts";
 import styles from "./group-create.module.css";
 import teams from "./teams.module.css";
+import { useSwap } from "./team-crest";
 
 const steps = [
   ["Name", "Name your team", "What your guild goes by, and the address members open."],
@@ -38,19 +39,46 @@ function slugProblem(slug: string) {
   return "";
 }
 
-/** The crest as two layers, so a new shield turns in and a new symbol strikes onto it. */
+/**
+ * The crest as two layers, so a new shield turns in as the old one turns away, and a new symbol
+ * strikes onto it as the old one lifts off.
+ */
 function Crest({ color, charge }: { color: CrestColor; charge: CrestCharge }) {
+  const shield = useSwap(color),
+    symbol = useSwap(charge);
   return (
     <span className={styles.crest} aria-hidden="true">
+      {shield.leaving && (
+        <span
+          key={`out-${shield.version}`}
+          className={styles.shield}
+          data-leaving=""
+          style={
+            { "--shield": `url("/albion/crests/crest-${shield.leaving}.webp")` } as CSSProperties
+          }
+          onAnimationEnd={shield.done}
+        />
+      )}
       <span
-        key={color}
+        key={`in-${shield.version}`}
         className={styles.shield}
-        style={{ "--shield": `url("/albion/crests/crest-${color}.webp")` } as CSSProperties}
+        style={
+          { "--shield": `url("/albion/crests/crest-${shield.current}.webp")` } as CSSProperties
+        }
       />
+      {symbol.leaving && (
+        <span
+          key={`out-${symbol.version}`}
+          className={styles.charge}
+          data-leaving=""
+          style={{ "--charge": `url("/albion/charges/${symbol.leaving}.webp")` } as CSSProperties}
+          onAnimationEnd={symbol.done}
+        />
+      )}
       <span
-        key={charge}
+        key={`in-${symbol.version}`}
         className={styles.charge}
-        style={{ "--charge": `url("/albion/charges/${charge}.webp")` } as CSSProperties}
+        style={{ "--charge": `url("/albion/charges/${symbol.current}.webp")` } as CSSProperties}
       />
     </span>
   );
