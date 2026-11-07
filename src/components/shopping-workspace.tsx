@@ -252,6 +252,7 @@ export function ShoppingWorkspace() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="catalog"
         scene="market"
         title="Crafting Planner"
@@ -354,7 +355,7 @@ export function ShoppingWorkspace() {
                 <div id="shopping-view" role="tabpanel" aria-labelledby="shopping-title">
                   {tab === "buy" ? (
                     <div
-                      className={styles.tableScroll}
+                      className={`table-scroll ${styles.tableScroll}`}
                       role="region"
                       aria-label="Shopping requirements"
                       tabIndex={0}

@@ -16,6 +16,7 @@ export function WorkspaceHeading({
   titleId,
   children,
   actions,
+  compact,
 }: {
   title: string;
   /** One word of the title to set in ember, as the landing does ("Market *Explorer*"). */
@@ -35,11 +36,14 @@ export function WorkspaceHeading({
   children?: React.ReactNode;
   /** Primary action rendered at the right edge of the masthead. */
   actions?: React.ReactNode;
+  /** A shorter band for tools and calculators, so the working view fits the first screen. */
+  compact?: boolean;
 }) {
   return (
     <header
       className="workspace-identity"
       data-scene={cover ? "cover" : (scene ?? "page")}
+      data-density={compact ? "compact" : undefined}
       style={cover ? ({ "--scene": `url("${cover}")` } as React.CSSProperties) : undefined}
     >
       <div className="workspace-identity-copy">

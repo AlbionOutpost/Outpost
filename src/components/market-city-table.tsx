@@ -1,4 +1,5 @@
 import { Silver } from "./silver";
+import "./market-table.css";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
 import { sourceTimestamp } from "@/lib/albion/freshness";
@@ -12,9 +13,10 @@ export function observedAt(value: string) {
 }
 
 /**
- * Every city's best sell and buy order for one item and quality. Each price carries its own
- * age (exact UTC time on hover and for assistive tech) and a Stale chip past one hour; a side
- * nobody observed is an em dash, never a zero.
+ * Every city's best sell and buy order for one item and quality, one line per city. Each price
+ * carries its own age (exact UTC time on hover and for assistive tech) and, past one hour, a
+ * stale mark that says "Stale" to assistive tech and on hover; a side nobody observed is an em
+ * dash with its reason, never a zero.
  */
 export function MarketCityTable({
   rows,
@@ -84,10 +86,7 @@ export function MarketCityTable({
                 </th>
                 <td className="numeric" data-label="Sell order">
                   {blackMarket ? (
-                    <>
-                      <span className="market-price-missing">—</span>
-                      <small className="market-inline-time">Buys from players only</small>
-                    </>
+                    <Missing label="Buys from players only" />
                   ) : (
                     <Price
                       value={r.sell_price_min}
@@ -109,7 +108,9 @@ export function MarketCityTable({
                 </td>
                 <td className="numeric mx-spread-col">
                   {spread == null ? (
-                    <span className="market-price-missing">—</span>
+                    <span className="market-price-missing">
+                      —<span className="sr-only"> Unavailable</span>
+                    </span>
                   ) : (
                     <span className={spread >= 0 ? "is-gain" : "is-loss"}>
                       {spread >= 0 ? "+" : "−"}
@@ -139,25 +140,33 @@ function Price({
   missing: string;
   now: number;
 }) {
-  if (!value)
-    return (
-      <>
-        <span className="market-price-missing">—</span>
-        <small className="market-inline-time">{missing}</small>
-      </>
-    );
+  if (!value) return <Missing label={missing} />;
   const age = sourceAge(date, now);
+  // The figure comes first for assistive tech; the row lays it out at the right edge.
   return (
-    <>
+    <span className="mx-price">
       <Silver value={value} />
-      <small className="market-inline-time">
+      <small className={`market-inline-time${age.stale ? " is-stale" : ""}`}>
         {best && <span className="mx-best">{best}</span>}
         <time dateTime={date} title={`${observedAt(date)} UTC`}>
           {age.label}
           <span className="sr-only"> ({observedAt(date)} UTC)</span>
         </time>
-        {age.stale && <span className="mx-stale">Stale</span>}
+        {age.stale && (
+          <span className="mx-stale-mark" title="Stale: seen more than an hour ago">
+            <span className="sr-only">Stale</span>
+          </span>
+        )}
       </small>
-    </>
+    </span>
+  );
+}
+
+function Missing({ label }: { label: string }) {
+  return (
+    <span className="mx-price is-missing">
+      <span className="market-price-missing">—</span>
+      <small className="market-inline-time">{label}</small>
+    </span>
   );
 }

@@ -190,7 +190,7 @@ test("mobile collection filters and catalog categories preserve the chosen scope
   await expect(page).toHaveURL(/mine=1/);
   await expect(page.getByRole("link", { name: "My comps", exact: true })).toHaveAttribute(
     "aria-current",
-    "true",
+    "page",
   );
   await expect(page.locator("[data-comp-window] a:has(h3)")).toHaveAttribute(
     "href",

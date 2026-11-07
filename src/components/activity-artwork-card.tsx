@@ -36,6 +36,8 @@ export function ActivityArtworkCard({
   compact = false,
   weapons = [],
   sizes = librarySizes,
+  href = `/builds?source=library&category=${encodeURIComponent(category)}`,
+  noun = ["build", "builds"],
 }: {
   category: string;
   name: string;
@@ -44,6 +46,10 @@ export function ActivityArtworkCard({
   weapons?: { itemId: string; name: string }[];
   /** The card's rendered width in its grid, so each screen loads the width it draws. */
   sizes?: string;
+  /** Where the card opens; the library's builds for the activity by default. */
+  href?: string;
+  /** What `builds` counts, singular and plural: comps reuse the card. */
+  noun?: [string, string];
 }) {
   const art = activityBackgrounds.find((a) => a.id === category);
   return (
@@ -53,7 +59,7 @@ export function ActivityArtworkCard({
     >
       <Link
         className={`activity-artwork-link ${styles.main}`}
-        href={`/builds?source=library&category=${encodeURIComponent(category)}`}
+        href={href}
         prefetch={false}
         style={
           art
@@ -94,8 +100,8 @@ export function ActivityArtworkCard({
             <h3>{name}</h3>
             <small>
               {builds
-                ? `${builds.toLocaleString("en-US")} ${builds === 1 ? "build" : "builds"}`
-                : "No builds listed yet"}
+                ? `${builds.toLocaleString("en-US")} ${builds === 1 ? noun[0] : noun[1]}`
+                : `No ${noun[1]} listed yet`}
             </small>
           </div>
           <ArrowUpRight size={21} aria-hidden="true" />

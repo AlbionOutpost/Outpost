@@ -112,6 +112,11 @@
   padding: 0;
   border: 0;
 }
+/* Eight colours as two even rows of four, in the dialog and on phones alike */
+:global(.app.outpost) .colorField :global(.segmented) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .colorField :global(.segmented) > label {
   flex: 0 1 auto;
   text-transform: capitalize;

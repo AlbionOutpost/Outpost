@@ -6,87 +6,13 @@
   margin: 0 auto;
   min-width: 0;
 }
-.app.outpost .builds-ecosystem-header {
-  display: block;
-  position: static;
-  width: 100%;
-  height: auto;
+/* Builds pages fit one screen: the masthead keeps its painting but drops the 300px band, so
+   the list, board or editor starts in the first viewport. */
+.app.outpost :is(.builds-ecosystem, .build-editor-page) > .workspace-identity[data-scene] {
   min-height: 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 18px;
-  padding: 22px 0 0;
-  background: linear-gradient(90deg, var(--bg), color-mix(in srgb, var(--panel) 45%, var(--bg)));
-}
-.app.outpost .builds-heading-copy {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  min-height: 82px;
-  margin-bottom: 13px;
-}
-.builds-heading-mark {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  flex-shrink: 0;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-}
-.app.outpost .builds-ecosystem-header .page-title {
-  font: 750 28px/1.16 var(--font-ui);
-  letter-spacing: -0.7px;
-  margin: 0 0 8px;
-}
-.app.outpost .builds-heading-copy p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-  max-width: 75ch;
-}
-.app.outpost .builds-heading-copy .builds-eyebrow {
-  font: 650 12px/1.2 var(--font-ui);
-  letter-spacing: 1.3px;
-  color: var(--accent-ink);
-  margin: 0 0 7px;
-}
-.builds-header-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-.builds-collection-tabs {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-  min-width: 0;
-  overflow-x: auto;
-}
-.app.outpost .builds-collection-tabs > a {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 13px 12px 14px;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 650;
-}
-.app.outpost .builds-collection-tabs > a[aria-current="page"] {
-  color: var(--accent-ink);
-  border-color: var(--accent);
-}
-.app.outpost .builds-header-bottom > .button {
-  min-height: 34px;
-  font-size: 12px;
-  padding: 7px 13px;
-  margin-bottom: 9px;
-  flex-shrink: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
 }
 .ecosystem-discovery-layout {
   display: grid;
@@ -1070,12 +996,40 @@
   margin-top: 64px;
 }
 /* The list's source (All · Community · Library) over the results; on "All" each source keeps
-   its own heading */
+   its own heading. Beside a phone, the switch and the count share one row. */
+@media (min-width: 701px) {
+  .app.outpost .build-discovery-results:has(> .build-source-switch) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-4);
+  }
+  .app.outpost .build-discovery-results:has(> .build-source-switch) > * {
+    grid-column: 1 / -1;
+  }
+  .app.outpost .build-discovery-results > .build-source-switch {
+    grid-column: 1;
+  }
+  .app.outpost .build-discovery-results > .build-source-switch + .ecosystem-results-subline {
+    grid-column: 2;
+  }
+}
 .app.outpost .build-source-switch {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 .app.outpost .build-source-group + .build-source-group {
-  margin-top: var(--space-10);
+  margin-top: var(--space-8);
+}
+/* Each source keeps its own heading, at panel size so the first row of windows stays in view */
+.app.outpost .build-source-group > .section-heading {
+  margin-bottom: var(--space-3);
+}
+.app.outpost .build-source-group > .section-heading h2 {
+  font-size: 24px;
+}
+.app.outpost .build-source-group > .section-heading p {
+  margin-top: var(--space-1);
+  font-size: 14px;
 }
 
 /* Phones: the weapon shortcuts are one row that scrolls, fading at the cut edge */

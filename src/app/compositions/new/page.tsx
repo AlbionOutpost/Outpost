@@ -6,7 +6,6 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import Link from "@/components/build-region-link";
 import { ArrowLeft } from "lucide-react";
 import { EmptyWell } from "@/components/empty-well";
-import { CompNextSteps } from "@/components/comp-next-steps";
 import styles from "@/components/comps.module.css";
 import { authOptions } from "@/lib/auth";
 import { editorOptions } from "@/lib/compositions/repository";
@@ -132,15 +131,6 @@ export default async function NewComposition({
           initialNotice={notice}
         />
       )}
-      <CompNextSteps
-        show={["builds", "library", "teams"]}
-        title={
-          <>
-            Missing a <em>build</em>?
-          </>
-        }
-        line="Find a loadout for an open slot, borrow from a recorded comp, or share the plan with your Team."
-      />
     </div>
   );
 }

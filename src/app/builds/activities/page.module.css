@@ -1,13 +1,14 @@
-/* Activity cards on the landing's grid: three across, two on tablets and phones, one under 361px. */
+/* Activity cards, dense enough that most activities fit the first screens: four across, three
+   to 1100px, two on phones, one under 361px. Builds and Comps by activity share this grid. */
 .sections {
   display: grid;
-  gap: 40px;
-  margin-top: 40px;
+  gap: var(--space-8);
+  margin-top: var(--space-6);
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px 22px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -35,6 +36,11 @@
   list-style: none;
 }
 @media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

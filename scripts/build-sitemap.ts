@@ -15,6 +15,7 @@ const entries: Entry[] = [
   { path: "/tools/market", changeFrequency: "daily", priority: 0.9 },
   { path: "/builds/activities", changeFrequency: "weekly", priority: 0.9 },
   { path: "/builds", changeFrequency: "daily", priority: 0.9 },
+  { path: "/compositions/activities", changeFrequency: "weekly", priority: 0.8 },
   { path: "/compositions", changeFrequency: "daily", priority: 0.8 },
   { path: "/guides", changeFrequency: "weekly", priority: 0.8 },
   { path: "/items", changeFrequency: "weekly", priority: 0.7 },

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { resolve } from "node:path";
+import { guideRedirects } from "./src/lib/guide-redirects";
 const config: NextConfig = {
   poweredByHeader: false,
   agentRules: false,
@@ -41,6 +42,9 @@ const config: NextConfig = {
         },
       } satisfies Partial<NextConfig>)
     : {}),
+  async redirects() {
+    return guideRedirects();
+  },
   async headers() {
     return [
       {

@@ -13,6 +13,7 @@ export default function Page() {
   return (
     <div className={`${styles.page} ${c.flipping}`}>
       <WorkspaceHeading
+        compact
         glyph="trade"
         scene="market"
         title="Market flipping"

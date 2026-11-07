@@ -14,6 +14,7 @@ import { PanelHead } from "@/components/panel-head";
 import { Unavailable } from "@/components/status-line";
 import { MarketNextSteps } from "@/components/market-next-steps";
 import styles from "./page.module.css";
+import marketPage from "@/components/market-page.module.css";
 
 const client = "https://www.albion-online-data.com/client/";
 
@@ -74,7 +75,7 @@ export default async function MarketDataPage({
     },
   ];
   return (
-    <article className={styles.page}>
+    <article className={`${styles.page} ${marketPage.page}`}>
       <WorkspaceHeading
         glyph="market"
         scene="market"

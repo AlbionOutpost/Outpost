@@ -23,7 +23,6 @@ import {
   Sparkles,
   Trash2,
   Upload,
-  UsersRound,
 } from "lucide-react";
 import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
@@ -1029,63 +1028,29 @@ export function BuildEditor({
           </section>
         )}
       </fieldset>
-      <section
-        className="raised has-scene builds-next-step"
-        data-scene="build"
-        aria-labelledby="editor-next-step"
-      >
-        {guest ? (
-          <>
-            <h2 id="editor-next-step">
-              Keep it on your <em>account</em>
-            </h2>
-            <p>
-              Sign in with Discord to publish the build, share a link and put it in your Team’s
-              comps.
-            </p>
-            <div className="builds-next-step-actions">
-              <Link className="button primary" href="/signin">
-                <LogIn size={16} aria-hidden="true" /> Sign in
-              </Link>
-              <Link className="button secondary" href="/builds?source=library">
-                Browse the library <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            </div>
-          </>
-        ) : id ? (
-          <>
-            <h2 id="editor-next-step">
-              Take it to your <em>Team</em>
-            </h2>
-            <p>Put the saved build in a comp so everyone knows who runs what.</p>
-            <div className="builds-next-step-actions">
-              <BuildCompositionLink
-                fromBuild={id}
-                label="Add to a comp"
-                className="button primary"
-              />
-              <Link className="button secondary" href={`/builds/${id}`}>
-                View build <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 id="editor-next-step">
-              Plan <em>around</em> it
-            </h2>
-            <p>Once it’s saved, put the build in a comp so your Team knows who runs what.</p>
-            <div className="builds-next-step-actions">
-              <Link className="button primary" href="/compositions/new">
-                <UsersRound size={16} aria-hidden="true" /> Plan a comp
-              </Link>
-              <Link className="button secondary" href="/builds">
-                Community builds <ArrowRight size={16} aria-hidden="true" />
-              </Link>
-            </div>
-          </>
-        )}
-      </section>
+      {/* A guest's draft lives on this device; signing in is what publishes and shares it. */}
+      {guest && (
+        <section
+          className="raised has-scene builds-next-step"
+          data-scene="build"
+          aria-labelledby="editor-next-step"
+        >
+          <h2 id="editor-next-step">
+            Keep it on your <em>account</em>
+          </h2>
+          <p>
+            Sign in with Discord to publish the build, share a link and put it in your Team’s comps.
+          </p>
+          <div className="builds-next-step-actions">
+            <Link className="button primary" href="/signin">
+              <LogIn size={16} aria-hidden="true" /> Sign in
+            </Link>
+            <Link className="button secondary" href="/builds?source=library">
+              Browse the library <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+      )}
     </form>
   );
 }

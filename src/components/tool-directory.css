@@ -128,11 +128,11 @@
 /* Sections */
 .app.outpost .support-tools-directory .directory-groups {
   display: grid;
-  gap: 64px;
-  margin-top: var(--space-6);
+  gap: 32px;
+  margin-top: var(--space-4);
 }
 .app.outpost .support-tools-directory .directory-group .section-heading {
-  margin-bottom: 28px;
+  margin-bottom: 14px;
 }
 .app.outpost .support-tools-directory .directory-group .section-heading p {
   display: flex;
@@ -154,15 +154,9 @@
 }
 .app.outpost .support-tools-directory .directory-entries {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 1fr;
-  gap: 26px 24px;
-}
-/* Four tools never leave a lone card under three: two by two */
-@media (min-width: 701px) {
-  .app.outpost .support-tools-directory .directory-entries:has(> :nth-child(4):last-child) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  gap: 16px;
 }
 .app.outpost .support-tools-directory .directory-entry {
   position: relative;
@@ -171,11 +165,11 @@
 }
 .app.outpost .support-tools-directory .directory-entry-link {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 14px;
   height: 100%;
-  min-height: 148px;
-  padding: 20px 20px 18px;
+  min-height: 96px;
+  padding: 16px 16px 14px;
   color: var(--text);
   text-decoration: none;
 }
@@ -185,12 +179,12 @@
 }
 .app.outpost .support-tools-directory .tool-symbol {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
 }
 .app.outpost .support-tools-directory .tool-symbol img {
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   filter: drop-shadow(0 3px 6px #0009);
 }
@@ -217,32 +211,36 @@
   padding-right: 36px;
 }
 .app.outpost .support-tools-directory .directory-entry h3 {
-  margin: 2px 0 6px;
-  font: 800 22px/1.1 var(--font-display);
+  margin: 0 0 4px;
+  font: 800 19px/1.1 var(--font-display);
   letter-spacing: 0;
   text-shadow: 0 1px 2px #000c;
 }
 .app.outpost .support-tools-directory .directory-entry p {
-  margin: 0 0 12px;
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
   color: var(--secondary);
   font-size: 13px;
   line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 .app.outpost .support-tools-directory .directory-arrow {
   position: absolute;
-  right: 18px;
-  bottom: 18px;
+  right: 14px;
+  bottom: 14px;
   color: var(--accent-ink);
 }
 .app.outpost .support-tools-directory .directory-pin {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 10px;
+  right: 10px;
   z-index: 4;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--well-border);
   border-radius: 50%;
   background: var(--well);
@@ -286,8 +284,8 @@
   display: grid;
   justify-items: center;
   gap: var(--space-3);
-  margin-top: 80px;
-  padding: 48px 24px 32px;
+  margin-top: 48px;
+  padding: 40px 24px 28px;
   text-align: center;
 }
 .app.outpost .support-tools-directory .directory-cta h2 {
@@ -342,34 +340,31 @@
     grid-row: auto;
   }
   .app.outpost .support-tools-directory .directory-groups {
-    gap: 56px;
+    gap: 28px;
   }
   .app.outpost .support-tools-directory .directory-entries {
     grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: auto;
-    gap: 26px;
+    gap: 12px;
   }
   .app.outpost .support-tools-directory .directory-entry-link {
-    gap: 14px;
+    gap: 12px;
     min-height: 0;
-    padding: 16px 16px 16px;
+    padding: 12px 14px;
   }
   .app.outpost .support-tools-directory .directory-entry-link {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr);
   }
   .app.outpost .support-tools-directory .tool-symbol,
   .app.outpost .support-tools-directory .tool-symbol img {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
   .app.outpost .support-tools-directory .directory-entry h3 {
-    font-size: 20px;
-  }
-  .app.outpost .support-tools-directory .directory-entry p {
-    margin-bottom: 10px;
+    font-size: 18px;
   }
   .app.outpost .support-tools-directory .directory-cta {
-    margin-top: 56px;
+    margin-top: 40px;
     padding: 36px 16px 24px;
   }
   .app.outpost .directory-cta-actions .button {

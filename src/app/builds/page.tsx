@@ -1,4 +1,3 @@
-import { BuildsNextStep } from "@/components/builds-next-step";
 import { WellSelect } from "@/components/well-select";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { AdSlot } from "@/components/ad-slot";
@@ -504,27 +503,6 @@ export default async function Builds({
             />
           </section>
         </div>
-      )}
-      {mine ? (
-        <BuildsNextStep
-          title={
-            <>
-              Plan the <em>next</em> one
-            </>
-          }
-          line="Start from an empty board or a library build, then put it in a comp for your Team."
-          secondary={{ href: "/compositions", label: "Plan a comp" }}
-        />
-      ) : (
-        <BuildsNextStep
-          title={
-            <>
-              Publish <em>your</em> build
-            </>
-          }
-          line="Start from any of these loadouts, or set a build to Public in the editor and it shows here for every player."
-          secondary={{ href: "/builds/activities", label: "Builds by activity" }}
-        />
       )}
     </div>
   );

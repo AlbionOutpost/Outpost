@@ -14,6 +14,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="fish"
         scene="economy"
         title="Fishing calculator"

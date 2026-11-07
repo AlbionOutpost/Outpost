@@ -1,4 +1,5 @@
 import type { productionSensitivity } from "@/lib/albion/production-sensitivity";
+import { Unavailable } from "./status-line";
 import s from "@/app/production-calculator.module.css";
 
 /** How the run's profit moves if the unit sale price does: hypothetical, not a forecast. */
@@ -8,27 +9,45 @@ export function ProductionSensitivity({
   rows: ReturnType<typeof productionSensitivity>;
 }) {
   const money = (value: number | null) =>
-    value === null ? "—" : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    value === null ? (
+      <Unavailable />
+    ) : (
+      value.toLocaleString(undefined, { maximumFractionDigits: 2 })
+    );
   const signed = (value: number | null) =>
-    value === null ? "—" : `${value > 0 ? "+" : value < 0 ? "−" : ""}${money(Math.abs(value))}`;
+    value === null ? (
+      <Unavailable />
+    ) : (
+      `${value > 0 ? "+" : value < 0 ? "−" : ""}${Math.abs(value).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+    );
+  const tone = (value: number | null) =>
+    value === null ? "numeric" : value < 0 ? "numeric is-loss" : "numeric is-gain";
   // Cash profit only differs from profit when returned materials are valued.
   const cash = rows.some((row) => row.cashProfit !== row.profit);
   return (
     <div className={s.sensitivity}>
       <h3 id="production-sensitivity-title">If the sale price moves</h3>
       <div
-        className={s.tableScroll}
+        className="table-scroll"
         role="region"
         aria-label="Sale-price sensitivity scenarios"
         tabIndex={0}
       >
-        <table>
+        <table data-density="compact">
           <thead>
             <tr>
               <th scope="col">Sale price</th>
-              <th scope="col">Unit</th>
-              <th scope="col">Profit</th>
-              {cash && <th scope="col">Cash profit</th>}
+              <th scope="col" className="numeric">
+                Unit
+              </th>
+              <th scope="col" className="numeric">
+                Profit
+              </th>
+              {cash && (
+                <th scope="col" className="numeric">
+                  Cash profit
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -39,15 +58,9 @@ export function ProductionSensitivity({
                     ? "Now"
                     : `${row.percent - 100 > 0 ? "+" : "−"}${Math.abs(row.percent - 100)}%`}
                 </th>
-                <td>{money(row.price)}</td>
-                <td
-                  className={
-                    row.profit === null ? undefined : row.profit < 0 ? "is-loss" : "is-gain"
-                  }
-                >
-                  {signed(row.profit)}
-                </td>
-                {cash && <td>{signed(row.cashProfit)}</td>}
+                <td className="numeric">{money(row.price)}</td>
+                <td className={tone(row.profit)}>{signed(row.profit)}</td>
+                {cash && <td className={tone(row.cashProfit)}>{signed(row.cashProfit)}</td>}
               </tr>
             ))}
           </tbody>

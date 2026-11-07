@@ -146,8 +146,8 @@ export function ItemPricePanel({ id, name }: { id: string; name: string }) {
         )}
       </div>
       <p className="mx-source">
-        Albion Online Data Project · sell orders are listings, buy orders are offers · older than an
-        hour is marked stale · times in UTC
+        Albion Online Data Project · sell orders are listings, buy orders are offers · an amber age
+        and ring mark an order older than an hour (stale) · times in UTC
       </p>
     </section>
   );

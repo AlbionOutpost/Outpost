@@ -14,6 +14,7 @@ export default async function Page({
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="craft"
         scene="economy"
         title="Crafting calculator"

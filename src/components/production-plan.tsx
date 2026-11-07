@@ -19,6 +19,7 @@ import { ScenarioControls } from "./scenario-controls";
 import { AddToShopping } from "./add-to-shopping";
 import { shoppingFromProduction } from "@/lib/albion/shopping";
 import { ItemIcon } from "./item-icon";
+import { Unavailable } from "./status-line";
 import "@/app/production-plan.css";
 import {
   productionPriceQuery,
@@ -26,7 +27,7 @@ import {
 } from "@/lib/albion/production-observations";
 
 const silver = (value: number | null) =>
-  value === null ? "Incomplete" : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  value === null ? <Unavailable /> : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
 export function ProductionPlan({
   current,
   onEdit,
@@ -370,7 +371,9 @@ export function ProductionPlan({
             </div>
             <div>
               <small>Margin on sales</small>
-              <strong>{result.margin === null ? "Incomplete" : `${silver(result.margin)}%`}</strong>
+              <strong>
+                {result.margin === null ? <Unavailable /> : `${silver(result.margin)}%`}
+              </strong>
             </div>
           </div>
           <div className="production-plan-subhead">
@@ -387,18 +390,24 @@ export function ProductionPlan({
             stay separate.
           </p>
           <div
-            className="production-plan-table"
+            className="production-plan-table table-scroll"
             tabIndex={0}
             role="region"
             aria-label="Production shopping list"
           >
-            <table>
+            <table data-density="compact">
               <thead>
                 <tr>
                   <th scope="col">Material / market</th>
-                  <th scope="col">Quality</th>
-                  <th scope="col">Required</th>
-                  <th scope="col">Cost · silver</th>
+                  <th scope="col" className="numeric">
+                    Quality
+                  </th>
+                  <th scope="col" className="numeric">
+                    Required
+                  </th>
+                  <th scope="col" className="numeric">
+                    Cost · silver
+                  </th>
                   <th scope="col">Price basis</th>
                 </tr>
               </thead>
@@ -414,9 +423,9 @@ export function ProductionPlan({
                         </span>
                       </span>
                     </th>
-                    <td>{row.quality}</td>
-                    <td>{silver(row.quantity)}</td>
-                    <td>{silver(row.gross)}</td>
+                    <td className="numeric">{row.quality}</td>
+                    <td className="numeric">{silver(row.quantity)}</td>
+                    <td className="numeric">{silver(row.gross)}</td>
                     <td>
                       {[...row.sources].map((source) => (
                         <small key={source}>{source}</small>

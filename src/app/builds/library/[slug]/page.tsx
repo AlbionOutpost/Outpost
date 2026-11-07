@@ -25,7 +25,6 @@ import { JsonLd } from "@/components/json-ld";
 import { breadcrumbList } from "@/lib/structured-data";
 import { brandCopy } from "@/lib/brand-copy";
 import { SectionHeading } from "@/components/section-heading";
-import { BuildsNextStep } from "@/components/builds-next-step";
 import { ArrowRight } from "lucide-react";
 export async function generateMetadata({
   params,
@@ -201,15 +200,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </div>
         </section>
       )}
-      <BuildsNextStep
-        title={
-          <>
-            Run it <em>your</em> way
-          </>
-        }
-        line="Start a build of your own from an empty board, or browse every loadout in the library."
-        secondary={{ href: "/builds?source=library", label: "Build library" }}
-      />
     </div>
   );
 }

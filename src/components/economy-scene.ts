@@ -1,16 +1,17 @@
 import {
   ACESFilmicToneMapping,
   AdditiveBlending,
-  BoxGeometry,
+  Box3,
   BufferAttribute,
   BufferGeometry,
   CanvasTexture,
   Color,
-  CylinderGeometry,
   DirectionalLight,
+  DoubleSide,
   DynamicDrawUsage,
   ExtrudeGeometry,
   Group,
+  IcosahedronGeometry,
   InstancedMesh,
   LatheGeometry,
   MathUtils,
@@ -18,18 +19,25 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
+  NormalBlending,
   Object3D,
+  Path,
   PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
   PointLight,
+  Points,
   Quaternion,
   RepeatWrapping,
   Scene,
+  ShaderMaterial,
   ShadowMaterial,
   Shape,
+  Sphere,
   SphereGeometry,
+  Sprite,
+  SpriteMaterial,
   SRGBColorSpace,
   Vector2,
   Vector3,
@@ -38,6 +46,7 @@ import {
   type Texture,
 } from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
 /**
@@ -154,7 +163,7 @@ const REEDS = 120;
 export const coinHalfHeight = H + RIM;
 
 /** Rim and milled edge: a lathed profile, reeded by pushing the edge in and out. */
-function rimGeometry(segments: number) {
+function rimGeometry(segments: number, reeded = true) {
   const p = (r: number, y: number) => new Vector2(r, y);
   const top = [
     p(FIELD - 0.012, H + 0.004),
@@ -177,7 +186,7 @@ function rimGeometry(segments: number) {
     const y = position.getY(i);
     const z = position.getZ(i);
     const r = Math.hypot(x, z);
-    if (r < R - 0.001 || Math.abs(y) > H + 0.0005) continue;
+    if (!reeded || r < R - 0.001 || Math.abs(y) > H + 0.0005) continue;
     const phi = Math.atan2(x, z);
     const ridge = Math.pow(Math.abs(Math.cos((REEDS * phi) / 2)), 0.6);
     const k = (R - 0.016 * (1 - ridge)) / r;
@@ -232,9 +241,9 @@ function faceGeometry(up: 1 | -1, rings = 20, segments = 96) {
 function coinGeometry(detail: "full" | "small") {
   const full = detail === "full";
   const parts = [
-    rimGeometry(full ? 480 : 120),
-    faceGeometry(1, full ? 20 : 6, full ? 96 : 32),
-    faceGeometry(-1, full ? 20 : 6, full ? 96 : 32),
+    full ? rimGeometry(480) : rimGeometry(28, false),
+    faceGeometry(1, full ? 20 : 3, full ? 96 : 28),
+    faceGeometry(-1, full ? 20 : 3, full ? 96 : 28),
   ];
   const merged = mergeGeometries(parts, true)!;
   parts.forEach((part) => part.dispose());
@@ -399,18 +408,53 @@ export type CoinScene = {
   place(side: Side): void;
   /** Throws the coin and lands it on `side`, the server's result. */
   toss(side: Side, onLanded: () => void): void;
+  /** Jumps a throw to its end. */
+  skip(): void;
   dispose(): void;
 };
 
-const TOSS_MS = 2500;
-const TURNS = 5;
-/** When the coin first meets the table, as a share of the throw. */
-const LAND = 0.55;
+/** The flip's beats, in scene milliseconds; slow motion stretches the apex. */
+export const flipCue = {
+  flick: 420,
+  land: 2300,
+  bounce: 2580,
+  rest: 2730,
+  /** The result is shown from here, while the coin rings down. */
+  landed: 2760,
+  settle: 3350,
+  slowFrom: 1120,
+  slowTo: 1600,
+  slowRate: 0.32,
+};
+const flipTime = (real: number) => {
+  const { slowFrom, slowTo, slowRate } = flipCue;
+  const span = (slowTo - slowFrom) / slowRate;
+  if (real <= slowFrom) return real;
+  if (real <= slowFrom + span) return slowFrom + (real - slowFrom) * slowRate;
+  return slowTo + (real - slowFrom - span);
+};
+const TURNS = 7;
+const TOSS_HEIGHT = 6.2;
+
+/** A thin bright ring for the landing flash. */
+function ringTexture(bin: Bin) {
+  const { canvas, g } = canvas2d(128);
+  const gradient = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gradient.addColorStop(0, "rgba(255,255,255,0)");
+  gradient.addColorStop(0.62, "rgba(255,255,255,0)");
+  gradient.addColorStop(0.8, "rgba(255,255,255,1)");
+  gradient.addColorStop(0.88, "rgba(255,255,255,.35)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = gradient;
+  g.fillRect(0, 0, 128, 128);
+  return bin.add(new CanvasTexture(canvas));
+}
 
 /**
- * A silver coin on a table: thrown up in an arc toward the viewer, tumbling end over end with
- * a little precession and slowing, landing on its edge, bouncing twice and wobbling flat onto
- * the side it was given. Renders only while it moves.
+ * A silver coin on a table, flipped as a moment: a thumb flick, a big high toss the camera
+ * tilts up to follow, spinning with blur and glints, slow motion at the apex, faces trading
+ * on the way down, the last turn slowing to the side it was given, then a clinking bounce, a
+ * puff of dust, a flash ring and sparkles in that side's colour. Renders only while it moves.
  */
 export async function createCoinScene(
   canvas: HTMLCanvasElement,
@@ -421,29 +465,41 @@ export async function createCoinScene(
   renderer.setSize(width, height, false);
   const look = await mintCoin(bin, environment, "full");
   const scene = new Scene();
-  const camera = new PerspectiveCamera(28, width / height, 0.1, 60);
-  // Coin diameter ≈ 40% of the canvas width at rest; the canvas has headroom for the arc.
+  const camera = new PerspectiveCamera(28, width / height, 0.1, 80);
+  const restLook = 1.55;
   const distance = 11.2;
   const elevation = MathUtils.degToRad(52);
-  camera.position.set(0, Math.sin(elevation) * distance, Math.cos(elevation) * distance);
-  camera.lookAt(0, 1.55, 0);
+  const base = new Vector3(0, Math.sin(elevation) * distance, Math.cos(elevation) * distance);
+  const lookAt = new Vector3(0, restLook, 0);
+  const aim = (coinY: number) => {
+    // Tilt up to follow the coin once it is high, and ease back down as it falls.
+    const follow = smooth(0.8, 3.2, coinY);
+    lookAt.set(0, lerp(restLook, coinY - 0.3, follow * 0.78), 0);
+    camera.position.copy(base);
+    camera.position.y += follow * coinY * 0.35;
+    camera.lookAt(lookAt);
+  };
+  aim(0);
 
-  const key = new DirectionalLight(
-    token(canvas, "--warning", "#e6b35b").lerp(new Color(0xffffff), 0.4),
-    3,
-  );
+  const warm = token(canvas, "--warning", "#e6b35b");
+  const sideColor = {
+    heads: warm.clone().lerp(new Color(0xffffff), 0.2),
+    tails: token(canvas, "--focus", "#82b9ff").lerp(new Color(0xffffff), 0.2),
+  };
+  const key = new DirectionalLight(warm.clone().lerp(new Color(0xffffff), 0.4), 3);
   key.position.set(-3.5, 7, 4);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
   key.shadow.camera.left = key.shadow.camera.bottom = -3;
   key.shadow.camera.right = key.shadow.camera.top = 3;
   key.shadow.camera.near = 1;
-  key.shadow.camera.far = 20;
+  key.shadow.camera.far = 30;
   key.shadow.radius = 5;
   key.shadow.bias = -0.0008;
   const fill = new DirectionalLight(token(canvas, "--focus", "#82b9ff"), 0.35);
   fill.position.set(4, 2, -3);
   scene.add(key, fill);
+  const lightDir = key.position.clone().normalize();
 
   const table = new Mesh(
     bin.add(new PlaneGeometry(14, 14)),
@@ -464,168 +520,608 @@ export async function createCoinScene(
   );
   blob.rotation.x = -Math.PI / 2;
   blob.position.y = 0.002;
-  scene.add(table, blob);
+  const ring = new Mesh(
+    bin.add(new PlaneGeometry(1, 1)),
+    bin.add(
+      new MeshBasicMaterial({
+        map: ringTexture(bin),
+        transparent: true,
+        opacity: 0,
+        blending: AdditiveBlending,
+        depthWrite: false,
+      }),
+    ),
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.01;
+  scene.add(table, blob, ring);
 
   const coin = new Mesh(look.geometry, look.materials);
   coin.castShadow = true;
   scene.add(coin);
+  // Motion blur: fading copies a little behind in the spin, only while it spins fast.
+  const ghosts = [0.32, 0.2, 0.12, 0.06].map((opacity) => {
+    const materials = look.materials.map((m) => {
+      const copy = bin.add((m as MeshStandardMaterial).clone());
+      copy.transparent = true;
+      copy.opacity = opacity;
+      copy.depthWrite = false;
+      return copy;
+    });
+    const ghost = new Mesh(look.geometry, materials);
+    ghost.visible = false;
+    scene.add(ghost);
+    return { ghost, materials, opacity };
+  });
+  const glint = new Sprite(
+    bin.add(
+      new SpriteMaterial({
+        map: starTexture(bin),
+        color: 0xfff4dc,
+        transparent: true,
+        opacity: 0,
+        blending: AdditiveBlending,
+        depthWrite: false,
+      }),
+    ),
+  );
+  const flash = new Sprite(
+    bin.add(
+      new SpriteMaterial({
+        map: glowTexture(bin),
+        color: 0xfff2d6,
+        transparent: true,
+        opacity: 0,
+        blending: AdditiveBlending,
+        depthWrite: false,
+      }),
+    ),
+  );
+  scene.add(glint, flash);
+  const dust = new Particles(40, glowTexture(bin), false, bin);
+  const sparks = new Particles(110, starTexture(bin), true, bin);
+  scene.add(dust.points, sparks.points);
+  {
+    const buffer = new Vector2();
+    renderer.getDrawingBufferSize(buffer);
+    dust.setViewport(buffer.y);
+    sparks.setViewport(buffer.y);
+  }
 
   let spin = 0; // end-over-end angle; heads is a multiple of 2π
   let stop = () => {};
-  const q = new Quaternion();
+  let finish: (() => void) | null = null;
   const axisX = new Vector3(1, 0, 0);
   const axisY = new Vector3(0, 1, 0);
   const axisZ = new Vector3(0, 0, 1);
   const part = new Quaternion();
+  const wobbleAxis = new Vector3();
+  const normal = new Vector3();
+  const view = new Vector3();
 
-  const pose = (
-    angle: number,
-    yaw: number,
-    roll: number,
-    wobble: number,
-    wobbleDir: number,
-    lift: number,
-    x: number,
-    z: number,
-  ) => {
-    q.setFromAxisAngle(new Vector3(Math.cos(wobbleDir), 0, Math.sin(wobbleDir)), wobble);
-    q.multiply(part.setFromAxisAngle(axisY, yaw));
-    q.multiply(part.setFromAxisAngle(axisZ, roll));
-    q.multiply(part.setFromAxisAngle(axisX, angle));
-    coin.quaternion.copy(q);
-    coin.position.set(x, restHeight(q) + lift, z);
-    const high = clamp01(lift / 2.6);
-    blob.position.set(coin.position.x + lift * 0.18, 0.002, coin.position.z - lift * 0.08);
-    blob.scale.setScalar(1 + high * 0.5);
-    (blob.material as MeshBasicMaterial).opacity = 0.6 * (1 - high * 0.75);
+  type Pose = {
+    angle: number;
+    yaw: number;
+    roll: number;
+    wobble: number;
+    wobbleDir: number;
+    lift: number;
+    x: number;
+    z: number;
+  };
+  const still = (angle: number): Pose => ({
+    angle,
+    yaw: 0,
+    roll: 0,
+    wobble: 0,
+    wobbleDir: 0,
+    lift: 0,
+    x: 0,
+    z: 0,
+  });
+  const put = (target: Object3D, p: Pose) => {
+    wobbleAxis.set(Math.cos(p.wobbleDir), 0, Math.sin(p.wobbleDir));
+    target.quaternion.setFromAxisAngle(wobbleAxis, p.wobble);
+    target.quaternion.multiply(part.setFromAxisAngle(axisY, p.yaw));
+    target.quaternion.multiply(part.setFromAxisAngle(axisZ, p.roll));
+    target.quaternion.multiply(part.setFromAxisAngle(axisX, p.angle));
+    target.position.set(p.x, restHeight(target.quaternion) + p.lift, p.z);
+  };
+  const pose = (p: Pose) => {
+    put(coin, p);
+    const high = clamp01(p.lift / 4);
+    blob.position.set(coin.position.x + p.lift * 0.12, 0.002, coin.position.z - p.lift * 0.05);
+    blob.scale.setScalar(1 + high * 0.7);
+    (blob.material as MeshBasicMaterial).opacity = 0.6 * (1 - high * 0.8);
+    aim(coin.position.y);
   };
   const render = () => renderer.render(scene, camera);
+  const clearFx = () => {
+    ghosts.forEach((g) => (g.ghost.visible = false));
+    (glint.material as SpriteMaterial).opacity = 0;
+    (flash.material as SpriteMaterial).opacity = 0;
+    (ring.material as MeshBasicMaterial).opacity = 0;
+    dust.clear();
+    sparks.clear();
+  };
 
   return {
     place(side) {
       stop();
+      finish = null;
+      clearFx();
       spin = side === "tails" ? Math.PI : 0;
-      pose(spin, 0, 0, 0, 0, 0, 0, 0);
+      pose(still(spin));
       render();
+    },
+    skip() {
+      finish?.();
     },
     toss(side, onLanded) {
       stop();
+      clearFx();
       const from = spin;
       const to =
         Math.ceil(from / (Math.PI * 2) + 0.01) * Math.PI * 2 +
         TURNS * Math.PI * 2 +
         (side === "tails" ? Math.PI : 0);
       spin = to;
+      const color = sideColor[side];
+      const r = seeded(Math.round(to * 1000) % 9973 || 5);
       const began = performance.now();
-      const frame = (now: number) => {
-        const s = clamp01((now - began) / TOSS_MS);
-        let angle: number;
-        if (s < LAND) {
-          const u = s / LAND;
-          // Fast off the thumb, slowing as it climbs and falls.
-          angle = from + (to - 0.5 - from) * (0.55 * u + 0.45 * easeOut(u, 2));
-        } else if (s < 0.7) angle = to - 0.5 + 0.72 * easeInOut((s - LAND) / 0.15);
-        else if (s < 0.8) angle = to + 0.22 - 0.28 * easeInOut((s - 0.7) / 0.1);
-        else angle = to - 0.06 + 0.06 * easeOut((s - 0.8) / 0.06);
-        const flight = clamp01(s / LAND);
-        const lift = hop(s, 0, LAND, 2.7) + hop(s, LAND, 0.7, 0.34) + hop(s, 0.7, 0.8, 0.07);
-        const arc = Math.sin(Math.PI * flight);
-        const yaw = 0.42 * arc * Math.sin(flight * 5.2);
-        const roll = s < LAND ? 0.28 * Math.sin(flight * Math.PI * 2.6) * (1 - flight * 0.6) : 0;
-        // Settling: the coin rings down flat, its tilt circling faster as it dies away.
-        const u = clamp01((s - 0.8) / 0.2);
-        const wobble =
-          s > 0.8 ? 0.085 * Math.sin(Math.min(1, u * 5) * (Math.PI / 2)) * Math.pow(1 - u, 1.7) : 0;
-        const wobbleDir = Math.PI * 2 * (2.2 * u + 3.4 * u * u);
-        pose(angle, yaw, roll, wobble, wobbleDir, lift, -0.12 * arc, 0.9 * arc);
-        render();
-        if (s < 1) return true;
-        pose(to, 0, 0, 0, 0, 0, 0, 0);
-        render();
+      let last = 0;
+      let lastAngle = from;
+      let told = false;
+      const tell = () => {
+        if (told) return;
+        told = true;
         onLanded();
-        return false;
+      };
+      const burst = (count: number, strength: number) => {
+        sparks.spawn(count, (p, v) => {
+          const a = r() * Math.PI * 2;
+          p.set(Math.cos(a) * 0.9, 0.1 + r() * 0.2, Math.sin(a) * 0.9);
+          v.set(
+            Math.cos(a) * (1 + r() * 2.4) * strength,
+            (1.6 + r() * 3) * strength,
+            Math.sin(a) * (1 + r() * 2) * strength,
+          );
+          return {
+            life: 700 + r() * 800,
+            size: 0.18 + r() * 0.26,
+            color: color.clone().lerp(new Color(0xffffff), r() * 0.5),
+          };
+        });
+      };
+      const frame = (now: number) => {
+        const t = flipTime(now - began);
+        const dt = Math.max(1, t - last);
+        last = t;
+        const p = still(to);
+        const { flick, land, bounce, rest, settle } = flipCue;
+        if (t < flick) {
+          // The thumb: the coin rocks back onto its edge and lifts a little.
+          const u = t / flick;
+          p.angle = from - 0.45 * easeInOut(u);
+          p.lift = 0.22 * Math.sin(u * Math.PI * 0.5);
+          p.roll = -0.06 * u;
+        } else if (t < land) {
+          const u = (t - flick) / (land - flick);
+          // Fast off the thumb, slowing all the way so the last turn is suspenseful.
+          p.angle = from - 0.45 + (to - 0.4 - (from - 0.45)) * (1 - Math.pow(1 - u, 3.1));
+          p.lift = 0.22 * (1 - u) + 4 * TOSS_HEIGHT * u * (1 - u);
+          const arc = Math.sin(Math.PI * u);
+          p.x = -0.22 * arc;
+          p.z = 0.45 * arc;
+          p.yaw = 0.4 * arc * Math.sin(u * 5.4);
+          p.roll = 0.24 * Math.sin(u * Math.PI * 2.4) * (1 - u * 0.7);
+        } else if (t < bounce) {
+          const u = (t - land) / (bounce - land);
+          p.angle = to - 0.4 + 0.58 * easeInOut(u);
+          p.lift = hop(u, 0, 1, 0.5);
+        } else if (t < rest) {
+          const u = (t - bounce) / (rest - bounce);
+          p.angle = to + 0.18 - 0.23 * easeInOut(u);
+          p.lift = hop(u, 0, 1, 0.12);
+        } else {
+          const u = clamp01((t - rest) / (settle - rest));
+          p.angle = to - 0.05 + 0.05 * easeOut(u * 4);
+          p.wobble = 0.09 * Math.sin(Math.min(1, u * 5) * (Math.PI / 2)) * Math.pow(1 - u, 1.7);
+          p.wobbleDir = Math.PI * 2 * (2.2 * u + 3.6 * u * u);
+        }
+        pose(p);
+        // Blur and glints while it spins fast.
+        const omega = Math.abs(p.angle - lastAngle) / (dt / 1000);
+        lastAngle = p.angle;
+        const blur = smooth(10, 30, omega);
+        ghosts.forEach((g, i) => {
+          g.ghost.visible = blur > 0.02;
+          if (!g.ghost.visible) return;
+          put(g.ghost, { ...p, angle: p.angle - Math.sign(to - from) * (i + 1) * 0.16 * blur });
+          g.ghost.position.copy(coin.position);
+          g.materials.forEach((m) => (m.opacity = g.opacity * blur));
+        });
+        normal.set(0, 1, 0).applyQuaternion(coin.quaternion);
+        view.subVectors(camera.position, coin.position).normalize();
+        const half = lightDir.clone().add(view).normalize();
+        const spec = Math.pow(Math.abs(normal.dot(half)), 60);
+        const glintAmount = t > flick && t < land ? spec : 0;
+        (glint.material as SpriteMaterial).opacity = glintAmount;
+        glint.position
+          .copy(coin.position)
+          .addScaledVector(view, 0.4)
+          .add(tmpUp.set(-0.35, 0.35, 0));
+        glint.scale.setScalar(0.8 + glintAmount * 1.6);
+        glint.material.rotation = t / 300;
+        // Landing: flash ring, dust puff and sparkles.
+        if (t >= land && t - dt < land) {
+          burst(60, 1);
+          dust.spawn(28, (pp, v) => {
+            const a = r() * Math.PI * 2;
+            pp.set(Math.cos(a) * 0.9, 0.05, Math.sin(a) * 0.9);
+            v.set(
+              Math.cos(a) * (1.2 + r() * 1.6),
+              0.3 + r() * 0.8,
+              Math.sin(a) * (1.2 + r() * 1.6),
+            );
+            return { life: 600 + r() * 500, size: 0.6 + r() * 0.6, color: new Color(0x8a7563) };
+          });
+        }
+        if (t >= bounce && t - dt < bounce) burst(16, 0.6);
+        const ringT = (t - land) / 520;
+        const ringOn = ringT > 0 && ringT < 1;
+        (ring.material as MeshBasicMaterial).opacity = ringOn ? Math.pow(1 - ringT, 1.5) : 0;
+        (ring.material as MeshBasicMaterial).color.copy(color);
+        ring.scale.setScalar(1.4 + easeOut(clamp01(ringT)) * 4.2);
+        const flashT = (t - land) / 300;
+        (flash.material as SpriteMaterial).opacity =
+          flashT > 0 && flashT < 1 ? Math.pow(1 - flashT, 2) * 0.8 : 0;
+        flash.position.copy(coin.position);
+        flash.scale.setScalar(2 + flashT * 3);
+        dust.step(dt, -0.6, 0.1, (u) => 0.45 * Math.pow(1 - u, 1.5));
+        sparks.step(
+          dt,
+          -2.5,
+          0.4,
+          (u, i) => Math.pow(1 - u, 1.3) * (0.6 + 0.4 * Math.sin(t / 40 + i)),
+        );
+        if (t >= flipCue.landed) tell();
+        render();
+        return t < settle || sparks.live > 0 || dust.live > 0;
+      };
+      finish = () => {
+        stop();
+        finish = null;
+        clearFx();
+        pose(still(to));
+        render();
+        tell();
       };
       frame(began);
-      stop = animate(frame);
+      stop = animate((now) => {
+        if (frame(now)) return true;
+        finish?.();
+        return false;
+      });
     },
     dispose() {
       stop();
+      finish = null;
       bin.dispose();
     },
   };
 }
+const tmpUp = new Vector3();
 
 /* ------------------------------------------------------------------------------------------ */
 /* Loot chest scene                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
-/** Painted planks: a canvas wood grain with knots, tileable along the plank. */
-function woodTextures(bin: Bin) {
+const seeded = (seed: number) => {
+  let s = seed;
+  return () => (s = (s * 16807) % 2147483647) / 2147483647;
+};
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const smooth = (a: number, b: number, x: number) => {
+  const t = clamp01((x - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
+
+/** A tangent-space normal map from a height field; it wraps, so tiling maps stay seamless. */
+function normalsFrom(height: Float32Array, w: number, h: number, strength: number) {
+  const data = new ImageData(w, h);
+  const at = (x: number, y: number) => height[((y + h) % h) * w + ((x + w) % w)];
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const nx = -(at(x + 1, y) - at(x - 1, y)) * strength;
+      const ny = (at(x, y + 1) - at(x, y - 1)) * strength;
+      const l = Math.hypot(nx, ny, 1);
+      data.data.set(
+        [(nx / l / 2 + 0.5) * 255, (ny / l / 2 + 0.5) * 255, (1 / l / 2 + 0.5) * 255, 255],
+        (y * w + x) * 4,
+      );
+    }
+  return data;
+}
+
+function textureOf(data: ImageData, bin: Bin, srgb = false) {
+  const { canvas, g } = canvas2d(data.width, data.height);
+  g.putImageData(data, 0, 0);
+  const texture = bin.add(new CanvasTexture(canvas));
+  texture.wrapS = texture.wrapT = RepeatWrapping;
+  texture.anisotropy = 4;
+  if (srgb) texture.colorSpace = SRGBColorSpace;
+  return texture;
+}
+
+/**
+ * Painted planks: grain rings that wander around a few knots, open pores, a colour, a
+ * normal and a roughness map from one height field. The grain runs along U.
+ */
+function woodMaps(bin: Bin) {
   const W = 512;
-  const Hh = 128;
-  const { canvas, g } = canvas2d(W, Hh);
-  const bump = canvas2d(W, Hh);
-  const image = g.createImageData(W, Hh);
-  const bumpImage = bump.g.createImageData(W, Hh);
-  // Deterministic noise so every chest is the same chest.
-  let seed = 7;
-  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const H = 128;
+  const rand = seeded(7);
   const knots = Array.from({ length: 3 }, () => ({
     x: rand() * W,
-    y: 20 + rand() * (Hh - 40),
-    r: 6 + rand() * 8,
+    y: 24 + rand() * (H - 48),
+    r: 5 + rand() * 7,
   }));
   const waves = Array.from({ length: 4 }, () => ({
     f: 1 + Math.floor(rand() * 3),
     p: rand() * 6.28,
     a: 2 + rand() * 4,
   }));
-  for (let y = 0; y < Hh; y++)
+  const height = new Float32Array(W * H);
+  const color = new ImageData(W, H);
+  const rough = new ImageData(W, H);
+  for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       let yy = y;
       for (const w of waves) yy += Math.sin((x / W) * Math.PI * 2 * w.f + w.p) * w.a;
       for (const k of knots) {
-        const dx = (x - k.x) / (k.r * 3);
+        const dx = Math.min(Math.abs(x - k.x), W - Math.abs(x - k.x)) / (k.r * 3);
         const dy = (y - k.y) / k.r;
         const d = dx * dx + dy * dy;
-        if (d < 9) yy += (k.y > y ? -1 : 1) * k.r * Math.exp(-d) * 1.6;
+        if (d < 9) yy += (k.y > y ? -1 : 1) * k.r * Math.exp(-d) * 1.7;
       }
       const ring = Math.pow(
-        0.5 + 0.5 * Math.sin(yy * 0.2 + Math.sin(yy * 0.05 + x * 0.004) * 2.5),
-        3,
+        0.5 + 0.5 * Math.sin(yy * 0.24 + Math.sin(yy * 0.05 + x * 0.006) * 2.4),
+        2.4,
       );
-      const fine = 0.5 + 0.5 * Math.sin(yy * 1.7 + x * 0.002);
-      let grain = 0.8 + ring * 0.16 - fine * 0.05 + (rand() - 0.5) * 0.07;
+      const pore = rand() < 0.035 ? 0.35 : 0;
+      let knot = 0;
       for (const k of knots) {
-        const d = Math.hypot((x - k.x) / 1.6, y - k.y) / k.r;
-        if (d < 1) grain *= 0.55 + 0.45 * d;
+        const dx = Math.min(Math.abs(x - k.x), W - Math.abs(x - k.x)) / 1.5;
+        const d = Math.hypot(dx, y - k.y) / k.r;
+        if (d < 1) knot = Math.max(knot, 1 - d);
       }
-      // Darker plank edges read as a bevel between boards.
-      const edge = Math.min(y, Hh - 1 - y) / Hh;
-      const shade = edge < 0.06 ? 0.55 + (edge / 0.06) * 0.45 : 1;
-      const v = grain * shade;
-      image.data.set([132 * v, 80 * v, 47 * v, 255], (y * W + x) * 4);
-      const b = 255 * clamp01(ring * 0.7 + 0.3) * shade;
-      bumpImage.data.set([b, b, b, 255], (y * W + x) * 4);
+      const i = y * W + x;
+      height[i] = ring * 0.8 - pore - knot * 0.5;
+      // Warm, slightly desaturated oak: darker late wood in the rings, darker knots.
+      const tone = (0.78 + (1 - ring) * 0.15) * (1 - knot * 0.45) * (1 - pore * 0.4);
+      const streak = 0.94 + 0.06 * Math.sin(x * 0.013 + y * 0.002);
+      color.data.set([150 * tone * streak, 96 * tone * streak, 58 * tone * streak, 255], i * 4);
+      rough.data.set([0, (0.6 + ring * 0.22 + pore) * 255, 0, 255], i * 4);
+    }
+  return {
+    map: textureOf(color, bin, true),
+    normalMap: textureOf(normalsFrom(height, W, H, 2.2), bin),
+    roughnessMap: textureOf(rough, bin),
+  };
+}
+
+/** Hammered metal: overlapping shallow dents for a normal and a roughness map. */
+function hammeredMaps(bin: Bin) {
+  const N = 256;
+  const rand = seeded(29);
+  const height = new Float32Array(N * N);
+  for (let n = 0; n < 110; n++) {
+    const cx = rand() * N;
+    const cy = rand() * N;
+    const r = 8 + rand() * 16;
+    const depth = 0.4 + rand() * 0.6;
+    for (let y = Math.floor(cy - r); y <= cy + r; y++)
+      for (let x = Math.floor(cx - r); x <= cx + r; x++) {
+        const d = Math.hypot(x - cx, y - cy) / r;
+        if (d >= 1) continue;
+        const i = ((y + N) % N) * N + ((x + N) % N);
+        height[i] -= depth * (1 - d * d) * (1 - d * d);
+      }
+  }
+  const rough = new ImageData(N, N);
+  for (let i = 0; i < N * N; i++) {
+    const r = 0.36 + Math.min(0.3, -height[i] * 0.18) + (rand() - 0.5) * 0.06;
+    rough.data.set([0, r * 255, 0, 255], i * 4);
+  }
+  return {
+    normalMap: textureOf(normalsFrom(height, N, N, 1.6), bin),
+    roughnessMap: textureOf(rough, bin),
+  };
+}
+
+/** A soft round sprite, white in the middle. */
+function glowTexture(bin: Bin, hard = 0.0) {
+  const { canvas, g } = canvas2d(128);
+  const gradient = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gradient.addColorStop(0, "rgba(255,255,255,1)");
+  gradient.addColorStop(Math.max(0.05, hard), "rgba(255,255,255,.75)");
+  gradient.addColorStop(0.4, "rgba(255,255,255,.22)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = gradient;
+  g.fillRect(0, 0, 128, 128);
+  return bin.add(new CanvasTexture(canvas));
+}
+
+/** A four-point star for sparkles. */
+function starTexture(bin: Bin) {
+  const { canvas, g } = canvas2d(64);
+  const glow = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  glow.addColorStop(0, "rgba(255,255,255,1)");
+  glow.addColorStop(0.18, "rgba(255,255,255,.5)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = glow;
+  g.fillRect(0, 0, 64, 64);
+  g.fillStyle = "rgba(255,255,255,.9)";
+  for (const [w, h] of [
+    [2, 30],
+    [30, 2],
+  ]) {
+    g.beginPath();
+    g.ellipse(32, 32, w, h, 0, 0, Math.PI * 2);
+    g.fill();
+  }
+  return bin.add(new CanvasTexture(canvas));
+}
+
+/** A shaft of light: bright at its foot, fading up and to the sides. */
+function shaftTexture(bin: Bin) {
+  const { canvas, g } = canvas2d(64, 256);
+  const image = g.createImageData(64, 256);
+  for (let y = 0; y < 256; y++)
+    for (let x = 0; x < 64; x++) {
+      const across = 1 - Math.pow(Math.abs(x / 63 - 0.5) * 2, 1.6);
+      const up = Math.pow(y / 255, 1.8);
+      const a = clamp01(across * up) * 255;
+      image.data.set([255, 255, 255, a], (y * 64 + x) * 4);
     }
   g.putImageData(image, 0, 0);
-  bump.g.putImageData(bumpImage, 0, 0);
-  const map = bin.add(new CanvasTexture(canvas));
-  map.colorSpace = SRGBColorSpace;
-  const bumpMap = bin.add(new CanvasTexture(bump.canvas));
-  for (const t of [map, bumpMap]) {
-    t.wrapS = t.wrapT = RepeatWrapping;
-    t.anisotropy = 4;
+  return bin.add(new CanvasTexture(canvas));
+}
+
+/**
+ * Cheap particles: one draw of point sprites with their own size, alpha and colour. They move
+ * on the CPU (a few hundred at most) and fade out by their remaining life.
+ */
+class Particles {
+  readonly points: Points;
+  private position: Float32Array;
+  private velocity: Float32Array;
+  private life: Float32Array;
+  private span: Float32Array;
+  private size: Float32Array;
+  private baseSize: Float32Array;
+  private alpha: Float32Array;
+  private tint: Float32Array;
+  private material: ShaderMaterial;
+  live = 0;
+  constructor(
+    private capacity: number,
+    map: Texture,
+    additive: boolean,
+    bin: Bin,
+  ) {
+    this.position = new Float32Array(capacity * 3);
+    this.velocity = new Float32Array(capacity * 3);
+    this.life = new Float32Array(capacity);
+    this.span = new Float32Array(capacity);
+    this.size = new Float32Array(capacity);
+    this.baseSize = new Float32Array(capacity);
+    this.alpha = new Float32Array(capacity);
+    this.tint = new Float32Array(capacity * 3);
+    const geometry = bin.add(new BufferGeometry());
+    geometry.setAttribute(
+      "position",
+      new BufferAttribute(this.position, 3).setUsage(DynamicDrawUsage),
+    );
+    geometry.setAttribute("size", new BufferAttribute(this.size, 1).setUsage(DynamicDrawUsage));
+    geometry.setAttribute("alpha", new BufferAttribute(this.alpha, 1).setUsage(DynamicDrawUsage));
+    geometry.setAttribute("tint", new BufferAttribute(this.tint, 3).setUsage(DynamicDrawUsage));
+    this.material = bin.add(
+      new ShaderMaterial({
+        uniforms: { map: { value: map }, viewport: { value: 600 } },
+        vertexShader: `
+          attribute float size; attribute float alpha; attribute vec3 tint;
+          uniform float viewport; varying float vAlpha; varying vec3 vTint;
+          void main() {
+            vec4 view = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * view;
+            gl_PointSize = clamp(size * projectionMatrix[1][1] * viewport * 0.5 / max(0.1, -view.z), 0.0, 128.0);
+            vAlpha = alpha; vTint = tint;
+          }`,
+        fragmentShader: `
+          uniform sampler2D map; varying float vAlpha; varying vec3 vTint;
+          void main() {
+            vec4 t = texture2D(map, gl_PointCoord);
+            gl_FragColor = vec4(vTint * t.rgb, t.a * vAlpha);
+          }`,
+        transparent: true,
+        depthWrite: false,
+        blending: additive ? AdditiveBlending : NormalBlending,
+      }),
+    );
+    this.points = new Points(geometry, this.material);
+    this.points.frustumCulled = false;
+    geometry.setDrawRange(0, 0);
   }
-  return { map, bumpMap };
+  /** Adds up to `n` particles; `init` fills position, velocity, life (ms), size and colour. */
+  spawn(n: number, init: (p: Vector3, v: Vector3) => { life: number; size: number; color: Color }) {
+    const p = new Vector3();
+    const v = new Vector3();
+    for (let k = 0; k < n && this.live < this.capacity; k++) {
+      const i = this.live++;
+      p.set(0, 0, 0);
+      v.set(0, 0, 0);
+      const { life, size, color } = init(p, v);
+      p.toArray(this.position, i * 3);
+      v.toArray(this.velocity, i * 3);
+      this.life[i] = this.span[i] = life;
+      this.baseSize[i] = size;
+      color.toArray(this.tint, i * 3);
+    }
+  }
+  /** Steps every particle by `dt` ms; `fade(t)` gives alpha for t = 0 (born) … 1 (gone). */
+  step(dt: number, gravity: number, drag: number, fade: (t: number, i: number) => number) {
+    const s = dt / 1000;
+    let i = 0;
+    while (i < this.live) {
+      this.life[i] -= dt;
+      if (this.life[i] <= 0) {
+        // Move the last live particle into this slot.
+        const last = --this.live;
+        for (const [array, width] of [
+          [this.position, 3],
+          [this.velocity, 3],
+          [this.tint, 3],
+          [this.life, 1],
+          [this.span, 1],
+          [this.baseSize, 1],
+        ] as const)
+          array.copyWithin(i * width, last * width, last * width + width);
+        continue;
+      }
+      const k = Math.pow(drag, s);
+      this.velocity[i * 3] *= k;
+      this.velocity[i * 3 + 1] = this.velocity[i * 3 + 1] * k + gravity * s;
+      this.velocity[i * 3 + 2] *= k;
+      for (let c = 0; c < 3; c++) this.position[i * 3 + c] += this.velocity[i * 3 + c] * s;
+      const t = 1 - this.life[i] / this.span[i];
+      this.alpha[i] = fade(t, i);
+      this.size[i] = this.baseSize[i] * (0.6 + 0.4 * Math.sin(Math.min(1, t * 4) * Math.PI * 0.5));
+      i++;
+    }
+    const geometry = this.points.geometry;
+    geometry.setDrawRange(0, this.live);
+    for (const name of ["position", "size", "alpha", "tint"])
+      (geometry.getAttribute(name) as BufferAttribute).needsUpdate = true;
+  }
+  setViewport(height: number) {
+    this.material.uniforms.viewport.value = height;
+  }
+  clear() {
+    this.live = 0;
+    this.points.geometry.setDrawRange(0, 0);
+  }
 }
 
 export type ChestTarget = { x: number; y: number };
+export type ChestBand = { left: number; top: number; width: number; height: number };
 
 export type ChestScene = {
   /**
-   * Plays the reveal once. `targets(i)` gives card i's coin landing point in canvas pixels,
-   * read when the burst starts; `onCoin(i, first)` fires as each coin reaches card i.
+   * Plays the reveal once. `targets()` gives each card's coin landing point in canvas pixels
+   * (read again on every resize); `onCoin(i, first)` fires as each coin reaches card i and
+   * `onSlam` once the last one is home.
    */
   play(options: {
     cards: number;
@@ -633,567 +1129,1086 @@ export type ChestScene = {
     targets: () => ChestTarget[];
     onOpen: () => void;
     onCoin: (card: number, first: boolean) => void;
+    onSlam: () => void;
     onDone: () => void;
   }): void;
-  resize(width: number, height: number, stage: { top: number; height: number }): void;
+  /** Jumps to the end: the chest open, the coins home. */
+  skip(): void;
+  resize(width: number, height: number, band: ChestBand): void;
   dispose(): void;
 };
 
-export const chestCue = { drop: 380, open: 820, burst: 1080 };
+/** The reveal's beats, in scene milliseconds (slow motion stretches the fountain's peak). */
+export const chestCue = {
+  thud: 480,
+  beats: [900, 1130, 1330, 1490, 1620, 1720],
+  burst: 1800,
+  slow: 2330,
+  /** Real milliseconds spent in slow motion, and how fast scene time runs meanwhile. */
+  slowReal: 780,
+  slowRate: 0.3,
+};
+/** Scene time for real time since the start: one stretch of slow motion at the peak. */
+const sceneTime = (real: number) => {
+  const { slow, slowReal, slowRate } = chestCue;
+  if (real <= slow) return real;
+  if (real <= slow + slowReal) return slow + (real - slow) * slowRate;
+  return slow + slowReal * slowRate + (real - slow - slowReal);
+};
+
+const CW = 2.3; // chest width (x)
+const CD = 1.5; // depth (z)
+const CH = 1.0; // body height
+const PLANK = 0.1; // plank thickness
+const POST = 0.17;
+const LID_R = CD / 2;
+const STRAP_X = 0.64;
+const FOUNTAIN = 1.9; // how high the coins go above the rim
+const LID_OPEN = MathUtils.degToRad(106);
+
+/** Brightens bevels: vertices whose normal is off the main axes catch a worn, lighter edge. */
+function edgeWear(geometry: BufferGeometry, base = 0.85, edge = 2.1) {
+  const normal = geometry.getAttribute("normal");
+  const colors = new Float32Array(normal.count * 3);
+  for (let i = 0; i < normal.count; i++) {
+    const m = Math.max(
+      Math.abs(normal.getX(i)),
+      Math.abs(normal.getY(i)),
+      Math.abs(normal.getZ(i)),
+    );
+    const wear = smooth(0.97, 0.72, m);
+    const c = lerp(base, edge, wear);
+    colors.set([c, c, c], i * 3);
+  }
+  geometry.setAttribute("color", new BufferAttribute(colors, 3));
+  return geometry;
+}
 
 /**
- * A wooden loot chest with iron bands, brass corners, a lock plate and rivets. It drops in,
- * shakes, its lid swings open on the back hinge with an overshoot, a warm light rises from
- * the coins inside and silver bursts out in spinning arcs to each member's card.
+ * A wooden loot chest built in code: bevelled planks with gaps between chunky corner posts, a
+ * domed lid of curved staves, hammered iron straps with worn edges, ornate brass corners and
+ * lock plate, big rivets, and a hoard of silver, gold and gems inside. The reveal: the camera
+ * starts low and wide and dollies in, the chest thuds down in a burst of dust, rattles in
+ * rising beats with light leaking from the seams, bursts open with a flash and shafts of light,
+ * and a fountain of coins erupts (slow motion at its peak) and rains into each member's card.
  */
 export async function createChestScene(
   canvas: HTMLCanvasElement,
-  {
-    width,
-    height,
-    stage: band,
-  }: { width: number; height: number; stage: { top: number; height: number } },
+  { width, height, band }: { width: number; height: number; band: ChestBand },
 ): Promise<ChestScene> {
   const bin = new Bin();
   const { renderer, environment } = makeRenderer(canvas, bin);
+  renderer.toneMappingExposure = 1.12;
   const coinLook = await mintCoin(bin, environment, "small");
   const scene = new Scene();
   scene.environment = environment;
-  scene.environmentIntensity = 0.55;
-  const camera = new PerspectiveCamera(30, 1, 0.1, 80);
-  camera.position.set(0, 0, 18);
+  scene.environmentIntensity = 0.5;
+  const camera = new PerspectiveCamera(30, 1, 0.1, 120);
   const ember = token(canvas, "--accent", "#ee945a");
   const warm = token(canvas, "--warning", "#e6b35b");
 
-  // World units per pixel on the z = 0 plane, and pixel → world on that plane.
-  let size = { width, height };
-  let stage = band;
-  const unit = () =>
-    (2 * camera.position.z * Math.tan(MathUtils.degToRad(camera.fov / 2))) / size.height;
-  const toWorld = (px: number, py: number) =>
-    new Vector3((px - size.width / 2) * unit(), (size.height / 2 - py) * unit(), 0);
-
-  const key = new DirectionalLight(warm.clone().lerp(new Color(0xffffff), 0.35), 2.2);
-  key.position.set(-6, 9, 10);
+  /* --- lights ------------------------------------------------------------------------------ */
+  const key = new DirectionalLight(warm.clone().lerp(new Color(0xffffff), 0.45), 2.6);
+  key.position.set(-5, 8, 7);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
-  Object.assign(key.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 1, far: 40 });
-  key.shadow.radius = 4;
-  key.shadow.bias = -0.0006;
-  const rimLight = new DirectionalLight(token(canvas, "--focus", "#82b9ff"), 0.4);
-  rimLight.position.set(6, 3, -6);
-  scene.add(key, key.target, rimLight);
+  Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 1, far: 30 });
+  key.shadow.radius = 3;
+  key.shadow.bias = -0.0005;
+  key.shadow.normalBias = 0.02;
+  // A warm rim from behind picks out the silhouette against the dark well.
+  const rim = new DirectionalLight(ember.clone().lerp(warm, 0.4), 2.4);
+  rim.position.set(3.5, 4, -6);
+  const fill = new DirectionalLight(token(canvas, "--focus", "#82b9ff"), 0.3);
+  fill.position.set(6, 2, 4);
+  scene.add(key, rim, fill);
 
-  /* --- the chest model ------------------------------------------------------------------- */
-  const wood = woodTextures(bin);
-  const woodMaterial = (tint: number) =>
+  /* --- materials --------------------------------------------------------------------------- */
+  const wood = woodMaps(bin);
+  const metal = hammeredMaps(bin);
+  const tones = [0xffffff, 0xe9d9c8, 0xf6e4d2, 0xd8c4b0, 0xfff1e0];
+  const planks = tones.map((tone, i) =>
     bin.add(
       new MeshStandardMaterial({
-        color: tint,
+        color: tone,
         map: wood.map,
-        bumpMap: wood.bumpMap,
-        bumpScale: 1.4,
-        roughness: 0.78,
+        normalMap: wood.normalMap,
+        normalScale: new Vector2(0.9, 0.9),
+        roughnessMap: wood.roughnessMap,
+        roughness: 0.85 + (i % 3) * 0.08,
         metalness: 0,
+        vertexColors: true,
       }),
-    );
-  const planks = woodMaterial(0xffffff);
-  const darkPlanks = woodMaterial(0xa08c80);
+    ),
+  );
+  const darkWood = bin.add(
+    new MeshStandardMaterial({
+      color: 0x9a7e6a,
+      map: wood.map,
+      normalMap: wood.normalMap,
+      roughnessMap: wood.roughnessMap,
+      roughness: 0.95,
+      vertexColors: true,
+    }),
+  );
   const iron = bin.add(
     new MeshStandardMaterial({
-      color: 0x45403b,
-      metalness: 0.9,
-      roughness: 0.38,
-      envMapIntensity: 1.6,
+      color: 0x77706a,
+      metalness: 0.92,
+      roughness: 1,
+      roughnessMap: metal.roughnessMap,
+      normalMap: metal.normalMap,
+      normalScale: new Vector2(0.8, 0.8),
+      envMapIntensity: 1.5,
+      vertexColors: true,
     }),
   );
   const brass = bin.add(
-    new MeshStandardMaterial({ color: 0xd2a65a, metalness: 1, roughness: 0.3, envMapIntensity: 2 }),
+    new MeshStandardMaterial({
+      color: 0xe0b45e,
+      metalness: 1,
+      roughness: 0.75,
+      roughnessMap: metal.roughnessMap,
+      normalMap: metal.normalMap,
+      normalScale: new Vector2(0.5, 0.5),
+      envMapIntensity: 2.2,
+      vertexColors: true,
+    }),
   );
-  const inside = bin.add(new MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.9 }));
+  const shadowWood = bin.add(new MeshStandardMaterial({ color: 0x1c120b, roughness: 1 }));
 
-  const W = 2.3; // width (x)
-  const D = 1.45; // depth (z)
-  const BH = 1.05; // body height
-  const T = 0.09; // plank thickness
-  const chest = new Group();
+  /* --- the chest ----------------------------------------------------------------------------- */
+  const chest = new Group(); // moves (drop, shake); its origin is the floor under its centre
   const body = new Group();
   chest.add(body);
-  const box = (w: number, h: number, d: number) => bin.add(new BoxGeometry(w, h, d));
-  const add = (parent: Object3D, mesh: Mesh, x: number, y: number, z: number) => {
+  const pick = seeded(3);
+  const place = (parent: Object3D, mesh: Mesh, x: number, y: number, z: number, shadow = true) => {
     mesh.position.set(x, y, z);
-    mesh.castShadow = mesh.receiveShadow = true;
+    mesh.castShadow = shadow;
+    mesh.receiveShadow = true;
     parent.add(mesh);
+    mesh.updateMatrix();
     return mesh;
   };
-  // Three boards per wall, each with its own slice of the grain.
-  const board = (geometry: BoxGeometry, offset: number, material = planks) => {
-    const uv = geometry.getAttribute("uv");
-    const copy = geometry.clone();
-    const out = copy.getAttribute("uv");
-    for (let i = 0; i < uv.count; i++) out.setXY(i, uv.getX(i) * 0.7 + offset, uv.getY(i));
-    bin.add(copy);
-    return new Mesh(copy, material);
+  /**
+   * Baked ambient occlusion for wood, by where each vertex sits on the body: darker toward the
+   * floor, in the corners and under the straps and the lid.
+   */
+  const bakeWood = (mesh: Mesh, inside = false) => {
+    const geometry = mesh.geometry;
+    const position = geometry.getAttribute("position");
+    const colors = new Float32Array(position.count * 3);
+    const v = new Vector3();
+    for (let i = 0; i < position.count; i++) {
+      v.fromBufferAttribute(position, i).applyMatrix4(mesh.matrix);
+      let ao = 0.7 + 0.3 * smooth(0.05, 0.45, v.y);
+      ao *= 1 - 0.22 * smooth(CW / 2 - 0.35, CW / 2 - 0.05, Math.abs(v.x));
+      ao *= 1 - 0.2 * smooth(0.2, 0.06, Math.abs(Math.abs(v.x) - STRAP_X));
+      ao *= 1 - 0.15 * smooth(CH - 0.15, CH, v.y);
+      if (inside) ao *= 0.55;
+      colors.set([ao, ao, ao], i * 3);
+    }
+    geometry.setAttribute("color", new BufferAttribute(colors, 3));
   };
-  const rows = 3;
-  const boardH = BH / rows;
-  for (let r = 0; r < rows; r++) {
-    const y = boardH * (r + 0.5);
-    add(body, board(box(W, boardH - 0.012, T), r * 0.23), 0, y, D / 2 - T / 2);
-    add(body, board(box(W, boardH - 0.012, T), 0.5 + r * 0.17, darkPlanks), 0, y, -D / 2 + T / 2);
-    for (const side of [-1, 1]) {
-      const plank = board(box(D - 2 * T, boardH - 0.012, T), r * 0.31 + (side > 0 ? 0.1 : 0.4));
-      plank.rotation.y = Math.PI / 2;
-      add(body, plank, side * (W / 2 - T / 2), y, 0);
-    }
-  }
-  add(body, new Mesh(box(W - 0.02, T, D - 0.02), darkPlanks), 0, T / 2, 0);
-  // The treasure: a dark well with a mound of coins that catches the inner light.
-  add(body, new Mesh(box(W - 2 * T, 0.02, D - 2 * T), inside), 0, BH * 0.55, 0);
-  const pile = new InstancedMesh(coinLook.geometry, coinLook.materials, 46);
-  {
-    const m = new Matrix4();
-    const p = new Vector3();
-    const r = new Quaternion();
-    const e = new Vector3();
-    let s = 11;
-    const rand = () => (s = (s * 16807) % 2147483647) / 2147483647;
-    for (let i = 0; i < pile.count; i++) {
-      const x = (rand() - 0.5) * (W - 0.45);
-      const z = (rand() - 0.5) * (D - 0.45);
-      const mound = 1 - Math.min(1, Math.hypot(x / (W / 2), z / (D / 2)));
-      p.set(x, BH * 0.58 + mound * 0.32 + rand() * 0.05, z);
-      e.set(rand() - 0.5, rand(), rand() - 0.5).normalize();
-      r.setFromAxisAngle(e, (rand() - 0.5) * 0.9);
-      m.compose(p, r, new Vector3(0.17, 0.17, 0.17));
-      pile.setMatrixAt(i, m);
-    }
-  }
-  body.add(pile);
+  const rounded = (w: number, h: number, d: number, r: number) =>
+    bin.add(new RoundedBoxGeometry(w, h, d, 2, r));
+  const plank = (w: number, h: number, d: number) => {
+    const geometry = rounded(w, h, d, 0.022);
+    // Each plank its own slice of the grain.
+    const uv = geometry.getAttribute("uv");
+    const shift = pick();
+    for (let i = 0; i < uv.count; i++)
+      uv.setXY(i, uv.getX(i) * (w / 2.4) + shift, uv.getY(i) * 0.9 + shift * 0.3);
+    return new Mesh(geometry, planks[Math.floor(pick() * planks.length)]);
+  };
 
-  // Iron bands, wrapping front, bottom and back.
-  for (const x of [-W * 0.3, W * 0.3]) {
-    add(body, new Mesh(box(0.16, BH + 0.02, 0.03), iron), x, BH / 2, D / 2 + 0.015);
-    add(body, new Mesh(box(0.16, BH + 0.02, 0.03), iron), x, BH / 2, -D / 2 - 0.015);
-    for (const side of [-1, 1])
-      add(body, new Mesh(box(0.16, 0.03, D + 0.06), iron), x, side < 0 ? -0.01 : -0.01, 0);
-  }
-  // Brass corner brackets: an L on each vertical edge, top and bottom.
+  // Plinth and posts.
+  bakeWood(place(body, new Mesh(rounded(CW + 0.1, 0.12, CD + 0.1, 0.04), darkWood), 0, 0.06, 0));
   for (const sx of [-1, 1])
     for (const sz of [-1, 1])
-      for (const y of [0.2, BH - 0.2]) {
-        const a = add(
+      bakeWood(
+        place(
           body,
-          new Mesh(box(0.3, 0.4, 0.035), brass),
-          sx * (W / 2 - 0.13),
-          y,
-          sz * (D / 2 + 0.018),
-        );
-        const b = add(
+          new Mesh(rounded(POST, CH - 0.06, POST, 0.04), darkWood),
+          sx * (CW / 2 - POST / 2),
+          (CH + 0.06) / 2,
+          sz * (CD / 2 - POST / 2),
+        ),
+      );
+  // Three bevelled boards per wall, with gaps.
+  const rows = 3;
+  const rowH = (CH - 0.12) / rows;
+  for (let r = 0; r < rows; r++) {
+    const y = 0.12 + rowH * (r + 0.5);
+    for (const sz of [-1, 1])
+      bakeWood(
+        place(
           body,
-          new Mesh(box(0.035, 0.4, 0.3), brass),
-          sx * (W / 2 + 0.018),
+          plank(CW - 2 * POST + 0.04, rowH - 0.022, PLANK),
+          0,
           y,
-          sz * (D / 2 - 0.13),
+          sz * (CD / 2 - PLANK / 2 - 0.012),
+        ),
+      );
+    for (const sx of [-1, 1]) {
+      const side = plank(CD - 2 * POST + 0.04, rowH - 0.022, PLANK);
+      side.rotation.y = Math.PI / 2;
+      bakeWood(place(body, side, sx * (CW / 2 - PLANK / 2 - 0.012), y, 0));
+    }
+  }
+  // The hold: a dark floor high up, so the hoard sits near the rim.
+  place(
+    body,
+    new Mesh(rounded(CW - 0.3, 0.04, CD - 0.3, 0.01), shadowWood),
+    0,
+    CH * 0.74,
+    0,
+    false,
+  );
+
+  // Iron straps: bands round the top and foot, and two straps down the front and back.
+  const strap = (w: number, h: number, d: number) =>
+    new Mesh(edgeWear(rounded(w, h, d, 0.018)), iron);
+  for (const y of [CH - 0.075, 0.2]) {
+    for (const sz of [-1, 1])
+      place(body, strap(CW + 0.03, 0.13, 0.05), 0, y, sz * (CD / 2 + 0.012));
+    for (const sx of [-1, 1]) {
+      const band = strap(CD + 0.03, 0.13, 0.05);
+      band.rotation.y = Math.PI / 2;
+      place(body, band, sx * (CW / 2 + 0.012), y, 0);
+    }
+  }
+  for (const x of [-STRAP_X, STRAP_X])
+    for (const sz of [-1, 1])
+      place(body, strap(0.17, CH - 0.04, 0.05), x, CH / 2 + 0.01, sz * (CD / 2 + 0.026));
+
+  // Ornate brass corners: a curled plate on both faces of every corner, top and bottom.
+  const corner = new Shape();
+  corner.moveTo(0, 0);
+  corner.lineTo(0.44, 0);
+  corner.quadraticCurveTo(0.46, 0.09, 0.36, 0.1);
+  corner.quadraticCurveTo(0.25, 0.1, 0.2, 0.15);
+  corner.quadraticCurveTo(0.15, 0.2, 0.15, 0.25);
+  corner.quadraticCurveTo(0.14, 0.38, 0.1, 0.44);
+  corner.quadraticCurveTo(0.05, 0.47, 0, 0.44);
+  corner.closePath();
+  const cornerGeometry = bin.add(
+    edgeWear(
+      new ExtrudeGeometry(corner, {
+        depth: 0.02,
+        bevelEnabled: true,
+        bevelSize: 0.014,
+        bevelThickness: 0.014,
+        bevelSegments: 2,
+        curveSegments: 10,
+      }),
+      0.75,
+      1.6,
+    ),
+  );
+  const basis = new Matrix4();
+  const plate = (
+    geometry: BufferGeometry,
+    material: Material,
+    xAxis: Vector3,
+    yAxis: Vector3,
+    zAxis: Vector3,
+    at: Vector3,
+  ) => {
+    const mesh = new Mesh(geometry, material);
+    mesh.matrixAutoUpdate = false;
+    mesh.matrix.copy(basis.makeBasis(xAxis, yAxis, zAxis).setPosition(at));
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    body.add(mesh);
+    return mesh;
+  };
+  const X = new Vector3(1, 0, 0);
+  const Y = new Vector3(0, 1, 0);
+  const Z = new Vector3(0, 0, 1);
+  const rivetSpots: Vector3[] = [];
+  for (const sx of [-1, 1])
+    for (const sz of [-1, 1])
+      for (const top of [false, true]) {
+        const y = top ? CH - 0.005 : 0.125;
+        const up = top ? Y.clone().negate() : Y.clone();
+        plate(
+          cornerGeometry,
+          brass,
+          X.clone().multiplyScalar(-sx),
+          up,
+          Z.clone().multiplyScalar(sz),
+          new Vector3(sx * (CW / 2 + 0.01), y, sz * (CD / 2 + 0.045)),
         );
-        a.castShadow = b.castShadow = false;
+        plate(
+          cornerGeometry,
+          brass,
+          Z.clone().multiplyScalar(-sz),
+          up,
+          X.clone().multiplyScalar(sx),
+          new Vector3(sx * (CW / 2 + 0.045), y, sz * (CD / 2 + 0.01)),
+        );
+        const ry = top ? y - 0.09 : y + 0.09;
+        rivetSpots.push(
+          new Vector3(sx * (CW / 2 - 0.09), ry, sz * (CD / 2 + 0.085)),
+          new Vector3(sx * (CW / 2 + 0.085), ry, sz * (CD / 2 - 0.09)),
+        );
       }
 
-  // The lid: curved staves around a back hinge, half-disc ends, bands, a hasp.
+  // The lock plate: a scrolled shield with a keyhole, on a dark backing so the hole reads.
+  const lock = new Shape();
+  lock.moveTo(-0.2, 0.2);
+  lock.lineTo(0.2, 0.2);
+  lock.quadraticCurveTo(0.33, 0.22, 0.3, 0.1);
+  lock.quadraticCurveTo(0.2, 0.06, 0.22, -0.06);
+  lock.quadraticCurveTo(0.22, -0.2, 0, -0.33);
+  lock.quadraticCurveTo(-0.22, -0.2, -0.22, -0.06);
+  lock.quadraticCurveTo(-0.2, 0.06, -0.3, 0.1);
+  lock.quadraticCurveTo(-0.33, 0.22, -0.2, 0.2);
+  const keyhole = new Path();
+  keyhole.absarc(0, 0, 0.045, -Math.PI / 3, (Math.PI * 4) / 3, false);
+  keyhole.lineTo(-0.032, -0.14);
+  keyhole.lineTo(0.032, -0.14);
+  keyhole.closePath();
+  lock.holes.push(keyhole);
+  const lockGeometry = bin.add(
+    edgeWear(
+      new ExtrudeGeometry(lock, {
+        depth: 0.03,
+        bevelEnabled: true,
+        bevelSize: 0.018,
+        bevelThickness: 0.018,
+        bevelSegments: 3,
+        curveSegments: 14,
+      }),
+      0.8,
+      1.6,
+    ),
+  );
+  plate(lockGeometry, brass, X, Y, Z, new Vector3(0, CH - 0.27, CD / 2 + 0.05));
+  place(
+    body,
+    new Mesh(rounded(0.12, 0.2, 0.02, 0.005), shadowWood),
+    0,
+    CH - 0.31,
+    CD / 2 + 0.055,
+    false,
+  );
+  rivetSpots.push(
+    new Vector3(-0.2, CH - 0.12, CD / 2 + 0.1),
+    new Vector3(0.2, CH - 0.12, CD / 2 + 0.1),
+    new Vector3(0, CH - 0.52, CD / 2 + 0.1),
+  );
+  // Rivets down the straps and along the bands.
+  for (const x of [-STRAP_X, STRAP_X])
+    for (const sz of [-1, 1])
+      for (let k = 0; k < 3; k++)
+        rivetSpots.push(new Vector3(x, 0.38 + k * 0.17, sz * (CD / 2 + 0.06)));
+  for (const y of [CH - 0.075, 0.2])
+    for (const sz of [-1, 1])
+      for (const x of [-0.95, -0.32, 0.32, 0.95])
+        rivetSpots.push(new Vector3(x, y, sz * (CD / 2 + 0.045)));
+
+  // The lid: curved staves round the back hinge, bevelled with gaps, end caps and straps.
   const hinge = new Group();
-  hinge.position.set(0, BH, -D / 2);
+  hinge.position.set(0, CH, -CD / 2);
   chest.add(hinge);
   const lid = new Group();
-  lid.position.set(0, 0, D / 2); // lid's local origin = middle of the body's top
+  lid.position.set(0, 0, CD / 2);
   hinge.add(lid);
-  const LR = D / 2; // lid radius
   const staves = 6;
-  for (let i = 0; i < staves; i++) {
-    const a0 = (i / staves) * Math.PI;
-    const a1 = ((i + 1) / staves) * Math.PI - 0.012;
+  const arcSector = (
+    r0: number,
+    r1: number,
+    a0: number,
+    a1: number,
+    depth: number,
+    bevel: number,
+  ) => {
     const shape = new Shape();
-    shape.absarc(0, 0, LR, a0, a1, false);
-    shape.absarc(0, 0, LR - T, a1, a0, true);
-    const geometry = bin.add(
-      new ExtrudeGeometry(shape, { depth: W - 0.02, bevelEnabled: false, curveSegments: 6 }),
-    );
-    geometry.translate(0, 0, -(W - 0.02) / 2);
-    // Grain along the length of each stave.
+    shape.absarc(0, 0, r1, a0, a1, false);
+    shape.absarc(0, 0, r0, a1, a0, true);
+    const geometry = new ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled: bevel > 0,
+      bevelSize: bevel,
+      bevelThickness: bevel,
+      bevelSegments: 2,
+      curveSegments: 18,
+    });
+    geometry.translate(0, 0, -depth / 2);
+    geometry.rotateY(Math.PI / 2);
+    return bin.add(geometry);
+  };
+  for (let i = 0; i < staves; i++) {
+    const a0 = (i / staves) * Math.PI + 0.008;
+    const a1 = ((i + 1) / staves) * Math.PI - 0.008;
+    const geometry = arcSector(LID_R - PLANK + 0.02, LID_R + 0.02, a0, a1, CW - 0.12, 0.016);
+    // Grain along the stave.
     const uv = geometry.getAttribute("uv");
     const pos = geometry.getAttribute("position");
+    const shift = pick();
     for (let v = 0; v < uv.count; v++)
       uv.setXY(
         v,
-        pos.getZ(v) * 0.4 + i * 0.13,
-        (Math.atan2(pos.getY(v), pos.getX(v)) - a0) / (a1 - a0),
+        pos.getX(v) * 0.42 + shift,
+        ((Math.atan2(pos.getY(v), pos.getZ(v)) - a0) / (a1 - a0)) * 0.3 + shift,
       );
-    const stave = new Mesh(geometry, planks);
-    stave.rotation.y = Math.PI / 2;
-    add(lid, stave, 0, 0, 0);
+    const stave = place(
+      lid,
+      new Mesh(geometry, planks[Math.floor(pick() * planks.length)]),
+      0,
+      0,
+      0,
+    );
+    bakeWood(stave);
   }
-  for (const side of [-1, 1]) {
+  for (const sx of [-1, 1]) {
     const end = new Shape();
-    end.absarc(0, 0, LR, 0, Math.PI, false);
-    end.lineTo(LR, 0);
+    end.absarc(0, 0, LID_R + 0.01, 0, Math.PI, false);
+    end.lineTo(LID_R + 0.01, 0);
     const geometry = bin.add(
-      new ExtrudeGeometry(end, { depth: T, bevelEnabled: false, curveSegments: 24 }),
+      new ExtrudeGeometry(end, {
+        depth: 0.07,
+        bevelEnabled: true,
+        bevelSize: 0.015,
+        bevelThickness: 0.015,
+        bevelSegments: 2,
+        curveSegments: 24,
+      }),
     );
-    geometry.translate(0, 0, -T / 2);
-    const cap = new Mesh(geometry, planks);
-    cap.rotation.y = Math.PI / 2;
-    add(lid, cap, side * (W / 2 - T / 2), 0, 0);
+    geometry.translate(0, 0, -0.035);
+    geometry.rotateY(Math.PI / 2);
+    bakeWood(place(lid, new Mesh(geometry, darkWood), sx * (CW / 2 - 0.06), 0, 0));
+    // Brass trim round each end.
+    place(
+      lid,
+      new Mesh(
+        edgeWear(arcSector(LID_R - 0.03, LID_R + 0.05, 0, Math.PI, 0.05, 0.012), 0.75, 1.6),
+        brass,
+      ),
+      sx * (CW / 2 - 0.02),
+      0,
+      0,
+    );
   }
-  const lidFloor = add(lid, new Mesh(box(W - 0.02, 0.025, D - 0.02), inside), 0, 0.012, 0);
-  lidFloor.castShadow = false;
-  const bandArc = (x: number) => {
-    const shape = new Shape();
-    shape.absarc(0, 0, LR + 0.03, 0, Math.PI, false);
-    shape.absarc(0, 0, LR - 0.01, Math.PI, 0, true);
-    const geometry = bin.add(
-      new ExtrudeGeometry(shape, { depth: 0.16, bevelEnabled: false, curveSegments: 32 }),
-    );
-    geometry.translate(0, 0, -0.08);
-    const band = new Mesh(geometry, iron);
-    band.rotation.y = Math.PI / 2;
-    add(lid, band, x, 0, 0);
-  };
-  bandArc(-W * 0.3);
-  bandArc(W * 0.3);
-  // Brass trim along the lid's front and back edges.
-  add(lid, new Mesh(box(W + 0.04, 0.07, 0.05), brass), 0, 0.035, LR + 0.01);
-  add(lid, new Mesh(box(W + 0.04, 0.07, 0.05), brass), 0, 0.035, -LR - 0.01);
-  add(body, new Mesh(box(W + 0.04, 0.07, 0.05), brass), 0, BH - 0.035, D / 2 + 0.02);
-
-  // Lock plate on the body and the hasp hanging from the lid.
-  const plate = new Shape();
-  plate.moveTo(-0.24, 0.2);
-  plate.lineTo(0.24, 0.2);
-  plate.lineTo(0.24, -0.12);
-  plate.quadraticCurveTo(0.2, -0.26, 0, -0.32);
-  plate.quadraticCurveTo(-0.2, -0.26, -0.24, -0.12);
-  plate.closePath();
-  const keyhole = new Shape();
-  keyhole.absarc(0, -0.02, 0.045, 0, Math.PI * 2, false);
-  plate.holes.push(keyhole);
-  const plateGeometry = bin.add(
-    new ExtrudeGeometry(plate, {
-      depth: 0.04,
-      bevelEnabled: true,
-      bevelSize: 0.015,
-      bevelThickness: 0.015,
-      bevelSegments: 2,
-    }),
-  );
-  add(body, new Mesh(plateGeometry, brass), 0, BH - 0.3, D / 2 + 0.02);
-  add(
-    body,
-    new Mesh(bin.add(new BoxGeometry(0.035, 0.1, 0.03)), inside),
-    0,
-    BH - 0.38,
-    D / 2 + 0.07,
-  );
-  add(lid, new Mesh(box(0.16, 0.26, 0.04), brass), 0, -0.06, LR + 0.04);
-
-  // Rivets along every band and bracket.
-  const rivetSpots: Vector3[] = [];
   const lidRivets: Vector3[] = [];
-  for (const x of [-W * 0.3, W * 0.3]) {
-    for (let k = 0; k < 4; k++) {
-      rivetSpots.push(new Vector3(x, 0.15 + k * ((BH - 0.3) / 3), D / 2 + 0.035));
-      rivetSpots.push(new Vector3(x, 0.15 + k * ((BH - 0.3) / 3), -D / 2 - 0.035));
-    }
+  for (const x of [-STRAP_X, STRAP_X]) {
+    place(
+      lid,
+      new Mesh(edgeWear(arcSector(LID_R + 0.01, LID_R + 0.075, 0, Math.PI, 0.17, 0.018)), iron),
+      x,
+      0,
+      0,
+    );
     for (let k = 1; k < 6; k++) {
       const a = (k / 6) * Math.PI;
-      lidRivets.push(new Vector3(x, Math.sin(a) * (LR + 0.04), Math.cos(a) * (LR + 0.04)));
+      lidRivets.push(new Vector3(x, Math.sin(a) * (LID_R + 0.085), Math.cos(a) * (LID_R + 0.085)));
     }
   }
-  for (const sx of [-1, 1])
-    for (const y of [0.2, BH - 0.2]) {
-      rivetSpots.push(new Vector3(sx * (W / 2 - 0.08), y + 0.12, D / 2 + 0.04));
-      rivetSpots.push(new Vector3(sx * (W / 2 - 0.08), y - 0.12, D / 2 + 0.04));
-    }
-  for (const [x, y] of [
-    [-0.17, BH - 0.17],
-    [0.17, BH - 0.17],
-    [0, BH - 0.55],
-  ])
-    rivetSpots.push(new Vector3(x, y, D / 2 + 0.08));
-  const rivetGeometry = bin.add(new SphereGeometry(0.03, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2));
-  const rivets = (parent: Object3D, spots: Vector3[], center: Vector3 | null) => {
+  place(
+    lid,
+    new Mesh(edgeWear(rounded(CW + 0.04, 0.1, 0.07, 0.02), 0.75, 1.6), brass),
+    0,
+    0.05,
+    LID_R + 0.01,
+  );
+  place(
+    lid,
+    new Mesh(edgeWear(rounded(CW + 0.04, 0.1, 0.07, 0.02), 0.75, 1.6), brass),
+    0,
+    0.05,
+    -LID_R - 0.01,
+  );
+  // The hasp hangs from the lid over the lock plate.
+  place(
+    lid,
+    new Mesh(edgeWear(rounded(0.16, 0.26, 0.05, 0.02), 0.75, 1.6), brass),
+    0,
+    -0.07,
+    LID_R + 0.06,
+  );
+  lidRivets.push(new Vector3(0, 0.0, LID_R + 0.09));
+
+  const rivetGeometry = bin.add(new SphereGeometry(0.042, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2));
+  edgeWear(rivetGeometry, 1, 1);
+  const rivets = (parent: Object3D, spots: Vector3[], outward: (spot: Vector3) => Vector3) => {
     const mesh = new InstancedMesh(rivetGeometry, brass, spots.length);
     const m = new Matrix4();
-    const up = new Vector3(0, 1, 0);
     spots.forEach((spot, i) => {
-      const normal = center
-        ? spot.clone().sub(center.clone().setX(spot.x)).normalize()
-        : new Vector3(0, 0, Math.sign(spot.z));
-      m.compose(spot, new Quaternion().setFromUnitVectors(up, normal), new Vector3(1, 1, 1));
+      m.compose(spot, new Quaternion().setFromUnitVectors(Y, outward(spot)), new Vector3(1, 1, 1));
       mesh.setMatrixAt(i, m);
     });
+    mesh.castShadow = true;
     parent.add(mesh);
+    return mesh;
   };
-  rivets(body, rivetSpots, null);
-  rivets(lid, lidRivets, new Vector3(0, 0, 0));
+  const bodyRivets = rivets(body, rivetSpots, (s) =>
+    Math.abs(s.x) > CW / 2 + 0.05
+      ? new Vector3(Math.sign(s.x), 0, 0)
+      : new Vector3(0, 0, Math.sign(s.z)),
+  );
+  const topRivets = rivets(lid, lidRivets, (s) => new Vector3(0, s.y, s.z).normalize());
 
-  // The glow: a warm point light in the chest and an additive halo over the mouth.
-  const glow = new PointLight(ember.clone().lerp(warm, 0.5), 0, 6, 1.6);
-  glow.position.set(0, BH + 0.25, 0.1);
-  body.add(glow);
-  const haloTexture = (() => {
-    const { canvas: c, g } = canvas2d(128);
-    const gradient = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-    gradient.addColorStop(0, "rgba(255,236,190,1)");
-    gradient.addColorStop(0.3, "rgba(255,190,110,.55)");
-    gradient.addColorStop(1, "rgba(255,150,70,0)");
-    g.fillStyle = gradient;
-    g.fillRect(0, 0, 128, 128);
-    return bin.add(new CanvasTexture(c));
-  })();
-  const halo = new Mesh(
-    bin.add(new PlaneGeometry(3.6, 2.2)),
+  // The hoard: silver and gold coins heaped up, and a few gems.
+  const goldMaterials = coinLook.materials.map((m) => {
+    const copy = bin.add((m as MeshStandardMaterial).clone());
+    copy.color.set(0xffc35a);
+    return copy;
+  });
+  const rand = seeded(11);
+  const heap = (count: number, materials: Material[]) => {
+    const mesh = new InstancedMesh(coinLook.geometry, materials, count);
+    const m = new Matrix4();
+    const q = new Quaternion();
+    const axis = new Vector3();
+    for (let i = 0; i < count; i++) {
+      const x = (rand() - 0.5) * (CW - 0.5);
+      const z = (rand() - 0.5) * (CD - 0.5);
+      const mound = 1 - Math.min(1, Math.hypot(x / (CW / 2 - 0.2), z / (CD / 2 - 0.2)));
+      axis.set(rand() - 0.5, 0, rand() - 0.5).normalize();
+      q.setFromAxisAngle(axis, (rand() - 0.5) * 1.1);
+      m.compose(
+        new Vector3(x, CH * 0.77 + mound * 0.32 + rand() * 0.04, z),
+        q,
+        new Vector3(0.15, 0.15, 0.15),
+      );
+      mesh.setMatrixAt(i, m);
+    }
+    body.add(mesh);
+    return mesh;
+  };
+  const hoard = [heap(46, coinLook.materials), heap(34, goldMaterials)];
+  const gemGeometry = bin.add(new IcosahedronGeometry(0.1, 0));
+  const gems = [0xe0314f, 0x2fbf71, 0x3f7fff, 0xb455ff, 0xe0314f].map((hue, i) => {
+    const material = bin.add(
+      new MeshStandardMaterial({
+        color: hue,
+        emissive: hue,
+        emissiveIntensity: 0.25,
+        roughness: 0.06,
+        metalness: 0.2,
+        flatShading: true,
+        envMapIntensity: 2.6,
+      }),
+    );
+    const gem = new Mesh(gemGeometry, material);
+    const a = (i / 5) * Math.PI * 2 + 0.4;
+    gem.position.set(Math.cos(a) * 0.45, CH * 0.77 + 0.26, Math.sin(a) * 0.22);
+    gem.rotation.set(rand() * 3, rand() * 3, rand() * 3);
+    gem.scale.setScalar(0.8 + rand() * 0.5);
+    body.add(gem);
+    return gem;
+  });
+
+  /* --- light and effects ------------------------------------------------------------------- */
+  const glowMap = glowTexture(bin);
+  const inner = new PointLight(warm.clone().lerp(ember, 0.35), 0, 7, 1.5);
+  inner.position.set(0, CH + 0.2, 0.05);
+  body.add(inner);
+  // Light leaking through the seam under the lid, before it opens.
+  const leakMaterial = bin.add(
+    new MeshBasicMaterial({
+      color: warm.clone().lerp(new Color(0xffffff), 0.3),
+      transparent: true,
+      opacity: 0,
+      blending: AdditiveBlending,
+      depthWrite: false,
+    }),
+  );
+  for (const sz of [-1, 1])
+    place(
+      body,
+      new Mesh(rounded(CW - 0.1, 0.035, 0.02, 0.005), leakMaterial),
+      0,
+      CH + 0.002,
+      sz * (CD / 2 + 0.002),
+      false,
+    );
+  for (const sx of [-1, 1]) {
+    const seam = place(
+      body,
+      new Mesh(rounded(CD - 0.1, 0.035, 0.02, 0.005), leakMaterial),
+      sx * (CW / 2 + 0.002),
+      CH + 0.002,
+      0,
+      false,
+    );
+    seam.rotation.y = Math.PI / 2;
+  }
+  const additive = (map: Texture, color: Color) =>
     bin.add(
-      new MeshBasicMaterial({
-        map: haloTexture,
-        color: warm,
+      new SpriteMaterial({
+        map,
+        color,
         transparent: true,
         opacity: 0,
         blending: AdditiveBlending,
         depthWrite: false,
       }),
-    ),
+    );
+  const halo = new Sprite(additive(glowMap, warm.clone().lerp(ember, 0.5)));
+  const flash = new Sprite(additive(glowMap, new Color(0xfff2d6)));
+  const leakGlow = new Sprite(additive(glowMap, ember));
+  const rays = new Group();
+  const shaft = shaftTexture(bin);
+  const rayMaterial = bin.add(
+    new MeshBasicMaterial({
+      map: shaft,
+      color: warm.clone().lerp(new Color(0xffffff), 0.25),
+      transparent: true,
+      opacity: 0,
+      blending: AdditiveBlending,
+      depthWrite: false,
+      side: DoubleSide,
+    }),
   );
-  halo.position.set(0, BH + 0.55, 0);
-  chest.add(halo);
-  const beam = new Mesh(
-    bin.add(new CylinderGeometry(0.7, 1, 2.2, 32, 1, true)),
-    bin.add(
-      new MeshBasicMaterial({
-        map: haloTexture,
-        color: warm,
-        transparent: true,
-        opacity: 0,
-        blending: AdditiveBlending,
-        depthWrite: false,
-      }),
-    ),
-  );
-  beam.position.set(0, BH + 1.1, 0);
-  chest.add(beam);
+  const rayGeometry = bin.add(new PlaneGeometry(0.55, 3.2));
+  rayGeometry.translate(0, 1.6, 0);
+  [-0.55, -0.28, -0.05, 0.16, 0.4, 0.62].forEach((angle, i) => {
+    const ray = new Mesh(rayGeometry, rayMaterial);
+    ray.rotation.z = angle;
+    ray.scale.set(0.7 + (i % 3) * 0.35, 0.8 + ((i * 7) % 4) * 0.12, 1);
+    ray.position.x = angle * 0.6;
+    rays.add(ray);
+  });
+  const fx = new Group(); // follows the chest's mouth
+  fx.add(halo, flash, leakGlow, rays);
+  scene.add(fx);
 
-  // The floor the chest stands on: shadows only, plus a soft contact blob.
+  const dust = new Particles(60, glowMap, false, bin);
+  const sparks = new Particles(180, starTexture(bin), true, bin);
+  scene.add(dust.points, sparks.points);
+
+  // The floor: shadows and a soft contact shadow.
   const floor = new Mesh(
-    bin.add(new PlaneGeometry(14, 10)),
-    bin.add(new ShadowMaterial({ opacity: 0.42 })),
+    bin.add(new PlaneGeometry(30, 30)),
+    bin.add(new ShadowMaterial({ opacity: 0.5, depthWrite: false })),
   );
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   const blob = new Mesh(
-    bin.add(new PlaneGeometry(W * 1.6, D * 1.9)),
+    bin.add(new PlaneGeometry(CW * 1.7, CD * 2)),
     bin.add(
       new MeshBasicMaterial({
         map: blobTexture(bin),
         transparent: true,
         depthWrite: false,
-        opacity: 0.75,
+        opacity: 0.8,
       }),
     ),
   );
   blob.rotation.x = -Math.PI / 2;
   blob.position.y = 0.003;
-  const ground = new Group();
-  ground.add(floor, blob, chest);
-  // Seen from a little above and to the side.
-  ground.rotation.set(MathUtils.degToRad(24), MathUtils.degToRad(-22), 0);
-  scene.add(ground);
+  scene.add(floor, blob);
+  chest.rotation.y = -0.38;
+  scene.add(chest);
 
-  // The flying coins.
-  const flyingCount = 120;
-  const flying = new InstancedMesh(coinLook.geometry, coinLook.materials, flyingCount);
+  // The coins that fly: the fountain (some fall back in) and each card's share.
+  const flyCap = 170;
+  const flying = new InstancedMesh(coinLook.geometry, coinLook.materials, flyCap);
   flying.instanceMatrix.setUsage(DynamicDrawUsage);
   flying.count = 0;
   flying.frustumCulled = false;
   scene.add(flying);
 
-  // Place the chest so its feet sit on the bottom of the stage band, centred.
-  const scale = new Vector3();
+  /* --- framing ----------------------------------------------------------------------------- */
+  // Fit the camera to the chest with its lid open and the fountain above it, inside the band:
+  // every corner of that box must sit inside the frame from the final camera angle.
+  const fit = new Sphere();
+  const corners: Vector3[] = [];
+  {
+    hinge.rotation.x = -LID_OPEN;
+    chest.updateMatrixWorld(true);
+    const box = new Box3().expandByObject(body).expandByObject(hinge);
+    hinge.rotation.x = 0;
+    chest.updateMatrixWorld(true);
+    box.max.y = Math.max(box.max.y, CH + FOUNTAIN);
+    box.getBoundingSphere(fit);
+    fit.center.copy(box.getCenter(new Vector3()));
+    for (const x of [box.min.x, box.max.x])
+      for (const y of [box.min.y, box.max.y])
+        for (const z of [box.min.z, box.max.z]) corners.push(new Vector3(x, y, z).sub(fit.center));
+  }
+  const END = { elevation: 0.3, azimuth: 0.1 };
+  let size = { width, height };
+  let frame = band;
+  let distance = 10;
   const layout = () => {
     renderer.setSize(size.width, size.height, false);
-    camera.aspect = size.width / size.height;
-    camera.updateProjectionMatrix();
-    const feet = toWorld(size.width / 2, stage.top + stage.height * 0.84);
-    const s = Math.min((stage.height * 0.42 * unit()) / BH, (size.width * 0.4 * unit()) / W);
-    ground.position.copy(feet);
-    ground.scale.setScalar(s);
-    scale.setScalar(s);
-    key.target.position.copy(feet);
+    const aspect = frame.width / Math.max(1, frame.height);
+    camera.aspect = aspect;
+    // The band is the camera's frame; the rest of the canvas extends it, so nothing clips there.
+    camera.setViewOffset(
+      frame.width,
+      frame.height,
+      -frame.left,
+      -frame.top,
+      size.width,
+      size.height,
+    );
+    const vfov = MathUtils.degToRad(camera.fov);
+    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
+    const back = new Vector3(
+      Math.sin(END.azimuth) * Math.cos(END.elevation),
+      Math.sin(END.elevation),
+      Math.cos(END.azimuth) * Math.cos(END.elevation),
+    );
+    const right = new Vector3(0, 1, 0).cross(back).normalize();
+    const up = back.clone().cross(right);
+    distance = 0;
+    for (const c of corners) {
+      const z = c.dot(back);
+      distance = Math.max(
+        distance,
+        z + Math.abs(c.dot(right)) / Math.tan(hfov / 2),
+        z + Math.abs(c.dot(up)) / Math.tan(vfov / 2),
+      );
+    }
+    distance *= 1.06;
+    const buffer = new Vector2();
+    renderer.getDrawingBufferSize(buffer);
+    dust.setViewport(buffer.y);
+    sparks.setViewport(buffer.y);
+  };
+  /** Pixels per world unit `depth` in front of the camera. */
+  const unitAt = (depth: number) =>
+    frame.height / (2 * depth * Math.tan(MathUtils.degToRad(camera.fov) / 2));
+  const shake = new Vector3();
+  const look = new Vector3();
+  const posCamera = (k: number) => {
+    const e = easeInOut(k);
+    const elevation = lerp(0.05, END.elevation, e);
+    const azimuth = lerp(0.42, END.azimuth, e);
+    const dist = distance * lerp(1.4, 1, e);
+    look.copy(fit.center);
+    look.y += lerp(-0.35, 0, e) * fit.radius;
+    camera.position.set(
+      look.x + Math.sin(azimuth) * Math.cos(elevation) * dist,
+      look.y + Math.sin(elevation) * dist,
+      look.z + Math.cos(azimuth) * Math.cos(elevation) * dist,
+    );
+    camera.position.add(shake);
+    camera.lookAt(look);
+    camera.updateMatrixWorld();
   };
   layout();
   const render = () => renderer.render(scene, camera);
 
+  /* --- the reveal ---------------------------------------------------------------------------- */
   let stop = () => {};
+  let finish: (() => void) | null = null;
+  let targets: () => ChestTarget[] = () => [];
+  let spots: ChestTarget[] = [];
+  const mouth = new Vector3();
+  const tmp = new Vector3();
+  const dir = new Vector3();
+  const m = new Matrix4();
+  const q = new Quaternion();
+  const sc = new Vector3();
+
+  const restPose = () => {
+    chest.position.set(0, 0, 0);
+    chest.scale.set(1, 1, 1);
+    body.rotation.set(0, 0, 0);
+    hinge.rotation.x = -LID_OPEN;
+    inner.intensity = 4.5;
+    (halo.material as SpriteMaterial).opacity = 0.4;
+    (flash.material as SpriteMaterial).opacity = 0;
+    (leakGlow.material as SpriteMaterial).opacity = 0;
+    rayMaterial.opacity = 0.32;
+    leakMaterial.opacity = 0;
+    flying.count = 0;
+    dust.clear();
+    sparks.clear();
+    shake.set(0, 0, 0);
+    posCamera(1);
+    placeFx(1);
+  };
+  const placeFx = (open: number) => {
+    mouth.set(0, CH + 0.1, 0);
+    chest.updateMatrixWorld(true);
+    chest.localToWorld(mouth);
+    fx.position.copy(mouth);
+    halo.scale.setScalar(3.4 * (0.75 + 0.25 * open));
+    leakGlow.scale.setScalar(3.2);
+    // The shafts turn to face the camera around the vertical.
+    rays.rotation.y = Math.atan2(camera.position.x - mouth.x, camera.position.z - mouth.z);
+  };
+
   return {
-    resize(w, h, s) {
+    resize(w, h, b) {
       size = { width: w, height: h };
-      stage = s;
+      frame = b;
       layout();
+      spots = targets();
+      // Resizing clears the canvas: draw at once (the next frame moves on from here).
+      if (!finish) {
+        posCamera(1);
+        placeFx(1);
+      }
       render();
     },
-    play({ cards, perCard, targets, onOpen, onCoin, onDone }) {
-      const began = performance.now();
-      type Flight = {
-        card: number;
+    skip() {
+      finish?.();
+    },
+    play({ cards, perCard, targets: read, onOpen, onCoin, onSlam, onDone }) {
+      targets = read;
+      spots = read();
+      type Coin = {
+        card: number; // -1 falls back into the chest
         first: boolean;
-        start: number;
-        end: number;
+        launch: number;
+        v: Vector3;
+        handoff: number;
+        rain: number;
         from: Vector3;
-        apex: Vector3;
-        to: Vector3;
         axis: Vector3;
-        turns: number;
+        spin: number;
         arrived: boolean;
       };
-      let flights: Flight[] = [];
-      let lastLand = Infinity;
+      const coins: Coin[] = [];
+      const shareCount = Math.min(cards * perCard, flyCap - 40);
+      const r = seeded(17);
+      const g = -9; // units per second²
+      for (let k = 0; k < shareCount + 40; k++) {
+        const share = k < shareCount;
+        const card = share ? k % cards : -1;
+        const launch = chestCue.burst + 40 + r() * 420;
+        const vy = 4.7 + r() * 1.1;
+        const v = new Vector3((r() - 0.5) * 2.2, vy, (r() - 0.5) * 1.6 + 0.35);
+        const apex = (vy / -g) * 1000;
+        coins.push({
+          card,
+          first: share && k < cards,
+          launch,
+          v,
+          handoff: launch + apex * (0.85 + r() * 0.2) + (share ? Math.floor(k / cards) * 35 : 0),
+          rain: 620 + r() * 260,
+          from: new Vector3(),
+          axis: new Vector3(r() - 0.5, r() - 0.5, r() - 0.5).normalize(),
+          spin: 6 + r() * 10,
+          arrived: false,
+        });
+      }
+      const lastArrival = coins.reduce(
+        (t, c) => (c.card >= 0 ? Math.max(t, c.handoff + c.rain) : t),
+        0,
+      );
+      const slamAt = lastArrival + 140;
+      const end = slamAt + 1500;
       let opened = false;
-      const m = new Matrix4();
-      const q = new Quaternion();
-      const p = new Vector3();
-      const sc = new Vector3();
-      const mouth = new Vector3();
-      const plan = () => {
-        mouth.set(0, BH + 0.3, 0);
-        chest.localToWorld(mouth);
-        const spots = targets();
-        const coinScale = scale.x * 0.2;
-        cards = Math.min(cards, Math.floor(flyingCount / perCard));
-        for (let card = 0; card < cards; card++) {
-          const spot = spots[card];
-          if (!spot) continue;
-          const to = toWorld(spot.x, spot.y);
-          for (let c = 0; c < perCard; c++) {
-            const seed = (card * 7 + c * 13) % 17;
-            const start = chestCue.burst + card * 120 + c * 95 + (seed % 3) * 25;
-            const duration = 980 + (seed % 4) * 90;
-            const apex = new Vector3(
-              mouth.x + (seed - 8) * 0.13 + (to.x - mouth.x) * 0.25,
-              Math.max(mouth.y, to.y) + coinScale * (9 + (seed % 6) * 2.4),
-              2.2 + (seed % 5) * 0.8,
-            );
-            flights.push({
-              card,
-              first: c === 0,
-              start,
-              end: start + duration,
-              from: mouth.clone(),
-              apex,
-              to,
-              axis: new Vector3((seed % 3) - 1, 1, (seed % 2) - 0.5).normalize(),
-              turns: 2 + (seed % 4),
-              arrived: false,
-            });
-          }
-        }
-        flights = flights.slice(0, flyingCount);
-        lastLand = flights.reduce((t, f) => Math.max(t, f.end), chestCue.burst);
+      let slammed = false;
+      let lastScene = 0;
+      const began = performance.now();
+      const ballistic = (c: Coin, ms: number, out: Vector3) => {
+        const s = ms / 1000;
+        return out
+          .copy(mouth)
+          .addScaledVector(c.v, s)
+          .setY(mouth.y + c.v.y * s + 0.5 * g * s * s);
       };
-      const settle = () => lastLand + 650;
-      const frame = (now: number) => {
-        const t = now - began;
-        // Drop in and squash.
-        const drop = clamp01(t / chestCue.drop);
-        const fall = drop < 0.6 ? 1 - Math.pow(drop / 0.6, 2) : 0;
-        const squash = drop >= 0.6 ? Math.sin(((drop - 0.6) / 0.4) * Math.PI) * 0.06 : 0;
-        chest.position.y = fall * 2.4;
-        chest.scale.set(1 + squash * 0.6, 1 - squash, 1 + squash * 0.6);
-        (blob.material as MeshBasicMaterial).opacity = 0.75 * (1 - fall * 0.7);
-        // A nervous shake before the lid gives.
-        const shaking =
-          t > chestCue.drop && t < chestCue.open
-            ? (t - chestCue.drop) / (chestCue.open - chestCue.drop)
-            : -1;
-        chest.rotation.z =
-          shaking >= 0 ? Math.sin(shaking * Math.PI * 7) * 0.05 * (1 - shaking * 0.4) : 0;
-        chest.position.x = shaking >= 0 ? Math.sin(shaking * Math.PI * 9) * 0.03 : 0;
-        if (shaking > 0.75)
-          chest.position.y += Math.sin(((shaking - 0.75) / 0.25) * Math.PI) * 0.08;
-        // The lid swings back on its hinge, overshoots and settles.
-        const o = (t - chestCue.open) / 620;
-        let lidAngle = 0;
-        if (o > 0) {
-          if (o < 0.12) lidAngle = -0.1 * (o / 0.12);
-          else if (o < 0.62)
-            lidAngle = -0.1 + (124 + 6) * easeInOut((o - 0.12) / 0.5) * (Math.PI / 180) + 0;
-          else
-            lidAngle = MathUtils.degToRad(
-              124 - 14 * Math.sin(Math.min(1, (o - 0.62) / 0.38) * Math.PI * 0.5) - 0,
+      const tick = (now: number) => {
+        const t = sceneTime(now - began);
+        const dt = Math.max(0, t - lastScene);
+        lastScene = t;
+        // Drop and thud.
+        const fall = t < chestCue.thud ? 1 - Math.pow(t / chestCue.thud, 2) : 0;
+        const squashT = (t - chestCue.thud) / 260;
+        const squash =
+          squashT > 0 && squashT < 1 ? Math.sin(squashT * Math.PI) * 0.09 * (1 - squashT) : 0;
+        chest.position.y = fall * 4.5;
+        chest.scale.set(1 + squash * 0.5, 1 - squash, 1 + squash * 0.5);
+        if (t >= chestCue.thud && t - dt < chestCue.thud) {
+          const base = new Vector3();
+          chest.getWorldPosition(base);
+          dust.spawn(56, (p, v) => {
+            const a = r() * Math.PI * 2;
+            const radius = 1.1 + r() * 0.5;
+            p.set(
+              base.x + Math.cos(a) * radius,
+              0.08 + r() * 0.1,
+              base.z + Math.sin(a) * radius * 0.75,
             );
-          if (o >= 1) lidAngle = MathUtils.degToRad(110);
+            v.set(
+              Math.cos(a) * (1.6 + r() * 2.2),
+              0.4 + r() * 1.1,
+              Math.sin(a) * (1.4 + r() * 1.6),
+            );
+            return {
+              life: 700 + r() * 600,
+              size: 0.5 + r() * 0.6,
+              color: new Color(0x8a7563).multiplyScalar(0.9 + r() * 0.3),
+            };
+          });
         }
-        const late = t - settle();
-        if (late > 0)
-          lidAngle = MathUtils.degToRad(110 - 8 * Math.sin(Math.min(1, late / 520) * Math.PI));
-        hinge.rotation.x = -lidAngle;
-        if (!opened && t >= chestCue.open) {
-          opened = true;
-          onOpen();
-        }
-        // The light rises from the coins and steadies.
-        const light = clamp01((t - chestCue.open - 60) / 440);
-        const dim = late > 0 ? clamp01(late / 900) : 0;
-        const level = easeOut(light) * (1 - dim * 0.4);
-        glow.intensity = level * 9 * scale.x * scale.x;
-        (halo.material as MeshBasicMaterial).opacity = level * 0.85;
-        halo.scale.setScalar(0.6 + easeOut(light) * 0.5 - dim * 0.15);
-        (beam.material as MeshBasicMaterial).opacity = level * 0.22 * (1 - dim * 0.5);
-        beam.scale.set(1, Math.max(0.01, easeOut(light, 4)), 1);
-        // The burst.
-        if (t >= chestCue.burst && !flights.length && lastLand === Infinity) plan();
-        let n = 0;
-        for (const f of flights) {
-          if (t < f.start) continue;
-          const u = (t - f.start) / (f.end - f.start);
-          if (u >= 1) {
-            if (!f.arrived) {
-              f.arrived = true;
-              onCoin(f.card, f.first);
-            }
-            continue;
+        // Rattles in rising beats, light leaking at the seams.
+        let rattle = 0;
+        chestCue.beats.forEach((beat, i) => {
+          const u = (t - beat) / 150;
+          if (u > 0 && u < 1) rattle += Math.sin(u * Math.PI * 3) * (1 - u) * (0.35 + i * 0.13);
+        });
+        body.rotation.z = rattle * 0.035;
+        body.rotation.x = rattle * 0.012;
+        const lidHop = Math.max(0, rattle) * 0.09;
+        const leak =
+          t < chestCue.burst
+            ? smooth(chestCue.beats[0] - 100, chestCue.burst, t) * (0.45 + Math.abs(rattle) * 0.8)
+            : Math.max(0, 1 - (t - chestCue.burst) / 200);
+        leakMaterial.opacity = clamp01(leak);
+        (leakGlow.material as SpriteMaterial).opacity = clamp01(leak) * 0.5;
+        // The burst: the lid flies open past its stop and rocks back.
+        const o = t - chestCue.burst;
+        let lidAngle = lidHop;
+        if (o > 0) {
+          const spring = 1 - Math.exp(-o / 140) * Math.cos(o / 95);
+          lidAngle =
+            lerp(lidHop, LID_OPEN, spring) +
+            (o < 160 ? MathUtils.degToRad(24) * Math.sin((o / 160) * Math.PI) : 0);
+          if (!opened) {
+            opened = true;
+            onOpen();
           }
-          // A quadratic arc through the apex, quick out of the chest and easing into the card.
-          const k = easeOut(u, 1.6);
-          const a = (1 - k) * (1 - k);
-          const b = 2 * (1 - k) * k;
-          const c = k * k;
-          p.set(
-            a * f.from.x + b * f.apex.x + c * f.to.x,
-            a * f.from.y + b * f.apex.y + c * f.to.y,
-            a * f.from.z + b * f.apex.z + c * f.to.z,
-          );
-          q.setFromAxisAngle(f.axis, u * f.turns * Math.PI * 2);
-          const grow = u < 0.12 ? u / 0.12 : u > 0.88 ? (1 - u) / 0.12 : 1;
-          sc.setScalar(
-            scale.x *
-              0.2 *
-              (0.5 + 0.6 * Math.sin(Math.PI * Math.min(1, u * 1.4))) *
-              Math.max(0.05, grow),
-          );
-          m.compose(p, q, sc);
-          flying.setMatrixAt(n++, m);
+        }
+        hinge.rotation.x = -lidAngle;
+        const light = o > 0 ? easeOut(o / 260) : 0;
+        const settle = smooth(slamAt, end, t);
+        inner.intensity = light * (11 - settle * 6.5) + leak * 3;
+        (halo.material as SpriteMaterial).opacity = light * (0.8 - settle * 0.4);
+        const flashT = o / 380;
+        (flash.material as SpriteMaterial).opacity =
+          flashT > 0 && flashT < 1 ? Math.pow(1 - flashT, 2) : 0;
+        flash.scale.setScalar(2 + easeOut(clamp01(flashT)) * 6);
+        rayMaterial.opacity = light * (0.75 - settle * 0.43) * (0.85 + 0.15 * Math.sin(t / 90));
+        rays.scale.set(1, 0.4 + easeOut(clamp01(o / 500)) * 0.6, 1);
+        if (o > 0 && o - dt <= 0)
+          sparks.spawn(110, (p, v) => {
+            p.copy(mouth).add(tmp.set((r() - 0.5) * 1.8, r() * 0.3, (r() - 0.5) * 1.1));
+            v.set((r() - 0.5) * 2.4, 1.2 + r() * 3.4, (r() - 0.5) * 1.6);
+            return {
+              life: 1200 + r() * 1600,
+              size: 0.12 + r() * 0.22,
+              color: warm.clone().lerp(new Color(0xffffff), r() * 0.7),
+            };
+          });
+        if (o > 300 && t < slamAt && Math.floor(t / 70) !== Math.floor((t - dt) / 70))
+          sparks.spawn(3, (p, v) => {
+            p.copy(mouth).add(tmp.set((r() - 0.5) * 1.6, 0, (r() - 0.5) * 0.9));
+            v.set((r() - 0.5) * 0.6, 0.6 + r() * 1.2, (r() - 0.5) * 0.4);
+            return {
+              life: 1400 + r() * 900,
+              size: 0.08 + r() * 0.12,
+              color: warm.clone().lerp(new Color(0xffffff), 0.5),
+            };
+          });
+        // Camera: a slow dolly in, shaken by the thud, the beats and the burst.
+        const kick = (at: number, len: number, amp: number) => {
+          const u = (t - at) / len;
+          return u > 0 && u < 1 ? amp * (1 - u) * (1 - u) : 0;
+        };
+        const quake =
+          kick(chestCue.thud, 320, 0.07) +
+          chestCue.beats.reduce((a, beat, i) => a + kick(beat, 140, 0.008 + i * 0.004), 0) +
+          kick(chestCue.burst, 380, 0.05);
+        shake
+          .set(
+            Math.sin(t * 0.091) * quake,
+            Math.sin(t * 0.137 + 1) * quake,
+            Math.sin(t * 0.073 + 2) * quake * 0.5,
+          )
+          .multiplyScalar(fit.radius);
+        posCamera(clamp01(t / 2600));
+        placeFx(light);
+        dust.step(dt, -0.8, 0.12, (u) => 0.55 * Math.pow(1 - u, 1.5));
+        sparks.step(
+          dt,
+          -0.35,
+          0.5,
+          (u, i) => Math.pow(1 - u, 1.2) * (0.6 + 0.4 * Math.sin(t / 45 + i * 1.7)),
+        );
+        // Coins: up out of the chest, then down in arcs to the cards.
+        const depth = camera.position.distanceTo(fit.center) * 0.62;
+        const perPixel = 1 / unitAt(depth);
+        let n = 0;
+        for (const c of coins) {
+          if (t < c.launch) continue;
+          let scale = 0.13;
+          if (c.card < 0 || t < c.handoff) {
+            const s = t - c.launch;
+            ballistic(c, s, tmp);
+            if (c.card < 0 && tmp.y < mouth.y - 0.25 && s > 300) continue; // fell back in
+            q.setFromAxisAngle(c.axis, (s / 1000) * c.spin);
+            c.from.copy(tmp);
+          } else {
+            const u = (t - c.handoff) / c.rain;
+            if (u >= 1) {
+              if (!c.arrived) {
+                c.arrived = true;
+                onCoin(c.card, c.first);
+              }
+              continue;
+            }
+            const spot = spots[c.card] ?? { x: size.width / 2, y: size.height };
+            tmp
+              .set((spot.x / size.width) * 2 - 1, 1 - (spot.y / size.height) * 2, 0.5)
+              .unproject(camera);
+            dir.subVectors(tmp, camera.position).normalize();
+            const target = tmp.copy(camera.position).addScaledVector(dir, depth);
+            const k = easeInOut(u) * 0.35 + u * 0.65;
+            const lift = Math.sin(Math.PI * u) * 0.9;
+            const a = c.from;
+            tmp.set(lerp(a.x, target.x, k), lerp(a.y, target.y, k) + lift, lerp(a.z, target.z, k));
+            q.setFromAxisAngle(c.axis, ((c.handoff - c.launch) / 1000) * c.spin + u * 9);
+            // Shrink to the size of the card's silver icon, then vanish into it.
+            const end = 11 * perPixel;
+            scale = lerp(0.13, end, easeInOut(u)) * (u > 0.88 ? (1 - u) / 0.12 : 1);
+          }
+          m.compose(tmp, q, sc.setScalar(scale));
+          if (n < flyCap) flying.setMatrixAt(n++, m);
         }
         flying.count = n;
         flying.instanceMatrix.needsUpdate = true;
+        if (!slammed && t >= slamAt) {
+          slammed = true;
+          onSlam();
+        }
         render();
-        if (t < settle() + 900) return true;
-        onDone();
+        if (t < end || sparks.live > 0 || dust.live > 0) return t < end + 2500;
         return false;
       };
-      frame(began);
-      stop = animate(frame);
+      const done = () => {
+        finish = null;
+        restPose();
+        render();
+        onDone();
+      };
+      finish = () => {
+        stop();
+        coins.forEach((c) => {
+          if (c.card >= 0 && !c.arrived) {
+            c.arrived = true;
+            onCoin(c.card, c.first);
+          }
+        });
+        if (!opened) onOpen();
+        if (!slammed) onSlam();
+        done();
+      };
+      tick(began);
+      stop = animate((now) => {
+        if (tick(now)) return true;
+        done();
+        return false;
+      });
     },
     dispose() {
       stop();
-      pile.dispose();
+      finish = null;
+      hoard.forEach((h) => h.dispose());
+      bodyRivets.dispose();
+      topRivets.dispose();
       flying.dispose();
+      gems.length = 0;
       bin.dispose();
     },
   };

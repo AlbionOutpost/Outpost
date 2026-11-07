@@ -1,6 +1,7 @@
 import { selectEditorSlot } from "./support/build-editor";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { readFileSync } from "node:fs";
 test("recovered builds keep author, spells and swaps, and become independent validated guest drafts", async ({
   page,
 }) => {
@@ -182,4 +183,40 @@ test("restored libraries, reading pages and consumable tools reflow at narrow wi
     page.getByRole("region", { name: "Selected equipment configuration" }),
   ).toContainText("Helmet");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+test("renamed guides answer their old URLs with a permanent redirect, and every guide link resolves", async ({
+  page,
+  request,
+}) => {
+  const guides: { slug: string; previousSlugs?: string[]; content: unknown[] }[] = JSON.parse(
+    readFileSync("public/library/grind-guides.json", "utf8"),
+  );
+  const slugs = new Set(guides.map((guide) => guide.slug));
+  for (const guide of guides)
+    for (const old of guide.previousSlugs ?? []) {
+      const response = await request.get(`/guides/${old}?region=europe`, { maxRedirects: 0 });
+      expect(response.status(), old).toBe(308);
+      expect(response.headers().location).toBe(`/guides/${guide.slug}?region=europe`);
+    }
+  // Links inside the guides point at live slugs, never at a redirect
+  const links = JSON.stringify(guides.map((guide) => guide.content)).matchAll(
+    /"href":"\/guides\/([a-z0-9-]+)"/g,
+  );
+  for (const [, slug] of links) expect(slugs.has(slug), slug).toBe(true);
+  // The reader: the contents marker follows the text and the related guides say why
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/guides/first-silver");
+  await expect(page).toHaveURL(/\/guides\/making-silver$/);
+  await expect(page.locator("h1")).toHaveText("Making silver");
+  const contents = page.getByRole("navigation", { name: "Guide contents" });
+  await expect(contents.locator('[aria-current="location"]')).toHaveText("Use the Journal first");
+  // offsetTop is relative to the reading page, not the document, so scroll the section itself
+  await page.evaluate(() =>
+    document.getElementById("section-sell-with-orders")!.scrollIntoView({ block: "start" }),
+  );
+  await expect(contents.locator('[aria-current="location"]')).toHaveText("Sell with orders");
+  await expect(page.locator("[data-guide-section]")).toHaveCount(9);
+  const related = page.getByRole("region", { name: "Read next" });
+  await expect(related.getByRole("link")).not.toHaveCount(0);
+  await expect(related).toContainText("Linked in this guide");
 });

@@ -1,7 +1,6 @@
 import { archiveShareMetadata } from "@/lib/seo-public";
 import type { SeoQuery } from "@/lib/seo";
 import Link from "@/components/build-region-link";
-import { CompNextSteps } from "@/components/comp-next-steps";
 import styles from "@/components/comps.module.css";
 import { notFound } from "next/navigation";
 import { findLibraryBuilds, findLibraryComposition, librarySpellNames } from "@/lib/grind-library";
@@ -88,15 +87,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         builds={builds}
         spellNames={spellNames}
         notes={short ? undefined : note || undefined}
-      />
-      <CompNextSteps
-        show={["builds", "library", "create"]}
-        title={
-          <>
-            Make it <em>yours</em>
-          </>
-        }
-        line="Copy this comp to put your players in the slots, or swap a member’s build first."
       />
     </div>
   );

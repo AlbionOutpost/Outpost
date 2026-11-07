@@ -94,6 +94,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="reference"
         scene="economy"
         title="Reference tables"
@@ -137,7 +138,7 @@ export default function Page() {
                   >
                     {table.heading && t.tables.length > 1 && <h3>{sentence(table.heading)}</h3>}
                     <div
-                      className={r.scroll}
+                      className="table-scroll"
                       tabIndex={0}
                       role="region"
                       aria-label={table.heading ?? t.title}
@@ -152,7 +153,7 @@ export default function Page() {
                                 className={
                                   i > 0 &&
                                   table.rows.every((row) => !row[i] || numeric.test(row[i]))
-                                    ? r.numeric
+                                    ? "numeric"
                                     : undefined
                                 }
                               >
@@ -172,7 +173,7 @@ export default function Page() {
                                 ) : (
                                   <td
                                     key={c}
-                                    className={numeric.test(cell) ? r.numeric : undefined}
+                                    className={numeric.test(cell) ? "numeric" : undefined}
                                   >
                                     <Cell value={cell} item={items.has(c)} />
                                   </td>

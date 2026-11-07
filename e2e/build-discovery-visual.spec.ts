@@ -168,7 +168,7 @@ test("equipment discovery preserves filters, private boundaries and saved favori
       await page.getByLabel("Search guides", { exact: true }).press("Enter");
       await expect(page.locator(".grind-guide-card")).toHaveCount(1);
       await page.locator(".grind-guide-card").click();
-      await expect(page).toHaveURL(/\/guides\/read-a-market-quote/);
+      await expect(page).toHaveURL(/\/guides\/reading-market-prices/);
       await expect(page.locator("main")).toContainText("Albion Online Data Project");
       await page.goto("/guides");
       for (const width of [1440, 390, 320]) {

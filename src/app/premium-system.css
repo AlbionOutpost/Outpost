@@ -94,23 +94,6 @@
   font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
 }
-.app.outpost :is(table thead, .studio-column-headings) {
-  background: var(--elevated);
-}
-.app.outpost table th {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 550;
-}
-.app.outpost table td {
-  font-size: 13px;
-}
-.app.outpost tbody tr {
-  transition: background-color 120ms ease;
-}
-.app.outpost tbody tr:hover {
-  background: var(--accent-wash);
-}
 .app.outpost .library-provenance {
   color: var(--muted);
   font-size: 12px;
@@ -319,9 +302,6 @@
     width: 100%;
     white-space: normal;
   }
-}
-.app.outpost tbody th {
-  background: transparent;
 }
 .shopping-account-lists {
   margin-top: 20px;

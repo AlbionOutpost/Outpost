@@ -96,6 +96,7 @@ const footerColumns = [
       ["/builds/activities", "Builds by activity"],
       ["/builds", "All builds"],
       ["/builds/new", "Create a build"],
+      ["/compositions/activities", "Comps by activity"],
       ["/compositions", "All comps"],
       ["/compositions/new", "Plan a comp"],
     ],
@@ -104,10 +105,10 @@ const footerColumns = [
     label: "Guides",
     links: [
       ["/guides", "All guides"],
-      ["/guides/first-silver", "Your first silver"],
+      ["/guides/making-silver", "Making silver"],
       ["/guides/focus-and-resource-return-rate", "Focus and RRR"],
       ["/guides/hellgates-guide", "Hellgates"],
-      ["/guides/put-every-role-in-place", "Plan a party comp"],
+      ["/guides/planning-a-comp", "Plan a party comp"],
     ],
   },
   {
