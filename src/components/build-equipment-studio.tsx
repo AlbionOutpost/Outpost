@@ -349,27 +349,6 @@ export function BuildEquipmentStudio({
           }}
         />
         {!value.length && boardEmpty}
-        {!!ordered.length && (
-          <div className="editor-piece-strip">
-            <small>Every piece</small>
-            <div role="group" aria-label="Pieces in this loadout">
-              {ordered.map((item) => (
-                <button
-                  type="button"
-                  key={item.slot}
-                  aria-pressed={item.slot === slot}
-                  title={`${item.slot}: ${pieceName(item.itemId)}`}
-                  onClick={() => selectSlot(item.slot as EquipmentSlot)}
-                >
-                  <ItemIcon id={item.itemId} quality={item.quality} size={36} />
-                  <span className="sr-only">
-                    {pieceName(item.itemId)} ({item.slot})
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </aside>
       <section
         className="raised editor-slot-panel studio-loadout-list"

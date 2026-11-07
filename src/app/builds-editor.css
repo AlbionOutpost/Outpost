@@ -297,39 +297,6 @@ body:has(.editor-save-bar.is-docked) {
   flex-direction: column;
   gap: var(--space-4);
 }
-.app.outpost .editor-piece-strip {
-  display: grid;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--well-border);
-}
-.app.outpost .editor-piece-strip > small {
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .editor-piece-strip > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.app.outpost .editor-piece-strip button {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 3px;
-  border: 1px solid var(--well-border);
-  border-radius: 8px;
-  background: var(--well);
-  box-shadow: none;
-}
-.app.outpost .editor-piece-strip button[aria-pressed="true"] {
-  border-color: var(--accent);
-}
-.app.outpost .editor-piece-strip img {
-  border-radius: 5px;
-}
 .app.outpost .focused-build-editor .editor-inventory-panel > :first-child {
   margin-bottom: 0;
 }
@@ -1264,10 +1231,6 @@ body:has(.editor-save-bar.is-docked) {
      build needs no list at all */
   .app.outpost .editor-summary-list > .is-empty,
   .app.outpost .editor-slot-panel:has(.editor-summary-list):not(:has(.is-equipped)) {
-    display: none;
-  }
-  /* The slot chips sit under the board, so the piece strip would be a third way to pick a slot */
-  .app.outpost .editor-piece-strip {
     display: none;
   }
   /* Tabs and slot chips: one row each that scrolls, the cut pill fading at the edge */
