@@ -533,7 +533,11 @@
   text-align: right;
 }
 :global(.app.outpost) .flip.flip {
-  border-top: 1px solid var(--well-border);
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  transition: background-color 120ms ease;
+}
+:global(.app.outpost) .flip.flip:hover {
+  background: color-mix(in srgb, var(--text) 4%, transparent);
 }
 :global(.app.outpost) .flip.flip > img {
   border-radius: var(--radius-sm);
@@ -560,7 +564,7 @@
 }
 :global(.app.outpost) .flipPrice.flipPrice {
   justify-items: end;
-  font: 600 13px/1.2 var(--font-data);
+  font: 500 14px/1.2 var(--font-ui);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -568,7 +572,7 @@
   justify-content: flex-end;
 }
 :global(.app.outpost) .flipNet.flipNet {
-  font: 800 18px/1 var(--font-display);
+  font: 700 15px/1 var(--font-ui);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -577,14 +581,15 @@
   justify-content: flex-end;
 }
 :global(.app.outpost) .flip.flip[data-outcome="positive"] .flipNet {
-  color: var(--killer);
+  color: var(--success);
 }
 :global(.app.outpost) .flip.flip[data-outcome="negative"] .flipNet {
-  color: var(--victim);
+  color: var(--error);
 }
 :global(.app.outpost) .flipMargin.flipMargin {
   color: var(--secondary);
-  font: 600 13px/1 var(--font-data);
+  font: 500 14px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
   text-align: right;
 }
 :global(.app.outpost) .flipAction.flipAction {

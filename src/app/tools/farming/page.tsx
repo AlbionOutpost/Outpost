@@ -10,6 +10,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="farm"
         scene="economy"
         title="Farming calculator"

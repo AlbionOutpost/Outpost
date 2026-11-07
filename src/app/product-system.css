@@ -698,6 +698,7 @@
   font-size: clamp(28px, 2.4vw, 38px);
 }
 .app.outpost .workspace-identity[data-density="compact"] p {
+  max-width: 96ch;
   font-size: 14px;
   line-height: 1.45;
 }

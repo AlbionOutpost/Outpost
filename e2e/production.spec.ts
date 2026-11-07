@@ -411,12 +411,9 @@ test("the sticky result never covers the details under a calculator", async ({ p
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-  for (const name of ["Detailed accounting · entire run", "Your assumptions"]) {
-    const toggle = page.getByRole("button", { name, exact: true });
-    // A real click: it fails while anything, such as the sticky result, sits on the toggle.
-    await toggle.click();
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
-  }
+  // Accounting and assumptions are open beside the sensitivity table, not behind toggles.
+  for (const name of ["Detailed accounting · entire run", "Your assumptions"])
+    await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
   // Scrolled to the end, the sticky result stays above the details.
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
   const result = await page.locator("#production-results").boundingBox();

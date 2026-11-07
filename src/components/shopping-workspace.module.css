@@ -95,43 +95,8 @@
   color: var(--accent-ink);
 }
 
-/* Shopping list table, in a well */
-:global(.app.outpost) .tableScroll.tableScroll {
-  overflow-x: auto;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-:global(.app.outpost) .tableScroll.tableScroll:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-:global(.app.outpost) .table.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
-}
-:global(.app.outpost) .table.table :is(th, td) {
-  padding: 10px 8px;
-  border-top: 1px solid var(--well-border);
-  font-size: 13px;
-  text-align: left;
-  vertical-align: middle;
-}
-:global(.app.outpost) .table.table :is(th, td):first-child {
-  padding-left: 12px;
-}
-:global(.app.outpost) .table.table thead th {
-  border-top: 0;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-:global(.app.outpost) .table.table thead th:nth-child(n + 2):nth-child(-n + 6) {
-  text-align: right;
-}
+/* Shopping list table: the shared table design (globals.css) plus its own columns */
+:global(.app.outpost) .table.table thead th:nth-child(n + 2):nth-child(-n + 6),
 :global(.app.outpost) .table.table td:nth-child(n + 2):nth-child(-n + 6) {
   text-align: right;
 }
@@ -178,7 +143,7 @@
   line-height: 1.25;
 }
 :global(.app.outpost) .num.num {
-  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
 }
@@ -542,6 +507,8 @@
     border: 0;
     background: none;
     box-shadow: none;
+    mask-image: none;
+    animation: none;
   }
   :global(.app.outpost) .table.table thead {
     position: absolute;
@@ -565,11 +532,14 @@
     box-shadow: inset 0 1px 3px #0009;
   }
   :global(.app.outpost) .table.table :is(th, td) {
+    position: static;
     display: grid;
     align-content: start;
     gap: 4px;
+    height: auto;
     padding: 0;
     border: 0;
+    background: none;
   }
   :global(.app.outpost) .table.table :is(th, td):first-child {
     padding: 0;

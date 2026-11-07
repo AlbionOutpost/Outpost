@@ -24,12 +24,14 @@ test("production prerequisites, genuine sensitivity and the steps beside their r
       return { x: r.x, y: r.y, width: r.width, height: r.height };
     }),
   );
-  // The input steps stack in one column; the result starts level with the first, beside them.
+  // Wide screens: every step side by side in the first row, the result last.
   const [setup, materials, results] = bounds;
   expect(Math.abs(setup.y - results.y)).toBeLessThan(2);
-  expect(Math.abs(setup.x - materials.x)).toBeLessThan(2);
-  expect(materials.y).toBeGreaterThan(setup.y + setup.height);
-  expect(setup.x + setup.width).toBeLessThan(results.x);
+  expect(Math.abs(setup.y - materials.y)).toBeLessThan(2);
+  expect(setup.x + setup.width).toBeLessThan(materials.x);
+  expect(materials.x + materials.width).toBeLessThan(results.x);
+  // The working view starts on the first screen, under the compact masthead.
+  expect(setup.y).toBeLessThan(300);
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
