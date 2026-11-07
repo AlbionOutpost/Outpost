@@ -443,26 +443,32 @@ const coinsPerCard = (cards: number) =>
 /** A card counts from its first coin to its last. */
 const countForCard = (cards: number) => coinsPerCard(cards) * 95 + 600;
 
-/** The shared total and the member cards under either chest; each card counts once lit. */
+/**
+ * The shared total and the member cards under either chest; each card counts once lit. The
+ * WebGL chest passes `slam`: the total stays hidden until the last coin is home, then slams in;
+ * after a skip every figure jumps straight to its value.
+ */
 function RevealSummary({
   rows,
   total,
   opened,
   lit,
+  slam,
 }: {
   rows: RevealPayout[];
   total: number;
   opened: boolean;
   lit: Set<string>;
+  slam?: { slammed: boolean; skipped: boolean };
 }) {
-  const countFor = countForCard(rows.length);
-  const sum = useCountUp(opened ? total : 0, {
-    duration: rows.length * 120 + countFor + chestCue.coin - 200,
+  const countFor = slam?.skipped ? 0 : countForCard(rows.length);
+  const sum = useCountUp((slam ? slam.slammed : opened) ? total : 0, {
+    duration: slam ? (slam.skipped ? 0 : 520) : rows.length * 120 + countFor + chestCue.coin - 200,
     from: 0,
   });
   return (
     <>
-      <p className={styles.revealTotal}>
+      <p className={styles.revealTotal} data-slam={slam?.slammed ? "" : undefined}>
         {/* eslint-disable-next-line @next/next/no-img-element -- painted silver */}
         <img src="/albion/icons/silver-64w.webp" alt="" />
         <data value={total} aria-hidden="true">
@@ -740,9 +746,10 @@ const useStageMode = () =>
 
 /**
  * A two-faced silver coin (the crown is heads, the skull tails). Give it a `flip` — the side
- * the server landed and a key per throw — and it is tossed in an arc, tumbles end over end,
- * bounces and settles on that side. The first throw loads the WebGL coin; until then, and
- * wherever WebGL is missing, the CSS coin stands in. Under reduced motion it simply lands.
+ * the server landed and a key per throw — and it is flicked high, tumbles with slow motion at
+ * the top, slows its last turn, bounces and settles on that side. The first throw loads the
+ * WebGL coin; until then, and wherever WebGL is missing, the CSS coin stands in. A click on
+ * the coin or Esc skips a throw; under reduced motion it simply lands.
  */
 export function Coin3D({
   flip,
@@ -762,6 +769,7 @@ export function Coin3D({
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const landed = useRef(onLanded);
+  const tossing = useRef(false);
   useLayoutEffect(() => {
     landed.current = onLanded;
   });
@@ -773,7 +781,11 @@ export function Coin3D({
   const height = Math.round(size * 2.6);
   useEffect(() => {
     if (!side || !throwKey || !gl) return;
-    const land = () => landed.current?.();
+    const land = () => {
+      tossing.current = false;
+      landed.current?.();
+    };
+    tossing.current = !still;
     if (scene.current) {
       if (still) {
         scene.current.place(side);
@@ -797,15 +809,28 @@ export function Coin3D({
       cancelled = true;
     };
   }, [side, throwKey, still, gl, width, height]);
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // Esc skips a throw in flight.
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !tossing.current || !scene.current) return;
+      event.preventDefault();
+      scene.current.skip();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
       scene.current?.dispose();
       scene.current = null;
-    },
-    [],
-  );
+    };
+  }, []);
   return (
-    <div className={styles.coinHost} data-gl={ready ? "" : undefined}>
+    <div
+      className={styles.coinHost}
+      data-gl={ready ? "" : undefined}
+      onClick={() => {
+        if (tossing.current) scene.current?.skip();
+      }}
+    >
       {/* While the WebGL coin loads, the CSS coin holds its last rest (no flip moves it). */}
       <CssCoin
         flip={gl ? null : flip}
@@ -823,7 +848,12 @@ export function Coin3D({
   );
 }
 
-/** The chest scene in WebGL: the same summary and cards, the chest and coins on one canvas. */
+/**
+ * The chest scene in WebGL: the same summary and cards, the chest, its light and the coins on
+ * one canvas over the whole reveal. The chest is framed in the stage band and the coins fly to
+ * the cards where they really are, re-read whenever the reveal resizes. A click, Skip or Esc
+ * jumps to the result.
+ */
 function GlChestReveal({
   rows,
   total,
@@ -836,8 +866,11 @@ function GlChestReveal({
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const skipper = useRef<() => void>(() => {});
   const [opened, setOpened] = useState(false);
   const [lit, setLit] = useState<Set<string>>(() => new Set());
+  const [slam, setSlam] = useState({ slammed: false, skipped: false });
+  const [playing, setPlaying] = useState(true);
   const fail = useRef(onFail);
   useLayoutEffect(() => {
     fail.current = onFail;
@@ -854,12 +887,18 @@ function GlChestReveal({
       return {
         width: Math.max(1, box.width),
         height: Math.max(1, box.height),
-        stage: { top: b.top - box.top, height: b.height },
+        band: {
+          left: b.left - box.left,
+          top: b.top - box.top,
+          width: Math.max(1, b.width),
+          height: Math.max(1, b.height),
+        },
       };
     };
     const card = (id: string) =>
       scene.querySelector<HTMLElement>(`[data-userid="${CSS.escape(id)}"]`);
     let cancelled = false;
+    let skipping = false;
     let dispose = () => {};
     let observer: ResizeObserver | undefined;
     loadScene("webgl")!
@@ -867,11 +906,16 @@ function GlChestReveal({
       .then((chest) => {
         if (cancelled) return chest.dispose();
         dispose = () => chest.dispose();
+        skipper.current = () => {
+          skipping = true;
+          chest.skip();
+        };
         observer = new ResizeObserver(() => {
-          const { width, height, stage: s } = measure();
-          chest.resize(width, height, s);
+          const { width, height, band: b } = measure();
+          chest.resize(width, height, b);
         });
         observer.observe(scene);
+        observer.observe(band);
         chest.play({
           cards: rows.length,
           perCard: coinsPerCard(rows.length),
@@ -890,16 +934,18 @@ function GlChestReveal({
           onCoin: (index, first) => {
             const id = ids[index];
             if (first) setLit((prev) => new Set(prev).add(id));
+            if (skipping) return;
             card(id)?.animate(
               [
                 { transform: "scale(1.022)" },
-                { transform: "scale(1.06)", offset: 0.35 },
+                { transform: "scale(1.07)", offset: 0.3 },
                 { transform: "scale(1.022)" },
               ],
-              { duration: 240, easing: "ease-out" },
+              { duration: 260, easing: "ease-out" },
             );
           },
-          onDone: () => {},
+          onSlam: () => setSlam({ slammed: true, skipped: skipping }),
+          onDone: () => setPlaying(false),
         });
       })
       .catch(() => {
@@ -907,14 +953,39 @@ function GlChestReveal({
       });
     return () => {
       cancelled = true;
+      skipper.current = () => {};
       observer?.disconnect();
       dispose();
     };
   }, [rows]);
+  // Esc skips while it plays (and only closes the dialog once it has finished).
+  useEffect(() => {
+    if (!playing) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      skipper.current();
+    };
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
+  }, [playing]);
   return (
-    <div ref={root} className={styles.revealScene} data-gl="">
+    <div
+      ref={root}
+      className={styles.revealScene}
+      data-gl=""
+      onClick={() => {
+        if (playing) skipper.current();
+      }}
+    >
       <div ref={stage} className={styles.chestStage} aria-hidden="true" />
-      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} />
+      {playing && (
+        <button type="button" className={`pill-link is-small ${styles.revealSkip}`}>
+          Skip
+        </button>
+      )}
+      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} slam={slam} />
       <canvas ref={canvas} className={styles.revealCanvas} aria-hidden="true" />
     </div>
   );
