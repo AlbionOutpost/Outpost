@@ -83,11 +83,11 @@
   box-shadow: 0 0 0 4px var(--accent-wash);
   transform: scale(1.1);
 }
-:global(.app.outpost) [data-state="current"] > button,
-:global(.app.outpost) [data-state="done"] > button {
+:global(.app.outpost) .progress [data-state="current"] > button,
+:global(.app.outpost) .progress [data-state="done"] > button {
   color: var(--secondary);
 }
-:global(.app.outpost) [data-state="current"] > button {
+:global(.app.outpost) .progress [data-state="current"] > button {
   color: var(--text);
 }
 :global(.app.outpost) .progress button:not(:disabled):hover .stepBadge.stepBadge {
