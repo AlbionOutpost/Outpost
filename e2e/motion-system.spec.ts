@@ -1,14 +1,19 @@
 import { test, expect } from "@playwright/test";
 
-test("shared controls grow, press and still navigate with the current region", async ({ page }) => {
+test("shared controls lift and settle without changing size, and still navigate with the region", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/tools?region=asia");
   const link = page.getByRole("link", { name: "Sign in", exact: true });
-  const width = (await link.boundingBox())!.width;
+  const rest = (await link.boundingBox())!;
   await link.hover();
-  await expect.poll(async () => (await link.boundingBox())!.width).toBeGreaterThan(width * 1.02);
+  // Hover lifts a pixel; scaling would push wide controls past their box and shift their text
+  await expect.poll(async () => (await link.boundingBox())!.y).toBeLessThan(rest.y - 0.5);
+  expect((await link.boundingBox())!.width).toBeCloseTo(rest.width, 1);
   await page.mouse.down();
-  await expect.poll(async () => (await link.boundingBox())!.width).toBeLessThan(width * 0.99);
+  await expect.poll(async () => (await link.boundingBox())!.y).toBeGreaterThan(rest.y + 0.5);
+  expect((await link.boundingBox())!.width).toBeCloseTo(rest.width, 1);
   await page.mouse.move(0, 100);
   await page.mouse.up();
   await page
