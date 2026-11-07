@@ -64,15 +64,13 @@ test("restored guides are readable documents and compositions retain every membe
       }),
     })
     .click();
-  await expect(page.locator("h1")).toHaveText(
-    "How to Level Fishing Fast: Fame Needed and Cheapest Fish",
-  );
+  await expect(page.locator("h1")).toHaveText("Leveling fishing");
   await expect(page.locator("article")).toContainText("Fishing Specialist");
   expect(
     await page.locator("article script, article iframe, article input, article select").count(),
   ).toBe(0);
-  await page.getByRole("link", { name: "The two lines", exact: true }).click();
-  await expect(page).toHaveURL(/#section-the-two-lines$/);
+  await page.getByRole("link", { name: "How much fame the two lines take", exact: true }).click();
+  await expect(page).toHaveURL(/#section-how-much-fame-the-two-lines-take$/);
   await page.goto("/compositions/library/dreamteam");
   // Every member opens as its own build window
   await expect(page.locator("[data-comp-member]")).toHaveCount(17);
