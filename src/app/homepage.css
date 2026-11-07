@@ -216,7 +216,6 @@
 
 /* Inset panels inside the surfaces */
 .app.outpost .landing-features li,
-.app.outpost .tool-search,
 .app.outpost .tool-item,
 .app.outpost .tool-table,
 .app.outpost .tool-chart,
@@ -965,75 +964,8 @@
 .app.outpost .guides-carousel {
   position: relative;
 }
-.app.outpost .guides-track {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: calc((100% - 48px) / 3);
-  gap: 24px;
-  /* Room around the covers so a hovered cover can grow without its edges being cut */
-  margin: -12px -8px 0;
-  padding: 12px 8px 20px;
-  overflow-x: auto;
-  scroll-padding-inline: 8px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.app.outpost .guides-track::-webkit-scrollbar {
-  display: none;
-}
 .app.outpost .guide-card {
   scroll-snap-align: start;
-}
-.app.outpost .guides-arrow {
-  position: absolute;
-  /* Centred with top alone: the shared button hover scales through transform, and a
-     translate there made the arrow drop on hover */
-  top: calc(50% - 26px);
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, #ffffff1a);
-  border-radius: 50%;
-  background: #15181ff2;
-  color: #f4f2ee;
-  box-shadow: 0 8px 20px #000c;
-  cursor: pointer;
-  transition:
-    background 200ms var(--ease-out),
-    box-shadow 320ms var(--ease-out),
-    transform 380ms var(--ease-spring);
-}
-.app.outpost .guides-arrow.is-prev {
-  left: -22px;
-}
-.app.outpost .guides-arrow.is-next {
-  right: -22px;
-}
-.app.outpost .guides-arrow svg {
-  transition: translate 380ms var(--ease-spring);
-}
-.app.outpost .guides-arrow:hover:not(:disabled) {
-  background: var(--accent);
-  color: #1a100b;
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent),
-    0 0 22px color-mix(in srgb, var(--accent) 55%, transparent),
-    0 8px 20px #000c;
-  transform: scale(1.1);
-}
-.app.outpost .guides-arrow.is-next:hover:not(:disabled) svg {
-  translate: 2px 0;
-}
-.app.outpost .guides-arrow.is-prev:hover:not(:disabled) svg {
-  translate: -2px 0;
-}
-.app.outpost .guides-arrow:active:not(:disabled) {
-  transform: scale(0.94);
-}
-.app.outpost .guides-arrow[disabled] {
-  display: none;
 }
 
 /* Activities: what you are about to do, with the weapons its best-liked builds use */
@@ -1194,9 +1126,6 @@
   .app.outpost .landing-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .app.outpost .guides-track {
-    grid-auto-columns: calc((100% - 24px) / 2);
-  }
   .app.outpost .activity-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1298,17 +1227,8 @@
     color: var(--accent-ink);
     font-weight: 700;
   }
-  .app.outpost .guides-track {
-    grid-auto-columns: 82%;
-    gap: 16px;
-    margin-inline: -16px;
-    padding-inline: 16px;
-  }
   .app.outpost .guide-card a {
     height: 380px;
-  }
-  .app.outpost .guides-arrow {
-    display: none;
   }
   .app.outpost .activity-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -41,28 +41,6 @@
 .app.outpost :is(.task-state, .product-empty, .empty-state) .button + :is(.button, .text-link) {
   margin-left: 8px;
 }
-.app.outpost .workspace-tabs {
-  display: flex;
-  gap: 6px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
-  overflow-x: auto;
-}
-.app.outpost .workspace-tabs a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  white-space: nowrap;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  text-decoration: none;
-}
-.app.outpost .workspace-tabs a[aria-current="page"] {
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  background: var(--accent-wash);
-}
 /* Footer, in the landing's language: the brand and where the numbers come from, four labelled
    link columns, then a bottom bar with ©, Privacy & terms and Back to top. Muted 12px labels over
    14px links; columns form a 2 × 2 grid on phones, every link a 44px row. */
@@ -263,10 +241,6 @@
     grid-column: 2;
   }
 }
-.app.outpost .directory-start {
-  border-radius: 12px;
-  padding: 20px 24px;
-}
 .app.outpost #market-saved-research {
   display: grid;
   gap: 8px;
@@ -311,37 +285,6 @@
   ) {
   border-radius: 12px;
 }
-.app.outpost .account-settings-content > .panel {
-  padding: 24px;
-}
-.app.outpost .account-settings-navigation a {
-  border-radius: 7px;
-  min-height: 40px;
-  padding: 10px 12px;
-}
-.app.outpost .player-hub-shortcuts {
-  gap: 12px;
-  margin-top: 24px;
-}
-.app.outpost .player-hub-shortcuts > a {
-  border-radius: 12px;
-  padding: 18px;
-  background: var(--panel);
-}
-.app.outpost .player-hub-grid {
-  gap: 18px;
-}
-.app.outpost .player-loadout-link {
-  padding: 14px 0;
-}
-.app.outpost .player-dashboard > .actions {
-  margin-top: 18px;
-}
-@media (max-width: 780px) {
-  .app.outpost .account-settings-content > .panel {
-    padding: 18px;
-  }
-}
 /* One header geometry across home, content, account and workspace routes. */
 .app.outpost .main > header.site-header {
   padding-inline: max(24px, calc((100vw - 1536px) / 2 + 24px));
@@ -354,30 +297,5 @@
 @media (max-width: 780px) {
   .app.outpost .main > header.site-header {
     padding-inline: 12px;
-  }
-}
-.app.outpost .button-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* Other scenic surfaces also take the 800px variants on phones. */
-@media (max-width: 700px) {
-  .app.outpost .builds-ecosystem .builds-ecosystem-header {
-    background-image:
-      linear-gradient(
-        90deg,
-        var(--bg) 36%,
-        color-mix(in srgb, var(--bg) 84%, transparent) 64%,
-        color-mix(in srgb, var(--bg) 32%, transparent)
-      ),
-      url("/albion/illustrations/build-v1-phone.webp");
-  }
-  .app.outpost .premium-workspace-heading {
-    background-image:
-      linear-gradient(90deg, var(--panel) 45%, color-mix(in srgb, var(--panel) 88%, transparent)),
-      url("/albion/illustrations/hero-v1-phone.webp");
   }
 }

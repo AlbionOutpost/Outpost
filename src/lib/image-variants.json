@@ -1,0 +1,590 @@
+{
+  "/albion/activities/abyssal-depths-2v2.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "7eadc79abd0efa1d",
+    "variants": [400, 600]
+  },
+  "/albion/activities/abyssal-depths-3v3.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "023a9af84648a5dc",
+    "variants": [400, 600]
+  },
+  "/albion/activities/ancient-lands.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "b9a7d2bc8ed0abb2",
+    "variants": [400, 600]
+  },
+  "/albion/activities/arena.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "e3871d869d2d6bdb",
+    "variants": [400, 600]
+  },
+  "/albion/activities/bomb-squad.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "e8d5a09950e9c85f",
+    "variants": [400, 600]
+  },
+  "/albion/activities/corrupted-dungeon.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "fad3994cf017648d",
+    "variants": [400, 600]
+  },
+  "/albion/activities/crystal-arena-1v1.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "169833b5162c5363",
+    "variants": [400, 600]
+  },
+  "/albion/activities/crystal-arena.webp": {
+    "width": 800,
+    "height": 533,
+    "hash": "dd2c936b017e9a69",
+    "variants": [400, 600]
+  },
+  "/albion/activities/crystal-creatures.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "defb05475df502e2",
+    "variants": [400, 600]
+  },
+  "/albion/activities/faction-warfare.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "36b6135ddaced578",
+    "variants": [400, 600]
+  },
+  "/albion/activities/fame-farm-group-avalon.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "6f57d9ce94191ec3",
+    "variants": [400, 600]
+  },
+  "/albion/activities/fame-farm-group.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "9cbb778652fc12e7",
+    "variants": [400, 600]
+  },
+  "/albion/activities/fame-farm-solo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "bae955c13c9ef58e",
+    "variants": [400, 600]
+  },
+  "/albion/activities/gank-duo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "8dda01c67b7fe7a7",
+    "variants": [400, 600]
+  },
+  "/albion/activities/gank-group.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "7a205e596b871835",
+    "variants": [400, 600]
+  },
+  "/albion/activities/gank-solo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "ae5e09e9595eafac",
+    "variants": [400, 600]
+  },
+  "/albion/activities/gathering.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "3ced2bad235efc42",
+    "variants": [400, 600]
+  },
+  "/albion/activities/group-dungeon.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "3d8939839ae8a85f",
+    "variants": [400, 600]
+  },
+  "/albion/activities/hce.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "22bbe7be3d36732f",
+    "variants": [400, 600]
+  },
+  "/albion/activities/hellgate-10v10.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "1f74008ebadaff76",
+    "variants": [400, 600]
+  },
+  "/albion/activities/hellgate-2v2.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "8eb92c12a593d0b3",
+    "variants": [400, 600]
+  },
+  "/albion/activities/hellgate-5v5.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "41a9e11b82fb7d18",
+    "variants": [400, 600]
+  },
+  "/albion/activities/mists-duo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "d49f89a0329fdbc9",
+    "variants": [400, 600]
+  },
+  "/albion/activities/mists-solo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "b653f5820d7fca89",
+    "variants": [400, 600]
+  },
+  "/albion/activities/off-meta.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "e3b4e2d16fb2e0d8",
+    "variants": [400, 600]
+  },
+  "/albion/activities/open-world.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "4483e985de070217",
+    "variants": [400, 600]
+  },
+  "/albion/activities/small-scale.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "4f58750ca56f3fcb",
+    "variants": [400, 600]
+  },
+  "/albion/activities/tracking-group.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "37fef156901330c9",
+    "variants": [400, 600]
+  },
+  "/albion/activities/tracking-solo.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "742dc761502d67b0",
+    "variants": [400, 600]
+  },
+  "/albion/activities/transporting.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "2ca48ac450a99faa",
+    "variants": [400, 600]
+  },
+  "/albion/activities/world-boss.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "88b9573020546039",
+    "variants": [400, 600]
+  },
+  "/albion/activities/zvz.webp": {
+    "width": 800,
+    "height": 667,
+    "hash": "6f0c5bcd66f4ca2e",
+    "variants": [400, 600]
+  },
+  "/albion/icons/admin-audit.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "b1b29079c6950440",
+    "variants": [64, 128]
+  },
+  "/albion/icons/admin-reports.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "7dbbd58358d75483",
+    "variants": [64, 128]
+  },
+  "/albion/icons/admin-review.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "388ae49f77049d36",
+    "variants": [64, 128]
+  },
+  "/albion/icons/fame.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "38e9cf1e23a86bba",
+    "variants": [64, 128]
+  },
+  "/albion/icons/kill-skull.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "b2f2a1730ff0ec47",
+    "variants": [64, 128]
+  },
+  "/albion/icons/silver.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "6a9a83da665bb699",
+    "variants": [64, 128]
+  },
+  "/albion/icons/status-error.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "3c2375db05588254",
+    "variants": [64, 128]
+  },
+  "/albion/icons/status-notfound.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "7386734cb1a4fb79",
+    "variants": [64, 128]
+  },
+  "/albion/icons/strip-builds.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "e1ac3bc41783daac",
+    "variants": [64, 128]
+  },
+  "/albion/icons/strip-comps.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "bb8bb35c18ef1100",
+    "variants": [64, 128]
+  },
+  "/albion/icons/strip-content.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "9e742daeb38907c1",
+    "variants": [64, 128]
+  },
+  "/albion/icons/team-announce.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "f2c65a6176d84e7f",
+    "variants": [64]
+  },
+  "/albion/icons/team-calendar.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "f401167e6057799f",
+    "variants": [64]
+  },
+  "/albion/icons/team-comps.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "59b13f8dd4d61c59",
+    "variants": [64]
+  },
+  "/albion/icons/team-loot.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "65daa3d9daf20c62",
+    "variants": [64]
+  },
+  "/albion/icons/team-roles.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "943910f88d6bc995",
+    "variants": [64]
+  },
+  "/albion/icons/tool-alchemy.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "49ad3d15bc54cfaa",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-avalon.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "8a7b6f7d93286d88",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-builds.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "01944f5b44e358af",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-cooking.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "30ae5a1f20658ac5",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-craft.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "c162ee9d232019ac",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-enchanting.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "23593985948908dc",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-farming.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "e37ef9e11cae7b72",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-fishing.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "676e4877c1b2eb6e",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-gold.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "f31c34b771ea7147",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-items.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "68fe1c3ddb215516",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-market.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "b07aeff4a391987c",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-mastery.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "4dd0066275759a8f",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-planner.webp": {
+    "width": 192,
+    "height": 192,
+    "hash": "257452be49cb3e15",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-reference.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "b19b9175169a6df4",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-refining.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "b9b54448c20daa93",
+    "variants": [64, 128]
+  },
+  "/albion/icons/tool-transport.webp": {
+    "width": 256,
+    "height": 256,
+    "hash": "bdb8e4f4766763c5",
+    "variants": [64, 128]
+  },
+  "/albion/icons/trophy-bronze.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "19d8898c6879582f",
+    "variants": [64]
+  },
+  "/albion/icons/trophy-gold.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "6afce4300e9fdde8",
+    "variants": [64]
+  },
+  "/albion/icons/trophy-silver.webp": {
+    "width": 128,
+    "height": 128,
+    "hash": "3c70e33c978fd290",
+    "variants": [64]
+  },
+  "/library/media/guides/abyssal-depths-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "494cd5ceeb2040c9",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/achievements.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "23b0d6f646bebd31",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/albion-journal-guide.webp": {
+    "width": 415,
+    "height": 450,
+    "hash": "dda8b1aedf760dbf",
+    "variants": []
+  },
+  "/library/media/guides/ancient-lands.webp": {
+    "width": 640,
+    "height": 360,
+    "hash": "d9b314b88c2f11cc",
+    "variants": [400]
+  },
+  "/library/media/guides/black-zone-gathering-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "be9efb77dd330ea2",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/build-with-a-purpose.webp": {
+    "width": 640,
+    "height": 360,
+    "hash": "16e617b2c803647f",
+    "variants": [400]
+  },
+  "/library/media/guides/corrupted-dungeon-ratting.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "c1c077c0e6d52c1b",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/count-the-whole-cost.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "a0ad329f1ca376e5",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/crystal-arena-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "87550b1b725104d8",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/destiny-board-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "7637e73e19a76367",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/dragonfire-items.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "a2fe10928ff6e5c4",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/enchanting-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "2443ae5d439f34e7",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/faction-warfare-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "c1a8f1162a286a4e",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/first-silver.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "5f2ceedc35c9bce2",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/first-solo-pve-build.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "7d9dab4da28a0082",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/fishing-leveling-guide.webp": {
+    "width": 390,
+    "height": 450,
+    "hash": "02ee56eaad16d768",
+    "variants": []
+  },
+  "/library/media/guides/focus-and-resource-return-rate.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "6aa013c6afc2a0c1",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/gathering-progression-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "b97dc5cfb93db1cb",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/group-dungeons-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "842dac440b523e86",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/haul-between-cities.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "d87ab41f4280bef0",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/hellgates-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "8106700524ed0602",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/islands-and-farming-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "5fe470d6a4e25cce",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/market-flipping-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "8a357d0db692e5c5",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/mists-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "69c849038b873f38",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/put-every-role-in-place.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "d0d31e8394dd268d",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/read-a-market-quote.webp": {
+    "width": 415,
+    "height": 450,
+    "hash": "6220ac017bbe3aba",
+    "variants": []
+  },
+  "/library/media/guides/roads-of-avalon-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "9b182a8b7ca39c74",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/tracking-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "a7e29ceeb5953b54",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/zones-and-death-loss.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "9b96e974036b95a8",
+    "variants": [400, 600]
+  },
+  "/library/media/guides/zvz-guide.webp": {
+    "width": 800,
+    "height": 450,
+    "hash": "8b6cb6e82d80db29",
+    "variants": [400, 600]
+  },
+  "/scenes/supporter/crown-courtyard.webp": {
+    "width": 1374,
+    "height": 1145,
+    "hash": "124ad7c41c203031",
+    "variants": [480, 720, 1040]
+  }
+}

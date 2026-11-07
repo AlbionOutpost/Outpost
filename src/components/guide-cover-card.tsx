@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { Clock } from "lucide-react";
 import Link from "@/components/link";
 import { ItemIcon } from "./item-icon";
 import type { GuideNode } from "@/lib/grind-library-types";
 import { coverBackdrop } from "./landing/guides-carousel";
+import { variantSrcSet } from "@/lib/image-variants";
 import styles from "./guide-cover-card.module.css";
 
 export type GuideCover = {
@@ -39,16 +39,27 @@ export function guideDate(value: string) {
     : null;
 }
 
+/** The width a card's cover is drawn at in the guides grid (one column on phones, then two,
+ * three and four), or more where `object-fit: cover` crops a wide cover to the card's height
+ * (280px on phones, 340px above). */
+function coverSizes({ width, height }: { width: number; height: number }) {
+  const tall = (h: number) => `${Math.ceil((h * width) / height)}px`;
+  return `(max-width: 700px) max(calc(100vw - 24px), ${tall(280)}), (max-width: 1100px) max(46vw, ${tall(340)}), max(min(33vw, 420px), ${tall(340)})`;
+}
+
 /** A guide as a cover card, like the landing's side stories: the artwork fills it, topic and
  * reading time sit in the corner, the title and two lines of summary on a scrim at the foot. */
 export function GuideCoverCard({
   guide,
   suffix = "",
   className = "",
+  priority = false,
 }: {
   guide: GuideCover;
   suffix?: string;
   className?: string;
+  /** The first card in a grid is the page's largest paint: load its cover at once. */
+  priority?: boolean;
 }) {
   const date = guideDate(guide.updatedAt);
   return (
@@ -58,12 +69,17 @@ export function GuideCoverCard({
         style={guide.cover ? coverBackdrop(guide.cover.src) : undefined}
       >
         {guide.cover ? (
-          <Image
-            unoptimized
+          // eslint-disable-next-line @next/next/no-img-element -- static cover with its own srcset
+          <img
             src={guide.cover.src}
+            srcSet={variantSrcSet(guide.cover.src)}
+            sizes={coverSizes(guide.cover)}
             width={guide.cover.width}
             height={guide.cover.height}
             alt=""
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : undefined}
+            decoding="async"
           />
         ) : (
           <span className="guide-card-stand" aria-hidden="true">

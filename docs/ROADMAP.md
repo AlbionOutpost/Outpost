@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Homepage weight — 7 November 2026
+
+- Images: one variant step (`scripts/image-variants.mjs`) for activity art, emblems, every guide cover in the library JSON (`public/library/media/guides`) and the Supporter painting; guide cards, the landing guide stories, the Supporter band and the landing windows pick a width with `srcset`/`sizes`, and a cover's blurred backdrop uses its narrowest file. The first `/guides` card loads eagerly with high priority (it is the LCP). `--check` also catches a repainted source (hash) and leftover variants. Local images on `/` after a full scroll: 1,126 → 718 KB at 412px, 1,199 → 769 KB at 1350px.
+- Browser cache: `public/_headers` gives `/_next/static/*` a year (immutable) and artwork, icons and fonts 30 days plus a week stale-while-revalidate; before, every static file was `max-age=0`.
+- CSS: rules for classes no source file uses were deleted from the 16 root sheets and `homepage.css` (≈ 120 KB of source). No element on 45 routes (signed out and admin, 1440 and 390) carries a removed class, and computed styles are unchanged. Inline CSS on `/` 405 → 308 KB; the homepage HTML 1,260 → 968 KB (213 → 167 KB gzip).
+- `public/llms.txt` added.
+- Not done: the homepage LCP is the lede, held back by the hero's rise animation; webpack strict CSS chunking; both wait for the owner. Item icons from the official renderer are requested at 2× for every screen; Next's built-in polyfills are the 14 KB of "legacy JavaScript"; the crest shields are CSS backgrounds and get no variants.
+
 ## Dashboard, settings and admin redesign — 6 November 2026
 
 - Dashboard: compact well rows for your builds (loadout strip), comps (party weapons), running timers (running first), Teams and saved plans, builds and comps beside the side lists. An empty list is its panel head with one action; a new account sees one "first build" band instead of five empty lists. The quick-start tiles and closing cards are gone.

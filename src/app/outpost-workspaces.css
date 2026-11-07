@@ -138,46 +138,9 @@
 .app.outpost .filter-drawer-backdrop {
   display: none;
 }
-.device-favorites-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.device-favorites-controls > label {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-.device-favorites-controls > label:first-child {
-  flex: 1 1 230px;
-}
-.device-favorites-controls > label:nth-child(2) {
-  flex: 0 1 190px;
-}
-.device-favorites-controls .actions {
-  margin: 0;
-}
-.device-favorites-controls button[aria-pressed="true"] {
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
 .device-favorites-count {
   font-size: 12px;
   color: var(--muted);
-}
-.device-favorites-empty-note {
-  margin: 0 0 24px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.ecosystem-favorites-page .collection-empty {
-  min-height: 0;
-  padding: 20px;
 }
 .device-favorites-grid.is-list {
   grid-template-columns: minmax(0, 1fr);
@@ -318,9 +281,6 @@
 .app.outpost.light .button.primary {
   color: #fff;
 }
-.app.outpost .library-comp-members > section {
-  min-width: 0;
-}
 .app.outpost .build-card-owner-actions {
   z-index: 3;
 }
@@ -460,9 +420,4 @@
 }
 .detail-related-builds .ecosystem-section-heading {
   align-items: center;
-}
-.app.outpost .detail-slot-list > div > .text-link {
-  display: flex;
-  align-items: center;
-  min-height: 32px;
 }

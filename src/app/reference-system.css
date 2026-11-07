@@ -86,10 +86,6 @@
   border-color: var(--muted);
   background: var(--surface-3);
 }
-.app.outpost .button.tertiary {
-  color: var(--accent-ink);
-  background: transparent;
-}
 .app.outpost .button.negative {
   color: var(--error);
   border-color: var(--error);
@@ -192,291 +188,12 @@
   border-top: 1px solid var(--border);
 }
 /* Homepage: a compact two-column product introduction, then distinct destinations. */
-.reference-home {
-  max-width: 1280px;
-  margin: auto;
-}
-.reference-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
-  gap: 40px;
-  align-items: center;
-  padding-block: 16px 40px;
-}
-.reference-hero-copy h1 {
-  margin: 12px 0 16px;
-  font: 800 56px/1.05 var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-}
-.reference-hero-copy h1 em {
-  font-style: normal;
-  color: var(--accent);
-}
-.reference-hero-copy > p {
-  max-width: 45ch;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.65;
-  margin-bottom: 24px;
-}
-.reference-hero-facts {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.reference-hero-facts > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.reference-hero-facts svg {
-  color: var(--accent);
-}
-.reference-hero-product {
-  min-width: 0;
-}
-.reference-section-heading {
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-.reference-section-heading h2 {
-  font: 700 28px/1.25 var(--font-ui);
-  letter-spacing: -0.02em;
-  margin: 8px 0;
-}
-.reference-section-heading p {
-  margin: 0;
-  color: var(--muted);
-}
-.reference-guide-link {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  padding: 16px;
-  background: var(--panel);
-  border-radius: 8px;
-}
-.reference-guide-link > svg:first-child {
-  color: var(--accent);
-}
-.reference-guide-link strong,
-.reference-guide-link small {
-  display: block;
-}
-.reference-guide-link small {
-  color: var(--muted);
-  margin-top: 4px;
-}
-.reference-feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.reference-feature {
-  position: relative;
-  padding: 24px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  background: var(--panel-face);
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-}
-.reference-feature .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.reference-feature h3 {
-  margin: 16px 0 8px;
-  font: 650 21px/1.35 var(--font-ui);
-}
-.reference-feature p {
-  margin: 0 0 16px;
-  color: var(--muted);
-  font-size: 14px;
-}
-.reference-feature .button {
-  margin-top: auto;
-}
-.feature-loadout {
-  display: flex;
-  gap: 8px;
-  margin: 0 0 20px;
-}
-.feature-role-preview {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 4px 0 28px;
-}
-.feature-role-preview span {
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--elevated);
-  font-size: 12px;
-}
-.feature-role-preview span:first-child {
-  color: #8cbfff;
-}
-.feature-role-preview span:nth-child(2) {
-  color: var(--success);
-}
-.feature-market-preview {
-  align-self: stretch;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 0 0 20px;
-  padding-block: 12px;
-  border-block: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted);
-}
-.reference-benefits {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  width: 100%;
-  padding-block: 8px 16px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.reference-benefits > span {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.reference-benefits svg {
-  width: 20px;
-  color: var(--accent);
-}
 .app.outpost .market-form {
   grid-template-columns: minmax(0, 1fr) minmax(110px, 1fr) auto;
   gap: 12px;
 }
 .app.outpost .market-form > .catalog-item-picker {
   grid-column: 1/-1;
-}
-/* Production: recipe, assumptions and quantity, followed by materials and results. */
-.app.outpost .production-calculator-page {
-  max-width: 1280px;
-}
-.app.outpost .production-calculator-page > .page-title {
-  font: 700 36px/1.2 var(--font-ui);
-}
-.app.outpost .production-workspace {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 16px;
-}
-.app.outpost .production-workspace > .calculator-inputs {
-  display: contents;
-}
-.app.outpost .production-workspace .calculator-inputs > .panel {
-  grid-column: span 2;
-  margin: 0;
-  padding: 20px;
-}
-.app.outpost .production-workspace > .production-materials {
-  grid-column: 1/4;
-  grid-row: auto;
-  padding: 20px;
-}
-.app.outpost .production-workspace > .result {
-  grid-column: 4/7;
-  grid-row: auto;
-  padding: 20px;
-  position: static;
-}
-.app.outpost .production-workspace h2 {
-  font: 650 18px/1.5 var(--font-ui);
-}
-.app.outpost .production-workspace .input-grid {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-}
-.app.outpost .production-city-choices {
-  margin-top: 0;
-}
-.reference-recipe-identity {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-block: 24px;
-}
-.reference-recipe-identity > div {
-  flex: 1;
-  min-width: 140px;
-}
-.reference-recipe-identity h3 {
-  font-size: 18px;
-  margin: 0 0 8px;
-}
-.reference-recipe-identity :is(p, small) {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.app.outpost .production-price-list {
-  display: block;
-}
-.app.outpost .material-price-row {
-  padding: 16px 0;
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  background: transparent;
-}
-.app.outpost .material-pricing-controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 16px;
-}
-.app.outpost .production-output-price {
-  background: var(--elevated);
-  border-radius: 6px;
-  padding: 16px;
-  margin-top: 16px;
-}
-.app.outpost .production-steps {
-  display: flex;
-  gap: 0;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 0;
-  background: var(--panel-face);
-  margin-bottom: 24px;
-}
-.app.outpost .production-steps button {
-  flex: 1;
-  padding: 16px;
-  border: 0;
-  border-right: 1px solid var(--border);
-  border-radius: 0;
-  background: transparent;
-  color: var(--muted);
-}
-.app.outpost .production-steps button[aria-current="step"] {
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-}
-.app.outpost .production-steps button[aria-current="step"] span {
-  background: var(--accent);
-  color: #15100c;
 }
 /* Equipment and parties retain separate editing models and real item art. */
 .app.outpost .build-command-bar {
@@ -516,8 +233,7 @@
   border-color: var(--accent);
   background: var(--accent-wash);
 }
-.app.outpost .gear-category-nav button,
-.app.outpost .production-batch-actions button {
+.app.outpost .gear-category-nav button {
   border-radius: 6px;
 }
 .app.outpost .item-browser-choice {
@@ -528,19 +244,7 @@
   border-color: var(--accent);
   background: var(--accent-wash);
 }
-.app.outpost .party-command-bar,
-.app.outpost .party-tools-bar {
-  border-radius: 8px;
-}
-.app.outpost .party-board-card {
-  box-shadow: none;
-}
-.app.outpost .party-board-role {
-  font-family: var(--font-ui);
-}
-.app.outpost .build-settings,
-.app.outpost .advanced-build,
-.app.outpost .party-notes {
+.app.outpost .build-settings {
   margin-block: 16px;
 }
 @media (min-width: 1600px) {
@@ -555,9 +259,6 @@
   }
   .app.outpost .desktop-navigation {
     gap: 16px;
-  }
-  .reference-hero {
-    gap: 24px;
   }
 }
 @media (max-width: 1099px) {
@@ -576,15 +277,6 @@
   .app.outpost .gear-studio.build-gear-studio .gear-details {
     grid-column: 1/-1;
     grid-row: 2;
-  }
-  .reference-hero {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  }
-  .reference-hero-copy h1 {
-    font-size: 44px;
-  }
-  .reference-feature {
-    padding: 20px;
   }
 }
 @media (max-width: 780px) {
@@ -605,97 +297,14 @@
   .app.outpost .header-actions {
     gap: 4px;
   }
-  .app.outpost .page-title,
-  .app.outpost .production-calculator-page > .page-title {
+  .app.outpost .page-title {
     font-size: 28px;
-  }
-  .reference-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 24px;
-    padding-block: 0 24px;
-  }
-  .reference-hero-copy h1 {
-    font-size: 44px;
-    max-width: 16ch;
-    margin-top: 12px;
-  }
-  .reference-hero-copy > p {
-    font-size: 15px;
-    margin-block: 16px 20px;
-  }
-  .reference-hero-copy .actions {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .reference-hero-facts {
-    display: none;
-  }
-  .reference-hero-product {
-    order: 2;
-  }
-  .reference-section-heading {
-    display: block;
-  }
-  .reference-section-heading h2 {
-    font-size: 24px;
-  }
-  .reference-guide-link {
-    display: none;
-  }
-  .reference-feature-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-  }
-  .reference-feature {
-    padding: 16px;
-  }
-  .reference-feature h3 {
-    font-size: 20px;
-    margin-top: 12px;
-  }
-  .reference-feature h3 br {
-    display: none;
-  }
-  .reference-feature :is(.feature-loadout, .feature-market-preview, .feature-role-preview) {
-    display: none;
-  }
-  .reference-feature .button {
-    min-height: 40px;
   }
   .app.outpost .market-form {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .app.outpost .market-form > .button {
     grid-column: 1/-1;
-  }
-  .app.outpost .production-workspace {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .production-workspace .calculator-inputs > .panel,
-  .app.outpost .production-workspace > .production-materials,
-  .app.outpost .production-workspace > .result {
-    grid-column: 1;
-    grid-row: auto;
-    padding: 16px;
-  }
-  .app.outpost .production-journey[data-step="1"] .calculator-inputs {
-    display: contents;
-  }
-  .app.outpost .production-journey:not([data-step="1"]) .calculator-inputs {
-    display: none;
-  }
-  .app.outpost .production-steps {
-    position: sticky;
-    top: 64px;
-    z-index: 3;
-  }
-  .app.outpost .production-steps button {
-    padding: 12px 8px;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 12px;
   }
   .app.outpost .gear-studio.build-gear-studio {
     display: block;
@@ -727,260 +336,10 @@
 .app.outpost.light .discord-login .discord-mark {
   filter: none;
 }
-.reference-advanced-assumptions {
-  border-top: 1px solid var(--border);
-  margin-top: 16px;
-  padding-top: 12px;
-}
-.reference-advanced-assumptions > summary {
-  padding: 8px 0;
-  cursor: pointer;
-  color: var(--accent-ink);
-}
-.app.outpost .reference-material-table th[scope="row"] {
-  background: transparent;
-  color: var(--text);
-  text-align: left;
-}
-.app.outpost .reference-material-table {
-  min-width: 580px;
-}
-.app.outpost .reference-material-table input[type="number"] {
-  min-width: 90px;
-  width: 100%;
-}
-.app.outpost .reference-material-table .material-item-heading {
-  margin: 0;
-  min-width: 140px;
-}
-.app.outpost .reference-material-table .material-return-choice {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-}
-.app.outpost .reference-material-table :is(th, td) {
-  padding: 12px 8px;
-}
-.reference-result-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 20px;
-}
-.reference-result-cards > div {
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--elevated);
-}
-.reference-result-cards :is(span, small) {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-}
-.reference-result-cards strong {
-  display: block;
-  font: 600 24px/1.5 var(--font-data);
-  overflow-wrap: anywhere;
-  margin-block: 8px;
-}
-.reference-result-cards .positive strong {
-  color: var(--success);
-}
-.reference-result-cards .negative strong {
-  color: var(--error);
-}
-.reference-accounting {
-  margin-top: 24px;
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
-}
-.reference-accounting summary {
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.reference-party-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 32px;
-  padding: 20px;
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  background: var(--panel-face);
-  margin-block: 20px;
-}
-.reference-party-summary h2 {
-  font-size: 18px;
-  margin: 0;
-}
-.reference-party-summary p {
-  color: var(--muted);
-  margin: 8px 0 0;
-  font-size: 13px;
-}
-.reference-party-summary > p {
-  flex-basis: 100%;
-}
-.reference-role-counts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.reference-role-counts > span {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-size: 13px;
-}
-.reference-role-counts strong {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  color: var(--accent-ink);
-}
-.app.outpost .party-board[data-party-size="5"] .party-board-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-}
-.app.outpost .party-board[data-party-size="5"] .party-board-title {
-  grid-column: 1/-1;
-  grid-row: auto;
-  text-align: left;
-  padding: 0 0 12px;
-}
-.app.outpost .party-board[data-party-size="5"] .party-loadout-card:nth-child(n) {
-  grid-column: auto;
-  grid-row: auto;
-  width: auto;
-  margin: 0;
-}
-.app.outpost .party-loadout-card {
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  background: var(--panel-face);
-  border-radius: 8px;
-}
-.app.outpost .party-loadout-card[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: var(--accent-wash);
-}
-@media (max-width: 1099px) {
-  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
 @media (max-width: 780px) {
   .app.outpost .site-header {
     min-height: 64px;
   }
-  .reference-home {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .reference-hero {
-    display: contents;
-  }
-  .reference-hero-copy {
-    order: 0;
-  }
-  .reference-discovery {
-    order: 1;
-  }
-  .reference-hero-product {
-    order: 2;
-  }
-  .app.outpost .production-journey[data-step="1"] .reference-quantity {
-    order: -1;
-  }
-  .app.outpost .production-workspace .calculator-inputs > .panel {
-    margin-bottom: 12px;
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-board-title {
-    grid-column: 1/-1;
-  }
-}
-@media (max-width: 360px) {
-  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-.reference-party-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 16px;
-  align-items: start;
-}
-.reference-party-workspace > .party-board {
-  grid-column: 1;
-  grid-row: 1;
-  min-width: 0;
-  padding: 16px;
-}
-.reference-party-workspace > .party-workspace {
-  display: contents;
-}
-.reference-party-workspace .party-roster {
-  grid-column: 1;
-  grid-row: 1;
-}
-.reference-available-builds {
-  grid-column: 2;
-  grid-row: 1;
-  background: var(--panel-face);
-  border: 1px solid var(--panel-edge);
-  border-top-color: var(--panel-edge-top);
-  border-radius: 8px;
-  padding: 16px;
-  min-width: 0;
-}
-.reference-available-builds h2 {
-  font-size: 18px;
-  margin: 0 0 16px;
-}
-.reference-available-builds label {
-  margin-block: 12px;
-}
-.reference-available-builds ul {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0;
-  max-height: 520px;
-  overflow-y: auto;
-}
-.reference-available-builds li {
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  align-items: center;
-  padding-block: 12px;
-  border-top: 1px solid var(--border);
-}
-.reference-available-builds li > a {
-  font-size: 13px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-.reference-available-builds p {
-  font-size: 12px;
-  line-height: 1.7;
-}
-.app.outpost .reference-available-builds .button {
-  min-height: 36px;
-  padding: 8px;
-  font-size: 12px;
 }
 .app.outpost .contextual-drawer {
   position: fixed;
@@ -1014,60 +373,9 @@
 .app.outpost .build-gear-studio .gear-pane {
   align-self: start;
 }
-.app.outpost .guide-discovery-card {
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  padding: 24px 0;
-}
-.app.outpost .guide-directory-grid {
-  display: block;
-}
-.app.outpost .guide-discovery-card h2 {
-  font: 650 24px/1.35 var(--font-ui);
-}
-.app.outpost .guide-body {
-  max-width: 72ch;
-  font-size: 16px;
-  line-height: 1.8;
-}
-.app.outpost .guild-discovery-card,
-.app.outpost .group-announcement {
-  background: var(--panel);
-  border-color: var(--border);
-  border-radius: 8px;
-}
 .app.outpost .item-reference-page {
   max-width: 1100px;
   margin-inline: auto;
-}
-.app.outpost .item-provenance {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-@media (max-width: 1099px) {
-  .reference-party-workspace {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .reference-available-builds {
-    grid-column: 1;
-    grid-row: 2;
-  }
-}
-@media (min-width: 1100px) {
-  .app.outpost .reference-party-workspace .party-board[data-party-size="5"] .party-board-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-  .reference-party-workspace .party-gear-cell {
-    min-width: 0;
-  }
-  .reference-party-workspace .party-gear-cell img {
-    max-width: 100%;
-    height: auto;
-  }
 }
 @media (max-width: 780px) {
   .app.outpost .contextual-drawer {
@@ -1075,83 +383,8 @@
     border: 0;
     padding: 16px;
   }
-  .app.outpost .production-journey[data-step="1"] .reference-quantity {
-    order: 0;
-  }
-}
-.app.outpost.light .feature-role-preview span:first-child {
-  color: #225a94;
-}
-.app.outpost .reference-material-table {
-  min-width: 0;
-  table-layout: fixed;
-}
-.app.outpost .reference-material-table :is(th, td) {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  font-family: var(--font-ui);
-}
-.app.outpost .reference-material-table .numeric {
-  font-family: var(--font-data);
-}
-.app.outpost .reference-material-table .material-item-heading {
-  min-width: 0;
-  flex-wrap: wrap;
-}
-.app.outpost .reference-material-table .material-item-heading strong {
-  min-width: 0;
-}
-.app.outpost .reference-material-table th:nth-child(1) {
-  width: 26%;
-}
-.app.outpost .reference-material-table th:nth-child(2) {
-  width: 11%;
-}
-.app.outpost .reference-material-table th:nth-child(3) {
-  width: 23%;
-}
-.app.outpost .reference-material-table th:nth-child(4) {
-  width: 17%;
-}
-.app.outpost .reference-material-table th:nth-child(5) {
-  width: 23%;
-}
-@media (min-width: 781px) {
-  .app.outpost .production-workspace .reference-quantity .input-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-}
-@media (max-width: 780px) {
-  .app.outpost .reference-material-table {
-    min-width: 520px;
-  }
 }
 /* Final six-width review: keep contextual prices and party labels readable. */
-@media (max-width: 600px) {
-  .app.outpost .party-board[data-party-size="5"] .party-board-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-loadout-card {
-    display: block;
-    min-width: 0;
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-card-heading {
-    display: flex;
-    flex-wrap: nowrap;
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-gear-matrix {
-    width: 100%;
-    max-width: 162px;
-    margin-block: 12px;
-  }
-  .app.outpost .party-board[data-party-size="5"] .party-card-status {
-    display: flex;
-    justify-content: space-between;
-  }
-}
-.app.outpost .reference-material-table th {
-  overflow-wrap: normal;
-}
 .history-series-key {
   color: var(--muted);
   font-size: 13px;

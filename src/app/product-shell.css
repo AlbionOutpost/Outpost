@@ -105,9 +105,6 @@
     gap: 6px;
   }
 }
-.product-route .production-mobile-summary > span:last-child {
-  color: var(--accent-ink);
-}
 .product-route .button.secondary:hover,
 .product-route .button.secondary:focus-visible {
   color: var(--text);

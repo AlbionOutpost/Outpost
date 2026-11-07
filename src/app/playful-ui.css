@@ -67,18 +67,6 @@ a:hover .task-glyph {
 .app.outpost .outpost-home-hub .outpost-hero::after {
   display: none;
 }
-.app.outpost .outpost-home-hub .hero-inner {
-  width: auto;
-  max-width: none;
-}
-.hero-kicker {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--accent-ink);
-  margin-bottom: 16px;
-}
 .app.outpost .outpost-home-hub .outpost-hero h1 {
   font-size: clamp(38px, 4.3vw, 64px);
   color: var(--text);
@@ -87,31 +75,6 @@ a:hover .task-glyph {
 }
 .app.outpost .outpost-home-hub .outpost-hero h1 em {
   color: var(--accent-ink);
-}
-.app.outpost .outpost-home-hub .hero-description {
-  color: var(--muted);
-  font-size: 16px;
-  max-width: 42ch;
-}
-.app.outpost .outpost-home-hub .hero-actions .button {
-  font-size: 14px;
-  min-height: 46px;
-  padding: 12px 18px;
-}
-.app.outpost .outpost-home-hub .hero-actions .primary {
-  background: var(--action);
-  border-color: var(--action);
-  color: #fff7f1;
-}
-.app.outpost .outpost-home-hub .hero-actions .primary:hover {
-  background: var(--action-hover);
-  border-color: var(--action-hover);
-  color: #fff7f1;
-}
-.app.outpost .outpost-home-hub .hero-actions .secondary {
-  background: var(--panel);
-  color: var(--text);
-  border-color: var(--border);
 }
 @keyframes equipment-arrive {
   from {
@@ -122,16 +85,6 @@ a:hover .task-glyph {
     opacity: 1;
     translate: 0 0;
   }
-}
-.app.outpost .featured-tool {
-  background: var(--panel);
-  box-shadow: inset 0 1px #ffffff08;
-}
-.app.outpost .featured-tool h2 {
-  font-size: 19px;
-}
-.app.outpost .featured-tool p {
-  font-size: 14px;
 }
 @media (max-width: 1350px) and (min-width: 1101px) {
   .app.outpost .desktop-navigation {
@@ -163,19 +116,6 @@ a:hover .task-glyph {
   .app.outpost .outpost-home-hub .outpost-hero h1 {
     font-size: clamp(36px, 8.5vw, 48px);
   }
-  .hero-kicker {
-    font-size: 10px;
-    margin-bottom: 14px;
-  }
-  .app.outpost .outpost-home-hub .hero-description {
-    font-size: 15px;
-  }
-}
-@media (max-width: 360px) {
-  .app.outpost .outpost-home-hub .hero-actions .button {
-    padding-inline: 12px;
-    font-size: 12px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .app.outpost *,
@@ -185,12 +125,5 @@ a:hover .task-glyph {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-@media (max-width: 600px) {
-  .app.outpost .featured-tool h2 {
-    font-size: 16px;
-    word-break: normal;
-    overflow-wrap: normal;
   }
 }

@@ -1,0 +1,36 @@
+# Albion Outpost
+
+> Independent tools for the MMO Albion Online: live market prices, crafting and production calculators, equipment builds, party compositions (comps) and player guides, all from real player data. Market prices come from the Albion Online Data Project and are shown with their city, quality and time of observation; missing data is marked as unavailable, never estimated. Outpost is not affiliated with Sandbox Interactive.
+
+## Tools
+
+- [All tools](https://albionoutpost.com/tools): every calculator and planner in one list
+- [Market explorer](https://albionoutpost.com/tools/market): buy and sell orders for an item in every city
+- [Market flipping](https://albionoutpost.com/tools/flipping): city order spreads, trading fees and margins
+- [Crafting calculator](https://albionoutpost.com/tools/crafting): material costs, resource returns, focus and profit
+- [Refining](https://albionoutpost.com/tools/refining), [cooking](https://albionoutpost.com/tools/cooking), [alchemy](https://albionoutpost.com/tools/alchemy) and [enchanting](https://albionoutpost.com/tools/enchanting) calculators
+- [Farming](https://albionoutpost.com/tools/farming), [fishing](https://albionoutpost.com/tools/fishing) and [laborers](https://albionoutpost.com/tools/laborers)
+- [Transport planner](https://albionoutpost.com/tools/transporting): prices, weight and trading costs for a run between cities
+- [Specialization & focus](https://albionoutpost.com/tools/mastery) and [reference tables](https://albionoutpost.com/tools/reference)
+- [Gold price history](https://albionoutpost.com/tools/gold) and the [kill & death feed](https://albionoutpost.com/tools/kill-feed)
+- [Item database](https://albionoutpost.com/items): the item catalog with metadata and regional prices
+
+## Builds and comps
+
+- [Community builds](https://albionoutpost.com/builds): player-made equipment builds with gear, abilities and notes
+- [Builds by activity](https://albionoutpost.com/builds/activities): Mists, Hellgates, Avalonian Dungeons, small scale and more
+- [Build library](https://albionoutpost.com/builds/library): archived builds by activity and weapon
+- [Comps](https://albionoutpost.com/compositions): party compositions with roles and member loadouts
+- [Group build library](https://albionoutpost.com/compositions/library): archived group builds
+
+## Guides
+
+- [Guides](https://albionoutpost.com/guides): progression, gathering, PvE, trading and crafting, with sources and update dates
+
+## Market data
+
+- [Market data & coverage](https://albionoutpost.com/market-data): where prices come from, how fresh they are and how to contribute
+
+## Legal
+
+- [Legal notice, privacy and terms](https://albionoutpost.com/legal)

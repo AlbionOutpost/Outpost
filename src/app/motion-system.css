@@ -285,13 +285,6 @@
 }
 
 /* Roster rows share a hit area with drag/move controls. Keep their bounds stable. */
-:root
-  .app.outpost[data-motion-enabled]
-  .party-roster
-  .roster-row
-  > .member-select:is(:hover, :active) {
-  transform: none;
-}
 
 @media (prefers-reduced-motion: no-preference) {
   .activity-artwork-link::before {

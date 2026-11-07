@@ -120,34 +120,6 @@
 .region-picker-trigger .region-mark {
   color: var(--accent-ink);
 }
-.app.outpost .site-header .theme-single {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  min-height: 36px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  box-shadow: none;
-  color: var(--muted);
-}
-.app.outpost .site-header .theme-single::before,
-.app.outpost .site-header .theme-single::after {
-  display: none;
-}
-.app.outpost .site-header .theme-single svg {
-  transform: none;
-  animation: none;
-  transition: none;
-}
-.app.outpost .site-header .theme-single:hover {
-  color: var(--text);
-  background: var(--elevated);
-  border-color: var(--border);
-}
 .app.outpost .site-header .discord-login {
   min-height: 36px;
   height: 36px;
