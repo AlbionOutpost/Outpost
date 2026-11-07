@@ -50,6 +50,11 @@ export const teamPermissions = [
     label: "Share builds",
     line: "Share builds with the team and remove shared ones.",
   },
+  {
+    key: "manageWallet",
+    label: "Manage wallet",
+    line: "Credit, debit, reset and pay out members' silver and the team pot, and pay loot into wallets.",
+  },
 ] as const;
 export type TeamPermission = (typeof teamPermissions)[number]["key"];
 export const permissionKeys = teamPermissions.map((p) => p.key) as TeamPermission[];
@@ -96,6 +101,7 @@ export const seededRoles = [
       "manageComps",
       "manageLoot",
       "manageBuilds",
+      "manageWallet",
     ]),
     isDefault: false,
   },
@@ -110,6 +116,7 @@ export const seededRoles = [
       "manageComps",
       "manageLoot",
       "manageBuilds",
+      "manageWallet",
     ]),
     isDefault: false,
   },

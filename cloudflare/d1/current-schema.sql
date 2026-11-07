@@ -323,6 +323,74 @@ CREATE TABLE "GroupLootSplit" (
 );
 
 -- CreateTable
+CREATE TABLE "GroupWalletEntry" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT NOT NULL,
+    "userId" TEXT,
+    "amount" REAL NOT NULL,
+    "kind" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "sourceId" TEXT NOT NULL,
+    "createdById" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "GroupWalletEntry_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupWalletEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupWalletEntry_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "GroupCoinFlip" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
+    "createdById" TEXT,
+    "headsId" TEXT NOT NULL,
+    "tailsId" TEXT,
+    "call" TEXT,
+    "stake" REAL NOT NULL DEFAULT 0,
+    "status" TEXT NOT NULL,
+    "outcome" TEXT,
+    "rollId" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "settledAt" DATETIME,
+    CONSTRAINT "GroupCoinFlip_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupCoinFlip_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "GroupCoinFlip_headsId_fkey" FOREIGN KEY ("headsId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupCoinFlip_tailsId_fkey" FOREIGN KEY ("tailsId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "GroupLootRoll" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "silver" REAL NOT NULL DEFAULT 0,
+    "potShare" BOOLEAN NOT NULL DEFAULT false,
+    "status" TEXT NOT NULL DEFAULT 'OPEN',
+    "winnerId" TEXT,
+    "tieBreak" BOOLEAN NOT NULL DEFAULT false,
+    "createdById" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "closedAt" DATETIME,
+    CONSTRAINT "GroupLootRoll_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupLootRoll_winnerId_fkey" FOREIGN KEY ("winnerId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "GroupLootRoll_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "GroupLootRollEntry" (
+    "rollId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "value" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("rollId", "userId"),
+    CONSTRAINT "GroupLootRollEntry_rollId_fkey" FOREIGN KEY ("rollId") REFERENCES "GroupLootRoll" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupLootRollEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "CatalogRelease" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "version" TEXT NOT NULL,
@@ -579,6 +647,27 @@ CREATE INDEX "SavedScenario_authorId_updatedAt_idx" ON "SavedScenario"("authorId
 
 -- CreateIndex
 CREATE INDEX "GroupLootSplit_groupId_updatedAt_idx" ON "GroupLootSplit"("groupId", "updatedAt");
+
+-- CreateIndex
+CREATE INDEX "GroupWalletEntry_groupId_userId_createdAt_idx" ON "GroupWalletEntry"("groupId", "userId", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "GroupWalletEntry_groupId_createdAt_idx" ON "GroupWalletEntry"("groupId", "createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GroupWalletEntry_groupId_sourceId_userId_key" ON "GroupWalletEntry"("groupId", "sourceId", "userId");
+
+-- CreateIndex
+CREATE INDEX "GroupCoinFlip_groupId_createdAt_idx" ON "GroupCoinFlip"("groupId", "createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GroupCoinFlip_groupId_key_key" ON "GroupCoinFlip"("groupId", "key");
+
+-- CreateIndex
+CREATE INDEX "GroupLootRoll_groupId_createdAt_idx" ON "GroupLootRoll"("groupId", "createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GroupLootRoll_groupId_key_key" ON "GroupLootRoll"("groupId", "key");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CatalogRelease_version_key" ON "CatalogRelease"("version");
