@@ -65,10 +65,10 @@
       "content": "Royal-city local production specialties (crafting +15, refining +40, butchering +10 efficiency, farming +10% yield) keyed by crafting category; base city 18, focus 59"
     },
     "src/lib/albion/game/recipes.json": {
-      "sha256": "8642fab99f41a1720b0ce01e4a999f132643af976636532fba4a6477b585065c",
-      "bytes": 3478623,
+      "sha256": "b561323bba6a85e61d8893ff66f62cb6085b2ee2db2d5d901d369313af5f668d",
+      "bytes": 1376673,
       "rows": 11314,
-      "content": "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), enchanted variants .1\u2013.4, focus, silver, output count and non-returnable flags"
+      "content": "Crafting, refining, cooking and alchemy recipes with every alternative (artifact/token/faction), enchanted variants .1\u2013.4, focus, silver, output count and non-returnable flags (compact rows: [id, kind 0 crafting/1 refining, category, craftingCategory, tier, outputCount, focus, silver, [[ingredient, count, 0 when not returnable]]]; output and enchantment derive from the id)"
     },
     "src/lib/albion/game/reference-tables.json": {
       "sha256": "f0b1b49d1b9735536268f09575a8fd1bc1d29d349b8e969a7fc95c5c786abee9",
