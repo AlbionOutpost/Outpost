@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { regions } from "@/lib/albion/region-config";
-import { crestItemName, resolveCrestColor } from "@/lib/groups/crest";
-import { ItemIcon } from "./item-icon";
+import { resolveCrestCharge, resolveCrestColor } from "@/lib/groups/crest";
 import styles from "./teams.module.css";
 
 /** A team's two-letter mark: the first letters of its first two words. */
@@ -15,38 +14,35 @@ export function teamInitials(name: string) {
     .toUpperCase();
 }
 
-const crestPixels = { large: 76, medium: 54, small: 34 };
-
 /**
- * The team's crest: its chosen item render on its palette field, or its initials on a field
- * picked from its name. Used for the masthead emblem, directory cards and invitations.
+ * The team's crest: its painted symbol on its painted shield, or the default crest (the tower on
+ * the orange shield) until an owner or admin picks one. Used wherever a team appears.
  */
 export function TeamMark({
-  name,
   crestItem,
   crestColor,
   size = "large",
 }: {
-  name: string;
+  /** Kept for callers; the crest no longer shows the team's name. */
+  name?: string;
   crestItem?: string | null;
   crestColor?: string | null;
   size?: "large" | "medium" | "small";
 }) {
-  const item = crestItemName(crestItem) ? crestItem : null;
+  const charge = resolveCrestCharge(crestItem);
   return (
     <span
       className={styles.mark}
       data-size={size}
+      data-team-crest={charge}
       style={
         {
-          "--shield": `url("/albion/crests/crest-${resolveCrestColor(name, crestColor)}.webp")`,
+          "--shield": `url("/albion/crests/crest-${resolveCrestColor(crestColor)}.webp")`,
+          "--charge": `url("/albion/charges/${charge}.webp")`,
         } as React.CSSProperties
       }
-      data-team-crest={item ?? "monogram"}
       aria-hidden="true"
-    >
-      {item ? <ItemIcon id={item} size={crestPixels[size]} /> : teamInitials(name)}
-    </span>
+    />
   );
 }
 

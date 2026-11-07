@@ -9,32 +9,23 @@
 }
 
 /* ---------- Identity ---------- */
-/* The crest: the team's painted shield with its item render or initials on it, a little above
-   centre where the shield is widest. The masthead's emblem rule sizes imgs, hence the second
-   selector. */
+/* The crest: the team's painted shield with its painted symbol on it, a little above centre
+   where the shield is widest. The symbol is its own layer so it keeps a shadow on pale shields. */
 :global(.app.outpost) .mark.mark {
-  display: inline-grid;
+  position: relative;
+  display: inline-block;
   flex: none;
-  place-items: center;
   width: 88px;
   height: 88px;
-  padding-bottom: 8%;
   background: var(--shield) center / contain no-repeat;
   filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--illustration-bg) 70%, transparent));
-  color: var(--text);
-  font: 800 30px/1 var(--font-display);
-  letter-spacing: 0.02em;
-  text-shadow: 0 2px 4px var(--illustration-bg);
 }
-:global(.app.outpost) .mark.mark img,
-:global(.app.outpost .workspace-emblem) .mark.mark img {
-  /* The render is an inventory tile; a round cut keeps the item and drops the tile's frame,
-     tier numeral and quality dots, so it reads as a medallion on the shield. */
-  width: 70%;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: contain;
-  clip-path: circle(31% at 50% 50%);
+:global(.app.outpost) .mark.mark::after {
+  content: "";
+  position: absolute;
+  inset: 20% 22% 28%;
+  background: var(--charge) center / contain no-repeat;
+  filter: drop-shadow(0 1px 2px var(--illustration-bg)) drop-shadow(0 0 1px var(--illustration-bg));
 }
 /* In the masthead the crest stands on its own, like a painted emblem: no second box */
 :global(.app.outpost .workspace-emblem):has(> .mark) {
@@ -47,19 +38,15 @@
 :global(.app.outpost) .mark.mark[data-size="medium"] {
   width: 60px;
   height: 60px;
-  font-size: 20px;
 }
 :global(.app.outpost) .mark.mark[data-size="small"] {
   width: 40px;
   height: 40px;
-  font-size: 14px;
 }
 @media (max-width: 700px) {
   :global(.app.outpost .workspace-emblem) > .mark.mark {
     width: 60px;
     height: 60px;
-    border-radius: 12px;
-    font-size: 22px;
   }
 }
 :global(.app.outpost) .chips.chips {
@@ -1349,10 +1336,6 @@
 :global(.app.outpost) .charge.charge:has(input:checked) {
   border-color: var(--accent);
   background: var(--accent-wash);
-}
-:global(.app.outpost) .chargeInitials.chargeInitials {
-  color: var(--secondary);
-  font: 800 18px/1 var(--font-display);
 }
 :global(.app.outpost) .playOptions.playOptions {
   display: flex;

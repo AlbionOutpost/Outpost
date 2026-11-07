@@ -74,12 +74,12 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     const crest = {
       ...profile,
       expectedUpdatedAt: fresh.updatedAt.toISOString(),
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
     };
     expect((await action(1, crest)).status()).toBe(403);
     expect((await action(2, crest)).status()).toBe(404);
-    expect((await action(0, { ...crest, crestItem: "T8_UNLISTED_ITEM" })).status()).toBe(400);
+    expect((await action(0, { ...crest, crestItem: "dragon" })).status()).toBe(400);
     expect((await action(0, { ...crest, crestColor: "#ff0000" })).status()).toBe(400);
     expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
       crestItem: fresh.crestItem,
@@ -88,7 +88,7 @@ test("private guild profiles, event revisions and calendar exports preserve perm
     });
     expect((await action(0, crest)).status()).toBe(200);
     expect(await db.group.findUniqueOrThrow({ where: { id: groupId } })).toMatchObject({
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
     });
     const eventInput = {
