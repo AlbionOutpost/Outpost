@@ -156,6 +156,31 @@ CREATE TABLE "GroupMember" (
 );
 
 -- CreateTable
+CREATE TABLE "GroupCustomRole" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "color" TEXT NOT NULL DEFAULT 'muted',
+    "position" INTEGER NOT NULL,
+    "permissions" INTEGER NOT NULL DEFAULT 0,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "GroupCustomRole_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "GroupRoleAssignment" (
+    "groupId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "roleId" TEXT NOT NULL,
+
+    PRIMARY KEY ("roleId", "userId"),
+    CONSTRAINT "GroupRoleAssignment_roleId_groupId_fkey" FOREIGN KEY ("roleId", "groupId") REFERENCES "GroupCustomRole" ("id", "groupId") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GroupRoleAssignment_groupId_userId_fkey" FOREIGN KEY ("groupId", "userId") REFERENCES "GroupMember" ("groupId", "userId") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Composition" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "authorId" TEXT NOT NULL,
@@ -509,6 +534,15 @@ CREATE INDEX "Group_ownerId_idx" ON "Group"("ownerId");
 
 -- CreateIndex
 CREATE INDEX "GroupMember_userId_idx" ON "GroupMember"("userId");
+
+-- CreateIndex
+CREATE INDEX "GroupCustomRole_groupId_position_idx" ON "GroupCustomRole"("groupId", "position");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GroupCustomRole_id_groupId_key" ON "GroupCustomRole"("id", "groupId");
+
+-- CreateIndex
+CREATE INDEX "GroupRoleAssignment_groupId_userId_idx" ON "GroupRoleAssignment"("groupId", "userId");
 
 -- CreateIndex
 CREATE INDEX "Composition_authorId_updatedAt_idx" ON "Composition"("authorId", "updatedAt");

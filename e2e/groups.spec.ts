@@ -15,6 +15,17 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
   for (let i = 1; i < 5; i++)
     clients.push(await browser.newContext({ baseURL: "http://localhost:3000" }));
   let groupId = "";
+  const roleId = async (name: string) =>
+    (await db.groupCustomRole.findFirstOrThrow({ where: { groupId, name } })).id;
+  const held = async (userId: string) =>
+    (
+      await db.groupRoleAssignment.findMany({
+        where: { groupId, userId },
+        select: { role: { select: { name: true } } },
+      })
+    )
+      .map((a) => a.role.name)
+      .sort();
   const action = (i: number, data: Record<string, unknown>) =>
     clients[i].request.post(`/api/groups/${groupId}/actions`, {
       headers: { origin: "http://localhost:3000" },
@@ -52,7 +63,24 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     ).toBeVisible();
     groupId = (await db.group.findUniqueOrThrow({ where: { slug } })).id;
     expect((await action(0, { action: "leave" })).status()).toBe(409);
-    expect((await action(4, { action: "role", userId: ids[4], role: "ADMIN" })).status()).toBe(404);
+    // A new team starts with Admin, Officer and the default Member; outsiders get a 404.
+    expect(
+      (
+        await db.groupCustomRole.findMany({ where: { groupId }, orderBy: { position: "desc" } })
+      ).map((r) => [r.name, r.isDefault]),
+    ).toEqual([
+      ["Admin", false],
+      ["Officer", false],
+      ["Member", true],
+    ]);
+    expect(
+      (await action(4, { action: "member-roles", userId: ids[4], roleIds: [] })).status(),
+    ).toBe(404);
+    expect(
+      (
+        await action(4, { action: "role-create", name: "Spy", color: "red", permissions: [] })
+      ).status(),
+    ).toBe(404);
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
     await page.getByRole("button", { name: "Create invitation", exact: true }).click();
     const link = page.getByLabel("New invitation link");
@@ -106,17 +134,12 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     ).toBe(410);
     await page.reload();
     await page.getByRole("tab", { name: "Members", exact: true }).click();
-    await page.getByLabel("Role for Guild tester 2").selectOption("OFFICER");
-    await expect
-      .poll(
-        async () =>
-          (
-            await db.groupMember.findUniqueOrThrow({
-              where: { groupId_userId: { groupId, userId: ids[2] } },
-            })
-          ).role,
-      )
-      .toBe("OFFICER");
+    // An invited player joins with the default role; the owner adds Officer from the roster.
+    expect(await held(ids[2])).toEqual(["Member"]);
+    await page.getByRole("button", { name: "Roles for Guild tester 2" }).click();
+    await page.getByRole("checkbox", { name: /Officer/ }).check();
+    await page.getByRole("button", { name: "Save roles" }).click();
+    await expect.poll(() => held(ids[2])).toEqual(["Member", "Officer"]);
     const adminInvite = await (await action(0, { action: "invite", hours: 24 })).json();
     expect(
       (
@@ -125,7 +148,15 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
         })
       ).status(),
     ).toBe(200);
-    expect((await action(0, { action: "role", userId: ids[1], role: "ADMIN" })).status()).toBe(200);
+    expect(
+      (
+        await action(0, {
+          action: "member-roles",
+          userId: ids[1],
+          roleIds: [await roleId("Admin"), await roleId("Member")],
+        })
+      ).status(),
+    ).toBe(200);
     // A public team that has closed its roster refuses new requests and queues nothing.
     await db.group.update({ where: { id: groupId }, data: { recruiting: false } });
     expect((await action(3, { action: "request", message: "Closed roster" })).status()).toBe(409);
@@ -140,9 +171,111 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
     await page.getByRole("button", { name: "Approve Guild tester 3" }).click();
     await expect.poll(() => db.groupMember.count({ where: { groupId, userId: ids[3] } })).toBe(1);
-    expect((await action(3, { action: "role", userId: ids[3], role: "ADMIN" })).status()).toBe(403);
-    expect((await action(1, { action: "role", userId: ids[1], role: "ADMIN" })).status()).toBe(403);
+    expect(await held(ids[3])).toEqual(["Member"]);
+    const admin = await roleId("Admin");
+    // Without Manage roles nobody hands out roles, not even to themselves.
+    expect(
+      (await action(3, { action: "member-roles", userId: ids[3], roleIds: [admin] })).status(),
+    ).toBe(403);
+    expect(
+      (await action(1, { action: "member-roles", userId: ids[3], roleIds: [admin] })).status(),
+    ).toBe(403);
     expect((await action(2, { action: "remove", userId: ids[3] })).status()).toBe(403);
+    expect(
+      (
+        await action(3, {
+          action: "profile",
+          expectedUpdatedAt: new Date().toISOString(),
+          name: "Hijacked",
+          description: "",
+          region: "europe",
+          visibility: "PUBLIC",
+        })
+      ).status(),
+    ).toBe(403);
+    // A recruiter role below Officer with Manage roles: the officer may now hand out roles,
+    // but only those below their own, and grant only permissions they hold.
+    const recruiter = await (
+      await action(0, {
+        action: "role-create",
+        name: "Recruiter",
+        color: "green",
+        permissions: ["manageRoles", "inviteMembers"],
+      })
+    ).json();
+    expect(
+      (
+        await action(0, {
+          action: "member-roles",
+          userId: ids[2],
+          roleIds: [await roleId("Officer"), await roleId("Member"), recruiter.id],
+        })
+      ).status(),
+    ).toBe(200);
+    expect(
+      (await action(2, { action: "member-roles", userId: ids[3], roleIds: [admin] })).status(),
+    ).toBe(403);
+    expect(
+      (await action(2, { action: "member-roles", userId: ids[1], roleIds: [] })).status(),
+    ).toBe(403);
+    expect(
+      (
+        await action(2, {
+          action: "role-update",
+          roleId: await roleId("Officer"),
+          name: "Boss",
+          color: "red",
+          permissions: [],
+        })
+      ).status(),
+    ).toBe(403);
+    expect(
+      (
+        await action(2, {
+          action: "role-create",
+          name: "Usurper",
+          color: "red",
+          permissions: ["manageTeam"],
+        })
+      ).status(),
+    ).toBe(403);
+    expect((await action(2, { action: "role-delete", roleId: admin })).status()).toBe(403);
+    // Moving a role among those below you works; past your own role it does not.
+    expect(
+      (await action(2, { action: "role-move", roleId: recruiter.id, direction: "up" })).status(),
+    ).toBe(200);
+    expect(
+      (await action(2, { action: "role-move", roleId: recruiter.id, direction: "up" })).status(),
+    ).toBe(403);
+    expect(await held(ids[3])).toEqual(["Member"]);
+    expect(
+      (await db.groupCustomRole.findUniqueOrThrow({ where: { id: await roleId("Officer") } }))
+        .permissions,
+    ).toBe(484);
+    const caller = await action(2, {
+      action: "role-create",
+      name: "Caller",
+      color: "violet",
+      permissions: ["inviteMembers"],
+    });
+    expect(caller.status()).toBe(200);
+    const callerId = (await caller.json()).id;
+    expect(
+      (
+        await action(2, {
+          action: "member-roles",
+          userId: ids[3],
+          roleIds: [await roleId("Member"), callerId],
+        })
+      ).status(),
+    ).toBe(200);
+    expect(await held(ids[3])).toEqual(["Caller", "Member"]);
+    // The default role cannot be deleted; an ordinary one can, and its holders lose it.
+    expect(
+      (await action(0, { action: "role-delete", roleId: await roleId("Member") })).status(),
+    ).toBe(409);
+    expect((await action(2, { action: "role-delete", roleId: callerId })).status()).toBe(200);
+    expect(await held(ids[3])).toEqual(["Member"]);
     await officerPage.reload();
     await officerPage.getByRole("tab", { name: "Announcements", exact: true }).click();
     await officerPage.getByLabel("Announcement title").fill("Secret group strategy");
@@ -238,7 +371,8 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     ).toBeVisible();
     expect((await action(0, { action: "transfer", userId: ids[1] })).status()).toBe(200);
     expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).ownerId).toBe(ids[1]);
-    expect(await db.groupMember.count({ where: { groupId, role: "OWNER" } })).toBe(1);
+    // The previous owner keeps the team's highest role.
+    expect(await held(ids[0])).toEqual(["Admin"]);
     expect((await action(1, { action: "leave" })).status()).toBe(409);
     expect((await action(0, { action: "leave" })).status()).toBe(200);
     expect(

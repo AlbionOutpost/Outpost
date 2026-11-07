@@ -50,7 +50,13 @@ export const GET = apiHandler("account.export", async () => {
         },
         include: { versions: true },
       },
-      memberships: { select: { groupId: true, role: true, joinedAt: true } },
+      memberships: {
+        select: {
+          groupId: true,
+          joinedAt: true,
+          roles: { select: { role: { select: { name: true, permissions: true } } } },
+        },
+      },
       // Shared ledgers may have been edited by other team members. Export only
       // the actor's attribution metadata while their current membership permits
       // viewing it; do not leak a revoked team's latest financial notes.

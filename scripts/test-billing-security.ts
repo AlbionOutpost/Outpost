@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { db } from "../src/lib/db";
 import { mutateGroup, acceptInvitation } from "../src/lib/groups/service";
+import { seedTeamRoles } from "../src/lib/groups/roles";
 import { applySubscription } from "../src/lib/billing/plan";
 import { beginCheckout, resolveCheckout, updateCheckout } from "../src/lib/billing/checkout";
 import { verifyDeletionBilling, deleteAccountRecord } from "../src/lib/account-deletion";
@@ -143,16 +144,29 @@ try {
     },
   });
   groupId = group.id;
+  await seedTeamRoles(db, groupId);
+  const officer = await db.groupCustomRole.findFirstOrThrow({
+    where: { groupId, name: "Officer" },
+  });
   for (const mode of ["remove", "demote", "leave", "legacy"] as const) {
     await db.groupMember.upsert({
       where: { groupId_userId: { groupId, userId: users[1] } },
       create: { groupId, userId: users[1], role: "OFFICER" },
       update: { role: "OFFICER" },
     });
+    await db.groupRoleAssignment.upsert({
+      where: { roleId_userId: { roleId: officer.id, userId: users[1] } },
+      create: { groupId, userId: users[1], roleId: officer.id },
+      update: {},
+    });
     const invitation = await mutateGroup(groupId, users[1], { action: "invite", hours: 1 });
     if (!("path" in invitation)) throw new Error("Invitation result missing");
     if (mode === "demote")
-      await mutateGroup(groupId, users[0], { action: "role", userId: users[1], role: "MEMBER" });
+      await mutateGroup(groupId, users[0], {
+        action: "member-roles",
+        userId: users[1],
+        roleIds: [],
+      });
     else if (mode === "legacy")
       await db.groupMember.delete({ where: { groupId_userId: { groupId, userId: users[1] } } });
     else

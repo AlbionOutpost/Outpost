@@ -1,20 +1,18 @@
 import { describe, expect, it } from "vitest";
-import snapshot from "../data/catalog/ao-snapshot-20260712.json";
+import { existsSync } from "node:fs";
 import { contentTypes } from "../src/lib/builds/validation";
 import {
   crestColors,
-  crestItems,
+  crestCharges,
   decodeActivities,
-  defaultCrestColor,
+  defaultCrest,
+  resolveCrestCharge,
   encodeActivities,
   resolveCrestColor,
   teamActivities,
 } from "../src/lib/groups/crest";
 import { groupAction } from "../src/lib/groups/validation";
 
-const catalog = new Map(
-  (snapshot as { items: { id: string; name: string }[] }).items.map((i) => [i.id, i.name]),
-);
 const profile = {
   action: "profile",
   expectedUpdatedAt: "2026-11-06T12:00:00.000Z",
@@ -25,25 +23,29 @@ const profile = {
 };
 
 describe("team crest", () => {
-  it("offers only items from the pinned catalog, under their catalog names", () => {
-    for (const [, id, name] of crestItems) expect(catalog.get(id), id).toBe(name);
-    expect(new Set(crestItems.map(([, id]) => id)).size).toBe(crestItems.length);
+  it("offers each painted symbol and shield once, each with its artwork", () => {
+    expect(new Set(crestCharges).size).toBe(crestCharges.length);
+    expect(new Set(crestColors).size).toBe(crestColors.length);
+    for (const c of crestCharges)
+      expect(existsSync(`public/albion/charges/${c}.webp`), c).toBe(true);
+    for (const c of crestColors)
+      expect(existsSync(`public/albion/crests/crest-${c}.webp`), c).toBe(true);
   });
 
   it("keeps the team activities in step with the build activities", () => {
     expect([...teamActivities]).toEqual(contentTypes.filter((t) => t !== "Other"));
   });
 
-  it("accepts a listed item and palette colour", () => {
+  it("accepts a listed symbol and shield", () => {
     const parsed = groupAction.parse({
       ...profile,
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
       activities: ["ZvZ", "Arena"],
       recruiting: false,
     });
     expect(parsed).toMatchObject({
-      crestItem: "T8_2H_CLAYMORE",
+      crestItem: "wolf",
       crestColor: "red",
       activities: ",ZvZ,Arena,",
       recruiting: false,
@@ -62,6 +64,7 @@ describe("team crest", () => {
   it.each([
     { crestItem: "T8_MAIN_SWORD@3" },
     { crestItem: "T4_MAIN_SWORD" },
+    { crestItem: "dragon" },
     { crestItem: "https://example.com/logo.png" },
     { crestItem: "" },
     { crestColor: "#ff0000" },
@@ -84,10 +87,13 @@ describe("team crest", () => {
     expect(decodeActivities(null)).toEqual([]);
   });
 
-  it("gives an unset crest a stable palette colour and ignores unknown stored colours", () => {
-    expect(defaultCrestColor("Ironbound")).toBe(defaultCrestColor("Ironbound"));
-    expect(crestColors).toContain(defaultCrestColor("Ironbound"));
-    expect(resolveCrestColor("Ironbound", "violet")).toBe("violet");
-    expect(resolveCrestColor("Ironbound", "#123456")).toBe(defaultCrestColor("Ironbound"));
+  it("shows the default crest until one is picked, and for anything unknown or legacy", () => {
+    expect(resolveCrestColor(null)).toBe(defaultCrest.color);
+    expect(resolveCrestColor("violet")).toBe("violet");
+    expect(resolveCrestColor("#123456")).toBe(defaultCrest.color);
+    expect(resolveCrestColor("crimson")).toBe("red");
+    expect(resolveCrestCharge(null)).toBe(defaultCrest.charge);
+    expect(resolveCrestCharge("wolf")).toBe("wolf");
+    expect(resolveCrestCharge("T8_2H_CLAYMORE")).toBe(defaultCrest.charge);
   });
 });

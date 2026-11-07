@@ -1072,7 +1072,7 @@ export function BuildEditor({
               <Link className="button primary" href="/signin">
                 <LogIn size={16} aria-hidden="true" /> Sign in
               </Link>
-              <Link className="button secondary" href="/builds/library">
+              <Link className="button secondary" href="/builds?source=library">
                 Browse the library <ArrowRight size={16} aria-hidden="true" />
               </Link>
             </div>

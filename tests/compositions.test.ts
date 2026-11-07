@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { randomUUID } from "node:crypto";
 import { compositionInput, equipmentChoice } from "../src/lib/compositions/validation";
-import { canEditShared, canManageMembers } from "../src/lib/groups/permissions";
+import { can, resolveAccess, seededRoles } from "../src/lib/groups/permissions";
 const slot = () => ({
   id: randomUUID(),
   playerName: "",
@@ -58,9 +58,10 @@ describe("composition invariants", () => {
     expect(equipmentChoice.safeParse({ ...e, itemId: "T6_FAKE" }).success).toBe(false);
   });
   it("restricts officer/member powers", () => {
-    expect(canEditShared("OFFICER")).toBe(true);
-    expect(canManageMembers("OFFICER")).toBe(false);
-    expect(canEditShared("MEMBER")).toBe(false);
-    expect(canEditShared(null)).toBe(false);
+    const [, officer, member] = seededRoles.map((r) => resolveAccess(false, [r]));
+    expect(can(officer, "manageComps")).toBe(true);
+    expect(can(officer, "manageTeam")).toBe(false);
+    expect(can(member, "manageComps")).toBe(false);
+    expect(can(null, "manageComps")).toBe(false);
   });
 });

@@ -46,9 +46,9 @@ try {
   for (const path of [
     "/",
     "/builds/new",
-    "/builds/library",
+    "/builds?source=library",
     "/builds/library/battleaxe-mist-build",
-    "/compositions/library",
+    "/compositions?source=library",
     "/guides",
     "/guides/albion-journal-guide",
     "/tools/fishing",

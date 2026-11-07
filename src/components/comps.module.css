@@ -646,27 +646,26 @@
   :global(.app.outpost) .panel.panel {
     padding: var(--space-4);
   }
-  /* A lone search keeps its button beside it; with a select, fields stack */
+  /* A lone search keeps its button beside it; with a select, the select takes the button's
+     place. The fields name themselves (search icon and placeholder, "All activities"), so
+     their labels stay for screen readers only and the first comp shows in the first screen */
   :global(.app.outpost) .filters.filters {
-    padding: var(--space-4);
+    padding: var(--space-3);
   }
   :global(.app.outpost) .filters.hasSelect {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 150px);
   }
-  /* The comp tabs wrap rather than run off the edge; without their icons the three fit one
-     row at 390, so the first comp shows inside the first screen */
-  :global(.app.outpost) .page :global(.masthead-tabs) {
-    flex-wrap: wrap;
-    margin-inline: 0;
-    padding-inline: 0;
-    overflow: visible;
-    mask-image: none;
-  }
-  :global(.app.outpost) .page :global(.masthead-tabs) > a {
-    min-height: 40px;
-  }
-  :global(.app.outpost) .page :global(.masthead-tabs) > a > svg {
+  /* Enter searches and the activity applies when chosen, so phones drop the button */
+  :global(.app.outpost) .hasSelect > button {
     display: none;
+  }
+  .hasSelect .fieldName {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   .grid {
     grid-template-columns: minmax(0, 1fr);
@@ -1199,5 +1198,24 @@
   }
   :global(.app.outpost) .rowSelect.rowSelect {
     grid-template-columns: 12px 44px minmax(0, 1fr);
+  }
+}
+
+/* The list's source (All · Player comps · Group Builds · My comps) over the results; on "All"
+   each source keeps its own heading */
+.sources {
+  margin-bottom: var(--space-3);
+}
+.sourceGroup + .sourceGroup {
+  margin-top: var(--space-8);
+}
+.sourceGroup > h3 {
+  margin: 0 0 var(--space-3);
+  color: var(--text);
+  font: 600 15px/1.3 var(--font-ui);
+}
+@media (max-width: 360px) {
+  :global(.app.outpost) .filters.hasSelect {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

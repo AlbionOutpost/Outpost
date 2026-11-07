@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Team roles — 7 November 2026
+
+- Teams have Discord-style roles: each Team keeps ordered roles with a name, a palette colour and nine permissions (manage team, manage roles, invite, review requests, remove members, events and announcements, comps, loot splits, shared builds). Members hold any number; rights are their union; the owner is the Leader with all of them. New Teams start with Admin, Officer and the default Member.
+- Hierarchy is enforced on the server inside each transaction: roles and members are managed only below your own highest role, and nobody grants a permission they lack. The crest and profile need Manage team.
+- Existing Teams were migrated to the same rights (Postgres `20261107180000_team_roles`, private-store step 11).
+- Settings has a Roles panel; the member list shows role chips and a Roles dialog.
+- Not done: a "see private content" permission; every member still sees the Team's events, comps, builds, announcements and loot splits.
+
 ## Homepage weight — 7 November 2026
 
 - Images: one variant step (`scripts/image-variants.mjs`) for activity art, emblems, every guide cover in the library JSON (`public/library/media/guides`) and the Supporter painting; guide cards, the landing guide stories, the Supporter band and the landing windows pick a width with `srcset`/`sizes`, and a cover's blurred backdrop uses its narrowest file. The first `/guides` card loads eagerly with high priority (it is the LCP). `--check` also catches a repainted source (hash) and leftover variants. Local images on `/` after a full scroll: 1,126 → 718 KB at 412px, 1,199 → 769 KB at 1350px.
@@ -123,6 +131,12 @@ Open items found on the way:
 - First page of the inner-page pass: sticky search rail, an item hero with lowest sell / highest buy / newest observation, a well table of city orders with spread, Lowest/Highest tags, per-price ages and Stale chips, a stacked two-line layout on phones, a selected-city detail that moves Price history to that city, and the landing chart for history (also on Gold, with hour labels for hourly data). Research list and watchlist open directly in their tabs.
 - 369 legacy market selectors removed from ten global stylesheets; the page's rules live in `market-explorer.css` and `history.css`.
 
+## Shipped — One builds list, one comps list (7 Nov)
+
+- `/builds` lists community and library builds together with a source switch (All · Community · Library) beside the weapon, activity, playstyle and search filters; `/builds/library` list URLs 308-redirect to `/builds?source=library` keeping region and filters. Build pages are unchanged.
+- `/compositions` lists player comps and Group Builds together (All · Player comps · Group Builds · My comps) with an activity filter; `/compositions/library` list URLs redirect the same way. `CompTabs` and the library tile grid CSS are gone.
+- One activity filter covers both vocabularies: library activities and player content types are paired only where they are the same activity (`src/lib/source-filter.ts`).
+
 ## Shipped — Build library inner page (1 Nov)
 
 - Library windows lead with the loadout board beside the weapon, author, activity chip, abilities and notes; titles get two lines; empty notes are no longer printed; phones show the date beside the author and drop the caption's duplicate (cards 178px).
@@ -186,7 +200,7 @@ Open items found on the way:
 
 - **Supporter** (`/supporter`; `/premium` redirects): a monthly Stripe subscription that removes advertising and unlocks running a Team. Plan columns on `User`, Stripe REST client without the SDK (`src/lib/billing/stripe.ts`), checkout and portal routes, a signature-verified webhook that re-reads the subscription before writing, gates in `src/lib/billing/gate.ts` (create a workspace; manage one — the owner's plan), settings billing section, honest states while billing is off. Switch-on steps in OPERATIONS.
 - **Advertising**: `AdSlot` placements `hub` (after a hub's list) and `article` (after a guide or library build), one per page, reserved height, hidden for Supporters; unit ids from `NEXT_PUBLIC_ADSENSE_SLOT_HUB` / `_ARTICLE`.
-- **Page map**: kill and death feed are one route (`/tools/kill-feed?view=deaths`; `/tools/death-feed` redirects); gold history joins the Market Explorer tabs; Comps and Group Builds share one tab row; the header's tools menu is generated from the tool directory; "About market data" and "Reference tables" are linked from the footer. Builds (`/builds` community, `/builds/library` archive) and Comps keep separate addresses because they are different data sources with indexed URLs; they already share one masthead and tab row. Favorites stays a tab of Builds; `/timers` is the detail of the dashboard's summary; `/items`, `/market-data` and `/tools/reference` are different things (catalog, data coverage, game tables).
+- **Page map**: kill and death feed are one route (`/tools/kill-feed?view=deaths`; `/tools/death-feed` redirects); gold history joins the Market Explorer tabs; Comps and Group Builds share one list (7 Nov); the header's tools menu is generated from the tool directory; "About market data" and "Reference tables" are linked from the footer. Builds (`/builds` community, `/builds/library` archive) and Comps keep separate addresses because they are different data sources with indexed URLs; they already share one masthead and tab row. Favorites stays a tab of Builds; `/timers` is the detail of the dashboard's summary; `/items`, `/market-data` and `/tools/reference` are different things (catalog, data coverage, game tables).
 
 ## Shipped — surface system across the site (31 Oct)
 

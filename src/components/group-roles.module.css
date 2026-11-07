@@ -1,0 +1,145 @@
+/* Team roles: the ordered role list in Settings, its editor and the role chips on members. */
+.roleDot {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--role-color, var(--muted));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--role-color, var(--muted)) 22%, transparent);
+}
+/* Each palette name maps to an existing token; a stored colour is never used as CSS. */
+.tone[data-role-color="muted"] {
+  --role-color: var(--muted);
+}
+.tone[data-role-color="ember"] {
+  --role-color: var(--accent);
+}
+.tone[data-role-color="gold"] {
+  --role-color: var(--warning);
+}
+.tone[data-role-color="green"] {
+  --role-color: var(--success);
+}
+.tone[data-role-color="teal"] {
+  --role-color: var(--role-healer);
+}
+.tone[data-role-color="blue"] {
+  --role-color: var(--role-support);
+}
+.tone[data-role-color="violet"] {
+  --role-color: var(--role-dps);
+}
+.tone[data-role-color="red"] {
+  --role-color: var(--error);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 22px;
+  padding: 0 8px;
+  border: 1px solid color-mix(in srgb, var(--role-color, var(--muted)) 45%, var(--well-border));
+  border-radius: 999px;
+  color: var(--secondary);
+  font: 600 12px/1.2 var(--font-ui);
+  white-space: nowrap;
+}
+.chip > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chip::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--role-color, var(--muted));
+}
+.order {
+  display: inline-flex;
+  gap: 4px;
+}
+.order > button {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--secondary);
+  cursor: pointer;
+}
+.order > button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.order > button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.permissions {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.permissions > legend,
+.colorField > legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.permissions > label {
+  padding: 10px 12px;
+}
+.permissions > label:has(> input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.colorField {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.colorField :global(.segmented) > label {
+  flex: 0 1 auto;
+  text-transform: capitalize;
+}
+.editorActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.editorActions > span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.assign {
+  display: grid;
+  gap: var(--space-2);
+}
+.assign > label {
+  padding: 8px 12px;
+}
+.assign > label:has(> input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+@media (max-width: 700px) {
+  .roleRow {
+    flex-wrap: wrap;
+  }
+}

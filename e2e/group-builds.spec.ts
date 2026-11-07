@@ -7,10 +7,17 @@ test("group builds are discoverable and retain every member while presentation c
 }) => {
   await page.goto("/compositions");
   await page
-    .getByRole("navigation", { name: "Comp collections" })
+    .getByRole("navigation", { name: "Comp source" })
     .getByRole("link", { name: "Group Builds", exact: true })
     .click();
-  await expect(page.getByRole("heading", { name: "Group Builds", exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/compositions\?source=library/);
+  await expect(page.getByRole("heading", { name: /^[\d,]+ Group Builds$/ })).toBeVisible();
+  // The old list URL redirects to the merged list, keeping its filters and server.
+  const old = await page.request.get("/compositions/library?q=zvz&page=2&region=asia", {
+    maxRedirects: 0,
+  });
+  expect(old.status()).toBe(308);
+  expect(old.headers().location).toBe("/compositions?source=library&q=zvz&page=2&region=asia");
   await page.goto("/compositions/library/dreamteam?region=asia");
   // Starts as one build window per member, each opening that member's build; the roster rows
   // are one click away.

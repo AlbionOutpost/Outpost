@@ -1,7 +1,8 @@
 import { db, databaseService } from "../db";
 import { Prisma } from "../prisma-runtime";
 import { HttpError } from "../http-error";
-import { canEditShared } from "./permissions";
+import { can } from "./permissions";
+import { loadTeamAccess } from "./roles";
 import { allocateLoot, lootSave } from "./loot";
 import { z } from "zod";
 
@@ -12,18 +13,16 @@ async function localTeamLoot(groupId: string, userId: string, input?: unknown) {
   return db
     .$transaction(
       async (tx) => {
-        const member = await tx.groupMember.findUnique({
-          where: { groupId_userId: { groupId, userId } },
-        });
-        if (!member) throw new HttpError(404, "Team not found");
+        const access = await loadTeamAccess(tx, groupId, userId);
+        if (!access) throw new HttpError(404, "Team not found");
         if (!parsed)
           return tx.groupLootSplit.findMany({
             where: { groupId },
             orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
             take: 50,
           });
-        if (!canEditShared(member.role))
-          throw new HttpError(403, "Officers and administrators manage team loot splits");
+        if (!can(access, "manageLoot"))
+          throw new HttpError(403, "Saving loot splits needs the Manage loot splits permission");
         const eligible = await tx.groupMember.count({
           where: {
             groupId,

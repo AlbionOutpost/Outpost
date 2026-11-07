@@ -2,17 +2,17 @@
 import { useState } from "react";
 import {
   crestColors,
-  crestItems,
+  crestCharges,
+  defaultCrest,
+  resolveCrestCharge,
   resolveCrestColor,
   teamActivities,
   type CrestColor,
 } from "@/lib/groups/crest";
-import { ItemIcon } from "./item-icon";
 import { TeamMark } from "./group-parts";
 import styles from "./teams.module.css";
 
 const colourName = (c: string) => c.charAt(0).toUpperCase() + c.slice(1);
-const groups = [...new Set(crestItems.map(([group]) => group))];
 
 /** Read the identity fields back out of a form, in the shape the Team APIs take. */
 export function identityFromForm(f: FormData) {
@@ -42,8 +42,8 @@ export function TeamIdentityFields({
   activities?: readonly string[];
   recruiting?: boolean;
 }) {
-  const [item, setItem] = useState(crestItem ?? "");
-  const [color, setColor] = useState<CrestColor>(resolveCrestColor(name || "Team", crestColor));
+  const [item, setItem] = useState<string>(resolveCrestCharge(crestItem));
+  const [color, setColor] = useState<CrestColor>(resolveCrestColor(crestColor));
   const [plays, setPlays] = useState<string[]>([...activities]);
   return (
     <div className={styles.identity}>
@@ -51,7 +51,7 @@ export function TeamIdentityFields({
         <legend>Crest</legend>
         <div className={styles.crestPreview}>
           <TeamMark name={name || "Team"} crestItem={item} crestColor={color} />
-          <p>Pick a shield and an item for your crest, or keep the team&apos;s initials.</p>
+          <p>Pick a shield and a symbol. New teams start on the Outpost tower.</p>
         </div>
         <div className={styles.swatches} role="radiogroup" aria-label="Crest shield">
           {crestColors.map((c) => (
@@ -72,37 +72,24 @@ export function TeamIdentityFields({
             </label>
           ))}
         </div>
-        <div className={styles.charges} role="radiogroup" aria-label="Crest item">
-          <label className={styles.charge} title="Initials">
-            <input
-              type="radio"
-              name="crestItem"
-              value=""
-              checked={!item}
-              onChange={() => setItem("")}
-            />
-            <b className={styles.chargeInitials} aria-hidden="true">
-              Aa
-            </b>
-            <span className="sr-only">Initials</span>
-          </label>
-          {groups.map((group) =>
-            crestItems
-              .filter(([g]) => g === group)
-              .map(([, id, label]) => (
-                <label key={id} className={styles.charge} title={label}>
-                  <input
-                    type="radio"
-                    name="crestItem"
-                    value={id}
-                    checked={item === id}
-                    onChange={() => setItem(id)}
-                  />
-                  <ItemIcon id={id} size={40} />
-                  <span className="sr-only">{label}</span>
-                </label>
-              )),
-          )}
+        <div className={styles.charges} role="radiogroup" aria-label="Crest symbol">
+          {crestCharges.map((c) => (
+            <label key={c} className={styles.charge} title={colourName(c)}>
+              <input
+                type="radio"
+                name="crestItem"
+                value={c}
+                checked={item === c}
+                onChange={() => setItem(c)}
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/albion/charges/${c}.webp`} alt="" width={36} height={36} />
+              <span className="sr-only">
+                {colourName(c)}
+                {c === defaultCrest.charge ? " (default)" : ""}
+              </span>
+            </label>
+          ))}
         </div>
       </fieldset>
       <fieldset className={styles.playsPicker}>

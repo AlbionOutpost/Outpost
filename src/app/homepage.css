@@ -981,7 +981,7 @@
   list-style: none;
 }
 /* ---------- Motion ----------
-   The hero settles in on arrival (painting eases back, copy rises out of a mask line by line),
+   The hero settles in on arrival (painting eases back, copy lifts a few pixels, already painted),
    the windows deal in after it, and every section below rises into place as it scrolls into
    view. Only transforms and clip paths move, so text never fades through low contrast and a
    browser without scroll timelines simply shows everything in place. */
@@ -989,11 +989,16 @@
   .app.outpost.home-route .site-backdrop {
     animation: landing-settle 2600ms var(--ease-out-expo) both;
   }
-  .app.outpost .landing-hero-copy > *,
-  .app.outpost .landing-hero h1 em,
   .app.outpost .landing-stats > div {
     animation: landing-rise 1100ms var(--ease-out-expo) both;
     animation-delay: var(--enter, 0ms);
+  }
+  /* The hero copy is painted at once (it is the page's largest paint) and only lifts a little,
+     so the first paint never waits on the entrance. */
+  .app.outpost .landing-hero-copy > *,
+  .app.outpost .landing-hero h1 em {
+    animation: landing-lift 600ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--enter, 0ms) / 3);
   }
   .app.outpost .landing-hero h1 em {
     display: inline-block;
@@ -1042,6 +1047,11 @@
     }
     to {
       scale: 1;
+    }
+  }
+  @keyframes landing-lift {
+    from {
+      translate: 0 10px;
     }
   }
   @keyframes landing-rise {

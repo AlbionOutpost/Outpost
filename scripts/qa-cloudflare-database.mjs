@@ -301,6 +301,12 @@ try {
     "removed invitation issuer loses all outstanding admission capabilities",
     async () => {
       await query("groupMember", "create", { data: { groupId, userId: userB, role: "OFFICER" } });
+      const officer = await query("groupCustomRole", "create", {
+        data: { groupId, name: "Officer", color: "blue", position: 2, permissions: 484 },
+      });
+      await query("groupRoleAssignment", "create", {
+        data: { groupId, userId: userB, roleId: officer.id },
+      });
       const invitation = await service("mutateGroup", groupId, userB, {
         action: "invite",
         hours: 1,

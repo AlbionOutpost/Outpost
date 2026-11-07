@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <JsonLd
         data={breadcrumbList([
           { name: "Home", path: "/" },
-          { name: "Group Builds", path: "/compositions/library" },
+          { name: "Comps", path: "/compositions" },
           {
             name: composition.title,
             path: `/compositions/library/${encodeURIComponent(composition.slug)}`,
@@ -79,7 +79,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <span className="landing-chip is-muted">By {composition.author}</span>
           {composition.upvotes != null && <HeartChip count={composition.upvotes} />}
         </div>
-        <Link className="pill-link is-small masthead-back" href="/compositions/library">
+        <Link className="pill-link is-small masthead-back" href="/compositions?source=library">
           <ArrowLeft size={14} aria-hidden="true" /> All Group Builds
         </Link>
       </WorkspaceHeading>

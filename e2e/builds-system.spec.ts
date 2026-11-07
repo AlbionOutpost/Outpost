@@ -9,7 +9,17 @@ test("library discovery keeps URL filters, region and device collections through
   page,
 }) => {
   test.setTimeout(60000);
+  // The old library list URL redirects to the merged list's Library source with every filter.
+  const old = await page.request.get(
+    "/builds/library?family=axe&category=MISTS_SOLO&sort=newest&region=asia",
+    { maxRedirects: 0 },
+  );
+  expect(old.status()).toBe(308);
+  expect(old.headers().location).toBe(
+    "/builds?source=library&family=axe&category=MISTS_SOLO&sort=recent&region=asia",
+  );
   await page.goto("/builds/library?family=axe&category=MISTS_SOLO&sort=title&region=asia");
+  await expect(page).toHaveURL(/\/builds\?source=library&/);
   const cards = page.locator(".library-build-card");
   await expect(cards.first()).toBeVisible();
   await page.getByRole("searchbox", { name: "Search", exact: true }).fill("Battleaxe");
@@ -19,7 +29,7 @@ test("library discovery keeps URL filters, region and device collections through
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   await expect(cards.first()).toContainText(/Battleaxe/i);
   await page.getByRole("link", { name: "List view", exact: true }).click();
-  await expect(page.locator(".library-page")).toHaveClass(/view-list/);
+  await expect(page.locator(".ecosystem-library-page")).toHaveClass(/view-list/);
   expect(new URL(page.url()).searchParams.get("region")).toBe("asia");
   const title = await cards.first().locator("h2").innerText(),
     save = cards.first().locator(".library-device-save");
@@ -136,7 +146,7 @@ test("mobile library filters use a keyboard drawer and retain real paginated res
     .getByRole("searchbox", { name: "Search", exact: true })
     .fill("no-outpost-build-948321");
   await expect(page).toHaveURL(/q=no-outpost-build-948321/);
-  await expect(page.locator(".library-build-grid .library-build-card")).toHaveCount(0);
+  await expect(page.locator(".build-discovery-results > .account-build-grid > *")).toHaveCount(0);
   await expect(page.locator("main")).toContainText(/No loadouts/);
 });
 

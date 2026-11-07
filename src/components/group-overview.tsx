@@ -17,7 +17,7 @@ import styles from "./teams.module.css";
  * empty wells under them don't repeat them.
  */
 export function GroupOverview({ ctx }: { ctx: TeamContext }) {
-  const { data, editor, now, setTab } = ctx;
+  const { data, now, setTab, can } = ctx;
   const upcoming = data.events.filter((e) => isUpcoming(e, now));
   const next = upcoming[0];
   const more = (label: string, tab: Parameters<TeamContext["setTab"]>[0]) => (
@@ -102,7 +102,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
               title="No event scheduled"
               line="Set a time, the comp and the voice channel; members answer with their RSVP."
               action={
-                editor ? (
+                can("manageEvents") ? (
                   <button type="button" className="button secondary" onClick={ctx.newEvent}>
                     Schedule an event
                   </button>
@@ -138,7 +138,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
                   title="No shared comps yet"
                   line="Save a comp to this team so every member sees the same roster."
                   action={
-                    editor ? (
+                    can("manageComps") ? (
                       <Link className="button secondary" href="/compositions/new">
                         Plan a comp
                       </Link>
@@ -172,7 +172,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
                   title="No shared builds yet"
                   line="Copy a build into the team so members gear the same set."
                   action={
-                    editor ? (
+                    can("manageBuilds") ? (
                       <button
                         type="button"
                         className="button secondary"
@@ -194,7 +194,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             id="team-latest-news"
             emblem="team-announce"
             title="Announcements"
-            line={data.announcements.length ? "Newest first" : "News from the officers"}
+            line={data.announcements.length ? "Newest first" : "News from the leaders"}
             actions={data.announcements.length ? more("View all", "Announcements") : undefined}
           />
           {data.announcements.length ? (
@@ -210,9 +210,9 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             <div className={styles.emptyStack}>
               <EmptyWell
                 title="No announcements yet"
-                line="Officers post here; every member reads it."
+                line="Leaders post here; every member reads it."
                 action={
-                  editor ? (
+                  can("manageEvents") ? (
                     <button
                       type="button"
                       className="button secondary"
@@ -237,7 +237,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           <ul className={styles.list}>
             {data.members.slice(0, 5).map((m) => (
               <li key={m.userId}>
-                <MemberRow member={m} />
+                <MemberRow member={m} roles={data.roles} />
               </li>
             ))}
           </ul>

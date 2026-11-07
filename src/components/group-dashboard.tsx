@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CalendarPlus, Plus, UserPlus } from "lucide-react";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
-import { canEditShared, canManageMembers } from "@/lib/groups/permissions";
+import type { TeamPermission } from "@/lib/groups/permissions";
 import { WorkspaceHeading } from "./workspace-heading";
 import { decodeActivities } from "@/lib/groups/crest";
-import { TeamActivities, TeamChips, TeamMark, roleLabel } from "./group-parts";
+import { TeamActivities, TeamChips, TeamMark, topRoleName } from "./group-parts";
 import { GroupOverview } from "./group-overview";
 import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
@@ -49,14 +49,16 @@ function subscribeTeamHash(callback: () => void) {
 }
 const teamHash = () => window.location.hash;
 
+/** The viewer's rights as the server resolved them for this render. */
+export type TeamViewerAccess = { owner: boolean; rank: number; permissions: string[] };
 /** What every tab of the workspace gets: the data, the viewer's rights and the one way to save. */
 export type TeamContext = {
   groupId: string;
   userId: string;
-  role: string;
+  access: TeamViewerAccess;
+  /** Whether the viewer holds a permission (shared edits are off while the plan has lapsed). */
+  can: (key: TeamPermission) => boolean;
   data: GroupDashboardData;
-  editor: boolean;
-  manager: boolean;
   busy: boolean;
   /** The time the page was rendered on the server, so upcoming/past splits match on hydration. */
   now: number;
@@ -67,12 +69,12 @@ export type TeamContext = {
 
 /**
  * A member's Team workspace: the team's masthead with its tabs, then one tab's panels. Every
- * change goes through `/api/groups/[id]/actions`, which re-checks membership and role; the
- * buttons shown here only follow the role the server reported.
+ * change goes through `/api/groups/[id]/actions`, which re-checks membership and permissions
+ * against current rows; the buttons shown here only follow the rights the server reported.
  */
 export function GroupDashboard({
   groupId,
-  role,
+  access,
   userId,
   data,
   group,
@@ -81,7 +83,7 @@ export function GroupDashboard({
   profile,
 }: {
   groupId: string;
-  role: string;
+  access: TeamViewerAccess;
   userId: string;
   data: GroupDashboardData;
   group: {
@@ -119,8 +121,9 @@ export function GroupDashboard({
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   }
   // While the owner's plan has lapsed the server refuses shared edits; hide their controls too.
-  const editor = canEditShared(role) && !gate,
-    manager = canManageMembers(role);
+  // Removing members never locks, so a lapsed team can still be wound down.
+  const can = (key: TeamPermission) =>
+    (access.owner || access.permissions.includes(key)) && (!gate || key === "removeMembers");
   async function run(action: Record<string, unknown>) {
     setBusy(true);
     setError("");
@@ -158,10 +161,9 @@ export function GroupDashboard({
   const ctx: TeamContext = {
     groupId,
     userId,
-    role,
+    access,
+    can,
     data,
-    editor,
-    manager,
     busy,
     now,
     run,
@@ -169,32 +171,33 @@ export function GroupDashboard({
     newEvent: () => setEventOpen(true),
   };
   // One primary action, the one that fits the open tab
-  const primary = !editor ? undefined : tab === "Overview" || tab === "Events" ? (
-    <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
-      <CalendarPlus size={17} aria-hidden="true" /> New event
-    </button>
-  ) : tab === "Loot splits" ? (
-    <button
-      type="button"
-      className="button primary"
-      onClick={() => window.dispatchEvent(new Event(newLootSplitEvent))}
-    >
-      <Plus size={17} aria-hidden="true" /> New split
-    </button>
-  ) : tab === "Members" ? (
-    <button
-      type="button"
-      className="button primary"
-      onClick={() => {
-        setTab("Settings");
-        requestAnimationFrame(() =>
-          document.getElementById("team-invites")?.scrollIntoView({ block: "center" }),
-        );
-      }}
-    >
-      <UserPlus size={17} aria-hidden="true" /> Invite
-    </button>
-  ) : undefined;
+  const primary =
+    (tab === "Overview" || tab === "Events") && can("manageEvents") ? (
+      <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
+        <CalendarPlus size={17} aria-hidden="true" /> New event
+      </button>
+    ) : tab === "Loot splits" && can("manageLoot") ? (
+      <button
+        type="button"
+        className="button primary"
+        onClick={() => window.dispatchEvent(new Event(newLootSplitEvent))}
+      >
+        <Plus size={17} aria-hidden="true" /> New split
+      </button>
+    ) : tab === "Members" && can("inviteMembers") ? (
+      <button
+        type="button"
+        className="button primary"
+        onClick={() => {
+          setTab("Settings");
+          requestAnimationFrame(() =>
+            document.getElementById("team-invites")?.scrollIntoView({ block: "center" }),
+          );
+        }}
+      >
+        <UserPlus size={17} aria-hidden="true" /> Invite
+      </button>
+    ) : undefined;
   return (
     <>
       <WorkspaceHeading
@@ -213,7 +216,14 @@ export function GroupDashboard({
           members={data.memberCount}
           recruiting={group.recruiting}
         >
-          <span className="landing-chip is-muted">Your role: {roleLabel(role)}</span>
+          <span className="landing-chip is-muted">
+            Your role:{" "}
+            {topRoleName(
+              access.owner,
+              data.roles,
+              data.members.find((m) => m.userId === userId)?.roleIds ?? [],
+            )}
+          </span>
         </TeamChips>
         <TeamActivities list={decodeActivities(group.activities)} />
         <div className={styles.tabRow}>
@@ -262,7 +272,7 @@ export function GroupDashboard({
             groupId={groupId}
             userId={userId}
             members={data.members}
-            editable={editor}
+            editable={can("manageLoot")}
             active={tab === "Loot splits"}
           />
         </div>
@@ -278,14 +288,14 @@ export function GroupDashboard({
           <GroupSettings ctx={ctx} inviteLink={inviteLink} profile={profile} />
         )}
       </div>
-      {editor && (
+      {can("manageEvents") && (
         <GroupEventDialog ctx={ctx} open={eventOpen} onClose={() => setEventOpen(false)} />
       )}
     </>
   );
 }
 
-/** A public team seen by someone outside it: ask the owner and admins to let you in. */
+/** A public team seen by someone outside it: ask its leaders to let you in. */
 export function GroupRequest({ groupId }: { groupId: string }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -304,7 +314,7 @@ export function GroupRequest({ groupId }: { groupId: string }) {
           });
           const body = await response.json();
           if (!response.ok) throw new Error(body.error);
-          setMessage("Membership request saved. An owner or admin must approve it.");
+          setMessage("Membership request saved. A team leader must approve it.");
         } catch (e) {
           setMessage(e instanceof Error ? e.message : "Could not submit request");
         } finally {

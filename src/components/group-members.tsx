@@ -6,23 +6,24 @@ import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import { StatusLine } from "./status-line";
 import { Pagination } from "./pagination";
-import { WellSelect } from "./well-select";
+import { EditorDialog } from "./editor-dialog";
+import { MemberRolesEditor, RoleChips } from "./group-roles";
 import { SearchInput } from "./field";
 import type { TeamContext } from "./group-dashboard";
-import { plural, roleLabel } from "./group-parts";
+import { plural } from "./group-parts";
 import { AvatarFrame } from "./avatar-frame";
 import styles from "./teams.module.css";
 
 type Member = GroupDashboardData["members"][number];
 
-/** A member as a well row: framed initial, name and role; the role control replaces the chip when allowed. */
+/** A member as a well row: framed initial, name and role chips; tools at the end when allowed. */
 export function MemberRow({
   member,
-  editable = false,
+  roles,
   children,
 }: {
   member: Member;
-  editable?: boolean;
+  roles: GroupDashboardData["roles"];
   children?: React.ReactNode;
 }) {
   return (
@@ -30,36 +31,40 @@ export function MemberRow({
       <AvatarFrame frame={member.avatarFrame} size={36} name={member.name} />
       <span className={styles.rowCopy}>
         <strong>{member.name}</strong>
+        <RoleChips roles={roles} held={member.roleIds} owner={member.owner} />
       </span>
-      {editable ? (
-        <span className={styles.rowTools}>{children}</span>
-      ) : (
-        <span className="landing-chip is-muted" data-role={member.role}>
-          {roleLabel(member.role)}
-        </span>
-      )}
+      {children && <span className={styles.rowTools}>{children}</span>}
     </div>
   );
 }
 
-/** The roster: search, then each member with the role, ownership and removal controls. */
+/** The roster: search, then each member with their roles and the role, ownership and removal controls. */
 export function GroupMembers({ ctx }: { ctx: TeamContext }) {
-  const { data, role, userId, manager, busy, run } = ctx;
+  const { data, access, userId, busy, run } = ctx;
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [assigning, setAssigning] = useState<Member | null>(null);
+  const roleNames = (m: Member) =>
+    data.roles
+      .filter((r) => m.roleIds.includes(r.id))
+      .map((r) => r.name)
+      .join(" ");
   const roster = data.members.filter((m) =>
-    `${m.name} ${m.role}`.toLowerCase().includes(query.trim().toLowerCase()),
+    `${m.name} ${m.owner ? "Leader" : ""} ${roleNames(m)}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
   );
   const pages = Math.max(1, Math.ceil(roster.length / 25));
   const current = Math.min(page, pages);
   const rows = roster.slice((current - 1) * 25, current * 25);
+  const outranks = (m: Member) => access.owner || m.rank < access.rank;
   return (
     <section className={`panel ${styles.panel}`} id="guild-members" aria-labelledby="team-members">
       <PanelHead
         id="team-members"
         emblem="team-roles"
         title="Members"
-        line={`${plural(data.memberCount, "member")} · owners and admins manage roles`}
+        line={`${plural(data.memberCount, "member")} · roles set what each one can do`}
       />
       <label>
         <span className="sr-only">Find a member</span>
@@ -83,72 +88,75 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
       )}
       {roster.length ? (
         <ul className={`${styles.list} ${styles.memberGrid}`}>
-          {rows.map((m) => (
-            <li key={m.userId}>
-              <MemberRow
-                member={m}
-                editable={
-                  m.role !== "OWNER" && (role === "OWNER" || (manager && m.userId !== userId))
-                }
-              >
-                {role === "OWNER" && m.role !== "OWNER" && (
-                  <WellSelect
-                    aria-label={`Role for ${m.name}`}
-                    value={m.role}
-                    disabled={busy}
-                    onChange={(e) =>
-                      run({ action: "role", userId: m.userId, role: e.target.value })
-                    }
-                  >
-                    {["ADMIN", "OFFICER", "MEMBER"].map((r) => (
-                      <option key={r} value={r}>
-                        {roleLabel(r)}
-                      </option>
-                    ))}
-                  </WellSelect>
-                )}
-                {/* The rare and destructive actions wait behind the row's menu */}
-                <RowMenu label={`More actions for ${m.name}`}>
-                  {role === "OWNER" && m.role !== "OWNER" && (
+          {rows.map((m) => {
+            const assign = ctx.can("manageRoles") && !m.owner;
+            const assignable = assign && (m.userId === userId || outranks(m));
+            const removable =
+              ctx.can("removeMembers") && !m.owner && m.userId !== userId && outranks(m);
+            const transferable = access.owner && !m.owner;
+            return (
+              <li key={m.userId}>
+                <MemberRow member={m} roles={data.roles}>
+                  {assign && (
                     <button
                       type="button"
-                      role="menuitem"
-                      disabled={busy}
-                      aria-label={`Transfer ownership to ${m.name}`}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Transfer ownership to ${m.name}? You will become an admin.`,
-                          )
-                        )
-                          run({ action: "transfer", userId: m.userId });
-                      }}
+                      className="button secondary"
+                      disabled={busy || !assignable}
+                      title={assignable ? undefined : "Only members below you"}
+                      aria-label={`Roles for ${m.name}`}
+                      onClick={() => setAssigning(m)}
                     >
-                      Make owner
+                      Roles
                     </button>
                   )}
-                  {manager && m.role !== "OWNER" && m.userId !== userId && (
-                    <button
-                      type="button"
-                      role="menuitem"
-                      data-tone="loss"
-                      disabled={busy}
-                      aria-label={`Remove ${m.name}`}
-                      onClick={() => run({ action: "remove", userId: m.userId })}
-                    >
-                      Remove from team
-                    </button>
+                  {/* The rare and destructive actions wait behind the row's menu */}
+                  {(transferable || removable) && (
+                    <RowMenu label={`More actions for ${m.name}`}>
+                      {transferable && (
+                        <button
+                          type="button"
+                          role="menuitem"
+                          disabled={busy}
+                          aria-label={`Transfer ownership to ${m.name}`}
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `Transfer ownership to ${m.name}? You keep the team's highest role.`,
+                              )
+                            )
+                              run({ action: "transfer", userId: m.userId });
+                          }}
+                        >
+                          Make owner
+                        </button>
+                      )}
+                      {removable && (
+                        <button
+                          type="button"
+                          role="menuitem"
+                          data-tone="loss"
+                          disabled={busy}
+                          aria-label={`Remove ${m.name}`}
+                          onClick={() => {
+                            if (window.confirm(`Remove ${m.name} from the team?`))
+                              run({ action: "remove", userId: m.userId });
+                          }}
+                        >
+                          Remove from team
+                        </button>
+                      )}
+                    </RowMenu>
                   )}
-                </RowMenu>
-              </MemberRow>
-            </li>
-          ))}
+                </MemberRow>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <EmptyWell
           emblem="team-roles"
           title="No loaded members match that search."
-          line="Search by name or by role, such as officer."
+          line="Search by name or by role, such as Officer."
           action={
             <button type="button" className="button secondary" onClick={() => setQuery("")}>
               Clear search
@@ -157,6 +165,15 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
         />
       )}
       <Pagination label="Member pages" page={current} pages={pages} onPage={setPage} />
+      <EditorDialog
+        open={assigning !== null}
+        title={`Roles for ${assigning?.name ?? "member"}`}
+        onClose={() => setAssigning(null)}
+      >
+        {assigning && (
+          <MemberRolesEditor ctx={ctx} member={assigning} onDone={() => setAssigning(null)} />
+        )}
+      </EditorDialog>
     </section>
   );
 }

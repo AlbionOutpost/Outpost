@@ -243,7 +243,7 @@ export function TeamLootWorkspace({
               line={
                 editable
                   ? "Fill in the split and save it to keep a record."
-                  : "Officers save splits here."
+                  : "Members with Manage loot splits save splits here."
               }
               action={
                 editable ? (

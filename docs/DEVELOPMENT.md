@@ -51,7 +51,7 @@ First-time setup: copy `.env.example` to `.env` and set `NEXTAUTH_SECRET` to ≥
 
 | Path                                                            | What lives there                                                                                                                   |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app`                                                       | App Router pages (57) and API routes (50), root `layout.tsx`, global stylesheets                                                   |
+| `src/app`                                                       | App Router pages (55) and API routes (50), root `layout.tsx`, global stylesheets                                                   |
 | `src/components`                                                | Shared and feature components (flat) — shell, search, item/spell icons, editors, calculators                                       |
 | `src/lib/albion`                                                | AODP clients, region config, calculators (`calculations`, `production`, `transport`, `farming`, `fishing`…), recipes and game JSON |
 | `src/lib/{builds,compositions,groups,community,catalog,timers}` | Domain validation, permissions and transactional services                                                                          |

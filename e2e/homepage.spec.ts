@@ -383,7 +383,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   await expect(activities).toHaveCount(6);
   await expect(activities.first().locator(".activity-artwork-link")).toHaveAttribute(
     "href",
-    "/builds/library?category=CRYSTAL_CREATURES&region=europe",
+    "/builds?source=library&category=CRYSTAL_CREATURES&region=europe",
   );
   await expect(activities.first().locator(".activity-artwork-link")).toContainText(
     /Crystal Creatures\s*1 build/i,
@@ -466,6 +466,17 @@ test("the Supporter plan pages do not exist while billing is off", async ({ page
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
     await expect(page.locator('meta[name="robots"][content*="noindex"]').first()).toBeAttached();
     await expect(page.locator("main")).not.toContainText(/\$|€|per month/);
+  }
+});
+
+test("the hero copy is painted on arrival, never masked by its entrance", async ({ page }) => {
+  // The lede is the page's largest paint; a clip-path entrance held it back from the first paint.
+  await page.goto("/?region=europe");
+  for (const selector of [".landing-hero h1", ".landing-lede", ".landing-hero .landing-actions"]) {
+    const node = page.locator(selector).first();
+    await expect(node).toBeVisible();
+    expect(await node.evaluate((n) => getComputedStyle(n).clipPath)).toBe("none");
+    expect(await node.evaluate((n) => getComputedStyle(n).opacity)).toBe("1");
   }
 });
 
