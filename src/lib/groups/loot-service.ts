@@ -3,7 +3,7 @@ import { Prisma } from "../prisma-runtime";
 import { HttpError } from "../http-error";
 import { can } from "./permissions";
 import { loadTeamAccess } from "./roles";
-import { allocateLoot, lootSave } from "./loot";
+import { allocateLoot, lootConfiguration, lootSave } from "./loot";
 import { z } from "zod";
 
 async function localTeamLoot(groupId: string, userId: string, input?: unknown) {
@@ -35,6 +35,34 @@ async function localTeamLoot(groupId: string, userId: string, input?: unknown) {
             "A participant is no longer a team member. Review the split before saving.",
           );
         allocateLoot(parsed.configuration);
+        // Guild tax goes into the team pot, so a split may only take the team's own rate (or keep
+        // the rate it was saved with); members can't set a rate of their choosing.
+        const tax = parsed.configuration.guildTaxPercent;
+        if (tax) {
+          const team = await tx.group.findUnique({
+            where: { id: groupId },
+            select: { guildTaxPercent: true },
+          });
+          const before = parsed.id
+            ? lootConfiguration.safeParse(
+                (
+                  await tx.groupLootSplit.findFirst({
+                    where: { id: parsed.id, groupId },
+                    select: { configuration: true },
+                  })
+                )?.configuration,
+              )
+            : null;
+          const same = (rate?: number) => rate !== undefined && Math.abs(rate - tax) < 1e-9;
+          if (
+            !same(team?.guildTaxPercent) &&
+            !(before?.success && same(before.data.guildTaxPercent))
+          )
+            throw new HttpError(
+              409,
+              `The team's guild tax is now ${team?.guildTaxPercent ?? 0}%. Turn Guild tax off and on to apply it.`,
+            );
+        }
         if (parsed.id) {
           const changed = await tx.groupLootSplit.updateMany({
             where: { id: parsed.id, groupId, version: parsed.version },

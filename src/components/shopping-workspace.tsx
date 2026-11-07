@@ -28,6 +28,7 @@ import { readShopping, writeShopping } from "./shopping-storage";
 import { fetchQuoteBatch, type MarketPrice } from "@/lib/albion/market-quotes";
 import { isStale } from "@/lib/albion/freshness";
 import styles from "./shopping-workspace.module.css";
+import { NumberField } from "./number-field";
 
 const money = (n: number | null) =>
   n === null ? "Prices needed" : n.toLocaleString("en-GB", { maximumFractionDigits: 2 });
@@ -326,13 +327,11 @@ export function ShoppingWorkspace() {
                 <CatalogItemPicker key={add.picks} label="Add an item" onSelect={addItem} />
               </div>
               <Field label="Quantity">
-                <input
-                  type="number"
-                  inputMode="numeric"
+                <NumberField
                   min={1}
                   max={1000000}
                   value={add.quantity}
-                  onChange={(e) => setAdd({ ...add, quantity: e.target.value })}
+                  onValueChange={(v) => setAdd({ ...add, quantity: v == null ? "" : String(v) })}
                 />
               </Field>
               <Field label="Buy in">
@@ -410,42 +409,37 @@ export function ShoppingWorkspace() {
                                   </div>
                                 </th>
                                 <td data-label="Need">
-                                  <input
+                                  <NumberField
                                     aria-label={`${row.name} required quantity`}
-                                    type="number"
                                     min={1}
                                     max={1000000}
                                     value={row.quantity}
-                                    onChange={(e) =>
-                                      update(key, { quantity: Number(e.target.value) })
-                                    }
+                                    onValueChange={(v) => update(key, { quantity: v ?? NaN })}
                                   />
                                 </td>
                                 <td data-label="Own">
-                                  <input
+                                  <NumberField
                                     aria-label={`${row.name} owned quantity`}
-                                    type="number"
                                     min={0}
                                     max={1000000}
                                     value={row.owned}
-                                    onChange={(e) => update(key, { owned: Number(e.target.value) })}
+                                    onValueChange={(v) => update(key, { owned: v ?? NaN })}
                                   />
                                 </td>
                                 <td className={styles.num} data-label="Buy">
                                   {row.buy}
                                 </td>
                                 <td data-label="Unit price">
-                                  <input
+                                  <NumberField
+                                    silver
                                     aria-label={`${row.name} unit price`}
-                                    type="number"
                                     min={0}
-                                    step="any"
+                                    decimals={2}
                                     placeholder="Add price"
                                     value={row.unitPrice ?? ""}
-                                    onChange={(e) =>
+                                    onValueChange={(v) =>
                                       update(key, {
-                                        unitPrice:
-                                          e.target.value === "" ? null : Number(e.target.value),
+                                        unitPrice: v,
                                         priceKind: "manual",
                                         observedAt: null,
                                       })
@@ -542,13 +536,12 @@ export function ShoppingWorkspace() {
                                 >
                                   <Minus size={14} aria-hidden="true" />
                                 </button>
-                                <input
+                                <NumberField
                                   aria-label={`${row.name} owned quantity`}
-                                  type="number"
                                   min={0}
                                   max={1000000}
                                   value={row.owned}
-                                  onChange={(e) => update(key, { owned: Number(e.target.value) })}
+                                  onValueChange={(v) => update(key, { owned: v ?? NaN })}
                                 />
                                 <button
                                   type="button"

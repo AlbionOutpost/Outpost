@@ -8,6 +8,7 @@ import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
+import { NumberField } from "./number-field";
 type Cost = {
   region: string;
   city: string;
@@ -117,14 +118,13 @@ export function BuildCost({ id }: { id: string }) {
             </label>
             <label className="build-cost-sets">
               <span>Sets</span>
-              <input
-                type="number"
+              <NumberField
                 min={1}
                 max={1000}
                 required
                 value={sets}
                 aria-label="Sets"
-                onChange={(e) => setSets(Number(e.target.value))}
+                onValueChange={(v) => setSets(v ?? NaN)}
               />
             </label>
             <button className="button secondary" disabled={busy}>

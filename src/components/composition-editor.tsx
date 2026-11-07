@@ -37,6 +37,7 @@ import { Disclosure } from "./disclosure";
 import { WellSelect } from "./well-select";
 import styles from "./comps.module.css";
 import { SearchInput } from "./field";
+import { NumberField } from "./number-field";
 function member(): MemberSlot {
   return {
     id: crypto.randomUUID(),
@@ -390,17 +391,15 @@ export function CompositionEditor({
       </span>
       <label className={styles.sizeCustom}>
         <span>Other</span>
-        <input
+        <NumberField
           aria-label="Custom comp size"
-          type="number"
-          inputMode="numeric"
           min={1}
           max={100}
           placeholder="1–100"
           value={
             draft.slots.length && !sizes.includes(draft.slots.length) ? draft.slots.length : ""
           }
-          onChange={(event) => resize(Number(event.target.value))}
+          onValueChange={(v) => v != null && resize(v)}
         />
       </label>
     </div>

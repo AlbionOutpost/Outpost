@@ -19,6 +19,7 @@ import { WellSelect } from "./well-select";
 import { Missing } from "./calculator-figures";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 const KEY = "outpost:avalon-map-v1";
 /** No painted Roads art yet; the neutral seal stands in (see the batch 4 report). */
 const EMBLEM = "tool-planner";
@@ -152,22 +153,20 @@ export function AvalonMapper() {
         </label>
         <label>
           Hours left
-          <input
-            type="number"
+          <NumberField
             min={0}
             max={48}
             value={form.hours}
-            onChange={(e) => setForm({ ...form, hours: Number(e.target.value) })}
+            onValueChange={(v) => setForm({ ...form, hours: v ?? NaN })}
           />
         </label>
         <label>
           Minutes
-          <input
-            type="number"
+          <NumberField
             min={0}
             max={59}
             value={form.minutes}
-            onChange={(e) => setForm({ ...form, minutes: Number(e.target.value) })}
+            onValueChange={(v) => setForm({ ...form, minutes: v ?? NaN })}
           />
         </label>
         <p className={s.help}>

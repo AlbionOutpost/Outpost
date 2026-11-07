@@ -43,6 +43,7 @@ import {
   readGuestBuildDraft,
   writeGuestBuildDraft,
 } from "@/lib/guest-build-storage";
+import { NumberField } from "./number-field";
 function buildValidationMessage(issue?: { path: PropertyKey[]; message: string }) {
   if (!issue) return "Review your equipment and build settings before saving.";
   if (issue.message === "Equipment slots must be unique")
@@ -830,23 +831,21 @@ export function BuildEditor({
               </label>
               <label>
                 <span>Player count</span>
-                <input
-                  type="number"
+                <NumberField
                   min={1}
                   max={400}
                   value={draft.playerCount}
-                  onChange={(e) => update("playerCount", Number(e.target.value))}
+                  onValueChange={(v) => update("playerCount", v ?? NaN)}
                 />
               </label>
               <label>
                 <span>Recommended IP</span>
-                <input
-                  type="number"
+                <NumberField
                   min={0}
                   max={4000}
                   value={draft.recommendedIP}
                   aria-describedby="editor-ip-help"
-                  onChange={(e) => update("recommendedIP", Number(e.target.value))}
+                  onValueChange={(v) => update("recommendedIP", v ?? NaN)}
                 />
                 <small id="editor-ip-help">Your estimate. 0 hides it.</small>
               </label>

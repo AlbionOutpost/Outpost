@@ -19,6 +19,7 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { SearchInput } from "./field";
+import { NumberField } from "./number-field";
 const groups = Object.entries(masteryGroups);
 const steps = ["mastery-board", "mastery-focus"];
 const specsOf = (ids: string[]) =>
@@ -134,15 +135,13 @@ export function MasteryPlanner() {
                   {category.specs.map((spec) => (
                     <li key={spec.id}>
                       <label htmlFor={`spec-${spec.id}`}>{spec.name}</label>
-                      <input
+                      <NumberField
                         id={`spec-${spec.id}`}
-                        type="number"
                         min={0}
                         max={100}
-                        step={1}
                         disabled={!loaded}
                         value={levels[spec.id] ?? 0}
-                        onChange={(e) => set(spec.id, Number(e.target.value))}
+                        onValueChange={(v) => set(spec.id, v ?? NaN)}
                       />
                     </li>
                   ))}

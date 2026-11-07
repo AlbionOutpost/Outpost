@@ -19,6 +19,7 @@ import type { transport } from "@/lib/albion/transport";
 import type { transportObservations } from "@/lib/albion/transport-prices";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 type Row = ReturnType<typeof transport> &
   ReturnType<typeof transportObservations> & { itemId: string };
 const itemPattern = /^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/;
@@ -179,25 +180,25 @@ export function OpportunityScanner() {
           </label>
           <label>
             Tax (%)
-            <input
-              type="number"
+            <NumberField
               min={0}
               max={100}
-              step="0.5"
+              step={0.5}
+              decimals={1}
               value={tax}
-              onChange={(e) => setTax(e.target.value)}
+              onValueChange={(v) => setTax(v == null ? "" : String(v))}
             />
           </label>
           {mode === "listing" && (
             <label>
               Setup fee (%)
-              <input
-                type="number"
+              <NumberField
                 min={0}
                 max={100}
-                step="0.5"
+                step={0.5}
+                decimals={1}
                 value={fee}
-                onChange={(e) => setFee(e.target.value)}
+                onValueChange={(v) => setFee(v == null ? "" : String(v))}
               />
             </label>
           )}

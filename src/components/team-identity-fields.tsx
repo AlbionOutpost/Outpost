@@ -9,7 +9,7 @@ import {
   teamActivities,
   type CrestColor,
 } from "@/lib/groups/crest";
-import { TeamMark } from "./group-parts";
+import { SwapCrest } from "./team-crest";
 import styles from "./teams.module.css";
 
 const colourName = (c: string) => c.charAt(0).toUpperCase() + c.slice(1);
@@ -25,18 +25,18 @@ export function identityFromForm(f: FormData) {
 }
 
 /**
- * The crest picker (a palette field and an item render, or the team's initials), up to three
+ * The crest picker (shield swatches and a symbol grid over a preview that swaps with a flip), up to three
  * activities and whether the team takes join requests. Plain form inputs, so the surrounding
  * form posts them; the server validates every value again.
  */
 export function TeamIdentityFields({
-  name,
   crestItem,
   crestColor,
   activities = [],
   recruiting = true,
 }: {
-  name: string;
+  /** Kept for callers; the crest no longer shows the team's name. */
+  name?: string;
   crestItem?: string | null;
   crestColor?: string | null;
   activities?: readonly string[];
@@ -50,7 +50,7 @@ export function TeamIdentityFields({
       <fieldset className={styles.crestPicker}>
         <legend>Crest</legend>
         <div className={styles.crestPreview}>
-          <TeamMark name={name || "Team"} crestItem={item} crestColor={color} />
+          <SwapCrest color={color} charge={item} />
           <p>Pick a shield and a symbol. New teams start on the Outpost tower.</p>
         </div>
         <div className={styles.swatches} role="radiogroup" aria-label="Crest shield">

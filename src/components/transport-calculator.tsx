@@ -38,6 +38,7 @@ import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 export type TransportPreselection = {
   item?: string;
   from?: string;
@@ -179,13 +180,13 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
   ) => (
     <label key={key}>
       {label}
-      <input
-        type="number"
+      <NumberField
         min={min}
-        step="any"
+        decimals={key === "quantity" ? 0 : 2}
+        silver={key === "costPerTrip"}
         disabled={key === "fee" && draft.saleMode === "instant"}
         value={Number.isNaN(draft[key]) ? "" : draft[key]}
-        onChange={(e) => update(key, e.target.value === "" ? NaN : Number(e.target.value))}
+        onValueChange={(v) => update(key, v ?? NaN)}
       />
     </label>
   );
@@ -364,17 +365,18 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             />
           </small>
         </span>
-        <input
+        <NumberField
+          silver
           className={s.matInput}
-          type="number"
           min={0}
+          decimals={2}
           aria-label={label}
           placeholder="Price"
           value={value ?? ""}
-          onChange={(e) =>
+          onValueChange={(v) =>
             update(key, {
               ...draft[key],
-              value: e.target.value === "" ? null : Number(e.target.value),
+              value: v,
               manual: true,
               quality: draft.quality,
             })

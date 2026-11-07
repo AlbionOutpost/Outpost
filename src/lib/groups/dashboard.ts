@@ -17,6 +17,7 @@ export async function groupDashboard(id: string, userId?: string) {
       crestColor: true,
       activities: true,
       recruiting: true,
+      guildTaxPercent: true,
       ownerId: true,
       createdAt: true,
       updatedAt: true,
@@ -35,7 +36,10 @@ export async function groupDashboard(id: string, userId?: string) {
     : null;
   if (!membership) {
     if (group.visibility !== "PUBLIC") throw new HttpError(404, "Group not found");
-    return { group, membership: null };
+    // The guild tax is the members' business.
+    const { guildTaxPercent: _, ...outside } = group;
+    void _;
+    return { group: outside, membership: null };
   }
   const access = resolveAccess(
     group.ownerId === membership.userId,
@@ -146,6 +150,7 @@ export async function groupDashboard(id: string, userId?: string) {
     },
     dashboard: {
       memberCount: group._count.members,
+      guildTaxPercent: group.guildTaxPercent,
       roles: roles.map(({ _count, permissions, ...role }) => ({
         ...role,
         permissions: fromMask(permissions),

@@ -24,6 +24,7 @@ import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
+import { NumberField } from "./number-field";
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined ? (
     <Unavailable />
@@ -170,17 +171,17 @@ export function FishingCalculator({
             />
           </small>
         </span>
-        <input
+        <NumberField
+          silver
           className={s.matInput}
-          type="number"
           aria-label={label}
           aria-describedby={`${instance}-${key}-source`}
           min={0}
           max={1e12}
-          step="any"
+          decimals={2}
           value={raw}
           placeholder="Price"
-          onChange={(event) => edit(key, event.target.value)}
+          onValueChange={(v) => edit(key, v == null ? "" : String(v))}
         />
         <span className={s.matTotal}>
           <span className="sr-only">Total </span>
@@ -265,23 +266,21 @@ export function FishingCalculator({
           <>
             <label>
               Fish quantity
-              <input
-                type="number"
+              <NumberField
                 min={1}
                 max={1000000}
                 value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                onValueChange={(v) => setQuantity(v ?? NaN)}
               />
             </label>
             <label>
               Chopped fish per raw fish
-              <input
-                type="number"
+              <NumberField
                 aria-label="Chopped fish per raw fish"
                 min={1}
                 max={10000}
                 value={yieldValue}
-                onChange={(e) => edit("yield", e.target.value)}
+                onValueChange={(v) => edit("yield", v == null ? "" : String(v))}
               />
             </label>
           </>
@@ -289,26 +288,24 @@ export function FishingCalculator({
           <>
             <label>
               Target fishing fame
-              <input
-                type="number"
+              <NumberField
                 min={1}
                 max={1e12}
                 value={target}
-                onChange={(e) => setTarget(Number(e.target.value))}
+                onValueChange={(v) => setTarget(v ?? NaN)}
               />
             </label>
             <label>
               Fame per consumed fish
-              <input
-                type="number"
+              <NumberField
                 min={0}
                 max={1e9}
-                step="any"
+                decimals={2}
                 aria-label="Fame per consumed fish"
                 aria-describedby={`${instance}-fame-help`}
                 value={fameValue}
                 placeholder="Your fame"
-                onChange={(e) => edit("fame", e.target.value)}
+                onValueChange={(v) => edit("fame", v == null ? "" : String(v))}
               />
             </label>
             <p id={`${instance}-fame-help`} className={s.help}>
@@ -322,26 +319,25 @@ export function FishingCalculator({
           <div className={s.fields}>
             <label>
               Purchase order fee (%)
-              <input
-                type="number"
+              <NumberField
                 min={0}
                 max={100}
-                step="any"
+                decimals={2}
                 value={purchaseFee}
-                onChange={(e) => setPurchaseFee(e.target.value)}
+                onValueChange={(v) => setPurchaseFee(v == null ? "" : String(v))}
               />
             </label>
             {mode === "chopping" && (
               <>
                 <label>
                   Total chopping cost · silver
-                  <input
-                    type="number"
+                  <NumberField
+                    silver
                     min={0}
                     max={1e12}
-                    step="any"
+                    decimals={2}
                     value={processingCost}
-                    onChange={(e) => setProcessingCost(e.target.value)}
+                    onValueChange={(v) => setProcessingCost(v == null ? "" : String(v))}
                   />
                 </label>
                 <label className={s.wide}>
@@ -425,14 +421,13 @@ export function FishingCalculator({
         <div className={s.fields}>
           <label>
             Total sale fees (%)
-            <input
-              type="number"
+            <NumberField
               min={0}
               max={100}
-              step="any"
+              decimals={2}
               value={saleFee}
               placeholder="Tax + listing"
-              onChange={(e) => setSaleFee(e.target.value)}
+              onValueChange={(v) => setSaleFee(v == null ? "" : String(v))}
             />
           </label>
           <p className={`${s.help} ${c.alignEnd}`}>

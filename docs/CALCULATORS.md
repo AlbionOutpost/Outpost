@@ -132,7 +132,7 @@ focusBenefit       = watered·(wateredYield − baseYield)/100·seedPrice
 
 - **Build cost** (`/api/builds/[id]/cost`): `sell_price_min` per slot at the build's quality in the chosen city, × sets (≤1000); null total if any slot is missing (`observed-costs.ts`, `loadout-quotes.ts`).
 - **Shopping** (`shopping.ts`): buy = max(0, required − owned); a source 0 is unavailable, a manual 0 is valid; lists merge only within one server.
-- **Loot split** (`lib/groups/loot.ts`): net = pool − expenses (BigInt); integer shares by weight; leftover silver goes 1 each to the largest remainders, ties by user ID.
+- **Loot split** (`lib/groups/loot.ts`): guild tax = ⌊pool × t ÷ 1000⌋ and each % expense = ⌊pool × p ÷ 1000⌋, with t and p the rates in tenths of a percent (both taken from the gross pool, rounded down to whole silver); silver expenses as entered; net = pool − guild tax − expenses (BigInt, never below 0: deductions over the pool are invalid); integer shares by weight; leftover silver goes 1 each to the largest remainders, ties by user ID. Guild tax + expenses + payouts always equal the pool. The rate on a split is the team's `guildTaxPercent` (0–100, one decimal) when Guild tax is on; the split keeps the rate it was saved with, and splits saved before kinds read as silver expenses with no tax. Reference cases (`tests/team-loot.test.ts`): 1,000,000 pool, 10 % tax, 50,000 repairs, 5 % caller → tax 100,000, expenses 100,000, shared **800,000** (400,000 × 2); 999 pool, 12.5 % tax, 33.3 % scout → 124 + 332, shared **543** (272 + 271).
 
 ## Saved scenarios
 
