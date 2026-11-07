@@ -70,8 +70,49 @@ export function safeGuideHref(value?: string) {
     return undefined;
   }
 }
+type Element = Exclude<GuideNode, string>;
+const isElement = (node: GuideNode): node is Element => typeof node !== "string";
+const text = (node: GuideNode): string =>
+  typeof node === "string" ? node : node.children.map(text).join("");
+const kids = (node: Element) =>
+  node.children.filter((child) => isElement(child) || child.trim() !== "");
+/** A figure the reader compares down a column: "15.25%", "+40", "1,200 IP", "22 hours". */
+const figure = (value: string) =>
+  /^[+−\-–~≈]?\s*[\d.,]+\s*(?:%|k|m|x|×|ip|silver|s|h|hours?|minutes?|seconds?|days?)?$/i.test(
+    value.trim(),
+  );
+/** The columns of a table whose every body cell is a figure; they set in tabular numbers. */
+function figureColumns(table: Element) {
+  const rows: Element[] = [];
+  const collect = (node: Element) =>
+    node.children.forEach((child) => {
+      if (!isElement(child)) return;
+      if (child.tag === "tr") rows.push(child);
+      else if (child.tag === "tbody") collect(child);
+    });
+  collect(table);
+  const cells = rows.map((row) => row.children.filter(isElement).filter((c) => c.tag === "td"));
+  const width = Math.max(0, ...cells.map((row) => row.length));
+  const columns = new Set<number>();
+  for (let i = 1; i < width; i++)
+    if (cells.length && cells.every((row) => row[i] && figure(text(row[i])))) columns.add(i);
+  return columns;
+}
+/** A list whose every item opens on a bold lead is a set of terms; when every lead is a short
+ * figure ("+40", "T4:") it is a set of figures. */
+function listKind(list: Element) {
+  const leads = kids(list).map((li) => {
+    const first = isElement(li) ? kids(li)[0] : undefined;
+    return first && isElement(first) && ["strong", "b"].includes(first.tag) ? text(first) : null;
+  });
+  if (leads.length < 2 || leads.some((lead) => lead === null)) return undefined;
+  return leads.every((lead) => /\d/.test(lead!) && lead!.length <= 24) ? "figures" : "terms";
+}
+
 export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
-  function render(node: GuideNode, key: number): ReactNode {
+  const none = new Set<number>();
+  /** `columns` are the figure columns of the table being drawn; `inFigureColumn` marks a cell. */
+  function render(node: GuideNode, key: number, columns = none, inFigureColumn = false): ReactNode {
     if (typeof node === "string") return brandCopy(node);
     if (node.tag === "item" && /^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/.test(node.id || ""))
       return <ItemIcon key={key} id={node.id!} size={48} />;
@@ -95,14 +136,31 @@ export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
         />
       );
     if (!allowed.has(node.tag)) return null;
-    const children = node.children.map(render);
+    const figures = node.tag === "table" ? figureColumns(node) : columns;
+    const children =
+      node.tag === "tr"
+        ? node.children.filter(isElement).map((cell, i) => render(cell, i, figures, figures.has(i)))
+        : node.children.map((child, i) => render(child, i, figures));
     const props: Record<string, unknown> = { key };
+    if (inFigureColumn) props.className = "is-figure";
     if (node.tag === "a") {
       props.href = safeGuideHref(node.href);
       props.rel = "noopener noreferrer";
+      if (node.children.some((child) => isElement(child) && child.tag === "item"))
+        props.className = "guide-item";
     }
     if (["h2", "h3", "h4"].includes(node.tag) && /^section-[a-z0-9-]+$/.test(node.id || ""))
       props.id = node.id;
+    // A paragraph that is one bold statement (a formula, a rule) stands out as a callout.
+    if (node.tag === "p") {
+      const only = kids(node);
+      if (only.length === 1 && isElement(only[0]) && ["strong", "b"].includes(only[0].tag))
+        props.className = "guide-callout";
+    }
+    if (node.tag === "ul" || node.tag === "ol") {
+      const kind = listKind(node);
+      if (kind) props.className = `guide-${kind}`;
+    }
     const element = createElement(node.tag, props, node.tag === "br" ? undefined : children);
     return node.tag === "table" ? (
       <div
@@ -118,5 +176,5 @@ export function GuideArticleContent({ nodes }: { nodes: GuideNode[] }) {
       element
     );
   }
-  return <>{nodes.map(render)}</>;
+  return <>{nodes.map((node, i) => render(node, i))}</>;
 }

@@ -40,7 +40,7 @@
       "Steam announcement 2024-10-09: guide-farming",
       "/workspace/Outpost/src/lib/albion/game/production-bonuses.json"
     ],
-    "first-silver": [
+    "making-silver": [
       "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
       "Steam announcement 2026-04-13: changelog-radiant-wilds-update",
       "Steam announcement 2026-06-29: changelog-radiant-wilds-patch-3",
@@ -54,7 +54,7 @@
       "/workspace/Outpost/docs/CALCULATORS.md",
       "/workspace/Outpost/src/lib/albion/game/items.json"
     ],
-    "gathering-progression-guide": [
+    "gathering-guide": [
       "Steam announcement 2024-10-28: changelog-horizons-update",
       "Steam announcement 2025-02-03: changelog-rogue-frontier-update",
       "Steam announcement 2025-02-26: changelog-rogue-frontier-patch-2",
@@ -64,7 +64,7 @@
       "Steam announcement 2024-10-16: learning-points-and-how-to-use-them",
       "/workspace/Outpost/src/lib/albion/game/items.json"
     ],
-    "abyssal-depths-guide": [
+    "depths-guide": [
       "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
       "Steam announcement 2025-07-08: changelog-abyssal-depths-patch-1",
       "Steam announcement 2025-07-23: changelog-abyssal-depths-patch-2",
@@ -111,7 +111,7 @@
       "Steam announcement 2026-11-02: dragonfire-patch-4",
       "Steam announcement 2023-07-21: guide-zone-types-and-flagging"
     ],
-    "zones-and-death-loss": [
+    "zones-and-death": [
       "Steam announcement 2023-07-21: guide-zone-types-and-flagging",
       "Steam announcement 2025-06-30: changelog-abyssal-depths-update",
       "Steam announcement 2025-11-24: changelog-realm-divided-update",
@@ -183,7 +183,7 @@
     "_note": [
       "wiki.albiononline.com and forum.albiononline.com returned 403 from this session; no wiki or forum pages were used."
     ],
-    "first-solo-pve-build": [
+    "first-pve-build": [
       "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt",
       "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
       "guides/notes/2026-05-26-changelog-radiant-wilds-patch-2.txt",
@@ -280,7 +280,7 @@
       "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
       "guides/notes/2023-08-28-the-final-crystal-league-championship-is-coming.txt"
     ],
-    "haul-between-cities": [
+    "transport-guide": [
       "/workspace/Outpost/src/lib/albion/game/mounts.json",
       "/workspace/Outpost/src/lib/albion/game/items.json",
       "/workspace/Outpost/src/lib/albion/game/recipes.json",
@@ -300,7 +300,7 @@
       "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
       "Premium focus 10,000/day, 30,000 cap: carried from previous guide (wiki); not in patch notes"
     ],
-    "read-a-market-quote": [
+    "reading-market-prices": [
       "/workspace/Outpost/docs/DATA.md",
       "/workspace/Outpost/src/components/market.tsx",
       "/workspace/Outpost/src/components/market-city-table.tsx",
@@ -311,7 +311,7 @@
       "guides/notes/2024-11-22-new-guide-caerleon-and-the-black-market.txt",
       "guides/notes/2024-01-22-guide-the-world-of-albion.txt"
     ],
-    "count-the-whole-cost": [
+    "real-profit": [
       "/workspace/Outpost/docs/CALCULATORS.md (trade and production reference cases)",
       "/workspace/Outpost/docs/DATA.md",
       "/workspace/Outpost/src/components/trade-calculator.tsx",
@@ -319,7 +319,7 @@
       "/workspace/Outpost/src/components/production-calculator.tsx",
       "/workspace/Outpost/src/lib/albion/production.ts"
     ],
-    "build-with-a-purpose": [
+    "making-a-build": [
       "/workspace/Outpost/src/components/build-editor.tsx",
       "/workspace/Outpost/src/components/build-equipment-studio.tsx",
       "/workspace/Outpost/src/components/equipment-sets.tsx",
@@ -331,7 +331,7 @@
       "guides/notes/2026-08-31-changelog-dragonfire-update.txt",
       "guides/notes/2025-06-30-changelog-abyssal-depths-update.txt"
     ],
-    "put-every-role-in-place": [
+    "planning-a-comp": [
       "/workspace/Outpost/src/components/composition-editor.tsx",
       "/workspace/Outpost/src/components/composition-png-export.tsx",
       "/workspace/Outpost/src/lib/compositions/roles.ts",
