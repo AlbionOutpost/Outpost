@@ -4,8 +4,8 @@ import styles from "./avatar-frame.module.css";
 
 /**
  * A player's picture in the frame they picked in Settings (`src/lib/avatar-frames.ts`), or the
- * plain picture when they picked none. Without a Discord picture (and everywhere other players
- * see it) the face is the name's initial. Decorative: the name always sits beside it.
+ * plain picture when they picked none. Without a Discord picture (and everywhere the server does
+ * not send one) the face is the name's initial. Decorative: the name always sits beside it.
  */
 export function AvatarFrame({
   frame,
@@ -16,7 +16,7 @@ export function AvatarFrame({
   frame?: string | null;
   /** Outer size in px, ring included. */
   size: number;
-  /** The signed-in player's own Discord picture; never another player's. */
+  /** A Discord picture: the viewer's own, or a fellow Team member's inside that Team. */
   image?: string | null;
   name?: string | null;
 }) {
@@ -32,7 +32,7 @@ export function AvatarFrame({
       aria-hidden="true"
     >
       {image ? (
-        // Discord profile imagery belongs to the signed-in user; never a synthetic avatar.
+        // Real Discord pictures only, sent by the server; never a synthetic avatar.
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className={styles.face}

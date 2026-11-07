@@ -143,6 +143,52 @@
 @media (hover: hover) {
   .app.outpost .loadout-board.is-interactive .loadout-board-slot:hover .loadout-board-cell {
     border-color: var(--accent-ink);
+    background: color-mix(in srgb, var(--accent) 8%, var(--well));
+  }
+}
+/* An enchanted piece glows in its enchantment's colour, as it does in the game */
+.app.outpost .loadout-board.is-interactive .loadout-board-cell:has(img[data-enchantment="1"]) {
+  --enchant: var(--enchant-1);
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-cell:has(img[data-enchantment="2"]) {
+  --enchant: var(--enchant-2);
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-cell:has(img[data-enchantment="3"]) {
+  --enchant: var(--enchant-3);
+}
+.app.outpost .loadout-board.is-interactive .loadout-board-cell:has(img[data-enchantment="4"]) {
+  --enchant: var(--enchant-4);
+}
+.app.outpost
+  .loadout-board.is-interactive
+  .loadout-board-slot:not(.is-selected)
+  .loadout-board-cell:has(img[data-enchantment]:not([data-enchantment="0"])) {
+  border-color: color-mix(in srgb, var(--enchant) 55%, var(--well-border));
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--enchant) 30%, transparent);
+}
+/* Game-inventory feel: the piece grows on hover, presses in, and a new piece settles in with
+   a short ember flash. Motion only when the player allows it. */
+@media (prefers-reduced-motion: no-preference) {
+  .app.outpost .loadout-board.is-interactive .loadout-board-cell > img {
+    transition: scale 180ms var(--motion-ease, ease-out);
+  }
+  .app.outpost .loadout-board.is-interactive .loadout-board-slot:hover .loadout-board-cell > img {
+    scale: 1.06;
+  }
+  .app.outpost .loadout-board.is-interactive .loadout-board-slot:active .loadout-board-cell {
+    scale: 0.96;
+    transition: scale 90ms var(--motion-ease, ease-out);
+  }
+  .app.outpost .loadout-board.is-interactive .loadout-board-slot.is-equipped .loadout-board-cell {
+    animation: loadout-equip 360ms var(--motion-ease, ease-out);
+  }
+  @keyframes loadout-equip {
+    from {
+      scale: 0.86;
+      box-shadow:
+        0 0 0 2px var(--accent),
+        0 0 18px color-mix(in srgb, var(--accent) 55%, transparent);
+    }
   }
 }
 .app.outpost .loadout-board.is-interactive .loadout-board-slot.is-selected .loadout-board-cell {

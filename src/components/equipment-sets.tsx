@@ -18,15 +18,12 @@ export function EquipmentSets({
   onEquipment,
   onSets,
   expanded = false,
-  part,
 }: {
   equipment: EquipmentChoice[];
   sets: EquipmentSet[];
   onEquipment: (rows: EquipmentChoice[]) => void;
   onSets: (sets: EquipmentSet[]) => void;
   expanded?: boolean;
-  /** Expanded only: show the starting templates or the spare sets as their own panel. */
-  part?: "templates" | "spares";
 }) {
   const [name, setName] = useState("");
   const [template, setTemplate] = useState("battleaxe");
@@ -108,46 +105,8 @@ export function EquipmentSets({
       ))}
     </div>
   );
-  // The build editor shows templates and spare sets as two working panels; the comp editor
-  // keeps them folded in its member dialog.
-  if (expanded && part === "templates")
-    return (
-      <section className="equipment-set-tools is-expanded" aria-label="Starting sets">
-        <div className="raised editor-sets-panel">
-          <PanelHead
-            title="Starting sets"
-            line="Fill every slot from a template, then change what you need. Abilities stay yours to pick."
-          />
-          <div className="editor-template-browser" role="group" aria-label="Loadout templates">
-            {loadoutTemplates.map((item) => (
-              <article key={item.id}>
-                <div className="editor-template-art">
-                  {item.items.slice(0, 4).map(([slot, itemId]) => (
-                    <ItemIcon key={slot} id={itemId} size={42} />
-                  ))}
-                </div>
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() =>
-                    restore({
-                      id: crypto.randomUUID(),
-                      name: item.name,
-                      equipment: templateEquipment(item.id),
-                    })
-                  }
-                >
-                  Use {item.name}
-                </button>
-              </article>
-            ))}
-          </div>
-          {message && <StatusLine>{message}</StatusLine>}
-        </div>
-      </section>
-    );
+  // The build editor shows spare sets as a working panel and the starting sets on its empty
+  // board (`StartingSets`); the comp editor keeps both folded in its member dialog.
   if (expanded)
     return (
       <section className="equipment-set-tools is-expanded" aria-label="Spare sets">
@@ -206,5 +165,37 @@ export function EquipmentSets({
         {message}
       </p>
     </section>
+  );
+}
+
+/** The empty board's one start: fill every slot from a template, then change what you need. */
+export function StartingSets({
+  onPick,
+}: {
+  onPick: (id: string, rows: EquipmentChoice[]) => void;
+}) {
+  return (
+    <div className="editor-starting-sets" role="group" aria-labelledby="editor-starting-sets">
+      <small id="editor-starting-sets">Or start from a set</small>
+      <div>
+        {loadoutTemplates.map((item) => (
+          <button
+            type="button"
+            key={item.id}
+            aria-label={`Use ${item.name}`}
+            title={item.description}
+            onClick={() => onPick(item.id, templateEquipment(item.id))}
+          >
+            <span aria-hidden="true">
+              {item.items.slice(0, 3).map(([slot, itemId]) => (
+                <ItemIcon key={slot} id={itemId} size={28} />
+              ))}
+            </span>
+            <strong>{item.name.replace(/ (equipment|starting) set$/, "")}</strong>
+            <small>{item.items.length} slots</small>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

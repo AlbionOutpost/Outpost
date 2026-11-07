@@ -138,31 +138,51 @@ test("populated build editor preserves gear, choices and revisions across respon
       if ([390, 1440].includes(width)) {
         await selectEditorSlot(page, "Helmet");
         await page.getByRole("button", { name: /^Choose Helmet equipment:/ }).click();
-        const drawer = page.getByRole("dialog", { name: "Equipment picker", exact: true });
+        // The slot picker: a centred modal on desktop, a full-screen sheet on phones
+        const drawer = page.getByRole("dialog", { name: "Choose your helmet", exact: true });
         await expect(drawer).toBeVisible();
+        await expect(page.getByLabel("Search equipment")).toBeFocused();
+        // Measure the settled modal, not its opening frames
+        await drawer.evaluate((element) =>
+          Promise.all(element.getAnimations().map((animation) => animation.finished)),
+        );
         const geometry = await drawer.evaluate((element) => {
           const heading = element.querySelector(".editor-dialog-heading h2")!;
-          const bodyHeading = element.querySelector(".studio-picker-heading h3")!;
+          const bodyHeading = element.querySelector(".studio-picker-heading")!;
           const item = element.querySelector(".studio-picker-item")!;
           const strong = item.querySelector("strong")!;
           const tier = item.querySelector("small")!;
+          const centre = (node: Element) => {
+            const r = node.getBoundingClientRect();
+            return r.x + r.width / 2;
+          };
           return {
             dialog: element.getBoundingClientRect().toJSON(),
-            viewport: innerHeight,
+            viewport: { width: innerWidth, height: innerHeight },
             headingX: heading.getBoundingClientRect().x,
             bodyHeadingX: bodyHeading.getBoundingClientRect().x,
-            nameX: strong.getBoundingClientRect().x,
-            tierX: tier.getBoundingClientRect().x,
+            nameCentre: centre(strong),
+            tierCentre: centre(tier),
+            itemCentre: centre(item),
             nameAlignment: getComputedStyle(strong).textAlign,
             clip: getComputedStyle(element).clipPath,
           };
         });
-        expect(geometry.dialog.y).toBe(0);
-        expect(geometry.dialog.height).toBe(geometry.viewport);
-        expect(geometry.dialog.bottom).toBe(geometry.viewport);
+        if (width <= 700) {
+          expect(geometry.dialog.y).toBe(0);
+          expect(geometry.dialog.height).toBe(geometry.viewport.height);
+          expect(geometry.dialog.width).toBe(geometry.viewport.width);
+        } else {
+          expect(geometry.dialog.y).toBeGreaterThan(0);
+          expect(geometry.dialog.bottom).toBeLessThan(geometry.viewport.height);
+          expect(
+            Math.abs(geometry.dialog.x + geometry.dialog.width / 2 - geometry.viewport.width / 2),
+          ).toBeLessThanOrEqual(1);
+        }
         expect(Math.abs(geometry.headingX - geometry.bodyHeadingX)).toBeLessThanOrEqual(1);
-        expect(Math.abs(geometry.nameX - geometry.tierX)).toBeLessThanOrEqual(1);
-        expect(geometry.nameAlignment).toBe("left");
+        expect(Math.abs(geometry.nameCentre - geometry.itemCentre)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.tierCentre - geometry.itemCentre)).toBeLessThanOrEqual(1);
+        expect(geometry.nameAlignment).toBe("center");
         expect(geometry.clip).toBe("none");
         await page.keyboard.press("Escape");
         await expect(drawer).toHaveCount(0);

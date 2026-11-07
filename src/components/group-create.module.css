@@ -1,0 +1,704 @@
+/* Founding a Team: the step list, the live banner beside the step, and the reveal once the
+   server has created it. Pickers reuse the Team identity rules in teams.module.css. Motion runs
+   only under prefers-reduced-motion: no-preference and moves transforms and clip paths only. */
+
+:global(.app.outpost) .ceremony.ceremony {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  grid-template-areas: "progress progress" "stage step";
+  align-items: start;
+  gap: var(--space-6);
+}
+
+/* ---------- Progress ---------- */
+:global(.app.outpost) .progress.progress {
+  grid-area: progress;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+:global(.app.outpost) .progress.progress > li {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+}
+/* The line that joins each step to the one before it, lit once that step is reached */
+:global(.app.outpost) .progress.progress > li + li::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  right: calc(50% + 22px);
+  left: calc(-50% + 22px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--border);
+}
+:global(.app.outpost)
+  .progress.progress
+  > li:is([data-state="done"], [data-state="current"])::before {
+  background: linear-gradient(90deg, var(--accent-active), var(--accent));
+}
+:global(.app.outpost) .progress button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 600 13px/1.2 var(--font-ui);
+  cursor: pointer;
+}
+:global(.app.outpost) .progress button:disabled {
+  cursor: default;
+}
+:global(.app.outpost) .stepBadge.stepBadge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  color: var(--muted);
+  font: 800 18px/1 var(--font-display);
+  transition:
+    transform 300ms var(--ease-out-expo),
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+:global(.app.outpost) [data-state="done"] .stepBadge.stepBadge {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) [data-state="current"] .stepBadge.stepBadge {
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface-raised));
+  color: var(--accent-ink);
+  box-shadow: 0 0 0 4px var(--accent-wash);
+  transform: scale(1.1);
+}
+:global(.app.outpost) .progress [data-state="current"] > button,
+:global(.app.outpost) .progress [data-state="done"] > button {
+  color: var(--secondary);
+}
+:global(.app.outpost) .progress [data-state="current"] > button {
+  color: var(--text);
+}
+:global(.app.outpost) .progress button:not(:disabled):hover .stepBadge.stepBadge {
+  border-color: var(--accent);
+}
+:global(.app.outpost) .stepLabel.stepLabel {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- The banner ---------- */
+:global(.app.outpost) .stage.stage {
+  grid-area: stage;
+  position: sticky;
+  top: calc(72px + var(--space-6));
+  display: grid;
+  justify-items: center;
+  padding-top: 4px;
+}
+/* The pole the cloth hangs from: aged copper with a finial at each end */
+:global(.app.outpost) .rod.rod {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--frame-rule) 70%, var(--text)),
+    var(--frame-rule) 45%,
+    color-mix(in srgb, var(--frame-rule) 50%, var(--illustration-bg))
+  );
+  box-shadow: 0 3px 6px color-mix(in srgb, var(--illustration-bg) 70%, transparent);
+}
+:global(.app.outpost) .rod.rod::before,
+:global(.app.outpost) .rod.rod::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 35%,
+    color-mix(in srgb, var(--frame-rule) 50%, var(--text)),
+    var(--frame-rule) 55%,
+    color-mix(in srgb, var(--frame-rule) 40%, var(--illustration-bg))
+  );
+}
+:global(.app.outpost) .rod.rod::before {
+  left: -8px;
+}
+:global(.app.outpost) .rod.rod::after {
+  right: -8px;
+}
+/* The cloth: tinted by the chosen shield's own paint, cut into a swallowtail */
+:global(.app.outpost) .cloth.cloth {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-2);
+  width: calc(100% - 32px);
+  min-height: 460px;
+  margin-top: -3px;
+  padding: var(--space-8) var(--space-5) 96px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-raised) 72%, transparent),
+    color-mix(in srgb, var(--illustration-bg) 92%, transparent)
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 64px), 0 100%);
+  text-align: center;
+  transform-origin: 50% 0;
+}
+:global(.app.outpost) .cloth.cloth::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30%;
+  background: var(--shield) center / 140% no-repeat;
+  filter: blur(36px) saturate(1.15);
+  opacity: 0.55;
+  transition: background-image 400ms ease;
+}
+/* A woven grain and the gold-thread hem along both sides */
+:global(.app.outpost) .cloth.cloth::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      var(--frame-rule) 0 2px,
+      transparent 2px calc(100% - 2px),
+      var(--frame-rule) 0
+    ),
+    var(--canvas-grain);
+  opacity: 0.6;
+}
+:global(.app.outpost) .crest.crest {
+  --crest: 184px;
+  position: relative;
+  display: block;
+  width: var(--crest);
+  height: var(--crest);
+  margin-bottom: var(--space-3);
+  perspective: 700px;
+  filter: drop-shadow(0 12px 18px color-mix(in srgb, var(--illustration-bg) 75%, transparent));
+}
+:global(.app.outpost) .shield.shield {
+  position: absolute;
+  inset: 0;
+  background: var(--shield) center / contain no-repeat;
+  backface-visibility: hidden;
+}
+:global(.app.outpost) .charge.charge {
+  position: absolute;
+  inset: 25% 29% 33%;
+  background: var(--charge) center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--illustration-bg) 90%, transparent))
+    drop-shadow(0 4px 6px color-mix(in srgb, var(--illustration-bg) 75%, transparent));
+}
+:global(.app.outpost) .bannerName.bannerName {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font: 800 clamp(26px, 2.6vw, 34px) / 1.05 var(--font-display);
+  text-wrap: balance;
+}
+:global(.app.outpost) .bannerName[data-empty] {
+  color: var(--muted);
+}
+:global(.app.outpost) .bannerLine.bannerLine {
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .bannerPlays.bannerPlays {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--space-2);
+}
+:global(.app.outpost) .bannerPlays.bannerPlays > span {
+  padding: 4px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--illustration-bg) 55%, transparent);
+  color: var(--accent-ink);
+  font: 600 12px/1.2 var(--font-ui);
+}
+
+/* ---------- The step ---------- */
+:global(.app.outpost) .step.step {
+  grid-area: step;
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+  padding: var(--space-6);
+}
+:global(.app.outpost) .step.step > * {
+  margin: 0;
+}
+:global(.app.outpost) .stepHead.stepHead {
+  display: grid;
+  gap: 4px;
+}
+:global(.app.outpost) .stepHead.stepHead > * {
+  margin: 0;
+}
+:global(.app.outpost) .kicker.kicker {
+  margin: 0;
+  color: var(--accent-ink);
+  font: 700 12px/1.3 var(--font-ui);
+  letter-spacing: 0.04em;
+}
+:global(.app.outpost) .stepTitle.stepTitle {
+  color: var(--text);
+  font: 800 clamp(30px, 3vw, 40px) / 1 var(--font-display);
+  outline: none;
+}
+:global(.app.outpost) .stepLine.stepLine {
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .stepBody.stepBody {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+:global(.app.outpost) .group.group {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+:global(.app.outpost) .group.group > legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 4px;
+  padding: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .count.count {
+  color: var(--accent-ink);
+  font: 600 12px/1 var(--font-data);
+}
+:global(.app.outpost) .hint.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .addressCheck.addressCheck {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: calc(var(--space-3) * -1) 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+:global(.app.outpost) .addressCheck[data-ok] {
+  color: var(--secondary);
+}
+:global(.app.outpost) .addressCheck[data-ok] > svg {
+  flex: none;
+  color: var(--success);
+}
+:global(.app.outpost) .textButton.textButton {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-ink);
+  font: 600 13px/1.4 var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+:global(.app.outpost) .textButton.textButton:hover {
+  color: var(--accent-hover);
+}
+/* Bigger shields than the profile editor: this is the moment to choose one */
+:global(.app.outpost) .shields.shields {
+  display: grid;
+  grid-template-columns: repeat(7, 56px);
+  gap: var(--space-3);
+}
+:global(.app.outpost) .shieldOption.shieldOption {
+  width: 56px;
+  height: 56px;
+  transition: transform 300ms var(--ease-out-expo);
+}
+:global(.app.outpost) .shieldOption.shieldOption:hover,
+:global(.app.outpost) .shieldOption.shieldOption:has(input:checked) {
+  transform: scale(1.08);
+}
+:global(.app.outpost) .charges.charges {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+/* Who can join: two cards, the chosen one lit */
+:global(.app.outpost) .gates.gates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+:global(.app.outpost) .gate.gate {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  color: var(--secondary);
+  cursor: pointer;
+  transition: border-color 180ms ease;
+}
+:global(.app.outpost) .gate.gate:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
+}
+:global(.app.outpost) .gate.gate:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .gate.gate > input {
+  margin: 2px 0 0;
+}
+:global(.app.outpost) .gateCopy.gateCopy {
+  display: grid;
+  gap: 4px;
+}
+:global(.app.outpost) .gateCopy.gateCopy strong {
+  color: var(--text);
+  font: 800 21px/1.1 var(--font-display);
+}
+:global(.app.outpost) .gateCopy.gateCopy small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+/* The charter: every answer once, each with its way back (the dd's value and button sit in
+   the row's grid) */
+:global(.app.outpost) .charter.charter {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+:global(.app.outpost) .charter.charter > div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: 8px var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .charter dt {
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .charter dd {
+  display: contents;
+}
+:global(.app.outpost) .charter dd > span {
+  min-width: 0;
+  margin: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font: 600 14px/1.4 var(--font-ui);
+}
+:global(.app.outpost) .includes.includes {
+  display: grid;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .includes.includes > p {
+  margin: 0;
+  color: var(--muted);
+  font: 600 12px/1.35 var(--font-ui);
+}
+:global(.app.outpost) .includes.includes > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .includes.includes li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--secondary);
+  font: 600 13px/1.2 var(--font-ui);
+}
+:global(.app.outpost) .actions.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+:global(.app.outpost) .actions.actions > :first-child:not(:only-child) {
+  margin-right: auto;
+}
+
+/* ---------- Founded ---------- */
+:global(.app.outpost) .reveal.reveal {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  max-width: 560px;
+  margin-inline: auto;
+  scroll-margin-top: calc(72px + var(--space-6));
+  padding-bottom: var(--space-8);
+  text-align: center;
+}
+:global(.app.outpost) .revealBanner.revealBanner {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 340px);
+}
+:global(.app.outpost) .revealBanner .cloth.cloth {
+  min-height: 340px;
+  padding-top: var(--space-10);
+}
+:global(.app.outpost) .revealCrest.revealCrest {
+  display: block;
+  perspective: 700px;
+}
+:global(.app.outpost) .revealCopy.revealCopy {
+  display: grid;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .revealCopy.revealCopy > * {
+  margin: 0;
+}
+:global(.app.outpost) .revealTitle.revealTitle {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font: 800 clamp(40px, 5vw, 64px) / 0.98 var(--font-display);
+  letter-spacing: -0.01em;
+}
+:global(.app.outpost) .revealLine.revealLine {
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* The banner unfurls when the page opens */
+  :global(.app.outpost) .stage .cloth.cloth {
+    animation: founding-unfurl 900ms var(--ease-out-expo) both;
+  }
+  /* A new shield turns in on its vertical axis; a new symbol strikes onto it */
+  :global(.app.outpost) .shield.shield {
+    animation: founding-turn 620ms var(--ease-spring) both;
+  }
+  :global(.app.outpost) .charge.charge {
+    animation: founding-strike 460ms var(--ease-spring) both;
+  }
+  /* Each step slides in from the side it was reached from */
+  :global(.app.outpost) .stepBody.stepBody {
+    animation: founding-step 360ms var(--ease-out-expo) both;
+  }
+  /* Founded: the banner unfurls, the crest drops onto it, then the name rises */
+  :global(.app.outpost) .revealBanner .cloth.cloth {
+    animation: founding-unfurl 1000ms var(--ease-out-expo) both;
+  }
+  :global(.app.outpost) .revealCrest.revealCrest {
+    animation: founding-drop 900ms var(--ease-spring) 650ms both;
+  }
+  :global(.app.outpost) .revealCrest .shield.shield,
+  :global(.app.outpost) .revealCrest .charge.charge {
+    animation: none;
+  }
+  :global(.app.outpost) .revealCopy.revealCopy > * {
+    animation: founding-rise 700ms var(--ease-out-expo) both;
+  }
+  :global(.app.outpost) .revealCopy.revealCopy > :nth-child(1) {
+    animation-delay: 1150ms;
+  }
+  :global(.app.outpost) .revealCopy.revealCopy > :nth-child(2) {
+    animation-delay: 1250ms;
+  }
+  :global(.app.outpost) .revealCopy.revealCopy > :nth-child(3) {
+    animation-delay: 1350ms;
+  }
+  :global(.app.outpost) .reveal.reveal > :global(.button) {
+    animation: founding-rise 700ms var(--ease-out-expo) 1450ms both;
+  }
+}
+@keyframes founding-unfurl {
+  from {
+    transform: scaleY(0.04);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes founding-turn {
+  from {
+    transform: rotateY(-120deg) scale(0.86);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes founding-strike {
+  from {
+    transform: scale(1.9) rotate(-18deg);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes founding-step {
+  from {
+    transform: translateX(20px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes founding-drop {
+  from {
+    transform: translateY(-140%) rotateX(65deg) scale(1.15);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes founding-rise {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(14px);
+  }
+  to {
+    clip-path: inset(0 0 -20% 0);
+    transform: none;
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 780px) {
+  :global(.app.outpost) .ceremony.ceremony {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "progress" "stage" "step";
+    gap: var(--space-4);
+  }
+  :global(.app.outpost) .progress.progress > li + li::before {
+    top: 16px;
+    right: calc(50% + 18px);
+    left: calc(-50% + 18px);
+  }
+  :global(.app.outpost) .stepBadge.stepBadge {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  :global(.app.outpost) .stepLabel.stepLabel {
+    font-size: 12px;
+  }
+  /* The banner shrinks to a pennant: crest beside the name */
+  :global(.app.outpost) .stage.stage {
+    position: static;
+  }
+  :global(.app.outpost) .stage .cloth.cloth {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    gap: 2px var(--space-4);
+    min-height: 0;
+    padding: var(--space-4) var(--space-4) 36px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 22px), 0 100%);
+    text-align: left;
+  }
+  :global(.app.outpost) .stage .crest.crest {
+    --crest: 96px;
+    grid-row: span 3;
+    margin: 0;
+  }
+  :global(.app.outpost) .stage .bannerPlays.bannerPlays {
+    justify-content: flex-start;
+    margin: 0;
+  }
+  :global(.app.outpost) .step.step {
+    padding: var(--space-4);
+  }
+  :global(.app.outpost) .gates.gates {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .charter.charter > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px var(--space-3);
+  }
+  :global(.app.outpost) .charter dt {
+    grid-column: 1;
+  }
+  :global(.app.outpost) .charter dd > span {
+    grid-column: 1;
+  }
+  :global(.app.outpost) .charter dd > button {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  :global(.app.outpost) .shields.shields {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  :global(.app.outpost) .shieldOption.shieldOption {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  :global(.app.outpost) .charges.charges {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  :global(.app.outpost) .actions.actions > :global(.button) {
+    flex: 1 1 0;
+  }
+}
+/* The narrowest phones keep the numbers; the names stay for screen readers */
+@media (max-width: 360px) {
+  :global(.app.outpost) .stepLabel.stepLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

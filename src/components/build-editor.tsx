@@ -1,7 +1,7 @@
 "use client";
 import { LoadoutPriceCheck } from "./loadout-price-check";
 import { useOutpostRegion } from "./region-context";
-import { EquipmentSets } from "./equipment-sets";
+import { EquipmentSets, StartingSets } from "./equipment-sets";
 import { EquipmentPicker } from "./equipment-picker";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
@@ -29,12 +29,10 @@ import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
 import { BuildWindow } from "./build-window";
 import { Disclosure } from "./disclosure";
-import { EmptyWell } from "./empty-well";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
 import { BuildCompositionLink } from "./build-composition-link";
-import { templateEquipment } from "@/lib/albion/equipment-sets";
 import { BuildLoadoutView } from "./build-loadout-view";
 import { EditorDialog } from "./editor-dialog";
 import Link from "@/components/link";
@@ -782,41 +780,19 @@ export function BuildEditor({
             onChange={updateEquipment}
             flaggedSlot={mainFlagged ? "Main hand" : undefined}
             boardEmpty={
-              !initial && (
-                <EmptyWell
-                  emblem="strip-builds"
-                  title="Nothing equipped yet"
-                  line="Start from a full Battleaxe set, then swap pieces."
-                  action={
-                    <button
-                      type="button"
-                      className="button secondary"
-                      onClick={() => {
-                        updateEquipment(templateEquipment("battleaxe"));
-                        if (!draft.title) setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
-                      }}
-                    >
-                      Load example equipment
-                    </button>
-                  }
-                />
-              )
+              <StartingSets
+                onPick={(template, rows) => {
+                  updateEquipment(rows);
+                  if (template === "battleaxe" && !draft.title)
+                    setDraft((d) => ({ ...d, title: "My Battleaxe build" }));
+                }}
+              />
             }
             captureUndo={() => {
               const equipment = structuredClone(draft.equipment);
               return () => setDraft((latest) => ({ ...latest, equipment }));
             }}
           />
-          <div hidden={section !== "equipment"} className="editor-template-workspace">
-            <EquipmentSets
-              equipment={supportedEquipment}
-              sets={draft.equipmentSets}
-              onEquipment={updateEquipment}
-              onSets={(sets) => update("equipmentSets", sets)}
-              expanded
-              part="templates"
-            />
-          </div>
           <div hidden={section !== "alternatives"} className="editor-template-workspace">
             <EquipmentSets
               equipment={supportedEquipment}
@@ -824,7 +800,6 @@ export function BuildEditor({
               onEquipment={updateEquipment}
               onSets={(sets) => update("equipmentSets", sets)}
               expanded
-              part="spares"
             />
           </div>
         </div>

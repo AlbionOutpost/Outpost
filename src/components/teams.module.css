@@ -1055,17 +1055,12 @@
 /* ---------- Create ---------- */
 :global(.app.outpost) .createLayout.createLayout {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  align-items: stretch;
   gap: 26px 24px;
 }
-:global(.app.outpost) .createLayout.createLayout[data-locked] {
-  grid-template-columns: minmax(0, 1fr);
-}
-:global(.app.outpost) .createLayout[data-locked] .rowCopy > strong {
+:global(.app.outpost) .createLayout .rowCopy > strong {
   white-space: normal;
 }
-:global(.app.outpost) .createLayout[data-locked] .list {
+:global(.app.outpost) .createLayout .list {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 :global(.app.outpost) .wellRow.wellRow > img {
@@ -1096,11 +1091,6 @@
   border: 0;
   background: none;
   box-shadow: none;
-}
-@media (max-width: 900px) {
-  :global(.app.outpost) .createLayout.createLayout {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 @media (max-width: 420px) {
   :global(.app.outpost) .prefixed.prefixed > span {
@@ -1457,14 +1447,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-/* Beside the long create form the feature list stays in view */
-@media (min-width: 901px) {
-  :global(.app.outpost) .createLayout:not([data-locked]) > .includes.includes {
-    position: sticky;
-    top: calc(72px + var(--space-6));
-    align-self: start;
-  }
-}
 :global(.app.outpost) .settingsWide.settingsWide {
   grid-column: 1 / -1;
   min-width: 0;
@@ -1513,4 +1495,56 @@
   :global(.app.outpost) .cardHead.cardHead > :global(.landing-chip) {
     display: none;
   }
+}
+
+/* ---------- Members: framed pictures, role chips and joined dates ---------- */
+:global(.app.outpost) .memberRow.memberRow {
+  min-height: 64px;
+  padding-block: var(--space-2);
+}
+:global(.app.outpost) .memberRow .rowCopy > strong {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .youTag.youTag {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 12px/1.2 var(--font-ui);
+}
+:global(.app.outpost) .memberMeta.memberMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--space-3);
+  min-width: 0;
+}
+:global(.app.outpost) .memberMeta.memberMeta > * {
+  margin: 0;
+}
+:global(.app.outpost) .memberMeta.memberMeta > small {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+/* The overview's roster tally: the Leader, then each role anyone holds, with its count */
+:global(.app.outpost) .rosterTally.rosterTally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .rosterTally.rosterTally > li {
+  min-height: 26px;
+  padding-inline: 10px;
+}
+:global(.app.outpost) .rosterTally.rosterTally b {
+  color: var(--text);
+  font: 600 12px/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
 }

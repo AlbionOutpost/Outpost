@@ -71,6 +71,12 @@ export const GET = apiHandler("account.export", async () => {
           updatedAt: true,
         },
       },
+      // The player's own Team wallet entries (in-game silver bookkeeping), not who booked them.
+      walletEntries: {
+        select: { groupId: true, amount: true, kind: true, reason: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 1000,
+      },
       builds: { include: { equipment: true, versions: true } },
       supporterGiftUntil: true,
       supporterGiftPermanent: true,

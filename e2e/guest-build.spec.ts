@@ -9,7 +9,7 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   test.setTimeout(120000);
   await page.goto("/builds/new");
   await expect(page).toHaveURL(/\/builds\/new$/);
-  await page.getByRole("button", { name: "Load example equipment", exact: true }).click();
+  await page.getByRole("button", { name: "Use Battleaxe starting set", exact: true }).click();
   await page.getByLabel("Build title", { exact: true }).fill("Guest equipment test");
   await selectEditorSlot(page, "Helmet");
   await page.getByRole("button", { name: "Choose Helmet equipment", exact: false }).click();

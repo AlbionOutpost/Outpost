@@ -5,15 +5,11 @@ import { regionSchema } from "@/lib/albion/region-config";
 import { apiHandler, HttpError } from "@/lib/api-errors";
 import { mutationUser, boundedJson } from "@/lib/http";
 import { requireTeamCreation } from "@/lib/billing/gate";
-import { teamIdentity } from "@/lib/groups/crest";
+import { teamIdentity, teamSlug } from "@/lib/groups/crest";
 import { starterRoles } from "@/lib/groups/roles";
 const input = z.object({
   name: z.string().trim().min(3).max(80),
-  slug: z
-    .string()
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .min(3)
-    .max(60),
+  slug: teamSlug,
   description: z.string().trim().max(4000),
   region: regionSchema,
   visibility: z.enum(["PUBLIC", "PRIVATE"]),

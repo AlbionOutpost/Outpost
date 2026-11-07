@@ -22,6 +22,7 @@ import clearOauthTokens from "../d1/migrations/0009_clear_oauth_tokens.sql";
 import teamCrestSchema from "../d1/migrations/0010_team_crest.sql";
 import avatarFrameSchema from "../d1/migrations/0011_avatar_frame.sql";
 import teamRolesSchema from "../d1/migrations/0012_team_roles.sql";
+import teamEconomySchema from "../d1/migrations/0013_team_economy.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
@@ -126,7 +127,12 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
           // Team roles: existing teams get their old fixed roles as editable ones, same rights.
           this.ctx.storage.sql.exec(teamRolesSchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=11 WHERE version=10");
-        } else if (version !== 11) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 11) {
+          // Team economy: wallets, coin flips and loot rolls; Manage loot holders get Manage wallet.
+          this.ctx.storage.sql.exec(teamEconomySchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=12 WHERE version=11");
+        } else if (version !== 12) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);

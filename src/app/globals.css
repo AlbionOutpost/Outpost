@@ -793,17 +793,24 @@ kbd {
     transform: translateY(0);
   }
 }
+/* The game's enchantment colours: green .1, blue .2, purple .3, gold .4 */
+:root {
+  --enchant-1: var(--success);
+  --enchant-2: #74a9d8;
+  --enchant-3: #b593ce;
+  --enchant-4: var(--accent);
+}
 [data-albion-icon][data-enchantment="1"] {
-  border-bottom-color: var(--success);
+  border-bottom-color: var(--enchant-1);
 }
 [data-albion-icon][data-enchantment="2"] {
-  border-bottom-color: #74a9d8;
+  border-bottom-color: var(--enchant-2);
 }
 [data-albion-icon][data-enchantment="3"] {
-  border-bottom-color: #b593ce;
+  border-bottom-color: var(--enchant-3);
 }
 [data-albion-icon][data-enchantment="4"] {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--enchant-4);
 }
 /* Outpost identity: hard type, warm surfaces and compact top navigation. */
 .app {

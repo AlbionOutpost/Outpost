@@ -77,7 +77,7 @@ test("team loot conserves silver and enforces current membership, officer permis
     expect((await contexts[3].request.get(`/api/groups/${groupId}/loot`)).status()).toBe(404);
     expect(await db.groupLootSplit.count({ where: { groupId } })).toBe(0);
     await page.goto(`/groups/${slug}`);
-    await page.getByRole("tab", { name: "Loot splits", exact: true }).click();
+    await page.getByRole("tab", { name: "Treasury", exact: true }).click();
     await page.getByLabel("Split name", { exact: true }).fill("Weighted loot");
     await page.getByLabel("Total loot pool (silver)", { exact: true }).fill("1000");
     await page.getByRole("button", { name: "Add expense", exact: true }).click();

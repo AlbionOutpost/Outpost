@@ -8,6 +8,7 @@ export function EditorDialog({
   children,
   wide = false,
   drawer = false,
+  className = "",
 }: {
   open: boolean;
   title: string;
@@ -15,6 +16,7 @@ export function EditorDialog({
   children: ReactNode;
   wide?: boolean;
   drawer?: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -30,7 +32,7 @@ export function EditorDialog({
   return (
     <dialog
       ref={ref}
-      className={`editor-dialog${wide ? " wide" : ""}${drawer ? " contextual-drawer" : ""}`}
+      className={`editor-dialog${wide ? " wide" : ""}${drawer ? " contextual-drawer" : ""} ${className}`.trim()}
       aria-label={title}
       onCancel={(e) => {
         e.preventDefault();

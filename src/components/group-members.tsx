@@ -16,22 +16,44 @@ import styles from "./teams.module.css";
 
 type Member = GroupDashboardData["members"][number];
 
-/** A member as a well row: framed initial, name and role chips; tools at the end when allowed. */
+const joined = (iso: string) =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(iso));
+
+/**
+ * A member as a well row: their Discord picture in their frame (the server sends pictures only
+ * to members), name, role chips in the roles' colours and when they joined; tools at the end.
+ */
 export function MemberRow({
   member,
   roles,
+  self,
   children,
 }: {
   member: Member;
   roles: GroupDashboardData["roles"];
+  /** The signed-in viewer's own row. */
+  self?: boolean;
   children?: React.ReactNode;
 }) {
   return (
-    <div className={`well ${styles.wellRow}`} data-team-member="">
-      <AvatarFrame frame={member.avatarFrame} size={36} name={member.name} />
+    <div className={`well ${styles.wellRow} ${styles.memberRow}`} data-team-member="">
+      <AvatarFrame frame={member.avatarFrame} size={44} image={member.image} name={member.name} />
       <span className={styles.rowCopy}>
-        <strong>{member.name}</strong>
-        <RoleChips roles={roles} held={member.roleIds} owner={member.owner} />
+        <strong>
+          {member.name}
+          {self && <span className={styles.youTag}>You</span>}
+        </strong>
+        <span className={styles.memberMeta}>
+          <RoleChips roles={roles} held={member.roleIds} owner={member.owner} />
+          <small>
+            Joined <time dateTime={member.joinedAt}>{joined(member.joinedAt)}</time>
+          </small>
+        </span>
       </span>
       {children && <span className={styles.rowTools}>{children}</span>}
     </div>
@@ -96,7 +118,7 @@ export function GroupMembers({ ctx }: { ctx: TeamContext }) {
             const transferable = access.owner && !m.owner;
             return (
               <li key={m.userId}>
-                <MemberRow member={m} roles={data.roles}>
+                <MemberRow member={m} roles={data.roles} self={m.userId === userId}>
                   {assign && (
                     <button
                       type="button"
