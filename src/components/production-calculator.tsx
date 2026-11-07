@@ -161,6 +161,7 @@ export function ProductionCalculator({
   const [showScenarios, setShowScenarios] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const autoLoad = useRef<number | undefined>(undefined);
   const request = useRef<AbortController | null>(null);
   const [overwrite, setOverwrite] = useState(false);
   const [bonus, setBonus] = useState(0);
@@ -180,9 +181,13 @@ export function ProductionCalculator({
   useEffect(() => {
     if (!recipeKnown || incompatibleRecipe) return;
     const timer = window.setTimeout(() => void loadRef.current(), 400);
+    autoLoad.current = timer;
     return () => window.clearTimeout(timer);
   }, [recipeKnown, incompatibleRecipe, requestKey]);
   async function load() {
+    // Any load (a Refresh) replaces the pending automatic one: firing later, it would start from
+    // prices typed since and, with "Replace manual overrides" on, replace them.
+    window.clearTimeout(autoLoad.current);
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;
@@ -1092,64 +1097,67 @@ export function ProductionCalculator({
         line="How the profit moves with the sale price, the full accounting and what you assumed."
       />
       <div className={s.detailsGrid}>
-        {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
         <div className={s.detailsCol}>
-          <Disclosure summary="Detailed accounting · entire run">
-            <ResultRows
-              items={[
-                ["Total material cost", result.grossMaterials],
-                ["Recipe silver requirements", result.recipeCost],
-                ["Station / upgrade fees", result.stationCost],
-                ["Upfront silver requirement", result.upfront],
-                ["Expected returned material value", result.returnCredit],
-                ["Effective production cost", result.cost],
-                ["Gross output revenue", result.revenue],
-                ["Taxes and setup fees", result.fees],
-                ["Cash profit before valuing retained returns", result.cashProfit],
-                ["Profit margin (%)", result.margin],
-                ["ROI on effective cost (%)", result.roi],
-                ["Profit per output", result.profitPerItem],
-                ...(draft.useFocus
-                  ? [
-                      ["Profit per focus", result.profitPerFocus],
-                      ["Additional material value per focus", result.incrementalPerFocus],
-                    ]
-                  : []),
-              ].map(([label, value]) => ({
-                label: String(label),
-                value:
-                  value == null ? (
-                    <Unavailable />
-                  ) : (
-                    <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
-                  ),
-              }))}
-            />
-          </Disclosure>
-          <Disclosure summary="Your assumptions">
-            <ResultRows
-              items={[
-                { label: "Crafts / upgrades", value: draft.batches.toLocaleString() },
-                { label: "Material market", value: draft.materialCity },
-                { label: "Sale market", value: draft.outputCity },
-                { label: "Recipe silver / craft", value: `${money(recipe.silver ?? 0)} silver` },
-                { label: "Station fee / craft", value: `${money(draft.stationFee)} silver` },
-                { label: "Sales tax", value: `${draft.tax}%` },
-                {
-                  label: "Setup fee",
-                  value: productionSellsInstantly(draft)
-                    ? "Not charged (instant sale)"
-                    : `${draft.setupFee}%`,
-                },
-              ]}
-            />
-            <p className={s.help}>
-              Confirm fees and returns at your station before crafting.{" "}
-              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-                Recipe source & limitations
-              </a>
-            </p>
-          </Disclosure>
+          {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
+          <h3 className={s.detailsHeading}>Your assumptions</h3>
+          <ResultRows
+            items={[
+              { label: "Crafts / upgrades", value: draft.batches.toLocaleString() },
+              { label: "Material market", value: draft.materialCity },
+              { label: "Sale market", value: draft.outputCity },
+              {
+                label: "Recipe silver / craft",
+                value: `${money(recipe.silver ?? 0)} silver`,
+              },
+              { label: "Station fee / craft", value: `${money(draft.stationFee)} silver` },
+              { label: "Sales tax", value: `${draft.tax}%` },
+              {
+                label: "Setup fee",
+                value: productionSellsInstantly(draft)
+                  ? "Not charged (instant sale)"
+                  : `${draft.setupFee}%`,
+              },
+            ]}
+          />
+          <p className={s.help}>
+            Confirm fees and returns at your station before crafting.{" "}
+            <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+              Recipe source & limitations
+            </a>
+          </p>
+        </div>
+        <div className={s.detailsCol}>
+          <h3 className={s.detailsHeading}>Detailed accounting · entire run</h3>
+          <ResultRows
+            items={[
+              ["Total material cost", result.grossMaterials],
+              ["Recipe silver requirements", result.recipeCost],
+              ["Station / upgrade fees", result.stationCost],
+              ["Upfront silver requirement", result.upfront],
+              ["Expected returned material value", result.returnCredit],
+              ["Effective production cost", result.cost],
+              ["Gross output revenue", result.revenue],
+              ["Taxes and setup fees", result.fees],
+              ["Cash profit before valuing retained returns", result.cashProfit],
+              ["Profit margin (%)", result.margin],
+              ["ROI on effective cost (%)", result.roi],
+              ["Profit per output", result.profitPerItem],
+              ...(draft.useFocus
+                ? [
+                    ["Profit per focus", result.profitPerFocus],
+                    ["Additional material value per focus", result.incrementalPerFocus],
+                  ]
+                : []),
+            ].map(([label, value]) => ({
+              label: String(label),
+              value:
+                value == null ? (
+                  <Unavailable />
+                ) : (
+                  <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
+                ),
+            }))}
+          />
         </div>
       </div>
     </section>

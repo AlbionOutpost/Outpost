@@ -37,9 +37,10 @@ export function GroupSettings({
   return (
     <div className={styles.settings}>
       <h2 className="sr-only">Team settings</h2>
-      {/* The profile full width, then two stacks at their own heights: who wants in; invitations */}
-      {profile && <div className={styles.settingsWide}>{profile}</div>}
-      <div className={styles.settingsWide}>
+      {/* Two columns at their own heights, so the tab fits a screen: the profile beside the
+          roles, then who wants in beside the invitations */}
+      {profile && <div className={styles.overviewColumn}>{profile}</div>}
+      <div className={profile ? styles.overviewColumn : styles.settingsWide}>
         <GroupRoles ctx={ctx} />
       </div>
       <div className={styles.overviewColumn}>

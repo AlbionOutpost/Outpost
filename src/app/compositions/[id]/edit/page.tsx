@@ -7,7 +7,6 @@ import { editorOptions } from "@/lib/compositions/repository";
 import { readStoredComposition } from "@/lib/compositions/stored";
 import Link from "@/components/build-region-link";
 import { ArrowLeft } from "lucide-react";
-import { CompNextSteps } from "@/components/comp-next-steps";
 import styles from "@/components/comps.module.css";
 import { HttpError } from "@/lib/api-errors";
 import { WorkspaceHeading } from "@/components/workspace-heading";
@@ -52,15 +51,6 @@ export default async function EditComposition({ params }: { params: Promise<{ id
             : undefined
         }
         {...await editorOptions(session.user.id)}
-      />
-      <CompNextSteps
-        show={["builds", "library", "teams"]}
-        title={
-          <>
-            Missing a <em>build</em>?
-          </>
-        }
-        line="Find a loadout for an open slot, borrow from a recorded comp, or share the plan with your Team."
       />
     </div>
   );

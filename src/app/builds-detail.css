@@ -1139,6 +1139,13 @@
   border-bottom: 0;
   background: none;
 }
+/* Compact band: the board and the selected piece start in the first viewport */
+.app.outpost .build-detail-page > .detail-hero.masthead[data-scene] {
+  min-height: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
+}
 .app.outpost .detail-hero.masthead .detail-breadcrumb {
   color: var(--secondary);
 }

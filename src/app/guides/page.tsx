@@ -5,7 +5,6 @@ import { libraryGuides } from "@/lib/grind-library";
 import { JsonLd } from "@/components/json-ld";
 import { itemListLd } from "@/lib/structured-data";
 import { GrindGuideDirectory } from "@/components/grind-guide-directory";
-import { NextStepCards } from "@/components/next-step-cards";
 import styles from "./guides.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/guides", await searchParams);
@@ -40,39 +39,6 @@ export default async function Guides({
       />
       <GrindGuideDirectory guides={guides} query={query} category={category} />
       <AdSlot placement="hub" />
-      <NextStepCards
-        id="guides-next"
-        title={
-          <>
-            Take it into your next <em>run</em>
-          </>
-        }
-        line="Track your journal, pick a loadout for the content, or price the trip."
-        link={{ href: "/tools", label: "All tools" }}
-        cards={[
-          {
-            href: "/guides/albion-journal-guide",
-            emblem: "tool-planner",
-            title: "Journal tracker",
-            line: "Every journal objective in one list, ticked off as you go.",
-            scene: "city",
-          },
-          {
-            href: "/builds/activities",
-            emblem: "strip-builds",
-            title: "Builds by activity",
-            line: "Loadouts players run for each kind of content.",
-            scene: "build",
-          },
-          {
-            href: "/tools/market",
-            emblem: "tool-market",
-            title: "Market Explorer",
-            line: "Prices in every city, so you know where to buy and where to dump.",
-            scene: "market",
-          },
-        ]}
-      />
     </div>
   );
 }

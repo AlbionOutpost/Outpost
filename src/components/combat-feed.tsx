@@ -137,6 +137,7 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   return (
     <div className={`combat-feed-page ${styles.page}`}>
       <WorkspaceHeading
+        compact
         glyph="combat"
         scene="builds"
         title={kills ? "Global kill feed" : "Global death feed"}

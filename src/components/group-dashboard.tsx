@@ -253,8 +253,9 @@ export function GroupDashboard({
               data.members.find((m) => m.userId === userId)?.roleIds ?? [],
             )}
           </span>
+          {/* What the team plays rides the same row: the tabs stay in the first screen */}
+          <TeamActivities list={decodeActivities(group.activities)} />
         </TeamChips>
-        <TeamActivities list={decodeActivities(group.activities)} />
         <div className={styles.tabRow}>
           <Link className={styles.backTab} href="/groups">
             <ArrowLeft size={14} aria-hidden="true" /> All teams

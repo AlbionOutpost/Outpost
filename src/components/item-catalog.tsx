@@ -260,7 +260,7 @@ export function ItemCatalog({
                     href={itemHref(item.id)}
                   >
                     <span className={styles.well}>
-                      <ItemIcon id={item.id} size={view === "grid" ? 64 : 44} />
+                      <ItemIcon id={item.id} size={view === "grid" ? 64 : 36} />
                     </span>
                     <span className={styles.copy}>
                       <strong>{item.name}</strong>

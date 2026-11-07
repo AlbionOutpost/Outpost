@@ -1,0 +1,206 @@
+/* Market tables: City orders (Market Explorer, item pages) and price-history observations
+   (Market Explorer, Gold). One design: UI-font labels, figures in Geist Mono with tabular
+   numerals on the right, a light 12px header, one line per row with subtle dividers, the
+   selected row marked by an accent bar, "— Unavailable" for gaps. Narrow wells scroll inside
+   themselves with the first column pinned and a fade on the cut edge. */
+.app.outpost .mx-table-well {
+  position: relative;
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  /* The edge fade: the cover rides with the content and hides the shade once the end is in
+     view, so the shade only shows while there is more to scroll. */
+  background:
+    linear-gradient(to left, var(--well) 40%, transparent) right / 32px 100% no-repeat local,
+    linear-gradient(to left, #0009, transparent) right / 20px 100% no-repeat scroll,
+    var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  container-type: inline-size;
+}
+.app.outpost .mx-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.app.outpost .mx-table :is(th, td) {
+  padding: 6px var(--space-3);
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--well-border) 70%, transparent);
+  background: none;
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.app.outpost .mx-table thead {
+  background: none;
+}
+.app.outpost .mx-table thead th {
+  position: static;
+  height: 34px;
+  padding-block: 0;
+  border-top: 0;
+  background: none;
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.app.outpost .mx-table :is(th, td):first-child {
+  width: 99%;
+  text-align: left;
+}
+.app.outpost .mx-table tbody tr {
+  transition: background var(--motion-fast) var(--ease-out);
+}
+.app.outpost .mx-table tbody tr:hover {
+  background: color-mix(in srgb, var(--edge-light) 45%, transparent);
+}
+/* The selected city: an accent bar on its first cell, no full-row tint */
+.app.outpost .mx-table tbody tr.selected-market-row > :first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.app.outpost .mx-table td {
+  font: 600 14px/1.2 var(--font-data);
+}
+.app.outpost .mx-table .silver {
+  justify-content: flex-end;
+  gap: 5px;
+  font: inherit;
+}
+.app.outpost .mx-table .silver img {
+  width: 14px;
+  height: 14px;
+}
+
+/* One price on one line: the figure at the right edge, its tag, age and stale mark before it.
+   In narrower wells the age line drops under the figure. */
+.app.outpost .mx-table .mx-price {
+  display: inline-flex;
+  flex-flow: row-reverse nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px var(--space-2);
+  vertical-align: middle;
+}
+.app.outpost .mx-table .mx-price.is-missing {
+  flex-direction: row;
+}
+.app.outpost .mx-table .market-inline-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted);
+  font: 500 12px/1.2 var(--font-ui);
+}
+.app.outpost .mx-table .market-inline-time.is-stale time {
+  color: var(--warning);
+}
+.app.outpost .mx-table .market-price-missing {
+  color: var(--muted);
+}
+.app.outpost .mx-table .mx-best {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 12px/1 var(--font-ui);
+}
+/* Stale: a hollow warning dot beside the amber age; "Stale" on hover and for assistive tech */
+.app.outpost .mx-table .mx-stale-mark {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--warning);
+  border-radius: 50%;
+  cursor: help;
+}
+.app.outpost .mx-table .is-gain {
+  color: var(--success);
+}
+.app.outpost .mx-table .is-loss {
+  color: var(--error);
+}
+.app.outpost .mx-table .market-row-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 600 14px/1.2 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+.app.outpost .mx-table .market-row-select:disabled {
+  cursor: default;
+  color: var(--secondary);
+}
+.app.outpost .mx-table .market-row-select:is(:hover:not(:disabled), [aria-pressed="true"]) {
+  color: var(--accent-ink);
+}
+/* Text columns (observation times) stay in the UI font */
+.app.outpost .mx-table td.is-text {
+  font: 500 13px/1.2 var(--font-ui);
+}
+.app.outpost .mx-table.is-compact :is(th, td) {
+  padding-block: 5px;
+}
+
+@container (max-width: 640px) {
+  .app.outpost .mx-table .mx-price {
+    flex-wrap: wrap;
+  }
+}
+/* Narrow wells (phones, side columns): the city stays pinned while the figures scroll, each
+   price sits over its age, and the spread drops. */
+@container (max-width: 520px) {
+  .app.outpost .mx-table :is(th, td) {
+    padding-inline: var(--space-3);
+  }
+  .app.outpost .mx-table :is(th, td):first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: auto;
+    background: var(--well);
+    white-space: normal;
+  }
+  .app.outpost .mx-table .market-row-select {
+    gap: 6px;
+    font-size: 13px;
+  }
+  .app.outpost .mx-table .mx-spread-col {
+    display: none;
+  }
+  .app.outpost .mx-table .mx-price,
+  .app.outpost .mx-table .mx-price.is-missing {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .app.outpost .mx-table td {
+    white-space: normal;
+  }
+  .app.outpost .mx-table .market-inline-time {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    text-align: right;
+  }
+  .app.outpost .mx-table .silver img {
+    display: none;
+  }
+}
+@container (max-width: 300px) {
+  .app.outpost .mx-table :is(th, td) {
+    padding-inline: var(--space-2);
+  }
+}

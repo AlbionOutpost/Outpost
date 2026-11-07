@@ -1,0 +1,23 @@
+/* Market research pages (Market Explorer, items, item detail, gold, market data) are working
+   pages: the masthead keeps its painting, title and line but gives up its tall padding, so the
+   working view starts high enough to fit the first screen. Tabs or actions sit at its right
+   edge on wide screens. Route sheets may tune masthead padding only (DESIGN.md). */
+:global(.app.outpost) .page :global(.workspace-identity)[data-scene] {
+  min-height: 0;
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-5);
+}
+:global(.app.outpost)
+  .page
+  :global(.workspace-identity-copy)
+  > :not(:global(.workspace-identity-head)) {
+  margin-top: var(--space-3);
+}
+@media (max-width: 780px) {
+  :global(.app.outpost) .page :global(.workspace-identity)[data-scene] {
+    margin-bottom: var(--space-3);
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-4);
+  }
+}

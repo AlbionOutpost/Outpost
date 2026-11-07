@@ -10,6 +10,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <WorkspaceHeading
+        compact
         glyph="map"
         scene="roads"
         title="Roads of Avalon mapper"

@@ -101,24 +101,6 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
-.app.outpost table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.app.outpost th {
-  background: var(--elevated);
-  color: var(--muted);
-  font: 500 12px/1.5 var(--font-ui);
-  padding: 12px;
-}
-.app.outpost td {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-}
-.app.outpost tbody tr:hover {
-  background: var(--elevated);
-}
 .app.outpost .site-header {
   height: 72px;
   gap: 24px;

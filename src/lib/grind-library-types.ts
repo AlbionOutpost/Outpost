@@ -60,6 +60,10 @@ export type LibraryGuide = {
   title: string;
   /** The longer, search-style title for the browser tab and search results. */
   seoTitle?: string;
+  /** Earlier slugs; next.config.ts answers each with a 308 to the current one. */
+  previousSlugs?: string[];
+  /** One-line standfirst for the reader's cover, where the summary's opening clause runs long. */
+  dek?: string;
   author: string;
   category: string;
   updatedAt: string;

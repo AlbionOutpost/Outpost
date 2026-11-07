@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Dices, RotateCcw } from "lucide-react";
 import type { TeamGamesView } from "@/lib/groups/economy-service";
+import { AvatarFrame } from "./avatar-frame";
 import { EmptyWell } from "./empty-well";
 import { Field } from "./group-parts";
 import { PanelHead } from "./panel-head";
@@ -12,7 +13,7 @@ import { operationKey, shortTime } from "./team-wallet";
 import teams from "./teams.module.css";
 import styles from "./team-economy.module.css";
 
-type Member = { userId: string; name: string };
+type Member = { userId: string; name: string; avatarFrame?: string | null };
 type Flip = TeamGamesView["flips"][number];
 type Roll = TeamGamesView["rolls"][number];
 type Side = "heads" | "tails";
@@ -343,11 +344,26 @@ export function TeamGames({
               still={!thrown}
               onLanded={() => setLanded(true)}
             />
-            <p className={styles.verdict} aria-live="polite">
+            <p
+              className={styles.verdict}
+              aria-live="polite"
+              // A result that just landed slams in, with the winner's frame pulsing.
+              data-slam={landed && thrown ? "" : undefined}
+            >
               {!landed ? (
                 <strong>Flipping…</strong>
               ) : shown?.outcome ? (
                 <>
+                  {thrown && (
+                    <AvatarFrame
+                      frame={
+                        members.find((m) => m.userId === (shown.winnerId ?? shown.headsId))
+                          ?.avatarFrame
+                      }
+                      size={44}
+                      name={name(shown.winnerId ?? shown.headsId)}
+                    />
+                  )}
                   <strong>{verdict(shown).head}</strong>
                   <span>{verdict(shown).line}</span>
                 </>

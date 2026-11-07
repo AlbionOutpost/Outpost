@@ -1,12 +1,13 @@
-/* Guide reader (/guides/[slug]): the guide's own cover as the masthead, then a raised contents
-   rail beside the guide on a framed reading page (the /legal treatment), the pair centred in the
-   landing's measure, and a closing row. */
+/* Guide reader (/guides/[slug]). A cover hero (the guide's key art crisp on the right, the same
+   art blurred behind the copy), then three columns at desktop: a sticky contents list with a
+   sliding marker, the text on a framed reading page (~68ch), and a rail of what the guide uses
+   (tools, items, details). Then "Read next": the guides it links to or that link back. */
 .page {
-  --reader-width: 1064px;
+  --reader-width: 1240px;
   max-width: var(--page-width);
   margin-inline: auto;
 }
-/* The shell narrows reading routes to 880px; the reader needs the rail beside its column */
+/* The shell narrows reading routes to 880px; the reader needs its rails beside the text */
 :global(.app.outpost main):has(> .page) {
   max-width: calc(var(--page-width) + 2 * var(--page-gutter));
 }
@@ -14,196 +15,397 @@
 :global(.app.outpost) .page :global(.workspace-emblem) {
   display: none;
 }
-/* The masthead copy starts where the centred reading pair starts */
+
+/* ---------- Cover hero ---------- */
 :global(.app.outpost) .page > :global(.workspace-identity) {
-  min-height: 360px;
-  padding-inline: calc(50vw - 50% + max(0px, (100% - var(--reader-width)) / 2));
+  min-height: 400px;
+  align-items: center;
+  gap: var(--space-10);
+  padding-block: var(--space-12);
+}
+/* Behind the copy the cover is only atmosphere: blurred and dimmed, so the crisp one leads */
+:global(.app.outpost) .page > :global(.workspace-identity[data-scene="cover"])::before {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--illustration-bg) 94%, transparent) 0%,
+      color-mix(in srgb, var(--illustration-bg) 78%, transparent) 45%,
+      color-mix(in srgb, var(--illustration-bg) 60%, transparent) 100%
+    ),
+    var(--scene) center 35% / cover no-repeat;
+  filter: blur(14px) saturate(1.15);
+  mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
+}
+:global(.app.outpost) .page :global(.workspace-identity-copy) {
+  max-width: 640px;
 }
 :global(.app.outpost) .page :global(.workspace-identity h1) {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-3);
+  text-wrap: balance;
 }
-/* The landing hero's oval shade behind the copy, over the cover */
-:global(.app.outpost) .page :global(.workspace-identity-copy) {
-  isolation: isolate;
-}
-:global(.app.outpost) .page :global(.workspace-identity-copy)::before {
-  content: "";
-  position: absolute;
-  inset: -48px -120px -40px -80px;
-  z-index: -1;
-  background: radial-gradient(
-    ellipse at 35% 50%,
-    color-mix(in srgb, var(--illustration-bg) 72%, transparent) 0%,
-    color-mix(in srgb, var(--illustration-bg) 40%, transparent) 45%,
-    transparent 72%
-  );
-  pointer-events: none;
+:global(.app.outpost) .page :global(.workspace-identity .intro) {
+  max-width: 54ch;
+  color: var(--secondary);
+  font-size: 17px;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 :global(.app.outpost) .chips.chips {
   flex-wrap: wrap;
-  margin: 18px 0 0;
+  margin: var(--space-5) 0 0;
   padding: 0;
   list-style: none;
-}
-/* The journal tracker fills the whole measure, so its masthead starts at the page edge */
-.journal {
-  --reader-width: var(--page-width);
 }
 .mastheadActions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  margin-top: var(--space-4);
 }
-.layout {
-  display: grid;
-  grid-template-columns: 256px minmax(0, 776px);
-  justify-content: center;
-  align-items: start;
-  gap: 32px;
-  margin-top: 8px;
+/* The crisp key art, framed like a card on the painting */
+:global(.app.outpost) .cover.cover {
+  flex: 0 1 460px;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1px var(--raised-edge),
+    0 0 0 4px color-mix(in srgb, var(--illustration-bg) 50%, transparent),
+    0 28px 60px -28px #000;
+}
+.cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+/* The journal tracker fills the whole measure */
+.journal {
+  --reader-width: var(--page-width);
 }
 
-/* Contents rail: a raised panel that stays in view; it never scrolls on its own */
-:global(.app.outpost) .rail.rail {
+/* ---------- Columns ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 264px;
+  grid-template-areas: "toc main facts";
+  align-items: start;
+  gap: var(--space-10);
+  margin-top: var(--space-2);
+}
+.toc {
+  grid-area: toc;
   position: sticky;
   top: 96px;
   display: grid;
-  justify-items: start;
   gap: var(--space-4);
-  padding: 20px;
+  padding-top: var(--space-2);
 }
-:global(.app.outpost) .rail h2 {
+:global(.app.outpost) .toc h2 {
   margin: 0;
-  font: 800 19px/1.15 var(--font-display);
+  color: var(--muted);
+  font: 600 12px/1.3 var(--font-ui);
 }
+/* Contents: a hairline track with an ember marker that slides to the section in view */
 .contents {
+  position: relative;
   display: grid;
-  width: 100%;
-  gap: 2px;
+  border-left: 1px solid var(--border);
+}
+.marker {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 :global(.app.outpost) .contents a {
   display: block;
-  padding: 6px 10px;
-  margin-inline: -10px;
-  border-radius: var(--radius-sm);
-  color: var(--secondary);
+  padding: 7px 0 7px var(--space-4);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
   text-decoration: none;
+  transition: color 180ms ease;
 }
 :global(.app.outpost) .contents a:hover {
-  background: var(--accent-wash);
-  color: var(--accent-ink);
+  color: var(--text);
 }
-.railNote {
-  margin: 0;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--well-border);
+:global(.app.outpost) .contents a[aria-current] {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+:global(.app.outpost) .backTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--muted);
   font-size: 12px;
-  line-height: 1.5;
+  text-decoration: none;
+}
+:global(.app.outpost) .backTop:hover {
+  color: var(--text);
+}
+/* Reading progress along the top of the window */
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 30;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-active), var(--accent));
+  transform: scaleX(var(--progress, 0));
+  transform-origin: 0 50%;
+  pointer-events: none;
 }
 .mobileToc {
   display: none;
 }
-
-/* Reading column */
-.body {
+.mobileContents {
   display: grid;
-  gap: 48px;
+  padding-top: var(--space-1);
+}
+:global(.app.outpost) .mobileContents a {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--well-border);
+  color: var(--secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.main {
+  grid-area: main;
+  display: grid;
+  gap: var(--space-12);
   min-width: 0;
 }
-/* The reading page: a framed document, as on /legal, with the text at about 68 characters */
+
+/* ---------- Reading page ---------- */
 :global(.app.outpost) .doc.doc {
   min-width: 0;
-  padding: 40px 48px 48px;
+  padding: var(--space-10) var(--space-12) var(--space-12);
 }
 .prose {
   color: var(--secondary);
-  font-size: 16px;
-  line-height: 1.75;
-  overflow-wrap: anywhere;
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  font-kerning: normal;
 }
-.prose > * {
+.prose :is(p, li) {
+  text-wrap: pretty;
+  hyphens: manual;
+}
+.prose :is(p, ul, ol, h3, h4) {
   max-width: 68ch;
 }
-.prose > :first-child {
-  margin-top: 0;
-}
 .prose p {
-  margin: 0 0 18px;
+  margin: 0 0 1.1em;
 }
-.prose :is(h2, h3, h4) {
+/* The opening paragraph reads as the lede */
+:global(.app.outpost) .intro > p:first-child {
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.6;
+}
+.section {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--well-border);
+}
+.intro + .section,
+.section:first-child {
+  margin-top: var(--space-8);
+}
+:global(.app.outpost) .sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  color: var(--text);
+  font: 800 clamp(26px, 2.4vw, 32px) / 1.08 var(--font-display);
+  scroll-margin-top: 100px;
+  text-wrap: balance;
+}
+.charge {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 4px 8px #0009);
+}
+.prose :is(h3, h4) {
   color: var(--text);
   scroll-margin-top: 100px;
   text-wrap: balance;
 }
-:global(.app.outpost) .prose h2 {
-  margin: 48px 0 16px;
-  font: 800 30px/1.1 var(--font-display);
-}
 :global(.app.outpost) .prose h3 {
-  margin: 32px 0 10px;
-  font: 650 18px/1.35 var(--font-ui);
+  margin: var(--space-8) 0 var(--space-2);
+  font: 650 19px/1.35 var(--font-ui);
 }
 :global(.app.outpost) .prose h4 {
-  margin: 24px 0 8px;
-  font: 650 16px/1.4 var(--font-ui);
+  margin: var(--space-6) 0 var(--space-2);
+  font: 650 17px/1.4 var(--font-ui);
 }
 .prose strong,
 .prose b {
   color: var(--text);
+  font-weight: 650;
 }
 :global(.app.outpost) .prose a {
   color: var(--accent-ink);
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent-ink) 45%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+  transition: text-decoration-color 160ms ease;
+}
+:global(.app.outpost) .prose a:hover {
+  text-decoration-color: currentColor;
 }
 .prose :is(ul, ol) {
-  margin: 0 0 18px;
-  padding-left: 22px;
+  margin: 0 0 1.2em;
+  padding-left: 1.3em;
 }
 .prose li {
-  margin: 6px 0;
+  margin: 0.4em 0;
+  padding-left: 0.2em;
 }
 .prose li::marker {
   color: var(--accent);
 }
-.prose blockquote {
-  margin: 24px 0;
-  padding: 14px 18px;
+.prose ol > li::marker {
+  font: 600 0.9em var(--font-data);
+}
+
+/* Items named in the text: their render and name as one chip in the line */
+:global(.app.outpost) .prose :global(a.guide-item) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  margin-block: 2px;
+  padding: 0 8px 0 2px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  color: var(--text);
+  line-height: 1.6;
+  text-decoration: none;
+  vertical-align: middle;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+:global(.app.outpost) .prose :global(a.guide-item):hover {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+.prose :global(img[data-albion-icon]) {
+  flex: none;
+  width: 1.7em;
+  height: 1.7em;
+  margin: -0.2em 0;
+  vertical-align: middle;
+}
+
+/* A paragraph that is one bold statement (a formula, a rule): set out as a callout */
+:global(.app.outpost) .prose :global(p.guide-callout) {
+  max-width: 68ch;
+  margin: var(--space-6) 0;
+  padding: var(--space-4) var(--space-5);
   border: 1px solid var(--well-border);
   border-left: 3px solid var(--accent);
   border-radius: var(--radius-md);
-  background: var(--well);
+  background: linear-gradient(90deg, var(--accent-wash), transparent 70%), var(--well);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.5;
 }
+/* A list of bold leads: each lead on its own line above its explanation */
+:global(.app.outpost) .prose :global(ul.guide-terms) {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .prose :global(ul.guide-terms > li) {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+  border-left: 2px solid var(--frame-rule);
+  background: linear-gradient(90deg, var(--well), transparent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+:global(.app.outpost) .prose :global(ul.guide-terms > li > strong:first-child) {
+  display: block;
+  margin-bottom: 2px;
+}
+/* A list of figures (+40, T4:): the figure in the display face, as stat tiles */
+:global(.app.outpost) .prose :global(ul.guide-figures) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: var(--space-3);
+  max-width: none;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .prose :global(ul.guide-figures > li) {
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  font-size: 14px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .prose :global(ul.guide-figures > li > strong:first-child) {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--accent-ink);
+  font: 800 28px/1.05 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+/* Mistake and tip sections carry a caution or an ember edge on their lists */
+:global(.app.outpost) .section[data-tone="caution"] :global(ul.guide-terms > li) {
+  border-left-color: var(--warning);
+}
+:global(.app.outpost) .section[data-tone="caution"] :is(ul, ol):not(:global(.guide-terms)) {
+  padding: var(--space-4) var(--space-5) var(--space-4) var(--space-8);
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 6%, transparent);
+}
+:global(.app.outpost) .section[data-tone="caution"] li::marker {
+  color: var(--warning);
+}
+:global(.app.outpost) .section[data-tone="tip"] :is(ul, ol) {
+  padding: var(--space-4) var(--space-5) var(--space-4) var(--space-8);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--accent-wash);
+}
+
 .prose :global(.guide-article-image) {
   display: block;
   width: 100%;
   height: auto;
-  margin: 28px 0;
+  margin: var(--space-8) 0;
   border-radius: var(--radius-md);
   box-shadow:
     0 0 0 1px var(--raised-edge),
     0 14px 26px -18px #000b;
 }
-/* Item renders inline in the text: a little taller than the letters, pulled into the line so
-   a list item or paragraph keeps its line-height */
-.prose :global(img[data-albion-icon]) {
-  width: 1.9em;
-  height: 1.9em;
-  margin: -0.5em 0.1em -0.45em;
-  vertical-align: middle;
-}
+
+/* Tables as data cards: Inter for words, tabular figures right-aligned, row dividers */
 .prose :global(.guide-table-scroll) {
   max-width: 100%;
-  margin: 24px 0;
+  margin: var(--space-6) 0 var(--space-8);
   overflow: auto;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  scrollbar-width: thin;
 }
 .prose :global(.guide-table-scroll):focus-visible {
   outline: 2px solid var(--accent);
@@ -211,84 +413,416 @@
 }
 :global(.app.outpost) .prose table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
   line-height: 1.5;
-}
-:global(.app.outpost) .prose :is(th, td) {
-  min-width: 100px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--well-border);
-  text-align: left;
-  vertical-align: top;
   white-space: normal;
 }
+:global(.app.outpost) .prose :is(th, td) {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--well-border);
+  font-family: var(--font-ui);
+  font-variant-numeric: normal;
+  text-align: left;
+  vertical-align: top;
+}
+:global(.app.outpost) .prose td {
+  color: var(--secondary);
+  font-weight: 400;
+}
+:global(.app.outpost) .prose td:first-child {
+  color: var(--text);
+  font-weight: 550;
+  min-width: 128px;
+}
 :global(.app.outpost) .prose th {
+  position: sticky;
+  top: 0;
+  background: var(--elevated);
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
-  text-transform: none;
   letter-spacing: 0;
+  white-space: nowrap;
+}
+:global(.app.outpost) .prose :global(:is(th, td).is-figure) {
+  text-align: right;
+  white-space: nowrap;
+}
+:global(.app.outpost) .prose :global(td.is-figure) {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .prose tbody tr:nth-child(even) > td {
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+:global(.app.outpost) .prose tbody tr:hover > td {
+  background: var(--accent-wash);
 }
 .prose tr:last-child > td {
   border-bottom: 0;
 }
+.patchNote {
+  margin: var(--space-12) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---------- Facts rail ---------- */
+.facts {
+  grid-area: facts;
+  position: sticky;
+  top: 96px;
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+.factCard {
+  padding: var(--space-5);
+  border: 1px solid var(--raised-edge);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: 0 18px 32px -24px #000;
+}
+:global(.app.outpost) .factCard h2 {
+  margin: 0 0 var(--space-3);
+  color: var(--text);
+  font: 800 19px/1.15 var(--font-display);
+}
+.factList {
+  display: grid;
+  margin: 0;
+}
+.factList > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--well-border);
+  font-size: 13px;
+}
+.factList > div:last-child {
+  border-bottom: 0;
+}
+.factList dt {
+  color: var(--muted);
+}
+.factList dd {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  font-weight: 550;
+  text-align: right;
+}
+.toolList,
+.itemList {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .toolList a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: 4px var(--space-2);
+  margin-inline: calc(-1 * var(--space-2));
+  border-radius: var(--radius-sm);
+  color: var(--secondary);
+  font-size: 13px;
+  font-weight: 550;
+  text-decoration: none;
+}
+.toolList a span {
+  flex: 1;
+}
+.toolList a svg {
+  color: var(--muted);
+}
+:global(.app.outpost) .toolList a:hover {
+  background: var(--accent-wash);
+  color: var(--text);
+}
+.itemList {
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+}
+:global(.app.outpost) .itemList a {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  transition: border-color 160ms ease;
+}
+:global(.app.outpost) .itemList a:hover {
+  border-color: var(--accent);
+}
+.itemList img {
+  width: 44px;
+  height: 44px;
+}
+.itemList span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Read next ---------- */
+.related {
+  margin-top: var(--space-16);
+}
+.relatedList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .relatedCard {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--raised-edge);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  color: var(--secondary);
+  text-decoration: none;
+  box-shadow: 0 18px 32px -24px #000;
+}
+.relatedCard img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.relatedCopy {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.relatedCopy strong {
+  color: var(--text);
+  font: 800 22px/1.1 var(--font-display);
+}
+.relatedReason {
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+.relatedMeta {
+  color: var(--muted);
+  font-size: 12px;
+}
 .tool {
   display: grid;
-  gap: 24px;
+  gap: var(--space-6);
 }
 .tool > * {
   margin-block: 0;
 }
 
-@media (max-width: 1100px) {
-  .layout {
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 28px;
+/* ---------- Motion ----------
+   Sections rise into place once as they scroll in (transform and clip only, never opacity, so
+   text never passes through low contrast); the contents marker slides; the cover settles. */
+@media (prefers-reduced-motion: no-preference) {
+  .marker {
+    transition:
+      transform 420ms var(--ease-out-expo),
+      height 420ms var(--ease-out-expo);
   }
-  :global(.app.outpost) .doc.doc {
-    padding: 32px 36px 40px;
+  .section[data-reveal] {
+    translate: 0 28px;
+    clip-path: inset(0 0 12% 0);
+    transition:
+      translate 900ms var(--ease-out-expo),
+      clip-path 900ms var(--ease-out-expo);
+  }
+  .section[data-reveal][data-revealed] {
+    translate: 0 0;
+    clip-path: inset(-40px);
+  }
+  .cover img {
+    animation: guide-cover-settle 1400ms var(--ease-out-expo) both;
+  }
+  :global(.app.outpost) .relatedCard {
+    transition:
+      scale 340ms var(--ease-out-expo),
+      border-color 200ms ease;
+  }
+  :global(.app.outpost) .relatedCard:hover {
+    scale: 1.022;
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  :global(.app.outpost) .relatedCard:active {
+    scale: 0.985;
+  }
+  @keyframes guide-cover-settle {
+    from {
+      scale: 1.08;
+    }
+    to {
+      scale: 1;
+    }
   }
 }
-@media (max-width: 800px) {
+
+/* ---------- Narrower screens ---------- */
+@media (max-width: 1279px) {
+  .layout {
+    grid-template-columns: 196px minmax(0, 1fr);
+    grid-template-areas:
+      "toc main"
+      ". facts";
+    column-gap: var(--space-8);
+    row-gap: var(--space-8);
+  }
+  .facts {
+    position: static;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+@media (max-width: 1100px) {
+  :global(.app.outpost) .doc.doc {
+    padding: var(--space-8) var(--space-8) var(--space-10);
+  }
+  :global(.app.outpost) .page > :global(.workspace-identity) {
+    gap: var(--space-6);
+  }
+  :global(.app.outpost) .cover.cover {
+    flex-basis: 360px;
+  }
+}
+@media (max-width: 900px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "main"
+      "facts";
   }
-  :global(.app.outpost) .rail.rail {
+  /* Only the progress bar of the contents column stays; the list moves into the page */
+  .toc {
+    grid-area: auto;
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    padding: 0;
+  }
+  :global(.app.outpost) .toc > :not(.progress) {
     display: none;
   }
   .mobileToc {
     display: block;
-    margin-bottom: 28px;
+    margin-bottom: var(--space-6);
   }
-  .mobileToc .contents {
-    padding-top: 4px;
+  .relatedList {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+  :global(.app.outpost) .relatedCard {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+  .relatedCard img {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  .relatedCopy {
+    padding: var(--space-3) var(--space-4);
+  }
+  .relatedCopy strong {
+    font-size: 19px;
+  }
+  .relatedCopy > span:not([class]) {
+    display: none;
+  }
+}
+@media (max-width: 780px) {
+  :global(.app.outpost) .page > :global(.workspace-identity) {
+    flex-wrap: wrap;
+    min-height: 0;
+    padding-block: var(--space-8);
+  }
+  :global(.app.outpost) .cover.cover {
+    flex: 1 1 100%;
   }
 }
 @media (max-width: 700px) {
-  :global(.app.outpost) .page :global(.workspace-identity) {
-    min-height: 0;
-  }
   :global(.app.outpost) .doc.doc {
-    padding: 20px 18px 28px;
+    padding: var(--space-5) var(--space-4) var(--space-8);
   }
   .prose {
-    font-size: 15px;
+    font-size: 16px;
   }
-  :global(.app.outpost) .prose h2 {
-    margin-top: 40px;
-    font-size: 26px;
+  :global(.app.outpost) .intro > p:first-child {
+    font-size: 17px;
   }
-  .body {
-    gap: 40px;
+  .section {
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+  }
+  .charge {
+    width: 32px;
+    height: 32px;
+  }
+  :global(.app.outpost) .prose :global(ul.guide-figures) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Wide tables scroll in their own card with the row name pinned */
+  :global(.app.outpost) .prose :is(th, td) {
+    padding: 10px 12px;
+  }
+  :global(.app.outpost) .prose :is(th, td):first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 112px;
+    max-width: 148px;
+    background: var(--surface-raised);
+    box-shadow: 1px 0 0 var(--well-border);
+  }
+  :global(.app.outpost) .prose th:first-child {
+    z-index: 2;
+    background: var(--elevated);
+  }
+  :global(.app.outpost) .prose td {
+    min-width: 132px;
+  }
+  :global(.app.outpost) .prose :global(td.is-figure) {
+    min-width: 0;
+  }
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media print {
-  .rail,
-  .mobileToc {
+  .toc,
+  .mobileToc,
+  .facts,
+  .related,
+  .progress {
     display: none;
   }
   .layout {
     display: block;
+  }
+  .section[data-reveal] {
+    translate: none;
+    clip-path: none;
   }
 }

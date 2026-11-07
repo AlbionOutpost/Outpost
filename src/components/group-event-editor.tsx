@@ -35,7 +35,12 @@ export function GroupEventEditor({
       <button type="button" className="pill-link is-small" onClick={() => setOpen(true)}>
         Edit event
       </button>
-      <EditorDialog open={open} title="Edit team event" onClose={() => setOpen(false)}>
+      <EditorDialog
+        open={open}
+        title="Edit team event"
+        onClose={() => setOpen(false)}
+        className={styles.dialog}
+      >
         <form
           className={styles.form}
           onSubmit={async (e) => {

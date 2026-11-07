@@ -1,24 +1,27 @@
 /* The shared calculator layout: numbered input panels → result → full-width details. See
-   DESIGN.md "Shared building blocks". Wide: every step side by side, result last. Tablet: inputs
-   stacked beside a sticky result. Phone: one step at a time behind a switcher, each input step
-   ending in a bar with its next action and headline figure. */
+   DESIGN.md "Shared building blocks". Wide (above 1180px): every step side by side, result
+   last, so inputs and the headline figure share the first screen. Tablet: inputs stacked beside
+   a sticky result. Phone: one step at a time behind a switcher, each input step ending in a bar
+   with its next action and headline figure. */
 :global(.app.outpost) .shell.shell {
   display: grid;
   gap: var(--space-4);
 }
 :global(.app.outpost) .grid.grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
-  gap: 24px;
+  grid-template-columns: repeat(var(--inputs), minmax(0, 1fr)) minmax(320px, 380px);
+  gap: 20px;
   align-items: start;
 }
 :global(.app.outpost) .shell[data-rail] .grid.grid {
-  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(320px, 380px);
+  grid-template-columns:
+    minmax(220px, 260px) repeat(var(--inputs), minmax(0, 1fr))
+    minmax(300px, 360px);
 }
 :global(.app.outpost) .rail.rail {
   position: sticky;
   top: 88px;
-  grid-row: 1 / span var(--inputs);
+  grid-row: 1;
   min-width: 0;
 }
 :global(.app.outpost) .panel.panel {
@@ -32,9 +35,9 @@
 :global(.app.outpost) .panel.panel > * {
   margin: 0;
 }
-/* Input steps stack in the main column; the result rides beside them */
+/* Input steps sit side by side in the first row; the result rides beside them */
 :global(.app.outpost) .panel.panel:not(.result) {
-  grid-column: -3;
+  grid-row: 1;
   container-type: inline-size;
 }
 /* Details sit after the step grid (not in it): the sticky result is confined to the grid and
@@ -54,7 +57,7 @@
   position: sticky;
   top: 88px;
   grid-column: -2;
-  grid-row: 1 / span var(--inputs);
+  grid-row: 1;
 }
 :global(.app.outpost) .switcher.switcher,
 :global(.app.outpost) .bar.bar {
@@ -197,10 +200,19 @@
 }
 
 /* Tablet: the list to pick from moves above the steps */
+/* Tablet: the inputs stack in the main column beside the sticky result */
 @media (max-width: 1180px) {
   :global(.app.outpost) .grid.grid,
   :global(.app.outpost) .shell[data-rail] .grid.grid {
     grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    gap: 24px;
+  }
+  :global(.app.outpost) .panel.panel:not(.result) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  :global(.app.outpost) .result.result {
+    grid-row: 1 / span var(--inputs);
   }
   :global(.app.outpost) .rail.rail {
     position: static;
@@ -347,7 +359,7 @@
 }
 :global(.app.outpost) .journey.journey {
   display: grid;
-  gap: 26px;
+  gap: 20px;
   min-width: 0;
 }
 :global(.app.outpost) .journey.journey input[type="number"] {
@@ -524,6 +536,17 @@
   margin: 0;
   padding: 0;
   list-style: none;
+}
+/* Wide screens: a long price list (laborer loot, big recipes) scrolls inside its well, so the
+   step never pushes the page past the first screen */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .materials.materials ul {
+    max-height: max(280px, calc(100svh - 400px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
 }
 :global(.app.outpost) .matHead.matHead,
 :global(.app.outpost) .mat.mat {

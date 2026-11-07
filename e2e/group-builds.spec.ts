@@ -2,6 +2,29 @@ import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
+test("comps by activity counts each activity's comps and opens its filtered list", async ({
+  page,
+}) => {
+  await page.goto("/compositions");
+  await page
+    .getByRole("navigation", { name: "Comp collections" })
+    .getByRole("link", { name: "Activities", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/compositions\/activities/);
+  const activities = page.getByRole("region", { name: "Comp activities" });
+  const cards = activities.locator("[data-activity]");
+  expect(await cards.count()).toBeGreaterThan(5);
+  // Every card names its activity and a real count; none is listed empty
+  for (const text of await cards.locator("small").allInnerTexts())
+    expect(text).toMatch(/^[\d,]+ comps?$/);
+  const zvz = activities.locator('[data-activity="ZVZ"]');
+  const count = Number((await zvz.locator("small").innerText()).replace(/\D/g, ""));
+  await zvz.getByRole("link").click();
+  await expect(page).toHaveURL(/\/compositions\?category=ZVZ/);
+  await expect(
+    page.getByRole("region", { name: "Matching comps" }).getByText(/^[\d,]+ comps? /),
+  ).toHaveText(new RegExp(`^${count.toLocaleString("en-GB")} comps? `));
+});
 test("group builds are discoverable and retain every member while presentation controls work", async ({
   page,
 }) => {
@@ -11,7 +34,9 @@ test("group builds are discoverable and retain every member while presentation c
     .getByRole("link", { name: "Group Builds", exact: true })
     .click();
   await expect(page).toHaveURL(/\/compositions\?source=library/);
-  await expect(page.getByRole("heading", { name: /^[\d,]+ Group Builds$/ })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Matching comps" }).getByText(/^[\d,]+ Group Builds · /),
+  ).toBeVisible();
   // The old list URL redirects to the merged list, keeping its filters and server.
   const old = await page.request.get("/compositions/library?q=zvz&page=2&region=asia", {
     maxRedirects: 0,

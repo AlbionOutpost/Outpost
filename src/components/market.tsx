@@ -637,8 +637,8 @@ export function Market() {
               )}
               <p className="market-source-note mx-source">
                 Albion Online Data Project · sell orders are listings, buy orders are offers ·
-                spread is sell minus buy, as a share of buy · older than an hour is marked stale ·
-                times in UTC
+                spread is sell minus buy, as a share of buy · an amber age and ring mark an order
+                older than an hour (stale) · times in UTC
               </p>
             </section>
           </div>

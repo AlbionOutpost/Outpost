@@ -186,6 +186,40 @@
   color: var(--secondary);
   font-size: 13px;
 }
+/* A result that just landed slams in; the winner's frame pulses with an ember ring */
+:global(.app.outpost) .verdict.verdict[data-slam] strong {
+  animation: verdictSlam 560ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+}
+:global(.app.outpost) .verdict.verdict[data-slam] > :first-child {
+  border-radius: 50%;
+  animation: winnerPulse 1100ms var(--ease-out-expo) 120ms both;
+}
+@keyframes verdictSlam {
+  0% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes winnerPulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 80%, transparent);
+    transform: scale(0.6);
+  }
+  35% {
+    transform: scale(1.15);
+  }
+  100% {
+    box-shadow: 0 0 0 18px transparent;
+    transform: scale(1);
+  }
+}
 :global(.app.outpost) .sides.sides {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -501,7 +535,55 @@
 /* The WebGL chest and its coins share one canvas over the whole reveal; the open lid needs
    more headroom than the CSS chest */
 :global(.app.outpost) .revealScene[data-gl] > .chestStage {
-  height: 300px;
+  height: 380px;
+}
+:global(.app.outpost) .revealScene[data-gl] {
+  cursor: pointer;
+}
+:global(.app.outpost) .revealSkip.revealSkip {
+  position: absolute;
+  top: var(--space-2);
+  right: 0;
+  z-index: 4;
+}
+/* The total slams in once the last coin is home */
+:global(.app.outpost) .revealScene[data-gl] > .revealTotal:not([data-slam]) {
+  visibility: hidden;
+}
+:global(.app.outpost) .revealScene[data-gl] > .revealTotal[data-slam] {
+  animation: totalSlam 620ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes totalSlam {
+  0% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* A card pops with a glow ring when its first coin lands */
+:global(.app.outpost) .revealScene[data-gl] .payoutCard[data-lit] {
+  animation: cardPop 760ms var(--ease-out-expo);
+}
+@keyframes cardPop {
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--accent) 75%, transparent),
+      0 0 24px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+  100% {
+    box-shadow:
+      0 0 0 16px transparent,
+      0 0 0 transparent;
+  }
 }
 :global(.app.outpost) .revealCanvas.revealCanvas {
   position: absolute;
@@ -904,10 +986,14 @@
     scale: 0.8;
   }
   :global(.app.outpost) .revealScene[data-gl] > .chestStage {
-    height: 240px;
+    height: 280px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  :global(.app.outpost) .verdict.verdict[data-slam] *,
+  :global(.app.outpost) .revealScene[data-gl] > .revealTotal[data-slam] {
+    animation: none;
+  }
   :global(.app.outpost) .payoutCard.payoutCard {
     transition: none;
   }

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { ItemCatalog } from "@/components/item-catalog";
 import { MarketNextSteps } from "@/components/market-next-steps";
 import styles from "./items.module.css";
+import marketPage from "@/components/market-page.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/items", await searchParams);
 }
@@ -23,7 +24,7 @@ export default async function Page() {
     }),
   ]);
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${marketPage.page}`}>
       <WorkspaceHeading
         glyph="catalog"
         scene="market"

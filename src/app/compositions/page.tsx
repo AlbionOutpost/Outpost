@@ -1,5 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
-import { WorkspaceHeading } from "@/components/workspace-heading";
+import { CompDirectoryHeader } from "@/components/comp-directory-header";
 import { AdSlot } from "@/components/ad-slot";
 import { findLibraryBuilds, queryLibraryCompositions } from "@/lib/grind-library";
 import { activityName, type LibraryComposition } from "@/lib/grind-library-types";
@@ -15,8 +15,6 @@ import { CompRoster, RosterRows } from "@/components/comp-roster";
 import { HeartChip } from "@/components/heart-chip";
 import { CompGrid, CompWindow } from "@/components/comp-window";
 import { Pagination } from "@/components/pagination";
-import { CompNextSteps } from "@/components/comp-next-steps";
-import { SectionHeading } from "@/components/section-heading";
 import { EmptyWell } from "@/components/empty-well";
 import { BuildSortSelect } from "@/components/build-sort-select";
 import { SearchInput } from "@/components/field";
@@ -218,109 +216,95 @@ export default async function Compositions({
     </CompGrid>
   );
   const sources = [
-    ["", "All", !mine && source === ""],
-    ["player", "Player comps", !mine && source === "player"],
+    ["", "All", source === ""],
+    ["player", "Player comps", source === "player"],
     ["library", "Group Builds", source === "library"],
   ] as const;
   return (
     <div className={styles.page} data-comp-directory="">
-      <WorkspaceHeading
-        glyph="composition"
-        scene="comps"
+      <CompDirectoryHeader
+        active={mine ? "mine" : "browse"}
         title={mine ? "My comps" : "Albion Online comps"}
-        accent="comps"
         description={
           mine
             ? "Comps you made, and the ones your Teams share with you."
             : "Party comps players shared on Outpost, and Group Builds: recorded comps with every member’s loadout. Copy one to plan your own party around it."
         }
-        actions={
-          <Link className="button primary" href="/compositions/new">
-            Create a comp
-          </Link>
-        }
       />
-      <form
-        className={`raised ${styles.filters} ${styles.hasSelect}`}
-        action="/compositions"
-        role="search"
-        aria-label="Find comps"
-      >
-        {source && <input type="hidden" name="source" value={source} />}
-        {mine && <input type="hidden" name="mine" value="1" />}
-        <label>
-          <span className={styles.fieldName}>Search comps</span>
-          <SearchInput
-            type="search"
-            name="q"
-            defaultValue={q}
-            maxLength={100}
-            placeholder="Comp name…"
-          />
-        </label>
-        <label>
-          <span className={styles.fieldName}>Activity</span>
-          <BuildSortSelect name="category" defaultValue={activity}>
-            <option value="">All activities</option>
-            {activity && !options.some((o) => o.value === activity) && (
-              <option value={activity}>{activityLabel(activity)}</option>
-            )}
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
+      <div className={`raised ${styles.toolbar}`}>
+        {!mine && (
+          <nav className={`segmented ${styles.sources}`} aria-label="Comp source">
+            {sources.map(([id, label, current]) => (
+              <Link
+                key={id}
+                href={href({ source: id, page: "" })}
+                aria-current={current ? "true" : undefined}
+              >
+                {label}
+              </Link>
             ))}
-          </BuildSortSelect>
-        </label>
-        <button className="button secondary">Find comps</button>
-      </form>
-      <section className={styles.section} aria-labelledby="comp-results">
-        <nav className={`segmented ${styles.sources}`} aria-label="Comp source">
-          {sources.map(([id, label, current]) => (
-            <Link
-              key={id}
-              href={href({ source: id, mine: "", page: "" })}
-              aria-current={current ? "true" : undefined}
-            >
-              {label}
-            </Link>
-          ))}
-          <Link
-            href={href({ source: "", mine: "1", page: "" })}
-            aria-current={mine ? "true" : undefined}
-          >
-            My comps
-          </Link>
-        </nav>
-        <SectionHeading
-          id="comp-results"
-          title={
-            <>
-              {total.toLocaleString("en-GB")}{" "}
-              <em>{mine ? "of your comps" : total === 1 ? noun : `${noun}s`}</em>
-            </>
-          }
-          line={[
+          </nav>
+        )}
+        <form
+          className={`${styles.filters} ${styles.hasSelect}`}
+          action="/compositions"
+          role="search"
+          aria-label="Find comps"
+        >
+          {source && <input type="hidden" name="source" value={source} />}
+          {mine && <input type="hidden" name="mine" value="1" />}
+          <label>
+            <span className={styles.fieldName}>Search comps</span>
+            <SearchInput
+              type="search"
+              name="q"
+              defaultValue={q}
+              maxLength={100}
+              placeholder="Comp name…"
+            />
+          </label>
+          <label>
+            <span className={styles.fieldName}>Activity</span>
+            <BuildSortSelect name="category" defaultValue={activity}>
+              <option value="">All activities</option>
+              {activity && !options.some((o) => o.value === activity) && (
+                <option value={activity}>{activityLabel(activity)}</option>
+              )}
+              {options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </BuildSortSelect>
+          </label>
+          <button className="button secondary">Find comps</button>
+        </form>
+      </div>
+      <section className={styles.section} aria-label="Matching comps">
+        <p className={styles.count} aria-live="polite" aria-atomic="true">
+          <strong>{total.toLocaleString("en-GB")}</strong>{" "}
+          {mine ? "of your comps" : total === 1 ? noun : `${noun}s`}
+          {[
             source === "" &&
-              `${playerTotal.toLocaleString("en-GB")} from players · ${libraryTotal.toLocaleString("en-GB")} Group Builds`,
-            shown > 0 && `${first + 1}–${first + shown} shown`,
+              ` (${playerTotal.toLocaleString("en-GB")} from players · ${libraryTotal.toLocaleString("en-GB")} Group Builds)`,
+            shown > 0 && ` · ${first + 1}–${first + shown} shown`,
             source === "library"
-              ? "Most liked first."
+              ? " · Most liked first"
               : source === "player"
-                ? "Last updated first."
-                : "Player comps first, then Group Builds.",
+                ? " · Last updated first"
+                : "",
           ]
             .filter(Boolean)
-            .join(" · ")}
-        />
+            .join("")}
+        </p>
         {source === "" && players.length > 0 && groupBuilds.length > 0 ? (
           <>
             <section className={styles.sourceGroup} aria-labelledby="player-comps">
-              <h3 id="player-comps">Player comps</h3>
+              <h2 id="player-comps">Player comps</h2>
               {playerGrid}
             </section>
             <section className={styles.sourceGroup} aria-labelledby="group-builds">
-              <h3 id="group-builds">Group Builds</h3>
+              <h2 id="group-builds">Group Builds</h2>
               {libraryGrid}
             </section>
           </>
@@ -382,15 +366,6 @@ export default async function Compositions({
         />
       </section>
       {groupBuilds.length > 0 && <AdSlot placement="hub" />}
-      <CompNextSteps
-        show={["create", "builds", "teams"]}
-        title={
-          <>
-            Get your party <em>ready</em>
-          </>
-        }
-        line="Plan your own comp, find the loadout a slot is missing, or share one with your guild."
-      />
     </div>
   );
 }

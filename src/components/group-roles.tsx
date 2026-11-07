@@ -64,7 +64,6 @@ export function GroupRoles({ ctx }: { ctx: TeamContext }) {
     <section className={`panel ${styles.panel}`} aria-labelledby="team-roles">
       <PanelHead
         id="team-roles"
-        emblem="team-roles"
         title="Roles"
         line="Highest first. A member gets every permission of each role they hold."
         actions={
@@ -172,6 +171,7 @@ export function GroupRoles({ ctx }: { ctx: TeamContext }) {
         open={editing !== null}
         title={editing === "new" ? "New role" : `Edit ${editing?.name ?? "role"}`}
         onClose={() => setEditing(null)}
+        className={styles.dialog}
       >
         {editing !== null && (
           <RoleEditor
