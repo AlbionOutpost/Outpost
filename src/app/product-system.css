@@ -676,6 +676,55 @@
     min-height: 44px;
   }
 }
+/* Compact masthead (`compact` on WorkspaceHeading): tools and calculators, where the working
+   view must fit the first screen. Same painting, shade and emblem; a shorter band, a smaller
+   title and the line beside it, so the panels start about 150px under the header. */
+.app.outpost .workspace-identity[data-scene][data-density="compact"] {
+  min-height: 0;
+  margin-bottom: 16px;
+  padding-block: 24px 8px;
+  align-items: center;
+}
+.app.outpost .workspace-identity[data-density="compact"] .workspace-identity-head {
+  gap: 14px;
+}
+.app.outpost .workspace-identity[data-density="compact"] .workspace-emblem,
+.app.outpost .workspace-identity[data-density="compact"] .workspace-emblem > img.painted-emblem {
+  width: 48px;
+  height: 48px;
+}
+.app.outpost .workspace-identity[data-density="compact"] h1 {
+  margin-bottom: 4px;
+  font-size: clamp(28px, 2.4vw, 38px);
+}
+.app.outpost .workspace-identity[data-density="compact"] p {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.app.outpost
+  .workspace-identity[data-density="compact"]
+  .workspace-identity-copy
+  > :not(.workspace-identity-head) {
+  margin-top: 12px;
+}
+.app.outpost .workspace-identity[data-density="compact"] .workspace-identity-actions > .button {
+  min-height: 40px;
+  padding: 8px 16px;
+}
+@media (max-width: 780px) {
+  .app.outpost .workspace-identity[data-scene][data-density="compact"] {
+    margin-bottom: 12px;
+    padding-block: 16px 8px;
+  }
+  .app.outpost .workspace-identity[data-density="compact"] .workspace-emblem,
+  .app.outpost .workspace-identity[data-density="compact"] .workspace-emblem > img.painted-emblem {
+    width: 40px;
+    height: 40px;
+  }
+  .app.outpost .workspace-identity[data-density="compact"] p {
+    font-size: 13px;
+  }
+}
 
 /* Not found, error and loading: the landing hero's language, full-bleed on the backdrop, the
    copy centred over a soft oval shade. Always over the painting, so always the night palette. */
