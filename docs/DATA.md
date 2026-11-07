@@ -97,3 +97,7 @@ On an Albion patch: confirm the official patch name/date, diff the pinned old/ne
 Authentic game screenshots/scenes are **not** used: no permission is recorded. To add one, record source, creator, licence or permission, attribution and allowed edits first. The guide covers (`public/library/media/guides/<slug>.webp`) are official Albion Online key art from Sandbox Interactive's Steam announcement banners (`clan.steamstatic.com/images/32445805/…`), © Sandbox Interactive GmbH, used at the owner's decision (6 Nov 2026). Edits: crop and WebP only. They come down if Sandbox Interactive asks.
 
 `assets.ts` still marks ability art as "missing" although `spell-icon.tsx` renders renderer spell images — reconcile when next touching abilities.
+
+## Team economy (8 November 2026)
+
+Team wallets are a ledger of whole in-game silver (`GroupWalletEntry`): every change keeps who it is for (a member, or the team pot), the signed amount, its kind (credit, debit, payout, reset, split, roll, flip), a reason, who booked it and when. Balances are always summed from the entries, so the ledger and the totals cannot disagree. Coin flips (`GroupCoinFlip`) and loot rolls (`GroupLootRoll`, one `GroupLootRollEntry` per member) store the server's draw with its time. None of it is real money: Outpost holds nothing, sells nothing and moves no silver in game, and the UI says so beside every balance. A player's own entries are in their account export; deleting an account removes their entries, flips and rolls, and the team keeps the pot.

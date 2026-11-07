@@ -274,7 +274,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     expect(
       (await db.groupCustomRole.findUniqueOrThrow({ where: { id: await roleId("Officer") } }))
         .permissions,
-    ).toBe(484);
+    ).toBe(996); // the Officer's old rights plus Manage wallet, which came with Manage loot splits
     const caller = await action(2, {
       action: "role-create",
       name: "Caller",

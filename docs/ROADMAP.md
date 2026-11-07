@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Team economy — 8 November 2026
+
+- Teams get a **Wallet** tab: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
+- **Rolls & flips** tab: coin flips between two members or a call, with an optional stake the other player accepts first; loot rolls (1–100, one roll each, highest wins, ties settled by a coin flip) with optional silver shared among the rollers and the pot. A 3D silver coin (crown heads, skull tails) and d100 number drums replay the server's result; reduced motion shows it at once.
+- Manage wallet went to every role that had Manage loot splits (Postgres `20261108090000_team_economy`, private-store step 12).
+- Not done: roll penalties into the pot, giveaways, regear requests and stats from the Discord bot; live updates (the tab re-reads every 20 s while a roll or offer is open).
+
 ## Founding a Team and member pictures — 7 November 2026
 
 - `/groups/new` is a five-step founding ceremony (name, banner, plays, who can join, charter) with a live banner preview and a reveal when the team is created; one submit to the unchanged create API.
