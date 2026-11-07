@@ -469,6 +469,17 @@ test("the Supporter plan pages do not exist while billing is off", async ({ page
   }
 });
 
+test("the hero copy is painted on arrival, never masked by its entrance", async ({ page }) => {
+  // The lede is the page's largest paint; a clip-path entrance held it back from the first paint.
+  await page.goto("/?region=europe");
+  for (const selector of [".landing-hero h1", ".landing-lede", ".landing-hero .landing-actions"]) {
+    const node = page.locator(selector).first();
+    await expect(node).toBeVisible();
+    expect(await node.evaluate((n) => getComputedStyle(n).clipPath)).toBe("none");
+    expect(await node.evaluate((n) => getComputedStyle(n).opacity)).toBe("1");
+  }
+});
+
 test("robots points crawlers at a sitemap of public pages and keeps editors out", async ({
   request,
 }) => {
