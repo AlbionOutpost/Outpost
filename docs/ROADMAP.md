@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Founding a Team and member pictures — 7 November 2026
+
+- `/groups/new` is a five-step founding ceremony (name, banner, plays, who can join, charter) with a live banner preview and a reveal when the team is created; one submit to the unchanged create API.
+- The workspace address fills in from the name (`slugFromName`, the API's own `teamSlug` rule) until edited; whether it is free is still decided by the server on submit.
+- Team members see each other's Discord pictures in their frames, a You tag and joined dates; the overview's Members panel tallies roles. Outsiders never receive the pictures (`e2e/supporting-product.spec.ts`).
+
 ## Team roles — 7 November 2026
 
 - Teams have Discord-style roles: each Team keeps ordered roles with a name, a palette colour and nine permissions (manage team, manage roles, invite, review requests, remove members, events and announcements, comps, loot splits, shared builds). Members hold any number; rights are their union; the owner is the Leader with all of them. New Teams start with Admin, Officer and the default Member.

@@ -116,6 +116,19 @@ export const decodeActivities = (stored?: string | null): TeamActivity[] =>
     .split(",")
     .filter((a): a is TeamActivity => (teamActivities as readonly string[]).includes(a));
 
+/** A workspace address: lowercase letters and digits in runs joined by single hyphens, 3–60 long. */
+export const teamSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const teamSlug = z.string().regex(teamSlugPattern).min(3).max(60);
+/** The address a name suggests ("Ironbound Company" → "ironbound-company"), within the rules above. */
+export const slugFromName = (name: string) =>
+  name
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .slice(0, 60)
+    .replace(/^-+|-+$/g, "");
+
 /** The crest, activities and recruiting fields shared by creating a team and editing its profile. */
 export const teamIdentity = {
   crestItem: z.enum(crestCharges).nullable().default(null),

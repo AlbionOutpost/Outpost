@@ -9,6 +9,7 @@ import { CompRow, BuildRow } from "./group-shared";
 import { MemberRow } from "./group-members";
 import { plural } from "./group-parts";
 import styles from "./teams.module.css";
+import roleStyles from "./group-roles.module.css";
 
 /**
  * The workspace's front page: the next event, shared comps and builds in the wide column;
@@ -226,7 +227,11 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             </div>
           )}
         </section>
-        <section className={`panel ${styles.panel}`} aria-labelledby="team-roster">
+        <section
+          className={`panel ${styles.panel}`}
+          aria-labelledby="team-roster"
+          data-team-roster=""
+        >
           <PanelHead
             id="team-roster"
             emblem="team-roles"
@@ -234,13 +239,51 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             line={plural(data.memberCount, "member")}
             actions={more("All members", "Members")}
           />
+          {/* How the roster splits by role: the Leader, then each role that anyone holds */}
+          <ul className={styles.rosterTally} aria-label="Members by role">
+            <li className={`${roleStyles.chip} ${roleStyles.tone}`} data-role-color="gold">
+              <span>Leader</span> <b>1</b>
+            </li>
+            {data.roles
+              .filter((r) => r.members > 0)
+              .map((r) => (
+                <li
+                  key={r.id}
+                  className={`${roleStyles.chip} ${roleStyles.tone}`}
+                  data-role-color={r.color}
+                >
+                  <span>{r.name}</span> <b>{r.members.toLocaleString("en")}</b>
+                </li>
+              ))}
+          </ul>
           <ul className={styles.list}>
             {data.members.slice(0, 5).map((m) => (
               <li key={m.userId}>
-                <MemberRow member={m} roles={data.roles} />
+                <MemberRow member={m} roles={data.roles} self={m.userId === ctx.userId} />
               </li>
             ))}
           </ul>
+          {data.memberCount === 1 && (
+            <EmptyWell
+              title="Just you so far"
+              line={
+                can("inviteMembers")
+                  ? "Send an invitation link to bring your first members in."
+                  : "Members you invite appear here."
+              }
+              action={
+                can("inviteMembers") ? (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setTab("Settings")}
+                  >
+                    Invite members
+                  </button>
+                ) : undefined
+              }
+            />
+          )}
           {data.memberCount > 5 && (
             <button type="button" className={styles.moreLink} onClick={() => setTab("Members")}>
               {plural(data.memberCount - 5, "more member")}{" "}

@@ -88,7 +88,8 @@ export async function groupDashboard(id: string, userId?: string) {
     }),
     db.groupMember.findMany({
       where: { groupId: id },
-      include: { user: { select: { name: true, avatarFrame: true } }, ...held },
+      // Members see each other's Discord pictures; outsiders never reach this query.
+      include: { user: { select: { name: true, avatarFrame: true, image: true } }, ...held },
       orderBy: { joinedAt: "asc" },
       take: 500,
     }),
@@ -106,7 +107,7 @@ export async function groupDashboard(id: string, userId?: string) {
     can(access, "manageRequests")
       ? db.groupMembershipRequest.findMany({
           where: { groupId: id, status: "PENDING" },
-          include: { user: { select: { name: true, avatarFrame: true } } },
+          include: { user: { select: { name: true, avatarFrame: true, image: true } } },
           take: 100,
         })
       : [],
@@ -154,6 +155,8 @@ export async function groupDashboard(id: string, userId?: string) {
         userId: m.userId,
         name: m.user.name || "Adventurer",
         avatarFrame: m.user.avatarFrame,
+        image: m.user.image,
+        joinedAt: m.joinedAt.toISOString(),
         owner: m.userId === group.ownerId,
         rank: m.userId === group.ownerId ? ownerRank : rankOf(m.roles.map((r) => r.role)),
         roleIds: m.roles.map((r) => r.roleId),
@@ -168,7 +171,9 @@ export async function groupDashboard(id: string, userId?: string) {
         userId: r.userId,
         name: r.user.name || "Adventurer",
         avatarFrame: r.user.avatarFrame,
+        image: r.user.image,
         message: r.message,
+        requestedAt: r.updatedAt.toISOString(),
       })),
       announcements: announcements.map((a) => ({ id: a.id, title: a.title, body: a.body })),
       events: events.map((e) => ({

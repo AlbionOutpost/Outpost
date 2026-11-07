@@ -10,6 +10,7 @@ import { SupporterGate } from "@/components/supporter-gate";
 import { PanelHead } from "@/components/panel-head";
 import { canCreateTeam } from "@/lib/billing/gate";
 import styles from "@/components/teams.module.css";
+import ceremony from "@/components/group-create.module.css";
 export const metadata = privateMetadata("Create a Team");
 
 /** What a workspace holds, in the landing's Team Management words. */
@@ -26,7 +27,7 @@ export default async function NewGroup() {
   if (!session?.user?.id) redirect("/signin");
   const allowed = await canCreateTeam(session.user.id);
   const featureList = (
-    <section className={`panel ${styles.panel} ${styles.includes}`} aria-labelledby="team-includes">
+    <section className={`panel ${styles.panel}`} aria-labelledby="team-includes">
       <PanelHead id="team-includes" title="In every workspace" />
       <ul className={styles.list}>
         {features.map(([emblem, name, line]) => (
@@ -49,22 +50,30 @@ export default async function NewGroup() {
         glyph="guild"
         title="Create a team"
         accent="team"
-        description="A private home for your guild's events, shared loadouts and party plans."
+        description="Five steps to a home for your guild's events, shared loadouts and party plans."
       >
         <Link className="pill-link is-small masthead-back" href="/groups">
           <ArrowLeft size={14} aria-hidden="true" /> All teams
         </Link>
       </WorkspaceHeading>
       {allowed ? (
-        <div className={styles.createLayout}>
-          <GroupCreate />
-          {featureList}
-        </div>
+        <GroupCreate>
+          <div className={ceremony.includes}>
+            <p>Your workspace comes with</p>
+            <ul>
+              {features.map(([emblem, name]) => (
+                <li key={emblem}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
+                  <img src={`/albion/icons/${emblem}-64w.webp`} alt="" width={32} height={32} />
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </GroupCreate>
       ) : (
         <>
-          <div className={styles.createLayout} data-locked="">
-            {featureList}
-          </div>
+          <div className={styles.createLayout}>{featureList}</div>
           <SupporterGate kind="create" />
         </>
       )}

@@ -54,14 +54,37 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     }
     const slug = `guild-${randomUUID().slice(0, 8)}`;
     await page.goto("/groups/new");
+    // The founding steps: the address follows the name until it is edited, and Next refuses
+    // a short name; every answer survives Back.
+    const next = page.getByRole("button", { name: /^Next:/ });
     await page.getByLabel("Team name").fill("Verified guild workflows");
+    await expect(page.getByLabel("Workspace address")).toHaveValue("verified-guild-workflows");
     await page.getByLabel("Workspace address").fill(slug);
-    await page.getByLabel("Workspace visibility").selectOption("PUBLIC");
-    await page.getByRole("button", { name: "Create team", exact: true }).click();
+    await page.getByLabel("Team name").fill("Verified guild workflows");
+    await expect(page.getByLabel("Workspace address")).toHaveValue(slug);
+    await next.click();
+    await expect(page.getByRole("heading", { name: "Raise your banner" })).toBeFocused();
+    await page.getByRole("radio", { name: "Teal", exact: true }).check();
+    await page.getByRole("radio", { name: "Wolf", exact: true }).check();
+    await next.click();
+    await page.getByRole("checkbox", { name: "ZvZ", exact: true }).check();
+    await next.click();
+    await page.getByRole("radio", { name: "Public", exact: true }).check();
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.getByRole("checkbox", { name: "ZvZ", exact: true })).toBeChecked();
+    await next.click();
+    await expect(page.getByRole("radio", { name: "Public", exact: true })).toBeChecked();
+    await next.click();
+    await page.getByRole("button", { name: "Found the team", exact: true }).click();
+    await page.getByRole("link", { name: "Enter the workspace" }).click();
     await expect(
       page.getByRole("heading", { name: "Verified guild workflows", exact: true }),
     ).toBeVisible();
-    groupId = (await db.group.findUniqueOrThrow({ where: { slug } })).id;
+    const founded = await db.group.findUniqueOrThrow({ where: { slug } });
+    expect([founded.crestColor, founded.crestItem, founded.activities, founded.visibility]).toEqual(
+      ["teal", "wolf", ",ZvZ,", "PUBLIC"],
+    );
+    groupId = founded.id;
     expect((await action(0, { action: "leave" })).status()).toBe(409);
     // A new team starts with Admin, Officer and the default Member; outsiders get a 404.
     expect(
