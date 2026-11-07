@@ -4,6 +4,19 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Team economy — 8 November 2026
+
+- Teams get one **Treasury** tab (8 tabs in all) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
+- **Rolls & flips**: coin flips between two members or a call, to settle ties and decisions (no stakes: the owner decided flips never move silver); loot rolls (1–100, one roll each, highest wins, ties settled by a coin flip) with optional silver shared among the rollers and the pot. A 3D silver coin with a milled rim (crown heads, skull tails) tumbles end over end with a little precession, catches the light, casts a shadow that shrinks while it is high and lands with a bounce, a ring and dust; d100 number drums replay rolls. Both only replay the server's result; reduced motion shows it at once.
+- Manage wallet went to every role that had Manage loot splits (Postgres `20261108090000_team_economy`, private-store step 12).
+- Not done: roll penalties into the pot, giveaways, regear requests and stats from the Discord bot; live updates (the view re-reads every 20 s while a roll is open).
+
+## Founding a Team and member pictures — 7 November 2026
+
+- `/groups/new` is a five-step founding ceremony (name, banner, plays, who can join, charter) with a live banner preview and a reveal when the team is created; one submit to the unchanged create API.
+- The workspace address fills in from the name (`slugFromName`, the API's own `teamSlug` rule) until edited; whether it is free is still decided by the server on submit.
+- Team members see each other's Discord pictures in their frames, a You tag and joined dates; the overview's Members panel tallies roles. Outsiders never receive the pictures (`e2e/supporting-product.spec.ts`).
+
 ## Team roles — 7 November 2026
 
 - Teams have Discord-style roles: each Team keeps ordered roles with a name, a palette colour and nine permissions (manage team, manage roles, invite, review requests, remove members, events and announcements, comps, loot splits, shared builds). Members hold any number; rights are their union; the owner is the Leader with all of them. New Teams start with Admin, Officer and the default Member.

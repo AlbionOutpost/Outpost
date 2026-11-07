@@ -49,6 +49,14 @@ model User {
   authoredGroupEvents GroupEvent[]
   authoredGroupBuilds GroupBuild[]
   authoredLootSplits GroupLootSplit[]
+  walletEntries GroupWalletEntry[] @relation("WalletHolder")
+  walletChanges GroupWalletEntry[] @relation("WalletActor")
+  calledFlips GroupCoinFlip[] @relation("FlipCaller")
+  headsFlips GroupCoinFlip[] @relation("FlipHeads")
+  tailsFlips GroupCoinFlip[] @relation("FlipTails")
+  openedRolls GroupLootRoll[] @relation("RollOpener")
+  wonRolls GroupLootRoll[] @relation("RollWinner")
+  lootRolls GroupLootRollEntry[]
   issuedGroupInvites GroupInvitation[]
 
   savedScenarios SavedScenario[]
@@ -213,6 +221,9 @@ model Group {
   builds GroupBuild[]
   lootSplits GroupLootSplit[]
   roles GroupCustomRole[]
+  walletEntries GroupWalletEntry[]
+  coinFlips GroupCoinFlip[]
+  lootRolls GroupLootRoll[]
 
 }
 model GroupMember {
@@ -396,6 +407,88 @@ model GroupLootSplit {
  createdAt DateTime @default(now())
  updatedAt DateTime @updatedAt
  @@index([groupId,updatedAt])
+}
+
+/// One change to a Team wallet, in whole in-game silver (bookkeeping only; Outpost moves no silver).
+/// `userId` is the member whose balance changes, or null for the team pot; a balance is the sum of its entries.
+model GroupWalletEntry {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ userId String?
+ user User? @relation("WalletHolder",fields:[userId],references:[id],onDelete:Cascade)
+ /// Signed whole silver: credits are positive; debits, payouts and resets negative.
+ amount Float
+ /// credit | debit | payout | reset | split | roll
+ kind String
+ reason String
+ /// What made the change (`op:<client key>`, `split:<id>`, `roll:<id>`), so a retry never books twice.
+ sourceId String
+ createdById String?
+ createdBy User? @relation("WalletActor",fields:[createdById],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ @@unique([groupId,sourceId,userId])
+ @@index([groupId,userId,createdAt])
+ @@index([groupId,createdAt])
+}
+/// A coin flip decided on the server: two members (heads and tails) or one member calling a side.
+/// It settles ties and decisions only: no stake, no silver moves.
+model GroupCoinFlip {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ /// The caller's operation key: retrying the same flip returns the first result.
+ key String
+ createdById String?
+ createdBy User? @relation("FlipCaller",fields:[createdById],references:[id],onDelete:SetNull)
+ headsId String
+ heads User @relation("FlipHeads",fields:[headsId],references:[id],onDelete:Cascade)
+ tailsId String?
+ tails User? @relation("FlipTails",fields:[tailsId],references:[id],onDelete:Cascade)
+ /// A one-member flip's call (heads | tails); null for two members.
+ call String?
+ /// heads | tails, drawn when the flip is made
+ outcome String
+ /// Set when the flip broke a two-way tie in a loot roll.
+ rollId String?
+ createdAt DateTime @default(now())
+ @@unique([groupId,key])
+ @@index([groupId,createdAt])
+}
+/// A loot roll: members roll 1–100 once each for a drop; the highest wins when an officer closes it.
+model GroupLootRoll {
+ id String @id @default(cuid())
+ groupId String
+ group Group @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ key String
+ title String
+ /// Silver that comes with the drop, shared among everyone who rolled when the roll closes.
+ silver Float @default(0)
+ /// The team pot takes one share of that silver.
+ potShare Boolean @default(false)
+ /// OPEN | CLOSED | CANCELLED
+ status String @default("OPEN")
+ winnerId String?
+ winner User? @relation("RollWinner",fields:[winnerId],references:[id],onDelete:SetNull)
+ /// The top roll was tied and the server broke the tie.
+ tieBreak Boolean @default(false)
+ createdById String?
+ createdBy User? @relation("RollOpener",fields:[createdById],references:[id],onDelete:SetNull)
+ createdAt DateTime @default(now())
+ closedAt DateTime?
+ entries GroupLootRollEntry[]
+ @@unique([groupId,key])
+ @@index([groupId,createdAt])
+}
+/// One member's roll; the key makes it one roll per member.
+model GroupLootRollEntry {
+ rollId String
+ roll GroupLootRoll @relation(fields:[rollId],references:[id],onDelete:Cascade)
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ value Int
+ createdAt DateTime @default(now())
+ @@id([rollId,userId])
 }
 
 model CatalogRelease {

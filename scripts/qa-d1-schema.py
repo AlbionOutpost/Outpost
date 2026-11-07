@@ -265,6 +265,66 @@ def team_roles_upgrade():
         db.execute('DELETE FROM "User" WHERE id=?', (user,))
 check("team roles upgrade gives every existing member the same rights, keeps rank and stays inside its team", team_roles_upgrade)
 
+def team_economy_upgrade():
+    # Manage wallet (bit 512) goes to exactly the roles that held Manage loot splits (bit 128).
+    for user in ("qa-eco-owner", "qa-eco-officer", "qa-eco-member", "qa-eco-out"):
+        db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', (user, user))
+    db.execute('INSERT INTO "Group"(id,name,slug,description,region,ownerId,updatedAt) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)', ("qa-eco-team", "Economy team", "qa-eco-team", "", "europe", "qa-eco-owner"))
+    for user, role in (("qa-eco-owner", "OWNER"), ("qa-eco-officer", "OFFICER"), ("qa-eco-member", "MEMBER")):
+        db.execute('INSERT INTO "GroupMember"(groupId,userId,role) VALUES(?,?,?)', ("qa-eco-team", user, role))
+    db.executescript((root / "cloudflare/d1/migrations/0012_team_roles.sql").read_text())
+    before = dict(db.execute('SELECT name, permissions FROM "GroupCustomRole" WHERE groupId=?', ("qa-eco-team",)).fetchall())
+    sql = (root / "cloudflare/d1/migrations/0013_team_economy.sql").read_text()
+    db.executescript(sql)
+    db.executescript(sql)  # applying it again changes nothing
+    after = dict(db.execute('SELECT name, permissions FROM "GroupCustomRole" WHERE groupId=?', ("qa-eco-team",)).fetchall())
+    for name, mask in before.items():
+        assert after[name] == (mask | 512 if mask & 128 else mask), (name, mask, after[name])
+        assert after[name] & ~512 == mask  # nothing else changed
+    assert after == {"Admin": 1021, "Officer": 996, "Member": 0}, after
+    db.execute('UPDATE "GroupCustomRole" SET permissions=? WHERE id=?', (1023, "role-admin-qa-eco-team"))
+    denied('UPDATE "GroupCustomRole" SET permissions=? WHERE id=?', (1024, "role-admin-qa-eco-team"))
+    # Ledger: whole, non-zero, bounded silver of a known kind; append-only.
+    entry = 'INSERT INTO "GroupWalletEntry"(id,groupId,userId,amount,kind,reason,sourceId,createdById) VALUES(?,?,?,?,?,?,?,?)'
+    db.execute(entry, ("qa-eco-1", "qa-eco-team", "qa-eco-member", 1500, "credit", "Fixture", "op:qa-eco-1", "qa-eco-owner"))
+    db.execute(entry, ("qa-eco-2", "qa-eco-team", None, 250, "credit", "Fixture pot", "op:qa-eco-2", "qa-eco-owner"))
+    db.execute(entry, ("qa-eco-3", "qa-eco-team", "qa-eco-member", -500, "payout", "Paid", "op:qa-eco-3", "qa-eco-owner"))
+    for bad in ((0, "credit"), (1.5, "credit"), (10**13, "credit"), (5, "gift"), (5, "flip")):
+        denied(entry, ("qa-eco-bad", "qa-eco-team", "qa-eco-member", bad[0], bad[1], "Bad", "op:qa-eco-bad", None))
+    denied(entry, ("qa-eco-dup", "qa-eco-team", "qa-eco-member", 1, "credit", "Again", "op:qa-eco-1", None))
+    denied('UPDATE "GroupWalletEntry" SET amount=? WHERE id=?', (9999, "qa-eco-1"))
+    assert db.execute('SELECT sum(amount) FROM "GroupWalletEntry" WHERE groupId=? AND userId=?', ("qa-eco-team", "qa-eco-member")).fetchone()[0] == 1000
+    # Flips: every flip carries its drawn side, calls have no tails player, and there is no stake.
+    assert "stake" not in [r[1] for r in db.execute('PRAGMA table_info("GroupCoinFlip")')]
+    flip = 'INSERT INTO "GroupCoinFlip"(id,groupId,key,headsId,tailsId,call,outcome) VALUES(?,?,?,?,?,?,?)'
+    db.execute(flip, ("qa-flip-1", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, "heads"))
+    db.execute(flip, ("qa-flip-2", "qa-eco-team", "qa-flip-key-2", "qa-eco-member", None, "tails", "heads"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-1", "qa-eco-owner", "qa-eco-member", None, "tails"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", None, None))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", None, "edge"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-owner", None, "heads"))
+    denied(flip, ("qa-flip-x", "qa-eco-team", "qa-flip-key-x", "qa-eco-owner", "qa-eco-member", "heads", "heads"))
+    denied(entry, ("qa-eco-flip", "qa-eco-team", "qa-eco-member", 100, "flip", "Stake", "flip:qa-flip-1", None))
+    # Rolls: one roll per member, 1-100.
+    db.execute('INSERT INTO "GroupLootRoll"(id,groupId,key,title,silver) VALUES(?,?,?,?,?)', ("qa-roll", "qa-eco-team", "qa-roll-key-1", "Bloodletter drop", 90000))
+    denied('INSERT INTO "GroupLootRoll"(id,groupId,key,title,silver) VALUES(?,?,?,?,?)', ("qa-roll-2", "qa-eco-team", "qa-roll-key-2", "Bad", -1))
+    db.execute('INSERT INTO "GroupLootRollEntry"(rollId,userId,value) VALUES(?,?,?)', ("qa-roll", "qa-eco-member", 77))
+    denied('INSERT INTO "GroupLootRollEntry"(rollId,userId,value) VALUES(?,?,?)', ("qa-roll", "qa-eco-member", 12))
+    denied('INSERT INTO "GroupLootRollEntry"(rollId,userId,value) VALUES(?,?,?)', ("qa-roll", "qa-eco-owner", 101))
+    denied('INSERT INTO "GroupLootRollEntry"(rollId,userId,value) VALUES(?,?,?)', ("qa-roll", "qa-eco-owner", 0))
+    # Account deletion takes a player's own entries, flips and rolls; the team takes the rest.
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-eco-member",))
+    assert db.execute('SELECT count(*) FROM "GroupWalletEntry" WHERE userId IS NULL').fetchone()[0] == 1
+    assert db.execute('SELECT count(*) FROM "GroupLootRollEntry"').fetchone()[0] == 0
+    assert db.execute('SELECT count(*) FROM "GroupCoinFlip"').fetchone()[0] == 0
+    db.execute('DELETE FROM "Group" WHERE id=?', ("qa-eco-team",))
+    for table in ("GroupWalletEntry", "GroupCoinFlip", "GroupLootRoll", "GroupLootRollEntry", "GroupCustomRole"):
+        assert db.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0] == 0, table
+    for user in ("qa-eco-owner", "qa-eco-officer", "qa-eco-out"):
+        db.execute('DELETE FROM "User" WHERE id=?', (user,))
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
+check("team economy upgrade gives Manage wallet to Manage loot holders only and enforces ledger, stake-free flip and roll rules", team_economy_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

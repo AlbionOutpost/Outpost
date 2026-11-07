@@ -54,10 +54,13 @@ export function GroupSettings({
               <ul className={styles.list}>
                 {data.requests.map((r) => (
                   <li key={r.userId} className={`well ${styles.wellRow}`}>
-                    <AvatarFrame frame={r.avatarFrame} size={36} name={r.name} />
+                    <AvatarFrame frame={r.avatarFrame} size={44} image={r.image} name={r.name} />
                     <span className={styles.rowCopy}>
                       <strong>{r.name}</strong>
                       {r.message && <small className={styles.wrap}>{r.message}</small>}
+                      <small>
+                        Asked <time dateTime={r.requestedAt}>{utc(r.requestedAt)}</time>
+                      </small>
                     </span>
                     <span className={styles.rowTools}>
                       <button

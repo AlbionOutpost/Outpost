@@ -136,6 +136,96 @@ test("team membership scope, event deep links and roster filtering preserve priv
   }
 });
 
+test("team members see each other's Discord pictures; outsiders never receive them", async ({
+  page,
+  context,
+  browser,
+}) => {
+  const ids = [0, 1, 2].map(() => `atlas-test-support-${randomUUID()}`);
+  const tokens = [randomUUID(), randomUUID()];
+  const picture = (i: number) => `https://cdn.discordapp.com/avatars/qa-${ids[i]}/face.png`;
+  let groupId = "";
+  try {
+    for (const i of [0, 1, 2])
+      await db.user.create({
+        data: {
+          id: ids[i],
+          name: `Picture tester ${i}`,
+          image: picture(i),
+          ...(i !== 1
+            ? {
+                sessions: {
+                  create: {
+                    sessionToken: tokens[i === 0 ? 0 : 1],
+                    expires: new Date(Date.now() + 600000),
+                  },
+                },
+              }
+            : {}),
+        },
+      });
+    const group = await db.group.create({
+      data: {
+        name: `Picture QA ${randomUUID().slice(0, 8)}`,
+        slug: `support-${randomUUID()}`,
+        region: "europe",
+        visibility: "PUBLIC",
+        description: "Isolated picture privacy fixture",
+        ownerId: ids[0],
+        members: {
+          create: [
+            { userId: ids[0], role: "OWNER" },
+            { userId: ids[1], role: "MEMBER" },
+          ],
+        },
+      },
+    });
+    groupId = group.id;
+    // The outsider (ids[2]) asks to join, so their own picture is in a pending request.
+    await db.groupMembershipRequest.create({
+      data: { groupId, userId: ids[2], message: "Let me in" },
+    });
+    const cookie = (value: string) => ({
+      name: "next-auth.session-token",
+      value,
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax" as const,
+    });
+    await context.addCookies([cookie(tokens[0])]);
+    const member = await context.request.get(`/api/groups/${groupId}`);
+    expect(member.status()).toBe(200);
+    const body = await member.text();
+    expect(body).toContain(picture(1));
+    expect(body).toContain(picture(2));
+    await page.goto(`/groups/${group.slug}#team-members`);
+    await expect(
+      page.locator(`[data-team-member] img[src="${picture(1)}"]`).first(),
+    ).toBeAttached();
+    const outsider = await browser.newContext({ baseURL: "http://localhost:3000" });
+    const anonymous = await browser.newContext({ baseURL: "http://localhost:3000" });
+    try {
+      await outsider.addCookies([cookie(tokens[1])]);
+      for (const client of [outsider, anonymous]) {
+        const api = await client.request.get(`/api/groups/${groupId}`);
+        expect(api.status()).toBe(200);
+        const html = await (await client.request.get(`/groups/${group.slug}`)).text();
+        for (const text of [await api.text(), html]) {
+          expect(text).toContain(group.name);
+          for (const i of [0, 1]) expect(text).not.toContain(picture(i));
+        }
+      }
+    } finally {
+      await outsider.close();
+      await anonymous.close();
+    }
+  } finally {
+    if (groupId) await db.group.deleteMany({ where: { id: groupId } });
+    await db.user.deleteMany({ where: { id: { in: ids } } });
+  }
+});
+
 test("existing timers lead the workspace and a new timer returns focus to its saved row", async ({
   page,
   context,

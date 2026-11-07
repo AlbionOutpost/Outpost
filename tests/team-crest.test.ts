@@ -9,7 +9,9 @@ import {
   resolveCrestCharge,
   encodeActivities,
   resolveCrestColor,
+  slugFromName,
   teamActivities,
+  teamSlug,
 } from "../src/lib/groups/crest";
 import { groupAction } from "../src/lib/groups/validation";
 
@@ -95,5 +97,22 @@ describe("team crest", () => {
     expect(resolveCrestCharge(null)).toBe(defaultCrest.charge);
     expect(resolveCrestCharge("wolf")).toBe("wolf");
     expect(resolveCrestCharge("T8_2H_CLAYMORE")).toBe(defaultCrest.charge);
+  });
+});
+
+describe("workspace address from a name", () => {
+  it("derives an address the create API accepts", () => {
+    for (const [name, slug] of [
+      ["Ironbound Company", "ironbound-company"],
+      ["  Les Épées d'Or  ", "les-epees-d-or"],
+      ["ZvZ -- Night Watch!!", "zvz-night-watch"],
+      ["Ωmega", "mega"],
+      ["x".repeat(59) + " y", "x".repeat(59)],
+    ] as const) {
+      expect(slugFromName(name)).toBe(slug);
+      expect(teamSlug.safeParse(slug).success).toBe(true);
+    }
+    expect(slugFromName("!!!")).toBe("");
+    expect(teamSlug.safeParse("Bad--slug").success).toBe(false);
   });
 });

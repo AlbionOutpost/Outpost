@@ -14,7 +14,8 @@ import { GroupMembers } from "./group-members";
 import { GroupComps, GroupBuilds } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
 import { GroupSettings } from "./group-settings";
-import { TeamLootWorkspace, newLootSplitEvent } from "./team-loot-workspace";
+import { newLootSplitEvent } from "./team-loot-workspace";
+import { TeamTreasury, treasuryViewOf, treasuryViews, type TreasuryView } from "./team-treasury";
 import styles from "./teams.module.css";
 
 export type TeamTab =
@@ -23,7 +24,7 @@ export type TeamTab =
   | "Members"
   | "Comps"
   | "Builds"
-  | "Loot splits"
+  | "Treasury"
   | "Announcements"
   | "Settings";
 const tabs: TeamTab[] = [
@@ -32,12 +33,18 @@ const tabs: TeamTab[] = [
   "Members",
   "Comps",
   "Builds",
-  "Loot splits",
+  "Treasury",
   "Announcements",
   "Settings",
 ];
-const tabHash = (name: string) => `#team-${name.toLowerCase().replaceAll(" ", "-")}`;
-const tabId = (name: string) => `guild-tab-${name.replaceAll(" ", "-")}`;
+const tabHash = (name: string) => `#team-${name.toLowerCase()}`;
+const tabId = (name: string) => `guild-tab-${name}`;
+/** The tab (and Treasury view) a hash opens; old Loot, Wallet and Rolls links open the Treasury. */
+function routeOf(hash: string): { tab: TeamTab; view: TreasuryView } {
+  const view = treasuryViewOf(hash);
+  if (view) return { tab: "Treasury", view };
+  return { tab: tabs.find((name) => tabHash(name) === hash) || "Overview", view: "loot" };
+}
 
 function subscribeTeamHash(callback: () => void) {
   window.addEventListener("hashchange", callback);
@@ -109,13 +116,35 @@ export function GroupDashboard({
   const [eventOpen, setEventOpen] = useState(false);
   const [eventFilter, setEventFilter] = useState("upcoming");
   const hash = useSyncExternalStore(subscribeTeamHash, teamHash, () => "");
-  const tab = tabs.find((name) => tabHash(name) === hash) || "Overview";
+  const { tab, view } = routeOf(hash);
+  // `?tab=treasury&view=wallet` links land on the same place as their hash.
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const name = tabs.find((t) => t.toLowerCase() === query.get("tab")?.toLowerCase());
+    if (!name) return;
+    const target =
+      name === "Treasury"
+        ? (treasuryViews.find((v) => v.key === query.get("view")) ?? treasuryViews[0]).hash
+        : tabHash(name);
+    query.delete("tab");
+    query.delete("view");
+    const rest = query.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${rest ? `?${rest}` : ""}${target}`,
+    );
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  }, []);
   // On phones the tab row scrolls; keep the open tab in view
   useEffect(() => {
     document.getElementById(tabId(tab))?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [tab]);
-  function setTab(name: TeamTab) {
-    const target = tabHash(name);
+  function setTab(name: TeamTab, treasury?: TreasuryView) {
+    const target =
+      name === "Treasury"
+        ? treasuryViews.find((v) => v.key === (treasury ?? view))!.hash
+        : tabHash(name);
     if (window.location.hash === target) return;
     window.history.pushState(null, "", target);
     window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -176,7 +205,7 @@ export function GroupDashboard({
       <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
         <CalendarPlus size={17} aria-hidden="true" /> New event
       </button>
-    ) : tab === "Loot splits" && can("manageLoot") ? (
+    ) : tab === "Treasury" && view === "loot" && can("manageLoot") ? (
       <button
         type="button"
         className="button primary"
@@ -267,13 +296,17 @@ export function GroupDashboard({
       </p>
       <div id="guild-tab-panel" role="tabpanel" aria-labelledby={tabId(tab)}>
         {/* Kept mounted so an unsaved split survives switching tabs */}
-        <div hidden={tab !== "Loot splits"}>
-          <TeamLootWorkspace
+        <div hidden={tab !== "Treasury"}>
+          <TeamTreasury
+            view={view}
+            onView={(next) => setTab("Treasury", next)}
             groupId={groupId}
             userId={userId}
             members={data.members}
-            editable={can("manageLoot")}
-            active={tab === "Loot splits"}
+            canLoot={can("manageLoot")}
+            canPay={can("manageWallet")}
+            locked={!!gate}
+            active={tab === "Treasury"}
           />
         </div>
         {tab === "Overview" && <GroupOverview ctx={ctx} />}
