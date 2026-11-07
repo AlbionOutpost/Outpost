@@ -55,6 +55,13 @@ export const libraryCounts = async () => ({
 export const libraryActivities = async () => summariseActivities(listedLibraryBuilds());
 export const queryLibraryBuilds = (query: LibraryQuery) =>
   paginateLibrary(listedLibraryBuilds(), query, 24);
+/** Group Builds per library category (Comps by activity); the Worker reads the public index. */
+export const libraryCompositionCounts = async () => {
+  const counts: Record<string, number> = {};
+  for (const comp of libraryCompositions())
+    counts[comp.category] = (counts[comp.category] ?? 0) + 1;
+  return counts;
+};
 export const queryLibraryCompositions = (query: LibraryQuery) =>
   paginateLibrary(compositionsByLikes(), query, 18);
 

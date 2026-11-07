@@ -4,7 +4,7 @@ import { ActivityArtworkCard } from "@/components/activity-artwork-card";
 import { CompDirectoryHeader } from "@/components/comp-directory-header";
 import Link from "@/components/build-region-link";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
-import { libraryCompositions } from "@/lib/grind-library";
+import { libraryCompositionCounts } from "@/lib/grind-library";
 import { activityForContent, activityLabel, playerContent } from "@/lib/source-filter";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -32,7 +32,7 @@ export default async function CompActivities() {
   const counts = new Map<string, number>();
   const add = (activity: string, n: number) =>
     counts.set(activity, (counts.get(activity) ?? 0) + n);
-  for (const comp of libraryCompositions()) add(comp.category, 1);
+  for (const [category, n] of Object.entries(await libraryCompositionCounts())) add(category, n);
   const players = await db.composition.groupBy({
     by: ["contentType"],
     where: {
