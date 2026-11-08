@@ -3,7 +3,7 @@
 
 .app.outpost .history-panel {
   /* The plot's height; Market Explorer ties it to the viewport */
-  --chart-h: 220px;
+  --chart-h: 260px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
@@ -22,7 +22,7 @@
   min-width: 0;
 }
 
-/* Controls: city well, range segment, refresh */
+/* Controls: city well and refresh (the range segment sits on the chart, beside its value) */
 .app.outpost .history-panel .history-controls {
   display: flex;
   flex-wrap: wrap;
@@ -40,6 +40,7 @@
   color: var(--secondary);
   font: 600 12px/1.35 var(--font-ui);
 }
+/* The 7/30-day switch: a solid accent segment at the chart's top right */
 .app.outpost .history-panel .history-range {
   display: inline-flex;
   gap: 2px;
@@ -47,24 +48,27 @@
   border: 1px solid var(--well-border);
   border-radius: 999px;
   background: var(--well);
+  box-shadow: var(--well-inset);
 }
 .app.outpost .history-panel .history-range > button {
-  min-height: 34px;
-  padding: 0 12px;
-  border: 1px solid transparent;
+  min-height: 32px;
+  padding: 0 14px;
+  border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--muted);
-  font: 700 12px/1 var(--font-ui);
+  color: var(--secondary);
+  font: 700 13px/1 var(--font-ui);
   cursor: pointer;
+  transition:
+    background var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
 }
 .app.outpost .history-panel .history-range > button:hover {
   color: var(--text);
 }
 .app.outpost .history-panel .history-range > button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-  background: var(--accent-wash);
-  color: var(--accent-ink);
+  background: var(--accent);
+  color: var(--primary-ink);
 }
 
 /* Headline figures (gold): latest, lowest and highest, each with its own time */
@@ -119,20 +123,38 @@
   font: 400 12px/1.4 var(--font-ui);
 }
 
-/* Chart well */
+/* Chart well: the current value at the top left, the range switch at the top right, then a
+   labelled five-line value grid, the area line and a crosshair with the hovered day's price */
 .app.outpost .history-panel .history-chart {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--space-3);
   padding: var(--space-4);
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: var(--well-inset);
 }
+.app.outpost .history-panel .history-chart > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.app.outpost .history-panel .history-chart > .history-chart-head {
+  grid-row: 1;
+  grid-column: 1;
+}
+.app.outpost .history-panel .history-chart > .history-range-slot {
+  grid-row: 1;
+  grid-column: 2;
+}
+.app.outpost .history-panel .history-range-slot:empty {
+  display: none;
+}
 .app.outpost .history-panel .history-chart-head {
   display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-height: 22px;
+  align-items: center;
+  min-height: 38px;
   margin-bottom: var(--space-3);
 }
 .app.outpost .history-panel .history-series-key {
@@ -140,12 +162,15 @@
   font-size: 12px;
 }
 .app.outpost .history-panel .history-last {
-  display: grid;
-  justify-items: end;
-  gap: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--space-2);
+  min-width: 0;
 }
 .app.outpost .history-panel .history-last b {
-  font: 800 22px/1 var(--font-display);
+  font: 800 28px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
 }
 .app.outpost .history-panel .history-last small {
   color: var(--muted);
@@ -158,20 +183,31 @@
   gap: var(--space-2);
   margin: 0;
 }
+/* Each value label sits on its grid line (--tick-y, set from the plot's value band) */
 .app.outpost .history-panel .reference-price-axis {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* Matches the plot's value band (30→175 of 210) */
-  padding: calc(var(--chart-h) * 26 / 210) 0 calc(var(--chart-h) * 33 / 210);
-  min-width: 44px;
-  color: var(--muted);
+  position: relative;
+  min-width: 48px;
+  padding: 0;
+  color: var(--secondary);
   font: 500 12px/1 var(--font-data);
   text-align: right;
+}
+.app.outpost .history-panel .reference-price-axis span {
+  position: absolute;
+  top: var(--tick-y);
+  right: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
 }
 .app.outpost .history-panel .history-plot {
   position: relative;
   min-width: 0;
+  border-radius: var(--radius-sm);
+  touch-action: pan-y;
+}
+.app.outpost .history-panel .history-plot:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
 }
 .app.outpost .history-panel .price-chart {
   display: block;
@@ -182,16 +218,75 @@
   color: var(--accent);
   overflow: visible;
 }
-.app.outpost .history-panel .price-chart circle {
-  fill: var(--accent-ink);
-  stroke: var(--surface-raised);
-  stroke-width: 1.5;
+.app.outpost .history-panel .history-point {
+  fill: none;
+  stroke: var(--accent-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
 }
 .app.outpost .history-panel .history-grid {
   stroke: var(--edge-light);
   stroke-width: 1;
-  stroke-dasharray: 3 4;
   vector-effect: non-scaling-stroke;
+}
+/* Hover or keyboard reading: a vertical crosshair, a ringed dot and the day's price */
+.app.outpost .history-panel .history-hover {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.app.outpost .history-panel .history-crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--hover-x);
+  width: 1px;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.app.outpost .history-panel .history-dot {
+  position: absolute;
+  top: var(--hover-y);
+  left: var(--hover-x);
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--well);
+  border-radius: 50%;
+  background: var(--accent-ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  transform: translate(-50%, -50%);
+}
+.app.outpost .history-panel .history-tip {
+  position: absolute;
+  top: var(--hover-y);
+  left: var(--hover-x);
+  display: grid;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-surface);
+  transform: translate(14px, -50%);
+  white-space: nowrap;
+}
+.app.outpost .history-panel .history-hover.is-flipped .history-tip {
+  transform: translate(calc(-100% - 14px), -50%);
+}
+.app.outpost .history-panel .history-tip b {
+  font: 700 14px/1.2 var(--font-data);
+}
+.app.outpost .history-panel .history-tip .silver {
+  gap: 5px;
+  font: inherit;
+}
+.app.outpost .history-panel .history-tip .silver img {
+  width: 14px;
+  height: 14px;
+}
+.app.outpost .history-panel .history-tip small {
+  color: var(--muted);
+  font: 500 12px/1.2 var(--font-ui);
 }
 /* Nothing to draw yet: one line in a well, with a retry after a failure */
 .app.outpost .history-panel .history-state {
@@ -231,7 +326,7 @@
 .app.outpost .history-panel .chart-range {
   display: flex;
   justify-content: space-between;
-  margin: var(--space-2) 0 0 52px;
+  margin: var(--space-2) 0 0 56px;
   color: var(--muted);
   font: 400 12px/1.4 var(--font-ui);
 }
@@ -273,7 +368,7 @@
     font-size: 24px;
   }
   .app.outpost .history-panel {
-    --chart-h: 180px;
+    --chart-h: 220px;
   }
   .app.outpost .history-panel .chart-range > span:not(:first-child, :last-child) {
     display: none;
