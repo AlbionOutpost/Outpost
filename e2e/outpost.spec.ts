@@ -31,7 +31,7 @@ test("Outpost branding, landing actions and navigation retain working destinatio
   ).toHaveAttribute("href", "/tools?region=asia");
   await expect(
     page.locator(".landing-actions").getByRole("link", { name: /^Sign in/ }),
-  ).toHaveAttribute("href", "/signin?region=asia");
+  ).toHaveAttribute("href", "/signin?callbackUrl=%2Fdashboard&region=asia");
   const browse = page
     .getByRole("navigation", { name: "Main navigation", exact: true })
     .getByRole("link", { name: "Builds", exact: true });
