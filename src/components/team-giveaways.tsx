@@ -11,7 +11,16 @@ import styles from "./giveaways.module.css";
  * `/api/groups/<id>/giveaways`, which re-checks membership and the permission on every request,
  * so it can sit in any tab of the workspace.
  */
-export function TeamGiveaways({ groupId, region }: { groupId: string; region: string }) {
+export function TeamGiveaways({
+  groupId,
+  name,
+  region,
+}: {
+  groupId: string;
+  /** The Team's name, shown as each giveaway's host. */
+  name: string;
+  region: string;
+}) {
   const endpoint = `/api/groups/${encodeURIComponent(groupId)}/giveaways`;
   const [state, setState] = useState<{ board: Board; at: number } | { error: string } | null>(null);
   useEffect(() => {
@@ -43,6 +52,7 @@ export function TeamGiveaways({ groupId, region }: { groupId: string; region: st
           initial={state.board}
           endpoint={endpoint}
           scope="team"
+          host={name}
           defaultRegion={region}
           now={state.at}
         />
