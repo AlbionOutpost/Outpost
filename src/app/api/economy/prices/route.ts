@@ -5,7 +5,10 @@ import { recipeFor } from "@/lib/albion/recipes";
 import "@/lib/albion/game/server-recipes";
 import { regionSchema, cities } from "@/lib/albion/region-config";
 import { getPrices } from "@/lib/albion/market-client";
-import { productionOutputQuality, productionSellsInstantly } from "@/lib/albion/production";
+import {
+  observedProductionPrices,
+  productionPriceRequests,
+} from "@/lib/albion/production-observations";
 export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   const v = z
     .object({
@@ -27,21 +30,7 @@ export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   } catch {
     throw new HttpError(400, "Unsupported recipe");
   }
-  const requests = [
-    ...recipe.ingredients.map((i) => ({
-      id: i.id,
-      quality: i.quality === "selected" ? v.quality : 1,
-      city: v.materialCity,
-      execution: "instant-purchase" as const,
-    })),
-    {
-      id: recipe.output,
-      quality: productionOutputQuality(v),
-      city: v.outputCity,
-      // The Black Market only buys instantly, at its highest buy order; elsewhere the output is listed.
-      execution: productionSellsInstantly(v) ? ("instant-sale" as const) : ("listing" as const),
-    },
-  ];
+  const requests = productionPriceRequests(recipe, v);
   const rows = (
     await Promise.all(
       [...new Set(requests.map((r) => r.quality))].map((q) =>
@@ -56,26 +45,6 @@ export const GET = apiHandler("economy.prices", async (req: NextRequest) => {
   return NextResponse.json({
     region: v.region,
     source: "Albion Online Data Project",
-    prices: Object.fromEntries(
-      requests.map((r) => {
-        const row = rows.find(
-          (p) => p.item_id === r.id && p.quality === r.quality && p.city === r.city,
-        );
-        const bid = r.execution === "instant-sale";
-        const value = (bid ? row?.buy_price_max : row?.sell_price_min) || null;
-        return [
-          r.id,
-          {
-            value,
-            manual: false,
-            observedAt: value ? (bid ? row!.buy_price_max_date : row!.sell_price_min_date) : null,
-            execution: r.execution,
-            region: v.region,
-            city: r.city,
-            quality: r.quality,
-          },
-        ];
-      }),
-    ),
+    prices: observedProductionPrices(requests, rows, v.region),
   });
 });
