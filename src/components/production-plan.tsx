@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { PanelHead } from "./panel-head";
 import { Disclosure } from "./disclosure";
 import {
@@ -50,8 +50,19 @@ export function ProductionPlan({
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  // The plan sits under the calculator as one summary row; "Open plan" shows the runs, totals,
+  // shopping list and saved plans. A link to the plan (a dashboard entry, a share link) opens it.
+  const [open, setOpen] = useState(false);
   const request = useRef<AbortController | null>(null);
   useEffect(() => () => request.current?.abort(), []);
+  useEffect(() => {
+    const followHash = () => {
+      if (location.hash.startsWith("#production-plan")) setOpen(true);
+    };
+    followHash();
+    window.addEventListener("hashchange", followHash);
+    return () => window.removeEventListener("hashchange", followHash);
+  }, []);
   let result: ReturnType<typeof productionPlan> | null = null;
   let error = "";
   try {
@@ -162,17 +173,38 @@ export function ProductionPlan({
       <Plus size={16} aria-hidden="true" /> Add current recipe
     </button>
   );
+  const summary = !plan.runs.length
+    ? "Add runs to one plan for a single shopping list. Each run keeps its own prices and settings."
+    : `${plan.runs.length} / 30 recipes · ${plan.region} · ${
+        result?.complete && result.profit !== null
+          ? `estimated profit ${result.profit.toLocaleString(undefined, { maximumFractionDigits: 0 })} silver`
+          : "some prices missing, totals are incomplete"
+      }`;
   return (
-    <section className="production-plan panel" aria-labelledby="production-plan-title">
+    <section
+      className="production-plan panel"
+      data-open={open ? "" : undefined}
+      aria-labelledby="production-plan-title"
+    >
       <PanelHead
         id="production-plan-title"
         emblem="tool-planner"
         title="Production plan"
-        line="Add several runs to one plan and get a single shopping list. Each run keeps its own prices and settings."
+        line={summary}
         actions={
           <>
             {runAction}
-            {plan.runs.length > 0 && addButton}
+            {addButton}
+            <button
+              type="button"
+              className="button secondary production-plan-toggle"
+              aria-expanded={open}
+              aria-controls="production-plan-body"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? "Close plan" : "Open plan"}
+              <ChevronDown size={16} aria-hidden="true" />
+            </button>
           </>
         }
       />
@@ -183,308 +215,312 @@ export function ProductionPlan({
           its runs to start a new plan.
         </p>
       )}
-      {!plan.runs.length && (
-        <div className="production-plan-empty">
-          <p>No runs yet. Set one up above and add it; missing prices are fine.</p>
-          {addButton}
-        </div>
-      )}
-      {error && <p role="alert">{error}</p>}
-      {legacyFees.map(({ configuration, recipe, index }) => (
-        <div className="task-state" key={index}>
-          <p>
-            Recipe {index + 1}: {recipe.name}. This saved run records{" "}
-            {silver(configuration.stationFee)} silver per craft; the recipe requires{" "}
-            {silver(recipe.silver ?? 0)}. Confirm whether that fee includes recipe silver before
-            calculating the plan.
+      <div id="production-plan-body" className="production-plan-body" hidden={!open}>
+        {!plan.runs.length && (
+          <p className="production-plan-empty">
+            No runs yet. Set one up above and add it; missing prices are fine.
           </p>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => confirmPlanFee(index, false)}
-          >
-            Treat recipe {index + 1} fee as additional
-          </button>
-          <button
-            type="button"
-            className="button secondary"
-            disabled={configuration.stationFee < (recipe.silver ?? 0)}
-            onClick={() => confirmPlanFee(index, true)}
-          >
-            Recipe {index + 1} fee includes recipe silver
-          </button>
-          {configuration.stationFee < (recipe.silver ?? 0) && (
+        )}
+        {error && <p role="alert">{error}</p>}
+        {legacyFees.map(({ configuration, recipe, index }) => (
+          <div className="task-state" key={index}>
             <p>
-              The recorded fee is below the fixed recipe requirement. Confirm it as additional to
-              continue.
+              Recipe {index + 1}: {recipe.name}. This saved run records{" "}
+              {silver(configuration.stationFee)} silver per craft; the recipe requires{" "}
+              {silver(recipe.silver ?? 0)}. Confirm whether that fee includes recipe silver before
+              calculating the plan.
             </p>
-          )}
-        </div>
-      ))}
-      {result && (
-        <>
-          <div className="production-plan-status">
-            <strong>
-              {plan.runs.length} / 30 recipes · {plan.region}
-            </strong>
-            <span>
-              {result.complete
-                ? "All required prices supplied"
-                : "Some prices missing, totals are incomplete"}
-              {result.stale ? " · Includes stale observations" : ""}
-            </span>
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => confirmPlanFee(index, false)}
+            >
+              Treat recipe {index + 1} fee as additional
+            </button>
+            <button
+              type="button"
+              className="button secondary"
+              disabled={configuration.stationFee < (recipe.silver ?? 0)}
+              onClick={() => confirmPlanFee(index, true)}
+            >
+              Recipe {index + 1} fee includes recipe silver
+            </button>
+            {configuration.stationFee < (recipe.silver ?? 0) && (
+              <p>
+                The recorded fee is below the fixed recipe requirement. Confirm it as additional to
+                continue.
+              </p>
+            )}
           </div>
-          <div className="production-plan-runs">
-            {result.runs.map(({ configuration, recipe, result: run }, index) => (
-              <article key={index} className="production-plan-run">
-                <ItemIcon
-                  id={recipe.output}
-                  quality={configuration.kind === "refining" ? 1 : configuration.quality}
-                  size={40}
-                />
-                <div className="production-plan-identity">
-                  <h3>{recipe.name}</h3>
-                  <p>
-                    {configuration.batches} crafts · {configuration.materialCity} →{" "}
-                    {configuration.outputCity}
-                  </p>
-                  <small>
-                    {Object.values(configuration.prices).some((p) => p.manual && p.value !== null)
-                      ? "Includes manual prices"
-                      : "Observation-based inputs"}
-                    {run.stale ? " · Stale observations" : ""}
-                  </small>
-                </div>
-                <label>
-                  Crafts
-                  <NumberField
-                    min={1}
-                    max={100000}
-                    value={configuration.batches}
-                    onValueChange={(v) => {
-                      const batches = v ?? NaN;
-                      if (!Number.isInteger(batches) || batches < 1 || batches > 100000) return;
+        ))}
+        {result && (
+          <>
+            <div className="production-plan-status">
+              <strong>
+                {plan.runs.length} / 30 recipes · {plan.region}
+              </strong>
+              <span>
+                {result.complete
+                  ? "All required prices supplied"
+                  : "Some prices missing, totals are incomplete"}
+                {result.stale ? " · Includes stale observations" : ""}
+              </span>
+            </div>
+            <div className="production-plan-runs">
+              {result.runs.map(({ configuration, recipe, result: run }, index) => (
+                <article key={index} className="production-plan-run">
+                  <ItemIcon
+                    id={recipe.output}
+                    quality={configuration.kind === "refining" ? 1 : configuration.quality}
+                    size={40}
+                  />
+                  <div className="production-plan-identity">
+                    <h3>{recipe.name}</h3>
+                    <p>
+                      {configuration.batches} crafts · {configuration.materialCity} →{" "}
+                      {configuration.outputCity}
+                    </p>
+                    <small>
+                      {Object.values(configuration.prices).some((p) => p.manual && p.value !== null)
+                        ? "Includes manual prices"
+                        : "Observation-based inputs"}
+                      {run.stale ? " · Stale observations" : ""}
+                    </small>
+                  </div>
+                  <label>
+                    Crafts
+                    <NumberField
+                      min={1}
+                      max={100000}
+                      value={configuration.batches}
+                      onValueChange={(v) => {
+                        const batches = v ?? NaN;
+                        if (!Number.isInteger(batches) || batches < 1 || batches > 100000) return;
+                        const next = {
+                          ...plan,
+                          runs: plan.runs.map((r, i) => (i === index ? { ...r, batches } : r)),
+                        };
+                        // Actual focus is a run-level assumption; require editing rather than scaling it implicitly.
+                        if (configuration.useFocus) {
+                          setMessage(
+                            "Edit this focused recipe above and confirm the actual focus cost before updating its quantity.",
+                          );
+                          return;
+                        }
+                        try {
+                          productionPlan(next);
+                          setPlan(next);
+                        } catch {
+                          setMessage("This quantity exceeds the plan total limit.");
+                        }
+                      }}
+                    />
+                  </label>
+                  <div className="production-plan-profit">
+                    <small>Estimated profit · silver</small>
+                    <strong>{silver(run.profit)}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    disabled={
+                      configuration.kind !== current.kind || configuration.region !== current.region
+                    }
+                    onClick={() => {
+                      onEdit(configuration);
+                      setEditing(index);
+                      setMessage(
+                        "Recipe loaded above. Adjust inputs, then replace this planned recipe.",
+                      );
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    aria-label={`Remove recipe ${index + 1}: ${recipe.name}`}
+                    onClick={() => {
+                      setPlan({ ...plan, runs: plan.runs.filter((_, i) => i !== index) });
+                      setEditing(null);
+                      setMessage("Recipe removed.");
+                    }}
+                  >
+                    <Trash2 size={16} aria-hidden="true" />
+                  </button>
+                </article>
+              ))}
+            </div>
+            {editing !== null && (
+              <div className="production-plan-edit">
+                <p>
+                  Editing recipe {editing + 1}. The plan keeps its previous inputs until you replace
+                  it.
+                </p>
+                <button
+                  className="button secondary"
+                  disabled={!valid || !sameServer}
+                  onClick={() => {
+                    try {
                       const next = {
                         ...plan,
-                        runs: plan.runs.map((r, i) => (i === index ? { ...r, batches } : r)),
+                        runs: plan.runs.map((r, i) =>
+                          i === editing ? productionSchema.parse(current) : r,
+                        ),
                       };
-                      // Actual focus is a run-level assumption; require editing rather than scaling it implicitly.
-                      if (configuration.useFocus) {
-                        setMessage(
-                          "Edit this focused recipe above and confirm the actual focus cost before updating its quantity.",
-                        );
-                        return;
-                      }
-                      try {
-                        productionPlan(next);
-                        setPlan(next);
-                      } catch {
-                        setMessage("This quantity exceeds the plan total limit.");
-                      }
-                    }}
-                  />
-                </label>
-                <div className="production-plan-profit">
-                  <small>Estimated profit · silver</small>
-                  <strong>{silver(run.profit)}</strong>
-                </div>
-                <button
-                  type="button"
-                  className="button secondary"
-                  disabled={
-                    configuration.kind !== current.kind || configuration.region !== current.region
-                  }
-                  onClick={() => {
-                    onEdit(configuration);
-                    setEditing(index);
-                    setMessage(
-                      "Recipe loaded above. Adjust inputs, then replace this planned recipe.",
-                    );
+                      productionPlan(next);
+                      setPlan(next);
+                      setEditing(null);
+                      setMessage("Planned recipe updated.");
+                    } catch {
+                      setMessage(
+                        "Could not update this recipe. Check plan inputs and total limits.",
+                      );
+                    }
                   }}
                 >
-                  Edit
+                  Replace planned recipe
                 </button>
-                <button
-                  type="button"
-                  className="button secondary"
-                  aria-label={`Remove recipe ${index + 1}: ${recipe.name}`}
-                  onClick={() => {
-                    setPlan({ ...plan, runs: plan.runs.filter((_, i) => i !== index) });
-                    setEditing(null);
-                    setMessage("Recipe removed.");
-                  }}
-                >
-                  <Trash2 size={16} aria-hidden="true" />
+                <button className="button secondary" onClick={() => setEditing(null)}>
+                  Cancel edit
                 </button>
-              </article>
-            ))}
-          </div>
-          {editing !== null && (
-            <div className="production-plan-edit">
-              <p>
-                Editing recipe {editing + 1}. The plan keeps its previous inputs until you replace
-                it.
-              </p>
-              <button
-                className="button secondary"
-                disabled={!valid || !sameServer}
-                onClick={() => {
-                  try {
-                    const next = {
-                      ...plan,
-                      runs: plan.runs.map((r, i) =>
-                        i === editing ? productionSchema.parse(current) : r,
-                      ),
-                    };
-                    productionPlan(next);
-                    setPlan(next);
-                    setEditing(null);
-                    setMessage("Planned recipe updated.");
-                  } catch {
-                    setMessage("Could not update this recipe. Check plan inputs and total limits.");
-                  }
-                }}
-              >
-                Replace planned recipe
-              </button>
-              <button className="button secondary" onClick={() => setEditing(null)}>
-                Cancel edit
-              </button>
+              </div>
+            )}
+            <div className="production-plan-stats">
+              <div>
+                <small>Estimated profit · silver</small>
+                <strong>{silver(result.profit)}</strong>
+              </div>
+              <div>
+                <small>Upfront cash · silver</small>
+                <strong>{silver(result.upfront)}</strong>
+              </div>
+              <div>
+                <small>Cash profit before returns · silver</small>
+                <strong>{silver(result.cashProfit)}</strong>
+              </div>
+              <div>
+                <small>Recipe silver requirements</small>
+                <strong>{silver(result.recipeCost)}</strong>
+              </div>
+              <div>
+                <small>Margin on sales</small>
+                <strong>
+                  {result.margin === null ? <Unavailable /> : `${silver(result.margin)}%`}
+                </strong>
+              </div>
             </div>
-          )}
-          <div className="production-plan-stats">
-            <div>
-              <small>Estimated profit · silver</small>
-              <strong>{silver(result.profit)}</strong>
+            <div className="production-plan-subhead">
+              <h3>Shopping list</h3>
+              <AddToShopping
+                region={plan.region}
+                label="Send to shopping list"
+                entries={shoppingFromProduction(result.materials)}
+              />
             </div>
-            <div>
-              <small>Upfront cash · silver</small>
-              <strong>{silver(result.upfront)}</strong>
-            </div>
-            <div>
-              <small>Cash profit before returns · silver</small>
-              <strong>{silver(result.cashProfit)}</strong>
-            </div>
-            <div>
-              <small>Recipe silver requirements</small>
-              <strong>{silver(result.recipeCost)}</strong>
-            </div>
-            <div>
-              <small>Margin on sales</small>
-              <strong>
-                {result.margin === null ? <Unavailable /> : `${silver(result.margin)}%`}
-              </strong>
-            </div>
-          </div>
-          <div className="production-plan-subhead">
-            <h3>Shopping list</h3>
-            <AddToShopping
-              region={plan.region}
-              label="Send to shopping list"
-              entries={shoppingFromProduction(result.materials)}
-            />
-          </div>
-          <p className="production-plan-note">
-            Gross materials required before crafting. Returned resources are valued as a credit;
-            they are not deducted from your shopping quantities. Different markets and qualities
-            stay separate.
-          </p>
-          <div
-            className="production-plan-table table-scroll"
-            tabIndex={0}
-            role="region"
-            aria-label="Production shopping list"
-          >
-            <table data-density="compact">
-              <thead>
-                <tr>
-                  <th scope="col">Material / market</th>
-                  <th scope="col" className="numeric">
-                    Quality
-                  </th>
-                  <th scope="col" className="numeric">
-                    Required
-                  </th>
-                  <th scope="col" className="numeric">
-                    Cost · silver
-                  </th>
-                  <th scope="col">Price basis</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.materials.map((row) => (
-                  <tr key={`${row.city}/${row.id}/${row.quality}`}>
-                    <th scope="row">
-                      <span className="production-plan-material">
-                        <ItemIcon id={row.id} quality={row.quality} size={32} />
-                        <span>
-                          {row.name}
-                          <small>{row.city}</small>
-                        </span>
-                      </span>
-                    </th>
-                    <td className="numeric">{row.quality}</td>
-                    <td className="numeric">{silver(row.quantity)}</td>
-                    <td className="numeric">{silver(row.gross)}</td>
-                    <td>
-                      {[...row.sources].map((source) => (
-                        <small key={source}>{source}</small>
-                      ))}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Disclosure summary="Detailed accounting & assumptions">
-            <dl className="production-plan-accounting">
-              {(
-                [
-                  ["Gross sale value", result.revenue],
-                  ["Sales and setup fees", result.fees],
-                  ["Retained-resource credit", result.returnCredit],
-                  ["Economic cost after returns", result.cost],
-                  ["Actual focus entered", result.focus],
-                ] as const
-              ).map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>
-                    {silver(value)}
-                    {label === "Actual focus entered" ? " focus" : " silver"}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p>
-              Recipe snapshots are current-patch unverified. Each recipe uses its own supplied fees,
-              return eligibility and price inputs. No automatic intermediate-material transfers,
-              journals, weight or station rounding are included. Editing a focused recipe requires
-              confirming its actual focus cost.
+            <p className="production-plan-note">
+              Gross materials required before crafting. Returned resources are valued as a credit;
+              they are not deducted from your shopping quantities. Different markets and qualities
+              stay separate.
             </p>
-          </Disclosure>
-          <div className="production-plan-actions">
-            <button className="button secondary" disabled={busy} onClick={refreshPrices}>
-              {busy ? "Refreshing plan prices…" : "Refresh plan observations"}
-            </button>
-            <button className="button secondary" onClick={exportPlan}>
-              Export plan JSON
-            </button>
-          </div>
-        </>
-      )}
-      <Disclosure summary="Save or restore a production plan">
-        <ScenarioControls
-          prepare={prepareProductionRestore}
-          schema={productionPlanSchema}
-          configuration={plan}
-          hashKey="production-plan"
-          onLoad={(value) => {
-            setPlan(value);
-            setEditing(null);
-          }}
-        />
-      </Disclosure>
+            <div
+              className="production-plan-table table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="Production shopping list"
+            >
+              <table data-density="compact">
+                <thead>
+                  <tr>
+                    <th scope="col">Material / market</th>
+                    <th scope="col" className="numeric">
+                      Quality
+                    </th>
+                    <th scope="col" className="numeric">
+                      Required
+                    </th>
+                    <th scope="col" className="numeric">
+                      Cost · silver
+                    </th>
+                    <th scope="col">Price basis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.materials.map((row) => (
+                    <tr key={`${row.city}/${row.id}/${row.quality}`}>
+                      <th scope="row">
+                        <span className="production-plan-material">
+                          <ItemIcon id={row.id} quality={row.quality} size={32} />
+                          <span>
+                            {row.name}
+                            <small>{row.city}</small>
+                          </span>
+                        </span>
+                      </th>
+                      <td className="numeric">{row.quality}</td>
+                      <td className="numeric">{silver(row.quantity)}</td>
+                      <td className="numeric">{silver(row.gross)}</td>
+                      <td>
+                        {[...row.sources].map((source) => (
+                          <small key={source}>{source}</small>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Disclosure summary="Detailed accounting & assumptions">
+              <dl className="production-plan-accounting">
+                {(
+                  [
+                    ["Gross sale value", result.revenue],
+                    ["Sales and setup fees", result.fees],
+                    ["Retained-resource credit", result.returnCredit],
+                    ["Economic cost after returns", result.cost],
+                    ["Actual focus entered", result.focus],
+                  ] as const
+                ).map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>
+                      {silver(value)}
+                      {label === "Actual focus entered" ? " focus" : " silver"}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p>
+                Recipe snapshots are current-patch unverified. Each recipe uses its own supplied
+                fees, return eligibility and price inputs. No automatic intermediate-material
+                transfers, journals, weight or station rounding are included. Editing a focused
+                recipe requires confirming its actual focus cost.
+              </p>
+            </Disclosure>
+            <div className="production-plan-actions">
+              <button className="button secondary" disabled={busy} onClick={refreshPrices}>
+                {busy ? "Refreshing plan prices…" : "Refresh plan observations"}
+              </button>
+              <button className="button secondary" onClick={exportPlan}>
+                Export plan JSON
+              </button>
+            </div>
+          </>
+        )}
+        <Disclosure summary="Save or restore a production plan">
+          <ScenarioControls
+            prepare={prepareProductionRestore}
+            schema={productionPlanSchema}
+            configuration={plan}
+            hashKey="production-plan"
+            onLoad={(value) => {
+              setPlan(value);
+              setEditing(null);
+              setOpen(true);
+            }}
+          />
+        </Disclosure>
+      </div>
       {message && (
         <p className="production-plan-message" role="status">
           {message}

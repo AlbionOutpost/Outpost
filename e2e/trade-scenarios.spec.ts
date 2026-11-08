@@ -32,6 +32,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
   ]);
   try {
     await page.goto("/tools/flipping?region=europe");
+    await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
     await page.getByText("Fees & extra costs", { exact: true }).click();
     for (const [label, value] of [
       ["Purchase price per item", "100"],
@@ -75,6 +76,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
       })),
     });
     await page.reload();
+    await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
     await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Restore QA saved manual trade", exact: true }).click();
@@ -170,6 +172,7 @@ test("manual trade thresholds persist privately and remain available beyond othe
     await page.getByRole("button", { name: "Save new scenario", exact: true }).click();
     await expect(page.getByText("Scenario saved to your account.", { exact: true })).toBeVisible();
     await page.reload();
+    await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
     await page.getByText("Saved trade scenarios & sharing", { exact: true }).click();
     await page.getByRole("button", { name: "Load saved scenarios", exact: true }).click();
     await page

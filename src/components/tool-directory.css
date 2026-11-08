@@ -1,7 +1,9 @@
 /* Tools directory, in the landing's language: a search and category pills under the masthead,
    then one section per kind of task with a mixed-case heading, its tools as framed cards
-   (emblem or glyph mark in the same slot, Barlow title, one line) three across. Phones list the same tools as
-   compact rows in wells. Ends on the Crafting Planner band. */
+   (emblem or glyph mark in the same slot, Barlow title, its whole description) four across.
+   Wide screens set every section in one five-column grid, each heading in the cell before its
+   tools, so the hub fits one screen at 1440x900. Phones list the same tools as compact rows.
+   Ends on the source note; no closing band. */
 .app.outpost .support-tools-directory {
   display: grid;
   gap: 0;
@@ -72,7 +74,11 @@
   background: var(--accent-wash);
   color: var(--accent-ink);
 }
+/* The count, with the pin hint under it until something is pinned */
 .app.outpost .directory-count {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
   color: var(--muted);
   font-size: 13px;
   white-space: nowrap;
@@ -82,9 +88,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 var(--space-4);
+  margin: 0;
   color: var(--muted);
   font-size: 12px;
+}
+.app.outpost .tool-pin-feedback {
+  margin-bottom: var(--space-4);
 }
 .app.outpost .tool-pin-help svg {
   color: var(--accent-ink);
@@ -217,14 +226,10 @@
   text-shadow: 0 1px 2px #000c;
 }
 .app.outpost .support-tools-directory .directory-entry p {
-  display: -webkit-box;
   margin: 0;
-  overflow: hidden;
   color: var(--secondary);
   font-size: 13px;
   line-height: 1.45;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 .app.outpost .support-tools-directory .directory-arrow {
   position: absolute;
@@ -279,41 +284,69 @@
   color: var(--muted);
 }
 
-/* Closing band */
-.app.outpost .support-tools-directory .directory-cta {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-3);
-  margin-top: 48px;
-  padding: 40px 24px 28px;
-  text-align: center;
-}
-.app.outpost .support-tools-directory .directory-cta h2 {
-  margin: 0;
-  font: 800 clamp(28px, 3vw, 40px) / 1.05 var(--font-display);
-}
-.app.outpost .support-tools-directory .directory-cta h2 em {
-  color: var(--accent);
-  font-style: normal;
-}
-.app.outpost .support-tools-directory .directory-cta > p {
-  max-width: 52ch;
-  margin: 0;
-  color: var(--secondary);
-  font-size: 16px;
-}
-.app.outpost .directory-cta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  margin: var(--space-2) 0 var(--space-4);
-}
-.app.outpost .support-tools-directory .directory-cta .directory-footnote {
-  max-width: 70ch;
+.app.outpost .support-tools-directory .directory-footnote {
+  margin: var(--space-6) 0 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+/* One screen at 1440: every tool in one five-column grid, in section order, each description
+   running the card's full width under its emblem and name. The section headings stay for
+   assistive tech and the category pills group the tools; phones and tablets show them. */
+@media (min-width: 1281px) {
+  .app.outpost .support-tools-directory .directory-groups {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px 12px;
+    margin-top: 0;
+  }
+  .app.outpost .support-tools-directory :is(.directory-group, .directory-entries) {
+    display: contents;
+  }
+  .app.outpost .support-tools-directory .directory-group .section-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .app.outpost .support-tools-directory .directory-entry-link {
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-content: start;
+    align-items: center;
+    gap: 6px 10px;
+    min-height: 0;
+    padding: 12px;
+  }
+  .app.outpost .support-tools-directory .directory-entry-copy {
+    display: contents;
+  }
+  .app.outpost .support-tools-directory :is(.tool-symbol, .tool-symbol img) {
+    width: 32px;
+    height: 32px;
+  }
+  .app.outpost .support-tools-directory .directory-entry h3 {
+    grid-column: 2;
+    margin: 0;
+    padding-right: 30px;
+    font-size: 17px;
+  }
+  .app.outpost .support-tools-directory .directory-entry p {
+    grid-column: 1 / -1;
+    align-self: start;
+    line-height: 1.35;
+  }
+  .app.outpost .support-tools-directory .directory-arrow {
+    display: none;
+  }
+  .app.outpost .support-tools-directory .directory-pin {
+    top: 10px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -339,6 +372,10 @@
     grid-column: 1;
     grid-row: auto;
   }
+  .app.outpost .directory-count {
+    grid-auto-flow: column;
+    justify-content: space-between;
+  }
   .app.outpost .support-tools-directory .directory-groups {
     gap: 28px;
   }
@@ -362,12 +399,5 @@
   }
   .app.outpost .support-tools-directory .directory-entry h3 {
     font-size: 18px;
-  }
-  .app.outpost .support-tools-directory .directory-cta {
-    margin-top: 40px;
-    padding: 36px 16px 24px;
-  }
-  .app.outpost .directory-cta-actions .button {
-    flex: 1 1 auto;
   }
 }

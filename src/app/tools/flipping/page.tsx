@@ -1,48 +1,49 @@
+import { ArrowLeftRight, ScanSearch } from "lucide-react";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { OpportunityScanner } from "@/components/opportunity-scanner";
 import { TradeCalculator } from "@/components/trade-calculator";
-import { SectionHeading } from "@/components/section-heading";
-import { CalculatorCta } from "@/components/calculator-cta";
+import { PageView, PageViewTabs, PageViews } from "@/components/page-views";
 import styles from "@/components/calculator-shell.module.css";
-import c from "@/app/calculators.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/flipping", await searchParams);
 }
 export default function Page() {
   return (
-    <div className={`${styles.page} ${c.flipping}`}>
-      <WorkspaceHeading
-        compact
-        glyph="trade"
-        scene="market"
-        title="Market flipping"
-        accent="flipping"
-        description="Scan a route for items that sell for more in the other city, then check one trade with your own prices and fees."
-      />
-      <OpportunityScanner />
-      <section className={c.handCheck} aria-labelledby="flip-manual-heading">
-        <SectionHeading
-          id="flip-manual-heading"
-          title={
-            <>
-              Check one trade by <em>hand</em>
-            </>
+    <div className={styles.page}>
+      <PageViews id="flip" initial="scan" hashViews={{ "#scenario": "trade", "#trade": "trade" }}>
+        <WorkspaceHeading
+          compact
+          glyph="trade"
+          scene="market"
+          title="Market flipping"
+          accent="flipping"
+          description="Scan a route for items that sell for more in the other city, or check one trade with your own prices and fees."
+          actions={
+            <PageViewTabs
+              label="Flipping tools"
+              views={[
+                {
+                  key: "scan",
+                  label: "Scan a route",
+                  icon: <ScanSearch size={16} aria-hidden="true" />,
+                },
+                {
+                  key: "trade",
+                  label: "Check one trade",
+                  icon: <ArrowLeftRight size={16} aria-hidden="true" />,
+                },
+              ]}
+            />
           }
-          line="Type what you expect to pay and get. Nothing here loads from the market."
         />
-        <TradeCalculator />
-      </section>
-      <CalculatorCta
-        title={
-          <>
-            Found a flip worth <em>hauling</em>?
-          </>
-        }
-        line="Weigh the cargo against your mount, count the trips and set aside silver for the risk."
-        primary={{ href: "/tools/transporting", label: "Plan the haul" }}
-        secondary={{ href: "/tools/market", label: "Market Explorer" }}
-      />
+        <PageView view="scan">
+          <OpportunityScanner />
+        </PageView>
+        <PageView view="trade">
+          <TradeCalculator />
+        </PageView>
+      </PageViews>
     </div>
   );
 }

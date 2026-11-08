@@ -7,11 +7,11 @@
   margin: 0 auto;
   min-width: 0;
 }
+/* Back links ride at the masthead's right edge */
 .app.outpost .build-editor-page .editor-backline {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: var(--space-4);
 }
 .app.outpost .focused-build-editor {
   /* The landing's inset well, in tokens */
@@ -69,6 +69,26 @@
   gap: var(--space-2);
   padding-top: var(--space-4);
   border-top: 1px solid var(--well-border);
+}
+/* Wide screens: fields and actions on one row, so the board starts high enough to fit the
+   first screen */
+@media (min-width: 1281px) {
+  .app.outpost .focused-build-editor {
+    gap: var(--space-4);
+  }
+  .app.outpost .editor-command.raised {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    padding: 16px 20px;
+  }
+  .app.outpost .editor-command-foot {
+    flex-wrap: nowrap;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .app.outpost .editor-command > .editor-messages {
+    grid-column: 1 / -1;
+  }
 }
 .app.outpost .editor-file-menu {
   position: relative;
@@ -363,6 +383,41 @@ body:has(.editor-save-bar.is-docked) {
 .app.outpost .editor-starting-sets button > small {
   color: var(--muted);
   font-size: 12px;
+}
+/* Wide screens: a slightly smaller board and the sets as one row of chips, so the board and
+   the slot list end within the first screen */
+@media (min-width: 1281px) {
+  .app.outpost .focused-build-editor .editor-inventory-panel .loadout-board {
+    --cell: 64px;
+    --gap: 12px;
+  }
+  .app.outpost .editor-starting-sets {
+    padding-top: var(--space-3);
+  }
+  .app.outpost .focused-build-editor .editor-starting-sets button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+  }
+  .app.outpost .editor-starting-sets button > :is(small, span) {
+    display: none;
+  }
+  .app.outpost .focused-build-editor .editor-summary-list {
+    grid-auto-rows: minmax(52px, 64px);
+  }
+  /* The slot inspector, a little tighter, so a chosen piece and its abilities fit too */
+  .app.outpost .focused-build-editor .editor-slot-panel {
+    gap: var(--space-3);
+  }
+  .app.outpost .focused-build-editor .editor-slot-panel > .editor-game-note {
+    padding-top: var(--space-3);
+  }
+  .app.outpost .focused-build-editor .editor-spell-tiles label.editor-spell-tile {
+    min-height: 96px;
+    padding-block: 8px;
+  }
 }
 /* Abilities lists every piece, so it runs long: the board stays in view beside it instead of
    stretching into an empty panel. Only while the columns sit side by side (above 980px). */

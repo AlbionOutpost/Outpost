@@ -411,7 +411,10 @@ test("the sticky result never covers the details under a calculator", async ({ p
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-  // Accounting and assumptions are open beside the sensitivity table, not behind toggles.
+  // Run details stay closed so the run fits one screen; the Run details button opens accounting and
+  // assumptions beside the sensitivity table.
+  await expect(page.getByRole("heading", { name: "Your assumptions", exact: true })).toBeHidden();
+  await page.getByRole("button", { name: "Run details", exact: true }).click();
   for (const name of ["Detailed accounting · entire run", "Your assumptions"])
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
   // Scrolled to the end, the sticky result stays above the details.
@@ -427,6 +430,8 @@ test("the sticky result never covers the details under a calculator", async ({ p
     ["/tools/flipping?region=europe", "Saved trade scenarios & sharing"],
   ] as const) {
     await page.goto(url);
+    if (url.startsWith("/tools/flipping"))
+      await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
     const toggle = page.getByRole("button", { name, exact: true });
     await toggle.click();

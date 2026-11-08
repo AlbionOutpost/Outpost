@@ -2,7 +2,7 @@
 import "./tool-directory.css";
 import Link from "@/components/link";
 import { useState, useSyncExternalStore } from "react";
-import { ArrowUpRight, ArrowRight, X, Pin } from "lucide-react";
+import { ArrowUpRight, X, Pin } from "lucide-react";
 import { tools, toolGroups, toolPaintings, toolSections } from "@/lib/tool-directory";
 import { ToolIcon } from "./tool-icon";
 import { parseToolShortcuts, TOOL_SHORTCUT_KEY } from "@/lib/tool-shortcuts";
@@ -133,8 +133,15 @@ export function ToolDirectory() {
             </button>
           ))}
         </nav>
-        <span className="directory-count" role="status">
-          {matches.length} {matches.length === 1 ? "tool" : "tools"}
+        <span className="directory-count">
+          <span role="status">
+            {matches.length} {matches.length === 1 ? "tool" : "tools"}
+          </span>
+          {!pins.length && (
+            <span className="tool-pin-help">
+              <Pin size={14} aria-hidden="true" /> Pin up to six on this device
+            </span>
+          )}
         </span>
       </div>
       {pins.length > 0 && !query && category === "All tools" ? (
@@ -152,14 +159,7 @@ export function ToolDirectory() {
               ))}
           </div>
         </section>
-      ) : (
-        !pins.length &&
-        !query && (
-          <p className="tool-pin-help">
-            <Pin size={14} aria-hidden="true" /> Pin up to six shortcuts on this device.
-          </p>
-        )
-      )}
+      ) : null}
       {pinMessage && (
         <p className="tool-pin-feedback" role="status">
           {pinMessage}
@@ -243,24 +243,10 @@ export function ToolDirectory() {
           </button>
         </div>
       )}
-      <section className="raised has-scene directory-cta" data-scene="city">
-        <h2>
-          Plan a <em>crafting</em> session
-        </h2>
-        <p>List what you want to make, tick off what you already own and buy the rest.</p>
-        <div className="directory-cta-actions">
-          <Link className="button primary" href={`/shopping-list?region=${region}`}>
-            Open the Crafting Planner <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-          <Link className="button secondary" href={`/tools/crafting?region=${region}`}>
-            Price a craft
-          </Link>
-        </div>
-        <p className="directory-footnote">
-          Recipes and game tables come from game data captured 27 Oct 2026. Prices come from the
-          Albion Online Data Project and can be missing; you can always type your own.
-        </p>
-      </section>
+      <p className="directory-footnote">
+        Recipes and game tables come from game data captured 27 Oct 2026. Prices come from the
+        Albion Online Data Project and can be missing; you can always type your own.
+      </p>
     </div>
   );
 }

@@ -74,7 +74,8 @@
   margin: 0 4px 4px;
 }
 
-/* Overview: quick actions in the masthead, the queues first, totals in one strip */
+/* Overview: account search in the masthead (bans live in Users & access), the queues first,
+   totals in one strip */
 .app.outpost .admin-quick {
   display: flex;
   align-items: center;
@@ -85,9 +86,6 @@
   flex: none;
   width: 320px;
   margin: 0;
-}
-.app.outpost .admin-quick > .button {
-  flex: none;
 }
 /* On the overview a flagged account is its name and its signals */
 .app.outpost .admin-review-list.is-short > li {
@@ -239,6 +237,58 @@
 .app.outpost .admin-overview-grid > .panel {
   padding: 24px;
   min-width: 0;
+}
+/* Overview on wide screens: the queues, totals and trend in the main column, the newest accounts
+   and recent access changes beside them, each list scrolling in its own panel, so the console
+   fits one screen */
+@media (min-width: 1281px) {
+  .app.outpost .admin-main:has(> .admin-totals) {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+    grid-template-areas:
+      "attention newest"
+      "totals newest"
+      "trend recent"
+      "fresh recent";
+    gap: 16px 20px;
+    align-items: start;
+  }
+  .app.outpost .admin-main:has(> .admin-totals) > .admin-overview-grid {
+    display: contents;
+  }
+  .app.outpost .admin-main:has(> .admin-totals) :is(.panel, .admin-overview-grid > .panel) {
+    padding: 20px;
+  }
+  .app.outpost .admin-main > .admin-attention {
+    grid-area: attention;
+  }
+  .app.outpost .admin-main > .admin-totals {
+    grid-area: totals;
+  }
+  .app.outpost .admin-overview-grid > .admin-trend {
+    grid-area: trend;
+  }
+  .app.outpost .admin-overview-grid > .admin-newest {
+    grid-area: newest;
+    align-self: stretch;
+  }
+  .app.outpost .admin-main > .admin-recent {
+    grid-area: recent;
+  }
+  .app.outpost .admin-main > .admin-freshness {
+    grid-area: fresh;
+  }
+  /* A shorter chart; the bars stretch across the well */
+  .app.outpost .admin-overview-grid .admin-chart svg {
+    height: 88px;
+  }
+  .app.outpost .admin-newest .admin-signups,
+  .app.outpost .admin-recent .admin-audit-list {
+    max-height: 240px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
 }
 .app.outpost .admin-foot {
   margin: 0 0 16px;

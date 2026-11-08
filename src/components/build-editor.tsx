@@ -9,6 +9,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   CircleAlert,
+  Coins,
   Ellipsis,
   Download,
   Eye,
@@ -149,9 +150,9 @@ export function BuildEditor({
   const [saving, setSaving] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const [preview, setPreview] = useState(false);
-  const [section, setSection] = useState<"equipment" | "abilities" | "alternatives" | "notes">(
-    "equipment",
-  );
+  const [section, setSection] = useState<
+    "equipment" | "abilities" | "alternatives" | "cost" | "notes"
+  >("equipment");
   const guestNavigationDraft = useRef<BuildInput | null>(null);
   useEffect(() => {
     if (guest || !ownerId || !recoveryKey) return;
@@ -701,6 +702,7 @@ export function BuildEditor({
               ["equipment", "Equipment", Package],
               ["abilities", "Abilities", Sparkles],
               ["alternatives", "Alternatives", Repeat2],
+              ["cost", "Cost", Coins],
               ["notes", "Notes", NotebookPen],
             ] as const
           ).map(([key, label, Icon], index) => (
@@ -710,7 +712,11 @@ export function BuildEditor({
               key={key}
               id={`editor-tab-${key}`}
               aria-selected={section === key}
-              aria-controls={key === "notes" ? "editor-panel-notes" : "editor-equipment-workspace"}
+              aria-controls={
+                key === "notes" || key === "cost"
+                  ? `editor-panel-${key}`
+                  : "editor-equipment-workspace"
+              }
               tabIndex={section === key ? 0 : -1}
               onClick={() => {
                 setSection(key);
@@ -727,17 +733,19 @@ export function BuildEditor({
               onKeyDown={(event) => {
                 const next =
                   event.key === "ArrowRight"
-                    ? (index + 1) % 4
+                    ? (index + 1) % 5
                     : event.key === "ArrowLeft"
-                      ? (index + 3) % 4
+                      ? (index + 4) % 5
                       : event.key === "Home"
                         ? 0
                         : event.key === "End"
-                          ? 3
+                          ? 4
                           : null;
                 if (next === null) return;
                 event.preventDefault();
-                setSection((["equipment", "abilities", "alternatives", "notes"] as const)[next]);
+                setSection(
+                  (["equipment", "abilities", "alternatives", "cost", "notes"] as const)[next],
+                );
                 event.currentTarget.parentElement
                   ?.querySelectorAll<HTMLElement>('[role="tab"]')
                   [next]?.focus();
@@ -768,14 +776,14 @@ export function BuildEditor({
           </div>
         )}
         <div
-          hidden={section === "notes"}
+          hidden={section === "notes" || section === "cost"}
           role="tabpanel"
           id="editor-equipment-workspace"
-          aria-labelledby={`editor-tab-${section === "notes" ? "equipment" : section}`}
+          aria-labelledby={`editor-tab-${section === "notes" || section === "cost" ? "equipment" : section}`}
         >
           <EquipmentPicker
             variant="build"
-            view={section === "notes" ? "equipment" : section}
+            view={section === "notes" || section === "cost" ? "equipment" : section}
             value={supportedEquipment}
             onChange={updateEquipment}
             flaggedSlot={mainFlagged ? "Main hand" : undefined}
@@ -989,13 +997,20 @@ export function BuildEditor({
             </div>
           </section>
         </div>
-        {/* The detail page's cost panel, as it is there */}
-        <div className="build-detail-page editor-price-workspace">
+        {/* The detail page's cost panel, as it is there, as its own tab */}
+        <div
+          hidden={section !== "cost"}
+          role="tabpanel"
+          id="editor-panel-cost"
+          aria-labelledby="editor-tab-cost"
+          className="build-detail-page editor-price-workspace"
+        >
           <div className="raised detail-panel-frame">
             <LoadoutPriceCheck region={draft.region} equipment={equipped} />
           </div>
         </div>
-        {id && (
+        {/* Deleting is a settings matter: it shows with the Notes tab */}
+        {id && section === "notes" && (
           <section className="editor-danger-zone" aria-labelledby="editor-delete-title">
             <PanelHead
               id="editor-delete-title"

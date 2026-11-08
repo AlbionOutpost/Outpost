@@ -224,8 +224,9 @@ export function History({
         </dl>
       )}
       {!visible.length && (
-        <div className={`history-state${kind === "gold" ? " is-chart" : ""}`}>
-          {kind === "gold" && (
+        // A failed load is one line with Try again; the empty chart frame is for waiting
+        <div className={`history-state${kind === "gold" && !failed ? " is-chart" : ""}`}>
+          {kind === "gold" && !failed && (
             <svg viewBox="0 0 700 210" preserveAspectRatio="none" aria-hidden="true">
               {[0, 0.5, 1].map((fraction) => (
                 <line

@@ -141,6 +141,9 @@ test("private comp preserves immediate history edits, stale revisions and export
         sameSite: "Lax",
       },
     ]);
+    // The account menu stays open after the refused sign-out; close it off the masthead's back link.
+    if (await page.locator(".account-dropdown[open]").count())
+      await page.locator(".account-dropdown > summary").click();
     await page.getByRole("link", { name: "Back to comps", exact: true }).click();
     await expect(page).toHaveURL((url) => url.pathname === "/compositions");
     await page.getByRole("link", { name: /Newer saved party/ }).click();

@@ -20,7 +20,6 @@ import { WellSelect } from "./well-select";
 import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
 import { StatusLine } from "./status-line";
-import { NextStepCards } from "./next-step-cards";
 import styles from "./combat-feed.module.css";
 import { SearchInput } from "./field";
 
@@ -383,47 +382,6 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
           </p>
         </Disclosure>
       </div>
-      <NextStepCards
-        id="combat-next"
-        title={
-          <>
-            Gear up for the next <em>fight</em>
-          </>
-        }
-        line="Find a PvP loadout, plan your party, or see the same fights from the other side."
-        link={{ href: "/builds", label: "All builds" }}
-        cards={[
-          {
-            href: "/builds/activities",
-            emblem: "strip-builds",
-            title: "Builds by activity",
-            line: "Loadouts players run for small scale, ganking, Hellgates and more.",
-            scene: "build",
-          },
-          {
-            href: "/compositions",
-            emblem: "strip-comps",
-            title: "Comps",
-            line: "Plan the party: roles, loadouts and swaps for every slot.",
-            scene: "composition",
-          },
-          kills
-            ? {
-                href: "/tools/kill-feed?view=deaths",
-                emblem: "kill-skull",
-                title: "Death feed",
-                line: "The same fights, from the side that lost them.",
-                scene: "city",
-              }
-            : {
-                href: "/tools/kill-feed",
-                emblem: "trophy-gold",
-                title: "Kill feed",
-                line: "The same fights, from the side that won them.",
-                scene: "city",
-              },
-        ]}
-      />
     </div>
   );
 }

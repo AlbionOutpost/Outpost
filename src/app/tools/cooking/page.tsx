@@ -1,6 +1,6 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { ProductionCalculator } from "@/components/production-calculator";
+import { ProductionCalculator, ProductionModes } from "@/components/production-calculator";
 import styles from "@/components/calculator-shell.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/cooking", await searchParams);
@@ -20,6 +20,7 @@ export default async function Page({
         title="Cooking calculator"
         accent="Cooking"
         description="Price the ingredients for a batch of meals and see what is left after costs and tax."
+        actions={<ProductionModes current="cooking" />}
       />
       <ProductionCalculator
         initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}

@@ -71,6 +71,7 @@ export function AdminTrend({ data, limited }: { data: AdminOverview["trend"]; li
           <div className="admin-chart well">
             <svg
               viewBox="0 0 780 180"
+              preserveAspectRatio="none"
               role="img"
               aria-label={`${series[selected]}: ${total} over 30 days`}
               onPointerLeave={() => setDay(null)}

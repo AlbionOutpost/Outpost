@@ -278,7 +278,7 @@ export function TradeCalculator() {
             id: steps[0],
             label: "Prices",
             title: "Your trade",
-            line: "What you pay, what you sell for and how many.",
+            line: "What you pay, what you sell for and how many. Nothing here loads from the market.",
             children: inputs,
           },
           {

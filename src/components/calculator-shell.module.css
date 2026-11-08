@@ -199,7 +199,17 @@
   text-align: right;
 }
 
-/* Tablet: the list to pick from moves above the steps */
+/* Wide: every step side by side, a little tighter, so the steps and the rows under them (saved
+   plans, the production plan) end within a 900px-high screen */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .panel.panel {
+    gap: var(--space-3);
+    padding: 20px;
+  }
+  :global(.app.outpost) .details.details {
+    margin-top: 0;
+  }
+}
 /* Tablet: the inputs stack in the main column beside the sticky result */
 @media (max-width: 1180px) {
   :global(.app.outpost) .grid.grid,
@@ -351,7 +361,7 @@
 
 /* The calculator page and its wells, shared by every calculator: page width, field grid, the
    identity card, price rows, readiness checklist, help and error lines, the picker drawer, mode
-   pills and the closing band. */ /* Crafting, refining, enchanting, cooking and alchemy: one calculator on CalculatorShell.
+   pills. */ /* Crafting, refining, enchanting, cooking and alchemy: one calculator on CalculatorShell.
    Everything here is scoped to the calculator; the shell owns the layout. */
 :global(.app.outpost) .page.page {
   width: min(100%, var(--workspace-width));
@@ -359,8 +369,13 @@
 }
 :global(.app.outpost) .journey.journey {
   display: grid;
-  gap: 20px;
+  gap: var(--space-4);
   min-width: 0;
+}
+@media (min-width: 1181px) {
+  :global(.app.outpost) .journey.journey {
+    gap: var(--space-3);
+  }
 }
 :global(.app.outpost) .journey.journey :is(button, a):focus-visible {
   outline: 2px solid var(--focus);
@@ -410,9 +425,6 @@
 }
 :global(.app.outpost) .modes.modes a:last-child {
   margin-right: 56px;
-}
-:global(.app.outpost) .modeBar.modeBar > :global(.pill-link) {
-  flex: none;
 }
 
 /* Step 1: recipe and run */
@@ -533,7 +545,7 @@
    step never pushes the page past the first screen */
 @media (min-width: 1181px) {
   :global(.app.outpost) .materials.materials ul {
-    max-height: max(280px, calc(100svh - 400px));
+    max-height: max(240px, calc(100svh - 530px));
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
@@ -809,9 +821,6 @@
 }
 
 @media (max-width: 780px) {
-  :global(.app.outpost) .modeBar.modeBar > :global(.pill-link) {
-    display: none;
-  }
   :global(.app.outpost) .journey.journey {
     gap: var(--space-4);
   }
@@ -853,44 +862,4 @@
 :global(.app.outpost) .na.na {
   color: var(--muted);
   font: 500 14px/1.2 var(--font-ui);
-}
-
-/* Closing band, as on the landing */
-:global(.app.outpost) .cta.cta {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-3);
-  margin-top: 28px;
-  padding: 44px 24px 36px;
-  text-align: center;
-}
-:global(.app.outpost) .cta.cta h2 {
-  margin: 0;
-  font: 800 clamp(28px, 3vw, 40px) / 1.05 var(--font-display);
-}
-:global(.app.outpost) .cta.cta h2 em {
-  color: var(--accent);
-  font-style: normal;
-}
-:global(.app.outpost) .cta.cta p {
-  max-width: 56ch;
-  margin: 0;
-  color: var(--secondary);
-  font-size: 16px;
-}
-:global(.app.outpost) .ctaActions.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-@media (max-width: 700px) {
-  :global(.app.outpost) .ctaActions.ctaActions {
-    flex-direction: column;
-    width: 100%;
-  }
-  :global(.app.outpost) .ctaActions.ctaActions :global(.button) {
-    justify-content: center;
-  }
 }

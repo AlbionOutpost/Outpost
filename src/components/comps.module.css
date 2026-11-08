@@ -845,13 +845,46 @@
 }
 .planner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   align-items: start;
-  gap: 26px;
+  gap: 20px;
 }
-.builds {
+/* The comp's details over your builds, beside the party; sticky while the party scrolls */
+.side {
   position: sticky;
   top: 88px;
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.side .fields {
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Wide screens: the editor fits one screen, the party scrolling inside its own well */
+@media (min-width: 1101px) {
+  .editor {
+    gap: var(--space-4);
+  }
+  .side {
+    max-height: max(400px, calc(100svh - 300px));
+    margin-inline: -4px;
+    padding: 0 4px 24px;
+    /* Your builds continue below: the cut edge fades */
+    mask-image: linear-gradient(#000 calc(100% - 24px), transparent);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .partyWell {
+    max-height: max(300px, calc(100svh - 575px));
+    margin-inline: -4px;
+    padding: 4px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
 }
 .buildList {
   display: grid;
@@ -1149,8 +1182,12 @@
   .planner {
     grid-template-columns: minmax(0, 1fr);
   }
-  .builds {
-    position: static;
+  /* Stacked: the comp's details first, then the party, then your builds */
+  .side {
+    display: contents;
+  }
+  .side > :first-child {
+    order: -1;
   }
 }
 @media (max-width: 700px) {

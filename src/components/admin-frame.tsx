@@ -40,7 +40,7 @@ export async function AdminFrame({
   return (
     <>
       {titleChips ? (
-        <header className="workspace-identity" data-scene="page">
+        <header className="workspace-identity" data-scene="page" data-density="compact">
           <div className="workspace-identity-copy">
             <div className="workspace-identity-head">
               <span className="workspace-emblem" aria-hidden="true">
@@ -66,6 +66,7 @@ export async function AdminFrame({
         </header>
       ) : (
         <WorkspaceHeading
+          compact
           title={title}
           accent={accent}
           description={description}

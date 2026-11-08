@@ -29,16 +29,18 @@ export default async function EditComposition({ params }: { params: Promise<{ id
   return (
     <div className={styles.workspace}>
       <WorkspaceHeading
+        compact
         glyph="composition"
         scene="comps"
         title="Edit comp"
         accent="comp"
         description="Change roles, loadouts and notes. Saving keeps a new revision."
-      >
-        <Link className="pill-link is-small masthead-back" href="/compositions?view=all">
-          <ArrowLeft size={14} aria-hidden="true" /> Back to comps
-        </Link>
-      </WorkspaceHeading>
+        actions={
+          <Link className="pill-link is-small masthead-back" href="/compositions?view=all">
+            <ArrowLeft size={14} aria-hidden="true" /> Back to comps
+          </Link>
+        }
+      />
       <CompositionEditor
         key={`${session.user.id}:${id}`}
         ownerId={session.user.id}

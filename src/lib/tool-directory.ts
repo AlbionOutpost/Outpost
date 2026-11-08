@@ -6,8 +6,7 @@ export const tools = [
     short: "Kill feed",
     group: "Teams & community",
     icon: "combat",
-    description:
-      "Published PvP fights as kills or deaths: the players involved and their recorded equipment.",
+    description: "Published PvP fights as kills or deaths, with each player’s recorded equipment.",
     state: "Game Info · all three regions",
   },
   {
@@ -142,8 +141,7 @@ export const tools = [
     short: "Avalon map",
     group: "Economy",
     icon: "map",
-    description:
-      "Track portal connections and their remaining time on a map that stays on this device.",
+    description: "Track portal connections and their remaining time, kept on this device.",
     state: "Saved on this device",
   },
   {

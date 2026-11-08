@@ -206,6 +206,19 @@
 :global(.app.outpost) .detailsCol.detailsCol > .sensitivity + .detailsHeading {
   margin-top: var(--space-3);
 }
+/* With every step side by side the recipe is already in view, so the result leads with profit */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .resultRepeat.resultRepeat.resultRepeat {
+    display: none;
+  }
+}
+/* Run details open on request from the result's head, so the run stays on one screen */
+:global(.app.outpost) .detailsToggle.detailsToggle svg {
+  transition: transform 160ms ease;
+}
+:global(.app.outpost) .detailsToggle.detailsToggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
 @media (max-width: 980px) {
   :global(.app.outpost) .detailsGrid.detailsGrid {
     grid-template-columns: minmax(0, 1fr);

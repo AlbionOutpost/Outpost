@@ -22,21 +22,23 @@ export default async function EditBuild({ params }: { params: Promise<{ id: stri
   return (
     <div className="build-editor-page">
       <WorkspaceHeading
+        compact
         glyph="builds"
         scene="builds"
         title="Edit your build"
         accent="build"
         description={`${build.title}. Each save adds a revision, so you can always go back.`}
-      >
-        <div className="editor-backline">
-          <Link className="pill-link is-small" href="/builds">
-            <ArrowLeft size={14} aria-hidden="true" /> Builds
-          </Link>
-          <Link className="pill-link is-small" href={`/builds/${build.id}`}>
-            View build
-          </Link>
-        </div>
-      </WorkspaceHeading>
+        actions={
+          <div className="editor-backline">
+            <Link className="pill-link is-small" href="/builds">
+              <ArrowLeft size={14} aria-hidden="true" /> Builds
+            </Link>
+            <Link className="pill-link is-small" href={`/builds/${build.id}`}>
+              View build
+            </Link>
+          </div>
+        }
+      />
       <BuildEditor
         key={`${session.user.id}:${build.id}`}
         initial={buildInput.parse(build)}

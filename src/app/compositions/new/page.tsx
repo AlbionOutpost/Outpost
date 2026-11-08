@@ -93,16 +93,18 @@ export default async function NewComposition({
   return (
     <div className={styles.workspace}>
       <WorkspaceHeading
+        compact
         glyph="composition"
         scene="comps"
         title="Create a comp"
         accent="comp"
         description="Set the party size, give every slot a role and a loadout, then share it with your Team."
-      >
-        <Link className="pill-link is-small masthead-back" href="/compositions">
-          <ArrowLeft size={14} aria-hidden="true" /> Back to comps
-        </Link>
-      </WorkspaceHeading>
+        actions={
+          <Link className="pill-link is-small masthead-back" href="/compositions">
+            <ArrowLeft size={14} aria-hidden="true" /> Back to comps
+          </Link>
+        }
+      />
       {error ? (
         <section className={`panel ${styles.panel}`} role="alert" aria-label="Comp could not start">
           <EmptyWell

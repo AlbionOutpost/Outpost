@@ -39,6 +39,7 @@ test("production prerequisites, genuine sensitivity and the steps beside their r
   await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
     exact: true,
   });
+  await page.getByRole("button", { name: "Run details", exact: true }).click();
   await expectResultText(
     page.getByRole("region", { name: "Sale-price sensitivity scenarios" }),
     "400",
@@ -66,6 +67,7 @@ test("manual trade requires prices, accepts explicit zero, and shows negative ou
   page,
 }) => {
   await page.goto("/tools/flipping?region=asia");
+  await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
   const result = page.locator('[data-result="trade-profit"]');
   await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
   await expect(page.getByLabel("Purchase price per item", { exact: true })).toHaveValue("");
@@ -151,6 +153,7 @@ test("mobile secondary assumptions collapse without changing the calculated resu
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tools/flipping?region=europe");
+  await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
   await expect(page.getByLabel("Sales tax (%)", { exact: true })).toBeHidden();
   await page.getByLabel("Purchase price per item", { exact: true }).fill("100");
   await page.getByLabel("Sale price per item", { exact: true }).fill("150");

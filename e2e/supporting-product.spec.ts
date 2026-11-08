@@ -30,9 +30,7 @@ test("tool shortcuts stay device-local, bounded and region-aware through reload"
   await page.getByRole("button", { name: "Clear tool search", exact: true }).click();
   await page.getByRole("button", { name: "Unpin Crafting on this device", exact: true }).click();
   await expect(shortcuts).toHaveCount(0);
-  await expect(page.locator(".tool-pin-help")).toContainText(
-    "Pin up to six shortcuts on this device",
-  );
+  await expect(page.locator(".tool-pin-help")).toContainText("Pin up to six on this device");
 });
 
 test("team membership scope, event deep links and roster filtering preserve private boundaries", async ({

@@ -22,6 +22,7 @@ export default async function NewBuild({
   return (
     <div className="build-editor-page">
       <WorkspaceHeading
+        compact
         glyph="builds"
         scene="builds"
         title="Create a build"
@@ -31,21 +32,22 @@ export default async function NewBuild({
             ? `A copy of ${source.title} by ${source.author}. Change any piece, then save it as your own.`
             : "Pick each piece on the board, choose its abilities, then save the loadout or share it."
         }
-      >
-        <div className="editor-backline">
-          <Link className="pill-link is-small" href="/builds">
-            <ArrowLeft size={14} aria-hidden="true" /> Builds
-          </Link>
-          {source && (
-            <Link
-              className="pill-link is-small"
-              href={`/builds/library/${encodeURIComponent(source.slug)}`}
-            >
-              Original build
+        actions={
+          <div className="editor-backline">
+            <Link className="pill-link is-small" href="/builds">
+              <ArrowLeft size={14} aria-hidden="true" /> Builds
             </Link>
-          )}
-        </div>
-      </WorkspaceHeading>
+            {source && (
+              <Link
+                className="pill-link is-small"
+                href={`/builds/library/${encodeURIComponent(source.slug)}`}
+              >
+                Original build
+              </Link>
+            )}
+          </div>
+        }
+      />
       <BuildEditor
         key={`${session?.user?.id || "guest"}:${source?.slug || "blank"}:${initial?.region || "preferred"}`}
         initial={initial || undefined}
