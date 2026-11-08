@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Storage limits, display names and the launch grant — 8 November 2026
+
+- Each account keeps up to 500 builds and 500 comps (Team comps count for their creator), the last 50 revisions of each, and saves up to 50 MiB a day; the editors say so in plain words (409/429). Older revisions go on the next save.
+- Display names lose hidden and direction-control characters and extra spaces; names that read as Outpost or its staff are refused. Existing names stay as stored and are cleaned where they show.
+- Launch grant: every account, including new sign-ups, is a lifetime Supporter, free; settings, admin and `/supporter` say "Launch Supporter". The Team gates are on and consistent (giveaway management included) but lock nobody while the launch is open. No prices or checkout anywhere.
+
 ## Market Explorer switches faster and holds still — 8 November 2026
 
 - Picking another item or version used to ask for the price history only after the prices arrived, each behind its own 150 ms wait, and dropped every panel to a short status line meanwhile. Now prices and history go out together at once, and an item seen in the last minute comes back from the browser without a request. With source answers stubbed at 400/800 ms, the full switch (prices and chart) went from about 1.16/1.97 s to 0.45/0.86 s, a return to a seen version to about 0.05 s.
