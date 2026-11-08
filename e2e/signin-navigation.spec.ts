@@ -91,7 +91,7 @@ test("the shared top navigation and Outpost browser icons stay consistent across
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   let navigationLeft: number | undefined;
-  for (const path of ["/", "/signin", "/legal", "/guides", "/builds?source=library"]) {
+  for (const path of ["/", "/signin", "/tools", "/guides", "/builds?source=library"]) {
     await page.goto(path);
     const nav = page.getByRole("navigation", { name: "Main navigation", exact: true });
     await expect(page.locator(".search-trigger")).toHaveCount(0);

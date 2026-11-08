@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Legal page unpublished — 8 November 2026
+
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+
 ## Teams, guide reader and comp weapons — 8 November 2026
 
 - Team workspace: six tabs (Overview, Events, Members, Loadouts, Treasury, Announcements). "All teams" is a back link beside the chips; Settings sits behind a gear for the owner and Manage team / Manage roles holders and keeps `#team-settings`. Comps and Builds merge into Loadouts; `#team-comps` and `#team-builds` still land on their view. Phones get one sideways strip.

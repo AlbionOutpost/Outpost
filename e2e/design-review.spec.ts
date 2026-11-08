@@ -100,7 +100,6 @@ test("design review covers application pages, equipment, guilds and reduced moti
           `/groups/${group.slug}`,
           "/favorites",
           "/settings",
-          "/legal",
           "/guides",
         ]) {
           await page.goto(route);

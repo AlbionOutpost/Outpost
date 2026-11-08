@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
+import { legalPublished } from "../src/lib/legal";
+
+// The page is unpublished until the operator details are final; these run again once it is on.
+test.skip(!legalPublished, "Legal pages are unpublished (src/lib/legal.ts)");
 
 const copies = {
   en: {
