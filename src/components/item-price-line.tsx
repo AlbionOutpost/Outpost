@@ -5,8 +5,7 @@ import {
   itemPricesResponse,
   type ItemSellOrder,
 } from "@/lib/albion/item-prices";
-import { sourceAge } from "@/lib/albion/source-age";
-import { observedAt, Skeleton } from "./market-city-table";
+import { priceAge, Skeleton } from "./market-city-table";
 import { Silver } from "./silver";
 import styles from "./item-price-line.module.css";
 
@@ -89,8 +88,10 @@ export function useItemPrices(region: string, ids: string[], ready: boolean) {
   };
 }
 
-/** One item's cheapest sell order: the figure, its city and how long ago it was seen. A stale
- * order keeps its amber age and "Stale" mark; no order is an em dash, never a zero. */
+/** One item's cheapest sell order: the figure and its city, with its age only where it matters,
+ * as in City orders (`priceAge`): none within the hour, a short amber age past it, dimmed past a
+ * day; the exact time on hover and in full for assistive tech. No order is an em dash, never a
+ * zero. */
 export function ItemPriceLine({ state }: { state: ItemPriceState }) {
   if (state.status === "loading")
     return (
@@ -113,24 +114,27 @@ export function ItemPriceLine({ state }: { state: ItemPriceState }) {
       </span>
     );
   const { price, city, observedAt: date } = state.best;
-  const age = sourceAge(date, state.now);
+  const age = priceAge(date, state.now);
   return (
-    <span className={styles.line} data-price={age.stale ? "stale" : "fresh"}>
+    <span
+      className={`${styles.line}${age.tone === "old" ? ` ${styles.old}` : ""}`}
+      data-price={age.tone === "fresh" ? "fresh" : "stale"}
+    >
       <span className={styles.figure}>
         <span className="sr-only">Cheapest sell order </span>
         <Silver value={price} animate={false} />
       </span>
-      <small className={`${styles.where}${age.stale ? ` ${styles.stale}` : ""}`}>
+      <small className={styles.where}>
         <span className="city-dot" data-city={city} aria-hidden="true" />
         <span className={styles.city}>{city}</span>
-        <time dateTime={date} title={`${observedAt(date)} UTC`}>
-          {age.label}
+        <time dateTime={date} title={age.exact}>
+          {age.tone !== "fresh" && (
+            <span className={styles.age} aria-hidden="true">
+              {age.short}
+            </span>
+          )}
+          <span className="sr-only">{age.spoken}</span>
         </time>
-        {age.stale && (
-          <span className={styles.staleMark} title="Stale: seen more than an hour ago">
-            <span className="sr-only">Stale</span>
-          </span>
-        )}
       </small>
     </span>
   );

@@ -1,5 +1,6 @@
 /* The item database's price line: the cheapest sell order in Geist Mono with the coin, then its
-   city dot, city and age; amber age and a hollow ring when stale, a muted em dash when missing */
+   city dot and city; a short amber age past the hour, the figure dimmed past a day, a muted em dash
+   when missing */
 .line {
   display: grid;
   gap: 2px;
@@ -33,16 +34,14 @@
 .city {
   color: var(--secondary);
 }
-.stale time {
+.age {
   color: var(--warning);
 }
-.staleMark {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border: 2px solid var(--warning);
-  border-radius: 50%;
-  cursor: help;
+.old .figure {
+  color: var(--muted);
+}
+.old .age {
+  color: var(--muted);
 }
 .missing .figure {
   color: var(--muted);
