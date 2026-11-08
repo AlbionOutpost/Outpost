@@ -10,6 +10,7 @@ import { safeSignInPageReturn } from "@/lib/sign-in-return";
 import Link from "@/components/link";
 import { NextStepCards } from "@/components/next-step-cards";
 import styles from "@/components/account.module.css";
+import { legalPublished } from "@/lib/legal";
 export const metadata = privateMetadata("Sign in");
 
 const benefits = [
@@ -105,9 +106,11 @@ export default async function Signin({
           <Link className="pill-link is-small" href="/tools">
             Explore without an account <ArrowRight size={14} aria-hidden="true" />
           </Link>
-          <Link className="pill-link is-small" href="/legal">
-            Privacy &amp; terms
-          </Link>
+          {legalPublished && (
+            <Link className="pill-link is-small" href="/legal">
+              Privacy &amp; terms
+            </Link>
+          )}
         </div>
       </section>
       <div className={styles.signinNext}>

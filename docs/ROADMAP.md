@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Legal page unpublished — 8 November 2026
+
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+
 ## Tools and editors on one screen — 8 November 2026
 
 - Every calculator, flipping, gold, reference, the Avalon mapper, the build and comp editors and the admin console now fit 1440×900: compact mastheads with their tabs and back links at the right edge, no closing link bands (market pages keep `MarketNextSteps`, as DESIGN.md asks), long lists scrolling in their own wells. `e2e/one-screen.spec.ts` checks each page.
