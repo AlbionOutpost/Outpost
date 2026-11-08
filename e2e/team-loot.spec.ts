@@ -239,8 +239,22 @@ test("guild tax: only Manage team sets it, a split takes it with % expenses, and
     expect((await profile(1, 10, team.updatedAt)).status()).toBe(403);
     expect((await profile(0, 12.34, team.updatedAt)).status()).toBe(400);
     expect((await profile(0, 100.5, team.updatedAt)).status()).toBe(400);
+    const guildTax = (actor: number, guildTaxPercent: number) =>
+      contexts[actor].request.post(`/api/groups/${groupId}/actions`, {
+        headers: { origin: "http://localhost:3000" },
+        data: { action: "guild-tax", guildTaxPercent },
+      });
+    expect((await guildTax(1, 10)).status()).toBe(403);
+    expect((await guildTax(0, 12.34)).status()).toBe(400);
     expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).guildTaxPercent).toBe(0);
-    // The leader sets the rate from its own row in Settings, without opening the profile form.
+    // With no rate yet, the leader sets it right in the loot split and the toggle appears on.
+    await page.goto(`/groups/${slug}`);
+    await page.getByRole("tab", { name: "Treasury", exact: true }).click();
+    await page.getByLabel("Team guild tax (%)", { exact: true }).fill("5");
+    await page.getByRole("button", { name: "Set guild tax", exact: true }).click();
+    await expect(page.getByRole("checkbox", { name: /Guild tax/ })).toBeChecked();
+    expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).guildTaxPercent).toBe(5);
+    // The leader changes the rate from its own row in Settings, without opening the profile form.
     await page.goto(`/groups/${slug}`);
     await page.getByRole("tab", { name: "Settings", exact: true }).click();
     const rate = page.getByLabel("Guild tax (%)", { exact: true });
