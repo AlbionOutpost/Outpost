@@ -190,6 +190,14 @@ export const publicPages: Record<string, [string, string]> = {
     "Albion Online market flipping calculator",
     "Compare city order spreads and calculate trading fees and estimated margins before placing an Albion Online market order.",
   ],
+  "/tools/black-market": [
+    "Albion Online Black Market flips",
+    "Compare the Caerleon Black Market's buy orders with the cheapest city sell orders for the same gear, enchantment and quality, after tax, with every price's age.",
+  ],
+  "/tools/profitable-crafts": [
+    "Albion Online most profitable crafts",
+    "What should I craft? Rank Albion Online recipes by profit for your buy, craft and sell cities, city returns, tax and budget, from observed market prices.",
+  ],
   "/tools/transporting": [
     "Albion Online transport calculator",
     "Compare city prices, transport weight and trading costs to plan an Albion Online shopping or transport run.",

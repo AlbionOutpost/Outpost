@@ -11,10 +11,42 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - The server draws inside one transaction with crypto randomness, once: a second draw returns the same winners, and the store refuses any change after the draw. Postgres `20261111090000_giveaways`, private-store step 15 (from 14, so it lands after step 14).
 - Not done: Discord notifications to winners, claim tracking, giveaway pages of their own.
 
+## Tax defaults and saves on the account — 9 November 2026
+
+- Every sales-tax field starts at 4% (Premium) with "Premium 4%" and "No premium 8%" beside it: flipping and its route scan, the Black Market board and Profitable crafts (one shared field now), the crafting family, transport, laborers (was 8%), farming and fishing (was empty). Saved runs and links keep their own rate (owner decision, 8 Nov 2026).
+- Signed in, library favorites and Specialization & focus levels are kept on the account and follow you to every device; the browser's own copy moves over once after sign-in without duplicates. Guests keep them in the browser as before. Private-store schema 14 (`0015_account_saves`).
+- Fishing hides its detail rows until every input is in, so the page stays on one screen with the fee filled.
+
+## Legal page unpublished — 8 November 2026
+
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+
+## Teams, guide reader and comp weapons — 8 November 2026
+
+- Team workspace: six tabs (Overview, Events, Members, Loadouts, Treasury, Announcements). "All teams" is a back link beside the chips; Settings sits behind a gear for the owner and Manage team / Manage roles holders and keeps `#team-settings`. Comps and Builds merge into Loadouts; `#team-comps` and `#team-builds` still land on their view. Phones get one sideways strip.
+- Overview: next event with quick actions, one Loadouts panel, members and news in a rail; empty parts are one line. Members is a role-coloured table with role filters, then invitations, requests and Leave team (moved from Settings). Rolls & flips: coin stage beside the form and flip history; loot rolls open on one row.
+- Team directory cards carry a banner in the team's shield colour; no "No description yet." filler.
+- Guide reader: details as hero chips, equal All guides / Print guide pills, contents and one "Use with this guide" rail aligned with the reading page.
+- Comps by activity cards overlay the three weapons their Group Builds comps carry most (player comps fill in), from a small build-time `grind-comp-weapons.json` on Cloudflare.
+
+## Editors without the duplicates — 8 November 2026
+
+- Build editor: one loadout view, Cost · board · Abilities side by side (board, abilities, cost on phones). The "Your build" slot list and the Equipment, Abilities and Cost tabs are gone; the board is the only place to pick a slot. Alternatives and Notes stay as tabs.
+- Comp editor: party size is chosen in one place (the empty party's well, then a Party size select under the board); The comp holds comp details only; Your builds appears once there is a party and says one thing; a 5-player party fits one row of smaller windows.
+- Builds pages end on their content: the Favorites "Make one yours" band and the guest editor's sign-in band are gone (a guest gets one line with Sign in).
+
+## Black Market board, Profitable crafts, watchlist changes — 8 November 2026
+
+- **Black Market board** (`/tools/black-market`): one gear category over a tier range at one enchantment and quality; each item's cheapest player-city sell order beside the Black Market's buy order, net after the player's tax (Premium 4% / No premium 8%, editable), margin and both observation ages, best net first. Items without both orders are listed last as unavailable, never as zero. Each row opens Market Explorer and plans the haul in the transport calculator.
+- **Profitable crafts** (`/tools/profitable-crafts`, "What should I craft?"): every primary recipe of a category at one tier and enchantment, priced from one bounded AODP batch and run through the Crafting calculator's `production()` with the player's buy, craft and sell cities, city returns, daily bonus, tax, setup fee and budget; top 10 with Show all, unpriced recipes listed with what is missing. Open takes a recipe to its calculator with the same settings (the crafting, cooking and alchemy pages read them from the link).
+- **Watchlist "since your last visit"**: after refreshing quotes, each watched item shows how its lowest sell and highest buy order moved since the player last pressed Mark as seen (up/down %, new order, no order now). The marks live on the device, the watchlist itself stays on the account.
+- Both scan routes answer from one AODP request and are kept in the signed-out edge cache for two minutes; changing cities, tax or budget re-ranks in the page without a new request.
+- Not yet: focus and specialization in Profitable crafts; buy orders as a purchase route on the board; order volume.
+
 ## Tools and editors on one screen — 8 November 2026
 
 - Every calculator, flipping, gold, reference, the Avalon mapper, the build and comp editors and the admin console now fit 1440×900: compact mastheads with their tabs and back links at the right edge, no closing link bands (market pages keep `MarketNextSteps`, as DESIGN.md asks), long lists scrolling in their own wells. `e2e/one-screen.spec.ts` checks each page.
-- Crafting family: the five modes sit in the masthead; the Production plan is one summary row with Open plan; Run details open from the result's head. Flipping shows Scan a route or Check one trade, one at a time. The build editor gained a Cost tab; the comp editor puts The comp and Your builds beside the party. The tools hub shows all 23 tools five across with whole descriptions.
+- Crafting family: the five modes sit in the masthead; the Production plan is one summary row with Open plan; Run details open from the result's head. Flipping shows Scan a route or Check one trade, one at a time. The build editor gained a Cost tab; the comp editor puts The comp and Your builds beside the party. The tools hub shows all 23 tools (25 since the Black Market board and Profitable crafts) five across with whole descriptions.
 - Gold's failed load is one line with Try again; on phones a missing market order is a lone dash.
 - Fixed: a price that finished loading while a player was in its field replaced the text under the caret, so their typing was appended to it (2,982 + 3000 read as 29,823,000). Number fields now hold outside values until the player leaves the field.
 
@@ -40,7 +72,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 
 ## Team economy — 8 November 2026
 
-- Teams get one **Treasury** tab (8 tabs in all) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
+- Teams get one **Treasury** tab (8 tabs then; six since the Loadouts merge) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
 - **Rolls & flips**: coin flips between two members or a call, to settle ties and decisions (no stakes: the owner decided flips never move silver); loot rolls (1–100, one roll each, highest wins, ties settled by a coin flip) with optional silver shared among the rollers and the pot. A 3D silver coin with a milled rim (crown heads, skull tails) tumbles end over end with a little precession, catches the light, casts a shadow that shrinks while it is high and lands with a bounce, a ring and dust; d100 number drums replay rolls. Both only replay the server's result; reduced motion shows it at once.
 - Manage wallet went to every role that had Manage loot splits (Postgres `20261108090000_team_economy`, private-store step 12).
 - Not done: roll penalties into the pot, regear requests and stats from the Discord bot; live updates (the view re-reads every 20 s while a roll is open).

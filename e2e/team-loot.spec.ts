@@ -256,7 +256,7 @@ test("guild tax: only Manage team sets it, a split takes it with % expenses, and
     expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).guildTaxPercent).toBe(5);
     // The leader changes the rate from its own row in Settings, without opening the profile form.
     await page.goto(`/groups/${slug}`);
-    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    await page.getByRole("button", { name: "Team settings", exact: true }).click();
     const rate = page.getByLabel("Guild tax (%)", { exact: true });
     await expect(rate).toBeVisible();
     await rate.fill("10");

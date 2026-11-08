@@ -27,6 +27,36 @@ describe("edge cache for signed-out public answers", () => {
     );
     expect(key("/api/combat-events/top?region=europe&region=asia")).toBeNull();
   });
+  it("keys the scan routes by their validated selection only", () => {
+    expect(
+      key("/api/economy/crafts?utm=x&quality=2&region=europe&category=sword&tier=6&enchantment=1"),
+    ).toBe(
+      "https://albionoutpost.com/api/economy/crafts?region=europe&category=sword&tier=6&enchantment=1&quality=2",
+    );
+    expect(
+      key("/api/economy/crafts?region=europe&category=mounts&tier=6&enchantment=0&quality=1"),
+    ).toBeNull();
+    expect(
+      key("/api/economy/crafts?region=europe&category=sword&tier=9&enchantment=0&quality=1"),
+    ).toBeNull();
+    expect(
+      key(
+        "/api/economy/black-market?region=asia&category=bag&fromTier=4&toTier=8&enchantment=0&quality=1",
+      ),
+    ).toBe(
+      "https://albionoutpost.com/api/economy/black-market?region=asia&category=bag&fromTier=4&toTier=8&enchantment=0&quality=1",
+    );
+    expect(
+      key(
+        "/api/economy/black-market?region=asia&category=bag&fromTier=8&toTier=4&enchantment=0&quality=1",
+      ),
+    ).toBeNull();
+    expect(
+      key(
+        "/api/economy/black-market?region=asia&category=food&fromTier=4&toTier=8&enchantment=0&quality=1",
+      ),
+    ).toBeNull();
+  });
   it("keys the combined homepage answer by validated server only", () => {
     expect(key("/api/landing?region=europe")).toBe(
       "https://albionoutpost.com/api/landing?region=europe",

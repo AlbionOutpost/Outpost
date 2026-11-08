@@ -24,6 +24,7 @@ import avatarFrameSchema from "../d1/migrations/0011_avatar_frame.sql";
 import teamRolesSchema from "../d1/migrations/0012_team_roles.sql";
 import teamEconomySchema from "../d1/migrations/0013_team_economy.sql";
 import teamGuildTaxSchema from "../d1/migrations/0014_team_guild_tax.sql";
+import accountSavesSchema from "../d1/migrations/0015_account_saves.sql";
 import giveawaysSchema from "../d1/migrations/0016_giveaways.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
@@ -139,6 +140,11 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
           // Team guild tax: every team starts at 0%, so saved splits read as they were.
           this.ctx.storage.sql.exec(teamGuildTaxSchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=13 WHERE version=12");
+        }
+        if (version >= 1 && version <= 13) {
+          // Account saves: library favorites and spec levels on the account; new tables only.
+          this.ctx.storage.sql.exec(accountSavesSchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=14 WHERE version=13");
         }
         if (version >= 1 && version <= 14) {
           // Giveaways: site-wide and Team giveaways; Manage team holders get Manage giveaways.

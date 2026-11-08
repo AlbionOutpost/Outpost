@@ -1,6 +1,8 @@
 # Calculators
 
-Every calculator is a pure function in `src/lib/albion` with a Zod schema, used by the UI; saved scenarios are schema-checked on the server, and production, plan, transport and farming results are re-run there. Units are **silver**; percentages are entered 0–100. Totals are capped at 1e12 silver, quantities at 1e6, batches at 1e5. Missing or mismatched prices make the result incomplete (null totals) — see [DATA.md](DATA.md#truth-rules).
+Every calculator is a pure function in `src/lib/albion` with a Zod schema, used by the UI; saved scenarios are schema-checked on the server, and production, plan, transport and farming results are re-run there. Units are **silver**; percentages are entered 0–100.
+
+**Sales tax default.** Every sales-tax field (flipping and its route scan, the Black Market board, Profitable crafts, the crafting family, transport, laborers, farming produce and fishing sale fees) starts at **4% (Premium)** with two quick buttons, "Premium 4%" and "No premium 8%" (`SalesTaxField`, `src/lib/albion/sales-tax.ts`; owner decision 8 Nov 2026). The `initial*()` drafts carry it; saved scenarios and links keep their own tax. Setup and station fees keep their defaults (0; laborers 2.5). Test fixtures that model "no fees" set `tax = 0` explicitly, and the e2e expectations for default runs are worked by hand with the 4% (e.g. 3,000 sale, 2,000 materials → 880). Totals are capped at 1e12 silver, quantities at 1e6, batches at 1e5. Missing or mismatched prices make the result incomplete (null totals) — see [DATA.md](DATA.md#truth-rules).
 
 **Price sides.** Instant buy uses `sell_price_min`; instant sale uses `buy_price_max`; listing uses the destination `sell_price_min`. A Black Market price is never a purchase source.
 
@@ -20,6 +22,10 @@ margin, roi  = null when the denominator is 0
 `breakEven` and `minimumProfitableSale` use exact BigInt rationals (`decimal.ts`). Example: buy 100, sell 150, Q 10, tax 8, fee 2.5, transport 50 → profit **292.5**, minimum profitable sale **118**.
 
 **Opportunity scanner** (`/api/opportunities`): 1–25 items, one quality; origin can't be Black Market; Black Market destination only for instant sale; rows run through `transport()` and sort by profit. No liquidity model yet.
+
+**Black Market board** (`black-market.ts` → `blackMarketBoard()`): per item, buy = the lowest `sell_price_min` of the exact item and quality in any city except the Black Market; sale = the Black Market's `buy_price_max` (instant sale); `trade({ buy, sell, quantity: 1, tax, fee: 0, transport: 0 })` gives net and margin (net ÷ sale). Either order missing (or 0) → net null, listed after the priced rows. Tax defaults to 4 % (the Premium rate) with a No premium 8 % preset, both editable (the owner's call, 8 Nov 2026, for this scanner and Profitable crafts). Example: 1,000 in Martlock, BM bid 1,500, 4 % → net **440**, margin 29.33 %; at 8 % → **380**. Tests: `tests/black-market.test.ts`.
+
+**Profitable crafts** (`craft-ranking.ts` → `rankCrafts()`): each candidate recipe runs through `production()` exactly as the calculator would — materials from `sell_price_min` in the buy city, output listed in the sell city (Black Market: its `buy_price_max`, no setup fee), returns from `sourcedReturnRates()` for the craft city and daily bonus with every returnable material ticked, no focus or station fee, one craft. With no budget rows rank by profit per craft; with a budget B, `crafts = min(100000, ⌊B ÷ upfront⌋)` and rank by `profit × crafts` (crafts = 0 → "over budget", not ranked). Rows with a missing price are listed separately, never as 0; a row keeps its oldest observation time. Example (`tests/craft-ranking.test.ts`): 16 bars at 100 + 8 leather at 50, sword listed at 3,000, Lymhurst (33/133 back), 4 % tax + 2.5 % setup → profit 3,000 − 195 − 2,000·100/133 = **1,301.24**; a 5,000 budget makes 2 crafts → 2,602.48. Open passes markets, quality, tax, setup fee, return rate, returned materials and the city profile to the calculator (`craft-link.ts`); a malformed link is ignored whole.
 
 ## Production — `production.ts` → `production()`
 
@@ -52,7 +58,7 @@ incrementalFocus = (returnCredit − baseReturnCredit) / focusUsed
 - Shared and saved restores first load their exact declared game recipe IDs (up to 30 in a plan, three concurrent reads), then validate the complete configuration before replacing inputs. Failed recipe loads leave the current draft intact. This does not relax server recipe validation.
 - Recipe links for a different production kind or cooking/alchemy category show a recoverable selection notice. The default-recipe action clears the incompatible selection and retains the chosen server.
 - `estimatedFocusCost(base, efficiency, batches) = base·2^(−efficiency/10000)·batches` (no per-operation rounding yet).
-- **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are saved on the device (`/tools/mastery`).
+- **Focus from specs** (`focus.ts`): `efficiency = Σ level × perLevel` over every spec whose item patterns and tier range match the item (mastery 30/level, specialist 30 + 250 on its own item); `focusPerCraft = base / 2^(efficiency/10000)`. Levels are kept on the account when signed in and in the browser for guests (`/tools/mastery`, [API](API.md#account-saves)).
 - `returnRateFromBonus(b) = 1 − 1/(1 + b/100)`.
 
 **Return profile** (`production-profile.ts` → `sourcedReturnRates`):
@@ -150,11 +156,11 @@ Write the expected value **by hand** (or with exact rationals) before running th
 | Buy 10 @100 + 50 transport, no fees                                                | break-even 105 · minimum profitable whole sale 106                                                 |
 | Return profile, refining specialist city, no daily                                 | 58/158 = 36.709% · with focus 117/217 = 53.917%                                                    |
 
-Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
+Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `black-market`, `craft-ranking`, `economy-scans`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
 
 ## Known gaps
 
-No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
+Profitable crafts has no focus, specialization or alternative (token) recipes yet and counts one craft per row without order volume. No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no setup-fee presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
 
 ## Landing crafting quantity projection
 

@@ -39,6 +39,8 @@ model User {
   ownedGroups Group[]
   memberships GroupMember[]
   libraryLikes LibraryLike[]
+  libraryFavorites LibraryFavorite[]
+  masteryLevels MasteryLevel[]
   builds Build[]
   accounts Account[]
   sessions Session[]
@@ -691,4 +693,24 @@ model LibraryLike {
   createdAt DateTime @default(now())
   @@unique([userId, kind, slug])
   @@index([kind, slug])
+}
+
+/// A library build saved to the account (private; no public count). `slug` is the build's
+/// canonical library key (its slug, or its id when the slug is over 200 characters).
+model LibraryFavorite {
+  userId String
+  slug String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, slug])
+}
+
+/// One specialization level on the account (/tools/mastery); level 0 is no row.
+model MasteryLevel {
+  userId String
+  specId String
+  level Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+  @@id([userId, specId])
 }

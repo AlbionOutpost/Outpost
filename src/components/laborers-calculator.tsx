@@ -34,6 +34,7 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
 /** Silver in whole coins: the game never shows fractions of a silver. Display only. */
 const whole = (v: number | null | undefined) =>
   v == null || !Number.isFinite(v) ? <Missing /> : <Silver value={Math.round(v)} />;
@@ -367,16 +368,7 @@ export function LaborersCalculator() {
           meta={`${draft.tax}% tax${draft.buyOrder || draft.saleMode === "listing" ? ` · ${draft.setupFee}% setup` : ""}`}
         >
           <div className={s.fields}>
-            <label>
-              Sales tax (%)
-              <NumberField
-                min={0}
-                max={100}
-                decimals={2}
-                value={draft.tax}
-                onValueChange={(v) => update("tax", v ?? NaN)}
-              />
-            </label>
+            <SalesTaxField value={draft.tax} onValueChange={(v) => update("tax", v ?? NaN)} />
             <label>
               Setup fee (%)
               <NumberField

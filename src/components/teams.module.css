@@ -209,40 +209,69 @@
   margin-top: var(--space-4);
 }
 
-/* ---------- Workspace tabs, in the masthead ---------- */
-/* One control row: the way back, then the tabs */
-:global(.app.outpost) .tabRow.tabRow {
+/* ---------- Workspace masthead: the way back with the chips, then the tabs ---------- */
+:global(.app.outpost) .mastRow.mastRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
 }
+:global(.app.outpost) .mastRow.mastRow > .chips {
+  display: contents;
+}
 :global(.app.outpost) .tabs.tabs {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  margin-top: var(--space-4);
 }
-:global(.app.outpost) .backTab.backTab {
-  display: inline-flex;
+/* Settings: a square gear beside the primary action, as tall as it; ember while open */
+:global(.app.outpost .workspace-identity-actions) > .gear.gear {
   flex: none;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 0 14px 0 10px;
-  border: 1px solid color-mix(in srgb, var(--frame-rule) 58%, var(--border));
-  border-radius: 999px;
-  background: var(--surface-raised);
-  color: var(--text);
-  font: 600 13px/1 var(--font-ui);
-  white-space: nowrap;
-  text-decoration: none;
+  width: 46px;
+  padding: 0;
 }
-:global(.app.outpost) .backTab.backTab svg {
+:global(.app.outpost) .gear.gear[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
   color: var(--accent-ink);
 }
-:global(.app.outpost) .backTab.backTab:hover {
-  border-color: var(--accent);
+/* Phones: one strip that scrolls sideways (the open tab is kept in view), its cut edge fading */
+@media (max-width: 700px) {
+  :global(.app.outpost) .tabs.tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--space-4) * -1);
+    padding: 2px var(--space-4);
+    scroll-padding-inline: var(--space-4);
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 var(--space-4),
+      #000 calc(100% - 28px),
+      transparent
+    );
+  }
+  :global(.app.outpost) .tabs.tabs::-webkit-scrollbar {
+    display: none;
+  }
+  :global(.app.outpost) .tabs.tabs > button {
+    flex: none;
+    min-height: 40px;
+  }
+  /* What the team plays waits on the directory card and in Settings: the tabs stay higher */
+  :global(.app.outpost) .mastRow.mastRow .plays {
+    display: none;
+  }
+  /* The gear stays square beside the full-width primary action */
+  :global(.app.outpost .workspace-identity-actions):has(> .gear) {
+    flex-wrap: nowrap;
+  }
+  :global(.app.outpost .workspace-identity-actions) > .gear.gear {
+    width: 44px;
+  }
 }
 :global(.app.outpost) .tabs.tabs > button {
   min-height: 36px;
@@ -588,15 +617,101 @@
   gap: 24px;
   min-width: 0;
 }
-:global(.app.outpost) .overviewPair.overviewPair {
+/* The hero: the next event, then the things this member can do from here as painted wells */
+:global(.app.outpost) .quick.quick {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--well-border);
+  list-style: none;
+}
+:global(.app.outpost) .quick.quick :is(a, button) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 160ms var(--ease-out);
+}
+:global(.app.outpost) .quick.quick :is(a, button):hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
+}
+:global(.app.outpost) .quick.quick img {
+  flex: none;
+  width: 36px;
+  height: 36px;
+}
+:global(.app.outpost) .quick.quick span {
+  display: grid;
+  min-width: 0;
+}
+:global(.app.outpost) .quick.quick strong {
+  font: 600 14px/1.25 var(--font-ui);
+}
+:global(.app.outpost) .quick.quick small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Loadouts summary: comps beside builds, each its own short list */
+:global(.app.outpost) .loadoutPair.loadoutPair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  gap: 24px;
+  gap: var(--space-5);
+}
+:global(.app.outpost) .loadoutPair.loadoutPair > div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .loadoutPair .subhead.subhead {
+  margin: 0;
+}
+/* An empty part said in one dashed line, with its way to fill it at the end */
+:global(.app.outpost) .quietEmpty.quietEmpty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--well-border);
+  border-radius: var(--radius-md);
+  color: var(--secondary);
+  font-size: 14px;
 }
 @media (max-width: 700px) {
-  :global(.app.outpost) .overviewPair.overviewPair {
+  :global(.app.outpost) .loadoutPair.loadoutPair {
     grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .quick.quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* The narrowest phones keep two across with the label alone */
+@media (max-width: 420px) {
+  :global(.app.outpost) .quick.quick small {
+    display: none;
+  }
+  :global(.app.outpost) .quick.quick :is(a, button) {
+    gap: var(--space-2);
+    padding-inline: var(--space-2);
+  }
+  :global(.app.outpost) .quick.quick img {
+    width: 32px;
+    height: 32px;
   }
 }
 :global(.app.outpost) .nextEvent.nextEvent {
@@ -998,25 +1113,6 @@
   }
 }
 @media (max-width: 700px) {
-  /* The control row scrolls sideways; a pill cut by the edge fades out */
-  :global(.app.outpost) .tabRow.tabRow {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin-inline: -16px;
-    padding-inline: 16px 64px;
-    scrollbar-width: none;
-    mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
-  }
-  :global(.app.outpost) .tabRow.tabRow::-webkit-scrollbar {
-    display: none;
-  }
-  :global(.app.outpost) .tabs.tabs {
-    flex-wrap: nowrap;
-  }
-  :global(.app.outpost) .tabs.tabs > button,
-  :global(.app.outpost) .backTab.backTab {
-    min-height: 40px;
-  }
   :global(.app.outpost) .overview.overview,
   :global(.app.outpost) .lootColumns.lootColumns {
     grid-template-columns: minmax(0, 1fr);
@@ -1173,12 +1269,57 @@
 }
 :global(.app.outpost) .card.card {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-row: span 4;
   grid-template-rows: subgrid;
   gap: var(--space-3);
   min-width: 0;
   padding: var(--space-5);
+}
+/* The card's own face over the shared framed-panel painting: a woven grain on the raised surface,
+   and at the top a banner in the shield's own paint (blurred into cloth) that fades into the card
+   under the name, with a copper hem where it ends */
+:global(.app.outpost) .cardBanner.cardBanner {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--surface-raised) 94%, transparent),
+      color-mix(in srgb, var(--surface-raised) 94%, transparent)
+    ),
+    var(--canvas-grain), var(--surface-raised);
+}
+:global(.app.outpost) .cardBanner.cardBanner::before {
+  content: "";
+  position: absolute;
+  inset: -60px -40px auto;
+  height: 220px;
+  background: var(--shield) 18% 45% / 55% no-repeat;
+  filter: blur(30px) saturate(1.25);
+  opacity: 0.75;
+}
+:global(.app.outpost) .cardBanner.cardBanner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      transparent 103px,
+      color-mix(in srgb, var(--frame-rule) 60%, transparent) 103px 104px,
+      transparent 104px
+    ),
+    linear-gradient(180deg, transparent 30px, var(--surface-raised) 104px);
+}
+:global(.app.outpost) .card.card > .cardHead {
+  min-height: 64px;
+  margin-bottom: var(--space-5);
+}
+:global(.app.outpost) .card.card .cardTitle p {
+  color: var(--secondary);
 }
 :global(.app.outpost) .cardHead.cardHead {
   display: flex;
@@ -1239,7 +1380,7 @@
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
-:global(.app.outpost) :is(.cardLine, .cardLineMuted) {
+:global(.app.outpost) .cardLine.cardLine {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
@@ -1249,7 +1390,6 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
-:global(.app.outpost) .cardLineMuted.cardLineMuted,
 :global(.app.outpost) .muted.muted {
   color: var(--muted);
 }
@@ -1379,13 +1519,6 @@
   margin: 0;
 }
 
-/* An empty well in a narrow panel: its action drops under the copy instead of squeezing it */
-:global(.app.outpost) .emptyStack.emptyStack > div {
-  flex-wrap: wrap;
-}
-:global(.app.outpost) .emptyStack.emptyStack > div > div:last-child:not(:nth-child(2)) {
-  flex: 1 1 100%;
-}
 /* The invitation card stands centred on the page */
 :global(.app.outpost) .centred.centred {
   margin-inline: auto;
@@ -1486,32 +1619,12 @@
 :global(.app.outpost) .rowMenu.rowMenu > [role="menu"] > button[data-tone="loss"] {
   color: var(--error);
 }
-/* The roster reads in two columns on wide screens */
-:global(.app.outpost) .memberGrid.memberGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2) var(--space-3);
-}
-@media (max-width: 900px) {
-  :global(.app.outpost) .memberGrid.memberGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 :global(.app.outpost) .buildWindow .windowTitle.windowTitle {
   font: 800 15px/1.2 var(--font-display);
   letter-spacing: 0.01em;
 }
 :global(.app.outpost) .overviewColumn.overviewColumn:empty {
   display: none;
-}
-/* Phones keep a member's role and menu on the name's line; only the narrowest wrap them */
-@media (min-width: 361px) and (max-width: 700px) {
-  :global(.app.outpost) .memberGrid .wellRow.wellRow:has(.rowTools) {
-    flex-wrap: nowrap;
-  }
-  :global(.app.outpost) .memberGrid .rowTools.rowTools {
-    flex-basis: auto;
-    flex-wrap: nowrap;
-  }
 }
 
 /* ---------- Team identity: crest, what the team plays, recruiting ---------- */
@@ -1817,7 +1930,7 @@
 
 /* ---------- Members: framed pictures, role chips and joined dates ---------- */
 :global(.app.outpost) .memberRow.memberRow {
-  min-height: 64px;
+  min-height: 56px;
   padding-block: var(--space-2);
 }
 :global(.app.outpost) .memberRow .rowCopy > strong {
@@ -1832,21 +1945,6 @@
   background: var(--accent-wash);
   color: var(--accent-ink);
   font: 700 12px/1.2 var(--font-ui);
-}
-:global(.app.outpost) .memberMeta.memberMeta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px var(--space-3);
-  min-width: 0;
-}
-:global(.app.outpost) .memberMeta.memberMeta > * {
-  margin: 0;
-}
-:global(.app.outpost) .memberMeta.memberMeta > small {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
 }
 /* The overview's roster tally: the Leader, then each role anyone holds, with its count */
 :global(.app.outpost) .rosterTally.rosterTally {
@@ -1863,6 +1961,120 @@
 }
 :global(.app.outpost) .rosterTally.rosterTally b {
   color: var(--text);
+  font: 600 12px/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Members tab: the roster as one table, then who wants in, then leaving ---------- */
+:global(.app.outpost) .membersTab.membersTab {
+  display: grid;
+  gap: 24px;
+}
+:global(.app.outpost) .rosterSearch.rosterSearch {
+  width: min(320px, 100%);
+}
+/* Filter by role: the role chips themselves, pressed one in its colour */
+:global(.app.outpost) .roleFilter.roleFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+:global(.app.outpost) .roleFilter.roleFilter > button {
+  min-height: 32px;
+  padding-inline: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+:global(.app.outpost) .roleFilter.roleFilter > button[data-all]::before {
+  display: none;
+}
+:global(.app.outpost) .roleFilter.roleFilter > button:hover {
+  color: var(--text);
+}
+:global(.app.outpost) .roleFilter.roleFilter > button[aria-pressed="true"] {
+  border-color: var(--role-color, var(--accent));
+  background: color-mix(in srgb, var(--role-color, var(--accent)) 16%, transparent);
+  color: var(--text);
+}
+:global(.app.outpost) .roleFilter.roleFilter b {
+  color: var(--text);
+  font: 600 12px/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+/* Each row carries its top role's colour as a bar on its first cell */
+:global(.app.outpost) .roster.roster {
+  width: 100%;
+}
+:global(.app.outpost) .roster.roster tbody th {
+  box-shadow: inset 3px 0 0 var(--role-color, var(--muted));
+}
+:global(.app.outpost) .roster.roster :is(th, td) {
+  vertical-align: middle;
+}
+:global(.app.outpost) .roster.roster tbody :is(th, td) {
+  padding-block: var(--space-2);
+}
+:global(.app.outpost) .roster.roster :is(th, td):last-child {
+  text-align: right;
+}
+:global(.app.outpost) .rosterName.rosterName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 180px;
+}
+:global(.app.outpost) .rosterName.rosterName strong {
+  overflow: hidden;
+  font: 600 14px/1.3 var(--font-ui);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+:global(.app.outpost) .joined.joined {
+  color: var(--secondary);
+  font: 500 13px/1.3 var(--font-data);
+  white-space: nowrap;
+}
+:global(.app.outpost) .roster.roster .rowTools.rowTools {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+/* Requests beside invitations, at their own heights */
+:global(.app.outpost) .joining.joining {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+:global(.app.outpost) .joining.joining > :only-child {
+  grid-column: 1 / -1;
+}
+@media (max-width: 900px) {
+  :global(.app.outpost) .joining.joining {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .rosterSearch.rosterSearch {
+    width: 100%;
+  }
+}
+
+/* ---------- Loadouts tab: comps or builds under one segmented switch ---------- */
+:global(.app.outpost) .loadouts.loadouts {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+:global(.app.outpost) .subNav.subNav {
+  justify-self: start;
+  max-width: 100%;
+}
+:global(.app.outpost) .subNav.subNav > a {
+  gap: var(--space-2);
+  padding: 0 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+:global(.app.outpost) .subCount.subCount {
+  color: var(--muted);
   font: 600 12px/1 var(--font-data);
   font-variant-numeric: tabular-nums;
 }

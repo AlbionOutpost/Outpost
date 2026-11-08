@@ -361,11 +361,13 @@
   font: 800 15px/1.2 var(--font-display);
 }
 
-/* The planner's party board: the landing's windows three across (party-board.tsx) */
+/* The planner's party board (party-board.tsx): the landing's windows, as many across as the
+   party size reads best, each at most 240px so a small party never stretches a window */
 .members {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(var(--plan-cols, 3), minmax(0, 240px));
+  justify-content: center;
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -654,9 +656,11 @@
   font: 800 15px/1.2 var(--font-display);
 }
 @media (max-width: 1100px) {
-  .grid,
-  .members {
+  .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .members {
+    grid-template-columns: repeat(var(--plan-cols-md, 2), minmax(0, 240px));
   }
 }
 @media (max-width: 700px) {
@@ -818,14 +822,6 @@
 .editor :is(input, select, textarea, button) {
   scroll-margin-top: 170px;
 }
-.fieldLabel {
-  color: var(--secondary);
-  font: 600 12px/1.35 var(--font-ui);
-}
-.sizeRow {
-  display: grid;
-  gap: 6px;
-}
 .sizePills {
   display: flex;
   flex-wrap: wrap;
@@ -877,7 +873,7 @@
     scrollbar-color: var(--border) transparent;
   }
   .partyWell {
-    max-height: max(300px, calc(100svh - 575px));
+    max-height: max(300px, calc(100svh - 560px));
     margin-inline: -4px;
     padding: 4px;
     overflow-y: auto;
@@ -885,6 +881,10 @@
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
+}
+.buildPick {
+  display: grid;
+  gap: var(--space-3);
 }
 .buildList {
   display: grid;
@@ -1010,6 +1010,25 @@
 }
 .partyCard[data-active] :global(.landing-window-title) {
   color: var(--accent-ink);
+}
+/* Planner windows stay small so a 5-player party fits one row: a smaller board, no weapon
+   render in the foot (the board shows it), a short foot */
+:global(.app.outpost) .members .partyCard :global(.landing-window-bar) {
+  margin-bottom: 8px;
+}
+:global(.app.outpost) .members .partyCard :global(.landing-window-body) > :global(.loadout-board) {
+  --gap: 8px;
+  --cell: min(44px, calc((100cqw - 2 * var(--gap)) / 3));
+  padding: 0;
+}
+:global(.app.outpost) .members .partyCard :global(.landing-window-foot) {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 0;
+  margin-top: 10px;
+  padding: 8px 14px 10px;
+}
+.members .partyCard .footWeapon {
+  display: none;
 }
 /* Rows: a roster row with a drag handle and move buttons */
 .rows {

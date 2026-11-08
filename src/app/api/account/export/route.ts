@@ -29,6 +29,8 @@ export const GET = apiHandler("account.export", async () => {
       compositionFavorites: true,
       buildVotes: true,
       libraryLikes: true,
+      libraryFavorites: { select: { slug: true, createdAt: true } },
+      masteryLevels: { select: { specId: true, level: true, updatedAt: true } },
       comments: { include: { revisions: true } },
       reports: {
         select: {

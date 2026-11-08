@@ -1,0 +1,17 @@
+/* Shared by the Black Market board and the craft finder; the rows reuse the flip scanner's
+   result well in calculators.module.css. */
+.wide {
+  grid-column: 1 / -1;
+}
+.more {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3);
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+}
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}

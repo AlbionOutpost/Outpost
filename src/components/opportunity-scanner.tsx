@@ -20,6 +20,8 @@ import type { transportObservations } from "@/lib/albion/transport-prices";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
+import { DEFAULT_SALES_TAX } from "@/lib/albion/sales-tax";
 type Row = ReturnType<typeof transport> &
   ReturnType<typeof transportObservations> & { itemId: string };
 const itemPattern = /^T[1-8]_[A-Z0-9_]+(?:@[1-4])?$/;
@@ -50,7 +52,7 @@ export function OpportunityScanner() {
     [to, setTo] = useState("Caerleon"),
     [quality, setQuality] = useState("1"),
     [mode, setMode] = useState("instant"),
-    [tax, setTax] = useState("4"),
+    [tax, setTax] = useState(String(DEFAULT_SALES_TAX)),
     [fee, setFee] = useState("2.5"),
     [result, setResult] = useState<{ key: string; rows: Row[]; methodology: string } | null>(null),
     [error, setError] = useState<{ key: string; message: string } | null>(null),
@@ -178,17 +180,11 @@ export function OpportunityScanner() {
               ))}
             </WellSelect>
           </label>
-          <label>
-            Tax (%)
-            <NumberField
-              min={0}
-              max={100}
-              step={0.5}
-              decimals={1}
-              value={tax}
-              onValueChange={(v) => setTax(v == null ? "" : String(v))}
-            />
-          </label>
+          <SalesTaxField
+            label="Scan sales tax (%)"
+            value={tax}
+            onValueChange={(v) => setTax(v == null ? "" : String(v))}
+          />
           {mode === "listing" && (
             <label>
               Setup fee (%)

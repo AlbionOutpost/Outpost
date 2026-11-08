@@ -27,6 +27,7 @@ import {
 } from "../../src/lib/admin/queries";
 
 import { setLibraryLike } from "../../src/lib/library-likes";
+import { accountSaves } from "../../src/lib/account-saves-service";
 
 import { activeSession, createActiveSession } from "../../src/lib/admin/sessions";
 
@@ -41,6 +42,7 @@ const services = {
   adminUserDetail,
   adminAuditLog,
   setLibraryLike,
+  accountSaves,
   reviseBuild,
   duplicateBuild,
   saveComposition,

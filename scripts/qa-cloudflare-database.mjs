@@ -631,6 +631,33 @@ try {
     assert.notEqual(different.id, first.id);
     assert.equal(await query("marketWatchItem", "count", { where: { userId: userB } }), 0);
   });
+  await check("account saves merge once and stay with their own account", async () => {
+    const copy = {
+      action: "merge",
+      favorites: ["battleaxe-mist-build", "carving-sword-mist-build"],
+      levels: { axe_crafter: 30 },
+    };
+    const first = await service("accountSaves", userA, copy),
+      again = await service("accountSaves", userA, copy);
+    assert.deepEqual([...first.favorites].sort(), [...again.favorites].sort());
+    assert.equal(await query("libraryFavorite", "count", { where: { userId: userA } }), 2);
+    assert.deepEqual(again.levels, { axe_crafter: 30 });
+    await service("accountSaves", userA, {
+      action: "levels",
+      levels: { axe_crafter: 0, bow_crafter: 7 },
+    });
+    assert.deepEqual((await service("accountSaves", userA, { action: "read" })).levels, {
+      bow_crafter: 7,
+    });
+    const other = await service("accountSaves", userB, { action: "read" });
+    assert.deepEqual(other, { favorites: [], levels: {} });
+    await service("accountSaves", userB, {
+      action: "favorite",
+      slug: "battleaxe-mist-build",
+      active: false,
+    });
+    assert.equal(await query("libraryFavorite", "count", { where: { userId: userA } }), 2);
+  });
   await check("persistent rate budget has exactly three concurrent winners", async () => {
     const hits = await Promise.all(
       Array.from({ length: 12 }, () => call("rateLimit", fixture, 3, 60)),

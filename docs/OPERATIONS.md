@@ -111,7 +111,7 @@ Switch-on order (done 6 Nov 2026 up to the imprint): client id → deploy → co
 
 - OAuth app `1564994799722045560`, scopes `identify email`, callback `https://albionoutpost.com/api/auth/callback/discord`. Public Bot off, no install link.
 - `npm run discord:status` shows the bot/app profile; `npm run discord:setup -- --apply` applies avatar, icon, description and tags (backs up to `.qa/discord/`). The helper only touches `/users/@me` and `/applications/@me`.
-- Still to do in the Developer Portal: real Terms and Privacy URLs (after the legal page is completed).
+- Still to do in the Developer Portal: real Terms and Privacy URLs (after the legal page is completed). The page is unpublished for now (`src/lib/legal.ts`), so `/legal` returns 404 until then.
 
 ## Free-tier budgets
 

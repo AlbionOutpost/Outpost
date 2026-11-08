@@ -73,6 +73,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <Shell
           key={`${initialRegion}:${initialLight}`}
           authenticated={!!session?.user?.id}
+          accountId={user ? session!.user!.id : null}
           account={
             user
               ? {

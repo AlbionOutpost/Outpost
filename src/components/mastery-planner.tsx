@@ -8,7 +8,7 @@ import {
   focusPerCraft,
 } from "@/lib/albion/focus";
 import type { MasteryLevels } from "@/lib/albion/focus";
-import { readMasteryLevels, writeMasteryLevels } from "@/lib/mastery-storage";
+import { useMasteryLevels } from "./use-mastery-levels";
 import type { Recipe } from "@/lib/albion/recipes";
 import { CalculatorShell, useCalculatorStep } from "./calculator-shell";
 import { Disclosure } from "./disclosure";
@@ -25,8 +25,8 @@ const steps = ["mastery-board", "mastery-focus"];
 const specsOf = (ids: string[]) =>
   masteryCategories.filter((c) => ids.includes(c.id)).flatMap((c) => c.specs.map((s) => s.id));
 export function MasteryPlanner() {
-  const [levels, setLevels] = useState<MasteryLevels>({});
-  const [loaded, setLoaded] = useState(false);
+  const stored = useMasteryLevels();
+  const { levels, loaded } = stored;
   const [group, setGroup] = useState(groups[0][0]);
   const [status, setStatus] = useState<{ text: string; error?: boolean } | null>(null);
   const [query, setQuery] = useState("");
@@ -34,13 +34,6 @@ export function MasteryPlanner() {
     null,
   );
   const [step, goToStep] = useCalculatorStep(steps);
-  useEffect(() => {
-    // Hydrate from this device after mount so server and client markup match.
-    queueMicrotask(() => {
-      setLevels(readMasteryLevels());
-      setLoaded(true);
-    });
-  }, []);
   const categories = masteryCategories.filter((c) =>
     masteryGroups[group].categoryIds.includes(c.id),
   );
@@ -72,11 +65,8 @@ export function MasteryPlanner() {
     };
   }, [term, searching]);
   function save(next: MasteryLevels) {
-    setLevels(next);
     setStatus(
-      writeMasteryLevels(next)
-        ? { text: "Saved in this browser." }
-        : { text: "This browser couldn’t save your levels.", error: true },
+      stored.save(next) ? null : { text: "This browser couldn’t save your levels.", error: true },
     );
   }
   function set(id: string, value: number) {
@@ -120,6 +110,19 @@ export function MasteryPlanner() {
   const board = (
     <>
       {status?.error && <StatusLine tone="error">{status.text}</StatusLine>}
+      {stored.error && (
+        <StatusLine tone="error">
+          {stored.error}{" "}
+          <button type="button" className="text-link" onClick={() => stored.retry()}>
+            Try again
+          </button>
+        </StatusLine>
+      )}
+      {stored.saving === "error" && (
+        <StatusLine tone="error">
+          Your levels could not be saved to your account. Change a level to try again.
+        </StatusLine>
+      )}
       <div className={c.categories}>
         {categories.map((category, index) => {
           const ids = category.specs.map((s) => s.id);
@@ -250,7 +253,15 @@ export function MasteryPlanner() {
             line: "Your level in each spec, 0 to 100.",
             actions: (
               <span className={c.chip} role="status">
-                {status && !status.error ? status.text : "Saved in this browser"}
+                {stored.where === "device"
+                  ? "Saved in this browser"
+                  : !loaded && !stored.error
+                    ? "Loading your levels…"
+                    : stored.saving === "saving"
+                      ? "Saving to your account…"
+                      : stored.saving === "error"
+                        ? "Not saved"
+                        : "Saved to your account"}
               </span>
             ),
             children: board,

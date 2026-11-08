@@ -9,6 +9,8 @@ import { LegalLanguageSwitch, LegalSectionRestore } from "./legal-language-switc
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { NextStepCards } from "@/components/next-step-cards";
 import styles from "./legal.module.css";
+import { notFound } from "next/navigation";
+import { legalPublished } from "@/lib/legal";
 
 export const dynamic = "force-dynamic";
 type Query = { lang?: string | string[]; region?: string | string[] };
@@ -17,6 +19,7 @@ async function language(query: Query) {
   return resolveLegalLocale(query.lang, (await headers()).get("accept-language"));
 }
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  if (!legalPublished) notFound();
   const locale = await language(await searchParams);
   return {
     title:
@@ -35,6 +38,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 export default async function Legal({ searchParams }: Props) {
+  if (!legalPublished) notFound();
   const query = await searchParams;
   const locale = await language(query);
   const de = locale === "de";

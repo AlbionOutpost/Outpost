@@ -6,6 +6,7 @@ export {
   searchGameRecipes,
   gameRecipesForOutput,
   gameRecipesUsing,
+  gameRecipesInCategory,
   itemName,
   itemWeight,
   itemValue,

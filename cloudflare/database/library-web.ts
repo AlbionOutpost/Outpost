@@ -12,7 +12,7 @@ import type {
 import type { JournalEntry } from "../../src/lib/journal-progress";
 import type { FishReference } from "../../src/lib/albion/fishing";
 import type { LibraryQuery, LibraryPage } from "../../src/lib/grind-library-query";
-import type { Activity } from "../../src/lib/library-activities";
+import type { Activity, ActivityWeapon } from "../../src/lib/library-activities";
 
 // React cache deduplicates within a render/request, without retaining request-bound I/O globally.
 const read = cache(async <T>(name: string): Promise<T> => {
@@ -30,6 +30,9 @@ export const libraryGuides = () => read<LibraryGuide[]>("guides");
 export const librarySpellNames = () => read<Record<string, string>>("spell-names");
 /** Written at build time by scripts/build-library-activities.ts. */
 export const libraryActivities = () => read<Activity[]>("activities");
+/** Written at build time by scripts/build-library-activities.ts (Comps by activity's weapons). */
+export const libraryCompositionWeapons = () =>
+  read<Record<string, ActivityWeapon[]>>("comp-weapons");
 export const libraryJournal = () => read<JournalEntry[]>("journal");
 export const libraryFishing = () => read<FishReference[]>("fishing");
 export const libraryTraits = () => read<AwakeningTrait[]>("traits");

@@ -42,8 +42,8 @@ test("a market refresh preserves a newer manual edit and warns about undated obs
     page.getByRole("button", { name: "Refresh market observations", exact: true }),
   ).toBeEnabled();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("175");
-  // 16 × 175 + 8 × 50 = 3,200 cost, 3,000 revenue, no supplied fees/returns.
-  await expectResultText(page.locator("output[data-result=total-profit]"), "-200", { exact: true });
+  // 16 × 175 + 8 × 50 = 3,200 cost, 3,000 revenue, 120 default 4% sales tax, no returns.
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-320", { exact: true });
   await expect(
     page.getByText("Stale or undated source observations included.", { exact: false }),
   ).toBeVisible();

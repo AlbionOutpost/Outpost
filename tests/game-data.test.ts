@@ -76,6 +76,7 @@ it("searches by name within a kind, tier and category", () => {
 
 it("prices an artifact recipe without crediting returns on the artifact", () => {
   const input = initialProduction("crafting", "europe");
+  input.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
   input.recipeId = "T8_2H_BOW_HELL";
   input.returnRate = 50;
   input.returns = { T8_PLANKS: true, T8_ARTEFACT_2H_BOW_HELL: true };
@@ -94,6 +95,7 @@ it("prices an artifact recipe without crediting returns on the artifact", () => 
 
 it("includes fixed recipe silver in scaled and restored cash and profit, separately from station fees", () => {
   const input = initialProduction("crafting", "europe");
+  input.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
   input.recipeId = "T4_WOOD_LEVEL1@1";
   input.batches = 10;
   input.stationFee = 20;
@@ -135,6 +137,7 @@ it("includes mandatory silver when enforcing the production cash limit", () => {
 
 it("requires an explicit accounting choice for ambiguous legacy saved fees", () => {
   const input = initialProduction("crafting", "europe");
+  input.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
   input.recipeId = "T4_WOOD_LEVEL1@1";
   input.stationFee = 1520;
   input.prices = { T4_WOOD: manual(100), "T4_WOOD_LEVEL1@1": manual(1000) };

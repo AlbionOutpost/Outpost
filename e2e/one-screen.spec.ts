@@ -25,6 +25,10 @@ async function quietMarket(page: Page) {
   await page.route("**/api/history?**", (route) =>
     route.fulfill({ status: 503, json: { error: "Upstream unavailable" } }),
   );
+  for (const scan of ["economy/crafts", "economy/black-market"])
+    await page.route(`**/api/${scan}?**`, (route) =>
+      route.fulfill({ status: 503, json: { error: "Upstream unavailable" } }),
+    );
   await page.route("**/api/opportunities?**", (route) =>
     route.fulfill({ status: 503, json: { error: "Upstream unavailable" } }),
   );
@@ -40,6 +44,8 @@ const toolPages = [
   "/tools/farming",
   "/tools/fishing",
   "/tools/flipping",
+  "/tools/black-market",
+  "/tools/profitable-crafts",
   "/tools/transporting",
   "/tools/laborers",
   "/tools/mastery",

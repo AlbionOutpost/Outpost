@@ -152,13 +152,19 @@ test("activity depth preserves click targets and respects reduced motion", async
   await expect(page.locator("#library-activity")).toHaveValue("MISTS_SOLO");
 });
 
-test("both activity grids overlay recorded weapons without ranking rows", async ({ page }) => {
-  for (const path of ["/", "/builds/activities"]) {
+test("every activity grid overlays recorded weapons without ranking rows", async ({ page }) => {
+  // Builds: the most liked builds' main hands. Comps: the main hands its Group Builds' comps
+  // carry most often (ZvZ comps: Hallowfall in the most of them).
+  for (const [path, activity, first] of [
+    ["/", "MISTS_SOLO", "T8_2H_POLEHAMMER"],
+    ["/builds/activities", "MISTS_SOLO", "T8_2H_POLEHAMMER"],
+    ["/compositions", "ZVZ", "T8_MAIN_HOLYSTAFF_AVALON"],
+  ]) {
     await page.goto(path);
-    const card = page.locator('.activity-artwork-card[data-activity="MISTS_SOLO"]');
+    const card = page.locator(`.activity-artwork-card[data-activity="${activity}"]`);
     const weapons = card.locator("[data-activity-weapon]");
     await expect(weapons).toHaveCount(3);
-    await expect(weapons.first()).toHaveAttribute("data-activity-weapon", "T8_2H_POLEHAMMER");
+    await expect(weapons.first()).toHaveAttribute("data-activity-weapon", first);
     await expect(weapons.first()).toHaveAccessibleName(/.+/);
     await expect(card.locator(".activity-top")).toHaveCount(0);
     const scene = (await card.locator("[data-activity-scene]").boundingBox())!;

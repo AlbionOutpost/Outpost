@@ -37,6 +37,24 @@ export const tools = [
     state: "Manual planning",
   },
   {
+    href: "/tools/black-market",
+    title: "Black Market board",
+    short: "Black Market",
+    group: "Economy",
+    icon: "trade",
+    description: "Gear the Black Market buys for more than the cheapest city sells it, after tax.",
+    state: "Observed prices",
+  },
+  {
+    href: "/tools/profitable-crafts",
+    title: "Profitable crafts",
+    short: "What to craft",
+    group: "Economy",
+    icon: "craft",
+    description: "Rank a category's recipes by profit for your cities, returns, tax and budget.",
+    state: "Observed prices · game recipes",
+  },
+  {
     href: "/tools/crafting",
     title: "Crafting",
     short: "Crafting",
@@ -216,6 +234,8 @@ export const tools = [
 export const toolPaintings: Record<string, string> = {
   "/tools/market": "tool-market",
   "/tools/flipping": "silver",
+  "/tools/black-market": "silver",
+  "/tools/profitable-crafts": "tool-craft",
   "/tools/crafting": "tool-craft",
   "/shopping-list": "tool-planner",
   "/tools/laborers": "team-loot",
@@ -257,6 +277,7 @@ export const toolSections: {
     hrefs: [
       "/tools/market",
       "/tools/flipping",
+      "/tools/black-market",
       "/tools/transporting",
       "/tools/gold",
       "/tools/avalon-mapper",
@@ -271,6 +292,7 @@ export const toolSections: {
     link: { href: "/shopping-list", label: "Open the Crafting Planner" },
     hrefs: [
       "/tools/crafting",
+      "/tools/profitable-crafts",
       "/shopping-list",
       "/tools/refining",
       "/tools/enchanting",

@@ -106,8 +106,8 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     const rows = planner.locator("tbody tr");
     await expect(rows.first()).toContainText("4,800");
     await expect(rows.first()).toContainText("32");
-    // Empty supplied fees/returns:6000 revenue-5600 gross material purchases=400 profit.
-    await expect(planner.locator(".production-plan-stats").first()).toContainText("400");
+    // No returns, 4% default sales tax: 6,000 revenue − 240 tax − 5,600 materials = 160 profit.
+    await expect(planner.locator(".production-plan-stats").first()).toContainText("160");
     await page.route("**/api/economy/prices?*", (route) =>
       route.fulfill({
         json: {
@@ -177,7 +177,8 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     await planner.getByRole("button", { name: "Edit", exact: true }).first().click();
     await page.getByLabel("Output unit sale price", { exact: true }).fill("4000");
     await planner.getByRole("button", { name: "Replace planned recipe", exact: true }).click();
-    await expect(planner.locator(".production-plan-stats")).toContainText("1,400");
+    // (4,000 − 160 − 2,000) + (3,000 − 120 − 3,600), both at the 4% default sales tax.
+    await expect(planner.locator(".production-plan-stats")).toContainText("1,120");
     const download = page.waitForEvent("download");
     await planner.getByRole("button", { name: "Export plan JSON", exact: true }).click();
     expect((await download).suggestedFilename()).toBe("outpost-production-europe.json");

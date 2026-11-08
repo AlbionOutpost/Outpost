@@ -1,0 +1,22 @@
+import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { WorkspaceHeading } from "@/components/workspace-heading";
+import { CraftFinder } from "@/components/craft-finder";
+import styles from "@/components/calculator-shell.module.css";
+export async function generateMetadata({ searchParams }: SeoPageProps) {
+  return metadataForPage("/tools/profitable-crafts", await searchParams);
+}
+export default function Page() {
+  return (
+    <div className={styles.page}>
+      <WorkspaceHeading
+        compact
+        glyph="craft"
+        scene="economy"
+        title="Profitable crafts"
+        accent="crafts"
+        description="Rank a category's recipes by profit for your cities, returns, tax and budget."
+      />
+      <CraftFinder />
+    </div>
+  );
+}

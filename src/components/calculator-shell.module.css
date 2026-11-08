@@ -495,6 +495,32 @@
     padding-inline: 20px;
   }
 }
+/* A sales-tax field: two columns wide, label on the fields' label row, the input with its
+   Premium / No premium choices beside it on the control row (wrapping under it when narrow) */
+:global(.app.outpost) .fields.fields > .taxField {
+  grid-column: span 2;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 6px;
+}
+:global(.app.outpost) .taxField.taxField {
+  display: grid;
+  align-items: start;
+  min-width: 0;
+}
+:global(.app.outpost) .taxControls.taxControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .taxControls.taxControls > input {
+  flex: 1 1 88px;
+  min-width: 0;
+}
+:global(.app.outpost) .taxControls.taxControls > :global(.segmented) {
+  flex: 0 1 auto;
+}
 :global(.app.outpost) .fields.fields > .wide,
 :global(.app.outpost) .fields.fields > .help {
   grid-column: 1 / -1;

@@ -17,7 +17,6 @@ const pages = [
   "/items",
   "/market-data",
   "/signin",
-  "/legal",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },

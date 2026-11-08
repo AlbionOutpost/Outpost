@@ -34,6 +34,7 @@ describe("production planning", () => {
   it("aggregates known recipe silver after a saved plan is restored", () => {
     registerRecipes([gameRecipe("T4_WOOD_LEVEL1@1")!]);
     const first = initialProduction("crafting", "europe");
+    first.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
     first.recipeId = "T4_WOOD_LEVEL1@1";
     first.batches = 2;
     for (const [id, value] of Object.entries({ T4_WOOD: 100, "T4_WOOD_LEVEL1@1": 1000 }))

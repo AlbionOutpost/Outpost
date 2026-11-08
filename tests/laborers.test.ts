@@ -33,6 +33,7 @@ it("weights blacksmith loot 7 : 2 : 1 across bars, planks and cloth", () => {
 });
 it("prices a T4 blacksmith run by hand", () => {
   const input = initialLaborers("europe");
+  input.tax = 8; // The reference case is priced without Premium.
   input.sellEmpty = true;
   for (const item of laborerLoot("WARRIOR", 4)!.items)
     input.prices[item.id] = manual(
