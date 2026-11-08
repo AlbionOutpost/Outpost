@@ -4,6 +4,15 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Page sweep on the new surfaces — 8 November 2026
+
+- Empty states straight on the backdrop (Favorites, no-result searches on Builds, Comps and Teams, a comp whose members could not be read, a Team's shared loadouts, saved filters) are raised cards instead of wells cut into nothing; the sign-in page's three benefits too.
+- The builds list view used to stretch every build window to the full width; it now shows each window without its board, two across, so a page of builds scans as a list. "Clear all" sits at the filter chips' height.
+- Saved Filters gets the shared section heading and empty state; the comp editor's "members could not be read" notice is an amber well like the comp page's.
+- The guide reader's contents, tool rail and related guides are shared surfaces, so they match the page in light mode (they were pale cards beside a dark one). The kill and death feeds say a failed load on a surface.
+- Sign-in's headline is readable in light mode (its shade follows the page colour); the build page's recordings no longer wrap one word per line.
+- Every hand-drawn well shadow in route sheets uses `--well-inset`, so wells get their light lip and work in light mode; dead build-card and editor box rules removed.
+
 ## Surfaces with depth and a softer backdrop — 8 November 2026
 
 - Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
