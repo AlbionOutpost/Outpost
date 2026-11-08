@@ -6,6 +6,12 @@
  *
  * Search returns user-made public builds and comps, so its TTL is short: a build made private or
  * hidden by moderation drops out of signed-out search within two minutes. */
+import {
+  craftCategoryIds,
+  gearCategoryIds,
+  type CraftCategory,
+} from "../../src/lib/albion/craft-categories";
+
 const regions = new Set(["europe", "americas", "asia"]);
 type Rule = { ttl: number; key: (params: URLSearchParams) => string | null };
 const rules: Record<string, Rule> = {
@@ -32,6 +38,44 @@ const rules: Record<string, Rule> = {
       if (!regions.has(region) || !Number.isInteger(batches) || batches < 1 || batches > 50)
         return null;
       return `region=${region}&batches=${batches}`;
+    },
+  },
+  // The scan routes return observations only (the page applies the player's cities, tax and
+  // budget), so one answer per validated selection serves everyone.
+  "/api/economy/crafts": {
+    ttl: 120,
+    key: (params) => {
+      const region = params.get("region") || "",
+        category = params.get("category") || "";
+      const [tier, enchantment, quality] = ["tier", "enchantment", "quality"].map((k) =>
+        params.get(k),
+      );
+      return regions.has(region) &&
+        craftCategoryIds.includes(category as CraftCategory) &&
+        /^[1-8]$/.test(tier || "") &&
+        /^[0-4]$/.test(enchantment || "") &&
+        /^[1-5]$/.test(quality || "")
+        ? `region=${region}&category=${category}&tier=${tier}&enchantment=${enchantment}&quality=${quality}`
+        : null;
+    },
+  },
+  "/api/economy/black-market": {
+    ttl: 120,
+    key: (params) => {
+      const region = params.get("region") || "",
+        category = params.get("category") || "";
+      const [from, to, enchantment, quality] = ["fromTier", "toTier", "enchantment", "quality"].map(
+        (k) => params.get(k) || "",
+      );
+      return regions.has(region) &&
+        gearCategoryIds.includes(category as CraftCategory) &&
+        /^[2-8]$/.test(from) &&
+        /^[2-8]$/.test(to) &&
+        Number(from) <= Number(to) &&
+        /^[0-4]$/.test(enchantment) &&
+        /^[1-5]$/.test(quality)
+        ? `region=${region}&category=${category}&fromTier=${from}&toTier=${to}&enchantment=${enchantment}&quality=${quality}`
+        : null;
     },
   },
   "/api/combat-events/top": {

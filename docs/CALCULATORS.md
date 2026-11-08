@@ -21,6 +21,10 @@ margin, roi  = null when the denominator is 0
 
 **Opportunity scanner** (`/api/opportunities`): 1–25 items, one quality; origin can't be Black Market; Black Market destination only for instant sale; rows run through `transport()` and sort by profit. No liquidity model yet.
 
+**Black Market board** (`black-market.ts` → `blackMarketBoard()`): per item, buy = the lowest `sell_price_min` of the exact item and quality in any city except the Black Market; sale = the Black Market's `buy_price_max` (instant sale); `trade({ buy, sell, quantity: 1, tax, fee: 0, transport: 0 })` gives net and margin (net ÷ sale). Either order missing (or 0) → net null, listed after the priced rows. Tax defaults to 4 % (the Premium rate) with a No premium 8 % preset, both editable (the owner's call, 8 Nov 2026, for this scanner and Profitable crafts). Example: 1,000 in Martlock, BM bid 1,500, 4 % → net **440**, margin 29.33 %; at 8 % → **380**. Tests: `tests/black-market.test.ts`.
+
+**Profitable crafts** (`craft-ranking.ts` → `rankCrafts()`): each candidate recipe runs through `production()` exactly as the calculator would — materials from `sell_price_min` in the buy city, output listed in the sell city (Black Market: its `buy_price_max`, no setup fee), returns from `sourcedReturnRates()` for the craft city and daily bonus with every returnable material ticked, no focus or station fee, one craft. With no budget rows rank by profit per craft; with a budget B, `crafts = min(100000, ⌊B ÷ upfront⌋)` and rank by `profit × crafts` (crafts = 0 → "over budget", not ranked). Rows with a missing price are listed separately, never as 0; a row keeps its oldest observation time. Example (`tests/craft-ranking.test.ts`): 16 bars at 100 + 8 leather at 50, sword listed at 3,000, Lymhurst (33/133 back), 4 % tax + 2.5 % setup → profit 3,000 − 195 − 2,000·100/133 = **1,301.24**; a 5,000 budget makes 2 crafts → 2,602.48. Open passes markets, quality, tax, setup fee, return rate, returned materials and the city profile to the calculator (`craft-link.ts`); a malformed link is ignored whole.
+
 ## Production — `production.ts` → `production()`
 
 Crafting, refining, enchanting, cooking and alchemy all use this engine.
@@ -150,11 +154,11 @@ Write the expected value **by hand** (or with exact rationals) before running th
 | Buy 10 @100 + 50 transport, no fees                                                | break-even 105 · minimum profitable whole sale 106                                                 |
 | Return profile, refining specialist city, no daily                                 | 58/158 = 36.709% · with focus 117/217 = 53.917%                                                    |
 
-Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
+Tests: `tests/game-data`, `laborers`, `avalon-map`, `calculations`, `production`, `production-profile`, `production-plan`, `production-sensitivity`, `production-observations`, `production-market`, `reviewed-recipes`, `transport`, `opportunities`, `black-market`, `craft-ranking`, `economy-scans`, `farming`, `fishing-journal`, `build-cost*`, `loadout-quotes`, `observed-costs`, `shopping`, `team-loot` (`*.test.ts`); browser flows in `e2e/production*.spec.ts`, `trade-scenarios`, `transport`.
 
 ## Known gaps
 
-No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
+Profitable crafts has no focus, specialization or alternative (token) recipes yet and counts one craft per row without order volume. No cheapest-path refining planner (including heart/transmutation alternatives) yet; enchanting stops at .3 (the game has no .3 → .4 foundry upgrade); no station focus rounding or IP; no tax/setup presets; cooking/alchemy have no category-specific mechanics; no nutrition-based station fees; no animals or islands. Laborers and Avalon portals can't be saved as server scenarios yet. See [ROADMAP.md](ROADMAP.md).
 
 ## Landing crafting quantity projection
 

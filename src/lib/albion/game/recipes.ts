@@ -136,3 +136,16 @@ export function searchGameRecipes(s: RecipeSearch) {
   out.sort((a, b) => (a.alternative ?? 1) - (b.alternative ?? 1));
   return { total, recipes: out };
 }
+/** Primary crafting recipes of one crafting category at one tier and enchantment, in data order. */
+export function gameRecipesInCategory(craftingCategory: string, tier: number, enchantment: number) {
+  return raw
+    .filter(
+      (r) =>
+        r.kind === "crafting" &&
+        r.craftingCategory === craftingCategory &&
+        r.tier === tier &&
+        r.enchantment === enchantment &&
+        alternativeIndex(r.id) === 1,
+    )
+    .map(toRecipe);
+}
