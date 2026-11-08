@@ -20,7 +20,7 @@ import { Pagination } from "@/components/pagination";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { regions } from "@/lib/albion/region-config";
-import { decodeActivities, teamActivities } from "@/lib/groups/crest";
+import { decodeActivities, resolveCrestColor, teamActivities } from "@/lib/groups/crest";
 import styles from "@/components/teams.module.css";
 import { LivelyCrest } from "@/components/team-crest";
 export const metadata = privateMetadata("Teams");
@@ -223,7 +223,17 @@ export default async function Groups({
               const canAsk = !member && g.visibility === "PUBLIC" && g.recruiting;
               return (
                 <li key={g.id}>
-                  <article className={`raised ${styles.card}`} data-team-card="">
+                  <article
+                    className={`raised ${styles.card}`}
+                    data-team-card=""
+                    style={
+                      {
+                        "--shield": `url("/albion/crests/crest-${resolveCrestColor(g.crestColor)}.webp")`,
+                      } as React.CSSProperties
+                    }
+                  >
+                    {/* The team's banner: its shield's own paint, woven, behind the crest */}
+                    <span className={styles.cardBanner} aria-hidden="true" />
                     <div className={styles.cardHead}>
                       <LivelyCrest>
                         <TeamMark
@@ -250,15 +260,14 @@ export default async function Groups({
                       </div>
                       {member && <span className="landing-chip">Your team</span>}
                     </div>
-                    <p className={g.description ? styles.cardLine : styles.cardLineMuted}>
-                      {g.description || "No description yet."}
-                    </p>
+                    {/* Only what the leaders wrote; an unwritten line leaves its row empty */}
+                    {g.description ? (
+                      <p className={styles.cardLine}>{g.description}</p>
+                    ) : (
+                      <span aria-hidden="true" />
+                    )}
                     <div className={styles.cardPlays}>
-                      {plays.length ? (
-                        <TeamActivities list={plays} />
-                      ) : (
-                        <span className={styles.muted}>Activities not set</span>
-                      )}
+                      <TeamActivities list={plays} />
                     </div>
                     <div className={`well ${styles.cardFoot}`}>
                       {member ? (

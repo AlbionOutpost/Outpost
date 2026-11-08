@@ -172,8 +172,16 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     // Happy path in the browser: book a credit, then flip a coin (reduced motion: instant).
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(`/groups/${slug}`);
-    // One Treasury tab holds loot splits, the wallet and rolls & flips; 8 tabs in all.
-    await expect(page.getByRole("tab")).toHaveCount(8);
+    // One Treasury tab holds loot splits, the wallet and rolls & flips; six tabs in all, with
+    // Settings behind the masthead's gear and the way back to all teams a link.
+    await expect(page.getByRole("tab")).toHaveCount(6);
+    await expect(page.getByRole("tablist", { name: "Team workspace" })).toHaveText(
+      /^Overview\s*Events\s*Members\s*Loadouts\s*Treasury\s*Announcements$/,
+    );
+    await expect(page.getByRole("link", { name: "All teams", exact: true })).toHaveAttribute(
+      "href",
+      "/groups",
+    );
     await page.getByRole("tab", { name: "Treasury", exact: true }).click();
     await expect(page).toHaveURL(/#team-treasury$/);
     await expect(page.getByRole("heading", { name: "Saved splits" })).toBeVisible();

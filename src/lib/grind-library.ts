@@ -11,7 +11,7 @@ import type {
 import type { JournalEntry } from "./journal-progress";
 import type { FishReference } from "./albion/fishing";
 import { paginateLibrary, type LibraryQuery } from "./grind-library-query";
-import { summariseActivities } from "./library-activities";
+import { summariseActivities, summariseCompWeapons } from "./library-activities";
 import { byLikes, listedBuild } from "./library-scope";
 
 // Immutable PUBLIC snapshots only; no user/account state enters these process-local indexes.
@@ -62,6 +62,10 @@ export const libraryCompositionCounts = async () => {
     counts[comp.category] = (counts[comp.category] ?? 0) + 1;
   return counts;
 };
+let compWeapons: ReturnType<typeof summariseCompWeapons> | undefined;
+/** The weapons each Group Build category's comps carry; the Worker reads the build-time file. */
+export const libraryCompositionWeapons = async () =>
+  (compWeapons ||= summariseCompWeapons(libraryCompositions(), libraryBuilds()));
 export const queryLibraryCompositions = (query: LibraryQuery) =>
   paginateLibrary(compositionsByLikes(), query, 18);
 
