@@ -67,12 +67,23 @@ export function LivelyCrest({ children }: { children: ReactNode }) {
     );
   };
   const mark = () => host.current?.firstElementChild as HTMLElement | null;
+  // On a directory card the crest sits above the card's link: open the team like the link would.
+  const open = (event: PointerEvent<HTMLSpanElement>) => {
+    const link = host.current
+      ?.closest("[data-team-card]")
+      ?.querySelector<HTMLAnchorElement>("a[href]");
+    if (!link) return;
+    if (event.ctrlKey || event.metaKey || event.shiftKey)
+      window.open(link.href, "_blank", "noopener");
+    else link.click();
+  };
   const strike = (event: PointerEvent<HTMLSpanElement>) => {
     const el = host.current,
       crest = mark();
-    if (!el || !crest) return;
+    // Only a plain primary press: right and middle buttons keep their own meaning.
+    if (!el || !crest || event.button !== 0) return;
     if (still()) {
-      el.closest("[data-team-card]")?.querySelector<HTMLAnchorElement>("a[href]")?.click();
+      open(event);
       return;
     }
     if (event.pointerType === "touch") {
@@ -87,11 +98,10 @@ export function LivelyCrest({ children }: { children: ReactNode }) {
         { duration: 560, easing: "ease-out" },
       );
       sparkle(el, 6);
+      window.setTimeout(() => open(event), 260);
       return;
     }
-    // On a directory card the crest sits above the card's link: strike, then open the team.
-    const link = el.closest("[data-team-card]")?.querySelector<HTMLAnchorElement>("a[href]");
-    if (link && event.button === 0) window.setTimeout(() => link.click(), 260);
+    window.setTimeout(() => open(event), 260);
     crest.animate(
       [
         { scale: "1" },

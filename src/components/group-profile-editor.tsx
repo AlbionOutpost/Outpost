@@ -33,6 +33,37 @@ export function GroupProfileEditor({
     [name, setName] = useState(group.name),
     router = useRouter();
   const plays = decodeActivities(group.activities);
+  // The profile action takes the whole profile; the guild tax row sends the saved values with its new rate.
+  async function save(fields: Record<string, unknown>, done: string) {
+    setBusy(true);
+    try {
+      const r = await fetch(`/api/groups/${group.id}/actions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "profile",
+            expectedUpdatedAt: group.updatedAt,
+            name: group.name,
+            description: group.description,
+            region: group.region,
+            visibility: group.visibility,
+            crestItem: group.crestItem,
+            crestColor: group.crestColor,
+            activities: plays,
+            recruiting: group.recruiting,
+            ...fields,
+          }),
+        }),
+        b = await r.json();
+      if (!r.ok) throw new Error(b.error);
+      setMessage(done);
+      router.refresh();
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Save failed; your draft is retained.");
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <section className={`panel ${styles.panel}`} aria-labelledby="team-profile">
       <PanelHead
@@ -54,43 +85,54 @@ export function GroupProfileEditor({
             {joiningLabel(group)}
           </small>
           <small>{plays.length ? plays.join(" · ") : "Activities not set"}</small>
-          <small>
-            {group.guildTaxPercent ? `Guild tax ${group.guildTaxPercent}%` : "No guild tax"}
-          </small>
         </span>
       </div>
+      <form
+        className={styles.taxRow}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const f = new FormData(e.currentTarget);
+          // Empty means no tax, as the hint says.
+          void save(
+            { guildTaxPercent: Number(f.get("guildTaxPercent") || 0) },
+            "Guild tax saved.",
+          );
+        }}
+      >
+        <Field
+          label="Guild tax (%)"
+          hint="Loot splits can take this share of the pool for the team pot first. 0 or empty for none."
+        >
+          <NumberField
+            name="guildTaxPercent"
+            aria-label="Guild tax (%)"
+            min={0}
+            max={100}
+            decimals={1}
+            placeholder="e.g. 10"
+            defaultValue={group.guildTaxPercent || null}
+          />
+        </Field>
+        <button className="button secondary" disabled={busy}>
+          Save guild tax
+        </button>
+      </form>
       <Disclosure summary="Edit team profile">
         <form
           className={styles.form}
-          onSubmit={async (e) => {
+          onSubmit={(e) => {
             e.preventDefault();
             const f = new FormData(e.currentTarget);
-            setBusy(true);
-            try {
-              const r = await fetch(`/api/groups/${group.id}/actions`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    action: "profile",
-                    expectedUpdatedAt: group.updatedAt,
-                    name: f.get("name"),
-                    description: f.get("description"),
-                    region: f.get("region"),
-                    visibility: f.get("visibility"),
-                    // Empty means no tax, as the hint says.
-                    guildTaxPercent: Number(f.get("guildTaxPercent") || 0),
-                    ...identityFromForm(f),
-                  }),
-                }),
-                b = await r.json();
-              if (!r.ok) throw new Error(b.error);
-              setMessage("Team profile saved.");
-              router.refresh();
-            } catch (e) {
-              setMessage(e instanceof Error ? e.message : "Save failed; your draft is retained.");
-            } finally {
-              setBusy(false);
-            }
+            void save(
+              {
+                name: f.get("name"),
+                description: f.get("description"),
+                region: f.get("region"),
+                visibility: f.get("visibility"),
+                ...identityFromForm(f),
+              },
+              "Team profile saved.",
+            );
           }}
         >
           <div className={styles.profileForm}>
@@ -123,21 +165,6 @@ export function GroupProfileEditor({
                   <option value="PRIVATE">Private</option>
                 </WellSelect>
               </Field>
-              <Field
-                label="Guild tax (%)"
-                hint="Loot splits can take this share of the pool for the team pot first. 0 or empty for none."
-                wide
-              >
-                <NumberField
-                  name="guildTaxPercent"
-                  aria-label="Guild tax (%)"
-                  min={0}
-                  max={100}
-                  decimals={1}
-                  placeholder="e.g. 10"
-                  defaultValue={group.guildTaxPercent || null}
-                />
-              </Field>
             </div>
             <TeamIdentityFields
               name={name}
@@ -152,11 +179,11 @@ export function GroupProfileEditor({
               Save team profile
             </button>
           </div>
-          <p role="status" className={message ? styles.saved : "sr-only"}>
-            {message}
-          </p>
         </form>
       </Disclosure>
+      <p role="status" className={message ? styles.saved : "sr-only"}>
+        {message}
+      </p>
     </section>
   );
 }

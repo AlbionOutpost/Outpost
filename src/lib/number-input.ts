@@ -16,7 +16,10 @@ export type NumberRules = {
 export type NumberText = {
   /** What the field shows. */
   text: string;
-  /** The plain number, or null while the field is empty or holds only "-" or a fraction in progress. */
+  /**
+   * The plain number, or null while the field is empty, holds only "-", a fraction in progress, or
+   * (committed) something it cannot read without guessing: then the text stays and the field is invalid.
+   */
   value: number | null;
 };
 
@@ -25,6 +28,31 @@ const suffixes = { k: 3, m: 6, b: 9 } as const;
 const maxIntegerDigits = 15;
 /** How many fraction digits a whole-silver field holds while shorthand is typed ("1.25" → "1.25m"). */
 const shorthandDigits = 9;
+
+/**
+ * Decimal commas, the European way, without breaking the grouped text this field writes itself.
+ * Both marks: the last one is the decimal point ("1.234,56", "1,234.56"). Several dots: grouping
+ * ("1.250.000"). A single comma followed by one or two digits is a decimal point in a field that
+ * takes fractions ("12,5" %) unless the field was already showing grouped text. Length is kept, so
+ * the caret maps across.
+ */
+export function normalizeMarks(raw: string, rules: NumberRules = {}, previous = "") {
+  const commas = raw.split(",").length - 1,
+    dots = raw.split(".").length - 1;
+  if (commas && dots) {
+    const last = Math.max(raw.lastIndexOf(","), raw.lastIndexOf("."));
+    return [...raw].map((c, i) => (c === "," || c === "." ? (i === last ? "." : ",") : c)).join("");
+  }
+  if (dots > 1) return raw.replaceAll(".", ",");
+  if (
+    commas === 1 &&
+    (rules.decimals ?? 0) > 0 &&
+    !previous.includes(",") &&
+    /,\d{1,2}$/.test(raw.trim())
+  )
+    return raw.replace(",", ".");
+  return raw;
+}
 
 const group = (digits: string) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -51,18 +79,25 @@ export function readNumberText(
   raw: string,
   rules: NumberRules = {},
   committed = false,
+  /** What the field showed before this keystroke: grouped text means its commas are grouping. */
+  previous = "",
 ): NumberText {
   const decimals = rules.decimals ?? 0;
-  let source = raw.trim().replace(/[\s,_']/g, "");
+  let source = raw.trim().replace(/[\s_']/g, "");
   const sign = rules.negative && source.startsWith("-") ? "-" : "";
   let power = 0;
   if (rules.silver) {
-    const match = /^-?([\d.]*\d[\d.]*)([kmb])$/i.exec(source);
+    const match = /^-?([\d.,]*\d[\d.,]*)([kmb])$/i.exec(source);
     if (match) {
-      source = match[1];
+      // "1,5m" is 1.5 million; "1,250k" is grouping.
+      source = /^\d+,\d{1,2}$/.test(match[1]) ? match[1].replace(",", ".") : match[1];
       power = suffixes[match[2].toLowerCase() as keyof typeof suffixes];
+    } else if (decimals === 0 && !previous.includes(",") && /^-?\d+,\d{1,2}$/.test(source)) {
+      // "1,5" may be shorthand on its way ("1,5m") or grouping still being typed ("1,250"): wait.
+      return { text: `${sign}${source.replace(/^-/, "")}`, value: null };
     }
   }
+  source = normalizeMarks(source, rules, previous).replace(/,/g, "");
   // Digits and the first point only.
   const cleaned = source.replace(/[^\d.]/g, "");
   const point = cleaned.indexOf(".");
@@ -71,10 +106,12 @@ export function readNumberText(
   if (power) {
     // 1.2m: move the point six places as text, so no float error creeps in; the suffix finishes it.
     const digits = (frac ?? "").padEnd(power, "0");
-    int = `${int}${digits.slice(0, power)}`.replace(/^0+(?=\d)/, "").slice(0, maxIntegerDigits);
+    int = `${int}${digits.slice(0, power)}`.replace(/^0+(?=\d)/, "");
+    // Too large to hold exactly: say so rather than drop digits and the magnitude with them.
+    if (int.length > maxIntegerDigits) return { text: raw.trim(), value: null };
     return finish(Number(`${sign}${int || "0"}.${digits.slice(power) || "0"}`), decimals);
   }
-  int = int.slice(0, maxIntegerDigits);
+  if (int.length > maxIntegerDigits) return { text: `${sign}${group(int)}`, value: null };
   const pending = decimals === 0 && rules.silver;
   if (frac !== undefined) {
     if (decimals === 0 && !pending) frac = undefined;
@@ -82,10 +119,11 @@ export function readNumberText(
   }
   if (!int && frac === undefined) return { text: sign, value: null };
   const value = Number(`${sign}${int || "0"}.${frac || "0"}`);
-  if (committed) return finish(value, decimals);
   const text = `${sign}${group(int || "0")}${frac !== undefined ? `.${frac}` : ""}`;
-  // A fraction typed into a whole-silver field is shorthand in progress: no value until k/m/b.
+  // A fraction typed into a whole-silver field is shorthand in progress: no value until k/m/b,
+  // and still none when the player leaves it, so "1.5" is never quietly read as 2 silver.
   if (pending && frac) return { text, value: null };
+  if (committed) return finish(value, decimals);
   return { text, value: value || 0 };
 }
 

@@ -11,6 +11,7 @@ import {
   caretAfter,
   clampNumber,
   formatNumberText,
+  normalizeMarks,
   readNumberText,
   type NumberRules,
 } from "@/lib/number-input";
@@ -130,15 +131,23 @@ export function NumberField({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-invalid={
-          props["aria-invalid"] ?? (required && touched && current === null ? true : undefined)
+          props["aria-invalid"] ??
+          // Empty but required, or text it will not guess at ("1.5" silver without k/m/b).
+          (touched && current === null && (required || text.replace("-", "") !== "")
+            ? true
+            : undefined)
         }
         required={required}
         data-number=""
         value={text}
         onChange={(event) => {
           const raw = event.target.value;
-          const next = readNumberText(raw, rules);
-          caret.current = caretAfter(raw, event.target.selectionStart ?? raw.length, next.text);
+          const next = readNumberText(raw, rules, false, text);
+          caret.current = caretAfter(
+            normalizeMarks(raw, rules, text),
+            event.target.selectionStart ?? raw.length,
+            next.text,
+          );
           setEdited(true);
           emit(next);
         }}
@@ -148,7 +157,7 @@ export function NumberField({
             if (next.value !== null) {
               const bounded = clampNumber(next.value, min, max);
               emit({ text: formatNumberText(bounded, decimals), value: bounded });
-            } else emit({ text: "", value: null });
+            } else emit({ text: next.text === "-" ? "" : next.text, value: null });
             setEdited(false);
           }
           setTouched(true);
@@ -163,7 +172,14 @@ export function NumberField({
           }
         }}
       />
-      {name && <input type="hidden" name={name} value={current ?? ""} />}
+      {/* Clamped here too: Enter can submit before the field is left. */}
+      {name && (
+        <input
+          type="hidden"
+          name={name}
+          value={current === null ? "" : clampNumber(current, min, max)}
+        />
+      )}
     </>
   );
 }

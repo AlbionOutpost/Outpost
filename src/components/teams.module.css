@@ -1681,6 +1681,23 @@
   margin-bottom: var(--space-3);
   padding: var(--space-3) var(--space-4);
 }
+/* Guild tax: its own row under the summary, so leaders find it without opening the profile form */
+:global(.app.outpost) .taxRow.taxRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+:global(.app.outpost) .taxRow.taxRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+@media (max-width: 480px) {
+  :global(.app.outpost) .taxRow.taxRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 /* A public team from outside: what it is beside the way in */
 :global(.app.outpost) .home.home {
   display: grid;
