@@ -240,8 +240,16 @@ test("guild tax: only Manage team sets it, a split takes it with % expenses, and
     expect((await profile(0, 12.34, team.updatedAt)).status()).toBe(400);
     expect((await profile(0, 100.5, team.updatedAt)).status()).toBe(400);
     expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).guildTaxPercent).toBe(0);
-    expect((await profile(0, 10, team.updatedAt)).ok()).toBe(true);
+    // The leader sets the rate from its own row in Settings, without opening the profile form.
+    await page.goto(`/groups/${slug}`);
+    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    const rate = page.getByLabel("Guild tax (%)", { exact: true });
+    await expect(rate).toBeVisible();
+    await rate.fill("10");
+    await page.getByRole("button", { name: "Save guild tax", exact: true }).click();
+    await expect(page.getByRole("status").filter({ hasText: "Guild tax saved" })).toBeVisible();
     expect((await db.group.findUniqueOrThrow({ where: { id: groupId } })).guildTaxPercent).toBe(10);
+    await expect(rate).toHaveValue("10");
     // A split may only take the team's own rate.
     const odd = await contexts[0].request.post(`/api/groups/${groupId}/loot`, {
       headers: { origin: "http://localhost:3000" },

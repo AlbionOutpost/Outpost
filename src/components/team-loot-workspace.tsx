@@ -488,7 +488,7 @@ export function TeamLootWorkspace({
                       max={100}
                       decimals={1}
                       placeholder="e.g. 5"
-                      value={expense.percent}
+                      value={expense.percent ?? null}
                       onValueChange={(v) => setExpense(i, { percent: v ?? undefined })}
                     />
                   ) : (
