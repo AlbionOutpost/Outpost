@@ -79,6 +79,11 @@ describe("merge rules", () => {
     expect(mergeMasteryLevels(device, account)).toEqual(merged);
     expect(mergeMasteryLevels(merged, device)).toEqual(merged);
   });
+  it("reads spec keys named like Object members as unset, never as a broken level", () => {
+    const merged = mergeMasteryLevels({ axe: 10 }, { constructor: 5, tostring: 3, axe: 20 });
+    expect(merged).toEqual({ axe: 20, constructor: 5, tostring: 3 });
+    expect(Object.values(merged).every(Number.isInteger)).toBe(true);
+  });
   it("refuses malformed requests", () => {
     const bad = [
       { action: "favorite", slug: "Bad Slug", active: true },
