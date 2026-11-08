@@ -114,7 +114,7 @@ test("guest can edit, preview, save, restore and export a build without gaining 
   expect(
     await page.evaluate(() => JSON.parse(localStorage.getItem("outpost-guest-build-v1")!).title),
   ).toBe("Guest navigation recovery");
-  // The masthead action; the closing band repeats the link at the end of the page.
+  // The masthead action.
   await page
     .locator(".workspace-identity")
     .getByRole("link", { name: "Create a build", exact: true })

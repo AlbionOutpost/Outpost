@@ -1,7 +1,7 @@
 /* Build editor (/builds/new, /builds/[id]/edit), in the build detail's panel language: one
-   command panel holding Save and Preview (they dock to the bottom once it scrolls away), pill
-   tabs, the shared loadout board beside the slot inspector, the detail page's ability tiles and
-   cost panel, a quiet delete row and, for guests, the sign-in band. */
+   command panel holding Save and Preview (they dock to the bottom once it scrolls away), three
+   pill tabs, then one loadout view: cost · the shared loadout board · the selected piece's
+   abilities, and a quiet delete row with the notes. */
 .app.outpost .build-editor-page {
   max-width: var(--workspace-width);
   margin: 0 auto;
@@ -239,7 +239,7 @@ body:has(.editor-save-bar.is-docked) {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 40px;
+  min-height: 36px;
   padding: 0 16px;
   border: 1px solid var(--well-border);
   border-radius: 999px;
@@ -290,12 +290,16 @@ body:has(.editor-save-bar.is-docked) {
   line-height: 1.5;
 }
 
-/* Equipment workspace: the board panel beside the slot inspector */
+/* The loadout view, one place per job: the board picks pieces, the inspector beside it holds
+   the selected piece's tier, quality and abilities (or its swaps), and the cost panel sits on
+   the left. Wide: cost · board · abilities. Tablet: board · abilities over the cost. Phones:
+   board, abilities, cost (the source order). */
 .app.outpost .focused-build-editor .inventory-editor-studio {
   display: grid;
-  grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "board slot" "cost cost";
   align-items: stretch;
-  gap: 26px;
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   border: 0;
@@ -305,9 +309,24 @@ body:has(.editor-save-bar.is-docked) {
 .app.outpost .inventory-editor-studio > .editor-notice {
   grid-column: 1 / -1;
 }
+.app.outpost .inventory-editor-studio > .editor-inventory-panel {
+  grid-area: board;
+}
+.app.outpost .inventory-editor-studio > .editor-slot-panel {
+  grid-area: slot;
+}
+.app.outpost .inventory-editor-studio > .editor-price-workspace {
+  grid-area: cost;
+}
+@media (min-width: 1281px) {
+  .app.outpost .focused-build-editor .inventory-editor-studio {
+    grid-template-columns: minmax(280px, 320px) auto minmax(0, 1fr);
+    grid-template-areas: "cost board slot";
+  }
+}
 .app.outpost .focused-build-editor :is(.editor-inventory-panel, .editor-slot-panel).raised {
   min-width: 0;
-  padding: 24px;
+  padding: 20px;
   border: 0;
   border-radius: var(--radius-md);
   background: var(--surface-raised);
@@ -404,28 +423,13 @@ body:has(.editor-save-bar.is-docked) {
   .app.outpost .editor-starting-sets button > :is(small, span) {
     display: none;
   }
-  .app.outpost .focused-build-editor .editor-summary-list {
-    grid-auto-rows: minmax(52px, 64px);
-  }
   /* The slot inspector, a little tighter, so a chosen piece and its abilities fit too */
   .app.outpost .focused-build-editor .editor-slot-panel {
     gap: var(--space-3);
   }
-  .app.outpost .focused-build-editor .editor-slot-panel > .editor-game-note {
-    padding-top: var(--space-3);
-  }
   .app.outpost .focused-build-editor .editor-spell-tiles label.editor-spell-tile {
     min-height: 96px;
     padding-block: 8px;
-  }
-}
-/* Abilities lists every piece, so it runs long: the board stays in view beside it instead of
-   stretching into an empty panel. Only while the columns sit side by side (above 980px). */
-@media (min-width: 981px) {
-  .app.outpost .inventory-editor-studio:has(.editor-ability-pieces) > .editor-inventory-panel {
-    position: sticky;
-    top: 88px;
-    align-self: start;
   }
 }
 /* The board: the landing window's board at panel size, abilities round on the pieces */
@@ -471,35 +475,7 @@ body:has(.editor-save-bar.is-docked) {
 }
 .app.outpost .editor-slot-panel > .editor-game-note {
   margin-top: auto;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--well-border);
 }
-/* Beside the board the slot chips would repeat it; they return once the board is above */
-.app.outpost .editor-slot-switcher {
-  display: none;
-  gap: 6px;
-}
-.app.outpost .editor-slot-switcher > button {
-  flex: none;
-  min-height: 40px;
-  padding: 0 14px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font: 600 13px/1 var(--font-ui);
-  box-shadow: none;
-}
-.app.outpost .editor-slot-switcher > button:hover {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
-}
-.app.outpost .editor-slot-switcher > button[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
-  background: color-mix(in srgb, var(--accent) 22%, var(--well));
-  color: var(--text);
-}
-
 /* The selected piece: a landing item row (render, name, tier and quality once, actions) */
 .app.outpost .editor-selected-item {
   display: flex;
@@ -580,23 +556,17 @@ body:has(.editor-save-bar.is-docked) {
   display: grid;
   gap: var(--space-3);
 }
-.app.outpost :is(.editor-current-abilities, .editor-current-alternatives) h3 {
-  margin: 0;
-  color: var(--text);
-  font: 650 14px/1.3 var(--font-ui);
-}
-.app.outpost .editor-subhead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
 
 /* Ability tiles: the detail page's Q / W / E / Passive tiles, each one opens its choice */
 .app.outpost .focused-build-editor .editor-spell-tiles {
   margin: 0;
   padding: 0;
   background: none;
+}
+.app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
 }
 .app.outpost .focused-build-editor label.editor-spell-tile {
   position: relative;
@@ -663,134 +633,6 @@ body:has(.editor-save-bar.is-docked) {
   opacity: 0;
   cursor: pointer;
 }
-.app.outpost .editor-ability-pieces {
-  display: grid;
-  gap: var(--space-3);
-}
-.app.outpost .editor-ability-piece {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.32fr) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--well-border);
-}
-.app.outpost .editor-ability-piece:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-.app.outpost .editor-ability-piece.is-selected .editor-ability-piece-head strong {
-  color: var(--accent-ink);
-}
-/* Four columns, so every piece's Q / W / E / Passive line up and the weapon fills the row */
-.app.outpost .focused-build-editor .detail-spell-grid.editor-spell-tiles {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-2);
-}
-.app.outpost .editor-ability-piece-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.app.outpost .editor-ability-piece-head > img {
-  flex: none;
-  border-radius: 6px;
-}
-.app.outpost .editor-ability-piece-head > div {
-  display: grid;
-  min-width: 0;
-}
-.app.outpost .editor-ability-piece-head small {
-  color: var(--muted);
-  font-size: 12px;
-}
-.app.outpost .editor-ability-piece-head strong {
-  overflow: hidden;
-  font: 650 14px/1.3 var(--font-ui);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* With the selected slot empty the inspector lists the build: every slot as a row, a piece
-   to inspect or an empty slot that opens the picker */
-.app.outpost .editor-summary-list {
-  display: grid;
-  flex: 1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: minmax(52px, 76px);
-  align-content: start;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.app.outpost .focused-build-editor .editor-summary-list button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-  padding: 3px 12px 3px 3px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: none;
-  color: var(--text);
-  text-align: left;
-}
-.app.outpost .focused-build-editor .editor-summary-list button:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
-}
-:root .app.outpost[data-motion-enabled] .focused-build-editor .editor-summary-list button:hover {
-  transform: none;
-}
-.app.outpost .editor-summary-list img {
-  flex: none;
-  border-radius: 6px;
-}
-.app.outpost .editor-summary-list button > span:not(.editor-summary-empty) {
-  display: grid;
-  flex: 1;
-  min-width: 0;
-}
-.app.outpost .editor-summary-list strong {
-  overflow: hidden;
-  font: 650 14px/1.3 var(--font-ui);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.app.outpost .editor-summary-list small {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.app.outpost .editor-summary-list button > small {
-  font-family: var(--font-data);
-}
-.app.outpost .editor-summary-list > li {
-  display: grid;
-}
-.app.outpost .editor-summary-empty {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  color: var(--muted);
-}
-.app.outpost .editor-summary-list .is-empty strong {
-  color: var(--muted);
-  font-weight: 500;
-}
-.app.outpost .focused-build-editor .editor-summary-list .is-empty button:hover strong {
-  color: var(--accent-ink);
-}
-
-/* Swaps */
 .app.outpost .editor-swap-row {
   display: flex;
   align-items: center;
@@ -942,8 +784,10 @@ body:has(.editor-save-bar.is-docked) {
   justify-self: start;
 }
 
-/* Cost: the detail page's panel; delete: one quiet row */
+/* Cost: the detail page's panel as the loadout view's third column; delete: one quiet row */
 .app.outpost .build-detail-page.editor-price-workspace {
+  display: grid;
+  min-width: 0;
   max-width: none;
   margin: 0;
   padding: 0;
@@ -951,8 +795,11 @@ body:has(.editor-save-bar.is-docked) {
 .app.outpost .editor-price-workspace > .detail-panel-frame {
   margin: 0;
 }
-/* Compact here: the figures share one row with their status line */
-@media (min-width: 701px) {
+.app.outpost .editor-price-workspace .loadout-price-check {
+  padding: 20px;
+}
+/* Tablet, under the board: the figures share one row with their status line */
+@media (min-width: 701px) and (max-width: 1280px) {
   .app.outpost .editor-price-workspace .loadout-price-total {
     grid-template-columns: minmax(180px, 260px) minmax(120px, 160px) minmax(0, 1fr);
     align-items: center;
@@ -969,6 +816,63 @@ body:has(.editor-save-bar.is-docked) {
     font-size: 19px;
   }
 }
+/* Wide, a narrow column: the city and the two actions stack under the heading, the total
+   and the priced count share a row over the status line */
+@media (min-width: 1281px) {
+  .app.outpost .editor-price-workspace .loadout-price-check > :first-child {
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+  .app.outpost .editor-price-workspace .loadout-price-check > :first-child > :last-child {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+  .app.outpost .editor-price-workspace .loadout-quote-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    flex: 1;
+    gap: var(--space-2);
+  }
+  .app.outpost .editor-price-workspace .loadout-quote-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+  .app.outpost .editor-price-workspace .loadout-price-total {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .app.outpost .editor-price-workspace .build-cost-figure {
+    gap: 2px;
+    min-height: 0;
+    padding: 7px 12px;
+  }
+  .app.outpost .editor-price-workspace .build-cost-figure > strong,
+  .app.outpost .editor-price-workspace .build-cost-figure > strong > span {
+    font-size: 17px;
+  }
+  .app.outpost .editor-price-workspace .build-cost-figure > strong > span > span:first-child {
+    font-size: 17px;
+  }
+  .app.outpost .editor-price-workspace .loadout-price-check details > summary {
+    min-height: 32px;
+  }
+  .app.outpost .editor-price-workspace .library-provenance {
+    margin-top: var(--space-1);
+  }
+  /* The scans explainer as a text link at the end of the line, not a pill of its own */
+  .app.outpost .editor-price-workspace .library-provenance > .pill-link {
+    display: inline;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent-ink);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
 .app.outpost .editor-danger-zone {
   margin: 0;
   padding: 0 4px;
@@ -979,8 +883,18 @@ body:has(.editor-save-bar.is-docked) {
 .app.outpost .editor-danger-zone h2 {
   font: 650 15px/1.3 var(--font-ui);
 }
-.app.outpost .focused-build-editor > .builds-next-step.raised {
-  margin: var(--space-8) 0 var(--space-10);
+/* A guest's one line: the draft stays on this device until they sign in */
+.app.outpost .editor-guest-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--secondary);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 /* Preview: the build window as the lists show it beside its cost, then the detail view */
@@ -1251,9 +1165,6 @@ body:has(.editor-save-bar.is-docked) {
   .app.outpost .editor-catalog-drawer .studio-picker-pagination > .button {
     padding-inline: 10px;
   }
-  .app.outpost .editor-summary-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .app.outpost .editor-catalog-drawer .studio-picker-toolbar:has(> :nth-child(4)) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1270,26 +1181,14 @@ body:has(.editor-save-bar.is-docked) {
   .app.outpost .editor-preview-top {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* The tabs stay in reach while the inspector scrolls under them */
-  .app.outpost .editor-workspace-tabs {
-    position: sticky;
-    top: 0;
-    z-index: 11;
-    padding: 8px 0;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(10px);
+  .app.outpost .focused-build-editor .inventory-editor-studio {
+    grid-template-areas: "board" "slot" "cost";
   }
   .app.outpost .editor-slot-panel {
-    scroll-margin-top: 64px;
+    scroll-margin-top: 16px;
   }
-  /* The board sits right above: the build list keeps only what is equipped, and an empty
-     build needs no list at all */
-  .app.outpost .editor-summary-list > .is-empty,
-  .app.outpost .editor-slot-panel:has(.editor-summary-list):not(:has(.is-equipped)) {
-    display: none;
-  }
-  /* Tabs and slot chips: one row each that scrolls, the cut pill fading at the edge */
-  .app.outpost :is(.editor-workspace-tabs, .editor-slot-switcher) {
+  /* The tabs: one row that scrolls, the cut pill fading at the edge */
+  .app.outpost .editor-workspace-tabs {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -1298,19 +1197,16 @@ body:has(.editor-save-bar.is-docked) {
     scrollbar-width: none;
     mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 40px), transparent);
   }
-  .app.outpost :is(.editor-workspace-tabs, .editor-slot-switcher)::-webkit-scrollbar {
+  .app.outpost .editor-workspace-tabs::-webkit-scrollbar {
     display: none;
   }
-  .app.outpost :is(.editor-workspace-tabs, .editor-slot-switcher) > button {
+  .app.outpost .editor-workspace-tabs > button {
     flex: none;
   }
 }
 @media (max-width: 700px) {
   .app.outpost .focused-build-editor {
     gap: 16px;
-  }
-  .app.outpost .editor-ability-piece {
-    grid-template-columns: minmax(0, 1fr);
   }
   .app.outpost .build-editor-page .editor-backline {
     margin-top: var(--space-3);
@@ -1403,9 +1299,6 @@ body:has(.editor-save-bar.is-docked) {
     flex-basis: 100%;
     justify-content: flex-end;
   }
-  .app.outpost .editor-subhead {
-    flex-wrap: wrap;
-  }
   .app.outpost .editor-field-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1418,9 +1311,6 @@ body:has(.editor-save-bar.is-docked) {
   }
   .app.outpost .is-expanded .set-template-controls > .button {
     justify-content: center;
-  }
-  .app.outpost .focused-build-editor > .builds-next-step.raised {
-    margin: 48px 0 48px;
   }
 }
 /* Narrow phones: tighter tab pills, one suggestion per row, tiles two across */
