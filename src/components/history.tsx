@@ -11,12 +11,17 @@ import { Silver } from "./silver";
 import { PanelHead } from "./panel-head";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
+import { Skeleton } from "./market-city-table";
+import { marketHistoryCache, withSignal } from "@/lib/client-json-cache";
 type Point = { price: number; timestamp: string; count?: number };
+type SourceSeries = { data: { avg_price: number; timestamp: string; item_count: number }[] };
+type HistoryAnswer = { data: Point[] | SourceSeries[] };
 export function History({
   kind = "history",
   item = "T4_BAG",
   quality = 1,
   autoLoad = false,
+  delay = 150,
   embedded = false,
   city: controlledCity,
   onCityChange,
@@ -27,6 +32,8 @@ export function History({
   quality?: number;
   /** Load the current selection as soon as it changes instead of waiting for the button. */
   autoLoad?: boolean;
+  /** How long autoLoad waits for the selection to settle (a typed identifier) before asking. */
+  delay?: number;
   /** Render inside a host panel: no panel chrome, heading or description of its own. */
   embedded?: boolean;
   /** History city owned by the host (the market page follows the selected city row). */
@@ -46,8 +53,9 @@ export function History({
   const request = useRef<AbortController | null>(null);
   const [rangeDays, setRangeDays] = useState(30);
   const current = `${kind}:${region}:${item}:${quality}:${city}`;
-  const busy = pendingKey === current;
-  const failed = !busy && errorKey === current;
+  const failed = pendingKey !== current && errorKey === current;
+  // Auto-loading, the moment before the request goes out counts as loading too.
+  const busy = pendingKey === current || (autoLoad && key !== current && !failed);
   const loaded = !busy && key === current;
   useEffect(() => () => request.current?.abort(), [current]);
   const returned = key === current ? points : [];
@@ -58,39 +66,50 @@ export function History({
           (point) => sourceTimestamp(point.timestamp) >= latest - rangeDays * 86400000,
         )
       : returned;
-  async function load() {
+  async function load({ fresh = false }: { fresh?: boolean } = {}) {
     request.current?.abort();
     const active = new AbortController();
     request.current = active;
-    setPendingKey(current);
+    const p = new URLSearchParams({
+      kind,
+      region,
+      item: item.toUpperCase(),
+      quality: String(quality),
+      city,
+    });
+    const source = `/api/history?${p}`;
     setErrorKey("");
-    setPoints([]);
-    setKey("");
-    try {
-      const p = new URLSearchParams({
-        kind,
-        region,
-        item: item.toUpperCase(),
-        quality: String(quality),
-        city,
-      });
-      const res = await fetch(`/api/history?${p}`, { signal: active.signal });
-      const body = await res.json();
-      if (active.signal.aborted) return;
-      if (!res.ok) throw new Error(body.error);
+    const show = (body: HistoryAnswer) => {
       const rows: Point[] =
         kind === "gold"
-          ? body.data
-          : body.data.flatMap(
-              (r: { data: { avg_price: number; timestamp: string; item_count: number }[] }) =>
-                r.data.map((v) => ({
-                  price: v.avg_price,
-                  timestamp: v.timestamp,
-                  count: v.item_count,
-                })),
+          ? (body.data as Point[])
+          : (body.data as SourceSeries[]).flatMap((r) =>
+              r.data.map((v) => ({
+                price: v.avg_price,
+                timestamp: v.timestamp,
+                count: v.item_count,
+              })),
             );
       setPoints(rows.sort((a, b) => sourceTimestamp(a.timestamp) - sourceTimestamp(b.timestamp)));
       setKey(current);
+    };
+    // A series this browser fetched within the server's cache life draws at once.
+    const kept = fresh ? undefined : (marketHistoryCache.peek(source) as HistoryAnswer | undefined);
+    if (kept) {
+      setPendingKey(null);
+      show(kept);
+      return;
+    }
+    setPendingKey(current);
+    setPoints([]);
+    setKey("");
+    try {
+      const body = (await withSignal(
+        marketHistoryCache.get(source, { fresh }),
+        active.signal,
+      )) as HistoryAnswer;
+      if (active.signal.aborted) return;
+      show(body);
     } catch {
       if (active.signal.aborted) return;
       setErrorKey(current);
@@ -100,7 +119,7 @@ export function History({
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    await load();
+    await load({ fresh: true });
   }
   const loadRef = useRef(load);
   useEffect(() => {
@@ -108,9 +127,9 @@ export function History({
   });
   useEffect(() => {
     if (!autoLoad) return;
-    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    const timer = window.setTimeout(() => void loadRef.current(), delay);
     return () => window.clearTimeout(timer);
-  }, [autoLoad, current]);
+  }, [autoLoad, current, delay]);
   const min = visible.length ? Math.min(...visible.map((p) => p.price)) : 0,
     max = visible.length ? Math.max(...visible.map((p) => p.price)) : 0;
   const start = visible.length ? sourceTimestamp(visible[0].timestamp) : 0,
@@ -157,6 +176,8 @@ export function History({
     ? visible.reduce((best, p) => (p.price > best.price ? p : best))
     : undefined;
   const gradient = `history-fill-${kind}`;
+  // Market history while a series loads: the chart's skeleton (gold keeps its empty frame).
+  const skeleton = kind === "history" && busy && !visible.length;
   const status = busy
     ? "Loading history…"
     : failed
@@ -190,7 +211,7 @@ export function History({
               </WellSelect>
             </label>
           )}
-          {kind === "history" && visible.length > 0 && (
+          {kind === "history" && (visible.length > 0 || skeleton) && (
             <div className="history-range" role="group" aria-label="History date range">
               {[7, 30].map((days) => (
                 <button
@@ -223,7 +244,62 @@ export function History({
           ))}
         </dl>
       )}
-      {!visible.length && (
+      {skeleton && (
+        // The next series is on its way: the chart keeps its frame, axis and footer while the
+        // figures shimmer, so the panel neither collapses nor shows the previous item's line.
+        <>
+          <div className="history-chart is-loading" aria-hidden="true">
+            <div className="history-chart-head">
+              <span className="history-series-key">Daily sell-order average · {city}</span>
+              <span className="history-last">
+                <b className="numeric">
+                  <Skeleton>0,000</Skeleton>
+                </b>
+                <small>
+                  <Skeleton>00 Mon</Skeleton>
+                </small>
+              </span>
+            </div>
+            <div className="reference-price-figure">
+              <div className="reference-price-axis">
+                {[0, 1, 2].map((i) => (
+                  <span key={i}>
+                    <Skeleton>0,000</Skeleton>
+                  </span>
+                ))}
+              </div>
+              <div className="history-plot">
+                <svg viewBox="0 0 700 210" preserveAspectRatio="none" className="price-chart">
+                  {[0, 0.5, 1].map((fraction) => (
+                    <line
+                      key={fraction}
+                      x1="0"
+                      x2="700"
+                      y1={Y1 - fraction * (Y1 - Y0)}
+                      y2={Y1 - fraction * (Y1 - Y0)}
+                      className="history-grid"
+                    />
+                  ))}
+                </svg>
+              </div>
+            </div>
+            <div className="chart-range">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <span key={i}>
+                  <Skeleton>00 Mon</Skeleton>
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="sr-only" role="status">
+            {status}
+          </p>
+          <div inert aria-hidden="true">
+            <Disclosure summary="View source observations">{null}</Disclosure>
+          </div>
+        </>
+      )}
+      {!visible.length && !skeleton && (
         // A failed load is one line with Try again; the empty chart frame is for waiting
         <div className={`history-state${kind === "gold" && !failed ? " is-chart" : ""}`}>
           {kind === "gold" && !failed && (
@@ -242,7 +318,11 @@ export function History({
           )}
           <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>
           {failed && (
-            <button type="button" className="pill-link is-small" onClick={() => void load()}>
+            <button
+              type="button"
+              className="pill-link is-small"
+              onClick={() => void load({ fresh: true })}
+            >
               <RotateCw size={14} aria-hidden="true" />
               Try again
             </button>

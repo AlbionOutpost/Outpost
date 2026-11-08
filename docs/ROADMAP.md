@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Market Explorer switches faster and holds still — 8 November 2026
+
+- Picking another item or version used to ask for the price history only after the prices arrived, each behind its own 150 ms wait, and dropped every panel to a short status line meanwhile. Now prices and history go out together at once, and an item seen in the last minute comes back from the browser without a request. With source answers stubbed at 400/800 ms, the full switch (prices and chart) went from about 1.16/1.97 s to 0.45/0.86 s, a return to a seen version to about 0.05 s.
+- While the next item loads, the hero figures, every City orders row and the chart show skeletons in place (static under reduced motion); no panel shrinks (layout shift during a switch 0.069 → 0) and the old item's prices never show for the new one. The item page's price panel uses the same skeletons.
+- Signed-out `/api/market` and `/api/history` answers are edge-cached for their server cache lives (60 s, 5 min).
+
 ## Giveaways — 8 November 2026
 
 - `/giveaways` (More menu, footer, sitemap): Outpost staff (a global ADMIN) start a giveaway (title, prize, server, winners, closing time, optional painted picture and rules), edit or cancel it before the draw and draw the winners once entries close. Any signed-in player enters once and can leave until the deadline; guests get Sign in to enter, which comes back to the page. Winners show by display name with their place.

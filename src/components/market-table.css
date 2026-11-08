@@ -217,3 +217,36 @@
     padding-inline: var(--space-2);
   }
 }
+
+/* Loading stand-ins (Skeleton in market-city-table.tsx, used by City orders, the item hero and
+   Price history): the invisible sample text gives each bar the exact line box of the figure it
+   stands for, so nothing moves when the answer lands. It shimmers unless motion is reduced. */
+.app.outpost {
+  --mx-skel-wash: linear-gradient(
+    90deg,
+    var(--well-border) 25%,
+    var(--edge-light) 50%,
+    var(--well-border) 75%
+  );
+}
+.app.outpost .mx-skel {
+  border-radius: var(--radius-sm);
+  background: var(--well-border);
+  color: transparent;
+  box-decoration-break: clone;
+  user-select: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app.outpost .mx-skel {
+    background: var(--mx-skel-wash) 0 0 / 300% 100%;
+    animation: mx-shimmer 1.4s linear infinite;
+  }
+}
+@keyframes mx-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
