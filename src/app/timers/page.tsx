@@ -8,6 +8,8 @@ import { TimerManager } from "@/components/timer-manager";
 import styles from "@/components/account.module.css";
 import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Timers");
+/** The server clock for the first paint; the page is per-request, so this is the request time. */
+const renderedAt = () => Date.now();
 export default async function Page() {
   const s = await getServerSession(authOptions);
   if (!s?.user?.id) redirect(signInPath("/timers"));
@@ -21,6 +23,7 @@ export default async function Page() {
     <div className={styles.page}>
       <TimerManager
         initialCursor={page.cursor}
+        serverNow={renderedAt()}
         initial={page.items.map((t) => ({ ...t, dueAt: t.dueAt?.toISOString() ?? null }))}
       />
     </div>

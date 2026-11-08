@@ -167,6 +167,7 @@ describe("OAuth retry destinations and errors", () => {
     "/settings",
     "/timers",
     "/giveaways",
+    "/shopping-list",
     "/favorites",
     "/groups/new",
     "/groups?mine=1",
