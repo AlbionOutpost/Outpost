@@ -2,20 +2,13 @@
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { MastheadTabs } from "@/components/masthead-tabs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ChevronDown, RefreshCw, Skull, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, RefreshCw, Skull, Swords } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { regions } from "@/lib/albion/region-config";
 import type { GearValue } from "@/lib/albion/kill-value";
-import type { CombatEvent, CombatFeed } from "@/lib/albion/combat-events";
-/** The API prices each victim's worn gear in the same response (see pricedCombatEvents). */
-type Feed = Omit<CombatFeed, "events"> & {
-  events: (CombatEvent & { gearValue?: GearValue })[];
-};
-import { equipmentName } from "@/lib/albion/equipment-catalog";
+import type { CombatFeed, FeedEvent } from "@/lib/albion/combat-events";
 import { sourceAge } from "@/lib/albion/source-age";
-import { ItemIcon } from "./item-icon";
-import { KillCard } from "./kill-card";
-import { LoadoutBoard } from "./loadout-board";
+import { KillCard, KillCardSkeleton, utc } from "./kill-card";
 import { WellSelect } from "./well-select";
 import { EmptyWell } from "./empty-well";
 import { Disclosure } from "./disclosure";
@@ -23,40 +16,12 @@ import { StatusLine } from "./status-line";
 import styles from "./combat-feed.module.css";
 import { SearchInput } from "./field";
 
-type Player = CombatEvent["killer"];
-const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
-const utc = (value: string) =>
-  new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
-/** Every recorded piece by name and quality, for the item details. */
-function Gear({ player, victim }: { player: Player; victim?: boolean }) {
-  return (
-    <div className={styles.gear}>
-      <strong className={victim ? styles.victimName : styles.killerName}>{player.name}</strong>
-      <ul>
-        {player.equipment.map((item) =>
-          item.itemId ? (
-            <li key={item.slot}>
-              <span
-                role="img"
-                aria-label={`${item.slot}: ${equipmentName(item.itemId)}`}
-                title={`${item.slot}: ${equipmentName(item.itemId)}`}
-              >
-                <ItemIcon id={item.itemId} quality={item.quality || 1} size={36} />
-              </span>
-              <span>
-                <b>{equipmentName(item.itemId)}</b>
-                <small>
-                  {item.slot} ·{" "}
-                  {item.quality ? qualities[item.quality - 1] : "quality not reported"}
-                </small>
-              </span>
-            </li>
-          ) : null,
-        )}
-      </ul>
-    </div>
-  );
-}
+/** The API prices each victim's worn gear in the same response (see pricedCombatEvents). */
+type Feed = Omit<CombatFeed, "events"> & {
+  events: (FeedEvent & { gearValue?: GearValue | null })[];
+};
+
+const scenes = ["build", "composition", "market"];
 
 export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const region = useOutpostRegion();
@@ -68,7 +33,6 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const [result, setResult] = useState<{ key: string; feed: Feed } | null>(null),
     [error, setError] = useState<{ key: string; message: string } | null>(null),
     [pending, setPending] = useState<string | null>(null);
-  const [open, setOpen] = useState<Set<number>>(() => new Set());
   const controller = useRef<AbortController | null>(null);
   const key = `${region}:${offset}`;
   const refresh = useCallback(async () => {
@@ -129,10 +93,8 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
   const failed = error?.key === key;
   const kills = mode === "kills";
   const noun = kills ? "kills" : "deaths";
-  const turn = (to: number) => {
-    setOffset(to);
-    setOpen(new Set());
-  };
+  const turn = (to: number) => setOffset(to);
+  const kill = kills ? "kill" : "death";
   return (
     <div className={`combat-feed-page ${styles.page}`}>
       <WorkspaceHeading
@@ -214,19 +176,40 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             {loading ? "Updating…" : "Refresh feed"}
           </button>
         </div>
-        <p className={styles.source}>
-          {feed
-            ? `${events.length} ${noun} shown · page ${offset / 20 + 1} · newest ${feed.newestAt ? sourceAge(feed.newestAt).label : "unavailable"} · checked ${sourceAge(feed.fetchedAt).label}`
-            : "From Albion Online’s published PvP events."}
+        <p className={`${styles.source} combat-feed-source`}>
+          {feed ? (
+            <>
+              {/* The newest fight's age leads: it is what says how current the page is. */}
+              <span
+                className={styles.newest}
+                data-tone={feed.freshness === "live" ? "live" : "stale"}
+                title={feed.newestAt ? utc(feed.newestAt) : undefined}
+              >
+                {feed.newestAt
+                  ? `Newest ${kill} ${sourceAge(feed.newestAt).label}`
+                  : `No ${noun} on this page`}
+              </span>
+              <span>
+                {events.length} {noun} shown · page {offset / 20 + 1} ·{" "}
+                {feed.origin === "collector" && feed.collectedAt
+                  ? `Outpost read Albion ${sourceAge(feed.collectedAt).label}`
+                  : `checked ${sourceAge(feed.fetchedAt).label}`}
+              </span>
+            </>
+          ) : (
+            "From Albion Online’s published PvP events."
+          )}
         </p>
       </section>
-      {feed && feed.freshness !== "live" && feed.newestAt && (
+      {feed && (feed.sourceUnavailable || (feed.freshness !== "live" && feed.newestAt)) && (
         // Old fights are never shown as the latest: say how far behind the answer is.
         <div className={`well ${styles.error} combat-feed-freshness`}>
           <StatusLine tone="stale">
-            {feed.freshness === "snapshot"
-              ? `Albion’s server sent an old copy of the feed: its newest ${kills ? "kill" : "death"} is from ${sourceAge(feed.newestAt).label}, but Outpost saw fights from ${sourceAge(feed.latestSeenAt).label}. These are not the latest fights; refresh to ask again.`
-              : `Albion’s feed is running behind: the newest published ${kills ? "kill" : "death"} is from ${sourceAge(feed.newestAt).label}. Newer fights appear once the game publishes them.`}
+            {feed.sourceUnavailable
+              ? `Albion’s combat feed did not answer just now. These are the newest fights Outpost read from it${feed.collectedAt ? ` ${sourceAge(feed.collectedAt).label}` : ""}; each card says when its fight happened.`
+              : feed.freshness === "snapshot"
+                ? `Albion’s server sent an old copy of the feed: its newest ${kill} is from ${sourceAge(feed.newestAt!).label}, but Outpost saw fights from ${sourceAge(feed.latestSeenAt).label}. These are not the latest fights; refresh to ask again.`
+                : `Albion’s feed is running behind: the newest published ${kill} is from ${sourceAge(feed.newestAt!).label}. Newer fights appear once the game publishes them.`}
           </StatusLine>
           <button
             type="button"
@@ -259,21 +242,10 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         loading ? (
           <div className={`kill-grid ${styles.grid}`} aria-busy="true">
             <div className={styles.loading}>
-              <StatusLine>Loading the {kills ? "kill" : "death"} feed…</StatusLine>
+              <StatusLine>Loading the {kill} feed…</StatusLine>
             </div>
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className={`raised has-scene kill-card ${styles.card} ${styles.skeleton}`}
-                data-scene={["build", "composition", "market"][i]}
-                aria-hidden="true"
-              >
-                <div className="kill-boards">
-                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
-                  <div className="kill-mid" />
-                  <LoadoutBoard pieces={[]} size="mini" abilities={false} />
-                </div>
-              </div>
+            {scenes.map((scene) => (
+              <KillCardSkeleton key={scene} scene={scene} />
             ))}
           </div>
         ) : null
@@ -312,60 +284,23 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
             // The game publishes most fights minutes late; flag only the ones an hour behind.
             const old = at - Date.parse(event.occurredAt) > 60 * 60000;
             const future = Date.parse(event.occurredAt) > at + 60000;
-            const isOpen = open.has(event.id);
             return (
               <KillCard
                 key={event.id}
                 event={event}
                 at={at}
                 gearValue={event.gearValue ?? null}
-                scene={["build", "composition", "market"][i % 3]}
-                className={`combat-event ${styles.card}`}
-              >
-                <div className={styles.foot}>
-                  <span className={styles.footMeta}>
-                    <span>
-                      {event.participants !== null
-                        ? `${event.participants} ${event.participants === 1 ? "participant" : "participants"}`
-                        : "Participants not reported"}
-                    </span>
-                    {(old || future) && (
-                      <span className={styles.delayed} title={utc(event.occurredAt)}>
-                        {future ? "Source time is ahead" : "Delayed source event"}
-                      </span>
-                    )}
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.detailsToggle}
-                    aria-expanded={isOpen}
-                    aria-controls={`combat-event-${event.id}`}
-                    onClick={() => {
-                      const next = new Set(open);
-                      if (isOpen) next.delete(event.id);
-                      else next.add(event.id);
-                      setOpen(next);
-                    }}
-                  >
-                    Item details <ChevronDown size={14} aria-hidden="true" />
-                  </button>
-                </div>
-                <div
-                  id={`combat-event-${event.id}`}
-                  className={`combat-event-details ${styles.details}`}
-                  data-open={isOpen || undefined}
-                  inert={!isOpen}
-                >
-                  <div>
-                    <Gear player={event.killer} />
-                    <Gear player={event.victim} victim />
-                    <p>
-                      Event #{event.id} · {utc(event.occurredAt)}. Slots the game did not report
-                      stay empty.
-                    </p>
-                  </div>
-                </div>
-              </KillCard>
+                scene={scenes[i % 3]}
+                className="combat-event"
+                details
+                note={
+                  future
+                    ? "Source time is ahead"
+                    : old
+                      ? `Delayed source event · ${utc(event.occurredAt)}`
+                      : undefined
+                }
+              />
             );
           })}
         </section>

@@ -1,5 +1,6 @@
-/* Kill and death feeds (/tools/kill-feed): a framed filter bar, then each fight as the landing's
-   killboard (homepage.css `.kill-card`): both loadouts, the fame seal between them. */
+/* Kill and death feeds (/tools/kill-feed): a framed filter bar that leads with the newest fight's
+   age, then each fight as the one killboard (kill-card.tsx / kill-card.css, shared with the
+   landing's top kills). */
 .page {
   max-width: var(--page-width);
   margin-inline: auto;
@@ -42,10 +43,37 @@
   white-space: nowrap;
 }
 .source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
   grid-column: 1 / -1;
   margin: 0;
   color: var(--muted);
   font-size: 12px;
+}
+/* The newest fight's age, in a chip: green-dotted when live, caution when behind */
+.newest {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 3px 10px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  box-shadow: var(--well-inset);
+  color: var(--text);
+  font-weight: 600;
+}
+.newest::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  content: "";
+}
+.newest[data-tone="stale"]::before {
+  background: var(--warning);
 }
 
 /* Error: once, in a well, with a pill retry */
@@ -62,172 +90,15 @@
   min-width: 0;
 }
 
-/* Killboards (kill-card.tsx, shared with the landing's top kills), three across; the feed adds
-   a foot that lines up across a row */
+/* Killboards (kill-card.tsx, shared with the landing's top kills), three across */
 :global(.app.outpost) .grid.grid {
-  align-items: stretch;
   margin-top: 28px;
 }
 .loading {
   grid-column: 1 / -1;
 }
-:global(.app.outpost) .card.card {
-  grid-template-rows: auto 1fr auto;
-  align-content: stretch;
-}
-/* While loading the killboards stay: empty boards, no names */
-:global(.app.outpost) .skeleton.skeleton {
-  grid-template-rows: auto;
-}
-:global(.app.outpost) .skeleton :global(.kill-boards) {
-  opacity: 0.6;
-}
-@media (prefers-reduced-motion: no-preference) {
-  :global(.app.outpost) .skeleton :global(.kill-boards) {
-    animation: breathe 1600ms ease-in-out infinite alternate;
-  }
-}
-@keyframes breathe {
-  to {
-    transform: scale(0.99);
-  }
-}
 .empty {
   margin-top: 28px;
-}
-.foot {
-  display: flex;
-  align-self: end;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--well-border);
-  color: var(--muted);
-  font-size: 12px;
-}
-.footMeta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  min-width: 0;
-}
-.delayed {
-  padding: 2px 8px;
-  border: 1px solid var(--well-border);
-  border-radius: 999px;
-  background: var(--well);
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-:global(.app.outpost) .detailsToggle.detailsToggle {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 6px;
-  min-height: 40px;
-  padding: 0 4px;
-  border: 0;
-  background: none;
-  color: var(--accent-ink);
-  font: 700 13px/1 var(--font-ui);
-  white-space: nowrap;
-  cursor: pointer;
-}
-.detailsToggle svg {
-  transition: rotate 320ms var(--ease-spring);
-}
-.detailsToggle[aria-expanded="true"] svg {
-  rotate: 180deg;
-}
-/* Item details open by height inside their own card, like the landing's participants */
-.details {
-  display: grid;
-  grid-template-rows: 0fr;
-  visibility: hidden;
-  transition:
-    grid-template-rows 420ms var(--ease-spring),
-    visibility 0s linear 420ms;
-}
-.details[data-open] {
-  grid-template-rows: 1fr;
-  visibility: visible;
-  transition:
-    grid-template-rows 480ms var(--ease-spring),
-    visibility 0s;
-}
-.details > div {
-  display: grid;
-  gap: 12px;
-  min-height: 0;
-  overflow: hidden;
-}
-.details[data-open] > div {
-  padding-top: 12px;
-}
-.details p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-.gear {
-  display: grid;
-  gap: 6px;
-}
-.gear > strong {
-  font-size: 13px;
-}
-.killerName {
-  color: var(--killer);
-}
-.victimName {
-  color: var(--victim);
-}
-.gear ul {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.gear li {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px 4px 4px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-}
-.gear li > span {
-  display: grid;
-  min-width: 0;
-}
-.gear li > span[role="img"] {
-  display: block;
-  width: 36px;
-  height: 36px;
-}
-.gear b,
-.gear small {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.gear b {
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-}
-.gear small {
-  color: var(--muted);
-  font-size: 12px;
 }
 
 /* Pages and notes */
@@ -284,17 +155,15 @@
   .error > p {
     flex-basis: 100%;
   }
-  .skeleton ~ .skeleton {
+  .grid > :global(.is-skeleton) ~ :global(.is-skeleton) {
     display: none;
   }
   .about {
     margin-top: 24px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .details,
-  .details[data-open],
-  .detailsToggle svg {
-    transition: none;
+@media (max-width: 360px) {
+  :global(.app.outpost) .toolbar.toolbar {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

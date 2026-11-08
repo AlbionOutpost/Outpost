@@ -376,6 +376,8 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
     kills.nth(1).getByRole("list", { name: "Participants" }).getByRole("listitem"),
   ).toHaveCount(4);
   await expect(kills.nth(1).locator(".kill-people li").first()).toContainText(/healing/);
+  // The same card as the kill feed; only the feed adds the item details.
+  await expect(kills.getByRole("button", { name: "Item details" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Open the kill feed/ })).toHaveAttribute(
     "href",
     "/tools/kill-feed?region=europe",

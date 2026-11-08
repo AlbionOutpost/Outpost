@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "@/components/link";
 import { KillCard } from "@/components/kill-card";
@@ -20,12 +19,8 @@ const shown = (events: Kill[]) =>
  * their kit. The section heading says how old the kills are; nothing is estimated silently.
  */
 export function TopKills({ suffix, serverName }: { suffix: string; serverName: string }) {
-  const [open, setOpen] = useState<Set<number>>(() => new Set());
   const kills = useLandingPart("kills");
-  const data = kills && {
-    error: kills.error,
-    value: kills.value && { feed: kills.value as Feed, at: kills.at },
-  };
+  const feed = kills?.value as Feed | undefined;
   return (
     <section className="landing-wrap landing-kills" aria-labelledby="home-kills-title">
       <div className="section-heading landing-section-heading">
@@ -40,50 +35,21 @@ export function TopKills({ suffix, serverName }: { suffix: string; serverName: s
           Open the kill feed <ArrowRight size={15} />
         </Link>
       </div>
-      {!data?.value ? (
+      {!kills?.value || !feed ? (
         <p className="landing-preview-status" role="status">
-          {data?.error ?? "Loading the kill ranking…"}
+          {kills?.error ?? "Loading the kill ranking…"}
         </p>
-      ) : !shown(data.value.feed.events).length ? (
+      ) : !shown(feed.events).length ? (
         <p className="landing-preview-status" role="status">
           No ranked kill has both loadouts recorded right now.
         </p>
       ) : (
-        <Kills feed={data.value.feed} at={data.value.at} open={open} setOpen={setOpen} />
+        <div className="kill-grid">
+          {shown(feed.events).map((ev, rank) => (
+            <KillCard key={ev.id} event={ev} at={kills.at} gearValue={ev.gearValue} rank={rank} />
+          ))}
+        </div>
       )}
     </section>
-  );
-}
-
-function Kills({
-  feed,
-  at,
-  open,
-  setOpen,
-}: {
-  feed: Feed;
-  at: number;
-  open: Set<number>;
-  setOpen: (ids: Set<number>) => void;
-}) {
-  return (
-    <div className="kill-grid">
-      {shown(feed.events).map((ev, rank) => (
-        <KillCard
-          key={ev.id}
-          event={ev}
-          at={at}
-          gearValue={ev.gearValue}
-          rank={rank}
-          open={open.has(ev.id)}
-          onToggle={() => {
-            const next = new Set(open);
-            if (open.has(ev.id)) next.delete(ev.id);
-            else next.add(ev.id);
-            setOpen(next);
-          }}
-        />
-      ))}
-    </div>
   );
 }

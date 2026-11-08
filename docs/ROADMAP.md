@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## One kill card and a feed that stays current — 8 November 2026
+
+- The kill and death feeds use the landing's killboard card in full: the victim's inventory, "Show N participants" with each kit, and an "Item details" disclosure beside it in the same row of wells; a delayed fight's note sits under the card. The loading skeleton is the same card. One `KillCard` (`kill-card.tsx`), no feed-only foot.
+- The feed's first pages now come from the collector: every minute it merges each server's newest fights into a window of the newest 100 distinct events, so a lagging Game Info replica no longer makes the feed look hours old. Live reads (deeper pages, or a thin window) ask a replica 5+ minutes behind once more and merge both answers by EventId.
+- "Live" now means the newest kill is within 15 minutes of the newest Outpost has seen; the toolbar leads with the newest kill's age.
+- Americas "combat feed unavailable": big fights make Game Info pages several megabytes and the 1 MB read cap rejected them (also dropping the collector's live pages). The cap is 8 MB, streamed; one malformed event no longer fails a page; when Albion does not answer, the collector's newest fights are shown and the page says so.
+
 ## Page sweep on the new surfaces — 8 November 2026
 
 - Empty states straight on the backdrop (Favorites, no-result searches on Builds, Comps and Teams, a comp whose members could not be read, a Team's shared loadouts, saved filters) are raised cards instead of wells cut into nothing; the sign-in page's three benefits too.
