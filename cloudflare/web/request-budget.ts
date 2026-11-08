@@ -47,6 +47,10 @@ export async function requestBudget(
     } catch {
       return denied(request, "Invalid request path", 400);
     }
+    // Uncached search scans builds, comps and Teams in the one private store: a caller who
+    // varies the query (or sends a session cookie) misses the edge cache on every request.
+    if (pathname === "/api/search" && !(await binding.rateLimit(`edge:search:${client}`, 30, 60)))
+      return denied(request, "Too many searches. Please wait a minute, then retry.", 429, true);
     if (marketRoutes.has(pathname) || /^\/api\/builds\/[^/]+\/cost$/.test(pathname)) {
       const asked = url.searchParams.get("region") || "europe";
       const region = /^(europe|americas|asia)$/.test(asked) ? asked : "invalid";
