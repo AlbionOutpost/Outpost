@@ -275,6 +275,11 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
     return this.env.KILLS.getByName(region).shortlist();
   }
+  /** The newest kill time the collector has seen on a server (epoch ms), or null. */
+  async killWatermark(region: string) {
+    if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
+    return this.env.KILLS.getByName(region).newest();
+  }
   /** Every minute: read each server's live kill feed and the weekly ranking into its shortlist. */
   async scheduled() {
     await Promise.allSettled(

@@ -81,7 +81,8 @@ async function localAccountSaves(
             // Device order is newest first; older device entries get earlier times.
             data: add.map((slug, i) => ({ userId, slug, createdAt: new Date(base - i) })),
           });
-        if (Object.entries(input.levels).some(([id, level]) => level > (current.levels[id] ?? 0))) {
+        const saved = (id: string) => (Object.hasOwn(current.levels, id) ? current.levels[id] : 0);
+        if (Object.entries(input.levels).some(([id, level]) => level > saved(id))) {
           const levels = mergeMasteryLevels(current.levels, input.levels);
           if (Object.keys(levels).length > MASTERY_LEVEL_LIMIT)
             throw new HttpError(400, "Too many specs");

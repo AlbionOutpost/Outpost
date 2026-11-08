@@ -8,3 +8,11 @@ export async function killShortlist(
 ): Promise<{ kills: KillCandidate[]; collectedAt: string | null }> {
   return databaseBinding().topKills(region);
 }
+
+/** Newest kill time the cron collector has seen; the collector owns it, so noting is a no-op. */
+export async function killWatermark(region: Region): Promise<number | null> {
+  return databaseBinding().killWatermark(region);
+}
+export function noteNewestKill(...args: [region: Region, at: number | null]) {
+  void args;
+}
