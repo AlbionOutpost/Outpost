@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import { ArrowRight, Check } from "lucide-react";
 import { adminPageActor } from "@/lib/admin/page-access";
 import { adminOverview, adminReview, adminUsers } from "@/lib/admin/queries";
-import { isSupporter } from "@/lib/billing/plan";
+import { storedSupporter } from "@/lib/billing/plan";
 import { accountBanned } from "@/lib/admin/policy";
 import { AdminFrame } from "@/components/admin-frame";
 import { AdminTrend } from "@/components/admin-trend";
@@ -161,7 +161,7 @@ export default async function AdminOverviewPage() {
                 <Link href={`/admin/users/${u.id}`} className="admin-user-name">
                   {u.name || "Unnamed account"}
                 </Link>
-                {(accountBanned(u) || u.role !== "USER" || isSupporter(u)) && (
+                {(accountBanned(u) || u.role !== "USER" || storedSupporter(u)) && (
                   <AdminChip
                     tone={accountBanned(u) ? "danger" : u.role !== "USER" ? "warn" : "accent"}
                   >

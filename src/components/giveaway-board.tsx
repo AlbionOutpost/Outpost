@@ -45,6 +45,7 @@ export function GiveawayBoard({
   defaultRegion,
   now,
   signIn,
+  locked = false,
 }: {
   initial: Board;
   /** `/api/giveaways` or `/api/groups/<id>/giveaways`. */
@@ -55,8 +56,11 @@ export function GiveawayBoard({
   now: number;
   /** For guests: the sign-in page that comes back here. */
   signIn?: string;
+  /** A Team whose owner is no longer a Supporter: the management buttons are hidden. */
+  locked?: boolean;
 }) {
   const [board, setBoard] = useState(initial);
+  const canManage = board.canManage && !locked;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -97,7 +101,7 @@ export function GiveawayBoard({
   const open = board.giveaways.filter((g) => g.status === "OPEN");
   const recent = board.giveaways.filter((g) => g.status !== "OPEN");
   const who = scope === "site" ? "Outpost staff" : "Members with Manage giveaways";
-  const start = board.canManage ? (
+  const start = canManage ? (
     <button
       type="button"
       className="button primary"
@@ -222,7 +226,7 @@ export function GiveawayBoard({
             <span className="landing-chip is-muted">Not drawn this time</span>
           )}
           {/* Running it */}
-          {board.canManage && g.status === "OPEN" && (
+          {canManage && g.status === "OPEN" && (
             <div className={styles.manage}>
               {phase === "closed" &&
                 (ask("draw") ? (
@@ -317,7 +321,7 @@ export function GiveawayBoard({
             emblem="trophy-silver"
             title="No open giveaways right now"
             line={
-              board.canManage
+              canManage
                 ? "Start one: set the prize, how many win and when entries close."
                 : `${who} start giveaways here. Check back soon.`
             }
@@ -337,7 +341,7 @@ export function GiveawayBoard({
           <EmptyWell title="No draws yet" line="Finished giveaways and their winners show here." />
         )}
       </section>
-      {board.canManage && (
+      {canManage && (
         <GiveawayDialog
           editing={editing}
           busy={busy}

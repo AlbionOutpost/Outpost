@@ -12,7 +12,7 @@ import { DiscordMark } from "@/components/discord-mark";
 import { authOptions } from "@/lib/auth";
 import { regionSchema } from "@/lib/albion/region-config";
 import { giftedSupporter } from "@/lib/admin/policy";
-import { billingProfile, isSupporter } from "@/lib/billing/plan";
+import { billingProfile, isSupporter, launchOpen, supporterSource } from "@/lib/billing/plan";
 import { supporterPrice } from "@/lib/billing/price";
 import { billingEnabled, stripeConfig } from "@/lib/billing/stripe";
 import { notFound } from "next/navigation";
@@ -30,9 +30,11 @@ const teamFeatures = [
 ] as const;
 
 /**
- * The Supporter plan: no advertising and a Team workspace of your own, for a monthly
- * subscription through Stripe. States: billing not configured (nothing for sale, nothing
- * locked), signed out, free account, supporter, gifted supporter.
+ * The Supporter plan: a Team workspace of your own. During launch every account is a lifetime
+ * Supporter for free (`launchGrant` in src/lib/billing/plan.ts), so the page says that and
+ * nothing about prices or payment. States: launch grant (signed in or out), billing not
+ * configured (nothing for sale, nothing locked), signed out, free account, supporter, gifted
+ * supporter.
  */
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/supporter", await searchParams);
@@ -52,10 +54,12 @@ export default async function Supporter({
   const profile = session?.user?.id ? await billingProfile(session.user.id) : null;
   const supporter = isSupporter(profile);
   const gifted = giftedSupporter(profile);
-  // Everything is free while billing is off (owner, 6 Nov 2026): the plan page exists only for
-  // accounts an admin gifted the plan to, so they can still see it.
-  if (!billingEnabled() && !supporter) notFound();
-  const price = await supporterPrice();
+  // The launch grant: every account, old or new, is a lifetime Supporter, free.
+  const launch = profile ? supporterSource(profile) === "launch" : launchOpen();
+  // Everything is free while billing is off (owner, 6 Nov 2026): outside the launch the plan page
+  // exists only for accounts an admin gifted the plan to, so they can still see it.
+  if (!billingEnabled() && !supporter && !launch) notFound();
+  const price = launch ? null : await supporterPrice();
   const renews = profile?.planRenewsAt
     ? profile.planRenewsAt.toLocaleDateString("en-GB", {
         day: "numeric",
@@ -78,79 +82,103 @@ export default async function Supporter({
     </Link>
   );
   // One state, said once, in the band: what the plan is for this visitor right now.
-  const state = gifted
-    ? {
-        title: (
-          <>
-            Your Supporter <em>gift</em> is active
-          </>
-        ),
-        line: `You have every Supporter benefit${profile?.supporterGiftUntil && !profile.supporterGiftPermanent ? ` until ${profile.supporterGiftUntil.toLocaleDateString("en-GB", { timeZone: "UTC" })}` : " until the gift is revoked"}. A gift never creates a charge or changes a subscription.`,
-        actions:
-          profile?.stripeCustomerId && configured ? (
-            <SupporterActions region={region} mode="manage" />
-          ) : (
-            free
-          ),
-      }
-    : !configured
+  const state = launch
+    ? profile
       ? {
           title: (
             <>
-              Supporter is not on sale <em>yet</em>
+              You are a lifetime <em>Supporter</em>
             </>
           ),
-          line: "The plan will bring no advertising and a Team workspace for your guild. Billing is not switched on, so nobody is charged and nothing is locked. Sign in now and the plan can join your account when it launches.",
+          line: "A launch grant: every Outpost account is a lifetime Supporter, free. There is nothing to pay and nothing to renew, and your Team workspace is yours to run.",
           actions: (
-            <>
-              {!profile && (
-                <Link href={`/signin${suffix}`} className="button primary">
-                  <DiscordMark /> Sign in with Discord
-                </Link>
-              )}
-              {free}
-            </>
+            <Link href={`/groups/new${suffix}`} className="button primary">
+              Start a team <ArrowRight size={16} aria-hidden="true" />
+            </Link>
           ),
         }
-      : !profile
+      : {
+          title: (
+            <>
+              Every account is a <em>Supporter</em>
+            </>
+          ),
+          line: "A launch grant: every Outpost account, including new ones, is a lifetime Supporter, free. Sign in with Discord and yours has it straight away.",
+          actions: signIn,
+        }
+    : gifted
+      ? {
+          title: (
+            <>
+              Your Supporter <em>gift</em> is active
+            </>
+          ),
+          line: `You have every Supporter benefit${profile?.supporterGiftUntil && !profile.supporterGiftPermanent ? ` until ${profile.supporterGiftUntil.toLocaleDateString("en-GB", { timeZone: "UTC" })}` : " until the gift is revoked"}. A gift never creates a charge or changes a subscription.`,
+          actions:
+            profile?.stripeCustomerId && configured ? (
+              <SupporterActions region={region} mode="manage" />
+            ) : (
+              free
+            ),
+        }
+      : !configured
         ? {
             title: (
               <>
-                Become a <em>Supporter</em>
+                Supporter is not on sale <em>yet</em>
               </>
             ),
-            line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. The plan lives on your Outpost account, so sign in first.`,
-            actions: signIn,
+            line: "The plan will bring no advertising and a Team workspace for your guild. Billing is not switched on, so nobody is charged and nothing is locked. Sign in now and the plan can join your account when it launches.",
+            actions: (
+              <>
+                {!profile && (
+                  <Link href={`/signin${suffix}`} className="button primary">
+                    <DiscordMark /> Sign in with Discord
+                  </Link>
+                )}
+                {free}
+              </>
+            ),
           }
-        : supporter
+        : !profile
           ? {
               title: (
                 <>
-                  You are a <em>Supporter</em>
+                  Become a <em>Supporter</em>
                 </>
               ),
-              line: `Thank you. ${renews ? `Your plan renews on ${renews}.` : "Your plan is active."}${profile.planStatus === "past_due" ? " The last payment failed; update your card to keep the plan." : ""} Change the card, get invoices or cancel in Stripe's billing portal.`,
-              actions: <SupporterActions region={region} mode="manage" />,
+              line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. The plan lives on your Outpost account, so sign in first.`,
+              actions: signIn,
             }
-          : params.checkout === "success"
+          : supporter
             ? {
                 title: (
                   <>
-                    Almost <em>there</em>
+                    You are a <em>Supporter</em>
                   </>
                 ),
-                line: "Stripe confirmed your payment. The plan reaches your account as soon as the confirmation arrives, usually within a minute; reload this page to check.",
-                actions: free,
+                line: `Thank you. ${renews ? `Your plan renews on ${renews}.` : "Your plan is active."}${profile.planStatus === "past_due" ? " The last payment failed; update your card to keep the plan." : ""} Change the card, get invoices or cancel in Stripe's billing portal.`,
+                actions: <SupporterActions region={region} mode="manage" />,
               }
-            : {
-                title: (
-                  <>
-                    Become a <em>Supporter</em>
-                  </>
-                ),
-                line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. Cancel any time; checkout happens on Stripe.`,
-                actions: <SupporterActions region={region} mode="subscribe" />,
-              };
+            : params.checkout === "success"
+              ? {
+                  title: (
+                    <>
+                      Almost <em>there</em>
+                    </>
+                  ),
+                  line: "Stripe confirmed your payment. The plan reaches your account as soon as the confirmation arrives, usually within a minute; reload this page to check.",
+                  actions: free,
+                }
+              : {
+                  title: (
+                    <>
+                      Become a <em>Supporter</em>
+                    </>
+                  ),
+                  line: `No advertising and a Team workspace for your guild${price ? `, for ${price}` : ""}. Cancel any time; checkout happens on Stripe.`,
+                  actions: <SupporterActions region={region} mode="subscribe" />,
+                };
   return (
     <div className="supporter-page">
       <SupporterBand
@@ -160,7 +188,7 @@ export default async function Supporter({
         line={state.line}
         actions={state.actions}
       >
-        {configured && (
+        {configured && !launch && (
           <span className="supporter-note">
             <Lock size={14} aria-hidden="true" /> Outpost never sees your card.
           </span>
@@ -171,10 +199,14 @@ export default async function Supporter({
           id="supporter-includes"
           title={
             <>
-              What the plan <em>includes</em>
+              What {launch ? "Supporter" : "the plan"} <em>includes</em>
             </>
           }
-          line="Two things, and nothing else changes: every tool, price and guide stays free."
+          line={
+            launch
+              ? "A Team workspace for your guild. Every tool, price and guide stays free for everyone."
+              : "Two things, and nothing else changes: every tool, price and guide stays free."
+          }
         />
         <div className="supporter-grid">
           <article
@@ -204,36 +236,60 @@ export default async function Supporter({
               <img src="/albion/icons/team-roles.webp" alt="" width={40} height={40} />
               <span>
                 <strong>Members join free</strong>
-                <small>Only the owner needs the plan</small>
+                <small>
+                  {launch ? "Every account is a Supporter" : "Only the owner needs the plan"}
+                </small>
               </span>
               <ArrowRight size={20} aria-hidden="true" />
             </Link>
           </article>
-          <section className="panel supporter-panel" aria-labelledby="supporter-ads">
-            <PanelHead
-              id="supporter-ads"
-              as="h3"
-              emblem="fame"
-              title="No advertising"
-              line="Ad slots disappear from every page for the account that holds the plan."
-            />
-            <ul className="supporter-points">
-              <li className="well">Market, calculators and build pages without ad units</li>
-              <li className="well">On every device you sign in on</li>
-            </ul>
-          </section>
+          {launch ? (
+            <section className="panel supporter-panel" aria-labelledby="supporter-ads">
+              <PanelHead
+                id="supporter-ads"
+                as="h3"
+                emblem="fame"
+                title="Free, with no ads"
+                line="Outpost shows no advertising and takes no payment."
+              />
+              <ul className="supporter-points">
+                <li className="well">No card, no checkout, no subscription</li>
+                <li className="well">The grant stays on your account for life</li>
+              </ul>
+            </section>
+          ) : (
+            <section className="panel supporter-panel" aria-labelledby="supporter-ads">
+              <PanelHead
+                id="supporter-ads"
+                as="h3"
+                emblem="fame"
+                title="No advertising"
+                line="Ad slots disappear from every page for the account that holds the plan."
+              />
+              <ul className="supporter-points">
+                <li className="well">Market, calculators and build pages without ad units</li>
+                <li className="well">On every device you sign in on</li>
+              </ul>
+            </section>
+          )}
           <section className="panel supporter-panel" aria-labelledby="supporter-free">
             <PanelHead
               id="supporter-free"
               as="h3"
               emblem="tool-market"
               title="Nothing else is held back"
-              line="Market data, Workers and storage cost money each month; Supporters cover it."
+              line={
+                launch
+                  ? "Every tool works without an account, and accounts cost nothing."
+                  : "Market data, Workers and storage cost money each month; Supporters cover it."
+              }
             />
             <ul className="supporter-points">
               <li className="well">Prices, builds, comps and guides stay free</li>
               <li className="well">Joining a Team, RSVPs and loot splits stay free</li>
-              {configured && <li className="well">Cancel any time in Stripe&apos;s portal</li>}
+              {configured && !launch && (
+                <li className="well">Cancel any time in Stripe&apos;s portal</li>
+              )}
             </ul>
           </section>
         </div>

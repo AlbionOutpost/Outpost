@@ -9,7 +9,9 @@ const m = vi.hoisted(() => ({
 }));
 vi.mock("next-auth", () => ({ getServerSession: async () => m.session }));
 vi.mock("../src/lib/auth", () => ({ authOptions: {} }));
-vi.mock("../src/lib/db", () => ({ db: { user: { update: m.update } } }));
+vi.mock("../src/lib/db", () => ({
+  db: { user: { update: m.update, findUnique: async () => ({ name: "Framed" }) } },
+}));
 vi.mock("../src/lib/redis", () => ({ rateLimit: async () => true }));
 vi.mock("../src/lib/account-deletion", () => ({}));
 vi.mock("next/navigation", () => ({ redirect: m.redirect }));

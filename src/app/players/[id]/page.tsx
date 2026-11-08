@@ -16,6 +16,7 @@ import { slotRosterMember } from "@/lib/compositions/roster";
 import { plural } from "@/components/group-parts";
 import { AvatarFrame } from "@/components/avatar-frame";
 import styles from "@/components/account.module.css";
+import { displayName } from "@/lib/display-name";
 export const metadata = privateMetadata("Player profile");
 
 const since = (d: Date) =>
@@ -85,7 +86,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
   // comp, or a visible comment on one) or for its own account. Other account IDs reveal nothing.
   if (!u || (!u.builds.length && !u.compositions.length && !u.comments.length && viewer !== id))
     notFound();
-  const name = u.name || "Adventurer";
+  const name = displayName(u.name);
   return (
     <div className={styles.page}>
       <WorkspaceHeading

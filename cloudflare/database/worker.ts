@@ -259,8 +259,8 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     const name = Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
     return this.env.BUDGETS.getByName(name);
   }
-  async rateLimit(key: string, limit: number, seconds: number) {
-    return (await this.#budget(key)).allow(limit, seconds);
+  async rateLimit(key: string, limit: number, seconds: number, cost = 1) {
+    return (await this.#budget(key)).allow(limit, seconds, cost);
   }
   async upstreamBlocked(region: string) {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");

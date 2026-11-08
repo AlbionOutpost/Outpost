@@ -10,6 +10,7 @@ import { ReactionFeedback } from "./reaction-feedback";
 import { TurnstileChallenge } from "./turnstile-challenge";
 import { AvatarFrame } from "./avatar-frame";
 import styles from "./community-panel.module.css";
+import { displayName } from "@/lib/display-name";
 type Comment = {
   id: string;
   body: string;
@@ -220,8 +221,12 @@ export function CommunityPanel({ kind, id }: { kind: "build" | "composition"; id
               {data.comments.map((c) => (
                 <li className={styles.comment} key={c.id}>
                   <p className={styles.byline}>
-                    <AvatarFrame frame={c.author.avatarFrame} size={32} name={c.author.name} />
-                    <Link href={`/players/${c.authorId}`}>{c.author.name || "Adventurer"}</Link>
+                    <AvatarFrame
+                      frame={c.author.avatarFrame}
+                      size={32}
+                      name={displayName(c.author.name)}
+                    />
+                    <Link href={`/players/${c.authorId}`}>{displayName(c.author.name)}</Link>
                     <time dateTime={c.createdAt}>
                       {new Date(c.createdAt).toLocaleString("en-GB", {
                         day: "numeric",

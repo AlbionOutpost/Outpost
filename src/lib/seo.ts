@@ -267,8 +267,8 @@ export const publicPages: Record<string, [string, string]> = {
     "Enter free Albion Online giveaways run by Outpost staff: in-game prizes, one entry per Discord account, winners drawn at random by the server after entries close.",
   ],
   "/supporter": [
-    "Support Outpost",
-    "Learn about Outpost Supporter, ad-free tools and Team workspaces. Compare the available plan and account features.",
+    "Outpost Supporter",
+    "Every Outpost account is a lifetime Supporter during launch, free: a Team workspace for your guild, with no ads and no payment.",
   ],
 };
 

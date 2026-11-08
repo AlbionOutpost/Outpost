@@ -273,6 +273,20 @@ try {
     assert.equal(row.versions.length, 2);
     assert.equal(row.equipment.length, 1);
   });
+  await check("build create service and revision trim run in the private store", async () => {
+    const made = await service("createBuild", userB, { ...draft, title: "Trimmed history" });
+    for (let version = 1; version <= 51; version++)
+      await service("reviseBuild", made.id, userB, { ...draft, title: `Rev ${version}` }, version);
+    const versions = await query("buildVersion", "findMany", {
+      where: { buildId: made.id },
+      select: { version: true },
+      orderBy: { version: "asc" },
+    });
+    assert.equal(versions.length, 50);
+    assert.equal(versions[0].version, 3);
+    assert.equal(versions.at(-1).version, 52);
+    await query("build", "deleteMany", { where: { id: made.id } });
+  });
   await check("SQLite case-insensitive filters preserve snapshot JSON mode", async () => {
     const rows = await query("build", "findMany", {
       where: { authorId: userA, title: { contains: "RACING", mode: "insensitive" } },
