@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import {
   allocateLoot,
   lootConfiguration,
@@ -16,17 +15,14 @@ import { WellSelect } from "./well-select";
 import { Disclosure } from "./disclosure";
 import { Field } from "./group-parts";
 import { EditorDialog } from "./editor-dialog";
-import type { RevealPayout } from "./economy-stage";
+// Small (CSS only) and imported here so the reveal opens with its stage already in place.
+import { LootChestReveal, type RevealPayout } from "./economy-stage";
 import { bookkeepingLine } from "@/lib/groups/economy";
+import { walletChangedEvent } from "./economy-motion";
 import styles from "./teams.module.css";
 import { NumberField } from "./number-field";
 
-// The chest scene loads only when a split is revealed.
-const LootChestReveal = dynamic(() => import("./economy-stage").then((m) => m.LootChestReveal), {
-  ssr: false,
-});
-
-/** Fired by the workspace masthead's New split button. */
+/** Fired by the Treasury's New split button. */
 export const newLootSplitEvent = "outpost:team-loot-new";
 
 type Saved = {
@@ -309,6 +305,7 @@ export function TeamLootWorkspace({
       const body = await response.json();
       if (!response.ok) throw new Error(body.error);
       setPaid(new Set(body.wallet.paidSplits));
+      window.dispatchEvent(new Event(walletChangedEvent));
       const rows = body.paid as { userId: string; silver: number }[];
       const shares = new Map(result?.payouts.map((p) => [p.userId, p.shares]));
       setReveal({
@@ -411,6 +408,7 @@ export function TeamLootWorkspace({
           <div className={styles.formGrid}>
             <Field label="Split name" error={shown(missing.title)}>
               <input
+                id="loot-split-name"
                 aria-label="Split name"
                 maxLength={100}
                 placeholder="e.g. Tuesday ZvZ haul"

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CalendarPlus, Plus, Settings, UserPlus } from "lucide-react";
+import { ArrowLeft, CalendarPlus, Settings, UserPlus } from "lucide-react";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import type { TeamPermission } from "@/lib/groups/permissions";
@@ -16,7 +16,6 @@ import { GroupLoadouts, loadoutViewOf, loadoutViews, type LoadoutView } from "./
 import { GroupAnnouncements } from "./group-announcements";
 import { TeamGiveaways } from "./team-giveaways";
 import { GroupSettings } from "./group-settings";
-import { newLootSplitEvent } from "./team-loot-workspace";
 import { TeamTreasury, treasuryViewOf, treasuryViews, type TreasuryView } from "./team-treasury";
 import styles from "./teams.module.css";
 
@@ -218,19 +217,11 @@ export function GroupDashboard({
     setTab,
     newEvent: () => setEventOpen(true),
   };
-  // One primary action, the one that fits the open tab
+  // One primary action, the one that fits the open tab (the Treasury's sit in its hero)
   const primary =
     (tab === "Overview" || tab === "Events") && can("manageEvents") ? (
       <button type="button" className="button primary" onClick={() => setEventOpen(true)}>
         <CalendarPlus size={17} aria-hidden="true" /> New event
-      </button>
-    ) : tab === "Treasury" && view === "loot" && can("manageLoot") ? (
-      <button
-        type="button"
-        className="button primary"
-        onClick={() => window.dispatchEvent(new Event(newLootSplitEvent))}
-      >
-        <Plus size={17} aria-hidden="true" /> New split
       </button>
     ) : tab === "Members" && can("inviteMembers") ? (
       <button
