@@ -509,7 +509,7 @@ export function CompositionEditor({
               line={
                 draft.slots.length
                   ? `${draft.slots.length} ${draft.slots.length === 1 ? "slot" : "slots"}. Select a member to set their role and loadout.`
-                  : "Pick a party size to lay out the slots."
+                  : undefined
               }
               actions={
                 draft.slots.length > 0 && (
@@ -559,10 +559,10 @@ export function CompositionEditor({
                 {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
                 <img src="/albion/icons/team-roles.webp" alt="" width={48} height={48} />
                 <div className={styles.startCopy}>
-                  <p className={styles.startTitle}>Start with your party</p>
+                  <p className={styles.startTitle}>How many players does it take?</p>
                   <p className={styles.startLine}>
-                    Choose how many players the comp takes, or start from one tank, one healer and
-                    three damage dealers and change any slot.
+                    Pick a size to lay out the slots, or start from one tank, one healer and three
+                    damage dealers and change any slot.
                   </p>
                   {sizePills}
                   <div className={styles.startActions}>
@@ -740,6 +740,22 @@ export function CompositionEditor({
                     <Plus size={16} aria-hidden="true" />
                     Add member
                   </button>
+                  {/* Resizing a laid-out party: one compact select, the pills stay with the
+                      empty party */}
+                  <label className={styles.inlineField}>
+                    Party size
+                    <WellSelect
+                      aria-label="Party size"
+                      value={draft.slots.length}
+                      onChange={(e) => resize(Number(e.target.value))}
+                    >
+                      {Array.from({ length: 100 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>
+                          {n === 1 ? "Solo" : `${n} players`}
+                        </option>
+                      ))}
+                    </WellSelect>
+                  </label>
                   {!boardView && (
                     <>
                       <label className={styles.inlineField}>
@@ -774,11 +790,7 @@ export function CompositionEditor({
               the first screen */}
           <div className={styles.side}>
             <section className={`panel ${styles.panel}`} aria-labelledby="comp-details">
-              <PanelHead
-                id="comp-details"
-                title="The comp"
-                line="Name it, say what it is for and how many players it takes."
-              />
+              <PanelHead id="comp-details" title="The comp" />
               <div className={styles.fields}>
                 <label className={styles.field}>
                   Comp title
@@ -817,12 +829,6 @@ export function CompositionEditor({
                   </WellSelect>
                 </label>
               </div>
-              {draft.slots.length > 0 && (
-                <div className={styles.sizeRow}>
-                  <span className={styles.fieldLabel}>Party size</span>
-                  {sizePills}
-                </div>
-              )}
               <Disclosure
                 summary="Sharing, region & description"
                 meta={`${visibilityName} · ${regionName}`}
@@ -906,79 +912,77 @@ export function CompositionEditor({
                 </label>
               </Disclosure>
             </section>
-            <aside className={`panel ${styles.panel}`} aria-labelledby="comp-builds">
-              <PanelHead
-                id="comp-builds"
-                title="Your builds"
-                line="Copy a saved build into the selected slot. The copy stays independent."
-              />
-              {!draft.slots.length ? (
-                <p className={styles.memberNote}>
-                  Lay out the party first, then copy a saved build into any slot.
-                </p>
-              ) : builds.length > 0 ? (
-                <>
-                  <label className={styles.field}>
-                    Search saved builds
-                    <SearchInput
-                      type="search"
-                      value={buildQuery}
-                      onChange={(e) => setBuildQuery(e.target.value)}
-                      placeholder="Find a loadout…"
-                    />
-                  </label>
-                  {draft.slots.length > 0 && (
-                    <label className={styles.field}>
-                      Assign to party slot
-                      <WellSelect
-                        aria-label="Build assignment slot"
-                        value={active}
-                        onChange={(e) => setActive(Number(e.target.value))}
-                      >
-                        {draft.slots.map((slot, i) => (
-                          <option key={slot.id} value={i}>
-                            {i + 1} · {memberRole(slot)} · {slot.playerName || "Unassigned"}
-                          </option>
+            {/* Builds copy into a slot, so they show once the party is laid out */}
+            {draft.slots.length > 0 && (
+              <aside className={`panel ${styles.panel}`} aria-labelledby="comp-builds">
+                <PanelHead
+                  id="comp-builds"
+                  title="Your builds"
+                  line={
+                    builds.length
+                      ? "Copy one into the selected slot; the copy stays independent."
+                      : "None saved yet. Save a build to copy it into a slot."
+                  }
+                />
+                {builds.length > 0 && (
+                  <>
+                    <div className={styles.buildPick}>
+                      <label className={styles.field}>
+                        Search saved builds
+                        <SearchInput
+                          type="search"
+                          value={buildQuery}
+                          onChange={(e) => setBuildQuery(e.target.value)}
+                          placeholder="Find a loadout…"
+                        />
+                      </label>
+                      <label className={styles.field}>
+                        Assign to party slot
+                        <WellSelect
+                          aria-label="Build assignment slot"
+                          value={active}
+                          onChange={(e) => setActive(Number(e.target.value))}
+                        >
+                          {draft.slots.map((slot, i) => (
+                            <option key={slot.id} value={i}>
+                              {i + 1} · {memberRole(slot)} · {slot.playerName || "Unassigned"}
+                            </option>
+                          ))}
+                        </WellSelect>
+                      </label>
+                    </div>
+                    <ul className={styles.buildList}>
+                      {builds
+                        .filter((build) =>
+                          build.title.toLowerCase().includes(buildQuery.toLowerCase()),
+                        )
+                        .map((build) => (
+                          <li key={build.id}>
+                            <Link href={`/builds/${build.id}`} title={build.title}>
+                              {build.title}
+                            </Link>
+                            <button
+                              type="button"
+                              className="button secondary"
+                              disabled={copyingBuild}
+                              onClick={() => void copyBuild(build.id)}
+                              aria-label={`Assign ${build.title} to selected slot`}
+                            >
+                              {copyingBuild ? "Copying…" : "Assign"}
+                            </button>
+                          </li>
                         ))}
-                      </WellSelect>
-                    </label>
-                  )}
-                  <ul className={styles.buildList}>
-                    {builds
-                      .filter((build) =>
-                        build.title.toLowerCase().includes(buildQuery.toLowerCase()),
-                      )
-                      .map((build) => (
-                        <li key={build.id}>
-                          <Link href={`/builds/${build.id}`} title={build.title}>
-                            {build.title}
-                          </Link>
-                          <button
-                            type="button"
-                            className="button secondary"
-                            disabled={!draft.slots.length || copyingBuild}
-                            onClick={() => void copyBuild(build.id)}
-                            aria-label={`Assign ${build.title} to selected slot`}
-                          >
-                            {copyingBuild ? "Copying…" : "Assign"}
-                          </button>
-                        </li>
-                      ))}
-                  </ul>
-                  {!builds.some((build) =>
-                    build.title.toLowerCase().includes(buildQuery.toLowerCase()),
-                  ) && <StatusLine>No saved build matches that name.</StatusLine>}
-                </>
-              ) : (
-                <p className={styles.memberNote}>
-                  You have no saved builds yet. Give each member a loadout here, or save a build
-                  first and assign it.
-                </p>
-              )}
-              <Link className="pill-link is-small" href="/builds/new">
-                <Plus size={14} aria-hidden="true" /> Create a build
-              </Link>
-            </aside>
+                    </ul>
+                    {!builds.some((build) =>
+                      build.title.toLowerCase().includes(buildQuery.toLowerCase()),
+                    ) && <StatusLine>No saved build matches that name.</StatusLine>}
+                  </>
+                )}
+                <Link className="pill-link is-small" href="/builds/new">
+                  <Plus size={14} aria-hidden="true" /> Create a build
+                </Link>
+              </aside>
+            )}
           </div>
         </div>
         <EditorDialog

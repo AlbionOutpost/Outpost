@@ -919,56 +919,6 @@
   font-size: 12px;
 }
 
-/* The closing band: one framed card, centred like the landing's call band */
-.app.outpost .builds-next-step.raised {
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  margin: 96px 0 72px;
-  padding: 48px 32px 44px;
-  text-align: center;
-}
-.app.outpost .builds-next-step h2 {
-  margin: 0;
-  font: 800 clamp(30px, 3vw, 40px) / 1.05 var(--font-display);
-  letter-spacing: -0.01em;
-  text-shadow: 0 2px 14px #0008;
-}
-.app.outpost .builds-next-step h2 em {
-  font-style: normal;
-  color: var(--accent);
-}
-.app.outpost .builds-next-step p {
-  max-width: 52ch;
-  margin: 0;
-  color: var(--secondary);
-  font-size: 16px;
-  line-height: 1.5;
-}
-.app.outpost .builds-next-step-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 10px;
-}
-@media (max-width: 700px) {
-  .app.outpost .builds-next-step.raised {
-    margin: 64px 0 48px;
-    padding: 32px 18px;
-  }
-  .app.outpost .builds-next-step p {
-    font-size: 14px;
-  }
-  .app.outpost .builds-next-step-actions {
-    align-self: stretch;
-  }
-  .app.outpost .builds-next-step-actions .button {
-    flex: 1 1 100%;
-    justify-content: center;
-  }
-}
-
 /* Rail counts are figures in the UI font, not table data */
 .app.outpost .builds-ecosystem .build-weapon-rail a small {
   font: 500 12px/1.4 var(--font-ui);

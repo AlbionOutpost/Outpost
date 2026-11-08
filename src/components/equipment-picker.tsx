@@ -10,6 +10,7 @@ export function EquipmentPicker(props: {
   captureUndo?: () => () => void;
   boardEmpty?: React.ReactNode;
   flaggedSlot?: string;
+  cost?: React.ReactNode;
 }) {
   return props.variant === "build" ? (
     <BuildEquipmentStudio {...props} />

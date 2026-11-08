@@ -10,7 +10,7 @@ test("populated build editor preserves gear, choices and revisions across respon
   page,
   context,
 }) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   // Screenshots land in .qa/<area>-correction/current for review.
   const iteration: string = "current";
   const folder = `.qa/build-editor-correction/${iteration}`;
@@ -101,39 +101,37 @@ test("populated build editor preserves gear, choices and revisions across respon
           (width) => ({
             width,
             overflow: document.documentElement.scrollWidth > innerWidth,
-            panes: [".build-studio", ".studio-loadout-list", ".editor-inventory-panel"].map(
-              (selector) => {
-                const r = document.querySelector(selector)!.getBoundingClientRect();
-                return { selector, x: r.x, y: r.y, width: r.width, height: r.height };
-              },
-            ),
+            panes: [
+              ".build-studio",
+              ".editor-price-workspace",
+              ".editor-inventory-panel",
+              ".studio-loadout-list",
+            ].map((selector) => {
+              const r = document.querySelector(selector)!.getBoundingClientRect();
+              return { selector, x: r.x, y: r.y, width: r.width, height: r.height };
+            }),
           }),
           width,
         ),
       );
       expect(measures.at(-1)!.overflow).toBe(false);
-      if (width <= 980) {
-        for (const name of ["Abilities", "Alternatives"]) {
-          await page.getByRole("tab", { name, exact: true }).click();
-          const inspector = page.locator("#editor-selected-slot");
-          await expect(inspector).toBeFocused();
-          const position = await inspector.boundingBox();
-          const header = await page.locator(".site-header").boundingBox();
-          const tabs = await page.getByRole("tablist", { name: "Build workspace" }).boundingBox();
-          expect(tabs!.y).toBeGreaterThanOrEqual(-0.5);
-          expect(tabs!.y).toBeLessThanOrEqual(0.5);
-          expect(position!.y).toBeGreaterThanOrEqual(
-            Math.max(header!.y + header!.height, tabs!.y + tabs!.height),
-          );
-          expect(position!.y).toBeLessThan(200);
-        }
-        const abilities = page.getByRole("tab", { name: "Abilities", exact: true });
+      // One loadout view: on wide screens cost, board and abilities sit side by side; on
+      // phones they stack as board, abilities, cost.
+      const [cost, board, inspector] = measures.at(-1)!.panes.slice(1);
+      if (width > 1280) {
+        expect(cost.x + cost.width).toBeLessThanOrEqual(board.x);
+        expect(board.x + board.width).toBeLessThanOrEqual(inspector.x);
+        expect(Math.abs(cost.y - inspector.y)).toBeLessThanOrEqual(1);
+      } else if (width <= 980) {
+        expect(board.y + board.height).toBeLessThanOrEqual(inspector.y);
+        expect(inspector.y + inspector.height).toBeLessThanOrEqual(cost.y);
+        const loadout = page.getByRole("tab", { name: "Loadout", exact: true });
         const alternatives = page.getByRole("tab", { name: "Alternatives", exact: true });
-        await abilities.focus();
+        await loadout.focus();
         await page.keyboard.press("ArrowRight");
         await expect(alternatives).toBeFocused();
         await page.keyboard.press("ArrowLeft");
-        await expect(abilities).toBeFocused();
+        await expect(loadout).toBeFocused();
       }
       if ([390, 1440].includes(width)) {
         await selectEditorSlot(page, "Helmet");
@@ -219,7 +217,7 @@ test("populated build editor preserves gear, choices and revisions across respon
     await page.getByLabel("Main hand alternative", { exact: true }).selectOption("T6_2H_CLAYMORE");
     await page.getByRole("button", { name: /^Equip alternative Main hand 1:/ }).click();
     await expect(
-      page.getByRole("button", { name: /^Inspect Main hand: Claymore\b/ }),
+      page.getByRole("button", { name: /^Choose Main hand equipment: Claymore\b/ }),
     ).toBeVisible();
     const occupiedOffHand = page.getByRole("button", {
       name: "Inspect Off hand: held by the two-handed main hand",

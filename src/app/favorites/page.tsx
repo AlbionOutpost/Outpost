@@ -1,5 +1,4 @@
 import "@/app/build-styles";
-import { BuildsNextStep } from "@/components/builds-next-step";
 import { privateMetadata } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import Link from "@/components/build-region-link";
@@ -257,15 +256,6 @@ export default async function Favorites({
           )}
         </section>
       </div>
-      <BuildsNextStep
-        title={
-          <>
-            Make one <em>yours</em>
-          </>
-        }
-        line="Open a saved build, copy it into the editor and change the pieces you want."
-        secondary={{ href: "/builds?source=library", label: "Build library" }}
-      />
     </div>
   );
 }

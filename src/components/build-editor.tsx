@@ -7,9 +7,7 @@ import { findEquipment } from "@/lib/albion/equipment-catalog";
 import type { EquipmentChoice } from "@/lib/compositions/validation";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
   CircleAlert,
-  Coins,
   Ellipsis,
   Download,
   Eye,
@@ -21,7 +19,6 @@ import {
   Package,
   Plus,
   Repeat2,
-  Sparkles,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -150,9 +147,7 @@ export function BuildEditor({
   const [saving, setSaving] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const [preview, setPreview] = useState(false);
-  const [section, setSection] = useState<
-    "equipment" | "abilities" | "alternatives" | "cost" | "notes"
-  >("equipment");
+  const [section, setSection] = useState<"equipment" | "alternatives" | "notes">("equipment");
   const guestNavigationDraft = useRef<BuildInput | null>(null);
   useEffect(() => {
     if (guest || !ownerId || !recoveryKey) return;
@@ -641,6 +636,18 @@ export function BuildEditor({
               </div>
             </div>
           </div>
+          {/* A guest's draft lives on this device; signing in is what publishes and shares it */}
+          {guest && (
+            <p className="editor-guest-line">
+              <span>
+                Guest draft on this device. Sign in with Discord to publish it, share a link and use
+                it in your Team’s comps.
+              </span>
+              <Link className="pill-link is-small" href="/signin">
+                <LogIn size={14} aria-hidden="true" /> Sign in
+              </Link>
+            </p>
+          )}
           {(recoveryMessage || shareMessage || (!guest && dirty && ownerId) || error) && (
             <div className="editor-messages">
               {recoveryMessage && <StatusLine>{recoveryMessage}</StatusLine>}
@@ -696,56 +703,44 @@ export function BuildEditor({
             </div>
           </EditorDialog>
         )}
+        {/* The loadout is one view: cost, board and abilities side by side. Swaps and notes
+            are the two other places a build is worked on. */}
         <div className="editor-workspace-tabs" role="tablist" aria-label="Build workspace">
           {(
             [
-              ["equipment", "Equipment", Package],
-              ["abilities", "Abilities", Sparkles],
+              ["equipment", "Loadout", Package],
               ["alternatives", "Alternatives", Repeat2],
-              ["cost", "Cost", Coins],
               ["notes", "Notes", NotebookPen],
             ] as const
-          ).map(([key, label, Icon], index) => (
+          ).map(([key, label, Icon], index, tabs) => (
             <button
               type="button"
               role="tab"
               key={key}
               id={`editor-tab-${key}`}
               aria-selected={section === key}
-              aria-controls={
-                key === "notes" || key === "cost"
-                  ? `editor-panel-${key}`
-                  : "editor-equipment-workspace"
-              }
+              aria-controls={key === "notes" ? "editor-panel-notes" : "editor-equipment-workspace"}
               tabIndex={section === key ? 0 : -1}
-              onClick={() => {
-                setSection(key);
-                if (
-                  (key === "abilities" || key === "alternatives") &&
-                  matchMedia("(max-width: 980px)").matches
-                )
-                  requestAnimationFrame(() => {
-                    const panel = document.getElementById("editor-selected-slot");
-                    panel?.focus({ preventScroll: true });
-                    panel?.scrollIntoView({ block: "start", behavior: "instant" });
-                  });
-              }}
+              onClick={() => setSection(key)}
               onKeyDown={(event) => {
+                const last = tabs.length - 1;
                 const next =
                   event.key === "ArrowRight"
-                    ? (index + 1) % 5
+                    ? index === last
+                      ? 0
+                      : index + 1
                     : event.key === "ArrowLeft"
-                      ? (index + 4) % 5
+                      ? index === 0
+                        ? last
+                        : index - 1
                       : event.key === "Home"
                         ? 0
                         : event.key === "End"
-                          ? 4
+                          ? last
                           : null;
                 if (next === null) return;
                 event.preventDefault();
-                setSection(
-                  (["equipment", "abilities", "alternatives", "cost", "notes"] as const)[next],
-                );
+                setSection(tabs[next][0]);
                 event.currentTarget.parentElement
                   ?.querySelectorAll<HTMLElement>('[role="tab"]')
                   [next]?.focus();
@@ -776,14 +771,21 @@ export function BuildEditor({
           </div>
         )}
         <div
-          hidden={section === "notes" || section === "cost"}
+          hidden={section === "notes"}
           role="tabpanel"
           id="editor-equipment-workspace"
-          aria-labelledby={`editor-tab-${section === "notes" || section === "cost" ? "equipment" : section}`}
+          aria-labelledby={`editor-tab-${section === "notes" ? "equipment" : section}`}
         >
           <EquipmentPicker
             variant="build"
-            view={section === "notes" || section === "cost" ? "equipment" : section}
+            view={section === "notes" ? "equipment" : section}
+            cost={
+              <div className="build-detail-page editor-price-workspace">
+                <div className="raised detail-panel-frame">
+                  <LoadoutPriceCheck compact region={draft.region} equipment={equipped} />
+                </div>
+              </div>
+            }
             value={supportedEquipment}
             onChange={updateEquipment}
             flaggedSlot={mainFlagged ? "Main hand" : undefined}
@@ -997,18 +999,6 @@ export function BuildEditor({
             </div>
           </section>
         </div>
-        {/* The detail page's cost panel, as it is there, as its own tab */}
-        <div
-          hidden={section !== "cost"}
-          role="tabpanel"
-          id="editor-panel-cost"
-          aria-labelledby="editor-tab-cost"
-          className="build-detail-page editor-price-workspace"
-        >
-          <div className="raised detail-panel-frame">
-            <LoadoutPriceCheck region={draft.region} equipment={equipped} />
-          </div>
-        </div>
         {/* Deleting is a settings matter: it shows with the Notes tab */}
         {id && section === "notes" && (
           <section className="editor-danger-zone" aria-labelledby="editor-delete-title">
@@ -1042,29 +1032,6 @@ export function BuildEditor({
           </section>
         )}
       </fieldset>
-      {/* A guest's draft lives on this device; signing in is what publishes and shares it. */}
-      {guest && (
-        <section
-          className="raised has-scene builds-next-step"
-          data-scene="build"
-          aria-labelledby="editor-next-step"
-        >
-          <h2 id="editor-next-step">
-            Keep it on your <em>account</em>
-          </h2>
-          <p>
-            Sign in with Discord to publish the build, share a link and put it in your Team’s comps.
-          </p>
-          <div className="builds-next-step-actions">
-            <Link className="button primary" href="/signin">
-              <LogIn size={16} aria-hidden="true" /> Sign in
-            </Link>
-            <Link className="button secondary" href="/builds?source=library">
-              Browse the library <ArrowRight size={16} aria-hidden="true" />
-            </Link>
-          </div>
-        </section>
-      )}
     </form>
   );
 }
