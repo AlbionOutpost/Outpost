@@ -119,7 +119,8 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
   const result = page.locator('[data-result="trade-profit"]');
-  await expectResultText(result, "0.5");
+  // 1.5 − 0.06 (4% default sales tax) − 1.
+  await expectResultText(result, "0.44");
   await page.getByLabel("Purchase price per item").fill("");
   await expect(page.locator('[data-result="readiness"]')).toContainText("Purchase price per item");
   await expect(result).toHaveText("—Unavailable");
@@ -172,7 +173,8 @@ test("visitor journey from named item search to a verified trade result", async 
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");
-  await expectResultText(page.locator('[data-result="trade-profit"]'), "500");
+  // 10 × (150 − 100) − 60 sales tax at the 4% default.
+  await expectResultText(page.locator('[data-result="trade-profit"]'), "440");
   await page.goBack();
   await expect(page.getByRole("heading", { name: "Market Explorer" })).toBeVisible();
 });

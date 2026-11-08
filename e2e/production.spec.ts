@@ -95,6 +95,7 @@ test("legacy production fees require a player accounting choice without replacin
   legacy.recipeId = "T4_WOOD_LEVEL1@1";
   legacy.batches = 10;
   legacy.stationFee = 1520;
+  legacy.tax = 0; // saved before the 4% default; a saved rate is kept
   for (const [id, value] of Object.entries({ T4_WOOD: 100, "T4_WOOD_LEVEL1@1": 1000 }))
     legacy.prices[id] = {
       value,
@@ -206,7 +207,8 @@ test("laborer execution changes never reuse listing observations after a failed 
   await page.goto("/tools/laborers?region=europe");
   const execution = page.locator("label").filter({ hasText: "Sell loot by" }).locator("select");
   await execution.selectOption("listing");
-  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,294", {
+  // 17.2 loot units × 1,000 × (1 − (4% default tax + 2.5% setup)) − 100 journal = 15,982.
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,982", {
     exact: true,
   });
   // Every price is in: no checklist of missing prices.
@@ -215,7 +217,8 @@ test("laborer execution changes never reuse listing observations after a failed 
   await expect(
     page.getByText("Prices couldn’t be loaded. Your inputs were kept.", { exact: true }),
   ).toBeVisible();
-  await expectResultText(page.locator('[data-result="laborer-profit"]'), "15,724", { not: true });
+  // The instant-sale figure the listing observations would give (17,200 × 0.96 − 100).
+  await expectResultText(page.locator('[data-result="laborer-profit"]'), "16,412", { not: true });
   await expect(page.getByLabel("Metalbar · T4.0 unit price", { exact: true })).toHaveValue("");
   await expect(page.locator('[data-result="readiness"]')).toContainText("Loot prices");
   await page.getByLabel("Metalbar · T4.0 unit price", { exact: true }).fill("900");
@@ -289,7 +292,8 @@ test("production calculations save, reload, share and enforce scenario ownership
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
     await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-    await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+    // 3,000 − 120 (4% default sales tax) − 2,000 materials.
+    await expectResultText(page.locator("output[data-result=total-profit]"), "880", {
       exact: true,
     });
     await page.getByRole("button", { name: "Saved runs & sharing", exact: true }).click();
@@ -473,7 +477,8 @@ test("a price that loads while the player is in its field never splices into wha
   await loaded;
   await page.keyboard.type("3000");
   await expect(output).toHaveValue("3,000");
-  await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+  // 3,000 − 120 (4% default sales tax) − 2,000 materials.
+  await expectResultText(page.locator("output[data-result=total-profit]"), "880", {
     exact: true,
   });
 });

@@ -275,6 +275,7 @@ describe("production economics", () => {
   });
   it("preserves enchantment output quality regardless of the unused crafting recipe selection", () => {
     const v = initialProduction("enchanting", "europe");
+    v.tax = 0; // A no-tax fixture: the hand-worked values below include no sales tax.
     v.recipeId = "grind-t4_butter";
     v.quality = 2;
     for (const [id, value] of Object.entries({

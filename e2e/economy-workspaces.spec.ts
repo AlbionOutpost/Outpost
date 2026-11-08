@@ -36,16 +36,19 @@ test("production prerequisites, genuine sensitivity and the steps beside their r
   await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
   await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
   await page.getByLabel("Output unit sale price", { exact: true }).fill("3000");
-  await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+  // 3,000 sale − 120 Premium sales tax (4%, the default) − 2,000 materials = 880.
+  await expectResultText(page.locator("output[data-result=total-profit]"), "880", {
     exact: true,
   });
   await page.getByRole("button", { name: "Run details", exact: true }).click();
+  // At 80%: 2,400 − 96 tax − 2,000 = 304.
   await expectResultText(
     page.getByRole("region", { name: "Sale-price sensitivity scenarios" }),
-    "400",
+    "304",
   );
   await page.getByLabel("Output unit sale price", { exact: true }).fill("1000");
-  await expectResultText(page.locator("output[data-result=total-profit]"), "-1,000", {
+  // 1,000 − 40 tax − 2,000.
+  await expectResultText(page.locator("output[data-result=total-profit]"), "-1,040", {
     exact: true,
   });
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
@@ -73,7 +76,8 @@ test("manual trade requires prices, accepts explicit zero, and shows negative ou
   await expect(page.getByLabel("Purchase price per item", { exact: true })).toHaveValue("");
   await page.getByLabel("Purchase price per item", { exact: true }).fill("100");
   await page.getByLabel("Sale price per item", { exact: true }).fill("50");
-  await expectResultText(result, "-50", { exact: true });
+  // 50 − 2 (4% default sales tax) − 100.
+  await expectResultText(result, "-52", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("0");
   await expectResultText(result, "-100", { exact: true });
   await page.getByLabel("Sale price per item", { exact: true }).fill("");
@@ -176,8 +180,9 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByText("Trip costs, risk & fees", { exact: true }).click();
   await page.getByLabel("Cost per trip", { exact: true }).fill("10");
   await page.getByText("Trip costs, risk & fees", { exact: true }).click();
-  // The validated transport model requires at least one trip: 150-100-10=40.
-  await expectResultText(page.locator('[data-result="transport-profit"]'), "40", { exact: true });
+  // The validated transport model requires at least one trip, and the default sales tax is
+  // 4%: 150 - 6 - 100 - 10 = 34.
+  await expectResultText(page.locator('[data-result="transport-profit"]'), "34", { exact: true });
   await expect(page.locator("#transport-route [data-assumptions]")).toContainText("10 silver/trip");
   await expect(page.getByLabel("Transport plan title", { exact: true })).toBeHidden();
 
@@ -192,8 +197,8 @@ test("mobile secondary assumptions collapse without changing the calculated resu
   await page.getByText("Seed returns & fees", { exact: true }).click();
   await page.getByLabel("Unwatered seed yield (%)", { exact: true }).fill("50");
   await page.getByText("Seed returns & fees", { exact: true }).click();
-  // Nine plants: 7200 revenue-18000 seeds+9000 retained seed credit=-1800.
-  await expectResultText(page.locator('[data-result="farm-profit"]'), "-1,800", { exact: true });
+  // Nine plants: 7200 revenue-288 (4% default sales tax)-18000 seeds+9000 seed credit=-2088.
+  await expectResultText(page.locator('[data-result="farm-profit"]'), "-2,088", { exact: true });
   await expect(page.locator("#farming-plan [data-assumptions]")).toContainText("50% unwatered");
   await expect(page.getByLabel("Scenario title", { exact: true })).toBeHidden();
 });

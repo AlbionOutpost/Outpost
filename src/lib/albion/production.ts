@@ -4,6 +4,7 @@ import { regionSchema, cities } from "./region-config";
 import { recipeFor, findRecipe } from "./recipes";
 import { isStale } from "./freshness";
 import { finiteRatio } from "./finite-ratio";
+import { DEFAULT_SALES_TAX } from "./sales-tax";
 export const observation = z.object({
   value: z.number().nonnegative().max(1e12).nullable(),
   manual: z.boolean(),
@@ -238,7 +239,7 @@ export function initialProduction(
     useFocus: false,
     focusUsed: 0,
     stationFee: 0,
-    tax: 0,
+    tax: DEFAULT_SALES_TAX,
     setupFee: 0,
     enchantFamily: "MAIN_AXE",
     tier: 4,

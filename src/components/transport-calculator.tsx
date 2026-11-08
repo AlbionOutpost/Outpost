@@ -38,6 +38,7 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
 export type TransportPreselection = {
   item?: string;
   from?: string;
@@ -313,7 +314,11 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
           <div className={s.fields}>
             {numberInput("costPerTrip", "Cost per trip")}
             {numberInput("risk", "Total manual risk allowance")}
-            {numberInput("tax", "Transport sales tax (%)")}
+            <SalesTaxField
+              label="Transport sales tax (%)"
+              value={draft.tax}
+              onValueChange={(v) => update("tax", v ?? NaN)}
+            />
             {numberInput("fee", "Transport listing fee (%)")}
             <p className={s.help}>
               The listing fee applies to sell orders only. The risk allowance is silver you set

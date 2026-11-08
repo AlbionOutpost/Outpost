@@ -4,6 +4,7 @@ import { observation } from "./production";
 import { cities, regionSchema } from "./region-config";
 import { isStale } from "./freshness";
 import { finiteRatio } from "./finite-ratio";
+import { DEFAULT_SALES_TAX } from "./sales-tax";
 export const laborerTypes = [
   "WARRIOR",
   "HUNTER",
@@ -99,7 +100,7 @@ export function initialLaborers(region: LaborerInput["region"]): LaborerInput {
     saleMode: "instant",
     sellEmpty: false,
     buyOrder: false,
-    tax: 8,
+    tax: DEFAULT_SALES_TAX,
     setupFee: 2.5,
     prices: {},
   };

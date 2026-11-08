@@ -20,6 +20,8 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
+import { DEFAULT_SALES_TAX } from "@/lib/albion/sales-tax";
 const fields = [
   { key: "buy", label: "Purchase price per item" },
   { key: "sell", label: "Sale price per item" },
@@ -38,7 +40,7 @@ export function TradeCalculator() {
     buyFee: 0,
     sell: NaN,
     quantity: 1,
-    tax: 0,
+    tax: DEFAULT_SALES_TAX,
     fee: 0,
     transport: 0,
   });
@@ -149,7 +151,10 @@ export function TradeCalculator() {
           }
         >
           <div className={s.fields}>
-            {input(fields[3])}
+            <SalesTaxField
+              value={values.tax}
+              onValueChange={(v) => setValues({ ...values, tax: v ?? NaN })}
+            />
             {input(fields[4])}
             {input(fields[5], true)}
             <p className={s.help}>

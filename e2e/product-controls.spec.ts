@@ -82,8 +82,9 @@ test("recipe drawer searches real variants, returns focus and keeps accounting i
   await page.getByLabel("Worked Leather unit price", { exact: true }).fill("200");
   await page.getByLabel("Output unit sale price", { exact: true }).fill("5000");
   await page.getByRole("button", { name: "3 Review profit", exact: true }).click();
-  // Independent one-craft expectation: 16*100 + 8*200 = 3200; no supplied fees/returns.
-  await expectResultText(page.locator("output[data-result=total-profit]"), "1,800", {
+  // Independent one-craft expectation: 16*100 + 8*200 = 3200 materials, 5000*4% = 200 default
+  // sales tax, no returns: 5000 - 200 - 3200 = 1600.
+  await expectResultText(page.locator("output[data-result=total-profit]"), "1,600", {
     exact: true,
   });
   await expectResultText(page.locator("[data-result=cash-summary]"), "3,200");

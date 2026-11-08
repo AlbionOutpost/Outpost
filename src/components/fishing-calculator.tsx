@@ -25,6 +25,8 @@ import { WellSelect } from "./well-select";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
 import { NumberField } from "./number-field";
+import { SalesTaxField } from "./sales-tax-field";
+import { DEFAULT_SALES_TAX } from "@/lib/albion/sales-tax";
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined ? (
     <Unavailable />
@@ -58,7 +60,7 @@ export function FishingCalculator({
   const [quantity, setQuantity] = useState(100);
   const [target, setTarget] = useState(100000);
   const [purchaseFee, setPurchaseFee] = useState("0");
-  const [saleFee, setSaleFee] = useState("");
+  const [saleFee, setSaleFee] = useState(String(DEFAULT_SALES_TAX));
   const [processingCost, setProcessingCost] = useState("0");
   const [saleBasis, setSaleBasis] = useState<"bid" | "ask">("bid");
   const [manual, setManual] = useState<Record<string, string>>({});
@@ -419,19 +421,15 @@ export function FishingCalculator({
       </div>
       {mode === "chopping" && (
         <div className={s.fields}>
-          <label>
-            Total sale fees (%)
-            <NumberField
-              min={0}
-              max={100}
-              decimals={2}
-              value={saleFee}
-              placeholder="Tax + listing"
-              onValueChange={(v) => setSaleFee(v == null ? "" : String(v))}
-            />
-          </label>
+          <SalesTaxField
+            label="Total sale fees (%)"
+            value={saleFee}
+            placeholder="Tax + listing"
+            onValueChange={(v) => setSaleFee(v == null ? "" : String(v))}
+          />
           <p className={`${s.help} ${c.alignEnd}`}>
-            Your sales tax plus any listing fee. Premium players pay less tax.
+            Your sales tax plus any listing fee: 4% tax with Premium, 8% without. Add 2.5% when you
+            list a sell order.
           </p>
         </div>
       )}
@@ -560,7 +558,8 @@ export function FishingCalculator({
           </button>
         </div>
       )}
-      {mode === "chopping" && conversion && (
+      {/* The checklist above says what is missing; the detail rows wait for a complete run. */}
+      {mode === "chopping" && conversion && missing.length === 0 && (
         <ResultRows
           result="fish-rows"
           items={[

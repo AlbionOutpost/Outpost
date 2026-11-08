@@ -13,7 +13,8 @@ import { EmptyWell } from "./empty-well";
 import { RetryLine } from "./calculator-shell";
 import { StatusLine, Unavailable } from "./status-line";
 import { WellSelect } from "./well-select";
-import { TaxField } from "./tax-field";
+import { SalesTaxField } from "./sales-tax-field";
+import { DEFAULT_SALES_TAX } from "@/lib/albion/sales-tax";
 import { Observed, coin, PRICE_ERROR } from "./calculator-figures";
 import s from "./calculator-shell.module.css";
 import c from "@/app/calculators.module.css";
@@ -56,7 +57,7 @@ export function BlackMarketBoard() {
     [toTier, setToTier] = useState(8),
     [enchantment, setEnchantment] = useState(0),
     [quality, setQuality] = useState(1),
-    [tax, setTax] = useState<number | null>(4),
+    [tax, setTax] = useState<number | null>(DEFAULT_SALES_TAX),
     [result, setResult] = useState<{ key: string; data: Data } | null>(null),
     [error, setError] = useState<string | null>(null),
     [pendingKey, setPendingKey] = useState<string | null>(null);
@@ -200,7 +201,7 @@ export function BlackMarketBoard() {
           </label>
         </div>
         <div className={c.scanItems}>
-          <TaxField value={tax} onChange={setTax} />
+          <SalesTaxField value={tax ?? ""} onValueChange={setTax} />
         </div>
       </div>
       {error === query ? (
