@@ -8,7 +8,7 @@ import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminFrame } from "@/components/admin-frame";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
 import { PanelHead } from "@/components/panel-head";
-import { isSupporter } from "@/lib/billing/plan";
+import { isSupporter, supporterLabel } from "@/lib/billing/plan";
 import { accountBanned, giftedSupporter } from "@/lib/admin/policy";
 import { HttpError } from "@/lib/http-error";
 export default async function AdminUserPage({ params }: { params: Promise<{ id: string }> }) {
@@ -50,7 +50,7 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
       titleChips={
         <div className="admin-chips">
           <AdminChip tone={banned ? "danger" : isSupporter(user) ? "accent" : "default"}>
-            {banned ? "Banned" : isSupporter(user) ? "Supporter" : "Free"}
+            {banned ? "Banned" : supporterLabel(user)}
           </AdminChip>
           {user.role !== "USER" && <AdminChip tone="warn">{roleLabel(user.role)}</AdminChip>}
         </div>
@@ -72,7 +72,7 @@ export default async function AdminUserPage({ params }: { params: Promise<{ id: 
               {[
                 ["Email", user.email || "Not provided"],
                 ["Joined", day(user.createdAt)],
-                ["Plan", isSupporter(user) ? "Supporter" : "Free"],
+                ["Plan", supporterLabel(user)],
                 [
                   "Gift",
                   giftedSupporter(user)

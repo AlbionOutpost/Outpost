@@ -1,20 +1,21 @@
 import { db } from "@/lib/db";
 import { HttpError } from "@/lib/http-error";
-import { billingEnabled } from "./stripe";
-import { isSupporter } from "./plan";
+import { isSupporter, launchOpen } from "./plan";
 const entitlementSelect = {
   plan: true,
   supporterGiftUntil: true,
   supporterGiftPermanent: true,
+  createdAt: true,
 } as const;
 
 /**
  * Running a Team is a Supporter feature: creating a workspace and managing one (profile,
- * events, announcements, invites, roles, shared builds, loot splits) need the owner on the
- * Supporter plan. Viewing, requesting to join, RSVPs and leaving stay open to every member.
- * Removing members, transferring ownership and deleting the team are never locked: a lapsed
- * owner must always be able to wind a team down (account deletion requires it).
- * Until billing is configured nothing is for sale, so nothing is locked.
+ * events, announcements, invites, roles, shared builds, loot splits, the wallet, flips and
+ * rolls, giveaways) need the owner to be a Supporter. Viewing, requesting to join, RSVPs,
+ * entering a giveaway and leaving stay open to every member. Removing members, transferring
+ * ownership and deleting the team are never locked: a lapsed owner must always be able to wind
+ * a team down (account deletion requires it). During launch every account is a lifetime
+ * Supporter (`launchGrant` in plan.ts), so the gates are on but nobody is locked out.
  */
 export const teamManagementActions = new Set([
   "profile",
@@ -36,9 +37,12 @@ export const teamManagementActions = new Set([
   "remove-build",
 ]);
 
+/** Giveaway actions that manage one (entering and leaving stay open). */
+export const giveawayManagementActions = new Set(["create", "update", "cancel", "draw"]);
+
 export const supporterMessage = {
   create: "Creating a team workspace is a Supporter feature.",
-  manage: "Team management needs the team's owner on the Supporter plan.",
+  manage: "Team management needs the team's owner to be a Supporter.",
 };
 
 export async function userIsSupporter(userId: string) {
@@ -48,17 +52,20 @@ export async function userIsSupporter(userId: string) {
 
 /** True when this user may create a workspace right now. */
 export async function canCreateTeam(userId: string) {
-  return !billingEnabled() || (await userIsSupporter(userId));
+  // While the launch is on it covers every account, so the answer needs no read.
+  return launchOpen() || userIsSupporter(userId);
 }
 
-/** True when the team's owner holds the plan that keeps its management open. */
+/** True when the team's owner is a Supporter, which keeps its management open. */
 export async function teamManagementOpen(groupId: string) {
-  if (!billingEnabled()) return true;
+  // Every team has an owner account, and an open launch covers every account.
+  if (launchOpen()) return true;
   const group = await db.group.findUnique({
     where: { id: groupId },
     select: { owner: { select: entitlementSelect } },
   });
-  return isSupporter(group?.owner);
+  // A missing team is the service's 404, not a Supporter question.
+  return !group || isSupporter(group.owner);
 }
 
 export async function requireTeamCreation(userId: string) {
@@ -71,7 +78,8 @@ export async function requireTeamCreation(userId: string) {
  */
 export async function requireTeamManagement(groupId: string, action?: string, userId?: string) {
   if (action !== undefined && !teamManagementActions.has(action)) return;
-  if (!billingEnabled()) return;
+  // An open launch makes every owner a Supporter: nothing to read.
+  if (launchOpen()) return;
   if (
     userId &&
     !(await db.groupMember.findUnique({
