@@ -12,10 +12,18 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Guide reader: details as hero chips, equal All guides / Print guide pills, contents and one "Use with this guide" rail aligned with the reading page.
 - Comps by activity cards overlay the three weapons their Group Builds comps carry most (player comps fill in), from a small build-time `grind-comp-weapons.json` on Cloudflare.
 
+## Black Market board, Profitable crafts, watchlist changes — 8 November 2026
+
+- **Black Market board** (`/tools/black-market`): one gear category over a tier range at one enchantment and quality; each item's cheapest player-city sell order beside the Black Market's buy order, net after the player's tax (Premium 4% / No premium 8%, editable), margin and both observation ages, best net first. Items without both orders are listed last as unavailable, never as zero. Each row opens Market Explorer and plans the haul in the transport calculator.
+- **Profitable crafts** (`/tools/profitable-crafts`, "What should I craft?"): every primary recipe of a category at one tier and enchantment, priced from one bounded AODP batch and run through the Crafting calculator's `production()` with the player's buy, craft and sell cities, city returns, daily bonus, tax, setup fee and budget; top 10 with Show all, unpriced recipes listed with what is missing. Open takes a recipe to its calculator with the same settings (the crafting, cooking and alchemy pages read them from the link).
+- **Watchlist "since your last visit"**: after refreshing quotes, each watched item shows how its lowest sell and highest buy order moved since the player last pressed Mark as seen (up/down %, new order, no order now). The marks live on the device, the watchlist itself stays on the account.
+- Both scan routes answer from one AODP request and are kept in the signed-out edge cache for two minutes; changing cities, tax or budget re-ranks in the page without a new request.
+- Not yet: focus and specialization in Profitable crafts; buy orders as a purchase route on the board; order volume.
+
 ## Tools and editors on one screen — 8 November 2026
 
 - Every calculator, flipping, gold, reference, the Avalon mapper, the build and comp editors and the admin console now fit 1440×900: compact mastheads with their tabs and back links at the right edge, no closing link bands (market pages keep `MarketNextSteps`, as DESIGN.md asks), long lists scrolling in their own wells. `e2e/one-screen.spec.ts` checks each page.
-- Crafting family: the five modes sit in the masthead; the Production plan is one summary row with Open plan; Run details open from the result's head. Flipping shows Scan a route or Check one trade, one at a time. The build editor gained a Cost tab; the comp editor puts The comp and Your builds beside the party. The tools hub shows all 23 tools five across with whole descriptions.
+- Crafting family: the five modes sit in the masthead; the Production plan is one summary row with Open plan; Run details open from the result's head. Flipping shows Scan a route or Check one trade, one at a time. The build editor gained a Cost tab; the comp editor puts The comp and Your builds beside the party. The tools hub shows all 23 tools (25 since the Black Market board and Profitable crafts) five across with whole descriptions.
 - Gold's failed load is one line with Try again; on phones a missing market order is a lone dash.
 - Fixed: a price that finished loading while a player was in its field replaced the text under the caret, so their typing was appended to it (2,982 + 3000 read as 29,823,000). Number fields now hold outside values until the player leaves the field.
 
