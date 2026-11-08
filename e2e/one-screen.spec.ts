@@ -175,16 +175,22 @@ test("editors and the admin console end within the first screen at 1440x900", as
     // The ten-member party scrolls inside its own well rather than the page.
     await page.goto(`/compositions/${comp.id}/edit`);
     await expect(page.locator("[data-member-index]")).toHaveCount(10);
-    const inWell = await page
-      .locator("[data-member-index]")
-      .first()
-      .evaluate((row) => {
-        for (let el = row.parentElement; el && el !== document.body; el = el.parentElement)
-          if (getComputedStyle(el).overflowY === "auto" && el.scrollHeight > el.clientHeight + 1)
-            return true;
-        return false;
-      });
-    expect(inWell).toBe(true);
+    await expect
+      .poll(() =>
+        page
+          .locator("[data-member-index]")
+          .first()
+          .evaluate((row) => {
+            for (let el = row.parentElement; el && el !== document.body; el = el.parentElement)
+              if (
+                getComputedStyle(el).overflowY === "auto" &&
+                el.scrollHeight > el.clientHeight + 1
+              )
+                return true;
+            return false;
+          }),
+      )
+      .toBe(true);
   } finally {
     await db.composition.deleteMany({ where: { authorId: id } });
     await db.build.deleteMany({ where: { authorId: id } });
