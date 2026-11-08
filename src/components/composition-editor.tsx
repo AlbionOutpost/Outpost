@@ -438,7 +438,7 @@ export function CompositionEditor({
       >
         {(initialNotice || recoveryMessage) && (
           <div className={styles.notices}>
-            {initialNotice && <StatusLine>{initialNotice}</StatusLine>}
+            {initialNotice && <StatusLine tone="stale">{initialNotice}</StatusLine>}
             {recoveryMessage && <StatusLine tone="stale">{recoveryMessage}</StatusLine>}
           </div>
         )}

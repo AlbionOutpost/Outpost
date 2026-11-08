@@ -108,15 +108,10 @@
   grid-template-areas: "toc main";
   justify-content: center;
 }
-/* The contents: a quiet card of its own, held in view while reading */
+/* The contents and the rail: surfaces of their own (`.raised`), held in view while reading */
 .toc,
 .factCard {
   padding: var(--space-5);
-  border: 1px solid var(--raised-edge);
-  border-top-color: var(--raised-edge-top);
-  border-radius: var(--radius-lg);
-  background: var(--surface-raised);
-  box-shadow: 0 18px 32px -24px #000;
 }
 .toc {
   grid-area: toc;
@@ -587,16 +582,13 @@
   padding: 0;
   list-style: none;
 }
+/* A link surface (`a.raised`): the shared recipe draws it and lights its edge on hover */
 :global(.app.outpost) .relatedCard {
   display: grid;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--raised-edge);
-  border-radius: var(--radius-lg);
-  background: var(--surface-raised);
   color: var(--secondary);
   text-decoration: none;
-  box-shadow: 0 18px 32px -24px #000;
 }
 .relatedCard img {
   display: block;
@@ -656,18 +648,6 @@
   }
   .cover img {
     animation: guide-cover-settle 1400ms var(--ease-out-expo) both;
-  }
-  :global(.app.outpost) .relatedCard {
-    transition:
-      scale 340ms var(--ease-out-expo),
-      border-color 200ms ease;
-  }
-  :global(.app.outpost) .relatedCard:hover {
-    scale: 1.022;
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  }
-  :global(.app.outpost) .relatedCard:active {
-    scale: 0.985;
   }
   @keyframes guide-cover-settle {
     from {
