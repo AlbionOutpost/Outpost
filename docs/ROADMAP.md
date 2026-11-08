@@ -4,6 +4,10 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Legal page unpublished — 8 November 2026
+
+- `/legal` (notice, privacy, terms) is off until the operator details are final (owner's decision): it answers 404, the footer and sign-in links are hidden and `llms.txt` no longer lists it. Turn it back on with `legalPublished` in `src/lib/legal.ts`; `e2e/legal.spec.ts` runs again automatically.
+
 ## Black Market board, Profitable crafts, watchlist changes — 8 November 2026
 
 - **Black Market board** (`/tools/black-market`): one gear category over a tier range at one enchantment and quality; each item's cheapest player-city sell order beside the Black Market's buy order, net after the player's tax (Premium 4% / No premium 8%, editable), margin and both observation ages, best net first. Items without both orders are listed last as unavailable, never as zero. Each row opens Market Explorer and plans the haul in the transport calculator.

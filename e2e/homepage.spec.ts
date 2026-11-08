@@ -720,10 +720,8 @@ test("membership callout precedes activity discovery and the footer keeps its na
   for (const link of await footerNavigation.getByRole("link").all())
     expect(await link.getAttribute("href")).toMatch(/^\/[a-z]/);
   await expect(footer.getByRole("link", { name: /Supporter/ })).toHaveCount(0);
-  await expect(footer.getByRole("link", { name: "Privacy & terms", exact: true })).toHaveAttribute(
-    "href",
-    "/legal",
-  );
+  // The legal page is unpublished until the operator details are final (src/lib/legal.ts).
+  await expect(footer.getByRole("link", { name: "Privacy & terms", exact: true })).toHaveCount(0);
   await expect(footer).toContainText("Not affiliated with or endorsed by Sandbox Interactive");
   await expect(footer.getByRole("link", { name: "Outpost home", exact: true })).toBeVisible();
   await expect(

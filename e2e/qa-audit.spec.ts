@@ -72,7 +72,6 @@ test("audit page layouts, accessibility and local browser timings", async ({ pag
         `/builds/${build.id}`,
         `/builds/${build.id}/edit`,
         "/settings",
-        "/legal",
       ]) {
         await page.setViewportSize({ width, height: 1000 });
         const response = await page.goto(route);

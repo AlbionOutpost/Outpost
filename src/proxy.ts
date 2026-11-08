@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adsActive } from "@/components/adsense-loader";
+import { legalPublished } from "@/lib/legal";
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const dev = process.env.NODE_ENV === "development";
@@ -29,7 +30,12 @@ export function proxy(request: NextRequest) {
   headers.delete("x-outpost-region");
   const asked = request.nextUrl.searchParams.get("region");
   if (asked && /^(europe|americas|asia)$/.test(asked)) headers.set("x-outpost-region", asked);
-  const response = NextResponse.next({ request: { headers } });
+  // While the legal page is unpublished it answers a real 404 (the page's own notFound() can only
+  // show the 404 page after the status is sent).
+  const response =
+    !legalPublished && request.nextUrl.pathname === "/legal"
+      ? NextResponse.rewrite(new URL("/_unpublished/legal", request.url), { request: { headers } })
+      : NextResponse.next({ request: { headers } });
   response.headers.set("Content-Security-Policy", policy);
   response.headers.set("Cache-Control", "private, no-store");
   if (process.env.NEXTAUTH_URL?.startsWith("https://"))
