@@ -438,3 +438,42 @@ test("the sticky result never covers the details under a calculator", async ({ p
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
   }
 });
+
+test("a price that loads while the player is in its field never splices into what they type", async ({
+  page,
+}) => {
+  // The observed sale price lands after the player has clicked into the field; their typing
+  // must replace it, not be appended to it (2,982 + 3000 read as 29,823,000).
+  let release = () => {};
+  const held = new Promise<void>((resolve) => (release = resolve));
+  const observedAt = new Date().toISOString();
+  const observed = (value: number) => ({
+    value,
+    manual: false,
+    observedAt,
+    region: "europe",
+    city: "Lymhurst",
+    quality: 1,
+  });
+  await page.route("**/api/economy/prices?**", async (route) => {
+    await held;
+    await route.fulfill({
+      json: {
+        prices: { T4_METALBAR: observed(31), T4_PLANKS: observed(22), T4_MAIN_AXE: observed(2982) },
+      },
+    });
+  });
+  await page.goto("/tools/crafting?region=europe");
+  await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
+  await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
+  const output = page.getByLabel("Output unit sale price", { exact: true });
+  await output.click();
+  const loaded = page.waitForResponse("**/api/economy/prices?**");
+  release();
+  await loaded;
+  await page.keyboard.type("3000");
+  await expect(output).toHaveValue("3,000");
+  await expectResultText(page.locator("output[data-result=total-profit]"), "1,000", {
+    exact: true,
+  });
+});

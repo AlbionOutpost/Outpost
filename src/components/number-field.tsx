@@ -63,6 +63,7 @@ export function NumberField({
   silver = false,
   name,
   onBlur,
+  onFocus,
   onKeyDown,
   required,
   ...props
@@ -78,9 +79,18 @@ export function NumberField({
   // Typed since the value last came in: only then does leaving the field tidy and clamp it, so a
   // derived value (36.70886…) shown rounded is never replaced by its rounding just by focusing.
   const [edited, setEdited] = useState(false);
+  // While the player is in the field, a value arriving from elsewhere (an observed price that
+  // finished loading) waits until they leave it: replacing the text under the caret would splice
+  // their keystrokes onto it ("2,982" + "3000" → 29,823,000).
+  const [focused, setFocused] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const caret = useRef<number | null>(null);
-  if (controlled && incoming !== reported && !(incoming === null && reported === null)) {
+  if (
+    controlled &&
+    !focused &&
+    incoming !== reported &&
+    !(incoming === null && reported === null)
+  ) {
     // The parent set a new value (a preset, a reset, a loaded scenario): show it.
     setReported(incoming);
     setCurrent(incoming);
@@ -151,7 +161,12 @@ export function NumberField({
           setEdited(true);
           emit(next);
         }}
+        onFocus={(event) => {
+          setFocused(true);
+          onFocus?.(event);
+        }}
         onBlur={(event) => {
+          setFocused(false);
           if (edited) {
             const next = readNumberText(text, rules, true);
             if (next.value !== null) {
