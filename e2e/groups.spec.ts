@@ -104,7 +104,8 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
         await action(4, { action: "role-create", name: "Spy", color: "red", permissions: [] })
       ).status(),
     ).toBe(404);
-    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    // Invitations and requests live with the roster; Settings sits behind the gear
+    await page.getByRole("tab", { name: "Members", exact: true }).click();
     await page.getByRole("button", { name: "Create invitation", exact: true }).click();
     const link = page.getByLabel("New invitation link");
     await expect(link).toHaveValue(/invitations\//);
@@ -191,7 +192,7 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
     await memberPage.getByRole("button", { name: "Request membership" }).click();
     await expect(memberPage.getByRole("status")).toContainText("Membership request saved");
     await page.reload();
-    await page.getByRole("tab", { name: "Settings", exact: true }).click();
+    await page.getByRole("tab", { name: "Members", exact: true }).click();
     await page.getByRole("button", { name: "Approve Guild tester 3" }).click();
     await expect.poll(() => db.groupMember.count({ where: { groupId, userId: ids[3] } })).toBe(1);
     expect(await held(ids[3])).toEqual(["Member"]);
@@ -332,7 +333,13 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
       },
     });
     await page.reload();
-    await page.getByRole("tab", { name: "Builds", exact: true }).click();
+    // Comps and Builds share the Loadouts tab; the old #team-builds link opens its Builds view
+    await page.getByRole("tab", { name: "Loadouts", exact: true }).click();
+    await page
+      .getByRole("navigation", { name: "Loadouts" })
+      .getByRole("link", { name: /^Builds/ })
+      .click();
+    await expect(page).toHaveURL(/#team-builds$/);
     await page.getByLabel("Build to share").selectOption(sourceBuild.id);
     await page.getByRole("button", { name: "Share build snapshot" }).click();
     await expect(page.getByRole("heading", { name: "Private source loadout" })).toBeVisible();
@@ -356,6 +363,21 @@ test("guild invitations, requests, roles, resources, events and ownership enforc
       officerPage.getByRole("heading", { name: "Guild training operation" }),
     ).toBeVisible();
     await memberPage.reload();
+    // A plain member gets no gear; the old Comps link still opens Loadouts on its comps
+    await expect(memberPage.getByRole("button", { name: "Team settings" })).toHaveCount(0);
+    // A fresh load, as an old bookmark would be (a same-page hash jump during hydration races
+    // the router's own URL write)
+    await memberPage.goto("about:blank");
+    await memberPage.goto(`/groups/${slug}#team-comps`);
+    await expect(memberPage.getByRole("tab", { name: "Loadouts", exact: true })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(
+      memberPage
+        .getByRole("navigation", { name: "Loadouts" })
+        .getByRole("link", { name: /^Comps/ }),
+    ).toHaveAttribute("aria-current", "page");
     await memberPage.getByRole("tab", { name: "Events", exact: true }).click();
     await memberPage.getByLabel("RSVP for Guild training operation").selectOption("MAYBE");
     await memberPage.getByLabel("Your role", { exact: true }).fill("Healer");

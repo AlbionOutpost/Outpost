@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { landingActivities, summariseActivities } from "@/lib/library-activities";
+import {
+  landingActivities,
+  summariseActivities,
+  summariseCompWeapons,
+} from "@/lib/library-activities";
 import type { LibraryBuild } from "@/lib/grind-library-types";
 
 const build = (id: string, category: string, upvotes: number, weapon: string) =>
@@ -43,5 +47,36 @@ describe("landing activity summary", () => {
     expect(landingActivities).not.toContain("ZVZ");
     expect(summary.map((a) => a.category)).toEqual([...landingActivities]);
     expect(summary.every((a) => a.builds === 0 && a.top.length === 0)).toBe(true);
+  });
+});
+
+describe("summariseCompWeapons", () => {
+  const build = (id: string, itemId: string, weaponName = itemId) => ({
+    id,
+    weaponName,
+    equipment: [{ slot: "Main hand", itemId, quality: 1 }] as never,
+  });
+  const builds = [
+    build("a", "T8_MAIN_HOLYSTAFF_AVALON", "Hallowfall"),
+    build("b", "T8_2H_AXE_AVALON", "Realmbreaker"),
+    build("c", "T8_MAIN_HOLYSTAFF_AVALON", "Hallowfall"),
+  ];
+  it("counts each comp's main hands once and ranks by how many comps carry them", () => {
+    const out = summariseCompWeapons(
+      [
+        { category: "ZVZ", members: ["a", "c", "b"] },
+        { category: "ZVZ", members: ["b", "missing"] },
+        { category: "ZVZ", members: ["c"] },
+      ],
+      builds,
+    );
+    // A tie reads by name
+    expect(out.ZVZ).toEqual([
+      { itemId: "T8_MAIN_HOLYSTAFF_AVALON", name: "Hallowfall", count: 2 },
+      { itemId: "T8_2H_AXE_AVALON", name: "Realmbreaker", count: 2 },
+    ]);
+  });
+  it("leaves out categories whose members are not recorded", () => {
+    expect(summariseCompWeapons([{ category: "SMALL_SCALE", members: ["x"] }], builds)).toEqual({});
   });
 });

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Dices, RotateCcw } from "lucide-react";
 import type { TeamGamesView } from "@/lib/groups/economy-service";
 import { AvatarFrame } from "./avatar-frame";
-import { EmptyWell } from "./empty-well";
 import { Field } from "./group-parts";
 import { NumberField } from "./number-field";
 import { PanelHead } from "./panel-head";
@@ -376,235 +375,229 @@ export function TeamGames({
               )}
             </p>
           </div>
-          {locked ? (
-            <StatusLine>
-              Flips and rolls open again when the team&apos;s plan is renewed.
-            </StatusLine>
-          ) : (
-            <form
-              className={styles.stack}
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (flipReady) void flip();
-              }}
-            >
-              <div className="segmented" role="group" aria-label="Flip type">
-                <button
-                  type="button"
-                  aria-pressed={mode === "duel"}
-                  onClick={() => setMode("duel")}
-                >
-                  Two players
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={mode === "call"}
-                  onClick={() => setMode("call")}
-                >
-                  Call it yourself
-                </button>
-              </div>
-              {mode === "duel" ? (
-                <>
-                  <div className={styles.sides}>
-                    <Field label={<SideLabel side="heads" />}>
-                      <WellSelect
-                        aria-label="Heads player"
-                        value={heads}
-                        onChange={(e) => setHeads(e.target.value)}
-                      >
-                        <option value="">Choose a member</option>
-                        {members.map((m) => (
-                          <option key={m.userId} value={m.userId}>
-                            {m.userId === userId ? `${m.name} (you)` : m.name}
-                          </option>
-                        ))}
-                      </WellSelect>
-                    </Field>
-                    <Field label={<SideLabel side="tails" />}>
-                      <WellSelect
-                        aria-label="Tails player"
-                        value={tails}
-                        onChange={(e) => setTails(e.target.value)}
-                      >
-                        <option value="">Choose a member</option>
-                        {members
-                          .filter((m) => m.userId !== heads)
-                          .map((m) => (
+          <div className={styles.arenaSide}>
+            {locked ? (
+              <StatusLine>
+                Flips and rolls open again when the team&apos;s plan is renewed.
+              </StatusLine>
+            ) : (
+              <form
+                className={styles.stack}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (flipReady) void flip();
+                }}
+              >
+                <div className="segmented" role="group" aria-label="Flip type">
+                  <button
+                    type="button"
+                    aria-pressed={mode === "duel"}
+                    onClick={() => setMode("duel")}
+                  >
+                    Two players
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={mode === "call"}
+                    onClick={() => setMode("call")}
+                  >
+                    Call it yourself
+                  </button>
+                </div>
+                {mode === "duel" ? (
+                  <>
+                    <div className={styles.sides}>
+                      <Field label={<SideLabel side="heads" />}>
+                        <WellSelect
+                          aria-label="Heads player"
+                          value={heads}
+                          onChange={(e) => setHeads(e.target.value)}
+                        >
+                          <option value="">Choose a member</option>
+                          {members.map((m) => (
                             <option key={m.userId} value={m.userId}>
                               {m.userId === userId ? `${m.name} (you)` : m.name}
                             </option>
                           ))}
-                      </WellSelect>
-                    </Field>
+                        </WellSelect>
+                      </Field>
+                      <Field label={<SideLabel side="tails" />}>
+                        <WellSelect
+                          aria-label="Tails player"
+                          value={tails}
+                          onChange={(e) => setTails(e.target.value)}
+                        >
+                          <option value="">Choose a member</option>
+                          {members
+                            .filter((m) => m.userId !== heads)
+                            .map((m) => (
+                              <option key={m.userId} value={m.userId}>
+                                {m.userId === userId ? `${m.name} (you)` : m.name}
+                              </option>
+                            ))}
+                        </WellSelect>
+                      </Field>
+                    </div>
+                  </>
+                ) : (
+                  <div className="segmented" role="radiogroup" aria-label="Your call">
+                    {(["heads", "tails"] as const).map((side) => (
+                      <button
+                        key={side}
+                        type="button"
+                        role="radio"
+                        aria-checked={call === side}
+                        onClick={() => setCall(side)}
+                      >
+                        <SideLabel side={side} />
+                      </button>
+                    ))}
                   </div>
-                </>
-              ) : (
-                <div className="segmented" role="radiogroup" aria-label="Your call">
-                  {(["heads", "tails"] as const).map((side) => (
-                    <button
-                      key={side}
-                      type="button"
-                      role="radio"
-                      aria-checked={call === side}
-                      onClick={() => setCall(side)}
-                    >
-                      <SideLabel side={side} />
-                    </button>
-                  ))}
+                )}
+                <div className={teams.formActions}>
+                  <button className="button primary" disabled={!!busy || !flipReady || !landed}>
+                    {busy === "flip" ? "Throwing…" : "Flip the coin"}
+                  </button>
                 </div>
+              </form>
+            )}
+            <section className={styles.flipHistory} aria-labelledby="flip-history">
+              <h3 id="flip-history" className={teams.subhead}>
+                Flip history <small>The team&apos;s last 30</small>
+              </h3>
+              {view.flips.length ? (
+                <ul className={`${teams.list} ${styles.flipList}`}>
+                  {view.flips.map((f) => (
+                    <li key={f.id} className={`well ${teams.wellRow}`}>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
+                      <img
+                        src={sideArt[f.outcome as Side]}
+                        alt={sideName[f.outcome as Side]}
+                        width={28}
+                        height={28}
+                      />
+                      <span className={teams.rowCopy}>
+                        <strong>{verdict(f).head}</strong>
+                        <small>
+                          {verdict(f).line}
+                          {f.rollId ? " · roll tie-break" : ""} · {shortTime(f.createdAt)}
+                        </small>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={teams.quietEmpty}>
+                  No coin flips yet. Flips the team throws show here.
+                </p>
               )}
-              <div className={teams.formActions}>
-                <button className="button primary" disabled={!!busy || !flipReady || !landed}>
-                  {busy === "flip" ? "Throwing…" : "Flip the coin"}
-                </button>
-              </div>
-            </form>
-          )}
+            </section>
+          </div>
         </div>
       </section>
 
-      <div className={styles.columns}>
-        <section className={`panel ${teams.panel}`} aria-labelledby="loot-rolls">
-          <PanelHead
-            id="loot-rolls"
-            emblem="trophy-gold-64w"
-            title="Loot rolls"
-            line="One roll each, 1 to 100. The highest takes the drop when an officer closes the roll."
-            actions={
-              <button
-                type="button"
-                className="pill-link is-small"
-                onClick={() => setAttempt((n) => n + 1)}
-              >
-                <RotateCcw size={14} aria-hidden="true" /> Refresh
-              </button>
-            }
-          />
-          {view.canRun && !locked && (
-            <form
-              className={`well ${styles.rollCard}`}
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const result = await play(
-                  {
-                    action: "roll-open",
-                    key: rollKey,
-                    title: title.trim(),
-                    silver: rollWhole,
-                    potShare,
-                  },
-                  "open",
-                );
-                if (result?.roll) {
-                  setRollKey(operationKey());
-                  setTitle("");
-                  setRollSilver("");
-                  setPotShare(false);
-                }
-              }}
+      <section className={`panel ${teams.panel}`} aria-labelledby="loot-rolls">
+        <PanelHead
+          id="loot-rolls"
+          emblem="trophy-gold-64w"
+          title="Loot rolls"
+          line="One roll each, 1 to 100. The highest takes the drop when an officer closes the roll."
+          actions={
+            <button
+              type="button"
+              className="pill-link is-small"
+              onClick={() => setAttempt((n) => n + 1)}
             >
-              <div className={teams.formGrid}>
-                <Field label="Drop">
-                  <input
-                    aria-label="Drop"
-                    maxLength={100}
-                    value={title}
-                    placeholder="Bloodletter 8.3, a mount, a chest key…"
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </Field>
-                <Field
-                  label="Silver to share (optional)"
-                  hint={
-                    view.canPay
-                      ? "Split evenly among everyone who rolls, into their wallets."
-                      : "Needs Manage wallet."
-                  }
-                >
-                  <NumberField
-                    aria-label="Silver to share"
-                    silver
-                    min={0}
-                    max={1e12}
-                    placeholder="None"
-                    disabled={!view.canPay}
-                    value={rollSilver}
-                    onValueChange={(v) => setRollSilver(v == null ? "" : String(v))}
-                  />
-                </Field>
-              </div>
-              {rollWhole > 0 && (
-                <label className={styles.sideLabel}>
-                  <input
-                    type="checkbox"
-                    checked={potShare}
-                    onChange={(e) => setPotShare(e.target.checked)}
-                  />
-                  The team pot takes one share
-                </label>
-              )}
-              <div className={teams.formActions}>
-                <button
-                  className="button primary"
-                  disabled={!!busy || !title.trim() || Number.isNaN(rollWhole)}
-                >
-                  {busy === "open" ? "Opening…" : "Open a roll"}
-                </button>
-              </div>
-            </form>
-          )}
-          {open.map(rollCard)}
-          {!open.length && !past.length && (
-            <EmptyWell
-              emblem="trophy-gold-64w"
-              title="No loot rolls yet"
-              line={
-                view.canRun
-                  ? "Open a roll for a drop; members roll once each and the highest takes it."
-                  : "Members with Manage loot splits open rolls for drops here."
+              <RotateCcw size={14} aria-hidden="true" /> Refresh
+            </button>
+          }
+        />
+        {view.canRun && !locked && (
+          <form
+            className={`well ${styles.rollForm}`}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const result = await play(
+                {
+                  action: "roll-open",
+                  key: rollKey,
+                  title: title.trim(),
+                  silver: rollWhole,
+                  potShare,
+                },
+                "open",
+              );
+              if (result?.roll) {
+                setRollKey(operationKey());
+                setTitle("");
+                setRollSilver("");
+                setPotShare(false);
               }
-            />
-          )}
-          {past.length > 0 && (
-            <>
-              <h3 className={teams.subhead}>Closed rolls</h3>
-              {past.map(rollCard)}
-            </>
-          )}
-        </section>
-        <section className={`panel ${teams.panel}`} aria-labelledby="flip-history">
-          <PanelHead id="flip-history" title="Flip history" line="The team's last 30 coin flips." />
-          {view.flips.length ? (
-            <ul className={teams.list}>
-              {view.flips.map((f) => (
-                <li key={f.id} className={`well ${teams.wellRow}`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
-                  <img
-                    src={sideArt[f.outcome as Side]}
-                    alt={sideName[f.outcome as Side]}
-                    width={28}
-                    height={28}
-                  />
-                  <span className={teams.rowCopy}>
-                    <strong>{verdict(f).head}</strong>
-                    <small>
-                      {verdict(f).line}
-                      {f.rollId ? " · roll tie-break" : ""} · {shortTime(f.createdAt)}
-                    </small>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyWell
-              emblem="trophy-silver-64w"
-              title="No coin flips yet"
-              line="Flips the team throws show here."
-            />
-          )}
-        </section>
-      </div>
+            }}
+          >
+            <div className={styles.rollFields}>
+              <Field label="Drop">
+                <input
+                  aria-label="Drop"
+                  maxLength={100}
+                  value={title}
+                  placeholder="Bloodletter 8.3, a mount, a chest key…"
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </Field>
+              <Field
+                label="Silver to share (optional)"
+                hint={
+                  view.canPay
+                    ? "Split evenly among everyone who rolls, into their wallets."
+                    : "Needs Manage wallet."
+                }
+              >
+                <NumberField
+                  aria-label="Silver to share"
+                  silver
+                  min={0}
+                  max={1e12}
+                  placeholder="None"
+                  disabled={!view.canPay}
+                  value={rollSilver}
+                  onValueChange={(v) => setRollSilver(v == null ? "" : String(v))}
+                />
+              </Field>
+              <button
+                className="button primary"
+                disabled={!!busy || !title.trim() || Number.isNaN(rollWhole)}
+              >
+                {busy === "open" ? "Opening…" : "Open a roll"}
+              </button>
+            </div>
+            {rollWhole > 0 && (
+              <label className={styles.sideLabel}>
+                <input
+                  type="checkbox"
+                  checked={potShare}
+                  onChange={(e) => setPotShare(e.target.checked)}
+                />
+                The team pot takes one share
+              </label>
+            )}
+          </form>
+        )}
+        {open.length > 0 && <div className={styles.rollGrid}>{open.map(rollCard)}</div>}
+        {!open.length && !past.length && (
+          <p className={teams.quietEmpty}>
+            {view.canRun
+              ? "No loot rolls yet. Open one for a drop; members roll once each and the highest takes it."
+              : "No loot rolls yet. Members with Manage loot splits open rolls for drops here."}
+          </p>
+        )}
+        {past.length > 0 && (
+          <>
+            <h3 className={teams.subhead}>Closed rolls</h3>
+            <div className={styles.rollGrid}>{past.map(rollCard)}</div>
+          </>
+        )}
+      </section>
       {loadedFor !== attempt && <StatusLine>Refreshing…</StatusLine>}
     </section>
   );

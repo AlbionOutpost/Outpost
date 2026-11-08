@@ -44,3 +44,4 @@ __pycache__/
 dump.rdb
 public/sitemap.xml
 public/library/grind-activities.json
+public/library/grind-comp-weapons.json

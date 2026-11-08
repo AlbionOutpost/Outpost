@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CalendarPlus, Plus, UserPlus } from "lucide-react";
+import { ArrowLeft, CalendarPlus, Plus, Settings, UserPlus } from "lucide-react";
 import Link from "@/components/link";
 import type { GroupDashboardData } from "@/lib/groups/dashboard";
 import type { TeamPermission } from "@/lib/groups/permissions";
@@ -12,7 +12,7 @@ import { LivelyCrest } from "./team-crest";
 import { GroupOverview } from "./group-overview";
 import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
-import { GroupComps, GroupBuilds } from "./group-shared";
+import { GroupLoadouts, loadoutViewOf, loadoutViews, type LoadoutView } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
 import { GroupSettings } from "./group-settings";
 import { newLootSplitEvent } from "./team-loot-workspace";
@@ -20,31 +20,27 @@ import { TeamTreasury, treasuryViewOf, treasuryViews, type TreasuryView } from "
 import styles from "./teams.module.css";
 
 export type TeamTab =
-  | "Overview"
-  | "Events"
-  | "Members"
-  | "Comps"
-  | "Builds"
-  | "Treasury"
-  | "Announcements"
-  | "Settings";
-const tabs: TeamTab[] = [
-  "Overview",
-  "Events",
-  "Members",
-  "Comps",
-  "Builds",
-  "Treasury",
-  "Announcements",
-  "Settings",
-];
+  "Overview" | "Events" | "Members" | "Loadouts" | "Treasury" | "Announcements" | "Settings";
+/** The strip of tabs; Settings sits behind the masthead's gear and keeps its own link. */
+const tabs: TeamTab[] = ["Overview", "Events", "Members", "Loadouts", "Treasury", "Announcements"];
 const tabHash = (name: string) => `#team-${name.toLowerCase()}`;
 const tabId = (name: string) => `guild-tab-${name}`;
-/** The tab (and Treasury view) a hash opens; old Loot, Wallet and Rolls links open the Treasury. */
-function routeOf(hash: string): { tab: TeamTab; view: TreasuryView } {
+type Route = { tab: TeamTab; view: TreasuryView; loadouts: LoadoutView };
+/**
+ * The tab (and Treasury or Loadouts view) a hash opens. Old links still land: the Loot, Wallet
+ * and Rolls tabs open the Treasury, the Comps and Builds tabs open Loadouts, Settings its page.
+ */
+function routeOf(hash: string): Route {
   const view = treasuryViewOf(hash);
-  if (view) return { tab: "Treasury", view };
-  return { tab: tabs.find((name) => tabHash(name) === hash) || "Overview", view: "loot" };
+  if (view) return { tab: "Treasury", view, loadouts: "comps" };
+  const loadouts = loadoutViewOf(hash);
+  if (loadouts) return { tab: "Loadouts", view: "loot", loadouts };
+  if (hash === tabHash("Settings")) return { tab: "Settings", view: "loot", loadouts: "comps" };
+  return {
+    tab: tabs.find((name) => tabHash(name) === hash) || "Overview",
+    view: "loot",
+    loadouts: "comps",
+  };
 }
 
 function subscribeTeamHash(callback: () => void) {
@@ -71,7 +67,7 @@ export type TeamContext = {
   /** The time the page was rendered on the server, so upcoming/past splits match on hydration. */
   now: number;
   run: (action: Record<string, unknown>) => Promise<boolean>;
-  setTab: (tab: TeamTab) => void;
+  setTab: (tab: TeamTab, view?: TreasuryView | LoadoutView) => void;
   newEvent: () => void;
 };
 
@@ -117,16 +113,22 @@ export function GroupDashboard({
   const [eventOpen, setEventOpen] = useState(false);
   const [eventFilter, setEventFilter] = useState("upcoming");
   const hash = useSyncExternalStore(subscribeTeamHash, teamHash, () => "");
-  const { tab, view } = routeOf(hash);
-  // `?tab=treasury&view=wallet` links land on the same place as their hash.
+  const { tab, view, loadouts } = routeOf(hash);
+  // `?tab=treasury&view=wallet` links land on the same place as their hash; so do the old
+  // `?tab=comps`, `?tab=builds` and `?tab=settings`.
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
-    const name = tabs.find((t) => t.toLowerCase() === query.get("tab")?.toLowerCase());
-    if (!name) return;
+    const asked = query.get("tab")?.toLowerCase();
+    if (!asked) return;
     const target =
-      name === "Treasury"
+      asked === "treasury"
         ? (treasuryViews.find((v) => v.key === query.get("view")) ?? treasuryViews[0]).hash
-        : tabHash(name);
+        : asked === "comps" || asked === "builds"
+          ? `#team-${asked}`
+          : [...tabs, "Settings"].some((t) => t.toLowerCase() === asked)
+            ? `#team-${asked}`
+            : null;
+    if (!target) return;
     query.delete("tab");
     query.delete("view");
     const rest = query.toString();
@@ -139,13 +141,21 @@ export function GroupDashboard({
   }, []);
   // On phones the tab row scrolls; keep the open tab in view
   useEffect(() => {
-    document.getElementById(tabId(tab))?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    // Sideways only: the page itself never jumps to the strip
+    const button = document.getElementById(tabId(tab));
+    const strip = button?.parentElement;
+    if (!button || !strip || strip.scrollWidth <= strip.clientWidth) return;
+    const left = button.offsetLeft - strip.offsetLeft;
+    if (left < strip.scrollLeft || left + button.offsetWidth > strip.scrollLeft + strip.clientWidth)
+      strip.scrollTo({ left: left - 16 });
   }, [tab]);
-  function setTab(name: TeamTab, treasury?: TreasuryView) {
+  function setTab(name: TeamTab, sub?: TreasuryView | LoadoutView) {
     const target =
       name === "Treasury"
-        ? treasuryViews.find((v) => v.key === (treasury ?? view))!.hash
-        : tabHash(name);
+        ? treasuryViews.find((v) => v.key === ((sub as TreasuryView) ?? view))!.hash
+        : name === "Loadouts"
+          ? loadoutViews.find((v) => v.key === ((sub as LoadoutView) ?? loadouts))!.hash
+          : tabHash(name);
     if (window.location.hash === target) return;
     window.history.pushState(null, "", target);
     window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -154,6 +164,13 @@ export function GroupDashboard({
   // Removing members never locks, so a lapsed team can still be wound down.
   const can = (key: TeamPermission) =>
     (access.owner || access.permissions.includes(key)) && (!gate || key === "removeMembers");
+  // The gear shows to those who run the team: the owner, Manage team, and Manage roles (whose
+  // roles editor lives there). Anyone can still open `#team-settings`; the server re-checks
+  // every change it makes.
+  const runsTeam =
+    access.owner ||
+    access.permissions.includes("manageTeam") ||
+    access.permissions.includes("manageRoles");
   async function run(action: Record<string, unknown>) {
     setBusy(true);
     setError("");
@@ -219,7 +236,6 @@ export function GroupDashboard({
         type="button"
         className="button primary"
         onClick={() => {
-          setTab("Settings");
           requestAnimationFrame(() =>
             document.getElementById("team-invites")?.scrollIntoView({ block: "center" }),
           );
@@ -240,54 +256,73 @@ export function GroupDashboard({
         // A player-named title: no ember accent word on someone else's words
         title={group.name}
         description={group.description || "A Team workspace on Outpost."}
-        actions={primary}
+        actions={
+          runsTeam || primary ? (
+            <>
+              {runsTeam && (
+                <button
+                  type="button"
+                  id={tabId("Settings")}
+                  className={`button secondary ${styles.gear}`}
+                  aria-label="Team settings"
+                  title="Team settings"
+                  aria-pressed={tab === "Settings"}
+                  onClick={() => setTab(tab === "Settings" ? "Overview" : "Settings")}
+                >
+                  <Settings size={19} aria-hidden="true" />
+                </button>
+              )}
+              {primary}
+            </>
+          ) : undefined
+        }
       >
-        <TeamChips
-          region={group.region}
-          visibility={group.visibility}
-          members={data.memberCount}
-          recruiting={group.recruiting}
-        >
-          <span className="landing-chip is-muted">
-            Your role:{" "}
-            {topRoleName(
-              access.owner,
-              data.roles,
-              data.members.find((m) => m.userId === userId)?.roleIds ?? [],
-            )}
-          </span>
-          {/* What the team plays rides the same row: the tabs stay in the first screen */}
-          <TeamActivities list={decodeActivities(group.activities)} />
-        </TeamChips>
-        <div className={styles.tabRow}>
-          <Link className={styles.backTab} href="/groups">
+        <div className={styles.mastRow}>
+          <Link className="pill-link is-small" href="/groups">
             <ArrowLeft size={14} aria-hidden="true" /> All teams
           </Link>
-          <nav className={styles.tabs} role="tablist" aria-label="Team workspace">
-            {tabs.map((name, i) => (
-              <button
-                type="button"
-                role="tab"
-                id={tabId(name)}
-                aria-controls="guild-tab-panel"
-                aria-selected={tab === name}
-                tabIndex={tab === name ? 0 : -1}
-                key={name}
-                onClick={() => setTab(name)}
-                onKeyDown={(e) => {
-                  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-                  e.preventDefault();
-                  const next =
-                    tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
-                  setTab(next);
-                  document.getElementById(tabId(next))?.focus();
-                }}
-              >
-                {name}
-              </button>
-            ))}
-          </nav>
+          <TeamChips
+            region={group.region}
+            visibility={group.visibility}
+            members={data.memberCount}
+            recruiting={group.recruiting}
+          >
+            <span className="landing-chip is-muted">
+              Your role:{" "}
+              {topRoleName(
+                access.owner,
+                data.roles,
+                data.members.find((m) => m.userId === userId)?.roleIds ?? [],
+              )}
+            </span>
+            {/* What the team plays rides the same row: the tabs stay in the first screen */}
+            <TeamActivities list={decodeActivities(group.activities)} />
+          </TeamChips>
         </div>
+        <nav className={styles.tabs} role="tablist" aria-label="Team workspace">
+          {tabs.map((name, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={tabId(name)}
+              aria-controls="guild-tab-panel"
+              aria-selected={tab === name}
+              tabIndex={tab === name || (tab === "Settings" && i === 0) ? 0 : -1}
+              key={name}
+              onClick={() => setTab(name)}
+              onKeyDown={(e) => {
+                if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+                e.preventDefault();
+                const next =
+                  tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+                setTab(next);
+                document.getElementById(tabId(next))?.focus();
+              }}
+            >
+              {name}
+            </button>
+          ))}
+        </nav>
       </WorkspaceHeading>
       {gate}
       {error && (
@@ -298,7 +333,12 @@ export function GroupDashboard({
       <p role="status" className={message ? styles.saved : "sr-only"}>
         {message}
       </p>
-      <div id="guild-tab-panel" role="tabpanel" aria-labelledby={tabId(tab)}>
+      <div
+        id="guild-tab-panel"
+        role="tabpanel"
+        aria-labelledby={tab === "Settings" ? undefined : tabId(tab)}
+        aria-label={tab === "Settings" ? "Team settings" : undefined}
+      >
         {/* Kept mounted so an unsaved split survives switching tabs */}
         <div hidden={tab !== "Treasury"}>
           <TeamTreasury
@@ -319,13 +359,12 @@ export function GroupDashboard({
         {tab === "Events" && (
           <GroupEvents ctx={ctx} filter={eventFilter} onFilter={setEventFilter} />
         )}
-        {tab === "Members" && <GroupMembers ctx={ctx} />}
-        {tab === "Comps" && <GroupComps ctx={ctx} />}
-        {tab === "Builds" && <GroupBuilds ctx={ctx} />}
-        {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
-        {tab === "Settings" && (
-          <GroupSettings ctx={ctx} inviteLink={inviteLink} profile={profile} />
+        {tab === "Members" && <GroupMembers ctx={ctx} inviteLink={inviteLink} />}
+        {tab === "Loadouts" && (
+          <GroupLoadouts ctx={ctx} view={loadouts} onView={(next) => setTab("Loadouts", next)} />
         )}
+        {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
+        {tab === "Settings" && <GroupSettings ctx={ctx} profile={profile} />}
       </div>
       {can("manageEvents") && (
         <GroupEventDialog ctx={ctx} open={eventOpen} onClose={() => setEventOpen(false)} />

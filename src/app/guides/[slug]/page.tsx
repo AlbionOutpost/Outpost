@@ -60,6 +60,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const date = guideDate(guide.updatedAt);
   const journal = guide.slug === "albion-journal-guide";
   const minutes = readingMinutes(guide.content);
+  const sectionCount = guideSections(guide.content).sections.length;
   const cover = guide.cover && (
     <figure className={styles.cover}>
       {/* eslint-disable-next-line @next/next/no-img-element -- static cover with its own srcset */}
@@ -93,9 +94,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         }
         actions={cover}
       >
+        {/* What the old "About this guide" card said, read at a glance under the title */}
         <ul className={`landing-chips ${styles.chips}`} aria-label="About this guide">
           <li className="landing-chip">{guide.category}</li>
           {!journal && <li className="landing-chip is-muted">{minutes} min read</li>}
+          {!journal && sectionCount > 0 && (
+            <li className="landing-chip is-muted">{sectionCount} sections</li>
+          )}
           <li className="landing-chip is-muted">
             {date ? (
               <time dateTime={guide.updatedAt}>{`Updated ${date}`}</time>
@@ -103,9 +108,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               "Date unavailable"
             )}
           </li>
+          {guide.author && <li className="landing-chip is-muted">By {guide.author}</li>}
         </ul>
         <div className={styles.mastheadActions}>
-          <Link className="pill-link is-small masthead-back" href="/guides">
+          <Link className="pill-link is-small" href="/guides">
             <ArrowLeft size={14} aria-hidden="true" /> All guides
           </Link>
           {!journal && <GuideReadingTools />}
@@ -116,8 +122,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       ) : (
         <Reader
           guide={guide}
-          minutes={minutes}
-          date={date}
           related={relatedGuides(guide, await libraryGuides())}
           tool={
             guide.slug === "fishing-leveling-guide" && (
@@ -180,22 +184,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
  * the guide uses on the right, then the guides it leads to. */
 function Reader({
   guide,
-  minutes,
-  date,
   related,
   tool,
 }: {
   guide: LibraryGuide;
-  minutes: number;
-  date: string | null;
   related: RelatedGuide[];
   tool: React.ReactNode;
 }) {
   const { intro, sections } = guideSections(guide.content);
   const refs = guideReferences(guide.content);
+  const rail = refs.tools.length > 0 || refs.items.length > 0;
   return (
     <>
-      <div className={styles.layout}>
+      <div className={styles.layout} data-rail={rail ? undefined : "none"}>
         <aside className={styles.toc} aria-labelledby="guide-contents">
           <h2 id="guide-contents">In this guide</h2>
           <GuideReader toc={guide.toc} />
@@ -258,71 +259,49 @@ function Reader({
           {tool}
           <AdSlot placement="article" />
         </div>
-        <aside className={styles.facts} aria-label="Guide details">
-          <div className={styles.factCard}>
-            <h2>About this guide</h2>
-            <dl className={styles.factList}>
-              <div>
-                <dt>Topic</dt>
-                <dd>{guide.category}</dd>
-              </div>
-              <div>
-                <dt>Reading time</dt>
-                <dd>{minutes} min</dd>
-              </div>
-              <div>
-                <dt>Sections</dt>
-                <dd>{sections.length}</dd>
-              </div>
-              <div>
-                <dt>Updated</dt>
-                <dd>{date ? <time dateTime={guide.updatedAt}>{date}</time> : "Unavailable"}</dd>
-              </div>
-              <div>
-                <dt>Written by</dt>
-                <dd>{guide.author}</dd>
-              </div>
-            </dl>
-          </div>
-          {refs.tools.length > 0 && (
+        {/* One rail: the Outpost tools and the items the guide links to */}
+        {rail && (
+          <aside className={styles.facts} aria-labelledby="guide-uses">
             <div className={styles.factCard}>
-              <h2>Tools in this guide</h2>
-              <ul className={styles.toolList}>
-                {refs.tools.map((t) => (
-                  <li key={t.href}>
-                    <Link href={t.href}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- painted tool emblem */}
-                      <img
-                        src={`/albion/icons/${t.emblem}-64w.webp`}
-                        alt=""
-                        width={32}
-                        height={32}
-                        loading="lazy"
-                      />
-                      <span>{t.title}</span>
-                      <ArrowRight size={14} aria-hidden="true" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <h2 id="guide-uses">Use with this guide</h2>
+              {refs.tools.length > 0 && (
+                <ul className={styles.toolList} aria-label="Tools">
+                  {refs.tools.map((t) => (
+                    <li key={t.href}>
+                      <Link href={t.href}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- painted tool emblem */}
+                        <img
+                          src={`/albion/icons/${t.emblem}-64w.webp`}
+                          alt=""
+                          width={32}
+                          height={32}
+                          loading="lazy"
+                        />
+                        <span>{t.title}</span>
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {refs.items.length > 0 && (
+                <>
+                  <h3 className={styles.railLabel}>Items</h3>
+                  <ul className={styles.itemList}>
+                    {refs.items.map((item) => (
+                      <li key={item.id}>
+                        <Link href={`/items/${encodeURIComponent(item.id)}`} title={item.name}>
+                          <ItemIcon id={item.id} size={44} />
+                          <span>{item.name}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
-          )}
-          {refs.items.length > 0 && (
-            <div className={styles.factCard}>
-              <h2>Items in this guide</h2>
-              <ul className={styles.itemList}>
-                {refs.items.map((item) => (
-                  <li key={item.id}>
-                    <Link href={`/items/${encodeURIComponent(item.id)}`} title={item.name}>
-                      <ItemIcon id={item.id} size={44} />
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </aside>
+          </aside>
+        )}
       </div>
       {related.length > 0 && (
         <section className={styles.related} aria-labelledby="guide-related">
