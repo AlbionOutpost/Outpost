@@ -309,7 +309,7 @@
   background: var(--elevated);
   border: 1px solid var(--border);
   border-radius: 6px;
-  box-shadow: 0 8px 24px #0006;
+  box-shadow: var(--shadow-surface);
   font: 400 12px/1.5 var(--font-ui);
   color: var(--muted);
 }
@@ -1177,14 +1177,11 @@
   height: 56px;
   filter: drop-shadow(0 6px 14px #000c);
 }
-.app.outpost .detail-hero.masthead .detail-hero-description {
-  color: #ddd8d0;
-}
-.app.outpost .detail-hero.masthead .detail-author-line {
-  color: #cfc8bf;
+.app.outpost .detail-hero.masthead :is(.detail-hero-description, .detail-author-line) {
+  color: var(--secondary);
 }
 .app.outpost .detail-hero.masthead .detail-author-line a:hover {
-  color: #fff;
+  color: var(--text);
 }
 .app.outpost.light
   .detail-hero.masthead
@@ -1193,7 +1190,7 @@
 }
 .app.outpost.light .detail-hero.masthead .detail-hero-tags > span {
   background: color-mix(in srgb, var(--panel) 85%, transparent);
-  border-color: #00000018;
+  border-color: var(--well-border);
   color: var(--text);
 }
 .app.outpost .detail-section-navigation {
@@ -1203,18 +1200,11 @@
 .app.outpost .detail-section-navigation > a[aria-current="location"] {
   border-color: color-mix(in srgb, var(--accent) 70%, var(--well-border));
   background: color-mix(in srgb, var(--accent) 22%, var(--well));
-  color: #fff;
+  color: var(--text);
 }
 .app.outpost.light .detail-section-navigation > a[aria-current="location"] {
   background: color-mix(in srgb, var(--accent) 10%, var(--panel));
   color: var(--accent-ink);
-}
-.app.outpost .detail-disclosure.raised,
-.app.outpost .detail-build-context.raised,
-.app.outpost .detail-inventory-panel.raised,
-.app.outpost .detail-summary-panel.raised {
-  border: 0;
-  background: var(--surface-raised);
 }
 
 /* Detail workspace finish: panel padding, hero and ability choices in the warm metal palette. */
@@ -1256,12 +1246,6 @@
 }
 .app.outpost .detail-hero-description {
   font-size: 14px;
-}
-.app.outpost:not(.light) .detail-inventory-panel {
-  background: radial-gradient(ellipse at 50% 36%, #b4864220, transparent 68%), var(--panel);
-}
-.app.outpost.light .detail-inventory-panel {
-  background: var(--panel);
 }
 @media (max-width: 700px) {
   .app.outpost .detail-workspace-grid {
@@ -1316,7 +1300,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .app.outpost .build-cost-figure > small {
   color: var(--muted);
@@ -1410,7 +1394,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .app.outpost .build-detail-page .detail-secondary-sections .detail-disclosure > summary {
   min-height: 48px;
@@ -1663,9 +1647,13 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   color: var(--text);
   text-decoration: none;
+}
+/* A row with no painted mark (the recordings) gives its copy the mark's column */
+.app.outpost .detail-feature-rows a:not(:has(> img)) {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 .app.outpost .detail-feature-rows a:hover {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
@@ -1707,7 +1695,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   cursor: pointer;
 }
 .app.outpost .detail-piece-strip button[aria-pressed="true"] {

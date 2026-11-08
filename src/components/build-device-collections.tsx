@@ -17,6 +17,7 @@ import { ReactionFeedback } from "./reaction-feedback";
 import { useOutpostRegion } from "./region-context";
 import Link from "./build-region-link";
 import { ItemIcon } from "./item-icon";
+import { regions } from "@/lib/albion/region-config";
 import { activityName } from "@/lib/grind-library-types";
 import {
   bookmarkCollection,
@@ -356,6 +357,7 @@ export function DeviceLibraryFavorites() {
             </div>
           ) : (
             <EmptyWell
+              surface
               title="No favorites match your search"
               action={
                 <button
@@ -399,6 +401,7 @@ export function DeviceLibraryFavorites() {
         </>
       ) : (
         <EmptyWell
+          surface
           emblem="strip-builds"
           title="No library builds saved yet"
           line={
@@ -482,20 +485,20 @@ export function SavedBuildFilters() {
     [message, setMessage] = useState("");
   return (
     <section className="saved-build-filters">
-      <div className="ecosystem-section-heading">
-        <div>
-          <h2>Your saved filters</h2>
-          <p>
-            Saved on this device · {region} · {filters.filters.length}/8
-          </p>
-        </div>
-      </div>
+      <SectionHeading
+        title={
+          <>
+            Saved <em>filters</em>
+          </>
+        }
+        line={`${filters.filters.length} of 8 saved on this device · ${regions[region].label}`}
+      />
       {error ? (
         <p role="alert">{error}</p>
       ) : filters.filters.length ? (
         <div className="saved-filter-list">
           {filters.filters.map((filter) => (
-            <article key={filter.id}>
+            <article key={filter.id} className="raised">
               <SlidersHorizontal size={20} />
               <div>
                 <h3>{filter.name}</h3>
@@ -531,14 +534,17 @@ export function SavedBuildFilters() {
           ))}
         </div>
       ) : (
-        <div className="ecosystem-empty">
-          <SlidersHorizontal size={28} />
-          <h3>A shortcut to your playstyle.</h3>
-          <p>Choose a weapon, activity or tag, then save the filters above the results.</p>
-          <Link className="button secondary" href="/builds">
-            Find a build
-          </Link>
-        </div>
+        <EmptyWell
+          surface
+          emblem="strip-builds"
+          title="No saved filters yet"
+          line="Pick a weapon, activity or tag on All builds, then use Save filters above the results."
+          action={
+            <Link className="button secondary" href="/builds">
+              Find a build
+            </Link>
+          }
+        />
       )}
       <p role="status">{message}</p>
     </section>
