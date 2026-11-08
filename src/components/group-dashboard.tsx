@@ -14,6 +14,7 @@ import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
 import { GroupComps, GroupBuilds } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
+import { TeamGiveaways } from "./team-giveaways";
 import { GroupSettings } from "./group-settings";
 import { newLootSplitEvent } from "./team-loot-workspace";
 import { TeamTreasury, treasuryViewOf, treasuryViews, type TreasuryView } from "./team-treasury";
@@ -323,6 +324,7 @@ export function GroupDashboard({
         {tab === "Comps" && <GroupComps ctx={ctx} />}
         {tab === "Builds" && <GroupBuilds ctx={ctx} />}
         {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
+        {tab === "Announcements" && <TeamGiveaways groupId={groupId} region={group.region} />}
         {tab === "Settings" && (
           <GroupSettings ctx={ctx} inviteLink={inviteLink} profile={profile} />
         )}

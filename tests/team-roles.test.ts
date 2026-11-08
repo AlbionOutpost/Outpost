@@ -46,7 +46,7 @@ describe("team permission resolver", () => {
       "manageRoles",
       "manageBuilds",
     ]);
-    expect(allPermissions).toBe(1023);
+    expect(allPermissions).toBe(2047);
   });
 });
 
@@ -77,7 +77,8 @@ describe("team role hierarchy", () => {
 
 describe("migration from the fixed roles", () => {
   // The old rules: editors (owner/admin/officer) shared content and invited; managers ran the team.
-  // Manage wallet came later and went to every role that could manage loot splits.
+  // Manage wallet came later and went to every role that could manage loot splits; Manage
+  // giveaways later still, to every role that could manage the team.
   const editor = [
     "inviteMembers",
     "manageEvents",
@@ -86,7 +87,7 @@ describe("migration from the fixed roles", () => {
     "manageBuilds",
     "manageWallet",
   ];
-  const manager = [...editor, "manageTeam", "manageRequests", "removeMembers"];
+  const manager = [...editor, "manageTeam", "manageRequests", "removeMembers", "manageGiveaways"];
   const seeded = Object.fromEntries(seededRoles.map((r) => [r.legacy, resolveAccess(false, [r])]));
   it("gives each old role exactly its old rights", () => {
     expect(new Set(fromMask(seeded.ADMIN.permissions))).toEqual(new Set(manager));

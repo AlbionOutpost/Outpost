@@ -77,6 +77,12 @@ export const GET = apiHandler("account.export", async () => {
         orderBy: { createdAt: "desc" },
         take: 1000,
       },
+      // The player's own giveaway entries and any place they won, not who else entered.
+      giveawayEntries: {
+        select: { giveawayId: true, winnerPosition: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 1000,
+      },
       builds: { include: { equipment: true, versions: true } },
       supporterGiftUntil: true,
       supporterGiftPermanent: true,

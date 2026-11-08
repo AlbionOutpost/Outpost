@@ -55,6 +55,11 @@ export const teamPermissions = [
     label: "Manage wallet",
     line: "Credit, debit, reset and pay out members' silver and the team pot, and pay loot into wallets.",
   },
+  {
+    key: "manageGiveaways",
+    label: "Manage giveaways",
+    line: "Start, edit and cancel the team's giveaways, and draw the winners once entries close.",
+  },
 ] as const;
 export type TeamPermission = (typeof teamPermissions)[number]["key"];
 export const permissionKeys = teamPermissions.map((p) => p.key) as TeamPermission[];
@@ -102,6 +107,7 @@ export const seededRoles = [
       "manageLoot",
       "manageBuilds",
       "manageWallet",
+      "manageGiveaways",
     ]),
     isDefault: false,
   },

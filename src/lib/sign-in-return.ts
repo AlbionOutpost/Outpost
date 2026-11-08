@@ -2,7 +2,7 @@ import { buildCompositionLaunch, compositionLaunchPath } from "./compositions/bu
 
 /** Signed-in-only pages a player can be sent back to after Discord; anything else falls back to /settings. */
 const returnPages = [
-  /^\/(?:dashboard|settings|timers|favorites|groups\/new)$/,
+  /^\/(?:dashboard|settings|timers|favorites|giveaways|groups\/new)$/,
   /^\/(?:groups|compositions)\?mine=1$/,
   /^\/admin(?:\/(?:reports|review|audit|users))?$/,
   /^\/(?:builds|compositions)\/[A-Za-z0-9_-]{1,64}\/edit$/,

@@ -254,6 +254,10 @@ export const publicPages: Record<string, [string, string]> = {
     "Albion Online market data & coverage",
     "Understand player-observed market prices, freshness, missing city data and contributing with the Albion Online Data Project client.",
   ],
+  "/giveaways": [
+    "Albion Online giveaways",
+    "Enter free Albion Online giveaways run by Outpost staff: in-game prizes, one entry per Discord account, winners drawn at random by the server after entries close.",
+  ],
   "/supporter": [
     "Support Outpost",
     "Learn about Outpost Supporter, ad-free tools and Team workspaces. Compare the available plan and account features.",
