@@ -246,7 +246,9 @@ it("serves the first page from the collector's window without asking the source"
     readAt: new Date(Date.now() - 30_000).toISOString(),
     newestAt: Date.now() - 60_000,
   };
-  const fetcher = vi.spyOn(globalThis, "fetch");
+  // Offline: page 1 never asks the source, and page 2 (thinner than the window) falls back to
+  // the window when the top-up read fails, whatever network the test runner has.
+  const fetcher = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"));
   try {
     const feed = await getCombatEvents("europe", 0);
     expect(fetcher).not.toHaveBeenCalled();
