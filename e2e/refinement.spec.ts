@@ -116,6 +116,8 @@ test("populated equipment and party controls include visible names at phone, tab
       await accessible(page);
       await page.goto(`/compositions/${comp.id}/edit`);
       await ready(page);
+      // The form is disabled until it hydrates; check it once it can take focus.
+      await expect(page.locator("[data-comp-editor]")).toHaveAttribute("aria-busy", "false");
       const member = page.getByRole("button", { name: /^Edit player 1 loadout:/ });
       await expect(member).toHaveAccessibleName(/Tank (· )?QA player 1/);
       await accessible(page);

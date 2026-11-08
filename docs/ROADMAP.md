@@ -12,6 +12,12 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Guide reader: details as hero chips, equal All guides / Print guide pills, contents and one "Use with this guide" rail aligned with the reading page.
 - Comps by activity cards overlay the three weapons their Group Builds comps carry most (player comps fill in), from a small build-time `grind-comp-weapons.json` on Cloudflare.
 
+## Editors without the duplicates — 8 November 2026
+
+- Build editor: one loadout view, Cost · board · Abilities side by side (board, abilities, cost on phones). The "Your build" slot list and the Equipment, Abilities and Cost tabs are gone; the board is the only place to pick a slot. Alternatives and Notes stay as tabs.
+- Comp editor: party size is chosen in one place (the empty party's well, then a Party size select under the board); The comp holds comp details only; Your builds appears once there is a party and says one thing; a 5-player party fits one row of smaller windows.
+- Builds pages end on their content: the Favorites "Make one yours" band and the guest editor's sign-in band are gone (a guest gets one line with Sign in).
+
 ## Black Market board, Profitable crafts, watchlist changes — 8 November 2026
 
 - **Black Market board** (`/tools/black-market`): one gear category over a tier range at one enchantment and quality; each item's cheapest player-city sell order beside the Black Market's buy order, net after the player's tax (Premium 4% / No premium 8%, editable), margin and both observation ages, best net first. Items without both orders are listed last as unavailable, never as zero. Each row opens Market Explorer and plans the haul in the transport calculator.

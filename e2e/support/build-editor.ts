@@ -7,7 +7,10 @@ export async function selectEditorSlot(
   slot: string,
   section: "Equipment" | "Abilities" | "Alternatives" = "Equipment",
 ) {
-  await page.getByRole("tab", { name: section, exact: true }).click();
+  // Pieces and abilities share the Loadout view; swaps are on Alternatives.
+  await page
+    .getByRole("tab", { name: section === "Alternatives" ? section : "Loadout", exact: true })
+    .click();
   const button = page
     .getByRole("group", { name: "Editor equipment inventory", exact: true })
     .getByRole("button", {
