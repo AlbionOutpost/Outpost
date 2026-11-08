@@ -8,7 +8,7 @@ import Link from "@/components/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
 import { ItemVariantPicker, type ItemVariant } from "./item-variant-picker";
 import { catalogBaseKey } from "@/lib/catalog/search";
-import { MarketCityTable, observedAt } from "./market-city-table";
+import { MarketCityTable, Skeleton, observedAt } from "./market-city-table";
 import { MarketQuoteHero, qualityNames } from "./market-quote-hero";
 import { MarketResearch } from "./market-research";
 import { MarketWatchlist } from "./market-watchlist";
@@ -19,13 +19,22 @@ import { MarketNextSteps } from "./market-next-steps";
 import { marketViewTabId, useMarketView } from "./market-view";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
-import { useState, useRef, useEffect, useLayoutEffect, useId, useSyncExternalStore } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useId,
+  useSyncExternalStore,
+  type RefObject,
+} from "react";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceTimestamp } from "@/lib/albion/freshness";
 import { sourceAge } from "@/lib/albion/source-age";
 import { summarizeQuotes } from "@/lib/albion/quote-summary";
 import { useOutpostRegion, useRegionNavigationPending } from "./region-context";
 import { cities } from "@/lib/albion/region-config";
+import { catalogVariantCache, marketPriceCache, withSignal } from "@/lib/client-json-cache";
 export function Market() {
   const params = useSearchParams();
   const region = useOutpostRegion();
@@ -45,6 +54,9 @@ export function Market() {
     /^[0-4]$/.test(params.get("enchantment") || "") ? params.get("enchantment")! : "",
   );
   const [quality, setQuality] = useState(params.get("quality") || "1");
+  // A typed identifier waits for the typing to pause; a pick (search, version, quick pick,
+  // quality) asks at once.
+  const [typed, setTyped] = useState(false);
   const [result, setResult] = useState<{
     key: string;
     region: string;
@@ -75,12 +87,16 @@ export function Market() {
     () => false,
   );
   const controller = useRef<AbortController | null>(null);
+  const main = useRef<HTMLDivElement | null>(null);
   const qualityControl = useRef<HTMLSelectElement | null>(null);
   const current = `${region}:${item.trim().toUpperCase()}:${quality}`;
   useEffect(() => () => controller.current?.abort(), [current]);
-  const loading = regionPending || pendingKey === current;
   const hasResult = result?.key === current;
   const hasError = error?.key === current;
+  // A valid selection without its answer is loading, including the moment before the request
+  // goes out: the panels show their skeletons, never the previous item's figures.
+  const loading =
+    regionPending || pendingKey === current || (validSelectionFor(item) && !hasResult && !hasError);
   const rows = result?.key === current ? result.rows : [];
   const summary = summarizeQuotes(rows);
   const now = result?.at ?? 0;
@@ -96,32 +112,53 @@ export function Market() {
           : a.city.localeCompare(b.city),
     );
   const selectedQuote = visible.find((row) => row.city === selectedCity);
+  const placeholderCities = cities
+    .filter(
+      (name) => (!city || name === city) && (!extraCities.length || extraCities.includes(name)),
+    )
+    .toSorted((a, b) => a.localeCompare(b));
+  // While the next item loads, a selected city keeps its detail well (its figures shimmer).
+  const inspectCity =
+    selectedQuote?.city ??
+    (loading && !hasResult && placeholderCities.includes(selectedCity as (typeof cities)[number])
+      ? selectedCity
+      : "");
   const selectedItemName = selectedName || equipmentName(item);
-  const validSelection = /^[A-Z0-9_@]{3,100}$/.test(item.trim().toUpperCase());
+  const validSelection = validSelectionFor(item);
   const familyKey = validSelection ? catalogBaseKey(item.trim().toUpperCase()) : "";
-  const variants = family?.key === familyKey ? family.rows : [];
+  // Any tier names the family; the catalog answers with every version it has.
+  const familyUrl = familyKey
+    ? `/api/items?${new URLSearchParams({ variants: `T4_${familyKey}` })}`
+    : "";
+  const knownFamily =
+    family?.key === familyKey
+      ? family.rows
+      : (catalogVariantCache.peek(familyUrl) as { items: ItemVariant[] } | undefined)?.items;
+  const variants = knownFamily ?? [];
+  // Tiered ids have versions; their picker keeps its place while the family loads.
+  const variantsPending = !knownFamily && /^T\d_/.test(item.trim().toUpperCase());
   useEffect(() => {
-    if (!familyKey) return;
+    if (!familyUrl || catalogVariantCache.peek(familyUrl)) return;
     const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      // Any tier names the family; the catalog answers with every version it has.
-      fetch(`/api/items?${new URLSearchParams({ variants: `T4_${familyKey}` })}`, {
-        signal: controller.signal,
-      })
-        .then((r) => (r.ok ? r.json() : { items: [] }))
-        .then((body: { items: ItemVariant[] }) => {
-          if (!controller.signal.aborted) setFamily({ key: familyKey, rows: body.items });
-        })
-        .catch(() => {});
-    }, 150);
+    const timer = window.setTimeout(
+      () =>
+        withSignal(catalogVariantCache.get(familyUrl), controller.signal)
+          .then((body) =>
+            setFamily({ key: familyKey, rows: (body as { items: ItemVariant[] }).items }),
+          )
+          .catch(() => {
+            if (!controller.signal.aborted) setFamily({ key: familyKey, rows: [] });
+          }),
+      typed ? 150 : 0,
+    );
     return () => {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [familyKey]);
+  }, [familyKey, familyUrl, typed]);
   const marketLabel =
     city || (extraCities.length ? `${extraCities.length} cities selected` : "All cities");
-  async function load() {
+  async function load({ fresh = false }: { fresh?: boolean } = {}) {
     // Wait for the router's push before native URL synchronization; otherwise a
     // queued refresh can replace the previous region's browser-history entry.
     if (regionPending) return;
@@ -145,20 +182,30 @@ export function Market() {
     const active = new AbortController();
     controller.current = active;
     const key = current;
-    setPendingKey(current);
+    const source = `/api/market?${new URLSearchParams({ region, item: item.trim().toUpperCase(), quality })}`;
+    type Answer = { region: string; prices: MarketPrice[] };
+    const accept = (data: Answer) => {
+      if (data.region !== region) throw new Error("Source region mismatch");
+      setResult({ key, region, rows: data.prices, at: Date.now() });
+    };
     setError(null);
+    // An answer this browser fetched within the server's own cache life shows at once.
+    const kept = fresh ? undefined : (marketPriceCache.peek(source) as Answer | undefined);
+    if (kept?.region === region) {
+      setPendingKey(null);
+      accept(kept);
+      return;
+    }
+    setPendingKey(current);
     // A refresh of the same selection keeps the current table on screen until the new
     // observations arrive; a different selection shows no rows (they are keyed by selection).
     setResult((previous) => (previous?.key === key ? previous : null));
     try {
-      const response = await fetch(
-        `/api/market?${new URLSearchParams({ region, item: item.trim().toUpperCase(), quality })}`,
-        { signal: active.signal },
-      );
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
-      if (data.region !== region) throw new Error("Source region mismatch");
-      if (!active.signal.aborted) setResult({ key, region, rows: data.prices, at: Date.now() });
+      const data = (await withSignal(
+        marketPriceCache.get(source, { fresh }),
+        active.signal,
+      )) as Answer;
+      if (!active.signal.aborted) accept(data);
     } catch (e) {
       if (!active.signal.aborted)
         setError({ key, message: e instanceof Error ? e.message : "Could not load prices" });
@@ -168,7 +215,7 @@ export function Market() {
   }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    await load();
+    await load({ fresh: true });
   }
   const loadRef = useRef(load);
   useLayoutEffect(() => {
@@ -178,9 +225,9 @@ export function Market() {
   // with ?item= or picking from the catalog shows city prices without a second click.
   useEffect(() => {
     if (!hydrated || !validSelection || regionPending) return;
-    const timer = window.setTimeout(() => void loadRef.current(), 150);
+    const timer = window.setTimeout(() => void loadRef.current(), typed ? 150 : 0);
     return () => window.clearTimeout(timer);
-  }, [current, hydrated, validSelection, regionPending]);
+  }, [current, hydrated, validSelection, regionPending, typed]);
   const newest = visible
     .flatMap((r) => [
       ...(r.sell_price_min ? [{ city: r.city, date: r.sell_price_min_date }] : []),
@@ -207,7 +254,9 @@ export function Market() {
   };
   const filtersActive =
     extraCities.length > 0 || city || tier || category || enchantment || quality !== "1";
-  const historyOpen = researchOpen ?? hasResult;
+  // History loads beside the prices (not after them), so both arrive together.
+  const historyOpen = researchOpen ?? validSelection;
+  useHeldHeights(main, loading && !hasResult);
   // Closed, the toggle is the panel's action; open, it joins Refresh on the history controls row.
   const historyToggle = (
     <button
@@ -262,21 +311,31 @@ export function Market() {
                 tier={tier}
                 enchantment={enchantment}
                 onSelect={(i) => {
+                  setTyped(false);
                   setItem(i.id);
                   setSelectedName(i.name);
                   setRailOpen(false);
                 }}
               />
-              {variants.length > 1 && (
-                <ItemVariantPicker
-                  className="mx-variants"
-                  variants={variants}
-                  current={item.trim().toUpperCase()}
-                  onSelect={(variant) => {
-                    setItem(variant.id);
-                    setSelectedName(variant.name ?? "");
-                  }}
-                />
+              {variantsPending ? (
+                // The family's versions are on their way: the picker keeps its place.
+                <div className="mx-variants-pending" inert aria-hidden="true">
+                  <ItemVariantPicker className="mx-variants" variants={[]} current="" />
+                </div>
+              ) : (
+                variants.length > 1 && (
+                  <ItemVariantPicker
+                    key={familyKey}
+                    className="mx-variants"
+                    variants={variants}
+                    current={item.trim().toUpperCase()}
+                    onSelect={(variant) => {
+                      setTyped(false);
+                      setItem(variant.id);
+                      setSelectedName(variant.name ?? "");
+                    }}
+                  />
+                )
               )}
               <div className="market-start-examples mx-picks" aria-label="Suggested market items">
                 <span>Quick picks</span>
@@ -286,7 +345,8 @@ export function Market() {
                   { id: "T4_CAPE", name: "Cape" },
                   { id: "T6_METALBAR", name: "Steel Bar" },
                 ]
-                  .filter((preset) => preset.id !== item)
+                  // By family, so a version picked of a quick pick keeps the same three here.
+                  .filter((preset) => catalogBaseKey(preset.id) !== familyKey)
                   .slice(0, 3)
                   .map((preset) => (
                     <button
@@ -294,6 +354,7 @@ export function Market() {
                       key={preset.id}
                       className="mx-pill"
                       onClick={() => {
+                        setTyped(false);
                         setItem(preset.id);
                         setSelectedName(preset.name);
                         setRailOpen(false);
@@ -310,7 +371,10 @@ export function Market() {
                     aria-label="Quality"
                     ref={qualityControl}
                     value={quality}
-                    onChange={(e) => setQuality(e.target.value)}
+                    onChange={(e) => {
+                      setTyped(false);
+                      setQuality(e.target.value);
+                    }}
                   >
                     {qualityNames.map((x, i) => (
                       <option value={i + 1} key={x}>
@@ -338,7 +402,7 @@ export function Market() {
                 disabled={!hydrated || loading || !validSelection}
               >
                 <RotateCw size={16} aria-hidden="true" />
-                {loading ? "Fetching observations…" : "Refresh prices"}
+                {hydrated && loading ? "Fetching observations…" : "Refresh prices"}
               </button>
             </form>
             <div className="mx-disclosures">
@@ -432,6 +496,7 @@ export function Market() {
                     maxLength={100}
                     value={item}
                     onChange={(e) => {
+                      setTyped(true);
                       setItem(e.target.value);
                       setSelectedName("");
                     }}
@@ -470,7 +535,8 @@ export function Market() {
                 </button>
               </div>
             )}
-            {result && result.key !== current && (
+            {/* A valid selection loads on its own; this only explains an unfinished identifier */}
+            {result && result.key !== current && !validSelection && (
               <p role="status" className="mx-note">
                 {result.region !== region ? "Region changed." : "Selection changed."} Request new
                 observations for the selected item and quality.
@@ -478,7 +544,7 @@ export function Market() {
             )}
           </fieldset>
         </aside>
-        <div className="mx-main">
+        <div className="mx-main" ref={main}>
           <div className={`raised ${styles.marketDesk}`}>
             <MarketQuoteHero
               item={item}
@@ -493,7 +559,8 @@ export function Market() {
               newest={newest}
               status={heroStatus}
               failed={hasError && !loading}
-              onRetry={() => void load()}
+              onRetry={() => void load({ fresh: true })}
+              loading={loading && !hasResult}
               now={now}
             />
             <section className="raised market-board mx-board" aria-labelledby="market-board-title">
@@ -515,7 +582,7 @@ export function Market() {
                 }
                 actions={
                   <>
-                    {hasResult && summary.available > 0 && (
+                    {((hasResult && summary.available > 0) || (loading && !hasResult)) && (
                       <div className="segmented" role="radiogroup" aria-label="Sort market prices">
                         {(
                           [
@@ -529,6 +596,7 @@ export function Market() {
                             role="radio"
                             aria-checked={sort === value}
                             key={value}
+                            disabled={!hasResult}
                             onClick={() => setSort(value)}
                           >
                             {label}
@@ -545,7 +613,7 @@ export function Market() {
                     rows={visible}
                     ask={visibleSummary.ask}
                     bid={visibleSummary.bid}
-                    selectedCity={selectedQuote?.city ?? ""}
+                    selectedCity={inspectCity}
                     onSelect={selectCity}
                     now={now}
                   />
@@ -569,11 +637,15 @@ export function Market() {
                   )}
                 </>
               )}
-              {selectedQuote && (
-                <aside className="mx-inspector" aria-label="Selected city observation">
+              {inspectCity && (
+                <aside
+                  className="mx-inspector"
+                  aria-label="Selected city observation"
+                  aria-busy={!selectedQuote}
+                >
                   <div className="mx-inspector-head">
-                    <span className="city-dot" data-city={selectedQuote.city} aria-hidden="true" />
-                    <h3>{selectedQuote.city}</h3>
+                    <span className="city-dot" data-city={inspectCity} aria-hidden="true" />
+                    <h3>{inspectCity}</h3>
                     <button type="button" className="mx-reset" onClick={() => setSelectedCity("")}>
                       Close details
                     </button>
@@ -584,16 +656,24 @@ export function Market() {
                         <dt>Sell order</dt>
                         <dd>
                           <span className="numeric">
-                            {selectedQuote.city === "Black Market"
-                              ? "Not sold here"
-                              : selectedQuote.sell_price_min
-                                ? selectedQuote.sell_price_min.toLocaleString("en-US")
-                                : "Not observed"}
+                            {inspectCity === "Black Market" ? (
+                              "Not sold here"
+                            ) : !selectedQuote ? (
+                              <Skeleton>0,000</Skeleton>
+                            ) : selectedQuote.sell_price_min ? (
+                              selectedQuote.sell_price_min.toLocaleString("en-US")
+                            ) : (
+                              "Not observed"
+                            )}
                           </span>
                           <small>
-                            {selectedQuote.sell_price_min
-                              ? `${observedAt(selectedQuote.sell_price_min_date)} UTC · ${sourceAge(selectedQuote.sell_price_min_date, now).label}`
-                              : "No observation"}
+                            {!selectedQuote ? (
+                              <Skeleton>2026-01-01 00:00 UTC · 1 min ago</Skeleton>
+                            ) : selectedQuote.sell_price_min ? (
+                              `${observedAt(selectedQuote.sell_price_min_date)} UTC · ${sourceAge(selectedQuote.sell_price_min_date, now).label}`
+                            ) : (
+                              "No observation"
+                            )}
                           </small>
                         </dd>
                       </div>
@@ -601,14 +681,22 @@ export function Market() {
                         <dt>Buy order</dt>
                         <dd>
                           <span className="numeric">
-                            {selectedQuote.buy_price_max
-                              ? selectedQuote.buy_price_max.toLocaleString("en-US")
-                              : "Not observed"}
+                            {!selectedQuote ? (
+                              <Skeleton>0,000</Skeleton>
+                            ) : selectedQuote.buy_price_max ? (
+                              selectedQuote.buy_price_max.toLocaleString("en-US")
+                            ) : (
+                              "Not observed"
+                            )}
                           </span>
                           <small>
-                            {selectedQuote.buy_price_max
-                              ? `${observedAt(selectedQuote.buy_price_max_date)} UTC · ${sourceAge(selectedQuote.buy_price_max_date, now).label}`
-                              : "No observation"}
+                            {!selectedQuote ? (
+                              <Skeleton>2026-01-01 00:00 UTC · 1 min ago</Skeleton>
+                            ) : selectedQuote.buy_price_max ? (
+                              `${observedAt(selectedQuote.buy_price_max_date)} UTC · ${sourceAge(selectedQuote.buy_price_max_date, now).label}`
+                            ) : (
+                              "No observation"
+                            )}
                           </small>
                         </dd>
                       </div>
@@ -623,38 +711,33 @@ export function Market() {
                       className="pill-link is-small"
                       onClick={() => show("history")}
                     >
-                      {selectedQuote.city} price history
+                      {inspectCity} price history
                     </button>
                   </div>
                 </aside>
               )}
-              {!hasResult &&
-                (loading ? (
-                  <div className="mx-skeleton" aria-hidden="true">
-                    {Array.from({ length: 6 }, (_, i) => (
-                      <span key={i} />
-                    ))}
-                  </div>
-                ) : (
-                  // The table keeps its shape while there is nothing to show; the hero says why.
-                  <MarketCityTable
-                    rows={cities.map((name) => ({
-                      item_id: item,
-                      city: name,
-                      quality: Number(quality),
-                      sell_price_min: 0,
-                      sell_price_min_date: "",
-                      buy_price_max: 0,
-                      buy_price_max_date: "",
-                    }))}
-                    ask={null}
-                    bid={null}
-                    selectedCity=""
-                    onSelect={() => {}}
-                    missingLabel="Unavailable"
-                    now={0}
-                  />
-                ))}
+              {!hasResult && (
+                // The table keeps its shape while there is nothing to show: one row per city in
+                // the filter, shimmering while observations load, "Unavailable" otherwise.
+                <MarketCityTable
+                  rows={placeholderCities.map((name) => ({
+                    item_id: item,
+                    city: name,
+                    quality: Number(quality),
+                    sell_price_min: 0,
+                    sell_price_min_date: "",
+                    buy_price_max: 0,
+                    buy_price_max_date: "",
+                  }))}
+                  ask={null}
+                  bid={null}
+                  selectedCity={inspectCity}
+                  onSelect={() => {}}
+                  missingLabel="Unavailable"
+                  loading={loading}
+                  now={0}
+                />
+              )}
               {hasResult && !summary.available && (
                 <EmptyWell
                   title="No orders seen for this item yet"
@@ -669,7 +752,7 @@ export function Market() {
                   }
                 />
               )}
-              {hasResult ? (
+              {hasResult || loading ? (
                 <MarketQualityAvailability
                   region={region}
                   item={item}
@@ -677,6 +760,7 @@ export function Market() {
                   quality={quality}
                   note={sourceNote}
                   onChoose={(next) => {
+                    setTyped(false);
                     setQuality(next);
                     requestAnimationFrame(() => qualityControl.current?.focus());
                   }}
@@ -705,6 +789,7 @@ export function Market() {
                 item={item}
                 quality={Number(quality)}
                 autoLoad
+                delay={typed ? 150 : 0}
                 embedded
                 city={historyCity}
                 onCityChange={setHistoryCity}
@@ -798,4 +883,25 @@ export function Market() {
       <MarketNextSteps show={["flipping", "crafting", "planner"]} />
     </>
   );
+}
+
+const validSelectionFor = (item: string) => /^[A-Z0-9_@]{3,100}$/.test(item.trim().toUpperCase());
+
+/** While the next selection loads, the hero, the City orders well and Price history keep at
+ * least the height they had with the last answer. The skeletons match the answer's shape; this
+ * covers what they cannot know, such as ages that wrap to a second line in a phone's narrow
+ * cells, so a switch never collapses a panel. */
+const heldPanels = [".mx-hero", ".mx-board > .mx-table-well", ".mx-history"];
+function useHeldHeights(root: RefObject<HTMLElement | null>, holding: boolean) {
+  const heights = useRef<number[]>([]);
+  useLayoutEffect(() => {
+    heldPanels.forEach((selector, i) => {
+      const panel = root.current?.querySelector<HTMLElement>(selector);
+      if (!panel) return;
+      if (!holding) {
+        panel.style.minHeight = "";
+        heights.current[i] = panel.getBoundingClientRect().height;
+      } else if (heights.current[i]) panel.style.minHeight = `${heights.current[i]}px`;
+    });
+  });
 }

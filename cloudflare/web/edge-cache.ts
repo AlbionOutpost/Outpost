@@ -5,14 +5,19 @@
  * and Teams) always goes to the app.
  *
  * Search returns user-made public builds and comps, so its TTL is short: a build made private or
- * hidden by moderation drops out of signed-out search within two minutes. */
+ * hidden by moderation drops out of signed-out search within two minutes.
+ *
+ * Market Explorer's two reads keep their server cache lives: prices 60 s, history 5 min. */
 import {
   craftCategoryIds,
   gearCategoryIds,
   type CraftCategory,
 } from "../../src/lib/albion/craft-categories";
+import { cities } from "../../src/lib/albion/region-config";
 
 const regions = new Set(["europe", "americas", "asia"]);
+const itemId = /^[A-Z0-9_@]{3,100}$/;
+const marketCities = new Set<string>(cities);
 type Rule = { ttl: number; key: (params: URLSearchParams) => string | null };
 const rules: Record<string, Rule> = {
   "/api/search": {
@@ -75,6 +80,31 @@ const rules: Record<string, Rule> = {
         /^[0-4]$/.test(enchantment) &&
         /^[1-5]$/.test(quality)
         ? `region=${region}&category=${category}&fromTier=${from}&toTier=${to}&enchantment=${enchantment}&quality=${quality}`
+        : null;
+    },
+  },
+  "/api/market": {
+    ttl: 60,
+    key: (params) => {
+      const [region, item, quality] = ["region", "item", "quality"].map((k) => params.get(k) || "");
+      return regions.has(region) && itemId.test(item) && /^[1-5]$/.test(quality)
+        ? `region=${region}&item=${encodeURIComponent(item)}&quality=${quality}`
+        : null;
+    },
+  },
+  "/api/history": {
+    ttl: 300,
+    key: (params) => {
+      const [kind, region, item, city, quality] = ["kind", "region", "item", "city", "quality"].map(
+        (k) => params.get(k) || "",
+      );
+      if (!regions.has(region)) return null;
+      if (kind === "gold") return `kind=gold&region=${region}`;
+      return kind === "history" &&
+        itemId.test(item) &&
+        marketCities.has(city) &&
+        /^[1-5]$/.test(quality)
+        ? `kind=history&region=${region}&item=${encodeURIComponent(item)}&city=${encodeURIComponent(city)}&quality=${quality}`
         : null;
     },
   },

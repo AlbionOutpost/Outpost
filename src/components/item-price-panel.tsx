@@ -12,6 +12,7 @@ import { MarketQuoteHero } from "./market-quote-hero";
 import { MarketCityTable } from "./market-city-table";
 import { EmptyWell } from "./empty-well";
 import { PanelHead } from "./panel-head";
+import { marketPriceCache, withSignal } from "@/lib/client-json-cache";
 
 type State =
   | { status: "loading"; key: string }
@@ -34,12 +35,16 @@ export function ItemPricePanel({ id, name }: { id: string; name: string }) {
   const [selectedCity, setSelectedCity] = useState("");
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`/api/market?${new URLSearchParams({ region, item: id, quality: String(quality) })}`, {
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Could not load prices");
+    // Shared with Market Explorer: opening the item there reuses this answer. Try again asks anew.
+    withSignal(
+      marketPriceCache.get(
+        `/api/market?${new URLSearchParams({ region, item: id, quality: String(quality) })}`,
+        { fresh: attempt > 0 },
+      ),
+      controller.signal,
+    )
+      .then((answer) => {
+        const data = answer as { region: string; prices: MarketPrice[] };
         if (data.region !== region) throw new Error("Source region mismatch");
         setSettled({ status: "ready", key, rows: data.prices as MarketPrice[], at: Date.now() });
       })
@@ -48,7 +53,7 @@ export function ItemPricePanel({ id, name }: { id: string; name: string }) {
         setSettled({ status: "error", key });
       });
     return () => controller.abort();
-  }, [region, id, key]);
+  }, [region, id, key, attempt]);
   const ready = state.status === "ready";
   const rows = ready ? state.rows.toSorted((a, b) => a.city.localeCompare(b.city)) : [];
   const now = ready ? state.at : 0;
@@ -98,17 +103,12 @@ export function ItemPricePanel({ id, name }: { id: string; name: string }) {
           state.status === "loading" ? "Checking the markets…" : "Prices could not load right now."
         }
         failed={state.status === "error"}
+        loading={state.status === "loading"}
         onRetry={() => setAttempt((n) => n + 1)}
         now={now}
       />
       <div className="market-board">
-        {state.status === "loading" ? (
-          <div className="mx-skeleton" aria-hidden="true">
-            {Array.from({ length: 6 }, (_, i) => (
-              <span key={i} />
-            ))}
-          </div>
-        ) : ready && !summary.available ? (
+        {ready && !summary.available ? (
           <EmptyWell
             title="No orders seen for this item yet"
             line="Prices appear once a player running the Albion Online Data Project client opens this market. A gap is not a zero price."
@@ -126,21 +126,24 @@ export function ItemPricePanel({ id, name }: { id: string; name: string }) {
             rows={
               ready
                 ? rows
-                : cities.map((city) => ({
-                    item_id: id,
-                    city,
-                    quality,
-                    sell_price_min: 0,
-                    sell_price_min_date: "",
-                    buy_price_max: 0,
-                    buy_price_max_date: "",
-                  }))
+                : cities
+                    .toSorted((a, b) => a.localeCompare(b))
+                    .map((city) => ({
+                      item_id: id,
+                      city,
+                      quality,
+                      sell_price_min: 0,
+                      sell_price_min_date: "",
+                      buy_price_max: 0,
+                      buy_price_max_date: "",
+                    }))
             }
             ask={summary.ask}
             bid={summary.bid}
             selectedCity={selectedCity}
             onSelect={setSelectedCity}
             missingLabel={ready ? undefined : "Unavailable"}
+            loading={state.status === "loading"}
             now={now}
           />
         )}

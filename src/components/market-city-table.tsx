@@ -25,9 +25,12 @@ export function MarketCityTable({
   selectedCity,
   onSelect,
   missingLabel,
+  loading = false,
   now,
 }: {
   rows: MarketPrice[];
+  /** Placeholder rows while observations load: every figure is a shimmering stand-in. */
+  loading?: boolean;
   /** Placeholder rows (nothing loaded): every price says this instead of "No sell order". */
   missingLabel?: string;
   ask: MarketPrice | null;
@@ -89,6 +92,7 @@ export function MarketCityTable({
                     <Missing label="Buys from players only" />
                   ) : (
                     <Price
+                      loading={loading}
                       value={r.sell_price_min}
                       date={r.sell_price_min_date}
                       best={ask === r ? "Lowest" : null}
@@ -99,6 +103,7 @@ export function MarketCityTable({
                 </td>
                 <td className="numeric" data-label="Buy order">
                   <Price
+                    loading={loading}
                     value={r.buy_price_max}
                     date={r.buy_price_max_date}
                     best={bid === r ? "Highest" : null}
@@ -107,7 +112,9 @@ export function MarketCityTable({
                   />
                 </td>
                 <td className="numeric mx-spread-col">
-                  {spread == null ? (
+                  {loading ? (
+                    <Skeleton>+0.0%</Skeleton>
+                  ) : spread == null ? (
                     <span className="market-price-missing">
                       —<span className="sr-only"> Unavailable</span>
                     </span>
@@ -132,14 +139,26 @@ function Price({
   date,
   best,
   missing,
+  loading,
   now,
 }: {
   value: number;
   date: string;
   best: string | null;
   missing: string;
+  loading: boolean;
   now: number;
 }) {
+  // The stand-in has the figure's own line boxes, so the row keeps its height when it lands.
+  if (loading)
+    return (
+      <span className="mx-price">
+        <Skeleton>0,000</Skeleton>
+        <small className="market-inline-time">
+          <Skeleton>1 min ago</Skeleton>
+        </small>
+      </span>
+    );
   if (!value) return <Missing label={missing} />;
   const age = sourceAge(date, now);
   // The figure comes first for assistive tech; the row lays it out at the right edge.
@@ -167,6 +186,16 @@ function Missing({ label }: { label: string }) {
     <span className="mx-price is-missing">
       <span className="market-price-missing">—</span>
       <small className="market-inline-time">{label}</small>
+    </span>
+  );
+}
+
+/** A shimmering stand-in shaped by its (invisible) sample text; static under reduced motion.
+ * Hidden from assistive tech, which hears the surrounding status instead. */
+export function Skeleton({ children }: { children: string }) {
+  return (
+    <span className="mx-skel" aria-hidden="true">
+      {children}
     </span>
   );
 }

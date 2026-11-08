@@ -58,8 +58,9 @@ export function mergeMasteryLevels(
   account: Record<string, number>,
   device: Record<string, number>,
 ) {
-  const merged: Record<string, number> = {};
+  // No prototype: a spec key such as "constructor" must read as unset, not as Object's own.
+  const merged: Record<string, number> = Object.create(null);
   for (const [id, level] of [...Object.entries(account), ...Object.entries(device)])
     if (level > 0) merged[id] = Math.max(merged[id] ?? 0, level);
-  return merged;
+  return { ...merged };
 }

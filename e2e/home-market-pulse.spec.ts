@@ -52,18 +52,22 @@ test("market first use separates loading, source failure and a genuine missing r
   await page.goto("/tools/market?region=europe&city=Caerleon");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");
   // The selection loads on arrival; no second click is needed to see prices.
-  await expect(page.locator(".mx-hero-status")).toContainText("Checking the markets…");
+  // While it loads the hero's figures are skeletons; the status is said to assistive tech.
+  await expect(page.locator(".mx-hero").getByRole("status")).toHaveText("Checking the markets…");
+  await expect(page.locator(".mx-figures.is-loading")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Fetching observations…", exact: true }),
   ).toBeDisabled();
   await expect(page.locator(".market-selection")).toHaveCount(1);
   await expect(page.locator(".market-selection")).toContainText("Bag");
   await expect(page.locator(".market-quote-summary")).toHaveCount(0);
-  expect(calls).toBe(1);
+  await expect.poll(() => calls).toBe(1);
   release();
   // The failure is said once, in the item hero, with a retry; the table keeps its shape.
   await expect(page.locator(".mx-hero-status")).toContainText("Prices could not load");
-  await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+  await expect(
+    page.locator(".mx-hero").getByRole("button", { name: "Try again", exact: true }),
+  ).toBeVisible();
   await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
   await expect(page.locator(".market-board tbody")).toContainText("Unavailable");
   await expect(page.getByLabel("Market city", { exact: true })).toHaveValue("Caerleon");

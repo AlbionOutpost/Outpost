@@ -268,6 +268,25 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
       409,
     );
     expect(await db.groupWalletEntry.count({ where: { groupId, kind: "split" } })).toBe(2);
+    // A split may record a pool larger than one wallet can hold; paying it in is refused plainly
+    // (not a server error) and books nothing.
+    const huge = await db.groupLootSplit.create({
+      data: {
+        groupId,
+        title: "Impossible haul",
+        createdById: ids[0],
+        configuration: {
+          pool: 2_000_000_000_000,
+          notes: "",
+          expenses: [],
+          participants: [{ userId: ids[2], shares: 1 }],
+        },
+      },
+    });
+    const refused = await post(1, "wallet", { action: "pay-split", splitId: huge.id });
+    expect(refused.status()).toBe(409);
+    expect((await refused.json()).error).toContain("largest balance");
+    expect(await db.groupWalletEntry.count({ where: { groupId, kind: "split" } })).toBe(2);
 
     // Demoted officer loses Manage wallet with the Officer role.
     await db.groupRoleAssignment.deleteMany({ where: { groupId, userId: ids[1] } });

@@ -11,6 +11,12 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Team cards on `/groups` keep their 1px edge (the banner no longer covers it) and light up on hover; their shield-colour banner is quieter.
 - Superseded button and panel rules in older global sheets removed. Next: page-by-page passes on the new surfaces.
 
+## Market Explorer switches faster and holds still — 8 November 2026
+
+- Picking another item or version used to ask for the price history only after the prices arrived, each behind its own 150 ms wait, and dropped every panel to a short status line meanwhile. Now prices and history go out together at once, and an item seen in the last minute comes back from the browser without a request. With source answers stubbed at 400/800 ms, the full switch (prices and chart) went from about 1.16/1.97 s to 0.45/0.86 s, a return to a seen version to about 0.05 s.
+- While the next item loads, the hero figures, every City orders row and the chart show skeletons in place (static under reduced motion); no panel shrinks (layout shift during a switch 0.069 → 0) and the old item's prices never show for the new one. The item page's price panel uses the same skeletons.
+- Signed-out `/api/market` and `/api/history` answers are edge-cached for their server cache lives (60 s, 5 min).
+
 ## Giveaways — 8 November 2026
 
 - `/giveaways` (More menu, footer, sitemap): Outpost staff (a global ADMIN) start a giveaway (title, prize, server, winners, closing time, optional painted picture and rules), edit or cancel it before the draw and draw the winners once entries close. Any signed-in player enters once and can leave until the deadline; guests get Sign in to enter, which comes back to the page. Winners show by display name with their place.
@@ -180,7 +186,6 @@ Things learned the hard way (read before touching CSS):
 
 Open items found on the way:
 
-- **Top kills are not truly live.** We poll Albion's official `killfame?range=day` every 5 minutes, but that ranking lags by a week or more (on 1 Nov it held kills from 22–25 Oct) and Americas sometimes fails. A real 7-day top list needs a scheduled job that collects recent kill events around the clock and keeps the highest-fame ones (D1 or the data Durable Object), then the landing reads that. Until then the heading must not claim "this week" for older kills.
 - "Active players" counts signed-in accounts whose row was touched by a visit in the last 30 days (`updatedAt`, touched at most twice a day in `auth.ts`); visitors without an account are not counted.
 - Framed working panels have no centre gems (the border-image frame cannot draw outside elements); add them back only with a technique that needs no positioning.
 
@@ -203,6 +208,10 @@ Open items found on the way:
 - Comps, Teams and Guides share the illustrated masthead (`WorkspaceHeading` gained an `actions` slot); the landing page is rebuilt around benefits, real product screenshots, provenance and a final call to action, with no market request on arrival.
 - Deploy and PR pipelines run the browser suites as three parallel shards; sign-in is rate-limited per client address; CSP allows Discord avatars; logo and guide media shrank from 20 MB to 2.4 MB.
 - Competitor parity matrix in [PARITY.md](PARITY.md); `sitemap.xml` (generated at build time by `scripts/build-sitemap.ts`, 11.5k URLs served as a static asset) lists hubs, tools, guides and the archived library and is referenced from `robots.txt`.
+
+## Shipped — honest kill feed freshness (8 Nov)
+
+- Game Info sometimes serves an old copy of the live feed (Asia returned 31 Oct kills on 8 Nov). The kill feed now shows its newest kill's age, asks once more when an answer is over an hour behind the newest kill the collector has seen, and says above the kills when the copy is old or the source is running behind, instead of showing week-old fights as the latest.
 
 ## Shipped — live top kills by gear value (1 Nov)
 

@@ -469,6 +469,11 @@
   font: 800 24px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
+/* A loading price figure stands as tall as the animated silver figure it waits for (its
+   rolling digits sit in a mask that adds 4px above and below) */
+.app.outpost .mx-figures.is-loading b.is-price {
+  min-height: calc(1em + 8px);
+}
 .app.outpost .mx-figures b .silver {
   gap: 6px;
   font: inherit;
@@ -606,30 +611,15 @@
   color: var(--muted);
   font-size: 14px;
 }
-.app.outpost .mx-skeleton {
-  display: grid;
-  gap: 1px;
-  margin-top: var(--space-3);
-  overflow: hidden;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-}
-.app.outpost .mx-skeleton span {
-  height: 52px;
-  background: linear-gradient(90deg, transparent, var(--well-border), transparent) 0 0 / 200% 100%;
+/* A version picker waiting for its family keeps its place, its cells shimmering (the stand-in
+   itself is inert and hidden from assistive tech) */
+.app.outpost .mx-variants-pending .item-variant-cell {
+  color: transparent;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .app.outpost .mx-skeleton span {
+  .app.outpost .mx-variants-pending .item-variant-cell {
+    background: var(--mx-skel-wash) 0 0 / 300% 100%;
     animation: mx-shimmer 1.4s linear infinite;
-  }
-}
-@keyframes mx-shimmer {
-  from {
-    background-position: 100% 0;
-  }
-  to {
-    background-position: -100% 0;
   }
 }
 .app.outpost .mx-source {
