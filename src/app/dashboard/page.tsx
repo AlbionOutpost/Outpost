@@ -379,7 +379,9 @@ export default async function Dashboard() {
                     : null;
                 const href = parsed?.success
                   ? `/tools/${parsed.data.runs[0].kind}?region=${parsed.data.region}#production-plan-title`
-                  : `/tools/${plan.kind === "production-plan" ? "crafting" : plan.kind}`;
+                  : plan.kind === "flipping"
+                    ? "/tools/flipping#trade"
+                    : `/tools/${plan.kind === "production-plan" ? "crafting" : plan.kind}`;
                 return (
                   <li key={plan.id}>
                     <Link href={href} className={`well ${styles.row}`}>

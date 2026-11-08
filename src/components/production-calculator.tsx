@@ -5,7 +5,7 @@ import { ProductionSensitivity } from "./production-sensitivity";
 import { productionSensitivity } from "@/lib/albion/production-sensitivity";
 import { EditorDialog } from "./editor-dialog";
 import { ProductionProfile } from "./production-profile";
-import { ArrowDown, ArrowRight, CircleCheck, RefreshCw } from "lucide-react";
+import { ArrowRight, ChevronDown, CircleCheck, RefreshCw } from "lucide-react";
 import {
   CalculatorShell,
   ResultFigure,
@@ -138,30 +138,13 @@ export function ProductionCalculator({
     };
   }, [kind, category, recipeSearch, searchTier]);
   const [recipePickerOpen, setRecipePickerOpen] = useState(false);
-  const modeNavigation = useRef<HTMLElement>(null);
-  useEffect(() => {
-    function revealCurrentMode() {
-      const navigation = modeNavigation.current;
-      const active = navigation?.querySelector<HTMLElement>('[aria-current="page"]');
-      if (!navigation || !active || navigation.scrollWidth <= navigation.clientWidth) return;
-      const rail = navigation.getBoundingClientRect();
-      const tab = active.getBoundingClientRect();
-      if (tab.right > rail.right) navigation.scrollLeft += tab.right - rail.right + 12;
-      else if (tab.left < rail.left) navigation.scrollLeft -= rail.left - tab.left + 12;
-    }
-    const frame = requestAnimationFrame(revealCurrentMode);
-    window.addEventListener("resize", revealCurrentMode);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", revealCurrentMode);
-    };
-  }, [category, kind]);
   const [step, goToStep] = useCalculatorStep([
     "production-setup",
     "production-materials",
     "production-results",
   ]);
   const [showScenarios, setShowScenarios] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [attemptedKey, setAttemptedKey] = useState<string | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const autoLoad = useRef<number | undefined>(undefined);
@@ -944,7 +927,8 @@ export function ProductionCalculator({
   const sensitivity = productionSensitivity(configuration);
   const results = (
     <>
-      <div className={s.resultItem}>
+      {/* Wide screens show the recipe beside it in step 1; phones see one step at a time */}
+      <div className={`${s.resultItem} ${s.resultRepeat}`}>
         <ItemIcon id={recipe.output} quality={outputQuality} size={52} />
         <span>
           <strong>{recipe.name}</strong>
@@ -1093,100 +1077,89 @@ export function ProductionCalculator({
       )}
     </>
   );
-  const details = result?.complete ? (
-    <section className={`panel ${s.details}`} aria-labelledby="production-details-title">
-      <PanelHead
-        id="production-details-title"
-        title="Run details"
-        line="How the profit moves with the sale price, the full accounting and what you assumed."
-      />
-      <div className={s.detailsGrid}>
-        <div className={s.detailsCol}>
-          {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
-          <h3 className={s.detailsHeading}>Your assumptions</h3>
-          <ResultRows
-            items={[
-              {
-                label: kind === "enchanting" ? "Upgrades" : "Crafts",
-                value: draft.batches.toLocaleString(),
-              },
-              { label: "Material market", value: draft.materialCity },
-              { label: "Sale market", value: draft.outputCity },
-              {
-                label: "Recipe silver / craft",
-                value: `${money(recipe.silver ?? 0)} silver`,
-              },
-              { label: "Station fee / craft", value: `${money(draft.stationFee)} silver` },
-              { label: "Sales tax", value: `${draft.tax}%` },
-              {
-                label: "Setup fee",
-                value: productionSellsInstantly(draft)
-                  ? "Not charged (instant sale)"
-                  : `${draft.setupFee}%`,
-              },
-            ]}
-          />
-          <p className={s.help}>
-            Confirm fees and returns at your station before crafting.{" "}
-            <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
-              Recipe source & limitations
-            </a>
-          </p>
+  const details =
+    result?.complete && showDetails ? (
+      <section
+        id="production-details"
+        className={`panel ${s.details}`}
+        aria-labelledby="production-details-title"
+      >
+        <PanelHead
+          id="production-details-title"
+          title="Run details"
+          line="How the profit moves with the sale price, the full accounting and what you assumed."
+        />
+        <div className={s.detailsGrid}>
+          <div className={s.detailsCol}>
+            {sensitivity.length > 0 && <ProductionSensitivity rows={sensitivity} />}
+            <h3 className={s.detailsHeading}>Your assumptions</h3>
+            <ResultRows
+              items={[
+                {
+                  label: kind === "enchanting" ? "Upgrades" : "Crafts",
+                  value: draft.batches.toLocaleString(),
+                },
+                { label: "Material market", value: draft.materialCity },
+                { label: "Sale market", value: draft.outputCity },
+                {
+                  label: "Recipe silver / craft",
+                  value: `${money(recipe.silver ?? 0)} silver`,
+                },
+                { label: "Station fee / craft", value: `${money(draft.stationFee)} silver` },
+                { label: "Sales tax", value: `${draft.tax}%` },
+                {
+                  label: "Setup fee",
+                  value: productionSellsInstantly(draft)
+                    ? "Not charged (instant sale)"
+                    : `${draft.setupFee}%`,
+                },
+              ]}
+            />
+            <p className={s.help}>
+              Confirm fees and returns at your station before crafting.{" "}
+              <a className="text-link" href={recipe.source} target="_blank" rel="noreferrer">
+                Recipe source & limitations
+              </a>
+            </p>
+          </div>
+          <div className={s.detailsCol}>
+            <h3 className={s.detailsHeading}>Detailed accounting · entire run</h3>
+            <ResultRows
+              items={[
+                ["Total material cost", result.grossMaterials],
+                ["Recipe silver requirements", result.recipeCost],
+                [kind === "enchanting" ? "Upgrade fees" : "Station fees", result.stationCost],
+                ["Upfront silver requirement", result.upfront],
+                ["Expected returned material value", result.returnCredit],
+                ["Effective production cost", result.cost],
+                ["Gross output revenue", result.revenue],
+                ["Taxes and setup fees", result.fees],
+                ["Cash profit before valuing retained returns", result.cashProfit],
+                ["Profit margin (%)", result.margin],
+                ["ROI on effective cost (%)", result.roi],
+                ["Profit per output", result.profitPerItem],
+                ...(draft.useFocus
+                  ? [
+                      ["Profit per focus", result.profitPerFocus],
+                      ["Additional material value per focus", result.incrementalPerFocus],
+                    ]
+                  : []),
+              ].map(([label, value]) => ({
+                label: String(label),
+                value:
+                  value == null ? (
+                    <Unavailable />
+                  ) : (
+                    <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
+                  ),
+              }))}
+            />
+          </div>
         </div>
-        <div className={s.detailsCol}>
-          <h3 className={s.detailsHeading}>Detailed accounting · entire run</h3>
-          <ResultRows
-            items={[
-              ["Total material cost", result.grossMaterials],
-              ["Recipe silver requirements", result.recipeCost],
-              [kind === "enchanting" ? "Upgrade fees" : "Station fees", result.stationCost],
-              ["Upfront silver requirement", result.upfront],
-              ["Expected returned material value", result.returnCredit],
-              ["Effective production cost", result.cost],
-              ["Gross output revenue", result.revenue],
-              ["Taxes and setup fees", result.fees],
-              ["Cash profit before valuing retained returns", result.cashProfit],
-              ["Profit margin (%)", result.margin],
-              ["ROI on effective cost (%)", result.roi],
-              ["Profit per output", result.profitPerItem],
-              ...(draft.useFocus
-                ? [
-                    ["Profit per focus", result.profitPerFocus],
-                    ["Additional material value per focus", result.incrementalPerFocus],
-                  ]
-                : []),
-            ].map(([label, value]) => ({
-              label: String(label),
-              value:
-                value == null ? (
-                  <Unavailable />
-                ) : (
-                  <AnimatedNumber value={value as number} digits={2} minimumDigits={0} />
-                ),
-            }))}
-          />
-        </div>
-      </div>
-    </section>
-  ) : null;
+      </section>
+    ) : null;
   return (
     <div className={s.journey}>
-      <div className={s.modeBar}>
-        <nav ref={modeNavigation} className={s.modes} aria-label="Production calculators">
-          {(["crafting", "refining", "enchanting", "cooking", "alchemy"] as const).map((mode) => (
-            <Link
-              key={mode}
-              href={`/tools/${mode}?region=${region}`}
-              aria-current={(category || kind) === mode ? "page" : undefined}
-            >
-              {mode.charAt(0).toUpperCase() + mode.slice(1)}
-            </Link>
-          ))}
-        </nav>
-        <a className="pill-link" href="#production-plan-title">
-          Production plan <ArrowDown size={15} aria-hidden="true" />
-        </a>
-      </div>
       {recipePickerOpen && (
         <EditorDialog open title="Choose recipe" drawer onClose={() => setRecipePickerOpen(false)}>
           {recipeBrowser}
@@ -1245,6 +1218,19 @@ export function ProductionCalculator({
             id: "production-results",
             label: "Review profit",
             title: "Profit",
+            // The run's accounting opens under the steps on request, so the run fits one screen
+            actions: result?.complete ? (
+              <button
+                type="button"
+                className={`button secondary ${s.detailsToggle}`}
+                aria-expanded={showDetails}
+                aria-controls="production-details"
+                onClick={() => setShowDetails(!showDetails)}
+              >
+                {showDetails ? "Hide details" : "Run details"}
+                <ChevronDown size={16} aria-hidden="true" />
+              </button>
+            ) : undefined,
             children: results,
           },
         ]}
@@ -1288,23 +1274,6 @@ export function ProductionCalculator({
           />
         </div>
       </ProductionPlan>
-      <section className={`raised has-scene ${s.cta}`} data-scene="city">
-        <h2>
-          Buying for more than one <em>craft</em>?
-        </h2>
-        <p>
-          Add each run to the production plan, then send its materials to the Crafting Planner and
-          tick them off as you buy.
-        </p>
-        <div className={s.ctaActions}>
-          <Link className="button primary" href={`/shopping-list?region=${region}`}>
-            Open the Crafting Planner <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-          <Link className="button secondary" href={`/tools?region=${region}`}>
-            All tools
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }
@@ -1323,3 +1292,44 @@ function Observed({ at }: { at: string }) {
     </>
   );
 }
+
+/**
+ * The five production calculators as pill tabs at the masthead's right edge (as Market
+ * Explorer's sections); on phones the row scrolls and the current one is brought into view.
+ */
+export function ProductionModes({ current }: { current: ProductionMode }) {
+  const region = useOutpostRegion();
+  const modeNavigation = useRef<HTMLElement>(null);
+  useEffect(() => {
+    function revealCurrentMode() {
+      const navigation = modeNavigation.current;
+      const active = navigation?.querySelector<HTMLElement>('[aria-current="page"]');
+      if (!navigation || !active || navigation.scrollWidth <= navigation.clientWidth) return;
+      const rail = navigation.getBoundingClientRect();
+      const tab = active.getBoundingClientRect();
+      if (tab.right > rail.right) navigation.scrollLeft += tab.right - rail.right + 12;
+      else if (tab.left < rail.left) navigation.scrollLeft -= rail.left - tab.left + 12;
+    }
+    const frame = requestAnimationFrame(revealCurrentMode);
+    window.addEventListener("resize", revealCurrentMode);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", revealCurrentMode);
+    };
+  }, [current]);
+  return (
+    <nav ref={modeNavigation} className="masthead-tabs" aria-label="Production calculators">
+      {productionModes.map((mode) => (
+        <Link
+          key={mode}
+          href={`/tools/${mode}?region=${region}`}
+          aria-current={current === mode ? "page" : undefined}
+        >
+          {mode.charAt(0).toUpperCase() + mode.slice(1)}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+const productionModes = ["crafting", "refining", "enchanting", "cooking", "alchemy"] as const;
+type ProductionMode = (typeof productionModes)[number];

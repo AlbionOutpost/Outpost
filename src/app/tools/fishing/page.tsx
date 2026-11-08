@@ -2,7 +2,6 @@ import { ArrowRight } from "lucide-react";
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { FishingCalculator } from "@/components/fishing-calculator";
-import { CalculatorCta } from "@/components/calculator-cta";
 import { libraryFishing } from "@/lib/grind-library";
 import Link from "@/components/link";
 import styles from "@/components/calculator-shell.module.css";
@@ -29,15 +28,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
       <FishingCalculator
         fish={await libraryFishing()}
         initialMode={mode === "leveling" ? "leveling" : "chopping"}
-      />
-      <CalculatorCta
-        title={
-          <>
-            Cooking with your <em>chops</em>?
-          </>
-        }
-        line="Chopped fish goes into the best food in the game. Price the meal before you sell the chops."
-        primary={{ href: "/tools/cooking", label: "Open the cooking calculator" }}
       />
     </div>
   );

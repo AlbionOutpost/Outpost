@@ -501,134 +501,6 @@ export function CompositionEditor({
             </button>
           </div>
         </div>
-        <section className={`panel ${styles.panel}`} aria-labelledby="comp-details">
-          <PanelHead
-            id="comp-details"
-            title="The comp"
-            line="Name it, say what it is for and how many players it takes."
-          />
-          <div className={styles.fields}>
-            <label className={styles.field}>
-              Comp title
-              <input
-                required
-                minLength={3}
-                maxLength={100}
-                placeholder={`${draft.contentType} · ${
-                  draft.slots.length === 1
-                    ? "solo"
-                    : draft.slots.length
-                      ? `${draft.slots.length} players`
-                      : "party"
-                }`}
-                value={draft.title}
-                onChange={(e) => update("title", e.target.value)}
-              />
-            </label>
-            <label className={styles.field}>
-              Activity
-              <WellSelect
-                aria-label="Content type"
-                required
-                value={draft.contentType}
-                onChange={(event) => update("contentType", event.target.value)}
-              >
-                {/* A comp saved with an activity outside the list keeps it */}
-                {[
-                  ...(contentTypes.some((activity) => activity === draft.contentType)
-                    ? []
-                    : [draft.contentType]),
-                  ...contentTypes,
-                ].map((activity) => (
-                  <option key={activity}>{activity}</option>
-                ))}
-              </WellSelect>
-            </label>
-          </div>
-          {draft.slots.length > 0 && (
-            <div className={styles.sizeRow}>
-              <span className={styles.fieldLabel}>Party size</span>
-              {sizePills}
-            </div>
-          )}
-          <Disclosure
-            summary="Sharing, region & description"
-            meta={`${visibilityName} · ${regionName}`}
-          >
-            <div className={styles.fields}>
-              <label className={styles.field}>
-                Comp region
-                <WellSelect
-                  aria-label="Comp region"
-                  value={draft.region}
-                  onChange={(e) => update("region", e.target.value as CompositionInput["region"])}
-                >
-                  <option value="europe">Europe</option>
-                  <option value="americas">Americas</option>
-                  <option value="asia">Asia</option>
-                </WellSelect>
-              </label>
-              <label className={styles.field}>
-                Comp visibility
-                <WellSelect
-                  aria-label="Comp visibility"
-                  value={draft.visibility}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      visibility: e.target.value as CompositionInput["visibility"],
-                      groupId: e.target.value === "GROUP" ? groups[0]?.id || null : null,
-                    })
-                  }
-                >
-                  <option value="PRIVATE">Private (only you)</option>
-                  <option value="PUBLIC">Public (anyone)</option>
-                  <option value="GROUP" disabled={!groups.length}>
-                    Team members only
-                  </option>
-                </WellSelect>
-              </label>
-              {draft.visibility === "GROUP" && (
-                <label className={styles.field}>
-                  Shared team
-                  <WellSelect
-                    required
-                    aria-label="Shared team"
-                    value={draft.groupId || ""}
-                    onChange={(e) => update("groupId", e.target.value)}
-                  >
-                    <option value="">Choose team</option>
-                    {groups.map((g) => (
-                      <option key={g.id} value={g.id}>
-                        {g.name}
-                      </option>
-                    ))}
-                  </WellSelect>
-                </label>
-              )}
-            </div>
-            <label className={styles.field}>
-              Description
-              <textarea
-                rows={3}
-                value={draft.description}
-                maxLength={4000}
-                onChange={(e) => update("description", e.target.value)}
-              />
-            </label>
-          </Disclosure>
-          <Disclosure summary="Shotcaller notes" meta={draft.notes.trim() ? "Written" : "Optional"}>
-            <label className={styles.field}>
-              Shotcaller / comp notes
-              <textarea
-                rows={4}
-                maxLength={12000}
-                value={draft.notes}
-                onChange={(e) => update("notes", e.target.value)}
-              />
-            </label>
-          </Disclosure>
-        </section>
         <div className={styles.planner}>
           <section className={`panel ${styles.panel}`} aria-labelledby="comp-plan">
             <PanelHead
@@ -714,143 +586,146 @@ export function CompositionEditor({
             ) : (
               <>
                 <PartyReadiness members={draft.slots} region={draft.region} />
-                {boardView ? (
-                  <PartyBoard
-                    members={draft.slots}
-                    active={active}
-                    onSelect={(index) => {
-                      setActive(index);
-                      setEditing(true);
-                    }}
-                  />
-                ) : (
-                  <div role="list" aria-label="Comp roster" className={styles.rows}>
-                    {draft.slots
-                      .map((s, i) => ({ s, i }))
-                      .sort((a, b) =>
-                        grouping === "role"
-                          ? roles.indexOf(a.s.role) - roles.indexOf(b.s.role) || a.i - b.i
-                          : a.i - b.i,
-                      )
-                      .map(({ s, i }) => (
-                        <div
-                          role="listitem"
-                          data-member-index={i}
-                          data-role={roleTone(s.role)}
-                          className={styles.row}
-                          data-selected={i === active ? "" : undefined}
-                          data-drop={i === dropTarget ? "" : undefined}
-                          key={s.id}
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            setDropTarget(i);
-                          }}
-                          onDragLeave={() => setDropTarget(null)}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            const draggedId = e.dataTransfer.getData("text/plain");
-                            const from = draggedId
-                              ? draft.slots.findIndex((slot) => slot.id === draggedId)
-                              : drag.current;
-                            if (from !== null && from >= 0) move(from, i);
-                            drag.current = null;
-                            setDropTarget(null);
-                          }}
-                        >
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                <div className={styles.partyWell}>
+                  {boardView ? (
+                    <PartyBoard
+                      members={draft.slots}
+                      active={active}
+                      onSelect={(index) => {
+                        setActive(index);
+                        setEditing(true);
+                      }}
+                    />
+                  ) : (
+                    <div role="list" aria-label="Comp roster" className={styles.rows}>
+                      {draft.slots
+                        .map((s, i) => ({ s, i }))
+                        .sort((a, b) =>
+                          grouping === "role"
+                            ? roles.indexOf(a.s.role) - roles.indexOf(b.s.role) || a.i - b.i
+                            : a.i - b.i,
+                        )
+                        .map(({ s, i }) => (
+                          <div
+                            role="listitem"
+                            data-member-index={i}
+                            data-role={roleTone(s.role)}
+                            className={styles.row}
+                            data-selected={i === active ? "" : undefined}
+                            data-drop={i === dropTarget ? "" : undefined}
+                            key={s.id}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setDropTarget(i);
+                            }}
+                            onDragLeave={() => setDropTarget(null)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const draggedId = e.dataTransfer.getData("text/plain");
+                              const from = draggedId
+                                ? draft.slots.findIndex((slot) => slot.id === draggedId)
+                                : drag.current;
+                              if (from !== null && from >= 0) move(from, i);
+                              drag.current = null;
+                              setDropTarget(null);
+                            }}
+                          >
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                                  e.preventDefault();
+                                  move(i, i + (e.key === "ArrowUp" ? -1 : 1));
+                                }
+                                if (e.key === "Enter") {
+                                  setActive(i);
+                                  setEditing(true);
+                                }
+                              }}
+                              onPointerDown={(e) => {
+                                if (e.button !== 0) return;
                                 e.preventDefault();
-                                move(i, i + (e.key === "ArrowUp" ? -1 : 1));
-                              }
-                              if (e.key === "Enter") {
+                                e.currentTarget.focus();
+                                e.currentTarget.setPointerCapture(e.pointerId);
+                                pointerDrag.current = {
+                                  from: i,
+                                  x: e.clientX,
+                                  y: e.clientY,
+                                  target: i,
+                                  moved: false,
+                                };
+                              }}
+                              onPointerMove={(e) => {
+                                const d = pointerDrag.current;
+                                if (!d) return;
+                                if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6)
+                                  d.moved = true;
+                                if (!d.moved) return;
+                                const row = document
+                                  .elementFromPoint(e.clientX, e.clientY)
+                                  ?.closest<HTMLElement>("[data-member-index]");
+                                if (row) {
+                                  d.target = Number(row.dataset.memberIndex);
+                                  setDropTarget(d.target);
+                                }
+                              }}
+                              onPointerUp={() => {
+                                const d = pointerDrag.current;
+                                pointerDrag.current = null;
+                                setDropTarget(null);
+                                if (d?.moved && d.from !== d.target) move(d.from, d.target);
+                              }}
+                              onPointerCancel={() => {
+                                pointerDrag.current = null;
+                                setDropTarget(null);
+                              }}
+                              aria-label={`Drag member ${i + 1}`}
+                              className={styles.dragHandle}
+                            >
+                              <GripVertical size={18} aria-hidden="true" />
+                            </span>
+                            <button
+                              type="button"
+                              className={styles.rowSelect}
+                              aria-pressed={i === active}
+                              onClick={() => {
                                 setActive(i);
                                 setEditing(true);
-                              }
-                            }}
-                            onPointerDown={(e) => {
-                              if (e.button !== 0) return;
-                              e.preventDefault();
-                              e.currentTarget.focus();
-                              e.currentTarget.setPointerCapture(e.pointerId);
-                              pointerDrag.current = {
-                                from: i,
-                                x: e.clientX,
-                                y: e.clientY,
-                                target: i,
-                                moved: false,
-                              };
-                            }}
-                            onPointerMove={(e) => {
-                              const d = pointerDrag.current;
-                              if (!d) return;
-                              if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6) d.moved = true;
-                              if (!d.moved) return;
-                              const row = document
-                                .elementFromPoint(e.clientX, e.clientY)
-                                ?.closest<HTMLElement>("[data-member-index]");
-                              if (row) {
-                                d.target = Number(row.dataset.memberIndex);
-                                setDropTarget(d.target);
-                              }
-                            }}
-                            onPointerUp={() => {
-                              const d = pointerDrag.current;
-                              pointerDrag.current = null;
-                              setDropTarget(null);
-                              if (d?.moved && d.from !== d.target) move(d.from, d.target);
-                            }}
-                            onPointerCancel={() => {
-                              pointerDrag.current = null;
-                              setDropTarget(null);
-                            }}
-                            aria-label={`Drag member ${i + 1}`}
-                            className={styles.dragHandle}
-                          >
-                            <GripVertical size={18} aria-hidden="true" />
-                          </span>
-                          <button
-                            type="button"
-                            className={styles.rowSelect}
-                            aria-pressed={i === active}
-                            onClick={() => {
-                              setActive(i);
-                              setEditing(true);
-                            }}
-                          >
-                            <span className="sr-only">Configure member {i + 1}: </span>
-                            <RosterRowCells member={slotRosterMember(s)} n={i + 1} />
-                            {density === "detailed" && (
-                              <span className={styles.rowExtra}>
-                                {s.notes || "No notes"}
-                                {s.substitute && ` · Sub: ${s.substitute}`}
-                              </span>
-                            )}
-                          </button>
-                          <span className={styles.rowMove}>
-                            <button
-                              type="button"
-                              aria-label={`Move member ${i + 1} up`}
-                              disabled={i === 0}
-                              onClick={() => move(i, i - 1)}
+                              }}
                             >
-                              <ArrowUp size={15} aria-hidden="true" />
+                              <span className="sr-only">Configure member {i + 1}: </span>
+                              <RosterRowCells member={slotRosterMember(s)} n={i + 1} />
+                              {density === "detailed" && (
+                                <span className={styles.rowExtra}>
+                                  {s.notes || "No notes"}
+                                  {s.substitute && ` · Sub: ${s.substitute}`}
+                                </span>
+                              )}
                             </button>
-                            <button
-                              type="button"
-                              aria-label={`Move member ${i + 1} down`}
-                              disabled={i === draft.slots.length - 1}
-                              onClick={() => move(i, i + 1)}
-                            >
-                              <ArrowDown size={15} aria-hidden="true" />
-                            </button>
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                )}
+                            <span className={styles.rowMove}>
+                              <button
+                                type="button"
+                                aria-label={`Move member ${i + 1} up`}
+                                disabled={i === 0}
+                                onClick={() => move(i, i - 1)}
+                              >
+                                <ArrowUp size={15} aria-hidden="true" />
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={`Move member ${i + 1} down`}
+                                disabled={i === draft.slots.length - 1}
+                                onClick={() => move(i, i + 1)}
+                              >
+                                <ArrowDown size={15} aria-hidden="true" />
+                              </button>
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
                 <div className={styles.planFoot}>
                   <button
                     type="button"
@@ -895,77 +770,216 @@ export function CompositionEditor({
               </>
             )}
           </section>
-          <aside className={`panel ${styles.panel} ${styles.builds}`} aria-labelledby="comp-builds">
-            <PanelHead
-              id="comp-builds"
-              title="Your builds"
-              line="Copy a saved build into the selected slot. The copy stays independent."
-            />
-            {!draft.slots.length ? (
-              <p className={styles.memberNote}>
-                Lay out the party first, then copy a saved build into any slot.
-              </p>
-            ) : builds.length > 0 ? (
-              <>
+          {/* The comp's details and your builds ride beside the party, so the board starts in
+              the first screen */}
+          <div className={styles.side}>
+            <section className={`panel ${styles.panel}`} aria-labelledby="comp-details">
+              <PanelHead
+                id="comp-details"
+                title="The comp"
+                line="Name it, say what it is for and how many players it takes."
+              />
+              <div className={styles.fields}>
                 <label className={styles.field}>
-                  Search saved builds
-                  <SearchInput
-                    type="search"
-                    value={buildQuery}
-                    onChange={(e) => setBuildQuery(e.target.value)}
-                    placeholder="Find a loadout…"
+                  Comp title
+                  <input
+                    required
+                    minLength={3}
+                    maxLength={100}
+                    placeholder={`${draft.contentType} · ${
+                      draft.slots.length === 1
+                        ? "solo"
+                        : draft.slots.length
+                          ? `${draft.slots.length} players`
+                          : "party"
+                    }`}
+                    value={draft.title}
+                    onChange={(e) => update("title", e.target.value)}
                   />
                 </label>
-                {draft.slots.length > 0 && (
+                <label className={styles.field}>
+                  Activity
+                  <WellSelect
+                    aria-label="Content type"
+                    required
+                    value={draft.contentType}
+                    onChange={(event) => update("contentType", event.target.value)}
+                  >
+                    {/* A comp saved with an activity outside the list keeps it */}
+                    {[
+                      ...(contentTypes.some((activity) => activity === draft.contentType)
+                        ? []
+                        : [draft.contentType]),
+                      ...contentTypes,
+                    ].map((activity) => (
+                      <option key={activity}>{activity}</option>
+                    ))}
+                  </WellSelect>
+                </label>
+              </div>
+              {draft.slots.length > 0 && (
+                <div className={styles.sizeRow}>
+                  <span className={styles.fieldLabel}>Party size</span>
+                  {sizePills}
+                </div>
+              )}
+              <Disclosure
+                summary="Sharing, region & description"
+                meta={`${visibilityName} · ${regionName}`}
+              >
+                <div className={styles.fields}>
                   <label className={styles.field}>
-                    Assign to party slot
+                    Comp region
                     <WellSelect
-                      aria-label="Build assignment slot"
-                      value={active}
-                      onChange={(e) => setActive(Number(e.target.value))}
+                      aria-label="Comp region"
+                      value={draft.region}
+                      onChange={(e) =>
+                        update("region", e.target.value as CompositionInput["region"])
+                      }
                     >
-                      {draft.slots.map((slot, i) => (
-                        <option key={slot.id} value={i}>
-                          {i + 1} · {memberRole(slot)} · {slot.playerName || "Unassigned"}
-                        </option>
-                      ))}
+                      <option value="europe">Europe</option>
+                      <option value="americas">Americas</option>
+                      <option value="asia">Asia</option>
                     </WellSelect>
                   </label>
-                )}
-                <ul className={styles.buildList}>
-                  {builds
-                    .filter((build) => build.title.toLowerCase().includes(buildQuery.toLowerCase()))
-                    .map((build) => (
-                      <li key={build.id}>
-                        <Link href={`/builds/${build.id}`} title={build.title}>
-                          {build.title}
-                        </Link>
-                        <button
-                          type="button"
-                          className="button secondary"
-                          disabled={!draft.slots.length || copyingBuild}
-                          onClick={() => void copyBuild(build.id)}
-                          aria-label={`Assign ${build.title} to selected slot`}
-                        >
-                          {copyingBuild ? "Copying…" : "Assign"}
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-                {!builds.some((build) =>
-                  build.title.toLowerCase().includes(buildQuery.toLowerCase()),
-                ) && <StatusLine>No saved build matches that name.</StatusLine>}
-              </>
-            ) : (
-              <p className={styles.memberNote}>
-                You have no saved builds yet. Give each member a loadout here, or save a build first
-                and assign it.
-              </p>
-            )}
-            <Link className="pill-link is-small" href="/builds/new">
-              <Plus size={14} aria-hidden="true" /> Create a build
-            </Link>
-          </aside>
+                  <label className={styles.field}>
+                    Comp visibility
+                    <WellSelect
+                      aria-label="Comp visibility"
+                      value={draft.visibility}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          visibility: e.target.value as CompositionInput["visibility"],
+                          groupId: e.target.value === "GROUP" ? groups[0]?.id || null : null,
+                        })
+                      }
+                    >
+                      <option value="PRIVATE">Private (only you)</option>
+                      <option value="PUBLIC">Public (anyone)</option>
+                      <option value="GROUP" disabled={!groups.length}>
+                        Team members only
+                      </option>
+                    </WellSelect>
+                  </label>
+                  {draft.visibility === "GROUP" && (
+                    <label className={styles.field}>
+                      Shared team
+                      <WellSelect
+                        required
+                        aria-label="Shared team"
+                        value={draft.groupId || ""}
+                        onChange={(e) => update("groupId", e.target.value)}
+                      >
+                        <option value="">Choose team</option>
+                        {groups.map((g) => (
+                          <option key={g.id} value={g.id}>
+                            {g.name}
+                          </option>
+                        ))}
+                      </WellSelect>
+                    </label>
+                  )}
+                </div>
+                <label className={styles.field}>
+                  Description
+                  <textarea
+                    rows={3}
+                    value={draft.description}
+                    maxLength={4000}
+                    onChange={(e) => update("description", e.target.value)}
+                  />
+                </label>
+              </Disclosure>
+              <Disclosure
+                summary="Shotcaller notes"
+                meta={draft.notes.trim() ? "Written" : "Optional"}
+              >
+                <label className={styles.field}>
+                  Shotcaller / comp notes
+                  <textarea
+                    rows={4}
+                    maxLength={12000}
+                    value={draft.notes}
+                    onChange={(e) => update("notes", e.target.value)}
+                  />
+                </label>
+              </Disclosure>
+            </section>
+            <aside className={`panel ${styles.panel}`} aria-labelledby="comp-builds">
+              <PanelHead
+                id="comp-builds"
+                title="Your builds"
+                line="Copy a saved build into the selected slot. The copy stays independent."
+              />
+              {!draft.slots.length ? (
+                <p className={styles.memberNote}>
+                  Lay out the party first, then copy a saved build into any slot.
+                </p>
+              ) : builds.length > 0 ? (
+                <>
+                  <label className={styles.field}>
+                    Search saved builds
+                    <SearchInput
+                      type="search"
+                      value={buildQuery}
+                      onChange={(e) => setBuildQuery(e.target.value)}
+                      placeholder="Find a loadout…"
+                    />
+                  </label>
+                  {draft.slots.length > 0 && (
+                    <label className={styles.field}>
+                      Assign to party slot
+                      <WellSelect
+                        aria-label="Build assignment slot"
+                        value={active}
+                        onChange={(e) => setActive(Number(e.target.value))}
+                      >
+                        {draft.slots.map((slot, i) => (
+                          <option key={slot.id} value={i}>
+                            {i + 1} · {memberRole(slot)} · {slot.playerName || "Unassigned"}
+                          </option>
+                        ))}
+                      </WellSelect>
+                    </label>
+                  )}
+                  <ul className={styles.buildList}>
+                    {builds
+                      .filter((build) =>
+                        build.title.toLowerCase().includes(buildQuery.toLowerCase()),
+                      )
+                      .map((build) => (
+                        <li key={build.id}>
+                          <Link href={`/builds/${build.id}`} title={build.title}>
+                            {build.title}
+                          </Link>
+                          <button
+                            type="button"
+                            className="button secondary"
+                            disabled={!draft.slots.length || copyingBuild}
+                            onClick={() => void copyBuild(build.id)}
+                            aria-label={`Assign ${build.title} to selected slot`}
+                          >
+                            {copyingBuild ? "Copying…" : "Assign"}
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                  {!builds.some((build) =>
+                    build.title.toLowerCase().includes(buildQuery.toLowerCase()),
+                  ) && <StatusLine>No saved build matches that name.</StatusLine>}
+                </>
+              ) : (
+                <p className={styles.memberNote}>
+                  You have no saved builds yet. Give each member a loadout here, or save a build
+                  first and assign it.
+                </p>
+              )}
+              <Link className="pill-link is-small" href="/builds/new">
+                <Plus size={14} aria-hidden="true" /> Create a build
+              </Link>
+            </aside>
+          </div>
         </div>
         <EditorDialog
           open={editing}

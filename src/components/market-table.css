@@ -165,7 +165,7 @@
   }
 }
 /* Narrow wells (phones, side columns): the city stays pinned while the figures scroll, each
-   price sits over its age, and the spread drops. */
+   price sits over its age, a missing one is a lone dash, and the spread drops. */
 @container (max-width: 520px) {
   .app.outpost .mx-table :is(th, td) {
     padding-inline: var(--space-3);
@@ -200,6 +200,16 @@
   }
   .app.outpost .mx-table .silver img {
     display: none;
+  }
+  /* A missing order is just the dash; the column says which side, and "Unavailable" (or "No
+     sell order") stays for assistive tech */
+  .app.outpost .mx-table .mx-price.is-missing .market-inline-time {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 @container (max-width: 300px) {

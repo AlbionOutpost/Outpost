@@ -56,6 +56,7 @@ Sessions in browser tests are fixture database sessions, not real Discord logins
 - **Permissions:** for every allowed path add a denied one — anonymous, unrelated user, wrong role, revoked member — and assert nothing changed in the database.
 - **Caches:** warm as user A, request as B and anonymous; check headers and payload.
 - **UI:** visual specs write captures under `.qa/` (e.g. `.qa/<area>-correction/current/`, `.qa/design-review/`); review them, don't just count passes. Cover populated, empty, loading, error and stale states.
+- **One screen:** tool and workspace pages are held to 1440×900 by `e2e/one-screen.spec.ts`; add a page there when it should fit.
 - Keep tests fast and focused; don't add checks whose only purpose is a report.
 
 ## Not covered yet

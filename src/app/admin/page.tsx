@@ -8,7 +8,6 @@ import { AdminFrame } from "@/components/admin-frame";
 import { AdminTrend } from "@/components/admin-trend";
 import { AdminAuditRows } from "@/components/admin-audit";
 import { AdminChip, roleLabel } from "@/components/admin-chip";
-import { AdminDiscordBan } from "@/components/admin-user-actions";
 import { PanelHead } from "@/components/panel-head";
 import { SearchInput } from "@/components/field";
 
@@ -57,11 +56,10 @@ export default async function AdminOverviewPage() {
               placeholder="Find an account: name or Discord ID"
             />
           </form>
-          <AdminDiscordBan />
         </div>
       }
     >
-      <section className="panel" aria-labelledby="admin-attention">
+      <section className="panel admin-attention" aria-labelledby="admin-attention">
         <PanelHead
           id="admin-attention"
           title={
@@ -147,7 +145,7 @@ export default async function AdminOverviewPage() {
       </dl>
       <div className="admin-overview-grid">
         <AdminTrend data={data.trend} limited={data.chartLimited} />
-        <section className="panel" aria-labelledby="admin-signups">
+        <section className="panel admin-newest" aria-labelledby="admin-signups">
           <PanelHead
             id="admin-signups"
             title={
@@ -184,7 +182,7 @@ export default async function AdminOverviewPage() {
           </ul>
         </section>
       </div>
-      <section className="panel" aria-labelledby="admin-recent">
+      <section className="panel admin-recent" aria-labelledby="admin-recent">
         <PanelHead
           id="admin-recent"
           title={
@@ -198,7 +196,7 @@ export default async function AdminOverviewPage() {
               : "No gifts, bans or session changes recorded yet."
           }
         />
-        {data.audit.length > 0 && <AdminAuditRows rows={data.audit} />}
+        {data.audit.length > 0 && <AdminAuditRows rows={data.audit} variant="compact" />}
       </section>
       <p className="admin-freshness">
         Snapshot {new Date(data.asOf).toLocaleString("en-GB", { timeZone: "UTC" })} UTC. Reload the

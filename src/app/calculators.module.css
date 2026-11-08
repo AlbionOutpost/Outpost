@@ -169,9 +169,19 @@
   display: grid;
   gap: var(--space-3);
 }
+/* Wide: the open section scrolls in its own well, so the board stays on one screen */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .categories.categories {
+    max-height: max(320px, calc(100svh - 330px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
 :global(.app.outpost) .specs.specs ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 196px), 1fr));
   gap: 6px;
   margin: 0;
   padding: 0;
@@ -411,7 +421,9 @@
   display: none !important;
 }
 
-/* Flip scanner: one framed tool panel, route and items on top, results as rows in a well */
+/* Flip scanner: one framed tool panel, route and items on top, results as rows in a well. On
+   wide screens the route and items sit in a column beside the results, and the results scroll
+   in their own well, so a full 25-item scan stays on one screen. */
 :global(.app.outpost) .scanner.scanner {
   display: grid;
   gap: var(--space-4);
@@ -420,6 +432,40 @@
 }
 :global(.app.outpost) .scanner.scanner > * {
   margin: 0;
+}
+@media (min-width: 1181px) {
+  :global(.app.outpost) .scanner.scanner {
+    grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+  :global(.app.outpost) .scanner.scanner > :first-child {
+    grid-column: 1 / -1;
+  }
+  :global(.app.outpost) .scanner.scanner > .scanSetup {
+    grid-column: 1;
+    grid-row: 2 / 5;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :global(.app.outpost) .scanner.scanner > :not(:first-child, .scanSetup) {
+    grid-column: 2;
+  }
+  :global(.app.outpost) .scanner.scanner > .scanSetup.scanSetup > .scanItems.scanItems {
+    grid-column: 1 / -1;
+  }
+  :global(.app.outpost) .flips.flips {
+    max-height: max(280px, calc(100vh - 380px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  :global(.app.outpost) .flipHead.flipHead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--panel);
+  }
 }
 /* Route and items in one four-up field grid, as in crafting's first step: the four route
    choices fill the first row; tax (and the setup fee) start the second and the item search
@@ -690,22 +736,6 @@
     grid-column: 1 / -1;
   }
 }
-/* Flipping: the scanner, then the hand check under its own heading */
-:global(.app.outpost) .flipping.flipping {
-  display: grid;
-  gap: 26px;
-}
-:global(.app.outpost) .handCheck.handCheck {
-  display: grid;
-  gap: 28px;
-  margin-top: 70px;
-}
-@media (max-width: 700px) {
-  :global(.app.outpost) .handCheck.handCheck {
-    margin-top: 38px;
-  }
-}
-
 /* An empty well in a narrow panel: emblem, words and action stacked and centred */
 :global(.app.outpost) .columnEmpty.columnEmpty > div {
   flex-direction: column;

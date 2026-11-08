@@ -1,7 +1,6 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { TransportCalculator } from "@/components/transport-calculator";
-import { CalculatorCta } from "@/components/calculator-cta";
 import styles from "@/components/calculator-shell.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/transporting", await searchParams);
@@ -30,15 +29,6 @@ export default async function Page({
           to: value("to"),
           quality: value("quality"),
         }}
-      />
-      <CalculatorCta
-        title={
-          <>
-            Looking for something worth <em>hauling</em>?
-          </>
-        }
-        line="The flipping scanner checks a whole route for items that sell for more in the other city."
-        primary={{ href: "/tools/flipping", label: "Scan a route" }}
       />
     </div>
   );

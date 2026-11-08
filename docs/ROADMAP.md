@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Tools and editors on one screen — 8 November 2026
+
+- Every calculator, flipping, gold, reference, the Avalon mapper, the build and comp editors and the admin console now fit 1440×900: compact mastheads with their tabs and back links at the right edge, no closing link bands (market pages keep `MarketNextSteps`, as DESIGN.md asks), long lists scrolling in their own wells. `e2e/one-screen.spec.ts` checks each page.
+- Crafting family: the five modes sit in the masthead; the Production plan is one summary row with Open plan; Run details open from the result's head. Flipping shows Scan a route or Check one trade, one at a time. The build editor gained a Cost tab; the comp editor puts The comp and Your builds beside the party. The tools hub shows all 23 tools five across with whole descriptions.
+- Gold's failed load is one line with Try again; on phones a missing market order is a lone dash.
+- Fixed: a price that finished loading while a player was in its field replaced the text under the caret, so their typing was appended to it (2,982 + 3000 read as 29,823,000). Number fields now hold outside values until the player leaves the field.
+
 ## Audit fixes — 8 November 2026
 
 - Sign-in keeps the destination: dashboard, settings, timers, favorites, new Team, admin and build/comp edit pages send `callbackUrl`, and Discord returns there (same-origin allowlist only).

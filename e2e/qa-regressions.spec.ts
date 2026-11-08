@@ -115,6 +115,7 @@ test("decimal profit is visible and clearing numeric inputs causes no React warn
     if (m.type() === "error") errors.push(m.text());
   });
   await page.goto("/tools/flipping");
+  await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
   await page.getByLabel("Purchase price per item").fill("1");
   await page.getByLabel("Sale price per item").fill("1.5");
   const result = page.locator('[data-result="trade-profit"]');

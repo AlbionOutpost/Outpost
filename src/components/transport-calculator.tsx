@@ -639,7 +639,6 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
         label="Transport workflow"
         step={step}
         onStep={goToStep}
-        details={details}
         summary={{
           label: "Net profit",
           tone: complete ? profitTone(result!.profit) : "even",
@@ -685,7 +684,13 @@ export function TransportCalculator({ initial = {} }: { initial?: TransportPrese
             id: steps[2],
             label: "Review profit",
             title: "Profit",
-            children: results,
+            // Saved plans sit at the result's foot, so the route, prices and profit fit one screen
+            children: (
+              <>
+                {results}
+                {details}
+              </>
+            ),
           },
         ]}
       />

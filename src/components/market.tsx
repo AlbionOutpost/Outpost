@@ -254,10 +254,7 @@ export function Market() {
           </button>
           <fieldset id={`${tabId}-rail`} className="market-hydration-guard" disabled={!hydrated}>
             <legend className="sr-only">Choose an item, quality and city</legend>
-            <PanelHead
-              title="Search market items"
-              line="Pick an item, then its quality and city."
-            />
+            <PanelHead title="Search market items" />
             <form id="market-compare-query" className="mx-form" method="post" onSubmit={submit}>
               <CatalogItemPicker
                 grouped

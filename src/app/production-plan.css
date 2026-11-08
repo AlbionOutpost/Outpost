@@ -181,19 +181,32 @@
   }
 }
 .app.outpost .production-plan-empty {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 12px 14px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
-}
-.app.outpost .production-plan-empty p {
   margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed var(--well-border);
+  border-radius: var(--radius-md);
   color: var(--secondary);
   font-size: 14px;
+}
+/* Closed, the plan is one summary row; Open plan shows the runs, totals and saved plans */
+@media (min-width: 1181px) {
+  .app.outpost .production-plan.panel:not([data-open]) {
+    padding-block: 16px;
+  }
+}
+.app.outpost .production-plan-body {
+  display: grid;
+  gap: var(--space-4);
+}
+.app.outpost .production-plan-body[hidden] {
+  display: none;
+}
+.app.outpost .production-plan-body > * {
+  margin: 0;
+}
+.app.outpost .production-plan-toggle svg {
+  transition: transform 160ms ease;
+}
+.app.outpost .production-plan[data-open] .production-plan-toggle svg {
+  transform: rotate(180deg);
 }

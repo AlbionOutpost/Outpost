@@ -3,6 +3,7 @@ import { chooseRegion } from "./support/region";
 import { test, expect } from "@playwright/test";
 test("calculate a trade with real input", async ({ page }) => {
   await page.goto("/tools/flipping");
+  await page.getByRole("tab", { name: "Check one trade", exact: true }).click();
   await page.getByLabel("Purchase price per item").fill("100");
   await page.getByLabel("Sale price per item").fill("150");
   await page.getByLabel("Quantity", { exact: true }).fill("10");

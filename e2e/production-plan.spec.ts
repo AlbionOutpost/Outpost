@@ -43,6 +43,11 @@ test("a large restored plan stays exportable without copying a broken share link
   );
   await page.goto("/tools/alchemy?region=europe");
   const planner = page.getByRole("region", { name: "Production plan", exact: true });
+  // Closed, the plan is one summary row; Open plan shows the runs and saved plans.
+  await expect(
+    planner.getByText("Save or restore a production plan", { exact: true }),
+  ).toBeHidden();
+  await planner.getByRole("button", { name: "Open plan", exact: true }).click();
   await planner.getByText("Save or restore a production plan", { exact: true }).click();
   await planner.getByRole("button", { name: "Load saved production plans", exact: true }).click();
   await planner.getByRole("button", { name: "Restore Large plan fixture", exact: true }).click();
@@ -95,6 +100,9 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     await planner.getByRole("button", { name: "Add current recipe", exact: true }).click();
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("200");
     await planner.getByRole("button", { name: "Add current recipe", exact: true }).click();
+    // The closed plan sums the runs in its summary line.
+    await expect(planner.getByText(/^2 \/ 30 recipes · europe · estimated profit/)).toBeVisible();
+    await planner.getByRole("button", { name: "Open plan", exact: true }).click();
     const rows = planner.locator("tbody tr");
     await expect(rows.first()).toContainText("4,800");
     await expect(rows.first()).toContainText("32");
@@ -159,6 +167,7 @@ test("multi-recipe plan combines materials, refreshes safely and persists with o
     });
     expect(invalid.status()).toBe(400);
     await page.reload();
+    await planner.getByRole("button", { name: "Open plan", exact: true }).click();
     await planner.getByText("Save or restore a production plan", { exact: true }).click();
     await planner.getByRole("button", { name: "Load saved production plans", exact: true }).click();
     await planner

@@ -27,6 +27,15 @@
   top: 88px;
   padding: var(--space-4);
 }
+/* The tier and enchantment picker, a little shorter in the rail, so the rail and its
+   disclosures end within the first screen (its search results drop over the page, so the rail
+   itself never scrolls) */
+.app.outpost .mx-rail .mx-variants {
+  gap: var(--space-2);
+}
+.app.outpost .mx-rail .mx-variants .item-variant-cell {
+  min-height: 50px;
+}
 .app.outpost .mx-rail .button.primary {
   color: var(--illustration-bg);
 }
@@ -93,13 +102,16 @@
    masthead, and what does not fit (an opened quality check, many rows) scrolls inside them,
    the City orders table in its own well first. Shorter windows scroll the page instead. */
 @media (min-width: 1280px) and (min-height: 820px) {
+  /* The columns start under the header and the compact masthead (about 195px down), so this
+     ends them inside the viewport */
   .app.outpost .mx {
-    --mx-fit-h: calc(100dvh - 200px);
+    --mx-fit-h: calc(100dvh - 205px);
   }
   .app.outpost .mx-main > :is(.mx-history, .mx-saved) {
     max-height: var(--mx-fit-h);
     overflow-y: auto;
   }
+
   .app.outpost .mx-main > :first-child {
     display: flex;
     flex-direction: column;

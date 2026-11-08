@@ -3,7 +3,6 @@ import { WorkspaceHeading } from "@/components/workspace-heading";
 import { PanelHead } from "@/components/panel-head";
 import { ReferenceJump } from "@/components/reference-jump";
 import { ItemIcon } from "@/components/item-icon";
-import { CalculatorCta } from "@/components/calculator-cta";
 import { cities } from "@/lib/albion/region-config";
 import referenceTables from "@/lib/albion/game/reference-tables.json" with { type: "json" };
 import gameItems from "@/lib/albion/game/items.json" with { type: "json" };
@@ -194,16 +193,6 @@ export default function Page() {
           </p>
         </div>
       </div>
-      <CalculatorCta
-        title={
-          <>
-            Put the bonuses to <em>work</em>
-          </>
-        }
-        line="Pick the city with the right bonus in the crafting or refining calculator and see what the run makes."
-        primary={{ href: "/tools/crafting", label: "Open the crafting calculator" }}
-        secondary={{ href: "/tools/refining", label: "Refining" }}
-      />
     </div>
   );
 }

@@ -3,3 +3,66 @@
   max-width: var(--workspace-width);
   margin-inline: auto;
 }
+/* One screen at 1440×900: with a week to draw, the latest/lowest/highest figures stand in a
+   column beside a shorter plot, and the closing row sits nearer and slimmer, so the history and
+   the next steps both fit the first viewport. Empty and failed states keep the full width. */
+@media (min-width: 1181px) {
+  :global(.app.outpost) .page :global(.history-panel) {
+    --chart-h: 150px;
+  }
+  :global(.app.outpost) .page :global(.history-panel):has(> :global(.history-chart)) {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-auto-flow: row dense;
+    align-items: stretch;
+  }
+  :global(.app.outpost) .page :global(.history-panel):has(> :global(.history-chart)) > * {
+    grid-column: 1 / -1;
+  }
+  :global(.app.outpost)
+    .page
+    :global(.history-panel):has(> :global(.history-chart))
+    > :global(.history-chart) {
+    grid-column: 1;
+  }
+  :global(.app.outpost)
+    .page
+    :global(.history-panel):has(> :global(.history-chart))
+    > :global(.history-figures) {
+    grid-column: 2;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost)
+    .page
+    :global(.history-panel):has(> :global(.history-chart))
+    :global(.history-figures)
+    > div {
+    padding: 10px var(--space-4);
+  }
+  /* Each figure's time sits beside it, so the column stays as tall as the plot */
+  :global(.app.outpost)
+    .page
+    :global(.history-panel):has(> :global(.history-chart))
+    :global(.history-figures)
+    dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+  }
+  :global(.app.outpost)
+    .page
+    :global(.history-panel):has(> :global(.history-chart))
+    :global(.history-figures)
+    > div
+    + div {
+    border-top: 1px solid var(--well-border);
+    border-left: 0;
+  }
+  .page > section:last-child {
+    margin-top: var(--space-8);
+  }
+  :global(.app.outpost) .page > section:last-child li > a {
+    min-height: 0;
+    padding-block: 14px;
+  }
+}

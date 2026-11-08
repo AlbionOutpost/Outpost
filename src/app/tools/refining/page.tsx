@@ -1,6 +1,6 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { WorkspaceHeading } from "@/components/workspace-heading";
-import { ProductionCalculator } from "@/components/production-calculator";
+import { ProductionCalculator, ProductionModes } from "@/components/production-calculator";
 import styles from "@/components/calculator-shell.module.css";
 export async function generateMetadata({ searchParams }: SeoPageProps) {
   return metadataForPage("/tools/refining", await searchParams);
@@ -20,6 +20,7 @@ export default async function Page({
         title="Refining calculator"
         accent="Refining"
         description="Price raw resources against the refined output, set your return rate and see what a refining run makes."
+        actions={<ProductionModes current="refining" />}
       />
       <ProductionCalculator
         initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}
