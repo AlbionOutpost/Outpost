@@ -68,7 +68,10 @@ test("site-wide giveaway: staff start it, players enter once, the draw runs once
     // Staff start it on the page.
     await page.goto("/giveaways");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("giveaways");
-    await page.getByRole("button", { name: "Start a giveaway" }).first().click();
+    // One start action on the page, whether or not any giveaway is open.
+    const start = page.getByRole("button", { name: "Start a giveaway" });
+    await expect(start).toHaveCount(1);
+    await start.click();
     const dialog = page.getByRole("dialog", { name: "Start a giveaway" });
     await dialog.getByLabel("Title").fill(title);
     await dialog.getByLabel("Prize").fill("One T8 Swiftclaw each");
@@ -89,9 +92,15 @@ test("site-wide giveaway: staff start it, players enter once, the draw runs once
     giveawayId = row.id;
     expect(row).toMatchObject({ groupId: null, image: "trophy-gold", createdById: ids[0] });
 
-    // A guest sees the giveaway and a sign-in that comes back here.
+    // The card shows the countdown, entrants and winners, and still one start action.
+    await expect(card).toContainText("left to enter");
+    await expect(card).toContainText("0 entrants");
+    await expect(page.getByRole("button", { name: "Start a giveaway" })).toHaveCount(1);
+
+    // A guest sees the giveaway and a sign-in that comes back here, and no start action.
     const guestPage = await guest.newPage();
     await guestPage.goto("/giveaways");
+    await expect(guestPage.getByRole("button", { name: "Start a giveaway" })).toHaveCount(0);
     const guestCard = guestPage
       .getByRole("listitem")
       .filter({ has: guestPage.getByRole("heading", { name: title }) });
@@ -281,6 +290,9 @@ test("team giveaway: members only, Manage giveaways to run and draw, leavers exc
       .getByRole("listitem")
       .filter({ has: page.getByRole("heading", { name: "Team silver raffle" }) });
     await expect(card).toContainText("Americas server");
+    await expect(
+      page.locator("#team-giveaways").getByRole("button", { name: "Start a giveaway" }),
+    ).toHaveCount(1);
     await expect(card.getByText(`Team member ${ids[3].slice(-4)}`)).toBeVisible();
     await expect(card.getByText(/You won · (1st|2nd)/)).toBeVisible();
   } finally {

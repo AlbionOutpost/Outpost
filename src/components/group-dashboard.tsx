@@ -366,7 +366,12 @@ export function GroupDashboard({
         )}
         {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
         {tab === "Announcements" && (
-          <TeamGiveaways groupId={groupId} region={group.region} locked={!!gate} />
+          <TeamGiveaways
+            groupId={groupId}
+            name={group.name}
+            region={group.region}
+            locked={!!gate}
+          />
         )}
         {tab === "Settings" && <GroupSettings ctx={ctx} profile={profile} />}
       </div>

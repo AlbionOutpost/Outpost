@@ -14,10 +14,13 @@ import styles from "./giveaways.module.css";
  */
 export function TeamGiveaways({
   groupId,
+  name,
   region,
   locked = false,
 }: {
   groupId: string;
+  /** The Team's name, shown as each giveaway's host. */
+  name: string;
   region: string;
   locked?: boolean;
 }) {
@@ -50,11 +53,12 @@ export function TeamGiveaways({
       ) : (
         <GiveawayBoard
           initial={state.board}
+          locked={locked}
           endpoint={endpoint}
           scope="team"
+          host={name}
           defaultRegion={region}
           now={state.at}
-          locked={locked}
         />
       )}
     </div>
