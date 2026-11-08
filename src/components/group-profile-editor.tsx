@@ -88,34 +88,34 @@ export function GroupProfileEditor({
         </span>
       </div>
       <form
-        className={styles.taxRow}
+        className={styles.taxForm}
         onSubmit={(e) => {
           e.preventDefault();
           const f = new FormData(e.currentTarget);
           // Empty means no tax, as the hint says.
-          void save(
-            { guildTaxPercent: Number(f.get("guildTaxPercent") || 0) },
-            "Guild tax saved.",
-          );
+          void save({ guildTaxPercent: Number(f.get("guildTaxPercent") || 0) }, "Guild tax saved.");
         }}
       >
-        <Field
-          label="Guild tax (%)"
-          hint="Loot splits can take this share of the pool for the team pot first. 0 or empty for none."
-        >
-          <NumberField
-            name="guildTaxPercent"
-            aria-label="Guild tax (%)"
-            min={0}
-            max={100}
-            decimals={1}
-            placeholder="e.g. 10"
-            defaultValue={group.guildTaxPercent || null}
-          />
-        </Field>
-        <button className="button secondary" disabled={busy}>
-          Save guild tax
-        </button>
+        <div className={styles.taxRow}>
+          <Field label="Guild tax (%)">
+            <NumberField
+              name="guildTaxPercent"
+              aria-label="Guild tax (%)"
+              aria-describedby="guild-tax-hint"
+              min={0}
+              max={100}
+              decimals={1}
+              placeholder="e.g. 10"
+              defaultValue={group.guildTaxPercent || null}
+            />
+          </Field>
+          <button className="button secondary" disabled={busy}>
+            Save guild tax
+          </button>
+        </div>
+        <p id="guild-tax-hint" className={styles.taxHint}>
+          Loot splits can take this share of the pool for the team pot first. 0 or empty for none.
+        </p>
       </form>
       <Disclosure summary="Edit team profile">
         <form

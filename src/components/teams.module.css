@@ -1686,7 +1686,15 @@
   display: flex;
   align-items: flex-end;
   gap: var(--space-3);
+}
+:global(.app.outpost) .taxForm.taxForm {
   margin-bottom: var(--space-3);
+}
+:global(.app.outpost) .taxHint.taxHint {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 :global(.app.outpost) .taxRow.taxRow > :first-child {
   flex: 1;
