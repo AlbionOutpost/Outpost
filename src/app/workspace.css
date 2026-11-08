@@ -56,17 +56,6 @@ main[data-width="marketing"]:not([data-page="home"]) {
   margin-bottom: 24px;
   line-height: 1.6;
 }
-.workspace-route .panel {
-  background: var(--surface-card);
-  border-color: var(--line-soft);
-  border-radius: 6px;
-  box-shadow: none;
-}
-.workspace-route .button {
-  min-height: var(--control-height);
-  border-radius: 4px;
-  font-weight: 600;
-}
 .workspace-route .eyebrow {
   color: var(--accent-ink);
   letter-spacing: 0.06em;

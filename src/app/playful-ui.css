@@ -21,17 +21,6 @@
   font-weight: 700;
   padding-inline: 11px;
 }
-.app.outpost .button {
-  min-height: 42px;
-  border-radius: 8px;
-  font-weight: 650;
-}
-.app.outpost .button:not(.search-trigger):hover:not(:disabled) {
-  box-shadow: 0 5px 15px #00000020;
-}
-.app.outpost .button:active:not(:disabled) {
-  box-shadow: inset 0 2px 4px #00000028;
-}
 .app.outpost .button:focus-visible,
 .app.outpost button:focus-visible,
 .app.outpost a:focus-visible {

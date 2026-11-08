@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Surfaces with depth and a softer backdrop — 8 November 2026
+
+- Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
+- One surface recipe for every panel, toolbar and plain card: a crisp 1px edge lit copper along the top, an inner highlight, a fill lit from the top and a stacked soft drop; buttons, pill links and the chosen segmented option are the same surface in miniature; wells get a light lip under them. Tokens in `product-system.css`, recipe in DESIGN.md.
+- Team cards on `/groups` keep their 1px edge (the banner no longer covers it) and light up on hover; their shield-colour banner is quieter.
+- Superseded button and panel rules in older global sheets removed. Next: page-by-page passes on the new surfaces.
+
 ## Giveaways — 8 November 2026
 
 - `/giveaways` (More menu, footer, sitemap): Outpost staff (a global ADMIN) start a giveaway (title, prize, server, winners, closing time, optional painted picture and rules), edit or cancel it before the draw and draw the winners once entries close. Any signed-in player enters once and can leave until the deadline; guests get Sign in to enter, which comes back to the page. Winners show by display name with their place.

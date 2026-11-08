@@ -58,38 +58,7 @@
 .app.outpost .button {
   min-height: 42px;
   padding: 10px 16px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: var(--action);
-  color: #15100c;
   font: 650 14px/1.4 var(--font-ui);
-  box-shadow: none;
-  transform: none;
-}
-.app.outpost.light .button {
-  color: white;
-}
-.app.outpost .button:hover {
-  background: var(--action-hover);
-  transform: none;
-}
-.app.outpost .button:active {
-  background: var(--accent-active);
-}
-.app.outpost .button.secondary {
-  color: var(--text);
-  border-color: var(--border);
-  background: var(--elevated);
-  box-shadow: none;
-}
-.app.outpost .button.secondary:hover {
-  border-color: var(--muted);
-  background: var(--surface-3);
-}
-.app.outpost .button.negative {
-  color: var(--error);
-  border-color: var(--error);
-  background: transparent;
 }
 .app.outpost :is(button, a, summary):focus-visible {
   outline: 2px solid var(--accent-hover);
