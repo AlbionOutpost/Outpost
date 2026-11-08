@@ -30,8 +30,9 @@ const client = {
       state.updated.push(data);
       return { count: 1 };
     },
+    count: async () => 0,
   },
-  compositionVersion: { create: async () => ({}) },
+  compositionVersion: { create: async () => ({}), deleteMany: async () => ({ count: 0 }) },
   build: { findUnique: async () => null },
   groupMember: { findUnique: async () => null },
 };

@@ -11,7 +11,10 @@ const m = vi.hoisted(() => ({
 vi.mock("next-auth", () => ({ getServerSession: async () => ({ user: { id: "owner" } }) }));
 vi.mock("../src/lib/auth", () => ({ authOptions: {} }));
 vi.mock("../src/lib/db", () => ({
-  db: { user: { update: m.update, delete: m.del }, group: { count: m.count } },
+  db: {
+    user: { update: m.update, delete: m.del, findUnique: async () => ({ name: "Old name" }) },
+    group: { count: m.count },
+  },
 }));
 vi.mock("../src/lib/redis", () => ({ rateLimit: async () => true }));
 vi.mock("../src/lib/account-deletion", () => ({

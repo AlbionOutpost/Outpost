@@ -463,12 +463,19 @@ test("landing page keeps every state honest when the sources are down", async ({
   await expect(page.locator("body")).not.toContainText(/NaN|undefined/);
 });
 
-test("the Supporter plan pages do not exist while billing is off", async ({ page }) => {
+test("the Supporter page explains the launch grant and asks for no payment", async ({ page }) => {
   for (const path of ["/supporter?region=europe", "/premium?region=europe"]) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Page not found");
-    await expect(page.locator('meta[name="robots"][content*="noindex"]').first()).toBeAttached();
-    await expect(page.locator("main")).not.toContainText(/\$|€|per month/);
+    await expect(page).toHaveURL(/\/supporter\?region=europe$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Every account is a Supporter",
+    );
+    await expect(page.getByText(/lifetime Supporter, free/)).toBeVisible();
+    const main = page.locator("main");
+    await expect(main).not.toContainText(
+      /\$|€|per month|Become a Supporter|Stripe|Manage subscription/i,
+    );
+    await expect(main).not.toContainText(/Ad slots disappear|Supporters cover it/);
   }
 });
 

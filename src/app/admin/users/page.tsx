@@ -2,7 +2,7 @@ import Link from "@/components/link";
 
 import { adminPageActor } from "@/lib/admin/page-access";
 import { adminUsers } from "@/lib/admin/queries";
-import { isSupporter } from "@/lib/billing/plan";
+import { isSupporter, supporterLabel } from "@/lib/billing/plan";
 import { accountBanned } from "@/lib/admin/policy";
 import { AdminDiscordBan } from "@/components/admin-user-actions";
 import { AdminFrame } from "@/components/admin-frame";
@@ -112,7 +112,7 @@ export default async function AdminUsersPage({
                       <AdminChip
                         tone={accountBanned(u) ? "danger" : isSupporter(u) ? "accent" : "default"}
                       >
-                        {accountBanned(u) ? "Banned" : isSupporter(u) ? "Supporter" : "Free"}
+                        {accountBanned(u) ? "Banned" : supporterLabel(u)}
                       </AdminChip>
                       {u.role !== "USER" && <AdminChip tone="warn">{roleLabel(u.role)}</AdminChip>}
                     </td>

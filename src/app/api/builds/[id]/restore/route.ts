@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { apiHandler, HttpError } from "@/lib/api-errors";
-import { mutationUser, boundedJson } from "@/lib/http";
+import { mutationUser, boundedJson, spendSaveBudget } from "@/lib/http";
+import { storedBytes } from "@/lib/storage-limits";
 import { buildInput } from "@/lib/builds/validation";
 import { reviseBuild } from "@/lib/builds/service";
 export const POST = apiHandler(
@@ -23,13 +24,11 @@ export const POST = apiHandler(
       where: { buildId_version: { buildId: id, version: body.revision } },
     });
     if (!revision) throw new HttpError(404, "Revision not found");
-    return NextResponse.json(
-      await reviseBuild(
-        id,
-        auth.userId!,
-        buildInput.parse({ ...buildInput.parse(revision.snapshot), visibility: build.visibility }),
-        body.version,
-      ),
-    );
+    const restored = buildInput.parse({
+      ...buildInput.parse(revision.snapshot),
+      visibility: build.visibility,
+    });
+    await spendSaveBudget(auth.userId!, storedBytes(restored));
+    return NextResponse.json(await reviseBuild(id, auth.userId!, restored, body.version));
   },
 );

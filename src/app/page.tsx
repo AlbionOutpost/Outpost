@@ -23,6 +23,7 @@ import {
 } from "@/lib/grind-library";
 import { billingEnabled } from "@/lib/billing/stripe";
 import { supporterPrice } from "@/lib/billing/price";
+import { launchOpen } from "@/lib/billing/plan";
 import { SupporterBand } from "@/components/supporter-band";
 import { readingMinutes } from "@/components/guide-cover-card";
 import { itemName } from "@/lib/albion/game/recipes";
@@ -68,7 +69,8 @@ export default async function Home({
       supporterPrice(),
     ],
   );
-  const billing = billingEnabled();
+  // During the launch grant every account is a Supporter, so nothing is offered for sale.
+  const billing = billingEnabled() && !launchOpen();
   const [fallback, members] = await Promise.all([
     picked.length ? Promise.resolve([]) : featuredLibraryBuilds(),
     comp ? findLibraryBuilds(comp.members) : Promise.resolve([]),

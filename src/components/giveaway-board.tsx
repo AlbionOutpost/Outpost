@@ -87,6 +87,7 @@ export function GiveawayBoard({
   defaultRegion,
   now,
   signIn,
+  locked = false,
 }: {
   initial: Board;
   /** `/api/giveaways` or `/api/groups/<id>/giveaways`. */
@@ -99,8 +100,11 @@ export function GiveawayBoard({
   now: number;
   /** For guests: the sign-in page that comes back here. */
   signIn?: string;
+  /** A Team whose owner is no longer a Supporter: the management buttons are hidden. */
+  locked?: boolean;
 }) {
   const [board, setBoard] = useState(initial);
+  const canManage = board.canManage && !locked;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -328,7 +332,7 @@ export function GiveawayBoard({
             </button>
           )}
         </div>
-        {board.canManage && manage(g, closed)}
+        {canManage && manage(g, closed)}
       </li>
     );
   };
@@ -393,7 +397,7 @@ export function GiveawayBoard({
             }
             line={prizeLine}
             actions={
-              board.canManage ? (
+              canManage ? (
                 <button
                   type="button"
                   className="button primary"
@@ -413,7 +417,7 @@ export function GiveawayBoard({
               emblem="trophy-silver"
               title="No open giveaways right now"
               line={
-                board.canManage
+                canManage
                   ? "Start one to set the prize, how many win and when entries close."
                   : scope === "site"
                     ? "Outpost staff start giveaways here. Check back soon."
@@ -434,7 +438,7 @@ export function GiveawayBoard({
           <ul className={styles.rows}>{ended.map(row)}</ul>
         </section>
       )}
-      {board.canManage && (
+      {canManage && (
         <GiveawayDialog
           editing={editing}
           busy={busy}
@@ -582,7 +586,7 @@ function GiveawayDialog({
             <p>{error}</p>
             {/supporter/i.test(error) && (
               <Link className="button secondary" href="/supporter">
-                See the Supporter plan <ArrowRight size={16} aria-hidden="true" />
+                About Supporter <ArrowRight size={16} aria-hidden="true" />
               </Link>
             )}
           </div>

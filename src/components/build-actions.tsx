@@ -78,7 +78,7 @@ export function BuildActions({
         title={owner ? "Revisions" : "Make a copy"}
         line={
           owner
-            ? `Revision ${version} is current. Restoring an older one saves it as a new revision.`
+            ? `Revision ${version} is current; the last 50 are kept. Restoring an older one saves it as a new revision.`
             : "Copy this build to your account and change it in the editor."
         }
       />

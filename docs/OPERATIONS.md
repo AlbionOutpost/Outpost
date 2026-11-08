@@ -77,7 +77,7 @@ The catalog push reads your local Postgres catalog (run `npm run data:sync` firs
 
 ## Supporter billing (Stripe)
 
-**Off for now (owner, 6 Nov 2026): everything is free.** With no Stripe keys, `billingEnabled()` is false: Teams are open to everyone, `/supporter` and `/premium` show the 404 page, the landing band and Teams window name no plan, and the sitemap leaves `/supporter` out (re-add it in `scripts/build-sitemap.ts` when billing returns).
+**Off for now (owner, 6 Nov 2026): everything is free.** With no Stripe keys, `billingEnabled()` is false. Since 8 Nov the launch grant (`launchGrant` in `src/lib/billing/plan.ts`) makes every account a lifetime Supporter, so the Team gates are on but lock nobody; `/supporter` explains the grant (no price, no checkout) and `/premium` redirects there; the landing band and Teams window name no plan, and the sitemap leaves `/supporter` out. To end the launch, set `launchGrant.closedAt` to the date: accounts created before it keep Supporter. With the launch closed and billing off, newer accounts can create and run a Team only with an admin gift.
 
 The Supporter plan is a monthly subscription sold through Stripe Checkout; Outpost never sees a card. To switch it on:
 
@@ -86,7 +86,7 @@ The Supporter plan is a monthly subscription sold through Stripe Checkout; Outpo
 3. Enable the customer portal (Settings → Billing → Customer portal) so Supporters can change cards, download invoices and cancel.
 4. Upload `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` and `STRIPE_PRICE_SUPPORTER` as web secrets (step above) and deploy. The env validator refuses a partial set.
 
-Until all three are set the Supporter page says nothing is for sale and no gate is enforced. Once set: creating a Team workspace and managing one (profile, events, announcements, invites, roles, shared builds, loot splits) need the team **owner** on the plan; members keep reading, RSVPs and leaving. The plan on the account is written only by the webhook (signature verified, subscription re-read from Stripe on every event); `past_due` keeps the benefits until Stripe gives up. Test with Stripe's test keys and `stripe listen --forward-to localhost:3000/api/billing/webhook`.
+While the launch grant is open nothing is offered for sale even with keys set. After it closes: creating a Team workspace and managing one (profile, events, announcements, invites, roles, shared builds, loot splits, wallet, games, giveaways) need the team **owner** on the plan; members keep reading, RSVPs and leaving. The plan on the account is written only by the webhook (signature verified, subscription re-read from Stripe on every event); `past_due` keeps the benefits until Stripe gives up. Test with Stripe's test keys and `stripe listen --forward-to localhost:3000/api/billing/webhook`.
 
 ## Advertising (AdSense)
 
