@@ -4,6 +4,12 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Editors without the duplicates — 8 November 2026
+
+- Build editor: one loadout view, Cost · board · Abilities side by side (board, abilities, cost on phones). The "Your build" slot list and the Equipment, Abilities and Cost tabs are gone; the board is the only place to pick a slot. Alternatives and Notes stay as tabs.
+- Comp editor: party size is chosen in one place (the empty party's well, then a Party size select under the board); The comp holds comp details only; Your builds appears once there is a party and says one thing; a 5-player party fits one row of smaller windows.
+- Builds pages end on their content: the Favorites "Make one yours" band and the guest editor's sign-in band are gone (a guest gets one line with Sign in).
+
 ## Tools and editors on one screen — 8 November 2026
 
 - Every calculator, flipping, gold, reference, the Avalon mapper, the build and comp editors and the admin console now fit 1440×900: compact mastheads with their tabs and back links at the right edge, no closing link bands (market pages keep `MarketNextSteps`, as DESIGN.md asks), long lists scrolling in their own wells. `e2e/one-screen.spec.ts` checks each page.

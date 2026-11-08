@@ -4,13 +4,15 @@ import type { MemberSlot } from "@/lib/compositions/validation";
 import { slotRosterMember } from "@/lib/compositions/roster";
 import { LoadoutBoard } from "./loadout-board";
 import { RosterRowCells } from "./comp-roster";
-import { CompMemberWindow } from "./comp-members";
+import { CompMemberWindow, partyColumns } from "./comp-members";
+import type { CSSProperties } from "react";
 import windows from "./landing/windows.module.css";
 import styles from "./comps.module.css";
 
 /**
- * The planner's party: every member as the landing's window with its loadout on the board, three
- * across; the whole window opens that member's editor. Phones show the members as roster rows.
+ * The planner's party: every member as the landing's window with its loadout on a small board,
+ * laid out by party size so rows are full or balanced (5 in one row, 10 as 5 + 5, 7 as 4 + 3);
+ * the whole window opens that member's editor. Phones show the members as roster rows.
  */
 export function PartyBoard({
   members,
@@ -23,7 +25,16 @@ export function PartyBoard({
 }) {
   return (
     <div className={windows.windows}>
-      <ol className={styles.members} aria-label="Visual party loadouts">
+      <ol
+        className={styles.members}
+        aria-label="Visual party loadouts"
+        style={
+          {
+            "--plan-cols": members.length === 5 ? 5 : partyColumns(members.length),
+            "--plan-cols-md": members.length === 4 ? 2 : Math.min(members.length, 3),
+          } as CSSProperties
+        }
+      >
         {members.map((member, i) => {
           const row = slotRosterMember(member);
           // Screen readers hear the role with the player, as sighted players see it on the row.
@@ -59,7 +70,7 @@ export function PartyBoard({
                     body: (
                       <LoadoutBoard
                         pieces={member.equipment}
-                        size="card"
+                        size="mini"
                         abilities={false}
                         label={`Player ${i + 1} equipment`}
                       />
