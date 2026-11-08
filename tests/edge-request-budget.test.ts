@@ -67,6 +67,22 @@ describe("trusted edge request budgets", () => {
       await requestBudget(req("/api/market?region=europe", "203.0.113.2"), binding),
     ).toBeNull();
   });
+  it("limits uncached searches per caller, whatever the query or cookie", async () => {
+    const binding = budgets();
+    for (let i = 0; i < 30; i++)
+      expect(
+        await requestBudget(
+          req(`/api/search?q=probe${i}`, undefined, { Cookie: "next-auth.session-token=x" }),
+          binding,
+        ),
+      ).toBeNull();
+    const denied = await requestBudget(req("/api/search/?q=another"), binding);
+    expect(denied?.status).toBe(429);
+    expect(denied?.headers.get("Retry-After")).toBe("60");
+    expect(await requestBudget(req("/api/search?q=another", "203.0.113.2"), binding)).toBeNull();
+    // Other pages keep their own, larger budget.
+    expect(await requestBudget(req("/builds"), binding)).toBeNull();
+  });
   it("fails closed without trusted identity or a working limiter", async () => {
     expect(
       (
