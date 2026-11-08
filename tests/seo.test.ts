@@ -145,6 +145,17 @@ describe("public metadata identity and social previews", () => {
       expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
     },
   );
+  it("opens /compositions on comps by activity and keeps the list a distinct page", () => {
+    expect(metadataForPage("/compositions").title).toBe("Albion Online comps by activity");
+    const list = metadataForPage("/compositions", { view: "all", region: "asia" });
+    expect(list.title).toBe("Albion Online team compositions");
+    expect(list.alternates?.canonical).toBe(
+      "https://albionoutpost.com/compositions?region=asia&view=all",
+    );
+    expect(metadataForPage("/compositions", { category: "ZVZ" }).title).toBe(
+      "ZvZ comps — Albion Online",
+    );
+  });
   it.each([{ mine: "1" }, { view: "saved" }, { q: "not-public-search-text" }])(
     "keeps personalized/search variants out of indexing",
     (query) => {
@@ -341,7 +352,8 @@ describe("public discovery output", () => {
         );
         expect(url.pathname).not.toMatch(/^\/(builds|compositions)\/(new|[^/]+\/edit)(\/|$)/);
         expect(url.pathname).not.toBe("/tools/death-feed");
-        for (const key of url.searchParams.keys()) expect(["source", "category"]).toContain(key);
+        for (const [key, value] of url.searchParams)
+          expect(["source", "category", ...(value === "all" ? ["view"] : [])]).toContain(key);
       }
       expect(urls.some((url) => url.pathname === "/supporter")).toBe(false);
       expect(urls.some((url) => url.searchParams.get("category") === "MISTS_SOLO")).toBe(true);

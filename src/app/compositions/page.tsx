@@ -1,4 +1,5 @@
-import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { isCompList, metadataForPage, type SeoPageProps } from "@/lib/seo";
+import CompActivities from "./comp-activities";
 import { CompDirectoryHeader } from "@/components/comp-directory-header";
 import { AdSlot } from "@/components/ad-slot";
 import { findLibraryBuilds, queryLibraryCompositions } from "@/lib/grind-library";
@@ -35,7 +36,8 @@ export async function generateMetadata({ searchParams }: SeoPageProps) {
 const visibility = { PUBLIC: "Public", PRIVATE: "Private", GROUP: "Team only" } as const;
 const size = 24;
 /**
- * Every comp in one list: comps players made on Outpost (and the ones their Teams share) and
+ * `/compositions` opens on comps by activity, as Builds does; any list parameter (`view=all`,
+ * a search, a filter or a page) opens the list. Every comp in one list: comps players made on Outpost (and the ones their Teams share) and
  * the recorded Group Builds. "All" shows the player comps first, then the Group Builds, each
  * under its own heading with its own count.
  */
@@ -46,6 +48,7 @@ export default async function Compositions({
 }) {
   const params = await searchParams,
     value = (key: string) => (typeof params[key] === "string" ? params[key].slice(0, 100) : "");
+  if (!isCompList(params)) return <CompActivities />;
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   const mine = value("mine") === "1",
@@ -65,7 +68,8 @@ export default async function Compositions({
   const href = (patch: Record<string, string>) => {
     const next = new URLSearchParams({ ...query, ...patch });
     for (const [key, v] of [...next]) if (!v) next.delete(key);
-    return `/compositions${next.size ? `?${next}` : ""}`;
+    // With no filter left, the list still needs a parameter: bare `/compositions` is the grid.
+    return `/compositions?${next.size ? next : "view=all"}`;
   };
   const reset = href({ q: "", category: "", page: "" });
   const where: Prisma.CompositionWhereInput = {
