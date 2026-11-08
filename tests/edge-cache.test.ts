@@ -71,6 +71,30 @@ describe("edge cache for signed-out public answers", () => {
     const cookie = { headers: { Cookie: "next-auth.session-token=abc" } };
     expect(key("/api/landing?region=europe", cookie)).toBeNull();
   });
+  it("keys Market Explorer's prices and history by their validated selection", () => {
+    expect(key("/api/market?quality=2&utm=x&item=T4_BAG%401&region=europe")).toBe(
+      "https://albionoutpost.com/api/market?region=europe&item=T4_BAG%401&quality=2",
+    );
+    expect(edgeCacheEntry(req("/api/market?region=asia&item=T4_BAG&quality=1"))!.ttl).toBe(60);
+    expect(key("/api/market?region=europe&item=t4_bag&quality=1")).toBeNull();
+    expect(key("/api/market?region=europe&item=T4_BAG&quality=6")).toBeNull();
+    expect(key("/api/market?region=mars&item=T4_BAG&quality=1")).toBeNull();
+    expect(
+      key("/api/history?city=Fort%20Sterling&quality=1&item=T4_BAG&region=americas&kind=history"),
+    ).toBe(
+      "https://albionoutpost.com/api/history?kind=history&region=americas&item=T4_BAG&city=Fort%20Sterling&quality=1",
+    );
+    expect(edgeCacheEntry(req("/api/history?kind=gold&region=europe"))!.ttl).toBe(300);
+    expect(key("/api/history?kind=gold&region=europe&item=T4_BAG")).toBe(
+      "https://albionoutpost.com/api/history?kind=gold&region=europe",
+    );
+    expect(
+      key("/api/history?kind=history&region=europe&item=T4_BAG&city=Nowhere&quality=1"),
+    ).toBeNull();
+    expect(key("/api/history?kind=other&region=europe")).toBeNull();
+    const cookie = { headers: { Cookie: "next-auth.session-token=abc" } };
+    expect(key("/api/market?region=europe&item=T4_BAG&quality=1", cookie)).toBeNull();
+  });
   it("never caches per-account likes", () => {
     expect(key("/api/library-likes?items=build:axe")).toBeNull();
     expect(key("/api/library-likes/build/axe")).toBeNull();

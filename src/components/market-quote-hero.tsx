@@ -5,7 +5,7 @@ import { Silver } from "./silver";
 import type { MarketPrice } from "@/lib/albion/market-client";
 import { sourceAge } from "@/lib/albion/source-age";
 import { sourceTimestamp } from "@/lib/albion/freshness";
-import { observedAt } from "./market-city-table";
+import { Skeleton, observedAt } from "./market-city-table";
 
 export const qualityNames = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
 
@@ -30,6 +30,7 @@ export function MarketQuoteHero({
   status,
   failed = false,
   onRetry,
+  loading = false,
   now,
 }: {
   item: string;
@@ -45,6 +46,8 @@ export function MarketQuoteHero({
   /** The request failed: the status is the page's one error, with a retry beside it. */
   failed?: boolean;
   onRetry?: () => void;
+  /** Observations are on their way: the figures keep their places as stand-ins. */
+  loading?: boolean;
   now: number;
 }) {
   const tier = tierLabel(item);
@@ -108,6 +111,27 @@ export function MarketQuoteHero({
             </dd>
           </div>
         </dl>
+      ) : loading ? (
+        <>
+          <dl className="mx-figures is-loading">
+            {["Lowest sell order", "Highest buy order", "Newest observation"].map((label, i) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>
+                  <b className={i < 2 ? "numeric is-price" : "numeric"}>
+                    <Skeleton>00,000</Skeleton>
+                  </b>
+                  <small>
+                    <Skeleton>Fort Sterling · 15 min ago</Skeleton>
+                  </small>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="sr-only" role="status">
+            {status}
+          </p>
+        </>
       ) : (
         <div className="mx-hero-status">
           <StatusLine tone={failed ? "error" : "default"}>{status}</StatusLine>

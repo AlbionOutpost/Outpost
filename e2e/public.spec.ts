@@ -74,7 +74,8 @@ test("regional market request and region invalidation", async ({ page }) => {
     await page.waitForTimeout(400);
     await expect(page).toHaveURL((url) => url.searchParams.get("region") === "asia");
     await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
-    await expect(rows).toHaveCount(0);
+    // Europe's observations are gone; the rows wait as skeletons.
+    await expect(rows.locator(".silver")).toHaveCount(0);
     releaseAsia();
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText("Caerleon");
@@ -145,13 +146,15 @@ test("a delayed region navigation preserves the previous market history entry", 
     await page.getByRole("option", { name: "Asia Albion East", exact: true }).click();
     await expect.poll(() => asiaRscRequested).toBe(true);
     await expect(picker).toHaveAttribute("data-region", "asia");
-    await expect(rows).toHaveCount(0);
+    // Europe's observations are gone; the rows wait as skeletons.
+    await expect(rows.locator(".silver")).toHaveCount(0);
     // Keep the actual RSC navigation pending beyond the 150ms autoload debounce.
     // The optimistic region must not replace the still-current Europe history entry.
     await page.waitForTimeout(600);
     await expect(page).toHaveURL((url) => url.searchParams.get("region") === "europe");
     await expect(picker).toHaveAttribute("data-region", "asia");
-    await expect(rows).toHaveCount(0);
+    // Europe's observations are gone; the rows wait as skeletons.
+    await expect(rows.locator(".silver")).toHaveCount(0);
     expect(await page.evaluate(() => history.length)).toBe(previousHistoryLength);
     expect(asiaMarketRequests).toBe(0);
     releaseAsia();
