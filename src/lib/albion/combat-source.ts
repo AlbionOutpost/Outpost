@@ -38,11 +38,15 @@ export const sourceEvent = z.object({
   numberOfParticipants: safeCount.optional(),
   BattleId: safeCount.nullable().optional(),
 });
-// Only the ranking reads inventories and participants; the feed strips both.
+// The killboard reads what the victim carried and who took part; everything else is stripped.
+// Big fights list hundreds of participants, so the bound is generous rather than a reason to
+// drop the fight.
 export const rankedEvent = sourceEvent.extend({
   Victim: person.extend({ Inventory: z.array(equipment.nullable()).max(200).optional() }),
-  Participants: z.array(participant).max(100).optional(),
+  Participants: z.array(participant).max(1000).optional(),
 });
+type SourceEvent = z.infer<typeof sourceEvent>;
+type RankedEvent = z.infer<typeof rankedEvent>;
 const slots = [
   ["MainHand", "Main hand"],
   ["Head", "Helmet"],
@@ -55,38 +59,53 @@ const slots = [
   ["Potion", "Potion"],
   ["Mount", "Mount"],
 ] as const;
-export function normalizeCombatEvents(raw: unknown, max = 20) {
-  const events = z.array(sourceEvent).max(max).parse(raw);
-  const identities = new Set<number>();
-  const player = (p: z.infer<typeof person>) => ({
-    id: p.Id,
+const player = (p: z.infer<typeof person>) => ({
+  id: p.Id,
+  name: p.Name,
+  guild: p.GuildName || "",
+  alliance: p.AllianceName || "",
+  itemPower: p.AverageItemPower ?? null,
+  equipment: slots.map(([key, slot]) => {
+    const item = p.Equipment?.[key];
+    return {
+      slot,
+      itemId: item?.Type ?? null,
+      quality: item?.Quality && item.Quality > 0 ? item.Quality : null,
+    };
+  }),
+});
+const toEvent = (event: SourceEvent) => ({
+  id: event.EventId,
+  occurredAt: event.TimeStamp,
+  killer: player(event.Killer),
+  victim: player(event.Victim),
+  fame: event.TotalVictimKillFame,
+  participants: event.numberOfParticipants ?? null,
+});
+const toRanked = (event: RankedEvent) => ({
+  ...toEvent(event),
+  inventory: (event.Victim.Inventory ?? []).flatMap((item) =>
+    item ? [{ itemId: item.Type, count: item.Count ?? 1 }] : [],
+  ),
+  crew: (event.Participants ?? []).map((p) => ({
     name: p.Name,
     guild: p.GuildName || "",
-    alliance: p.AllianceName || "",
+    damage: Math.round(p.DamageDone ?? 0),
+    healing: Math.round(p.SupportHealingDone ?? 0),
     itemPower: p.AverageItemPower ?? null,
-    equipment: slots.map(([key, slot]) => {
+    equipment: slots.flatMap(([key, slot]) => {
       const item = p.Equipment?.[key];
-      return {
-        slot,
-        itemId: item?.Type ?? null,
-        quality: item?.Quality && item.Quality > 0 ? item.Quality : null,
-      };
+      return item ? [{ slot, itemId: item.Type }] : [];
     }),
-  });
-  return events
-    .filter((event) => {
-      if (identities.has(event.EventId)) return false;
-      identities.add(event.EventId);
-      return true;
-    })
-    .map((event) => ({
-      id: event.EventId,
-      occurredAt: event.TimeStamp,
-      killer: player(event.Killer),
-      victim: player(event.Victim),
-      fame: event.TotalVictimKillFame,
-      participants: event.numberOfParticipants ?? null,
-    }));
+  })),
+});
+/** One entry per EventId, first copy wins. */
+function distinct<T extends { EventId: number }>(events: T[]) {
+  const seen = new Set<number>();
+  return events.filter((event) => !seen.has(event.EventId) && Boolean(seen.add(event.EventId)));
+}
+export function normalizeCombatEvents(raw: unknown, max = 20) {
+  return distinct(z.array(sourceEvent).max(max).parse(raw)).map(toEvent);
 }
 export type CombatEvent = ReturnType<typeof normalizeCombatEvents>[number];
 
@@ -96,35 +115,48 @@ export type CombatEvent = ReturnType<typeof normalizeCombatEvents>[number];
  * than promising "today".
  */
 export function normalizeTopKills(raw: unknown) {
-  const events = z.array(rankedEvent).max(60).parse(raw);
-  return normalizeCombatEvents(events, 60).map((event, i) => {
-    const source = events[i];
-    return {
-      ...event,
-      inventory: (source.Victim.Inventory ?? []).flatMap((item) =>
-        item ? [{ itemId: item.Type, count: item.Count ?? 1 }] : [],
-      ),
-      crew: (source.Participants ?? []).map((p) => ({
-        name: p.Name,
-        guild: p.GuildName || "",
-        damage: Math.round(p.DamageDone ?? 0),
-        healing: Math.round(p.SupportHealingDone ?? 0),
-        itemPower: p.AverageItemPower ?? null,
-        equipment: slots.flatMap(([key, slot]) => {
-          const item = p.Equipment?.[key];
-          return item ? [{ slot, itemId: item.Type }] : [];
-        }),
-      })),
-    };
-  });
+  return distinct(z.array(rankedEvent).max(60).parse(raw)).map(toRanked);
 }
 export type TopKill = ReturnType<typeof normalizeTopKills>[number];
+/** A fight as the kill feed and the killboard show it: both loadouts and, when the source's
+ * record of them parsed, what the victim carried and who took part. */
+export type FeedEvent = CombatEvent & Partial<Pick<TopKill, "inventory" | "crew">>;
 
-/** One bounded read of a game-info endpoint: ten seconds, one megabyte, no redirects. */
-export async function readCombatJson(url: string): Promise<unknown> {
+/**
+ * A page of the live event feed as killboard events. An entry whose inventory or participants do
+ * not parse keeps its fight without them (the card then leaves those parts out, never "nothing
+ * carried"); an entry that is not a valid fight is skipped rather than failing the page. A body
+ * that is not a bounded list throws.
+ */
+export function feedEventsFrom(raw: unknown, max = 60): FeedEvent[] {
+  if (!Array.isArray(raw) || raw.length > max) throw new Error("Unexpected combat response");
+  const seen = new Set<number>();
+  return raw.flatMap((entry): FeedEvent[] => {
+    const ranked = rankedEvent.safeParse(entry);
+    const plain = ranked.success ? null : sourceEvent.safeParse(entry);
+    const id = ranked.success ? ranked.data.EventId : plain?.success ? plain.data.EventId : null;
+    if (id === null || seen.has(id)) return [];
+    seen.add(id);
+    return [ranked.success ? toRanked(ranked.data) : toEvent(plain!.data as SourceEvent)];
+  });
+}
+
+/**
+ * Game Info sends every participant's and group member's full kit with each fight, so a page
+ * grows with the fights in it: 20 events from a large fight run to a few megabytes, and the
+ * collector's 51-event pages more. A one-megabyte cap rejected those pages outright (8 Nov 2026:
+ * the Americas feed failed on every call during big fights, and the collector's live pages were
+ * dropped), so the cap is eight megabytes, decoded as it streams in.
+ */
+export const COMBAT_MAX_BYTES = 8_000_000;
+/** One bounded read of a game-info endpoint: no redirects, a byte cap and a time limit. */
+export async function readCombatJson(
+  url: string,
+  { timeoutMs = 10_000, maxBytes = COMBAT_MAX_BYTES } = {},
+): Promise<unknown> {
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(timeoutMs),
     redirect: "manual",
     cache: "no-store",
   });
@@ -134,35 +166,35 @@ export async function readCombatJson(url: string): Promise<unknown> {
   }
   const reader = response.body?.getReader();
   if (!reader) throw new Error("Empty combat response");
-  const chunks: Uint8Array[] = [];
-  let bytes = 0;
+  const decoder = new TextDecoder();
+  let text = "",
+    bytes = 0;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
     bytes += value.byteLength;
-    if (bytes > 1000000) {
+    if (bytes > maxBytes) {
       await reader.cancel();
       throw new Error("Combat response exceeds limit");
     }
-    chunks.push(value);
+    text += decoder.decode(value, { stream: true });
   }
-  const buffer = new Uint8Array(bytes);
-  let position = 0;
-  for (const chunk of chunks) {
-    buffer.set(chunk, position);
-    position += chunk.byteLength;
-  }
-  return JSON.parse(new TextDecoder().decode(buffer));
+  return JSON.parse(text + decoder.decode());
 }
 
 /* ---- Feed freshness -----------------------------------------------------------------------
-   Game Info sometimes answers the live feed with an old copy (seen on 8 Nov 2026: the Asia feed
-   returned kills from 31 Oct minutes after returning kills from that afternoon). Outpost keeps
-   the newest kill time it has seen per server and says, on the page, when an answer is behind it
-   or simply old, instead of presenting old fights as the latest. */
+   Game Info is served by several replicas that lag by different amounts: two calls seconds apart
+   can answer with kills from 20:21 and from 19:56 (Europe, 8 Nov 2026), and a replica can answer
+   with a copy days old. Outpost keeps the newest kill time it has seen per server, asks once more
+   when an answer is behind it, merges the answers, and says on the page how old the newest kill is
+   instead of presenting old fights as the latest. */
 
 /** The game normally publishes fights minutes late; past an hour the page says so. */
 export const SOURCE_DELAY_MS = 60 * 60_000;
+/** A first page whose newest kill is further behind the newest kill Outpost saw is not live. */
+export const LIVE_LAG_MS = 15 * 60_000;
+/** An answer this far behind the newest kill Outpost saw is asked for once more. */
+export const RETRY_LAG_MS = 5 * 60_000;
 export type FeedFreshness = "live" | "delayed" | "snapshot";
 
 /** Newest kill time in a page of events (epoch ms), or null for an empty or undated page. */
@@ -172,9 +204,10 @@ export function newestKillAt(events: { occurredAt: string }[]): number | null {
 }
 
 /**
- * "snapshot" when the answer is over an hour behind a kill Outpost already saw from the same
- * server; "delayed" when the first page's newest kill is over an hour old; otherwise "live".
- * Deeper pages are older by nature, so only the snapshot check applies to them.
+ * First page: "snapshot" when its newest kill is over 15 minutes behind a kill Outpost already
+ * saw on the same server (an old copy), "delayed" when nothing newer is known but the newest kill
+ * is over an hour old (the source is behind), otherwise "live". Deeper pages are older by nature:
+ * only an answer over an hour behind a seen kill is flagged there.
  */
 export function feedFreshness(
   newestAt: number | null,
@@ -183,9 +216,69 @@ export function feedFreshness(
   firstPage: boolean,
 ): FeedFreshness {
   if (newestAt === null) return "live";
-  if (latestSeenAt !== null && latestSeenAt - newestAt > SOURCE_DELAY_MS) return "snapshot";
+  const behind = latestSeenAt === null ? 0 : latestSeenAt - newestAt;
+  if (behind > (firstPage ? LIVE_LAG_MS : SOURCE_DELAY_MS)) return "snapshot";
   if (firstPage && now - newestAt > SOURCE_DELAY_MS) return "delayed";
   return "live";
+}
+
+/** Whether an answer is far enough behind the newest kill already seen to ask once more. */
+export function shouldRetry(newestAt: number | null, latestSeenAt: number | null) {
+  return latestSeenAt !== null && (newestAt === null || latestSeenAt - newestAt > RETRY_LAG_MS);
+}
+
+/** Newest first, ties by event id, so every merge orders the same fights the same way. */
+const byTime = (a: { occurredAt: string; id: number }, b: { occurredAt: string; id: number }) =>
+  Date.parse(b.occurredAt) - Date.parse(a.occurredAt) || b.id - a.id;
+
+/**
+ * Two answers for the same feed, merged: one entry per EventId (the first answer's copy), newest
+ * first, at most `limit`. Every fight keeps its own timestamp; nothing is invented.
+ */
+export function mergeFeedEvents<T extends { id: number; occurredAt: string }>(
+  first: T[],
+  second: T[],
+  limit: number,
+): T[] {
+  const byId = new Map<number, T>();
+  for (const event of [...first, ...second]) if (!byId.has(event.id)) byId.set(event.id, event);
+  return [...byId.values()].sort(byTime).slice(0, limit);
+}
+
+/* ---- The newest fights ----------------------------------------------------------------------
+   The collector below reads each server's two newest feed pages every minute. Their fights are
+   merged into a rolling window of the newest distinct events per server (one stored value,
+   written once a tick), and the feed's first pages are served from it: a lagging replica can only
+   add fights the window lacks, never push newer ones out. */
+
+export const RECENT_SIZE = 100;
+/** The rolling window of a server's newest fights, as the feed reads it. */
+export type RecentKills = {
+  events: FeedEvent[];
+  /** When a collection pass last read a live feed page (ISO), or null. */
+  readAt: string | null;
+  /** The newest kill time any pass has seen (epoch ms), or null. */
+  newestAt: number | null;
+};
+/** The stored window stays well under a Durable Object value's 2 MB. */
+export const RECENT_MAX_CHARS = 1_500_000;
+
+/** The newest `keep` distinct fights from the window and a new read, dropping the oldest until
+ * the serialized window fits. Fights dated more than five minutes ahead are left out. */
+export function mergeRecent(
+  current: FeedEvent[],
+  incoming: FeedEvent[],
+  now: number,
+  keep = RECENT_SIZE,
+  maxChars = RECENT_MAX_CHARS,
+): FeedEvent[] {
+  const merged = mergeFeedEvents(incoming, current, Infinity).filter(
+    (event) => Date.parse(event.occurredAt) <= now + 300_000,
+  );
+  const window = merged.slice(0, keep);
+  let size = JSON.stringify(window).length;
+  while (window.length && size > maxChars) size -= JSON.stringify(window.pop()).length + 1;
+  return window;
 }
 
 /* ---- The week's top kills ----------------------------------------------------------------
@@ -199,7 +292,8 @@ export const KILL_WINDOW_MS = 7 * 24 * 3600 * 1000;
 export const SHORTLIST_SIZE = 40;
 export type KillCandidate = { id: number; occurredAt: number; fame: number; raw: unknown };
 
-/** Valid ranked events from one source page; malformed entries are skipped, not guessed. */
+/** Valid ranked events from one source page, stripped to what the killboard reads; malformed
+ * entries are skipped, not guessed. */
 export function candidatesFrom(raw: unknown): KillCandidate[] {
   if (!Array.isArray(raw)) return [];
   return raw.slice(0, 60).flatMap((entry) => {
@@ -207,7 +301,14 @@ export function candidatesFrom(raw: unknown): KillCandidate[] {
     if (!parsed.success) return [];
     const occurredAt = Date.parse(parsed.data.TimeStamp);
     return Number.isFinite(occurredAt)
-      ? [{ id: parsed.data.EventId, occurredAt, fame: parsed.data.TotalVictimKillFame, raw: entry }]
+      ? [
+          {
+            id: parsed.data.EventId,
+            occurredAt,
+            fame: parsed.data.TotalVictimKillFame,
+            raw: parsed.data,
+          },
+        ]
       : [];
   });
 }
@@ -228,16 +329,30 @@ export function mergeShortlist(
     .slice(0, keep);
 }
 
-/** One collection pass for a server: the two newest feed pages plus the official weekly ranking. */
+/**
+ * One collection pass for a server: the two newest feed pages, then the official weekly ranking,
+ * one at a time so a large page is parsed and stripped before the next arrives. `recent` holds
+ * the feed pages' fights (empty when neither page could be read); `candidates` everything valid.
+ */
 export async function fetchKillCandidates(
   region: Region,
-  read: (url: string) => Promise<unknown> = readCombatJson,
-): Promise<KillCandidate[]> {
+  read: (url: string) => Promise<unknown> = (url) => readCombatJson(url, { timeoutMs: 20_000 }),
+): Promise<{ candidates: KillCandidate[]; recent: FeedEvent[] }> {
   const host = combatHosts[region];
-  const pages = await Promise.allSettled([
-    read(`${host}/api/gameinfo/events?limit=51&offset=0`),
-    read(`${host}/api/gameinfo/events?limit=51&offset=51`),
-    read(`${host}/api/gameinfo/events/killfame?range=week&limit=10&offset=0`),
-  ]);
-  return pages.flatMap((page) => (page.status === "fulfilled" ? candidatesFrom(page.value) : []));
+  const candidates: KillCandidate[] = [],
+    recent: FeedEvent[] = [];
+  for (const [url, live] of [
+    [`${host}/api/gameinfo/events?limit=51&offset=0`, true],
+    [`${host}/api/gameinfo/events?limit=51&offset=51`, true],
+    [`${host}/api/gameinfo/events/killfame?range=week&limit=10&offset=0`, false],
+  ] as const) {
+    try {
+      const page = await read(url);
+      candidates.push(...candidatesFrom(page));
+      if (live) recent.push(...feedEventsFrom(page));
+    } catch {
+      // That page is missing from this pass; the next pass asks again.
+    }
+  }
+  return { candidates, recent };
 }

@@ -1,4 +1,4 @@
-import type { KillCandidate } from "../../src/lib/albion/combat-source";
+import type { KillCandidate, RecentKills } from "../../src/lib/albion/combat-source";
 import type { Region } from "../../src/lib/albion/region-config";
 import { databaseBinding } from "./web-driver";
 
@@ -9,10 +9,7 @@ export async function killShortlist(
   return databaseBinding().topKills(region);
 }
 
-/** Newest kill time the cron collector has seen; the collector owns it, so noting is a no-op. */
-export async function killWatermark(region: Region): Promise<number | null> {
-  return databaseBinding().killWatermark(region);
-}
-export function noteNewestKill(...args: [region: Region, at: number | null]) {
-  void args;
+/** The newest distinct fights the cron collector has read, with its last read and newest kill. */
+export async function recentKills(region: Region): Promise<RecentKills> {
+  return databaseBinding().recentKills(region);
 }

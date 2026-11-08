@@ -6,6 +6,7 @@ import { models, type DatabaseQuery, type DatabaseReply, validateQuery } from ".
 import { publicCatalogQuery } from "./public-assets";
 import { publicModels } from "./protocol";
 import type { LibraryQuery } from "../../src/lib/grind-library-query";
+import type { RecentKills } from "../../src/lib/albion/combat-source";
 
 export interface OutpostDatabaseBinding {
   query(queries: DatabaseQuery[]): Promise<DatabaseReply<unknown[]>>;
@@ -21,7 +22,7 @@ export interface OutpostDatabaseBinding {
     kills: { id: number; occurredAt: number; fame: number; raw: unknown }[];
     collectedAt: string | null;
   }>;
-  killWatermark(region: string): Promise<number | null>;
+  recentKills(region: string): Promise<RecentKills>;
 }
 export function databaseBinding(): OutpostDatabaseBinding {
   const env = getCloudflareContext().env;

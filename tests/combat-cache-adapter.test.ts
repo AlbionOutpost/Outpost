@@ -34,7 +34,7 @@ describe("public combat cache boundary", () => {
         await expect(client.get(key)).rejects.toThrow();
       await expect(client.set("atlas:combat:europe:0", "[]", "EX", 46)).rejects.toThrow();
       await expect(
-        client.set("atlas:combat:europe:0", "x".repeat(200001), "EX", 45),
+        client.set("atlas:combat:europe:0", "x".repeat(1_000_001), "EX", 45),
       ).rejects.toThrow();
     } finally {
       vi.unstubAllGlobals();

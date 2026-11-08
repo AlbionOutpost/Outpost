@@ -275,19 +275,21 @@ export default class OutpostData extends WorkerEntrypoint<OutpostDataEnv> {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
     return this.env.KILLS.getByName(region).shortlist();
   }
-  /** The newest kill time the collector has seen on a server (epoch ms), or null. */
-  async killWatermark(region: string) {
+  /** A server's newest distinct fights, the collector's last live read and newest kill time. */
+  async recentKills(region: string) {
     if (!["europe", "americas", "asia"].includes(region)) throw new Error("Invalid region");
-    return this.env.KILLS.getByName(region).newest();
+    return this.env.KILLS.getByName(region).recent();
   }
-  /** Every minute: read each server's live kill feed and the weekly ranking into its shortlist. */
+  /** Every minute: read each server's live kill feed and the weekly ranking into its shortlist
+   * and its window of newest fights. */
   async scheduled() {
     await Promise.allSettled(
       (["europe", "americas", "asia"] as const).map(async (region) => {
-        const candidates = await fetchKillCandidates(region);
+        const { candidates, recent } = await fetchKillCandidates(region);
         if (!candidates.length) return;
         await this.env.KILLS.getByName(region).record(
           candidates.map((kill) => ({ ...kill, raw: JSON.stringify(kill.raw) })),
+          recent,
         );
       }),
     );
