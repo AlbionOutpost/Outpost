@@ -124,6 +124,7 @@ Switch-on order (done 6 Nov 2026 up to the imprint): client id → deploy → co
 | AODP upstream      | 50/min and 250/5 min per region (AODP publishes 100/min, 300/5 min)                                                                                                                                                                                          |
 | Game Info upstream | 12/min per region                                                                                                                                                                                                                                            |
 | D1                 | Imports and index updates count as row writes; there is no scheduled ingestion by design                                                                                                                                                                     |
+| Kill collector     | The data Worker's per-minute cron (`cloudflare/database/wrangler.jsonc`) makes 3 Game Info reads per server and one `KillBoard` write per server; the kill feed adds one `killWatermark` read per upstream page fetch (at most every 45 s per page)          |
 
 Measure with the account GraphQL analytics (`workersInvocationsAdaptive`, `durableObjectsInvocationsAdaptiveGroups`, zone `httpRequestsAdaptiveGroups` by path and user agent). Check current Free plan quotas on Cloudflare's limits pages before adding any background job, cron or ingestion.
 

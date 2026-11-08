@@ -20,6 +20,7 @@ export async function killShortlist(
       try {
         if (!(await rateLimit(`combat-upstream:${region}`, 12, 60))) return;
         const incoming = await fetchKillCandidates(region);
+        noteNewestKill(region, Math.max(0, ...incoming.map((kill) => kill.occurredAt)) || null);
         board.kills = mergeShortlist(board.kills, incoming, Date.now());
         board.collectedAt = Date.now();
       } catch {
@@ -34,4 +35,19 @@ export async function killShortlist(
     kills: mergeShortlist(board.kills, [], Date.now()),
     collectedAt: board.collectedAt ? new Date(board.collectedAt).toISOString() : null,
   };
+}
+
+/* Newest kill time seen per server (feed pages and collection passes), for feed freshness. */
+const newest = new Map<Region, number>();
+export async function killWatermark(region: Region): Promise<number | null> {
+  return newest.get(region) ?? null;
+}
+export function noteNewestKill(region: Region, at: number | null) {
+  if (
+    at !== null &&
+    Number.isFinite(at) &&
+    at <= Date.now() + 300_000 &&
+    at > (newest.get(region) ?? 0)
+  )
+    newest.set(region, at);
 }
