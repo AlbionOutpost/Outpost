@@ -28,7 +28,7 @@ You are shipping UI for what should be the best Albion Online site ever made. Wo
 - **Accessible by default:** semantic elements, labelled controls and landmarks, visible focus, keyboard paths, dialogs that trap and return focus, ≥4.5:1 contrast, colour never the only signal.
 - **Motion** only through `motion-system.css` patterns (grow-and-hold, press, disclosure); everything respects reduced motion.
 - **Next.js 16:** check `node_modules/next/dist/docs/` before using an unfamiliar API. Prefer server components; keep client components small and split big ones by responsibility.
-- **Budget:** watch what you add to the client bundle and global CSS; the web Worker must stay under 3 MiB gzip.
+- **Budget:** watch what you add to the client bundle and global CSS; the web Worker must stay under 10 MiB gzip (Workers Paid) and smaller starts faster.
 
 ## Finish
 

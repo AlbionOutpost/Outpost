@@ -50,12 +50,13 @@ for (const name of ["data", "web"]) {
   if (result.status !== 0 || !matched)
     throw new Error(`${name} Worker dry-run failed; see the sanitized local log`);
   const compressedBytes = Math.ceil(Number(matched[1]) * 1024);
-  if (compressedBytes > 3 * 1024 * 1024)
-    throw new Error(`${name} Worker exceeds the Cloudflare Free 3 MiB limit`);
+  // Workers Paid allows 10 MiB gzip per Worker (Free: 3 MiB).
+  if (compressedBytes > 10 * 1024 * 1024)
+    throw new Error(`${name} Worker exceeds the Cloudflare Workers Paid 10 MiB limit`);
   results.push({
     worker: settings.name,
     compressedBytes,
-    freeLimitBytes: 3 * 1024 * 1024,
+    limitBytes: 10 * 1024 * 1024,
     status: "PASS",
   });
 }
