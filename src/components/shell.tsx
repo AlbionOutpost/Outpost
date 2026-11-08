@@ -15,6 +15,7 @@ import {
   LogOut,
   ArrowUpRight,
   Grid2X2,
+  Gift,
   Heart,
   LayoutDashboard,
   ListChecks,
@@ -117,6 +118,7 @@ const footerColumns = [
     label: "Outpost",
     links: [
       ["/groups", "Teams"],
+      ["/giveaways", "Giveaways"],
       ["/dashboard", "Dashboard"],
       ["/timers", "Timers"],
       ["/market-data", "How prices work"],
@@ -125,8 +127,11 @@ const footerColumns = [
   },
 ] as const;
 /** Header menu entries, grouped, each with its glyph. Signed in, the account menu holds
- * "Your account" and More keeps only Planning, so no link shows twice (the drawer lists all). */
-const menuItems: Record<string, { group: "Your account" | "Planning"; icon: typeof Timer }> = {
+ * "Your account" and More keeps Planning and Community, so no link shows twice (the drawer lists all). */
+const menuItems: Record<
+  string,
+  { group: "Your account" | "Planning" | "Community"; icon: typeof Timer }
+> = {
   "/dashboard": { group: "Your account", icon: LayoutDashboard },
   "/favorites": { group: "Your account", icon: Heart },
   "/settings": { group: "Your account", icon: Settings },
@@ -134,12 +139,14 @@ const menuItems: Record<string, { group: "Your account" | "Planning"; icon: type
   "/admin/reports": { group: "Your account", icon: ShieldCheck },
   "/timers": { group: "Planning", icon: Timer },
   "/shopping-list": { group: "Planning", icon: ListChecks },
+  "/giveaways": { group: "Community", icon: Gift },
 };
 const accountLinks = [
   ["/dashboard", "My dashboard"],
   ["/timers", "Personal timers"],
   ["/shopping-list", "Crafting Planner"],
   ["/favorites", "My favorites"],
+  ["/giveaways", "Giveaways"],
   ["/settings", "Settings"],
   ["/signin", "Sign in"],
 ];
@@ -377,16 +384,17 @@ export function Shell({
           More <ChevronDown size={13} />
         </summary>
         <div className="menu-panel">
-          {(authenticated ? (["Planning"] as const) : (["Your account", "Planning"] as const)).map(
-            (group) => (
-              <div key={group} className="menu-group" role="group" aria-label={group}>
-                <p className="menu-label" aria-hidden="true">
-                  {group}
-                </p>
-                {menuGroup(group)}
-              </div>
-            ),
-          )}
+          {(authenticated
+            ? (["Planning", "Community"] as const)
+            : (["Your account", "Planning", "Community"] as const)
+          ).map((group) => (
+            <div key={group} className="menu-group" role="group" aria-label={group}>
+              <p className="menu-label" aria-hidden="true">
+                {group}
+              </p>
+              {menuGroup(group)}
+            </div>
+          ))}
         </div>
       </details>
     </nav>

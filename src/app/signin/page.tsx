@@ -47,7 +47,9 @@ export default async function Signin({
                 ? "your timers"
                 : callbackUrl === "/favorites"
                   ? "your favorites"
-                  : "your dashboard";
+                  : callbackUrl === "/giveaways"
+                    ? "the giveaways"
+                    : "your dashboard";
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
   const error = signInErrorMessage(params.error);
   const retry = `/signin?${new URLSearchParams({ callbackUrl })}`;

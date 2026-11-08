@@ -389,6 +389,42 @@ CREATE TABLE "GroupLootRollEntry" (
 );
 
 -- CreateTable
+CREATE TABLE "Giveaway" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "groupId" TEXT,
+    "title" TEXT NOT NULL,
+    "prize" TEXT NOT NULL,
+    "image" TEXT,
+    "region" TEXT NOT NULL,
+    "rules" TEXT NOT NULL DEFAULT '',
+    "winnerCount" INTEGER NOT NULL,
+    "closesAt" DATETIME NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'OPEN',
+    "version" INTEGER NOT NULL DEFAULT 1,
+    "createdById" TEXT,
+    "drawnById" TEXT,
+    "drawnAt" DATETIME,
+    "cancelledAt" DATETIME,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Giveaway_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Giveaway_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Giveaway_drawnById_fkey" FOREIGN KEY ("drawnById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "GiveawayEntry" (
+    "giveawayId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "winnerPosition" INTEGER,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("giveawayId", "userId"),
+    CONSTRAINT "GiveawayEntry_giveawayId_fkey" FOREIGN KEY ("giveawayId") REFERENCES "Giveaway" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "GiveawayEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "CatalogRelease" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "version" TEXT NOT NULL,
@@ -687,6 +723,18 @@ CREATE INDEX "GroupLootRoll_groupId_createdAt_idx" ON "GroupLootRoll"("groupId",
 
 -- CreateIndex
 CREATE UNIQUE INDEX "GroupLootRoll_groupId_key_key" ON "GroupLootRoll"("groupId", "key");
+
+-- CreateIndex
+CREATE INDEX "Giveaway_groupId_status_closesAt_idx" ON "Giveaway"("groupId", "status", "closesAt");
+
+-- CreateIndex
+CREATE INDEX "Giveaway_status_closesAt_idx" ON "Giveaway"("status", "closesAt");
+
+-- CreateIndex
+CREATE INDEX "GiveawayEntry_userId_idx" ON "GiveawayEntry"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "GiveawayEntry_giveawayId_winnerPosition_key" ON "GiveawayEntry"("giveawayId", "winnerPosition");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CatalogRelease_version_key" ON "CatalogRelease"("version");

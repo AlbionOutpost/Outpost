@@ -1,0 +1,312 @@
+/* Giveaways: the site-wide /giveaways board and a Team's giveaways. Framed `.panel`s with
+   `PanelHead`; each giveaway is one well row: its picture, what it is and where it stands, then
+   the viewer's part and, for whoever runs it, the controls. */
+:global(.app.outpost) .board.board {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+:global(.app.outpost) .panel.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-6);
+}
+:global(.app.outpost) .panel.panel > * {
+  margin: 0;
+}
+:global(.app.outpost) .list.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Mounted under another tab's panels inside a Team workspace */
+:global(.app.outpost) .team.team {
+  margin-top: var(--space-4);
+}
+
+/* ---------- One giveaway ---------- */
+:global(.app.outpost) .card.card {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+}
+:global(.app.outpost) .art.art {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .art.art img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+:global(.app.outpost) .body.body {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .body.body > * {
+  margin: 0;
+}
+:global(.app.outpost) .title.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .prize.prize {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .chips.chips {
+  flex-wrap: wrap;
+}
+:global(.app.outpost) .meta.meta {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+:global(.app.outpost) .figure.figure {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text);
+}
+:global(.app.outpost) .winners.winners {
+  display: grid;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .label.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+:global(.app.outpost) .winners.winners ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .winners.winners li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-control);
+  background: var(--elevated);
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+:global(.app.outpost) .winners.winners li .figure {
+  color: var(--accent-ink);
+  font-size: 12px;
+}
+
+/* ---------- The viewer's part and the organiser's controls ---------- */
+:global(.app.outpost) .actions.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .manage.manage {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+:global(.app.outpost) .status.status {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .won.won {
+  color: var(--positive);
+  background: color-mix(in srgb, var(--positive) 12%, transparent);
+  border-color: color-mix(in srgb, var(--positive) 45%, var(--border));
+}
+:global(.app.outpost) .loss.loss.loss {
+  color: var(--negative);
+  border-color: color-mix(in srgb, var(--negative) 55%, var(--border));
+}
+:global(.app.outpost) .note.note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ---------- Feedback ---------- */
+:global(.app.outpost) .error.error,
+:global(.app.outpost) .saved.saved {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--well-border);
+  border-left: 3px solid var(--error);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--text);
+  font-size: 14px;
+}
+:global(.app.outpost) .saved.saved {
+  border-left-color: var(--success);
+}
+
+/* ---------- The start / edit dialog ---------- */
+:global(.app.outpost) dialog.dialog.dialog:modal {
+  inset: 0;
+  width: min(600px, calc(100vw - 32px));
+  max-height: min(88dvh, 860px);
+  margin: auto;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+:global(.app.outpost) dialog.dialog.dialog > :global(.editor-dialog-heading) {
+  top: 0;
+  margin-bottom: var(--space-4);
+  padding: var(--space-5) 0 var(--space-4);
+}
+:global(.app.outpost) .form.form {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+:global(.app.outpost) .formGrid.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+:global(.app.outpost) .formGrid.formGrid > [data-wide] {
+  grid-column: 1 / -1;
+}
+:global(.app.outpost) .formActions.formActions {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) 0 var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+:global(.app.outpost) .images.images {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+:global(.app.outpost) .images.images legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+:global(.app.outpost) .images.images label {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  color: var(--secondary);
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+}
+:global(.app.outpost) .images.images input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+:global(.app.outpost) .images.images label:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--text);
+}
+:global(.app.outpost) .images.images label:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:global(.app.outpost) .pick.pick {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .pick.pick img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+@media (max-width: 700px) {
+  :global(.app.outpost) .panel.panel {
+    padding: var(--space-5) var(--space-4);
+  }
+  :global(.app.outpost) .card.card {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+  :global(.app.outpost) .art.art {
+    width: 48px;
+    height: 48px;
+  }
+  :global(.app.outpost) .art.art img {
+    width: 36px;
+    height: 36px;
+  }
+  :global(.app.outpost) .actions.actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  :global(.app.outpost) .manage.manage {
+    justify-content: flex-start;
+  }
+  :global(.app.outpost) .formGrid.formGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) dialog.dialog.dialog:modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 90dvh;
+    margin: auto 0 0;
+    padding: 0 var(--space-4);
+    border-width: 1px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+}

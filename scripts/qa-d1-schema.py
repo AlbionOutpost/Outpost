@@ -381,6 +381,81 @@ def account_saves_upgrade():
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
 check("account saves upgrade adds favorites and spec levels without touching existing rows, one per account and key, cascading on account deletion", account_saves_upgrade)
 
+def giveaways_upgrade():
+    # Manage giveaways (bit 1024) goes to exactly the roles that held Manage team (bit 1).
+    for user in ("qa-gw-owner", "qa-gw-admin", "qa-gw-member", "qa-gw-player", "qa-gw-staff"):
+        db.execute('INSERT INTO "User"(id,name,updatedAt) VALUES(?,?,CURRENT_TIMESTAMP)', (user, user))
+    db.execute('INSERT INTO "Group"(id,name,slug,description,region,ownerId,updatedAt) VALUES(?,?,?,?,?,?,CURRENT_TIMESTAMP)', ("qa-gw-team", "Giveaway team", "qa-gw-team", "", "europe", "qa-gw-owner"))
+    for user, role in (("qa-gw-owner", "OWNER"), ("qa-gw-admin", "ADMIN"), ("qa-gw-member", "MEMBER")):
+        db.execute('INSERT INTO "GroupMember"(groupId,userId,role) VALUES(?,?,?)', ("qa-gw-team", user, role))
+    db.executescript((root / "cloudflare/d1/migrations/0012_team_roles.sql").read_text())  # seeds this team's roles
+    before = dict(db.execute('SELECT name, permissions FROM "GroupCustomRole" WHERE groupId=?', ("qa-gw-team",)).fetchall())
+    sql = (root / "cloudflare/d1/migrations/0016_giveaways.sql").read_text()
+    db.executescript(sql)
+    db.executescript(sql)  # applying it again changes nothing
+    after = dict(db.execute('SELECT name, permissions FROM "GroupCustomRole" WHERE groupId=?', ("qa-gw-team",)).fetchall())
+    for name, mask in before.items():
+        assert after[name] == (mask | 1024 if mask & 1 else mask), (name, mask, after[name])
+    assert after["Admin"] & 1024 and not after["Officer"] & 1024 and after["Member"] == 0, after
+    db.execute('UPDATE "GroupCustomRole" SET permissions=? WHERE id=?', (2047, "role-admin-qa-gw-team"))
+    denied('UPDATE "GroupCustomRole" SET permissions=? WHERE id=?', (2048, "role-admin-qa-gw-team"))
+    # Domain: bounded text, 1-50 winners, a real server, a known state that matches its timestamps.
+    giveaway = 'INSERT INTO "Giveaway"(id,groupId,title,prize,region,winnerCount,closesAt,createdById,updatedAt,status,drawnAt,cancelledAt,image) VALUES(?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?,?,?,?)'
+    ok = ("qa-gw-site", None, "Weekend mount", "One T8 Swiftclaw", "europe", 2, "2026-11-10T00:00:00Z", "qa-gw-staff", "OPEN", None, None, "trophy-gold")
+    db.execute(giveaway, ok)
+    db.execute(giveaway, ("qa-gw-teamone", "qa-gw-team", "Team raffle", "A bag of silver", "europe", 1, "2026-11-10T00:00:00Z", "qa-gw-admin", "OPEN", None, None, None))
+    for bad in ({2: "ab"}, {3: ""}, {3: "x" * 501}, {4: "mars"}, {5: 0}, {5: 51}, {8: "WON"}, {8: "DRAWN"}, {8: "CANCELLED"}, {8: "OPEN", 9: "2026-11-10T00:00:00Z"}, {11: "x" * 41}):
+        row = list(ok)
+        row[0] = "qa-gw-bad"
+        for index, value in bad.items():
+            row[index] = value
+        denied(giveaway, tuple(row))
+    denied('INSERT INTO "Giveaway"(id,groupId,title,prize,region,winnerCount,closesAt,updatedAt) VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)', ("qa-gw-orphan", "missing-team", "Orphan", "None", "europe", 1, "2026-11-10T00:00:00Z"))
+    # One entry per player per giveaway, never entered as a winner.
+    entry = 'INSERT INTO "GiveawayEntry"(giveawayId,userId) VALUES(?,?)'
+    for user in ("qa-gw-player", "qa-gw-member", "qa-gw-admin"):
+        db.execute(entry, ("qa-gw-site", user))
+    denied(entry, ("qa-gw-site", "qa-gw-player"))
+    denied('INSERT INTO "GiveawayEntry"(giveawayId,userId,winnerPosition) VALUES(?,?,?)', ("qa-gw-site", "qa-gw-owner", 1))
+    denied(entry, ("qa-gw-site", "missing-user"))
+    # The draw: places are unique and 1-50, marked while open, then the giveaway closes.
+    win = 'UPDATE "GiveawayEntry" SET winnerPosition=? WHERE giveawayId=? AND userId=?'
+    denied(win, (0, "qa-gw-site", "qa-gw-player"))
+    denied(win, (51, "qa-gw-site", "qa-gw-player"))
+    db.execute(win, (1, "qa-gw-site", "qa-gw-player"))
+    denied(win, (1, "qa-gw-site", "qa-gw-member"))
+    db.execute(win, (2, "qa-gw-site", "qa-gw-member"))
+    denied(win, (3, "qa-gw-site", "qa-gw-player"))  # a place once drawn never moves
+    denied('UPDATE "Giveaway" SET status=? WHERE id=?', ("DRAWN", "qa-gw-site"))  # needs its draw time
+    db.execute('UPDATE "Giveaway" SET status=?, drawnAt=?, drawnById=? WHERE id=?', ("DRAWN", "2026-11-10T00:01:00Z", "qa-gw-staff", "qa-gw-site"))
+    # After the draw the winner list and the giveaway are final.
+    denied(win, (3, "qa-gw-site", "qa-gw-admin"))
+    denied(win, (None, "qa-gw-site", "qa-gw-player"))
+    denied(entry, ("qa-gw-site", "qa-gw-owner"))
+    for change in (("status", "OPEN"), ("title", "Changed"), ("winnerCount", 5), ("drawnAt", "2026-11-11T00:00:00Z"), ("drawnById", "qa-gw-player")):
+        denied(f'UPDATE "Giveaway" SET {change[0]}=? WHERE id=?', (change[1], "qa-gw-site"))
+    assert db.execute('SELECT userId, winnerPosition FROM "GiveawayEntry" WHERE giveawayId=? AND winnerPosition IS NOT NULL ORDER BY winnerPosition', ("qa-gw-site",)).fetchall() == [("qa-gw-player", 1), ("qa-gw-member", 2)]
+    db.execute(entry, ("qa-gw-teamone", "qa-gw-member"))
+    # A cancelled giveaway is final too.
+    db.execute('UPDATE "Giveaway" SET status=?, cancelledAt=? WHERE id=?', ("CANCELLED", "2026-11-09T00:00:00Z", "qa-gw-teamone"))
+    denied('UPDATE "Giveaway" SET status=?, cancelledAt=NULL WHERE id=?', ("OPEN", "qa-gw-teamone"))
+    denied(entry, ("qa-gw-teamone", "qa-gw-member"))
+    # Account deletion takes a player's entries and clears who created or drew; the result stands.
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-gw-staff",))
+    assert db.execute('SELECT status, createdById, drawnById FROM "Giveaway" WHERE id=?', ("qa-gw-site",)).fetchone() == ("DRAWN", None, None)
+    db.execute('DELETE FROM "User" WHERE id=?', ("qa-gw-player",))
+    assert db.execute('SELECT count(*) FROM "GiveawayEntry" WHERE giveawayId=?', ("qa-gw-site",)).fetchone()[0] == 2
+    # Deleting a team takes its giveaways and their entries; site-wide giveaways stay.
+    db.execute('DELETE FROM "Group" WHERE id=?', ("qa-gw-team",))
+    assert db.execute('SELECT id FROM "Giveaway"').fetchall() == [("qa-gw-site",)]
+    assert db.execute('SELECT count(*) FROM "GiveawayEntry" WHERE giveawayId=?', ("qa-gw-teamone",)).fetchone()[0] == 0
+    db.execute('DELETE FROM "Giveaway" WHERE id=?', ("qa-gw-site",))
+    assert db.execute('SELECT count(*) FROM "GiveawayEntry"').fetchone()[0] == 0
+    for user in ("qa-gw-owner", "qa-gw-admin", "qa-gw-member"):
+        db.execute('DELETE FROM "User" WHERE id=?', (user,))
+    assert not db.execute("PRAGMA foreign_key_check").fetchall()
+check("giveaways upgrade gives Manage giveaways to Manage team holders, keeps one entry each and freezes the draw", giveaways_upgrade)
+
 def cascade():
     db.execute('DELETE FROM "User" WHERE id=?', ("qa-d1-owner",))
     assert db.execute('SELECT count(*) FROM "Build"').fetchone()[0] == 0

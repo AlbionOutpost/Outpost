@@ -14,6 +14,7 @@ import { GroupEvents, GroupEventDialog } from "./group-events";
 import { GroupMembers } from "./group-members";
 import { GroupLoadouts, loadoutViewOf, loadoutViews, type LoadoutView } from "./group-shared";
 import { GroupAnnouncements } from "./group-announcements";
+import { TeamGiveaways } from "./team-giveaways";
 import { GroupSettings } from "./group-settings";
 import { newLootSplitEvent } from "./team-loot-workspace";
 import { TeamTreasury, treasuryViewOf, treasuryViews, type TreasuryView } from "./team-treasury";
@@ -364,6 +365,7 @@ export function GroupDashboard({
           <GroupLoadouts ctx={ctx} view={loadouts} onView={(next) => setTab("Loadouts", next)} />
         )}
         {tab === "Announcements" && <GroupAnnouncements ctx={ctx} />}
+        {tab === "Announcements" && <TeamGiveaways groupId={groupId} region={group.region} />}
         {tab === "Settings" && <GroupSettings ctx={ctx} profile={profile} />}
       </div>
       {can("manageEvents") && (

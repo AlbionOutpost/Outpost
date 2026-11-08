@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Giveaways — 8 November 2026
+
+- `/giveaways` (More menu, footer, sitemap): Outpost staff (a global ADMIN) start a giveaway (title, prize, server, winners, closing time, optional painted picture and rules), edit or cancel it before the draw and draw the winners once entries close. Any signed-in player enters once and can leave until the deadline; guests get Sign in to enter, which comes back to the page. Winners show by display name with their place.
+- Teams run their own under Announcements with a new **Manage giveaways** permission (every role with Manage team got it); only current members enter, and anyone who left before the draw cannot win.
+- The server draws inside one transaction with crypto randomness, once: a second draw returns the same winners, and the store refuses any change after the draw. Postgres `20261111090000_giveaways`, private-store step 15 (from 14, so it lands after step 14).
+- Not done: Discord notifications to winners, claim tracking, giveaway pages of their own.
+
 ## Tax defaults and saves on the account — 9 November 2026
 
 - Every sales-tax field starts at 4% (Premium) with "Premium 4%" and "No premium 8%" beside it: flipping and its route scan, the Black Market board and Profitable crafts (one shared field now), the crafting family, transport, laborers (was 8%), farming and fishing (was empty). Saved runs and links keep their own rate (owner decision, 8 Nov 2026).
@@ -68,7 +75,7 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Teams get one **Treasury** tab (8 tabs then; six since the Loadouts merge) with three views under a segmented control, each with its own link (`#team-treasury`, `#team-treasury-wallet`, `#team-treasury-rolls`, or `?tab=treasury&view=wallet`; the old loot, wallet and rolls links land on the matching view). **Wallet**: each member's silver balance and a team pot, kept as a ledger. Officers with the new Manage wallet permission credit, debit, pay out and reset; members see their own balance and history. A saved loot split can be paid into wallets once, with a chest that opens and throws silver to each member's card.
 - **Rolls & flips**: coin flips between two members or a call, to settle ties and decisions (no stakes: the owner decided flips never move silver); loot rolls (1–100, one roll each, highest wins, ties settled by a coin flip) with optional silver shared among the rollers and the pot. A 3D silver coin with a milled rim (crown heads, skull tails) tumbles end over end with a little precession, catches the light, casts a shadow that shrinks while it is high and lands with a bounce, a ring and dust; d100 number drums replay rolls. Both only replay the server's result; reduced motion shows it at once.
 - Manage wallet went to every role that had Manage loot splits (Postgres `20261108090000_team_economy`, private-store step 12).
-- Not done: roll penalties into the pot, giveaways, regear requests and stats from the Discord bot; live updates (the view re-reads every 20 s while a roll is open).
+- Not done: roll penalties into the pot, regear requests and stats from the Discord bot; live updates (the view re-reads every 20 s while a roll is open).
 
 ## Founding a Team and member pictures — 7 November 2026
 

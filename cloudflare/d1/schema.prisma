@@ -60,6 +60,9 @@ model User {
   wonRolls GroupLootRoll[] @relation("RollWinner")
   lootRolls GroupLootRollEntry[]
   issuedGroupInvites GroupInvitation[]
+  createdGiveaways Giveaway[] @relation("GiveawayCreator")
+  drawnGiveaways Giveaway[] @relation("GiveawayDrawer")
+  giveawayEntries GiveawayEntry[]
 
   savedScenarios SavedScenario[]
 
@@ -228,6 +231,7 @@ model Group {
   walletEntries GroupWalletEntry[]
   coinFlips GroupCoinFlip[]
   lootRolls GroupLootRoll[]
+  giveaways Giveaway[]
 
 }
 model GroupMember {
@@ -493,6 +497,50 @@ model GroupLootRollEntry {
  value Int
  createdAt DateTime @default(now())
  @@id([rollId,userId])
+}
+/// A giveaway. Outpost staff run site-wide ones (no team); a Team runs its own, open to its members.
+/// The server draws the winners once, after entries close, inside one transaction.
+model Giveaway {
+ id String @id @default(cuid())
+ /// null: a site-wide giveaway run by Outpost staff. Set: a Team's giveaway for its members only.
+ groupId String?
+ group Group? @relation(fields:[groupId],references:[id],onDelete:Cascade)
+ title String
+ prize String
+ /// A painted emblem from a fixed list (src/lib/giveaways/rules.ts), or null for none.
+ image String?
+ region String
+ rules String @default("")
+ winnerCount Int
+ /// Entries close at this time; the draw opens after it.
+ closesAt DateTime
+ /// OPEN | CANCELLED | DRAWN
+ status String @default("OPEN")
+ version Int @default(1)
+ createdById String?
+ createdBy User? @relation("GiveawayCreator",fields:[createdById],references:[id],onDelete:SetNull)
+ drawnById String?
+ drawnBy User? @relation("GiveawayDrawer",fields:[drawnById],references:[id],onDelete:SetNull)
+ drawnAt DateTime?
+ cancelledAt DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ entries GiveawayEntry[]
+ @@index([groupId,status,closesAt])
+ @@index([status,closesAt])
+}
+/// One player's entry; the key makes it one entry per player. The draw sets `winnerPosition` once.
+model GiveawayEntry {
+ giveawayId String
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Cascade)
+ userId String
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ /// 1 for the first winner drawn, 2 for the next; null for everyone who did not win.
+ winnerPosition Int?
+ createdAt DateTime @default(now())
+ @@id([giveawayId,userId])
+ @@unique([giveawayId,winnerPosition])
+ @@index([userId])
 }
 
 model CatalogRelease {

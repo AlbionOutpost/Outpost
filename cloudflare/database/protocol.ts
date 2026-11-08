@@ -33,6 +33,8 @@ export const models = new Set([
   "groupCoinFlip",
   "groupLootRoll",
   "groupLootRollEntry",
+  "giveaway",
+  "giveawayEntry",
   "contentComment",
   "commentRevision",
   "contentReport",

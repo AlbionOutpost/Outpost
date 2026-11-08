@@ -12,6 +12,7 @@ import { HttpError } from "../../src/lib/http-error";
 import { listAccountBuilds, listAccountFavorites } from "../../src/lib/builds/discovery-service";
 import { teamLoot } from "../../src/lib/groups/loot-service";
 import { teamWallet, teamGames } from "../../src/lib/groups/economy-service";
+import { giveawayBoard, changeGiveaway } from "../../src/lib/giveaways/service";
 import { siteStats } from "../../src/lib/site-stats";
 import { applySubscription, rememberCustomer } from "../../src/lib/billing/plan";
 import { beginCheckout, updateCheckout } from "../../src/lib/billing/checkout";
@@ -57,6 +58,8 @@ const services = {
   teamLoot,
   teamWallet,
   teamGames,
+  giveawayBoard,
+  changeGiveaway,
   siteStats,
   applySubscription,
   rememberCustomer,

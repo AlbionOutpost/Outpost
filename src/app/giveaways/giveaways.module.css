@@ -1,0 +1,9 @@
+/* The /giveaways page: the landing's 1240px frame, a compact masthead so the open giveaways start
+   in the first screen. The board's own styles live in src/components/giveaways.module.css. */
+:global(.app.outpost) .page.page {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: var(--page-width);
+  margin-inline: auto;
+}

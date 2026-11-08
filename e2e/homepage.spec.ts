@@ -709,14 +709,17 @@ test("membership callout precedes activity discovery and the footer keeps its na
   await expect(footerNavigation).toBeVisible();
   // Four labelled columns of real routes, 5 or 6 links each, nothing floating loose.
   // Everything is free for now: the footer no longer links the Supporter plan.
-  const columns = { Tools: 6, "Builds & Comps": 6, Guides: 5, Outpost: 5 };
+  const columns = { Tools: 6, "Builds & Comps": 6, Guides: 5, Outpost: 6 };
   for (const [name, count] of Object.entries(columns)) {
     await expect(
       footerNavigation.getByRole("list", { name, exact: true }).getByRole("link"),
     ).toHaveCount(count);
   }
   await expect(footerNavigation.getByRole("list")).toHaveCount(4);
-  await expect(footerNavigation.getByRole("link")).toHaveCount(22);
+  await expect(footerNavigation.getByRole("link")).toHaveCount(23);
+  await expect(
+    footerNavigation.getByRole("link", { name: "Giveaways", exact: true }),
+  ).toHaveAttribute("href", /^\/giveaways/);
   for (const link of await footerNavigation.getByRole("link").all())
     expect(await link.getAttribute("href")).toMatch(/^\/[a-z]/);
   await expect(footer.getByRole("link", { name: /Supporter/ })).toHaveCount(0);

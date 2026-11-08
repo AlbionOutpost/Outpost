@@ -25,6 +25,7 @@ import teamRolesSchema from "../d1/migrations/0012_team_roles.sql";
 import teamEconomySchema from "../d1/migrations/0013_team_economy.sql";
 import teamGuildTaxSchema from "../d1/migrations/0014_team_guild_tax.sql";
 import accountSavesSchema from "../d1/migrations/0015_account_saves.sql";
+import giveawaysSchema from "../d1/migrations/0016_giveaways.sql";
 export { AbuseBudget } from "./budget";
 export { KillBoard } from "./kill-board";
 import { fetchKillCandidates } from "../../src/lib/albion/combat-source";
@@ -144,7 +145,12 @@ export class OutpostDatabase extends DurableObject<OutpostDataEnv> {
           // Account saves: library favorites and spec levels on the account; new tables only.
           this.ctx.storage.sql.exec(accountSavesSchema);
           this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=14 WHERE version=13");
-        } else if (version !== 14) throw new Error("Unsupported database schema version");
+        }
+        if (version >= 1 && version <= 14) {
+          // Giveaways: site-wide and Team giveaways; Manage team holders get Manage giveaways.
+          this.ctx.storage.sql.exec(giveawaysSchema);
+          this.ctx.storage.sql.exec("UPDATE _outpost_schema SET version=15 WHERE version=14");
+        } else if (version !== 15) throw new Error("Unsupported database schema version");
       });
     });
     this.#client = storageClient(this.ctx.storage);
