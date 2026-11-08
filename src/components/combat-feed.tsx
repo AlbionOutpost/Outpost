@@ -216,10 +216,28 @@ export function CombatFeed({ mode }: { mode: "kills" | "deaths" }) {
         </div>
         <p className={styles.source}>
           {feed
-            ? `${events.length} ${noun} shown · page ${offset / 20 + 1} · checked ${sourceAge(feed.fetchedAt).label}`
+            ? `${events.length} ${noun} shown · page ${offset / 20 + 1} · newest ${feed.newestAt ? sourceAge(feed.newestAt).label : "unavailable"} · checked ${sourceAge(feed.fetchedAt).label}`
             : "From Albion Online’s published PvP events."}
         </p>
       </section>
+      {feed && feed.freshness !== "live" && feed.newestAt && (
+        // Old fights are never shown as the latest: say how far behind the answer is.
+        <div className={`well ${styles.error} combat-feed-freshness`}>
+          <StatusLine tone="stale">
+            {feed.freshness === "snapshot"
+              ? `Albion’s server sent an old copy of the feed: its newest ${kills ? "kill" : "death"} is from ${sourceAge(feed.newestAt).label}, but Outpost saw fights from ${sourceAge(feed.latestSeenAt).label}. These are not the latest fights; refresh to ask again.`
+              : `Albion’s feed is running behind: the newest published ${kills ? "kill" : "death"} is from ${sourceAge(feed.newestAt).label}. Newer fights appear once the game publishes them.`}
+          </StatusLine>
+          <button
+            type="button"
+            className="pill-link is-small"
+            onClick={() => void refresh()}
+            disabled={loading}
+          >
+            <RefreshCw size={14} aria-hidden="true" /> Ask again
+          </button>
+        </div>
+      )}
       {failed && (
         // Said once, in a well, with the way back beside it (as Market says a failed quote)
         <div className={`well ${styles.error}`}>
