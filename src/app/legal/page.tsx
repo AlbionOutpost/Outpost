@@ -38,6 +38,7 @@ export default async function Legal({ searchParams }: Props) {
   const query = await searchParams;
   const locale = await language(query);
   const de = locale === "de";
+  const billing = billingEnabled();
   const copy = legalCopy(
     locale,
     {
@@ -45,7 +46,7 @@ export default async function Legal({ searchParams }: Props) {
       address: process.env.OPERATOR_ADDRESS?.trim(),
       email: process.env.OPERATOR_EMAIL?.trim(),
     },
-    billingEnabled(),
+    billing,
     !!adsActive(),
   );
   const region =
@@ -132,8 +133,8 @@ export default async function Legal({ searchParams }: Props) {
         }
         line={
           de
-            ? "Exportieren oder löschen Sie Ihr Konto selbst, oder lesen Sie, was Supporter bekommen."
-            : "Export or delete your account yourself, or see what Supporters get."
+            ? `Exportieren oder löschen Sie Ihr Konto selbst${billing ? ", oder lesen Sie, was Supporter bekommen" : ""}.`
+            : `Export or delete your account yourself${billing ? ", or see what Supporters get" : ""}.`
         }
         cards={[
           {
@@ -145,15 +146,19 @@ export default async function Legal({ searchParams }: Props) {
               : "Export your data or delete your account.",
             scene: "city",
           },
-          {
-            href: "/supporter",
-            emblem: "silver",
-            title: "Supporter",
-            line: de
-              ? "Was der Plan kostet, was er enthält und wie Sie kündigen."
-              : "What the plan costs, what it includes and how to cancel.",
-            scene: "economy",
-          },
+          ...(billing
+            ? [
+                {
+                  href: "/supporter",
+                  emblem: "silver",
+                  title: "Supporter",
+                  line: de
+                    ? "Was der Plan kostet, was er enthält und wie Sie kündigen."
+                    : "What the plan costs, what it includes and how to cancel.",
+                  scene: "economy" as const,
+                },
+              ]
+            : []),
           {
             href: "/tools",
             emblem: "tool-craft",

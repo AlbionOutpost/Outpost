@@ -18,7 +18,8 @@ export const Missing = () => (
   </span>
 );
 
-/** The one line every calculator shows when a price request fails; Retry sits beside it. */
+/** The one line every calculator shows when a price request fails; the panel's Refresh (or a
+ * Retry beside it where the panel has none) tries again. */
 export const PRICE_ERROR = "Prices couldn’t be loaded. Your inputs were kept.";
 
 /** Gain, loss or even, for ResultFigure, ResultRows and the phone summary bar. */

@@ -4,6 +4,14 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Audit fixes — 8 November 2026
+
+- Sign-in keeps the destination: dashboard, settings, timers, favorites, new Team, admin and build/comp edit pages send `callbackUrl`, and Discord returns there (same-origin allowlist only).
+- Home shows "Your dashboard" instead of "Sign in" to signed-in players; the lede counts tools, not calculators.
+- Comp editor: saving with no members says "Add at least one member before saving" (no raw validator text), a fresh form reads "New comp · not saved", and the title hint follows the activity and size.
+- `/legal` links the Supporter page only while billing is on.
+- One name per tool across menu, hub, footer and H1; "Copy to my builds" matches "Copy to my comps"; Crafts vs Upgrades and a Transmute label in the production calculators; one Refresh per price panel; build detail drops a Build server row that repeats the region; 12px floor on home stats and build card dates.
+
 ## Comps open on their activities — 8 November 2026
 
 - `/compositions` opens on Comps by activity, as Builds does: painted activity cards with comp counts, each opening the list filtered to that activity. All comps is one click away at `/compositions?view=all`; links with a search, filter, source or page still open the list, and `/compositions/activities` 308s to `/compositions`. Footer, sitemap, canonicals and back pills follow.

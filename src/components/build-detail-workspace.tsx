@@ -188,7 +188,7 @@ export function BuildDetailWorkspace({
               <dt>Market region</dt>
               <dd className="detail-capitalize">{region}</dd>
             </div>
-            {sourceRegion && (
+            {sourceRegion && sourceRegion !== region && (
               <div>
                 <dt>Build server</dt>
                 <dd className="detail-capitalize">{sourceRegion}</dd>
@@ -515,7 +515,7 @@ export function BuildDetailWorkspace({
                   <dt>Market region</dt>
                   <dd className="detail-capitalize">{region}</dd>
                 </div>
-                {sourceRegion && (
+                {sourceRegion && sourceRegion !== region && (
                   <div>
                     <dt>Build server</dt>
                     <dd className="detail-capitalize">{sourceRegion}</dd>

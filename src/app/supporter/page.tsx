@@ -257,7 +257,7 @@ export default async function Supporter({
           {
             href: `/tools/crafting${suffix}`,
             emblem: "tool-craft",
-            title: "Crafting Calculator",
+            title: "Crafting calculator",
             line: "See if a craft makes silver.",
             scene: "build",
           },

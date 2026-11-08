@@ -141,7 +141,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
                   action={
                     can("manageComps") ? (
                       <Link className="button secondary" href="/compositions/new">
-                        Plan a comp
+                        Create a comp
                       </Link>
                     ) : undefined
                   }

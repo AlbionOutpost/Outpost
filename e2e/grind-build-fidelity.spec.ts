@@ -30,7 +30,7 @@ test("archived traits, alternate spells and creator links survive an independent
   await expect(
     page.getByRole("link", { name: "Compare prices", exact: true }).first(),
   ).toHaveAttribute("href", /region=asia/);
-  await page.getByRole("link", { name: "Make this build yours", exact: true }).click();
+  await page.getByRole("link", { name: "Copy to my builds", exact: true }).click();
   await page.getByRole("tab", { name: "Notes", exact: true }).click();
   await expect(page.getByLabel("Build region", { exact: true })).toHaveValue("asia");
   await selectEditorSlot(page, "Helmet", "Alternatives");

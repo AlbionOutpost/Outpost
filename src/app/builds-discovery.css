@@ -648,6 +648,9 @@
   color: inherit;
   text-decoration: none;
 }
+.app.outpost .library-build-identity small {
+  font-size: var(--text-xs);
+}
 .app.outpost .ecosystem-title-link::after {
   content: "";
   position: absolute;

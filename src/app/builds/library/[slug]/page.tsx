@@ -168,7 +168,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </summary>
             <div className="detail-disclosure-content detail-discussion-note">
               <p className="detail-muted">
-                Library builds are archived and closed to comments. Make this build yours to change
+                Library builds are archived and closed to comments. Copy it to your builds to change
                 it, or talk it through on a player build.
               </p>
               <Link className="pill-link" href="/builds">

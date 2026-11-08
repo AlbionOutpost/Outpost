@@ -83,8 +83,8 @@ const footerColumns = [
     label: "Tools",
     links: [
       ["/tools/market", "Market Explorer"],
-      ["/tools/crafting", "Crafting Calculator"],
-      ["/tools/flipping", "Flipping"],
+      ["/tools/crafting", "Crafting calculator"],
+      ["/tools/flipping", "Market flipping"],
       ["/shopping-list", "Crafting Planner"],
       ["/items", "Item database"],
       ["/tools", "All tools"],
@@ -98,7 +98,7 @@ const footerColumns = [
       ["/builds/new", "Create a build"],
       ["/compositions", "Comps by activity"],
       ["/compositions?view=all", "All comps"],
-      ["/compositions/new", "Plan a comp"],
+      ["/compositions/new", "Create a comp"],
     ],
   },
   {

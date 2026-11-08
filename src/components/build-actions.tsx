@@ -62,7 +62,7 @@ export function BuildActions({
     return (
       <div className="build-duplicate-control">
         <button className="button primary" disabled={busy} onClick={() => run("duplicate")}>
-          {busy ? "Making your copy…" : "Make this build yours"}
+          {busy ? "Copying…" : "Copy to my builds"}
         </button>
         {message && (
           <p role="alert">

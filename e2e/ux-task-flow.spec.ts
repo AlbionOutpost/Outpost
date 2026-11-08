@@ -20,7 +20,7 @@ for (const width of [390, 320]) {
     // load on arrival, so a complete result may exist but stays in the hidden results step.
     await expect(page.locator("#production-setup")).not.toContainText("Unavailable");
     await expect(page.locator("output[data-result=total-profit]")).toBeHidden();
-    await page.getByLabel("Crafts / upgrades", { exact: true }).fill("10");
+    await page.getByLabel("Crafts", { exact: true }).fill("10");
     await page.getByRole("button", { name: "Next: price materials", exact: true }).click();
     await expect(page.locator("#production-materials")).toBeFocused();
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
@@ -34,7 +34,7 @@ for (const width of [390, 320]) {
     await expect(page.locator("#production-results")).toBeFocused();
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
     await page.getByRole("button", { name: "1 Choose recipe", exact: true }).click();
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("10");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("10");
     await page.getByRole("button", { name: "2 Price materials", exact: true }).click();
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("100");
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(

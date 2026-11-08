@@ -45,7 +45,7 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
               ["Steel Bar unit price", "100"],
               ["Pine Planks unit price", "50"],
               ["Output unit sale price", "3000"],
-              ["Additional station / upgrade fee per craft", "100"],
+              ["Additional station fee per craft", "100"],
               ["Sales tax (%)", "10"],
             ]
           : kind === "refining"
@@ -53,8 +53,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
                 ["Iron Ore unit price", "100"],
                 ["Bronze Bar unit price", "25"],
                 ["Output unit sale price", "500"],
-                ["Crafts / upgrades", "10"],
-                ["Additional station / upgrade fee per craft", "10"],
+                ["Crafts", "10"],
+                ["Additional station fee per craft", "10"],
                 ["Sales tax (%)", "8"],
                 ["Sell order setup fee (%)", "2.5"],
               ]
@@ -62,8 +62,8 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
                 ["Battleaxe · T4.0 unit price", "2000"],
                 ["Adept's Rune unit price", "3"],
                 ["Output unit sale price", "4000"],
-                ["Crafts / upgrades", "2"],
-                ["Additional station / upgrade fee per craft", "50"],
+                ["Upgrades", "2"],
+                ["Additional fee per upgrade", "50"],
                 ["Sales tax (%)", "10"],
               ];
       for (const [label, value] of fields)
@@ -73,11 +73,15 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
         exact: true,
       });
       const batches = kind === "crafting" ? "1" : kind === "refining" ? "10" : "2";
-      await page.getByLabel("Crafts / upgrades", { exact: true }).fill("0");
+      await page
+        .getByLabel(kind === "enchanting" ? "Upgrades" : "Crafts", { exact: true })
+        .fill("0");
       await expect(page.getByRole("alert").filter({ hasText: "Check quantities" })).toContainText(
         "Check quantities",
       );
-      await page.getByLabel("Crafts / upgrades", { exact: true }).fill(batches);
+      await page
+        .getByLabel(kind === "enchanting" ? "Upgrades" : "Crafts", { exact: true })
+        .fill(batches);
       await expectResultText(page.locator("output[data-result=total-profit]"), expected, {
         exact: true,
       });
@@ -97,7 +101,9 @@ for (const kind of ["crafting", "refining", "enchanting"] as const) {
       await expectResultText(page.locator("output[data-result=total-profit]"), expected, {
         exact: true,
       });
-      await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue(batches);
+      await expect(
+        page.getByLabel(kind === "enchanting" ? "Upgrades" : "Crafts", { exact: true }),
+      ).toHaveValue(batches);
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
         await page.evaluate(() => document.fonts.ready);

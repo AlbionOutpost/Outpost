@@ -10,7 +10,7 @@ export function ArchiveBuildCopyLink({ slug }: { slug: string }) {
       rel="nofollow"
       href={`/builds/new?${new URLSearchParams({ from: slug, region })}`}
     >
-      Make this build yours
+      Copy to my builds
     </Link>
   );
 }

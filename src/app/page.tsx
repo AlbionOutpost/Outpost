@@ -33,7 +33,7 @@ import { tools } from "@/lib/tool-directory";
 import { cookies } from "next/headers";
 import Link from "@/components/link";
 import { DiscordMark } from "@/components/discord-mark";
-import { ArrowRight, Hammer } from "lucide-react";
+import { ArrowRight, Hammer, LayoutDashboard } from "lucide-react";
 
 const showcase = landingShowcase;
 
@@ -46,9 +46,13 @@ export default async function Home({
   searchParams: Promise<{ region?: string }>;
 }) {
   const params = await searchParams;
+  const jar = await cookies();
   const region = regionSchema
     .catch("europe")
-    .parse(params.region || (await cookies()).get("atlas-region")?.value);
+    .parse(params.region || jar.get("atlas-region")?.value);
+  // A session cookie is enough to swap the hero's second action; the dashboard re-checks it.
+  const signedIn =
+    jar.has("next-auth.session-token") || jar.has("__Secure-next-auth.session-token");
   const suffix = `?region=${region}`;
   // Two round trips to the library on Cloudflare: everything independent first, then the
   // comp's members, so the page streams without showing the shell fallback.
@@ -98,6 +102,15 @@ export default async function Home({
     { value: tools.length, label: "Tools" },
     ...(players && billing ? [{ value: players.supporters, label: "Supporters" }] : []),
   ];
+  const accountAction = signedIn ? (
+    <Link href={`/dashboard${suffix}`} className="button primary">
+      Open your dashboard
+    </Link>
+  ) : (
+    <Link href="/signin?callbackUrl=%2Fdashboard" className="button primary">
+      <DiscordMark /> Sign in with Discord
+    </Link>
+  );
   return (
     <div className="home-landing">
       <LandingReveal />
@@ -111,8 +124,8 @@ export default async function Home({
                 <em>advantage.</em>
               </h1>
               <p className="landing-lede">
-                Live market prices, {n(library.builds)} builds and {tools.length} calculators, all
-                from real player data. Know what to craft, what to wear and where to sell before you
+                Live market prices, {n(library.builds)} builds and {tools.length} tools, all from
+                real player data. Know what to craft, what to wear and where to sell before you
                 leave town.
               </p>
               <div className="landing-actions">
@@ -126,16 +139,32 @@ export default async function Home({
                   </span>
                   <ArrowRight size={20} aria-hidden="true" />
                 </Link>
-                <Link href={`/signin${suffix}`} className="button landing-hero-action">
-                  <span className="hero-action-icon" aria-hidden="true">
-                    <DiscordMark />
-                  </span>
-                  <span className="hero-action-copy">
-                    <strong>Sign in</strong>
-                    <small>Save builds &amp; comps</small>
-                  </span>
-                  <ArrowRight size={20} aria-hidden="true" />
-                </Link>
+                {signedIn ? (
+                  <Link href={`/dashboard${suffix}`} className="button landing-hero-action">
+                    <span className="hero-action-icon" aria-hidden="true">
+                      <LayoutDashboard size={24} />
+                    </span>
+                    <span className="hero-action-copy">
+                      <strong>Your dashboard</strong>
+                      <small>Builds, comps &amp; Teams</small>
+                    </span>
+                    <ArrowRight size={20} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/signin?callbackUrl=%2Fdashboard&region=${region}`}
+                    className="button landing-hero-action"
+                  >
+                    <span className="hero-action-icon" aria-hidden="true">
+                      <DiscordMark />
+                    </span>
+                    <span className="hero-action-copy">
+                      <strong>Sign in</strong>
+                      <small>Save builds &amp; comps</small>
+                    </span>
+                    <ArrowRight size={20} aria-hidden="true" />
+                  </Link>
+                )}
               </div>
               <dl className="landing-stats" aria-label="Outpost in numbers">
                 {stats.map((s) => (
@@ -197,10 +226,10 @@ export default async function Home({
               emblem="tool-craft"
               glyph="craft"
               scene="build"
-              title="Crafting Calculator"
+              title="Crafting calculator"
               description="See if a craft makes silver before you burn the mats."
               href={`/tools/crafting${suffix}`}
-              action="Open Crafting Calculator"
+              action="Open Crafting calculator"
             >
               <CraftCard />
             </PreviewShell>
@@ -237,9 +266,7 @@ export default async function Home({
             }
             actions={
               <>
-                <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
-                  <DiscordMark /> Sign in with Discord
-                </Link>
+                {accountAction}
                 <Link href={`/supporter${suffix}`} className="button secondary">
                   Become a Supporter
                 </Link>
@@ -263,9 +290,7 @@ export default async function Home({
             }
             actions={
               <>
-                <Link href={`/signin?callbackUrl=%2Fdashboard`} className="button primary">
-                  <DiscordMark /> Sign in with Discord
-                </Link>
+                {accountAction}
                 <Link href={`/tools${suffix}`} className="button secondary">
                   Explore tools
                 </Link>

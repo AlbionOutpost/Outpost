@@ -12,7 +12,6 @@ import {
   ResultPair,
   ResultRows,
   useCalculatorStep,
-  RetryLine,
 } from "./calculator-shell";
 import { Disclosure } from "./disclosure";
 import { PanelHead } from "./panel-head";
@@ -56,6 +55,9 @@ import {
 import { NumberField } from "./number-field";
 // The shared calculator wells, plus the crafting family's own rules.
 const s = { ...shell, ...own };
+/** Raw resources are never crafted: a recipe that outputs one is a transmutation (resource + silver). */
+const isTransmutation = (output: string) =>
+  /^T\d_(?:WOOD|ORE|HIDE|FIBER|ROCK)(?:_LEVEL\d@\d)?$/.test(output);
 export function ProductionCalculator({
   kind,
   category,
@@ -332,7 +334,9 @@ export function ProductionCalculator({
       : category === "alchemy"
         ? "Alchemy recipe"
         : kind === "crafting"
-          ? "Crafting recipe"
+          ? isTransmutation(recipe.output)
+            ? "Transmutation"
+            : "Crafting recipe"
           : kind === "refining"
             ? "Refining recipe"
             : "Enchantment upgrade";
@@ -408,7 +412,9 @@ export function ProductionCalculator({
                   <small>
                     T{r.tier ?? r.output.match(/^T(\d)/)?.[1]}.{r.enchantment ?? 0}
                     {r.alternative && r.alternative > 1 ? ` · option ${r.alternative}` : ""} ·{" "}
-                    {r.ingredients.length} materials
+                    {isTransmutation(r.output)
+                      ? "Transmute"
+                      : `${r.ingredients.length} ${r.ingredients.length === 1 ? "material" : "materials"}`}
                   </small>
                 </span>
                 {r.id === draft.recipeId && <CircleCheck size={16} aria-hidden="true" />}
@@ -571,7 +577,9 @@ export function ProductionCalculator({
           </WellSelect>
         </label>
         <div className={s.qty}>
-          <label htmlFor="production-batches">Crafts / upgrades</label>
+          <label htmlFor="production-batches">
+            {kind === "enchanting" ? "Upgrades" : "Crafts"}
+          </label>
           <div className={s.qtyWell}>
             <NumberField
               id="production-batches"
@@ -652,7 +660,9 @@ export function ProductionCalculator({
           <Disclosure summary="Markets & transaction fees">
             <div className={s.fields}>
               <label className={s.wide}>
-                Additional station / upgrade fee per craft
+                {kind === "enchanting"
+                  ? "Additional fee per upgrade"
+                  : "Additional station fee per craft"}
                 <NumberField
                   silver
                   min={0}
@@ -830,7 +840,7 @@ export function ProductionCalculator({
       {busy ? (
         <StatusLine>Loading prices from {draft.materialCity}…</StatusLine>
       ) : error ? (
-        <RetryLine onRetry={load}>{error}</RetryLine>
+        <StatusLine tone="error">{error}</StatusLine>
       ) : attempted && !result?.complete ? (
         <StatusLine tone="stale">
           Some prices weren’t observed for this market or quality. Type the missing ones; observed
@@ -1096,7 +1106,10 @@ export function ProductionCalculator({
           <h3 className={s.detailsHeading}>Your assumptions</h3>
           <ResultRows
             items={[
-              { label: "Crafts / upgrades", value: draft.batches.toLocaleString() },
+              {
+                label: kind === "enchanting" ? "Upgrades" : "Crafts",
+                value: draft.batches.toLocaleString(),
+              },
               { label: "Material market", value: draft.materialCity },
               { label: "Sale market", value: draft.outputCity },
               {
@@ -1126,7 +1139,7 @@ export function ProductionCalculator({
             items={[
               ["Total material cost", result.grossMaterials],
               ["Recipe silver requirements", result.recipeCost],
-              ["Station / upgrade fees", result.stationCost],
+              [kind === "enchanting" ? "Upgrade fees" : "Station fees", result.stationCost],
               ["Upfront silver requirement", result.upfront],
               ["Expected returned material value", result.returnCredit],
               ["Effective production cost", result.cost],
