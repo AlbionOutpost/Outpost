@@ -22,6 +22,16 @@ const benefits = [
   ["strip-comps", "Comps your party can open", "Share a comp by link, or keep it to your Team."],
   ["team-roles", "A Team for your guild", "Events with RSVPs, shared sets and loot splits."],
 ] as const;
+/** A guest sent here from their timers sees what the account keeps for them there. */
+const timerBenefits = [
+  [
+    "tool-farming",
+    "Crops, laborers and focus",
+    "Start a countdown from a preset or your own time.",
+  ],
+  ["team-calendar", "Survives a refresh", "The clock runs on your account, not in this tab."],
+  ["strip-content", "On every device", "Start it at your desk, check it on your phone."],
+] as const;
 
 export default async function Signin({
   searchParams,
@@ -53,19 +63,34 @@ export default async function Signin({
   const configured = !!(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET);
   const error = signInErrorMessage(params.error);
   const retry = `/signin?${new URLSearchParams({ callbackUrl })}`;
+  const timers = callbackUrl === "/timers";
   return (
     <div className={styles.signin} data-signin="">
       <div className={styles.signinCopy}>
-        <h1 className={styles.signinTitle}>
-          Save your <em>builds</em> and bring your team
-        </h1>
-        <p className={styles.signinLede}>
-          Every tool works without an account. Sign in with Discord to keep what you make and plan
-          with your guild.
-        </p>
+        {timers ? (
+          <>
+            <h1 className={styles.signinTitle}>
+              Keep your <em>timers</em> running
+            </h1>
+            <p className={styles.signinLede}>
+              Timers live on your account, so they keep counting when you close the tab. Sign in
+              with Discord to start one.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className={styles.signinTitle}>
+              Save your <em>builds</em> and bring your team
+            </h1>
+            <p className={styles.signinLede}>
+              Every tool works without an account. Sign in with Discord to keep what you make and
+              plan with your guild.
+            </p>
+          </>
+        )}
       </div>
       <ul className={styles.benefits}>
-        {benefits.map(([emblem, title, line]) => (
+        {(timers ? timerBenefits : benefits).map(([emblem, title, line]) => (
           <li key={emblem} className="well">
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img src={`/albion/icons/${emblem}.webp`} alt="" width={44} height={44} />

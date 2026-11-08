@@ -1,5 +1,6 @@
-/* Personal timers (/timers): the list of countdowns beside a composer with presets. With no
-   timers yet the composer is the page's one panel, its presets in a single row. */
+/* Personal timers (/timers): the countdowns grouped by when they need the player (Ready, Soon,
+   Today, Later, Paused, Cleared) beside a composer with presets and quick lengths. With no timers
+   yet the composer is the page's one panel, its presets in a single row. */
 :global(.app.outpost) .chips.chips {
   flex-wrap: wrap;
   margin-top: var(--space-4);
@@ -44,7 +45,57 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* One timer: name and due time, the clock, a progress bar under both, then its actions */
+/* Groups: a small label row, then the timers due in that window */
+:global(.app.outpost) .groups.groups {
+  display: grid;
+  gap: var(--space-5);
+}
+:global(.app.outpost) .group.group {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+:global(.app.outpost) .groupHead.groupHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+  padding-inline: 2px;
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .groupLabel.groupLabel {
+  color: var(--text);
+  font: 800 17px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+:global(.app.outpost) .group.group[data-group="ready"] .groupLabel {
+  color: var(--success);
+}
+:global(.app.outpost) .group.group[data-group="soon"] .groupLabel {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .groupCount.groupCount {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--well-border);
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--secondary);
+  font: 600 12px/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .groupLine.groupLine {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* One timer: category badge · name, due line and progress · the clock · actions */
 :global(.app.outpost) .rows.rows {
   display: grid;
   gap: var(--space-2);
@@ -53,31 +104,49 @@
   list-style: none;
 }
 :global(.app.outpost) .row.row {
+  --tone: var(--accent);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   grid-template-areas:
-    "info clock"
-    "bar bar"
-    "actions actions";
+    "badge info clock"
+    "badge bar actions";
   align-items: center;
-  gap: 12px 16px;
-  padding: 16px 18px;
+  gap: 12px 20px;
+  padding: 14px 16px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
   box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .row.row[data-state="ready"] {
-  border-color: color-mix(in srgb, var(--success) 55%, var(--well-border));
+  --tone: var(--success);
+  border-color: color-mix(in srgb, var(--success) 50%, var(--well-border));
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--success) 12%, transparent), transparent 60%),
+    var(--well);
+}
+:global(.app.outpost) .row.row:is([data-state="paused"], [data-state="cleared"]) {
+  --tone: var(--muted);
+}
+:global(.app.outpost) .badge.badge {
+  grid-area: badge;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+  color: var(--tone);
+}
+:global(.app.outpost) .row.row[data-state="cleared"] .badge.badge {
+  opacity: 0.7;
 }
 :global(.app.outpost) .info.info {
   grid-area: info;
   display: grid;
   gap: 6px;
   min-width: 0;
-}
-:global(.app.outpost) .tag.tag {
-  justify-self: start;
 }
 :global(.app.outpost) .title.title {
   overflow: hidden;
@@ -86,30 +155,69 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+:global(.app.outpost) .row.row[data-state="cleared"] .title.title {
+  color: var(--secondary);
+}
 :global(.app.outpost) .meta.meta {
   color: var(--muted);
   font-size: 12px;
+  line-height: 1.45;
+}
+:global(.app.outpost) .tag.tag {
+  margin-right: 2px;
+  color: var(--secondary);
+  font-weight: 600;
 }
 :global(.app.outpost) .clock.clock {
   grid-area: clock;
+  display: grid;
+  justify-self: end;
+  justify-items: end;
+  gap: 4px;
+  /* Wide enough for "000:00:00", so ticking never moves the row */
+  min-width: 5.6em;
   margin: 0;
-  color: var(--text);
-  font: 600 40px/1 var(--font-data);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  font-size: 34px;
   text-align: right;
+}
+:global(.app.outpost) .clockValue.clockValue {
+  color: var(--text);
+  font: 600 1em/1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
   white-space: nowrap;
 }
-:global(.app.outpost) .row.row[data-state="paused"] .clock.clock {
+:global(.app.outpost) .sep.sep {
+  margin-inline: -0.08em;
+  color: var(--muted);
+  font-weight: 400;
+}
+:global(.app.outpost) .clockLine.clockLine {
+  color: var(--muted);
+  font: 600 12px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+:global(.app.outpost) .row.row[data-soon] .clockValue.clockValue {
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .row.row[data-state="paused"] .clockValue.clockValue {
   color: var(--secondary);
 }
-:global(.app.outpost) .row.row[data-state="ready"] .clock.clock {
+:global(.app.outpost) .row.row[data-state="ready"] .clockValue.clockValue {
   color: var(--success);
-  font: 800 40px/1 var(--font-display);
+  font: 800 1.05em/1 var(--font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
 }
-:global(.app.outpost) .row.row[data-state="cleared"] .clock.clock {
+:global(.app.outpost) .row.row[data-state="ready"] .clockLine.clockLine {
+  color: color-mix(in srgb, var(--success) 80%, var(--muted));
+}
+:global(.app.outpost) .row.row[data-state="cleared"] .clockValue.clockValue {
   color: var(--muted);
-  font: 800 32px/1 var(--font-display);
+  font: 800 0.85em/1 var(--font-display);
+  text-transform: uppercase;
 }
 :global(.app.outpost) .wait.wait {
   color: var(--muted);
@@ -117,28 +225,29 @@
 }
 :global(.app.outpost) .bar.bar {
   grid-area: bar;
-  height: 6px;
+  height: 4px;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 2px;
   background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 :global(.app.outpost) .bar.bar b {
   display: block;
   height: 100%;
-  border-radius: 3px;
-  background: var(--accent);
+  border-radius: 2px;
+  background: var(--tone);
+  transform-origin: left;
+  transition: transform 1s linear;
 }
-:global(.app.outpost) .row.row[data-state="ready"] .bar.bar b {
-  background: var(--success);
-}
-:global(.app.outpost) .row.row:is([data-state="paused"], [data-state="cleared"]) .bar.bar b {
-  background: var(--muted);
+@media (prefers-reduced-motion: reduce) {
+  :global(.app.outpost) .bar.bar b {
+    transition: none;
+  }
 }
 :global(.app.outpost) .actions.actions {
   grid-area: actions;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-2);
 }
 :global(.app.outpost) .icon.icon {
@@ -146,19 +255,22 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
   background: none;
-  color: var(--secondary);
+  color: var(--muted);
   cursor: pointer;
+  transition:
+    color var(--motion-fast, 0.15s) ease,
+    border-color var(--motion-fast, 0.15s) ease;
 }
 :global(.app.outpost) .tools.tools {
   display: inline-flex;
-  gap: var(--space-2);
-  margin-left: auto;
+  gap: 2px;
 }
-:global(.app.outpost) .icon.icon:hover:not(:disabled) {
-  border-color: var(--accent);
+:global(.app.outpost) .icon.icon:hover:not(:disabled),
+:global(.app.outpost) .icon.icon:focus-visible {
+  border-color: var(--well-border);
   color: var(--accent-ink);
 }
 :global(.app.outpost) .icon.icon:disabled {
@@ -166,7 +278,7 @@
   cursor: not-allowed;
 }
 :global(.app.outpost) .delete.delete:hover:not(:disabled) {
-  border-color: var(--error);
+  border-color: color-mix(in srgb, var(--error) 50%, transparent);
   color: var(--error);
 }
 :global(.app.outpost) .rename.rename {
@@ -190,9 +302,12 @@
 }
 :global(.app.outpost) .preset.preset {
   display: grid;
-  gap: 4px;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-areas: "icon title" "icon time";
+  align-items: center;
+  gap: 2px 10px;
   min-width: 0;
-  min-height: 64px;
+  min-height: 60px;
   padding: 10px 12px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
@@ -201,6 +316,7 @@
   color: var(--text);
   text-align: left;
   cursor: pointer;
+  transition: border-color var(--motion-fast, 0.15s) ease;
 }
 :global(.app.outpost) .preset.preset:hover {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--well-border));
@@ -209,17 +325,30 @@
   border-color: color-mix(in srgb, var(--accent) 65%, transparent);
   background: var(--accent-wash);
 }
+:global(.app.outpost) .presetIcon.presetIcon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
 :global(.app.outpost) .preset.preset strong {
+  grid-area: title;
   overflow: hidden;
   font: 600 14px/1.25 var(--font-ui);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-:global(.app.outpost) .preset.preset span {
+:global(.app.outpost) .preset.preset > span:last-child {
+  grid-area: time;
   color: var(--accent-ink);
   font: 600 13px/1.2 var(--font-data);
 }
-:global(.app.outpost) .preset.preset span[data-manual] {
+:global(.app.outpost) .preset.preset > span[data-manual] {
   color: var(--muted);
   font: 500 12px/1.2 var(--font-ui);
 }
@@ -240,7 +369,7 @@
 :global(.app.outpost) .duration.duration {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px var(--space-3);
+  gap: 8px var(--space-3);
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -255,45 +384,70 @@
   color: var(--secondary);
   font: 600 13px/1.3 var(--font-ui);
 }
+:global(.app.outpost) .bumps.bumps {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+:global(.app.outpost) .bump.bump {
+  min-height: 36px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  color: var(--secondary);
+  font: 600 13px/1 var(--font-data);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast, 0.15s) ease,
+    color var(--motion-fast, 0.15s) ease;
+}
+:global(.app.outpost) .bump.bump:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--well-border));
+  color: var(--accent-ink);
+}
+:global(.app.outpost) .bump.bump:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 :global(.app.outpost) .source.source {
   grid-column: 1 / -1;
   margin: 0;
   color: var(--muted);
   font-size: 12px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .preview.preview {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--secondary);
+  font-size: 12px;
+  line-height: 1.5;
 }
 :global(.app.outpost) .start.start {
   justify-content: center;
 }
-/* First timer: title, category, the two duration fields and Start on one row */
+/* First timer: title and category, then the duration with its quick lengths, then Start */
 @media (min-width: 1101px) {
   :global(.app.outpost) .layout.layout[data-empty] .form.form {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.6fr) auto;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.8fr);
+    align-items: start;
+  }
+  :global(.app.outpost) .layout.layout[data-empty] :is(.titleField, .categoryField, .duration) {
+    grid-column: auto;
+  }
+  :global(.app.outpost) .layout.layout[data-empty] .duration.duration {
+    grid-row: span 2;
+  }
+  /* Start sits under title and category, level with the foot of the duration */
+  :global(.app.outpost) .layout.layout[data-empty] .start.start {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    align-self: end;
   }
   /* With the composer beside the list, the masthead does not repeat its action */
   :global(.app.outpost) .jump.jump {
     display: none;
-  }
-  :global(.app.outpost)
-    .layout.layout[data-empty]
-    :is(.titleField, .categoryField, .duration, .start) {
-    grid-column: auto;
-  }
-  :global(.app.outpost) .layout.layout[data-empty] .duration.duration {
-    position: relative;
-  }
-  :global(.app.outpost) .layout.layout[data-empty] .source.source {
-    position: absolute;
-    top: calc(100% + 6px);
-  }
-  :global(.app.outpost) .layout.layout[data-empty] .duration.duration legend {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-  :global(.app.outpost) .layout.layout[data-empty] .composer.composer {
-    padding-bottom: calc(var(--space-6) + 18px);
   }
 }
 @media (max-width: 1100px) {
@@ -313,17 +467,34 @@
     padding: var(--space-4);
   }
   :global(.app.outpost) .row.row {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 36px minmax(0, 1fr) auto;
     grid-template-areas:
-      "info"
-      "clock"
-      "bar"
-      "actions";
+      "badge info info"
+      "clock clock clock"
+      "bar bar bar"
+      "actions actions actions";
+    gap: 10px 12px;
     padding: 14px;
   }
+  :global(.app.outpost) .badge.badge {
+    width: 36px;
+    height: 36px;
+    align-self: start;
+  }
   :global(.app.outpost) .clock.clock {
-    font-size: 36px;
-    text-align: left;
+    justify-self: stretch;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    min-width: 0;
+    font-size: 32px;
+  }
+  :global(.app.outpost) .actions.actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  :global(.app.outpost) .tools.tools {
+    margin-left: auto;
   }
   :global(.app.outpost) .layout.layout[data-empty] .presets.presets,
   :global(.app.outpost) .presets.presets {
@@ -340,5 +511,15 @@
 @media (max-width: 360px) {
   :global(.app.outpost) .form.form {
     grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .preset.preset {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "title" "time";
+  }
+  :global(.app.outpost) .presetIcon.presetIcon {
+    display: none;
+  }
+  :global(.app.outpost) .clock.clock {
+    font-size: 28px;
   }
 }

@@ -1,6 +1,8 @@
 "use client";
 import { AccountPageMore, appendAccountRows } from "./account-page-more";
 import { useState } from "react";
+import { LogIn, RotateCcw, Trash2 } from "lucide-react";
+import { useAccountId } from "./account-saves";
 import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { Field } from "./field";
@@ -14,6 +16,7 @@ export function ShoppingAccountLists({
   list: ShoppingList;
   onLoad: (list: ShoppingList) => void;
 }) {
+  const signedIn = useAccountId() !== null;
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [title, setTitle] = useState(""),
     [message, setMessage] = useState(""),
@@ -35,6 +38,28 @@ export function ShoppingAccountLists({
       setBusy(false);
     }
   }
+  async function save() {
+    setBusy(true);
+    try {
+      const configuration = savedShoppingSchema.parse({
+        kind: "shopping-list",
+        region: list.region,
+        list,
+      });
+      const r = await fetch("/api/scenarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: title.trim() || "My shopping list", configuration }),
+      });
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error || "List could not be saved");
+      setMessage("Shopping list saved to your account.");
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "List could not be saved");
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <section className={`panel ${styles.accountPanel}`} aria-labelledby="shopping-saved-title">
       <PanelHead
@@ -43,126 +68,114 @@ export function ShoppingAccountLists({
         title="Saved lists"
         line="Name a list to keep it on your account and open it on any device."
       />
-      <div className={styles.accountBody}>
-        <div className={styles.accountForm}>
-          <Field label="List name">
-            <input
-              maxLength={100}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Weekend regear"
-            />
-          </Field>
-          <button
-            type="button"
-            className="button secondary"
-            disabled={busy || !list.entries.length || list.entries.length > 100}
-            onClick={async () => {
-              setBusy(true);
-              try {
-                const configuration = savedShoppingSchema.parse({
-                  kind: "shopping-list",
-                  region: list.region,
-                  list,
-                });
-                const r = await fetch("/api/scenarios", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    title: title.trim() || "My shopping list",
-                    configuration,
-                  }),
-                });
-                const body = await r.json();
-                if (!r.ok) throw new Error(body.error || "List could not be saved");
-                setMessage("Shopping list saved to your account.");
-              } catch (e) {
-                setMessage(e instanceof Error ? e.message : "List could not be saved");
-              } finally {
-                setBusy(false);
-              }
-            }}
-          >
-            Save account list
-          </button>
-        </div>
-        <button
-          type="button"
-          className={`button secondary ${styles.accountLoad}`}
-          disabled={busy}
-          onClick={load}
-        >
-          Load account lists
-        </button>
-        <p>
-          Saved lists need{" "}
-          <Link href="/signin" className="text-link">
-            sign-in
+      {!signedIn ? (
+        <div className={styles.accountGuest}>
+          <p>Sign in with Discord to keep lists on your account. This list stays on this device.</p>
+          <Link href="/signin" className="button secondary">
+            <LogIn size={15} aria-hidden="true" /> Sign in to save lists
           </Link>
-          . The list on this page stays on this device until you restore another.
-        </p>
-        {list.entries.length > 100 && (
-          <p>Account lists support up to 100 purchase lines. Your larger device list is kept.</p>
-        )}
-        {message && <p role="status">{message}</p>}
-        {rows.map((row) => {
-          const parsed = savedShoppingSchema.safeParse(row.configuration);
-          const compatible = parsed.success && parsed.data.region === list.region;
-          return (
-            <div className={styles.savedRow} key={row.id}>
-              <span>
-                <strong>{row.title}</strong>
-                {parsed.success && (
-                  <small>
-                    {parsed.data.region} · {parsed.data.list.entries.length} purchase lines
-                  </small>
-                )}
-              </span>
-              <button
-                type="button"
-                className="button secondary"
-                disabled={!compatible}
-                onClick={() => {
-                  if (parsed.success) {
-                    onLoad(parsed.data.list);
-                    setMessage("List restored. Check observation dates before buying.");
-                  }
-                }}
-              >
-                Restore {row.title}
-              </button>
-              <button
-                type="button"
-                className="button secondary negative"
-                onClick={async () => {
-                  try {
-                    const r = await fetch(`/api/scenarios/${encodeURIComponent(row.id)}`, {
-                      method: "DELETE",
-                    });
-                    if (!r.ok) throw new Error();
-                    setRows(rows.filter((item) => item.id !== row.id));
-                    setMessage("Account list deleted. Your device list is kept.");
-                  } catch {
-                    setMessage("The account list could not be deleted. Try again.");
-                  }
-                }}
-              >
-                Delete {row.title}
+        </div>
+      ) : (
+        <div className={styles.accountBody}>
+          {list.entries.length > 0 && list.entries.length <= 100 ? (
+            <div className={styles.accountForm}>
+              <Field label="List name">
+                <input
+                  maxLength={100}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Weekend regear"
+                />
+              </Field>
+              <button type="button" className="button primary" disabled={busy} onClick={save}>
+                Save account list
               </button>
             </div>
-          );
-        })}
-        <AccountPageMore<Saved>
-          url="/api/scenarios?kind=shopping-list"
-          cursor={nextCursor}
-          disabled={busy}
-          label="Load older account lists"
-          onPage={(older, cursor) => {
-            setRows((current) => appendAccountRows(current, older));
-            setNextCursor(cursor);
-          }}
-        />
-      </div>
+          ) : (
+            <p>
+              {list.entries.length > 100
+                ? "Account lists hold up to 100 purchase lines. Your larger device list is kept."
+                : "Add an item to save this list to your account."}
+            </p>
+          )}
+          <div className={styles.accountHead}>
+            <span>On your account</span>
+            <button type="button" className="pill-link is-small" disabled={busy} onClick={load}>
+              <RotateCcw size={14} aria-hidden="true" />{" "}
+              {rows.length ? "Reload" : "Load account lists"}
+            </button>
+          </div>
+          {message && <p role="status">{message}</p>}
+          {rows.length > 0 && (
+            <ul className={styles.savedRows}>
+              {rows.map((row) => {
+                const parsed = savedShoppingSchema.safeParse(row.configuration);
+                const compatible = parsed.success && parsed.data.region === list.region;
+                return (
+                  <li className={styles.savedRow} key={row.id}>
+                    <span>
+                      <strong>{row.title}</strong>
+                      <small>
+                        {parsed.success
+                          ? `${parsed.data.region} · ${parsed.data.list.entries.length} purchase lines`
+                          : "Could not be read"}
+                      </small>
+                    </span>
+                    {compatible ? (
+                      <button
+                        type="button"
+                        className="button secondary"
+                        onClick={() => {
+                          if (parsed.success) {
+                            onLoad(parsed.data.list);
+                            setMessage("List restored. Check observation dates before buying.");
+                          }
+                        }}
+                      >
+                        Restore<span className="sr-only"> {row.title}</span>
+                      </button>
+                    ) : (
+                      <small className={styles.savedNote}>
+                        {parsed.success ? "Other server" : "Unreadable"}
+                      </small>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.iconButton}
+                      aria-label={`Delete ${row.title}`}
+                      title="Delete"
+                      onClick={async () => {
+                        try {
+                          const r = await fetch(`/api/scenarios/${encodeURIComponent(row.id)}`, {
+                            method: "DELETE",
+                          });
+                          if (!r.ok) throw new Error();
+                          setRows(rows.filter((item) => item.id !== row.id));
+                          setMessage("Account list deleted. Your device list is kept.");
+                        } catch {
+                          setMessage("The account list could not be deleted. Try again.");
+                        }
+                      }}
+                    >
+                      <Trash2 size={16} aria-hidden="true" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <AccountPageMore<Saved>
+            url="/api/scenarios?kind=shopping-list"
+            cursor={nextCursor}
+            disabled={busy}
+            label="Load older account lists"
+            onPage={(older, cursor) => {
+              setRows((current) => appendAccountRows(current, older));
+              setNextCursor(cursor);
+            }}
+          />
+        </div>
+      )}
     </section>
   );
 }

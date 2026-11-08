@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Personal timers and Crafting Planner redesign — 8 November 2026
+
+- `/timers`: countdowns grouped Ready · Soon · Today · Later · Paused · Cleared; each row has a category badge, a large tabular clock that never shifts as it ticks, and its progress under the name. The first clock comes from the server, so there is no "Updating" flash. The composer gains preset icons, quick lengths (+15m, +1h, +4h, +12h) and a preview of the due time.
+- Guests sent to sign-in from `/timers` see a timers headline and timer benefits instead of the builds pitch.
+- `/shopping-list`: queue rows show city and line cost with a round owned toggle; the table fits its panel at 1440 and shows observation times as game time; the totals rail is sticky with upfront cost, owned progress, "Where to buy" by chosen city and the royal-city comparison; the empty list shows the example plan as gear, and the rail shows three steps.
+- Saved lists: guests get a sign-in prompt instead of disabled buttons; saved lists are compact rows.
+
 ## Surfaces with depth and a softer backdrop — 8 November 2026
 
 - Every page but the landing sits on the castle painting pre-blurred (13 KB, one file for every width) under a deeper veil and a vignette, so panels and text read cleanly over it.
