@@ -13,6 +13,7 @@ import { Field } from "./field";
 import { countdown, timerCategories, timerCategory } from "./timer-labels";
 import styles from "./timer-manager.module.css";
 import { NumberField } from "./number-field";
+import { GameTime } from "./game-time";
 
 type Timer = {
   id: string;
@@ -54,13 +55,6 @@ const filters = [
   ["completed", "Cleared"],
   ["all", "All"],
 ] as const;
-const utc = (iso: string) =>
-  `${new Intl.DateTimeFormat("en-GB", {
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(new Date(iso))} UTC`;
 /** Whole seconds as a clock: "21:59:42". */
 const clock = (seconds: number) => {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -476,7 +470,8 @@ function TimerRow({
         <small className={styles.meta}>
           {t.status === "RUNNING" && t.dueAt ? (
             <>
-              {done ? "Was due" : "Due"} <time dateTime={t.dueAt}>{utc(t.dueAt)}</time>
+              {/* The clock beside it is the countdown, so the line names the moment only. */}
+              {done ? "Was due" : "Due"} <GameTime at={t.dueAt} />
             </>
           ) : t.status === "PAUSED" ? (
             "Paused, resume to keep counting"

@@ -285,3 +285,52 @@ test("existing timers lead the workspace and a new timer returns focus to its sa
     await db.user.deleteMany({ where: { id } });
   }
 });
+
+test.describe("timer due times", () => {
+  test.use({ timezoneId: "Asia/Tokyo" });
+  test("a running timer names its due moment in UTC game time and the viewer's clock", async ({
+    page,
+    context,
+  }) => {
+    const id = `atlas-test-support-${randomUUID()}`,
+      token = randomUUID(),
+      dueAt = new Date(Date.UTC(2030, 0, 7, 18, 30));
+    await db.user.create({
+      data: {
+        id,
+        name: "Timer owner",
+        sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+      },
+    });
+    try {
+      await db.timer.create({
+        data: {
+          userId: id,
+          title: "Running game-time reminder",
+          category: "CUSTOM",
+          status: "RUNNING",
+          durationMs: 600000,
+          dueAt,
+        },
+      });
+      await context.addCookies([
+        {
+          name: "next-auth.session-token",
+          value: token,
+          domain: "localhost",
+          path: "/",
+          httpOnly: true,
+          sameSite: "Lax",
+        },
+      ]);
+      await page.goto("/timers");
+      // 18:30 UTC on Monday is 03:30 on Tuesday in Tokyo; the stored instant is unchanged.
+      await expect(
+        page.getByText(/^Due Mon 7 Jan · 18:30 UTC · Tue 8 Jan 03:30 your time/),
+      ).toBeVisible();
+      await expect(page.locator(`time[datetime="${dueAt.toISOString()}"]`)).toHaveCount(1);
+    } finally {
+      await db.user.deleteMany({ where: { id } });
+    }
+  });
+});

@@ -123,6 +123,34 @@ describe("public snapshot reads during D1 unavailability", () => {
       }),
     ).toBe(0);
   });
+  it("orders by a list of fields, numbers as numbers, like the item database's T4+ bands", async () => {
+    const rows = [
+      { ...item, id: "T10_FAKE", tier: 10, enchantment: 0 },
+      { ...item, id: "T4_MAIN_AXE@1", enchantment: 1 },
+      { ...item, id: "T5_MAIN_AXE", tier: 5 },
+      item,
+    ];
+    fixture.set("catalog-index.json", {
+      items: rows.map((r) => ({ ...r, shard: "catalog-0.json" })),
+      releases: [],
+    });
+    fixture.set("catalog-0.json", rows);
+    const ids = (await publicCatalogQuery({
+      model: "itemMetadata",
+      operation: "findMany",
+      args: {
+        where: { tier: { in: [4, 5, 10] } },
+        orderBy: [{ tier: "asc" }, { enchantment: "asc" }, { id: "asc" }],
+        select: { id: true },
+      },
+    })) as { id: string }[];
+    expect(ids.map((r) => r.id)).toEqual([
+      "T4_MAIN_AXE",
+      "T4_MAIN_AXE@1",
+      "T5_MAIN_AXE",
+      "T10_FAKE",
+    ]);
+  });
   it("loads bounded page details and exact requested public references", async () => {
     setup();
     const page = await publicLibraryPage("builds", { q: "solo", page: 9999 });

@@ -6,7 +6,10 @@ const db = createTestDb();
 test("private guild profiles, event revisions and calendar exports preserve permissions", async ({
   browser,
 }) => {
-  const contexts = await Promise.all(Array.from({ length: 3 }, () => browser.newContext())),
+  // A viewer outside UTC sees game time and their own clock side by side.
+  const contexts = await Promise.all(
+      Array.from({ length: 3 }, () => browser.newContext({ timezoneId: "America/New_York" })),
+    ),
     ids = Array.from({ length: 3 }, () => `atlas-test-${randomUUID()}`);
   let groupId = "";
   try {
@@ -142,6 +145,22 @@ test("private guild profiles, event revisions and calendar exports preserve perm
       page.getByRole("heading", { name: "Revised group event", exact: true }),
     ).toBeVisible();
     expect((await db.groupEvent.findUniqueOrThrow({ where: { id: event.id } })).version).toBe(2);
+    // Stored once in UTC; shown as game time, the viewer's clock and how soon.
+    const clock = (timeZone: string) =>
+      new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+        timeZone,
+      }).format(new Date(eventInput.startsAt));
+    await expect(
+      page
+        .locator("article")
+        .filter({ hasText: "Revised group event" })
+        .locator("small", { hasText: "UTC" }),
+    ).toHaveText(
+      new RegExp(`${clock("UTC")} UTC · .*${clock("America/New_York")} your time · in 2[34] h`),
+    );
     expect(
       (
         await action(0, { ...eventInput, action: "edit-event", eventId: event.id, version: 1 })

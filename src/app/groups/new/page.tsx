@@ -11,6 +11,7 @@ import { PanelHead } from "@/components/panel-head";
 import { canCreateTeam } from "@/lib/billing/gate";
 import styles from "@/components/teams.module.css";
 import ceremony from "@/components/group-create.module.css";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Create a Team");
 
 /** What a workspace holds, in the landing's Team Management words. */
@@ -24,7 +25,7 @@ const features = [
 
 export default async function NewGroup() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect(signInPath("/groups/new"));
   const allowed = await canCreateTeam(session.user.id);
   const featureList = (
     <section className={`panel ${styles.panel}`} aria-labelledby="team-includes">

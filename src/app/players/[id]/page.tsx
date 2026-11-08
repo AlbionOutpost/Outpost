@@ -219,7 +219,7 @@ export default async function Profile({ params }: { params: Promise<{ id: string
           {
             href: "/tools/crafting",
             emblem: "tool-craft",
-            title: "Crafting Calculator",
+            title: "Crafting calculator",
             line: "Cost a set before you copy it.",
             scene: "city",
           },

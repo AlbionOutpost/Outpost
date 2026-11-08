@@ -136,7 +136,10 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
   expect(layout.headerBottom).toBeLessThanOrEqual(layout.heroTop + 1);
   const actions = page.locator(".landing-hero .landing-actions a");
   await expect(actions.nth(0)).toHaveAttribute("href", "/tools?region=europe");
-  await expect(actions.nth(1)).toHaveAttribute("href", "/signin?region=europe");
+  await expect(actions.nth(1)).toHaveAttribute(
+    "href",
+    "/signin?callbackUrl=%2Fdashboard&region=europe",
+  );
   const stats = page.getByRole("term");
   await expect(stats).toContainText(["Accounts", "Builds", "Comps", "Guides", "Tools"]);
   await expect(page.locator(".landing-stats dd").nth(1)).toHaveText(/^[\d,]+$/);
@@ -235,7 +238,7 @@ test("landing page: hero numbers, teaser windows, live tool cards, guides, top k
 
   await expectResultText(crafting.locator(".tool-stepper output"), "2", { exact: true });
   await expectResultText(crafting.locator(".tool-table tbody tr").first(), /28,752/);
-  await expect(crafting.getByRole("link", { name: /Open Crafting Calculator/ })).toHaveAttribute(
+  await expect(crafting.getByRole("link", { name: /Open Crafting calculator/ })).toHaveAttribute(
     "href",
     "/tools/crafting?region=europe",
   );

@@ -188,7 +188,7 @@ test("mobile navigation works without horizontal overflow", async ({ page }) => 
   await page.getByRole("button", { name: "Open navigation" }).click();
   await page
     .getByRole("navigation", { name: "Mobile navigation", exact: true })
-    .getByRole("link", { name: "Market explorer", exact: true })
+    .getByRole("link", { name: "Market Explorer", exact: true })
     .click();
   await expect(page).toHaveURL(/tools\/market/);
   // Phones fold the search rail behind one bar so the item and its prices come first.
@@ -209,7 +209,7 @@ test("theme and region survive reload, and desktop tool navigation supports Esca
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
   await page
     .getByRole("navigation", { name: "Main navigation", exact: true })
-    .getByRole("link", { name: "Market explorer", exact: true })
+    .getByRole("link", { name: "Market Explorer", exact: true })
     .click();
   await expect(page.getByLabel("Albion region")).toHaveAttribute("data-region", "asia");
   const tools = page.locator(".desktop-navigation summary").filter({ hasText: "Tools" });

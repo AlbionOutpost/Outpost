@@ -33,3 +33,34 @@ export function abilitiesFor(id: string): Record<string, string[]> {
     options[spell.key] = [...new Set([...(options[spell.key] || []), spell.name])];
   return options;
 }
+
+export type ItemAbility = {
+  id: string;
+  name: string;
+  slot: string;
+  unlock: string | null;
+  source: "snapshot" | "archive";
+};
+const slotOrder = ["Q", "W", "E", "Passive", "Passive 2", "Active"];
+/**
+ * An item page's abilities: the pinned item snapshot's list, plus the archived build library's
+ * spells for this exact item (the list the build editor offers), each tagged with its source.
+ * Nothing is derived from names; an item neither source records has none.
+ */
+export function itemAbilities(
+  id: string,
+  snapshot: { id: string; name: string; slot: string; unlock: string | null }[],
+): ItemAbility[] {
+  const rows: ItemAbility[] = snapshot.map((a) => ({ ...a, source: "snapshot" }));
+  for (const spell of archivedSpellOptions(id))
+    if (!rows.some((row) => row.id === spell.id && row.slot === spell.key))
+      rows.push({
+        id: spell.id,
+        name: spell.name,
+        slot: spell.key,
+        unlock: null,
+        source: "archive",
+      });
+  const rank = (slot: string) => (slotOrder.includes(slot) ? slotOrder.indexOf(slot) : 99);
+  return rows.sort((a, b) => rank(a.slot) - rank(b.slot));
+}

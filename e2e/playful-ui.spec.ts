@@ -9,9 +9,7 @@ test("tool navigation keeps the chosen region without a global search overlay", 
   await page.keyboard.press("Control+k");
   await expect(page.getByRole("dialog", { name: "Global search", exact: true })).toHaveCount(0);
   await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
-  const transport = page
-    .locator(".desktop-navigation")
-    .getByRole("link", { name: /^Transport planner/ });
+  const transport = page.locator(".desktop-navigation").getByRole("link", { name: /^Transport\b/ });
   await expect(transport).toHaveAttribute("href", "/tools/transporting?region=asia");
   await transport.click();
   await expect(page).toHaveURL(/tools\/transporting\?region=asia/);

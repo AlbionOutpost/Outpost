@@ -8,11 +8,12 @@ import { buildInput } from "@/lib/builds/validation";
 import { BuildEditor } from "@/components/build-editor";
 import Link from "@/components/link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Edit build");
 export default async function EditBuild({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/signin");
   const { id } = await params;
+  if (!session?.user?.id) redirect(signInPath(`/builds/${id}/edit`));
   const build = await db.build.findFirst({
     where: { id, authorId: session.user.id },
     include: { equipment: true },

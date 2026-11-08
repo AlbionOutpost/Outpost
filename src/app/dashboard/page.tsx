@@ -16,6 +16,7 @@ import { db } from "@/lib/db";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import { productionPlanSchema } from "@/lib/albion/production-plan";
 import styles from "./dashboard.module.css";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Dashboard");
 
 const renderedAt = () => Date.now();
@@ -84,7 +85,7 @@ function Shelf({
  */
 export default async function Dashboard() {
   const s = await getServerSession(authOptions);
-  if (!s?.user?.id) redirect("/signin");
+  if (!s?.user?.id) redirect(signInPath("/dashboard"));
   const [u, mine] = await Promise.all([
     db.user.findUnique({
       where: { id: s.user.id },
@@ -131,7 +132,7 @@ export default async function Dashboard() {
       page: 1,
     }),
   ]);
-  if (!u) redirect("/signin");
+  if (!u) redirect(signInPath("/dashboard"));
   const now = renderedAt();
   const builds = mine.builds.slice(0, 5);
   const timers = u.timers.toSorted(
@@ -262,7 +263,7 @@ export default async function Dashboard() {
                   : {
                       line: "No comps yet. Give each slot a role and a loadout.",
                       href: "/compositions/new",
-                      label: "Plan a comp",
+                      label: "Create a comp",
                     }
               }
             >

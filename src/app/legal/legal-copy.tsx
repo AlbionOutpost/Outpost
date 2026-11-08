@@ -15,6 +15,10 @@ export type LegalCopy = {
   sections: { id: string; title: string; body: ReactNode }[];
 };
 
+/** The Supporter page only exists while billing is configured; otherwise the words stay plain text. */
+const supporterLink = (billing: boolean, label: string) =>
+  billing ? <Link href="/supporter">{label}</Link> : label;
+
 /** Faithful bilingual draft; translation does not establish legal approval or activate services. */
 export function legalCopy(
   locale: LegalLocale,
@@ -526,8 +530,8 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               vorgesehen. Dazu gehören laut Produktdarstellung werbefreie Anzeigenplätze und die
               Möglichkeit, einen Team-Arbeitsbereich zu betreiben; Mitglieder können kostenlos
               beitreten. Aktuelle Eigenschaften und Verfügbarkeit sind auf der{" "}
-              <Link href="/supporter">Supporter-Seite</Link> beschrieben. Supporter sehen keine
-              Werbung (siehe Abschnitt zu Cookies und Werbung).
+              {supporterLink(configuredBilling, "Supporter-Seite")} beschrieben. Supporter sehen
+              keine Werbung (siehe Abschnitt zu Cookies und Werbung).
             </p>
             <p>
               Bei aktivierter Abrechnung werden Sie zum gehosteten Stripe Checkout weitergeleitet.
@@ -548,7 +552,7 @@ function germanCopy(operator: LegalOperator, configuredBilling: boolean, ads: bo
               Bestellsituation.
             </p>
             <p>
-              Ein eingerichtetes <Link href="/supporter">Kundenportal</Link> kann je nach
+              Ein eingerichtetes {supporterLink(configuredBilling, "Kundenportal")} kann je nach
               Stripe-Einstellung Zahlungsmittel, Rechnungen und Kündigungen verwalten. Die
               Vertragspartei für die Outpost-Leistung bleibt der zu benennende Anbieter; Stripe ist
               nicht allein dadurch Verkäufer der Outpost-Leistung. Die bereitgestellte Integration
@@ -1180,8 +1184,8 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               The existing integration is intended for a recurring Supporter subscription. According
               to the product description, this includes ad-free placements and the ability to run a
               Team workspace; members can join for free. Current features and availability are
-              described on the <Link href="/supporter">Supporter page</Link>. Supporters see no ads
-              (see the section on cookies and advertising).
+              described on the {supporterLink(configuredBilling, "Supporter page")}. Supporters see
+              no ads (see the section on cookies and advertising).
             </p>
             <p>
               When billing is activated, you are redirected to hosted Stripe Checkout. Outpost sends
@@ -1199,7 +1203,7 @@ function englishCopy(operator: LegalOperator, configuredBilling: boolean, ads: b
               and an unambiguous ordering process.
             </p>
             <p>
-              A configured <Link href="/supporter">customer portal</Link> may manage payment
+              A configured {supporterLink(configuredBilling, "customer portal")} may manage payment
               methods, invoices and cancellations depending on Stripe settings. The provider to be
               identified remains the contracting party for the Outpost service; Stripe does not
               become its seller merely by processing payment. The supplied integration does not

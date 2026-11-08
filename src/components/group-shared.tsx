@@ -158,7 +158,7 @@ export function GroupComps({ ctx }: { ctx: TeamContext }) {
           line="Create a comp and set its visibility to this team; it shows up here for every member."
           action={
             <Link className="button secondary" href="/compositions/new">
-              Plan a comp
+              Create a comp
             </Link>
           }
         />

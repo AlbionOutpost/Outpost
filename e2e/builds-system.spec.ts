@@ -311,7 +311,7 @@ test("public build primary copy creates an independent private revision and deni
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await page.getByRole("button", { name: "Make this build yours", exact: true }).click();
+    await page.getByRole("button", { name: "Copy to my builds", exact: true }).click();
     await expect(page).toHaveURL(/\/builds\/[^/?]+\/edit\?region=asia$/);
     const copiedId = new URL(page.url()).pathname.split("/")[2];
     expect(copiedId).not.toBe(source.id);

@@ -110,7 +110,7 @@ test("timers persist through refresh, pause/resume safely, populate dashboard an
     await page.locator(".desktop-navigation summary").filter({ hasText: "Tools" }).click();
     await page
       .locator(".desktop-navigation")
-      .getByRole("link", { name: /^Transport planner/ })
+      .getByRole("link", { name: /^Transport\b/ })
       .click();
     await expect(page).toHaveURL(/tools\/transporting/);
     await page.goto("/timers");

@@ -11,11 +11,12 @@ import styles from "@/components/comps.module.css";
 import { HttpError } from "@/lib/api-errors";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { CompositionEditor } from "@/components/composition-editor";
+import { signInPath } from "@/lib/sign-in-return";
 export const metadata = privateMetadata("Edit comp");
 export default async function EditComposition({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/signin");
   const { id } = await params;
+  if (!session?.user?.id) redirect(signInPath(`/compositions/${id}/edit`));
   let row;
   try {
     row = await requireRead(id, session.user.id);

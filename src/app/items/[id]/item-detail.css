@@ -45,13 +45,7 @@
 /* Shared wells */
 .app.outpost
   .item-reference-page
-  :is(
-    .item-ability-column,
-    .item-recipe-option li,
-    .item-variant-well,
-    .item-used-in-list li,
-    .item-variant-picker ul li > *
-  ) {
+  :is(.item-ability-column, .item-recipe-option li, .item-variant-well, .item-used-in-list li) {
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
@@ -152,7 +146,7 @@
 }
 .app.outpost .item-ability-column ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-2) var(--space-4);
   margin: 0;
   padding: 0;
@@ -387,38 +381,5 @@
   }
   .app.outpost .item-variant-picker {
     display: grid;
-    gap: var(--space-3);
-  }
-  .app.outpost .item-variant-picker label {
-    display: grid;
-    gap: 6px;
-    color: var(--secondary);
-    font: 600 12px/1.35 var(--font-ui);
-  }
-  .app.outpost .item-variant-picker label > :last-child {
-    width: 100%;
-  }
-  .app.outpost .item-variant-picker ul {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .app.outpost .item-variant-cell {
-    display: grid;
-    justify-items: center;
-    align-content: center;
-    gap: 4px;
-    min-height: 64px;
-    color: var(--muted);
-    font: 700 12px/1 var(--font-ui);
-    text-decoration: none;
-  }
-  .app.outpost .item-variant-cell.is-current {
-    border-color: var(--accent);
-    background: var(--accent-wash);
-    color: var(--accent-ink);
   }
 }

@@ -86,7 +86,7 @@ export default async function Favorites({
                 title="Sign in to see your saved player builds and comps"
                 line="Player builds and comps you favorite are kept on your Discord account, on every device."
                 action={
-                  <Link href="/signin" className="button primary">
+                  <Link href="/signin?callbackUrl=%2Ffavorites" className="button primary">
                     Sign in with Discord
                   </Link>
                 }

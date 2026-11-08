@@ -73,8 +73,8 @@ describe("faithful bilingual legal draft", () => {
     }
   });
   it("preserves every linked legal/provider/source destination and internal action", () => {
-    const links = (locale: LegalLocale) =>
-      copy(locale)
+    const links = (locale: LegalLocale, billing = true) =>
+      copy(locale, billing)
         .sections.flatMap((part) =>
           nodes(part.body)
             .map((node) => node.props.href)
@@ -97,6 +97,9 @@ describe("faithful bilingual legal draft", () => {
       "/licenses/geist-mono-OFL.txt",
     ])
       expect(links("en")).toContain(required);
+    // The Supporter page 404s while billing is off, so the policy names it without a link.
+    expect(links("en", false)).not.toContain("/supporter");
+    expect(links("de", false)).not.toContain("/supporter");
   });
   it.each(["en", "de"] as const)(
     "retains actual storage inventory and keyboard-accessible region (%s)",

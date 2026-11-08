@@ -25,7 +25,7 @@ for (const [calculator, recipe] of [
     ).toBeVisible();
     await expect(page.getByRole("heading", { name: "This page didn’t load" })).toHaveCount(0);
     await page.getByRole("link", { name: "Start with the default recipe", exact: true }).click();
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("1");
     await expect(
       page.getByRole("heading", { name: "Recipe unavailable in this calculator", exact: true }),
     ).toHaveCount(0);
@@ -83,7 +83,7 @@ for (const mode of ["hash", "saved"] as const) {
       ),
     ).toBeVisible();
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("1");
   });
 }
 
@@ -123,10 +123,10 @@ test("legacy production fees require a player accounting choice without replacin
   });
   await page.getByText("Station settings, focus & sources", { exact: true }).click();
   await page.getByText("Markets & transaction fees", { exact: true }).click();
-  await expect(
-    page.getByLabel("Additional station / upgrade fee per craft", { exact: true }),
-  ).toHaveValue("20");
-  await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("10");
+  await expect(page.getByLabel("Additional station fee per craft", { exact: true })).toHaveValue(
+    "20",
+  );
+  await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("10");
 });
 
 test("failed game-recipe prerequisites preserve the active draft on hash and account restores", async ({
@@ -152,7 +152,7 @@ test("failed game-recipe prerequisites preserve the active draft on hash and acc
       { exact: true },
     ),
   ).toBeVisible();
-  await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
+  await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("1");
   await page.getByLabel("Steel Bar unit price", { exact: true }).fill("123");
   await page.route("**/api/scenarios?**", (route) =>
     route.fulfill({
@@ -175,7 +175,7 @@ test("failed game-recipe prerequisites preserve the active draft on hash and acc
     ),
   ).toBeVisible();
   await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
-  await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("1");
+  await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("1");
 });
 
 test("laborer execution changes never reuse listing observations after a failed refresh", async ({
@@ -284,7 +284,7 @@ test("production calculations save, reload, share and enforce scenario ownership
     await page.getByText("Station settings, focus & sources", { exact: true }).click();
     await page.getByText("Markets & transaction fees", { exact: true }).click();
     await page.getByRole("button", { name: "Set 10 batches", exact: true }).click();
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("10");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("10");
     await page.getByRole("button", { name: "Set 1 batches", exact: true }).click();
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("100");
     await page.getByLabel("Pine Planks unit price", { exact: true }).fill("50");
@@ -380,11 +380,11 @@ for (const failure of [
     await page.goto("/tools/crafting?region=europe");
     await requested;
     await page.getByLabel("Steel Bar unit price", { exact: true }).fill("123");
-    await page.getByLabel("Crafts / upgrades", { exact: true }).fill("7");
+    await page.getByLabel("Crafts", { exact: true }).fill("7");
     release();
     await expect(page.getByText(failure.message, { exact: true })).toBeVisible();
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("7");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("7");
     await expect(page.locator("output[data-result=total-profit]")).toHaveCount(0);
     await expect(page.getByText(/Unexpected token|not valid JSON|Proxy unavailable/)).toHaveCount(
       0,
@@ -399,7 +399,7 @@ for (const failure of [
     ).toBeEnabled();
     await expect(page.getByText(failure.message, { exact: true })).toHaveCount(0);
     await expect(page.getByLabel("Steel Bar unit price", { exact: true })).toHaveValue("123");
-    await expect(page.getByLabel("Crafts / upgrades", { exact: true })).toHaveValue("7");
+    await expect(page.getByLabel("Crafts", { exact: true })).toHaveValue("7");
   });
 }
 

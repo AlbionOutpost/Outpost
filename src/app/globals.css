@@ -1647,20 +1647,6 @@ button.text-link {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 18px;
 }
-.build-preview-card {
-  display: block;
-  overflow-wrap: anywhere;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  transition:
-    border-color 160ms,
-    transform 160ms;
-  min-width: 0;
-}
-.build-preview-card:hover {
-  border-color: var(--metal);
-  transform: translateY(-2px);
-}
 .build-card-art {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1745,11 +1731,6 @@ button.text-link {
 @media (max-width: 520px) {
   .build-filter-form {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .build-preview-card:hover {
-    transform: none;
   }
 }
 .build-loadout-inventory {
@@ -1923,12 +1904,6 @@ button.text-link {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
-.build-discovery-page .build-preview-card {
-  position: relative;
-}
-.build-discovery-page .build-preview-link {
-  display: block;
-}
 .build-card-save {
   position: absolute;
   top: 8px;
@@ -2033,11 +2008,6 @@ button.text-link {
   }
 }
 @media (max-width: 480px) {
-  .build-discovery-page .build-preview-link {
-    display: grid;
-    grid-template-columns: 90px minmax(0, 1fr);
-    height: 100%;
-  }
   .build-discovery-page .build-card-art {
     display: flex;
     flex-direction: column;

@@ -28,7 +28,7 @@ test("recovered builds keep author, spells and swaps, and become independent val
   ]) {
     await expect(page.locator(".detail-alternative-card").filter({ hasText: name })).toHaveCount(1);
   }
-  await page.getByRole("link", { name: "Make this build yours", exact: true }).click();
+  await page.getByRole("link", { name: "Copy to my builds", exact: true }).click();
   await expect(page.getByLabel("Build title", { exact: true })).toHaveValue(
     "Battleaxe Mist Build (copy)",
   );

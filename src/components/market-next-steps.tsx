@@ -19,7 +19,7 @@ const tools = {
   crafting: {
     href: "/tools/crafting",
     emblem: "tool-craft",
-    title: "Crafting Calculator",
+    title: "Crafting calculator",
     line: "See if a craft makes silver before you burn the mats.",
   },
   planner: {

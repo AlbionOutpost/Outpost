@@ -52,6 +52,22 @@ function member(): MemberSlot {
     equipmentSets: [],
   };
 }
+/** A player-facing reason for the first schema issue, never the raw validator text. */
+function compositionValidationMessage(issue?: { path: PropertyKey[]; message: string }) {
+  const [field, , part] = issue?.path ?? [];
+  if (field === "title") return "Give your comp a name between 3 and 100 characters.";
+  if (field === "slots" && issue?.path.length === 1)
+    return "Add at least one member before saving: pick a party size or add a member.";
+  if (part === "equipment")
+    return issue?.message.includes("two-handed")
+      ? "A member has a two-handed weapon with an off hand. Remove one before saving."
+      : "Review a member's equipment: each slot can only be used once.";
+  if (field === "slots") return "Review the members: names, roles and notes have a length limit.";
+  if (field === "description") return "Keep the description within 4,000 characters.";
+  if (field === "notes") return "Keep the notes within 12,000 characters.";
+  if (!field) return "Choose a Team for Team-only visibility, or pick another visibility.";
+  return "Review the comp's activity, server and visibility before saving.";
+}
 function memberLoadoutSnapshot(slot: MemberSlot) {
   return JSON.stringify([slot.equipment, slot.equipmentSets, slot.sourceBuildId]);
 }
@@ -93,7 +109,10 @@ export function CompositionEditor({
     },
   );
   const [savedDraft] = useState(() => JSON.stringify(initial || null));
+  const [startDraft] = useState(() => JSON.stringify(draft));
   const dirty = !id || JSON.stringify(draft) !== savedDraft;
+  // A new comp nobody has touched yet is not "unsaved changes".
+  const untouched = !id && JSON.stringify(draft) === startDraft;
   const [baseVersion, setBaseVersion] = useState(version);
   const [recoveryReady, setRecoveryReady] = useState(false);
   const [recoveryMessage, setRecoveryMessage] = useState("");
@@ -219,6 +238,7 @@ export function CompositionEditor({
     else setRosterUndo(null);
     setDraft((d) => ({ ...d, [key]: value }));
     setStatus("");
+    setError("");
   }
   function patch(value: Partial<MemberSlot>) {
     const target = draft.slots[active]?.id;
@@ -310,7 +330,7 @@ export function CompositionEditor({
     e.preventDefault();
     const parsed = compositionInput.safeParse(draft);
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message || "Check comp fields");
+      setError(compositionValidationMessage(parsed.error.issues[0]));
       return;
     }
     setBusy(true);
@@ -435,9 +455,11 @@ export function CompositionEditor({
                     ? "Saving…"
                     : status
                       ? status
-                      : dirty
-                        ? "Unsaved changes"
-                        : `Saved revision ${baseVersion || 1}`}
+                      : untouched
+                        ? "New comp · not saved"
+                        : dirty
+                          ? "Unsaved changes"
+                          : `Saved revision ${baseVersion || 1}`}
                 </strong>
                 <small>
                   {draft.slots.length} {draft.slots.length === 1 ? "slot" : "slots"} · {regionName}{" "}
@@ -492,7 +514,13 @@ export function CompositionEditor({
                 required
                 minLength={3}
                 maxLength={100}
-                placeholder="Roads roam · 7 players"
+                placeholder={`${draft.contentType} · ${
+                  draft.slots.length === 1
+                    ? "solo"
+                    : draft.slots.length
+                      ? `${draft.slots.length} players`
+                      : "party"
+                }`}
                 value={draft.title}
                 onChange={(e) => update("title", e.target.value)}
               />

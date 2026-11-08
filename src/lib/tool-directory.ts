@@ -12,7 +12,7 @@ export const tools = [
   },
   {
     href: "/tools/market",
-    title: "Market explorer",
+    title: "Market Explorer",
     short: "Markets",
     group: "Economy",
     icon: "market",
@@ -102,7 +102,7 @@ export const tools = [
   },
   {
     href: "/tools/transporting",
-    title: "Transport planner",
+    title: "Transport",
     short: "Transport",
     group: "Economy",
     icon: "transport",
@@ -148,8 +148,8 @@ export const tools = [
   },
   {
     href: "/tools/gold",
-    title: "Gold history",
-    short: "Gold history",
+    title: "Gold price",
+    short: "Gold price",
     group: "Economy",
     icon: "history",
     description: "Inspect regional gold observations and their actual dates.",
@@ -157,8 +157,8 @@ export const tools = [
   },
   {
     href: "/builds/new",
-    title: "Build editor",
-    short: "Build editor",
+    title: "Create a build",
+    short: "New build",
     group: "Builds & comps",
     icon: "equipment",
     description: "Choose gear, set abilities and record swaps.",
@@ -166,8 +166,8 @@ export const tools = [
   },
   {
     href: "/compositions/new",
-    title: "Comp builder",
-    short: "Comp builder",
+    title: "Create a comp",
+    short: "New comp",
     group: "Builds & comps",
     icon: "composition",
     description: "Plan your party’s roles, gear and player assignments.",

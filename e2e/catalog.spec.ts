@@ -131,3 +131,98 @@ test("item detail loads city prices on arrival and links the item's variants", a
   await expect(page).toHaveURL(/\/items\/T4_MAIN_AXE@1/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Battleaxe");
 });
+
+test("the item database starts at T4 gear and keeps its filters in the address", async ({
+  page,
+}) => {
+  await page.goto("/items");
+  // T4 and up first, not T1 beginner tools
+  await expect(page.locator(".item-catalog-row").first()).toContainText("T4.0");
+  await page.goto("/items?q=claymore");
+  const search = page.getByLabel("Search item name or identifier", { exact: true });
+  await expect(search).toHaveValue("claymore");
+  await expect(page.locator(".item-catalog-row").first()).toContainText(/Claymore|Kingmaker/);
+  await page.getByLabel("Tier", { exact: true }).selectOption("6");
+  await expect(page).toHaveURL(/[?&]q=claymore/);
+  await expect(page).toHaveURL(/[?&]tier=6/);
+  await expect(page.locator(".item-catalog-row").first()).toContainText("T6.");
+  await page.locator(".item-catalog-row a").first().click();
+  await expect(page).toHaveURL(/\/items\/T6_/);
+  await page.goBack();
+  await expect(search).toHaveValue("claymore");
+  await expect(page.getByLabel("Tier", { exact: true })).toHaveValue("6");
+  await expect(page.locator(".item-catalog-row").first()).toContainText("T6.");
+});
+
+test("grouped catalog search lists each base item once and keeps typed identifiers exact", async ({
+  request,
+}) => {
+  const grouped = await (await request.get("/api/items?search=claymore&group=base")).json();
+  const ids: string[] = grouped.items.map((i: { id: string }) => i.id);
+  expect(ids).toContain("T4_2H_CLAYMORE");
+  expect(ids.filter((id) => id.replace(/^T\d_/, "").replace(/@\d$/, "") === "2H_CLAYMORE")).toEqual(
+    ["T4_2H_CLAYMORE"],
+  );
+  expect(grouped.items.find((i: { id: string }) => i.id === "T4_2H_CLAYMORE")).toMatchObject({
+    tiers: [4, 8],
+    enchantments: [0, 4],
+  });
+  const exact = await (await request.get("/api/items?search=T6_2H_CLAYMORE@1&group=base")).json();
+  expect(exact.items[0].id).toBe("T6_2H_CLAYMORE@1");
+  const variants = await (await request.get("/api/items?variants=T4_2H_CLAYMORE")).json();
+  expect(variants.items.map((v: { id: string }) => v.id)).toEqual(
+    expect.arrayContaining(["T4_2H_CLAYMORE", "T4_2H_CLAYMORE@4", "T8_2H_CLAYMORE@4"]),
+  );
+  expect((await request.get("/api/items?variants=../x")).status()).toBe(400);
+});
+
+test("Market Explorer search picks the item once, then its tier and enchantment", async ({
+  page,
+}) => {
+  await page.route("**/api/market?*", (route) =>
+    route.fulfill({ json: { region: "europe", prices: [] } }),
+  );
+  await page.goto("/tools/market?region=europe");
+  const input = page.getByRole("combobox", { name: "Search market items" });
+  await input.fill("claymore");
+  const options = page.getByRole("listbox", { name: "Matching market items" }).getByRole("option");
+  await expect(options.first()).toContainText("Claymore");
+  await expect(options.filter({ hasText: "· .1" })).toHaveCount(0);
+  await expect(options.filter({ hasText: "Adept's Claymore" })).toHaveCount(1);
+  await options.filter({ hasText: "Adept's Claymore" }).click();
+  const variants = page.getByRole("list", { name: "Tier 4 enchantments" });
+  await expect(variants.getByRole("button", { pressed: true })).toHaveAccessibleName(/^T4\.0/);
+  await variants.getByRole("button", { name: /^T4\.2/ }).click();
+  await page.locator(".mx-variants").getByRole("combobox").selectOption("6");
+  await page.getByText("Advanced item identifier", { exact: true }).click();
+  await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T6_2H_CLAYMORE@2");
+  await expect(page).toHaveURL(/item=T6_2H_CLAYMORE%402/);
+  // A typed enchanted identifier is still that exact item
+  await input.fill("T5_2H_CLAYMORE@3");
+  await expect(options.first()).toContainText("T5.3");
+  await input.press("Enter");
+  await expect(page.getByLabel("Item identifier", { exact: true })).toHaveValue("T5_2H_CLAYMORE@3");
+});
+
+test("an item page shows recorded spells from the build library and every build for its weapon", async ({
+  page,
+}) => {
+  await page.goto("/items/T8_2H_CLAYMORE?region=europe");
+  const abilities = page.locator(".item-abilities");
+  await expect(abilities).not.toContainText("No ability list");
+  await expect(abilities).toContainText("archived build library");
+  await expect(abilities.getByRole("region", { name: "Q abilities" })).toContainText(
+    "Heroic Strike",
+  );
+  const builds = page.locator(".item-builds");
+  const counts = (await builds.textContent())!.match(/([\d,]+) community · ([\d,]+) library/)!;
+  const total = Number(counts[1].replace(",", "")) + Number(counts[2].replace(",", ""));
+  await expect(builds.getByRole("heading", { level: 2 }).first()).toContainText(`${total}`);
+  await expect(
+    builds.locator(".build-window, .library-build-card, .community-build-card").first(),
+  ).toBeVisible();
+  const all = builds.getByRole("link", { name: `See all ${total}` });
+  await expect(all).toHaveAttribute("href", /\/builds\?weapon=Claymore/);
+  await all.click();
+  await expect(page.locator(".ecosystem-results-subline")).toContainText(`${total}`);
+});
