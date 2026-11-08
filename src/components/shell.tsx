@@ -96,8 +96,8 @@ const footerColumns = [
       ["/builds/activities", "Builds by activity"],
       ["/builds", "All builds"],
       ["/builds/new", "Create a build"],
-      ["/compositions/activities", "Comps by activity"],
-      ["/compositions", "All comps"],
+      ["/compositions", "Comps by activity"],
+      ["/compositions?view=all", "All comps"],
       ["/compositions/new", "Plan a comp"],
     ],
   },
@@ -199,7 +199,7 @@ export function Shell({
     "/shopping-list": "/tools",
   };
   const href = (url: string) =>
-    `${url === "/builds" ? "/builds/activities" : url}?region=${region}`;
+    `${url === "/builds" ? "/builds/activities" : url}${url.includes("?") ? "&" : "?"}region=${region}`;
   const productShell = true;
   const workspace = !["/", "/signin", "/legal"].includes(path) && !path.startsWith("/guides");
   useEffect(() => {

@@ -31,13 +31,13 @@ export function CompDirectoryHeader({
         label="Comp collections"
         tabs={[
           {
-            href: "/compositions/activities",
+            href: "/compositions",
             label: "Activities",
             icon: <LayoutGrid size={16} />,
             current: active === "activities",
           },
           {
-            href: "/compositions",
+            href: "/compositions?view=all",
             label: "All comps",
             icon: <Compass size={16} />,
             current: active === "browse",

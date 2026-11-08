@@ -33,26 +33,14 @@ export function GroupProfileEditor({
     [name, setName] = useState(group.name),
     router = useRouter();
   const plays = decodeActivities(group.activities);
-  // The profile action takes the whole profile; the guild tax row sends the saved values with its new rate.
-  async function save(fields: Record<string, unknown>, done: string) {
+  // One request helper: the profile form sends the whole profile, the guild tax row only its rate.
+  async function save(body: Record<string, unknown>, done: string) {
     setBusy(true);
     try {
       const r = await fetch(`/api/groups/${group.id}/actions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "profile",
-            expectedUpdatedAt: group.updatedAt,
-            name: group.name,
-            description: group.description,
-            region: group.region,
-            visibility: group.visibility,
-            crestItem: group.crestItem,
-            crestColor: group.crestColor,
-            activities: plays,
-            recruiting: group.recruiting,
-            ...fields,
-          }),
+          body: JSON.stringify(body),
         }),
         b = await r.json();
       if (!r.ok) throw new Error(b.error);
@@ -93,7 +81,10 @@ export function GroupProfileEditor({
           e.preventDefault();
           const f = new FormData(e.currentTarget);
           // Empty means no tax, as the hint says.
-          void save({ guildTaxPercent: Number(f.get("guildTaxPercent") || 0) }, "Guild tax saved.");
+          void save(
+            { action: "guild-tax", guildTaxPercent: Number(f.get("guildTaxPercent") || 0) },
+            "Guild tax saved.",
+          );
         }}
       >
         <div className={styles.taxRow}>
@@ -125,6 +116,8 @@ export function GroupProfileEditor({
             const f = new FormData(e.currentTarget);
             void save(
               {
+                action: "profile",
+                expectedUpdatedAt: group.updatedAt,
                 name: f.get("name"),
                 description: f.get("description"),
                 region: f.get("region"),

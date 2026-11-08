@@ -2,21 +2,23 @@ import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { createTestDb } from "./support/db";
 const db = createTestDb();
-test("comps by activity counts each activity's comps and opens its filtered list", async ({
+test("comps open on their activities, each card opening that activity's comps", async ({
   page,
 }) => {
-  await page.goto("/compositions");
-  await page
-    .getByRole("navigation", { name: "Comp collections" })
-    .getByRole("link", { name: "Activities", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/compositions\/activities/);
+  await page.goto("/compositions?region=asia");
+  const tabs = page.getByRole("navigation", { name: "Comp collections" });
+  await expect(tabs.getByRole("link", { name: "Activities", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Comps by activity/);
   const activities = page.getByRole("region", { name: "Comp activities" });
   const cards = activities.locator("[data-activity]");
   expect(await cards.count()).toBeGreaterThan(5);
   // Every card names its activity and a real count; none is listed empty
   for (const text of await cards.locator("small").allInnerTexts())
     expect(text).toMatch(/^[\d,]+ comps?$/);
+  await expect(page.getByRole("region", { name: "Matching comps" })).toHaveCount(0);
   const zvz = activities.locator('[data-activity="ZVZ"]');
   const count = Number((await zvz.locator("small").innerText()).replace(/\D/g, ""));
   await zvz.getByRole("link").click();
@@ -24,11 +26,40 @@ test("comps by activity counts each activity's comps and opens its filtered list
   await expect(
     page.getByRole("region", { name: "Matching comps" }).getByText(/^[\d,]+ comps? /),
   ).toHaveText(new RegExp(`^${count.toLocaleString("en-GB")} comps? `));
+  await expect(tabs.getByRole("link", { name: "All comps", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  // All comps is one click away and stays the list once its filters are cleared.
+  await tabs.getByRole("link", { name: "Activities", exact: true }).click();
+  await expect(page).toHaveURL(
+    (url) => url.pathname === "/compositions" && url.search === "?region=asia",
+  );
+  await tabs.getByRole("link", { name: "All comps", exact: true }).click();
+  await expect(page).toHaveURL(/\/compositions\?view=all/);
+  const list = page.getByRole("region", { name: "Matching comps" });
+  await expect(
+    list.getByText(/^[\d,]+ comps \([\d,]+ from players · [\d,]+ Group Builds\)/),
+  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "Comp activities" })).toHaveCount(0);
+  const pages = page.getByRole("navigation", { name: "Comp pages" });
+  await pages.getByRole("link", { name: "Next page" }).click();
+  await expect(page).toHaveURL(/\/compositions\?page=2/);
+  await pages.getByRole("link", { name: "Previous page" }).click();
+  await expect(page).toHaveURL(/\/compositions\?page=1/);
+  await expect(list).toBeVisible();
+  // The old activities URL lands on the same grid, keeping its server.
+  const old = await page.request.get("/compositions/activities?region=asia", { maxRedirects: 0 });
+  expect(old.status()).toBe(308);
+  expect(old.headers().location).toBe("/compositions?region=asia");
+  await page.goto("/compositions/activities");
+  await expect(page).toHaveURL(/\/compositions$/);
+  await expect(page.getByRole("region", { name: "Comp activities" })).toBeVisible();
 });
 test("group builds are discoverable and retain every member while presentation controls work", async ({
   page,
 }) => {
-  await page.goto("/compositions");
+  await page.goto("/compositions?view=all");
   await page
     .getByRole("navigation", { name: "Comp source" })
     .getByRole("link", { name: "Group Builds", exact: true })

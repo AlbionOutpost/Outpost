@@ -79,6 +79,14 @@ async function localMutateGroup(groupId: string, userId: string, input: unknown)
               throw new HttpError(409, "Group profile changed. Reload before saving.");
             return { updated: true };
           }
+          case "guild-tax": {
+            need("manageTeam", "Changing the guild tax needs the Manage team permission");
+            await tx.group.updateMany({
+              where: { id: groupId },
+              data: { guildTaxPercent: action.guildTaxPercent },
+            });
+            return { updated: true };
+          }
           case "edit-event": {
             need("manageEvents", "Editing events needs the Manage events permission");
             if (new Date(action.startsAt).getTime() < Date.now() - 60000)

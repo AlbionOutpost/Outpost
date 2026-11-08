@@ -34,7 +34,7 @@ export default async function EditComposition({ params }: { params: Promise<{ id
         accent="comp"
         description="Change roles, loadouts and notes. Saving keeps a new revision."
       >
-        <Link className="pill-link is-small masthead-back" href="/compositions">
+        <Link className="pill-link is-small masthead-back" href="/compositions?view=all">
           <ArrowLeft size={14} aria-hidden="true" /> Back to comps
         </Link>
       </WorkspaceHeading>

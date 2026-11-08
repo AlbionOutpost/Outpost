@@ -40,6 +40,8 @@ export const groupAction = z.discriminatedUnion("action", [
     /** Left out, the team's rate is kept. */
     guildTaxPercent: tenthPercent.optional(),
   }),
+  /** Only the guild tax rate, so a leader can set it from a loot split without the whole profile. */
+  z.object({ action: z.literal("guild-tax"), guildTaxPercent: tenthPercent }),
   z.object({
     action: z.literal("edit-event"),
     eventId: z.string().max(100),

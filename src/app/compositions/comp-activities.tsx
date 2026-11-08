@@ -1,8 +1,8 @@
-import { metadataForPage, type SeoPageProps } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import { ActivityArtworkCard } from "@/components/activity-artwork-card";
 import { CompDirectoryHeader } from "@/components/comp-directory-header";
 import Link from "@/components/build-region-link";
+import { EmptyWell } from "@/components/empty-well";
 import { activityBackgrounds } from "@/lib/activity-backgrounds";
 import { libraryCompositionCounts } from "@/lib/grind-library";
 import { activityForContent, activityLabel, playerContent } from "@/lib/source-filter";
@@ -11,19 +11,14 @@ import { db } from "@/lib/db";
 import styles from "@/app/builds/activities/page.module.css";
 import comps from "@/components/comps.module.css";
 
-export const dynamic = "force-dynamic";
-export async function generateMetadata({ searchParams }: SeoPageProps) {
-  return metadataForPage("/compositions/activities", await searchParams);
-}
-
 /** The card width in the shared activity grid (see builds/activities). */
 const sizes =
   "(max-width: 360px) calc(100vw - 32px), (max-width: 700px) calc(50vw - 27px), (max-width: 1100px) calc(33vw - 30px), 300px";
 const href = (activity: string) => `/compositions?category=${encodeURIComponent(activity)}`;
 
 /**
- * Comps by activity, as Builds has it: one painted card per activity that has comps, counting
- * the recorded Group Builds and the player comps the viewer can open (the same activity
+ * Comps by activity, where `/compositions` opens, as Builds opens on its activities: one painted
+ * card per activity that has comps, counting the recorded Group Builds and the player comps the viewer can open (the same activity
  * pairing the comps list filters by, so a card's count is what its list shows).
  */
 export default async function CompActivities() {
@@ -69,6 +64,18 @@ export default async function CompActivities() {
         description={`${total.toLocaleString("en-US")} comps across ${listed.length + others.length} activities. Open one to see the parties players run there.`}
       />
       <section aria-label="Comp activities" className={styles.sections}>
+        {!total && (
+          <EmptyWell
+            emblem="team-comps"
+            title="No comps yet"
+            line="Plan your party and share it, and it shows up under its activity."
+            action={
+              <Link className="button secondary" href="/compositions/new">
+                Create a comp
+              </Link>
+            }
+          />
+        )}
         <ul className={styles.grid}>
           {listed.map((a) => (
             <li key={a.id}>

@@ -43,6 +43,7 @@ export function TeamLootWorkspace({
   editable,
   canPay = false,
   guildTaxPercent = 0,
+  canSetTax = false,
   active,
 }: {
   groupId: string;
@@ -51,8 +52,10 @@ export function TeamLootWorkspace({
   editable: boolean;
   /** Manage wallet: a saved split can be paid into the participants' wallets once. */
   canPay?: boolean;
-  /** The team's guild tax rate (Settings); 0 hides the toggle. */
+  /** The team's guild tax rate (Settings). */
   guildTaxPercent?: number;
+  /** Manage team: with no rate set yet, it can be set right here. */
+  canSetTax?: boolean;
   active: boolean;
 }) {
   // Empty fields with hints, not sample values: the pool reads as missing until it is entered.
@@ -67,6 +70,40 @@ export function TeamLootWorkspace({
     [title, setTitle] = useState(""),
     [checked, setChecked] = useState(false),
     [selected, setSelected] = useState<Saved | null>(null);
+  // The team's rate as this split sees it; setting it here takes effect without a reload.
+  const [rate, setRate] = useState(guildTaxPercent),
+    [rateDraft, setRateDraft] = useState<number | null>(null),
+    [rateMessage, setRateMessage] = useState(""),
+    [rateBusy, setRateBusy] = useState(false);
+  // A new rate from Settings (after a refresh) replaces the one seen here.
+  const [rateProp, setRateProp] = useState(guildTaxPercent);
+  if (rateProp !== guildTaxPercent) {
+    setRateProp(guildTaxPercent);
+    setRate(guildTaxPercent);
+  }
+  const saveRate = async () => {
+    if (rateDraft === null || rateDraft <= 0) {
+      setRateMessage("Enter a rate above 0%.");
+      return;
+    }
+    setRateBusy(true);
+    try {
+      const response = await fetch(`/api/groups/${groupId}/actions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "guild-tax", guildTaxPercent: rateDraft }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "The rate was not saved.");
+      setRate(rateDraft);
+      setConfiguration((c) => ({ ...c, guildTaxPercent: rateDraft }));
+      setRateMessage("");
+    } catch (error) {
+      setRateMessage(error instanceof Error ? error.message : "The rate was not saved.");
+    } finally {
+      setRateBusy(false);
+    }
+  };
   const [saved, setSaved] = useState<Saved[]>([]),
     [loaded, setLoaded] = useState(false),
     [busy, setBusy] = useState(false),
@@ -400,7 +437,7 @@ export function TeamLootWorkspace({
               />
             </Field>
           </div>
-          {guildTaxPercent > 0 || configuration.guildTaxPercent ? (
+          {rate > 0 || configuration.guildTaxPercent ? (
             <label className={`well ${styles.taxToggle}`}>
               <input
                 type="checkbox"
@@ -409,7 +446,7 @@ export function TeamLootWorkspace({
                 onChange={(e) =>
                   setConfiguration({
                     ...configuration,
-                    guildTaxPercent: e.target.checked ? guildTaxPercent : 0,
+                    guildTaxPercent: e.target.checked ? rate : 0,
                   })
                 }
               />
@@ -417,12 +454,47 @@ export function TeamLootWorkspace({
                 <strong>Guild tax</strong>
                 <small id="loot-guild-tax-line">
                   {configuration.guildTaxPercent &&
-                  Math.abs(configuration.guildTaxPercent - guildTaxPercent) > 1e-9
-                    ? `Saved at ${configuration.guildTaxPercent}%; the team's rate is now ${guildTaxPercent}%. Turn it off and on to use the new rate.`
-                    : `${guildTaxPercent}% of the pool goes to the team pot before the share.`}
+                  Math.abs(configuration.guildTaxPercent - rate) > 1e-9
+                    ? `Saved at ${configuration.guildTaxPercent}%; the team's rate is now ${rate}%. Turn it off and on to use the new rate.`
+                    : `${rate}% of the pool goes to the team pot before the share.`}
                 </small>
               </span>
             </label>
+          ) : canSetTax && editable ? (
+            <div className={`well ${styles.taxSetup}`}>
+              <span className={styles.rowCopy}>
+                <strong>Guild tax</strong>
+                <small id="loot-guild-tax-setup">
+                  Set the team&apos;s rate to take a share of the pool for the team pot first. It is
+                  saved for every split; change it later in Settings.
+                </small>
+              </span>
+              <div className={styles.taxSetupRow}>
+                <NumberField
+                  aria-label="Team guild tax (%)"
+                  aria-describedby="loot-guild-tax-setup"
+                  min={0}
+                  max={100}
+                  decimals={1}
+                  placeholder="e.g. 10"
+                  value={rateDraft}
+                  onValueChange={setRateDraft}
+                />
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={rateBusy}
+                  onClick={saveRate}
+                >
+                  Set guild tax
+                </button>
+              </div>
+              {rateMessage && (
+                <p role="alert" className={styles.subline}>
+                  {rateMessage}
+                </p>
+              )}
+            </div>
           ) : (
             <p className={styles.subline}>
               No guild tax is set for this team. Members with Manage team set it in Settings.

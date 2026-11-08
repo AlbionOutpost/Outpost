@@ -5,8 +5,8 @@
 :global(.app.outpost) .page :global(.workspace-identity)[data-scene] {
   min-height: 0;
   margin-bottom: var(--space-4);
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-4);
 }
 :global(.app.outpost)
   .page

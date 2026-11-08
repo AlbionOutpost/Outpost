@@ -69,7 +69,7 @@ export function CompositionActions({
       if (action === "duplicate") {
         const body = await response.json();
         router.push(`/compositions/${body.id}/edit`);
-      } else router.push("/compositions");
+      } else router.push("/compositions?mine=1");
       router.refresh();
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "That didn’t work. Try again.");
