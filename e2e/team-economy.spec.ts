@@ -197,20 +197,26 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     await page.getByLabel("Reason", { exact: true }).fill("Guild tax");
     await page.getByRole("button", { name: "Credit 75,000 silver" }).click();
     await expect(page.getByRole("table")).toContainText("Guild tax");
+    // The Treasury hero reads the same wallet: the pot (5,000 went to a member) and the line.
+    const hero = page.getByRole("region", { name: "Team pot" });
+    await expect(hero).toContainText("75,000");
+    await expect(hero.getByRole("list", { name: "Latest wallet changes" })).toContainText(
+      "Guild tax",
+    );
     await expect(page.getByText("Team pot", { exact: true }).first()).toBeVisible();
     expect(
       (await db.groupWalletEntry.findFirstOrThrow({ where: { groupId, userId: null } })).amount,
     ).toBe(75000);
-    await page
-      .getByRole("navigation", { name: "Treasury" })
-      .getByRole("link", { name: "Rolls & flips", exact: true })
-      .click();
+    // The hero's Flip a coin opens Rolls & flips.
+    await hero.getByRole("button", { name: "Flip a coin" }).click();
     await expect(page).toHaveURL(/#team-treasury-rolls$/);
     await expect(page.getByText(/No silver moves on a flip/)).toBeVisible();
     await expect(page.getByLabel("Stake")).toHaveCount(0);
     await page.getByRole("button", { name: "Call it yourself" }).click();
     await page.getByRole("radio", { name: "Tails" }).click();
-    await page.getByRole("button", { name: "Flip the coin" }).click();
+    // A double click throws once.
+    const flipsBefore = await db.groupCoinFlip.count({ where: { groupId } });
+    await page.getByRole("button", { name: "Flip the coin" }).dblclick();
     await expect(
       page.getByText(/^(Heads|Tails): You (called it|lost the call)$/).first(),
     ).toBeVisible();
@@ -221,6 +227,7 @@ test("team wallet, coin flips and loot rolls: server outcomes, permissions and o
     await expect(
       page.getByText(new RegExp(`^${last.outcome === "heads" ? "Heads" : "Tails"}: You`)).first(),
     ).toBeVisible();
+    expect(await db.groupCoinFlip.count({ where: { groupId } })).toBe(flipsBefore + 1);
 
     // Old tab links and query links land on the matching Treasury view.
     await page.goto(`/groups/${slug}#team-wallet`);

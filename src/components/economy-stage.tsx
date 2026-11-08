@@ -1,78 +1,57 @@
 "use client";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { AvatarFrame } from "./avatar-frame";
-import { currentStage, loadScene, type StageMode } from "./economy-scene-loader";
-import type { CoinScene } from "./economy-scene";
+import { prefersReducedMotion, silverText, useCountUp } from "./economy-motion";
 import styles from "./team-economy.module.css";
 
 /**
- * The Team economy's 3D moments: a coin flip, a d100 number drum and a loot chest that throws
- * silver to each member. The coin and the chest are WebGL models (`economy-scene.ts`, three.js
- * loaded only when one plays); without WebGL they fall back to the CSS 3D versions here, moved
- * with the Web Animations API. Every one of them only shows a result the server already
- * decided; with reduced motion the result is simply there.
+ * The Treasury's 3D moments in CSS: a coin flip, a d100 number drum and a loot chest. They move
+ * only transforms and opacity (Web Animations API), play in under two seconds, can be skipped
+ * with a click or Esc, and show the result at once under reduced motion. Every one of them only
+ * shows a result the server already decided.
  */
 
-export function prefersReducedMotion() {
-  return typeof window === "undefined" || matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-export const silverText = (n: number) => n.toLocaleString("en");
-
-/** Counts a number up (or down) to `value`; jumps straight there under reduced motion. */
-export function useCountUp(
-  value: number,
-  { duration = 900, from }: { duration?: number; from?: number } = {},
-) {
-  const [shown, setShown] = useState(from ?? value);
-  const last = useRef(from ?? value);
+/** Runs `skip` on Esc while `active`, before a dialog's own Esc handler sees it. */
+function useEscape(active: boolean, skip: () => void) {
+  const latest = useRef(skip);
+  useLayoutEffect(() => {
+    latest.current = skip;
+  });
   useEffect(() => {
-    const start = last.current;
-    last.current = value;
-    if (start === value || prefersReducedMotion()) {
-      const id = requestAnimationFrame(() => setShown(value));
-      return () => cancelAnimationFrame(id);
-    }
-    let frame = 0;
-    const began = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - began) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setShown(Math.round(start + (value - start) * eased));
-      if (t < 1) frame = requestAnimationFrame(tick);
+    if (!active) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      latest.current();
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [value, duration]);
-  return shown;
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
+  }, [active]);
 }
 
 /* ------------------------------------------------------------------------------------------ */
 /* Coin                                                                                        */
 /* ------------------------------------------------------------------------------------------ */
 
-/** The rim: thin discs stacked through the coin's thickness, alternating light and dark. */
-const edgeLayers = Array.from({ length: 15 }, (_, i) => (i - 7) / 7);
-const dust = Array.from({ length: 10 }, (_, i) => i);
-const turns = 4;
+/** The rim: thin discs stacked through the coin's thickness, reeded round their edge. */
+const edgeLayers = Array.from({ length: 13 }, (_, i) => (i - 6) / 6);
+const sparks = Array.from({ length: 8 }, (_, i) => i);
+const turns = 5;
 const sideAngle = (side: "heads" | "tails") => (side === "tails" ? 180 : 0);
-const coinDuration = 2600;
+/** One throw, in ms. */
+export const coinDuration = 1650;
 /** When the coin meets the well, as a share of the throw. */
-const touch = 0.74;
+const touch = 0.78;
 
 /**
- * A two-faced silver coin with a real rim (the crown is heads, the skull tails). Give it a
- * `flip` — the side the server landed and a key per throw — and it is tossed in an arc, tumbles
- * end over end with a little precession, catches the light as it turns, lands with a bounce, a
- * ring and a puff of dust, and settles on that side. Its shadow shrinks while it is high.
+ * A two-faced silver coin with a reeded rim (the crown is heads, the skull tails). Give it a
+ * `flip` — the side the server landed and a key per throw — and it is tossed toward the
+ * viewer, spins end over end fast then slower, catches a sweep of light, lands with a small
+ * rock onto its face and a ring of light, and settles on that side. A click or Esc skips to
+ * the landing; under reduced motion it simply lies on that side.
  */
-function CssCoin({
+export function Coin3D({
   flip,
   size = 132,
   still = false,
@@ -87,10 +66,14 @@ function CssCoin({
   const stage = useRef<HTMLDivElement>(null);
   const coin = useRef<HTMLDivElement>(null);
   const resting = useRef(0);
+  const playing = useRef<Animation[] | null>(null);
+  const [inFlight, setInFlight] = useState(false);
   const landed = useRef(onLanded);
   useLayoutEffect(() => {
     landed.current = onLanded;
   });
+  const skip = () => playing.current?.forEach((a) => a.finish());
+  useEscape(inFlight, skip);
   // Keyed by the throw, not the object, so a re-render never throws the coin again.
   const side = flip?.side;
   const throwKey = flip?.key;
@@ -99,141 +82,130 @@ function CssCoin({
     const root = stage.current;
     if (!side || !throwKey || !el || !root) return;
     const part = (name: string) => root.querySelector<HTMLElement>(`[data-part="${name}"]`)!;
+    const all = (name: string) => [...root.querySelectorAll<HTMLElement>(`[data-part="${name}"]`)];
     const from = resting.current;
     const to = Math.ceil(from / 360) * 360 + turns * 360 + sideAngle(side);
     resting.current = to;
-    if (still || prefersReducedMotion()) {
+    const rest = () => {
       el.style.transform = `rotateX(${to}deg)`;
+    };
+    if (still || prefersReducedMotion()) {
+      rest();
       landed.current?.();
       return;
     }
     const D = coinDuration;
-    const high = size * 1.05;
-    const toward = size * 1.2;
+    const high = size * 1.15;
     const timing = { duration: D };
+    const hit = D * touch;
     const animations: Animation[] = [
-      // The arc: up and toward the viewer (perspective makes it grow), down, two small bounces.
+      // Up toward the viewer (perspective makes it grow), down onto the well, one small hop.
       part("lift").animate(
         [
-          { transform: "translate3d(0,0,0)", easing: "cubic-bezier(.16,.7,.36,1)" },
+          { transform: "translate3d(0,0,0)", easing: "cubic-bezier(.2,.75,.4,1)" },
           {
-            transform: `translate3d(0,${-high}px,${toward}px)`,
-            offset: 0.38,
-            easing: "cubic-bezier(.6,0,.86,.5)",
+            transform: `translate3d(0,${-high}px,${size * 0.6}px)`,
+            offset: 0.42,
+            easing: "cubic-bezier(.55,0,.85,.4)",
           },
           { transform: "translate3d(0,0,0)", offset: touch, easing: "cubic-bezier(.2,.7,.4,1)" },
           {
-            transform: `translate3d(0,${-size * 0.16}px,${size * 0.05}px)`,
-            offset: 0.84,
+            transform: `translate3d(0,${-size * 0.08}px,0)`,
+            offset: 0.88,
             easing: "cubic-bezier(.5,0,.8,.5)",
           },
-          { transform: "translate3d(0,0,0)", offset: 0.92, easing: "cubic-bezier(.2,.7,.4,1)" },
-          { transform: `translate3d(0,${-size * 0.04}px,0)`, offset: 0.96 },
           { transform: "translate3d(0,0,0)" },
         ],
         timing,
       ),
-      // End over end, fast and slowing, landing a little short and rocking onto its face.
+      // End over end, fast and slowing, landing a little short and rocking flat on its face.
       el.animate(
         [
-          { transform: `rotateX(${from}deg)`, easing: "cubic-bezier(.12,.58,.3,1)" },
-          { transform: `rotateX(${to - 28}deg)`, offset: touch, easing: "ease-out" },
-          { transform: `rotateX(${to + 14}deg)`, offset: 0.86, easing: "ease-in-out" },
-          { transform: `rotateX(${to - 6}deg)`, offset: 0.94, easing: "ease-in-out" },
+          { transform: `rotateX(${from}deg)`, easing: "cubic-bezier(.18,.6,.32,1)" },
+          { transform: `rotateX(${to - 24}deg)`, offset: touch, easing: "ease-out" },
+          { transform: `rotateX(${to + 10}deg)`, offset: 0.9, easing: "ease-in-out" },
           { transform: `rotateX(${to}deg)` },
         ],
         { ...timing, fill: "forwards" },
       ),
-      // Precession: the spin axis wanders while it flies, then the coin wobbles flat.
+      // The spin axis wanders a little in the air, then the coin settles square.
       part("tilt").animate(
         [
           { transform: "rotateY(0deg) rotateZ(0deg)" },
-          { transform: "rotateY(22deg) rotateZ(-10deg)", offset: 0.2 },
-          { transform: "rotateY(-16deg) rotateZ(8deg)", offset: 0.45 },
-          { transform: "rotateY(10deg) rotateZ(-4deg)", offset: 0.65 },
-          { transform: "rotateY(-9deg) rotateZ(3deg)", offset: 0.8 },
-          { transform: "rotateY(5deg) rotateZ(-1deg)", offset: 0.9 },
+          { transform: "rotateY(18deg) rotateZ(-8deg)", offset: 0.25 },
+          { transform: "rotateY(-12deg) rotateZ(6deg)", offset: 0.55 },
+          { transform: "rotateY(5deg) rotateZ(-2deg)", offset: touch },
           { transform: "rotateY(0deg) rotateZ(0deg)" },
         ],
         timing,
       ),
-      // A soft shadow that shrinks and pales while the coin is high...
+      // The shadow shrinks and pales while the coin is high.
       part("shadow").animate(
         [
-          { transform: "scale(1)", opacity: 0.85 },
-          { transform: "scale(.38)", opacity: 0.3, offset: 0.38 },
-          { transform: "scale(1)", opacity: 0.85, offset: touch },
-          { transform: "scale(.86)", opacity: 0.7, offset: 0.84 },
-          { transform: "scale(1)", opacity: 0.85 },
+          { transform: "scale(1)", opacity: 0.9 },
+          { transform: "scale(.4)", opacity: 0.3, offset: 0.42 },
+          { transform: "scale(1)", opacity: 0.9, offset: touch },
+          { transform: "scale(.9)", opacity: 0.75, offset: 0.88 },
+          { transform: "scale(1)", opacity: 0.9 },
         ],
         timing,
       ),
-      // ...and a sharp contact shadow that is only there on the ground.
-      part("contact").animate(
-        [
-          { opacity: 1 },
-          { opacity: 0, offset: 0.1 },
-          { opacity: 0, offset: touch - 0.06 },
-          { opacity: 1, offset: touch },
-          { opacity: 0.4, offset: 0.84 },
-          { opacity: 1, offset: 0.92 },
-          { opacity: 1 },
-        ],
-        timing,
-      ),
-      // The light sweeps across each face every time it turns past.
-      ...[...root.querySelectorAll<HTMLElement>("[data-part=sheen]")].map((sheen) =>
-        sheen.animate(
-          [{ transform: "translate(-70%,-70%)" }, { transform: "translate(70%,70%)" }],
-          {
-            duration: (D * touch) / turns,
-            iterations: turns,
-            easing: "cubic-bezier(.4,0,.6,1)",
-          },
-        ),
-      ),
-      // Landing: a ring of light on the well and a puff of dust.
+      // Light catches each face as it turns in the air, then one slow glint once it rests.
+      ...all("sheen").flatMap((sheen) => [
+        sheen.animate([{ transform: "translateX(-120%)" }, { transform: "translateX(120%)" }], {
+          duration: hit / 3,
+          iterations: 3,
+          easing: "cubic-bezier(.4,0,.6,1)",
+        }),
+        sheen.animate([{ transform: "translateX(-120%)" }, { transform: "translateX(120%)" }], {
+          duration: 620,
+          delay: D * 0.9,
+          easing: "cubic-bezier(.3,0,.3,1)",
+        }),
+      ]),
+      // Landing: a ring of light on the well and a few sparks.
       part("ring").animate(
         [
-          { transform: "scale(.35)", opacity: 0.9 },
-          { transform: "scale(1.9)", opacity: 0 },
+          { transform: "scale(.4)", opacity: 0.9 },
+          { transform: "scale(1.8)", opacity: 0 },
         ],
-        { duration: 650, delay: D * touch, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" },
+        { duration: 560, delay: hit, easing: "cubic-bezier(.16,1,.3,1)" },
       ),
-      ...[...root.querySelectorAll<HTMLElement>("[data-part=dust]")].map((mote, i) => {
-        const angle = (i / dust.length) * Math.PI * 2 + 0.3;
-        const reach = size * (0.55 + (i % 3) * 0.14);
-        return mote.animate(
+      ...all("spark").map((spark, i) => {
+        const angle = (i / sparks.length) * Math.PI * 2 + 0.4;
+        const reach = size * (0.55 + (i % 2) * 0.18);
+        return spark.animate(
           [
-            { transform: "translate(0,0) scale(1)", opacity: 0.85 },
+            { transform: "translate(0,0) scale(1)", opacity: 1 },
             {
-              transform: `translate(${Math.cos(angle) * reach}px,${Math.sin(angle) * reach * 0.32 - size * 0.12}px) scale(.3)`,
+              transform: `translate(${Math.cos(angle) * reach}px,${Math.sin(angle) * reach * 0.3 - size * 0.1}px) scale(.2)`,
               opacity: 0,
             },
           ],
-          {
-            duration: 520 + (i % 4) * 70,
-            delay: D * touch,
-            easing: "cubic-bezier(.2,.8,.4,1)",
-            fill: "forwards",
-          },
+          { duration: 480, delay: hit, easing: "cubic-bezier(.2,.8,.4,1)" },
         );
       }),
     ];
     const spin = animations[1];
-    let done = false;
+    playing.current = animations;
+    const id = requestAnimationFrame(() => setInFlight(true));
+    let cancelled = false;
     spin.finished
       .then(() => {
-        if (done) return;
-        el.style.transform = `rotateX(${to}deg)`;
+        if (cancelled) return;
+        rest();
         spin.cancel();
+        playing.current = null;
+        setInFlight(false);
         landed.current?.();
       })
       .catch(() => {});
     return () => {
-      done = true;
+      cancelled = true;
+      cancelAnimationFrame(id);
+      playing.current = null;
       animations.forEach((a) => a.cancel());
-      el.style.transform = `rotateX(${to}deg)`;
+      rest();
     };
   }, [side, throwKey, size, still]);
   return (
@@ -241,34 +213,36 @@ function CssCoin({
       ref={stage}
       className={styles.coinStage}
       style={{ "--coin": `${size}px` } as CSSProperties}
+      data-flying={inFlight ? "" : undefined}
       aria-hidden="true"
+      onClick={skip}
     >
       <div data-part="shadow" className={styles.coinShadow} />
-      <div data-part="contact" className={styles.coinContact} />
       <div data-part="ring" className={styles.coinRing} />
-      {dust.map((i) => (
-        <span key={i} data-part="dust" className={styles.coinDust} />
+      {sparks.map((i) => (
+        <span key={i} data-part="spark" className={styles.coinSpark} />
       ))}
       <div data-part="lift" className={styles.coinLift}>
-        <div data-part="tilt" className={styles.coinTilt}>
-          <div ref={coin} className={styles.coin}>
-            <div className={styles.coinFace} data-side="heads">
-              {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
-              <img src="/albion/charges/crown.webp" alt="" />
-              <span data-part="sheen" className={styles.coinSheen} />
-            </div>
-            {edgeLayers.map((z, i) => (
-              <div
-                key={z}
-                className={styles.coinEdge}
-                data-dark={i % 2 ? "" : undefined}
-                style={{ transform: `translateZ(calc(var(--coin) * ${(z * 0.048).toFixed(4)}))` }}
-              />
-            ))}
-            <div className={styles.coinFace} data-side="tails">
-              {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
-              <img src="/albion/charges/skull.webp" alt="" />
-              <span data-part="sheen" className={styles.coinSheen} />
+        <div className={styles.coinView}>
+          <div data-part="tilt" className={styles.coinTilt}>
+            <div ref={coin} className={styles.coin}>
+              <div className={styles.coinFace} data-side="heads">
+                {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
+                <img src="/albion/charges/crown.webp" alt="" />
+                <span data-part="sheen" className={styles.coinSheen} />
+              </div>
+              {edgeLayers.map((z) => (
+                <div
+                  key={z}
+                  className={styles.coinEdge}
+                  style={{ transform: `translateZ(calc(var(--coin) * ${(z * 0.05).toFixed(4)}))` }}
+                />
+              ))}
+              <div className={styles.coinFace} data-side="tails">
+                {/* eslint-disable-next-line @next/next/no-img-element -- painted charge */}
+                <img src="/albion/charges/skull.webp" alt="" />
+                <span data-part="sheen" className={styles.coinSheen} />
+              </div>
             </div>
           </div>
         </div>
@@ -381,24 +355,31 @@ export type RevealPayout = {
   note?: string;
 };
 
+/** The reveal's beats, in ms from mount: it lands, strains, opens, and the shares come in. */
+const chestCue = { strain: 300, open: 640, burst: 700, result: 1000, done: 1900 };
+const burstCoins = Array.from({ length: 12 }, (_, i) => i);
+type Phase = "closed" | "open" | "result" | "done";
+
 function PayoutCard({
   row,
+  index,
   start,
-  duration,
+  instant,
 }: {
   row: RevealPayout;
+  index: number;
   start: boolean;
-  duration: number;
+  instant: boolean;
 }) {
-  const shown = useCountUp(start ? row.silver : 0, { duration, from: 0 });
+  const shown = useCountUp(start ? row.silver : 0, { duration: instant ? 0 : 760, from: 0 });
   return (
     <li
       className={styles.payoutCard}
       data-userid={row.userId ?? "pot"}
-      data-lit={start ? "" : undefined}
+      style={{ "--i": index } as CSSProperties}
     >
       {row.userId ? (
-        <AvatarFrame frame={row.frame} size={48} name={row.name} />
+        <AvatarFrame frame={row.frame} size={44} name={row.name} />
       ) : (
         // eslint-disable-next-line @next/next/no-img-element -- painted emblem for the pot
         <img className={styles.potMark} src="/albion/icons/team-loot-64w.webp" alt="" />
@@ -419,56 +400,206 @@ function PayoutCard({
   );
 }
 
-/** A small 3D coin for the chest's burst: two faces and a rim, spinning as it flies. */
-function flyingCoin() {
-  const coin = document.createElement("span");
-  coin.className = styles.flyCoin;
-  const spin = document.createElement("span");
-  spin.className = styles.flyCoinSpin;
-  for (const part of ["face", "edge", "edge", "edge", "back"]) {
-    const el = document.createElement("i");
-    el.dataset.part = part;
-    spin.appendChild(el);
-  }
-  coin.appendChild(spin);
-  return { coin, spin };
-}
-
-/** Timings for the chest scene, in ms from mount. */
-const chestCue = { shake: 380, open: 820, burst: 1080, coin: 1050 };
-
-/** Coins thrown to each card: more each for a small party, fewer for a big one. */
-const coinsPerCard = (cards: number) =>
-  Math.max(3, Math.min(8, Math.floor(80 / Math.max(cards, 1))));
-/** A card counts from its first coin to its last. */
-const countForCard = (cards: number) => coinsPerCard(cards) * 95 + 600;
-
 /**
- * The shared total and the member cards under either chest; each card counts once lit. The
- * WebGL chest passes `slam`: the total stays hidden until the last coin is home, then slams in;
- * after a skip every figure jumps straight to its value.
+ * The loot chest reveal, about two seconds: the chest drops onto the well, strains while light
+ * leaks from its seam, the lid swings back on its hinge with a flash and a handful of coins,
+ * then the total and each member's share count in. Skip, a click or Esc jumps to the result;
+ * reduced motion shows it at once. Plays once on mount; the figures are the server's.
  */
-function RevealSummary({
-  rows,
-  total,
-  opened,
-  lit,
-  slam,
-}: {
-  rows: RevealPayout[];
-  total: number;
-  opened: boolean;
-  lit: Set<string>;
-  slam?: { slammed: boolean; skipped: boolean };
-}) {
-  const countFor = slam?.skipped ? 0 : countForCard(rows.length);
-  const sum = useCountUp((slam ? slam.slammed : opened) ? total : 0, {
-    duration: slam ? (slam.skipped ? 0 : 520) : rows.length * 120 + countFor + chestCue.coin - 200,
-    from: 0,
-  });
+export function LootChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
+  const scene = useRef<HTMLDivElement>(null);
+  const [phase, setPhase] = useState<Phase>("closed");
+  const [instant, setInstant] = useState(false);
+  const skipper = useRef<() => void>(() => {});
+  const playing = phase !== "done";
+  useEscape(playing && !instant, () => skipper.current());
+  useEffect(() => {
+    const root = scene.current;
+    if (!root) return;
+    const finishNow = () => {
+      setInstant(true);
+      setPhase("done");
+    };
+    if (prefersReducedMotion()) {
+      const id = requestAnimationFrame(finishNow);
+      return () => cancelAnimationFrame(id);
+    }
+    const q = (part: string) => root.querySelector<HTMLElement>(`[data-part="${part}"]`)!;
+    const animations: Animation[] = [];
+    const run = (el: Element, frames: Keyframe[], options: KeyframeAnimationOptions) => {
+      animations.push(el.animate(frames, options));
+    };
+    // It drops onto the well and squashes a touch.
+    run(
+      q("drop"),
+      [
+        { transform: "translateY(-48px) scale(.92)", opacity: 0 },
+        { transform: "translateY(0) scale(1.03,.96)", opacity: 1, offset: 0.7 },
+        { transform: "translateY(0) scale(1)", opacity: 1 },
+      ],
+      { duration: chestCue.strain, easing: "cubic-bezier(.4,0,.6,1)", fill: "backwards" },
+    );
+    // It strains: a short rattle while light leaks from under the lid.
+    run(
+      q("drop"),
+      [
+        { transform: "rotateZ(0deg)" },
+        { transform: "rotateZ(-2deg) translateY(-2px)", offset: 0.25 },
+        { transform: "rotateZ(2deg)", offset: 0.5 },
+        { transform: "rotateZ(-1deg) translateY(-3px)", offset: 0.75 },
+        { transform: "rotateZ(0deg)" },
+      ],
+      { duration: chestCue.open - chestCue.strain, delay: chestCue.strain },
+    );
+    run(q("seam"), [{ opacity: 0 }, { opacity: 1 }], {
+      duration: chestCue.open - chestCue.strain,
+      delay: chestCue.strain,
+      easing: "ease-in",
+      fill: "backwards",
+    });
+    // The lid swings back on its hinge past open, then settles.
+    run(
+      q("lid"),
+      [
+        { transform: "rotateX(0deg)" },
+        { transform: "rotateX(-5deg)", offset: 0.1 },
+        { transform: "rotateX(122deg)", offset: 0.55, easing: "cubic-bezier(.3,0,.4,1)" },
+        { transform: "rotateX(102deg)", offset: 0.8 },
+        { transform: "rotateX(110deg)" },
+      ],
+      {
+        duration: 560,
+        delay: chestCue.open,
+        easing: "cubic-bezier(.3,.7,.3,1)",
+        fill: "backwards",
+      },
+    );
+    // Light: a flash at the mouth, then the glow and slow rays behind it.
+    run(
+      q("flash"),
+      [
+        { transform: "scale(.2)", opacity: 0 },
+        { transform: "scale(1)", opacity: 1, offset: 0.25 },
+        { transform: "scale(1.5)", opacity: 0 },
+      ],
+      { duration: 520, delay: chestCue.open + 60, easing: "ease-out", fill: "backwards" },
+    );
+    run(
+      q("glow"),
+      [
+        { transform: "scale(.3)", opacity: 0 },
+        { transform: "scale(1.08)", opacity: 1, offset: 0.4 },
+        { transform: "scale(1)", opacity: 0.85 },
+      ],
+      { duration: 900, delay: chestCue.open + 40, easing: "ease-out", fill: "backwards" },
+    );
+    run(
+      q("rays"),
+      [
+        { transform: "rotate(-12deg) scale(.6)", opacity: 0 },
+        { transform: "rotate(4deg) scale(1)", opacity: 0.9, offset: 0.4 },
+        { transform: "rotate(18deg) scale(1)", opacity: 0.6 },
+      ],
+      { duration: 1260, delay: chestCue.open + 80, easing: "ease-out", fill: "backwards" },
+    );
+    // A handful of coins jump from the mouth, spin and fall away.
+    root.querySelectorAll<HTMLElement>(`[data-part="coin"]`).forEach((coin, i) => {
+      const side = i % 2 ? 1 : -1;
+      const x = side * (24 + ((i * 37) % 120));
+      const y = -(90 + ((i * 53) % 90));
+      const delay = chestCue.burst + (i % 6) * 40;
+      run(
+        coin,
+        [
+          { transform: "translate3d(0,0,0) rotateY(0deg) scale(.5)", opacity: 0 },
+          {
+            transform: `translate3d(${x * 0.6}px,${y}px,40px) rotateY(${360 * side}deg) scale(1)`,
+            opacity: 1,
+            offset: 0.45,
+            easing: "cubic-bezier(.5,0,.9,.6)",
+          },
+          {
+            transform: `translate3d(${x}px,${y * 0.2 + 40}px,0) rotateY(${720 * side}deg) scale(.8)`,
+            opacity: 0,
+          },
+        ],
+        { duration: 820 + (i % 3) * 90, delay, easing: "cubic-bezier(.2,.7,.4,1)", fill: "both" },
+      );
+    });
+    const timers = [
+      window.setTimeout(() => setPhase("open"), chestCue.open),
+      window.setTimeout(() => setPhase("result"), chestCue.result),
+      window.setTimeout(() => setPhase("done"), chestCue.done),
+    ];
+    skipper.current = () => {
+      timers.forEach((t) => clearTimeout(t));
+      animations.forEach((a) => a.finish());
+      finishNow();
+    };
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      animations.forEach((a) => a.cancel());
+      skipper.current = () => {};
+    };
+  }, [rows]);
+  const opened = phase !== "closed";
+  const counting = phase === "result" || phase === "done";
+  const sum = useCountUp(counting ? total : 0, { duration: instant ? 0 : 820, from: 0 });
   return (
-    <>
-      <p className={styles.revealTotal} data-slam={slam?.slammed ? "" : undefined}>
+    <div
+      ref={scene}
+      className={styles.revealScene}
+      data-phase={phase}
+      data-instant={instant ? "" : undefined}
+      onClick={() => {
+        if (playing) skipper.current();
+      }}
+    >
+      <div className={styles.chestStage} aria-hidden="true">
+        <div data-part="rays" className={styles.chestRays} />
+        <div data-part="glow" className={styles.chestGlow} />
+        <div data-part="drop" className={styles.chestDrop}>
+          <div className={styles.chest} data-open={opened ? "" : undefined}>
+            <div className={styles.chestBody}>
+              <span data-face="front" />
+              <span data-face="back" />
+              <span data-face="left" />
+              <span data-face="right" />
+              <span data-face="bottom" />
+              <span data-face="inside" />
+            </div>
+            <div data-part="lid" className={styles.chestLid}>
+              <span data-face="front" />
+              <span data-face="back" />
+              <span data-face="left" />
+              <span data-face="right" />
+              <span data-face="top" />
+              <span data-face="under" />
+            </div>
+            <span data-part="seam" className={styles.chestSeam} />
+          </div>
+        </div>
+        <div data-part="flash" className={styles.chestFlash} />
+        <div className={styles.burst}>
+          {burstCoins.map((i) => (
+            <span key={i} data-part="coin" className={styles.burstCoin} />
+          ))}
+        </div>
+        <div className={styles.chestShadow} />
+      </div>
+      {playing && !instant && (
+        <button
+          type="button"
+          className={`pill-link is-small ${styles.revealSkip}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            skipper.current();
+          }}
+        >
+          Skip
+        </button>
+      )}
+      <p className={styles.revealTotal}>
         {/* eslint-disable-next-line @next/next/no-img-element -- painted silver */}
         <img src="/albion/icons/silver-64w.webp" alt="" />
         <data value={total} aria-hidden="true">
@@ -479,528 +610,16 @@ function RevealSummary({
         </small>
       </p>
       <ul className={styles.payoutGrid} aria-label="Shares">
-        {rows.map((row) => (
+        {rows.map((row, i) => (
           <PayoutCard
             key={row.userId ?? "pot"}
             row={row}
-            start={lit.has(row.userId ?? "pot")}
-            duration={countFor}
+            index={i}
+            start={counting}
+            instant={instant}
           />
         ))}
       </ul>
-    </>
-  );
-}
-
-/**
- * The chest scene. The chest drops in, shakes in anticipation, then its lid swings open on the
- * back hinge, a beam of light rises and silver coins burst out in 3D arcs, spinning, to land
- * in each member's card, which pulses as its share counts up. Plays once on mount.
- */
-function CssChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
-  const scene = useRef<HTMLDivElement>(null);
-  const [opened, setOpened] = useState(false);
-  const [lit, setLit] = useState<Set<string>>(() => new Set());
-  const perCard = coinsPerCard(rows.length);
-  useEffect(() => {
-    const root = scene.current;
-    if (!root) return;
-    const all = new Set(rows.map((r) => r.userId ?? "pot"));
-    if (prefersReducedMotion()) {
-      const id = requestAnimationFrame(() => {
-        setOpened(true);
-        setLit(all);
-      });
-      return () => cancelAnimationFrame(id);
-    }
-    const q = (part: string) => root.querySelector<HTMLElement>(`[data-part="${part}"]`)!;
-    const timers: number[] = [];
-    const animations: Animation[] = [];
-    const run = (el: Element, frames: Keyframe[], options: KeyframeAnimationOptions) => {
-      const a = el.animate(frames, options);
-      animations.push(a);
-      return a;
-    };
-    // Drop in, then a nervous shake before the lid gives.
-    run(
-      q("shake"),
-      [
-        { transform: "translateY(-40px) scale(.9)" },
-        { transform: "translateY(4px) scale(1.02)", offset: 0.55 },
-        { transform: "translateY(0) scale(1)" },
-      ],
-      { duration: chestCue.shake, easing: "cubic-bezier(.2,.8,.3,1.2)" },
-    );
-    run(
-      q("shake"),
-      [
-        { transform: "rotateZ(0deg) translateX(0)" },
-        { transform: "rotateZ(-3deg) translateX(-3px)" },
-        { transform: "rotateZ(3deg) translateX(3px)" },
-        { transform: "rotateZ(-2.5deg) translateX(-2px) translateY(-3px)" },
-        { transform: "rotateZ(2deg) translateX(2px)" },
-        { transform: "rotateZ(-1deg) translateY(-6px)" },
-        { transform: "rotateZ(0deg) translateY(0)" },
-      ],
-      { duration: chestCue.open - chestCue.shake, delay: chestCue.shake, easing: "linear" },
-    );
-    // The lid swings back on its hinge, overshoots and settles.
-    run(
-      q("lid"),
-      [
-        { transform: "rotateX(0deg)" },
-        { transform: "rotateX(-6deg)", offset: 0.12 },
-        { transform: "rotateX(124deg)", offset: 0.62, easing: "ease-in-out" },
-        { transform: "rotateX(104deg)", offset: 0.82 },
-        { transform: "rotateX(110deg)" },
-      ],
-      {
-        duration: 620,
-        delay: chestCue.open,
-        easing: "cubic-bezier(.3,.6,.3,1)",
-        fill: "backwards",
-      },
-    );
-    timers.push(window.setTimeout(() => setOpened(true), chestCue.open));
-    run(
-      q("glow"),
-      [
-        { transform: "scale(0)", opacity: 0 },
-        { transform: "scale(1.15)", opacity: 1, offset: 0.4 },
-        { transform: "scale(1)", opacity: 0.9 },
-      ],
-      { duration: 1100, delay: chestCue.open + 60, easing: "ease-out", fill: "backwards" },
-    );
-    run(
-      q("beam"),
-      [
-        { transform: "scaleY(0) scaleX(.6)", opacity: 0 },
-        { transform: "scaleY(1.08) scaleX(1)", opacity: 1, offset: 0.35 },
-        { transform: "scaleY(1) scaleX(.95)", opacity: 0.75 },
-      ],
-      {
-        duration: 1300,
-        delay: chestCue.open + 80,
-        easing: "cubic-bezier(.16,1,.3,1)",
-        fill: "backwards",
-      },
-    );
-    const mouth = q("mouth");
-    const layer = q("coins");
-    timers.push(
-      window.setTimeout(() => {
-        const origin = mouth.getBoundingClientRect();
-        const base = layer.getBoundingClientRect();
-        const ox = origin.left + origin.width / 2 - base.left;
-        const oy = origin.top + origin.height / 2 - base.top;
-        let lastLand = 0;
-        rows.forEach((row, cardIndex) => {
-          const id = row.userId ?? "pot";
-          const card = root.querySelector<HTMLElement>(`[data-userid="${CSS.escape(id)}"]`);
-          const icon = card?.querySelector<HTMLElement>(`.${styles.payoutSilver} img`);
-          if (!card || !icon) return;
-          const target = icon.getBoundingClientRect();
-          const tx = target.left + target.width / 2 - base.left;
-          const ty = target.top + target.height / 2 - base.top;
-          for (let c = 0; c < perCard; c++) {
-            const { coin, spin } = flyingCoin();
-            layer.appendChild(coin);
-            // Deterministic variety: each coin its own burst height, side, depth and pace.
-            const seed = (cardIndex * 7 + c * 13) % 17;
-            const burstX = ox + (seed - 8) * 9;
-            const burstY = oy - 110 - (seed % 6) * 22;
-            const depth = 90 + (seed % 5) * 45;
-            const delay = cardIndex * 120 + c * 95 + (seed % 3) * 25;
-            const duration = 980 + (seed % 4) * 90;
-            lastLand = Math.max(lastLand, delay + duration);
-            run(
-              coin,
-              [
-                { transform: `translate3d(${ox}px,${oy}px,0) scale(.4)`, opacity: 0 },
-                {
-                  transform: `translate3d(${ox}px,${oy - 20}px,20px) scale(.7)`,
-                  opacity: 1,
-                  offset: 0.08,
-                },
-                {
-                  transform: `translate3d(${burstX}px,${burstY}px,${depth}px) scale(1.15)`,
-                  offset: 0.42,
-                  easing: "cubic-bezier(.45,0,.7,.6)",
-                },
-                {
-                  transform: `translate3d(${(burstX + tx) / 2}px,${Math.min(burstY, ty) - 30}px,${depth / 2}px) scale(.95)`,
-                  offset: 0.7,
-                },
-                { transform: `translate3d(${tx}px,${ty}px,0) scale(.7)`, opacity: 1, offset: 0.94 },
-                { transform: `translate3d(${tx}px,${ty}px,0) scale(.25)`, opacity: 0 },
-              ],
-              { duration, delay, easing: "cubic-bezier(.25,.6,.4,1)", fill: "both" },
-            )
-              .finished.then(() => {
-                coin.remove();
-                if (c === 0) setLit((prev) => new Set(prev).add(id));
-                // The card takes each coin with a pulse.
-                run(
-                  card,
-                  [
-                    { transform: "scale(1.022)" },
-                    { transform: "scale(1.06)", offset: 0.35 },
-                    { transform: "scale(1.022)" },
-                  ],
-                  { duration: 240, easing: "ease-out" },
-                );
-              })
-              .catch(() => coin.remove());
-            run(
-              spin,
-              [
-                { transform: "rotateX(0deg) rotateY(0deg)" },
-                {
-                  transform: `rotateX(${(seed % 2 ? 1 : -1) * (540 + seed * 30)}deg) rotateY(${160 + seed * 20}deg)`,
-                },
-              ],
-              { duration, delay, easing: "cubic-bezier(.2,.5,.5,1)", fill: "both" },
-            );
-          }
-        });
-        // A final settle once the last coin is home: the lid eases and the light steadies.
-        timers.push(
-          window.setTimeout(() => {
-            run(
-              q("lid"),
-              [
-                { transform: "rotateX(110deg)" },
-                { transform: "rotateX(100deg)", offset: 0.5 },
-                { transform: "rotateX(108deg)" },
-              ],
-              { duration: 520, easing: "ease-in-out" },
-            );
-            run(
-              q("shake"),
-              [
-                { transform: "translateY(0) scale(1)" },
-                { transform: "translateY(3px) scale(1.015,.985)", offset: 0.4 },
-                { transform: "translateY(0) scale(1)" },
-              ],
-              { duration: 420, easing: "ease-out" },
-            );
-            run(
-              q("glow"),
-              [
-                { transform: "scale(1)", opacity: 0.9 },
-                { transform: "scale(.7)", opacity: 0.55 },
-              ],
-              { duration: 900, easing: "ease-out", fill: "forwards" },
-            );
-          }, lastLand + 80),
-        );
-      }, chestCue.burst),
-    );
-    return () => {
-      timers.forEach((t) => clearTimeout(t));
-      animations.forEach((a) => a.cancel());
-      layer.replaceChildren();
-    };
-  }, [rows, perCard]);
-  return (
-    <div ref={scene} className={styles.revealScene}>
-      <div className={styles.chestStage} aria-hidden="true">
-        <div data-part="glow" className={styles.chestGlow} data-open={opened ? "" : undefined} />
-        <div data-part="beam" className={styles.chestBeam} data-open={opened ? "" : undefined} />
-        <div data-part="shake" className={styles.chestShake}>
-          <div className={styles.chest} data-open={opened ? "" : undefined}>
-            <div className={styles.chestBody}>
-              <span data-face="front" />
-              <span data-face="back" />
-              <span data-face="left" />
-              <span data-face="right" />
-              <span data-face="bottom" />
-              <span data-face="inside" data-part="mouth" />
-            </div>
-            <div data-part="lid" className={styles.chestLid}>
-              <span data-face="front" />
-              <span data-face="back" />
-              <span data-face="left" />
-              <span data-face="right" />
-              <span data-face="top" />
-              <span data-face="under" />
-            </div>
-          </div>
-        </div>
-        <div className={styles.chestShadow} />
-      </div>
-      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} />
-      <div data-part="coins" className={styles.coinLayer} aria-hidden="true" />
     </div>
-  );
-}
-
-/* ------------------------------------------------------------------------------------------ */
-/* WebGL stages                                                                                */
-/* ------------------------------------------------------------------------------------------ */
-
-const noSubscribe = () => () => {};
-/** How the 3D moments play here; "instant" on the server so hydration matches. */
-const useStageMode = () =>
-  useSyncExternalStore<StageMode>(noSubscribe, currentStage, () => "instant");
-
-/**
- * A two-faced silver coin (the crown is heads, the skull tails). Give it a `flip` — the side
- * the server landed and a key per throw — and it is flicked high, tumbles with slow motion at
- * the top, slows its last turn, bounces and settles on that side. The first throw loads the
- * WebGL coin; until then, and wherever WebGL is missing, the CSS coin stands in. A click on
- * the coin or Esc skips a throw; under reduced motion it simply lands.
- */
-export function Coin3D({
-  flip,
-  size = 132,
-  still = false,
-  onLanded,
-}: {
-  flip: { side: "heads" | "tails"; key: string } | null;
-  size?: number;
-  /** Show the landed side at rest, without a throw. */
-  still?: boolean;
-  onLanded?: () => void;
-}) {
-  const mode = useStageMode();
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const scene = useRef<CoinScene | null>(null);
-  const [ready, setReady] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const landed = useRef(onLanded);
-  const tossing = useRef(false);
-  useLayoutEffect(() => {
-    landed.current = onLanded;
-  });
-  const side = flip?.side;
-  const throwKey = flip?.key;
-  // A throw goes to WebGL when it can; once the WebGL coin exists it shows every rest too.
-  const gl = ready || (mode === "webgl" && !failed && !!flip && !still);
-  const width = Math.round(size * 2.4);
-  const height = Math.round(size * 2.6);
-  useEffect(() => {
-    if (!side || !throwKey || !gl) return;
-    const land = () => {
-      tossing.current = false;
-      landed.current?.();
-    };
-    tossing.current = !still;
-    if (scene.current) {
-      if (still) {
-        scene.current.place(side);
-        land();
-      } else scene.current.toss(side, land);
-      return;
-    }
-    let cancelled = false;
-    loadScene("webgl")!
-      .then((m) => m.createCoinScene(canvas.current!, { width, height }))
-      .then((created) => {
-        if (cancelled) return created.dispose();
-        scene.current = created;
-        setReady(true);
-        created.toss(side, land);
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [side, throwKey, still, gl, width, height]);
-  useEffect(() => {
-    // Esc skips a throw in flight.
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || !tossing.current || !scene.current) return;
-      event.preventDefault();
-      scene.current.skip();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      scene.current?.dispose();
-      scene.current = null;
-    };
-  }, []);
-  return (
-    <div
-      className={styles.coinHost}
-      data-gl={ready ? "" : undefined}
-      onClick={() => {
-        if (tossing.current) scene.current?.skip();
-      }}
-    >
-      {/* While the WebGL coin loads, the CSS coin holds its last rest (no flip moves it). */}
-      <CssCoin
-        flip={gl ? null : flip}
-        size={size}
-        still={still}
-        onLanded={gl ? undefined : onLanded}
-      />
-      <canvas
-        ref={canvas}
-        className={styles.coinCanvas}
-        style={{ width, height, bottom: -size * 0.32 }}
-        aria-hidden="true"
-      />
-    </div>
-  );
-}
-
-/**
- * The chest scene in WebGL: the same summary and cards, the chest, its light and the coins on
- * one canvas over the whole reveal. The chest is framed in the stage band and the coins fly to
- * the cards where they really are, re-read whenever the reveal resizes. A click, Skip or Esc
- * jumps to the result.
- */
-function GlChestReveal({
-  rows,
-  total,
-  onFail,
-}: {
-  rows: RevealPayout[];
-  total: number;
-  onFail: () => void;
-}) {
-  const root = useRef<HTMLDivElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const skipper = useRef<() => void>(() => {});
-  const [opened, setOpened] = useState(false);
-  const [lit, setLit] = useState<Set<string>>(() => new Set());
-  const [slam, setSlam] = useState({ slammed: false, skipped: false });
-  const [playing, setPlaying] = useState(true);
-  const fail = useRef(onFail);
-  useLayoutEffect(() => {
-    fail.current = onFail;
-  });
-  useEffect(() => {
-    const scene = root.current;
-    const band = stage.current;
-    const view = canvas.current;
-    if (!scene || !band || !view) return;
-    const ids = rows.map((r) => r.userId ?? "pot");
-    const measure = () => {
-      const box = scene.getBoundingClientRect();
-      const b = band.getBoundingClientRect();
-      return {
-        width: Math.max(1, box.width),
-        height: Math.max(1, box.height),
-        band: {
-          left: b.left - box.left,
-          top: b.top - box.top,
-          width: Math.max(1, b.width),
-          height: Math.max(1, b.height),
-        },
-      };
-    };
-    const card = (id: string) =>
-      scene.querySelector<HTMLElement>(`[data-userid="${CSS.escape(id)}"]`);
-    let cancelled = false;
-    let skipping = false;
-    let dispose = () => {};
-    let observer: ResizeObserver | undefined;
-    loadScene("webgl")!
-      .then((m) => m.createChestScene(view, measure()))
-      .then((chest) => {
-        if (cancelled) return chest.dispose();
-        dispose = () => chest.dispose();
-        skipper.current = () => {
-          skipping = true;
-          chest.skip();
-        };
-        observer = new ResizeObserver(() => {
-          const { width, height, band: b } = measure();
-          chest.resize(width, height, b);
-        });
-        observer.observe(scene);
-        observer.observe(band);
-        chest.play({
-          cards: rows.length,
-          perCard: coinsPerCard(rows.length),
-          targets: () => {
-            const box = scene.getBoundingClientRect();
-            return ids.map((id) => {
-              const r = card(id)
-                ?.querySelector(`.${styles.payoutSilver} img`)
-                ?.getBoundingClientRect();
-              return r
-                ? { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top }
-                : { x: box.width / 2, y: box.height };
-            });
-          },
-          onOpen: () => setOpened(true),
-          onCoin: (index, first) => {
-            const id = ids[index];
-            if (first) setLit((prev) => new Set(prev).add(id));
-            if (skipping) return;
-            card(id)?.animate(
-              [
-                { transform: "scale(1.022)" },
-                { transform: "scale(1.07)", offset: 0.3 },
-                { transform: "scale(1.022)" },
-              ],
-              { duration: 260, easing: "ease-out" },
-            );
-          },
-          onSlam: () => setSlam({ slammed: true, skipped: skipping }),
-          onDone: () => setPlaying(false),
-        });
-      })
-      .catch(() => {
-        if (!cancelled) fail.current();
-      });
-    return () => {
-      cancelled = true;
-      skipper.current = () => {};
-      observer?.disconnect();
-      dispose();
-    };
-  }, [rows]);
-  // Esc skips while it plays (and only closes the dialog once it has finished).
-  useEffect(() => {
-    if (!playing) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      event.stopPropagation();
-      skipper.current();
-    };
-    document.addEventListener("keydown", onKey, true);
-    return () => document.removeEventListener("keydown", onKey, true);
-  }, [playing]);
-  return (
-    <div
-      ref={root}
-      className={styles.revealScene}
-      data-gl=""
-      onClick={() => {
-        if (playing) skipper.current();
-      }}
-    >
-      <div ref={stage} className={styles.chestStage} aria-hidden="true" />
-      {playing && (
-        <button type="button" className={`pill-link is-small ${styles.revealSkip}`}>
-          Skip
-        </button>
-      )}
-      <RevealSummary rows={rows} total={total} opened={opened} lit={lit} slam={slam} />
-      <canvas ref={canvas} className={styles.revealCanvas} aria-hidden="true" />
-    </div>
-  );
-}
-
-/**
- * The loot chest reveal. Plays once on mount: in WebGL when it can, else the CSS chest; under
- * reduced motion every share is simply there.
- */
-export function LootChestReveal({ rows, total }: { rows: RevealPayout[]; total: number }) {
-  const mode = useStageMode();
-  const [failed, setFailed] = useState(false);
-  return mode === "webgl" && !failed ? (
-    <GlChestReveal rows={rows} total={total} onFail={() => setFailed(true)} />
-  ) : (
-    <CssChestReveal rows={rows} total={total} />
   );
 }

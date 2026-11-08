@@ -4,6 +4,13 @@ The goal: the best Albion Online site ever made. Getting there means three thing
 
 Status as of 1 Nov 2026. Update this file when something ships, breaks or gets planned.
 
+## Treasury comes alive — 8 November 2026
+
+- The Treasury opens on a hero: the team pot as a big counting figure beside a silver medallion, your balance, what the team owes members, the last four ledger lines and the actions (New split, Book silver, Flip a coin). A new team sees the three steps that fill its books instead of an empty ledger. The wallet is read once for the hero and the Wallet view, and again after a split is paid in or a roll shares silver.
+- The coin flip is a CSS 3D coin with a reeded rim and struck faces: a 1.65 s throw that spins, catches a light sweep and rocks flat onto the server's side, then glints. The chest reveal is a 1.9 s CSS 3D open: drop, strain with light at the seam, lid swings back on its hinge, glow, rays and a handful of coins, then the shares count in. Both move only transforms and opacity, skip on click or Esc, show the result at once under reduced motion and never shift the layout.
+- Double clicks no longer send a second flip, roll or wallet change. Ledger columns align by content (wallet and reason left).
+- three.js and the WebGL scenes are gone (about 160 KB gzip of client chunks).
+
 ## Personal timers and Crafting Planner redesign — 8 November 2026
 
 - `/timers`: countdowns grouped Ready · Soon · Today · Later · Paused · Cleared; each row has a category badge, a large tabular clock that never shifts as it ticks, and its progress under the name. The first clock comes from the server, so there is no "Updating" flash. The composer gains preset icons, quick lengths (+15m, +1h, +4h, +12h) and a preview of the due time.

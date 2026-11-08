@@ -78,6 +78,8 @@ test("team loot conserves silver and enforces current membership, officer permis
     expect(await db.groupLootSplit.count({ where: { groupId } })).toBe(0);
     await page.goto(`/groups/${slug}`);
     await page.getByRole("tab", { name: "Treasury", exact: true }).click();
+    // A team with nothing booked opens on the steps that fill its books.
+    await expect(page.getByRole("heading", { name: "Start the team's books" })).toBeVisible();
     await page.getByLabel("Split name", { exact: true }).fill("Weighted loot");
     await page.getByLabel("Total loot pool (silver)", { exact: true }).fill("1000");
     await page.getByRole("button", { name: "Add expense", exact: true }).click();
@@ -313,6 +315,15 @@ test("guild tax: only Manage team sets it, a split takes it with % expenses, and
     page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "Pay into wallets", exact: true }).click();
     await expect(page.getByRole("status").filter({ hasText: "into the team pot" })).toBeVisible();
+    // The chest reveal shows each share (Esc skips it), and the Treasury hero reads the wallet
+    // again: the guild tax is in the pot.
+    const reveal = page.getByRole("dialog", { name: "Paid into wallets" });
+    await expect(reveal.getByRole("list", { name: "Shares" })).toContainText("850,000 silver");
+    await page.keyboard.press("Escape");
+    await expect(reveal.getByRole("button", { name: "Skip" })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(reveal).toBeHidden();
+    await expect(page.getByRole("region", { name: "Team pot" })).toContainText("100,000");
     const entries = await db.groupWalletEntry.findMany({
       where: { groupId, sourceId: `split:${saved.id}` },
       select: { userId: true, amount: true },

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dices, RotateCcw } from "lucide-react";
 import type { TeamGamesView } from "@/lib/groups/economy-service";
 import { AvatarFrame } from "./avatar-frame";
@@ -8,8 +8,9 @@ import { NumberField } from "./number-field";
 import { PanelHead } from "./panel-head";
 import { StatusLine } from "./status-line";
 import { WellSelect } from "./well-select";
-import { Coin3D, RollDrum, silverText } from "./economy-stage";
-import { operationKey, shortTime } from "./team-wallet";
+import { Coin3D, RollDrum } from "./economy-stage";
+import { operationKey, silverText, walletChangedEvent } from "./economy-motion";
+import { shortTime } from "./team-treasury-hero";
 import teams from "./teams.module.css";
 import styles from "./team-economy.module.css";
 
@@ -102,7 +103,11 @@ export function TeamGames({
         ? "You"
         : members.find((m) => m.userId === id)?.name || view?.names[id] || "Former team member";
 
+  // A second click before the first answer lands never sends a second request.
+  const sending = useRef(false);
   async function play(action: Record<string, unknown>, label: string) {
+    if (sending.current) return null;
+    sending.current = true;
     setBusy(label);
     setError("");
     try {
@@ -119,6 +124,7 @@ export function TeamGames({
       setError(e instanceof Error ? e.message : "That did not go through.");
       return null;
     } finally {
+      sending.current = false;
       setBusy("");
     }
   }
@@ -295,6 +301,7 @@ export function TeamGames({
                   `close-${roll.id}`,
                 );
                 if (result?.roll?.tieBreak) setTieThrow(roll.id);
+                if (result && roll.silver > 0) window.dispatchEvent(new Event(walletChangedEvent));
               }}
             >
               {busy === `close-${roll.id}` ? "Closing…" : "Close and name the winner"}
@@ -331,7 +338,7 @@ export function TeamGames({
           line="Settle a tie or a decision. The server throws the coin; everyone in the team sees the result. No silver moves on a flip."
         />
         <div className={styles.arena}>
-          <div className={styles.arenaStage}>
+          <div id="coin-flip-stage" className={styles.arenaStage}>
             <Coin3D
               flip={
                 thrown
