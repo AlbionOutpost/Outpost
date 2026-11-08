@@ -597,6 +597,18 @@
     color-mix(in oklab, var(--canvas-end) var(--backdrop-deep), transparent) 560px
   );
 }
+/* Light mode: section headings are dark ink, so the tan canvas has to be in place by the time
+   the first one sits under the masthead; the painting stays behind the title only. */
+.app.outpost.light:not(.home-route) .main::before {
+  background: linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 90px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.55), transparent) 170px,
+    color-mix(in oklab, var(--canvas-end) calc(var(--backdrop-deep) * 0.9), transparent) 230px,
+    color-mix(in oklab, var(--canvas-end) var(--backdrop-deep), transparent) 290px
+  );
+}
 /* Grain above the scrim, below everything else */
 .app.outpost .main::after {
   content: "";

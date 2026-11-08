@@ -150,78 +150,10 @@
   gap: 6px;
   min-height: 28px;
 }
-.app.outpost .ecosystem-build-card {
-  position: relative;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-  min-width: 0;
-  overflow: visible;
-  box-shadow: none;
-}
-.app.outpost .ecosystem-build-card:hover {
-  border-color: var(--accent);
-}
-/* Framed (painted) cards keep their transparent face; the frame lights instead */
-.app.outpost .ecosystem-build-card:where(:not(.raised.has-scene)):hover {
-  background: var(--elevated);
-}
-.app.outpost .ecosystem-build-card > .ecosystem-card-main {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  color: var(--text);
-  min-width: 0;
-  height: 100%;
-  background: linear-gradient(180deg, var(--accent-wash), transparent 105px);
-}
-.ecosystem-card-topline {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-right: 27px;
-  min-height: 20px;
-}
-.app.outpost .ecosystem-activity {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* Library cards render the activity as a .landing-chip, which owns its pill */
-.app.outpost .ecosystem-activity:where(:not(.landing-chip)) {
-  display: inline-block;
-  padding: 3px 6px;
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
-  border-radius: 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--accent-ink);
-  background: var(--accent-wash);
-}
-.ecosystem-card-kind {
-  margin-left: auto;
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--muted);
-}
-.ecosystem-card-spells {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+/* "Clear all" sits in the chip row at the chips' height */
+.app.outpost .ecosystem-active-filters > .pill-link {
   min-height: 28px;
-}
-.ecosystem-card-spells > span {
-  display: inline-flex;
-  max-width: 100%;
-}
-.ecosystem-card-spells img {
-  width: 27px;
-  height: 27px;
-  object-fit: contain;
-  border-radius: 50%;
-  border: 1px solid var(--border);
+  height: 28px;
 }
 .device-save-feedback {
   position: absolute;
@@ -233,49 +165,6 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-.app.outpost .view-list .ecosystem-card-main {
-  display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(210px, 1.4fr) minmax(120px, 0.7fr);
-  align-items: center;
-  gap: 10px 18px;
-}
-.view-list .ecosystem-card-topline {
-  grid-column: 1;
-  grid-row: 1;
-}
-.view-list .ecosystem-card-spells {
-  grid-column: 2;
-  grid-row: 3;
-}
-.ecosystem-empty {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 250px;
-  padding: 28px;
-  border: 1px dashed var(--border);
-  border-radius: 6px;
-  background: var(--panel);
-  text-align: center;
-  color: var(--muted);
-}
-.app.outpost .ecosystem-empty :is(h2, h3) {
-  display: block;
-  text-align: center;
-  font-size: 18px;
-  margin: 12px 0 6px;
-  color: var(--text);
-}
-.app.outpost .ecosystem-empty p {
-  max-width: 55ch;
-  font-size: 13px;
-  line-height: 1.6;
-  margin: 0 0 18px;
-}
-.ecosystem-empty > svg {
-  color: var(--accent-ink);
 }
 .save-build-filter {
   position: relative;
@@ -314,22 +203,6 @@
   line-height: 1.5;
   margin: 9px 0 0;
 }
-.ecosystem-section-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 24px 0 16px;
-}
-.app.outpost .ecosystem-section-heading h2 {
-  font: 700 20px/1.3 var(--font-ui);
-  margin: 0 0 6px;
-}
-.app.outpost .ecosystem-section-heading p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-}
 .saved-filter-list {
   display: flex;
   flex-direction: column;
@@ -340,9 +213,6 @@
   align-items: center;
   gap: 16px;
   padding: 18px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
 }
 .saved-filter-list > article > div {
   min-width: 0;
@@ -353,7 +223,7 @@
   margin: 0 0 5px;
 }
 .app.outpost .saved-filter-list p {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   margin: 0;
   overflow-wrap: anywhere;
@@ -408,9 +278,6 @@
   .app.outpost .builds-ecosystem-header .page-title {
     font-size: 25px;
   }
-  .app.outpost .view-list .ecosystem-card-main {
-    grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.3fr);
-  }
 }
 @media (max-width: 600px) {
   .app.outpost .builds-heading-copy p {
@@ -444,15 +311,6 @@
   .ecosystem-sort-label {
     margin-right: auto;
   }
-  .app.outpost .ecosystem-build-card > .ecosystem-card-main {
-    padding: 14px;
-  }
-  .ecosystem-card-topline {
-    padding-right: 36px;
-  }
-  .app.outpost .view-list .ecosystem-card-main {
-    display: flex;
-  }
   .saved-filter-list > article {
     flex-wrap: wrap;
     padding: 14px;
@@ -467,12 +325,6 @@
   .saved-filter-list > article > .icon-button {
     margin-left: auto;
   }
-  .ecosystem-section-heading {
-    align-items: flex-start;
-  }
-  .ecosystem-section-heading > .text-link {
-    font-size: 12px;
-  }
   .ecosystem-results-subline {
     align-items: flex-start;
   }
@@ -480,57 +332,6 @@
     right: -3px;
     width: 250px;
   }
-}
-.app.outpost .ecosystem-build-card .equipment-strip {
-  display: flex;
-  gap: 3px;
-  flex-wrap: nowrap;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  min-width: 0;
-  justify-content: flex-start;
-}
-.app.outpost .ecosystem-build-card .equipment-strip > .strip-slot {
-  flex: 0 1 40px;
-  min-width: 0;
-  width: auto;
-  height: auto;
-  aspect-ratio: 1;
-  border: 0;
-  background: transparent;
-  padding: 0;
-}
-.app.outpost .ecosystem-build-card .equipment-strip img {
-  width: 100%;
-  height: auto;
-  max-width: 40px;
-  border-radius: 3px;
-}
-.app.outpost .ecosystem-build-card .loadout-card-footer {
-  margin: 0 12px;
-  padding: 8px 0 10px;
-  border-top: 1px solid var(--border);
-  background: transparent;
-  min-height: 42px;
-  gap: 6px;
-}
-.app.outpost .ecosystem-build-card .loadout-card-author small {
-  font-size: 12px;
-  color: var(--muted);
-}
-.app.outpost .ecosystem-build-card .loadout-card-footer .build-card-save {
-  min-height: 28px;
-  padding: 4px 7px;
-  font-size: 12px;
-}
-.app.outpost .ecosystem-build-card .loadout-card-empty {
-  min-height: 40px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-size: 12px;
-  color: var(--muted);
 }
 /* Weapon shortcuts: one well segment, the current weapon lit like a selected tab */
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts {
@@ -543,7 +344,7 @@
   border: 1px solid var(--well-border);
   border-radius: 999px;
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   overflow: visible;
 }
 .app.outpost .builds-ecosystem .ecosystem-weapon-shortcuts > a {
@@ -570,9 +371,6 @@
   background: var(--accent-wash);
   color: var(--accent-ink);
 }
-.app.outpost .builds-ecosystem.view-list .account-build-grid {
-  grid-template-columns: 1fr;
-}
 .app.outpost .favorite-compositions-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -587,7 +385,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   color: var(--text);
   font-size: 14px;
   font-weight: 600;
@@ -605,11 +403,6 @@
   color: var(--accent-ink);
   flex-shrink: 0;
 }
-.ecosystem-favorites-page .ecosystem-section-heading h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 @media (max-width: 900px) {
   .app.outpost .favorite-compositions-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -618,9 +411,6 @@
 @media (max-width: 600px) {
   .app.outpost .favorite-compositions-list {
     grid-template-columns: 1fr;
-  }
-  .ecosystem-favorites-page section[aria-label="Account favorites"] > .ecosystem-section-heading {
-    flex-wrap: wrap;
   }
 }
 
@@ -643,7 +433,6 @@
   outline: 2px solid var(--accent-ink);
   outline-offset: 3px;
 }
-.app.outpost .ecosystem-build-card .build-card-save,
 .app.outpost .device-favorite-card .build-card-save {
   position: relative;
   z-index: 2;
@@ -702,11 +491,6 @@
 }
 .app.outpost .ecosystem-library-page .ecosystem-results-subline {
   margin: 0 0 12px;
-}
-/* List view: one wide window per row, the board beside a roomier copy column */
-.app.outpost .ecosystem-library-page.view-list .ecosystem-card-main {
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-4) var(--space-6);
 }
 @media (max-width: 1100px) and (min-width: 901px) {
   .app.outpost .ecosystem-library-page .ecosystem-filter-form {
@@ -847,7 +631,7 @@
   border-radius: 50%;
   border-color: var(--well-border);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   color: transparent;
   overflow: hidden;
 }

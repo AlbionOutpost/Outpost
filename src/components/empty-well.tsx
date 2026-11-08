@@ -4,13 +4,16 @@ import styles from "./empty-well.module.css";
 /**
  * The empty state of a list, board or panel: a dashed well that says what is missing in one
  * line and offers the one next action. Render it in place of the content, inside the same panel;
- * hide controls that cannot act until there is something to act on.
+ * hide controls that cannot act until there is something to act on. Straight on the page backdrop
+ * (no panel around it) pass `surface`, so it stands as a raised card instead of a well cut into
+ * nothing.
  */
 export function EmptyWell({
   title,
   line,
   emblem,
   action,
+  surface = false,
 }: {
   /** What is empty, as a statement: "No timers yet". */
   title: string;
@@ -19,9 +22,11 @@ export function EmptyWell({
   emblem?: string;
   /** One link or button, usually `.button.secondary` or `.pill-link`. */
   action?: ReactNode;
+  /** Sits on the page backdrop rather than inside a panel. */
+  surface?: boolean;
 }) {
   return (
-    <div className={styles.well}>
+    <div className={surface ? `${styles.well} raised` : styles.well}>
       {emblem && (
         // eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem
         <img

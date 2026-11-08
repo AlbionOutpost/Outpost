@@ -197,7 +197,7 @@ function Reader({
   return (
     <>
       <div className={styles.layout} data-rail={rail ? undefined : "none"}>
-        <aside className={styles.toc} aria-labelledby="guide-contents">
+        <aside className={`raised ${styles.toc}`} aria-labelledby="guide-contents">
           <h2 id="guide-contents">In this guide</h2>
           <GuideReader toc={guide.toc} />
           <a className={styles.backTop} href="#guide-title">
@@ -262,7 +262,7 @@ function Reader({
         {/* One rail: the Outpost tools and the items the guide links to */}
         {rail && (
           <aside className={styles.facts} aria-labelledby="guide-uses">
-            <div className={styles.factCard}>
+            <div className={`raised ${styles.factCard}`}>
               <h2 id="guide-uses">Use with this guide</h2>
               {refs.tools.length > 0 && (
                 <ul className={styles.toolList} aria-label="Tools">
@@ -318,7 +318,7 @@ function Reader({
           <ul className={styles.relatedList}>
             {related.map(({ guide: next, reason }) => (
               <li key={next.slug}>
-                <Link href={`/guides/${next.slug}`} className={styles.relatedCard}>
+                <Link href={`/guides/${next.slug}`} className={`raised ${styles.relatedCard}`}>
                   {next.cover && (
                     // eslint-disable-next-line @next/next/no-img-element -- static cover with its own srcset
                     <img

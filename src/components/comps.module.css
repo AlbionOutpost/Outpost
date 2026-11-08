@@ -462,7 +462,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .abilitySlot {
   color: var(--muted);
@@ -493,7 +493,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   font-size: 14px;
 }
 
@@ -537,7 +537,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 /* Figure pairs: a 12px label over a Barlow figure, as on the landing's tool cards */
 .pairs {
@@ -591,7 +591,7 @@
   border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--well-border));
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
   color: var(--secondary);
   font-size: 14px;
   line-height: 1.5;
@@ -634,7 +634,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .pieces > li > span {
   display: grid;
@@ -732,7 +732,7 @@
     border-left: 3px solid var(--role, var(--well-border));
     border-radius: var(--radius-md);
     background: var(--well);
-    box-shadow: inset 0 1px 3px #0009;
+    box-shadow: var(--well-inset);
     color: var(--text);
     font: inherit;
     text-align: left;
@@ -788,13 +788,19 @@
   padding: 0;
   border: 0;
 }
+/* What the editor needs you to know before you save: dropped members, a recovered draft.
+   The same amber-edged well as the comp page's warning. */
 .notices {
   display: grid;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--well-border);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--well-border));
   border-radius: var(--radius-md);
   background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .notices.notices > p {
+  font-size: 14px;
 }
 .wellActions {
   display: inline-flex;
@@ -905,7 +911,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .buildList a {
   overflow: hidden;
@@ -972,7 +978,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .unframed.unframed :global(.landing-window-foot) {
   border-radius: 0 0 var(--radius-md) var(--radius-md);
@@ -1046,7 +1052,7 @@
   border-left: 3px solid var(--role, var(--well-border));
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .row[data-role="Tank"] {
   --role: var(--role-tank);

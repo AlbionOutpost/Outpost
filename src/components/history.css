@@ -76,7 +76,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .app.outpost .history-panel .history-figures > div {
   display: grid;
@@ -125,7 +125,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .app.outpost .history-panel .history-chart-head {
   display: flex;
@@ -216,7 +216,7 @@
   justify-content: center;
   min-height: 252px;
   border-style: solid;
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 .app.outpost .history-panel .history-state.is-chart > svg {
   position: absolute;

@@ -219,6 +219,7 @@ export default async function Builds({
       ) : mine && !viewer ? (
         <div className="build-signin-well">
           <EmptyWell
+            surface
             emblem="strip-builds"
             title="Sign in to see your builds"
             line="Builds you create are kept on your Discord account. Device favourites work without signing in."
@@ -440,6 +441,7 @@ export default async function Builds({
             )}
             {!shown && (
               <EmptyWell
+                surface
                 emblem="strip-builds"
                 title={
                   filtered

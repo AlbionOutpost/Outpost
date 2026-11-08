@@ -347,9 +347,6 @@
   border-radius: 10px;
   background: var(--panel-face);
 }
-.app.outpost .personal-favorites-collection .ecosystem-section-heading {
-  gap: 16px;
-}
 .app.outpost .personal-build-collection .ecosystem-result-toolbar {
   background: var(--panel);
 }
