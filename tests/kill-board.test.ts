@@ -3,6 +3,8 @@ import {
   KILL_WINDOW_MS,
   SHORTLIST_SIZE,
   candidatesFrom,
+  combatHosts,
+  fetchKillCandidates,
   mergeShortlist,
 } from "@/lib/albion/combat-source";
 import { rankByGearValue } from "@/lib/albion/kill-value";
@@ -34,6 +36,28 @@ describe("kill shortlist", () => {
     const merged = mergeShortlist(current, incoming, now);
     expect(merged.map((k) => k.id)).toEqual([1, 3]);
     expect(merged.find((k) => k.id === 1)!.fame).toBe(800);
+  });
+
+  it("stores the stripped record, not the source's group members and spells", () => {
+    const [kill] = candidatesFrom([{ ...ranked(1, 100, 1000), GroupMembers: [{ Id: "g" }] }]);
+    expect(JSON.stringify(kill.raw)).not.toContain("GroupMembers");
+  });
+
+  it("collects the two newest feed pages into the window and every page into the shortlist", async () => {
+    const urls: string[] = [];
+    const { candidates, recent } = await fetchKillCandidates("americas", async (url) => {
+      urls.push(url);
+      if (url.includes("offset=51")) throw new Error("Combat response exceeds limit");
+      return url.includes("killfame") ? [ranked(9, 900, 86_400_000)] : [ranked(1, 100, 60_000)];
+    });
+    expect(urls).toEqual([
+      `${combatHosts.americas}/api/gameinfo/events?limit=51&offset=0`,
+      `${combatHosts.americas}/api/gameinfo/events?limit=51&offset=51`,
+      `${combatHosts.americas}/api/gameinfo/events/killfame?range=week&limit=10&offset=0`,
+    ]);
+    // A failed page is missing from this pass only; the ranking never enters the newest window.
+    expect(candidates.map((k) => k.id)).toEqual([1, 9]);
+    expect(recent.map((e) => e.id)).toEqual([1]);
   });
 
   it("never grows beyond the shortlist size", () => {

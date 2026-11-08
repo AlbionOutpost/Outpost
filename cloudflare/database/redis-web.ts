@@ -34,7 +34,7 @@ const client = {
       duration < 1 ||
       duration > 3600 ||
       value.length > 2_000_000 ||
-      (key.startsWith("atlas:combat:") && (duration > 45 || value.length > 200_000))
+      (key.startsWith("atlas:combat:") && (duration > 45 || value.length > 1_000_000))
     )
       throw new Error("Invalid public cache entry");
     await publicCache().put(

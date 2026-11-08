@@ -1,6 +1,7 @@
 "use client";
 import "./kill-card.css";
 import type React from "react";
+import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { ItemIcon } from "@/components/item-icon";
 import { LoadoutBoard } from "@/components/loadout-board";
@@ -12,8 +13,8 @@ import type { CombatEvent, TopKill } from "@/lib/albion/combat-events";
 import type { GearValue } from "@/lib/albion/kill-value";
 
 type Player = CombatEvent["killer"];
-/** A fight as the killboard draws it. The ranked kills also carry what the victim had on them
- * and who took part; the plain feed does not, and the card leaves those parts out. */
+/** A fight as the killboard draws it. Kills from the collector and the live feed carry what the
+ * victim had on them and who took part; a card leaves out whichever part an event lacks. */
 export type KillCardEvent = CombatEvent & {
   inventory?: TopKill["inventory"];
   crew?: TopKill["crew"];
@@ -31,6 +32,50 @@ const fame = (n: number) =>
 const pieces = (p: Player) =>
   p.equipment.flatMap((e) => (e.itemId ? [{ slot: e.slot, itemId: e.itemId }] : []));
 const trophies = ["gold", "silver", "bronze"] as const;
+const qualities = ["Normal", "Good", "Outstanding", "Excellent", "Masterpiece"];
+/** UTC to the second, for the exact time behind "12 min ago". */
+export const utc = (value: string) =>
+  new Date(value).toISOString().slice(0, 19).replace("T", " ") + " UTC";
+
+/** Every recorded piece by name and quality, for the item details. */
+function Gear({ player, victim }: { player: Player; victim?: boolean }) {
+  return (
+    <div className="kill-gear">
+      <strong className={victim ? "is-victim" : undefined}>{player.name}</strong>
+      <ul>
+        {player.equipment.map((item) =>
+          item.itemId ? (
+            <li key={item.slot}>
+              <span
+                role="img"
+                aria-label={`${item.slot}: ${equipmentName(item.itemId)}`}
+                title={`${item.slot}: ${equipmentName(item.itemId)}`}
+              >
+                <ItemIcon id={item.itemId} quality={item.quality || 1} size={36} />
+              </span>
+              <span>
+                <b>{equipmentName(item.itemId)}</b>
+                <small>
+                  {item.slot} ·{" "}
+                  {item.quality ? qualities[item.quality - 1] : "quality not reported"}
+                </small>
+              </span>
+            </li>
+          ) : null,
+        )}
+      </ul>
+    </div>
+  );
+}
+
+/** A disclosure that opens by height inside its own card; closed, it is inert and hidden. */
+function Drawer({ id, open, children }: { id: string; open: boolean; children: React.ReactNode }) {
+  return (
+    <div className="kill-drawer" id={id} data-open={open || undefined} inert={!open}>
+      {children}
+    </div>
+  );
+}
 
 function Side({ p, victim }: { p: Player; victim?: boolean }) {
   return (
@@ -55,19 +100,19 @@ function Side({ p, victim }: { p: Player; victim?: boolean }) {
 
 /**
  * One fight as a killboard: killer and victim with their loadouts, kill fame, when it happened
- * and the estimated value of the victim's gear; on ranked kills also the victim's inventory and,
- * on request, every participant with their kit. `children` adds a foot (the feed's details).
+ * and the estimated value of the victim's gear, then what the victim carried and, on request,
+ * every participant with their kit. The landing's top kills add a trophy; the kill feed adds the
+ * named item details and a note such as "Delayed source event". One card for both.
  */
 export function KillCard({
   event: ev,
   at,
   gearValue: gear,
   rank,
-  open = false,
-  onToggle,
   scene = "composition",
   className = "",
-  children,
+  details = false,
+  note,
 }: {
   event: KillCardEvent;
   /** When the source answered, for "12 min ago". */
@@ -76,12 +121,15 @@ export function KillCard({
   gearValue: GearValue | undefined;
   /** 0–2 shows the gold, silver or bronze trophy. */
   rank?: number;
-  open?: boolean;
-  onToggle?: () => void;
   scene?: string;
   className?: string;
-  children?: React.ReactNode;
+  /** Adds an "Item details" disclosure naming every recorded piece and the exact time. */
+  details?: boolean;
+  /** One short line under the card, e.g. a source-delay note. */
+  note?: React.ReactNode;
 }) {
+  const [open, setOpen] = useState<"people" | "items" | null>(null);
+  const toggle = (part: "people" | "items") => setOpen(open === part ? null : part);
   const age = sourceAge(ev.occurredAt, at);
   const crew = ev.crew;
   return (
@@ -109,7 +157,7 @@ export function KillCard({
             {/* eslint-disable-next-line @next/next/no-img-element -- owner-supplied emblem */}
             <img src="/albion/icons/kill-skull.webp" alt="" width={30} height={30} />
             <em>Killed</em>
-            <time className="kill-ago" dateTime={ev.occurredAt}>
+            <time className="kill-ago" dateTime={ev.occurredAt} title={utc(ev.occurredAt)}>
               {age.label}
             </time>
           </span>
@@ -154,34 +202,43 @@ export function KillCard({
           )}
         </div>
       )}
-      {crew && (
-        <button
-          type="button"
-          className="kill-toggle"
-          aria-expanded={open}
-          aria-controls={`kill-people-${ev.id}`}
-          disabled={!crew.length}
-          onClick={onToggle}
-        >
-          {crew.length
-            ? `${open ? "Hide" : "Show"} ${crew.length} participant${crew.length === 1 ? "" : "s"}`
-            : "No participants recorded"}
-          {crew.length ? <ChevronDown size={14} aria-hidden="true" /> : null}
-        </button>
+      {(crew || details) && (
+        <div className="kill-actions">
+          {crew && (
+            <button
+              type="button"
+              className="kill-toggle"
+              aria-expanded={open === "people"}
+              aria-controls={`kill-people-${ev.id}`}
+              disabled={!crew.length}
+              onClick={() => toggle("people")}
+            >
+              {crew.length
+                ? `${open === "people" ? "Hide" : "Show"} ${crew.length} participant${crew.length === 1 ? "" : "s"}`
+                : "No participants recorded"}
+              {crew.length ? <ChevronDown size={14} aria-hidden="true" /> : null}
+            </button>
+          )}
+          {details && (
+            <button
+              type="button"
+              className="kill-toggle"
+              aria-expanded={open === "items"}
+              aria-controls={`kill-items-${ev.id}`}
+              onClick={() => toggle("items")}
+            >
+              Item details <ChevronDown size={14} aria-hidden="true" />
+            </button>
+          )}
+        </div>
       )}
       {crew?.length ? (
-        // Always in the tree so the height can animate; closed, it is inert and hidden.
-        <div
-          className="kill-people-wrap"
-          id={`kill-people-${ev.id}`}
-          data-open={open || undefined}
-          inert={!open}
-        >
+        <Drawer id={`kill-people-${ev.id}`} open={open === "people"}>
           <ol className="kill-people" aria-label="Participants">
-            {crew
-              .toSorted((a, b) => b.damage + b.healing - (a.damage + a.healing))
+            {[...crew]
+              .sort((a, b) => b.damage + b.healing - (a.damage + a.healing))
               .map((p, i) => (
-                <li key={p.name} style={{ "--i": i } as React.CSSProperties}>
+                <li key={`${p.name}-${i}`} style={{ "--i": i } as React.CSSProperties}>
                   <span className="kill-person">
                     <strong>{p.name}</strong>
                     <small>
@@ -208,9 +265,40 @@ export function KillCard({
                 </li>
               ))}
           </ol>
-        </div>
+        </Drawer>
       ) : null}
-      {children}
+      {details && (
+        <Drawer id={`kill-items-${ev.id}`} open={open === "items"}>
+          <div className="kill-items combat-event-details">
+            <Gear player={ev.killer} />
+            <Gear player={ev.victim} victim />
+            <p>
+              Event #{ev.id} · {utc(ev.occurredAt)}. Slots the game did not report stay empty.
+            </p>
+          </div>
+        </Drawer>
+      )}
+      {note && <p className="kill-note">{note}</p>}
     </article>
+  );
+}
+
+/** A killboard waiting for its fight: the same frame, empty boards and wells, no names. */
+export function KillCardSkeleton({ scene = "composition" }: { scene?: string }) {
+  return (
+    <div className="raised has-scene kill-card is-skeleton" data-scene={scene} aria-hidden="true">
+      <div className="kill-boards">
+        <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+        <div className="kill-mid" />
+        <LoadoutBoard pieces={[]} size="mini" abilities={false} />
+      </div>
+      <div className="kill-loot">
+        <span className="kill-loot-label">Victim’s inventory</span>
+        <p className="kill-loot-empty" />
+      </div>
+      <div className="kill-actions">
+        <span className="kill-toggle" />
+      </div>
+    </div>
   );
 }

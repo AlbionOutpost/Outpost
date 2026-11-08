@@ -1,28 +1,55 @@
-import { fetchKillCandidates, mergeShortlist, type KillCandidate } from "./albion/combat-source";
+import {
+  fetchKillCandidates,
+  mergeRecent,
+  mergeShortlist,
+  type FeedEvent,
+  type KillCandidate,
+  type RecentKills,
+} from "./albion/combat-source";
 import type { Region } from "./albion/region-config";
 import { rateLimit } from "./redis";
 
-/* Node runtime: the shortlist lives in this process and is refreshed at most once a minute when
-   someone asks for it. On Cloudflare this module is replaced by cloudflare/database/
-   kill-board-web.ts, which reads the data worker's KillBoard (filled by its cron trigger). */
-const boards = new Map<
-  Region,
-  { kills: KillCandidate[]; collectedAt: number; pending?: Promise<void> }
->();
+/* Node runtime: the shortlist and the window of newest fights live in this process and are
+   refreshed at most once a minute when someone asks for them. On Cloudflare this module is
+   replaced by cloudflare/database/kill-board-web.ts, which reads the data worker's KillBoard
+   (filled by its cron trigger). */
+type Board = {
+  kills: KillCandidate[];
+  recent: FeedEvent[];
+  collectedAt: number;
+  readAt: number;
+  newestAt: number | null;
+  pending?: Promise<void>;
+};
+const boards = new Map<Region, Board>();
 
-export async function killShortlist(
-  region: Region,
-): Promise<{ kills: KillCandidate[]; collectedAt: string | null }> {
-  const board = boards.get(region) ?? { kills: [], collectedAt: 0 };
+async function board(region: Region): Promise<Board> {
+  const board = boards.get(region) ?? {
+    kills: [],
+    recent: [],
+    collectedAt: 0,
+    readAt: 0,
+    newestAt: null,
+  };
   boards.set(region, board);
   if (Date.now() - board.collectedAt > 60_000 && !board.pending) {
     board.pending = (async () => {
       try {
         if (!(await rateLimit(`combat-upstream:${region}`, 12, 60))) return;
-        const incoming = await fetchKillCandidates(region);
-        noteNewestKill(region, Math.max(0, ...incoming.map((kill) => kill.occurredAt)) || null);
-        board.kills = mergeShortlist(board.kills, incoming, Date.now());
-        board.collectedAt = Date.now();
+        const { candidates, recent } = await fetchKillCandidates(region);
+        const now = Date.now();
+        const newest = Math.max(
+          board.newestAt ?? 0,
+          ...candidates.map((kill) => kill.occurredAt),
+          ...recent.map((event) => Date.parse(event.occurredAt)),
+        );
+        if (newest > 0 && newest <= now + 300_000) board.newestAt = newest;
+        board.kills = mergeShortlist(board.kills, candidates, now);
+        if (recent.length) {
+          board.recent = mergeRecent(board.recent, recent, now);
+          board.readAt = now;
+        }
+        board.collectedAt = now;
       } catch {
         // Keep the last shortlist; an unreachable source never empties it.
       } finally {
@@ -30,24 +57,22 @@ export async function killShortlist(
       }
     })();
   }
-  if (!board.kills.length && board.pending) await board.pending;
+  if (!board.collectedAt && board.pending) await board.pending;
+  return board;
+}
+
+export async function killShortlist(
+  region: Region,
+): Promise<{ kills: KillCandidate[]; collectedAt: string | null }> {
+  const { kills, collectedAt } = await board(region);
   return {
-    kills: mergeShortlist(board.kills, [], Date.now()),
-    collectedAt: board.collectedAt ? new Date(board.collectedAt).toISOString() : null,
+    kills: mergeShortlist(kills, [], Date.now()),
+    collectedAt: collectedAt ? new Date(collectedAt).toISOString() : null,
   };
 }
 
-/* Newest kill time seen per server (feed pages and collection passes), for feed freshness. */
-const newest = new Map<Region, number>();
-export async function killWatermark(region: Region): Promise<number | null> {
-  return newest.get(region) ?? null;
-}
-export function noteNewestKill(region: Region, at: number | null) {
-  if (
-    at !== null &&
-    Number.isFinite(at) &&
-    at <= Date.now() + 300_000 &&
-    at > (newest.get(region) ?? 0)
-  )
-    newest.set(region, at);
+/** The newest distinct fights the collector has read, with its last read and newest kill. */
+export async function recentKills(region: Region): Promise<RecentKills> {
+  const { recent, readAt, newestAt } = await board(region);
+  return { events: recent, readAt: readAt ? new Date(readAt).toISOString() : null, newestAt };
 }
