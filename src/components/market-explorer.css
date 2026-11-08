@@ -864,3 +864,35 @@
     margin-top: var(--space-4);
   }
 }
+
+/* Watchlist: since your last visit (marks on this device, src/lib/watch-seen.ts) */
+.app.outpost .mx .watch-seen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+}
+.app.outpost .mx .watch-seen p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app.outpost .mx .watch-changes {
+  display: grid;
+  gap: 2px;
+  margin-top: var(--space-2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.app.outpost .mx .watch-change svg {
+  vertical-align: -2px;
+}
+.app.outpost .mx .watch-change strong {
+  color: var(--text);
+  font-family: var(--font-data);
+}

@@ -11,7 +11,7 @@ These are enforced in code; keep them that way.
 3. **Every observation keeps its own time.** Buy and sell sides carry their own source timestamps (`sell_price_min_date`, `buy_price_max_date`); fetch time is never shown as observation time. Data older than 1 h (or >5 min in the future) is **stale**. Plans keep the oldest timestamp that fed them.
 4. **Unknown stays unknown.** Missing IP shows "Not verified"; unlocks, return eligibility and spell inheritance stay null. Don't derive abilities or recipes from names.
 5. **Provenance has stages**: imported → schema-valid → reviewed → verified → current-patch verified (`src/lib/catalog/verification.ts`). A new download or a passing parser never promotes a record. Today every dataset is at **imported/schema-valid; zero records are reviewed, verified or current-patch verified.**
-6. **No fee presets.** Taxes, setup and station fees are user assumptions; defaults are 0.
+6. **No fee presets.** Taxes, setup and station fees are user assumptions; defaults are 0. Exceptions the owner chose: the flipping scanner, the Black Market board and Profitable crafts start at the 4 % Premium sales tax (with a No premium 8 % button) and, where a listing is made, the 2.5 % setup fee; all stay editable.
 
 ## Market data — Albion Online Data Project (AODP)
 
@@ -23,6 +23,8 @@ These are enforced in code; keep them that way.
 | Limits                                    | 12 s timeout, no redirects, 2 MB body cap, URLs ≤3,900 chars                                                                                                                         |
 | Budgets                                   | 50/min and 250/5 min per region, every attempt counted; 429 → regional cooldown from `Retry-After` / reset headers (on Cloudflare, cooldowns over 1 h are rejected by `AbuseBudget`) |
 | Cache                                     | Prices 60 s, history/gold 300 s; process cache + shared cache (Cache API on Cloudflare, Redis locally)                                                                               |
+
+The Black Market board and Profitable crafts each spend one price request per selection (≤48 items, `MAX_SCAN_ITEMS`); the page applies cities, tax and budget to that answer, and signed-out answers are edge-cached for 2 min. The watchlist's "since your last visit" marks (lowest sell and highest buy order, each with its city and observation time) stay in the browser (`outpost:watch-seen-v1`, `src/lib/watch-seen.ts`, at most 200 items) and are never sent to the server.
 
 Coverage depends on what players upload: exact-quality gaps are common, especially on Asia and for T8. AODP data is crowd-sourced and has no warranty — the UI must say so where it matters.
 

@@ -62,10 +62,13 @@ export function ProductionCalculator({
   kind,
   category,
   initialRecipeId,
+  initialSettings,
 }: {
   kind: ProductionInput["kind"];
   category?: "cooking" | "alchemy";
   initialRecipeId?: string;
+  /** Markets, quality, fees and returns from a craft finder link (`parseCraftLink`). */
+  initialSettings?: Partial<ProductionInput>;
 }) {
   const region = useOutpostRegion();
   const router = useRouter();
@@ -75,7 +78,9 @@ export function ProductionCalculator({
   });
   const [draft, setDraft] = useState(() => ({
     ...defaultDraft(),
-    ...(initialRecipeId && kind !== "enchanting" ? { recipeId: initialRecipeId } : {}),
+    ...(initialRecipeId && kind !== "enchanting"
+      ? { recipeId: initialRecipeId, ...initialSettings }
+      : {}),
   }));
   const [error, setError] = useState("");
   const [recipeSearch, setRecipeSearch] = useState("");

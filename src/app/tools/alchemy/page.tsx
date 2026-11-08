@@ -1,4 +1,5 @@
 import { metadataForPage, type SeoPageProps } from "@/lib/seo";
+import { parseCraftLink } from "@/lib/albion/craft-link";
 import { WorkspaceHeading } from "@/components/workspace-heading";
 import { ProductionCalculator, ProductionModes } from "@/components/production-calculator";
 import styles from "@/components/calculator-shell.module.css";
@@ -8,9 +9,10 @@ export async function generateMetadata({ searchParams }: SeoPageProps) {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ recipe?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { recipe } = await searchParams;
+  const params = await searchParams;
+  const recipe = params.recipe;
   return (
     <div className={styles.page}>
       <WorkspaceHeading
@@ -24,6 +26,7 @@ export default async function Page({
       />
       <ProductionCalculator
         initialRecipeId={typeof recipe === "string" && recipe.length <= 100 ? recipe : undefined}
+        initialSettings={parseCraftLink(params)}
         kind="crafting"
         category="alchemy"
       />
