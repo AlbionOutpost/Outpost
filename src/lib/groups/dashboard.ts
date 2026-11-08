@@ -3,6 +3,7 @@ import { HttpError } from "../api-errors";
 import { can, fromMask, ownerRank, rankOf, resolveAccess } from "./permissions";
 import { buildInput } from "../builds/validation";
 import { memberSlot } from "../compositions/validation";
+import { displayName } from "../display-name";
 export async function groupDashboard(id: string, userId?: string) {
   const group = await db.group.findUnique({
     where: { id },
@@ -158,7 +159,7 @@ export async function groupDashboard(id: string, userId?: string) {
       })),
       members: members.map((m) => ({
         userId: m.userId,
-        name: m.user.name || "Adventurer",
+        name: displayName(m.user.name),
         avatarFrame: m.user.avatarFrame,
         image: m.user.image,
         joinedAt: m.joinedAt.toISOString(),
@@ -174,7 +175,7 @@ export async function groupDashboard(id: string, userId?: string) {
       })),
       requests: requests.map((r) => ({
         userId: r.userId,
-        name: r.user.name || "Adventurer",
+        name: displayName(r.user.name),
         avatarFrame: r.user.avatarFrame,
         image: r.user.image,
         message: r.message,
@@ -194,7 +195,7 @@ export async function groupDashboard(id: string, userId?: string) {
         cancelled: e.cancelled,
         rsvps: e.rsvps.map((r) => ({
           userId: r.userId,
-          name: r.user.name || "Adventurer",
+          name: displayName(r.user.name),
           status: r.status,
           role: r.role,
         })),

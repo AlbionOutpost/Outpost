@@ -4,6 +4,7 @@ import { FavoriteBuildButton } from "./favorite-build-button";
 import { BuildCardOwnerActions } from "./build-card-owner-actions";
 import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
+import { displayName } from "@/lib/display-name";
 
 export type PreviewBuild = {
   id: string;
@@ -70,7 +71,7 @@ export function CommunityBuildCard({
       }
       weaponName={main ? equipmentName(main.itemId) : ""}
       weaponItemId={main?.itemId}
-      author={b.author.name}
+      author={displayName(b.author.name)}
       updatedAt={b.updatedAt}
       pieces={pieces}
       spellNames={names}

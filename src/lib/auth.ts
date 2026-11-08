@@ -6,6 +6,7 @@ import { db } from "./db";
 import { grantOwnerAdmin, promoteOwnerOnce } from "./owner-admin";
 import { activeSession, createActiveSession } from "./admin/sessions";
 import { discordBanned } from "./admin/access";
+import { cleanDisplayName, reservedDisplayName } from "./display-name";
 const adapter = PrismaAdapter(db);
 export const authOptions: NextAuthOptions = {
   adapter: {
@@ -19,6 +20,15 @@ export const authOptions: NextAuthOptions = {
         refresh_token: undefined,
         id_token: undefined,
       }),
+    // A new account takes its Discord name cleaned; one that reads as Outpost or its staff
+    // (or has no visible letters) starts unnamed and shows as "Adventurer" until changed.
+    createUser: (user: Parameters<NonNullable<typeof adapter.createUser>>[0]) => {
+      const name = cleanDisplayName(user.name);
+      return adapter.createUser!({
+        ...user,
+        name: name && !reservedDisplayName(name) ? name : null,
+      });
+    },
     createSession: createActiveSession,
     async getSessionAndUser(token) {
       const result = await activeSession(token);
