@@ -257,21 +257,22 @@ export function Market() {
   // History loads beside the prices (not after them), so both arrive together.
   const historyOpen = researchOpen ?? validSelection;
   useHeldHeights(main, loading && !hasResult);
-  // Closed, the toggle is the panel's action; open, it joins Refresh on the history controls row.
+  // The panel's own action beside its title, so the chart keeps the room under it.
   const historyToggle = (
     <button
       type="button"
       className="pill-link is-small"
       aria-expanded={historyOpen}
+      aria-label={historyOpen ? "Hide price history" : undefined}
       onClick={() => setResearchOpen(!historyOpen)}
     >
-      {historyOpen ? "Hide price history" : "Research price history"}
+      {historyOpen ? "Hide" : "Research price history"}
     </button>
   );
   const sourceNote = (
     <>
-      Albion Online Data Project · sell orders are listings, buy orders offers · spread is sell
-      minus buy, as a share of buy · amber age and ring: older than an hour · UTC
+      Albion Online Data Project · spread is sell minus buy, as a share of buy · no age: seen within
+      the hour · amber age: older · dimmed: over a day · exact UTC time on hover
     </>
   );
   return (
@@ -307,6 +308,7 @@ export function Market() {
             <form id="market-compare-query" className="mx-form" method="post" onSubmit={submit}>
               <CatalogItemPicker
                 grouped
+                placeholder="Item name, e.g. Bag"
                 category={category}
                 tier={tier}
                 enchantment={enchantment}
@@ -782,7 +784,7 @@ export function Market() {
               id="market-history-title"
               title="Price history"
               line={<>Daily sell-order averages · {qualityNames[Number(quality) - 1]}</>}
-              actions={!historyOpen && historyToggle}
+              actions={historyToggle}
             />
             {historyOpen ? (
               <History
@@ -793,7 +795,6 @@ export function Market() {
                 embedded
                 city={historyCity}
                 onCityChange={setHistoryCity}
-                actions={historyToggle}
               />
             ) : (
               <p className="mx-collapsed-note">

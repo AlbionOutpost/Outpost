@@ -30,6 +30,7 @@ export function CatalogItemPicker({
   enchantment = "",
   label = "Search market items",
   grouped = false,
+  placeholder = "Search Battleaxe, Bag, Mercenary…",
 }: {
   onSelect: (item: CatalogOption) => void;
   category?: string;
@@ -37,6 +38,8 @@ export function CatalogItemPicker({
   enchantment?: string;
   label?: string;
   grouped?: boolean;
+  /** Short enough for the field it sits in; Market Explorer's rail is narrow. */
+  placeholder?: string;
 }) {
   const [query, setQuery] = useState(""),
     [open, setOpen] = useState(false),
@@ -128,7 +131,7 @@ export function CatalogItemPicker({
         aria-activedescendant={open && rows[active] ? `${id}-option-${active}` : undefined}
         value={query}
         maxLength={100}
-        placeholder="Search Battleaxe, Bag, Mercenary…"
+        placeholder={placeholder}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
           setQuery(e.target.value);
