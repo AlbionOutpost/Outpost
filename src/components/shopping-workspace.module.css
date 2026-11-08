@@ -18,7 +18,7 @@
 }
 :global(.app.outpost) .layout.layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 344px);
   gap: 24px;
   align-items: start;
 }
@@ -31,6 +31,7 @@
 }
 :global(.app.outpost) .main.main > *,
 :global(.app.outpost) .summary.summary > * {
+  min-width: 0;
   margin: 0;
 }
 :global(.app.outpost) .summary.summary {
@@ -40,6 +41,13 @@
   display: grid;
   gap: 24px;
   min-width: 0;
+}
+/* The totals stay in view while the list scrolls */
+@media (min-width: 1101px) {
+  :global(.app.outpost) .side.side {
+    position: sticky;
+    top: 88px;
+  }
 }
 /* Add row: item search, quantity and city in one line of wells */
 :global(.app.outpost) .add.add {
@@ -76,7 +84,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .tabs.tabs button {
   white-space: nowrap;
@@ -103,20 +111,20 @@
 :global(.app.outpost) .table.table td:nth-child(2) input,
 :global(.app.outpost) .table.table td:nth-child(3) input {
   display: block;
-  width: 76px;
+  width: 64px;
   margin-left: auto;
 }
 :global(.app.outpost) .table.table td:nth-child(5) {
-  width: 132px;
+  width: 136px;
 }
-:global(.app.outpost) .table.table td:nth-child(5) small {
+:global(.app.outpost) .priceNote.priceNote {
   display: block;
   margin-top: 4px;
   color: var(--muted);
   font: 500 12px/1.3 var(--font-ui);
   text-align: right;
 }
-:global(.app.outpost) .table.table td:nth-child(5) small[data-tone="stale"] {
+:global(.app.outpost) .priceNote.priceNote[data-tone="stale"] {
   color: var(--warning);
 }
 :global(.app.outpost) .table.table tr[data-ready] th strong {
@@ -126,7 +134,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 200px;
+  min-width: 160px;
 }
 :global(.app.outpost) .item.item > img {
   flex: none;
@@ -165,13 +173,37 @@
   color: var(--muted);
   cursor: pointer;
 }
-:global(.app.outpost) .iconButton.iconButton + .iconButton {
+:global(.app.outpost) .rowActions.rowActions > * + * {
   margin-left: 4px;
 }
-:global(.app.outpost) .iconButton.iconButton:hover,
-:global(.app.outpost) .iconButton.iconButton[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--well-border));
-  color: var(--accent-ink);
+:global(.app.outpost) .iconButton.iconButton:hover {
+  border-color: color-mix(in srgb, var(--error) 50%, var(--well-border));
+  color: var(--error);
+}
+/* Owned toggle: an empty ring while needed, a filled green check once owned */
+:global(.app.outpost) .toggle.toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--well-border);
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast, 0.15s) ease,
+    border-color var(--motion-fast, 0.15s) ease,
+    color var(--motion-fast, 0.15s) ease;
+}
+:global(.app.outpost) .toggle.toggle:hover {
+  border-color: color-mix(in srgb, var(--success) 60%, var(--well-border));
+  color: var(--success);
+}
+:global(.app.outpost) .toggle.toggle[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--success) 70%, transparent);
+  background: color-mix(in srgb, var(--success) 18%, transparent);
+  color: var(--success);
 }
 
 /* Crafting queue: progress and own-count steppers */
@@ -184,15 +216,21 @@
 }
 :global(.app.outpost) .queue.queue li {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto minmax(116px, auto);
   align-items: center;
-  gap: 12px;
-  min-height: 68px;
-  padding: 10px 12px;
+  gap: 14px;
+  min-height: 72px;
+  padding: 12px 14px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .queue.queue li[data-ready] {
+  border-color: color-mix(in srgb, var(--success) 40%, var(--well-border));
+}
+:global(.app.outpost) .queue.queue li[data-ready] strong {
+  color: var(--secondary);
 }
 :global(.app.outpost) .queue.queue li > img {
   border-radius: var(--radius-sm);
@@ -203,29 +241,51 @@
   min-width: 0;
 }
 :global(.app.outpost) .queueName.queueName strong {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 :global(.app.outpost) .queueName.queueName small {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .lineCost.lineCost {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+:global(.app.outpost) .lineCost.lineCost strong {
+  font: 600 15px/1.1 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+:global(.app.outpost) .lineCost.lineCost small {
   color: var(--muted);
   font-size: 12px;
 }
 :global(.app.outpost) .progress.progress {
   display: block;
-  height: 6px;
+  height: 4px;
+  max-width: 320px;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 2px;
   background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 :global(.app.outpost) .progress.progress b {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--accent);
+  transform-origin: left;
+  transition: transform var(--motion-fast, 0.15s) ease;
 }
 :global(.app.outpost) .queue.queue li[data-ready] .progress b {
-  background: var(--killer);
+  background: var(--success);
 }
 :global(.app.outpost) .queueActions.queueActions {
   display: flex;
@@ -285,30 +345,62 @@
   gap: 6px;
 }
 
-/* Summary */
+/* Summary: the upfront cost as the headline, owned progress under it, then the counts, where to
+   buy and the royal-city comparison */
 :global(.app.outpost) .figure.figure {
   display: grid;
   gap: 6px;
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
-  background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  background: radial-gradient(120% 90% at 0% 0%, var(--accent-wash), transparent 70%), var(--well);
+  box-shadow: var(--well-inset);
 }
-:global(.app.outpost) .figure.figure small {
+:global(.app.outpost) .figure.figure > small {
   color: var(--muted);
   font-size: 12px;
 }
-:global(.app.outpost) .figure.figure strong {
-  font: 800 32px/1 var(--font-display);
+:global(.app.outpost) .figure.figure > strong {
+  color: var(--text);
+  font: 800 40px/1 var(--font-display);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
 }
-:global(.app.outpost) .figure.figure strong > span {
+:global(.app.outpost) .figure.figure > strong > span {
   font: 500 14px/1.4 var(--font-ui);
 }
-:global(.app.outpost) .figure.figure:not([data-complete]) strong {
+:global(.app.outpost) .figure.figure:not([data-complete]) > strong {
   color: var(--secondary);
+}
+:global(.app.outpost) .owned.owned {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 8px;
+  margin-top: 8px;
+  color: var(--secondary);
+  font: 600 12px/1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .owned.owned > i {
+  grid-column: 1 / -1;
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}
+:global(.app.outpost) .owned.owned > i > b,
+:global(.app.outpost) .cities.cities li > i b {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform var(--motion-fast, 0.15s) ease;
+}
+:global(.app.outpost) .figure.figure[data-complete] .owned > i > b {
+  background: var(--success);
 }
 :global(.app.outpost) .stats.stats {
   display: grid;
@@ -317,7 +409,7 @@
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .stats.stats > div {
   display: grid;
@@ -334,19 +426,71 @@
 }
 :global(.app.outpost) .stats.stats dd {
   margin: 0;
-  font: 800 17px/1.1 var(--font-display);
+  font: 800 19px/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
+:global(.app.outpost) .stats.stats > div[data-tone="stale"] dd {
+  color: var(--warning);
+}
+:global(.app.outpost) .where.where {
+  display: grid;
+  gap: 8px;
+}
+:global(.app.outpost) .where.where h3,
+:global(.app.outpost) .citiesHead.citiesHead > span {
+  margin: 0;
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .where.where ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .where.where li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  font-size: 13px;
+}
+:global(.app.outpost) .where.where li + li {
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .whereCity.whereCity {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+:global(.app.outpost) .whereItems.whereItems {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .whereCost.whereCost {
+  display: inline-flex;
+  justify-content: flex-end;
+  min-width: 84px;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 :global(.app.outpost) .cities.cities {
   display: grid;
-  max-width: 560px;
   gap: 10px;
   padding: 12px 14px;
   border: 1px solid var(--well-border);
   border-radius: var(--radius-md);
   background: var(--well);
-  box-shadow: inset 0 1px 3px #0009;
+  box-shadow: var(--well-inset);
 }
 :global(.app.outpost) .citiesHead.citiesHead {
   display: flex;
@@ -354,9 +498,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: var(--secondary);
-  font-size: 13px;
-  font-weight: 600;
 }
 :global(.app.outpost) .cities.cities ol {
   display: grid;
@@ -395,27 +536,19 @@
   grid-column: 1 / -1;
   grid-row: 2;
   display: block;
-  height: 6px;
+  height: 4px;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 2px;
   background: color-mix(in srgb, var(--text) 8%, transparent);
-}
-:global(.app.outpost) .cities.cities li > i b {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--accent);
-}
-:global(.app.outpost) .cityValue.cityValue {
-  font-family: var(--font-data);
-  text-align: right;
-  white-space: nowrap;
 }
 :global(.app.outpost) .cityValue.cityValue {
   flex: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  font-family: var(--font-data);
+  text-align: right;
+  white-space: nowrap;
 }
 :global(.app.outpost) .chip.chip {
   padding: 1px 7px;
@@ -427,9 +560,106 @@
   font-style: normal;
 }
 :global(.app.outpost) .fine.fine {
+  margin: 0;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+/* Before the first item: three numbered steps in place of the totals */
+:global(.app.outpost) .steps.steps {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+:global(.app.outpost) .steps.steps li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 2px 12px;
+  padding: 10px 0;
+  counter-increment: step;
+}
+:global(.app.outpost) .steps.steps li + li {
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .steps.steps li::before {
+  content: counter(step);
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font: 700 14px/1 var(--font-data);
+}
+:global(.app.outpost) .steps.steps b {
+  font: 600 14px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .steps.steps span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* Empty list: the example plan as real gear, one tap from being the list */
+:global(.app.outpost) .example.example {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-6);
+  border: 1px dashed color-mix(in srgb, var(--accent) 35%, var(--well-border));
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(80% 120% at 100% 50%, var(--accent-wash), transparent 70%), var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .exampleCopy.exampleCopy {
+  display: grid;
+  gap: 6px;
+}
+:global(.app.outpost) .exampleCopy.exampleCopy p {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+:global(.app.outpost) .exampleCopy.exampleCopy .exampleTitle {
+  color: var(--text);
+  font: 800 24px/1.1 var(--font-display);
+}
+:global(.app.outpost) .exampleItems.exampleItems {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .exampleItems.exampleItems li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid var(--surface-inset-edge, var(--well-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  font-size: 13px;
+}
+:global(.app.outpost) .exampleItems.exampleItems b {
+  color: var(--accent-ink);
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+:global(.app.outpost) .example.example > :global(.button) {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 :global(.app.outpost) .gate.gate h2 {
@@ -452,13 +682,20 @@
 :global(.app.outpost) .accountPanel.accountPanel > * {
   margin: 0;
 }
-:global(.app.outpost) .accountLoad.accountLoad {
-  justify-self: start;
-}
+:global(.app.outpost) .accountGuest.accountGuest,
 :global(.app.outpost) .accountBody.accountBody {
   display: grid;
   gap: var(--space-3);
 }
+:global(.app.outpost) .accountGuest.accountGuest {
+  justify-items: start;
+  padding: var(--space-4);
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: var(--well-inset);
+}
+:global(.app.outpost) .accountGuest.accountGuest p,
 :global(.app.outpost) .accountBody.accountBody p {
   margin: 0;
   color: var(--secondary);
@@ -466,26 +703,48 @@
   line-height: 1.5;
 }
 :global(.app.outpost) .accountForm.accountForm {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: var(--space-2);
 }
-:global(.app.outpost) .accountForm.accountForm > :first-child {
-  flex: 1 1 200px;
-}
-:global(.app.outpost) .savedRow.savedRow {
+:global(.app.outpost) .accountHead.accountHead {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
-  padding: 10px 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--well-border);
+  color: var(--secondary);
+  font: 600 13px/1.3 var(--font-ui);
+}
+:global(.app.outpost) .savedRows.savedRows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:global(.app.outpost) .savedRow.savedRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 0;
+}
+:global(.app.outpost) .savedRow.savedRow + .savedRow {
   border-top: 1px solid var(--well-border);
 }
 :global(.app.outpost) .savedRow.savedRow > span {
   display: grid;
-  flex: 1 1 200px;
   gap: 2px;
+  min-width: 0;
+}
+:global(.app.outpost) .savedRow.savedRow strong {
+  overflow: hidden;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 :global(.app.outpost) .savedRow.savedRow small {
   color: var(--muted);
@@ -530,7 +789,7 @@
     border: 1px solid var(--well-border);
     border-radius: var(--radius-md);
     background: var(--well);
-    box-shadow: inset 0 1px 3px #0009;
+    box-shadow: var(--well-inset);
   }
   :global(.app.outpost) .table.table :is(th, td) {
     position: static;
@@ -580,8 +839,37 @@
     font-size: 12px;
     white-space: nowrap;
   }
-  :global(.app.outpost) .table.table td:nth-child(5) small {
+  :global(.app.outpost) .priceNote.priceNote {
     text-align: left;
+  }
+  :global(.app.outpost) .queue.queue li {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon name name"
+      "icon actions cost";
+    gap: 10px 12px;
+  }
+  :global(.app.outpost) .queue.queue li > img {
+    grid-area: icon;
+    align-self: start;
+  }
+  :global(.app.outpost) .queueName.queueName {
+    grid-area: name;
+  }
+  :global(.app.outpost) .queueActions.queueActions {
+    grid-area: actions;
+  }
+  :global(.app.outpost) .lineCost.lineCost {
+    grid-area: cost;
+  }
+  :global(.app.outpost) .example.example {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-4);
+  }
+  :global(.app.outpost) .example.example > :global(.button) {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
   }
   :global(.app.outpost) .num.num {
     align-content: center;
@@ -633,13 +921,24 @@
 @media (max-width: 420px) {
   :global(.app.outpost) .queue.queue li {
     grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-areas:
+      "icon name"
+      "actions actions"
+      "cost cost";
   }
   :global(.app.outpost) .queue.queue li > img {
     width: 40px;
     height: 40px;
   }
-  :global(.app.outpost) .queueActions.queueActions {
-    grid-column: 2;
-    justify-self: start;
+  :global(.app.outpost) .lineCost.lineCost {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  :global(.app.outpost) .lineCost.lineCost small {
+    grid-row: 1;
+  }
+  :global(.app.outpost) .accountForm.accountForm {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

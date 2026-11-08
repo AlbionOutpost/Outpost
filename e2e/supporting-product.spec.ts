@@ -284,6 +284,75 @@ test("existing timers lead the workspace and a new timer returns focus to its sa
   }
 });
 
+test("timers group by when they are due and the clock ticks without moving the row", async ({
+  page,
+  context,
+}) => {
+  const id = `atlas-test-support-${randomUUID()}`,
+    token = randomUUID(),
+    minute = 60000;
+  await db.user.create({
+    data: {
+      id,
+      name: "Timer owner",
+      sessions: { create: { sessionToken: token, expires: new Date(Date.now() + 600000) } },
+    },
+  });
+  try {
+    const now = Date.now();
+    for (const [title, durationMs, dueAt] of [
+      ["Overdue herbs", 60 * minute, new Date(now - 5 * minute)],
+      ["Soon crops", 60 * minute, new Date(now + 20 * minute)],
+      ["Today journals", 8 * 60 * minute, new Date(now + 5 * 60 * minute)],
+      ["Later pasture", 44 * 60 * minute, new Date(now + 40 * 60 * minute)],
+    ] as const)
+      await db.timer.create({
+        data: { userId: id, title, category: "CROP", status: "RUNNING", durationMs, dueAt },
+      });
+    await context.addCookies([
+      {
+        name: "next-auth.session-token",
+        value: token,
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+    ]);
+    await page.goto("/timers");
+    for (const [group, title] of [
+      ["Ready", "Overdue herbs"],
+      ["Soon", "Soon crops"],
+      ["Today", "Today journals"],
+      ["Later", "Later pasture"],
+    ])
+      await expect(
+        page
+          .getByRole("list", { name: `${group} timers`, exact: true })
+          .getByRole("heading", { name: title, exact: true }),
+      ).toBeVisible();
+    const overdue = page.locator("li").filter({ hasText: "Overdue herbs" });
+    await expect(overdue).toContainText("Ready");
+    await expect(overdue).toContainText(/\d+m \d+s ago/);
+    await expect(overdue.getByRole("button", { name: "Start again", exact: true })).toBeVisible();
+    // The countdown is rendered on the server, so the first paint already shows a clock
+    await expect(page.getByText("Updating…", { exact: true })).toHaveCount(0);
+    const soon = page.locator("li").filter({ hasText: "Soon crops" });
+    const before = await soon.boundingBox();
+    const clock = await soon.locator("p[aria-live=off]").textContent();
+    await expect(soon.locator("p[aria-live=off]")).not.toHaveText(clock || "");
+    expect(await soon.boundingBox()).toEqual(before);
+    // Quick lengths add to the typed time and are labelled as the player's own
+    await page.getByRole("button", { name: "+1h", exact: true }).click();
+    await page.getByRole("button", { name: "+15m", exact: true }).click();
+    await expect(page.getByLabel("Hours", { exact: true })).toHaveValue("1");
+    await expect(page.getByLabel("Minutes", { exact: true })).toHaveValue("15");
+    await expect(page.getByText("Your own time", { exact: true })).toBeVisible();
+  } finally {
+    await db.user.deleteMany({ where: { id } });
+  }
+});
+
 test.describe("timer due times", () => {
   test.use({ timezoneId: "Asia/Tokyo" });
   test("a running timer names its due moment in UTC game time and the viewer's clock", async ({
