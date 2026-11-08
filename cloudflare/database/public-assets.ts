@@ -91,11 +91,13 @@ export async function publicCatalogQuery(query: DatabaseQuery) {
   rows = rows.filter((r) => match(r, args.where as Record<string, unknown>));
   if (query.operation === "count") return rows.length;
   if (args.orderBy) {
-    const order = args.orderBy as Record<string, string>;
+    // Prisma takes one order object or a list of them, applied in turn.
+    const order = [args.orderBy].flat().flatMap((o) => Object.entries(o as Record<string, string>));
     rows = [...rows].sort((a, b) => {
-      for (const [key, dir] of Object.entries(order)) {
-        const left = String(a[key]),
-          right = String(b[key]);
+      for (const [key, dir] of order) {
+        const numeric = typeof a[key] === "number" && typeof b[key] === "number";
+        const left = numeric ? (a[key] as number) : String(a[key]),
+          right = numeric ? (b[key] as number) : String(b[key]);
         const r = left < right ? -1 : left > right ? 1 : 0;
         if (r) return dir === "desc" ? -r : r;
       }

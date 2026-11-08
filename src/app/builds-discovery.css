@@ -159,15 +159,6 @@
   overflow: visible;
   box-shadow: none;
 }
-.app.outpost .build-preview-card[data-activity-background],
-.app.outpost .build-preview-card[data-activity-background]:hover {
-  background:
-    linear-gradient(
-      color-mix(in srgb, var(--panel) 88%, transparent),
-      color-mix(in srgb, var(--panel) 96%, transparent)
-    ),
-    var(--build-category-scene) center / cover no-repeat;
-}
 .app.outpost .ecosystem-build-card:hover {
   border-color: var(--accent);
 }
@@ -231,11 +222,6 @@
   object-fit: contain;
   border-radius: 50%;
   border: 1px solid var(--border);
-}
-.ecosystem-no-spells {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
 }
 .device-save-feedback {
   position: absolute;
@@ -494,11 +480,6 @@
     right: -3px;
     width: 250px;
   }
-}
-.app.outpost .ecosystem-build-card.build-preview-card {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
 }
 .app.outpost .ecosystem-build-card .equipment-strip {
   display: flex;

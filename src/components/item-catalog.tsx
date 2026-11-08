@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, LayoutGrid, List, RotateCw } from "lucide-react";
 import { useOutpostRegion } from "./region-context";
 import { Pagination } from "./pagination";
@@ -24,38 +25,81 @@ const tierLabel = (id: string) => {
   const match = /^T(\d)_[^@]*(?:@(\d))?$/.exec(id);
   return match ? `T${match[1]}.${match[2] ?? 0}` : "No tier";
 };
-export function ItemCatalog({
-  metadata = [],
-  total: initialTotal = 0,
-  categories = [],
-}: {
-  metadata?: { id: string; name: string; tier: number; enchantment: number; slot: string }[];
-  total?: number;
-  categories?: string[];
-}) {
-  const [page, setPage] = useState(1);
-  const [view, setView] = useState<"list" | "grid">("list");
-  const [more, setMore] = useState(false);
-  const [search, setSearch] = useState("");
-  const [tier, setTier] = useState("");
-  const [enchantment, setEnchantment] = useState("");
-  const [category, setCategory] = useState("");
-  const [result, setResult] = useState({
-    items: metadata,
-    total: initialTotal,
-    key: "search=&page=1",
-  });
-  const [errorKey, setErrorKey] = useState("");
-  const [retry, setRetry] = useState(0);
+type Filters = {
+  search: string;
+  category: string;
+  tier: string;
+  enchantment: string;
+  page: number;
+};
+const none: Filters = { search: "", category: "", tier: "", enchantment: "", page: 1 };
+/** The `/api/items` query for these filters; also the key of the rows on screen. */
+function apiQuery({ search, category, tier, enchantment, page }: Filters) {
   const params = new URLSearchParams({ search, page: String(page) });
   if (category) params.set("slot", category);
   if (tier) params.set("tier", tier);
   if (enchantment) params.set("enchantment", enchantment);
-  const requestKey = params.toString();
+  return params.toString();
+}
+function fromAddress(params: URLSearchParams, categories: string[]): Filters {
+  const value = (key: string) => params.get(key) ?? "";
+  const page = Number(value("page"));
+  return {
+    search: value("q").slice(0, 100),
+    category: categories.includes(value("category")) ? value("category") : "",
+    tier: /^[1-8]$/.test(value("tier")) ? value("tier") : "",
+    enchantment: /^[0-4]$/.test(value("enchantment")) ? value("enchantment") : "",
+    page: Number.isInteger(page) && page >= 1 && page <= 1000 ? page : 1,
+  };
+}
+/** The same filters in the page address: `/items?q=claymore&tier=6`, so Back and links keep them. */
+function syncAddress({ search, category, tier, enchantment, page }: Filters) {
+  const url = new URL(window.location.href);
+  const values = { q: search, category, tier, enchantment, page: page > 1 ? String(page) : "" };
+  for (const [key, value] of Object.entries(values))
+    if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
+  if (url.href !== window.location.href) window.history.replaceState(null, "", url);
+}
+export function ItemCatalog({
+  metadata = [],
+  total: initialTotal = 0,
+  categories = [],
+  initial = none,
+}: {
+  metadata?: { id: string; name: string; tier: number; enchantment: number; slot: string }[];
+  total?: number;
+  categories?: string[];
+  /** The filters the server rendered `metadata` for, read from the address. */
+  initial?: Filters;
+}) {
+  // The address wins over the server's rows: Back can restore this page from the router cache
+  // with rows for an older address, and the filters must match the address the player sees.
+  const address = fromAddress(useSearchParams(), categories);
+  const [page, setPage] = useState(address.page);
+  const [view, setView] = useState<"list" | "grid">("list");
+  const [more, setMore] = useState(false);
+  const [search, setSearch] = useState(address.search);
+  const [tier, setTier] = useState(address.tier);
+  const [enchantment, setEnchantment] = useState(address.enchantment);
+  const [category, setCategory] = useState(address.category);
+  const [result, setResult] = useState({
+    items: metadata,
+    total: initialTotal,
+    key: apiQuery(initial),
+  });
+  const [errorKey, setErrorKey] = useState("");
+  const [retry, setRetry] = useState(0);
+  const requestKey = apiQuery({ search, category, tier, enchantment, page });
   // A failed refresh of the page the server already rendered keeps showing those rows.
   const error = errorKey === `${requestKey}#${retry}` && requestKey !== result.key;
   const busy = requestKey !== result.key && !error;
   useEffect(() => {
+    syncAddress({ search, category, tier, enchantment, page });
+  }, [search, category, tier, enchantment, page]);
+  useEffect(() => {
+    // The server already rendered the rows for the address it was given.
+    if (requestKey === result.key) return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
@@ -73,7 +117,7 @@ export function ItemCatalog({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [requestKey, retry]);
+  }, [requestKey, retry, result.key]);
   const region = useOutpostRegion();
   const shortcuts = items.filter(
     (i) =>
@@ -192,7 +236,7 @@ export function ItemCatalog({
             line={
               filtered
                 ? "Matching your search and filters."
-                : "Every item in the index, by tier. Open one for its prices."
+                : "T4 and up first, by tier and enchantment, then T1–T3. Open one for its prices."
             }
             actions={
               <>

@@ -6,6 +6,8 @@ import styles from "./market-workspace.module.css";
 import { History } from "./history";
 import Link from "@/components/link";
 import { CatalogItemPicker } from "./catalog-item-picker";
+import { ItemVariantPicker, type ItemVariant } from "./item-variant-picker";
+import { catalogBaseKey } from "@/lib/catalog/search";
 import { MarketCityTable, observedAt } from "./market-city-table";
 import { MarketQuoteHero, qualityNames } from "./market-quote-hero";
 import { MarketResearch } from "./market-research";
@@ -31,6 +33,8 @@ export function Market() {
   const { view, show } = useMarketView();
   const [item, setItem] = useState(params.get("item") || "T4_BAG");
   const [selectedName, setSelectedName] = useState("");
+  // The picked item's tiers and enchantments, read once per base item (not per version).
+  const [family, setFamily] = useState<{ key: string; rows: ItemVariant[] } | null>(null);
   const [category, setCategory] = useState(
     equipmentSlots.find((slot) => slot === params.get("category")) || "",
   );
@@ -94,6 +98,27 @@ export function Market() {
   const selectedQuote = visible.find((row) => row.city === selectedCity);
   const selectedItemName = selectedName || equipmentName(item);
   const validSelection = /^[A-Z0-9_@]{3,100}$/.test(item.trim().toUpperCase());
+  const familyKey = validSelection ? catalogBaseKey(item.trim().toUpperCase()) : "";
+  const variants = family?.key === familyKey ? family.rows : [];
+  useEffect(() => {
+    if (!familyKey) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      // Any tier names the family; the catalog answers with every version it has.
+      fetch(`/api/items?${new URLSearchParams({ variants: `T4_${familyKey}` })}`, {
+        signal: controller.signal,
+      })
+        .then((r) => (r.ok ? r.json() : { items: [] }))
+        .then((body: { items: ItemVariant[] }) => {
+          if (!controller.signal.aborted) setFamily({ key: familyKey, rows: body.items });
+        })
+        .catch(() => {});
+    }, 150);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [familyKey]);
   const marketLabel =
     city || (extraCities.length ? `${extraCities.length} cities selected` : "All cities");
   async function load() {
@@ -235,6 +260,7 @@ export function Market() {
             />
             <form id="market-compare-query" className="mx-form" method="post" onSubmit={submit}>
               <CatalogItemPicker
+                grouped
                 category={category}
                 tier={tier}
                 enchantment={enchantment}
@@ -244,6 +270,17 @@ export function Market() {
                   setRailOpen(false);
                 }}
               />
+              {variants.length > 1 && (
+                <ItemVariantPicker
+                  className="mx-variants"
+                  variants={variants}
+                  current={item.trim().toUpperCase()}
+                  onSelect={(variant) => {
+                    setItem(variant.id);
+                    setSelectedName(variant.name ?? "");
+                  }}
+                />
+              )}
               <div className="market-start-examples mx-picks" aria-label="Suggested market items">
                 <span>Quick picks</span>
                 {[

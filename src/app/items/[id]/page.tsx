@@ -8,7 +8,9 @@ import BackLink from "@/components/build-region-link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ItemMarketLink } from "@/components/item-market-link";
 import { ItemPricePanel } from "@/components/item-price-panel";
-import { BuildPreviewCard } from "@/components/build-preview-card";
+import { CommunityBuildCard } from "@/components/community-build-card";
+import { LibraryBuildCard } from "@/components/library-build-card";
+import { queryLibraryBuilds } from "@/lib/grind-library";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -20,7 +22,9 @@ import {
   itemWeight,
 } from "@/lib/albion/game/server-recipes";
 import { catalogItem } from "@/lib/catalog/validation";
+import { catalogVariants } from "@/lib/catalog/item-search";
 import { findEquipment } from "@/lib/albion/equipment-catalog";
+import { itemAbilities } from "@/lib/albion/equipment-abilities";
 import { buildDiscovery } from "@/lib/build-discovery";
 import { listAccountBuilds } from "@/lib/builds/discovery-service";
 import Link from "@/components/build-region-link";
@@ -33,17 +37,6 @@ import { ItemVariantPicker } from "@/components/item-variant-picker";
 import { MarketNextSteps } from "@/components/market-next-steps";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbList } from "@/lib/structured-data";
-
-/** Every tier and enchantment this item id could take; the catalog decides which exist. */
-function variantIds(id: string) {
-  const match = /^T([1-8])_(.+?)(?:@([1-4]))?$/.exec(id);
-  if (!match) return [];
-  const ids: string[] = [];
-  for (let tier = 1; tier <= 8; tier++)
-    for (let enchantment = 0; enchantment <= 4; enchantment++)
-      ids.push(`T${tier}_${match[2]}${enchantment ? `@${enchantment}` : ""}`);
-  return ids;
-}
 
 /** Route params keep percent-encoding, so an enchanted id arrives as `T4_MAIN_AXE%401`. */
 async function itemId(params: Promise<{ id: string }>) {
@@ -73,30 +66,33 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
   const recipe = itemRecipes[0];
   const weight = itemWeight(id);
   const usedIn = gameRecipesUsing(id, 12);
-  const candidates = variantIds(id);
-  const variants = candidates.length
-    ? await db.itemMetadata.findMany({
-        where: { id: { in: candidates }, active: true },
-        select: { id: true, tier: true, enchantment: true, itemPower: true },
-        orderBy: [{ tier: "asc" }, { enchantment: "asc" }],
-      })
-    : [];
+  const variants = await catalogVariants(id);
   const equipment = findEquipment(id);
-  const weaponCode =
-    equipment && buildDiscovery.weapons.some((weapon) => weapon.code === equipment.family.code)
-      ? equipment.family.code
-      : "";
-  const session = weaponCode ? await getServerSession(authOptions) : null;
-  const builds = weaponCode
-    ? await listAccountBuilds(session?.user?.id || null, {
-        q: "",
-        mine: false,
-        content: "",
-        codes: [weaponCode],
-        sort: "saved",
-        page: 1,
-      })
-    : null;
+  // The weapon as /builds names it, so the count here is the count behind "See all".
+  const weapon = equipment
+    ? buildDiscovery.weapons.find((entry) => entry.code === equipment.family.code)
+    : undefined;
+  const session = weapon ? await getServerSession(authOptions) : null;
+  const viewer = session?.user?.id || null;
+  const [players, library] = weapon
+    ? await Promise.all([
+        listAccountBuilds(viewer, {
+          q: "",
+          mine: false,
+          content: "",
+          codes: [weapon.code],
+          sort: "saved",
+          page: 1,
+        }),
+        queryLibraryBuilds({ weapon: weapon.name, page: 1 }),
+      ])
+    : [null, null];
+  const buildTotal = (players?.total ?? 0) + (library?.matched ?? 0);
+  // Like /builds "All": community builds first, then the library, three windows in all.
+  const shownPlayers = players?.builds.slice(0, 3) ?? [];
+  const shownLibrary = library?.rows.slice(0, 3 - shownPlayers.length) ?? [];
+  const abilities = itemAbilities(id, metadata.abilities);
+  const abilitySources = new Set(abilities.map((ability) => ability.source));
   const tiers = [...new Set(variants.map((variant) => variant.tier))];
   // Tiers without enchanted versions (usually T1–T3) sit above the grid instead of padding it with dashes
   const enchantedTiers = tiers.filter((tier) =>
@@ -174,7 +170,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
             ...(usedIn.total > 0
               ? [{ href: "#item-used-in-heading", label: "Used in", anchor: true }]
               : []),
-            ...(builds && builds.total > 0
+            ...(buildTotal > 0
               ? [{ href: "#item-builds-heading", label: "Builds", anchor: true }]
               : []),
           ]}
@@ -195,11 +191,17 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           <PanelHead
             id="item-abilities-heading"
             title="Abilities"
-            line="Every ability you can pick for each slot. Unlock requirements show when known."
+            line={
+              abilitySources.size === 2
+                ? "Every ability recorded for each slot: the July 2026 item snapshot, plus the archived build library where marked. Confirm in game."
+                : abilitySources.has("archive")
+                  ? "Every ability recorded for each slot in the archived build library, the list the build editor offers. Historical; confirm in game."
+                  : "Every ability you can pick for each slot, from the July 2026 item snapshot. Unlock requirements show when known."
+            }
           />
-          {metadata.abilities.length ? (
+          {abilities.length ? (
             <div className="item-ability-columns">
-              {[...new Set(metadata.abilities.map((ability) => ability.slot))].map((slot) => (
+              {[...new Set(abilities.map((ability) => ability.slot))].map((slot) => (
                 <section
                   key={slot}
                   className="item-ability-column"
@@ -209,7 +211,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                     <span className="item-slot-key">{slot}</span>
                   </h3>
                   <ul>
-                    {metadata.abilities
+                    {abilities
                       .filter((ability) => ability.slot === slot)
                       .map((ability) => (
                         <li key={ability.id}>
@@ -219,6 +221,9 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                           <span>
                             {ability.name}
                             {ability.unlock && <small>Unlock: {ability.unlock}</small>}
+                            {abilitySources.size === 2 && ability.source === "archive" && (
+                              <small>Archived build library</small>
+                            )}
                           </span>
                         </li>
                       ))}
@@ -229,7 +234,7 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
           ) : (
             <EmptyWell
               title="No ability list for this item"
-              line="Check the item's spells in game; they have not been recorded here yet."
+              line="Neither the item snapshot nor the archived build library records its spells. Check them in game."
             />
           )}
         </section>
@@ -380,32 +385,39 @@ export default async function Item({ params }: { params: Promise<{ id: string }>
                 </tbody>
               </table>
             </div>
-            <ItemVariantPicker variants={variants} current={id} />
+            <ItemVariantPicker className="item-variant-picker" variants={variants} current={id} />
           </section>
         )}
-        {builds && builds.total > 0 && (
+        {weapon && buildTotal > 0 && (
           <section className="item-builds" aria-labelledby="item-builds-heading">
             <SectionHeading
               id="item-builds-heading"
               title={
                 <>
-                  {builds.total} public <em>{builds.total === 1 ? "build" : "builds"}</em>{" "}
-                  {builds.total === 1 ? "uses" : "use"} this weapon
+                  {buildTotal.toLocaleString("en-GB")}{" "}
+                  <em>{buildTotal === 1 ? "build" : "builds"}</em>{" "}
+                  {buildTotal === 1 ? "uses" : "use"} the {weapon.name}
                 </>
               }
-              line="Most saved first, any tier or enchantment."
-              link={{ href: `/builds?weapon=${weaponCode}`, label: "See all builds" }}
+              line={`${(players?.total ?? 0).toLocaleString("en-GB")} community · ${(library?.matched ?? 0).toLocaleString("en-GB")} library · any tier or enchantment, most saved first.`}
+              link={{
+                href: `/builds?weapon=${encodeURIComponent(weapon.name)}`,
+                label: `See all ${buildTotal.toLocaleString("en-GB")}`,
+              }}
             />
             <div className="build-grid item-build-grid">
-              {builds.builds.slice(0, 3).map((build) => (
-                <BuildPreviewCard
+              {shownPlayers.map((build) => (
+                <CommunityBuildCard
                   key={build.id}
                   build={build}
-                  authenticated={!!session?.user?.id}
+                  authenticated={!!viewer}
                   saved={build.favorites.length > 0}
                   favoriteCount={build._count.favorites}
-                  owned={build.authorId === session?.user?.id}
+                  owned={build.authorId === viewer}
                 />
+              ))}
+              {shownLibrary.map((build) => (
+                <LibraryBuildCard key={build.id} build={build} />
               ))}
             </div>
           </section>

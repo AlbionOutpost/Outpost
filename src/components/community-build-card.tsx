@@ -4,7 +4,18 @@ import { FavoriteBuildButton } from "./favorite-build-button";
 import { BuildCardOwnerActions } from "./build-card-owner-actions";
 import { archivedSpellOptions } from "@/lib/albion/equipment-abilities";
 import { equipmentName } from "@/lib/albion/equipment-catalog";
-import type { PreviewBuild } from "./build-preview-card";
+
+export type PreviewBuild = {
+  id: string;
+  title: string;
+  description: string;
+  contentType: string;
+  visibility: string;
+  version: number;
+  updatedAt: Date;
+  author: { name: string | null };
+  equipment: { slot: string; itemId: string; quality: number; abilitySelections?: unknown }[];
+};
 
 const visibilityLabel: Record<string, string> = { PRIVATE: "Private", UNLISTED: "Unlisted" };
 

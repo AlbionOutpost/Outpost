@@ -12,6 +12,7 @@ import type { TeamContext } from "./group-dashboard";
 import { Field, plural } from "./group-parts";
 import styles from "./teams.module.css";
 import { NumberField } from "./number-field";
+import { GameTime } from "./game-time";
 
 type TeamEvent = GroupDashboardData["events"][number];
 const rsvpLabel: Record<string, string> = {
@@ -25,24 +26,16 @@ export const isUpcoming = (e: TeamEvent, now: number) =>
 export const rsvpCount = (e: TeamEvent, status: string) =>
   e.rsvps.filter((r) => r.status === status).length;
 
-/** "Saturday 8 November, 20:00 · Europe/Berlin", in the event's own timezone. */
-export function eventTime(e: TeamEvent) {
-  const when = new Intl.DateTimeFormat("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: e.timezone,
-  }).format(new Date(e.startsAt));
-  return `${when} · ${e.timezone}`;
+/** When an event starts: UTC game time, the viewer's own clock and how far away it is. */
+export function EventTime({ event, now }: { event: TeamEvent; now: number }) {
+  return <GameTime at={event.startsAt} now={now} />;
 }
 
-/** The event's day as a calendar leaf: month over a Barlow day number. */
+/** The event's UTC day as a calendar leaf: month over a Barlow day number. */
 export function EventDate({ event, large }: { event: TeamEvent; large?: boolean }) {
   const date = new Date(event.startsAt);
   const part = (o: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat("en-GB", { ...o, timeZone: event.timezone }).format(date);
+    new Intl.DateTimeFormat("en-GB", { ...o, timeZone: "UTC" }).format(date);
   return (
     <time
       className={`well ${styles.leaf}`}
@@ -81,7 +74,7 @@ export function GroupEvents({
         id="team-events"
         emblem="team-calendar"
         title="Events"
-        line={`${plural(ordered.length, "event")} · times in each event's own timezone`}
+        line={`${plural(ordered.length, "event")} · UTC game time, your time and how soon`}
         actions={
           <label className={styles.inlineLabel}>
             <span className="sr-only">Show events</span>
@@ -158,7 +151,9 @@ function EventCard({
             {e.title}
             {e.cancelled && <span className={styles.cancelled}> · Cancelled</span>}
           </h3>
-          <small>{eventTime(e)}</small>
+          <small>
+            <EventTime event={e} now={ctx.now} />
+          </small>
         </div>
         <span className={`landing-chips ${styles.eventChips}`}>
           <span className="landing-chip is-muted">{e.expectedParticipants} expected</span>

@@ -1,0 +1,50 @@
+/* One tier at a time, its five enchantments in a row (item page on phones, Market Explorer). */
+.picker {
+  display: grid;
+  gap: var(--space-3);
+}
+.picker label {
+  display: grid;
+  gap: 6px;
+  color: var(--secondary);
+  font: 600 12px/1.35 var(--font-ui);
+}
+.picker label > :last-child {
+  width: 100%;
+}
+.picker ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cell {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 64px;
+  padding: 0;
+  border: 1px solid var(--well-border);
+  border-radius: var(--radius-md);
+  background: var(--well);
+  box-shadow: inset 0 1px 3px #0009;
+  color: var(--muted);
+  font: 700 12px/1 var(--font-ui);
+  text-decoration: none;
+  cursor: pointer;
+}
+.cell:is(a, button):hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.cell.current {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.cell.missing {
+  cursor: default;
+}

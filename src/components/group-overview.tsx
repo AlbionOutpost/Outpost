@@ -4,7 +4,7 @@ import Link from "@/components/link";
 import { PanelHead } from "./panel-head";
 import { EmptyWell } from "./empty-well";
 import type { TeamContext } from "./group-dashboard";
-import { EventDate, eventTime, isUpcoming, rsvpCount } from "./group-events";
+import { EventDate, EventTime, isUpcoming, rsvpCount } from "./group-events";
 import { CompRow, BuildRow } from "./group-shared";
 import { MemberRow } from "./group-members";
 import { plural } from "./group-parts";
@@ -52,7 +52,9 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
               <EventDate event={next} large />
               <div className={styles.nextEventCopy}>
                 <h3>{next.title}</h3>
-                <p className={styles.eventWhen}>{eventTime(next)}</p>
+                <p className={styles.eventWhen}>
+                  <EventTime event={next} now={now} />
+                </p>
                 {next.description && <p className={styles.clamp}>{next.description}</p>}
                 <dl className={styles.facts}>
                   <div>
@@ -90,7 +92,9 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
                         <EventDate event={e} />
                         <span className={styles.rowCopy}>
                           <strong>{e.title}</strong>
-                          <small>{eventTime(e)}</small>
+                          <small>
+                            <EventTime event={e} now={now} />
+                          </small>
                         </span>
                       </button>
                     </li>
