@@ -26,6 +26,8 @@
   font-variant-numeric: tabular-nums;
 }
 .app.outpost .mx-table :is(th, td) {
+  /* 38px rows (compact 30px), not the global table's 44px */
+  height: 38px;
   padding: 6px var(--space-3);
   border: 0;
   border-top: 1px solid color-mix(in srgb, var(--well-border) 70%, transparent);
@@ -114,7 +116,7 @@
   font: 700 12px/1 var(--font-ui);
 }
 /* Stale: a hollow warning dot beside the amber age; "Stale" on hover and for assistive tech */
-.app.outpost .mx-table .mx-stale-mark {
+.app.outpost :is(.mx-table, .mx-figures) .mx-stale-mark {
   flex: none;
   width: 8px;
   height: 8px;
@@ -153,6 +155,7 @@
   font: 500 13px/1.2 var(--font-ui);
 }
 .app.outpost .mx-table.is-compact :is(th, td) {
+  height: 30px;
   padding-block: 5px;
 }
 

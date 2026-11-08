@@ -14,6 +14,7 @@ import { MarketQualityAvailability } from "./market-quality-availability";
 import { EmptyWell } from "./empty-well";
 import { PanelHead } from "./panel-head";
 import { MarketNextSteps } from "./market-next-steps";
+import { marketViewTabId, useMarketView } from "./market-view";
 import { equipmentName, equipmentSlots } from "@/lib/albion/equipment-catalog";
 import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect, useLayoutEffect, useId, useSyncExternalStore } from "react";
@@ -27,6 +28,7 @@ export function Market() {
   const params = useSearchParams();
   const region = useOutpostRegion();
   const regionPending = useRegionNavigationPending();
+  const { view, show } = useMarketView();
   const [item, setItem] = useState(params.get("item") || "T4_BAG");
   const [selectedName, setSelectedName] = useState("");
   const [category, setCategory] = useState(
@@ -191,6 +193,12 @@ export function Market() {
     >
       {historyOpen ? "Hide price history" : "Research price history"}
     </button>
+  );
+  const sourceNote = (
+    <>
+      Albion Online Data Project · sell orders are listings, buy orders offers · spread is sell
+      minus buy, as a share of buy · amber age and ring: older than an hour · UTC
+    </>
   );
   return (
     <>
@@ -576,9 +584,13 @@ export function Market() {
                     <Link className="pill-link is-small" href={`/tools/flipping?region=${region}`}>
                       Plan a trade <ArrowRight size={15} aria-hidden="true" />
                     </Link>
-                    <a className="pill-link is-small" href="#market-history-research">
+                    <button
+                      type="button"
+                      className="pill-link is-small"
+                      onClick={() => show("history")}
+                    >
                       {selectedQuote.city} price history
-                    </a>
+                    </button>
                   </div>
                 </aside>
               )}
@@ -623,39 +635,35 @@ export function Market() {
                   }
                 />
               )}
-              {hasResult && (
+              {hasResult ? (
                 <MarketQualityAvailability
                   region={region}
                   item={item}
                   city={city || (extraCities.length === 1 ? extraCities[0] : "")}
                   quality={quality}
+                  note={sourceNote}
                   onChoose={(next) => {
                     setQuality(next);
                     requestAnimationFrame(() => qualityControl.current?.focus());
                   }}
                 />
+              ) : (
+                <p className="market-source-note mx-source">{sourceNote}</p>
               )}
-              <p className="market-source-note mx-source">
-                Albion Online Data Project · sell orders are listings, buy orders are offers ·
-                spread is sell minus buy, as a share of buy · an amber age and ring mark an order
-                older than an hour (stale) · times in UTC
-              </p>
             </section>
           </div>
+          {/* The side column: one panel at a time, picked by the masthead tabs */}
           <section
             className="raised reference-market-history mx-history"
             id="market-history-research"
-            aria-labelledby="market-history-title"
+            role="tabpanel"
+            aria-labelledby={marketViewTabId("history")}
+            hidden={view !== "history"}
           >
             <PanelHead
               id="market-history-title"
               title="Price history"
-              line={
-                <>
-                  Daily sell-order averages · {qualityNames[Number(quality) - 1]} · not confirmed
-                  trades
-                </>
-              }
+              line={<>Daily sell-order averages · {qualityNames[Number(quality) - 1]}</>}
               actions={!historyOpen && historyToggle}
             />
             {historyOpen ? (
@@ -678,7 +686,9 @@ export function Market() {
           <section
             id="market-saved-research"
             className="raised mx-saved"
-            aria-labelledby="market-saved-title"
+            role="tabpanel"
+            aria-labelledby={marketViewTabId("saved")}
+            hidden={view !== "saved"}
           >
             <PanelHead
               id="market-saved-title"
