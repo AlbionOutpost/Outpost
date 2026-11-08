@@ -24,6 +24,12 @@ Status as of 1 Nov 2026. Update this file when something ships, breaks or gets p
 - Team cards on `/groups` keep their 1px edge (the banner no longer covers it) and light up on hover; their shield-colour banner is quieter.
 - Superseded button and panel rules in older global sheets removed. Next: page-by-page passes on the new surfaces.
 
+## Giveaways redesign — 8 November 2026
+
+- Open giveaways are raised cards in a grid: the picture, host (Outpost staff or the Team, "Members only" on a Team's), the prize in its own well, a live countdown to the close with entrants and winners in fixed columns (ticks never move the layout), and one state pill (Open, Entered, Draw pending, Won, Ended, Cancelled). Entries still open come first, then those waiting for their draw; drawn and cancelled ones sit in one quiet Ended panel with their winners.
+- One Start a giveaway button, at the head of the open section; the empty state no longer repeats it. Server refusals in the start/edit dialog show inside the dialog, with a link to the Supporter plan when the refusal names it.
+- No server change: the draw, deadlines, members-only rules and schemas are as before. `e2e/giveaways.spec.ts` now checks the single start action.
+
 ## Market Explorer switches faster and holds still — 8 November 2026
 
 - Picking another item or version used to ask for the price history only after the prices arrived, each behind its own 150 ms wait, and dropped every panel to a short status line meanwhile. Now prices and history go out together at once, and an item seen in the last minute comes back from the browser without a request. With source answers stubbed at 400/800 ms, the full switch (prices and chart) went from about 1.16/1.97 s to 0.45/0.86 s, a return to a seen version to about 0.05 s.
