@@ -115,7 +115,54 @@ function TeamCompWindow({ comp }: { comp: CompPreview }) {
   );
 }
 
-export function GroupComps({ ctx }: { ctx: TeamContext }) {
+export type LoadoutView = "comps" | "builds";
+/** Loadouts' two views, each with its own link: the old Comps and Builds tab hashes. */
+export const loadoutViews: { key: LoadoutView; label: string; hash: string }[] = [
+  { key: "comps", label: "Comps", hash: "#team-comps" },
+  { key: "builds", label: "Builds", hash: "#team-builds" },
+];
+export function loadoutViewOf(hash: string): LoadoutView | null {
+  if (hash === "#team-loadouts") return "comps";
+  return loadoutViews.find((v) => v.hash === hash)?.key ?? null;
+}
+
+/**
+ * The team's shared comps and builds in one tab, one view at a time under a segmented control
+ * that carries each count, like the Treasury's.
+ */
+export function GroupLoadouts({
+  ctx,
+  view,
+  onView,
+}: {
+  ctx: TeamContext;
+  view: LoadoutView;
+  onView: (view: LoadoutView) => void;
+}) {
+  const count = { comps: ctx.data.compositions.length, builds: ctx.data.builds.length };
+  return (
+    <div className={styles.loadouts}>
+      <nav className={`segmented ${styles.subNav}`} aria-label="Loadouts">
+        {loadoutViews.map((v) => (
+          <a
+            key={v.key}
+            href={v.hash}
+            aria-current={view === v.key ? "page" : undefined}
+            onClick={(e) => {
+              e.preventDefault();
+              onView(v.key);
+            }}
+          >
+            {v.label} <span className={styles.subCount}>{count[v.key].toLocaleString("en")}</span>
+          </a>
+        ))}
+      </nav>
+      {view === "comps" ? <GroupComps ctx={ctx} /> : <GroupBuilds ctx={ctx} />}
+    </div>
+  );
+}
+
+function GroupComps({ ctx }: { ctx: TeamContext }) {
   const { data } = ctx;
   const editor = ctx.can("manageComps");
   const previews = new Map(data.compositionPreviews.map((c) => [c.id, c]));
@@ -210,7 +257,7 @@ function TeamBuildWindow({ build, children }: { build: SharedBuild; children?: R
   );
 }
 
-export function GroupBuilds({ ctx }: { ctx: TeamContext }) {
+function GroupBuilds({ ctx }: { ctx: TeamContext }) {
   const { data, busy, run } = ctx;
   const editor = ctx.can("manageBuilds");
   return (

@@ -11,26 +11,77 @@ import { plural } from "./group-parts";
 import styles from "./teams.module.css";
 import roleStyles from "./group-roles.module.css";
 
+type Quick = { emblem: string; label: string; line: string } & (
+  { href: string; onClick?: never } | { onClick: () => void; href?: never }
+);
+
 /**
- * The workspace's front page: the next event, shared comps and builds in the wide column;
- * the officers' news and the roster beside them. Each panel keeps its own height, so a short
- * list never leaves an empty block beside a long one. Panel heads carry the emblems; the
- * empty wells under them don't repeat them.
+ * The workspace's front page. A hero row (the next event, then the things this member can do
+ * from here) and the team's loadouts in the wide column; the roster and the leaders' news in a
+ * side rail. Panels keep their own heights; empty parts say so in one line with the way to fill
+ * them, so nothing stands half-empty.
  */
 export function GroupOverview({ ctx }: { ctx: TeamContext }) {
   const { data, now, setTab, can } = ctx;
   const upcoming = data.events.filter((e) => isUpcoming(e, now));
   const next = upcoming[0];
-  const more = (label: string, tab: Parameters<TeamContext["setTab"]>[0]) => (
-    <button type="button" className="pill-link is-small" onClick={() => setTab(tab)}>
+  const more = (label: string, onClick: () => void) => (
+    <button type="button" className="pill-link is-small" onClick={onClick}>
       {label} <ArrowRight size={14} aria-hidden="true" />
     </button>
   );
+  const invite = () => {
+    setTab("Members");
+    requestAnimationFrame(() =>
+      document.getElementById("team-invites")?.scrollIntoView({ block: "center" }),
+    );
+  };
+  // Only what this member may do; every one of them is checked again by the server
+  const quick: Quick[] = [
+    can("manageEvents") && {
+      emblem: "team-announce",
+      label: "Post news",
+      line: "Tell every member",
+      onClick: () => setTab("Announcements"),
+    },
+    can("manageComps") && {
+      emblem: "team-comps",
+      label: "Create a comp",
+      line: "Save a roster here",
+      href: "/compositions/new",
+    },
+    can("manageBuilds") && {
+      emblem: "strip-builds",
+      label: "Share a build",
+      line: "One set for all",
+      onClick: () => setTab("Loadouts", "builds"),
+    },
+    can("inviteMembers") && {
+      emblem: "team-roles",
+      label: "Invite",
+      line: "A single-use link",
+      onClick: invite,
+    },
+    {
+      emblem: "team-loot",
+      label: "Loot splits",
+      line: "Who gets what",
+      onClick: () => setTab("Treasury", "loot"),
+    },
+    {
+      emblem: "trophy-silver-64w",
+      label: "Flip a coin",
+      line: "Settle a tie",
+      onClick: () => setTab("Treasury", "rolls"),
+    },
+  ].filter((q): q is Quick => !!q);
+  const comps = data.compositionPreviews.slice(0, 3);
+  const builds = data.builds.slice(0, 3);
   return (
     <div className={styles.overview}>
       <div className={styles.overviewColumn}>
         <section
-          className={`panel ${styles.panel}`}
+          className={`panel ${styles.panel} ${styles.hero}`}
           data-team-next-event=""
           aria-labelledby="team-next-event"
         >
@@ -45,7 +96,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
                   ? "The only event coming up"
                   : "Mass-ups, raids and gathering trips"
             }
-            actions={next ? more("All events", "Events") : undefined}
+            actions={next ? more("All events", () => setTab("Events")) : undefined}
           />
           {next ? (
             <div className={styles.nextEvent}>
@@ -105,7 +156,11 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
           ) : (
             <EmptyWell
               title="No event scheduled"
-              line="Set a time, the comp and the voice channel; members answer with their RSVP."
+              line={
+                can("manageEvents")
+                  ? "Set a time, the comp and the voice channel; members answer with their RSVP."
+                  : "Leaders with Manage events schedule them; you answer with your RSVP."
+              }
               action={
                 can("manageEvents") ? (
                   <button type="button" className="button secondary" onClick={ctx.newEvent}>
@@ -115,122 +170,97 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
               }
             />
           )}
-        </section>
-        <div className={styles.overviewPair}>
-          <section className={`panel ${styles.panel}`} aria-labelledby="team-comps">
-            <PanelHead
-              id="team-comps"
-              emblem="team-comps"
-              title="Shared comps"
-              line={
-                data.compositions.length
-                  ? plural(data.compositions.length, "comp")
-                  : "Rosters every member can open"
-              }
-              actions={data.compositions.length ? more("Open comps", "Comps") : undefined}
-            />
-            {data.compositionPreviews.length ? (
-              <ul className={styles.list}>
-                {data.compositionPreviews.slice(0, 3).map((c) => (
-                  <li key={c.id}>
-                    <CompRow comp={c} />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className={styles.emptyStack}>
-                <EmptyWell
-                  title="No shared comps yet"
-                  line="Save a comp to this team so every member sees the same roster."
-                  action={
-                    can("manageComps") ? (
-                      <Link className="button secondary" href="/compositions/new">
-                        Create a comp
-                      </Link>
-                    ) : undefined
-                  }
-                />
-              </div>
-            )}
-          </section>
-          <section className={`panel ${styles.panel}`} aria-labelledby="team-builds">
-            <PanelHead
-              id="team-builds"
-              emblem="strip-builds"
-              title="Shared builds"
-              line={
-                data.builds.length ? plural(data.builds.length, "build") : "Sets every member gears"
-              }
-              actions={data.builds.length ? more("Open builds", "Builds") : undefined}
-            />
-            {data.builds.length ? (
-              <ul className={styles.list}>
-                {data.builds.slice(0, 3).map((b) => (
-                  <li key={b.id}>
-                    <BuildRow build={b} onOpen={() => setTab("Builds")} />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className={styles.emptyStack}>
-                <EmptyWell
-                  title="No shared builds yet"
-                  line="Copy a build into the team so members gear the same set."
-                  action={
-                    can("manageBuilds") ? (
-                      <button
-                        type="button"
-                        className="button secondary"
-                        onClick={() => setTab("Builds")}
-                      >
-                        Share a build
-                      </button>
-                    ) : undefined
-                  }
-                />
-              </div>
-            )}
-          </section>
-        </div>
-      </div>
-      <div className={styles.overviewColumn}>
-        <section className={`panel ${styles.panel}`} aria-labelledby="team-latest-news">
-          <PanelHead
-            id="team-latest-news"
-            emblem="team-announce"
-            title="Announcements"
-            line={data.announcements.length ? "Newest first" : "News from the leaders"}
-            actions={data.announcements.length ? more("View all", "Announcements") : undefined}
-          />
-          {data.announcements.length ? (
-            <ul className={styles.list}>
-              {data.announcements.slice(0, 3).map((a) => (
-                <li key={a.id} className={`well ${styles.note}`}>
-                  <h3>{a.title}</h3>
-                  <p className={styles.clamp}>{a.body}</p>
+          <ul className={styles.quick} aria-label="Quick actions">
+            {quick.map((q) => {
+              const body = (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- painted emblem */}
+                  <img src={`/albion/icons/${q.emblem}.webp`} alt="" width={36} height={36} />
+                  <span>
+                    <strong>{q.label}</strong>
+                    <small>{q.line}</small>
+                  </span>
+                </>
+              );
+              return (
+                <li key={q.label}>
+                  {q.href ? (
+                    <Link className="well" href={q.href}>
+                      {body}
+                    </Link>
+                  ) : (
+                    <button type="button" className="well" onClick={q.onClick}>
+                      {body}
+                    </button>
+                  )}
                 </li>
-              ))}
-            </ul>
-          ) : (
-            <div className={styles.emptyStack}>
-              <EmptyWell
-                title="No announcements yet"
-                line="Leaders post here; every member reads it."
-                action={
-                  can("manageEvents") ? (
+              );
+            })}
+          </ul>
+        </section>
+        <section className={`panel ${styles.panel}`} aria-labelledby="team-loadouts-summary">
+          <PanelHead
+            id="team-loadouts-summary"
+            emblem="team-comps"
+            title="Loadouts"
+            line={`${plural(data.compositions.length, "comp")} · ${plural(data.builds.length, "build")} shared with members`}
+            actions={
+              data.compositions.length || data.builds.length
+                ? more("Open loadouts", () => setTab("Loadouts"))
+                : undefined
+            }
+          />
+          <div className={styles.loadoutPair}>
+            <div>
+              <h3 className={styles.subhead}>Comps</h3>
+              {comps.length ? (
+                <ul className={styles.list}>
+                  {comps.map((c) => (
+                    <li key={c.id}>
+                      <CompRow comp={c} />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.quietEmpty}>
+                  <span>No shared comps yet.</span>
+                  {can("manageComps") && (
+                    <Link className="pill-link is-small" href="/compositions/new">
+                      Create a comp
+                    </Link>
+                  )}
+                </p>
+              )}
+            </div>
+            <div>
+              <h3 className={styles.subhead}>Builds</h3>
+              {builds.length ? (
+                <ul className={styles.list}>
+                  {builds.map((b) => (
+                    <li key={b.id}>
+                      <BuildRow build={b} onOpen={() => setTab("Loadouts", "builds")} />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.quietEmpty}>
+                  <span>No shared builds yet.</span>
+                  {can("manageBuilds") && (
                     <button
                       type="button"
-                      className="button secondary"
-                      onClick={() => setTab("Announcements")}
+                      className="pill-link is-small"
+                      onClick={() => setTab("Loadouts", "builds")}
                     >
-                      Write one
+                      Share a build
                     </button>
-                  ) : undefined
-                }
-              />
+                  )}
+                </p>
+              )}
             </div>
-          )}
+          </div>
         </section>
+      </div>
+      <aside className={styles.overviewColumn} aria-label="Team rail">
         <section
           className={`panel ${styles.panel}`}
           aria-labelledby="team-roster"
@@ -241,7 +271,7 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             emblem="team-roles"
             title="Members"
             line={plural(data.memberCount, "member")}
-            actions={more("All members", "Members")}
+            actions={more("All", () => setTab("Members"))}
           />
           {/* How the roster splits by role: the Leader, then each role that anyone holds */}
           <ul className={styles.rosterTally} aria-label="Members by role">
@@ -268,25 +298,14 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             ))}
           </ul>
           {data.memberCount === 1 && (
-            <EmptyWell
-              title="Just you so far"
-              line={
-                can("inviteMembers")
-                  ? "Send an invitation link to bring your first members in."
-                  : "Members you invite appear here."
-              }
-              action={
-                can("inviteMembers") ? (
-                  <button
-                    type="button"
-                    className="button secondary"
-                    onClick={() => setTab("Settings")}
-                  >
-                    Invite members
-                  </button>
-                ) : undefined
-              }
-            />
+            <p className={styles.quietEmpty}>
+              <span>Just you so far.</span>
+              {can("inviteMembers") && (
+                <button type="button" className="pill-link is-small" onClick={invite}>
+                  Invite members
+                </button>
+              )}
+            </p>
           )}
           {data.memberCount > 5 && (
             <button type="button" className={styles.moreLink} onClick={() => setTab("Members")}>
@@ -295,7 +314,41 @@ export function GroupOverview({ ctx }: { ctx: TeamContext }) {
             </button>
           )}
         </section>
-      </div>
+        <section className={`panel ${styles.panel}`} aria-labelledby="team-latest-news">
+          <PanelHead
+            id="team-latest-news"
+            emblem="team-announce"
+            title="Announcements"
+            line={data.announcements.length ? "Newest first" : "News from the leaders"}
+            actions={
+              data.announcements.length ? more("All", () => setTab("Announcements")) : undefined
+            }
+          />
+          {data.announcements.length ? (
+            <ul className={styles.list}>
+              {data.announcements.slice(0, 2).map((a) => (
+                <li key={a.id} className={`well ${styles.note}`}>
+                  <h3>{a.title}</h3>
+                  <p className={styles.clamp}>{a.body}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.quietEmpty}>
+              <span>No announcements yet.</span>
+              {can("manageEvents") && (
+                <button
+                  type="button"
+                  className="pill-link is-small"
+                  onClick={() => setTab("Announcements")}
+                >
+                  Write one
+                </button>
+              )}
+            </p>
+          )}
+        </section>
+      </aside>
     </div>
   );
 }

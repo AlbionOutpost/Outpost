@@ -144,11 +144,77 @@
 }
 
 /* ---------- Coin flips ---------- */
+/* The coin's stage beside its controls, both the same height: the throw on the left, the form
+   on top of the right column and the team's flips filling the rest of it */
 :global(.app.outpost) .arena.arena {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-5);
+}
+:global(.app.outpost) .arenaSide.arenaSide {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-5);
+  min-width: 0;
+}
+:global(.app.outpost) .arenaSide.arenaSide > form > :last-child > :global(.button) {
+  width: 100%;
+}
+:global(.app.outpost) .flipHistory.flipHistory {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  min-height: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--well-border);
+}
+:global(.app.outpost) .flipHistory.flipHistory h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+}
+:global(.app.outpost) .flipHistory.flipHistory h3 small {
+  color: var(--muted);
+  font: 500 12px/1.3 var(--font-ui);
+}
+/* At most four flips in view; the rest scroll inside */
+:global(.app.outpost) .flipList.flipList {
+  max-height: 248px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* Opening a roll: the drop, the silver and the button on one row */
+:global(.app.outpost) .rollForm.rollForm {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+:global(.app.outpost) .rollFields.rollFields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+}
+:global(.app.outpost) .rollFields.rollFields > :global(.button) {
+  margin-top: 22px;
+}
+:global(.app.outpost) .rollGrid.rollGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-3);
+}
+@media (max-width: 700px) {
+  :global(.app.outpost) .rollFields.rollFields,
+  :global(.app.outpost) .rollGrid.rollGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :global(.app.outpost) .rollFields.rollFields > :global(.button) {
+    margin-top: 0;
+  }
 }
 :global(.app.outpost) .arenaStage.arenaStage {
   display: grid;
