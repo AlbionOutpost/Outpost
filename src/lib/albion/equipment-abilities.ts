@@ -62,5 +62,5 @@ export function itemAbilities(
         source: "archive",
       });
   const rank = (slot: string) => (slotOrder.includes(slot) ? slotOrder.indexOf(slot) : 99);
-  return rows.toSorted((a, b) => rank(a.slot) - rank(b.slot));
+  return rows.sort((a, b) => rank(a.slot) - rank(b.slot));
 }
